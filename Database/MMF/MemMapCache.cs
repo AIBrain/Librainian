@@ -1,23 +1,26 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // "Librainian2/MemMapCache.cs" was last cleaned by Rick on 2014/08/08 at 2:26 PM
-#endregion
+
+#endregion License & Information
 
 namespace Librainian.Database.MMF {
+
     using System;
     using System.Collections.Generic;
     using System.IO.MemoryMappedFiles;
@@ -27,10 +30,11 @@ namespace Librainian.Database.MMF {
     using System.Text;
     using Threading;
 
-    public class MemMapCache< T > {
+    public class MemMapCache<T> {
         private const String DELIM = "[!@#]";
 
-        private readonly Dictionary< String, DateTime > _keyExpirations;
+        private readonly Dictionary<String, DateTime> _keyExpirations;
+
         //this is necessary because the lib still will hold refs to expired MMFs
 
         private BinaryFormatter _formatter;
@@ -39,14 +43,14 @@ namespace Librainian.Database.MMF {
 
         public MemMapCache() {
             this.Encoding = Encoding.ASCII;
-            this.ChunkSize = 1024*1024*30; //10MB
+            this.ChunkSize = 1024 * 1024 * 30; //10MB
 
             this.Server = "127.0.0.1"; //limited to local
             this.Port = 57742;
 
             this.CacheHitAlwaysMiss = false;
 
-            this._keyExpirations = new Dictionary< String, DateTime >();
+            this._keyExpirations = new Dictionary<String, DateTime>();
         }
 
         public static int MaxKeyLength { get { return 4096 - 32; } }
@@ -72,6 +76,45 @@ namespace Librainian.Database.MMF {
             this._tcpClient.Connect( this.Server, this.Port );
             this._networkStream = this._tcpClient.GetStream();
             this._formatter = new BinaryFormatter();
+        }
+
+        public T Get( String key ) {
+            if ( !this.IsConnected ) {
+                return default( T );
+            }
+
+            if ( this.CacheHitAlwaysMiss ) {
+                return default( T );
+            }
+
+            try {
+                using ( var memoryMappedFile = MemoryMappedFile.OpenExisting( key ) ) {
+                    if ( this._keyExpirations.ContainsKey( key ) ) {
+                        if ( DateTime.UtcNow >= this._keyExpirations[ key ] ) {
+                            memoryMappedFile.Dispose();
+                            this._keyExpirations.Remove( key );
+                            return default( T );
+                        }
+                    }
+
+                    var viewStream = memoryMappedFile.CreateViewStream( offset: 0, size: 0 );
+
+                    var o = this._formatter.Deserialize( serializationStream: viewStream );
+                    return ( T )o;
+                }
+            }
+            catch ( SerializationException ) {
+
+                //throw;
+                return default( T );
+            }
+            catch ( Exception ) {
+                if ( this._keyExpirations.ContainsKey( key ) ) {
+                    this._keyExpirations.Remove( key );
+                }
+
+                return default( T );
+            }
         }
 
         public void Set( String key, T obj ) {
@@ -113,65 +156,14 @@ namespace Librainian.Database.MMF {
                 this._networkStream.Flush();
             }
             catch ( NotSupportedException exception ) {
+
                 //Console.WriteLine( "{0} is too small for {1}.", size, key );
                 exception.Log();
             }
             catch ( Exception exception ) {
+
                 //Console.WriteLine( "MemMapCache: Set Failed.\n\t" + ex.Message );
                 exception.Log();
-            }
-        }
-
-        public T TryGetThenSet( String key, Func< T > cacheMiss ) {
-            return this.TryGetThenSet( key, DateTime.MaxValue, cacheMiss );
-        }
-
-        public T TryGetThenSet( String key, DateTime expire, Func< T > cacheMiss ) {
-            var obj = this.Get( key );
-            if ( obj != null ) {
-                return obj;
-            }
-            obj = cacheMiss.Invoke();
-            this.Set( key, obj, expire );
-
-            return obj;
-        }
-
-        public T Get( String key ) {
-            if ( !this.IsConnected ) {
-                return default( T );
-            }
-
-            if ( this.CacheHitAlwaysMiss ) {
-                return default( T );
-            }
-
-            try {
-                using ( var memoryMappedFile = MemoryMappedFile.OpenExisting( key ) ) {
-                    if ( this._keyExpirations.ContainsKey( key ) ) {
-                        if ( DateTime.UtcNow >= this._keyExpirations[ key ] ) {
-                            memoryMappedFile.Dispose();
-                            this._keyExpirations.Remove( key );
-                            return default( T );
-                        }
-                    }
-
-                    var viewStream = memoryMappedFile.CreateViewStream( offset: 0, size: 0 );
-
-                    var o = this._formatter.Deserialize( serializationStream: viewStream );
-                    return ( T ) o;
-                }
-            }
-            catch ( SerializationException ) {
-                //throw;
-                return default( T );
-            }
-            catch ( Exception ) {
-                if ( this._keyExpirations.ContainsKey( key ) ) {
-                    this._keyExpirations.Remove( key );
-                }
-
-                return default( T );
             }
         }
 
@@ -188,17 +180,32 @@ namespace Librainian.Database.MMF {
             this.Set( key, obj, size, DateTime.MaxValue );
         }
 
-        public T TryGetThenSet( String key, TimeSpan expire, Func< T > cacheMiss ) {
+        public T TryGetThenSet( String key, Func<T> cacheMiss ) {
+            return this.TryGetThenSet( key, DateTime.MaxValue, cacheMiss );
+        }
+
+        public T TryGetThenSet( String key, DateTime expire, Func<T> cacheMiss ) {
+            var obj = this.Get( key );
+            if ( obj != null ) {
+                return obj;
+            }
+            obj = cacheMiss.Invoke();
+            this.Set( key, obj, expire );
+
+            return obj;
+        }
+
+        public T TryGetThenSet( String key, TimeSpan expire, Func<T> cacheMiss ) {
             var expireDT = DateTime.Now.Add( expire );
             return this.TryGetThenSet( key, expireDT, cacheMiss );
         }
 
-        public T TryGetThenSet( String key, long size, TimeSpan expire, Func< T > cacheMiss ) {
+        public T TryGetThenSet( String key, long size, TimeSpan expire, Func<T> cacheMiss ) {
             var expireDT = DateTime.Now.Add( expire );
             return this.TryGetThenSet( key, size, expireDT, cacheMiss );
         }
 
-        public T TryGetThenSet( String key, long size, DateTime expire, Func< T > cacheMiss ) {
+        public T TryGetThenSet( String key, long size, DateTime expire, Func<T> cacheMiss ) {
             var obj = this.Get( key );
             if ( obj == null ) {
                 obj = cacheMiss.Invoke();
