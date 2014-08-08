@@ -30,6 +30,7 @@ namespace Librainian.Database {
     using System.Threading.Tasks;
     using System.Web.Caching;
     using Annotations;
+    using FluentAssertions;
     using Measurement.Time;
     using Threading;
 
@@ -100,7 +101,7 @@ namespace Librainian.Database {
 
             //Utilities.IO.ExtensionMethods.
 
-            Assert.NotNull( this.Cash );
+            this.Cash.Should().NotBeNull();
         }
 
         /// <summary>
@@ -108,7 +109,7 @@ namespace Librainian.Database {
         /// </summary>
         public SqlParameterCollection Params {
             get {
-                Assert.NotNull( this.Command );
+                this.Command.Should().NotBeNull();
                 return this.Command.Parameters;
             }
         }
