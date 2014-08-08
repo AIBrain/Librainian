@@ -1,23 +1,26 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // "Librainian2/KittProgressBar.cs" was last cleaned by Rick on 2014/08/08 at 2:26 PM
-#endregion
+
+#endregion License & Information
 
 namespace Librainian.Controls {
+
     using System;
     using System.ComponentModel;
     using System.Drawing;
@@ -25,33 +28,26 @@ namespace Librainian.Controls {
     using System.Windows.Forms;
 
     /// <summary>
-    ///     A replacement for the default ProgressBar control.
+    /// A replacement for the default ProgressBar control.
     /// </summary>
     [DefaultEvent( "ValueChanged" )]
     public class KittProgressBar : UserControl {
         private readonly Timer mGlowAnimation = new Timer();
 
         /// <summary>
-        ///     Required designer variable.
+        /// Required designer variable.
         /// </summary>
 #pragma warning disable 649
+        private Boolean _mAnimate = true;
+        private Color _mBackgroundColor = Color.FromArgb( 201, 201, 201 );
+        private int _mGlowPosition = -325;
+        private Color _mHighlightColor = Color.White;
+        private int _mMaxValue = 100;
         private Container components;
 #pragma warning restore 649
-
-        private Boolean _mAnimate = true;
-
-        private Color _mBackgroundColor = Color.FromArgb( 201, 201, 201 );
-
         private Color mEndColor = Color.FromArgb( 0, 211, 40 );
 
         private Color mGlowColor = Color.FromArgb( 150, 255, 255, 255 );
-
-        private int _mGlowPosition = -325;
-
-        private Color _mHighlightColor = Color.White;
-
-        private int _mMaxValue = 100;
-
         private int mMinValue;
 
         private Color mStartColor = Color.FromArgb( 210, 0, 0 );
@@ -59,9 +55,10 @@ namespace Librainian.Controls {
         private int mValue;
 
         /// <summary>
-        ///     Create the control and initialize it.
+        /// Create the control and initialize it.
         /// </summary>
         public KittProgressBar() {
+
             // This call is required by the Windows.Forms Form Designer.
             this.InitializeComponent();
             this.SetStyle( ControlStyles.AllPaintingInWmPaint, true );
@@ -81,13 +78,160 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        ///     The value that is displayed on the progress bar.
+        /// Whether the glow is animated.
+        /// </summary>
+        [Category( "Highlights and Glows" )]
+        [DefaultValue( typeof( Boolean ), "true" )]
+        [Description( "Whether the glow is animated or not." )]
+        public Boolean Animate {
+            get { return this._mAnimate; }
+
+            set {
+                this._mAnimate = value;
+                if ( value ) {
+                    this.mGlowAnimation.Start();
+                }
+                else {
+                    this.mGlowAnimation.Stop();
+                }
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// The color of the background.
+        /// </summary>
+        [Category( "Highlights and Glows" )]
+        [DefaultValue( typeof( Color ), "201,201,201" )]
+        [Description( "The color of the background." )]
+        public Color BackgroundColor {
+            get { return this._mBackgroundColor; }
+
+            set {
+                this._mBackgroundColor = value;
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// The end color for the progress bar. 210, 000, 000 = Red 210, 202, 000 = Yellow 000, 163,
+        /// 211 = Blue 000, 211, 040 = Green
+        /// </summary>
+        [Category( "Bar" )]
+        [DefaultValue( typeof( Color ), "0, 211, 40" )]
+        [Description( "The end color for the progress bar." + "210, 000, 000 = Red\n" + "210, 202, 000 = Yellow\n" + "000, 163, 211 = Blue\n" + "000, 211, 040 = Green\n" )]
+        public Color EndColor {
+            get { return this.mEndColor; }
+
+            set {
+                this.mEndColor = value;
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// The color of the glow.
+        /// </summary>
+        [Category( "Highlights and Glows" )]
+        [DefaultValue( typeof( Color ), "150, 255, 255, 255" )]
+        [Description( "The color of the glow." )]
+        public Color GlowColor {
+            get { return this.mGlowColor; }
+
+            set {
+                this.mGlowColor = value;
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// The color of the highlights.
+        /// </summary>
+        [Category( "Highlights and Glows" )]
+        [DefaultValue( typeof( Color ), "White" )]
+        [Description( "The color of the highlights." )]
+        public Color HighlightColor {
+            get { return this._mHighlightColor; }
+
+            set {
+                this._mHighlightColor = value;
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// The maximum value for the Value property.
+        /// </summary>
+        [Category( "Value" )]
+        [DefaultValue( 100 )]
+        [Description( "The maximum value for the Value property." )]
+        public int MaxValue {
+            get { return this._mMaxValue; }
+
+            set {
+                this._mMaxValue = value;
+                if ( value > this.MaxValue ) {
+                    this.Value = this.MaxValue;
+                }
+                if ( this.Value < this.MaxValue ) {
+                    this.mGlowAnimation.Start();
+                }
+                var mc = this.MaxChanged;
+                if ( mc != null ) {
+                    mc( this, EventArgs.Empty );
+                }
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// The minimum value for the Value property.
+        /// </summary>
+        [Category( "Value" )]
+        [DefaultValue( 0 )]
+        [Description( "The minimum value for the Value property." )]
+        public int MinValue {
+            get { return this.mMinValue; }
+
+            set {
+                this.mMinValue = value;
+                if ( value < this.MinValue ) {
+                    this.Value = this.MinValue;
+                }
+                var mc = this.MinChanged;
+                if ( mc != null ) {
+                    mc( this, EventArgs.Empty );
+                }
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// The start color for the progress bar. 210, 000, 000 = Red 210, 202, 000 = Yellow 000,
+        /// 163, 211 = Blue 000, 211, 040
+        /// = Green
+        /// </summary>
+        [Category( "Bar" )]
+        [DefaultValue( typeof( Color ), "210, 0, 0" )]
+        [Description( "The start color for the progress bar." + "210, 000, 000 = Red\n" + "210, 202, 000 = Yellow\n" + "000, 163, 211 = Blue\n" + "000, 211, 040 = Green\n" )]
+        public Color StartColor {
+            get { return this.mStartColor; }
+
+            set {
+                this.mStartColor = value;
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// The value that is displayed on the progress bar.
         /// </summary>
         [Category( "Value" )]
         [DefaultValue( 0 )]
         [Description( "The value that is displayed on the progress bar." )]
         public int Value {
             get { return this.mValue; }
+
             set {
                 if ( value > this.MaxValue || value < this.MinValue ) {
                     return;
@@ -108,144 +252,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        ///     The maximum value for the Value property.
-        /// </summary>
-        [Category( "Value" )]
-        [DefaultValue( 100 )]
-        [Description( "The maximum value for the Value property." )]
-        public int MaxValue {
-            get { return this._mMaxValue; }
-            set {
-                this._mMaxValue = value;
-                if ( value > this.MaxValue ) {
-                    this.Value = this.MaxValue;
-                }
-                if ( this.Value < this.MaxValue ) {
-                    this.mGlowAnimation.Start();
-                }
-                var mc = this.MaxChanged;
-                if ( mc != null ) {
-                    mc( this, EventArgs.Empty );
-                }
-                this.Invalidate();
-            }
-        }
-
-        /// <summary>
-        ///     The minimum value for the Value property.
-        /// </summary>
-        [Category( "Value" )]
-        [DefaultValue( 0 )]
-        [Description( "The minimum value for the Value property." )]
-        public int MinValue {
-            get { return this.mMinValue; }
-            set {
-                this.mMinValue = value;
-                if ( value < this.MinValue ) {
-                    this.Value = this.MinValue;
-                }
-                var mc = this.MinChanged;
-                if ( mc != null ) {
-                    mc( this, EventArgs.Empty );
-                }
-                this.Invalidate();
-            }
-        }
-
-        /// <summary>
-        ///     The start color for the progress bar. 210, 000, 000 = Red 210, 202, 000 = Yellow 000, 163, 211 = Blue 000, 211, 040
-        ///     = Green
-        /// </summary>
-        [Category( "Bar" )]
-        [DefaultValue( typeof ( Color ), "210, 0, 0" )]
-        [Description( "The start color for the progress bar." + "210, 000, 000 = Red\n" + "210, 202, 000 = Yellow\n" + "000, 163, 211 = Blue\n" + "000, 211, 040 = Green\n" )]
-        public Color StartColor {
-            get { return this.mStartColor; }
-            set {
-                this.mStartColor = value;
-                this.Invalidate();
-            }
-        }
-
-        /// <summary>
-        ///     The end color for the progress bar. 210, 000, 000 = Red 210, 202, 000 = Yellow 000, 163, 211 = Blue 000, 211, 040 =
-        ///     Green
-        /// </summary>
-        [Category( "Bar" )]
-        [DefaultValue( typeof ( Color ), "0, 211, 40" )]
-        [Description( "The end color for the progress bar." + "210, 000, 000 = Red\n" + "210, 202, 000 = Yellow\n" + "000, 163, 211 = Blue\n" + "000, 211, 040 = Green\n" )]
-        public Color EndColor {
-            get { return this.mEndColor; }
-            set {
-                this.mEndColor = value;
-                this.Invalidate();
-            }
-        }
-
-        /// <summary>
-        ///     The color of the highlights.
-        /// </summary>
-        [Category( "Highlights and Glows" )]
-        [DefaultValue( typeof ( Color ), "White" )]
-        [Description( "The color of the highlights." )]
-        public Color HighlightColor {
-            get { return this._mHighlightColor; }
-            set {
-                this._mHighlightColor = value;
-                this.Invalidate();
-            }
-        }
-
-        /// <summary>
-        ///     The color of the background.
-        /// </summary>
-        [Category( "Highlights and Glows" )]
-        [DefaultValue( typeof ( Color ), "201,201,201" )]
-        [Description( "The color of the background." )]
-        public Color BackgroundColor {
-            get { return this._mBackgroundColor; }
-            set {
-                this._mBackgroundColor = value;
-                this.Invalidate();
-            }
-        }
-
-        /// <summary>
-        ///     Whether the glow is animated.
-        /// </summary>
-        [Category( "Highlights and Glows" )]
-        [DefaultValue( typeof ( Boolean ), "true" )]
-        [Description( "Whether the glow is animated or not." )]
-        public Boolean Animate {
-            get { return this._mAnimate; }
-            set {
-                this._mAnimate = value;
-                if ( value ) {
-                    this.mGlowAnimation.Start();
-                }
-                else {
-                    this.mGlowAnimation.Stop();
-                }
-                this.Invalidate();
-            }
-        }
-
-        /// <summary>
-        ///     The color of the glow.
-        /// </summary>
-        [Category( "Highlights and Glows" )]
-        [DefaultValue( typeof ( Color ), "150, 255, 255, 255" )]
-        [Description( "The color of the glow." )]
-        public Color GlowColor {
-            get { return this.mGlowColor; }
-            set {
-                this.mGlowColor = value;
-                this.Invalidate();
-            }
-        }
-
-        /// <summary>
-        ///     Clean up any resources being used.
+        /// Clean up any resources being used.
         /// </summary>
         protected override void Dispose( Boolean disposing ) {
             if ( disposing ) {
@@ -254,19 +261,6 @@ namespace Librainian.Controls {
                 }
             }
             base.Dispose( disposing );
-        }
-
-        /// <summary>
-        ///     Required method for Designer support - do not modify the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent() {
-            this.SuspendLayout();
-            // 
-            // KittProgressBar
-            // 
-            this.Name = "KittProgressBar";
-            this.Size = new Size( 349, 94 );
-            this.ResumeLayout( false );
         }
 
         private void DrawBackground( Graphics g ) {
@@ -290,8 +284,8 @@ namespace Librainian.Controls {
 
         private void DrawBar( Graphics g ) {
             var r = new Rectangle( 1, 2, this.Width - 3, this.Height - 3 ) {
-                                                                               Width = ( int ) ( this.Value*1.0F/( this.MaxValue - this.MinValue )*this.Width )
-                                                                           };
+                Width = ( int )( this.Value * 1.0F / ( this.MaxValue - this.MinValue ) * this.Width )
+            };
             g.FillRectangle( new SolidBrush( this.GetIntermediateColor() ), r );
         }
 
@@ -300,26 +294,44 @@ namespace Librainian.Controls {
             var lg = new LinearGradientBrush( lr, Color.White, Color.White, LinearGradientMode.Horizontal );
 
             var lc = new ColorBlend( 3 ) {
-                                             Colors = new[] { Color.Transparent, Color.FromArgb( 40, 0, 0, 0 ), Color.Transparent },
-                                             Positions = new[] { 0.0F, 0.2F, 1.0F }
-                                         };
+                Colors = new[] { Color.Transparent, Color.FromArgb( 40, 0, 0, 0 ), Color.Transparent },
+                Positions = new[] { 0.0F, 0.2F, 1.0F }
+            };
             lg.InterpolationColors = lc;
 
             lr.X--;
             g.FillRectangle( lg, lr );
 
             var rr = new Rectangle( this.Width - 3, 2, 15, this.Height - 3 ) {
-                                                                                 X = ( int ) ( this.Value*1.0F/( this.MaxValue - this.MinValue )*this.Width ) - 14
-                                                                             };
+                X = ( int )( this.Value * 1.0F / ( this.MaxValue - this.MinValue ) * this.Width ) - 14
+            };
             var rg = new LinearGradientBrush( rr, Color.Black, Color.Black, LinearGradientMode.Horizontal );
 
             var rc = new ColorBlend( 3 ) {
-                                             Colors = new[] { Color.Transparent, Color.FromArgb( 40, 0, 0, 0 ), Color.Transparent },
-                                             Positions = new[] { 0.0F, 0.8F, 1.0F }
-                                         };
+                Colors = new[] { Color.Transparent, Color.FromArgb( 40, 0, 0, 0 ), Color.Transparent },
+                Positions = new[] { 0.0F, 0.8F, 1.0F }
+            };
             rg.InterpolationColors = rc;
 
             g.FillRectangle( rg, rr );
+        }
+
+        private void DrawGlow( Graphics g ) {
+            var r = new Rectangle( this._mGlowPosition, 0, 60, this.Height );
+            var lgb = new LinearGradientBrush( r, Color.White, Color.White, LinearGradientMode.Horizontal );
+
+            var cb = new ColorBlend( 4 ) {
+                Colors = new[] { Color.Transparent, this.GlowColor, this.GlowColor, Color.Transparent },
+                Positions = new[] { 0.0F, 0.5F, 0.6F, 1.0F }
+            };
+            lgb.InterpolationColors = cb;
+
+            var clip = new Rectangle( 1, 2, this.Width - 3, this.Height - 3 ) {
+                Width = ( int )( this.Value * 1.0F / ( this.MaxValue - this.MinValue ) * this.Width )
+            };
+            g.SetClip( clip );
+            g.FillRectangle( lgb, r );
+            g.ResetClip();
         }
 
         private void DrawHighlight( Graphics g ) {
@@ -350,24 +362,6 @@ namespace Librainian.Controls {
             g.DrawPath( new Pen( Color.FromArgb( 100, Color.White ) ), rr );
         }
 
-        private void DrawGlow( Graphics g ) {
-            var r = new Rectangle( this._mGlowPosition, 0, 60, this.Height );
-            var lgb = new LinearGradientBrush( r, Color.White, Color.White, LinearGradientMode.Horizontal );
-
-            var cb = new ColorBlend( 4 ) {
-                                             Colors = new[] { Color.Transparent, this.GlowColor, this.GlowColor, Color.Transparent },
-                                             Positions = new[] { 0.0F, 0.5F, 0.6F, 1.0F }
-                                         };
-            lgb.InterpolationColors = cb;
-
-            var clip = new Rectangle( 1, 2, this.Width - 3, this.Height - 3 ) {
-                                                                                  Width = ( int ) ( this.Value*1.0F/( this.MaxValue - this.MinValue )*this.Width )
-                                                                              };
-            g.SetClip( clip );
-            g.FillRectangle( lgb, r );
-            g.ResetClip();
-        }
-
         private void DrawOuterStroke( Graphics g ) {
             var r = this.ClientRectangle;
             r.Width--;
@@ -376,7 +370,27 @@ namespace Librainian.Controls {
             g.DrawPath( new Pen( Color.FromArgb( 178, 178, 178 ) ), rr );
         }
 
+        /// <summary>
+        /// Required method for Designer support - do not modify the contents of this method with
+        /// the code editor.
+        /// </summary>
+        private void InitializeComponent() {
+            this.SuspendLayout();
+
+            //
+            // KittProgressBar
+            //
+            this.Name = "KittProgressBar";
+            this.Size = new Size( 349, 94 );
+            this.ResumeLayout( false );
+        }
+
         #region -  Functions  -
+
+        private static Boolean InDesignMode() {
+            return ( LicenseManager.UsageMode == LicenseUsageMode.Designtime );
+        }
+
         private static GraphicsPath RoundRect( RectangleF r, float r1, float r2, float r3, float r4 ) {
             float x = r.X, y = r.Y, w = r.Width, h = r.Height;
             var rr = new GraphicsPath();
@@ -391,23 +405,19 @@ namespace Librainian.Controls {
             return rr;
         }
 
-        private static Boolean InDesignMode() {
-            return ( LicenseManager.UsageMode == LicenseUsageMode.Designtime );
-        }
-
         private Color GetIntermediateColor() {
             var c = this.StartColor;
             var c2 = this.EndColor;
 
-            var pc = this.Value*1.0F/( this.MaxValue - this.MinValue );
+            var pc = this.Value * 1.0F / ( this.MaxValue - this.MinValue );
 
             int ca = c.A, cr = c.R, cg = c.G, cb = c.B;
             int c2a = c2.A, c2r = c2.R, c2g = c2.G, c2b = c2.B;
 
-            var a = ( int ) Math.Abs( ca + ( ca - c2a )*pc );
-            var r = ( int ) Math.Abs( cr - ( ( cr - c2r )*pc ) );
-            var g = ( int ) Math.Abs( cg - ( ( cg - c2g )*pc ) );
-            var b = ( int ) Math.Abs( cb - ( ( cb - c2b )*pc ) );
+            var a = ( int )Math.Abs( ca + ( ca - c2a ) * pc );
+            var r = ( int )Math.Abs( cr - ( ( cr - c2r ) * pc ) );
+            var g = ( int )Math.Abs( cg - ( ( cg - c2g ) * pc ) );
+            var b = ( int )Math.Abs( cb - ( ( cb - c2b ) * pc ) );
 
             if ( a > 255 ) {
                 a = 255;
@@ -424,20 +434,8 @@ namespace Librainian.Controls {
 
             return ( Color.FromArgb( a, r, g, b ) );
         }
-        #endregion
 
-        private void ProgressBar_Paint( object sender, PaintEventArgs e ) {
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            this.DrawBackground( e.Graphics );
-            this.DrawBackgroundShadows( e.Graphics );
-            this.DrawBar( e.Graphics );
-            this.DrawBarShadows( e.Graphics );
-            this.DrawHighlight( e.Graphics );
-            this.DrawInnerStroke( e.Graphics );
-            this.DrawGlow( e.Graphics );
-            this.DrawOuterStroke( e.Graphics );
-        }
+        #endregion -  Functions  -
 
         private void mGlowAnimation_Tick( object sender, EventArgs e ) {
             if ( this.Animate ) {
@@ -453,36 +451,51 @@ namespace Librainian.Controls {
             }
         }
 
+        private void ProgressBar_Paint( object sender, PaintEventArgs e ) {
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            this.DrawBackground( e.Graphics );
+            this.DrawBackgroundShadows( e.Graphics );
+            this.DrawBar( e.Graphics );
+            this.DrawBarShadows( e.Graphics );
+            this.DrawHighlight( e.Graphics );
+            this.DrawInnerStroke( e.Graphics );
+            this.DrawGlow( e.Graphics );
+            this.DrawOuterStroke( e.Graphics );
+        }
+
         #region -  Events  -
+
         /// <summary>
-        ///     When the MaxValue property is changed.
+        /// When the MaxValue property is changed.
         /// </summary>
         public delegate void MaxChangedHandler( object sender, EventArgs e );
 
         /// <summary>
-        ///     When the MinValue property is changed.
+        /// When the MinValue property is changed.
         /// </summary>
         public delegate void MinChangedHandler( object sender, EventArgs e );
 
         /// <summary>
-        ///     When the Value property is changed.
+        /// When the Value property is changed.
         /// </summary>
         public delegate void ValueChangedHandler( object sender, EventArgs e );
 
         /// <summary>
-        ///     When the Value property is changed.
+        /// When the MaxValue property is changed.
         /// </summary>
-        public event ValueChangedHandler ValueChanged;
+        public event MaxChangedHandler MaxChanged;
 
         /// <summary>
-        ///     When the MinValue property is changed.
+        /// When the MinValue property is changed.
         /// </summary>
         public event MinChangedHandler MinChanged;
 
         /// <summary>
-        ///     When the MaxValue property is changed.
+        /// When the Value property is changed.
         /// </summary>
-        public event MaxChangedHandler MaxChanged;
-        #endregion
+        public event ValueChangedHandler ValueChanged;
+
+        #endregion -  Events  -
     }
 }

@@ -119,34 +119,6 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        ///     Threadsafe <see cref="Button.PerformClick" />.
-        /// </summary>
-        /// <param name="control"></param>
-        /// <param name="delay"></param>
-        /// <returns></returns>
-        public static void PerformThreadSafeClick( [CanBeNull] this Button control, TimeSpan? delay = null ) {
-            if ( !delay.HasValue ) {
-                delay = Seconds.One;
-            }
-            var timer = new Timer {
-                                      Interval = ( int ) delay.Value.TotalMilliseconds
-                                  };
-            timer.Tick += ( sender, args ) => {
-                              timer.Stop();
-
-                              if ( control != null ) {
-                                  control.InvokeIfRequired( control.PerformClick );
-                              }
-                              using ( timer ) {
-                                  FormTimers.Remove( timer );
-                                  timer = null;
-                              }
-                          };
-            FormTimers.Add( timer );
-            timer.Start();
-        }
-
-        /// <summary>
         ///     Safely set the <see cref="Control.Enabled" /> of the control across threads.
         /// </summary>
         /// <param name="control"></param>
@@ -157,12 +129,12 @@ namespace Librainian.Controls {
             }
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
-                                                     if ( control.IsDisposed ) {
-                                                         return;
-                                                     }
-                                                     control.Enabled = value;
-                                                     control.Refresh();
-                                                 } ) );
+                    if ( control.IsDisposed ) {
+                        return;
+                    }
+                    control.Enabled = value;
+                    control.Refresh();
+                } ) );
             }
             else {
                 control.Enabled = value;
@@ -184,12 +156,12 @@ namespace Librainian.Controls {
             }
             if ( control.ProgressBar.InvokeRequired ) {
                 control.ProgressBar.BeginInvoke( new Action( () => {
-                                                                 if ( control.IsDisposed ) {
-                                                                     return;
-                                                                 }
-                                                                 control.Enabled = value;
-                                                                 control.ProgressBar.Refresh();
-                                                             } ) );
+                    if ( control.IsDisposed ) {
+                        return;
+                    }
+                    control.Enabled = value;
+                    control.ProgressBar.Refresh();
+                } ) );
             }
             else {
                 control.Enabled = value;
@@ -218,18 +190,35 @@ namespace Librainian.Controls {
             }
         }
 
+        /// <summary>
+        ///     Safely set the <see cref="Control.Text" /> of a control across threads.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        public static void Location( [CanBeNull] this Form form, Point location ) {
+            if ( null == form ) {
+                return;
+            }
+            form.InvokeIfRequired( () => {
+                if ( form.IsDisposed ) {
+                    return;
+                }
+                form.Location = location;
+            } );
+        }
+
         public static async void Marquee( [CanBeNull] this Control control, TimeSpan timeSpan, [CanBeNull] String message ) {
             control.Text( message );
             var until = DateTime.Now.Add( timeSpan );
             await Task.Run( () => {
-                                var stopwatch = Stopwatch.StartNew();
-                                do {
-                                    stopwatch.Restart();
-                                    control.Blink();
-                                    stopwatch.Stop();
-                                    //await Task.Delay( stopwatch.Elapsed );
-                                } while ( DateTime.Now < until );
-                            } );
+                var stopwatch = Stopwatch.StartNew();
+                do {
+                    stopwatch.Restart();
+                    control.Blink();
+                    stopwatch.Stop();
+                    //await Task.Delay( stopwatch.Elapsed );
+                } while ( DateTime.Now < until );
+            } );
         }
 
         /// <summary>
@@ -241,7 +230,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return 0;
             }
-            return control.InvokeRequired ? ( int ) control.Invoke( new Func< int >( () => control.Maximum ) ) : control.Maximum;
+            return control.InvokeRequired ? ( int )control.Invoke( new Func<int>( () => control.Maximum ) ) : control.Maximum;
         }
 
         /// <summary>
@@ -254,12 +243,12 @@ namespace Librainian.Controls {
                 return;
             }
             control.OnThread( () => {
-                                  if ( control.IsDisposed ) {
-                                      return;
-                                  }
-                                  control.Maximum = value;
-                                  control.Refresh();
-                              } );
+                if ( control.IsDisposed ) {
+                    return;
+                }
+                control.Maximum = value;
+                control.Refresh();
+            } );
         }
 
         /// <summary>
@@ -271,7 +260,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return 0;
             }
-            return control.InvokeRequired ? ( int ) control.Invoke( new Func< int >( () => control.Minimum ) ) : control.Minimum;
+            return control.InvokeRequired ? ( int )control.Invoke( new Func<int>( () => control.Minimum ) ) : control.Minimum;
         }
 
         /// <summary>
@@ -284,12 +273,12 @@ namespace Librainian.Controls {
                 return;
             }
             control.OnThread( () => {
-                                  if ( control.IsDisposed ) {
-                                      return;
-                                  }
-                                  control.Minimum = value;
-                                  control.Refresh();
-                              } );
+                if ( control.IsDisposed ) {
+                    return;
+                }
+                control.Minimum = value;
+                control.Refresh();
+            } );
         }
 
         /// <summary>
@@ -302,11 +291,11 @@ namespace Librainian.Controls {
                 return;
             }
             control.InvokeIfRequired( () => {
-                                          if ( action != null ) {
-                                              action();
-                                          }
-                                          control.Refresh();
-                                      } );
+                if ( action != null ) {
+                    action();
+                }
+                control.Refresh();
+            } );
         }
 
         public static void OnThread( [CanBeNull] this Form form, [CanBeNull] Action action ) {
@@ -319,7 +308,7 @@ namespace Librainian.Controls {
             form.InvokeIfRequired( action );
         }
 
-        public static void OnThread( [CanBeNull] this Control control, [CanBeNull] Action< Control > action ) {
+        public static void OnThread( [CanBeNull] this Control control, [CanBeNull] Action<Control> action ) {
             if ( null == control ) {
                 return;
             }
@@ -366,6 +355,33 @@ namespace Librainian.Controls {
             }
         }
 
+        /// <summary>
+        ///     Threadsafe <see cref="Button.PerformClick" />.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="delay"></param>
+        /// <returns></returns>
+        public static void PerformThreadSafeClick( [CanBeNull] this Button control, TimeSpan? delay = null ) {
+            if ( !delay.HasValue ) {
+                delay = Seconds.One;
+            }
+            var timer = new Timer {
+                                      Interval = ( int ) delay.Value.TotalMilliseconds
+                                  };
+            timer.Tick += ( sender, args ) => {
+                              timer.Stop();
+
+                              if ( control != null ) {
+                                  control.InvokeIfRequired( control.PerformClick );
+                              }
+                              using ( timer ) {
+                                  FormTimers.Remove( timer );
+                                  timer = null;
+                              }
+                          };
+            FormTimers.Add( timer );
+            timer.Start();
+        }
         /// <summary>
         ///     Threadsafe <see cref="Control.Refresh" />.
         /// </summary>
@@ -422,6 +438,35 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
+        ///     Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.
+        /// </summary>
+        /// <param name="form"></param>
+        /// <returns></returns>
+        public static Size Size( [CanBeNull] this Form form ) {
+            if ( null == form ) {
+                return new Size();
+            }
+            return form.InvokeRequired ? ( Size )form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
+        }
+
+        /// <summary>
+        ///     Safely set the <see cref="Control.Text" /> of a control across threads.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        public static void Size( [CanBeNull] this Form form, Size size ) {
+            if ( null == form ) {
+                return;
+            }
+            form.InvokeIfRequired( () => {
+                if ( form.IsDisposed ) {
+                    return;
+                }
+                form.Size = size;
+            } );
+        }
+
+        /// <summary>
         ///     Safely perform the <see cref="ProgressBar.PerformStep" />  across threads.
         /// </summary>
         /// <param name="control"></param>
@@ -468,19 +513,6 @@ namespace Librainian.Controls {
             }
             return control.InvokeRequired ? control.Invoke( new Func< string >( () => control.Text ) ) as String ?? String.Empty : control.Text;
         }
-
-        /// <summary>
-        ///     Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.
-        /// </summary>
-        /// <param name="form"></param>
-        /// <returns></returns>
-        public static Size Size( [CanBeNull] this Form form ) {
-            if ( null == form ) {
-                return new Size();
-            }
-            return form.InvokeRequired ? ( Size ) form.Invoke( new Func< Size >( () => form.Size ) ) : form.Size;
-        }
-
         /// <summary>
         ///     Safely set the <see cref="Control.Text" /> of a control across threads.
         /// </summary>
@@ -502,41 +534,6 @@ namespace Librainian.Controls {
                                           control.Text = value;
                                       } );
         }
-
-        /// <summary>
-        ///     Safely set the <see cref="Control.Text" /> of a control across threads.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        public static void Size( [CanBeNull] this Form form, Size size ) {
-            if ( null == form ) {
-                return;
-            }
-            form.InvokeIfRequired( () => {
-                                       if ( form.IsDisposed ) {
-                                           return;
-                                       }
-                                       form.Size = size;
-                                   } );
-        }
-
-        /// <summary>
-        ///     Safely set the <see cref="Control.Text" /> of a control across threads.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        public static void Location( [CanBeNull] this Form form, Point location ) {
-            if ( null == form ) {
-                return;
-            }
-            form.InvokeIfRequired( () => {
-                                       if ( form.IsDisposed ) {
-                                           return;
-                                       }
-                                       form.Location = location;
-                                   } );
-        }
-
         /// <summary>
         ///     Safely set the <see cref="ToolStripItem.Text" /> of the control across threads.
         /// </summary>
