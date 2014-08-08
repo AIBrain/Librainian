@@ -30,17 +30,23 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     Length of the range (difference between maximum and minimum values).
         /// </summary>
-        [DataMember] [OptionalField] public readonly Span Length;
+        [DataMember]
+        [OptionalField]
+        public readonly Span Length;
 
         /// <summary>
         ///     Maximum value
         /// </summary>
-        [DataMember] [OptionalField] public readonly UniversalDateTime Max;
+        [DataMember]
+        [OptionalField]
+        public readonly UniversalDateTime Max;
 
         /// <summary>
         ///     Minimum value
         /// </summary>
-        [DataMember] [OptionalField] public readonly UniversalDateTime Min;
+        [DataMember]
+        [OptionalField]
+        public readonly UniversalDateTime Min;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="WhenRange" /> class

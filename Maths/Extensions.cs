@@ -356,6 +356,10 @@ namespace Librainian.Maths {
             return x/2.0f;
         }
 
+        public static Byte Half( this Byte x ) {
+            return ( Byte )( x / 2 );
+        }
+
         public static TimeSpan Half( this TimeSpan timeSpan ) {
             return TimeSpan.FromTicks( timeSpan.Ticks/2L );
         }
