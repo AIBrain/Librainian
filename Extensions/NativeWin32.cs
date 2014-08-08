@@ -27,6 +27,18 @@ namespace Librainian.Extensions {
         public const int MaxPath = 260;
 
         /// <summary>
+        ///     Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, or FindFirstStreamW function.
+        /// </summary>
+        /// <param name="hFindFile">The file search handle.</param>
+        /// <returns>
+        ///     If the function succeeds, the return value is nonzero.
+        ///     If the function fails, the return value is zero.
+        /// </returns>
+        /// <see cref="http://msdn.microsoft.com/en-us/library/aa364413%28VS.85%29.aspx" />
+        [DllImport( "kernel32", SetLastError = true )]
+        public static extern Boolean FindClose( IntPtr hFindFile );
+
+        /// <summary>
         ///     Searches a directory for a file or subdirectory with a name that matches a specific name (or partial name if
         ///     wildcards are used).
         /// </summary>
@@ -64,19 +76,6 @@ namespace Librainian.Extensions {
         /// <see cref="http://msdn.microsoft.com/en-us/library/aa364428%28VS.85%29.aspx" />
         [DllImport( "kernel32", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false )]
         public static extern Boolean FindNextFile( SafeSearchHandle hFindFile, out Win32FindData lpFindData );
-
-        /// <summary>
-        ///     Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, or FindFirstStreamW function.
-        /// </summary>
-        /// <param name="hFindFile">The file search handle.</param>
-        /// <returns>
-        ///     If the function succeeds, the return value is nonzero.
-        ///     If the function fails, the return value is zero.
-        /// </returns>
-        /// <see cref="http://msdn.microsoft.com/en-us/library/aa364413%28VS.85%29.aspx" />
-        [DllImport( "kernel32", SetLastError = true )]
-        public static extern Boolean FindClose( IntPtr hFindFile );
-
         /// <summary>
         ///     Win32 FILETIME structure.  The win32 documentation says this:
         ///     "Contains a 64-bit value representing the number of 100-nanosecond intervals since January 1, 1601 (UTC)."
@@ -87,18 +86,6 @@ namespace Librainian.Extensions {
             public uint dwLowDateTime;
 
             public uint dwHighDateTime;
-        }
-
-        /// <summary>
-        ///     Class to encapsulate a seach handle returned from FindFirstFile.  Using a wrapper
-        ///     like this ensures that the handle is properly cleaned up with FindClose.
-        /// </summary>
-        public class SafeSearchHandle : SafeHandleZeroOrMinusOneIsInvalid {
-            public SafeSearchHandle() : base( true ) { }
-
-            protected override Boolean ReleaseHandle() {
-                return FindClose( this.handle );
-            }
         }
 
         /// <summary>
@@ -125,9 +112,23 @@ namespace Librainian.Extensions {
 
             public uint dwReserved1;
 
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxPath )] public String cFileName;
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxPath )]
+            public String cFileName;
 
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )] public String cAlternateFileName;
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
+            public String cAlternateFileName;
+        }
+
+        /// <summary>
+        ///     Class to encapsulate a seach handle returned from FindFirstFile.  Using a wrapper
+        ///     like this ensures that the handle is properly cleaned up with FindClose.
+        /// </summary>
+        public class SafeSearchHandle : SafeHandleZeroOrMinusOneIsInvalid {
+            public SafeSearchHandle() : base( true ) { }
+
+            protected override Boolean ReleaseHandle() {
+                return FindClose( this.handle );
+            }
         }
     }
 }

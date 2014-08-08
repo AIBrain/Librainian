@@ -29,7 +29,20 @@ namespace Librainian.Extensions {
     /// <seealso
     ///     cref="http://blogs.windowsclient.net/damonwildercarr/archive/2008/09/10/expose-new-linq-operations-from-the-screaming-hashset-lt-t-gt-collection.aspx" />
     public static class HashSetLinqAccess {
-        public static HashSet< T > ToHashSet< T >( this IEnumerable< T > fromEnumerable, IEqualityComparer< T > comparer ) {
+        public static HashSet<T> AddRange<T>( this HashSet<T> hashSet, IEnumerable<T> range ) {
+            if ( Equals( hashSet, null ) ) {
+                throw new ArgumentNullException( "hashSet" );
+            }
+            if ( Equals( range, null ) ) {
+                throw new ArgumentNullException( "range" );
+            }
+            foreach ( var item in range ) {
+                hashSet.Add( item: item );
+            }
+            return hashSet;
+        }
+
+        public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable, IEqualityComparer<T> comparer ) {
             if ( null == fromEnumerable ) {
                 throw new ArgumentNullException( "fromEnumerable" );
             }
@@ -47,19 +60,6 @@ namespace Librainian.Extensions {
 
         public static HashSet< T > ToHashSet< T >( this IEnumerable< T > fromEnumerable ) {
             return ToHashSet( fromEnumerable, EqualityComparer< T >.Default );
-        }
-
-        public static HashSet< T > AddRange< T >( this HashSet< T > hashSet, IEnumerable< T > range ) {
-            if ( Equals( hashSet, null ) ) {
-                throw new ArgumentNullException( "hashSet" );
-            }
-            if ( Equals( range, null ) ) {
-                throw new ArgumentNullException( "range" );
-            }
-            foreach ( var item in range ) {
-                hashSet.Add( item: item );
-            }
-            return hashSet;
         }
     }
 }
