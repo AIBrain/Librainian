@@ -1,6 +1,5 @@
 namespace Librainian.Magic {
     using Annotations;
-    using IoCDI;
 
     public static class Ioc {
         [NotNull]

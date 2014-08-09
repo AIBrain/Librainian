@@ -208,7 +208,7 @@
     <Compile Include="Hardware\Virtual\Dice.cs" />
     <Compile Include="Magic\IIocContainer.cs" />
     <Compile Include="Magic\Ioc.cs" />
-    <Compile Include="IoCDI\NinjectIocContainer.cs" />
+    <Compile Include="Magic\NinjectIocContainer.cs" />
     <Compile Include="IO\Crc32.cs" />
     <Compile Include="IO\Extensions.cs" />
     <Compile Include="IO\File.cs" />
@@ -458,6 +458,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="IoCDI\" />
     <Folder Include="PatternRecognition\" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,6 @@
-namespace Librainian.IoCDI {
+namespace Librainian.Magic {
     using System;
     using Annotations;
-    using Magic;
     using Ninject;
     using Ninject.Modules;
 
