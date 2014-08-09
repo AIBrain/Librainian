@@ -26,7 +26,7 @@ namespace Librainian.IO {
     using Annotations;
     using Maths;
 
-    public static class Extensions {
+    public static class IOExtensions {
         /// <summary>
         ///     poor mans crc
         /// </summary>
@@ -96,15 +96,15 @@ namespace Librainian.IO {
                 return false;
             }
 
-            return left.Length == right.Length && left.GetEnumerator().SequenceEqual( right.GetEnumerator() );
+            return left.Length == right.Length && left.AsByteArray().SequenceEqual( right.AsByteArray() );
         }
 
         /// <summary>
-        ///     Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />s.
+        ///     Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
-        public static IEnumerable< Byte > GetEnumerator( [NotNull] this FileInfo fileInfo ) {
+        public static IEnumerable< Byte > AsByteArray( [NotNull] this FileInfo fileInfo ) {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( "fileInfo" );
             }

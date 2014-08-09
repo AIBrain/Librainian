@@ -27,7 +27,7 @@ namespace Librainian.IO {
 
     /// <summary>
     ///     <para>Container for a file, the parent folder, and the file size from the given fullpath.</para>
-    ///     <seealso cref="Extensions.SameContent(File,File)" />
+    ///     <seealso cref="IOExtensions.SameContent(File,File)" />
     /// </summary>
     [DataContract( IsReference = true )]
     [Immutable]
