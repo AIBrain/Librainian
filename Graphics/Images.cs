@@ -1,23 +1,26 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // "Librainian2/Images.cs" was last cleaned by Rick on 2014/08/08 at 2:27 PM
-#endregion
+
+#endregion License & Information
 
 namespace Librainian.Graphics {
+
     using System;
     using System.Drawing;
     using System.Drawing.Drawing2D;
@@ -31,6 +34,7 @@ namespace Librainian.Graphics {
     using Threading;
 
     public static class Images {
+
         [CanBeNull]
         public static DateTime? GetProperteryAsDateTime( [CanBeNull] this PropertyItem item ) {
             if ( null == item ) {
@@ -77,6 +81,7 @@ namespace Librainian.Graphics {
             try {
                 using ( var image = Image.FromFile( filename: info.FullName, useEmbeddedColorManagement: false ) ) {
                     if ( image.PropertyIdList.Contains( PropertyList.DateTimeDigitized ) ) {
+
                         //
                         var asDateTime = image.GetPropertyItem( PropertyList.DateTimeDigitized ).GetProperteryAsDateTime();
                         if ( asDateTime.HasValue && asDateTime.Value < bestGuess ) {
@@ -105,37 +110,9 @@ namespace Librainian.Graphics {
             return bestGuess;
         }
 
-        public static Image ResizeImage( [NotNull] this Image imgToResize, Size size ) {
-            if ( imgToResize == null ) {
-                throw new ArgumentNullException( "imgToResize" );
-            }
-
-            var sourceWidth = imgToResize.Width;
-            var sourceHeight = imgToResize.Height;
-
-            var nPercentW = ( size.Width/( Single ) sourceWidth );
-            var nPercentH = ( size.Height/( Single ) sourceHeight );
-
-            var nPercent = nPercentH < nPercentW ? nPercentH : nPercentW;
-
-            var destWidth = ( int ) ( sourceWidth*nPercent );
-            var destHeight = ( int ) ( sourceHeight*nPercent );
-
-            using ( var bitmap = new Bitmap( width: destWidth, height: destHeight ) ) {
-                using ( var g = Graphics.FromImage( image: bitmap ) ) {
-                    g.SmoothingMode = SmoothingMode.HighQuality;
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-                    g.DrawImage( image: imgToResize, x: 0, y: 0, width: destWidth, height: destHeight );
-                }
-                return bitmap;
-            }
-        }
-
         /// <summary>
-        ///     <para>Returns true if the file could be loaded as an image.</para>
-        ///     <para>Uses <see cref="BitmapImage" /> first, and then</para>
-        ///     <para><see cref="Image.FromFile(string)" /> next.</para>
+        /// <para>Returns true if the file could be loaded as an image.</para><para>Uses <see
+        /// cref="BitmapImage" /> first, and then</para><para><see cref="Image.FromFile(string)" /> next.</para>
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
@@ -195,9 +172,37 @@ namespace Librainian.Graphics {
             return false;
         }
 
+        public static Image ResizeImage( [NotNull] this Image imgToResize, Size size ) {
+            if ( imgToResize == null ) {
+                throw new ArgumentNullException( "imgToResize" );
+            }
+
+            var sourceWidth = imgToResize.Width;
+            var sourceHeight = imgToResize.Height;
+
+            var nPercentW = ( size.Width / ( Single )sourceWidth );
+            var nPercentH = ( size.Height / ( Single )sourceHeight );
+
+            var nPercent = nPercentH < nPercentW ? nPercentH : nPercentW;
+
+            var destWidth = ( int )( sourceWidth * nPercent );
+            var destHeight = ( int )( sourceHeight * nPercent );
+
+            using ( var bitmap = new Bitmap( width: destWidth, height: destHeight ) ) {
+                using ( var g = Graphics.FromImage( image: bitmap ) ) {
+                    g.SmoothingMode = SmoothingMode.HighQuality;
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                    g.DrawImage( image: imgToResize, x: 0, y: 0, width: destWidth, height: destHeight );
+                }
+                return bitmap;
+            }
+        }
+
         public static class FileNameExtension {
+
             /// <summary>
-            ///     <see cref="http://wikipedia.org/wiki/TIFF" />
+            /// <see cref="http://wikipedia.org/wiki/TIFF" />
             /// </summary>
             public static String Tiff { get { return ".tif"; } }
         }
