@@ -20,20 +20,20 @@
 namespace Librainian.Measurement.Time {
     using System;
     using System.Numerics;
+    using System.Web.UI;
+    using Annotations;
+    using FluentAssertions;
 
     /// <summary>
     ///     <para>Absolute universal date and time.</para>
     ///     <para><see cref="PlanckTimes" /> since the big bang of <i>this</i> universe.</para>
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Lol" />
-    public struct UniversalDateTime : IComparable< UniversalDateTime > {
-        public static readonly PlanckTimes PlancksUpTo1927 = new PlanckTimes( new Years( 13700000000m ).ToPlanckTimes() );
+    public struct UniversalDateTime : IComparable<UniversalDateTime> {
 
-        public static readonly DateTime BigBangProposedAtDate = new DateTime( year: 1927, month: 1, day: 1 );
+        [UsedImplicitly]
+        public static readonly PlanckTimes PlancksUpTo1900 = new PlanckTimes( new BillionYears( 13.7m ).ToPlanckTimes() );
 
-        public static readonly UniversalDateTime UniversalDateTimeIn1927 = new UniversalDateTime( PlancksUpTo1927.Value );
-
-        public static readonly UniversalDateTime UniversalDateTimeInDateTimeMinValue = new UniversalDateTime( DateTime.MinValue );
 
         public static readonly UniversalDateTime One = new UniversalDateTime( BigInteger.One );
 
@@ -54,41 +54,22 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public readonly BigInteger Value;
 
-        //public UniversalDateTime( int i )
-        //    : this( ( BigInteger )i ) {
-        //}
-
-        //public When( DateTime dateTime ) {
-        //    // big bang was 13700000000 years ago in 1927
-        //    var
-
-        //    //var yearsAgo = new Years( 13700000000 );
-        //    //yearsAgo
-        //}
-
         public UniversalDateTime( BigInteger planckTimesSinceBigBang ) {
             this.Value = planckTimesSinceBigBang;
-
-            var span = new Span( planckTimesSinceBigBang );
-
-            //TODO we need a 1927 offset added in here.
-            this.Date = new Date( span ); //we can use span here because the values have been normalized.
-            this.Time = new Time( span ); //we can use span here because the values have been normalized.
         }
 
         public UniversalDateTime( DateTime dateTime ) {
-            //TODO we need a 1927 offset added in here.
 
-            DateTime? ssadaff;
-            //if ( BigBangProposedAtDate.TryConvertToDateTime( out ssadaff ) ) {}
-            //UniversalDateTimeIn1927
-            //var timePassedSince1927 = 
+            var timebackwhen = PlancksUpTo1900.Value;
+            var timePassedSpan = new Span( dateTime - DateTime.MinValue ).TotalPlanckTimes;
 
-            //TODO
-            var timeSpan = Date.Now - BigBangProposedAtDate;
-            this.Value = new BigInteger();
-            this.Date = new Date();
-            this.Time = new Time();
+            this.Value = timebackwhen + timePassedSpan;
+            var tempSpan = new Span( planckTimes: this.Value );
+
+            this.Date = new Date( tempSpan  ); //we can use span here because the values have been normalized.
+            this.Time = new Time( tempSpan ); //we can use span here because the values have been normalized.
+
+            
         }
 
         public int CompareTo( UniversalDateTime other ) {
@@ -100,7 +81,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static UniversalDateTime operator -( UniversalDateTime universalDateTime ) {
-            return new UniversalDateTime( universalDateTime.Value*-1 );
+            return new UniversalDateTime( universalDateTime.Value * -1 );
         }
 
         public static Boolean operator <( UniversalDateTime left, UniversalDateTime right ) {

@@ -33,20 +33,26 @@ namespace Librainian.Internet {
     [DataContract]
     [Obsolete]
     public static class Scraper {
-        [DataMember] [OptionalField] private static ReaderWriterLockSlim mAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+        [DataMember]
+        [OptionalField]
+        private static ReaderWriterLockSlim mAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
         /// <summary>
         ///     TODO: concurrentbag
         /// </summary>
-        [DataMember] [OptionalField] private static List< WebSite > mWebsites = new List< WebSite >();
+        [DataMember]
+        [OptionalField]
+        private static List<WebSite> mWebsites = new List<WebSite>();
 
-        [DataMember] [OptionalField] private static CookieContainer cookies = new CookieContainer();
+        [DataMember]
+        [OptionalField]
+        private static CookieContainer cookies = new CookieContainer();
 
-        public static List< WebSite > ScrapedSites {
+        public static List<WebSite> ScrapedSites {
             get {
                 try {
                     mAccess.EnterReadLock();
-                    return mWebsites.Where( w => w.ResponseCount > 0 ) as List< WebSite >;
+                    return mWebsites.Where( w => w.ResponseCount > 0 ) as List<WebSite>;
                 }
                 finally {
                     mAccess.ExitReadLock();
@@ -54,7 +60,7 @@ namespace Librainian.Internet {
             }
         }
 
-        public static void AddSiteToScrape( String url, Action< WebSite > responseaction ) {
+        public static void AddSiteToScrape( String url, Action<WebSite> responseaction ) {
             try {
                 Uri uri;
                 if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out uri ) ) {
@@ -66,18 +72,18 @@ namespace Librainian.Internet {
             }
         }
 
-        public static void AddSiteToScrape( Uri uri, Action< WebSite > responseaction ) {
+        public static void AddSiteToScrape( Uri uri, Action<WebSite> responseaction ) {
             if ( !IsSiteQueued( uri ) ) {
                 var web = new WebSite {
-                                          Location = uri,
-                                          Document = String.Empty,
-                                          RequestCount = 0,
-                                          ResponseCount = 0,
-                                          WhenAddedToQueue = DateTime.UtcNow,
-                                          WhenRequestStarted = DateTime.MinValue,
-                                          WhenResponseCame = DateTime.MinValue
-                                          //ResponseAction = responseaction
-                                      };
+                    Location = uri,
+                    Document = String.Empty,
+                    RequestCount = 0,
+                    ResponseCount = 0,
+                    WhenAddedToQueue = DateTime.UtcNow,
+                    WhenRequestStarted = DateTime.MinValue,
+                    WhenResponseCame = DateTime.MinValue
+                    //ResponseAction = responseaction
+                };
                 try {
                     mAccess.EnterWriteLock();
                     mWebsites.Add( web );

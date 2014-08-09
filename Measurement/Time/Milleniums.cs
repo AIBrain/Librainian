@@ -62,6 +62,8 @@ namespace Librainian.Measurement.Time {
         [UsedImplicitly]
         private string DebuggerDisplay { get { return this.ToString(); } }
 
+        public const UInt16 InOneBillion = 1000;
+
         public int CompareTo( Milleniums other ) {
             return this.Value.CompareTo( other.Value );
         }
