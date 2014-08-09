@@ -70,7 +70,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly BigInteger InOneCentury = BigInteger.Multiply( InOneYear, Years.InOneCentury );
         public static readonly BigInteger InOneMillenium = BigInteger.Multiply( InOneCentury, Centuries.InOneMillenium );
-        public static readonly BigInteger InOneBillionYear = BigInteger.Multiply( InOneMillenium, Milleniums.InOneBillion );
+        public static readonly BigInteger InOneBillionYear = BigInteger.Multiply( InOneMillenium, Milleniums.InOneBillionYears );
 
         /// <summary>
         ///     One <see cref="PlanckTimes" />.

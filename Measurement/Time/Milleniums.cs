@@ -62,7 +62,7 @@ namespace Librainian.Measurement.Time {
         [UsedImplicitly]
         private string DebuggerDisplay { get { return this.ToString(); } }
 
-        public const UInt16 InOneBillion = 1000;
+        public const UInt16 InOneBillionYears = 1000;
 
         public int CompareTo( Milleniums other ) {
             return this.Value.CompareTo( other.Value );
@@ -161,6 +161,10 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator !=( Milleniums left, Milleniums right ) {
             return !Equals( left, right );
+        }
+
+        public static BillionYears ToBillionYears( Milleniums milleniums ) {
+            return new BillionYears( milleniums.Value/Milleniums.InOneBillionYears );
         }
 
         public static Centuries ToCenturies( Milleniums milleniums ) {

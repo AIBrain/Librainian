@@ -144,7 +144,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Boolean operator <( BillionYears left, Years years ) {
-            return left < ( BillionYears ) years;
+            return left <  years.ToBillionYears();
         }
 
         public static Boolean operator >( BillionYears left, Years years ) {
