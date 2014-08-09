@@ -207,7 +207,7 @@
     <Compile Include="Hardware\Virtual\DiceCup.cs" />
     <Compile Include="Hardware\Virtual\Dice.cs" />
     <Compile Include="IoCDI\IIocContainer.cs" />
-    <Compile Include="IoCDI\Ioc.cs" />
+    <Compile Include="Magic\Ioc.cs" />
     <Compile Include="IoCDI\NinjectIocContainer.cs" />
     <Compile Include="IO\Crc32.cs" />
     <Compile Include="IO\Extensions.cs" />
