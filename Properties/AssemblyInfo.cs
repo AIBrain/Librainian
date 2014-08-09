@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "AIBrain.Org" )]
 [assembly: AssemblyProduct( "Librainian" )]
-[assembly: AssemblyCopyright( "Copyright © AIBrain.Org 2013" )]
+[assembly: AssemblyCopyright( "Copyright © AIBrain.Org" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -54,4 +54,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion( "2.0.*" )]
+[assembly: AssemblyVersion( "2.0.0.*" )]
