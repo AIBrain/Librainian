@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/Extensions.cs" was last cleaned by Rick on 2014/08/08 at 2:25 PM
+// "Librainian/Extensions.cs" was last cleaned by Rick on 2014/08/09 at 3:47 PM
 #endregion
 
 namespace Librainian.Collections {
@@ -32,7 +32,7 @@ namespace Librainian.Collections {
         public static readonly List< string > EmptyList = new List< string >();
 
         /// <summary>
-        ///     <para>A list containing <see cref="Boolean.False" /> then <see cref="Boolean.True" />.</para>
+        ///     <para>A list containing <see cref="bool.False" /> then <see cref="bool.True" />.</para>
         /// </summary>
         public static readonly Lazy< List< bool > > FalseThenTrue = new Lazy< List< bool > >( () => new List< bool >( new[] { false, true } ) );
 
@@ -72,7 +72,7 @@ namespace Librainian.Collections {
             return ( T ) ( ValueType ) ( ( ( int ) ( ValueType ) type | ( int ) ( ValueType ) value ) );
         }
 
-        public static BigInteger CountBig<TType>( [NotNull] this IEnumerable<TType> items ) {
+        public static BigInteger CountBig< TType >( [NotNull] this IEnumerable< TType > items ) {
             if ( items == null ) {
                 throw new ArgumentNullException( "items" );
             }
@@ -215,7 +215,7 @@ namespace Librainian.Collections {
         /// <summary>
         ///     <para>A list containing <see cref="Boolean.True" /> then <see cref="Boolean.False" />.</para>
         /// </summary>
-        public static IEnumerable<bool> Infinitely( this Boolean value ) {
+        public static IEnumerable< bool > Infinitely( this Boolean value ) {
             do {
                 yield return value;
             } while ( true );
@@ -449,7 +449,7 @@ namespace Librainian.Collections {
         /// <param name="list"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static TType TakeLast<TType>( this IList<TType> list ) {
+        public static TType TakeLast< TType >( this IList< TType > list ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
             }
@@ -463,7 +463,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// 
+        ///     <para>Returns a string with the <paramref name="separator" /> between each item of an <paramref name="enumerable"/>.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="enumerable"></param>
