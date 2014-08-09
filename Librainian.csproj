@@ -491,9 +491,6 @@
     <Compile Include="Threading\WaitNode.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="External\Readme.txt" />
-    <Content Include="External\x64\CodeFluent.Runtime.Compression.dll" />
-    <Content Include="External\x86\CodeFluent.Runtime.Compression.dll" />
     <Content Include="Misc\asingle.js" />
     <Content Include="Misc\brain.js" />
     <Content Include="Misc\JavaScript1.js" />
