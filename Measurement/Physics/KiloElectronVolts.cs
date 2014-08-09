@@ -70,12 +70,6 @@ namespace Librainian.Measurement.Physics {
         public static readonly KiloElectronVolts Zero = new KiloElectronVolts( 0 );
         public readonly Decimal Value;
 
-        static KiloElectronVolts() {
-            Assert.Greater( UniversalConstants.ElementaryCharge.Value, UniversalConstants.ZeroElementaryCharge.Value );
-            Assert.Greater( UniversalConstants.ElementaryCharge.Value, UniversalConstants.NegativeTwoThirdsElementaryCharge.Value );
-            Assert.Greater( UniversalConstants.ZeroElementaryCharge.Value, UniversalConstants.NegativeTwoThirdsElementaryCharge.Value );
-            Assert.Greater( UniversalConstants.PositiveTwoThirdsElementaryCharge.Value, UniversalConstants.NegativeTwoThirdsElementaryCharge.Value );
-        }
 
         public KiloElectronVolts( Decimal value ) : this() {
             this.Value = value;
