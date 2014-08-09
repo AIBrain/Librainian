@@ -23,8 +23,13 @@ namespace Librainian.Measurement.Time.Clocks {
     using Annotations;
 
     /// <summary>
-    ///     <para>Starts a clock at the given time with settable events.</para>
+    ///     <para>Starts a forward-ticking clock at the given time with settable events.</para>
     ///     <para>Should be threadsafe.</para>
+    /// <para>Settable events are:
+    /// <para><see cref="OnHourTick"/></para>
+    /// <para><see cref="OnMinuteTick"/></para>
+    /// <para><see cref="OnSecondTick"/></para>
+    /// </para>
     /// </summary>
     public class TickingClock {
         /// <summary>

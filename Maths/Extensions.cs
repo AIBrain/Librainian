@@ -496,6 +496,10 @@ namespace Librainian.Maths {
             return Math.Abs( number - target ) <= Double.Epsilon;
         }
 
+        public static Boolean Near( this Single number, Single target ) {
+            return Math.Abs( number - target ) <= Single.Epsilon;
+        }
+
         public static Boolean Near( this Decimal number, Decimal target ) {
             return Math.Abs( number - target ) <= EpsilonDecimal;
         }
