@@ -176,7 +176,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static implicit operator Span( Seconds seconds ) {
-            return new Span( seconds );
+            return new Span( planckTimes: seconds.ToPlanckTimes() );
         }
 
         public static implicit operator TimeSpan( Seconds seconds ) {

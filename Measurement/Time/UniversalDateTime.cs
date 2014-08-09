@@ -32,7 +32,7 @@ namespace Librainian.Measurement.Time {
     public struct UniversalDateTime : IComparable<UniversalDateTime> {
 
         [UsedImplicitly]
-        public static readonly PlanckTimes PlancksUpTo1900 = new PlanckTimes( new BillionYears( 13.7m ).ToPlanckTimes() );
+        public static readonly PlanckTimes PlancksUpTo1900 = new PlanckTimes( new Seconds( 4.415E17m ).ToPlanckTimes() );
 
 
         public static readonly UniversalDateTime One = new UniversalDateTime( BigInteger.One );
@@ -56,20 +56,26 @@ namespace Librainian.Measurement.Time {
 
         public UniversalDateTime( BigInteger planckTimesSinceBigBang ) {
             this.Value = planckTimesSinceBigBang;
+            var span = new Span( planckTimes: this.Value );
+            this.Date = new Date( span );
+            this.Time = new Time( span );
         }
 
         public UniversalDateTime( DateTime dateTime ) {
+            BigInteger timebackwhen;
+            BigInteger timePassedSinceThen;
+            var span = CalcSpanSince( dateTime, out timebackwhen, out timePassedSinceThen );
 
-            var timebackwhen = PlancksUpTo1900.Value;
-            var timePassedSpan = new Span( dateTime - DateTime.MinValue ).TotalPlanckTimes;
+            this.Value = span.TotalPlanckTimes;
+            this.Date = new Date( span  ); //we can use span here because the values have been normalized.
+            this.Time = new Time( span ); //we can use span here because the values have been normalized.
+        }
 
-            this.Value = timebackwhen + timePassedSpan;
-            var tempSpan = new Span( planckTimes: this.Value );
-
-            this.Date = new Date( tempSpan  ); //we can use span here because the values have been normalized.
-            this.Time = new Time( tempSpan ); //we can use span here because the values have been normalized.
-
-            
+        private static Span CalcSpanSince( DateTime dateTime, out BigInteger timebackwhen, out BigInteger timePassedSinceThen ) {
+            timebackwhen = PlancksUpTo1900.Value;
+            timePassedSinceThen = new Span( dateTime - DateTime.MinValue ).TotalPlanckTimes;
+            var span = new Span( planckTimes: timebackwhen + timePassedSinceThen );
+            return span;
         }
 
         public int CompareTo( UniversalDateTime other ) {
