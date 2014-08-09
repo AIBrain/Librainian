@@ -424,11 +424,12 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     Remove and return the first item in the list, otherwise return null.
+        ///     <para>Remove and return the first item in the list, otherwise return null (or the default() for value types).</para>
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static TType TakeFirst< TType >( this IList< TType > list ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
@@ -442,12 +443,13 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     Remove and return the last item in the list, otherwise return null.
+        ///     <para>Remove and return the last item in the list, otherwise return null.</para>
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
         /// <returns></returns>
-        public static TType TakeLast< TType >( this IList< TType > list ) {
+        [CanBeNull]
+        public static TType TakeLast<TType>( this IList<TType> list ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
             }
@@ -460,7 +462,15 @@ namespace Librainian.Collections {
             return item;
         }
 
-        public static String ToStrings< T >( [NotNull] this IEnumerable< T > enumerable, [NotNull] String separator = ", ", String lastJoiner = null ) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="enumerable"></param>
+        /// <param name="separator"></param>
+        /// <param name="atTheEnd"></param>
+        /// <returns></returns>
+        public static String ToStrings< T >( [NotNull] this IEnumerable< T > enumerable, [NotNull] String separator = ", ", String atTheEnd = null ) {
             if ( enumerable == null ) {
                 throw new ArgumentNullException( "enumerable" );
             }
@@ -469,19 +479,19 @@ namespace Librainian.Collections {
             }
 
             string result;
-            var values = enumerable as IList< T > ?? enumerable.ToList();
+            var list = enumerable as IList< T > ?? enumerable.ToList();
 
-            if ( !String.IsNullOrEmpty( lastJoiner ) && values.Count > 2 ) {
-                result = String.Join( separator, values.Take( values.Count - 2 ) );
-                while ( values.Count > 2 ) {
-                    values.RemoveAt( 0 );
-                }
-                result += values.TakeFirst();
-                result += lastJoiner;
-                result += values.TakeFirst();
+            if ( String.IsNullOrEmpty( atTheEnd ) || list.Count <= 2 ) {
+                result = String.Join( separator, list );
             }
             else {
-                result = String.Join( separator, values );
+                result = String.Join( separator, list.Take( list.Count - 2 ) );
+                while ( list.Count > 2 ) {
+                    list.RemoveAt( 0 );
+                }
+                result += list.TakeFirst();
+                result += atTheEnd;
+                result += list.TakeFirst();
             }
             return result;
         }

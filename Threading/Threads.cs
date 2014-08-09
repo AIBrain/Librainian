@@ -316,6 +316,14 @@ namespace Librainian.Threading {
             return 1000000000L/Stopwatch.Frequency;
         }
 
+        /// <summary>
+        /// TODO replace this with a proper IoC container.
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <param name="message"></param>
+        /// <param name="memberName"></param>
+        /// <param name="sourceFilePath"></param>
+        /// <param name="sourceLineNumber"></param>
         public static void Log( [CanBeNull] this Exception exception, [CanBeNull] String message = "", [CanBeNull] [CallerMemberName] String memberName = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
             if ( Debugger.IsAttached ) {
                 Debugger.Break();

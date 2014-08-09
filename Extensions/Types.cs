@@ -38,6 +38,7 @@ namespace Librainian.Extensions {
             }
             try {
                 var sourceValue = field.GetValue( source );
+
                 if ( mergeDictionaries ) {
                     var sourceAsDictionary = sourceValue as IDictionary;
                     if ( null == sourceAsDictionary ) {
@@ -109,6 +110,7 @@ namespace Librainian.Extensions {
             try {
                 var sourceProps = source.GetType().GetAllProperties().Where( prop => prop.CanRead );
                 var destProps = destination.GetType().GetAllProperties().Where( prop => prop.CanWrite );
+
                 foreach ( var prop in sourceProps.Where( destProps.Contains ) ) {
                     CopyProperty( source: source, destination: destination, prop: prop );
                 }
@@ -126,6 +128,9 @@ namespace Librainian.Extensions {
             try {
                 var sourceValue = prop.GetValue( source, null );
                 prop.SetValue( destination, sourceValue, null );
+            }
+            catch ( TargetParameterCountException exception ) {
+                exception.Log();
             }
             catch ( TargetException exception ) {
                 exception.Log();
@@ -163,7 +168,7 @@ namespace Librainian.Extensions {
 
             //copy all settable fields
             // then
-            //copy all settable properties (going on the assumption that properties are the ones modifiying their private fields).
+            //copy all settable properties (going on the assumption that properties should be modifiying their private fields).
             return CopyFields( source: source, destination: destination ) && CopyProperties( source: source, destination: destination );
         }
 
