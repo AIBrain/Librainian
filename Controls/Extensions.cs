@@ -376,7 +376,7 @@ namespace Librainian.Controls {
                               }
                               using ( timer ) {
                                   FormTimers.Remove( timer );
-                                  timer = null;
+                                  //timer = null;
                               }
                           };
             FormTimers.Add( timer );
