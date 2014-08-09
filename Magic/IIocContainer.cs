@@ -1,4 +1,4 @@
-namespace Librainian.IoCDI {
+namespace Librainian.Magic {
     using System;
 
     public interface IIocContainer {
