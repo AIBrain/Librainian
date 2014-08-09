@@ -444,6 +444,7 @@ namespace Librainian.Measurement.Time {
         public static BigInteger CalcTotalPlanckTimes( this Span span ) {
             var counter = BigInteger.Zero;
 
+            // These if are a super minor optimization. The result should still calc the same.
             if ( span.PlanckTimes.Value > 0 ) {
                 counter += span.PlanckTimes.ToPlanckTimes();
             }
@@ -491,12 +492,6 @@ namespace Librainian.Measurement.Time {
             }
             if ( span.Years.Value > 0 ) {
                 counter += span.Years.ToPlanckTimes();
-            }
-            if ( span.Centuries.Value > 0 ) {
-                counter += span.Centuries.ToPlanckTimes();
-            }
-            if ( span.Milleniums.Value > 0 ) {
-                counter += span.Milleniums.ToPlanckTimes();
             }
             return counter;
         }

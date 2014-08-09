@@ -291,8 +291,6 @@
     <Compile Include="Measurement\Length\PlanckLengths.cs" />
     <Compile Include="Measurement\Time\AMorPM.cs" />
     <Compile Include="Measurement\Time\Attoseconds.cs" />
-    <Compile Include="Measurement\Time\BillionYears.cs" />
-    <Compile Include="Measurement\Time\Centuries.cs" />
     <Compile Include="Measurement\Time\Day.cs" />
     <Compile Include="Measurement\Time\Hour.cs" />
     <Compile Include="Measurement\Time\IPartofaClock.cs" />
@@ -309,7 +307,6 @@
     <Compile Include="Measurement\Time\Femtoseconds.cs" />
     <Compile Include="Measurement\Time\Hours.cs" />
     <Compile Include="Measurement\Time\Microseconds.cs" />
-    <Compile Include="Measurement\Time\Milleniums.cs" />
     <Compile Include="Measurement\Time\Months.cs" />
     <Compile Include="Measurement\Time\Nanoseconds.cs" />
     <Compile Include="Measurement\Time\Picoseconds.cs" />

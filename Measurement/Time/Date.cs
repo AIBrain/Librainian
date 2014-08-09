@@ -80,7 +80,7 @@ namespace Librainian.Measurement.Time {
         //}
 
         public Date( Span span ) {
-            this.Year = new Year( span.CalculateTotalYears() );
+            this.Year = new Year( span.GetWholeYears() );
             this.Month = new Month( ( byte ) span.Months.Value );
             this.Day = new Day( ( byte ) span.Days.Value );
         }

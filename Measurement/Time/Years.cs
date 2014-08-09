@@ -29,10 +29,6 @@ namespace Librainian.Measurement.Time {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public struct Years : IComparable< Years > {
-        /// <summary>
-        ///     100
-        /// </summary>
-        public const uint InOneCentury = 100;
 
         /// <summary>
         ///     One <see cref="Years" /> .
@@ -58,7 +54,6 @@ namespace Librainian.Measurement.Time {
             Zero.Should().BeLessThan( One );
             One.Should().BeGreaterThan( Zero );
             One.Should().Be( One );
-            One.Should().BeLessThan( Centuries.One );
             One.Should().BeGreaterThan( Months.One );
         }
 
@@ -128,14 +123,7 @@ namespace Librainian.Measurement.Time {
             return !Equals( left, right );
         }
 
-        /// <summary>
-        ///     Implicitly convert the number of <paramref name="years" /> to <see cref="Centuries" />.
-        /// </summary>
-        /// <param name="years"></param>
-        /// <returns></returns>
-        public static implicit operator Centuries( Years years ) {
-            return ToCenturies( years );
-        }
+      
 
         public static implicit operator Months( Years years ) {
             return ToMonths( years );
@@ -177,9 +165,6 @@ namespace Librainian.Measurement.Time {
             return left.Value > right.Value;
         }
 
-        public static Centuries ToCenturies( Years years ) {
-            return new Centuries( years.Value/InOneCentury );
-        }
 
         public static Months ToMonths( Years years ) {
             return new Months( years.Value*Months.InOneYear );

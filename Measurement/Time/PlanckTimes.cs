@@ -65,12 +65,9 @@ namespace Librainian.Measurement.Time {
         public static readonly BigInteger InOneMonth = BigInteger.Multiply( InOneHour, Hours.InOneMonth );
         public static readonly BigInteger InOneYear = BigInteger.Multiply( InOneMonth, Months.InOneYear );
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public static readonly BigInteger InOneCentury = BigInteger.Multiply( InOneYear, Years.InOneCentury );
-        public static readonly BigInteger InOneMillenium = BigInteger.Multiply( InOneCentury, Centuries.InOneMillenium );
-        public static readonly BigInteger InOneBillionYear = BigInteger.Multiply( InOneMillenium, Milleniums.InOneBillionYears );
+        //public static readonly BigInteger InOneCentury = BigInteger.Multiply( InOneYear, Years.InOneCentury );
+        //public static readonly BigInteger InOneMillenium = BigInteger.Multiply( InOneCentury, Centuries.InOneMillenium );
+        //public static readonly BigInteger InOneBillionYear = BigInteger.Multiply( InOneMillenium, Milleniums.InOneBillionYears );
 
         /// <summary>
         ///     One <see cref="PlanckTimes" />.
@@ -184,8 +181,8 @@ namespace Librainian.Measurement.Time {
 
         [Test]
         public static void TestConstants() {
-            InOneMillenium.Should().BeGreaterThan( InOneCentury );
-            InOneCentury.Should().BeGreaterThan( InOneYear );
+            //InOneMillenium.Should().BeGreaterThan( InOneCentury );
+            //InOneCentury.Should().BeGreaterThan( InOneYear );
             InOneYear.Should().BeGreaterThan( InOneMonth );
             InOneMonth.Should().BeGreaterThan( InOneWeek );
             InOneWeek.Should().BeGreaterThan( InOneDay );
