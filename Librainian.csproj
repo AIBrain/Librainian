@@ -458,7 +458,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="IoCDI\" />
     <Folder Include="PatternRecognition\" />
   </ItemGroup>
   <ItemGroup>
