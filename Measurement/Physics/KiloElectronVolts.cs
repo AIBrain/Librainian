@@ -25,7 +25,6 @@ namespace Librainian.Measurement.Physics {
     using Librainian.Extensions;
     using Maths;
     using Numerics;
-    using NUnit.Framework;
 
     /// <summary>
     ///     Units of mass and energy in ElectronVolts.
