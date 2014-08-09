@@ -53,18 +53,6 @@
     <Reference Include="Ninject">
       <HintPath>..\Universal\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject.Extensions.ChildKernel">
-      <HintPath>..\Universal\packages\Ninject.Extensions.ChildKernel.3.2.0.0\lib\net45-full\Ninject.Extensions.ChildKernel.dll</HintPath>
-    </Reference>
-    <Reference Include="Ninject.Extensions.Conventions">
-      <HintPath>..\Universal\packages\Ninject.Extensions.Conventions.3.2.0.0\lib\net45-full\Ninject.Extensions.Conventions.dll</HintPath>
-    </Reference>
-    <Reference Include="Ninject.Extensions.DependencyCreation">
-      <HintPath>..\Universal\packages\Ninject.Extensions.DependencyCreation.3.2.0.0\lib\net45-full\Ninject.Extensions.DependencyCreation.dll</HintPath>
-    </Reference>
-    <Reference Include="Ninject.Extensions.Factory">
-      <HintPath>..\Universal\packages\Ninject.Extensions.Factory.3.2.1.0\lib\net45-full\Ninject.Extensions.Factory.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\Universal\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -289,17 +277,17 @@
     <Compile Include="Measurement\Physics\MilliElectronVolts.cs" />
     <Compile Include="Measurement\Physics\TeraElectronVolts.cs" />
     <Compile Include="Measurement\Length\PlanckLengths.cs" />
-    <Compile Include="Measurement\Time\AMorPM.cs" />
+    <Compile Include="Measurement\Time\Clocks\AMorPM.cs" />
     <Compile Include="Measurement\Time\Attoseconds.cs" />
     <Compile Include="Measurement\Time\Day.cs" />
-    <Compile Include="Measurement\Time\Hour.cs" />
-    <Compile Include="Measurement\Time\IPartofaClock.cs" />
+    <Compile Include="Measurement\Time\Clocks\Hour.cs" />
+    <Compile Include="Measurement\Time\Clocks\IPartofaClock.cs" />
     <Compile Include="Measurement\Time\Millisecond.cs" />
-    <Compile Include="Measurement\Time\Minute.cs" />
+    <Compile Include="Measurement\Time\Clocks\Minute.cs" />
     <Compile Include="Measurement\Time\Month.cs" />
     <Compile Include="Measurement\Time\RoundTo.cs" />
-    <Compile Include="Measurement\Time\Second.cs" />
-    <Compile Include="Measurement\Time\TickingClock.cs" />
+    <Compile Include="Measurement\Time\Clocks\Second.cs" />
+    <Compile Include="Measurement\Time\Clocks\TickingClock.cs" />
     <Compile Include="Measurement\Time\Date.cs" />
     <Compile Include="Measurement\Time\Days.cs" />
     <Compile Include="Measurement\Time\Epochs.cs" />

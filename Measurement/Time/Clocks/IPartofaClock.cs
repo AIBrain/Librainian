@@ -14,26 +14,23 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Epochs.cs" was last cleaned by Rick on 2014/08/09 at 2:15 PM
+// "Librainian/IPartofaClock.cs" was last cleaned by Rick on 2014/08/09 at 2:16 PM
 #endregion
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time.Clocks {
     using System;
 
-    public static class Epochs {
-        /// <summary>
-        /// </summary>
-        /// <seealso cref="http://wikipedia.org/wiki/Timeline_of_the_Big_Bang" />
-        public static readonly WhenRange Before1PlanckTime = new WhenRange( min: UniversalDateTime.TheBeginning, max: UniversalDateTime.One );
+    public interface IPartofaClock {
+        void Set( Byte value );
 
         /// <summary>
-        ///     1927
+        ///     <para>Returns true if the value passed Minimum.</para>
         /// </summary>
-        public static readonly DateTime BigBangModelFormulated = new DateTime( year: 1927, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc );
+        Boolean Rewind();
 
         /// <summary>
-        ///     January 1st, 1970, zero seconds.
+        ///     <para>Returns true if the value passed Maximum.</para>
         /// </summary>
-        public static readonly DateTime UNIX = new DateTime( year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc );
+        Boolean Tick();
     }
 }

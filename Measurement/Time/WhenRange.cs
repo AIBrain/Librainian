@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/WhenRange.cs" was last cleaned by Rick on 2014/08/08 at 2:30 PM
+// "Librainian/WhenRange.cs" was last cleaned by Rick on 2014/08/09 at 2:16 PM
 #endregion
 
 namespace Librainian.Measurement.Time {
@@ -30,23 +30,17 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     Length of the range (difference between maximum and minimum values).
         /// </summary>
-        [DataMember]
-        [OptionalField]
-        public readonly Span Length;
+        [DataMember] [OptionalField] public readonly Span Length;
 
         /// <summary>
         ///     Maximum value
         /// </summary>
-        [DataMember]
-        [OptionalField]
-        public readonly UniversalDateTime Max;
+        [DataMember] [OptionalField] public readonly UniversalDateTime Max;
 
         /// <summary>
         ///     Minimum value
         /// </summary>
-        [DataMember]
-        [OptionalField]
-        public readonly UniversalDateTime Min;
+        [DataMember] [OptionalField] public readonly UniversalDateTime Min;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="WhenRange" /> class

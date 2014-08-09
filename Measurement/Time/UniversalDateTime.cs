@@ -14,26 +14,21 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/UniversalDateTime.cs" was last cleaned by Rick on 2014/08/08 at 2:30 PM
+// "Librainian/UniversalDateTime.cs" was last cleaned by Rick on 2014/08/09 at 2:16 PM
 #endregion
 
 namespace Librainian.Measurement.Time {
     using System;
     using System.Numerics;
-    using System.Web.UI;
     using Annotations;
-    using FluentAssertions;
 
     /// <summary>
     ///     <para>Absolute universal date and time.</para>
     ///     <para><see cref="PlanckTimes" /> since the big bang of <i>this</i> universe.</para>
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Lol" />
-    public struct UniversalDateTime : IComparable<UniversalDateTime> {
-
-        [UsedImplicitly]
-        public static readonly PlanckTimes PlancksUpTo1900 = new PlanckTimes( new Seconds( 4.415E17m ).ToPlanckTimes() );
-
+    public struct UniversalDateTime : IComparable< UniversalDateTime > {
+        [UsedImplicitly] public static readonly PlanckTimes PlancksUpTo1900 = new PlanckTimes( new Seconds( 4.415E17m ).ToPlanckTimes() );
 
         public static readonly UniversalDateTime One = new UniversalDateTime( BigInteger.One );
 
@@ -65,13 +60,16 @@ namespace Librainian.Measurement.Time {
             var span = CalcSpanSince( dateTime );
 
             this.Value = span.TotalPlanckTimes;
-            this.Date = new Date( span  ); //we can use span here because the values have been normalized.
+            this.Date = new Date( span ); //we can use span here because the values have been normalized.
             this.Time = new Time( span ); //we can use span here because the values have been normalized.
         }
 
+        public int CompareTo( UniversalDateTime other ) {
+            return this.Value.CompareTo( other.Value );
+        }
 
         /// <summary>
-        /// Given a <see cref="DateTime"/>, calculate the <see cref="Span"/>.
+        ///     Given a <see cref="DateTime" />, calculate the <see cref="Span" />.
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
@@ -82,16 +80,12 @@ namespace Librainian.Measurement.Time {
             return span;
         }
 
-        public int CompareTo( UniversalDateTime other ) {
-            return this.Value.CompareTo( other.Value );
-        }
-
         public static UniversalDateTime operator -( UniversalDateTime left, UniversalDateTime right ) {
             return Combine( left, -right );
         }
 
         public static UniversalDateTime operator -( UniversalDateTime universalDateTime ) {
-            return new UniversalDateTime( universalDateTime.Value * -1 );
+            return new UniversalDateTime( universalDateTime.Value*-1 );
         }
 
         public static Boolean operator <( UniversalDateTime left, UniversalDateTime right ) {

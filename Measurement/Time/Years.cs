@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/Years.cs" was last cleaned by Rick on 2014/08/08 at 2:30 PM
+// "Librainian/Years.cs" was last cleaned by Rick on 2014/08/09 at 2:16 PM
 #endregion
 
 namespace Librainian.Measurement.Time {
@@ -29,7 +29,6 @@ namespace Librainian.Measurement.Time {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public struct Years : IComparable< Years > {
-
         /// <summary>
         ///     One <see cref="Years" /> .
         /// </summary>
@@ -123,8 +122,6 @@ namespace Librainian.Measurement.Time {
             return !Equals( left, right );
         }
 
-      
-
         public static implicit operator Months( Years years ) {
             return ToMonths( years );
         }
@@ -164,7 +161,6 @@ namespace Librainian.Measurement.Time {
         public static Boolean operator >( Years left, Years right ) {
             return left.Value > right.Value;
         }
-
 
         public static Months ToMonths( Years years ) {
             return new Months( years.Value*Months.InOneYear );

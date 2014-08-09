@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/TimeSpanRange.cs" was last cleaned by Rick on 2014/08/08 at 2:30 PM
+// "Librainian/TimeSpanRange.cs" was last cleaned by Rick on 2014/08/09 at 2:16 PM
 #endregion
 
 namespace Librainian.Measurement.Time {
@@ -110,6 +110,14 @@ namespace Librainian.Measurement.Time {
 
         public IEnumerable< Seconds > AllSeconds() {
             return this.Min.TotalSeconds.To( this.Max.TotalSeconds ).Select( second => Seconds.One );
+        }
+
+        public IEnumerable< Hours > AllHours() {
+            return this.Min.TotalHours.To( this.Max.TotalHours ).Select( second => Hours.One );
+        }
+
+        public IEnumerable< Days > AllDays() {
+            return this.Min.TotalDays.To( this.Max.TotalDays ).Select( second => Days.One );
         }
     }
 }

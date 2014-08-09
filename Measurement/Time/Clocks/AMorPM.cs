@@ -14,26 +14,23 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Epochs.cs" was last cleaned by Rick on 2014/08/09 at 2:15 PM
+// "Librainian/AMorPM.cs" was last cleaned by Rick on 2014/08/09 at 2:15 PM
 #endregion
 
-namespace Librainian.Measurement.Time {
-    using System;
-
-    public static class Epochs {
+namespace Librainian.Measurement.Time.Clocks {
+    /// <summary>
+    ///     from the Latin: ante meridiem meaning "before midday", or post meridiem "after midday"
+    /// </summary>
+    /// <seealso cref="http://wikipedia.org/wiki/12-hour_clock" />
+    public enum AMorPM {
         /// <summary>
+        ///     from the Latin ante meridiem, meaning "before midday"
         /// </summary>
-        /// <seealso cref="http://wikipedia.org/wiki/Timeline_of_the_Big_Bang" />
-        public static readonly WhenRange Before1PlanckTime = new WhenRange( min: UniversalDateTime.TheBeginning, max: UniversalDateTime.One );
-
-        /// <summary>
-        ///     1927
-        /// </summary>
-        public static readonly DateTime BigBangModelFormulated = new DateTime( year: 1927, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc );
+        AM,
 
         /// <summary>
-        ///     January 1st, 1970, zero seconds.
+        ///     from the Latin post meridiem, meaning "after midday"
         /// </summary>
-        public static readonly DateTime UNIX = new DateTime( year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc );
+        PM
     }
 }

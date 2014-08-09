@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/Span.cs" was last cleaned by Rick on 2014/08/08 at 2:30 PM
+// "Librainian/Span.cs" was last cleaned by Rick on 2014/08/09 at 2:16 PM
 #endregion
 
 namespace Librainian.Measurement.Time {
@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Time {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     [Immutable]
-    public struct Span : IEquatable<Span>, IComparable<Span>, IComparable<TimeSpan> {
+    public struct Span : IEquatable< Span >, IComparable< Span >, IComparable< TimeSpan > {
         /// <summary>
         /// </summary>
         public static readonly Span Zero = new Span( planckTimes: 0 );
@@ -54,7 +54,6 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public readonly Attoseconds Attoseconds;
 
-
         /// <summary>
         ///     How many <seealso cref="Days" /> does this <seealso cref="Span" /> span?
         /// </summary>
@@ -68,6 +67,8 @@ namespace Librainian.Measurement.Time {
         ///     How many <seealso cref="Hours" /> does this <seealso cref="Span" /> span?
         /// </summary>
         public readonly Hours Hours;
+
+        public readonly Boolean IsNormalized;
 
         /// <summary>
         ///     <para>A microsecond is an SI unit of time equal to one millionth (10−6 or 1/1,000,000) of a second.</para>
@@ -131,10 +132,9 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     <para>This value is not calculated until needed.</para>
         /// </summary>
-        private readonly Lazy<BigInteger> _lazyTotal;
+        private readonly Lazy< BigInteger > _lazyTotal;
 
-        public Span( BigInteger planckTimes )
-            : this() {
+        public Span( BigInteger planckTimes ) : this() {
             planckTimes.Should().BeGreaterOrEqualTo( BigInteger.Zero );
 
             if ( planckTimes < BigInteger.Zero ) {
@@ -162,7 +162,7 @@ namespace Librainian.Measurement.Time {
             this.PlanckTimes += planckTimes;
 
             var tmpThis = this;
-            this._lazyTotal = new Lazy<BigInteger>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
+            this._lazyTotal = new Lazy< BigInteger >( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
         }
 
         /// <summary>
@@ -223,8 +223,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="centuries"></param>
         /// <param name="milleniums"></param>
         /// <param name="normalize"></param>
-        public Span( /*BigInteger planckTimes = default( BigInteger ),*/ Decimal yoctoseconds = 0, Decimal zeptoseconds = 0, Decimal attoseconds = 0, Decimal femtoseconds = 0, Decimal picoseconds = 0, Decimal nanoseconds = 0, Decimal microseconds = 0, Decimal milliseconds = 0, Decimal seconds = 0, Decimal minutes = 0, Decimal hours = 0, Decimal days = 0, Decimal weeks = 0, Decimal months = 0, Decimal years = 0, Decimal centuries = 0, Decimal milleniums = 0, Boolean normalize = true )
-            : this() {
+        public Span( /*BigInteger planckTimes = default( BigInteger ),*/ Decimal yoctoseconds = 0, Decimal zeptoseconds = 0, Decimal attoseconds = 0, Decimal femtoseconds = 0, Decimal picoseconds = 0, Decimal nanoseconds = 0, Decimal microseconds = 0, Decimal milliseconds = 0, Decimal seconds = 0, Decimal minutes = 0, Decimal hours = 0, Decimal days = 0, Decimal weeks = 0, Decimal months = 0, Decimal years = 0, Decimal centuries = 0, Decimal milleniums = 0, Boolean normalize = true ) : this() {
             //TODO Unit testing needed to verify the math.
 
             //this.PlanckTimes = new PlanckTimes( planckTimes.IfLessThanZeroThenZero() );
@@ -251,87 +250,87 @@ namespace Librainian.Measurement.Time {
                 //BUG the "while"s used below can probably be changed to "if"s because of the math, which should work the first time.
 
                 while ( this.PlanckTimes.Value > PlanckTimes.InOneYoctosecond ) {
-                    var truncate = this.PlanckTimes.Value / PlanckTimes.InOneYoctosecond;
-                    this.PlanckTimes -= truncate * PlanckTimes.InOneYoctosecond;
+                    var truncate = this.PlanckTimes.Value/PlanckTimes.InOneYoctosecond;
+                    this.PlanckTimes -= truncate*PlanckTimes.InOneYoctosecond;
                     truncate.ThrowIfOutOfDecimalRange();
-                    this.Yoctoseconds += ( Decimal )truncate;
+                    this.Yoctoseconds += ( Decimal ) truncate;
                 }
 
                 while ( this.Yoctoseconds.Value > Yoctoseconds.InOneZeptosecond ) {
-                    var truncate = Math.Truncate( this.Yoctoseconds.Value / Yoctoseconds.InOneZeptosecond );
-                    this.Yoctoseconds -= truncate * Yoctoseconds.InOneZeptosecond;
+                    var truncate = Math.Truncate( this.Yoctoseconds.Value/Yoctoseconds.InOneZeptosecond );
+                    this.Yoctoseconds -= truncate*Yoctoseconds.InOneZeptosecond;
                     this.Zeptoseconds += truncate;
                 }
 
                 while ( this.Zeptoseconds.Value > Zeptoseconds.InOneAttosecond ) {
-                    var truncate = Math.Truncate( this.Zeptoseconds.Value / Zeptoseconds.InOneAttosecond );
-                    this.Zeptoseconds -= truncate * Yoctoseconds.InOneZeptosecond;
+                    var truncate = Math.Truncate( this.Zeptoseconds.Value/Zeptoseconds.InOneAttosecond );
+                    this.Zeptoseconds -= truncate*Yoctoseconds.InOneZeptosecond;
                     this.Attoseconds += truncate;
                 }
 
                 while ( this.Attoseconds.Value > Attoseconds.InOneFemtosecond ) {
-                    var truncate = Math.Truncate( this.Attoseconds.Value / Attoseconds.InOneFemtosecond );
-                    this.Attoseconds -= truncate * Attoseconds.InOneFemtosecond;
+                    var truncate = Math.Truncate( this.Attoseconds.Value/Attoseconds.InOneFemtosecond );
+                    this.Attoseconds -= truncate*Attoseconds.InOneFemtosecond;
                     this.Femtoseconds += truncate;
                 }
 
                 while ( this.Femtoseconds.Value > Femtoseconds.InOnePicosecond ) {
-                    var truncate = Math.Truncate( this.Femtoseconds.Value / Femtoseconds.InOnePicosecond );
-                    this.Femtoseconds -= truncate * Femtoseconds.InOnePicosecond;
+                    var truncate = Math.Truncate( this.Femtoseconds.Value/Femtoseconds.InOnePicosecond );
+                    this.Femtoseconds -= truncate*Femtoseconds.InOnePicosecond;
                     this.Picoseconds += truncate;
                 }
 
                 while ( this.Picoseconds.Value > Picoseconds.InOneNanosecond ) {
-                    var truncate = Math.Truncate( this.Picoseconds.Value / Picoseconds.InOneNanosecond );
-                    this.Picoseconds -= truncate * Picoseconds.InOneNanosecond;
+                    var truncate = Math.Truncate( this.Picoseconds.Value/Picoseconds.InOneNanosecond );
+                    this.Picoseconds -= truncate*Picoseconds.InOneNanosecond;
                     this.Nanoseconds += truncate;
                 }
 
                 while ( this.Nanoseconds.Value > Nanoseconds.InOneMicrosecond ) {
-                    var truncate = Math.Truncate( this.Nanoseconds.Value / Nanoseconds.InOneMicrosecond );
-                    this.Nanoseconds -= truncate * Nanoseconds.InOneMicrosecond;
+                    var truncate = Math.Truncate( this.Nanoseconds.Value/Nanoseconds.InOneMicrosecond );
+                    this.Nanoseconds -= truncate*Nanoseconds.InOneMicrosecond;
                     this.Microseconds += truncate;
                 }
 
                 while ( this.Microseconds.Value > Microseconds.InOneMillisecond ) {
-                    var truncate = Math.Truncate( this.Microseconds.Value / Microseconds.InOneMillisecond );
-                    this.Microseconds -= truncate * Microseconds.InOneMillisecond;
+                    var truncate = Math.Truncate( this.Microseconds.Value/Microseconds.InOneMillisecond );
+                    this.Microseconds -= truncate*Microseconds.InOneMillisecond;
                     this.Milliseconds += truncate;
                 }
 
                 while ( this.Milliseconds.Value > Milliseconds.InOneSecond ) {
-                    var truncate = Math.Truncate( this.Milliseconds.Value / Milliseconds.InOneSecond );
-                    this.Milliseconds -= truncate * Milliseconds.InOneSecond;
+                    var truncate = Math.Truncate( this.Milliseconds.Value/Milliseconds.InOneSecond );
+                    this.Milliseconds -= truncate*Milliseconds.InOneSecond;
                     this.Seconds += truncate;
                 }
 
                 while ( this.Seconds.Value > Seconds.InOneMinute ) {
-                    var truncate = Math.Truncate( this.Seconds.Value / Seconds.InOneMinute );
-                    this.Seconds -= truncate * Seconds.InOneMinute;
+                    var truncate = Math.Truncate( this.Seconds.Value/Seconds.InOneMinute );
+                    this.Seconds -= truncate*Seconds.InOneMinute;
                     this.Minutes += truncate;
                 }
 
                 while ( this.Minutes.Value > Minutes.InOneHour ) {
-                    var truncate = Math.Truncate( this.Minutes.Value / Minutes.InOneHour );
-                    this.Minutes -= truncate * Minutes.InOneHour;
+                    var truncate = Math.Truncate( this.Minutes.Value/Minutes.InOneHour );
+                    this.Minutes -= truncate*Minutes.InOneHour;
                     this.Hours += truncate;
                 }
 
                 while ( this.Hours.Value > Hours.InOneDay ) {
-                    var truncate = Math.Truncate( this.Hours.Value / Hours.InOneDay );
-                    this.Hours -= truncate * Hours.InOneDay;
+                    var truncate = Math.Truncate( this.Hours.Value/Hours.InOneDay );
+                    this.Hours -= truncate*Hours.InOneDay;
                     this.Days += truncate;
                 }
 
                 while ( this.Days.Value > Days.InOneWeek ) {
-                    var truncate = Math.Truncate( this.Days.Value / Days.InOneWeek );
-                    this.Days -= truncate * Days.InOneWeek;
+                    var truncate = Math.Truncate( this.Days.Value/Days.InOneWeek );
+                    this.Days -= truncate*Days.InOneWeek;
                     this.Weeks += truncate;
                 }
 
                 while ( this.Months.Value > Months.InOneYear ) {
-                    var truncate = Math.Truncate( this.Months.Value / Months.InOneYear );
-                    this.Months -= truncate * Months.InOneYear;
+                    var truncate = Math.Truncate( this.Months.Value/Months.InOneYear );
+                    this.Months -= truncate*Months.InOneYear;
                     this.Years += truncate;
                 }
 
@@ -342,17 +341,14 @@ namespace Librainian.Measurement.Time {
             }
 
             var tmpThis = this;
-            this._lazyTotal = new Lazy<BigInteger>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
+            this._lazyTotal = new Lazy< BigInteger >( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
         }
-
-        public readonly Boolean IsNormalized;
 
         /// <summary>
         ///     TODO untested
         /// </summary>
         /// <param name="seconds"></param>
-        public Span( Decimal seconds )
-            : this() {
+        public Span( Decimal seconds ) : this() {
             var bob = new Seconds( seconds );
             var jane = bob.ToPlanckTimes();
             var frank = new Span( jane );
@@ -375,7 +371,7 @@ namespace Librainian.Measurement.Time {
             this.Zeptoseconds = frank.Zeptoseconds;
 
             var tmpThis = this;
-            this._lazyTotal = new Lazy<BigInteger>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
+            this._lazyTotal = new Lazy< BigInteger >( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
         }
 
         /// <summary>
@@ -393,7 +389,7 @@ namespace Librainian.Measurement.Time {
             return CompareTo( this, new Span( other ) );
         }
 
-        Boolean IEquatable<Span>.Equals( Span other ) {
+        Boolean IEquatable< Span >.Equals( Span other ) {
             return this.Equals( obj: other );
         }
 
@@ -431,13 +427,12 @@ namespace Librainian.Measurement.Time {
         ///     <para>Returns 1 if <paramref name="left" /> is larger.</para>
         ///     <para>Returns -1 if <paramref name="right" /> is larger.</para>
         ///     <para>Returns 0 if <paramref name="left" /> and <paramref name="right" /> are equal.</para>
-        /// <para>Static comparison function</para>
+        ///     <para>Static comparison function</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static int CompareTo( Span left, Span right ) {
-
             var leftPlancks = left.TotalPlanckTimes;
             var rightPlancks = right.TotalPlanckTimes;
 
@@ -451,7 +446,6 @@ namespace Librainian.Measurement.Time {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Span left, Span right ) {
-
             var leftPlancks = left.TotalPlanckTimes;
             var rightPlancks = right.TotalPlanckTimes;
 
@@ -461,13 +455,12 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     <para>Given the <paramref name="left" /> <see cref="Span" />,</para>
         ///     <para>subtract (-) the <paramref name="right" /> <see cref="Span" />.</para>
-        /// <para>And return the resulting span (which will not go below 0).</para>
+        ///     <para>And return the resulting span (which will not go below 0).</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Span operator -( Span left, Span right ) {
-
             var leftPlancks = left.TotalPlanckTimes;
             var rightPlancks = right.TotalPlanckTimes;
 
@@ -596,7 +589,7 @@ namespace Librainian.Measurement.Time {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
-            return obj is Span && Equals( this, ( Span )obj );
+            return obj is Span && Equals( this, ( Span ) obj );
         }
 
         /// <summary>
@@ -611,7 +604,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override String ToString() {
-            var bob = new Queue<string>( 20 );
+            var bob = new Queue< string >( 20 );
 
             if ( this.Years.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Years.ToString() );

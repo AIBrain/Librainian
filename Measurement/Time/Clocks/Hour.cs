@@ -14,27 +14,26 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Millisecond.cs" was last cleaned by Rick on 2014/08/09 at 2:15 PM
+// "Librainian/Hour.cs" was last cleaned by Rick on 2014/08/09 at 2:16 PM
 #endregion
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time.Clocks {
     using System;
     using System.Runtime.Serialization;
     using System.Threading;
-    using Clocks;
     using FluentAssertions;
 
     /// <summary>
-    ///     <para>A simple struct for a <see cref="Millisecond" />.</para>
+    ///     <para>A simple struct for an <see cref="Hour" />.</para>
     ///     <para>Should be threadsafe.</para>
     /// </summary>
     [DataContract]
     [Serializable]
-    public struct Millisecond : IPartofaClock {
+    public struct Hour : IPartofaClock {
         /// <summary>
-        ///     60
+        ///     24
         /// </summary>
-        public const UInt16 Maximum = Milliseconds.InOneSecond;
+        public const Byte Maximum = Hours.InOneDay;
 
         /// <summary>
         ///     1
@@ -43,32 +42,33 @@ namespace Librainian.Measurement.Time {
 
         private long _value;
 
-        static Millisecond() {
+        static Hour() {
             Maximum.Should().BeGreaterThan( Minimum );
         }
 
-        public Millisecond( UInt16 millisecond ) : this() {
-            this.Set( millisecond );
+        public Hour( Byte hour ) : this() {
+            this.Set( hour );
         }
 
         [DataMember]
-        public UInt16 Value {
-            get { return ( UInt16 ) Interlocked.Read( ref this._value ); }
+        public Byte Value {
+            get { return ( Byte ) Interlocked.Read( ref this._value ); }
             set {
                 value.Should().BeInRange( Minimum, Maximum );
 
                 if ( value < Minimum || value > Maximum ) {
-                    throw new ArgumentOutOfRangeException( "value", String.Format( "The specified millisecond {0} is out of the valid range {1} to {2}.", value, Minimum, Maximum ) );
+                    throw new ArgumentOutOfRangeException( "value", String.Format( "The specified hour {0} is out of the valid range {1} to {2}.", value, Minimum, Maximum ) );
                 }
                 Interlocked.Exchange( ref this._value, value );
             }
         }
 
         /// <summary>
-        ///     Decrease the current millisecond.
+        ///     Decrease the current hour.
+        ///     <para>Returns true if the value passed <see cref="Minimum" /></para>
         /// </summary>
         public Boolean Rewind() {
-            var value = ( Int32 ) this.Value;
+            var value = ( Int16 ) this.Value;
             value--;
             if ( value < Minimum ) {
                 this.Value = Maximum;
@@ -83,7 +83,8 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        ///     Increase the current millisecond.
+        ///     Increase the current hour.
+        ///     <para>Returns true if the value passed <see cref="Maximum" /></para>
         /// </summary>
         public Boolean Tick() {
             var value = this.Value;
@@ -94,10 +95,6 @@ namespace Librainian.Measurement.Time {
             }
             this.Value = value;
             return false;
-        }
-
-        public void Set( UInt16 value ) {
-            this.Value = value;
         }
     }
 }
