@@ -682,14 +682,14 @@ namespace Librainian.Controls {
         ///     Flashes the control.
         /// </summary>
         /// <param name="control"></param>
-        /// <param name="spanOff"></param>
+        /// <param name="spanOff">How long to keep the control off before it resets.</param>
         [CanBeNull]
         public static System.Timers.Timer Blink( [CanBeNull] this Control control, [CanBeNull] TimeSpan? spanOff = null ) {
             if ( null == control ) {
                 return null;
             }
             if ( !spanOff.HasValue ) {
-                spanOff = Milliseconds.One;
+                spanOff = Milliseconds.Hertz111;
             }
             control.OnThread( () => {
                 var foreColor = control.ForeColor;
