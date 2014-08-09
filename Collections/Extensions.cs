@@ -377,21 +377,21 @@ namespace Librainian.Collections {
         ///     Attempts to shuffle an array[] in-place in one pass.
         /// </summary>
         /// <typeparam name="T"> </typeparam>
-        /// <param name="list"> </param>
+        /// <param name="array"> </param>
         /// <param name="randomFunc"></param>
         /// <example>Deck.Shuffle( Randem.Next );</example>
-        public static void Shuffle< T >( [NotNull] this T[] list, [NotNull] Func< int, int, int > randomFunc ) {
-            if ( list == null ) {
-                throw new ArgumentNullException( "list" );
+        public static void Shuffle< T >( [NotNull] this T[] array, [NotNull] Func< int, int, int > randomFunc ) {
+            if ( array == null ) {
+                throw new ArgumentNullException( "array" );
             }
             if ( randomFunc == null ) {
                 throw new ArgumentNullException( "randomFunc" );
             }
-            var items = list.Count();
+            var items = array.Count();
             for ( var i = 0; i < items; i++ ) {
                 var index1 = randomFunc( 0, items ); //Randem.Next( 0, items );
                 var index2 = randomFunc( 0, items ); //Randem.Next( 0, items );
-                list.Swap( index1, index2 );
+                array.Swap( index1, index2 );
             }
         }
 
@@ -411,16 +411,16 @@ namespace Librainian.Collections {
         ///     Swap the two indexes
         /// </summary>
         /// <typeparam name="T"> </typeparam>
-        /// <param name="things"> </param>
+        /// <param name="array"> </param>
         /// <param name="index1"> </param>
         /// <param name="index2"> </param>
-        public static void Swap< T >( [NotNull] this T[] things, int index1, int index2 ) {
-            if ( things == null ) {
-                throw new ArgumentNullException( "things" );
+        public static void Swap< T >( [NotNull] this T[] array, int index1, int index2 ) {
+            if ( array == null ) {
+                throw new ArgumentNullException( "array" );
             }
-            var temp = things[ index1 ];
-            things[ index1 ] = things[ index2 ];
-            things[ index2 ] = temp;
+            var temp = array[ index1 ];
+            array[ index1 ] = array[ index2 ];
+            array[ index2 ] = temp;
         }
 
         /// <summary>
