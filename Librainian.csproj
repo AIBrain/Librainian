@@ -409,7 +409,7 @@
     <Compile Include="Threading\IQueuedSync.cs" />
     <Compile Include="Maths\AtomicDouble.cs" />
     <Compile Include="Maths\AtomicInt.cs" />
-    <Compile Include="Maths\Extensions.cs" />
+    <Compile Include="Maths\MathExtensions.cs" />
     <Compile Include="Maths\DoubleRange.cs" />
     <Compile Include="Maths\PotentialF.cs" />
     <Compile Include="Maths\Fuzzy.cs" />

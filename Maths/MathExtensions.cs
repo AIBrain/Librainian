@@ -30,7 +30,7 @@ namespace Librainian.Maths {
     using Parsing;
     using Threading;
 
-    public static class Extensions {
+    public static class MathExtensions {
         public delegate int FibonacciCalculator( int n );
 
         public const Boolean No = !Yes;

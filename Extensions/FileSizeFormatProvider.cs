@@ -45,23 +45,23 @@ namespace Librainian.Extensions {
             }
 
             var suffix = "n/a";
-            if ( size.Between( Extensions.OneTeraByte, UInt64.MaxValue ) ) {
-                size /= Extensions.OneTeraByte;
+            if ( size.Between( MathExtensions.OneTeraByte, UInt64.MaxValue ) ) {
+                size /= MathExtensions.OneTeraByte;
                 suffix = "TB";
             }
-            else if ( size.Between( Extensions.OneGigaByte, Extensions.OneTeraByte ) ) {
-                size /= Extensions.OneGigaByte;
+            else if ( size.Between( MathExtensions.OneGigaByte, MathExtensions.OneTeraByte ) ) {
+                size /= MathExtensions.OneGigaByte;
                 suffix = "GB";
             }
-            else if ( size.Between( Extensions.OneMegaByte, Extensions.OneGigaByte ) ) {
-                size /= Extensions.OneMegaByte;
+            else if ( size.Between( MathExtensions.OneMegaByte, MathExtensions.OneGigaByte ) ) {
+                size /= MathExtensions.OneMegaByte;
                 suffix = "MB";
             }
-            else if ( size.Between( Extensions.OneKiloByte, Extensions.OneMegaByte ) ) {
-                size /= Extensions.OneKiloByte;
+            else if ( size.Between( MathExtensions.OneKiloByte, MathExtensions.OneMegaByte ) ) {
+                size /= MathExtensions.OneKiloByte;
                 suffix = "kB";
             }
-            else if ( size.Between( UInt64.MinValue, Extensions.OneKiloByte ) ) {
+            else if ( size.Between( UInt64.MinValue, MathExtensions.OneKiloByte ) ) {
                 suffix = "Bytes";
             }
 
