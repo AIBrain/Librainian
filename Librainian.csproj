@@ -206,6 +206,7 @@
     <Compile Include="Hardware\Virtual\Deck.cs" />
     <Compile Include="Hardware\Virtual\DiceCup.cs" />
     <Compile Include="Hardware\Virtual\Dice.cs" />
+    <Compile Include="IO\ETACalculator.cs" />
     <Compile Include="Magic\IIocContainer.cs" />
     <Compile Include="Magic\Ioc.cs" />
     <Compile Include="Magic\NinjectIocContainer.cs" />
@@ -302,6 +303,7 @@
     <Compile Include="Measurement\Time\SpanRange.cs" />
     <Compile Include="Measurement\Time\Time.cs" />
     <Compile Include="Measurement\Constants.cs" />
+    <Compile Include="Measurement\Time\TimeProgression.cs" />
     <Compile Include="Measurement\Time\Weeks.cs" />
     <Compile Include="Measurement\Time\UniversalDateTime.cs" />
     <Compile Include="Measurement\Time\WhenRange.cs" />
