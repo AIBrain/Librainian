@@ -518,11 +518,22 @@ namespace Librainian.Maths {
             return difference <= EpsilonDecimal;
         }
 
-        public static Boolean TryParse( this String numberString, out BigRational result ) {
+        /// <summary>
+        /// <para>Attempt to parse a fraction from a string.</para>
+        /// </summary>
+        /// <example>
+        /// " 1234 / 346 "
+        /// </example>
+        /// <param name="numberString"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static Boolean TryParse( [CanBeNull] this String numberString, out BigRational result ) {
             result = BigRational.Zero;
 
+            if ( null == numberString ) { return false; }
+            
+            numberString = numberString.Trim();
             if ( numberString.IsNullOrEmpty() ) { return false; }
-
 
             var parts = numberString.Split( '/' ).ToList();
             if ( parts.Count() != 2 ) {
@@ -530,10 +541,30 @@ namespace Librainian.Maths {
             }
 
             var top = parts.TakeFirst();
-            var bottom = parts.TakeLast();
-            parts.Should().BeEmpty();
+            if ( String.IsNullOrWhiteSpace( top) ) {
+                return false;
+            }
+            top = top.Trim();
 
-            return false;
+            var bottom = parts.TakeLast();
+            if ( String.IsNullOrWhiteSpace( bottom ) ) {
+                return false;
+            }
+
+            parts.Should().BeEmpty();
+            if ( parts.Count > 0 ) {
+                return false;
+            }
+
+            BigInteger numerator;
+            BigInteger.TryParse( top, out numerator );
+
+            BigInteger denominator;
+            BigInteger.TryParse( bottom, out denominator );
+
+            result = new BigRational(1, numerator, denominator );
+
+            return true;
         }
 
         public static Boolean Near( this UInt64 number, UInt64 target ) {
