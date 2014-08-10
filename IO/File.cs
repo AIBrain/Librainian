@@ -22,6 +22,7 @@ namespace Librainian.IO {
     using System.IO;
     using System.Runtime.Serialization;
     using System.Security;
+    using System.Threading.Tasks;
     using Annotations;
     using Extensions;
 
@@ -31,23 +32,26 @@ namespace Librainian.IO {
     /// </summary>
     [DataContract( IsReference = true )]
     [Immutable]
-    public sealed class File : IEquatable< File > {
+    public sealed class File : IEquatable<File> {
         /// <summary>
         ///     <para>The extension of the file parsed in the ctor.</para>
         /// </summary>
-        [NotNull] public readonly String Extension;
+        [NotNull]
+        public readonly String Extension;
 
         /// <summary>
         ///     <para>The <see cref="FileInfo" /> parsed in the ctor.</para>
         /// </summary>
-        [NotNull] public readonly FileInfo Info;
+        [NotNull]
+        public readonly FileInfo Info;
 
         /// <summary>
         ///     The last known size of the file.
         /// </summary>
         public readonly UInt64 Size;
 
-        [NotNull] private readonly Lazy< DirectoryInfo > _lazyFolder;
+        [NotNull]
+        private readonly Lazy<DirectoryInfo> _lazyFolder;
 
         /// <summary>
         /// </summary>
@@ -73,8 +77,8 @@ namespace Librainian.IO {
 
             this.Extension = Path.GetExtension( path: fullPathWithFilename );
             this.Info = new FileInfo( fileName: fullPathWithFilename );
-            this.Size = ( UInt64 ) this.Info.Length;
-            this._lazyFolder = new Lazy< DirectoryInfo >( () => this.Info.Directory );
+            this.Size = ( UInt64 )this.Info.Length;
+            this._lazyFolder = new Lazy<DirectoryInfo>( () => this.Info.Directory );
         }
 
         [NotNull]
@@ -107,12 +111,12 @@ namespace Librainian.IO {
 
         public override int GetHashCode() {
             unchecked {
-                return ( this.Info.GetHashCode()*397 ) ^ this.Size.GetHashCode();
+                return ( this.Info.GetHashCode() * 397 ) ^ this.Size.GetHashCode();
             }
         }
 
         public override Boolean Equals( [CanBeNull] object obj ) {
-            return obj is File && Equals( this, ( File ) obj );
+            return obj is File && Equals( this, ( File )obj );
         }
 
         [NotNull]
@@ -150,5 +154,21 @@ namespace Librainian.IO {
         public static Boolean operator ==( File left, File right ) {
             return Equals( left, right );
         }
+
+        /// <summary>
+        /// Starts a task to provides
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        /// <param name="progress"></param>
+        /// <param name="eta"></param>
+        /// <returns></returns>
+        public static Task Copy( File source, File destination, Action<Double> progress, Action<TimeSpan> eta ) {
+            return Task.Run( () => {
+            } );
+
+        }
     }
+
+    
 }

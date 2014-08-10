@@ -14,79 +14,147 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/Percentage.cs" was last cleaned by Rick on 2014/08/08 at 2:28 PM
+// "Librainian/Percentage.cs" was last cleaned by Rick on 2014/08/10 at 4:32 AM
 #endregion
 
 namespace Librainian.Maths {
     using System;
     using System.Runtime.Serialization;
-    using System.Threading;
     using Annotations;
+    using Librainian.Extensions;
+    using Numerics;
 
     /// <summary>
-    ///     Restricts the value to between 0.0 and 1.0
+    ///     <para>Restricts the value to between 0.0 and 1.0</para>
     /// </summary>
     /// <remarks>Uses memory barriers to help thread safety.</remarks>
     [DataContract( IsReference = true )]
-    public struct Percentage {
-        public const Single MaxValue = 1.0f;
-        public const Single MinValue = 0.0f;
-
+    [Serializable]
+    [Immutable]
+    public class Percentage : IComparable<Percentage>, IComparable<Double>, IEquatable<Percentage> {
         /// <summary>
-        ///     ONLY used in the getter and setter.
+        ///     1
         /// </summary>
-        [DataMember] private Single _value;
+        public const Double Maximum = 1;
 
         /// <summary>
-        ///     Uses Interlocked to ensure thread safety and restricts the value to between 0.0 and 1.0
+        ///     0
+        /// </summary>
+        public const Double Minimum = 0f;
+
+        [DataMember]
+        public readonly BigRational Value;
+
+        /// <summary>
+        ///     Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.
         /// </summary>
         /// <param name="value"></param>
-        public Percentage( Single value ) : this() {
-            this.Value = value;
+        public Percentage( Double value ) {
+            if ( value >= Maximum ) {
+                this.Value = Maximum;
+            }
+            else if ( value <= Minimum ) {
+                this.Value = Minimum;
+            }
+            else {
+                this.Value = value;
+            }
         }
-
-        public Single Value {
-            get { return Thread.VolatileRead( ref this._value ); }
-
-            set {
-                var correctedvalue = value;
-                if ( value > MaxValue ) {
-                    correctedvalue = MaxValue;
-                }
-                else if ( value < MinValue ) {
-                    correctedvalue = MinValue;
-                }
-                Thread.VolatileWrite( ref this._value, correctedvalue );
+        
+        /// <summary>
+        ///     Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.
+        /// </summary>
+        /// <param name="value"></param>
+        public Percentage( BigRational value ) {
+            if ( value >= Maximum ) {
+                this.Value = Maximum;
+            }
+            else if ( value <= Minimum ) {
+                this.Value = Minimum;
+            }
+            else {
+                this.Value = value;
             }
         }
 
+        public int CompareTo( Double other ) {
+            return this.Value.CompareTo( other );
+        }
+
+        public int CompareTo( [NotNull] Percentage other ) {
+            if ( other == null ) {
+                throw new ArgumentNullException( "other" );
+            }
+            return this.Value.CompareTo( other.Value );
+        }
+
+        public bool Equals( [NotNull] Percentage other ) {
+            if ( other == null ) {
+                throw new ArgumentNullException( "other" );
+            }
+            return Equals( this, other );
+        }
+
         /// <summary>
-        ///     Lerp?
+        ///     static comparison
         /// </summary>
-        /// <param name="value1"></param>
-        /// <param name="value2"></param>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
         /// <returns></returns>
-        public static Percentage Combine( Percentage value1, Percentage value2 ) {
-            return new Percentage( ( value1 + value2 )/2.0f );
-        }
-
-        public static implicit operator Percentage( Single value ) {
-            return new Percentage( value );
-        }
-
-        public static implicit operator Single( Percentage special ) {
-            return special.Value;
+        public static Boolean Equals( [NotNull] Percentage left, [NotNull] Percentage right ) {
+            if ( left == null )
+                throw new ArgumentNullException( "left" );
+            if ( right == null )
+                throw new ArgumentNullException( "right" );
+            return left.Value == right.Value ;
         }
 
         public static Percentage Parse( [NotNull] String value ) {
             if ( value == null ) {
                 throw new ArgumentNullException( "value" );
             }
-            return new Percentage( Single.Parse( value ) );
+            return new Percentage( Double.Parse( value ) );
+        }
+
+        public static Boolean TryParse( [NotNull] String numberString, out Percentage result ) {
+            if ( numberString == null ) {
+                throw new ArgumentNullException( "numberString" );
+            }
+            Double value;
+            if ( !Double.TryParse( numberString, out value ) ) {
+
+                
+
+                value = Double.NaN;
+            }
+            result = new Percentage( value );
+            return !Double.IsNaN( value );
         }
 
         public override String ToString() {
-            return String.Format( "{0:P1}", this.Value );
+            return String.Format( "{0:P1}", (Decimal)this.Value );
+        }
+
+        /// <summary>
+        ///     Lerp?
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Percentage Combine( Percentage left, Percentage right ) {
+            return new Percentage( ( left.Value + right.Value ) / 2.0 );
+        }
+
+        public static implicit operator Double( Percentage special ) {
+            return special.Value;
+        }
+
+        public static implicit operator Percentage( Single value ) {
+            return new Percentage( value );
+        }
+
+        public static Percentage operator +( Percentage left, Percentage right ) {
+            return Combine( left, right );
         }
     }
 }

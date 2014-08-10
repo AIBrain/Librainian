@@ -33,14 +33,18 @@ namespace Librainian.Maths {
         /// <summary>
         ///     ONLY used in the getter and setter.
         /// </summary>
-        [DataMember] [OptionalField] private Double _value;
+        [DataMember]
+        [OptionalField]
+        private Double _value;
 
-        public AtomicDouble( Double value ) : this() {
+        public AtomicDouble( Double value )
+            : this() {
             this.Value = value;
         }
 
         public Double Value {
-            get { return Interlocked.Exchange( ref this._value, this._value ); //todo buggy use of Exchange ?
+            get {
+                return Interlocked.Exchange( ref this._value, this._value ); //todo buggy use of Exchange ?
             }
             set { Interlocked.Exchange( ref this._value, value ); }
         }
@@ -54,7 +58,7 @@ namespace Librainian.Maths {
         }
 
         public static AtomicDouble operator *( AtomicDouble a1, AtomicDouble a2 ) {
-            return new AtomicDouble( a1.Value*a2.Value );
+            return new AtomicDouble( a1.Value * a2.Value );
         }
 
         public static AtomicDouble operator +( AtomicDouble a1, AtomicDouble a2 ) {

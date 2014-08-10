@@ -27,6 +27,7 @@ namespace Librainian.Maths {
     using System.Threading;
     using Annotations;
     using Numerics;
+    using Parsing;
     using Threading;
 
     public static class Extensions {
@@ -502,6 +503,21 @@ namespace Librainian.Maths {
 
         public static Boolean Near( this Decimal number, Decimal target ) {
             return Math.Abs( number - target ) <= EpsilonDecimal;
+        }
+
+        public static Boolean Near( this BigRational number, BigRational target ) {
+            var difference = number - target;
+            if ( difference < BigRational.Zero ) {
+                difference = -difference;
+            }
+            return difference <= EpsilonDecimal;
+        }
+
+        public static Boolean TryParse( this String numberString , out BigRational result ) {
+            if ( numberString.IsNullOrEmpty() ) { return false; }
+            if ( numberString.Contains ) {
+                    
+                }
         }
 
         public static Boolean Near( this UInt64 number, UInt64 target ) {
