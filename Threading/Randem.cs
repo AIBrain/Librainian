@@ -253,6 +253,23 @@ namespace Librainian.Threading {
             return new BigInteger( buffer );
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="numberOfDigits"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static BigInteger NextBigIntegerPositive( UInt16 numberOfDigits ) {
+            numberOfDigits.Should().BeGreaterThan( 0 );
+            if ( numberOfDigits <= 0 ) {
+                throw new ArgumentOutOfRangeException( "numberOfDigits" );
+            }
+
+            var buffer = new Byte[numberOfDigits];
+            Instance.NextBytes( buffer );
+            buffer[ buffer.Length - 1 ] &= 127; //force sign bit to positive according to http://stackoverflow.com/a/17367241/956364
+            return new BigInteger( buffer );
+        }
+
         public static BigInteger NextBigIntegerSecure( UInt16 numberOfDigits ) {
             numberOfDigits.Should().BeGreaterThan( 0 );
             if ( numberOfDigits <= 0 ) {
