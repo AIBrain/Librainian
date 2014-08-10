@@ -23,7 +23,7 @@ namespace Librainian.IO {
     using System.Runtime.Serialization;
     using System.Security;
     using Annotations;
-    using Librainian.Extensions;
+    using Extensions;
 
     /// <summary>
     ///     <para>Container for a file, the parent folder, and the file size from the given fullpath.</para>
