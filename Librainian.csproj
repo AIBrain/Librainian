@@ -206,7 +206,6 @@
     <Compile Include="Hardware\Virtual\Deck.cs" />
     <Compile Include="Hardware\Virtual\DiceCup.cs" />
     <Compile Include="Hardware\Virtual\Dice.cs" />
-    <Compile Include="IO\ETACalculator.cs" />
     <Compile Include="Magic\IIocContainer.cs" />
     <Compile Include="Magic\Ioc.cs" />
     <Compile Include="Magic\NinjectIocContainer.cs" />
@@ -283,6 +282,7 @@
     <Compile Include="Measurement\Time\Day.cs" />
     <Compile Include="Measurement\Time\Clocks\Hour.cs" />
     <Compile Include="Measurement\Time\Clocks\IPartofaClock.cs" />
+    <Compile Include="Measurement\Time\ETACalculator.cs" />
     <Compile Include="Measurement\Time\Millisecond.cs" />
     <Compile Include="Measurement\Time\Clocks\Minute.cs" />
     <Compile Include="Measurement\Time\Month.cs" />

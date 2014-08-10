@@ -1,4 +1,4 @@
-﻿#region License & Information
+#region License & Information
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
@@ -17,7 +17,7 @@
 // "Librainian/ETACalculator.cs" was last cleaned by Rick on 2014/08/10 at 7:15 AM
 #endregion
 
-namespace Librainian.IO {
+namespace Librainian.Measurement.Time {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -26,7 +26,6 @@ namespace Librainian.IO {
     using System.Threading;
     using Annotations;
     using Maths;
-    using Measurement.Time;
     using Timer = System.Timers.Timer;
 
     /// <summary>
