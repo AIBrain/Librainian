@@ -28,7 +28,7 @@ namespace Librainian.Measurement.Time {
 
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    public struct Years : IComparable< Years > {
+    public struct Years : IComparable<Years> {
         /// <summary>
         ///     One <see cref="Years" /> .
         /// </summary>
@@ -47,7 +47,8 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Years Zero = new Years( 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember]
+        public readonly Decimal Value;
 
         static Years() {
             Zero.Should().BeLessThan( One );
@@ -66,7 +67,7 @@ namespace Librainian.Measurement.Time {
 
         public Years( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = ( Decimal )value;
         }
 
         [UsedImplicitly]
@@ -84,7 +85,7 @@ namespace Librainian.Measurement.Time {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
-            return obj is Years && this.Equals( ( Years ) obj );
+            return obj is Years && this.Equals( ( Years )obj );
         }
 
         [Pure]
@@ -101,7 +102,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Years Combine( Years left, BigInteger years ) {
-            return new Years( ( BigInteger ) left.Value + years );
+            return new Years( ( BigInteger )left.Value + years );
         }
 
         /// <summary>
@@ -131,7 +132,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Years operator -( Years days ) {
-            return new Years( days.Value*-1 );
+            return new Years( days.Value * -1 );
         }
 
         public static Years operator -( Years left, Years right ) {
@@ -163,7 +164,8 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Months ToMonths( Years years ) {
-            return new Months( years.Value*Months.InOneYear );
+            var months = years.Value * Months.InOneYear;
+            return new Months( months );
         }
 
         public static BigInteger ToPlanckTimes( Years years ) {
@@ -175,7 +177,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override string ToString() {
-            return this.Value.PluralOf( "year" );
+            return String.Format( "{0:R} {1}", this.Value, this.Value.PluralOf( "year" ) );
         }
     }
 }

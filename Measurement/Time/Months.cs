@@ -164,7 +164,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Years ToYears( Months months ) {
-            return new Years( months.Value*InOneYear );
+            return new Years( months.Value / InOneYear );
         }
 
         public override int GetHashCode() {
@@ -172,7 +172,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override string ToString() {
-            return this.Value.PluralOf( "month" );
+            return String.Format( "{0:R} {1}", this.Value, this.Value.PluralOf( "month" ) );
         }
     }
 }
