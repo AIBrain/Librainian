@@ -35,21 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BigRationalLibrary">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CodeFluent.Runtime.Client">
-    </Reference>
-    <Reference Include="CsQuery">
-    </Reference>
-    <Reference Include="FluentAssertions">
-    </Reference>
-    <Reference Include="FluentAssertions.Core">
-    </Reference>
-    <Reference Include="Ninject">
-    </Reference>
-    <Reference Include="nunit.framework">
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
