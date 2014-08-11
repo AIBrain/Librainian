@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BigRationalLibrary">
-      <HintPath>..\Universal\packages\BigRationalLibrary.1.0.0.0\lib\NETFramework40\BigRationalLibrary.dll</HintPath>
+      <HintPath>packages\BigRationalLibrary.1.0.0.0\lib\NETFramework40\BigRationalLibrary.dll</HintPath>
     </Reference>
     <Reference Include="CodeFluent.Runtime.Client">
       <HintPath>packages\CodeFluentRuntimeClient.1.0.0.772\lib\CodeFluent.Runtime.Client.dll</HintPath>
@@ -45,16 +45,16 @@
       <HintPath>packages\CsQuery.1.3.4\lib\net40\CsQuery.dll</HintPath>
     </Reference>
     <Reference Include="FluentAssertions">
-      <HintPath>..\Universal\packages\FluentAssertions.3.1.229\lib\net45\FluentAssertions.dll</HintPath>
+      <HintPath>packages\FluentAssertions.3.1.229\lib\net45\FluentAssertions.dll</HintPath>
     </Reference>
     <Reference Include="FluentAssertions.Core">
-      <HintPath>..\Universal\packages\FluentAssertions.3.1.229\lib\net45\FluentAssertions.Core.dll</HintPath>
+      <HintPath>packages\FluentAssertions.3.1.229\lib\net45\FluentAssertions.Core.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
-      <HintPath>..\Universal\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+      <HintPath>packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\Universal\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+      <HintPath>packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
