@@ -36,25 +36,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BigRationalLibrary">
-      <HintPath>..\Universal\packages\BigRationalLibrary.1.0.0.0\lib\NETFramework40\BigRationalLibrary.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="CodeFluent.Runtime.Client">
-      <HintPath>..\Universal\packages\CodeFluentRuntimeClient.1.0.0.772\lib\CodeFluent.Runtime.Client.dll</HintPath>
     </Reference>
     <Reference Include="CsQuery">
-      <HintPath>..\Universal\packages\CsQuery.1.3.4\lib\net40\CsQuery.dll</HintPath>
     </Reference>
     <Reference Include="FluentAssertions">
-      <HintPath>..\Universal\packages\FluentAssertions.3.1.229\lib\net45\FluentAssertions.dll</HintPath>
     </Reference>
     <Reference Include="FluentAssertions.Core">
-      <HintPath>..\Universal\packages\FluentAssertions.3.1.229\lib\net45\FluentAssertions.Core.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
-      <HintPath>..\Universal\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\Universal\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -258,9 +252,7 @@
     <Compile Include="Linguistics\PoS\PartsOfSpeech.cs" />
     <Compile Include="Linguistics\PoS\TaggedSentence.cs" />
     <Compile Include="Linguistics\WordCombo.cs" />
-    <Compile Include="Maths\BigDecimal.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Maths\BigDecimal.cs" />
     <Compile Include="Maths\BigIntegerRange.cs" />
     <Compile Include="Maths\DoubleConverter.cs" />
     <Compile Include="Maths\Votally.cs" />
