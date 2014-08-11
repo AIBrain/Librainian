@@ -25,6 +25,7 @@ namespace Librainian.Measurement.Time {
     using Annotations;
     using FluentAssertions;
     using Librainian.Extensions;
+    using Parsing;
 
     public interface IQuantityOfTime {
         int GetHashCode();
@@ -165,7 +166,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override string ToString() {
-            return String.Format( "{0:R} ms", this.Value );
+            return String.Format( "{0:R} {1}", this.Value, this.Value.PluralOf( "millisecond" ) );
         }
 
         public static Milliseconds Combine( Milliseconds left, Decimal milliseconds ) {

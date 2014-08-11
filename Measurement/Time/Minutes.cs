@@ -225,7 +225,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override string ToString() {
-            return this.Value.PluralOf( "minute" );
+            return String.Format( "{0:R} {1}", this.Value, this.Value.PluralOf( "minute" ) );
         }
     }
 }
