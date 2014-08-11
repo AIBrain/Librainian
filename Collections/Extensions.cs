@@ -527,7 +527,7 @@ namespace Librainian.Collections {
 
         [Test]
         public static TimeSpan ShuffleTest() {
-            const int itemCount = 100000000;
+            const int itemCount = 100;
 
             var list = new List<int>();
             for ( var i = 0; i < itemCount; i++ ) {
