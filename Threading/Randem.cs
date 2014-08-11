@@ -185,10 +185,10 @@ namespace Librainian.Threading {
         ///     Generate a random number between <paramref name="minValue" /> and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="minValue"> The inclusive lower bound of the random number returned. </param>
-        /// <param name="maxValue"> The exclusive upper bound of the random number returned. </param>
+        /// <param name="maxValue"> The inclusive upper bound of the random number returned. </param>
         /// <returns> </returns>
         public static int Next( int minValue, int maxValue ) {
-            return Instance.Next( minValue: minValue, maxValue: maxValue );
+            return Instance.Next( minValue: minValue, maxValue: maxValue + 1 );
         }
 
         /// <summary>

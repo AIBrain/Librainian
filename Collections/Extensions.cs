@@ -27,6 +27,7 @@ namespace Librainian.Collections {
     using System.Security.Cryptography;
     using System.Threading.Tasks;
     using Annotations;
+    using FluentAssertions;
     using Maths;
     using Threading;
 
@@ -376,46 +377,144 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     <para>Shuffle an array[] in-place.</para>
+        ///     <para>Shuffle an array[] in <paramref name="iterations"/>.</para>
         /// </summary>
         /// <typeparam name="T"> </typeparam>
         /// <param name="array"> </param>
-        /// <param name="randomFunc"></param>
-        /// <example>Deck.Shuffle( Randem.Next );</example>
-        public static void Shuffle<T>( [NotNull] this T[] array, [NotNull] Func<int, int, int> randomFunc ) {
+        /// <param name="iterations"></param>
+        /// <example>Deck.Shuffle( 7 );</example>
+        public static void Shuffle<T>( [NotNull] this T[] array, int iterations = 1 ) {
             if ( array == null ) {
                 throw new ArgumentNullException( "array" );
             }
-            if ( randomFunc == null ) {
-                throw new ArgumentNullException( "randomFunc" );
+            if ( iterations < 1 ) {
+                iterations = 1;
+            }
+            if ( array.Length < 1 ) {
+                return; //nothing to shuffle
             }
 
-            // make a copy of all items
-            var bag = new ConcurrentBag<T>( array );
-            var sqrt = ( int )Math.Sqrt( bag.Count );
-            if ( sqrt <= 1 ) {
-                sqrt = 1;
-            }
+            while ( iterations > 0 ) {
+                iterations--;
 
-            // make some buckets.
-            var buckets = new List< ConcurrentBag< T > >( capacity: sqrt );
-            buckets.AddRange( 1.To( sqrt ).Select( i => new ConcurrentBag<T>() ) );
+                // make a copy of all items
+                var bag = new ConcurrentBag<T>( array );
+                bag.Should().NotBeEmpty();
+                var originalcount = bag.Count;
 
-            foreach ( var dummy in bag ) {
-                T item;
-                if ( !bag.TryTake( out item ) ) {
-                    break;
+                var sqrt = ( int )Math.Sqrt( originalcount );
+                if ( sqrt <= 1 ) {
+                    sqrt = 1;
                 }
-                var putinBag = Randem.Next( 0, sqrt + 1 );
-                buckets[ putinBag ].Add( item );
+
+                // make some buckets.
+                var buckets = new List<ConcurrentBag<T>>( capacity: sqrt );
+                buckets.AddRange( 1.To( sqrt ).Select( i => new ConcurrentBag<T>() ) );
+
+                // pull the items out of the bag, and put them into a random bucket each
+                T item;
+                while ( bag.TryTake( out item ) ) {
+                    var index = Randem.Next( 0, sqrt );
+                    buckets[ index ].Add( item );
+                }
+                bag.Should().BeEmpty( "All items should have been taken out of the bag" );
+
+                while ( bag.Count < originalcount ) {
+                    var index = Randem.Next( minValue: 0, maxValue: buckets.Count );
+                    var bucket = buckets[ index ];
+
+                    if ( bucket.TryTake( out item ) ) {
+                        bag.Add( item );
+                    }
+                    if ( bucket.IsEmpty ) {
+                        buckets.Remove( bucket );
+                    }
+                }
+                bag.Count.Should().Be( originalcount );
+
+                // put them back into the array
+                var newArray = bag.ToArray();
+                newArray.CopyTo( array, 0 );
             }
 
-            var items = array.Count();
-            for ( var i = 0; i < items; i++ ) {
-                var index1 = randomFunc( 0, items ); //Randem.Next( 0, items );
-                var index2 = randomFunc( 0, items ); //Randem.Next( 0, items );
-                array.Swap( index1, index2 );
+            // Old, !bad! way.
+            //var items = array.Count();
+            //for ( var i = 0; i < items; i++ ) {
+            //    var index1 = randomFunc( 0, items ); //Randem.Next( 0, items );
+            //    var index2 = randomFunc( 0, items ); //Randem.Next( 0, items );
+            //    array.Swap( index1, index2 );
+            //}
+        }
+
+        /// <summary>
+        ///     <para>Shuffle a list in <paramref name="iterations"/>.</para>
+        /// </summary>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="list"> </param>
+        /// <param name="iterations"></param>
+        /// <example>Deck.Shuffle( 7 );</example>
+        public static void Shuffle<T>( [NotNull] this List<T> list, int iterations = 1 ) {
+            if ( list == null ) {
+                throw new ArgumentNullException( "list" );
             }
+            if ( iterations < 1 ) {
+                iterations = 1;
+            }
+            if ( !list.Any() ) {
+                return; //nothing to shuffle
+            }
+
+            while ( iterations > 0 ) {
+                iterations--;
+
+                var originalcount = list.Count;
+
+                var bag = new ConcurrentBag<T>( list );
+                bag.Should().NotBeEmpty( because: "made a copy of all items" );
+                
+                list.Clear();
+                list.Should().BeEmpty(because: "emptied the original list" );
+
+                // make some buckets.
+                var sqrt = ( int )Math.Sqrt( originalcount );
+                if ( sqrt <= 1 ) {
+                    sqrt = 1;   // TODO can we use Math.Ceiling() here?
+                }
+
+                var buckets = new List<ConcurrentBag<T>>( 1.To( sqrt ).Select( i => new ConcurrentBag<T>() ) );
+
+                // pull the items out of the bag, and put them into a random bucket each
+                T item;
+                while ( bag.TryTake( out item ) ) {
+                    var index = Randem.Next( 0, sqrt );
+                    buckets[ index ].Add( item );
+                }
+                bag.Should().BeEmpty( "All items should have been taken out of the bag" );
+
+                while ( bag.Count < originalcount ) {
+                    var index = Randem.Next( minValue: 0, maxValue: buckets.Count );
+                    var bucket = buckets[ index ];
+
+                    if ( bucket.TryTake( out item ) ) {
+                        bag.Add( item );
+                    }
+                    if ( bucket.IsEmpty ) {
+                        buckets.Remove( bucket );
+                    }
+                }
+                bag.Count.Should().Be( originalcount );
+
+                // put them back into the list
+                list.AddRange( bag );
+            }
+
+            // Old, !bad! way.
+            //var items = array.Count();
+            //for ( var i = 0; i < items; i++ ) {
+            //    var index1 = randomFunc( 0, items ); //Randem.Next( 0, items );
+            //    var index2 = randomFunc( 0, items ); //Randem.Next( 0, items );
+            //    array.Swap( index1, index2 );
+            //}
         }
 
         public static IEnumerable<IEnumerable<T>> Split<T>( [NotNull] this IEnumerable<T> list, int parts ) {
