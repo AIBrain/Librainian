@@ -458,90 +458,105 @@ namespace Librainian.Collections {
         /// <example>Deck.Shuffle( 7 );</example>
         /// <remarks>I know we could just do a list.orderby.random(), but I /want/ to try it this way.
         /// </remarks>
-        public static void Shuffle<T>( [NotNull] this List<T> list, int iterations = 1 ) {
+        public static void Shuffle<T>( [NotNull] this List<T> list, Byte iterations = 1 ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
             }
-            if ( iterations < 1 ) {
-                iterations = 1;
-            }
-            if ( !list.Any() ) {
-                return; //nothing to shuffle
-            }
+            try {
 
-            while ( iterations > 0 ) {
-                iterations--;
+                if ( iterations < 1 ) {
+                    iterations = 1;
+                }
+                if ( !list.Any() ) {
+                    return; //nothing to shuffle
+                }
 
-                var originalcount = list.Count;
-
-                var bag = new ConcurrentBag<T>( list.OrderBy( o => Randem.Next() ) );
-                bag.Should().NotBeEmpty( because: "made a copy of all items" );
-
-                list.Clear();
-                list.Should().BeEmpty( because: "emptied the original list" );
+                var originalcount = list.LongCount();
 
                 // make some buckets.
                 var bucketCount = ( int )Math.Sqrt( originalcount );
                 if ( bucketCount <= 1 ) {
-                    bucketCount = 1;   // TODO can we use Math.Ceiling() here?
+                    bucketCount = 1;
                 }
                 var buckets = new List<ConcurrentBag<T>>( 1.To( bucketCount ).Select( i => new ConcurrentBag<T>() ) );
                 buckets.Count.Should().Be( bucketCount );
 
-                // pull the items out of the bag, and push them into a random bucket each
-                T item;
-                while ( bag.TryTake( out item ) ) {
-                    var index = Randem.Next( 0, bucketCount );
-                    buckets[ index ].Add( item );
-                }
-                bag.Should().BeEmpty( "All items should have been taken out of the bag" );
+                while ( iterations > 0 ) {
+                    iterations--;
 
-                // pull all the items into the buckets
-                while ( bag.Count < originalcount ) {
-                    var index = Randem.Next( minValue: 0, maxValue: buckets.Count );
-                    var bucket = buckets[ index ];
+                    var bag = new ConcurrentBag<T>( list.OrderBy( o => Randem.Next() ) );
+                    bag.Should().NotBeEmpty( because: "made an unordered copy of all items" );
 
-                    if ( bucket.TryTake( out item ) ) {
-                        bag.Add( item );
+                    list.Clear();
+                    list.Should().BeEmpty( because: "emptied the original list" );
+
+                    // pull the items out of the bag, and push them each into a random bucket
+                    while ( bag.Any() ) {
+                        1.To( bucketCount ).OrderBy( o => Randem.Next() ).AsParallel().ForAll( index => {
+                            T item;
+                            if ( bag.TryTake( out item ) ) {
+                                buckets[ index - 1 ].Add( item );
+                            }
+
+                        } );
                     }
-                    if ( bucket.IsEmpty ) {
-                        buckets.Remove( bucket );
-                    }
-                }
-                bag.Count.Should().Be( originalcount );
+                    bag.Should().BeEmpty( "All items should have been taken out of the bag" );
 
-                // put them back into the list in another random order.
-                // I know, I know.. why didn't we do this first? Proof of Concept I guess.
-                // Besides, this whole function/process adds more randomness. I hope.
-                list.AddRange( bag.OrderBy( o => Randem.Next() ) );
+                    // pull all the items into the buckets
+                    while ( bag.Count < originalcount ) {
+
+                        1.To( bucketCount ).OrderBy( o => Randem.Next() ).AsParallel().ForAll( index => {
+                            T item;
+                            if ( buckets[ index - 1 ].TryTake( out item ) ) {
+                                bag.Add( item );
+                            }
+                        } );
+                    }
+                    if ( bag.LongCount() < originalcount ) {
+
+                        throw new IndexOutOfRangeException( "something went wrong" );
+
+                        //foreach ( var abucket in buckets ) { while ( abucket.TryTake( out item ) ) { bag.Add( item ); } }
+                    }
+
+                    bag.LongCount().Should().Be( originalcount );
+
+                    // put them back into the list in another random order.
+                    // I know, I know.. why didn't we do this first? Proof of Concept I guess.
+                    // Besides, this whole function/process adds more randomness. I hope.
+                    list.AddRange( bag.OrderBy( o => Randem.Next() ) );
+                }
+
+                // Old, !bad! way.
+                //var items = array.Count();
+                //for ( var i = 0; i < items; i++ ) {
+                //    var index1 = randomFunc( 0, items ); //Randem.Next( 0, items );
+                //    var index2 = randomFunc( 0, items ); //Randem.Next( 0, items );
+                //    array.Swap( index1, index2 );
+                //}
             }
-
-            // Old, !bad! way.
-            //var items = array.Count();
-            //for ( var i = 0; i < items; i++ ) {
-            //    var index1 = randomFunc( 0, items ); //Randem.Next( 0, items );
-            //    var index2 = randomFunc( 0, items ); //Randem.Next( 0, items );
-            //    array.Swap( index1, index2 );
-            //}
+            catch ( IndexOutOfRangeException exception ) {
+                exception.Log();
+            }
         }
 
         [Test]
         public static TimeSpan ShuffleTest() {
-            const int itemCount = 1000;
+            const int itemCount = 100000000;
 
             var list = new List<int>();
             for ( var i = 0; i < itemCount; i++ ) {
                 list.Add( i );
             }
-            var copyToCompare = list.ToList();
+            //var copyToCompare = list.ToList();
 
             var stopwatch = Stopwatch.StartNew();
             list.Shuffle();
             stopwatch.Stop();
 
-            Span bob = new Span(stopwatch.Elapsed );
+            var bob = new Span( stopwatch.Elapsed );
 
-            String.Format( "Shuffle took {0}.", bob ).TimeDebug();
+            String.Format( "Shuffle took {0} to shuffle {1} items.", bob, itemCount ).TimeDebug();
 
             return stopwatch.Elapsed;
         }
