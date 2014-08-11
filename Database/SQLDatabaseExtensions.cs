@@ -1,26 +1,23 @@
 ﻿#region License & Information
-
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
-// "Librainian2/SQLDatabaseExtensions.cs" was last cleaned by Rick on 2014/08/08 at 2:26 PM
-
-#endregion License & Information
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
+// 
+// "Librainian/SQLDatabaseExtensions.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+#endregion
 
 namespace Librainian.Database {
-
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -32,21 +29,20 @@ namespace Librainian.Database {
     using Threading;
 
     public static class SQLDatabaseExtensions {
-
         /// <summary>
-        /// Returns the total time taken for a simple query. (connect + execute + fetch...)
+        ///     Returns the total time taken for a simple query. (connect + execute + fetch...)
         /// </summary>
         /// <returns></returns>
         [Obsolete( "No access to a local server atm." )]
         public static TimeSpan EasyPing( SQLQuery db ) {
             var stopwatch = Stopwatch.StartNew();
             try {
-                var stack = new Stack<Object>();
+                var stack = new Stack< Object >();
                 db.Params.AddWithValue( "@when", DateTime.Now ).DbType = DbType.DateTime;
                 using ( var reader = db.Query( "[dbo].[HalloWrold]" ) ) {
                     while ( reader.Read() ) {
                         for ( var i = 0; i < reader.FieldCount; i++ ) {
-                            stack.Push( reader.GetFieldValue<Object>( i ) );
+                            stack.Push( reader.GetFieldValue< Object >( i ) );
                         }
 
                         //DateTime wesaid;

@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/ImmutableAttribute.cs" was last cleaned by Rick on 2014/08/08 at 2:26 PM
+// "Librainian/ImmutableAttribute.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 #endregion
 
 namespace Librainian.Extensions {
@@ -51,7 +51,7 @@ namespace Librainian.Extensions {
         /// </summary>
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         [SuppressMessage( "Microsoft.Design", "CA1002:DoNotExposeGenericLists" )]
-        public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable<Type> whiteList ) {
+        public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable< Type > whiteList ) {
             if ( type == null ) {
                 throw new ArgumentNullException( "type" );
             }
@@ -62,7 +62,7 @@ namespace Librainian.Extensions {
             if ( whiteList == null ) {
                 throw new ArgumentNullException( "whiteList" );
             }
-            var enumerable = whiteList as IList<Type> ?? whiteList.ToList();
+            var enumerable = whiteList as IList< Type > ?? whiteList.ToList();
 
             if ( enumerable.Contains( type ) ) {
                 return;
@@ -116,6 +116,7 @@ namespace Librainian.Extensions {
         private static Boolean IsMarkedImmutable( Type type ) {
             return ReflectionHelper.TypeHasAttribute< ImmutableAttribute >( type );
         }
+
         private static Boolean IsWhiteListed( Type type ) {
             if ( type == typeof ( Object ) ) {
                 return true;
@@ -148,13 +149,11 @@ namespace Librainian.Extensions {
         public class ImmutableFailureException : Exception {
             public readonly Type Type;
 
-            internal ImmutableFailureException( Type type, string message, Exception inner )
-                : base( message, inner ) {
+            internal ImmutableFailureException( Type type, string message, Exception inner ) : base( message, inner ) {
                 this.Type = type;
             }
 
-            internal ImmutableFailureException( Type type, string message )
-                : base( message ) {
+            internal ImmutableFailureException( Type type, string message ) : base( message ) {
                 this.Type = type;
             }
 
@@ -165,6 +164,7 @@ namespace Librainian.Extensions {
             internal MutableBaseException( Type type, Exception inner ) : base( type, FormatMessage( type ), inner ) { }
 
             protected MutableBaseException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+
             [SuppressMessage( "Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object)" )]
             private static string FormatMessage( Type type ) {
                 return string.Format( "'{0}' is mutable because its base type ('[{1}]') is mutable.", type, type.BaseType );
@@ -175,6 +175,7 @@ namespace Librainian.Extensions {
             internal MutableFieldException( FieldInfo fieldInfo, Exception inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) { }
 
             protected MutableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+
             [SuppressMessage( "Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object,System.Object)" )]
             private static string FormatMessage( FieldInfo fieldInfo ) {
                 return string.Format( "'{0}' is mutable because '{1}' of type '{2}' is mutable.", fieldInfo.DeclaringType, fieldInfo.Name, fieldInfo.FieldType );
@@ -185,6 +186,7 @@ namespace Librainian.Extensions {
             internal WritableFieldException( FieldInfo fieldInfo ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ) ) { }
 
             protected WritableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+
             [SuppressMessage( "Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object)" )]
             private static string FormatMessage( FieldInfo fieldInfo ) {
                 return string.Format( "'{0}' is mutable because field '{1}' is not marked 'readonly'.", fieldInfo.DeclaringType, fieldInfo.Name );

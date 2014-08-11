@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/PersistableSettings.cs" was last cleaned by Rick on 2014/08/08 at 2:31 PM
+// "Librainian/PersistableSettings.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
 #endregion
 
 namespace Librainian.Persistence {

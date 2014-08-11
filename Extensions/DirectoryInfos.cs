@@ -1,26 +1,23 @@
 ﻿#region License & Information
-
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
-// "Librainian2/DirectoryInfos.cs" was last cleaned by Rick on 2014/08/08 at 2:26 PM
-
-#endregion License & Information
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
+// 
+// "Librainian/DirectoryInfos.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+#endregion
 
 namespace Librainian.Extensions {
-
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -33,16 +30,16 @@ namespace Librainian.Extensions {
     using Threading;
 
     public static class DirectoryInfos {
-        public static readonly HashSet<DirectoryInfo> SystemFolders = new HashSet<DirectoryInfo>();
+        public static readonly HashSet< DirectoryInfo > SystemFolders = new HashSet< DirectoryInfo >();
 
         /// <summary>
-        /// No guarantee of return order. Also, because of the way the operating system works
-        /// (random-access), a directory may be created or deleted even after a search.
+        ///     No guarantee of return order. Also, because of the way the operating system works
+        ///     (random-access), a directory may be created or deleted even after a search.
         /// </summary>
         /// <param name="target"></param>
         /// <param name="searchPattern"></param>
         /// <returns></returns>
-        public static IEnumerable<DirectoryInfo> BetterEnumerateDirectories( this DirectoryInfo target, String searchPattern = "*" ) {
+        public static IEnumerable< DirectoryInfo > BetterEnumerateDirectories( this DirectoryInfo target, String searchPattern = "*" ) {
             if ( null == target ) {
                 yield break;
             }
@@ -92,7 +89,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static IEnumerable<FileInfo> BetterEnumerateFiles( [NotNull] this DirectoryInfo target, [NotNull] String searchPattern = "*" ) {
+        public static IEnumerable< FileInfo > BetterEnumerateFiles( [NotNull] this DirectoryInfo target, [NotNull] String searchPattern = "*" ) {
             if ( target == null ) {
                 throw new ArgumentNullException( "target" );
             }
@@ -107,7 +104,6 @@ namespace Librainian.Extensions {
             NativeWin32.Win32FindData findData;
             using ( var hFindFile = NativeWin32.FindFirstFile( searchPath, out findData ) ) {
                 do {
-
                     //Application.DoEvents();
 
                     if ( hFindFile.IsInvalid ) {
@@ -132,8 +128,8 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Before: @"c:\hello\world".
-        /// After: @"c:\hello\world\23468923475634836.extension"
+        ///     Before: @"c:\hello\world".
+        ///     After: @"c:\hello\world\23468923475634836.extension"
         /// </summary>
         /// <param name="info"></param>
         /// <param name="withExtension"></param>
@@ -151,11 +147,11 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// If the <paramref name="directoryInfo" /> does not exist, attempt to create it.
+        ///     If the <paramref name="directoryInfo" /> does not exist, attempt to create it.
         /// </summary>
         /// <param name="directoryInfo"></param>
         /// <param name="changeCompressionTo">
-        /// Suggest if folder comperssion be Enabled or Disabled. Defaults to null.
+        ///     Suggest if folder comperssion be Enabled or Disabled. Defaults to null.
         /// </param>
         /// <param name="requestReadAccess"></param>
         /// <param name="requestWriteAccess"></param>
@@ -271,7 +267,7 @@ namespace Librainian.Extensions {
             return managed;
         }
 
-        public static IEnumerable<string> ToPaths( [NotNull] this DirectoryInfo directoryInfo ) {
+        public static IEnumerable< string > ToPaths( [NotNull] this DirectoryInfo directoryInfo ) {
             if ( directoryInfo == null ) {
                 throw new ArgumentNullException( "directoryInfo" );
             }
@@ -279,7 +275,7 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// (does not create path)
+        ///     (does not create path)
         /// </summary>
         /// <param name="basePath"></param>
         /// <param name="d"></param>

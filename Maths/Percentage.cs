@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Percentage.cs" was last cleaned by Rick on 2014/08/10 at 4:32 AM
+// "Librainian/Percentage.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 #endregion
 
 namespace Librainian.Maths {
@@ -31,7 +31,7 @@ namespace Librainian.Maths {
     [DataContract( IsReference = true )]
     [Serializable]
     [Immutable]
-    public class Percentage : IComparable<Percentage>, IComparable<Double>, IEquatable<Percentage> {
+    public class Percentage : IComparable< Percentage >, IComparable< Double >, IEquatable< Percentage > {
         /// <summary>
         ///     1
         /// </summary>
@@ -42,8 +42,7 @@ namespace Librainian.Maths {
         /// </summary>
         public const Double Minimum = 0f;
 
-        [DataMember]
-        public readonly BigRational Value;
+        [DataMember] public readonly BigRational Value;
 
         /// <summary>
         ///     Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.
@@ -60,7 +59,7 @@ namespace Librainian.Maths {
                 this.Value = value;
             }
         }
-        
+
         /// <summary>
         ///     Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.
         /// </summary>
@@ -102,11 +101,13 @@ namespace Librainian.Maths {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( [NotNull] Percentage left, [NotNull] Percentage right ) {
-            if ( left == null )
+            if ( left == null ) {
                 throw new ArgumentNullException( "left" );
-            if ( right == null )
+            }
+            if ( right == null ) {
                 throw new ArgumentNullException( "right" );
-            return left.Value == right.Value ;
+            }
+            return left.Value == right.Value;
         }
 
         public static Percentage Parse( [NotNull] String value ) {
@@ -122,9 +123,6 @@ namespace Librainian.Maths {
             }
             Double value;
             if ( !Double.TryParse( numberString, out value ) ) {
-
-                
-
                 value = Double.NaN;
             }
             result = new Percentage( value );
@@ -132,7 +130,7 @@ namespace Librainian.Maths {
         }
 
         public override String ToString() {
-            return String.Format( "{0:P1}", (Decimal)this.Value );
+            return String.Format( "{0:P1}", ( Decimal ) this.Value );
         }
 
         /// <summary>
@@ -142,15 +140,15 @@ namespace Librainian.Maths {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Percentage Combine( Percentage left, Percentage right ) {
-            return new Percentage( ( left.Value + right.Value ) / 2.0 );
+            return new Percentage( ( left.Value + right.Value )/2.0 );
         }
 
         public static implicit operator Double( Percentage special ) {
             return ( double ) special.Value;
-        } 
-        
+        }
+
         public static implicit operator Decimal( Percentage special ) {
-            return ( Decimal )special.Value;
+            return ( Decimal ) special.Value;
         }
 
         public static implicit operator Percentage( Single value ) {

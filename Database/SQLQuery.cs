@@ -1,26 +1,23 @@
 ﻿#region License & Information
-
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
-// "Librainian2/SQLQuery.cs" was last cleaned by Rick on 2014/08/08 at 2:26 PM
-
-#endregion License & Information
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
+// 
+// "Librainian/SQLQuery.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+#endregion
 
 namespace Librainian.Database {
-
     using System;
     using System.Collections.Concurrent;
     using System.Data;
@@ -36,7 +33,6 @@ namespace Librainian.Database {
 
     [Obsolete( "No access to a local server atm." )]
     public sealed class SQLQuery : IDisposable {
-
         //[Obsolete( "No access to a local server atm." )]
         //private static readonly string SQLConnectionString = new SqlConnectionStringBuilder {
         //    ApplicationIntent = ApplicationIntent.ReadWrite,
@@ -54,7 +50,7 @@ namespace Librainian.Database {
         //    Password = Parameters.Databases.MainServer.Password
         //}.ConnectionString;
 
-        public static readonly ConcurrentDictionary<String, TimeSpan> QueryAverages = new ConcurrentDictionary<String, TimeSpan>();
+        public static readonly ConcurrentDictionary< String, TimeSpan > QueryAverages = new ConcurrentDictionary< String, TimeSpan >();
 
         public readonly Cache Cash = new Cache(); //TODO
 
@@ -72,7 +68,7 @@ namespace Librainian.Database {
         internal String UserName;
 
         /// <summary>
-        /// Create a database object to MainServer
+        ///     Create a database object to MainServer
         /// </summary>
         [Obsolete( "No access to a local server atm." )]
         public SQLQuery( [NotNull] String library, [NotNull] String server, [NotNull] String username, [NotNull] String password, [NotNull] String sproc ) {
@@ -105,7 +101,7 @@ namespace Librainian.Database {
         }
 
         /// <summary>
-        /// The parameter collection for this database connection
+        ///     The parameter collection for this database connection
         /// </summary>
         public SqlParameterCollection Params {
             get {
@@ -140,14 +136,14 @@ namespace Librainian.Database {
         }
 
         public void NonQuery( String sproc ) {
-        TryAgain:
+            TryAgain:
             try {
                 var stopwatch = Stopwatch.StartNew();
                 if ( this.Open() ) {
                     this.Command.CommandText = sproc;
                     this.Command.ExecuteNonQuery();
                 }
-                QueryAverages.AddOrUpdate( key: sproc, addValue: stopwatch.Elapsed, updateValueFactory: ( s, span ) => new Milliseconds( ( decimal )( QueryAverages[ sproc ].Add( stopwatch.Elapsed ).TotalMilliseconds / 2.0 ) ) );
+                QueryAverages.AddOrUpdate( key: sproc, addValue: stopwatch.Elapsed, updateValueFactory: ( s, span ) => new Milliseconds( ( decimal ) ( QueryAverages[ sproc ].Add( stopwatch.Elapsed ).TotalMilliseconds/2.0 ) ) );
                 foreach ( var pair in QueryAverages.Where( pair => pair.Value >= Seconds.One ) ) {
                     String.Format( "[{0}] average time is {1}", pair.Key, pair.Value.Simpler() ).TimeDebug();
                     TimeSpan value;
@@ -177,7 +173,7 @@ namespace Librainian.Database {
 
         [Obsolete]
         public async void NonQueryAsync( String sproc ) {
-        TryAgain:
+            TryAgain:
             try {
                 if ( this.Open() ) {
                     if ( null != this.ExecuteNonQueryAsyncTask ) {
@@ -219,7 +215,7 @@ namespace Librainian.Database {
         }
 
         public DataTableReader Query( String sproc ) {
-        TryAgain:
+            TryAgain:
             try {
                 var stopwatch = Stopwatch.StartNew();
 
@@ -233,7 +229,7 @@ namespace Librainian.Database {
                     }
                     table.EndLoadData();
 
-                    QueryAverages.AddOrUpdate( key: sproc, addValue: stopwatch.Elapsed, updateValueFactory: ( s, span ) => new Milliseconds( ( decimal )( QueryAverages[ sproc ].Add( stopwatch.Elapsed ).TotalMilliseconds / 2.0 ) ) );
+                    QueryAverages.AddOrUpdate( key: sproc, addValue: stopwatch.Elapsed, updateValueFactory: ( s, span ) => new Milliseconds( ( decimal ) ( QueryAverages[ sproc ].Add( stopwatch.Elapsed ).TotalMilliseconds/2.0 ) ) );
 
                     return table.CreateDataReader();
                 }
@@ -259,10 +255,9 @@ namespace Librainian.Database {
         }
 
         internal Boolean Open( TimeSpan? timeout = null ) {
-        TryAgain:
+            TryAgain:
             try {
                 if ( String.IsNullOrWhiteSpace( this.Connection.ConnectionString ) ) {
-
                     //this.Connection.ConnectionString = SQLConnectionString;
                     this.Connection.InfoMessage += ( sender, sqlInfoMessageEventArgs ) => String.Format( "[{0}] {1}", this.Server, sqlInfoMessageEventArgs.Message ).TimeDebug();
                 }

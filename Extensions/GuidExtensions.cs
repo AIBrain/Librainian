@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/GuidExtensions.cs" was last cleaned by Rick on 2014/08/08 at 2:26 PM
+// "Librainian/GuidExtensions.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 #endregion
 
 namespace Librainian.Extensions {
@@ -35,7 +35,7 @@ namespace Librainian.Extensions {
             s.RemoveAll( s1 => s1.Any( c => !Char.IsDigit( c ) ) );
 
             if ( s.Count >= 16 ) {
-                var b = new byte[ s.Count ];
+                var b = new byte[s.Count];
                 for ( var i = 0; i < s.Count; i++ ) {
                     b[ i ] = Convert.ToByte( s[ i ] );
                 }
@@ -58,7 +58,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         public static Guid Munge( this Guid left, Guid right ) {
             const int bytecount = 16;
-            var destByte = new byte[ bytecount ];
+            var destByte = new byte[bytecount];
             var lhsBytes = left.ToByteArray();
             var rhsBytes = right.ToByteArray();
             Assert.AreEqual( lhsBytes.Length, destByte.Length );
@@ -66,7 +66,7 @@ namespace Librainian.Extensions {
 
             for ( var i = 0; i < bytecount; i++ ) {
                 unchecked {
-                    destByte[ i ] = ( byte )( lhsBytes[ i ] ^ rhsBytes[ i ] );
+                    destByte[ i ] = ( byte ) ( lhsBytes[ i ] ^ rhsBytes[ i ] );
                 }
             }
             return new Guid( destByte );
@@ -91,13 +91,13 @@ namespace Librainian.Extensions {
                 var year = BitConverter.ToInt32( bytes, 0 );
                 var dayofYear = BitConverter.ToUInt16( bytes, 4 );
                 var millisecond = BitConverter.ToUInt16( bytes, 6 );
-                var dayofweek = ( DayOfWeek )bytes[ 8 ];
+                var dayofweek = ( DayOfWeek ) bytes[ 8 ];
                 var day = bytes[ 9 ];
                 var hour = bytes[ 10 ];
                 var minute = bytes[ 11 ];
                 var second = bytes[ 12 ];
                 var month = bytes[ 13 ];
-                var kind = ( DateTimeKind )bytes[ 15 ];
+                var kind = ( DateTimeKind ) bytes[ 15 ];
                 var result = new DateTime( year: year, month: month, day: day, hour: hour, minute: minute, second: second, millisecond: millisecond, kind: kind );
                 Assert.AreEqual( result.DayOfYear, dayofYear );
                 Assert.AreEqual( result.DayOfWeek, dayofweek );
@@ -144,9 +144,10 @@ namespace Librainian.Extensions {
                 return Guid.Empty;
             }
         }
+
         public static Guid ToGuid( UInt64 mostImportant, UInt64 somewhatImportant, UInt64 leastImportant ) {
             var all = mostImportant.GetHashMerge( somewhatImportant ).GetHashMerge( leastImportant );
-            var buffer = new byte[ 16 ];
+            var buffer = new byte[16];
 
             try {
                 BitConverter.GetBytes( leastImportant.GetHashCode() ).CopyTo( array: buffer, index: 12 );

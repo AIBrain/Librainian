@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/HashSetLinqAccess.cs" was last cleaned by Rick on 2014/08/08 at 2:26 PM
+// "Librainian/HashSetLinqAccess.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 #endregion
 
 namespace Librainian.Extensions {
@@ -29,7 +29,7 @@ namespace Librainian.Extensions {
     /// <seealso
     ///     cref="http://blogs.windowsclient.net/damonwildercarr/archive/2008/09/10/expose-new-linq-operations-from-the-screaming-hashset-lt-t-gt-collection.aspx" />
     public static class HashSetLinqAccess {
-        public static HashSet<T> AddRange<T>( this HashSet<T> hashSet, IEnumerable<T> range ) {
+        public static HashSet< T > AddRange< T >( this HashSet< T > hashSet, IEnumerable< T > range ) {
             if ( Equals( hashSet, null ) ) {
                 throw new ArgumentNullException( "hashSet" );
             }
@@ -42,7 +42,7 @@ namespace Librainian.Extensions {
             return hashSet;
         }
 
-        public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable, IEqualityComparer<T> comparer ) {
+        public static HashSet< T > ToHashSet< T >( this IEnumerable< T > fromEnumerable, IEqualityComparer< T > comparer ) {
             if ( null == fromEnumerable ) {
                 throw new ArgumentNullException( "fromEnumerable" );
             }

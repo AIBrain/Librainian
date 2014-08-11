@@ -1,26 +1,23 @@
 #region License & Information
-
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
-// "Librainian2/FileInfos.cs" was last cleaned by Rick on 2014/08/08 at 2:26 PM
-
-#endregion License & Information
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
+// 
+// "Librainian/FileInfos.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+#endregion
 
 namespace Librainian.Extensions {
-
     using System;
     using System.Collections.Generic;
     using System.Drawing.Imaging;
@@ -101,7 +98,6 @@ namespace Librainian.Extensions {
         // return bestGuess; }
 
         public enum SearchStyle {
-
             /// <summary>
             /// </summary>
             FilesFirst,
@@ -211,26 +207,28 @@ namespace Librainian.Extensions {
         */
 
         /// <summary>
-        /// Search all possible drives for any files matching the <paramref
-        /// name="fileSearchPatterns" />.
+        ///     Search all possible drives for any files matching the
+        ///     <paramref
+        ///         name="fileSearchPatterns" />
+        ///     .
         /// </summary>
         /// <param name="fileSearchPatterns">List of patterns to search for.</param>
         /// <param name="cancellationToken"></param>
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
-        public static void FindFiles( [NotNull] IEnumerable<String> fileSearchPatterns, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+        public static void FindFiles( [NotNull] IEnumerable< String > fileSearchPatterns, CancellationToken cancellationToken, Action< FileInfo > onFindFile = null, Action< DirectoryInfo > onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( "fileSearchPatterns" );
             }
             try {
                 DriveInfo.GetDrives().AsParallel().WithDegreeOfParallelism( 26 ).WithExecutionMode( ParallelExecutionMode.ForceParallelism ).ForAll( drive => {
-                    if ( !drive.IsReady || drive.DriveType == DriveType.NoRootDirectory || !drive.RootDirectory.Exists ) {
-                        return;
-                    }
-                    String.Format( "Scanning [{0}]", drive.VolumeLabel ).TimeDebug();
-                    FindFiles( fileSearchPatterns: fileSearchPatterns, cancellationToken: cancellationToken, startingFolder: drive.RootDirectory, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
-                } );
+                                                                                                                                                         if ( !drive.IsReady || drive.DriveType == DriveType.NoRootDirectory || !drive.RootDirectory.Exists ) {
+                                                                                                                                                             return;
+                                                                                                                                                         }
+                                                                                                                                                         String.Format( "Scanning [{0}]", drive.VolumeLabel ).TimeDebug();
+                                                                                                                                                         FindFiles( fileSearchPatterns: fileSearchPatterns, cancellationToken: cancellationToken, startingFolder: drive.RootDirectory, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
+                                                                                                                                                     } );
             }
             catch ( UnauthorizedAccessException ) { }
             catch ( DirectoryNotFoundException ) { }
@@ -238,27 +236,29 @@ namespace Librainian.Extensions {
             catch ( SecurityException ) { }
             catch ( AggregateException exception ) {
                 exception.Handle( ex => {
-                    if ( ex is UnauthorizedAccessException ) {
-                        return true;
-                    }
-                    if ( ex is DirectoryNotFoundException ) {
-                        return true;
-                    }
-                    if ( ex is IOException ) {
-                        return true;
-                    }
-                    if ( ex is SecurityException ) {
-                        return true;
-                    }
-                    ex.Log();
-                    return false;
-                } );
+                                      if ( ex is UnauthorizedAccessException ) {
+                                          return true;
+                                      }
+                                      if ( ex is DirectoryNotFoundException ) {
+                                          return true;
+                                      }
+                                      if ( ex is IOException ) {
+                                          return true;
+                                      }
+                                      if ( ex is SecurityException ) {
+                                          return true;
+                                      }
+                                      ex.Log();
+                                      return false;
+                                  } );
             }
         }
 
         /// <summary>
-        /// Search the <paramref name="startingFolder" /> for any files matching the <paramref
-        /// name="fileSearchPatterns" />.
+        ///     Search the <paramref name="startingFolder" /> for any files matching the
+        ///     <paramref
+        ///         name="fileSearchPatterns" />
+        ///     .
         /// </summary>
         /// <param name="fileSearchPatterns">List of patterns to search for.</param>
         /// <param name="startingFolder">The folder to start the search.</param>
@@ -266,7 +266,7 @@ namespace Librainian.Extensions {
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
-        public static void FindFiles( IEnumerable<String> fileSearchPatterns, DirectoryInfo startingFolder, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+        public static void FindFiles( IEnumerable< String > fileSearchPatterns, DirectoryInfo startingFolder, CancellationToken cancellationToken, Action< FileInfo > onFindFile = null, Action< DirectoryInfo > onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( "fileSearchPatterns" );
             }
@@ -274,111 +274,110 @@ namespace Librainian.Extensions {
                 throw new ArgumentNullException( "startingFolder" );
             }
             try {
-                var searchPatterns = fileSearchPatterns as IList<String> ?? fileSearchPatterns.ToList();
+                var searchPatterns = fileSearchPatterns as IList< String > ?? fileSearchPatterns.ToList();
                 searchPatterns.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( searchPattern => {
 #if DEEPDEBUG
 
     //String.Format( "Searching folder {0} for {1}.", startingFolder.FullName, searchPattern ).TimeDebug();
 #endif
-                    if ( cancellationToken.IsCancellationRequested ) {
-                        return;
-                    }
-                    try {
-                        var folders = startingFolder.EnumerateDirectories( "*", SearchOption.TopDirectoryOnly );
-                        folders.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( folder => {
+                                                                                     if ( cancellationToken.IsCancellationRequested ) {
+                                                                                         return;
+                                                                                     }
+                                                                                     try {
+                                                                                         var folders = startingFolder.EnumerateDirectories( "*", SearchOption.TopDirectoryOnly );
+                                                                                         folders.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( folder => {
 #if DEEPDEBUG
 
     //String.Format( "Found folder {0}.", folder ).TimeDebug();
 #endif
-                            if ( cancellationToken.IsCancellationRequested ) {
-                                return;
-                            }
-                            try {
-                                if ( onEachDirectory != null ) {
-                                    onEachDirectory( folder );
-                                }
-                            }
-                            catch ( Exception exception ) {
-                                exception.Log();
-                            }
-                            if ( searchStyle == SearchStyle.FoldersFirst ) {
-                                FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, startingFolder: folder, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
-                            }
+                                                                                                                                                       if ( cancellationToken.IsCancellationRequested ) {
+                                                                                                                                                           return;
+                                                                                                                                                       }
+                                                                                                                                                       try {
+                                                                                                                                                           if ( onEachDirectory != null ) {
+                                                                                                                                                               onEachDirectory( folder );
+                                                                                                                                                           }
+                                                                                                                                                       }
+                                                                                                                                                       catch ( Exception exception ) {
+                                                                                                                                                           exception.Log();
+                                                                                                                                                       }
+                                                                                                                                                       if ( searchStyle == SearchStyle.FoldersFirst ) {
+                                                                                                                                                           FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, startingFolder: folder, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
+                                                                                                                                                       }
 
-                            try {
-                                var files = folder.EnumerateFiles( searchPattern, SearchOption.TopDirectoryOnly );
-                                files.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( file => {
+                                                                                                                                                       try {
+                                                                                                                                                           var files = folder.EnumerateFiles( searchPattern, SearchOption.TopDirectoryOnly );
+                                                                                                                                                           files.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( file => {
+                                                                                                                                                                                                                       //String.Format( "Found file {0}.", file ).TimeDebug();
+                                                                                                                                                                                                                       if ( cancellationToken.IsCancellationRequested ) {
+                                                                                                                                                                                                                           return;
+                                                                                                                                                                                                                       }
+                                                                                                                                                                                                                       try {
+                                                                                                                                                                                                                           if ( onFindFile != null ) {
+                                                                                                                                                                                                                               onFindFile( file );
+                                                                                                                                                                                                                           }
+                                                                                                                                                                                                                       }
+                                                                                                                                                                                                                       catch ( Exception exception ) {
+                                                                                                                                                                                                                           exception.Log();
+                                                                                                                                                                                                                       }
+                                                                                                                                                                                                                   } );
 
-                                    //String.Format( "Found file {0}.", file ).TimeDebug();
-                                    if ( cancellationToken.IsCancellationRequested ) {
-                                        return;
-                                    }
-                                    try {
-                                        if ( onFindFile != null ) {
-                                            onFindFile( file );
-                                        }
-                                    }
-                                    catch ( Exception exception ) {
-                                        exception.Log();
-                                    }
-                                } );
+                                                                                                                                                           //String.Format( "Done searching {0} for {1}.", folder.Name, searchPattern ).TimeDebug();
+                                                                                                                                                       }
+                                                                                                                                                       catch ( UnauthorizedAccessException ) { }
+                                                                                                                                                       catch ( DirectoryNotFoundException ) { }
+                                                                                                                                                       catch ( IOException ) { }
+                                                                                                                                                       catch ( SecurityException ) { }
+                                                                                                                                                       catch ( AggregateException exception ) {
+                                                                                                                                                           exception.Handle( ex => {
+                                                                                                                                                                                 if ( ex is UnauthorizedAccessException ) {
+                                                                                                                                                                                     return true;
+                                                                                                                                                                                 }
+                                                                                                                                                                                 if ( ex is DirectoryNotFoundException ) {
+                                                                                                                                                                                     return true;
+                                                                                                                                                                                 }
+                                                                                                                                                                                 if ( ex is IOException ) {
+                                                                                                                                                                                     return true;
+                                                                                                                                                                                 }
+                                                                                                                                                                                 if ( ex is SecurityException ) {
+                                                                                                                                                                                     return true;
+                                                                                                                                                                                 }
+                                                                                                                                                                                 ex.Log();
+                                                                                                                                                                                 return false;
+                                                                                                                                                                             } );
+                                                                                                                                                       }
 
-                                //String.Format( "Done searching {0} for {1}.", folder.Name, searchPattern ).TimeDebug();
-                            }
-                            catch ( UnauthorizedAccessException ) { }
-                            catch ( DirectoryNotFoundException ) { }
-                            catch ( IOException ) { }
-                            catch ( SecurityException ) { }
-                            catch ( AggregateException exception ) {
-                                exception.Handle( ex => {
-                                    if ( ex is UnauthorizedAccessException ) {
-                                        return true;
-                                    }
-                                    if ( ex is DirectoryNotFoundException ) {
-                                        return true;
-                                    }
-                                    if ( ex is IOException ) {
-                                        return true;
-                                    }
-                                    if ( ex is SecurityException ) {
-                                        return true;
-                                    }
-                                    ex.Log();
-                                    return false;
-                                } );
-                            }
-
-                            if ( searchStyle == SearchStyle.FilesFirst ) {
-                                FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, startingFolder: folder, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
-                            }
-                            else {
-                                FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, startingFolder: folder, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
-                            }
-                        } );
-                    }
-                    catch ( UnauthorizedAccessException ) { }
-                    catch ( DirectoryNotFoundException ) { }
-                    catch ( IOException ) { }
-                    catch ( SecurityException ) { }
-                    catch ( AggregateException exception ) {
-                        exception.Handle( ex => {
-                            if ( ex is UnauthorizedAccessException ) {
-                                return true;
-                            }
-                            if ( ex is DirectoryNotFoundException ) {
-                                return true;
-                            }
-                            if ( ex is IOException ) {
-                                return true;
-                            }
-                            if ( ex is SecurityException ) {
-                                return true;
-                            }
-                            ex.Log();
-                            return false;
-                        } );
-                    }
-                } );
+                                                                                                                                                       if ( searchStyle == SearchStyle.FilesFirst ) {
+                                                                                                                                                           FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, startingFolder: folder, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
+                                                                                                                                                       }
+                                                                                                                                                       else {
+                                                                                                                                                           FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, startingFolder: folder, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
+                                                                                                                                                       }
+                                                                                                                                                   } );
+                                                                                     }
+                                                                                     catch ( UnauthorizedAccessException ) { }
+                                                                                     catch ( DirectoryNotFoundException ) { }
+                                                                                     catch ( IOException ) { }
+                                                                                     catch ( SecurityException ) { }
+                                                                                     catch ( AggregateException exception ) {
+                                                                                         exception.Handle( ex => {
+                                                                                                               if ( ex is UnauthorizedAccessException ) {
+                                                                                                                   return true;
+                                                                                                               }
+                                                                                                               if ( ex is DirectoryNotFoundException ) {
+                                                                                                                   return true;
+                                                                                                               }
+                                                                                                               if ( ex is IOException ) {
+                                                                                                                   return true;
+                                                                                                               }
+                                                                                                               if ( ex is SecurityException ) {
+                                                                                                                   return true;
+                                                                                                               }
+                                                                                                               ex.Log();
+                                                                                                               return false;
+                                                                                                           } );
+                                                                                     }
+                                                                                 } );
             }
             catch ( UnauthorizedAccessException ) { }
             catch ( DirectoryNotFoundException ) { }
@@ -386,27 +385,29 @@ namespace Librainian.Extensions {
             catch ( SecurityException ) { }
             catch ( AggregateException exception ) {
                 exception.Handle( ex => {
-                    if ( ex is UnauthorizedAccessException ) {
-                        return true;
-                    }
-                    if ( ex is DirectoryNotFoundException ) {
-                        return true;
-                    }
-                    if ( ex is IOException ) {
-                        return true;
-                    }
-                    if ( ex is SecurityException ) {
-                        return true;
-                    }
-                    ex.Log();
-                    return false;
-                } );
+                                      if ( ex is UnauthorizedAccessException ) {
+                                          return true;
+                                      }
+                                      if ( ex is DirectoryNotFoundException ) {
+                                          return true;
+                                      }
+                                      if ( ex is IOException ) {
+                                          return true;
+                                      }
+                                      if ( ex is SecurityException ) {
+                                          return true;
+                                      }
+                                      ex.Log();
+                                      return false;
+                                  } );
             }
         }
 
         /// <summary>
-        /// Search the <paramref name="startingFolder" /> for any files matching the <paramref
-        /// name="fileSearchPatterns" />.
+        ///     Search the <paramref name="startingFolder" /> for any files matching the
+        ///     <paramref
+        ///         name="fileSearchPatterns" />
+        ///     .
         /// </summary>
         /// <param name="fileSearchPatterns">List of patterns to search for.</param>
         /// <param name="startingFolder">The folder to start the search.</param>
@@ -414,7 +415,7 @@ namespace Librainian.Extensions {
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
-        public static void FindFiles( IEnumerable<String> fileSearchPatterns, Environment.SpecialFolder startingFolder, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+        public static void FindFiles( IEnumerable< String > fileSearchPatterns, Environment.SpecialFolder startingFolder, CancellationToken cancellationToken, Action< FileInfo > onFindFile = null, Action< DirectoryInfo > onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( "fileSearchPatterns" );
             }
@@ -448,8 +449,8 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Before: "hello.txt".
-        /// After: "hello 345680969061906730476346.txt"
+        ///     Before: "hello.txt".
+        ///     After: "hello 345680969061906730476346.txt"
         /// </summary>
         /// <param name="info"></param>
         /// <param name="newExtension"></param>

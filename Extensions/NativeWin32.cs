@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/NativeWin32.cs" was last cleaned by Rick on 2014/08/08 at 2:26 PM
+// "Librainian/NativeWin32.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 #endregion
 
 namespace Librainian.Extensions {
@@ -76,6 +76,7 @@ namespace Librainian.Extensions {
         /// <see cref="http://msdn.microsoft.com/en-us/library/aa364428%28VS.85%29.aspx" />
         [DllImport( "kernel32", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false )]
         public static extern Boolean FindNextFile( SafeSearchHandle hFindFile, out Win32FindData lpFindData );
+
         /// <summary>
         ///     Win32 FILETIME structure.  The win32 documentation says this:
         ///     "Contains a 64-bit value representing the number of 100-nanosecond intervals since January 1, 1601 (UTC)."
@@ -86,6 +87,18 @@ namespace Librainian.Extensions {
             public uint dwLowDateTime;
 
             public uint dwHighDateTime;
+        }
+
+        /// <summary>
+        ///     Class to encapsulate a seach handle returned from FindFirstFile.  Using a wrapper
+        ///     like this ensures that the handle is properly cleaned up with FindClose.
+        /// </summary>
+        public class SafeSearchHandle : SafeHandleZeroOrMinusOneIsInvalid {
+            public SafeSearchHandle() : base( true ) { }
+
+            protected override Boolean ReleaseHandle() {
+                return FindClose( this.handle );
+            }
         }
 
         /// <summary>
@@ -112,23 +125,9 @@ namespace Librainian.Extensions {
 
             public uint dwReserved1;
 
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxPath )]
-            public String cFileName;
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxPath )] public String cFileName;
 
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
-            public String cAlternateFileName;
-        }
-
-        /// <summary>
-        ///     Class to encapsulate a seach handle returned from FindFirstFile.  Using a wrapper
-        ///     like this ensures that the handle is properly cleaned up with FindClose.
-        /// </summary>
-        public class SafeSearchHandle : SafeHandleZeroOrMinusOneIsInvalid {
-            public SafeSearchHandle() : base( true ) { }
-
-            protected override Boolean ReleaseHandle() {
-                return FindClose( this.handle );
-            }
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )] public String cAlternateFileName;
         }
     }
 }
