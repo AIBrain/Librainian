@@ -455,10 +455,12 @@ namespace Librainian.Collections {
         /// <typeparam name="T"> </typeparam>
         /// <param name="list"> </param>
         /// <param name="iterations"></param>
+        /// <param name="additionalDisorder"></param>
+        /// <param name="asFastasPossible"></param>
         /// <example>Deck.Shuffle( 7 );</example>
         /// <remarks>I know we could just do a list.orderby.random(), but I /want/ to try it this way.
         /// </remarks>
-        public static void Shuffle<T>( [NotNull] this List<T> list, Byte iterations = 1 ) {
+        public static void Shuffle<T>( [NotNull] this List<T> list, Byte iterations = 1, Boolean additionalDisorder = false, Boolean asFastasPossible = true ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
             }
@@ -469,6 +471,18 @@ namespace Librainian.Collections {
                 }
                 if ( !list.Any() ) {
                     return; //nothing to shuffle
+                }
+
+                if ( asFastasPossible ) {
+                    var copy = list.OrderBy( o => Randem.Next() ).ToList();
+                    list.Clear();
+                    if ( additionalDisorder ) {
+                        list.AddRange( copy.OrderBy( o => Randem.Next() ) );
+                    }
+                    else {
+                        list.AddRange( copy );
+                    }
+                    return;
                 }
 
                 var originalcount = list.LongCount();
@@ -484,7 +498,7 @@ namespace Librainian.Collections {
                 while ( iterations > 0 ) {
                     iterations--;
 
-                    var bag = new ConcurrentBag<T>( list.OrderBy( o => Randem.Next() ) );
+                    var bag = additionalDisorder ? new ConcurrentBag<T>( list.OrderBy( o => Randem.Next() ).AsParallel() ) : new ConcurrentBag<T>( list.AsParallel() );
                     bag.Should().NotBeEmpty( because: "made an unordered copy of all items" );
 
                     list.Clear();
@@ -492,25 +506,45 @@ namespace Librainian.Collections {
 
                     // pull the items out of the bag, and push them each into a random bucket
                     while ( bag.Any() ) {
-                        1.To( bucketCount ).OrderBy( o => Randem.Next() ).AsParallel().ForAll( index => {
-                            T item;
-                            if ( bag.TryTake( out item ) ) {
-                                buckets[ index - 1 ].Add( item );
-                            }
+                        if ( additionalDisorder ) {
+                            1.To( bucketCount ).OrderBy( o => Randem.Next() ).AsParallel().ForAll( index => {
+                                T item;
+                                if ( bag.TryTake( out item ) ) {
+                                    buckets[ index - 1 ].Add( item );
+                                }
 
-                        } );
+                            } );
+                        }
+                        else {
+                            1.To( bucketCount ).AsParallel().ForAll( index => {
+                                T item;
+                                if ( bag.TryTake( out item ) ) {
+                                    buckets[ index - 1 ].Add( item );
+                                }
+
+                            } );
+                        }
                     }
                     bag.Should().BeEmpty( "All items should have been taken out of the bag" );
 
                     // pull all the items into the buckets
                     while ( bag.Count < originalcount ) {
-
-                        1.To( bucketCount ).OrderBy( o => Randem.Next() ).AsParallel().ForAll( index => {
-                            T item;
-                            if ( buckets[ index - 1 ].TryTake( out item ) ) {
-                                bag.Add( item );
-                            }
-                        } );
+                        if ( additionalDisorder ) {
+                            1.To( bucketCount ).OrderBy( o => Randem.Next() ).AsParallel().ForAll( index => {
+                                T item;
+                                if ( buckets[ index - 1 ].TryTake( out item ) ) {
+                                    bag.Add( item );
+                                }
+                            } );
+                        }
+                        else {
+                            1.To( bucketCount ).AsParallel().ForAll( index => {
+                                T item;
+                                if ( buckets[ index - 1 ].TryTake( out item ) ) {
+                                    bag.Add( item );
+                                }
+                            } );
+                        }
                     }
                     if ( bag.LongCount() < originalcount ) {
 
@@ -524,7 +558,12 @@ namespace Librainian.Collections {
                     // put them back into the list in another random order.
                     // I know, I know.. why didn't we do this first? Proof of Concept I guess.
                     // Besides, this whole function/process adds more randomness. I hope.
-                    list.AddRange( bag.OrderBy( o => Randem.Next() ) );
+                    if ( additionalDisorder ) {
+                        list.AddRange( bag.OrderBy( o => Randem.Next() ) );
+                    }
+                    else {
+                        list.AddRange( bag );
+                    }
                 }
 
                 // Old, !bad! way.
@@ -542,7 +581,7 @@ namespace Librainian.Collections {
 
         [Test]
         public static TimeSpan ShuffleTest() {
-            const int itemCount = 100000000;
+            const int itemCount = 1000000;
 
             var list = new List<int>();
             for ( var i = 0; i < itemCount; i++ ) {
