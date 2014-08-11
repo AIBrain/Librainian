@@ -185,7 +185,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override string ToString() {
-            return this.Value.PluralOf( "week" );
+            return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "week" ) );
         }
     }
 }
