@@ -434,7 +434,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="delay"></param>
         /// <returns></returns>
-        public static void PerformThreadSafeClick( [CanBeNull] this Button control, TimeSpan? delay = null ) {
+        public static void PushTheButton( [CanBeNull] this Button control, TimeSpan? delay = null ) {
             if ( !delay.HasValue ) {
                 delay = Seconds.One;
             }
