@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/ETACalculator.cs" was last cleaned by Rick on 2014/08/10 at 7:15 AM
+// "Librainian/ETACalculator.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
 #endregion
 
 namespace Librainian.Measurement.Time {
@@ -46,14 +46,14 @@ namespace Librainian.Measurement.Time {
         private Single _progress;
         private Timer _timer;
 
+        public ETACalculator() {
+            this.Reset( Seconds.One );
+        }
+
         /// <summary>
         ///     <para>The value to be updated to a value between 0 and 1 when possible.</para>
         /// </summary>
         public Single Progress { get { return Thread.VolatileRead( ref this._progress ); } set { Thread.VolatileWrite( ref this._progress, value ); } }
-
-        public ETACalculator() {
-            this.Reset( Seconds.One );
-        }
 
         public void Reset( TimeSpan samplingPeriod ) {
             this._timer.Close();

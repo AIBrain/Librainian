@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/MegaElectronVolts.cs" was last cleaned by Rick on 2014/08/08 at 2:29 PM
+// "Librainian/MegaElectronVolts.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
 #endregion
 
 namespace Librainian.Measurement.Physics {
@@ -134,7 +134,6 @@ namespace Librainian.Measurement.Physics {
         public MilliElectronVolts ToMilliElectronVolts() {
             return new MilliElectronVolts( this.Value*InOneMilliElectronVolt );
         }
-
 
         public TeraElectronVolts ToTeraElectronVolts() {
             return new TeraElectronVolts( this.Value*InOneTeraElectronVolt );

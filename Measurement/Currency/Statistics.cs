@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/Statistics.cs" was last cleaned by Rick on 2014/08/08 at 2:28 PM
+// "Librainian/Statistics.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
 #endregion
 
 namespace Librainian.Measurement.Currency {

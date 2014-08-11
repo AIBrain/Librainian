@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/TickingClock.cs" was last cleaned by Rick on 2014/08/09 at 2:16 PM
+// "Librainian/TickingClock.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
 #endregion
 
 namespace Librainian.Measurement.Time.Clocks {
@@ -25,11 +25,18 @@ namespace Librainian.Measurement.Time.Clocks {
     /// <summary>
     ///     <para>Starts a forward-ticking clock at the given time with settable events.</para>
     ///     <para>Should be threadsafe.</para>
-    /// <para>Settable events are:
-    /// <para><see cref="OnHourTick"/></para>
-    /// <para><see cref="OnMinuteTick"/></para>
-    /// <para><see cref="OnSecondTick"/></para>
-    /// </para>
+    ///     <para>
+    ///         Settable events are:
+    ///         <para>
+    ///             <see cref="OnHourTick" />
+    ///         </para>
+    ///         <para>
+    ///             <see cref="OnMinuteTick" />
+    ///         </para>
+    ///         <para>
+    ///             <see cref="OnSecondTick" />
+    ///         </para>
+    ///     </para>
     /// </summary>
     public class TickingClock {
         /// <summary>
