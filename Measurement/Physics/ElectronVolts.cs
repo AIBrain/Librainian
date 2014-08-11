@@ -200,10 +200,6 @@ namespace Librainian.Measurement.Physics {
             return new MilliElectronVolts( this.Value*InOneMilliElectronVolt );
         }
 
-        [Obsolete( "Use Display() instead" )]
-        public override string ToString() {
-            return base.ToString();
-        }
 
         public TeraElectronVolts ToTeraElectronVolts() {
             return new TeraElectronVolts( this.Value*InOneTeraElectronVolt );

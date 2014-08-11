@@ -28,7 +28,6 @@ namespace Librainian.Maths {
     using Annotations;
     using Collections;
     using FluentAssertions;
-    using IO;
     using Measurement.Time;
     using Numerics;
     using Parsing;
