@@ -429,12 +429,25 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        ///     Threadsafe <see cref="Button.PerformClick" />.
+        ///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
         /// </summary>
         /// <param name="control"></param>
         /// <param name="delay"></param>
         /// <returns></returns>
-        public static void PushTheButton( [CanBeNull] this Button control, TimeSpan? delay = null ) {
+        /// <seealso cref="Push"/>
+        public static void PerformThreadSafeClick( [CanBeNull] this Button control, TimeSpan? delay = null ) {
+            control.Push( delay );
+        }
+
+        
+
+        /// <summary>
+        ///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="delay"></param>
+        /// <returns></returns>
+        public static void Push( [CanBeNull] this Button control, TimeSpan? delay = null ) {
             if ( !delay.HasValue ) {
                 delay = Seconds.One;
             }

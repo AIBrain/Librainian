@@ -22,6 +22,7 @@ namespace Librainian.Collections {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
     using System.Linq;
     using System.Numerics;
     using System.Security.Cryptography;
@@ -29,6 +30,7 @@ namespace Librainian.Collections {
     using Annotations;
     using FluentAssertions;
     using Maths;
+    using NUnit.Framework;
     using Threading;
 
     public static class Extensions {
@@ -453,6 +455,8 @@ namespace Librainian.Collections {
         /// <param name="list"> </param>
         /// <param name="iterations"></param>
         /// <example>Deck.Shuffle( 7 );</example>
+        /// <remarks>I know we could just do a list.orderby.random(), but I /want/ to try it this way.
+        /// </remarks>
         public static void Shuffle<T>( [NotNull] this List<T> list, int iterations = 1 ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
@@ -471,9 +475,9 @@ namespace Librainian.Collections {
 
                 var bag = new ConcurrentBag<T>( list );
                 bag.Should().NotBeEmpty( because: "made a copy of all items" );
-                
+
                 list.Clear();
-                list.Should().BeEmpty(because: "emptied the original list" );
+                list.Should().BeEmpty( because: "emptied the original list" );
 
                 // make some buckets.
                 var sqrt = ( int )Math.Sqrt( originalcount );
@@ -483,14 +487,16 @@ namespace Librainian.Collections {
 
                 var buckets = new List<ConcurrentBag<T>>( 1.To( sqrt ).Select( i => new ConcurrentBag<T>() ) );
 
-                // pull the items out of the bag, and put them into a random bucket each
+                // pull the items out of the bag, and push them into a random bucket each
                 T item;
                 while ( bag.TryTake( out item ) ) {
                     var index = Randem.Next( 0, sqrt );
                     buckets[ index ].Add( item );
                 }
+                buckets.Count.Should().Be( sqrt );
                 bag.Should().BeEmpty( "All items should have been taken out of the bag" );
 
+                // pull all the items into the buckets
                 while ( bag.Count < originalcount ) {
                     var index = Randem.Next( minValue: 0, maxValue: buckets.Count );
                     var bucket = buckets[ index ];
@@ -504,8 +510,10 @@ namespace Librainian.Collections {
                 }
                 bag.Count.Should().Be( originalcount );
 
-                // put them back into the list
-                list.AddRange( bag );
+                // put them back into the list in another random order.
+                // I know, I know.. why didn't we do this first? Proof of Concept I guess.
+                // Besides, this whole function/process adds more randomness. I hope.
+                list.AddRange( bag.OrderBy( o => Randem.Next() ) );
             }
 
             // Old, !bad! way.
@@ -515,6 +523,24 @@ namespace Librainian.Collections {
             //    var index2 = randomFunc( 0, items ); //Randem.Next( 0, items );
             //    array.Swap( index1, index2 );
             //}
+        }
+
+        [Test]
+        public static TimeSpan ShuffleTest() {
+            const int itemCount = 100000000;
+
+            var list = new List<int>();
+            for ( var i = 0; i < itemCount; i++ ) {
+                list.Add( i );
+            }
+            var copyToCompare = list.ToList();
+
+            var stopwatch = Stopwatch.StartNew();
+            list.Shuffle();
+            stopwatch.Stop();
+            String.Format( "Shuffle" ).TimeDebug();
+
+            return stopwatch.Elapsed;
         }
 
         public static IEnumerable<IEnumerable<T>> Split<T>( [NotNull] this IEnumerable<T> list, int parts ) {

@@ -40,34 +40,36 @@ namespace Librainian.Measurement.Currency.BTC {
     /// </summary>
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{Formatted,nq}" )]
-    public class CoinWallet : IEnumerable< KeyValuePair< ICoin, ulong > >, ICoinWallet {
+    public class CoinWallet : IEnumerable<KeyValuePair<ICoin, ulong>>, ICoinWallet {
         /// <summary>
         ///     Count of each <see cref="ICoin" />.
         /// </summary>
-        [NotNull] private readonly ConcurrentDictionary< ICoin, UInt64 > _coins = new ConcurrentDictionary< ICoin, UInt64 >();
+        [NotNull]
+        private readonly ConcurrentDictionary<ICoin, UInt64> _coins = new ConcurrentDictionary<ICoin, UInt64>();
 
-        [DataMember] public Statistics Statistics;
+        [DataMember]
+        public Statistics Statistics;
 
         private CoinWallet( Guid id ) {
             this.ID = id;
             this.Statistics = new Statistics( id );
-            this.Actor = new ActionBlock< BitcoinTransactionMessage >( message => {
-                                                                           switch ( message.TransactionType ) {
-                                                                               case TransactionType.Deposit:
-                                                                                   this.Deposit( message.Coin, message.Quantity );
-                                                                                   break;
-                                                                               case TransactionType.Withdraw:
-                                                                                   this.TryWithdraw( message.Coin, message.Quantity );
-                                                                                   break;
-                                                                               default:
-                                                                                   throw new ArgumentOutOfRangeException();
-                                                                           }
-                                                                       }, Blocks.ManyProducers.ConsumeSerial );
+            this.Actor = new ActionBlock<BitcoinTransactionMessage>( message => {
+                switch ( message.TransactionType ) {
+                    case TransactionType.Deposit:
+                        this.Deposit( message.Coin, message.Quantity );
+                        break;
+                    case TransactionType.Withdraw:
+                        this.TryWithdraw( message.Coin, message.Quantity );
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }, Blocks.ManyProducers.ConsumeSerial );
         }
 
-        private ActionBlock< BitcoinTransactionMessage > Actor { get; set; }
+        private ActionBlock<BitcoinTransactionMessage> Actor { get; set; }
 
-        public IEnumerable< KeyValuePair< ICoin, UInt64 > > CoinsGrouped {
+        public IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped {
             [NotNull]
             get {
                 Assert.NotNull( this._coins );
@@ -75,8 +77,8 @@ namespace Librainian.Measurement.Currency.BTC {
             }
         }
 
-        public Action< KeyValuePair< ICoin, UInt64 > > OnDeposit { get; set; }
-        public Action< KeyValuePair< ICoin, UInt64 > > OnWithdraw { get; set; }
+        public Action<KeyValuePair<ICoin, UInt64>> OnDeposit { get; set; }
+        public Action<KeyValuePair<ICoin, UInt64>> OnWithdraw { get; set; }
 
         [UsedImplicitly]
         public String Formatted {
@@ -90,8 +92,9 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <summary>
         ///     Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.
         /// </summary>
-        public IEnumerable< ICoin > Coins {
-            [NotNull] get { return this._coins.SelectMany( pair => 1.To( pair.Value ), ( pair, valuePair ) => pair.Key ); }
+        public IEnumerable<ICoin> Coins {
+            [NotNull]
+            get { return this._coins.SelectMany( pair => 1.To( pair.Value ), ( pair, valuePair ) => pair.Key ); }
         }
 
         public Guid ID { get; private set; }
@@ -101,7 +104,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// </summary>
         public Decimal Total {
             get {
-                var total = this._coins.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue*pair.Value );
+                var total = this._coins.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue * pair.Value );
                 return total;
             }
         }
@@ -130,7 +133,7 @@ namespace Librainian.Measurement.Currency.BTC {
             }
             var onWithdraw = this.OnWithdraw;
             if ( onWithdraw != null ) {
-                onWithdraw( new KeyValuePair< ICoin, ulong >( coin, quantity ) );
+                onWithdraw( new KeyValuePair<ICoin, ulong>( coin, quantity ) );
             }
             return true;
         }
@@ -150,7 +153,7 @@ namespace Librainian.Measurement.Currency.BTC {
             return this._coins.TryGetValue( coin, out result ) ? result : UInt64.MinValue;
         }
 
-        public IEnumerator< KeyValuePair< ICoin, UInt64 > > GetEnumerator() {
+        public IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator() {
             return this._coins.GetEnumerator();
         }
 
@@ -178,11 +181,11 @@ namespace Librainian.Measurement.Currency.BTC {
             }
             finally {
                 if ( updateStatistics ) {
-                    this.Statistics.AllTimeDeposited += coin.FaceValue*quantity;
+                    this.Statistics.AllTimeDeposited += coin.FaceValue * quantity;
                 }
                 var onDeposit = this.OnDeposit;
                 if ( onDeposit != null ) {
-                    onDeposit( new KeyValuePair< ICoin, ulong >( coin, quantity ) );
+                    onDeposit( new KeyValuePair<ICoin, ulong>( coin, quantity ) );
                 }
             }
         }
@@ -210,7 +213,7 @@ namespace Librainian.Measurement.Currency.BTC {
                 return default( ICoin );
             }
 
-            possibleCoins.Shuffle( Randem.Next );
+            possibleCoins.Shuffle();
             var coin = possibleCoins.First();
 
             return this.TryWithdraw( coin.Key, 1 ) ? coin.Key : default( ICoin );
