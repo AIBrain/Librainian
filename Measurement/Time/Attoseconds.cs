@@ -162,7 +162,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override string ToString() {
-            return this.Value.PluralOf( "attosecond" );
+            return String.Format( "{0} as", this.Value );
         }
 
         public static Attoseconds Combine( Attoseconds left, Attoseconds right ) {
