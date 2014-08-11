@@ -33,22 +33,22 @@ namespace Librainian.Database.MMF {
         [DllImport( "kernel32", SetLastError = true )]
         public static extern Boolean CloseHandle( IntPtr handle );
 
-        [DllImport( "kernel32", SetLastError = true, CharSet = CharSet.Auto )]
-        public static extern IntPtr CreateFile( String lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile );
-
-        [DllImport( "kernel32", SetLastError = true, CharSet = CharSet.Auto )]
-        public static extern IntPtr CreateFileMapping( IntPtr hFile, IntPtr lpAttributes, int flProtect, int dwMaximumSizeLow, int dwMaximumSizeHigh, String lpName );
+        [DllImport( "kernel32", SetLastError = true )]
+        public static extern Boolean UnmapViewOfFile( IntPtr lpBaseAddress );
 
         [DllImport( "kernel32", SetLastError = true )]
         public static extern Boolean FlushViewOfFile( IntPtr lpBaseAddress, IntPtr dwNumBytesToFlush );
-
-        [DllImport( "kernel32", SetLastError = true )]
-        public static extern IntPtr MapViewOfFile( IntPtr hFileMappingObject, int dwDesiredAccess, int dwFileOffsetHigh, int dwFileOffsetLow, IntPtr dwNumBytesToMap );
 
         [DllImport( "kernel32", SetLastError = true, CharSet = CharSet.Auto )]
         public static extern IntPtr OpenFileMapping( int dwDesiredAccess, Boolean bInheritHandle, String lpName );
 
         [DllImport( "kernel32", SetLastError = true )]
-        public static extern Boolean UnmapViewOfFile( IntPtr lpBaseAddress );
+        public static extern IntPtr MapViewOfFile( IntPtr hFileMappingObject, int dwDesiredAccess, int dwFileOffsetHigh, int dwFileOffsetLow, IntPtr dwNumBytesToMap );
+
+        [DllImport( "kernel32", SetLastError = true, CharSet = CharSet.Auto )]
+        public static extern IntPtr CreateFileMapping( IntPtr hFile, IntPtr lpAttributes, int flProtect, int dwMaximumSizeLow, int dwMaximumSizeHigh, String lpName );
+
+        [DllImport( "kernel32", SetLastError = true, CharSet = CharSet.Auto )]
+        public static extern IntPtr CreateFile( String lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile );
     }
 }

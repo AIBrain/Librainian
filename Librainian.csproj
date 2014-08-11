@@ -144,6 +144,7 @@
     <Compile Include="Controls\Win32.cs" />
     <Compile Include="Controls\WindowWrapper.cs" />
     <Compile Include="Database\LocalDB.cs" />
+    <Compile Include="Database\MMF\Class1.cs" />
     <Compile Include="Database\MMF\Factory.cs" />
     <Compile Include="Database\MMF\FileMapIOException.cs" />
     <Compile Include="Database\MMF\ISerializeDeserialize.cs" />
