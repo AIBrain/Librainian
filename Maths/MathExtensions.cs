@@ -1020,6 +1020,42 @@ namespace Librainian.Maths {
         /// <summary>
         ///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
         /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="step"></param>
+        /// <returns></returns>
+        public static IEnumerable<int> To( this int start, int end, int step = 1 ) {
+            if ( start < 0 ) {
+                throw new ArgumentOutOfRangeException( "start", "'low' must be equal to or greater than zero." );
+            }
+
+            if ( step == 0 ) {
+                step = 1;
+            }
+
+            var reFrom = start; //bug here is the bug if from is less than zero
+
+            if ( start <= end ) {
+                for ( var ul = reFrom; ul <= end; ul += step ) {
+                    yield return ul;
+                    if ( ul == int.MaxValue ) {
+                        yield break;
+                    } //special case to deal with overflow
+                }
+            }
+            else {
+                for ( var ul = reFrom; ul >= end; ul -= step ) {
+                    yield return ul;
+                    if ( ul == int.MinValue ) {
+                        yield break;
+                    } //special case to deal with overflow
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
+        /// </summary>
         /// <param name="from"></param>
         /// <param name="end"></param>
         /// <param name="step"></param>
@@ -1097,32 +1133,32 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary>
-        ///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
-        /// </summary>
-        /// <param name="start"></param>
-        /// <param name="to"></param>
-        /// <param name="step"></param>
-        /// <returns></returns>
-        /// <remarks>A !huge! number will act like an infinite loop.</remarks>
-        public static IEnumerable< BigInteger > To( this int start, BigInteger to, UInt64 step = 1 ) {
-            if ( step == 0UL ) {
-                step = 1UL;
-            }
+        ///// <summary>
+        /////     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
+        ///// </summary>
+        ///// <param name="start"></param>
+        ///// <param name="to"></param>
+        ///// <param name="step"></param>
+        ///// <returns></returns>
+        ///// <remarks>A !huge! number will act like an infinite loop.</remarks>
+        //public static IEnumerable< BigInteger > To( this int start, BigInteger to, UInt64 step = 1 ) {
+        //    if ( step == 0UL ) {
+        //        step = 1UL;
+        //    }
 
-            BigInteger reFrom = start;
+        //    BigInteger reFrom = start;
 
-            if ( reFrom <= to ) {
-                for ( var ul = reFrom; ul <= to; ul += step ) {
-                    yield return ul;
-                }
-            }
-            else {
-                for ( var ul = reFrom; ul >= to; ul -= step ) {
-                    yield return ul;
-                }
-            }
-        }
+        //    if ( reFrom <= to ) {
+        //        for ( var ul = reFrom; ul <= to; ul += step ) {
+        //            yield return ul;
+        //        }
+        //    }
+        //    else {
+        //        for ( var ul = reFrom; ul >= to; ul -= step ) {
+        //            yield return ul;
+        //        }
+        //    }
+        //}
 
         /// <summary>
         ///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
