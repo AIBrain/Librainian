@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/ImmutableList.cs" was last cleaned by Rick on 2014/08/08 at 2:25 PM
+// "Librainian/ImmutableList.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
 #endregion
 
 namespace Librainian.Collections {
@@ -100,79 +100,6 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     Copies the list and adds a new value at the end.
-        /// </summary>
-        /// <param name="value">The value to add.</param>
-        /// <returns>A modified copy of this list.</returns>
-        public ImmutableList<T> CopyAndAdd( T value ) {
-            var newArray = new T[ this._mArray.Length + 1 ];
-            this._mArray.CopyTo( newArray, 0 );
-            newArray[ this._mArray.Length ] = value;
-            return new ImmutableList<T>( newArray );
-        }
-
-        /// <summary>
-        ///     Returns a new, cleared (empty) immutable list.
-        /// </summary>
-        /// <returns>A modified copy of this list.</returns>
-        public ImmutableList<T> CopyAndClear() {
-            return new ImmutableList<T>( new T[ 0 ] );
-        }
-
-        /// <summary>
-        ///     Copies the list adn inserts a particular element.
-        /// </summary>
-        /// <param name="index">The index at which to insert an element.</param>
-        /// <param name="item">The element to insert.</param>
-        /// <returns>A modified copy of this list.</returns>
-        public ImmutableList<T> CopyAndInsert( int index, T item ) {
-            var newArray = new T[ this._mArray.Length + 1 ];
-            Array.Copy( this._mArray, newArray, index );
-            newArray[ index ] = item;
-            Array.Copy( this._mArray, index, newArray, index + 1, this._mArray.Length - index );
-            return new ImmutableList<T>( newArray );
-        }
-
-        /// <summary>
-        ///     Copies the list and removes a particular element.
-        /// </summary>
-        /// <param name="item">The element to remove.</param>
-        /// <returns>A modified copy of this list.</returns>
-        public ImmutableList<T> CopyAndRemove( T item ) {
-            var index = this.IndexOf( item );
-            if ( index == -1 ) {
-                throw new ArgumentException( "Item not found in list." );
-            }
-
-            return this.CopyAndRemoveAt( index );
-        }
-
-        /// <summary>
-        ///     Copies the list and removes a particular element.
-        /// </summary>
-        /// <param name="index">The index of the element to remove.</param>
-        /// <returns>A modified copy of this list.</returns>
-        public ImmutableList<T> CopyAndRemoveAt( int index ) {
-            var newArray = new T[ this._mArray.Length - 1 ];
-            Array.Copy( this._mArray, newArray, index );
-            Array.Copy( this._mArray, index + 1, newArray, index, this._mArray.Length - index - 1 );
-            return new ImmutableList<T>( newArray );
-        }
-
-        /// <summary>
-        ///     Copies the list and modifies the specific value at the index provided.
-        /// </summary>
-        /// <param name="index">The index whose value is to be changed.</param>
-        /// <param name="item">The value to store at the specified index.</param>
-        /// <returns>A modified copy of this list.</returns>
-        public ImmutableList<T> CopyAndSet( int index, T item ) {
-            var newArray = new T[ this._mArray.Length ];
-            this._mArray.CopyTo( newArray, 0 );
-            newArray[ index ] = item;
-            return new ImmutableList<T>( newArray );
-        }
-
-        /// <summary>
         ///     Copies the contents of this list to a destination array.
         /// </summary>
         /// <param name="array">The array to copy elements to.</param>
@@ -241,6 +168,80 @@ namespace Librainian.Collections {
         public int IndexOf( T item ) {
             return Array.IndexOf( this._mArray, item );
         }
+
+        /// <summary>
+        ///     Copies the list and adds a new value at the end.
+        /// </summary>
+        /// <param name="value">The value to add.</param>
+        /// <returns>A modified copy of this list.</returns>
+        public ImmutableList< T > CopyAndAdd( T value ) {
+            var newArray = new T[this._mArray.Length + 1];
+            this._mArray.CopyTo( newArray, 0 );
+            newArray[ this._mArray.Length ] = value;
+            return new ImmutableList< T >( newArray );
+        }
+
+        /// <summary>
+        ///     Returns a new, cleared (empty) immutable list.
+        /// </summary>
+        /// <returns>A modified copy of this list.</returns>
+        public ImmutableList< T > CopyAndClear() {
+            return new ImmutableList< T >( new T[0] );
+        }
+
+        /// <summary>
+        ///     Copies the list adn inserts a particular element.
+        /// </summary>
+        /// <param name="index">The index at which to insert an element.</param>
+        /// <param name="item">The element to insert.</param>
+        /// <returns>A modified copy of this list.</returns>
+        public ImmutableList< T > CopyAndInsert( int index, T item ) {
+            var newArray = new T[this._mArray.Length + 1];
+            Array.Copy( this._mArray, newArray, index );
+            newArray[ index ] = item;
+            Array.Copy( this._mArray, index, newArray, index + 1, this._mArray.Length - index );
+            return new ImmutableList< T >( newArray );
+        }
+
+        /// <summary>
+        ///     Copies the list and removes a particular element.
+        /// </summary>
+        /// <param name="item">The element to remove.</param>
+        /// <returns>A modified copy of this list.</returns>
+        public ImmutableList< T > CopyAndRemove( T item ) {
+            var index = this.IndexOf( item );
+            if ( index == -1 ) {
+                throw new ArgumentException( "Item not found in list." );
+            }
+
+            return this.CopyAndRemoveAt( index );
+        }
+
+        /// <summary>
+        ///     Copies the list and removes a particular element.
+        /// </summary>
+        /// <param name="index">The index of the element to remove.</param>
+        /// <returns>A modified copy of this list.</returns>
+        public ImmutableList< T > CopyAndRemoveAt( int index ) {
+            var newArray = new T[this._mArray.Length - 1];
+            Array.Copy( this._mArray, newArray, index );
+            Array.Copy( this._mArray, index + 1, newArray, index, this._mArray.Length - index - 1 );
+            return new ImmutableList< T >( newArray );
+        }
+
+        /// <summary>
+        ///     Copies the list and modifies the specific value at the index provided.
+        /// </summary>
+        /// <param name="index">The index whose value is to be changed.</param>
+        /// <param name="item">The value to store at the specified index.</param>
+        /// <returns>A modified copy of this list.</returns>
+        public ImmutableList< T > CopyAndSet( int index, T item ) {
+            var newArray = new T[this._mArray.Length];
+            this._mArray.CopyTo( newArray, 0 );
+            newArray[ index ] = item;
+            return new ImmutableList< T >( newArray );
+        }
+
         /// <summary>
         ///     A helper method used below when a mutable method is accessed.  Several
         ///     operations on the collections interfaces IList&lt;T&gt; and

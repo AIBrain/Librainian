@@ -1,38 +1,34 @@
 #region License & Information
-
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
-// "Librainian2/DynamicExtensions.cs" was last cleaned by Rick on 2014/08/08 at 2:24 PM
-
-#endregion License & Information
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
+// 
+// "Librainian/DynamicExtensions.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
+#endregion
 
 namespace Librainian.AmazedSaint {
-
     using System;
     using System.Linq;
     using System.Xml.Linq;
 
     /// <summary>
-    /// Extension methods for our ElasticObject. See
-    /// http: //amazedsaint.blogspot.com/2010/02/introducing-elasticobject-for-net-40.html for details
+    ///     Extension methods for our ElasticObject. See
+    ///     http: //amazedsaint.blogspot.com/2010/02/introducing-elasticobject-for-net-40.html for details
     /// </summary>
     public static class DynamicExtensions {
-
         /// <summary>
-        /// Build an expando from an XElement
+        ///     Build an expando from an XElement
         /// </summary>
         /// <param name="el"></param>
         /// <returns></returns>
@@ -62,7 +58,7 @@ namespace Librainian.AmazedSaint {
         }
 
         /// <summary>
-        /// Converts an XElement to the expando
+        ///     Converts an XElement to the expando
         /// </summary>
         /// <param name="e"></param>
         /// <returns></returns>
@@ -71,7 +67,7 @@ namespace Librainian.AmazedSaint {
         }
 
         /// <summary>
-        /// Converts an expando to XElement
+        ///     Converts an expando to XElement
         /// </summary>
         /// <param name="e"></param>
         /// <returns></returns>
@@ -80,7 +76,7 @@ namespace Librainian.AmazedSaint {
         }
 
         /// <summary>
-        /// Returns an XElement from an ElasticObject
+        ///     Returns an XElement from an ElasticObject
         /// </summary>
         /// <param name="elastic"></param>
         /// <returns></returns>

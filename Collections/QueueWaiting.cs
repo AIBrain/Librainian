@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/QueueWaiting.cs" was last cleaned by Rick on 2014/08/08 at 2:25 PM
+// "Librainian/QueueWaiting.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 #endregion
 
 namespace Librainian.Collections {

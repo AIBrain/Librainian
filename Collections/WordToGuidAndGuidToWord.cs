@@ -1,26 +1,23 @@
 #region License & Information
-
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
-// "Librainian2/WordToGuidAndGuidToWord.cs" was last cleaned by Rick on 2014/08/08 at 2:25 PM
-
-#endregion License & Information
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
+// 
+// "Librainian/WordToGuidAndGuidToWord.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+#endregion
 
 namespace Librainian.Collections {
-
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -33,7 +30,7 @@ namespace Librainian.Collections {
     using Persistence;
 
     /// <summary>
-    /// Contains Words and their guids. Persisted to and from storage? Thread-safe?
+    ///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
     /// </summary>
     [DataContract( IsReference = true )]
     [Obsolete]
@@ -42,13 +39,9 @@ namespace Librainian.Collections {
 
         private readonly String _baseCollectionNameExt = String.Empty;
 
-        [DataMember]
-        [OptionalField]
-        private readonly ConcurrentDictionary<Guid, String> _guids = new ConcurrentDictionary<Guid, String>();
+        [DataMember] [OptionalField] private readonly ConcurrentDictionary< Guid, String > _guids = new ConcurrentDictionary< Guid, String >();
 
-        [DataMember]
-        [OptionalField]
-        private readonly ConcurrentDictionary<String, Guid> _words = new ConcurrentDictionary<String, Guid>();
+        [DataMember] [OptionalField] private readonly ConcurrentDictionary< String, Guid > _words = new ConcurrentDictionary< String, Guid >();
 
         public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) {
             if ( baseCollectionName == null ) {
@@ -71,12 +64,12 @@ namespace Librainian.Collections {
 
         public int Count { get { return Math.Min( this._words.Count, this._guids.Count ); } }
 
-        public IEnumerable<Guid> EachGuid { get { return this._guids.Keys; } }
+        public IEnumerable< Guid > EachGuid { get { return this._guids.Keys; } }
 
-        public IEnumerable<String> EachWord { get { return this._words.Keys; } }
+        public IEnumerable< String > EachWord { get { return this._words.Keys; } }
 
         /// <summary>
-        /// Get or set the guid for this word.
+        ///     Get or set the guid for this word.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -98,7 +91,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Get or set the word for this guid.
+        ///     Get or set the word for this guid.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -142,7 +135,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns true if the word is contained in the collections.
+        ///     Returns true if the word is contained in the collections.
         /// </summary>
         /// <param name="daword"></param>
         /// <returns></returns>
@@ -154,7 +147,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns true if the guid is contained in the collection.
+        ///     Returns true if the guid is contained in the collection.
         /// </summary>
         /// <param name="daguid"></param>
         /// <returns></returns>
@@ -189,7 +182,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns true if the collections are persisted to storage (or empty).
+        ///     Returns true if the collections are persisted to storage (or empty).
         /// </summary>
         /// <returns></returns>
         public Boolean Save() {

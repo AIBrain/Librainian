@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Extensions.cs" was last cleaned by Rick on 2014/08/09 at 4:08 PM
+// "Librainian/Extensions.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 #endregion
 
 namespace Librainian.Controls {
@@ -31,7 +31,7 @@ namespace Librainian.Controls {
     using Threading;
 
     public static class Extensions {
-        private static readonly List<Timer> FormTimers = new List<Timer>();
+        private static readonly List< Timer > FormTimers = new List< Timer >();
 
         /// <summary>
         ///     Just changes the cursor to the <see cref="Cursors.WaitCursor" />.
@@ -40,13 +40,13 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static void BusyCursor( [CanBeNull] this Control control ) {
             Threads.Wrap( () => {
-                if ( control != null ) {
-                    control.OnThread( () => {
-                        control.Cursor = Cursors.WaitCursor;
-                        control.Invalidate( invalidateChildren: false );
-                    } );
-                }
-            } );
+                              if ( control != null ) {
+                                  control.OnThread( () => {
+                                                        control.Cursor = Cursors.WaitCursor;
+                                                        control.Invalidate( invalidateChildren: false );
+                                                    } );
+                              }
+                          } );
         }
 
         /// <summary>
@@ -59,11 +59,11 @@ namespace Librainian.Controls {
                 return;
             }
             control.InvokeIfRequired( () => {
-                if ( action != null ) {
-                    action();
-                }
-                control.Refresh();
-            } );
+                                          if ( action != null ) {
+                                              action();
+                                          }
+                                          control.Refresh();
+                                      } );
         }
 
         public static void InvokeIfRequired( [NotNull] this Control control, [NotNull] Action action ) {
@@ -90,7 +90,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return false;
             }
-            return control.InvokeRequired ? ( Boolean )control.Invoke( new Func<Boolean>( () => control.Checked ) ) : control.Checked;
+            return control.InvokeRequired ? ( Boolean ) control.Invoke( new Func< Boolean >( () => control.Checked ) ) : control.Checked;
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return 0;
             }
-            return control.InvokeRequired ? ( int )control.Invoke( new Func<int>( () => control.Maximum ) ) : control.Maximum;
+            return control.InvokeRequired ? ( int ) control.Invoke( new Func< int >( () => control.Maximum ) ) : control.Maximum;
         }
 
         /// <summary>
@@ -127,9 +127,9 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( "control" );
             }
             Threads.Wrap( () => control.OnThread( () => {
-                control.ResetCursor();
-                control.Invalidate( invalidateChildren: false );
-            } ) );
+                                                      control.ResetCursor();
+                                                      control.Invalidate( invalidateChildren: false );
+                                                  } ) );
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace Librainian.Controls {
             if ( null == form ) {
                 return new Size();
             }
-            return form.InvokeRequired ? ( Size )form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
+            return form.InvokeRequired ? ( Size ) form.Invoke( new Func< Size >( () => form.Size ) ) : form.Size;
         }
 
         /// <summary>
@@ -153,12 +153,12 @@ namespace Librainian.Controls {
                 return;
             }
             control.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
-                control.PerformStep();
-                control.Refresh();
-            } );
+                                  if ( control.IsDisposed ) {
+                                      return;
+                                  }
+                                  control.PerformStep();
+                                  control.Refresh();
+                              } );
         }
 
         /// <summary>
@@ -170,14 +170,14 @@ namespace Librainian.Controls {
                 return;
             }
             control.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
-                control.PerformStep();
-                if ( control.ProgressBar != null ) {
-                    control.ProgressBar.Refresh();
-                }
-            } );
+                                  if ( control.IsDisposed ) {
+                                      return;
+                                  }
+                                  control.PerformStep();
+                                  if ( control.ProgressBar != null ) {
+                                      control.ProgressBar.Refresh();
+                                  }
+                              } );
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return String.Empty;
             }
-            return control.InvokeRequired ? control.Invoke( new Func<string>( () => control.Text ) ) as String ?? String.Empty : control.Text;
+            return control.InvokeRequired ? control.Invoke( new Func< string >( () => control.Text ) ) as String ?? String.Empty : control.Text;
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return Decimal.Zero;
             }
-            return control.InvokeRequired ? ( Decimal )control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
+            return control.InvokeRequired ? ( Decimal ) control.Invoke( new Func< Decimal >( () => control.Value ) ) : control.Value;
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return 0;
             }
-            return control.InvokeRequired ? ( int )control.Invoke( new Func<int>( () => control.Value ) ) : control.Value;
+            return control.InvokeRequired ? ( int ) control.Invoke( new Func< int >( () => control.Value ) ) : control.Value;
         }
 
         /// <summary>
@@ -245,9 +245,9 @@ namespace Librainian.Controls {
             }
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
-                    control.Checked = value;
-                    control.Refresh();
-                } ) );
+                                                     control.Checked = value;
+                                                     control.Refresh();
+                                                 } ) );
             }
             else {
                 control.Checked = value;
@@ -266,12 +266,12 @@ namespace Librainian.Controls {
             }
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
-                    if ( control.IsDisposed ) {
-                        return;
-                    }
-                    control.Enabled = value;
-                    control.Refresh();
-                } ) );
+                                                     if ( control.IsDisposed ) {
+                                                         return;
+                                                     }
+                                                     control.Enabled = value;
+                                                     control.Refresh();
+                                                 } ) );
             }
             else {
                 control.Enabled = value;
@@ -293,12 +293,12 @@ namespace Librainian.Controls {
             }
             if ( control.ProgressBar.InvokeRequired ) {
                 control.ProgressBar.BeginInvoke( new Action( () => {
-                    if ( control.IsDisposed ) {
-                        return;
-                    }
-                    control.Enabled = value;
-                    control.ProgressBar.Refresh();
-                } ) );
+                                                                 if ( control.IsDisposed ) {
+                                                                     return;
+                                                                 }
+                                                                 control.Enabled = value;
+                                                                 control.ProgressBar.Refresh();
+                                                             } ) );
             }
             else {
                 control.Enabled = value;
@@ -319,11 +319,11 @@ namespace Librainian.Controls {
                 return;
             }
             form.InvokeIfRequired( () => {
-                if ( form.IsDisposed ) {
-                    return;
-                }
-                form.Location = location;
-            } );
+                                       if ( form.IsDisposed ) {
+                                           return;
+                                       }
+                                       form.Location = location;
+                                   } );
         }
 
         public static void OnThread( [CanBeNull] this Form form, [CanBeNull] Action action ) {
@@ -336,7 +336,7 @@ namespace Librainian.Controls {
             form.InvokeIfRequired( action );
         }
 
-        public static void OnThread( [CanBeNull] this Control control, [CanBeNull] Action<Control> action ) {
+        public static void OnThread( [CanBeNull] this Control control, [CanBeNull] Action< Control > action ) {
             if ( null == control ) {
                 return;
             }
@@ -439,19 +439,19 @@ namespace Librainian.Controls {
                 delay = Seconds.One;
             }
             var timer = new Timer {
-                Interval = ( int )delay.Value.TotalMilliseconds
-            };
+                                      Interval = ( int ) delay.Value.TotalMilliseconds
+                                  };
             timer.Tick += ( sender, args ) => {
-                timer.Stop();
+                              timer.Stop();
 
-                if ( control != null ) {
-                    control.InvokeIfRequired( control.PerformClick );
-                }
-                using ( timer ) {
-                    FormTimers.Remove( timer );
-                    //timer = null;
-                }
-            };
+                              if ( control != null ) {
+                                  control.InvokeIfRequired( control.PerformClick );
+                              }
+                              using ( timer ) {
+                                  FormTimers.Remove( timer );
+                                  //timer = null;
+                              }
+                          };
             FormTimers.Add( timer );
             timer.Start();
         }
@@ -478,18 +478,18 @@ namespace Librainian.Controls {
                 return;
             }
             control.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
-                if ( value > control.Maximum ) {
-                    control.Maximum = value;
-                }
-                else if ( value < control.Minimum ) {
-                    control.Minimum = value;
-                }
-                control.Value = value;
-                control.Refresh();
-            } );
+                                  if ( control.IsDisposed ) {
+                                      return;
+                                  }
+                                  if ( value > control.Maximum ) {
+                                      control.Maximum = value;
+                                  }
+                                  else if ( value < control.Minimum ) {
+                                      control.Minimum = value;
+                                  }
+                                  control.Value = value;
+                                  control.Refresh();
+                              } );
         }
 
         /// <summary>
@@ -501,7 +501,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return 0;
             }
-            return control.InvokeRequired ? ( int )control.Invoke( new Func<int>( () => control.Minimum ) ) : control.Minimum;
+            return control.InvokeRequired ? ( int ) control.Invoke( new Func< int >( () => control.Minimum ) ) : control.Minimum;
         }
 
         /// <summary>
@@ -514,11 +514,11 @@ namespace Librainian.Controls {
                 return;
             }
             form.InvokeIfRequired( () => {
-                if ( form.IsDisposed ) {
-                    return;
-                }
-                form.Size = size;
-            } );
+                                       if ( form.IsDisposed ) {
+                                           return;
+                                       }
+                                       form.Size = size;
+                                   } );
         }
 
         /// <summary>
@@ -535,12 +535,12 @@ namespace Librainian.Controls {
             }
 
             toolStripItem.OnThread( () => {
-                if ( toolStripItem.IsDisposed ) {
-                    return;
-                }
-                toolStripItem.Text = value;
-                toolStripItem.Invalidate();
-            } );
+                                        if ( toolStripItem.IsDisposed ) {
+                                            return;
+                                        }
+                                        toolStripItem.Text = value;
+                                        toolStripItem.Invalidate();
+                                    } );
         }
 
         public static void TextAdd( [CanBeNull] this RichTextBox textBox, [CanBeNull] String message ) {
@@ -551,33 +551,33 @@ namespace Librainian.Controls {
                 return;
             }
             var method = new Action( () => {
-                if ( textBox.IsDisposed ) {
-                    return;
-                }
+                                         if ( textBox.IsDisposed ) {
+                                             return;
+                                         }
 
-                textBox.AppendText( message );
+                                         textBox.AppendText( message );
 
-                var lines = textBox.Lines.ToList();
-                if ( lines.Count > 20 ) {
-                    while ( lines.Count > 20 ) {
-                        lines.RemoveAt( 0 );
-                    }
-                    textBox.Lines = lines.ToArray();
-                }
+                                         var lines = textBox.Lines.ToList();
+                                         if ( lines.Count > 20 ) {
+                                             while ( lines.Count > 20 ) {
+                                                 lines.RemoveAt( 0 );
+                                             }
+                                             textBox.Lines = lines.ToArray();
+                                         }
 
-                //if ( textBox.Text.Length > 0 ) {textBox.SelectionStart = textBox.Text.Length - 1;}
-                //textBox.SelectionLength = message.Length;
-                //textBox.SelectionBackColor = Color.BlanchedAlmond;
-                //textBox.ShowSelectionMargin = true;
+                                         //if ( textBox.Text.Length > 0 ) {textBox.SelectionStart = textBox.Text.Length - 1;}
+                                         //textBox.SelectionLength = message.Length;
+                                         //textBox.SelectionBackColor = Color.BlanchedAlmond;
+                                         //textBox.ShowSelectionMargin = true;
 
-                //if ( italic ) {
-                //    var style = textBox.SelectionFont.Style;
-                //    style |= FontStyle.Italic;
-                //    textBox.SelectionFont = new Font( textBox.SelectionFont, style );
-                //}
-                //textBox.ScrollToCaret();
-                textBox.Invalidate();
-            } );
+                                         //if ( italic ) {
+                                         //    var style = textBox.SelectionFont.Style;
+                                         //    style |= FontStyle.Italic;
+                                         //    textBox.SelectionFont = new Font( textBox.SelectionFont, style );
+                                         //}
+                                         //textBox.ScrollToCaret();
+                                         textBox.Invalidate();
+                                     } );
 
             if ( textBox.IsDisposed ) {
                 return;
@@ -601,13 +601,13 @@ namespace Librainian.Controls {
             }
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
-                    if ( control.IsDisposed ) {
-                        return;
-                    }
-                    control.Visible = value;
-                    control.Enabled = value;
-                    control.Refresh();
-                } ) );
+                                                     if ( control.IsDisposed ) {
+                                                         return;
+                                                     }
+                                                     control.Visible = value;
+                                                     control.Enabled = value;
+                                                     control.Refresh();
+                                                 } ) );
             }
             else {
                 control.Visible = value;
@@ -627,12 +627,12 @@ namespace Librainian.Controls {
             }
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
-                    if ( control.IsDisposed ) {
-                        return;
-                    }
-                    control.Visible = value;
-                    control.Refresh();
-                } ) );
+                                                     if ( control.IsDisposed ) {
+                                                         return;
+                                                     }
+                                                     control.Visible = value;
+                                                     control.Refresh();
+                                                 } ) );
             }
             else {
                 control.Visible = value;
@@ -647,14 +647,14 @@ namespace Librainian.Controls {
             control.Text( message );
             var until = DateTime.Now.Add( timeSpan );
             await Task.Run( () => {
-                var stopwatch = Stopwatch.StartNew();
-                do {
-                    stopwatch.Restart();
-                    control.Blink();
-                    stopwatch.Stop();
-                    //await Task.Delay( stopwatch.Elapsed );
-                } while ( DateTime.Now < until );
-            } );
+                                var stopwatch = Stopwatch.StartNew();
+                                do {
+                                    stopwatch.Restart();
+                                    control.Blink();
+                                    stopwatch.Stop();
+                                    //await Task.Delay( stopwatch.Elapsed );
+                                } while ( DateTime.Now < until );
+                            } );
         }
 
         /// <summary>
@@ -665,17 +665,18 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="value"></param>
         /// <seealso cref="http://kristofverbiest.blogspot.com/2007/02/don-confuse-controlbegininvoke-with.html" />
-        /// <seealso cref="http://programmers.stackexchange.com/questions/114605/how-will-c-5-async-support-help-ui-thread-synchronization-issues" />
+        /// <seealso
+        ///     cref="http://programmers.stackexchange.com/questions/114605/how-will-c-5-async-support-help-ui-thread-synchronization-issues" />
         public static void Text( [CanBeNull] this Control control, [CanBeNull] String value ) {
             if ( null == control ) {
                 return;
             }
             control.InvokeIfRequired( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
-                control.Text = value;
-            } );
+                                          if ( control.IsDisposed ) {
+                                              return;
+                                          }
+                                          control.Text = value;
+                                      } );
         }
 
         /// <summary>
@@ -692,23 +693,23 @@ namespace Librainian.Controls {
                 spanOff = Milliseconds.Hertz111;
             }
             control.OnThread( () => {
-                var foreColor = control.ForeColor;
-                control.ForeColor = control.BackColor;
-                control.BackColor = foreColor;
-                control.Refresh();
-            } );
+                                  var foreColor = control.ForeColor;
+                                  control.ForeColor = control.BackColor;
+                                  control.BackColor = foreColor;
+                                  control.Refresh();
+                              } );
             var timer = new System.Timers.Timer {
-                AutoReset = false,
-                Interval = spanOff.Value.TotalMilliseconds
-            };
+                                                    AutoReset = false,
+                                                    Interval = spanOff.Value.TotalMilliseconds
+                                                };
             timer.Elapsed += ( sender, args ) => {
-                control.OnThread( () => {
-                    control.ResetForeColor();
-                    control.ResetBackColor();
-                    control.Refresh();
-                } );
-                using ( timer ) { }
-            };
+                                 control.OnThread( () => {
+                                                       control.ResetForeColor();
+                                                       control.ResetBackColor();
+                                                       control.Refresh();
+                                                   } );
+                                 using ( timer ) { }
+                             };
             GC.KeepAlive( timer );
             timer.Start();
             return timer;
@@ -773,12 +774,12 @@ namespace Librainian.Controls {
                 return;
             }
             control.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
-                control.Minimum = value;
-                control.Refresh();
-            } );
+                                  if ( control.IsDisposed ) {
+                                      return;
+                                  }
+                                  control.Minimum = value;
+                                  control.Refresh();
+                              } );
         }
 
         /// <summary>
@@ -791,12 +792,12 @@ namespace Librainian.Controls {
                 return;
             }
             control.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
-                control.Maximum = value;
-                control.Refresh();
-            } );
+                                  if ( control.IsDisposed ) {
+                                      return;
+                                  }
+                                  control.Maximum = value;
+                                  control.Refresh();
+                              } );
         }
 
         //[Obsolete( "Untested" )]
@@ -806,8 +807,8 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="a"></param>
         /// <returns></returns>
-        private static async Task<String> StringAsync( String a ) {
-            return await Task<String>.Factory.StartNew( () => a );
+        private static async Task< String > StringAsync( String a ) {
+            return await Task< String >.Factory.StartNew( () => a );
         }
 
         /*

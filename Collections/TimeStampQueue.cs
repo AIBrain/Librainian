@@ -1,26 +1,23 @@
 #region License & Information
-
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
-// "Librainian2/TimeStampQueue.cs" was last cleaned by Rick on 2014/08/08 at 2:25 PM
-
-#endregion License & Information
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
+// 
+// "Librainian/TimeStampQueue.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+#endregion
 
 namespace Librainian.Collections {
-
     using System;
     using System.Collections;
     using System.Collections.Concurrent;
@@ -30,16 +27,21 @@ namespace Librainian.Collections {
     using System.Threading.Tasks;
 
     [DataContract( IsReference = true )]
-    public class TimeStampQueue<T> : IEnumerable<WithTime<T>> where T : class {
+    public class TimeStampQueue< T > : IEnumerable< WithTime< T > > where T : class {
+        [DataMember] [OptionalField] public readonly ConcurrentQueue< WithTime< T > > Queue = new ConcurrentQueue< WithTime< T > >();
 
-        [DataMember]
-        [OptionalField]
-        public readonly ConcurrentQueue<WithTime<T>> Queue = new ConcurrentQueue<WithTime<T>>();
+        public IEnumerable< T > Items { get { return this.Queue.Select( item => item.Item ); } }
 
-        public IEnumerable<T> Items { get { return this.Queue.Select( item => item.Item ); } }
+        public IEnumerator< WithTime< T > > GetEnumerator() {
+            return this.Queue.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return this.GetEnumerator();
+        }
 
         /// <summary>
-        /// Adds the data to the queue.
+        ///     Adds the data to the queue.
         /// </summary>
         /// <param name="item"></param>
         /// <returns>Returns the DateTime the data was queued.</returns>
@@ -47,7 +49,7 @@ namespace Librainian.Collections {
             if ( null == item ) {
                 return default( DateTime );
             }
-            var newQI = new WithTime<T>( item: item );
+            var newQI = new WithTime< T >( item: item );
             this.Queue.Enqueue( newQI );
 
             //this.bob.Set();
@@ -57,7 +59,7 @@ namespace Librainian.Collections {
         //private readonly ManualResetEventSlim bob = new ManualResetEventSlim( false );
         //private Atomic _AddedCounter { get; set; }
         //public Func<int> OnWait { get; set; }
-        public void AddRange( IEnumerable<T> items ) {
+        public void AddRange( IEnumerable< T > items ) {
             if ( null != items ) {
                 Parallel.ForEach( items, obj => this.Add( obj ) );
             }
@@ -69,16 +71,8 @@ namespace Librainian.Collections {
             return this.Queue.Any( q => Equals( q.Item, value ) );
         }
 
-        public IEnumerator<WithTime<T>> GetEnumerator() {
-            return this.Queue.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
-
         /// <summary>
-        /// Returns the next <see cref="T" /> in the <see cref="Queue" /> or null.
+        ///     Returns the next <see cref="T" /> in the <see cref="Queue" /> or null.
         /// </summary>
         /// <returns></returns>
         public T Next() {
@@ -87,20 +81,20 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Does a Dequeue for each item in the <see cref="Queue" /> ?or null?
+        ///     Does a Dequeue for each item in the <see cref="Queue" /> ?or null?
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<T> NextAll() {
+        public IEnumerable< T > NextAll() {
             return this.Queue.Select( o => this.Next() );
         }
 
         /// <summary>
-        /// Returns the next Object in the <see cref="Queue" /> or null.
+        ///     Returns the next Object in the <see cref="Queue" /> or null.
         /// </summary>
         /// <returns></returns>
-        public WithTime<T> Pull() {
-            WithTime<T> temp;
-            return this.Queue.TryDequeue( out temp ) ? temp : default( WithTime<T> );
+        public WithTime< T > Pull() {
+            WithTime< T > temp;
+            return this.Queue.TryDequeue( out temp ) ? temp : default( WithTime< T > );
         }
 
         ///// <summary>

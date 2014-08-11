@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/VirtualList.cs" was last cleaned by Rick on 2014/08/08 at 2:25 PM
+// "Librainian/VirtualList.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 #endregion
 
 namespace Librainian.Collections {
@@ -47,50 +47,14 @@ namespace Librainian.Collections {
 
         object ICollection.SyncRoot { get { return this; } }
 
-        int ICollection<T>.Count { get { return this._count; } }
-
-        Boolean ICollection<T>.IsReadOnly { get { return true; } }
-
         Boolean IList.IsFixedSize { get { return true; } }
 
         Boolean IList.IsReadOnly { get { return true; } }
 
         object IList.this[ int index ] { get { return this._getValueForIndex( index ); } set { throw new NotSupportedException(); } }
 
-        T IList<T>.this[ int index ] { get { return this._getValueForIndex( index ); } set { throw new NotSupportedException(); } }
-
         void ICollection.CopyTo( Array array, int index ) {
             throw new NotSupportedException();
-        }
-
-        void ICollection<T>.Add( T item ) {
-            throw new NotSupportedException();
-        }
-
-        void ICollection<T>.Clear() {
-            throw new NotSupportedException();
-        }
-
-        Boolean ICollection<T>.Contains( T item ) {
-            throw new NotSupportedException();
-        }
-
-        void ICollection<T>.CopyTo( T[] array, int arrayIndex ) {
-            throw new NotSupportedException();
-        }
-
-        Boolean ICollection<T>.Remove( T item ) {
-            throw new NotSupportedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() {
-            return ( ( IEnumerable<T> )this ).GetEnumerator();
-        }
-
-        IEnumerator<T> IEnumerable<T>.GetEnumerator() {
-            for ( var i = 0; i < this._count; i++ ) {
-                yield return this._getValueForIndex( i );
-            }
         }
 
         int IList.Add( object value ) {
@@ -120,6 +84,42 @@ namespace Librainian.Collections {
         void IList.RemoveAt( int index ) {
             throw new NotSupportedException();
         }
+
+        int ICollection< T >.Count { get { return this._count; } }
+
+        Boolean ICollection< T >.IsReadOnly { get { return true; } }
+        T IList< T >.this[ int index ] { get { return this._getValueForIndex( index ); } set { throw new NotSupportedException(); } }
+
+        void ICollection< T >.Add( T item ) {
+            throw new NotSupportedException();
+        }
+
+        void ICollection< T >.Clear() {
+            throw new NotSupportedException();
+        }
+
+        Boolean ICollection< T >.Contains( T item ) {
+            throw new NotSupportedException();
+        }
+
+        void ICollection< T >.CopyTo( T[] array, int arrayIndex ) {
+            throw new NotSupportedException();
+        }
+
+        Boolean ICollection< T >.Remove( T item ) {
+            throw new NotSupportedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return ( ( IEnumerable< T > ) this ).GetEnumerator();
+        }
+
+        IEnumerator< T > IEnumerable< T >.GetEnumerator() {
+            for ( var i = 0; i < this._count; i++ ) {
+                yield return this._getValueForIndex( i );
+            }
+        }
+
         int IList< T >.IndexOf( T item ) {
             throw new NotSupportedException();
         }

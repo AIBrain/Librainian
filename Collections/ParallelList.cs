@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian2/ParallelList.cs" was last cleaned by Rick on 2014/08/08 at 2:25 PM
+// "Librainian/ParallelList.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 #endregion
 
 namespace Librainian.Collections {
@@ -115,11 +115,6 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     <para>Count of items currently in this <see cref="ParallelList{TType}" />.</para>
-        /// </summary>
-        public int Count { get { return this._itemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
-
-        /// <summary>
         ///     <para>Returns the count of items waiting to be added to this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
         public int CountOfItemsWaitingToBeAdded { get { return this._waitingToBeAddedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
@@ -134,14 +129,20 @@ namespace Librainian.Collections {
         /// </summary>
         public int CountOfItemsWaitingToBeInserted { get { return this._waitingToBeInsertedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
 
+        public TimeSpan TimeoutForReads { get; set; }
+
+        public TimeSpan TimeoutForWrites { get; set; }
+
+        /// <summary>
+        ///     <para>Count of items currently in this <see cref="ParallelList{TType}" />.</para>
+        /// </summary>
+        public int Count { get { return this._itemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
+
         /// <summary>
         /// </summary>
         /// <seealso cref="AllowModifications" />
         public Boolean IsReadOnly { get; private set; }
 
-        public TimeSpan TimeoutForReads { get; set; }
-
-        public TimeSpan TimeoutForWrites { get; set; }
         public TType this[ int index ] {
             get { return this.Clone()[ index ]; }
             set {
@@ -175,108 +176,6 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     <para>
-        ///         Add the
-        ///         <typeparam name="TType">item</typeparam>
-        ///         to the end of this <see cref="ParallelList{TType}" />.
-        ///     </para>
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="afterAdded"></param>
-        /// <returns></returns>
-        public Boolean Add( TType item, [CanBeNull] Action afterAdded ) {
-            if ( !this.AllowModifications ) {
-                return false;
-            }
-
-            this.RequestToAddAnItem();
-
-            return this._actionBlock.Post( () => this.Write( () => {
-                try {
-                    this._list.Add( item: item );
-                    return true;
-                }
-                finally {
-                    this.AnItemHasBeenAdded();
-                    if ( afterAdded != null ) {
-                        afterAdded();
-                    }
-                }
-            } ) );
-        }
-
-        public Boolean AddAndWait( TType item, CancellationToken cancellationToken = default( CancellationToken ), TimeSpan timeout = default( TimeSpan ) ) {
-            var slim = new ManualResetEventSlim( initialState: false );
-            slim.Reset();
-
-            this.Add( item: item, afterAdded: slim.Set );
-
-            try {
-                if ( default( TimeSpan ) != timeout && default( CancellationToken ) != cancellationToken ) {
-                    return slim.Wait( timeout, cancellationToken );
-                }
-                if ( default( TimeSpan ) != timeout ) {
-                    return this._actionBlock.Completion.Wait( timeout: timeout );
-                }
-                if ( default( CancellationToken ) != cancellationToken ) {
-                    slim.Wait( cancellationToken );
-                    return true;
-                }
-            }
-            catch ( OperationCanceledException ) { }
-            catch ( ArgumentOutOfRangeException ) { }
-            catch ( ObjectDisposedException ) { }
-            catch ( AggregateException ) { }
-            return false;
-        }
-
-        public Task AddAsync( TType item ) {
-            return Task.Run( () => { this.TryAdd( item ); } );
-        }
-
-        /// <summary>
-        ///     Add a collection of items.
-        /// </summary>
-        /// <param name="items"></param>
-        /// <param name="asParallel">Enables parallelization of the <paramref name="items" />.</param>
-        /// <param name="afterEachAdd"><see cref="Action" /> to perform after each add.</param>
-        /// <param name="afterRangeAdded"><see cref="Action" /> to perform after range added.</param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public void AddRange( [NotNull] IEnumerable<TType> items, Boolean asParallel = true, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
-            if ( null == items ) {
-                throw new ArgumentNullException( "items" );
-            }
-
-            if ( !this.AllowModifications ) {
-                return;
-            }
-
-            try {
-                if ( asParallel ) {
-                    items.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( item => this.TryAdd( item, afterEachAdd ) );
-                }
-                else {
-                    foreach ( var item in items ) {
-                        this.TryAdd( item: item, afterAdd: afterEachAdd );
-                    }
-                }
-            }
-            finally {
-                if ( afterRangeAdded != null ) {
-                    afterRangeAdded();
-                }
-            }
-        }
-
-        public Task AddRangeAsync( [CanBeNull] IEnumerable<TType> items ) {
-            return Task.Run( () => {
-                if ( items != null ) {
-                    this.AddRange( items );
-                }
-            } );
-        }
-
-        /// <summary>
         ///     Mark this <see cref="ParallelList{TType}" /> to be cleared.
         /// </summary>
         public void Clear() {
@@ -288,81 +187,6 @@ namespace Librainian.Collections {
                                                           this._itemCounter = new ThreadLocal< int >( () => 0, trackAllValues: true ); //BUG is this correct?
                                                           return true;
                                                       } ) );
-        }
-
-        /// <summary>
-        ///     <para>
-        ///         Returns a copy of this <see cref="ParallelList{TType}" /> as this moment in time.
-        ///     </para>
-        /// </summary>
-        /// <returns></returns>
-        public List<TType> Clone() {
-            return this.Read( () => this._list.ToList() );
-        }
-
-        /// <summary>
-        ///     Signal that this <see cref="ParallelList{TType}" /> will not be modified any more.
-        /// </summary>
-        /// <seealso cref="AllowModifications" />
-        public void Complete() {
-            try {
-                this._actionBlock.Complete();
-            }
-            finally {
-                Interlocked.Increment( ref this._markedAsCompleteCounter );
-                this.IsReadOnly = true;
-            }
-        }
-
-        /// <summary>
-        ///     <para>Signal that nothing else will be added or removed from this <see cref="ParallelList{TType}" /> and then,</para>
-        ///     <para>
-        ///         If both <paramref name="timeout" /> and <paramref name="cancellationToken" /> are provided,
-        ///         <see cref="TreeTask.Wait()" /> with it.
-        ///     </para>
-        ///     <para>Otherwise, if only a <paramref name="timeout" /> is provided, <see cref="TreeTask.Wait()" /> with it.</para>
-        ///     <para>
-        ///         Otherwise, if only a <paramref name="cancellationToken" /> is provided, <see cref="TreeTask.Wait()" /> with
-        ///         it.
-        ///     </para>
-        /// </summary>
-        /// <returns>
-        ///     Returns <see cref="Boolean.True" /> if the Task completed execution within the allotted time or has already
-        ///     waited.
-        /// </returns>
-        public Boolean CompleteAndWait( CancellationToken cancellationToken = default( CancellationToken ), TimeSpan timeout = default( TimeSpan ) ) {
-            try {
-                this.Complete();
-
-                if ( default( TimeSpan ) != timeout && default( CancellationToken ) != cancellationToken ) {
-                    return this._actionBlock.Completion.Wait( millisecondsTimeout: ( int )timeout.TotalMilliseconds, cancellationToken: cancellationToken );
-                }
-                if ( default( TimeSpan ) != timeout ) {
-                    return this._actionBlock.Completion.Wait( timeout: timeout );
-                }
-                if ( default( CancellationToken ) != cancellationToken ) {
-                    try {
-                        this._actionBlock.Completion.Wait( cancellationToken: cancellationToken );
-                    }
-                    catch ( OperationCanceledException ) {
-                        return false; //BUG Is this correct?
-                    }
-                    catch ( ObjectDisposedException ) {
-                        return false;
-                    }
-                    catch ( AggregateException ) {
-                        return false;
-                    }
-                    return true;
-                }
-
-                // ReSharper disable once MethodSupportsCancellation
-                this._actionBlock.Completion.Wait();
-                return true;
-            }
-            finally {
-                this._list.Capacity = this._list.Count; //optimize the memory used by this list.
-            }
         }
 
         /// <summary>
@@ -455,30 +279,6 @@ namespace Librainian.Collections {
             return this.Remove( item, null );
         }
 
-        /// <summary>
-        ///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="afterRemoval"></param>
-        /// <returns></returns>
-        public Boolean Remove( TType item, [CanBeNull] Action afterRemoval ) {
-            if ( !this.AllowModifications ) {
-                return false;
-            }
-
-            this.RequestToRemoveAnItem();
-
-            return this._actionBlock.Post( () => this.Write( () => {
-                try {
-                    this._list.Remove( item );
-                    return true;
-                }
-                finally {
-                    this.AnItemHasBeenRemoved( afterRemoval );
-                }
-            } ) );
-        }
-
         public void RemoveAt( int index ) {
             if ( index < 0 ) {
                 return;
@@ -505,6 +305,208 @@ namespace Librainian.Collections {
                                                           return true;
                                                       } ) );
         }
+
+        /// <summary>
+        ///     <para>
+        ///         Add the
+        ///         <typeparam name="TType">item</typeparam>
+        ///         to the end of this <see cref="ParallelList{TType}" />.
+        ///     </para>
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="afterAdded"></param>
+        /// <returns></returns>
+        public Boolean Add( TType item, [CanBeNull] Action afterAdded ) {
+            if ( !this.AllowModifications ) {
+                return false;
+            }
+
+            this.RequestToAddAnItem();
+
+            return this._actionBlock.Post( () => this.Write( () => {
+                                                                 try {
+                                                                     this._list.Add( item: item );
+                                                                     return true;
+                                                                 }
+                                                                 finally {
+                                                                     this.AnItemHasBeenAdded();
+                                                                     if ( afterAdded != null ) {
+                                                                         afterAdded();
+                                                                     }
+                                                                 }
+                                                             } ) );
+        }
+
+        public Boolean AddAndWait( TType item, CancellationToken cancellationToken = default( CancellationToken ), TimeSpan timeout = default( TimeSpan ) ) {
+            var slim = new ManualResetEventSlim( initialState: false );
+            slim.Reset();
+
+            this.Add( item: item, afterAdded: slim.Set );
+
+            try {
+                if ( default( TimeSpan ) != timeout && default( CancellationToken ) != cancellationToken ) {
+                    return slim.Wait( timeout, cancellationToken );
+                }
+                if ( default( TimeSpan ) != timeout ) {
+                    return this._actionBlock.Completion.Wait( timeout: timeout );
+                }
+                if ( default( CancellationToken ) != cancellationToken ) {
+                    slim.Wait( cancellationToken );
+                    return true;
+                }
+            }
+            catch ( OperationCanceledException ) { }
+            catch ( ArgumentOutOfRangeException ) { }
+            catch ( ObjectDisposedException ) { }
+            catch ( AggregateException ) { }
+            return false;
+        }
+
+        public Task AddAsync( TType item ) {
+            return Task.Run( () => { this.TryAdd( item ); } );
+        }
+
+        /// <summary>
+        ///     Add a collection of items.
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="asParallel">Enables parallelization of the <paramref name="items" />.</param>
+        /// <param name="afterEachAdd"><see cref="Action" /> to perform after each add.</param>
+        /// <param name="afterRangeAdded"><see cref="Action" /> to perform after range added.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public void AddRange( [NotNull] IEnumerable< TType > items, Boolean asParallel = true, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
+            if ( null == items ) {
+                throw new ArgumentNullException( "items" );
+            }
+
+            if ( !this.AllowModifications ) {
+                return;
+            }
+
+            try {
+                if ( asParallel ) {
+                    items.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( item => this.TryAdd( item, afterEachAdd ) );
+                }
+                else {
+                    foreach ( var item in items ) {
+                        this.TryAdd( item: item, afterAdd: afterEachAdd );
+                    }
+                }
+            }
+            finally {
+                if ( afterRangeAdded != null ) {
+                    afterRangeAdded();
+                }
+            }
+        }
+
+        public Task AddRangeAsync( [CanBeNull] IEnumerable< TType > items ) {
+            return Task.Run( () => {
+                                 if ( items != null ) {
+                                     this.AddRange( items );
+                                 }
+                             } );
+        }
+
+        /// <summary>
+        ///     <para>
+        ///         Returns a copy of this <see cref="ParallelList{TType}" /> as this moment in time.
+        ///     </para>
+        /// </summary>
+        /// <returns></returns>
+        public List< TType > Clone() {
+            return this.Read( () => this._list.ToList() );
+        }
+
+        /// <summary>
+        ///     Signal that this <see cref="ParallelList{TType}" /> will not be modified any more.
+        /// </summary>
+        /// <seealso cref="AllowModifications" />
+        public void Complete() {
+            try {
+                this._actionBlock.Complete();
+            }
+            finally {
+                Interlocked.Increment( ref this._markedAsCompleteCounter );
+                this.IsReadOnly = true;
+            }
+        }
+
+        /// <summary>
+        ///     <para>Signal that nothing else will be added or removed from this <see cref="ParallelList{TType}" /> and then,</para>
+        ///     <para>
+        ///         If both <paramref name="timeout" /> and <paramref name="cancellationToken" /> are provided,
+        ///         <see cref="TreeTask.Wait()" /> with it.
+        ///     </para>
+        ///     <para>Otherwise, if only a <paramref name="timeout" /> is provided, <see cref="TreeTask.Wait()" /> with it.</para>
+        ///     <para>
+        ///         Otherwise, if only a <paramref name="cancellationToken" /> is provided, <see cref="TreeTask.Wait()" /> with
+        ///         it.
+        ///     </para>
+        /// </summary>
+        /// <returns>
+        ///     Returns <see cref="Boolean.True" /> if the Task completed execution within the allotted time or has already
+        ///     waited.
+        /// </returns>
+        public Boolean CompleteAndWait( CancellationToken cancellationToken = default( CancellationToken ), TimeSpan timeout = default( TimeSpan ) ) {
+            try {
+                this.Complete();
+
+                if ( default( TimeSpan ) != timeout && default( CancellationToken ) != cancellationToken ) {
+                    return this._actionBlock.Completion.Wait( millisecondsTimeout: ( int ) timeout.TotalMilliseconds, cancellationToken: cancellationToken );
+                }
+                if ( default( TimeSpan ) != timeout ) {
+                    return this._actionBlock.Completion.Wait( timeout: timeout );
+                }
+                if ( default( CancellationToken ) != cancellationToken ) {
+                    try {
+                        this._actionBlock.Completion.Wait( cancellationToken: cancellationToken );
+                    }
+                    catch ( OperationCanceledException ) {
+                        return false; //BUG Is this correct?
+                    }
+                    catch ( ObjectDisposedException ) {
+                        return false;
+                    }
+                    catch ( AggregateException ) {
+                        return false;
+                    }
+                    return true;
+                }
+
+                // ReSharper disable once MethodSupportsCancellation
+                this._actionBlock.Completion.Wait();
+                return true;
+            }
+            finally {
+                this._list.Capacity = this._list.Count; //optimize the memory used by this list.
+            }
+        }
+
+        /// <summary>
+        ///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="afterRemoval"></param>
+        /// <returns></returns>
+        public Boolean Remove( TType item, [CanBeNull] Action afterRemoval ) {
+            if ( !this.AllowModifications ) {
+                return false;
+            }
+
+            this.RequestToRemoveAnItem();
+
+            return this._actionBlock.Post( () => this.Write( () => {
+                                                                 try {
+                                                                     this._list.Remove( item );
+                                                                     return true;
+                                                                 }
+                                                                 finally {
+                                                                     this.AnItemHasBeenRemoved( afterRemoval );
+                                                                 }
+                                                             } ) );
+        }
+
         public Boolean TryAdd( TType item, [CanBeNull] Action afterAdd = null ) {
             return this.Add( item: item, afterAdded: afterAdd );
         }

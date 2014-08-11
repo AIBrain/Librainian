@@ -14,7 +14,7 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Extensions.cs" was last cleaned by Rick on 2014/08/09 at 3:47 PM
+// "Librainian/Extensions.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
 #endregion
 
 namespace Librainian.Collections {
@@ -463,7 +463,10 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     <para>Returns a string with the <paramref name="separator" /> between each item of an <paramref name="enumerable"/>.</para>
+        ///     <para>
+        ///         Returns a string with the <paramref name="separator" /> between each item of an
+        ///         <paramref name="enumerable" />.
+        ///     </para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="enumerable"></param>

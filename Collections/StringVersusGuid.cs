@@ -1,26 +1,23 @@
 #region License & Information
-
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
-// "Librainian2/StringVersusGuid.cs" was last cleaned by Rick on 2014/08/08 at 2:25 PM
-
-#endregion License & Information
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
+// 
+// "Librainian/StringVersusGuid.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+#endregion
 
 namespace Librainian.Collections {
-
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -29,32 +26,27 @@ namespace Librainian.Collections {
     using Parsing;
 
     /// <summary>
-    /// Contains Words and their guids. Persisted to and from storage? Thread-safe?
+    ///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
     /// </summary>
     /// <remarks>i can see places where the tables are locked independantly.. could cause issues??</remarks>
     [DataContract( IsReference = true )]
     public class StringVersusGuid {
+        /// <summary>
+        /// </summary>
+        /// <remarks>Two dictionaries for speed, one class to rule them all.</remarks>
+        [DataMember] [OptionalField] public readonly ConcurrentDictionary< Guid, String > Guids = new ConcurrentDictionary< Guid, String >();
 
         /// <summary>
         /// </summary>
         /// <remarks>Two dictionaries for speed, one class to rule them all.</remarks>
-        [DataMember]
-        [OptionalField]
-        public readonly ConcurrentDictionary<Guid, String> Guids = new ConcurrentDictionary<Guid, String>();
+        [DataMember] [OptionalField] public readonly ConcurrentDictionary< String, Guid > Words = new ConcurrentDictionary< String, Guid >();
+
+        public IEnumerable< Guid > EachGuid { get { return this.Guids.Keys; } }
+
+        public IEnumerable< String > EachWord { get { return this.Words.Keys; } }
 
         /// <summary>
-        /// </summary>
-        /// <remarks>Two dictionaries for speed, one class to rule them all.</remarks>
-        [DataMember]
-        [OptionalField]
-        public readonly ConcurrentDictionary<String, Guid> Words = new ConcurrentDictionary<String, Guid>();
-
-        public IEnumerable<Guid> EachGuid { get { return this.Guids.Keys; } }
-
-        public IEnumerable<String> EachWord { get { return this.Words.Keys; } }
-
-        /// <summary>
-        /// Get or set the guid for this word.
+        ///     Get or set the guid for this word.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -83,7 +75,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Get or set the word for this guid.
+        ///     Get or set the word for this guid.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -105,7 +97,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns true if the word is contained in the collections.
+        ///     Returns true if the word is contained in the collections.
         /// </summary>
         /// <param name="daword"></param>
         /// <returns></returns>
@@ -118,7 +110,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns true if the guid is contained in the collection.
+        ///     Returns true if the guid is contained in the collection.
         /// </summary>
         /// <param name="daguid"></param>
         /// <returns></returns>
