@@ -23,10 +23,7 @@ namespace Librainian.Database.MMF {
 
 
         var localFilePath = "complete_path_to_large_file";
-using (var memoryMappedFile = MemoryMappedFile.CreateFromFile(localFilePath, FileMode.Open))
-{
-
-}
+        //using (var memoryMappedFile = MemoryMappedFile.CreateFromFile(localFilePath, FileMode.Open)){}
 
         public string GetContent( MemoryMappedFile memoryMappedFile, long beginningByteLocation, long bytesToReadIn ) {
             string content;
