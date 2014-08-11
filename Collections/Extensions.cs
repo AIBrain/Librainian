@@ -30,6 +30,7 @@ namespace Librainian.Collections {
     using Annotations;
     using FluentAssertions;
     using Maths;
+    using Measurement.Time;
     using NUnit.Framework;
     using Threading;
 
@@ -473,27 +474,26 @@ namespace Librainian.Collections {
 
                 var originalcount = list.Count;
 
-                var bag = new ConcurrentBag<T>( list );
+                var bag = new ConcurrentBag<T>( list.OrderBy( o => Randem.Next() ) );
                 bag.Should().NotBeEmpty( because: "made a copy of all items" );
 
                 list.Clear();
                 list.Should().BeEmpty( because: "emptied the original list" );
 
                 // make some buckets.
-                var sqrt = ( int )Math.Sqrt( originalcount );
-                if ( sqrt <= 1 ) {
-                    sqrt = 1;   // TODO can we use Math.Ceiling() here?
+                var bucketCount = ( int )Math.Sqrt( originalcount );
+                if ( bucketCount <= 1 ) {
+                    bucketCount = 1;   // TODO can we use Math.Ceiling() here?
                 }
-
-                var buckets = new List<ConcurrentBag<T>>( 1.To( sqrt ).Select( i => new ConcurrentBag<T>() ) );
+                var buckets = new List<ConcurrentBag<T>>( 1.To( bucketCount ).Select( i => new ConcurrentBag<T>() ) );
+                buckets.Count.Should().Be( bucketCount );
 
                 // pull the items out of the bag, and push them into a random bucket each
                 T item;
                 while ( bag.TryTake( out item ) ) {
-                    var index = Randem.Next( 0, sqrt );
+                    var index = Randem.Next( 0, bucketCount );
                     buckets[ index ].Add( item );
                 }
-                buckets.Count.Should().Be( sqrt );
                 bag.Should().BeEmpty( "All items should have been taken out of the bag" );
 
                 // pull all the items into the buckets
@@ -527,7 +527,7 @@ namespace Librainian.Collections {
 
         [Test]
         public static TimeSpan ShuffleTest() {
-            const int itemCount = 100;
+            const int itemCount = 1000;
 
             var list = new List<int>();
             for ( var i = 0; i < itemCount; i++ ) {
@@ -538,7 +538,10 @@ namespace Librainian.Collections {
             var stopwatch = Stopwatch.StartNew();
             list.Shuffle();
             stopwatch.Stop();
-            String.Format( "Shuffle" ).TimeDebug();
+
+            Span bob = new Span(stopwatch.Elapsed );
+
+            String.Format( "Shuffle took {0}.", bob ).TimeDebug();
 
             return stopwatch.Elapsed;
         }
