@@ -23,7 +23,7 @@ namespace Librainian.Maths {
     using System.Numerics;
     using Annotations;
     using FluentAssertions;
-    using Librainian.Extensions;
+    using Extensions;
     using Numerics;
 
     /// <summary>

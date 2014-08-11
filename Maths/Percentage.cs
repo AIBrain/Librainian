@@ -21,7 +21,7 @@ namespace Librainian.Maths {
     using System;
     using System.Runtime.Serialization;
     using Annotations;
-    using Librainian.Extensions;
+    using Extensions;
     using Numerics;
 
     /// <summary>
@@ -146,7 +146,11 @@ namespace Librainian.Maths {
         }
 
         public static implicit operator Double( Percentage special ) {
-            return special.Value;
+            return ( double ) special.Value;
+        } 
+        
+        public static implicit operator Decimal( Percentage special ) {
+            return ( Decimal )special.Value;
         }
 
         public static implicit operator Percentage( Single value ) {
