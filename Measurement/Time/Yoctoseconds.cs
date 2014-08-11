@@ -120,7 +120,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override string ToString() {
-            return String.Format( "{0:R} ys", this.Value );
+            return String.Format( "{0} ys", this.Value );
         }
 
         public Boolean Equals( Yoctoseconds other ) {

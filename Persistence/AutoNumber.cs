@@ -59,7 +59,7 @@ namespace Librainian.Persistence {
         }
 
         public override String ToString() {
-            return String.Format( "{0:R}", this.Identity );
+            return String.Format( "{0}", this.Identity );
         }
 
         public void Ensure( UInt64 atLeast ) {

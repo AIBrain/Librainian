@@ -118,7 +118,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public string Display() {
-            return String.Format( "{0:R} GeV", this.Value );
+            return String.Format( "{0} GeV", this.Value );
         }
 
         public ElectronVolts ToElectronVolts() {

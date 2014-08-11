@@ -69,7 +69,7 @@ namespace Librainian.Maths {
         }
 
         public override String ToString() {
-            return String.Format( "{0:R}", this.Value );
+            return String.Format( "{0}", this.Value );
         }
 
         public static implicit operator int( AtomicInt special ) {

@@ -100,7 +100,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public string Display() {
-            return String.Format( "{0:R} meV", this.Value );
+            return String.Format( "{0} meV", this.Value );
         }
 
         public String Simpler() {

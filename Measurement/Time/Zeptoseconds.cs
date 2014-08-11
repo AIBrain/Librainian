@@ -113,7 +113,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override string ToString() {
-            return String.Format( "{0:R} zs", this.Value );
+            return String.Format( "{0} zs", this.Value );
         }
 
         public Boolean Equals( Zeptoseconds other ) {

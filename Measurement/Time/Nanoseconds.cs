@@ -144,7 +144,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override string ToString() {
-            return String.Format( "{0:R} ns", this.Value );
+            return String.Format( "{0} ns", this.Value );
         }
 
         public Boolean Equals( Nanoseconds other ) {

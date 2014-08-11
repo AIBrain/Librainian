@@ -144,7 +144,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override string ToString() {
-            return String.Format( "{0:R} µs", this.Value );
+            return String.Format( "{0} µs", this.Value );
         }
 
         public Boolean Equals( Microseconds other ) {

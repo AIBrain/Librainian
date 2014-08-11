@@ -144,7 +144,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override string ToString() {
-            return String.Format( "{0:R} ps", this.Value );
+            return String.Format( "{0} ps", this.Value );
         }
 
         public Boolean Equals( Picoseconds other ) {

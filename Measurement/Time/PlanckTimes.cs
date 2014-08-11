@@ -132,7 +132,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override String ToString() {
-            return String.Format( "{0:R} tP", this.Value );
+            return String.Format( "{0} tP", this.Value );
         }
 
         public Boolean Equals( PlanckTimes other ) {

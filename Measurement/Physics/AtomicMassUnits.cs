@@ -174,7 +174,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public string Display() {
-            return String.Format( "{0:R} u", this.Value );
+            return String.Format( "{0} u", this.Value );
         }
 
         public AtomicMassUnits ToElectronVolts() {

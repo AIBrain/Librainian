@@ -172,7 +172,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public override string ToString() {
-            return String.Format( "{0:R} {1}", this.Value, this.Value.PluralOf( "month" ) );
+            return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "month" ) );
         }
     }
 }
