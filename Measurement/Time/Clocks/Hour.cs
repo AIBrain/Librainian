@@ -15,7 +15,9 @@
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
-// "Librainian/Hour.cs" was last cleaned by Rick on 2014/08/11 at 10:20 PM
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Hour.cs" was last cleaned by Rick on 2014/08/12 at 12:21 AM
 
 #endregion License & Information
 
@@ -23,7 +25,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
     using System;
     using System.Runtime.Serialization;
-    using FluentAssertions;
     using Librainian.Extensions;
 
     /// <summary>
@@ -33,13 +34,6 @@ namespace Librainian.Measurement.Time.Clocks {
     [Serializable]
     [Immutable]
     public sealed class Hour : PartialClock {
-
-
-        /// <summary>
-        /// 1
-        /// </summary>
-        public const Byte Minimum = 1;
-
         public static readonly Hour MaxHour = new Hour( Hours.InOneDay );
         public static readonly Hour MinHour = new Hour( Minimum );
 
@@ -47,12 +41,17 @@ namespace Librainian.Measurement.Time.Clocks {
         private readonly Byte _value;
 
         public Hour( Byte hour ) {
-            this._value = Validate( hour );
+            this._value = this.Validate( hour );
         }
 
         public Hour( long hour ) {
-            this._value = Validate( hour );
+            this._value = this.Validate( hour );
         }
+
+        /// <summary>
+        /// 24
+        /// </summary>
+        public override byte Maximum { get { return Hours.InOneDay; } }
 
         /// <summary>
         /// Allow this class to be visibly cast to a <see cref="SByte" />.
@@ -67,14 +66,8 @@ namespace Librainian.Measurement.Time.Clocks {
             return hour._value;
         }
 
-        /// <summary>
-        /// 24
-        /// </summary>
-        public override byte Maximum { get { return Hours.InOneDay; } }
-
         public override byte GetValue() {
-            return _value;
+            return this._value;
         }
-
     }
 }

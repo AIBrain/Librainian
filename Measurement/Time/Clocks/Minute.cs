@@ -15,7 +15,9 @@
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
-// "Librainian/Minute.cs" was last cleaned by Rick on 2014/08/11 at 10:15 PM
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Minute.cs" was last cleaned by Rick on 2014/08/12 at 12:25 AM
 
 #endregion License & Information
 
@@ -23,7 +25,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
     using System;
     using System.Runtime.Serialization;
-    using FluentAssertions;
     using Librainian.Extensions;
 
     /// <summary>
@@ -32,21 +33,11 @@ namespace Librainian.Measurement.Time.Clocks {
     [DataContract]
     [Serializable]
     [Immutable]
-    public struct Minute : IMinute {
-
-        /// <summary>
-        /// 60
-        /// </summary>
-        public const Byte Maximum = Minutes.InOneHour;
-
-        /// <summary>
-        /// 1
-        /// </summary>
-        public const Byte Minimum = 1;
+    public sealed class Minute : PartialClock {
 
         /// <summary>
         /// </summary>
-        public static readonly Minute MaxMinute = new Minute( Maximum );
+        public static readonly Minute MaxMinute = new Minute( Minutes.InOneHour );
 
         /// <summary>
         /// </summary>
@@ -56,12 +47,14 @@ namespace Librainian.Measurement.Time.Clocks {
         private readonly Byte _value;
 
         public Minute( Byte minute ) {
-            this._value = Validate( minute );
+            this._value = this.Validate( minute );
         }
 
         public Minute( long minute ) {
-            this._value = Validate( minute );
+            this._value = this.Validate( minute );
         }
+
+        public override byte Maximum { get { return Minutes.InOneHour; } }
 
         /// <summary>
         /// Allow this class to be visibly cast to a <see cref="SByte" />.
@@ -81,14 +74,8 @@ namespace Librainian.Measurement.Time.Clocks {
             return minute._value;
         }
 
-        private static Byte Validate( long minute ) {
-            minute.Should().BeInRange( Minimum, Maximum );
-
-            if ( minute < Minimum || minute > Maximum ) {
-                throw new ArgumentOutOfRangeException( "minute", String.Format( "The specified minute {0} is out of the valid range {1} to {2}.", minute, Minimum, Maximum ) );
-            }
-
-            return ( Byte )minute;
+        public override byte GetValue() {
+            return this._value;
         }
     }
 }
