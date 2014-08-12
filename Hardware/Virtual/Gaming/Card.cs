@@ -18,6 +18,8 @@
 #endregion
 
 namespace Librainian.Hardware.Virtual {
+    using Extensions;
+
     public enum Suites {
         Heart,
         Ace,
@@ -25,5 +27,16 @@ namespace Librainian.Hardware.Virtual {
         Diamond
     }
 
-    public class Card { }
+    public enum FaceValues {
+        Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King
+    }
+
+    [Immutable]
+    public class Card {
+        public readonly Suites Suite;
+
+        public Card( Suites suite, FaceValues faceValue ) {
+            this.Suite = suite;
+        }
+    }
 }

@@ -217,10 +217,10 @@
     <Compile Include="Hardware\Beeps.cs" />
     <Compile Include="Hardware\Computer.cs" />
     <Compile Include="Hardware\Network.cs" />
-    <Compile Include="Hardware\Virtual\Card.cs" />
-    <Compile Include="Hardware\Virtual\Deck.cs" />
-    <Compile Include="Hardware\Virtual\DiceCup.cs" />
-    <Compile Include="Hardware\Virtual\Dice.cs" />
+    <Compile Include="Hardware\Virtual\Gaming\Card.cs" />
+    <Compile Include="Hardware\Virtual\Gaming\Deck.cs" />
+    <Compile Include="Hardware\Virtual\Gaming\DiceCup.cs" />
+    <Compile Include="Hardware\Virtual\Gaming\Dice.cs" />
     <Compile Include="Magic\IIocContainer.cs" />
     <Compile Include="Magic\Ioc.cs" />
     <Compile Include="Magic\NinjectIocContainer.cs" />
@@ -276,6 +276,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Maths\BigIntegerRange.cs" />
+    <Compile Include="Maths\MovingAverageCalculator.cs" />
     <Compile Include="Maths\DoubleConverter.cs" />
     <Compile Include="Maths\Number.cs" />
     <Compile Include="Maths\NumberExtensions.cs" />
