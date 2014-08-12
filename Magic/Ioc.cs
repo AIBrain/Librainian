@@ -14,7 +14,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Ioc.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/Ioc.cs" was last cleaned by Rick on 2014/08/12 at 2:43 PM
 #endregion
 
 namespace Librainian.Magic {
