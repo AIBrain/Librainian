@@ -398,7 +398,7 @@
     <Compile Include="Threading\AsyncReaderWriterLock.cs" />
     <Compile Include="Threading\Blocks.cs" />
     <Compile Include="Threading\C5Random.cs" />
-    <Compile Include="Collections\Extensions.cs" />
+    <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Threading\AbandonableTask.cs" />
     <Compile Include="Threading\CustomAttribute.cs" />
     <Compile Include="Threading\Randem2.cs" />

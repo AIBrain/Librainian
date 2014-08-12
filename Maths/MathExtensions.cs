@@ -611,13 +611,13 @@ namespace Librainian.Maths {
         }
 
         public static Boolean PassProbabilityTest() {
-            var lower = new List< bool >();
+            var lower = new List< Boolean >();
             var probability = -0.33f;
             for ( var i = 0; i < 1048576*10; i++ ) {
                 lower.Add( probability.Probability() );
             }
 
-            var higher = new List< bool >();
+            var higher = new List< Boolean >();
             probability = 0.123f;
             for ( var i = 0; i < 1048576*10; i++ ) {
                 higher.Add( probability.Probability() );

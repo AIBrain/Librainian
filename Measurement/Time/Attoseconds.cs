@@ -28,7 +28,6 @@ namespace Librainian.Measurement.Time {
     using Annotations;
     using FluentAssertions;
     using Librainian.Extensions;
-    using NUnit.Framework;
 
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]

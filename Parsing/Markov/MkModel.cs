@@ -25,10 +25,10 @@ namespace Librainian.Parsing.Markov {
     using System.Text;
     using System.Threading.Tasks;
     using Annotations;
+    using Collections;
     using Librainian.Extensions;
     using Persistence;
     using Threading;
-    using Extensions = Collections.Extensions;
 
     public class MkModel {
         public readonly String Name;
@@ -77,10 +77,10 @@ namespace Librainian.Parsing.Markov {
         /// <returns></returns>
         public IEnumerable< String > Nexts( [CanBeNull] String word ) {
             if ( word == null ) {
-                return Extensions.EmptyList;
+                return CollectionExtensions.EmptyList;
             }
 
-            return this._markovChains.ContainsKey( key: word ) ? this._markovChains[ key: word ] : Extensions.EmptyList;
+            return this._markovChains.ContainsKey( key: word ) ? this._markovChains[ key: word ] : CollectionExtensions.EmptyList;
         }
 
         public Boolean Save() {

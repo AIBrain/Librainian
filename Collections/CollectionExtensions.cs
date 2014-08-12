@@ -30,23 +30,18 @@ namespace Librainian.Collections {
     using Maths;
     using Threading;
 
-    public static class Extensions {
+    public static class CollectionExtensions {
         public static readonly List<string> EmptyList = new List<string>();
 
         /// <summary>
-        ///     <para>A list containing <see cref="bool.False" /> then <see cref="bool.True" />.</para>
+        ///     <para>A list containing <see cref="Boolean.False" /> then <see cref="Boolean.True" />.</para>
         /// </summary>
-        public static readonly Lazy<List<bool>> FalseThenTrue = new Lazy<List<bool>>( () => new List<bool>( new[] { false, true } ) );
+        public static readonly Lazy<List<Boolean>> FalseThenTrue = new Lazy<List<Boolean>>( () => new List<Boolean>( new[] { false, true } ) );
 
         /// <summary>
         ///     <para>A list containing <see cref="Boolean.True" /> then <see cref="Boolean.False" />.</para>
         /// </summary>
-        public static readonly Lazy<List<bool>> TrueThenFalse = new Lazy<List<bool>>( () => new List<bool>( new[] { true, false } ) );
-
-        static Extensions() {
-            FalseThenTrue.Value.Fix();
-            TrueThenFalse.Value.Fix();
-        }
+        public static readonly Lazy<List<Boolean>> TrueThenFalse = new Lazy<List<Boolean>>( () => new List<Boolean>( new[] { true, false } ) );
 
         public static void Add<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] IEnumerable<T> items ) {
             if ( collection == null ) {
@@ -217,7 +212,7 @@ namespace Librainian.Collections {
         /// <summary>
         ///     <para>A list containing <see cref="Boolean.True" /> then <see cref="Boolean.False" />.</para>
         /// </summary>
-        public static IEnumerable<bool> Infinitely( this Boolean value ) {
+        public static IEnumerable<Boolean> Infinitely( this Boolean value ) {
             do {
                 yield return value;
             } while ( true );
