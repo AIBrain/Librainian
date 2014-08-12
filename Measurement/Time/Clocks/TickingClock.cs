@@ -39,7 +39,7 @@ namespace Librainian.Measurement.Time.Clocks {
     ///         </para>
     ///     </para>
     /// </summary>
-    public class TickingClock : IClock {
+    public class TickingClock : IStandardClock {
         /// <summary>
         /// </summary>
         [CanBeNull]

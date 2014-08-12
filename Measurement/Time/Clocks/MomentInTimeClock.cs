@@ -6,7 +6,7 @@ namespace Librainian.Measurement.Time.Clocks {
     /// A clock that stays at the set moment in time.
     /// </summary>
     [ImmutableAttribute]
-    public class MomentInTimeClock : IClock {
+    public class MomentInTimeClock : IStandardClock {
 
         public Hour Hour { get; private set; }
         public Minute Minute { get; private set; }

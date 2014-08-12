@@ -32,7 +32,7 @@ namespace Librainian.Measurement.Time.Clocks {
     [DataContract]
     [Serializable]
     [Immutable]
-    public struct Minute : IPartofaClock {
+    public struct Minute : IMinute {
 
         /// <summary>
         /// 60

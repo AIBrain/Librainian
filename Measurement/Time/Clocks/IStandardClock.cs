@@ -23,19 +23,19 @@ namespace Librainian.Measurement.Time.Clocks {
 
     using System;
 
-    public interface IClock {
+    public interface IStandardClock {
 
         /// <summary>
         /// </summary>
-        Hour Hour { get; }
+        IHour Hour { get; }
 
         /// <summary>
         /// </summary>
-        Minute Minute { get; }
+        IMinute Minute { get; }
 
         /// <summary>
         /// </summary>
-        Second Second { get; }
+        ISecond Second { get; }
 
         Time GetTime();
 

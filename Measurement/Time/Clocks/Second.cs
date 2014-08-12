@@ -29,7 +29,7 @@ namespace Librainian.Measurement.Time.Clocks {
     [DataContract]
     [Serializable]
     [Immutable]
-    public struct Second : IPartofaClock {
+    public struct Second : ISecond {
         /// <summary>
         ///     60
         /// </summary>
