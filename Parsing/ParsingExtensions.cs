@@ -36,7 +36,7 @@ namespace Librainian.Parsing {
     using System.Xml;
     using Annotations;
     using Collections;
-    using Librainian.Extensions;
+    using Extensions;
     using Linguistics;
     using Maths;
     using Numerics;

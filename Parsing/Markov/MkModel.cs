@@ -26,7 +26,7 @@ namespace Librainian.Parsing.Markov {
     using System.Threading.Tasks;
     using Annotations;
     using Collections;
-    using Librainian.Extensions;
+    using Extensions;
     using Persistence;
     using Threading;
 
