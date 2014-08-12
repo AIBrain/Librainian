@@ -55,7 +55,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     poor mans <see cref="File" /> compare. byte by byte.
+        ///     poor mans <see cref="Document" /> compare. byte by byte.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -69,7 +69,7 @@ namespace Librainian.IO {
         /// <exception cref="IOException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
-        public static Boolean SameContent( [CanBeNull] this File left, [CanBeNull] File right ) {
+        public static Boolean SameContent( [CanBeNull] this Document left, [CanBeNull] Document right ) {
             if ( left == null || right == null ) {
                 return false;
             }

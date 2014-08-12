@@ -28,11 +28,11 @@ namespace Librainian.IO {
 
     /// <summary>
     ///     <para>Container for a file, the parent folder, and the file size from the given fullpath.</para>
-    ///     <seealso cref="IOExtensions.SameContent(File,File)" />
+    ///     <seealso cref="IOExtensions.SameContent(Document,Document)" />
     /// </summary>
     [DataContract( IsReference = true )]
     [Immutable]
-    public sealed class File : IEquatable<File> {
+    public sealed class Document : IEquatable<Document> {
         /// <summary>
         ///     <para>The extension of the file parsed in the ctor.</para>
         /// </summary>
@@ -65,7 +65,7 @@ namespace Librainian.IO {
         /// <exception cref="IOException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
-        public File( [NotNull] String fullPathWithFilename ) {
+        public Document( [NotNull] String fullPathWithFilename ) {
             if ( String.IsNullOrWhiteSpace( fullPathWithFilename ) ) {
                 throw new ArgumentNullException( "fullPathWithFilename" );
             }
@@ -89,7 +89,7 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Boolean Equals( [CanBeNull] File other ) {
+        public Boolean Equals( [CanBeNull] Document other ) {
             return !ReferenceEquals( null, other ) && Equals( this, other );
         }
 
@@ -99,7 +99,7 @@ namespace Librainian.IO {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] File left, [CanBeNull] File right ) {
+        public static Boolean Equals( [CanBeNull] Document left, [CanBeNull] Document right ) {
             if ( left == null ) {
                 throw new ArgumentNullException( "left" );
             }
@@ -116,23 +116,23 @@ namespace Librainian.IO {
         }
 
         public override Boolean Equals( [CanBeNull] object obj ) {
-            return obj is File && Equals( this, ( File )obj );
+            return obj is Document && Equals( this, ( Document )obj );
         }
 
         [NotNull]
-        public static implicit operator DirectoryInfo( [NotNull] File file ) {
-            if ( file == null ) {
-                throw new ArgumentNullException( "file" );
+        public static implicit operator DirectoryInfo( [NotNull] Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( "document" );
             }
-            return file.Folder;
+            return document.Folder;
         }
 
         [NotNull]
-        public static implicit operator FileInfo( [NotNull] File file ) {
-            if ( file == null ) {
-                throw new ArgumentNullException( "file" );
+        public static implicit operator FileInfo( [NotNull] Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( "document" );
             }
-            return file.Info;
+            return document.Info;
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace Librainian.IO {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator !=( File left, File right ) {
+        public static Boolean operator !=( Document left, Document right ) {
             return !Equals( left, right );
         }
 
@@ -151,7 +151,7 @@ namespace Librainian.IO {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator ==( File left, File right ) {
+        public static Boolean operator ==( Document left, Document right ) {
             return Equals( left, right );
         }
 
@@ -163,7 +163,7 @@ namespace Librainian.IO {
         /// <param name="progress"></param>
         /// <param name="eta"></param>
         /// <returns></returns>
-        public static Task Copy( File source, File destination, Action<Double> progress, Action<TimeSpan> eta ) {
+        public static Task Copy( Document source, Document destination, Action<Double> progress, Action<TimeSpan> eta ) {
             return Task.Run( () => { } );
         }
     }

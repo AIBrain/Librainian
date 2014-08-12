@@ -218,7 +218,7 @@
     <Compile Include="Magic\NinjectIocContainer.cs" />
     <Compile Include="IO\Crc32.cs" />
     <Compile Include="IO\IOExtensions.cs" />
-    <Compile Include="IO\File.cs" />
+    <Compile Include="IO\Document.cs" />
     <Compile Include="Internet\Browser\Chrome.cs" />
     <Compile Include="Internet\Inet.cs" />
     <Compile Include="Internet\FTP\BasicFTPClient.cs" />
