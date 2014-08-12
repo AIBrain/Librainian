@@ -45,7 +45,7 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <summary>
         /// 1
         /// </summary>
-        public const Byte Minimum = Hours.InOneDay;
+        public const Byte Minimum = 1;
 
         public static readonly Hour Max = new Hour( Maximum );
 
