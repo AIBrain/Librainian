@@ -33,7 +33,7 @@ namespace Librainian.Measurement.Time.Clocks {
     [DataContract]
     [Serializable]
     [Immutable]
-    public sealed class Hour : PartialClock {
+    public sealed class Hour : ClockPart {
         public static readonly Hour MaxHour = new Hour( Hours.InOneDay );
         public static readonly Hour MinHour = new Hour( Minimum );
 

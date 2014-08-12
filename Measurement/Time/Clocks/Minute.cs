@@ -33,7 +33,7 @@ namespace Librainian.Measurement.Time.Clocks {
     [DataContract]
     [Serializable]
     [Immutable]
-    public sealed class Minute : PartialClock {
+    public sealed class Minute : ClockPart {
 
         /// <summary>
         /// </summary>

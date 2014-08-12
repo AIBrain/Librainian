@@ -25,7 +25,7 @@ namespace Librainian.Measurement.Time.Clocks {
     using FluentAssertions;
 
     [DataContract( IsReference = true )]
-    public abstract class PartialClock {
+    public abstract class ClockPart {
         /// <summary>
         ///     1
         /// </summary>
