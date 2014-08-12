@@ -44,14 +44,15 @@ namespace Librainian.Extensions {
         //
         // TODO: replace this with a per-field attribute, to allow the 
         // immutability test to run over the rest of the type.
-        [UsedImplicitly] public Boolean OnFaith;
+        [UsedImplicitly]
+        public Boolean OnFaith;
 
         /// <summary>
         ///     Ensures that 'type' follows the rules for immutability
         /// </summary>
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         [SuppressMessage( "Microsoft.Design", "CA1002:DoNotExposeGenericLists" )]
-        public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable< Type > whiteList ) {
+        public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable<Type> whiteList ) {
             if ( type == null ) {
                 throw new ArgumentNullException( "type" );
             }
@@ -62,7 +63,7 @@ namespace Librainian.Extensions {
             if ( whiteList == null ) {
                 throw new ArgumentNullException( "whiteList" );
             }
-            var enumerable = whiteList as IList< Type > ?? whiteList.ToList();
+            var enumerable = whiteList as IList<Type> ?? whiteList.ToList();
 
             if ( enumerable.Contains( type ) ) {
                 return;
@@ -103,7 +104,7 @@ namespace Librainian.Extensions {
         /// </summary>
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         [SuppressMessage( "Microsoft.Design", "CA1002:DoNotExposeGenericLists" )]
-        public static void VerifyTypesAreImmutable( IEnumerable< Assembly > assemblies, params Type[] whiteList ) {
+        public static void VerifyTypesAreImmutable( IEnumerable<Assembly> assemblies, params Type[] whiteList ) {
             var typesMarkedImmutable = from type in assemblies.GetTypes()
                                        where IsMarkedImmutable( type )
                                        select type;
@@ -114,19 +115,24 @@ namespace Librainian.Extensions {
         }
 
         private static Boolean IsMarkedImmutable( Type type ) {
-            return ReflectionHelper.TypeHasAttribute< ImmutableAttribute >( type );
+            return ReflectionHelper.TypeHasAttribute<ImmutableAttribute>( type );
         }
 
         private static Boolean IsWhiteListed( Type type ) {
-            if ( type == typeof ( Object ) ) {
+            // Boolean, int, etc.
+            if ( type.IsPrimitive ) {
                 return true;
             }
 
-            if ( type == typeof ( String ) ) {
+            if ( type == typeof( Object ) ) {
                 return true;
             }
 
-            if ( type == typeof ( Guid ) ) {
+            if ( type == typeof( String ) ) {
+                return true;
+            }
+
+            if ( type == typeof( Guid ) ) {
                 return true;
             }
 
@@ -134,13 +140,8 @@ namespace Librainian.Extensions {
                 return true;
             }
 
-            // Boolean, int, etc.
-            if ( type.IsPrimitive ) {
-                return true;
-            }
-
             // override all checks on this type if [ImmutableAttribute(OnFaith=true)] is set
-            var immutableAttribute = ReflectionHelper.GetCustomAttribute< ImmutableAttribute >( type );
+            var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>( type );
             return immutableAttribute != null && immutableAttribute.OnFaith;
         }
 
@@ -149,11 +150,13 @@ namespace Librainian.Extensions {
         public class ImmutableFailureException : Exception {
             public readonly Type Type;
 
-            internal ImmutableFailureException( Type type, string message, Exception inner ) : base( message, inner ) {
+            internal ImmutableFailureException( Type type, string message, Exception inner )
+                : base( message, inner ) {
                 this.Type = type;
             }
 
-            internal ImmutableFailureException( Type type, string message ) : base( message ) {
+            internal ImmutableFailureException( Type type, string message )
+                : base( message ) {
                 this.Type = type;
             }
 

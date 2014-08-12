@@ -22,7 +22,7 @@ namespace Librainian.Collections {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Runtime.Serialization;
-    using Librainian.Extensions;
+    using Extensions;
     using Parsing;
 
     /// <summary>

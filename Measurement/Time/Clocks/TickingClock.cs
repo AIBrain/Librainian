@@ -21,6 +21,7 @@ namespace Librainian.Measurement.Time.Clocks {
     using System;
     using System.Timers;
     using Annotations;
+    using Librainian.Extensions;
 
     /// <summary>
     ///     <para>Starts a forward-ticking clock at the given time with settable events.</para>
@@ -38,7 +39,7 @@ namespace Librainian.Measurement.Time.Clocks {
     ///         </para>
     ///     </para>
     /// </summary>
-    public class TickingClock {
+    public class TickingClock : IClock {
         /// <summary>
         /// </summary>
         [CanBeNull] private Timer _timer;
@@ -48,13 +49,13 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         [CanBeNull]
-        public Action OnHourTick { get; private set; }
+        public Action OnHourTick { get;  set; }
 
         [CanBeNull]
-        public Action OnMinuteTick { get; private set; }
+        public Action OnMinuteTick { get;  set; }
 
         [CanBeNull]
-        public Action OnSecondTick { get; private set; }
+        public Action OnSecondTick { get;  set; }
 
         /// <summary>
         /// </summary>
@@ -68,7 +69,7 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         public Second Second { get; private set; }
 
-        private void Set( DateTime time ) {
+        public void Set( DateTime time ) {
             this.Set( new Time( time ) );
         }
 
@@ -148,7 +149,7 @@ namespace Librainian.Measurement.Time.Clocks {
             return this.GetAMorPM() == AMorPM.PM;
         }
 
-        public Time Time() {
+        public Time GetTime() {
             try {
                 var timer = this._timer;
                 if ( timer != null ) {

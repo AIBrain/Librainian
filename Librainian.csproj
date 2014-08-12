@@ -286,6 +286,8 @@
     <Compile Include="Measurement\Length\PlanckLengths.cs" />
     <Compile Include="Measurement\Time\Clocks\AMorPM.cs" />
     <Compile Include="Measurement\Time\Attoseconds.cs" />
+    <Compile Include="Measurement\Time\Clocks\IClock.cs" />
+    <Compile Include="Measurement\Time\Clocks\MomentInTimeClock.cs" />
     <Compile Include="Measurement\Time\Day.cs" />
     <Compile Include="Measurement\Time\Clocks\Hour.cs" />
     <Compile Include="Measurement\Time\Clocks\IPartofaClock.cs" />

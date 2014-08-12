@@ -22,7 +22,7 @@ namespace Librainian.Collections {
     using System.Collections;
     using System.Collections.Generic;
     using Annotations;
-    using Librainian.Extensions;
+    using Extensions;
 
     /// <summary>
     ///     A list that has been written to be observationally immutable.  A mutable array
@@ -248,7 +248,7 @@ namespace Librainian.Collections {
         ///     ICollection&lt;T&gt; are mutable, so we cannot support them.  We offer
         ///     immutable versions of each.
         /// </summary>
-        private static void ThrowMutableException( string copyMethod ) {
+        private static void ThrowMutableException( String copyMethod ) {
             throw new InvalidOperationException( String.Format( "Cannot mutate an immutable list; see copying method ‘{0}’", copyMethod ) );
         }
     }
