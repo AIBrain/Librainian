@@ -71,7 +71,7 @@ namespace Librainian.Measurement.Time.Clocks {
             get {
                 var next = this.Value + 1;
                 if ( next > Maximum ) {
-                    next = 1;
+                    next = Minimum;
                 }
                 return new Hour( next );
             }
@@ -83,7 +83,7 @@ namespace Librainian.Measurement.Time.Clocks {
         public Hour Previous {
             get {
                 var next = this.Value - 1;
-                if ( next < 1 ) {
+                if ( next < Minimum ) {
                     next = Maximum;
                 }
                 return new Hour( next );
