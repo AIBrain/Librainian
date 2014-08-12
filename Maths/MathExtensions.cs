@@ -1367,7 +1367,7 @@ namespace Librainian.Maths {
         public static Boolean TestTrySplitDecimal() {
 
             //var bob = "18913489007071346701367013467767613401616136.136301590214084662236232265343672235925607263623468709823672366";
-            var bob = String.Format( "{0}.{1}", Randem.NextString( length: 10, lowerCase: false, upperCase: false, numbers: true, symbols: false ), Randem.NextString( length: 10, lowerCase: false, upperCase: false, numbers: true, symbols: false ) );
+            var bob = String.Format( "{0}.{1}", Randem.NextString( length: 31,  numbers: true ), Randem.NextString( length: 31, numbers: true ) );
                 
 
             BigInteger beforeDecimalPoint;

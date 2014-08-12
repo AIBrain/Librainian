@@ -384,7 +384,7 @@
     <Compile Include="Parsing\ClosedMatchContext.cs" />
     <Compile Include="Parsing\ContinuousSentence.cs" />
     <Compile Include="Parsing\TranslationDictionary.cs" />
-    <Compile Include="Parsing\Extensions.cs" />
+    <Compile Include="Parsing\ParsingExtensions.cs" />
     <Compile Include="Parsing\IntermediateMatchResultContext.cs" />
     <Compile Include="Parsing\Markov\Chain.cs" />
     <Compile Include="Parsing\Markov\MkModel.cs" />

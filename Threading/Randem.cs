@@ -40,7 +40,7 @@ namespace Librainian.Threading {
     using Maths;
     using Measurement.Time;
     using NUnit.Framework;
-    using Extensions = Parsing.Extensions;
+    using Parsing;
 
     public static class Randem {
 
@@ -344,18 +344,18 @@ namespace Librainian.Threading {
         /// Generate a random string.
         /// </summary>
         /// <param name="length">How many characters long.</param>
-        /// <param name="lowerCase"><see cref="Extensions.Lowercase"/></param>
-        /// <param name="upperCase"><see cref="Extensions.Uppercase"/></param>
-        /// <param name="numbers"><see cref="Extensions.Numbers"/></param>
-        /// <param name="symbols"><see cref="Extensions.Symbols"/></param>
+        /// <param name="lowerCase"><see cref="ParsingExtensions.Lowercase"/></param>
+        /// <param name="upperCase"><see cref="ParsingExtensions.Uppercase"/></param>
+        /// <param name="numbers"><see cref="ParsingExtensions.Numbers"/></param>
+        /// <param name="symbols"><see cref="ParsingExtensions.Symbols"/></param>
         /// <returns></returns>
-        public static String NextString( int length = 11, Boolean lowerCase = true, Boolean upperCase = false, Boolean numbers = false, Boolean symbols = false ) {
+        public static String NextString( int length = 11, Boolean lowerCase = false, Boolean upperCase = false, Boolean numbers = false, Boolean symbols = false ) {
             //var charPool = String.Concat( lowerCase ? Extensions.Lowercase : String.Empty, upperCase ? Extensions.Uppercase : String.Empty, numbers ? Extensions.Numbers : String.Empty, symbols ? Extensions.Symbols : String.Empty );
             var sb = new StringBuilder();
-            if ( lowerCase ) { sb.Append( Extensions.Lowercase ); }
-            if ( upperCase ) { sb.Append( Extensions.Uppercase ); }
-            if ( numbers ) { sb.Append( Extensions.Numbers ); }
-            if ( symbols ) { sb.Append( Extensions.Symbols ); }
+            if ( lowerCase ) { sb.Append( ParsingExtensions.Lowercase ); }
+            if ( upperCase ) { sb.Append( ParsingExtensions.Uppercase ); }
+            if ( numbers ) { sb.Append( ParsingExtensions.Numbers ); }
+            if ( symbols ) { sb.Append( ParsingExtensions.Symbols ); }
 
             var charPool = sb.ToString();
             return new String( Enumerable.Range( 0, length ).Select( i => charPool[ Next( 0, charPool.Length ) ] ).ToArray() );
@@ -503,7 +503,7 @@ namespace Librainian.Threading {
         /// <param name="symbols"></param>
         /// <returns></returns>
         public static String RandomString( int length = 10, Boolean lowerCase = true, Boolean upperCase = false, Boolean numbers = false, Boolean symbols = false ) {
-            var charPool = String.Concat( lowerCase ? Extensions.AllLowercaseLetters : String.Empty, upperCase ? Extensions.AllUppercaseLetters : String.Empty, numbers ? Extensions.Numbers : String.Empty, symbols ? Extensions.Symbols : String.Empty );
+            var charPool = String.Concat( lowerCase ? ParsingExtensions.AllLowercaseLetters : String.Empty, upperCase ? ParsingExtensions.AllUppercaseLetters : String.Empty, numbers ? ParsingExtensions.Numbers : String.Empty, symbols ? ParsingExtensions.Symbols : String.Empty );
             return new String( Enumerable.Range( 0, length ).Select( i => charPool[ Next( 0, charPool.Length ) ] ).ToArray() );
         }
 

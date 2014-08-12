@@ -43,7 +43,7 @@ namespace Librainian.Parsing {
     using NUnit.Framework;
     using Threading;
 
-    public static class Extensions {
+    public static class ParsingExtensions {
         public const String Doublespace = Singlespace + Singlespace;
 /*
         public const String LotsOfSpacesString = "                                                                                          ";
