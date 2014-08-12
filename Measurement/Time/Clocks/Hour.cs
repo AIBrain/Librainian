@@ -17,7 +17,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Hour.cs" was last cleaned by Rick on 2014/08/12 at 12:21 AM
+// "Librainian/Hour.cs" was last cleaned by Rick on 2014/08/12 at 7:28 AM
 
 #endregion License & Information
 
@@ -25,7 +25,9 @@ namespace Librainian.Measurement.Time.Clocks {
 
     using System;
     using System.Runtime.Serialization;
+    using FluentAssertions;
     using Librainian.Extensions;
+    using Maths;
 
     /// <summary>
     /// <para>A simple struct for an <see cref="Hour" />.</para>
@@ -33,25 +35,60 @@ namespace Librainian.Measurement.Time.Clocks {
     [DataContract]
     [Serializable]
     [Immutable]
-    public sealed class Hour : ClockPart {
-        public static readonly Hour MaxHour = new Hour( Hours.InOneDay );
-        public static readonly Hour MinHour = new Hour( Minimum );
-
-        [DataMember]
-        private readonly Byte _value;
-
-        public Hour( Byte hour ) {
-            this._value = this.Validate( hour );
-        }
-
-        public Hour( long hour ) {
-            this._value = this.Validate( hour );
-        }
+    public sealed class Hour : IClockPart {
 
         /// <summary>
         /// 24
         /// </summary>
-        public override byte Maximum { get { return Hours.InOneDay; } }
+        public const Byte Maximum = Hours.InOneDay;
+
+        /// <summary>
+        /// 1
+        /// </summary>
+        public const Byte Minimum = Hours.InOneDay;
+
+        public static readonly Hour Max = new Hour( Maximum );
+
+        public static readonly Hour Min = new Hour( Minimum );
+
+        [DataMember]
+        public readonly Byte Value;
+
+        public Hour( Byte hour ) {
+            Validate( hour );
+            this.Value = hour;
+        }
+
+        public Hour( long hour ) {
+            Validate( hour );
+            this.Value = ( Byte )hour;
+        }
+
+        /// <summary>
+        /// Provide the next hour.
+        /// </summary>
+        public Hour Next {
+            get {
+                var next = this.Value + 1;
+                if ( next > Maximum ) {
+                    next = 1;
+                }
+                return new Hour( next );
+            }
+        }
+
+        /// <summary>
+        /// Provide the previous hour.
+        /// </summary>
+        public Hour Previous {
+            get {
+                var next = this.Value - 1;
+                if ( next < 1 ) {
+                    next = Maximum;
+                }
+                return new Hour( next );
+            }
+        }
 
         /// <summary>
         /// Allow this class to be visibly cast to a <see cref="SByte" />.
@@ -59,15 +96,19 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <param name="hour"></param>
         /// <returns></returns>
         public static explicit operator SByte( Hour hour ) {
-            return ( SByte )hour._value;
+            return ( SByte )hour.Value;
         }
 
         public static implicit operator Byte( Hour hour ) {
-            return hour._value;
+            return hour.Value;
         }
 
-        public override byte GetValue() {
-            return this._value;
+        private static void Validate( long hour ) {
+            hour.Should().BeInRange( Minimum, Maximum );
+
+            if ( !hour.Between( Minimum, Maximum ) ) {
+                throw new ArgumentOutOfRangeException( "hour", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", hour, Minimum, Maximum ) );
+            }
         }
     }
 }
