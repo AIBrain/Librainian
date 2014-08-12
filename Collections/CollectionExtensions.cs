@@ -43,14 +43,14 @@ namespace Librainian.Collections {
         /// </summary>
         public static readonly Lazy<List<Boolean>> TrueThenFalse = new Lazy<List<Boolean>>( () => new List<Boolean>( new[] { true, false } ) );
 
-        public static void Add<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] IEnumerable<T> items ) {
+        public static void AddRange<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] IEnumerable<T> items ) {
             if ( collection == null ) {
                 throw new ArgumentNullException( "collection" );
             }
             if ( items == null ) {
                 throw new ArgumentNullException( "items" );
             }
-            Parallel.ForEach( items, Randem.Parallelism, collection.Add );
+            Parallel.ForEach( source: items,parallelOptions: Randem.Parallelism, body: collection.Add );
         }
 
         public static void Add<T>( this IProducerConsumerCollection<T> collection, T item ) {
@@ -62,18 +62,20 @@ namespace Librainian.Collections {
             }
         }
 
+/*
         public static T Append<T>( [NotNull] this Enum type, T value ) where T : struct {
             if ( type == null ) {
                 throw new ArgumentNullException( "type" );
             }
             return ( T )( ValueType )( ( ( int )( ValueType )type | ( int )( ValueType )value ) );
         }
+*/
 
         public static BigInteger CountBig<TType>( [NotNull] this IEnumerable<TType> items ) {
             if ( items == null ) {
                 throw new ArgumentNullException( "items" );
             }
-            return items.Aggregate( BigInteger.Zero, ( current, item ) => current + BigInteger.One );
+            return items.Aggregate( seed: BigInteger.Zero, func: ( current, item ) => current + BigInteger.One );
         }
 
         /// <summary>

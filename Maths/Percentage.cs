@@ -87,7 +87,7 @@ namespace Librainian.Maths {
             return this.Value.CompareTo( other.Value );
         }
 
-        public bool Equals( [NotNull] Percentage other ) {
+        public Boolean Equals( [NotNull] Percentage other ) {
             if ( other == null ) {
                 throw new ArgumentNullException( "other" );
             }
