@@ -14,89 +14,33 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/ClockExtensions.cs" was last cleaned by Rick on 2014/08/11 at 10:45 PM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/ClockExtensions.cs" was last cleaned by Rick on 2014/08/12 at 7:00 AM
 #endregion
 
 namespace Librainian.Measurement.Time.Clocks {
-    using System;
     using FluentAssertions;
     using NUnit.Framework;
 
     public static class ClockExtensions {
 
-
-        /// <summary>
-        ///     <para>Returns a new decremented <seealso cref="Hour" />.</para>
-        ///     <para>Returns true if the value passed <see cref="Hour.Minimum" /></para>
-        /// </summary>
-        public static Boolean Backward( this Hour hour ) {
-            var value = ( SByte )hour;
-            value--;
-            if ( value < Hour.Minimum ) { hour = Hour.MaxHour; return true; }
-            hour = new Hour( value );
-            return false;
-        }
-
-        /// <summary>
-        ///     <para>Returns a new incremented <seealso cref="Hour" />.</para>
-        ///     <para>Returns true if the value passed <see cref="Hour.Maximum" /></para>
-        /// </summary>
-        public static Boolean Forward( this Hour hour ) {
-            var value = ( Byte )hour;
-            value++;
-            if ( value > Hour.Maximum ) { hour = Hour.MinHour; return true; }
-            hour = new Hour( value );
-            return false;
-        }
-
-
-        /// <summary>
-        ///     <para>Returns a new decremented <see cref="Minute" />.</para>
-        ///     <para>Returns true if the value passed <see cref="Minute.Maximum" /></para>
-        /// </summary>
-        public static Boolean Backward( this Minute minute, out Boolean tocked ) {
-            var value = ( SByte )minute;
-            value--;
-            if ( value < Minute.Minimum ) {
-                tocked = true;
-                return new Minute( Minute.Maximum );
-                
-            }
-            minute = new Minute( value );
-            return false;
-        }
-
-        /// <summary>
-        ///     <para>Increase the current minute.</para>
-        ///     <para>Returns true if the value passed <see cref="Minute.Maximum" /></para>
-        /// </summary>
-        public static Minute Forward( this Minute minute, out Boolean tocked ) {
-            var value = ( SByte )minute;
-            value++;
-            if ( value > Minute.Maximum ) {
-                tocked = true;
-                return Minute.MinMinute;
-            }
-            tocked = false;
-            return new Minute( value );
-
-        }
-
         [Test]
         public static void TestHour() {
-            Hour.Minimum.Should().BeLessThan( Hour.Maximum );
-            Hour.Maximum.Should().BeGreaterThan( Hour.Minimum );
+            Hour.Min.Value.Should().BeLessThan( Hour.Max.Value );
+            Hour.Max.Value.Should().BeGreaterThan( Hour.Min.Value );
         }
 
         [Test]
         public static void TestMinute() {
-            Minute.Minimum.Should().BeLessThan( Minute.Maximum );
-            Minute.Maximum.Should().BeGreaterThan( Minute.Minimum );
+            Minute.Min.Value.Should().BeLessThan( Minute.Max.Value );
+            Minute.Max.Value.Should().BeGreaterThan( Minute.Min.Value );
         }
 
         [Test]
         private static void TestSecond() {
-            Second.Maximum.Should().BeGreaterThan( Second.Minimum );
+            Second.Min.Value.Should().BeLessThan( Second.Max.Value );
+            Second.Max.Value.Should().BeGreaterThan( Second.Min.Value );
         }
     }
 }

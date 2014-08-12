@@ -20,29 +20,5 @@
 #endregion
 
 namespace Librainian.Measurement.Time.Clocks {
-    using System;
-    using System.Runtime.Serialization;
-    using FluentAssertions;
-
-    [DataContract( IsReference = true )]
-    public abstract class ClockPart {
-        /// <summary>
-        ///     1
-        /// </summary>
-        public const Byte Minimum = 1;
-
-        public abstract Byte Maximum { get; }
-
-        public abstract Byte GetValue();
-
-        protected Byte Validate( long quantity ) {
-            quantity.Should().BeInRange( Minimum, this.Maximum );
-
-            if ( quantity < Minimum || quantity > this.Maximum ) {
-                throw new ArgumentOutOfRangeException( "quantity", String.Format( "The specified quantity ({0}) is out of the valid range {1} to {2}.", quantity, Minimum, this.Maximum ) );
-            }
-
-            return ( Byte ) quantity;
-        }
-    }
+    public interface IClockPart {}
 }

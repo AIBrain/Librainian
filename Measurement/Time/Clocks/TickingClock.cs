@@ -124,15 +124,11 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         public Boolean IsAM() {
-            return this.GetAMorPM() == AMorPM.AM;
-        }
-
-        public AMorPM GetAMorPM() {
-            return this.Hour.Value >= 12 ? AMorPM.PM : AMorPM.AM; //BUG is this correct?
+            return !this.IsPM();
         }
 
         public Boolean IsPM() {
-            return this.GetAMorPM() == AMorPM.PM;
+            return this.Hour.Value >= 12;
         }
 
         public Time GetTime() {

@@ -17,7 +17,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Minute.cs" was last cleaned by Rick on 2014/08/12 at 12:25 AM
+// "Librainian/Minute.cs" was last cleaned by Rick on 2014/08/12 at 7:31 AM
 
 #endregion License & Information
 
@@ -25,6 +25,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
     using System;
     using System.Runtime.Serialization;
+    using FluentAssertions;
     using Librainian.Extensions;
 
     /// <summary>
@@ -33,28 +34,59 @@ namespace Librainian.Measurement.Time.Clocks {
     [DataContract]
     [Serializable]
     [Immutable]
-    public sealed class Minute : ClockPart {
+    public sealed class Minute : IClockPart {
+
+        public const byte Maximum = Minutes.InOneHour;
+
+        public const byte Minimum = 1;
+
+        /// <summary>
+        /// 60
+        /// </summary>
+        public static readonly Minute Max = new Minute( Maximum );
 
         /// <summary>
         /// </summary>
-        public static readonly Minute MaxMinute = new Minute( Minutes.InOneHour );
-
-        /// <summary>
-        /// </summary>
-        public static readonly Minute MinMinute = new Minute( Minimum );
+        public static readonly Minute Min = new Minute( Minimum );
 
         [DataMember]
-        private readonly Byte _value;
+        public readonly Byte Value;
 
         public Minute( Byte minute ) {
-            this._value = this.Validate( minute );
+            Validate( minute );
+            this.Value = minute;
         }
 
         public Minute( long minute ) {
-            this._value = this.Validate( minute );
+            Validate( minute );
+            this.Value = ( Byte )minute;
         }
 
-        public override byte Maximum { get { return Minutes.InOneHour; } }
+        /// <summary>
+        /// Provide the next minute.
+        /// </summary>
+        public Minute Next {
+            get {
+                var next = this.Value + 1;
+                if ( next > Maximum ) {
+                    next = Minimum;
+                }
+                return new Minute( next );
+            }
+        }
+
+        /// <summary>
+        /// Provide the previous minute.
+        /// </summary>
+        public Minute Previous {
+            get {
+                var next = this.Value - 1;
+                if ( next < Minimum ) {
+                    next = Maximum;
+                }
+                return new Minute( next );
+            }
+        }
 
         /// <summary>
         /// Allow this class to be visibly cast to a <see cref="SByte" />.
@@ -62,7 +94,7 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <param name="minute"></param>
         /// <returns></returns>
         public static explicit operator SByte( Minute minute ) {
-            return ( SByte )minute._value;
+            return ( SByte )minute.Value;
         }
 
         /// <summary>
@@ -71,11 +103,15 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <param name="minute"></param>
         /// <returns></returns>
         public static implicit operator Byte( Minute minute ) {
-            return minute._value;
+            return minute.Value;
         }
 
-        public override byte GetValue() {
-            return this._value;
+        private static void Validate( long minute ) {
+            minute.Should().BeInRange( Minimum, Maximum );
+
+            if ( minute < 1 || minute > Maximum ) {
+                throw new ArgumentOutOfRangeException( "minute", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", minute, Minimum, Maximum ) );
+            }
         }
     }
 }

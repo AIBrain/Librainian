@@ -759,7 +759,7 @@ namespace Librainian.Threading {
                 return;
             }
             if ( newline ) {
-                Debug.WriteLine( "[{0:s}].({2}) {1}", DateTime.UtcNow, message, Thread.CurrentThread.ManagedThreadId );
+                Debug.WriteLine( "[{0:s}].({1}) {2}", DateTime.UtcNow, Thread.CurrentThread.ManagedThreadId, message );
             }
             else {
                 Debug.Write( String.Format( "[] {0}", message ) );
@@ -774,11 +774,11 @@ namespace Librainian.Threading {
         /// <param name="x"> </param>
         /// <returns> </returns>
         public static IEnumerable< TSource > Top< TSource >( [NotNull] this IEnumerable< TSource > source, Double x ) {
-            //I cannot think of any way to know what percentage of a total to grab without knowing how many total there are in the first place...
             if ( source == null ) {
                 throw new ArgumentNullException( "source" );
             }
-            return source.Take( ( int ) ( x*source.LongCount() ) );
+            var sources = source as IList< TSource > ?? source.ToList();
+            return sources.Take( ( int ) ( x*sources.Count() ) );
         }
 
         /// <summary>

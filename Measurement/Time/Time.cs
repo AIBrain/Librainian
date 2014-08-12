@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Time {
 
         /// <summary>
         /// </summary>
-        public readonly Millisecond Millisecond;
+        public readonly Millisecondasssss Millisecondasssss;
 
         /// <summary>
         /// </summary>
@@ -53,7 +53,7 @@ namespace Librainian.Measurement.Time {
             this.Hour = new Hour( ( Byte ) span.Hours.Value );
             this.Minute = new Minute( ( Byte ) span.Minutes.Value );
             this.Second = new Second( ( Byte ) span.Seconds.Value );
-            this.Millisecond = new Millisecond( ( UInt16 ) span.Milliseconds.Value );
+            this.Millisecondasssss = new Millisecondasssss( ( UInt16 ) span.Milliseconds.Value );
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="date"></param>
         /// <returns></returns>
         public static implicit operator DateTime( Time date ) {
-            return new DateTime( year: DateTime.MinValue.Year, month: DateTime.MinValue.Month, day: DateTime.MinValue.Day, hour: date.Hour.Value, minute: date.Minute.Value, second: date.Second.Value, millisecond: date.Millisecond.Value );
+            return new DateTime( year: DateTime.MinValue.Year, month: DateTime.MinValue.Month, day: DateTime.MinValue.Day, hour: date.Hour.Value, minute: date.Minute.Value, second: date.Second.Value, millisecond: date.Millisecondasssss.Value );
         }
     }
 }

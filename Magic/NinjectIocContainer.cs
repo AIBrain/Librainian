@@ -22,32 +22,30 @@ namespace Librainian.Magic {
     using Annotations;
     using Ninject;
     using Ninject.Modules;
+    using Threading;
 
     public class NinjectIocContainer : IIocContainer {
+
+        [NotNull]
         public readonly IKernel Kernel;
 
-        public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
-            if ( modules == null ) {
-                throw new ArgumentNullException( "modules" );
-            }
-            this.Kernel = new StandardKernel( modules );
-        }
-
-        private NinjectIocContainer() {
-            this.Kernel = new StandardKernel();
+        public NinjectIocContainer( [CanBeNull] params INinjectModule[] modules ) {
+            String.Format( "Wiring up Ninject..." ).TimeDebug();
+            this.Kernel = null == modules ? new StandardKernel() : new StandardKernel( modules );
             this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
+            String.Format( "Wired up Ninject..." ).TimeDebug();
         }
 
         public object Get( Type type ) {
             return this.Kernel.Get( type );
         }
 
-        public T Get< T >() {
-            return this.Kernel.Get< T >();
+        public T Get<T>() {
+            return this.Kernel.Get<T>();
         }
 
-        public T Get< T >( string name, string value ) {
-            var result = this.Kernel.TryGet< T >( metadata => metadata.Has( name ) && ( string.Equals( metadata.Get< string >( name ), value, StringComparison.InvariantCultureIgnoreCase ) ) );
+        public T Get<T>( string name, string value ) {
+            var result = this.Kernel.TryGet<T>( metadata => metadata.Has( name ) && ( string.Equals( metadata.Get<string>( name ), value, StringComparison.InvariantCultureIgnoreCase ) ) );
 
             if ( Equals( result, default( T ) ) ) {
                 throw new InvalidOperationException( null );
@@ -59,8 +57,8 @@ namespace Librainian.Magic {
             this.Kernel.Inject( item );
         }
 
-        public T TryGet< T >() {
-            return this.Kernel.TryGet< T >();
+        public T TryGet<T>() {
+            return this.Kernel.TryGet<T>();
         }
     }
 }

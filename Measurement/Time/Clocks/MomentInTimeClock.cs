@@ -5,7 +5,7 @@ namespace Librainian.Measurement.Time.Clocks {
     /// <summary>
     /// A clock that stays at the set moment in time.
     /// </summary>
-    [ImmutableAttribute]
+    [Immutable]
     public class MomentInTimeClock : IStandardClock {
 
         public Hour Hour { get; private set; }
@@ -19,20 +19,28 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Second = new Second( now.Second );
         }
 
-        public bool IsAM() {
-            return this.
+        public MomentInTimeClock( Time time ) {
+            this.Hour = new Hour( time.Hour );
+            this.Minute = new Minute( time.Minute );
+            this.Second = new Second( time.Second );
         }
 
-        public AMorPM GetAMorPM() {
-            throw new NotImplementedException();
+        public MomentInTimeClock( DateTime time ) {
+            this.Hour = new Hour( time.Hour );
+            this.Minute = new Minute( time.Minute );
+            this.Second = new Second( time.Second );
         }
 
-        public bool IsPM() {
-            throw new NotImplementedException();
+        public Boolean IsAM() {
+            return !this.IsPM();
+        }
+
+        public Boolean IsPM() {
+            return this.Hour >= 12;
         }
 
         public Time GetTime() {
-            throw new NotImplementedException();
+            return new Time( hour: this.Hour, minute: this.Minute, second: this.Second );
         }
     }
 }
