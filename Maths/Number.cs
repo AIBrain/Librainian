@@ -104,12 +104,17 @@ namespace Librainian.Maths {
                 return false;
             }
 
+            //TODO add in subset for parsing numbers like "3.14E15" (scientific notation?)
+
+            //TODO add in subset for parsing numbers like "3.14^15"? (exponential notation?)
+
             //for parsing large decimals
             if ( !value.Contains( "." ) ) {
                 value += ".0";
             }
 
-            if ( value.Count( '.' ) > 1 ) {
+            // too many of the allowed symbols
+            if ( value.Count( '.' ) > 1 || value.Count( '-' ) > 1 ) {
                 return false;
             }
 
