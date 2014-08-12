@@ -1324,7 +1324,7 @@ namespace Librainian.Maths {
                 throw new ArgumentNullException( "right" );
             }
             left.VoteYes( right.Yes );
-            left.VoteForB( right.No );
+            left.VoteNo( right.No );
         }
 
         public static Double Slope( [NotNull] List<TimeProgression> data ) {

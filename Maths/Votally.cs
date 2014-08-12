@@ -126,7 +126,7 @@ namespace Librainian.Maths {
             }
             var result = left;
             result.VoteYes( right.Yes );
-            result.VoteForB( right.No );
+            result.VoteNo( right.No );
             return result;
         }
 
@@ -150,62 +150,32 @@ namespace Librainian.Maths {
         /// <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
         /// </summary>
         public void VoteYes( UInt64 votes = 1 ) {
-            this.Yes.AddWithoutOverFlow( votes );
+            this.Yes += votes;
         }
+
+        /// <summary>
+        /// <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
+        /// </summary>
+        public void VoteNo( UInt64 votes = 1 ) {
+            this.No += votes;
+        }
+
 
         /// <summary>
         /// <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void VoteYes( long votes ) {
-            this.Yes.AddWithoutOverFlow( votes );
+        public void WithdrawYesVote( UInt64 votes = 1 ) {
+            this.Yes -= votes;
         }
+
 
         /// <summary>
         /// <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void VoteForB( UInt64 votes = 1 ) {
-            this.No.AddWithoutOverFlow( votes );
+        public void WithdrawNoVote( UInt64 votes = 1 ) {
+            this.No -= votes;
         }
 
-        /// <summary>
-        /// <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
-        /// </summary>
-        public void VoteForB( long votes ) {
-            if ( votes >= 0 ) {
-                this.VoteForB( ( UInt64 )votes );
-            }
-        }
-
-        /// <summary>
-        /// <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
-        /// </summary>
-        public void WithdrawVoteForA( UInt64 votes = 1 ) {
-            this.Yes.SubtractWithoutUnderFlow( votes );
-        }
-
-        /// <summary>
-        /// <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
-        /// </summary>
-        public void WithdrawVoteForA( long votes = 1 ) {
-            if ( votes >= 0 ) {
-                this.Yes.SubtractWithoutUnderFlow( ( UInt64 )votes );
-            }
-        }
-
-        /// <summary>
-        /// <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
-        /// </summary>
-        public void WithdrawVoteForB( UInt64 votes = 1 ) {
-            this.No.SubtractWithoutUnderFlow( votes );
-        }
-
-        /// <summary>
-        /// <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
-        /// </summary>
-        public void WithdrawVoteForB( long votes = 1 ) {
-            if ( votes >= 0 ) {
-                this.No.SubtractWithoutUnderFlow( ( UInt64 )votes );
-            }
-        }
+      
     }
 }
