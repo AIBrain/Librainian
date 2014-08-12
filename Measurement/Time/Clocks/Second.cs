@@ -17,7 +17,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Second.cs" was last cleaned by Rick on 2014/08/12 at 6:59 AM
+// "Librainian/Second.cs" was last cleaned by Rick on 2014/08/12 at 7:35 AM
 
 #endregion License & Information
 
@@ -36,6 +36,10 @@ namespace Librainian.Measurement.Time.Clocks {
     [Immutable]
     public sealed class Second : IClockPart {
 
+        public const Byte Maximum = Seconds.InOneMinute;
+
+        public const Byte Minimum = 1;
+
         /// <summary>
         /// 60
         /// </summary>
@@ -49,23 +53,13 @@ namespace Librainian.Measurement.Time.Clocks {
         public readonly Byte Value;
 
         public Second( Byte second ) {
-            ( ( long ) second ).Should().BeInRange( 1, this.Maximum );
-
-            if ( ( long ) second < 1 || ( long ) second > this.Maximum ) {
-                throw new ArgumentOutOfRangeException( "quantity", String.Format( "The specified quantity ({0}) is out of the valid range {1} to {2}.", ( long ) second, ( byte ) 1, this.Maximum ) );
-            }
-
-            this.Value = ( Byte ) second;
+            Validate( second );
+            this.Value = second;
         }
 
         public Second( long second ) {
-            second.Should().BeInRange( 1, this.Maximum );
-
-            if ( second < 1 || second > this.Maximum ) {
-                throw new ArgumentOutOfRangeException( "quantity", String.Format( "The specified quantity ({0}) is out of the valid range {1} to {2}.", second, ( byte ) 1, this.Maximum ) );
-            }
-
-            this.Value = ( Byte ) second;
+            Validate( second );
+            this.Value = ( Byte )second;
         }
 
         /// <summary>
@@ -74,27 +68,25 @@ namespace Librainian.Measurement.Time.Clocks {
         public Second Next {
             get {
                 var next = this.Value + 1;
-                if ( next > this.Maximum ) {
-                    next = 1;
+                if ( next > Maximum ) {
+                    next = Minimum;
                 }
                 return new Second( next );
             }
         }
 
         /// <summary>
-        /// Provide the previous minute.
+        /// Provide the previous second.
         /// </summary>
         public Second Previous {
             get {
                 var next = this.Value - 1;
-                if ( next < 1 ) {
-                    next = this.Maximum;
+                if ( next < Minimum ) {
+                    next = Maximum;
                 }
                 return new Second( next );
             }
         }
-
-        protected override byte Maximum { get { return Seconds.InOneMinute; } }
 
         /// <summary>
         /// Allow this class to be visibly cast to a <see cref="SByte" />.
@@ -112,6 +104,14 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <returns></returns>
         public static implicit operator Byte( Second second ) {
             return second.Value;
+        }
+
+        private static void Validate( long second ) {
+            second.Should().BeInRange( 1, Maximum );
+
+            if ( second < 1 || second > Maximum ) {
+                throw new ArgumentOutOfRangeException( "second", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", second, Minimum, Maximum ) );
+            }
         }
     }
 }
