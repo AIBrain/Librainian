@@ -14,7 +14,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/AltCoinExtensions.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/AltCoinExtensions.cs" was last cleaned by Rick on 2014/08/12 at 2:37 PM
 #endregion
 
 namespace Librainian.Measurement.Currency {
@@ -22,7 +24,7 @@ namespace Librainian.Measurement.Currency {
 
     public static class AltCoinExtensions {
         public static String Formatted( this Decimal amount ) {
-            return String.Format( "{0:f8}", amount );
+            return String.Format( "{0:F8}", amount );
         }
     }
 }
