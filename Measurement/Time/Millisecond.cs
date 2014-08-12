@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     [DataContract]
     [Serializable]
-    public struct Millisecond : PartofaClock {
+    public struct Millisecond : PartialClock {
         /// <summary>
         ///     60
         /// </summary>

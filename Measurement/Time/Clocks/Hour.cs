@@ -32,19 +32,15 @@ namespace Librainian.Measurement.Time.Clocks {
     [DataContract]
     [Serializable]
     [Immutable]
-    public struct Hour : IHour {
+    public sealed class Hour : PartialClock {
 
-        /// <summary>
-        /// 24
-        /// </summary>
-        public const Byte Maximum = Hours.InOneDay;
 
         /// <summary>
         /// 1
         /// </summary>
         public const Byte Minimum = 1;
 
-        public static readonly Hour MaxHour = new Hour( Maximum );
+        public static readonly Hour MaxHour = new Hour( Hours.InOneDay );
         public static readonly Hour MinHour = new Hour( Minimum );
 
         [DataMember]
@@ -71,14 +67,14 @@ namespace Librainian.Measurement.Time.Clocks {
             return hour._value;
         }
 
-        private static Byte Validate( long hour ) {
-            hour.Should().BeInRange( Minimum, Maximum );
+        /// <summary>
+        /// 24
+        /// </summary>
+        public override byte Maximum { get { return Hours.InOneDay; } }
 
-            if ( hour < Minimum || hour > Maximum ) {
-                throw new ArgumentOutOfRangeException( "hour", String.Format( "The specified hour {0} is out of the valid range {1} to {2}.", hour, Minimum, Maximum ) );
-            }
-
-            return ( Byte )hour;
+        public override byte GetValue() {
+            return _value;
         }
+
     }
 }

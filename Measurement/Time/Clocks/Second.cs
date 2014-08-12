@@ -14,7 +14,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Second.cs" was last cleaned by Rick on 2014/08/11 at 10:22 PM
+// Contact me through email if you have any questions.
+// 
+// "Librainian/Second.cs" was last cleaned by Rick on 2014/08/12 at 12:15 AM
 #endregion
 
 namespace Librainian.Measurement.Time.Clocks {
@@ -28,7 +30,7 @@ namespace Librainian.Measurement.Time.Clocks {
     [DataContract]
     [Serializable]
     [Immutable]
-    public class Second : PartofaClock {
+    public sealed class Second : PartialClock {
         /// <summary>
         /// </summary>
         public static readonly Second MaxSecond = new Second( Seconds.InOneMinute );
@@ -37,21 +39,21 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         public static readonly Second MinSecond = new Second( Minimum );
 
-        public override byte Maximum { get { return Seconds.InOneMinute; } }
-
         [DataMember]
         public readonly Byte Value;
 
         public Second( Byte second ) {
-            this.Value = Validate( second );
+            this.Value = this.Validate( second );
         }
 
         public Second( long second ) {
-            this.Value = Validate( second );
+            this.Value = this.Validate( second );
         }
 
+        public override byte Maximum { get { return Seconds.InOneMinute; } }
+
         /// <summary>
-        /// Allow this class to be visibly cast to a <see cref="SByte" />.
+        ///     Allow this class to be visibly cast to a <see cref="SByte" />.
         /// </summary>
         /// <param name="second"></param>
         /// <returns></returns>
@@ -60,7 +62,7 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         /// <summary>
-        /// Allow this class to be read as a <see cref="Byte" />.
+        ///     Allow this class to be read as a <see cref="Byte" />.
         /// </summary>
         /// <param name="second"></param>
         /// <returns></returns>
@@ -68,5 +70,8 @@ namespace Librainian.Measurement.Time.Clocks {
             return second.Value;
         }
 
+        public override byte GetValue() {
+            return this.Value;
+        }
     }
 }

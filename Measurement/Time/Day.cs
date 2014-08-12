@@ -29,7 +29,7 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     [DataContract]
     [Serializable]
-    public struct Day : PartofaClock {
+    public struct Day : PartialClock {
         /// <summary>
         ///     31
         /// </summary>

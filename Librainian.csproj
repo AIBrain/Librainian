@@ -288,7 +288,6 @@
     <Compile Include="Measurement\Time\Attoseconds.cs" />
     <Compile Include="Measurement\Time\Clocks\ClockExtensions.cs" />
     <Compile Include="Measurement\Time\Clocks\IStandardClock.cs" />
-    <Compile Include="Measurement\Time\Clocks\IHour.cs" />
     <Compile Include="Measurement\Time\Clocks\IMinute.cs" />
     <Compile Include="Measurement\Time\Clocks\MomentInTimeClock.cs" />
     <Compile Include="Measurement\Time\Day.cs" />
