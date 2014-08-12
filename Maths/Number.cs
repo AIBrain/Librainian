@@ -21,9 +21,11 @@
 
 namespace Librainian.Maths {
     using System;
+    using System.Linq;
     using System.Numerics;
     using Annotations;
     using Extensions;
+    using FluentAssertions;
     using Numerics;
 
     /// <summary>
@@ -48,7 +50,7 @@ namespace Librainian.Maths {
             BigInteger fractionalPart;
             BigRational sdgsdfgsdgfds;
 
-            if ( !bigHugeDecimalNumber.TryParseNumber( out this.BigRational ) ) {
+            if ( !TryParseNumber( bigHugeDecimalNumber, out this.BigRational ) ) {
                 throw new ArgumentOutOfRangeException( "bigHugeDecimalNumber", String.Format("Unable to parse a number from the string {0}", bigHugeDecimalNumber) );
             }
             //we now have a fraction, divvyed into the whole part and fraction part.
@@ -78,6 +80,56 @@ namespace Librainian.Maths {
             this.Numerator = new BigDecimal( this.BigRational.Numerator, 0 );
 
             this.Denominator = new BigDecimal( this.BigRational.GetWholePart(), 0 );
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="rational"></param>
+        /// <returns></returns>
+        public static Boolean TryParseNumber( [NotNull] String value, out BigRational rational ) {
+            if ( value == null ) {
+                throw new ArgumentNullException( "value" );
+            }
+
+
+            var theString = value.Trim();
+
+            if ( !theString.Contains( "." ) ) {
+                theString += ".0";
+            }
+
+            if ( theString.Any( c => !Char.IsDigit( c ) && c != '.' ) ) {
+                rational = new BigRational();
+                return false;
+            }
+
+            var split = theString.Split( '.' );
+            split.Should().HaveCount( expected: 2, because: "otherwise invalid" );
+
+            BigInteger wholePart;
+            BigInteger fractionalPart;
+
+            BigInteger.TryParse( split[ 0 ], out wholePart );
+
+            BigInteger.TryParse( split[ 1 ], out fractionalPart );
+
+            var fractionLength = fractionalPart.ToString().Length;
+
+            var ratio = BigInteger.Pow( 10, fractionLength); //we want the ratio of top/bottom to scale up past the decimal.. right?
+
+            wholePart *= ratio;
+
+            var newNumber = wholePart + fractionalPart;
+            newNumber.ToString().Length.Should().Be( theString.Length - 1 );    //because we took out the period
+
+            rational = new BigRational( newNumber, ratio );
+            var leastCommonDenominator = BigRational.LeastCommonDenominator( rational.Numerator, rational.Denominator );
+
+            rational /= leastCommonDenominator;
+
+            return true;
         }
     }
 }

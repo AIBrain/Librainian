@@ -30,6 +30,7 @@ namespace Librainian.Threading {
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Security.Cryptography;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Annotations;
@@ -339,8 +340,24 @@ namespace Librainian.Threading {
             return ( Single )( min + ( Instance.NextDouble() * ( max - min ) ) );
         }
 
-        public static String NextString( int length = 10, Boolean lowerCase = true, Boolean upperCase = false, Boolean numbers = false, Boolean symbols = false ) {
-            var charPool = String.Concat( lowerCase ? Extensions.Lowercase : String.Empty, upperCase ? Extensions.Uppercase : String.Empty, numbers ? Extensions.Numbers : String.Empty, symbols ? Extensions.Symbols : String.Empty );
+        /// <summary>
+        /// Generate a random string.
+        /// </summary>
+        /// <param name="length">How many characters long.</param>
+        /// <param name="lowerCase"><see cref="Extensions.Lowercase"/></param>
+        /// <param name="upperCase"><see cref="Extensions.Uppercase"/></param>
+        /// <param name="numbers"><see cref="Extensions.Numbers"/></param>
+        /// <param name="symbols"><see cref="Extensions.Symbols"/></param>
+        /// <returns></returns>
+        public static String NextString( int length = 11, Boolean lowerCase = true, Boolean upperCase = false, Boolean numbers = false, Boolean symbols = false ) {
+            //var charPool = String.Concat( lowerCase ? Extensions.Lowercase : String.Empty, upperCase ? Extensions.Uppercase : String.Empty, numbers ? Extensions.Numbers : String.Empty, symbols ? Extensions.Symbols : String.Empty );
+            var sb = new StringBuilder();
+            if ( lowerCase ) { sb.Append( Extensions.Lowercase ); }
+            if ( upperCase ) { sb.Append( Extensions.Uppercase ); }
+            if ( numbers ) { sb.Append( Extensions.Numbers ); }
+            if ( symbols ) { sb.Append( Extensions.Symbols ); }
+
+            var charPool = sb.ToString();
             return new String( Enumerable.Range( 0, length ).Select( i => charPool[ Next( 0, charPool.Length ) ] ).ToArray() );
 
             //var values = String.Join( String.Empty, Enumerable.Repeat( charPool[ r.Next( 0, charPool.Length ) ], length ).ToArray() );

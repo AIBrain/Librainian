@@ -1361,68 +1361,19 @@ namespace Librainian.Maths {
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="rational"></param>
-        /// <returns></returns>
-        public static Boolean TryParseNumber( [NotNull] this String value, out BigRational rational ) {
-            if ( value == null ) {
-                throw new ArgumentNullException( "value" );
-            }
-
-
-            var theString = value.Trim();
-
-            if ( !theString.Contains( "." ) ) {
-                theString += ".0";
-            }
-
-            if ( theString.Any( c => !Char.IsDigit( c ) && c != '.' ) ) {
-                rational = new BigRational();
-                return false;
-            }
-
-            var split = theString.Split( '.' );
-            split.Should().HaveCount( expected: 2, because: "otherwise invalid" );
-
-            BigInteger wholePart;
-            BigInteger fractionalPart;
-
-            BigInteger.TryParse( split[ 0 ], out wholePart );
-
-            BigInteger.TryParse( split[ 1 ], out fractionalPart );
-
-            var fractionLength = fractionalPart.ToString().Length;
-
-            var ratio = BigInteger.Pow( 10, fractionLength); //we want the ratio of top/bottom to scale up past the decimal.. right?
-
-            wholePart *= ratio;
-
-            var newNumber = wholePart + fractionalPart;
-            newNumber.ToString().Length.Should().Be( theString.Length - 1 );    //because we took out the period
-
-            rational = new BigRational( newNumber, ratio );
-            var leastCommonDenominator = BigRational.LeastCommonDenominator( rational.Numerator, rational.Denominator );
-
-            rational /= leastCommonDenominator;
-
-            return true;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <returns></returns>
         /// <seealso cref="Number"/>
         [Test]
         public static Boolean TestTrySplitDecimal() {
 
             //var bob = "18913489007071346701367013467767613401616136.136301590214084662236232265343672235925607263623468709823672366";
-            var bob = "671671000.1001000";
+            var bob = String.Format( "{0}.{1}", Randem.NextString( length: 10, lowerCase: false, upperCase: false, numbers: true, symbols: false ), Randem.NextString( length: 10, lowerCase: false, upperCase: false, numbers: true, symbols: false ) );
+                
 
             BigInteger beforeDecimalPoint;
             BigInteger afterDecimalPoint;
             BigRational sdgasdgd;
-            return bob.TryParseNumber( out sdgasdgd );
+            return Number.TryParseNumber( bob, out sdgasdgd );
         }
 
     }
