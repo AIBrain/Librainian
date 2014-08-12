@@ -37,7 +37,7 @@ namespace Librainian.IO {
                 throw new ArgumentNullException( "fileInfo" );
             }
 
-            using ( var stream = System.IO.File.OpenRead( fileInfo.FullName ) ) {
+            using ( var stream = File.OpenRead( fileInfo.FullName ) ) {
                 if ( !stream.CanRead ) {
                     throw new NotSupportedException( String.Format( "Cannot read from file {0}", fileInfo.FullName ) );
                 }
