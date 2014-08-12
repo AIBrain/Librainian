@@ -278,6 +278,7 @@
     <Compile Include="Maths\BigIntegerRange.cs" />
     <Compile Include="Maths\DoubleConverter.cs" />
     <Compile Include="Maths\Number.cs" />
+    <Compile Include="Maths\NumberExtensions.cs" />
     <Compile Include="Maths\Votally.cs" />
     <Compile Include="Maths\VotallyD.cs" />
     <Compile Include="Measurement\Currency\AltCoinExtensions.cs" />

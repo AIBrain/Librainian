@@ -27,29 +27,7 @@ namespace Librainian.Maths {
     using Extensions;
     using FluentAssertions;
     using Numerics;
-    using NUnit.Framework;
-    using Threading;
-
-    public static class NumberExtensions {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        /// <seealso cref="Number"/>
-        [Test]
-        public static Boolean TestNumberParsings() {
-
-            //var bob = "18913489007071346701367013467767613401616136.136301590214084662236232265343672235925607263623468709823672366";
-            var bob = String.Format( "{0}.{1}", Randem.NextString( length: 31, numbers: true ), Randem.NextString( length: 31, numbers: true ) );
-
-
-            BigInteger beforeDecimalPoint;
-            BigInteger afterDecimalPoint;
-            BigRational sdgasdgd;
-            var result = Number.TryParseNumber( bob, out sdgasdgd );
-            return result;
-        }
-    }
+    using Parsing;
 
     /// <summary>
     /// A number struct that can hold any real number.
@@ -111,22 +89,32 @@ namespace Librainian.Maths {
         /// 
         /// </summary>
         /// <param name="value"></param>
-        /// <param name="rational"></param>
+        /// <param name="number"></param>
         /// <returns></returns>
-        public static Boolean TryParseNumber( [NotNull] String value, out BigRational rational ) {
-            if ( value == null ) {
-                throw new ArgumentNullException( "value" );
+        public static Boolean TryParseNumber( [CanBeNull] String value, out Number? number ) {
+            number = null;
+
+            // all whitespace or none?
+            if ( String.IsNullOrWhiteSpace( value ) ) {
+                return false;
             }
 
-
-            var theString = value.Trim();
-
-            if ( !theString.Contains( "." ) ) {
-                theString += ".0";
+            value = value.Trim();
+            if ( String.IsNullOrWhiteSpace( value ) ) {
+                return false;
             }
 
-            if ( theString.Any( c => !Char.IsDigit( c ) && c != '.' ) ) {
-                rational = new BigRational();
+            //for parsing large decimals
+            if ( !value.Contains( "." ) ) {
+                value += ".0";
+            }
+
+            if ( value.Count( '.' ) > 1 ) {
+                return false;
+            }
+
+            // all chars must be a digit, a period, or a negative sign.
+            if ( value.Any( c => !Char.IsDigit( c ) && c != '.' && c != '-' ) ) {
                 return false;
             }
 
@@ -136,7 +124,7 @@ namespace Librainian.Maths {
             BigInteger wholePart;
             BigInteger fractionalPart;
 
-            BigInteger.TryParse( split[ 0 ], out wholePart );
+            if ( !BigInteger.TryParse( split[ 0 ], out wholePart ) ) { return false; }
 
             BigInteger.TryParse( split[ 1 ], out fractionalPart );
 
@@ -149,10 +137,10 @@ namespace Librainian.Maths {
             var newNumber = wholePart + fractionalPart;
             newNumber.ToString().Length.Should().Be( theString.Length - 1 );    //because we took out the period
 
-            rational = new BigRational( newNumber, ratio );
-            var leastCommonDenominator = BigRational.LeastCommonDenominator( rational.Numerator, rational.Denominator );
+            number = new BigRational( newNumber, ratio );
+            var leastCommonDenominator = BigRational.LeastCommonDenominator( number.Value.Numerator, number.Value.Denominator );
 
-            rational /= leastCommonDenominator;
+            number /= leastCommonDenominator;
 
             return true;
         }
