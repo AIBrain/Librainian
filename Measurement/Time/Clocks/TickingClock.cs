@@ -14,7 +14,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/TickingClock.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/TickingClock.cs" was last cleaned by Rick on 2014/08/12 at 9:56 AM
 #endregion
 
 namespace Librainian.Measurement.Time.Clocks {
@@ -36,34 +38,41 @@ namespace Librainian.Measurement.Time.Clocks {
     ///         <para>
     ///             <see cref="OnSecondTick" />
     ///         </para>
+    ///         <para>
+    ///             <see cref="OnMillisecondTick" />
+    ///         </para>
     ///     </para>
     /// </summary>
     public class TickingClock : IStandardClock {
+        public enum Granularity {
+            Milliseconds,
+            Seconds,
+            Minutes,
+            Hours
+        }
+
         /// <summary>
         /// </summary>
-        [CanBeNull]
-        private Timer _timer;
-
-        public enum Granularity {
-            Milliseconds, Seconds, Minutes, Hours
-        }
+        [CanBeNull] private Timer _timer;
 
         public TickingClock( DateTime time, Granularity granularity = Granularity.Seconds ) {
             this.Hour = new Hour( time.Hour );
             this.Minute = new Minute( time.Minute );
             this.Second = new Second( time.Second );
-            this.ResetTimer();
+            this.Millisecond = new Millisecond( time.Millisecond );
+            this.ResetTimer( granularity );
         }
 
         public TickingClock( Time time, Granularity granularity = Granularity.Seconds ) {
             this.Hour = new Hour( time.Hour );
             this.Minute = new Minute( time.Minute );
             this.Second = new Second( time.Second );
-            this.ResetTimer();
+            this.Millisecond = new Millisecond( time.Millisecond );
+            this.ResetTimer( granularity );
         }
 
         [CanBeNull]
-        public Action OnHourTick { get; set; }
+        public Action< Hour > OnHourTick { get; set; }
 
         [CanBeNull]
         public Action OnMinuteTick { get; set; }
@@ -76,6 +85,10 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>
         /// </summary>
+        public Millisecond Millisecond { get; private set; }
+
+        /// <summary>
+        /// </summary>
         public Hour Hour { get; private set; }
 
         /// <summary>
@@ -85,159 +98,6 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <summary>
         /// </summary>
         public Second Second { get; private set; }
-
-        /// <summary>
-        /// </summary>
-        public Millisecond Millisecond { get; private set; }
-
-        public void ResetTimer( Granularity granularity ) {
-            if ( null != this._timer ) {
-                using ( this._timer ) {
-                    this._timer.Stop();
-                }
-            }
-            switch ( granularity ) {
-                case Granularity.Milliseconds:
-                    this._timer = new Timer( interval: ( Double )Milliseconds.One.Value ) { AutoReset = true };
-                    this._timer.Elapsed += this.OnMillisecondElapsed;
-                    break;
-                case Granularity.Seconds:
-                    this._timer = new Timer( interval: ( Double )Seconds.One.Value ) { AutoReset = true };
-                    this._timer.Elapsed += this.OnSecondElapsed;
-                    break;
-                case Granularity.Minutes:
-                    this._timer = new Timer( interval: ( Double )Minutes.One.Value ) { AutoReset = true };
-                    this._timer.Elapsed += this.OnMinuteElapsed;
-                    break;
-                case Granularity.Hours:
-                    this._timer = new Timer( interval: ( Double )Hours.One.Value ) { AutoReset = true };
-                    this._timer.Elapsed += this.OnHourElapsed;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException( "granularity" );
-            }
-
-            this._timer.Start();
-        }
-
-
-        //These functions can be collasped I think.
-        private void OnMillisecondElapsed( object sender, ElapsedEventArgs e ) {
-            Boolean ticked;
-
-            this.Millisecond = this.Millisecond.Next( out ticked );
-            if ( !ticked ) {
-                return;
-            }
-
-            var onMillisecondTick = this.OnMillisecondTick;
-            if ( onMillisecondTick != null ) {
-                onMillisecondTick();
-            }
-
-            this.Second = this.Second.Next( out ticked );
-            if ( !ticked ) {
-                return;
-            }
-
-            var onSecondTick = this.OnSecondTick;
-            if ( onSecondTick != null ) {
-                onSecondTick();
-            }
-
-            this.Minute = this.Minute.Next( out ticked );
-            if ( !ticked ) {
-                return;
-            }
-
-            var onMinuteTick = this.OnMinuteTick;
-            if ( onMinuteTick != null ) {
-                onMinuteTick();
-            }
-
-            this.Hour = this.Hour.Next( out ticked );
-            if ( !ticked ) {
-                return;
-            }
-
-            var onHourTick = this.OnHourTick;
-            if ( onHourTick != null ) {
-                onHourTick();
-            }
-        }
-
-        private void OnSecondElapsed( object sender, ElapsedEventArgs e ) {
-            Boolean ticked;
-
-            this.Second = this.Second.Next( out ticked );
-            if ( !ticked ) {
-                return;
-            }
-
-            var onSecondTick = this.OnSecondTick;
-            if ( onSecondTick != null ) {
-                onSecondTick();
-            }
-
-            this.Minute = this.Minute.Next( out ticked );
-            if ( !ticked ) {
-                return;
-            }
-
-            var onMinuteTick = this.OnMinuteTick;
-            if ( onMinuteTick != null ) {
-                onMinuteTick();
-            }
-
-            this.Hour = this.Hour.Next( out ticked );
-            if ( !ticked ) {
-                return;
-            }
-
-            var onHourTick = this.OnHourTick;
-            if ( onHourTick != null ) {
-                onHourTick();
-            }
-        }
-
-        private void OnMinuteElapsed( object sender, ElapsedEventArgs e ) {
-            Boolean ticked;
-
-            this.Minute = this.Minute.Next( out ticked );
-            if ( !ticked ) {
-                return;
-            }
-
-            var onMinuteTick = this.OnMinuteTick;
-            if ( onMinuteTick != null ) {
-                onMinuteTick();
-            }
-
-            this.Hour = this.Hour.Next( out ticked );
-            if ( !ticked ) {
-                return;
-            }
-
-            var onHourTick = this.OnHourTick;
-            if ( onHourTick != null ) {
-                onHourTick();
-            }
-        }
-
-        private void OnHourElapsed( object sender, ElapsedEventArgs e ) {
-
-            Boolean ticked;
-
-            this.Hour = this.Hour.Next( out ticked );
-            if ( !ticked ) {
-                return;
-            }
-
-            var onHourTick = this.OnHourTick;
-            if ( onHourTick != null ) {
-                onHourTick();
-            }
-        }
 
         public Boolean IsAM() {
             return !this.IsPM();
@@ -259,6 +119,98 @@ namespace Librainian.Measurement.Time.Clocks {
                 var timer = this._timer;
                 if ( timer != null ) {
                     timer.Start();
+                }
+            }
+        }
+
+        public void ResetTimer( Granularity granularity ) {
+            if ( null != this._timer ) {
+                using ( this._timer ) {
+                    this._timer.Stop();
+                }
+            }
+            switch ( granularity ) {
+                case Granularity.Milliseconds:
+                    this._timer = new Timer( interval: ( Double ) Milliseconds.One.Value ) {
+                                                                                               AutoReset = true
+                                                                                           };
+                    this._timer.Elapsed += this.OnMillisecondElapsed;
+                    break;
+                case Granularity.Seconds:
+                    this._timer = new Timer( interval: ( Double ) Seconds.One.Value ) {
+                                                                                          AutoReset = true
+                                                                                      };
+                    this._timer.Elapsed += this.OnSecondElapsed;
+                    break;
+                case Granularity.Minutes:
+                    this._timer = new Timer( interval: ( Double ) Minutes.One.Value ) {
+                                                                                          AutoReset = true
+                                                                                      };
+                    this._timer.Elapsed += this.OnMinuteElapsed;
+                    break;
+                case Granularity.Hours:
+                    this._timer = new Timer( interval: ( Double ) Hours.One.Value ) {
+                                                                                        AutoReset = true
+                                                                                    };
+                    this._timer.Elapsed += this.OnHourElapsed;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException( "granularity" );
+            }
+
+            this._timer.Start();
+        }
+
+        private void OnMillisecondElapsed( object sender, ElapsedEventArgs e ) {
+            Boolean ticked;
+
+            this.Millisecond = this.Millisecond.Next( out ticked );
+            if ( ticked ) {
+                var onMillisecondTick = this.OnMillisecondTick;
+                if ( onMillisecondTick != null ) {
+                    onMillisecondTick();
+                }
+
+                this.OnSecondElapsed( sender, e );
+            }
+        }
+
+        private void OnSecondElapsed( object sender, ElapsedEventArgs e ) {
+            Boolean ticked;
+
+            this.Second = this.Second.Next( out ticked );
+            if ( ticked ) {
+                var onSecondTick = this.OnSecondTick;
+                if ( onSecondTick != null ) {
+                    onSecondTick();
+                }
+
+                this.OnMinuteElapsed( sender, e );
+            }
+        }
+
+        private void OnMinuteElapsed( object sender, ElapsedEventArgs e ) {
+            Boolean ticked;
+
+            this.Minute = this.Minute.Next( out ticked );
+            if ( ticked ) {
+                var onMinuteTick = this.OnMinuteTick;
+                if ( onMinuteTick != null ) {
+                    onMinuteTick();
+                }
+
+                this.OnHourElapsed( sender, e );
+            }
+        }
+
+        private void OnHourElapsed( object sender, ElapsedEventArgs e ) {
+            Boolean ticked;
+
+            this.Hour = this.Hour.Next( out ticked );
+            if ( ticked ) {
+                var onHourTick = this.OnHourTick;
+                if ( onHourTick != null ) {
+                    onHourTick( this.Hour );
                 }
             }
         }
