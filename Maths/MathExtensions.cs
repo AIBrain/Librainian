@@ -1346,8 +1346,7 @@ namespace Librainian.Maths {
         }
 
         public static Boolean TrySplitDecimal( this Decimal value, out BigInteger beforeDecimalPoint, out BigInteger afterDecimalPoint ) {
-
-            var theString = value.ToString( "R" );
+            var theString = value.ToString();
             if ( !theString.Contains( "." ) ) {
                 theString += ".0";
             }
@@ -1359,14 +1358,54 @@ namespace Librainian.Maths {
             return BigInteger.TryParse( split[ 0 ], out beforeDecimalPoint ) && BigInteger.TryParse( split[ 1 ], out afterDecimalPoint );
         }
 
+        public static Boolean TrySplitNumber( [NotNull] this String value, BigRational rational ) {
+            if ( value == null ) {
+                throw new ArgumentNullException( "value" );
+            }
+
+
+            var theString = value.Trim();
+
+            if ( !theString.Contains( "." ) ) {
+                theString += ".0";
+            }
+
+            if ( theString.Any( c => !Char.IsDigit( c ) && c != '.' ) ) {
+                return false;
+            }
+
+            var split = theString.Split( '.' );
+            split.Should().HaveCount( expected: 2, because: "otherwise invalid" );
+
+            BigInteger wholePart;
+            BigInteger fractionalPart;
+
+            BigInteger.TryParse( split[ 0 ], out wholePart );
+
+            BigInteger.TryParse( split[ 1 ], out fractionalPart );
+            var fractionLength = fractionalPart.ToString().Length;
+
+            wholePart *= (10 * fractionLength);
+
+            wholePart += fractionalPart;
+       
+
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <seealso cref="Number"/>
         [Test]
         public static Boolean TestTrySplitDecimal() {
 
-            var bob = 35236371727627528822347864262.136301590214084662236232265343672235925607263623468709823672366m;
+            var bob = "18913489007071346701367013467767613401616136.136301590214084662236232265343672235925607263623468709823672366";
 
-            BigInteger jane;
-            BigInteger frank;
-            return bob.TrySplitDecimal( out jane, out frank );
+            BigInteger beforeDecimalPoint;
+            BigInteger afterDecimalPoint;
+            return bob.TrySplitNumber( out beforeDecimalPoint, out afterDecimalPoint );
         }
 
     }

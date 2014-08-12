@@ -22,20 +22,46 @@
 namespace Librainian.Maths {
     using System;
     using System.Numerics;
+    using Annotations;
     using Extensions;
+    using Fractions;
     using Numerics;
 
     /// <summary>
     /// A number struct that can hold any real number.
     /// Decimal / Decimal
     /// </summary>
+    /// <seealso cref="MathExtensions.TestTrySplitDecimal"/>
     [Immutable]
     public struct Number {
         public readonly BigDecimal Answer;
         public readonly BigDecimal Denominator;
         public readonly BigDecimal Numerator;
 
-        internal readonly BigRational bigRational;
+        internal readonly BigRational BigRational;
+
+        public Number( [NotNull] String bigHugeDecimalNumber ) {
+            if ( bigHugeDecimalNumber == null ) {
+                throw new ArgumentNullException( "bigHugeDecimalNumber" );
+            }
+
+            BigInteger wholePart;
+            BigInteger fractionalPart;
+            if ( !bigHugeDecimalNumber.TrySplitNumber( out wholePart, out fractionalPart ) ) {
+                throw new ArgumentOutOfRangeException( "bigHugeDecimalNumber", String.Format("Unable to parse a number from the string {0}", bigHugeDecimalNumber) );
+            }
+            //we now have a fraction, divvyed into the whole part and fraction part.
+            var bobW = new Fraction( wholePart );
+            var bobF = new Fraction( fractionalPart );
+            Fraction.
+
+            var jane = bobW + bobF;
+
+            this.Answer = new BigDecimal();
+            this.Denominator = new BigDecimal();
+            this.Numerator = new BigDecimal();
+            this.BigRational = new BigRational();
+        }
 
         public Number( BigDecimal numerator, BigDecimal denominator ) {
 
@@ -47,11 +73,11 @@ namespace Librainian.Maths {
 
             this.Answer = numerator/denominator;
 
-            this.bigRational = new BigRational( ( Decimal ) this.Answer );
+            this.BigRational = new BigRational( ( Decimal ) this.Answer );
 
-            this.Numerator = new BigDecimal( this.bigRational.Numerator, 0 );
+            this.Numerator = new BigDecimal( this.BigRational.Numerator, 0 );
 
-            this.Denominator = new BigDecimal( this.bigRational.GetWholePart(), 0 );
+            this.Denominator = new BigDecimal( this.BigRational.GetWholePart(), 0 );
         }
     }
 }
