@@ -20,6 +20,7 @@
 namespace Librainian.Maths {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Numerics;
     using System.Security.Cryptography;
@@ -1344,6 +1345,29 @@ namespace Librainian.Maths {
             }
             var slope = Slope( data );
             return data.Average( d => d.Progress ) - slope*data.Average( d => d.MillisecondsPassed );
+        }
+
+        public static FractionSplit SplitDecimal( this Decimal value  ) {
+            // now do the split - the apres decimal precision defined by 
+            // the format function which defaults to 2 places i.e. "0.00"
+
+            var theString = value.ToString( "R" );
+            if ( !theString.Contains(".") ) {
+                theString += ".0";
+            }
+            var split = theString.Split( '.' );
+
+            string splitValue = decimalValue.ToString( string.Format( "0.{0}",
+                new String( '0', decimalPrecision ) ), CultureInfo.InvariantCulture );
+            string[] splitParts = splitValue.Split( '.' );
+
+            // now factor out derived splits as ints into struct
+            var fractionSplit = new FractionSplit {
+                BeforeDecimal = int.Parse( splitParts[ 0 ] ),
+                AfterDecimal = int.Parse( splitParts[ 1 ] )
+            };
+
+            return fractionSplit;
         }
 
     }
