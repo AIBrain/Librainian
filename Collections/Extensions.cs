@@ -600,27 +600,6 @@ namespace Librainian.Collections {
             }
         }
 
-        [Test]
-        public static TimeSpan ShuffleTest() {
-            const int itemCount = 10000000;
-
-            var list = new List<int>();
-            for ( var i = 0; i < itemCount; i++ ) {
-                list.Add( i );
-            }
-            //var copyToCompare = list.ToList();
-
-            var stopwatch = Stopwatch.StartNew();
-            list.Shuffle();
-            stopwatch.Stop();
-
-            var bob = new Span( stopwatch.Elapsed );
-
-            String.Format( "Shuffle took {0} to shuffle {1} items.", bob, itemCount ).TimeDebug();
-
-            return stopwatch.Elapsed;
-        }
-
         public static IEnumerable<IEnumerable<T>> Split<T>( [NotNull] this IEnumerable<T> list, int parts ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );

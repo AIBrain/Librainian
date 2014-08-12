@@ -28,6 +28,7 @@ namespace Librainian.Measurement.Time {
     using Annotations;
     using FluentAssertions;
     using Librainian.Extensions;
+    using NUnit.Framework;
 
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
@@ -38,6 +39,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         /// 1000
         /// </summary>
+        /// <seealso cref="Femtoseconds"/>
         public const UInt16 InOneFemtosecond = 1000;
 
         /// <summary>
@@ -154,14 +156,6 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         [DataMember]
         public readonly Decimal Value;
-
-        static Attoseconds() {
-            Zero.Should().BeLessThan( One );
-            One.Should().BeGreaterThan( Zero );
-            One.Should().Be( One );
-            One.Should().BeGreaterThan( Zeptoseconds.One );
-            One.Should().BeLessThan( Femtoseconds.One );
-        }
 
         public Attoseconds( Decimal value ) {
             this.Value = value;

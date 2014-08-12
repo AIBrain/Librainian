@@ -405,7 +405,7 @@ namespace Librainian.Measurement.Time {
             return TimeSpan.FromTicks( value: ( Int64 ) ( timeSpan.Ticks*scalar ) );
         }
 
-        public static TimeSpan TimeStatement( [CanBeNull] this Action action ) {
+        public static Span TimeStatement( [CanBeNull] this Action action ) {
             var one = Stopwatch.StartNew();
             try {
                 if ( null != action ) {
@@ -415,7 +415,7 @@ namespace Librainian.Measurement.Time {
             catch ( Exception exception ) {
                 exception.Log();
             }
-            return one.Elapsed;
+            return new Span( one.Elapsed );
         }
 
         public static String ToPath( this DateTime dateTime ) {
