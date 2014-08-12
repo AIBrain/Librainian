@@ -35,7 +35,7 @@ namespace Librainian.Maths {
     /// </summary>
     /// <see cref="http://stackoverflow.com/a/13813535/956364" />
     [UsedImplicitly]
-    public struct BigDecimal : IComparable, IComparable< BigDecimal > {
+    public struct BigDecimal : IComparable, IComparable<BigDecimal> {
         /// <summary>
         ///     Sets the maximum precision of division operations.
         ///     If AlwaysTruncate is set to true all operations are affected.
@@ -46,8 +46,14 @@ namespace Librainian.Maths {
 
         public static readonly BigDecimal Zero = new BigDecimal( mantissa: 0, exponent: 0 );
 
+        /// <summary>
+        /// raised to the power of
+        /// </summary>
         public readonly Int64 Exponent;
 
+        /// <summary>
+        /// the digits
+        /// </summary>
         public readonly BigInteger Mantissa;
 
         public BigDecimal( BigDecimal bigDecimal ) : this( mantissa: bigDecimal.Mantissa, exponent: bigDecimal.Exponent ) { }
@@ -58,7 +64,8 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="mantissa"></param>
         /// <param name="exponent"></param>
-        public BigDecimal( BigInteger mantissa, Int64 exponent ) : this() {
+        public BigDecimal( BigInteger mantissa, Int64 exponent )
+            : this() {
             this.Mantissa = mantissa;
             this.Exponent = exponent;
 
@@ -83,7 +90,7 @@ namespace Librainian.Maths {
             if ( ReferenceEquals( obj, null ) || !( obj is BigDecimal ) ) {
                 throw new ArgumentException();
             }
-            return this.CompareTo( ( BigDecimal ) obj );
+            return this.CompareTo( ( BigDecimal )obj );
         }
 
         public int CompareTo( BigDecimal other ) {
@@ -96,7 +103,7 @@ namespace Librainian.Maths {
         /// </summary>
         public static BigInteger AlignExponent( BigDecimal value, BigDecimal reference ) {
             Assert.GreaterOrEqual( value.Exponent, reference.Exponent );
-            return value.Mantissa*BigInteger.Pow( value: 10, exponent: ( Int32 ) ( value.Exponent - reference.Exponent ) ); //BUG cast.
+            return value.Mantissa * BigInteger.Pow( value: 10, exponent: ( Int32 )( value.Exponent - reference.Exponent ) ); //BUG cast.
         }
 
         /// <summary>
@@ -116,11 +123,11 @@ namespace Librainian.Maths {
                 tmp *= Math.Exp( diff );
                 exponent -= diff;
             }
-            return tmp*Math.Exp( d: exponent );
+            return tmp * Math.Exp( d: exponent );
         }
 
         public static explicit operator Double( BigDecimal value ) {
-            return ( Double ) value.Mantissa*Math.Pow( 10, value.Exponent );
+            return ( Double )value.Mantissa * Math.Pow( 10, value.Exponent );
         }
 
         public static implicit operator BigDecimal( Int64 number ) {
@@ -136,10 +143,10 @@ namespace Librainian.Maths {
             var mantissa = new BigInteger( value: number );
             var exponent = 0L;
             Double scaleFactor = 1;
-            while ( Math.Abs( number*scaleFactor - ( Double ) mantissa ) > 0 ) {
+            while ( Math.Abs( number * scaleFactor - ( Double )mantissa ) > 0 ) {
                 exponent -= 1;
                 scaleFactor *= 10;
-                mantissa = ( BigInteger ) ( number*scaleFactor );
+                mantissa = ( BigInteger )( number * scaleFactor );
             }
             return new BigDecimal( mantissa: mantissa, exponent: exponent );
         }
@@ -150,20 +157,20 @@ namespace Librainian.Maths {
         /// <param name="value"></param>
         /// <returns></returns>
         public static implicit operator BigDecimal( Decimal value ) {
-            var mantissa = ( BigInteger ) value;
+            var mantissa = ( BigInteger )value;
             var exponent = 0L;
             Decimal scaleFactor = 1;
-            while ( ( Decimal ) mantissa != value*scaleFactor ) {
+            while ( ( Decimal )mantissa != value * scaleFactor ) {
                 exponent -= 1;
                 scaleFactor *= 10;
-                mantissa = new BigInteger( value: value*scaleFactor );
+                mantissa = new BigInteger( value: value * scaleFactor );
             }
             return new BigDecimal( mantissa: mantissa, exponent: exponent );
         }
 
         public static BigDecimal operator -( BigDecimal number ) {
             //value.Mantissa *= -1;
-            return new BigDecimal( mantissa: number.Mantissa*-1, exponent: number.Exponent ); //BUG is this correct?
+            return new BigDecimal( mantissa: number.Mantissa * -1, exponent: number.Exponent ); //BUG is this correct?
         }
 
         public static BigDecimal operator -( BigDecimal left, BigDecimal right ) {
@@ -179,7 +186,7 @@ namespace Librainian.Maths {
         }
 
         public static BigDecimal operator *( BigDecimal left, BigDecimal right ) {
-            return new BigDecimal( mantissa: left.Mantissa*right.Mantissa, exponent: left.Exponent + right.Exponent );
+            return new BigDecimal( mantissa: left.Mantissa * right.Mantissa, exponent: left.Exponent + right.Exponent );
         }
 
         public static BigDecimal operator /( BigDecimal dividend, BigDecimal divisor ) {
@@ -188,8 +195,8 @@ namespace Librainian.Maths {
                 exponentChange = 0;
             }
             //dividend.Mantissa *= BigInteger.Pow( 10, exponentChange );
-            var newdividend = new BigDecimal( mantissa: dividend.Mantissa*BigInteger.Pow( 10, ( int ) exponentChange ), exponent: dividend.Exponent ); //BUG is this correct? I don't like that cast..
-            return new BigDecimal( newdividend.Mantissa/divisor.Mantissa, newdividend.Exponent - divisor.Exponent - exponentChange );
+            var newdividend = new BigDecimal( mantissa: dividend.Mantissa * BigInteger.Pow( 10, ( int )exponentChange ), exponent: dividend.Exponent ); //BUG is this correct? I don't like that cast..
+            return new BigDecimal( newdividend.Mantissa / divisor.Mantissa, newdividend.Exponent - divisor.Exponent - exponentChange );
         }
 
         public static BigDecimal operator +( BigDecimal number ) {
@@ -231,7 +238,7 @@ namespace Librainian.Maths {
                 tmp *= Math.Pow( basis, diff );
                 exponent -= diff;
             }
-            return tmp*Math.Pow( basis, exponent );
+            return tmp * Math.Pow( basis, exponent );
         }
 
         ///// <summary>
@@ -260,7 +267,7 @@ namespace Librainian.Maths {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
-            return obj is BigDecimal && Equals( this, ( BigDecimal ) obj );
+            return obj is BigDecimal && Equals( this, ( BigDecimal )obj );
         }
 
         public override int GetHashCode() {
@@ -280,7 +287,7 @@ namespace Librainian.Maths {
         //}
 
         public static explicit operator Decimal( BigDecimal value ) {
-            return ( Decimal ) value.Mantissa*( Decimal ) Math.Pow( 10, value.Exponent );
+            return ( Decimal )value.Mantissa * ( Decimal )Math.Pow( 10, value.Exponent );
         }
 
         //public static explicit operator int( BigDecimal value ) {

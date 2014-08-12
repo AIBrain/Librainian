@@ -516,6 +516,11 @@ namespace Librainian.Maths {
             return difference <= EpsilonDecimal;
         }
 
+        public static Boolean Near( this BigInteger number, BigInteger target ) {
+            var difference = number - target;
+            return BigInteger.Zero == difference;
+        }
+
         /// <summary>
         ///     <para>Attempt to parse a fraction from a string.</para>
         /// </summary>
@@ -1355,11 +1360,29 @@ namespace Librainian.Maths {
         /// <param name="right"></param>
         public static UInt64 AddWithoutOverFlow( this UInt64 left, UInt64 right ) {
             var integer = new UBigInteger( left ) + new UBigInteger( right );
-            if ( integer > new UBigInteger( UInt64.MaxValue ) ) {
+            if ( integer >= new UBigInteger( UInt64.MaxValue ) ) {
                 return UInt64.MaxValue;
             }
             return ( UInt64 ) integer;
         }
+
+        /// <summary>
+        /// Allow <paramref name="left"/> to increase or decrease by a signed number;
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static UInt64 AddWithoutOverFlow( this UInt64 left, long right ) {
+            var integer = new BigInteger( left ) + new BigInteger( right );
+            if ( integer >= new UBigInteger( UInt64.MaxValue ) ) {
+                return UInt64.MaxValue;
+            }
+            if ( integer < UInt64.MinValue ) {
+                return UInt64.MinValue;
+            }
+            return ( UInt64 )integer;
+        }
+
 
         /// <summary>
         ///     Subtract <paramref name="right" /> away from <paramref name="left" /> without the chance of "throw new
@@ -1388,8 +1411,8 @@ namespace Librainian.Maths {
             if ( right == null ) {
                 throw new ArgumentNullException( "right" );
             }
-            left.VoteForA( right.A );
-            left.VoteForB( right.B );
+            left.VoteYes( right.Yes );
+            left.VoteForB( right.No );
         }
 
         public static Double Slope( [NotNull] List< TimeProgression > data ) {
@@ -1409,5 +1432,6 @@ namespace Librainian.Maths {
             var slope = Slope( data );
             return data.Average( d => d.Progress ) - slope*data.Average( d => d.MillisecondsPassed );
         }
+
     }
 }
