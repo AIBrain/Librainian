@@ -28,7 +28,7 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     [DataContract]
     [Serializable]
-    public struct Year : IPartofaClock {
+    public struct Year : PartofaClock {
         public Year( BigInteger year ) : this() {
             this.Value = year;
         }

@@ -20,34 +20,34 @@
 namespace Librainian.Measurement.Time.Clocks {
     using System;
     using System.Runtime.Serialization;
-    using FluentAssertions;
     using Librainian.Extensions;
 
     /// <summary>
-    ///     A simple struct for a <see cref="ClockExtensions.Second" />.
+    ///     A simple struct for a <see cref="Second" />.
     /// </summary>
     [DataContract]
     [Serializable]
     [Immutable]
-    public struct Second : ISecond {
+    public class Second : PartofaClock {
         /// <summary>
-        ///     60
         /// </summary>
-        public const Byte Maximum = Seconds.InOneMinute;
+        public static readonly Second MaxSecond = new Second( Seconds.InOneMinute );
 
         /// <summary>
-        ///     1
         /// </summary>
-        public const Byte Minimum = 1;
+        public static readonly Second MinSecond = new Second( Minimum );
 
-        [DataMember] private readonly Byte _value;
+        public override byte Maximum { get { return Seconds.InOneMinute; } }
+
+        [DataMember]
+        public readonly Byte Value;
 
         public Second( Byte second ) {
-            this._value = Validate( second );
+            this.Value = Validate( second );
         }
 
         public Second( long second ) {
-            this._value = Validate( second );
+            this.Value = Validate( second );
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <param name="second"></param>
         /// <returns></returns>
         public static explicit operator SByte( Second second ) {
-            return ( SByte )second._value;
+            return ( SByte )second.Value;
         }
 
         /// <summary>
@@ -65,17 +65,8 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <param name="second"></param>
         /// <returns></returns>
         public static implicit operator Byte( Second second ) {
-            return second._value;
+            return second.Value;
         }
 
-        public static Byte Validate( long second ) {
-            second.Should().BeInRange( Minimum, Maximum );
-
-            if ( second < Minimum || second > Maximum ) {
-                throw new ArgumentOutOfRangeException( "second", String.Format( "The specified second {0} is out of the valid range {1} to {2}.", second, Minimum, Maximum ) );
-            }
-
-            return ( Byte ) second;
-        }
     }
 }

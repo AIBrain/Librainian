@@ -27,15 +27,15 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>
         /// </summary>
-        IHour Hour { get; }
+        Hour Hour { get; }
 
         /// <summary>
         /// </summary>
-        IMinute Minute { get; }
+        Minute Minute { get; }
 
         /// <summary>
         /// </summary>
-        ISecond Second { get; }
+        Second Second { get; }
 
         Time GetTime();
 

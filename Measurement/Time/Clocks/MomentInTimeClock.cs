@@ -20,7 +20,7 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         public bool IsAM() {
-            throw new NotImplementedException();
+            return this.
         }
 
         public AMorPM GetAMorPM() {

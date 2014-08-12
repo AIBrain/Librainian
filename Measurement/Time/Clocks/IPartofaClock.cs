@@ -18,6 +18,30 @@
 #endregion
 
 namespace Librainian.Measurement.Time.Clocks {
-    public interface IPartofaClock {
+    using System;
+    using System.Runtime.Serialization;
+    using FluentAssertions;
+
+    [DataContract(IsReference = true)]
+    public abstract class PartofaClock {
+        /// <summary>
+        ///     60
+        /// </summary>
+        public abstract Byte Maximum { get; }
+
+        /// <summary>
+        ///     1
+        /// </summary>
+        public const Byte Minimum = 1;
+
+        protected Byte Validate( long quantity ) {
+            quantity.Should().BeInRange( Minimum, Maximum );
+
+            if ( quantity < Minimum || quantity > Maximum ) {
+                throw new ArgumentOutOfRangeException( "quantity", String.Format( "The specified quantity ({0}) is out of the valid range {1} to {2}.", quantity, Minimum, Maximum ) );
+            }
+
+            return ( Byte ) quantity;
+        }
     }
 }

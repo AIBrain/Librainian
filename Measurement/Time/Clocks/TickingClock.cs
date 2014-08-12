@@ -21,7 +21,6 @@ namespace Librainian.Measurement.Time.Clocks {
     using System;
     using System.Timers;
     using Annotations;
-    using Librainian.Extensions;
 
     /// <summary>
     ///     <para>Starts a forward-ticking clock at the given time with settable events.</para>
@@ -46,7 +45,10 @@ namespace Librainian.Measurement.Time.Clocks {
         private Timer _timer;
 
         public TickingClock( DateTime time ) {
-            this.Hour = new Hour( ( Byte )time.Hour );
+            this.Hour = new Hour( time.Hour );
+            this.Minute = new Minute( time.Minute );
+            this.Second = new Second( time.Second );
+            this.ResetTimer();
         }
 
         [CanBeNull]
@@ -70,24 +72,6 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         public Second Second { get; private set; }
 
-        //public void Set( DateTime time ) {
-        //    this.Set( new Time( time ) );
-        //}
-
-        ///// <summary>
-        /////     <para>
-        /////         Updates the <see cref="Hour" />, <see cref="Minute" />, and <see cref="Second" /> without firing off the
-        /////         events and resets the internal timer.
-        /////     </para>
-        ///// </summary>
-        ///// <param name="time"></param>
-        //public void Set( Time time ) {
-        //    this.Hour.Set( time.Hour.Value );
-        //    this.Minute.Set( time.Minute.Value );
-        //    this.Second.Set( time.Second.Value );
-
-        //    this.ResetTimer();
-        //}
 
         public void ResetTimer() {
             if ( null != this._timer ) {
@@ -103,18 +87,19 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         private void OnElapsed( object sender, ElapsedEventArgs e ) {
-            if ( !this.Second.Tick() ) {
+
+            Boolean ticked;
+            this.Second = this.Second.Forward<Second>( out ticked );
+            if ( !ticked ) {
                 return;
             }
+
             if ( null != this.OnSecondTick ) {
-                try {
-                    this.OnSecondTick();
-                }
-                // ReSharper disable once EmptyGeneralCatchClause
-                catch { }
+                this.OnSecondTick();
+
             }
 
-            if ( !this.Minute.Tick() ) {
+            if ( !this.Minute.Forward() ) {
                 return;
             }
             if ( null != this.OnMinuteTick ) {

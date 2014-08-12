@@ -1,3 +1,3 @@
 namespace Librainian.Measurement.Time.Clocks {
-    public interface IMinute : IPartofaClock { }
+    public interface IMinute : PartofaClock { }
 }
