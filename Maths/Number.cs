@@ -37,36 +37,39 @@ namespace Librainian.Maths {
     [Immutable]
     public struct Number {
         public readonly BigDecimal Answer;
-        public readonly BigDecimal Denominator;
+
+        public BigDecimal Denominator {
+            get {
+                return this._value.Denominator;
+            }
+        }
+
         public readonly BigDecimal Numerator;
 
-        internal readonly BigRational BigRational;
+        private readonly Number? _value;
 
 
 
-        public Number( [NotNull] String bigHugeDecimalNumber ) {
-            if ( bigHugeDecimalNumber == null ) {
-                throw new ArgumentNullException( "bigHugeDecimalNumber" );
-            }
+        //public Number( [NotNull] String bigHugeDecimalNumber ) {
+        //    if ( bigHugeDecimalNumber == null ) {
+        //        throw new ArgumentNullException( "bigHugeDecimalNumber" );
+        //    }
 
-            BigInteger wholePart;
-            BigInteger fractionalPart;
-            BigRational sdgsdfgsdgfds;
 
-            if ( !TryParseNumber( bigHugeDecimalNumber, out this.BigRational ) ) {
-                throw new ArgumentOutOfRangeException( "bigHugeDecimalNumber", String.Format("Unable to parse a number from the string {0}", bigHugeDecimalNumber) );
-            }
-            //we now have a fraction, divvyed into the whole part and fraction part.
-            //var bobW = new Fraction( wholePart );
-            //var bobF = new Fraction( fractionalPart );
-            //Fraction.
+        //    if ( !TryParseNumber( bigHugeDecimalNumber, out this._value ) ) {
+        //        throw new ArgumentOutOfRangeException( "bigHugeDecimalNumber", String.Format( "Unable to parse a number from the string {0}", bigHugeDecimalNumber ) );
+        //    }
+        //    //we now have a fraction, divvyed into the whole part and fraction part.
+        //    //var bobW = new Fraction( wholePart );
+        //    //var bobF = new Fraction( fractionalPart );
+        //    //Fraction.
 
-            //var jane = bobW + bobF;
+        //    //var jane = bobW + bobF;
 
-            this.Answer = new BigDecimal();
-            this.Denominator = new BigDecimal();
-            this.Numerator = new BigDecimal();
-        }
+        //    this.Answer = new BigDecimal();
+        //    this.Denominator = new BigDecimal();
+        //    this.Numerator = new BigDecimal();
+        //}
 
         public Number( BigDecimal numerator, BigDecimal denominator ) {
 
@@ -76,13 +79,19 @@ namespace Librainian.Maths {
                 numeratorMultiplier *= 10;
             }
 
-            this.Answer = numerator/denominator;
+            this.Answer = numerator / denominator;
 
-            this.BigRational = new BigRational( ( Decimal ) this.Answer );
+            this._value = new BigRational( ( Decimal )this.Answer );
 
-            this.Numerator = new BigDecimal( this.BigRational.Numerator, 0 );
+            this.Numerator = new BigDecimal( this._value.Numerator, 0 );
 
-            this.Denominator = new BigDecimal( this.BigRational.GetWholePart(), 0 );
+            this.Denominator = new BigDecimal( this._value.GetWholePart(), 0 );
+        }
+
+        public Number( BigRational value ) {
+
+            this._value = value;
+
         }
 
         /// <summary>
@@ -104,9 +113,20 @@ namespace Librainian.Maths {
                 return false;
             }
 
-            //TODO add in subset for parsing numbers like "3.14E15" (scientific notation?)
+            if ( value.Contains( "E" ) ) {
+                //TODO add in subset for parsing numbers like "3.14E15" (scientific notation?)
+                throw new NotImplementedException();
+                return false;
+            }
 
-            //TODO add in subset for parsing numbers like "3.14^15"? (exponential notation?)
+            if ( value.Contains( "^" ) ) {
+
+                //TODO add in subset for parsing numbers like "3.14^15"? (exponential notation?)
+
+                //TODO add in subset for parsing numbers like "3.14X10^15"? (exponential notation?)
+                throw new NotImplementedException();
+                return false;
+            }
 
             //for parsing large decimals
             if ( !value.Contains( "." ) ) {
@@ -123,29 +143,36 @@ namespace Librainian.Maths {
                 return false;
             }
 
-            var split = theString.Split( '.' );
+            var split = value.Split( '.' );
             split.Should().HaveCount( expected: 2, because: "otherwise invalid" );
 
-            BigInteger wholePart;
-            BigInteger fractionalPart;
+            BigInteger whole;
+            BigInteger fraction;
 
-            if ( !BigInteger.TryParse( split[ 0 ], out wholePart ) ) { return false; }
+            if ( !BigInteger.TryParse( split[ 0 ], out whole ) ) {
+                //we were unable to parse the first string (all to the left of the decimal point)
+                return false;
+            }
 
-            BigInteger.TryParse( split[ 1 ], out fractionalPart );
+            if ( !BigInteger.TryParse( split[ 1 ], out fraction ) ) {
+                //we were unable to parse the second string (all to the right of the decimal point)
+                return false;
+            }
 
-            var fractionLength = fractionalPart.ToString().Length;
+            var fractionLength = fraction.ToString().Length;
 
-            var ratio = BigInteger.Pow( 10, fractionLength); //we want the ratio of top/bottom to scale up past the decimal.. right?
+            var ratio = BigInteger.Pow( 10, fractionLength ); //we want the ratio of top/bottom to scale up past the decimal
 
-            wholePart *= ratio;
+            whole *= ratio;     //append a lot of zeroes
 
-            var newNumber = wholePart + fractionalPart;
-            newNumber.ToString().Length.Should().Be( theString.Length - 1 );    //because we took out the period
+            whole += fraction;  //reconstruct the part that was after the decimal point
 
-            number = new BigRational( newNumber, ratio );
-            var leastCommonDenominator = BigRational.LeastCommonDenominator( number.Value.Numerator, number.Value.Denominator );
+            var bob = new BigRational( whole, ratio );
+            var leastCommonDenominator = this._value.LeastCommonDenominator( bob.Numerator, bob.Denominator );
 
-            number /= leastCommonDenominator;
+            bob /= leastCommonDenominator;
+
+            number = new Number( bob );
 
             return true;
         }
