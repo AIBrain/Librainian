@@ -25,7 +25,8 @@ namespace Librainian.Security {
     using Annotations;
     using Threading;
 
-    public static class StringExtensionMethods {
+    public static class SecurityExtensions {
+
         public static readonly ThreadLocal< MD5 > Md5S = new ThreadLocal< MD5 >( MD5.Create );
 
         //Almost a standard static method just the first parameter is different
@@ -40,7 +41,7 @@ namespace Librainian.Security {
             if ( publicKey == null ) {
                 throw new ArgumentNullException( "publicKey" );
             }
-            var encryptedValue = string.Empty;
+            var encryptedValue = String.Empty;
 
             // Create the CspParameters object which is used to create the RSA provider
             // without it generating a new private/public key.
@@ -86,7 +87,7 @@ namespace Librainian.Security {
             if ( privateKey == null ) {
                 throw new ArgumentNullException( "privateKey" );
             }
-            var decryptedValue = string.Empty;
+            var decryptedValue = String.Empty;
 
             // Create the CspParameters object which is used to create the RSA provider
             // without it generating a new private/public key.
@@ -124,6 +125,93 @@ namespace Librainian.Security {
             }
 
             return decryptedValue;
+        }
+
+        /// <summary>
+        ///     Provide to each thread its own <see cref="SHA256Managed" />.
+        /// </summary>
+        public static readonly ThreadLocal< SHA256Managed > SHA256Local = new ThreadLocal< SHA256Managed >( valueFactory: () => new SHA256Managed(), trackAllValues: false );
+
+        /// <summary>
+        ///     Provide to each thread its own <see cref="SHA256Managed" />.
+        /// </summary>
+        public static readonly ThreadLocal< SHA384Managed > SHA384Local = new ThreadLocal< SHA384Managed >( valueFactory: () => new SHA384Managed(), trackAllValues: false );
+
+        /// <summary>
+        ///     Provide to each thread its own <see cref="SHA256Managed" />.
+        /// </summary>
+        public static readonly ThreadLocal< SHA512Managed > SHA512Local = new ThreadLocal< SHA512Managed >( valueFactory: () => new SHA512Managed(), trackAllValues: false );
+
+        public static byte[] Sha256( this byte[] input ) {
+            if ( input == null ) {
+                throw new ArgumentNullException( "input" );
+            }
+            return SHA256Local.Value.ComputeHash( input, 0, input.Length );
+        }
+
+        /// <summary>
+        ///     <para>Compute the SHA-256 hash for the <paramref name="input" /></para>
+        ///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static byte[] Sha256( this String input, Encoding encoding = null ) {
+            if ( input == null ) {
+                throw new ArgumentNullException( "input" );
+            }
+            if ( null == encoding ) {
+                encoding = Encoding.UTF8;
+            }
+            return encoding.GetBytes( input ).Sha256();
+        }
+
+        /// <summary>
+        ///     <para>Compute the SHA-384 hash for the <paramref name="input" /></para>
+        ///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static byte[] Sha384( this String input, Encoding encoding = null ) {
+            if ( input == null ) {
+                throw new ArgumentNullException( "input" );
+            }
+            if ( null == encoding ) {
+                encoding = Encoding.UTF8;
+            }
+            return encoding.GetBytes( input ).Sha384();
+        }
+
+        public static byte[] Sha384( this byte[] input ) {
+            if ( input == null ) {
+                throw new ArgumentNullException( "input" );
+            }
+            return SHA384Local.Value.ComputeHash( input, 0, input.Length );
+        }
+
+        /// <summary>
+        ///     <para>Compute the SHA-384 hash for the <paramref name="input" /></para>
+        ///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static byte[] Sha512( this String input, Encoding encoding = null ) {
+            if ( input == null ) {
+                throw new ArgumentNullException( "input" );
+            }
+            if ( null == encoding ) {
+                encoding = Encoding.UTF8;
+            }
+            return encoding.GetBytes( input ).Sha512();
+        }
+
+        public static byte[] Sha512( this byte[] input ) {
+            if ( input == null ) {
+                throw new ArgumentNullException( "input" );
+            }
+            return SHA512Local.Value.ComputeHash( input, 0, input.Length );
         }
     }
 }
