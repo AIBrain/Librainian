@@ -1358,7 +1358,13 @@ namespace Librainian.Maths {
             return BigInteger.TryParse( split[ 0 ], out beforeDecimalPoint ) && BigInteger.TryParse( split[ 1 ], out afterDecimalPoint );
         }
 
-        public static Boolean TrySplitNumber( [NotNull] this String value, BigRational rational ) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="rational"></param>
+        /// <returns></returns>
+        public static Boolean TryParseNumber( [NotNull] this String value, out BigRational rational ) {
             if ( value == null ) {
                 throw new ArgumentNullException( "value" );
             }
@@ -1371,6 +1377,7 @@ namespace Librainian.Maths {
             }
 
             if ( theString.Any( c => !Char.IsDigit( c ) && c != '.' ) ) {
+                rational = new BigRational();
                 return false;
             }
 
@@ -1383,12 +1390,20 @@ namespace Librainian.Maths {
             BigInteger.TryParse( split[ 0 ], out wholePart );
 
             BigInteger.TryParse( split[ 1 ], out fractionalPart );
+
             var fractionLength = fractionalPart.ToString().Length;
 
-            wholePart *= (10 * fractionLength);
+            var ratio = BigInteger.Pow( 10, fractionLength); //we want the ratio of top/bottom to scale up past the decimal.. right?
 
-            wholePart += fractionalPart;
-       
+            wholePart *= ratio;
+
+            var newNumber = wholePart + fractionalPart;
+            newNumber.ToString().Length.Should().Be( theString.Length - 1 );    //because we took out the period
+
+            rational = new BigRational( newNumber, ratio );
+            var leastCommonDenominator = BigRational.LeastCommonDenominator( rational.Numerator, rational.Denominator );
+
+            rational /= leastCommonDenominator;
 
             return true;
         }
@@ -1401,11 +1416,13 @@ namespace Librainian.Maths {
         [Test]
         public static Boolean TestTrySplitDecimal() {
 
-            var bob = "18913489007071346701367013467767613401616136.136301590214084662236232265343672235925607263623468709823672366";
+            //var bob = "18913489007071346701367013467767613401616136.136301590214084662236232265343672235925607263623468709823672366";
+            var bob = "671671000.1001000";
 
             BigInteger beforeDecimalPoint;
             BigInteger afterDecimalPoint;
-            return bob.TrySplitNumber( out beforeDecimalPoint, out afterDecimalPoint );
+            BigRational sdgasdgd;
+            return bob.TryParseNumber( out sdgasdgd );
         }
 
     }
