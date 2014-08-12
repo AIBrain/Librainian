@@ -42,20 +42,21 @@ namespace Librainian.Measurement.Time.Clocks {
     public class TickingClock : IClock {
         /// <summary>
         /// </summary>
-        [CanBeNull] private Timer _timer;
+        [CanBeNull]
+        private Timer _timer;
 
         public TickingClock( DateTime time ) {
-            this.Set( time );
+            this.Hour = new Hour( ( Byte )time.Hour );
         }
 
         [CanBeNull]
-        public Action OnHourTick { get;  set; }
+        public Action OnHourTick { get; set; }
 
         [CanBeNull]
-        public Action OnMinuteTick { get;  set; }
+        public Action OnMinuteTick { get; set; }
 
         [CanBeNull]
-        public Action OnSecondTick { get;  set; }
+        public Action OnSecondTick { get; set; }
 
         /// <summary>
         /// </summary>
@@ -69,24 +70,24 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         public Second Second { get; private set; }
 
-        public void Set( DateTime time ) {
-            this.Set( new Time( time ) );
-        }
+        //public void Set( DateTime time ) {
+        //    this.Set( new Time( time ) );
+        //}
 
-        /// <summary>
-        ///     <para>
-        ///         Updates the <see cref="Hour" />, <see cref="Minute" />, and <see cref="Second" /> without firing off the
-        ///         events and resets the internal timer.
-        ///     </para>
-        /// </summary>
-        /// <param name="time"></param>
-        public void Set( Time time ) {
-            this.Hour.Set( time.Hour.Value );
-            this.Minute.Set( time.Minute.Value );
-            this.Second.Set( time.Second.Value );
+        ///// <summary>
+        /////     <para>
+        /////         Updates the <see cref="Hour" />, <see cref="Minute" />, and <see cref="Second" /> without firing off the
+        /////         events and resets the internal timer.
+        /////     </para>
+        ///// </summary>
+        ///// <param name="time"></param>
+        //public void Set( Time time ) {
+        //    this.Hour.Set( time.Hour.Value );
+        //    this.Minute.Set( time.Minute.Value );
+        //    this.Second.Set( time.Second.Value );
 
-            this.ResetTimer();
-        }
+        //    this.ResetTimer();
+        //}
 
         public void ResetTimer() {
             if ( null != this._timer ) {
@@ -94,9 +95,9 @@ namespace Librainian.Measurement.Time.Clocks {
                     this._timer.Stop();
                 }
             }
-            this._timer = new Timer( interval: ( Double ) Milliseconds.One.Value ) {
-                                                                                       AutoReset = true
-                                                                                   };
+            this._timer = new Timer( interval: ( Double )Milliseconds.One.Value ) {
+                AutoReset = true
+            };
             this._timer.Elapsed += this.OnElapsed;
             this._timer.Start();
         }
@@ -109,7 +110,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 try {
                     this.OnSecondTick();
                 }
-                    // ReSharper disable once EmptyGeneralCatchClause
+                // ReSharper disable once EmptyGeneralCatchClause
                 catch { }
             }
 
@@ -120,7 +121,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 try {
                     this.OnMinuteTick();
                 }
-                    // ReSharper disable once EmptyGeneralCatchClause
+                // ReSharper disable once EmptyGeneralCatchClause
                 catch { }
             }
 
@@ -133,7 +134,7 @@ namespace Librainian.Measurement.Time.Clocks {
             try {
                 this.OnHourTick();
             }
-                // ReSharper disable once EmptyGeneralCatchClause
+            // ReSharper disable once EmptyGeneralCatchClause
             catch { }
         }
 

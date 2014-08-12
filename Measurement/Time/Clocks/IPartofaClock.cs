@@ -18,19 +18,6 @@
 #endregion
 
 namespace Librainian.Measurement.Time.Clocks {
-    using System;
-
     public interface IPartofaClock {
-        void Set( Byte value );
-
-        /// <summary>
-        ///     <para>Returns true if the value passed Minimum.</para>
-        /// </summary>
-        Boolean Rewind();
-
-        /// <summary>
-        ///     <para>Returns true if the value passed Maximum.</para>
-        /// </summary>
-        Boolean Tick();
     }
 }

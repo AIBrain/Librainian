@@ -56,13 +56,11 @@ namespace Librainian.Measurement.Time.Clocks {
         private readonly Byte _value;
 
         public Minute( Byte minute ) {
-            Validate( minute );
-            this._value = minute;
+            this._value = Validate( minute );
         }
 
         public Minute( long minute ) {
-            Validate( minute );
-            this._value = ( Byte )minute;
+            this._value = Validate( minute );
         }
 
         /// <summary>
@@ -83,12 +81,14 @@ namespace Librainian.Measurement.Time.Clocks {
             return minute._value;
         }
 
-        private static void Validate( long minute ) {
+        private static Byte Validate( long minute ) {
             minute.Should().BeInRange( Minimum, Maximum );
 
             if ( minute < Minimum || minute > Maximum ) {
                 throw new ArgumentOutOfRangeException( "minute", String.Format( "The specified minute {0} is out of the valid range {1} to {2}.", minute, Minimum, Maximum ) );
             }
+
+            return ( Byte )minute;
         }
     }
 }

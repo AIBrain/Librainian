@@ -24,7 +24,7 @@ namespace Librainian.Collections {
     using System.IO;
     using System.Runtime.Serialization;
     using Annotations;
-    using Librainian.Extensions;
+    using Extensions;
     using NUnit.Framework;
     using Parsing;
     using Persistence;

@@ -12,12 +12,11 @@ namespace Librainian.Measurement.Time.Clocks {
         public Minute Minute { get; private set; }
         public Second Second { get; private set; }
 
-        public void Set( DateTime time ) {
-            this.Hour.Set( time.Hour );
-        }
-
-        public void Set( Time time ) {
-            throw new NotImplementedException();
+        public MomentInTimeClock() {
+            var now = Time.Now;
+            this.Hour = new Hour( now.Hour );
+            this.Minute = new Minute( now.Minute );
+            this.Second = new Second( now.Second );
         }
 
         public bool IsAM() {
