@@ -65,27 +65,27 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <summary>
         /// Provide the next minute.
         /// </summary>
-        public Minute Next {
-            get {
-                var next = this.Value + 1;
-                if ( next > Maximum ) {
-                    next = Minimum;
-                }
-                return new Minute( next );
+        public Minute Next( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value + 1;
+            if ( next > Maximum ) {
+                next = Minimum;
+                ticked = true;
             }
+            return new Minute( next );
         }
 
         /// <summary>
         /// Provide the previous minute.
         /// </summary>
-        public Minute Previous {
-            get {
-                var next = this.Value - 1;
-                if ( next < Minimum ) {
-                    next = Maximum;
-                }
-                return new Minute( next );
+        public Minute Previous( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value - 1;
+            if ( next < Minimum ) {
+                next = Maximum;
+                ticked = true;
             }
+            return new Minute( next );
         }
 
         /// <summary>

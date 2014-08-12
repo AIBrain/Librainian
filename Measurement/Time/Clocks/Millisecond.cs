@@ -17,7 +17,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Millisecond.cs" was last cleaned by Rick on 2014/08/12 at 7:39 AM
+// "Librainian/Millisecond.cs" was last cleaned by Rick on 2014/08/12 at 7:49 AM
 
 #endregion License & Information
 
@@ -27,6 +27,7 @@ namespace Librainian.Measurement.Time.Clocks {
     using System.Runtime.Serialization;
     using FluentAssertions;
     using Librainian.Extensions;
+    using Maths;
 
     /// <summary>
     /// A simple struct for a <see cref="Millisecond" />.
@@ -35,11 +36,19 @@ namespace Librainian.Measurement.Time.Clocks {
     [Serializable]
     [Immutable]
     public sealed class Millisecond : IClockPart {
-        public const Byte Maximum = Seconds.InOneMinute;
+
+        /// <summary>
+        /// 1000
+        /// </summary>
+        public const UInt16 Maximum = Milliseconds.InOneSecond;
+
+        /// <summary>
+        /// 1
+        /// </summary>
         public const Byte Minimum = 1;
 
         /// <summary>
-        /// 60
+        /// 1000
         /// </summary>
         public static readonly Millisecond Max = new Millisecond( Maximum );
 
@@ -51,64 +60,65 @@ namespace Librainian.Measurement.Time.Clocks {
         [DataMember]
         public readonly UInt16 Value;
 
-        public Millisecond( UInt16 second ) {
-            Validate( second );
-            this.Value = second;
+        public Millisecond( UInt16 millisecond ) {
+            Validate( millisecond );
+            this.Value = millisecond;
         }
 
-        public Millisecond( long second ) {
-            Validate( second );
-            this.Value = ( UInt16 )second;
+        public Millisecond( long millisecond ) {
+            Validate( millisecond );
+            this.Value = ( UInt16 )millisecond;
         }
 
         /// <summary>
         /// Provide the next millisecond.
         /// </summary>
-        public Millisecond Next {
-            get {
-                var next = this.Value + 1;
-                if ( next > Maximum ) {
-                    next = Minimum;
-                }
-                return new Millisecond( next );
-            }
+        public Millisecond Next( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value + 1;
+            if ( next > Maximum ) {
+                next = Minimum;
+                ticked = true;
+            } 
+
+            return new Millisecond( next );
         }
 
         /// <summary>
         /// Provide the previous millisecond.
         /// </summary>
-        public Millisecond Previous {
-            get {
-                var next = this.Value - 1;
-                if ( next < Minimum ) {
-                    next = Maximum;
-                }
-                return new Millisecond( next );
+        public Millisecond Previous( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value - 1;
+            if ( next < Minimum ) {
+                ticked = true;
+                next = Maximum;
             }
+            return new Millisecond( next );
         }
 
         /// <summary>
-        /// Allow this class to be visibly cast to a <see cref="SByte" />.
+        /// Allow this class to be visibly cast to a <see cref="Int16" />.
         /// </summary>
-        /// <param name="second"></param>
+        /// <param name="millisecond"></param>
         /// <returns></returns>
-        public static explicit operator SByte( Millisecond second ) {
-            return ( SByte )second.Value;
+        public static explicit operator Int16( Millisecond millisecond ) {
+            return ( Int16 )millisecond.Value;
         }
 
         /// <summary>
         /// Allow this class to be read as a <see cref="Byte" />.
         /// </summary>
-        /// <param name="second"></param>
+        /// <param name="millisecond"></param>
         /// <returns></returns>
-        public static implicit operator UInt16( Millisecond second ) {
-            return second.Value;
+        public static implicit operator UInt16( Millisecond millisecond ) {
+            return millisecond.Value;
         }
 
         private static void Validate( long millisecond ) {
             millisecond.Should().BeInRange( 1, Maximum );
 
-            if ( millisecond < 1 || millisecond > Maximum ) {
+            if ( !millisecond.Between( Minimum, Maximum ) ) {
                 throw new ArgumentOutOfRangeException( "millisecond", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", millisecond, Minimum, Maximum ) );
             }
         }

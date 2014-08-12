@@ -786,7 +786,6 @@ namespace Librainian.Parsing {
 
             var stopwatch = Stopwatch.StartNew();
             var floater = new PotentialF( 0 );
-            var tempcounter = 0;
 
             if ( source.Length <= 0 || compare.Length <= 0 ) {
                 goto noMoreTests;
@@ -874,11 +873,11 @@ namespace Librainian.Parsing {
             #endregion
 
             #region do any chars in source also show in compare
-            tempcounter = 0;
+            var tempcounter = 0;
             foreach ( var c in source ) {
-                votes.ForA( 1 );
+                votes.ForA(  );
                 if ( compare.Contains( c ) ) {
-                    votes.ForB( 1 );
+                    votes.ForB(  );
                     tempcounter++;
                 }
             }

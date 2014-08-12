@@ -60,6 +60,9 @@ namespace Librainian.Measurement.Time.Clocks {
         [CanBeNull]
         public Action OnSecondTick { get; set; }
 
+        [CanBeNull]
+        public Action OnMillisecondTick { get; set; }
+
         /// <summary>
         /// </summary>
         public Hour Hour { get; private set; }
@@ -72,6 +75,9 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         public Second Second { get; private set; }
 
+        /// <summary>
+        /// </summary>
+        public Millisecond Millisecond { get; private set; }
 
         public void ResetTimer() {
             if ( null != this._timer ) {
@@ -89,7 +95,9 @@ namespace Librainian.Measurement.Time.Clocks {
         private void OnElapsed( object sender, ElapsedEventArgs e ) {
 
             Boolean ticked;
-            this.Second = this.Second.Forward<Second>( out ticked );
+            this.Millisecond = this.Millisecond.Next()( out ticked );
+
+            this.Second = this.Second.Next( out ticked );
             if ( !ticked ) {
                 return;
             }

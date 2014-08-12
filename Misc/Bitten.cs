@@ -224,6 +224,7 @@ namespace Librainian.Misc {
             }
             offset = HexsToChars( guidChars, offset, this._f, this._g );
             offset = HexsToChars( guidChars, offset, this._h, this._i );
+// ReSharper disable once RedundantAssignment
             offset = HexsToChars( guidChars, offset, this._j, this._k );
 
             return new String( value: guidChars, startIndex: 0, length: strLength );

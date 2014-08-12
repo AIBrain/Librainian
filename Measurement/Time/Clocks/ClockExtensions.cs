@@ -38,9 +38,15 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         [Test]
-        private static void TestSecond() {
+        public static void TestSecond() {
             Second.Min.Value.Should().BeLessThan( Second.Max.Value );
             Second.Max.Value.Should().BeGreaterThan( Second.Min.Value );
+        } 
+        
+        [Test]
+        public static void TestMillisecond() {
+            Millisecond.Min.Value.Should().BeLessThan( Millisecond.Max.Value );
+            Millisecond.Max.Value.Should().BeGreaterThan( Millisecond.Min.Value );
         }
     }
 }

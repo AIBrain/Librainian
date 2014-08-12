@@ -40,12 +40,16 @@ namespace Librainian.Maths {
         /// <summary>
         ///     ONLY used in the getter and setter.
         /// </summary>
-        [DataMember] [OptionalField] private Double _aVotes;
+        [DataMember]
+        [OptionalField]
+        private Double _aVotes;
 
         /// <summary>
         ///     ONLY used in the getter and setter.
         /// </summary>
-        [DataMember] [OptionalField] private Double _bVotes;
+        [DataMember]
+        [OptionalField]
+        private Double _bVotes;
 
         public VotallyD( Double votesForA = 0, Double votesForB = 0 ) {
             this.A = votesForA;
@@ -71,7 +75,7 @@ namespace Librainian.Maths {
                 try {
                     var votes = this.Votes;
                     if ( !votes.Near( 0 ) ) {
-                        return this.A/votes;
+                        return this.A / votes;
                     }
                 }
                 catch ( DivideByZeroException exception ) {
@@ -86,7 +90,7 @@ namespace Librainian.Maths {
                 try {
                     var votes = this.Votes;
                     if ( !votes.Near( 0 ) ) {
-                        return this.B/votes;
+                        return this.B / votes;
                     }
                 }
                 catch ( DivideByZeroException exception ) {
@@ -104,7 +108,7 @@ namespace Librainian.Maths {
         }
 
         public Double HalfOfVotes() {
-            return this.Votes/2;
+            return this.Votes / 2;
         }
 
         public override String ToString() {

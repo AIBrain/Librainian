@@ -67,27 +67,27 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <summary>
         /// Provide the next hour.
         /// </summary>
-        public Hour Next {
-            get {
-                var next = this.Value + 1;
-                if ( next > Maximum ) {
-                    next = Minimum;
-                }
-                return new Hour( next );
+        public Hour Next( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value + 1;
+            if ( next > Maximum ) {
+                next = Minimum;
+                ticked = true;
             }
+            return new Hour( next );
         }
 
         /// <summary>
         /// Provide the previous hour.
         /// </summary>
-        public Hour Previous {
-            get {
-                var next = this.Value - 1;
-                if ( next < Minimum ) {
-                    next = Maximum;
-                }
-                return new Hour( next );
+        public Hour Previous( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value - 1;
+            if ( next < Minimum ) {
+                next = Maximum;
+                ticked = true;
             }
+            return new Hour( next );
         }
 
         /// <summary>
