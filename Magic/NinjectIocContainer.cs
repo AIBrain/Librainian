@@ -14,7 +14,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/NinjectIocContainer.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/NinjectIocContainer.cs" was last cleaned by Rick on 2014/08/12 at 2:43 PM
 #endregion
 
 namespace Librainian.Magic {
@@ -25,9 +27,7 @@ namespace Librainian.Magic {
     using Threading;
 
     public class NinjectIocContainer : IIocContainer {
-
-        [NotNull]
-        public readonly IKernel Kernel;
+        [NotNull] public readonly IKernel Kernel;
 
         public NinjectIocContainer( [CanBeNull] params INinjectModule[] modules ) {
             String.Format( "Wiring up Ninject..." ).TimeDebug();
@@ -40,12 +40,12 @@ namespace Librainian.Magic {
             return this.Kernel.Get( type );
         }
 
-        public T Get<T>() {
-            return this.Kernel.Get<T>();
+        public T Get< T >() {
+            return this.Kernel.Get< T >();
         }
 
-        public T Get<T>( string name, string value ) {
-            var result = this.Kernel.TryGet<T>( metadata => metadata.Has( name ) && ( string.Equals( metadata.Get<string>( name ), value, StringComparison.InvariantCultureIgnoreCase ) ) );
+        public T Get< T >( string name, string value ) {
+            var result = this.Kernel.TryGet< T >( metadata => metadata.Has( name ) && ( string.Equals( metadata.Get< string >( name ), value, StringComparison.InvariantCultureIgnoreCase ) ) );
 
             if ( Equals( result, default( T ) ) ) {
                 throw new InvalidOperationException( null );
@@ -57,8 +57,8 @@ namespace Librainian.Magic {
             this.Kernel.Inject( item );
         }
 
-        public T TryGet<T>() {
-            return this.Kernel.TryGet<T>();
+        public T TryGet< T >() {
+            return this.Kernel.TryGet< T >();
         }
     }
 }
