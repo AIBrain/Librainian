@@ -1358,23 +1358,6 @@ namespace Librainian.Maths {
             return BigInteger.TryParse( split[ 0 ], out beforeDecimalPoint ) && BigInteger.TryParse( split[ 1 ], out afterDecimalPoint );
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        /// <seealso cref="Number"/>
-        [Test]
-        public static Boolean TestTrySplitDecimal() {
-
-            //var bob = "18913489007071346701367013467767613401616136.136301590214084662236232265343672235925607263623468709823672366";
-            var bob = String.Format( "{0}.{1}", Randem.NextString( length: 31,  numbers: true ), Randem.NextString( length: 31, numbers: true ) );
-                
-
-            BigInteger beforeDecimalPoint;
-            BigInteger afterDecimalPoint;
-            BigRational sdgasdgd;
-            return Number.TryParseNumber( bob, out sdgasdgd );
-        }
 
     }
 }
