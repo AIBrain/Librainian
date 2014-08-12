@@ -14,9 +14,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// Contact me through email if you have any questions.
+// Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/Second.cs" was last cleaned by Rick on 2014/08/12 at 12:15 AM
+// "Librainian/Second.cs" was last cleaned by Rick on 2014/08/12 at 12:43 AM
 #endregion
 
 namespace Librainian.Measurement.Time.Clocks {
@@ -32,6 +32,7 @@ namespace Librainian.Measurement.Time.Clocks {
     [Immutable]
     public sealed class Second : PartialClock {
         /// <summary>
+        ///     60
         /// </summary>
         public static readonly Second MaxSecond = new Second( Seconds.InOneMinute );
 
@@ -39,8 +40,7 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         public static readonly Second MinSecond = new Second( Minimum );
 
-        [DataMember]
-        public readonly Byte Value;
+        [DataMember] public readonly Byte Value;
 
         public Second( Byte second ) {
             this.Value = this.Validate( second );
@@ -58,7 +58,7 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <param name="second"></param>
         /// <returns></returns>
         public static explicit operator SByte( Second second ) {
-            return ( SByte )second.Value;
+            return ( SByte ) second.Value;
         }
 
         /// <summary>
@@ -72,6 +72,36 @@ namespace Librainian.Measurement.Time.Clocks {
 
         public override byte GetValue() {
             return this.Value;
+        }
+
+        /// <summary>
+        ///     <para>Returns a new decremented <seealso cref="Second" />.</para>
+        ///     <para>Returns true if the value passed <see cref="Second.Minimum" /></para>
+        /// </summary>
+        public static Boolean Backward( ref Second second ) {
+            var value = ( int ) second.Value;
+            value--;
+            if ( value < MinSecond.Value ) {
+                second = MaxSecond;
+                return true;
+            }
+            second = new Second( value );
+            return false;
+        }
+
+        /// <summary>
+        ///     <para>Returns a new incremented <seealso cref="Second" />.</para>
+        ///     <para>Returns true if the value passed <see cref="Second.Maximum" /></para>
+        /// </summary>
+        public static Boolean Forward( ref Second second ) {
+            var value = ( int ) second.Value;
+            value++;
+            if ( value > MaxSecond.Value ) {
+                second = MinSecond;
+                return true;
+            }
+            second = new Second( value );
+            return false;
         }
     }
 }

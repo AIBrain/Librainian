@@ -82,37 +82,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
         }
 
-        /// <summary>
-        ///     <para>Returns a new decremented <seealso cref="Second" />.</para>
-        ///     <para>Returns true if the value passed <see cref="Second.Minimum" /></para>
-        /// </summary>
-        public static Second Backward( this PartialClock hand, out Boolean tocked ) {
-            var value = ( int )hand.GetValue();
-            value--;
-            if ( value < Second.Minimum ) {
-                tocked = true;
-                return Second.MaxSecond;
-            }
-            tocked = false;
-            return new Second( value );
-        }
-
-        /// <summary>
-        ///     <para>Returns a new incremented <seealso cref="Second" />.</para>
-        ///     <para>Returns true if the value passed <see cref="Second.Maximum" /></para>
-        /// </summary>
-        public static T Forward<T>( this PartialClock second, out Boolean tocked ) where T : new() {
-            var value = ( int )second.Value;
-            value++;
-            if ( value > Second.Maximum ) {
-                tocked = true;
-                return new T();
-            }
-            tocked = false;
-            return new PartialClock( value );
-        }
-
-
         [Test]
         public static void TestHour() {
             Hour.Minimum.Should().BeLessThan( Hour.Maximum );
