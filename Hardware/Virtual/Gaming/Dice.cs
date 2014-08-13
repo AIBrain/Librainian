@@ -66,22 +66,25 @@ namespace Librainian.Hardware.Virtual.Gaming {
         /// <returns>The side which landed face-up</returns>
         public UInt16 Roll() {
             var result = ( UInt16 )( Randem.Next( this.NumberOfSides ) + 1 );
-            var key = this._lastFewRolls.AddAsync( result, () => {
-                if ( this.LastFewRolls.Count() > this._keepTrackOfXRolls ) {
-                    this._lastFewRolls.TakeFirst();
-                }
-            } ).ContinueWith( task => {
+            var key = this._lastFewRolls.AddAsync( result, OnAfterAdd ).ContinueWith( task => {
                 DateTime dummy;
-                this._tasks.TryRemove( task, out dummy );
-                if ( !this._dontTrackRollsOlderThan.HasValue ) {
-                    return;
-                }
-                foreach ( var keyValuePair in this._tasks.Where( pair => DateTime.Now - pair.Value > this._dontTrackRollsOlderThan.Value ) ) {
-                    this._tasks.TryRemove( keyValuePair.Key, out dummy );
-                }
+                var removed = this._tasks.TryRemove( task, out dummy );
+                String.Format( "{0}" ).TimeDebug();
             } );
             this._tasks.TryAdd( key, DateTime.Now );
             return result;
+        }
+
+        private void OnAfterAdd() {
+            if ( this.LastFewRolls.Count() > this._keepTrackOfXRolls ) {
+                this._lastFewRolls.TakeFirst();
+            }
+            if ( !this._dontTrackRollsOlderThan.HasValue ) {
+                return;
+            }
+            foreach ( var keyValuePair in this._tasks.Where( pair => DateTime.Now - pair.Value > this._dontTrackRollsOlderThan.Value ) ) {
+                this._tasks.TryRemove( keyValuePair.Key, out dummy );
+            }
         }
     }
 }
