@@ -22,6 +22,7 @@ namespace Librainian.IO {
     using System.IO;
     using System.Runtime.Serialization;
     using System.Security;
+    using System.Threading;
     using System.Threading.Tasks;
     using Annotations;
     using Extensions;
@@ -32,7 +33,7 @@ namespace Librainian.IO {
     /// </summary>
     [DataContract( IsReference = true )]
     [Immutable]
-    public sealed class Document : IEquatable<Document> {
+    public sealed class Document : IEquatable< Document > {
         /// <summary>
         ///     <para>The extension of the file parsed in the ctor.</para>
         /// </summary>
@@ -51,7 +52,7 @@ namespace Librainian.IO {
         public readonly UInt64 Size;
 
         [NotNull]
-        private readonly Lazy<DirectoryInfo> _lazyFolder;
+        private readonly Lazy< DirectoryInfo > _lazyFolder;
 
         /// <summary>
         /// </summary>
@@ -78,7 +79,7 @@ namespace Librainian.IO {
             this.Extension = Path.GetExtension( path: fullPathWithFilename );
             this.Info = new FileInfo( fileName: fullPathWithFilename );
             this.Size = ( UInt64 )this.Info.Length;
-            this._lazyFolder = new Lazy<DirectoryInfo>( () => this.Info.Directory );
+            this._lazyFolder = new Lazy< DirectoryInfo >( () => this.Info.Directory );
         }
 
         [NotNull]
@@ -163,8 +164,101 @@ namespace Librainian.IO {
         /// <param name="progress"></param>
         /// <param name="eta"></param>
         /// <returns></returns>
-        public static Task Copy( Document source, Document destination, Action<Double> progress, Action<TimeSpan> eta ) {
+        public static Task Copy( Document source, Document destination, Action< double > progress, Action< TimeSpan > eta ) {
             return Task.Run( () => { } );
+        }
+
+        public static MemoryStream TryCopyStream( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
+            TryAgain:
+            var memoryStream = new MemoryStream();
+            try {
+                if ( File.Exists( filePath ) ) {
+                    using ( var fileStream = File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare ) ) {
+                        var length = ( int ) fileStream.Length;
+                        if ( length > 0 ) {
+                            fileStream.CopyTo( memoryStream, length ); //int-long possible issue.
+                            memoryStream.Seek( 0, SeekOrigin.Begin );
+                        }
+                    }
+                }
+            }
+            catch ( IOException ) {
+                // IOExcception is thrown if the file is in use by another process.
+                if ( bePatient ) {
+                    if ( !Thread.Yield() ) {
+                        Thread.Sleep( 0 );
+                    }
+                    goto TryAgain;
+                }
+            }
+            return memoryStream;
+        }
+
+        public static FileStream TryDeletingFile( String filePath, Boolean bePatient = true ) {
+            TryAgain:
+            try {
+                File.Delete( path: filePath );
+            }
+            catch ( IOException ) {
+                // IOExcception is thrown if the file is in use by another process.
+                if ( bePatient ) {
+                    if ( !Thread.Yield() ) {
+                        Thread.Sleep( 0 );
+                    }
+                    goto TryAgain;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        ///     Tries to open a file, with a user defined number of attempt and Sleep delay between attempts.
+        /// </summary>
+        /// <param name="filePath">The full file path to be opened</param>
+        /// <param name="fileMode">Required file mode enum value(see MSDN documentation)</param>
+        /// <param name="fileAccess">Required file access enum value(see MSDN documentation)</param>
+        /// <param name="fileShare">Required file share enum value(see MSDN documentation)</param>
+        /// <returns>
+        ///     A valid FileStream object for the opened file, or null if the File could not be opened after the required
+        ///     attempts
+        /// </returns>
+        public static FileStream TryOpen( String filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
+            try {
+                return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
+            }
+            catch ( IOException ) {
+                // IOExcception is thrown if the file is in use by another process.
+            }
+            return null;
+        }
+
+        public static FileStream TryOpenForReading( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
+            TryAgain:
+            try {
+                if ( File.Exists( filePath ) ) {
+                    return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
+                }
+            }
+            catch ( IOException ) {
+                // IOExcception is thrown if the file is in use by another process.
+                if ( bePatient ) {
+                    if ( !Thread.Yield() ) {
+                        Thread.Sleep( 0 );
+                    }
+                    goto TryAgain;
+                }
+            }
+            return null;
+        }
+
+        public static FileStream TryOpenForWriting( String filePath, FileMode fileMode = FileMode.Create, FileAccess fileAccess = FileAccess.Write, FileShare fileShare = FileShare.ReadWrite ) {
+            try {
+                return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
+            }
+            catch ( IOException ) {
+                // IOExcception is thrown if the file is in use by another process.
+            }
+            return null;
         }
     }
 }
