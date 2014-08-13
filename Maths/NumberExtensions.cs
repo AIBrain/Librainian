@@ -11,11 +11,11 @@ namespace Librainian.Maths {
     public static class NumberExtensions {
 
         /// <summary>
-        /// Converts the given string into a <see cref="BigRational"/> or null.
+        /// Converts the given string into a <see cref="BigDecimal"/> or null.
         /// </summary>
         /// <param name="longDecimalString"></param>
         /// <returns></returns>
-        public static BigRational? ToBigRational( this String longDecimalString ) {
+        public static BigDecimal? ToBigDecimal( this String longDecimalString ) {
 
             // all whitespace or none?
             if ( String.IsNullOrWhiteSpace( longDecimalString ) ) {
@@ -63,6 +63,7 @@ namespace Librainian.Maths {
             BigInteger whole;
             BigInteger fraction;
 
+
             if ( !BigInteger.TryParse( split[ 0 ], out whole ) ) {
                 //we were unable to parse the first string (all to the left of the decimal point)
                 return null;
@@ -73,17 +74,23 @@ namespace Librainian.Maths {
                 return null;
             }
 
+
             var fractionLength = fraction.ToString().Length;
 
-            var ratio = BigInteger.Pow( 10, fractionLength ); //we want the ratio of top/bottom to scale up past the decimal
+            var ratio = BigDecimal.Pow( 10, fractionLength ); //we want the ratio of top/bottom to scale up past the decimal
 
-            whole *= ratio;     //append a lot of zeroes
+            var wholeAsDecimal = new BigDecimal( whole, 0 );
+            var fractionAsDecimal = new BigDecimal( fraction, 0 );
 
-            whole += fraction;  //reconstruct the part that was after the decimal point
+            wholeAsDecimal *= ratio;     //append !a lot! of zeroes
 
-            var rational = new BigRational( whole, ratio );
+            wholeAsDecimal += fractionAsDecimal;  //reconstruct the entire string
 
-            return rational;
+            wholeAsDecimal /= ratio;        //and scale is back down
+
+            String.Format( "Old == new, {0}", wholeAsDecimal.ToString() == longDecimalString ).TimeDebug();
+
+            return wholeAsDecimal;
 
             //TODO how to losslessly convert to a bigdecimal? the exponent..
             //we have a rational number here. 4 over 5. or 4/5
@@ -108,12 +115,15 @@ namespace Librainian.Maths {
             var bob = String.Format( "{0}.{1}", Randem.NextString( length: 31, numbers: true ), Randem.NextString( length: 31, numbers: true ) );
             bob = "-18913489007071346701367013467767613401616136.136301590214084662236232265343672235925607263623468709823672366";
 
+            var anser = ToBigDecimal( bob );
 
-            BigInteger beforeDecimalPoint;
-            BigInteger afterDecimalPoint;
-            Number? sdgasdgd;
-            var result = Number.TryParseNumber( bob, out sdgasdgd );
-            return result;
+            //BigInteger beforeDecimalPoint;
+            //BigInteger afterDecimalPoint;
+            //Number? sdgasdgd;
+            //var result = Number.TryParseNumber( bob, out sdgasdgd );
+            //return result;
+
+            return true;
         }
     }
 }
