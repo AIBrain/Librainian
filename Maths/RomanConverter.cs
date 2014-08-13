@@ -16,6 +16,7 @@ namespace Librainian.Maths {
         public static string ToRoman( this short number ) {
 
             if ( !number.Between( ( short )1, ( short )3999 ) ) {
+                // per https://en.wikipedia.org/wiki/Roman_numerals#Large_numbers
                 throw new ArgumentOutOfRangeException( "number" );
             }
 
