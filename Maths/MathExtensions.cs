@@ -27,7 +27,6 @@ namespace Librainian.Maths {
     using FluentAssertions;
     using Measurement.Time;
     using Numerics;
-    using NUnit.Framework;
     using Parsing;
     using Threading;
 

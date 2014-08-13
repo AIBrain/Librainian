@@ -17,7 +17,7 @@
 // "Librainian/Dice.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 #endregion
 
-namespace Librainian.Hardware.Virtual {
+namespace Librainian.Hardware.Virtual.Gaming {
     using Threading;
 
     public class Dice {

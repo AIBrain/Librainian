@@ -36,26 +36,27 @@ namespace Librainian.Persistence {
     using Threading;
 
     public static class Storage {
-        [UsedImplicitly] public static readonly Lazy< DirectoryInfo > DataLocation = new Lazy< DirectoryInfo >( () => {
-                                                                                                                    var common = Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData );
-                                                                                                                    var assemby = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
-                                                                                                                    var name = Path.GetFileNameWithoutExtension( assemby.Location );
-                                                                                                                    var location = !String.IsNullOrWhiteSpace( name ) ? Path.Combine( common, name ) : assemby.Location;
-                                                                                                                    var result = new DirectoryInfo( location ).Ensure();
-                                                                                                                    return result;
-                                                                                                                } );
+        [UsedImplicitly]
+        public static readonly Lazy<DirectoryInfo> DataLocation = new Lazy<DirectoryInfo>( () => {
+            var common = Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData );
+            var assemby = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+            var name = Path.GetFileNameWithoutExtension( assemby.Location );
+            var location = !String.IsNullOrWhiteSpace( name ) ? Path.Combine( common, name ) : assemby.Location;
+            var result = new DirectoryInfo( location ).Ensure();
+            return result;
+        } );
 
-        public static readonly Lazy< DirectoryInfo > ConfigLocation = new Lazy< DirectoryInfo >( () => {
-                                                                                                     var common = Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData );
-                                                                                                     var assemby = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
-                                                                                                     var name = Path.GetFileNameWithoutExtension( assemby.Location );
-                                                                                                     var location = !String.IsNullOrWhiteSpace( name ) ? Path.Combine( common, name, String.Format( "{0}.config", name ) ) : assemby.Location;
-                                                                                                     var result = new DirectoryInfo( location );
-                                                                                                     if ( !result.Exists ) {
-                                                                                                         result.Create();
-                                                                                                     }
-                                                                                                     return result;
-                                                                                                 } );
+        public static readonly Lazy<DirectoryInfo> ConfigLocation = new Lazy<DirectoryInfo>( () => {
+            var common = Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData );
+            var assemby = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+            var name = Path.GetFileNameWithoutExtension( assemby.Location );
+            var location = !String.IsNullOrWhiteSpace( name ) ? Path.Combine( common, name, String.Format( "{0}.config", name ) ) : assemby.Location;
+            var result = new DirectoryInfo( location );
+            if ( !result.Exists ) {
+                result.Create();
+            }
+            return result;
+        } );
 
         static Storage() {
             EnableIsolatedStorageCompression();
@@ -107,7 +108,7 @@ namespace Librainian.Persistence {
         /// <param name="fileName"></param>
         /// <returns></returns>
         [Obsolete]
-        public static T Load< T >( [CanBeNull] String fileName ) where T : class, new() {
+        public static T Load<T>( [CanBeNull] String fileName ) where T : class, new() {
             try {
                 if ( String.IsNullOrEmpty( fileName ) ) {
                     return new T();
@@ -153,7 +154,7 @@ namespace Librainian.Persistence {
         /// <param name="fileName" />
         /// <returns></returns>
         [Obsolete]
-        public static Boolean LoadValue< T >( out T obj, String fileName ) where T : struct {
+        public static Boolean LoadValue<T>( out T obj, String fileName ) where T : struct {
             obj = default( T );
             try {
                 if ( String.IsNullOrEmpty( fileName ) ) {
@@ -204,11 +205,10 @@ namespace Librainian.Persistence {
 
                             if ( useCompression ) {
                                 using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                    obj = ( T ) serializer.ReadObject( stream: decompress );
+                                    obj = ( T )serializer.ReadObject( stream: decompress );
                                 }
-                            }
-                            else {
-                                obj = ( T ) serializer.ReadObject( stream: isfs );
+                            } else {
+                                obj = ( T )serializer.ReadObject( stream: isfs );
                             }
 
                             return !Equals( obj, default( T ) );
@@ -248,7 +248,7 @@ namespace Librainian.Persistence {
         /// <param name="objectToSerialize"></param>
         /// <param name="fileName"></param>
         /// <returns>Returns True if the object was saved.</returns>
-        public static Boolean Saver< TSource >( [CanBeNull] this TSource objectToSerialize, [NotNull] String fileName ) where TSource : class {
+        public static Boolean Saver<TSource>( [CanBeNull] this TSource objectToSerialize, [NotNull] String fileName ) where TSource : class {
             //TODO pass in a backup flag to save the newest copy with the backup time.
             // or a Backup class ?
 
@@ -309,8 +309,7 @@ namespace Librainian.Persistence {
                                     using ( var compress = new GZipStream( isfs, CompressionMode.Compress, leaveOpen: true ) ) {
                                         serializer.Serialize( compress, objectToSerialize );
                                     }
-                                }
-                                else {
+                                } else {
                                     serializer.Serialize( isfs, objectToSerialize );
                                 }
                                 isfs.Close();
@@ -357,7 +356,7 @@ namespace Librainian.Persistence {
         /// <param name="obj"></param>
         /// <param name="fileName"></param>
         /// <returns>Returns True if the object was saved.</returns>
-        public static Boolean SaveValue< TSource >( this TSource obj, [NotNull] String fileName ) where TSource : struct {
+        public static Boolean SaveValue<TSource>( this TSource obj, [NotNull] String fileName ) where TSource : struct {
             if ( fileName == null ) {
                 throw new ArgumentNullException( "fileName" );
             }
@@ -401,8 +400,7 @@ namespace Librainian.Persistence {
                                     using ( var compress = new GZipStream( isfs, CompressionMode.Compress, leaveOpen: true ) ) {
                                         serializer.WriteObject( compress, obj );
                                     }
-                                }
-                                else {
+                                } else {
                                     serializer.WriteObject( isfs, obj );
                                 }
                                 isfs.Close();
@@ -447,7 +445,7 @@ namespace Librainian.Persistence {
         /// <param name="feedback"></param>
         /// <returns></returns>
         [Obsolete]
-        public static Boolean Load< TSource >( out TSource obj, [NotNull] String fileName, ProgressChangedEventHandler feedback = null ) where TSource : class {
+        public static Boolean Load<TSource>( out TSource obj, [NotNull] String fileName, ProgressChangedEventHandler feedback = null ) where TSource : class {
             if ( fileName == null ) {
                 throw new ArgumentNullException( "fileName" );
             }
@@ -498,10 +496,9 @@ namespace Librainian.Persistence {
 
                                 if ( useCompression ) {
                                     using ( var decompress = new GZipStream( stream: fileStream, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                        obj = Deserialize< TSource >( stream: decompress, feedback: feedback );
+                                        obj = Deserialize<TSource>( stream: decompress, feedback: feedback );
                                     }
-                                }
-                                else {
+                                } else {
                                     //obj = Deserialize<TSource>( stream: isfs, feedback: feedback );
                                     var serializer = new NetDataContractSerializer();
                                     obj = serializer.Deserialize( fileStream ) as TSource;
@@ -543,7 +540,7 @@ namespace Librainian.Persistence {
             return false;
         }
 
-        public static TSource Deserialize< TSource >( Stream stream, ProgressChangedEventHandler feedback = null ) where TSource : class {
+        public static TSource Deserialize<TSource>( Stream stream, ProgressChangedEventHandler feedback = null ) where TSource : class {
             if ( null == stream ) {
                 throw new ArgumentNullException( "stream" );
             }
@@ -641,7 +638,7 @@ namespace Librainian.Persistence {
         /// <param name="onLoad"> </param>
         /// <param name="feedback"></param>
         /// <returns></returns>
-        public static Boolean Loader< TSource >( [NotNull] this String fullPathAndFileName, [CanBeNull] Action< TSource > onLoad = null, ProgressChangedEventHandler feedback = null ) where TSource : class {
+        public static Boolean Loader<TSource>( [NotNull] this String fullPathAndFileName, [CanBeNull] Action<TSource> onLoad = null, ProgressChangedEventHandler feedback = null ) where TSource : class {
             if ( fullPathAndFileName == null ) {
                 throw new ArgumentNullException( "fullPathAndFileName" );
             }
@@ -665,11 +662,10 @@ namespace Librainian.Persistence {
                                         TSource result;
                                         if ( useCompression ) {
                                             using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                                result = Deserialize< TSource >( stream: decompress, feedback: feedback );
+                                                result = Deserialize<TSource>( stream: decompress, feedback: feedback );
                                             }
-                                        }
-                                        else {
-                                            result = Deserialize< TSource >( stream: isfs, feedback: feedback );
+                                        } else {
+                                            result = Deserialize<TSource>( stream: isfs, feedback: feedback );
                                         }
                                         if ( onLoad != null ) {
                                             onLoad( result );
@@ -812,7 +808,7 @@ namespace Librainian.Persistence {
         /// <param name="parameters"></param>
         /// <returns></returns>
         [Obsolete]
-        public static TSource LoadOrCreate< TSource >( [NotNull] String fileName, ProgressChangedEventHandler feedback = null, [NotNull] params Object[] parameters ) where TSource : class, new() {
+        public static TSource LoadOrCreate<TSource>( [NotNull] String fileName, ProgressChangedEventHandler feedback = null, [NotNull] params Object[] parameters ) where TSource : class, new() {
             if ( fileName == null ) {
                 throw new ArgumentNullException( "fileName" );
             }
@@ -835,10 +831,10 @@ namespace Librainian.Persistence {
                                     var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( value: "Z", ignoreCase: true, culture: null );
 
                                     if ( !useCompression ) {
-                                        return Deserialize< TSource >( stream: isfs, feedback: feedback );
+                                        return Deserialize<TSource>( stream: isfs, feedback: feedback );
                                     }
                                     using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                        return Deserialize< TSource >( stream: decompress, feedback: feedback );
+                                        return Deserialize<TSource>( stream: decompress, feedback: feedback );
                                     }
                                 }
                             }
@@ -897,7 +893,7 @@ namespace Librainian.Persistence {
         /// <param name="value"></param>
         /// <param name="location"></param>
         /// <returns></returns>
-        public static Boolean TryGet< TSource >( this String attribute, out TSource value, String location = null ) {
+        public static Boolean TryGet<TSource>( this String attribute, out TSource value, String location = null ) {
             if ( attribute == null ) {
                 throw new ArgumentNullException( "attribute" );
             }
@@ -915,7 +911,7 @@ namespace Librainian.Persistence {
                 }
                 using ( var fs = NtfsAlternateStream.Open( path: filename, access: FileAccess.Read, mode: FileMode.Open, share: FileShare.None ) ) {
                     var serializer = new NetDataContractSerializer();
-                    value = ( TSource ) serializer.Deserialize( fs );
+                    value = ( TSource )serializer.Deserialize( fs );
                 }
                 return true;
             }
@@ -945,7 +941,7 @@ namespace Librainian.Persistence {
         /// <param name="attribute"></param>
         /// <param name="location"></param>
         /// <returns></returns>
-        public static Boolean TrySave< TSource >( this TSource objectToSerialize, [NotNull] String attribute, String location = null ) {
+        public static Boolean TrySave<TSource>( this TSource objectToSerialize, [NotNull] String attribute, String location = null ) {
             if ( attribute == null ) {
                 throw new ArgumentNullException( "attribute" );
             }
