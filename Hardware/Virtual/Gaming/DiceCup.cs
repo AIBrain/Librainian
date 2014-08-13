@@ -18,5 +18,14 @@
 #endregion
 
 namespace Librainian.Hardware.Virtual.Gaming {
-    public class DiceCup { }
+    using System.Collections.Concurrent;
+
+    public class DiceCup {
+
+        private ConcurrentBag<IDice> _contents = new ConcurrentBag<IDice>();
+
+        public void Add( IDice dice ) {
+        }
+
+    }
 }

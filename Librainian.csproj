@@ -261,7 +261,7 @@
     <Compile Include="Hardware\Virtual\Gaming\Card.cs" />
     <Compile Include="Hardware\Virtual\Gaming\Deck.cs" />
     <Compile Include="Hardware\Virtual\Gaming\DiceCup.cs" />
-    <Compile Include="Hardware\Virtual\Gaming\Dice.cs" />
+    <Compile Include="Hardware\Virtual\Gaming\TraditionalDice.cs" />
     <Compile Include="Magic\IIocContainer.cs" />
     <Compile Include="Magic\Ioc.cs" />
     <Compile Include="Magic\NinjectIocContainer.cs" />
@@ -464,6 +464,7 @@
     <Compile Include="Threading\C5Random.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Threading\AbandonableTask.cs" />
+    <Compile Include="Threading\MersenneTwister.cs" />
     <Compile Include="Threading\CustomAttribute.cs" />
     <Compile Include="Threading\Randem2.cs" />
     <Compile Include="Extensions\Combiner.cs" />
