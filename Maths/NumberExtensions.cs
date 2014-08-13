@@ -3,7 +3,6 @@ namespace Librainian.Maths {
     using System.Linq;
     using System.Numerics;
     using FluentAssertions;
-    using Numerics;
     using NUnit.Framework;
     using Parsing;
     using Threading;
