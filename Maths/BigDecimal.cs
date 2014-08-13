@@ -40,7 +40,7 @@ namespace Librainian.Maths {
         ///     Sets the maximum precision of division operations.
         ///     If AlwaysTruncate is set to true all operations are affected.
         /// </summary>
-        public const int Precision = 100;
+        public const long Precision = 100;
 
         public static readonly BigDecimal One = new BigDecimal( number: 1 );
 
