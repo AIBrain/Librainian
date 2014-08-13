@@ -41,25 +41,29 @@ namespace Librainian.IO {
                 throw new ArgumentNullException( "fileInfo" );
             }
 
-            using ( var stream = File.OpenRead( fileInfo.FullName ) ) {
-                if ( !stream.CanRead ) {
-                    throw new NotSupportedException( String.Format( "Cannot read from file {0}", fileInfo.FullName ) );
-                }
-
-                var result = fileInfo.FullName.GetHashCode();
-                int b;
-                do {
-                    b = stream.ReadByte();
-                    if ( b != -1 ) {
-                        result = result.GetHashMerge( b );
-                    }
-                } while ( b != -1 );
-                return result;
-            }
+            return fileInfo.AsByteArray().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
         }
 
         /// <summary>
-        ///     poor mans <see cref="Document" /> compare. byte by byte.
+        ///     poor mans crc
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        public static int CalcHash( [NotNull] this Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( "document" );
+            }
+
+            var fileInfo = new FileInfo( document.FullPathWithFileName );
+            if ( fileInfo == null ) {
+                throw new NullReferenceException( "fileInfo" );
+            }
+
+            return fileInfo.AsByteArray().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
+        }
+
+        /// <summary>
+        ///     <para>performs a byte by byte file comparison</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -77,11 +81,13 @@ namespace Librainian.IO {
             if ( left == null || right == null ) {
                 return false;
             }
-            return SameContent( left.File, right.File );
+            var linfo = new FileInfo( left.FullPathWithFileName );
+            var rinfo = new FileInfo( right.FullPathWithFileName );
+            return linfo.SameContent( rinfo );
         }
 
         /// <summary>
-        ///     poor mans file compare. byte by byte.
+        ///     <para>performs a byte by byte file comparison</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -108,7 +114,7 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
-        public static IEnumerable< byte > AsByteArray( [NotNull] this FileInfo fileInfo ) {
+        public static IEnumerable<byte> AsByteArray( [NotNull] this FileInfo fileInfo ) {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( "fileInfo" );
             }
@@ -129,7 +135,7 @@ namespace Librainian.IO {
                     if ( b == -1 ) {
                         yield break;
                     }
-                    yield return ( Byte ) b;
+                    yield return ( Byte )b;
                 }
             }
         }

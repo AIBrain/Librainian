@@ -73,7 +73,7 @@ namespace Librainian.IO {
         public readonly String FileName;
 
         /// <summary>
-        ///     A folder always ends with the <see cref="FolderSeparator" />.
+        ///     <para>FYI: A folder always ends with the <see cref="FolderSeparator" />.</para>
         /// </summary>
         [NotNull]
         public readonly String Folder;
@@ -135,7 +135,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Returns true if the <see cref="Document" /> <see cref="FullPathWithFileName" /> exists.
+        ///     Returns true if the <see cref="Document" /> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
         public Boolean FileExists {
@@ -145,7 +145,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Returns true if the <see cref="Document" /> exists.
+        ///     Returns true if the <see cref="Document.Folder" /> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
         public Boolean FolderExists {
