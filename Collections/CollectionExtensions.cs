@@ -615,6 +615,9 @@ namespace Librainian.Collections {
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
         /// <returns></returns>
+        /// <exception cref="IndexOutOfRangeException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="NotSupportedException"></exception>
         [CanBeNull]
         public static TType TakeFirst<TType>( this IList<TType> list ) {
             if ( list == null ) {

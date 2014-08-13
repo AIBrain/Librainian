@@ -19,23 +19,53 @@
 
 namespace Librainian.Hardware.Virtual.Gaming {
     using System;
+    using System.Collections;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Collections;
+    using Measurement.Time;
     using Threading;
 
     public class Dice {
+
+        private readonly uint _keepTrackOfXRolls;
         public readonly UInt16 NumberOfSides;
 
-        public UInt16 LastRoll { get; private set; }
+        private readonly ParallelList<UInt16> _lastFewRolls = new ParallelList<UInt16>();
 
-        public Dice( UInt16 numberOfSides ) {
+        public IEnumerable<UInt16> LastFewRolls {
+            get {
+                return this._lastFewRolls;
+            }
+        }
+
+        public Dice( UInt16 numberOfSides, UInt32 keepTrackOfXRolls = 10 ) {
+            this._keepTrackOfXRolls = keepTrackOfXRolls;
             this.NumberOfSides = numberOfSides;
         }
+
+        private readonly ConcurrentDictionary<Task, DateTime> _tasks = new ConcurrentDictionary<Task, DateTime>();
 
         /// <summary>
         ///     Rolls the dice to determine which side lands face-up
         /// </summary>
         /// <returns>The side which landed face-up</returns>
         public UInt16 Roll() {
-            return LastRoll = ( UInt16 )( Randem.Next( this.NumberOfSides ) + 1 );
+            var result = ( UInt16 )( Randem.Next( this.NumberOfSides ) + 1 );
+            Task key = this._lastFewRolls.AddAsync( result ).ContinueWith( task => {
+                if ( this.LastFewRolls.Count() > this._keepTrackOfXRolls ) {
+                    this._lastFewRolls.TakeFirst();
+                }
+                DateTime dummy;
+                this._tasks.TryRemove( task, out dummy );
+                foreach ( var keyValuePair in _tasks.Where( pair => pair.Value < DateTime.Now.AddMinutes( -10 ) ) ) {
+                    this._tasks.TryRemove( keyValuePair.Key, out dummy );
+                }
+            } );
+            _tasks.TryAdd( key, DateTime.Now );
+            return result;
         }
     }
 }
