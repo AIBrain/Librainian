@@ -89,13 +89,10 @@ namespace Librainian.Collections {
         private long _markedAsCompleteCounter;
 
         /// <summary>
-        ///     If <paramref name="doModifyPrecheck" /> is true, then <see cref="AllowModifications" /> will be checked before
-        ///     items are added, inserted, or removed.
         /// </summary>
-        /// <param name="doModifyPrecheck"></param>
         /// <param name="readTimeout"></param>
         /// <param name="writeTimeout"></param>
-        public ParallelList( Boolean doModifyPrecheck = true, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null )
+        public ParallelList( TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null )
             : this() {
             //this._doModifyPrecheck = doModifyPrecheck;
             if ( readTimeout.HasValue ) {

@@ -14,12 +14,13 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Dice.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/Dice.cs" was last cleaned by Rick on 2014/08/13 at 12:09 PM
 #endregion
 
 namespace Librainian.Hardware.Virtual.Gaming {
     using System;
-    using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
@@ -29,11 +30,29 @@ namespace Librainian.Hardware.Virtual.Gaming {
     using Threading;
 
     public class Dice {
-
-        private readonly uint _keepTrackOfXRolls;
         public readonly UInt16 NumberOfSides;
+        private readonly Span? _dontTrackRollsOlderThan;
+
+        /// <summary>
+        ///     Keep track of the most recent rolls.
+        /// </summary>
+        private readonly uint _keepTrackOfXRolls;
 
         private readonly ParallelList<UInt16> _lastFewRolls = new ParallelList<UInt16>();
+
+        private readonly ConcurrentDictionary<Task, DateTime> _tasks = new ConcurrentDictionary<Task, DateTime>();
+
+        public Dice( UInt16 numberOfSides, UInt32 keepTrackOfXRolls = 10, Span? dontTrackRollsOlderThan = null, Span? timeout = null ) {
+            this.NumberOfSides = numberOfSides;
+            this._keepTrackOfXRolls = keepTrackOfXRolls;
+            this._dontTrackRollsOlderThan = dontTrackRollsOlderThan;
+
+            if ( !timeout.HasValue ) {
+                timeout = Seconds.Thirty;
+            }
+            this._lastFewRolls.TimeoutForReads = timeout.Value;
+            this._lastFewRolls.TimeoutForWrites = timeout.Value;
+        }
 
         public IEnumerable<UInt16> LastFewRolls {
             get {
@@ -41,30 +60,27 @@ namespace Librainian.Hardware.Virtual.Gaming {
             }
         }
 
-        public Dice( UInt16 numberOfSides, UInt32 keepTrackOfXRolls = 10 ) {
-            this._keepTrackOfXRolls = keepTrackOfXRolls;
-            this.NumberOfSides = numberOfSides;
-        }
-
-        private readonly ConcurrentDictionary<Task, DateTime> _tasks = new ConcurrentDictionary<Task, DateTime>();
-
         /// <summary>
-        ///     Rolls the dice to determine which side lands face-up
+        ///     <para>Rolls the dice to determine which side lands face-up.</para>
         /// </summary>
         /// <returns>The side which landed face-up</returns>
         public UInt16 Roll() {
             var result = ( UInt16 )( Randem.Next( this.NumberOfSides ) + 1 );
-            Task key = this._lastFewRolls.AddAsync( result ).ContinueWith( task => {
+            var key = this._lastFewRolls.AddAsync( result, () => {
                 if ( this.LastFewRolls.Count() > this._keepTrackOfXRolls ) {
                     this._lastFewRolls.TakeFirst();
                 }
+            } ).ContinueWith( task => {
                 DateTime dummy;
                 this._tasks.TryRemove( task, out dummy );
-                foreach ( var keyValuePair in _tasks.Where( pair => pair.Value < DateTime.Now.AddMinutes( -10 ) ) ) {
+                if ( !this._dontTrackRollsOlderThan.HasValue ) {
+                    return;
+                }
+                foreach ( var keyValuePair in this._tasks.Where( pair => DateTime.Now - pair.Value > this._dontTrackRollsOlderThan.Value ) ) {
                     this._tasks.TryRemove( keyValuePair.Key, out dummy );
                 }
             } );
-            _tasks.TryAdd( key, DateTime.Now );
+            this._tasks.TryAdd( key, DateTime.Now );
             return result;
         }
     }
