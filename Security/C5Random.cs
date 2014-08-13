@@ -17,7 +17,7 @@
 // "Librainian/C5Random.cs" was last cleaned by Rick on 2014/08/11 at 12:41 AM
 #endregion
 
-namespace Librainian.Threading {
+namespace Librainian.Security {
     using System;
     using System.Threading;
     using Annotations;
@@ -51,7 +51,7 @@ namespace Librainian.Threading {
     ///         comp.lang.c on 2003-04-03.
     ///     </para>
     /// </summary>
-    /// <remarks>Modified by Rick to be threadsafe.</remarks>
+    /// <remarks>Modified by Rick to be threadsafe. I hope.</remarks>
     [UsedImplicitly]
     public class C5Random : Random {
         private readonly ThreadLocal< uint > _c = new ThreadLocal< uint >( () => 362436, false );

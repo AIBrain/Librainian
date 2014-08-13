@@ -56,7 +56,10 @@ namespace Librainian.Hardware.Virtual.Gaming {
 
         private readonly ConcurrentDictionary<Task, DateTime> _tasks = new ConcurrentDictionary<Task, DateTime>();
 
-        public TraditionalDice( UInt16 numberOfSides, UInt32 keepTrackOfXRolls = 10, Span? dontTrackRollsOlderThan = null, Span? timeout = null ) {
+        private TraditionalDice() {
+        }
+
+        public TraditionalDice( UInt16 numberOfSides = 4, UInt32 keepTrackOfXRolls = 10, Span? dontTrackRollsOlderThan = null, Span? timeout = null ) {
             this.NumberOfSides = numberOfSides;
             this._keepTrackOfXRolls = keepTrackOfXRolls;
             this._dontTrackRollsOlderThan = dontTrackRollsOlderThan;
@@ -81,7 +84,7 @@ namespace Librainian.Hardware.Virtual.Gaming {
             var key = this._lastFewRolls.AddAsync( result, OnAfterAdd ).ContinueWith( task => {
                 DateTime dummy;
                 var removed = this._tasks.TryRemove( task, out dummy );
-                String.Format( "{0}", removed ).TimeDebug();
+                String.Format( "Old roll {0} removed", dummy ).TimeDebug();
             } );
             this._tasks.TryAdd( key, DateTime.Now );
             return result;

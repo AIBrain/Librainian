@@ -63,7 +63,7 @@ namespace Librainian.Threading {
                                                            } );
         }
 
-        public void StartProcessing() {
+        public Task StartProcessing() {
             // initialize the collection
 
             this._valueQueue = new BlockingCollection< ValueCallBackWrapper >();
@@ -72,7 +72,7 @@ namespace Librainian.Threading {
 
             // items from the collection
 
-            Task.Run( () => { Parallel.ForEach( this._valueQueue.GetConsumingEnumerable(), wrapper => wrapper.Callback( wrapper.Value, this._pipelineFunction( wrapper.Value ) ) ); } );
+           return Task.Run( () => { Parallel.ForEach( this._valueQueue.GetConsumingEnumerable(), wrapper => wrapper.Callback( wrapper.Value, this._pipelineFunction( wrapper.Value ) ) ); } );
         }
 
         public void StopProcessing() {

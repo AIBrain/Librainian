@@ -461,12 +461,11 @@
     <Compile Include="Threading\AsyncLock.cs" />
     <Compile Include="Threading\AsyncReaderWriterLock.cs" />
     <Compile Include="Threading\Blocks.cs" />
-    <Compile Include="Threading\C5Random.cs" />
+    <Compile Include="Security\C5Random.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Threading\AbandonableTask.cs" />
-    <Compile Include="Threading\MersenneTwister.cs" />
+    <Compile Include="Security\MersenneTwister.cs" />
     <Compile Include="Threading\CustomAttribute.cs" />
-    <Compile Include="Threading\Randem2.cs" />
     <Compile Include="Extensions\Combiner.cs" />
     <Compile Include="Extensions\GuidExtensions.cs" />
     <Compile Include="Extensions\Enum.cs" />

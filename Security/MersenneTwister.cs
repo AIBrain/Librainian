@@ -1,4 +1,4 @@
-﻿namespace Librainian.Threading {
+﻿namespace Librainian.Security {
     using System;
 
     /// <summary>
