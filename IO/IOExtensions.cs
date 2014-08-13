@@ -150,10 +150,12 @@ namespace Librainian.IO {
         /// <returns></returns>
         public static Task Copy( Document source, Document destination, Action<double> progress, Action<TimeSpan> eta ) {
             return Task.Run( () => {
+                //TODO
             } );
         }
 
         public static MemoryStream TryCopyStream( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
+        //TODO
         TryAgain:
             var memoryStream = new MemoryStream();
             try {
@@ -190,14 +192,11 @@ namespace Librainian.IO {
             var stopwatch = Stopwatch.StartNew();
         TryAgain:
             try {
-                if ( !document.Exists ) {
+                if ( !document.FileExists ) {
                     return true;
                 }
-                File.Delete( path: document.FullName );
-                document.Refresh();
-                if ( !document.Exists ) {
-                    return true;
-                }
+                File.Delete( path: document.FullPathWithFileName );
+                return !File.Exists( document.FullPathWithFileName );
             }
             catch ( DirectoryNotFoundException ) {
             }
@@ -234,6 +233,7 @@ namespace Librainian.IO {
         ///     attempts
         /// </returns>
         public static FileStream TryOpen( String filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
+            //TODO
             try {
                 return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
             }
@@ -244,6 +244,7 @@ namespace Librainian.IO {
         }
 
         public static FileStream TryOpenForReading( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
+        //TODO
         TryAgain:
             try {
                 if ( File.Exists( filePath ) ) {
@@ -263,6 +264,7 @@ namespace Librainian.IO {
         }
 
         public static FileStream TryOpenForWriting( String filePath, FileMode fileMode = FileMode.Create, FileAccess fileAccess = FileAccess.Write, FileShare fileShare = FileShare.ReadWrite ) {
+            //TODO
             try {
                 return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
             }
