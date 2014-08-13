@@ -445,7 +445,7 @@ namespace Librainian.Collections {
         public enum ShufflingType {
 
             /// <summary>
-            /// Uses OrderBy( Random.Next ). This should be the fastest.
+            /// Uses OrderBy( Random.Next ).ThenBy( Random.Next ). This might be the fastest.
             /// </summary>
             Random,
 
@@ -456,7 +456,7 @@ namespace Librainian.Collections {
             OneByOne,
 
             /// <summary>
-            /// Possibly slower. But uses <see cref="ConcurrentBag{T}"/>!
+            /// Possibly slower. But uses <see cref="ConcurrentBag{T}"/> (which can introduce more randomness).
             /// </summary>
             ByBuckets,
 
@@ -494,7 +494,7 @@ namespace Librainian.Collections {
                     case ShufflingType.Random: {
                             while ( iterations > 0 ) {
                                 iterations--;
-                                var copy = list.AsParallel().OrderBy( o => Randem.Next() ).ToList();
+                                var copy = list.AsParallel().OrderBy( o => Randem.Next() ).ThenBy( o => Randem.Next() ).ToList();
                                 list.Clear();
                                 list.AddRange( copy.AsParallel() );
                             }
