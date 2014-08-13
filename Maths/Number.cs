@@ -36,17 +36,17 @@ namespace Librainian.Maths {
     /// <seealso cref="NumberExtensions.TestNumberParsings"/>
     [Immutable]
     public struct Number {
-        public readonly BigDecimal Answer;
+        private readonly BigDecimal _answer;
 
-        public BigDecimal Denominator {
+        public BigDecimal Answer {
             get {
-                return this._value.Denominator;
+                return this._answer;
             }
         }
 
-        public readonly BigDecimal Numerator;
+        //public readonly BigDecimal Numerator;
 
-        private readonly Number? _value;
+        //private readonly Number? _value;
 
 
 
@@ -79,20 +79,24 @@ namespace Librainian.Maths {
                 numeratorMultiplier *= 10;
             }
 
-            this.Answer = numerator / denominator;
+            this._answer = numerator / denominator;
 
-            this._value = new BigRational( ( Decimal )this.Answer );
+            //this._value = new BigRational( ( Decimal )this.Answer );
 
-            this.Numerator = new BigDecimal( this._value.Numerator, 0 );
+            //this.Numerator = new BigDecimal( this._value.Numerator, 0 );
 
-            this.Denominator = new BigDecimal( this._value.GetWholePart(), 0 );
+            //this.Denominator = new BigDecimal( this._value.GetWholePart(), 0 );
         }
 
-        public Number( BigRational value ) {
-
-            this._value = value;
-
+        private Number( BigRational bigRational ) {
+            throw new NotImplementedException();
         }
+
+        //public Number( BigRational value ) {
+
+        //    this._value = value;
+
+        //}
 
         /// <summary>
         /// 
@@ -168,9 +172,10 @@ namespace Librainian.Maths {
             whole += fraction;  //reconstruct the part that was after the decimal point
 
             var bob = new BigRational( whole, ratio );
-            var leastCommonDenominator = this._value.LeastCommonDenominator( bob.Numerator, bob.Denominator );
 
-            bob /= leastCommonDenominator;
+            //TODO does BigRational already reduce?
+            //var leastCommonDenominator = this._value.LeastCommonDenominator( bob.Numerator, bob.Denominator );
+            //bob /= leastCommonDenominator;
 
             number = new Number( bob );
 

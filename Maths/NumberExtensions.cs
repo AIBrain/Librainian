@@ -6,6 +6,12 @@ namespace Librainian.Maths {
     using Threading;
 
     public static class NumberExtensions {
+
+        public static BigDecimal ToBigDecimal( this String longDecimalString ) {
+
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -21,7 +27,7 @@ namespace Librainian.Maths {
 
             BigInteger beforeDecimalPoint;
             BigInteger afterDecimalPoint;
-            BigRational sdgasdgd;
+            Number? sdgasdgd;
             var result = Number.TryParseNumber( bob, out sdgasdgd );
             return result;
         }
