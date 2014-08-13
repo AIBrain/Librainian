@@ -1,23 +1,28 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/ParallelList.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/ParallelList.cs" was last cleaned by Rick on 2014/08/13 at 11:48 AM
+
+#endregion License & Information
 
 namespace Librainian.Collections {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -38,34 +43,44 @@ namespace Librainian.Collections {
     /// <copyright>Rick@AIBrain.org 2014</copyright>
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "Count={Count}" )]
-    public class ParallelList< TType > : IList< TType > {
+    public class ParallelList<TType> : IList<TType> {
+
         /// <summary>
         ///     <para>Provide a dataflow block to process messages in a serial fashion.</para>
         /// </summary>
-        [NotNull] private readonly ActionBlock< Action > _actionBlock = new ActionBlock< Action >( action => action(), new ExecutionDataflowBlockOptions {
-                                                                                                                                                             SingleProducerConstrained = false,
-                                                                                                                                                             MaxDegreeOfParallelism = 1
-                                                                                                                                                         } );
+        [NotNull]
+        private readonly ActionBlock<Action> _actionBlock = new ActionBlock<Action>( action => action(), new ExecutionDataflowBlockOptions {
+            SingleProducerConstrained = false,
+            MaxDegreeOfParallelism = 1
+        } );
 
         /// <summary>
         ///     <para>The internal list actually used.</para>
         /// </summary>
-        [DataMember] [NotNull] private readonly List< TType > _list;
+        [DataMember]
+        [NotNull]
+        private readonly List<TType> _list;
 
-        [NotNull] private readonly ReaderWriterLockSlim _readerWriter;
+        [NotNull]
+        private readonly ReaderWriterLockSlim _readerWriter;
 
-        [NotNull] private readonly ThreadLocal< int > _waitingToBeAddedCounter;
+        [NotNull]
+        private readonly ThreadLocal<int> _waitingToBeAddedCounter;
 
-        [NotNull] private readonly ThreadLocal< int > _waitingToBeChangedCounter;
+        [NotNull]
+        private readonly ThreadLocal<int> _waitingToBeChangedCounter;
 
-        [NotNull] private readonly ThreadLocal< int > _waitingToBeInsertedCounter;
+        [NotNull]
+        private readonly ThreadLocal<int> _waitingToBeInsertedCounter;
 
-        [NotNull] private readonly ThreadLocal< int > _waitingToBeRemovedCounter;
+        [NotNull]
+        private readonly ThreadLocal<int> _waitingToBeRemovedCounter;
 
         /// <summary>
         ///     Internal item counter.
         /// </summary>
-        [NotNull] private ThreadLocal< int > _itemCounter;
+        [NotNull]
+        private ThreadLocal<int> _itemCounter;
 
         /// <summary>
         ///     <para>Tracks count of times this <see cref="ParallelList{TType}" /> has been marked as <see cref="Complete" />.</para>
@@ -80,7 +95,8 @@ namespace Librainian.Collections {
         /// <param name="doModifyPrecheck"></param>
         /// <param name="readTimeout"></param>
         /// <param name="writeTimeout"></param>
-        public ParallelList( Boolean doModifyPrecheck = true, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) : this() {
+        public ParallelList( Boolean doModifyPrecheck = true, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null )
+            : this() {
             //this._doModifyPrecheck = doModifyPrecheck;
             if ( readTimeout.HasValue ) {
                 this.TimeoutForReads = readTimeout.Value;
@@ -91,12 +107,12 @@ namespace Librainian.Collections {
         }
 
         private ParallelList() {
-            this._itemCounter = new ThreadLocal< int >( () => 0, trackAllValues: true );
-            this._waitingToBeRemovedCounter = new ThreadLocal< int >( trackAllValues: true );
-            this._waitingToBeInsertedCounter = new ThreadLocal< int >( trackAllValues: true );
-            this._waitingToBeChangedCounter = new ThreadLocal< int >( trackAllValues: true );
-            this._waitingToBeAddedCounter = new ThreadLocal< int >( trackAllValues: true );
-            this._list = new List< TType >();
+            this._itemCounter = new ThreadLocal<int>( () => 0, trackAllValues: true );
+            this._waitingToBeRemovedCounter = new ThreadLocal<int>( trackAllValues: true );
+            this._waitingToBeInsertedCounter = new ThreadLocal<int>( trackAllValues: true );
+            this._waitingToBeChangedCounter = new ThreadLocal<int>( trackAllValues: true );
+            this._waitingToBeAddedCounter = new ThreadLocal<int>( trackAllValues: true );
+            this._list = new List<TType>();
             this._readerWriter = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
             this.TimeoutForReads = Minutes.One;
             this.TimeoutForWrites = Minutes.One;
@@ -117,34 +133,61 @@ namespace Librainian.Collections {
         /// <summary>
         ///     <para>Returns the count of items waiting to be added to this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeAdded { get { return this._waitingToBeAddedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
+        public int CountOfItemsWaitingToBeAdded {
+            get {
+                return this._waitingToBeAddedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
+            }
+        }
 
         /// <summary>
         ///     <para>Returns the count of items waiting to be changed in this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeChanged { get { return this._waitingToBeChangedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
+        public int CountOfItemsWaitingToBeChanged {
+            get {
+                return this._waitingToBeChangedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
+            }
+        }
 
         /// <summary>
         ///     <para>Returns the count of items waiting to be inserted to this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeInserted { get { return this._waitingToBeInsertedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
+        public int CountOfItemsWaitingToBeInserted {
+            get {
+                return this._waitingToBeInsertedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
+            }
+        }
 
-        public TimeSpan TimeoutForReads { get; set; }
+        public TimeSpan TimeoutForReads {
+            get;
+            set;
+        }
 
-        public TimeSpan TimeoutForWrites { get; set; }
+        public TimeSpan TimeoutForWrites {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     <para>Count of items currently in this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int Count { get { return this._itemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
+        public int Count {
+            get {
+                return this._itemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
+            }
+        }
 
         /// <summary>
         /// </summary>
         /// <seealso cref="AllowModifications" />
-        public Boolean IsReadOnly { get; private set; }
+        public Boolean IsReadOnly {
+            get;
+            private set;
+        }
 
         public TType this[ int index ] {
-            get { return this.Clone()[ index ]; }
+            get {
+                return this.Clone()[ index ];
+            }
             set {
                 if ( !this.AllowModifications ) {
                     return;
@@ -153,13 +196,13 @@ namespace Librainian.Collections {
                 this.RequestToChangeAnItem();
 
                 this._actionBlock.Post( () => this.Write( () => {
-                                                              if ( !this.AllowModifications ) {
-                                                                  return false;
-                                                              }
-                                                              this._list[ index ] = value;
-                                                              this.AnItemHasBeenChanged();
-                                                              return true;
-                                                          } ) );
+                    if ( !this.AllowModifications ) {
+                        return false;
+                    }
+                    this._list[ index ] = value;
+                    this.AnItemHasBeenChanged();
+                    return true;
+                } ) );
             }
         }
 
@@ -172,7 +215,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="item"></param>
         public void Add( TType item ) {
-            this.Add( item: item, afterAdded: null );
+            this.Add( item: item, afterAdd: null );
         }
 
         /// <summary>
@@ -183,10 +226,10 @@ namespace Librainian.Collections {
                 return;
             }
             this._actionBlock.Post( () => this.Write( () => {
-                                                          this._list.Clear();
-                                                          this._itemCounter = new ThreadLocal< int >( () => 0, trackAllValues: true ); //BUG is this correct?
-                                                          return true;
-                                                      } ) );
+                this._list.Clear();
+                this._itemCounter = new ThreadLocal<int>( () => 0, trackAllValues: true ); //BUG is this correct?
+                return true;
+            } ) );
         }
 
         /// <summary>
@@ -210,9 +253,9 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( "array" );
             }
             this.Read( () => {
-                           this._list.CopyTo( array: array, arrayIndex: arrayIndex );
-                           return true;
-                       } );
+                this._list.CopyTo( array: array, arrayIndex: arrayIndex );
+                return true;
+            } );
         }
 
         /// <summary>
@@ -222,7 +265,7 @@ namespace Librainian.Collections {
         ///     </para>
         /// </summary>
         /// <returns></returns>
-        public IEnumerator< TType > GetEnumerator() {
+        public IEnumerator<TType> GetEnumerator() {
             return this.Clone().GetEnumerator(); //BUG is this correct?
         }
 
@@ -257,17 +300,17 @@ namespace Librainian.Collections {
             this.RequestToInsertAnItem();
 
             this._actionBlock.Post( () => this.Write( () => {
-                                                          try {
-                                                              this._list.Insert( index: index, item: item );
-                                                              return true;
-                                                          }
-                                                          catch ( ArgumentOutOfRangeException ) {
-                                                              return false;
-                                                          }
-                                                          finally {
-                                                              this.AnItemHasBeenInserted();
-                                                          }
-                                                      } ) );
+                try {
+                    this._list.Insert( index: index, item: item );
+                    return true;
+                }
+                catch ( ArgumentOutOfRangeException ) {
+                    return false;
+                }
+                finally {
+                    this.AnItemHasBeenInserted();
+                }
+            } ) );
         }
 
         /// <summary>
@@ -291,19 +334,19 @@ namespace Librainian.Collections {
             this.RequestToRemoveAnItem();
 
             this._actionBlock.Post( () => this.Write( () => {
-                                                          try {
-                                                              if ( index < this._list.Count ) {
-                                                                  this._list.RemoveAt( index );
-                                                              }
-                                                          }
-                                                          catch ( ArgumentOutOfRangeException ) {
-                                                              return false;
-                                                          }
-                                                          finally {
-                                                              this.AnItemHasBeenRemoved();
-                                                          }
-                                                          return true;
-                                                      } ) );
+                try {
+                    if ( index < this._list.Count ) {
+                        this._list.RemoveAt( index );
+                    }
+                }
+                catch ( ArgumentOutOfRangeException ) {
+                    return false;
+                }
+                finally {
+                    this.AnItemHasBeenRemoved();
+                }
+                return true;
+            } ) );
         }
 
         /// <summary>
@@ -314,9 +357,9 @@ namespace Librainian.Collections {
         ///     </para>
         /// </summary>
         /// <param name="item"></param>
-        /// <param name="afterAdded"></param>
+        /// <param name="afterAdd"></param>
         /// <returns></returns>
-        public Boolean Add( TType item, [CanBeNull] Action afterAdded ) {
+        public Boolean Add( TType item, [CanBeNull] Action afterAdd ) {
             if ( !this.AllowModifications ) {
                 return false;
             }
@@ -324,24 +367,24 @@ namespace Librainian.Collections {
             this.RequestToAddAnItem();
 
             return this._actionBlock.Post( () => this.Write( () => {
-                                                                 try {
-                                                                     this._list.Add( item: item );
-                                                                     return true;
-                                                                 }
-                                                                 finally {
-                                                                     this.AnItemHasBeenAdded();
-                                                                     if ( afterAdded != null ) {
-                                                                         afterAdded();
-                                                                     }
-                                                                 }
-                                                             } ) );
+                try {
+                    this._list.Add( item: item );
+                    return true;
+                }
+                finally {
+                    this.AnItemHasBeenAdded();
+                    if ( afterAdd != null ) {
+                        afterAdd();
+                    }
+                }
+            } ) );
         }
 
         public Boolean AddAndWait( TType item, CancellationToken cancellationToken = default( CancellationToken ), TimeSpan timeout = default( TimeSpan ) ) {
             var slim = new ManualResetEventSlim( initialState: false );
             slim.Reset();
 
-            this.Add( item: item, afterAdded: slim.Set );
+            this.Add( item: item, afterAdd: slim.Set );
 
             try {
                 if ( default( TimeSpan ) != timeout && default( CancellationToken ) != cancellationToken ) {
@@ -355,15 +398,21 @@ namespace Librainian.Collections {
                     return true;
                 }
             }
-            catch ( OperationCanceledException ) { }
-            catch ( ArgumentOutOfRangeException ) { }
-            catch ( ObjectDisposedException ) { }
-            catch ( AggregateException ) { }
+            catch ( OperationCanceledException ) {
+            }
+            catch ( ArgumentOutOfRangeException ) {
+            }
+            catch ( ObjectDisposedException ) {
+            }
+            catch ( AggregateException ) {
+            }
             return false;
         }
 
-        public Task AddAsync( TType item ) {
-            return Task.Run( () => { this.TryAdd( item ); } );
+        public Task AddAsync( TType item, Action afterAdd = null ) {
+            return Task.Run( () => {
+                this.TryAdd( item: item, afterAdd: afterAdd );
+            } );
         }
 
         /// <summary>
@@ -374,7 +423,7 @@ namespace Librainian.Collections {
         /// <param name="afterEachAdd"><see cref="Action" /> to perform after each add.</param>
         /// <param name="afterRangeAdded"><see cref="Action" /> to perform after range added.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public void AddRange( [NotNull] IEnumerable< TType > items, Boolean asParallel = true, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
+        public void AddRange( [NotNull] IEnumerable<TType> items, Boolean asParallel = true, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
             if ( null == items ) {
                 throw new ArgumentNullException( "items" );
             }
@@ -386,8 +435,7 @@ namespace Librainian.Collections {
             try {
                 if ( asParallel ) {
                     items.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( item => this.TryAdd( item, afterEachAdd ) );
-                }
-                else {
+                } else {
                     foreach ( var item in items ) {
                         this.TryAdd( item: item, afterAdd: afterEachAdd );
                     }
@@ -400,12 +448,12 @@ namespace Librainian.Collections {
             }
         }
 
-        public Task AddRangeAsync( [CanBeNull] IEnumerable< TType > items ) {
+        public Task AddRangeAsync( [CanBeNull] IEnumerable<TType> items ) {
             return Task.Run( () => {
-                                 if ( items != null ) {
-                                     this.AddRange( items );
-                                 }
-                             } );
+                if ( items != null ) {
+                    this.AddRange( items );
+                }
+            } );
         }
 
         /// <summary>
@@ -414,7 +462,7 @@ namespace Librainian.Collections {
         ///     </para>
         /// </summary>
         /// <returns></returns>
-        public List< TType > Clone() {
+        public List<TType> Clone() {
             return this.Read( () => this._list.ToList() );
         }
 
@@ -453,7 +501,7 @@ namespace Librainian.Collections {
                 this.Complete();
 
                 if ( default( TimeSpan ) != timeout && default( CancellationToken ) != cancellationToken ) {
-                    return this._actionBlock.Completion.Wait( millisecondsTimeout: ( int ) timeout.TotalMilliseconds, cancellationToken: cancellationToken );
+                    return this._actionBlock.Completion.Wait( millisecondsTimeout: ( int )timeout.TotalMilliseconds, cancellationToken: cancellationToken );
                 }
                 if ( default( TimeSpan ) != timeout ) {
                     return this._actionBlock.Completion.Wait( timeout: timeout );
@@ -497,18 +545,18 @@ namespace Librainian.Collections {
             this.RequestToRemoveAnItem();
 
             return this._actionBlock.Post( () => this.Write( () => {
-                                                                 try {
-                                                                     this._list.Remove( item );
-                                                                     return true;
-                                                                 }
-                                                                 finally {
-                                                                     this.AnItemHasBeenRemoved( afterRemoval );
-                                                                 }
-                                                             } ) );
+                try {
+                    this._list.Remove( item );
+                    return true;
+                }
+                finally {
+                    this.AnItemHasBeenRemoved( afterRemoval );
+                }
+            } ) );
         }
 
         public Boolean TryAdd( TType item, [CanBeNull] Action afterAdd = null ) {
-            return this.Add( item: item, afterAdded: afterAdd );
+            return this.Add( item: item, afterAdd: afterAdd );
         }
 
         /// <summary>
@@ -517,20 +565,20 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="index"></param>
         /// <param name="afterGet">Action to be ran after the item at the <paramref name="index" /> is got.</param>
-        public Boolean TryGet( int index, [CanBeNull] Action< TType > afterGet ) {
+        public Boolean TryGet( int index, [CanBeNull] Action<TType> afterGet ) {
             if ( index < 0 ) {
                 return false;
             }
             return this._actionBlock.Post( () => this.Read( () => {
-                                                                if ( index >= this._list.Count ) {
-                                                                    return false;
-                                                                }
-                                                                var result = this._list[ index ];
-                                                                if ( afterGet != null ) {
-                                                                    afterGet( result );
-                                                                }
-                                                                return true;
-                                                            } ) );
+                if ( index >= this._list.Count ) {
+                    return false;
+                }
+                var result = this._list[ index ];
+                if ( afterGet != null ) {
+                    afterGet( result );
+                }
+                return true;
+            } ) );
         }
 
         private void AnItemHasBeenAdded() {
@@ -560,7 +608,7 @@ namespace Librainian.Collections {
         /// <typeparam name="TFuncResult"></typeparam>
         /// <param name="func"></param>
         /// <returns></returns>
-        private TFuncResult Read< TFuncResult >( Func< TFuncResult > func ) {
+        private TFuncResult Read<TFuncResult>( Func<TFuncResult> func ) {
             if ( !this.AllowModifications && func != null ) {
                 return func(); //list has been marked to not allow any more modifications, go ahead and perform the function.
             }
@@ -602,7 +650,7 @@ namespace Librainian.Collections {
         /// <typeparam name="TFuncResult"></typeparam>
         /// <param name="func"></param>
         /// <returns></returns>
-        private TFuncResult Write< TFuncResult >( Func< TFuncResult > func ) {
+        private TFuncResult Write<TFuncResult>( Func<TFuncResult> func ) {
             if ( !this.AllowModifications && func != null ) {
                 return default( TFuncResult );
             }
