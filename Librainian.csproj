@@ -501,7 +501,6 @@
     <Compile Include="Maths\UBigInteger.cs" />
     <Compile Include="Maths\UInt64Range.cs" />
     <Compile Include="Maths\Weight.cs" />
-    <Compile Include="Threading\MomentInTime.cs" />
     <Compile Include="Threading\OpenOrClosed.cs" />
     <Compile Include="Threading\Pipeline.cs" />
     <Compile Include="Threading\PolicyOnLockRecursion.cs" />
