@@ -120,6 +120,7 @@ namespace Librainian.Threading {
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
         /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
         /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static int Next( int minValue, int maxValue ) {
             return Instance.Next( minValue: minValue, maxValue: maxValue );
         }
@@ -133,6 +134,16 @@ namespace Librainian.Threading {
         public static int Next( int maxValue ) {
             return Instance.Next( maxValue );
         }
+        
+        /// <summary>
+        /// <para>Returns a nonnegative random number less than <paramref name="maxValue" />.</para>
+        /// </summary>
+        /// <param name="maxValue"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static UInt16 Next( UInt16 maxValue ) {
+            return ( UInt16 )( Instance.Next( maxValue: maxValue ) );
+        }
 
         /// <summary>
         /// Generate a random number between <paramref name="range.Min" /> and <paramref
@@ -140,6 +151,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static int Next( this Int32Range range ) {
             return Instance.Next( minValue: range.Min, maxValue: range.Max );
         }

@@ -18,12 +18,15 @@
 #endregion
 
 namespace Librainian.Hardware.Virtual.Gaming {
+    using System;
     using Threading;
 
     public class Dice {
-        public readonly int NumberOfSides;
+        public readonly UInt16 NumberOfSides;
 
-        public Dice( int numberOfSides ) {
+        public UInt16 LastRoll { get; private set; }
+
+        public Dice( UInt16 numberOfSides ) {
             this.NumberOfSides = numberOfSides;
         }
 
@@ -31,8 +34,8 @@ namespace Librainian.Hardware.Virtual.Gaming {
         ///     Rolls the dice to determine which side lands face-up
         /// </summary>
         /// <returns>The side which landed face-up</returns>
-        public int Roll() {
-            return Randem.Next( this.NumberOfSides ) + 1;
+        public UInt16 Roll() {
+            return LastRoll = ( UInt16 )( Randem.Next( this.NumberOfSides ) + 1 );
         }
     }
 }
