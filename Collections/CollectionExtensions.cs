@@ -50,7 +50,7 @@ namespace Librainian.Collections {
             if ( items == null ) {
                 throw new ArgumentNullException( "items" );
             }
-            Parallel.ForEach( source: items,parallelOptions: Randem.Parallelism, body: collection.Add );
+            Parallel.ForEach( source: items, parallelOptions: Randem.Parallelism, body: collection.Add );
         }
 
         public static void Add<T>( this IProducerConsumerCollection<T> collection, T item ) {
@@ -62,14 +62,14 @@ namespace Librainian.Collections {
             }
         }
 
-/*
-        public static T Append<T>( [NotNull] this Enum type, T value ) where T : struct {
-            if ( type == null ) {
-                throw new ArgumentNullException( "type" );
-            }
-            return ( T )( ValueType )( ( ( int )( ValueType )type | ( int )( ValueType )value ) );
-        }
-*/
+        /*
+                public static T Append<T>( [NotNull] this Enum type, T value ) where T : struct {
+                    if ( type == null ) {
+                        throw new ArgumentNullException( "type" );
+                    }
+                    return ( T )( ValueType )( ( ( int )( ValueType )type | ( int )( ValueType )value ) );
+                }
+        */
 
         public static BigInteger CountBig<TType>( [NotNull] this IEnumerable<TType> items ) {
             if ( items == null ) {
@@ -191,16 +191,14 @@ namespace Librainian.Collections {
                         // Bingo !
                         return p - seq.Length + 1;
                     }
-                }
-                else // Mismatch
+                } else // Mismatch
                 {
                     // Do we have prospective matches to fall back to ?
                     if ( prospects.Count > 0 ) {
                         // Yes, use the first one
                         var k = prospects[ 0 ];
                         i = p - k + 1;
-                    }
-                    else {
+                    } else {
                         // No, start from beginning of searched sequence
                         i = 0;
                     }
@@ -442,26 +440,6 @@ namespace Librainian.Collections {
             //}
         }
 
-        public enum ShufflingType {
-
-            /// <summary>
-            /// Uses OrderBy( Random.Next ).ThenBy( Random.Next ). This might be the fastest.
-            /// </summary>
-            Random,
-
-            /// <summary>
-            /// No idea if I've implemented this correctly.
-            /// </summary>
-            /// <seealso cref="http://wikipedia.org/wiki/Fisher-Yates_shuffle"/>
-            OneByOne,
-
-            /// <summary>
-            /// Possibly slower. But uses <see cref="ConcurrentBag{T}"/> (which can introduce more randomness).
-            /// </summary>
-            ByBuckets,
-
-        }
-
         /// <summary>
         ///     <para>Shuffle a list in <paramref name="iterations"/>.</para>
         /// </summary>
@@ -488,8 +466,17 @@ namespace Librainian.Collections {
                     return; //nothing to shuffle
                 }
 
-
                 switch ( shufflingType ) {
+
+                    case ShufflingType.ByGuid: {
+                        while ( iterations > 0 ) {
+                            iterations--;
+                            var copy = list.AsParallel().OrderBy( o => Guid.NewGuid() ).ToList();
+                            list.Clear();
+                            list.AddRange( copy.AsParallel() );
+                        }
+                    }
+                        break;
 
                     case ShufflingType.Random: {
                             while ( iterations > 0 ) {
@@ -501,7 +488,7 @@ namespace Librainian.Collections {
                         }
                         break;
 
-                    case ShufflingType.OneByOne: {
+                    case ShufflingType.HarkerShuffle: {
                             var copy = new List<T>();
 
                             while ( iterations > 0 ) {
@@ -510,7 +497,7 @@ namespace Librainian.Collections {
                                 copy.Clear();
 
                                 while ( list.Any() ) {
-                                    var index = Randem.Next( 0, list.Count() );
+                                    var index = Randem.Next( minValue: 0, maxValue: list.Count() );
                                     copy.Add( list[ index ] );
                                     list.RemoveAt( index );
                                 }
@@ -685,8 +672,7 @@ namespace Librainian.Collections {
 
             if ( String.IsNullOrEmpty( atTheEnd ) || list.Count <= 2 ) {
                 result = String.Join( separator, list );
-            }
-            else {
+            } else {
                 result = String.Join( separator, list.Take( list.Count - 2 ) );
                 while ( list.Count > 2 ) {
                     list.RemoveAt( 0 );
