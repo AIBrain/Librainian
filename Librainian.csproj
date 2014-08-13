@@ -85,12 +85,6 @@
     <Reference Include="Ninject.Extensions.Factory">
       <HintPath>..\Universal\packages\Ninject.Extensions.Factory.3.2.1.0\lib\net45-full\Ninject.Extensions.Factory.dll</HintPath>
     </Reference>
-    <Reference Include="NLog">
-      <HintPath>..\Universal\packages\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog.Fluent">
-      <HintPath>..\Universal\packages\NLog.Fluent.3.1.0.30\lib\net45\NLog.Fluent.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\Universal\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -101,6 +95,9 @@
     <Reference Include="System" />
     <Reference Include="System.AddIn" />
     <Reference Include="System.AddIn.Contract" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.Composition.registration" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity.Design" />
     <Reference Include="System.Data.Linq" />

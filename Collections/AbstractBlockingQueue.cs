@@ -17,12 +17,8 @@
 // "Librainian/AbstractBlockingQueue.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
 #endregion
 
-namespace Librainian.Collections {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Threading;
-
+//namespace Librainian.Collections {
+/*
     /// <summary>
     ///     This class provides skeletal implementations of some
     ///     <see cref="IBlockingQueue{T}" /> operations.
@@ -158,7 +154,7 @@ namespace Librainian.Collections {
             if ( maxElements <= 0 ) {
                 return 0;
             }
-            return this.DoDrain( collection.Add, maxElements, predicate );
+            return this.DoDrain( collection.AddRange, maxElements, predicate );
         }
 
         /// <summary>
@@ -197,7 +193,7 @@ namespace Librainian.Collections {
         /// <seealso cref="IQueue{T}.Drain(System.Action{T},int)" />
         public virtual int DrainTo( ICollection< T > collection, Predicate< T > predicate ) {
             this.CheckCollection( collection );
-            return this.DoDrain( collection.Add, predicate );
+            return this.DoDrain( collection.AddRange, predicate );
         }
 
         /// <summary>
@@ -263,4 +259,5 @@ namespace Librainian.Collections {
             }
         }
     }
-}
+*/
+//}

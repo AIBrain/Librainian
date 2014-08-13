@@ -24,7 +24,6 @@ namespace Librainian.Collections {
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Numerics;
-    using System.Threading.Tasks;
     using Annotations;
     using FluentAssertions;
     using Maths;
@@ -43,6 +42,7 @@ namespace Librainian.Collections {
         /// </summary>
         public static readonly Lazy<List<Boolean>> TrueThenFalse = new Lazy<List<Boolean>>( () => new List<Boolean>( new[] { true, false } ) );
 
+/*
         public static void AddRange<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] IEnumerable<T> items ) {
             if ( collection == null ) {
                 throw new ArgumentNullException( "collection" );
@@ -52,6 +52,7 @@ namespace Librainian.Collections {
             }
             Parallel.ForEach( source: items, parallelOptions: Randem.Parallelism, body: collection.Add );
         }
+*/
 
         public static void Add<T>( this IProducerConsumerCollection<T> collection, T item ) {
             if ( null == collection ) {

@@ -84,7 +84,10 @@ namespace Librainian.Hardware.Virtual.Gaming {
             var key = this._lastFewRolls.AddAsync( result, OnAfterAdd ).ContinueWith( task => {
                 DateTime dummy;
                 var removed = this._tasks.TryRemove( task, out dummy );
-                String.Format( "Old roll {0} removed", dummy ).TimeDebug();
+                if ( removed ) {
+                    String.Format( "Old roll {0} removed", dummy ).TimeDebug();
+                }
+
             } );
             this._tasks.TryAdd( key, DateTime.Now );
             return result;
