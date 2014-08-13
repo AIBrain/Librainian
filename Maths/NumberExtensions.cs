@@ -79,8 +79,8 @@ namespace Librainian.Maths {
 
             var ratio = BigDecimal.Pow( 10, fractionLength ); //we want the ratio of top/bottom to scale up past the decimal
 
-            var wholeAsDecimal = new BigDecimal( whole, 0 );
-            var fractionAsDecimal = new BigDecimal( fraction, 0 );
+            var wholeAsDecimal = new BigDecimal( whole, 1 );
+            var fractionAsDecimal = new BigDecimal( fraction, 1 );
 
             wholeAsDecimal *= ratio;     //append !a lot! of zeroes
 
