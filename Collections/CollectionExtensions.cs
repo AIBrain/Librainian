@@ -497,13 +497,6 @@ namespace Librainian.Collections {
                         throw new ArgumentOutOfRangeException( "shufflingType" );
                 }
 
-                // Old, !bad! way.
-                //var items = array.Count();
-                //for ( var i = 0; i < items; i++ ) {
-                //    var index1 = randomFunc( 0, items ); //Randem.Next( 0, items );
-                //    var index2 = randomFunc( 0, items ); //Randem.Next( 0, items );
-                //    array.Swap( index1, index2 );
-                //}
             }
             catch ( IndexOutOfRangeException exception ) {
                 exception.Log();
@@ -516,7 +509,7 @@ namespace Librainian.Collections {
             if ( bucketCount < 1 ) {
                 bucketCount = 1;
             }
-            bucketCount++;
+            bucketCount++;  //TODO Math.Ceiling
             var buckets = new List<ConcurrentBag<T>>( 1.To( bucketCount ).Select( i => new ConcurrentBag<T>() ) );
             buckets.Count.Should().Be( bucketCount );
 

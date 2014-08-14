@@ -35,6 +35,10 @@ namespace Librainian.Maths {
     /// </summary>
     /// <seealso cref="http://github.com/lavz24/DecimalToRoman/blob/master/DecimalToRoman/Converter.cs" />
     public static class RomanConverter {
+
+        /// <summary>
+        /// 
+        /// </summary>
         public static readonly RomanNumber[] RomanValues = { RomanNumber.I, RomanNumber.IV, RomanNumber.V, RomanNumber.IX, RomanNumber.X, RomanNumber.XL, RomanNumber.L, RomanNumber.XC, RomanNumber.C, RomanNumber.CD, RomanNumber.D, RomanNumber.CM, RomanNumber.M };
 
         /// <summary>
@@ -43,6 +47,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static string ToRoman( this short number ) {
             if ( !number.Between( ( short )1, ( short )3999 ) ) {
                 // per https://en.wikipedia.org/wiki/Roman_numerals#Large_numbers
