@@ -377,21 +377,23 @@ namespace Librainian.Collections {
             } ) );
         }
 
-        public Boolean AddAndWait( TType item, CancellationToken cancellationToken = default( CancellationToken ), TimeSpan timeout = default( TimeSpan ) ) {
-            var slim = new ManualResetEventSlim( initialState: false );
-            slim.Reset();
+        private readonly ThreadLocal<ManualResetEventSlim> _slims = new ThreadLocal<ManualResetEventSlim>( () => new ManualResetEventSlim( initialState: false ) );
 
-            this.Add( item: item, afterAdd: slim.Set );
+        public Boolean AddAndWait( TType item, CancellationToken cancellationToken = default( CancellationToken ), TimeSpan timeout = default( TimeSpan ) ) {
+            //var slim = new ManualResetEventSlim( initialState: false );
+            this._slims.Value.Reset();
+
+            this.Add( item: item, afterAdd: this._slims.Value.Set );
 
             try {
                 if ( default( TimeSpan ) != timeout && default( CancellationToken ) != cancellationToken ) {
-                    return slim.Wait( timeout, cancellationToken );
+                    return this._slims.Value.Wait( timeout, cancellationToken );
                 }
                 if ( default( TimeSpan ) != timeout ) {
                     return this._actionBlock.Completion.Wait( timeout: timeout );
                 }
                 if ( default( CancellationToken ) != cancellationToken ) {
-                    slim.Wait( cancellationToken );
+                    this._slims.Value.Wait( cancellationToken );
                     return true;
                 }
             }
