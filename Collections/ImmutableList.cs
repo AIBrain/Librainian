@@ -21,6 +21,7 @@ namespace Librainian.Collections {
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
     using Annotations;
     using Extensions;
 
@@ -64,7 +65,7 @@ namespace Librainian.Collections {
             if ( enumerableToCopy == null ) {
                 throw new ArgumentNullException( "enumerableToCopy" );
             }
-            this._mArray = new List< T >( enumerableToCopy ).ToArray();
+            this._mArray = enumerableToCopy.ToArray();
         }
 
         /// <summary>
