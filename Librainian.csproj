@@ -49,6 +49,9 @@
     <Reference Include="Castle.Core">
       <HintPath>..\Universal\packages\Castle.Core.3.2.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Chi">
+      <HintPath>..\Universal\packages\chi.0.1.1\lib\Chi.dll</HintPath>
+    </Reference>
     <Reference Include="CodeFluent.Runtime.Client">
       <HintPath>..\Universal\packages\CodeFluentRuntimeClient.1.0.0.772\lib\CodeFluent.Runtime.Client.dll</HintPath>
     </Reference>

@@ -1,23 +1,28 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/Extensions.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/CollectionExtensions.cs" was last cleaned by Rick on 2014/08/14 at 1:06 AM
+
+#endregion License & Information
 
 namespace Librainian.Collections {
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -34,7 +39,7 @@ namespace Librainian.Collections {
         public static readonly List<string> EmptyList = new List<string>();
 
         /// <summary>
-        ///     <para>A list containing <see cref="Boolean.False" /> then <see cref="Boolean.True" />.</para>
+        ///     <para>A list containing <see cref="bool.False" /> then <see cref="bool.True" />.</para>
         /// </summary>
         public static readonly Lazy<List<Boolean>> FalseThenTrue = new Lazy<List<Boolean>>( () => new List<Boolean>( new[] { false, true } ) );
 
@@ -63,7 +68,6 @@ namespace Librainian.Collections {
             }
 
             collection.TryAdd( item );
-
         }
 
         /*
@@ -375,12 +379,13 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     <para>Shuffle an array[] in <paramref name="iterations"/>.</para>
+        ///     <para>Shuffle an array[] in <paramref name="iterations" />.</para>
         /// </summary>
         /// <typeparam name="T"> </typeparam>
         /// <param name="array"> </param>
         /// <param name="iterations"></param>
         /// <example>Deck.Shuffle( 7 );</example>
+        [Obsolete( "broken at the moment. seealso Shuffle<List>" )]
         public static void Shuffle<T>( [NotNull] this T[] array, int iterations = 1 ) {
             if ( array == null ) {
                 throw new ArgumentNullException( "array" );
@@ -445,21 +450,18 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     <para>Shuffle a list in <paramref name="iterations"/>.</para>
+        ///     <para>Shuffle a list in <paramref name="iterations" />.</para>
         /// </summary>
         /// <typeparam name="T"> </typeparam>
         /// <param name="list"> </param>
         /// <param name="iterations"></param>
         /// <param name="shufflingType"></param>
         /// <example>Deck.Shuffle( 7 );</example>
-        /// <remarks>I know we could just do a list.orderby.random(), but I /want/ to try it this way.
-        /// </remarks>
-        public static void Shuffle<T>( [NotNull] this List<T> list, UInt16 iterations = 1, ShufflingType shufflingType = ShufflingType.Random ) {
+        public static void Shuffle<T>( [NotNull] this List<T> list, UInt16 iterations = 1, ShufflingType shufflingType = ShufflingType.ByRandom ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
             }
             try {
-
                 if ( iterations < 1 ) {
                     iterations = 1;
                 }
@@ -471,24 +473,22 @@ namespace Librainian.Collections {
                 }
 
                 switch ( shufflingType ) {
-
                     case ShufflingType.ByGuid: {
                             ShuffleByGuid( ref list, iterations );
                         }
                         break;
 
-                    case ShufflingType.Random: {
+                    case ShufflingType.ByRandom: {
                             ShuffleByRandomThenByRandom( ref list, iterations );
                         }
                         break;
 
-                    case ShufflingType.HarkerShuffle: {
+                    case ShufflingType.ByHarker: {
                             ShuffleByHarker( ref list, iterations );
                         }
                         break;
 
                     case ShufflingType.ByBuckets: {
-
                             ShuffleByBuckets( ref list, iterations, originalcount );
                         }
                         break;
@@ -496,10 +496,6 @@ namespace Librainian.Collections {
                     default:
                         throw new ArgumentOutOfRangeException( "shufflingType" );
                 }
-
-
-
-
 
                 // Old, !bad! way.
                 //var items = array.Count();
@@ -560,7 +556,8 @@ namespace Librainian.Collections {
                 }
 
                 // put them back into the list in another random order.
-                list.AddRange( bag.OrderBy( o => Randem.Next() ) );
+                // [optional]
+                // list.AddRange( bag.OrderBy( o => Randem.Next() ) );
                 list.LongCount().Should().Be( originalcount );
             }
         }
@@ -575,7 +572,7 @@ namespace Librainian.Collections {
 
                 while ( list.Any() ) {
                     var index = Randem.Next( minValue: 0, maxValue: list.Count() );
-                    copy.AddAndWait( list[ index ] );   //TODO test other Add()s
+                    copy.AddAndWait( list[ index ] ); //TODO test other Add()s
                     list.RemoveAt( index );
                 }
 

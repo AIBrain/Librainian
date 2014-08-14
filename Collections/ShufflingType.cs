@@ -7,12 +7,12 @@
         /// <summary>
         /// Uses OrderBy( Random.Next ).ThenBy( Random.Next ). This might be the fastest.
         /// </summary>
-        Random,
+        ByRandom,
 
         /// <summary>
         /// This is the one I understand the best.
         /// </summary>
-        HarkerShuffle,
+        ByHarker,
 
         /// <summary>
         /// Possibly slower. But uses <see cref="ConcurrentBag{T}"/> (which can introduce more randomness).

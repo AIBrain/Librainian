@@ -207,7 +207,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         [CanBeNull]
         public ICoin TryWithdrawAnyCoin() {
-            var possibleCoins = this._coins.Where( pair => pair.Value > 0 ).ToArray();
+            var possibleCoins = this._coins.Where( pair => pair.Value > 0 ).ToList();
 
             if ( !possibleCoins.Any() ) {
                 return default( ICoin );
