@@ -61,9 +61,9 @@ namespace Librainian.Collections {
             if ( null == collection ) {
                 throw new ArgumentNullException( "collection" );
             }
-            
-                collection.TryAdd( item );
-            
+
+            collection.TryAdd( item );
+
         }
 
         /*
@@ -483,63 +483,13 @@ namespace Librainian.Collections {
                         break;
 
                     case ShufflingType.HarkerShuffle: {
-                        ShuffleByHarker( ref list, iterations );
-                    }
+                            ShuffleByHarker( ref list, iterations );
+                        }
                         break;
 
                     case ShufflingType.ByBuckets: {
 
-                            // make some buckets.
-                            var bucketCount = ( int )Math.Sqrt( originalcount );
-                            if ( bucketCount < 1 ) {
-                                bucketCount = 1;
-                            }
-                            bucketCount++;
-                            var buckets = new List<ConcurrentBag<T>>( 1.To( bucketCount ).Select( i => new ConcurrentBag<T>() ) );
-                            buckets.Count.Should().Be( bucketCount );
-
-                            var bag = new ConcurrentBag<T>();
-
-                            while ( iterations > 0 ) {
-                                iterations--;
-
-                                bag.AddRange( list );
-                                bag.Should().NotBeEmpty( because: "made an unordered copy of all items" );
-
-                                list.Clear();
-                                list.Should().BeEmpty( because: "emptied the original list" );
-
-                                // pull the items out of the bag, and push them each into a random bucket
-                                while ( bag.Any() ) {
-                                    0.To( bucketCount - 1 ).AsParallel().ForAll( index => {
-                                        T item;
-                                        if ( bag.TryTake( out item ) ) {
-                                            buckets[ index ].Add( item );
-                                        }
-
-                                    } );
-                                }
-                                bag.Should().BeEmpty( "All items should have been taken out of the bag" );
-
-                                // pull all the items into the buckets
-                                while ( bag.Count < originalcount ) {
-                                    0.To( bucketCount - 1 ).AsParallel().ForAll( index => {
-                                        T item;
-                                        if ( buckets[ index ].TryTake( out item ) ) {
-                                            bag.Add( item );
-                                        }
-                                    } );
-
-                                }
-                                if ( bag.LongCount() < originalcount ) {
-                                    throw new InvalidOperationException( "something went wrong" );
-                                }
-
-                                // put them back into the list in another random order.
-                                list.AddRange( bag.OrderBy( o => Randem.Next() ) );
-                                list.LongCount().Should().Be( originalcount );
-                            }
-
+                            ShuffleByBuckets( ref list, iterations, originalcount );
                         }
                         break;
 
@@ -564,8 +514,59 @@ namespace Librainian.Collections {
             }
         }
 
-        private static void ShuffleByHarker< T >( ref List< T > list, ushort iterations ) {
-            var copy = new ParallelList< T >();
+        private static void ShuffleByBuckets<T>( ref List<T> list, ushort iterations, long originalcount ) {
+            // make some buckets.
+            var bucketCount = ( int )Math.Sqrt( originalcount );
+            if ( bucketCount < 1 ) {
+                bucketCount = 1;
+            }
+            bucketCount++;
+            var buckets = new List<ConcurrentBag<T>>( 1.To( bucketCount ).Select( i => new ConcurrentBag<T>() ) );
+            buckets.Count.Should().Be( bucketCount );
+
+            var bag = new ConcurrentBag<T>();
+
+            while ( iterations > 0 ) {
+                iterations--;
+
+                bag.AddRange( list );
+                bag.Should().NotBeEmpty( because: "made an unordered copy of all items" );
+
+                list.Clear();
+                list.Should().BeEmpty( because: "emptied the original list" );
+
+                // pull the items out of the bag, and push them each into a random bucket
+                while ( bag.Any() ) {
+                    0.To( bucketCount - 1 ).AsParallel().ForAll( index => {
+                        T item;
+                        if ( bag.TryTake( out item ) ) {
+                            buckets[ index ].Add( item );
+                        }
+                    } );
+                }
+                bag.Should().BeEmpty( "All items should have been taken out of the bag" );
+
+                // pull all the items into the buckets
+                while ( bag.Count < originalcount ) {
+                    0.To( bucketCount - 1 ).AsParallel().ForAll( index => {
+                        T item;
+                        if ( buckets[ index ].TryTake( out item ) ) {
+                            bag.Add( item );
+                        }
+                    } );
+                }
+                if ( bag.LongCount() < originalcount ) {
+                    throw new InvalidOperationException( "something went wrong" );
+                }
+
+                // put them back into the list in another random order.
+                list.AddRange( bag.OrderBy( o => Randem.Next() ) );
+                list.LongCount().Should().Be( originalcount );
+            }
+        }
+
+        private static void ShuffleByHarker<T>( ref List<T> list, ushort iterations ) {
+            var copy = new ParallelList<T>();
 
             while ( iterations > 0 ) {
                 iterations--;
@@ -582,7 +583,7 @@ namespace Librainian.Collections {
             }
         }
 
-        private static void ShuffleByRandomThenByRandom< T >( ref List< T > list, ushort iterations ) {
+        private static void ShuffleByRandomThenByRandom<T>( ref List<T> list, ushort iterations ) {
             while ( iterations > 0 ) {
                 iterations--;
                 var copy = list.AsParallel().OrderBy( o => Randem.Next() ).ThenBy( o => Randem.Next() ).ToList();
@@ -591,7 +592,7 @@ namespace Librainian.Collections {
             }
         }
 
-        private static void ShuffleByGuid< T >( ref List< T > list, ushort iterations ) {
+        private static void ShuffleByGuid<T>( ref List<T> list, ushort iterations ) {
             while ( iterations > 0 ) {
                 iterations--;
                 var copy = list.AsParallel().OrderBy( arg => Guid.NewGuid() ).ToList();
