@@ -62,9 +62,9 @@ namespace Librainian.Collections {
             if ( null == collection ) {
                 throw new ArgumentNullException( "collection" );
             }
-            if ( !Equals( item, default( T ) ) ) {
+            
                 collection.TryAdd( item );
-            }
+            
         }
 
         /*
@@ -536,10 +536,10 @@ namespace Librainian.Collections {
 
                                 // pull the items out of the bag, and push them each into a random bucket
                                 while ( bag.Any() ) {
-                                    1.To( bucketCount ).AsParallel().ForAll( index => {
+                                    0.To( bucketCount - 1 ).AsParallel().ForAll( index => {
                                         T item;
                                         if ( bag.TryTake( out item ) ) {
-                                            buckets[ index - 1 ].Add( item );
+                                            buckets[ index ].Add( item );
                                         }
 
                                     } );
@@ -548,9 +548,9 @@ namespace Librainian.Collections {
 
                                 // pull all the items into the buckets
                                 while ( bag.Count < originalcount ) {
-                                    1.To( bucketCount ).AsParallel().ForAll( index => {
+                                    0.To( bucketCount - 1 ).AsParallel().ForAll( index => {
                                         T item;
-                                        if ( buckets[ index - 1 ].TryTake( out item ) ) {
+                                        if ( buckets[ index ].TryTake( out item ) ) {
                                             bag.Add( item );
                                         }
                                     } );
