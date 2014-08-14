@@ -17,7 +17,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ParallelList.cs" was last cleaned by Rick on 2014/08/13 at 11:48 AM
+// "Librainian/ParallelList.cs" was last cleaned by Rick on 2014/08/13 at 10:39 PM
 
 #endregion License & Information
 
@@ -63,6 +63,8 @@ namespace Librainian.Collections {
 
         [NotNull]
         private readonly ReaderWriterLockSlim _readerWriter;
+
+        private readonly ThreadLocal<ManualResetEventSlim> _slims = new ThreadLocal<ManualResetEventSlim>( valueFactory: () => new ManualResetEventSlim( initialState: false ), trackAllValues: false );
 
         [NotNull]
         private readonly ThreadLocal<int> _waitingToBeAddedCounter;
@@ -376,8 +378,6 @@ namespace Librainian.Collections {
                 }
             } ) );
         }
-
-        private readonly ThreadLocal<ManualResetEventSlim> _slims = new ThreadLocal<ManualResetEventSlim>( () => new ManualResetEventSlim( initialState: false ) );
 
         public Boolean AddAndWait( TType item, CancellationToken cancellationToken = default( CancellationToken ), TimeSpan timeout = default( TimeSpan ) ) {
             //var slim = new ManualResetEventSlim( initialState: false );
