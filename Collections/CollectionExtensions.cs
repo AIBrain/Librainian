@@ -19,6 +19,7 @@
 
 namespace Librainian.Collections {
     using System;
+    using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -51,6 +52,10 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( "items" );
             }
             Parallel.ForEach( source: items.AsParallel(), parallelOptions: Randem.Parallelism, body: collection.Add );
+        }
+
+        public static UInt64 LongSum( this IEnumerable< int > collection  ) {
+            return collection.Aggregate( 0UL, ( current, u ) => current + ( UInt64 )u );
         }
 
         public static void Add<T>( this IProducerConsumerCollection<T> collection, T item ) {
