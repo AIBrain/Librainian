@@ -35,12 +35,12 @@ namespace Librainian.Maths {
         /// <summary>
         ///     1
         /// </summary>
-        public const Double Maximum = 1;
+        public const Double Maximum = 1d;
 
         /// <summary>
         ///     0
         /// </summary>
-        public const Double Minimum = 0f;
+        public const Double Minimum = 0d;
 
         [DataMember] public readonly BigRational Value;
 
@@ -130,7 +130,7 @@ namespace Librainian.Maths {
         }
 
         public override String ToString() {
-            return String.Format( "{0:P1}", ( Decimal ) this.Value );
+            return String.Format( "{0}", this.Value );
         }
 
         /// <summary>
