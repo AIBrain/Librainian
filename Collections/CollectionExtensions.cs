@@ -473,42 +473,18 @@ namespace Librainian.Collections {
                 switch ( shufflingType ) {
 
                     case ShufflingType.ByGuid: {
-                            while ( iterations > 0 ) {
-                                iterations--;
-                                var copy = list.AsParallel().OrderBy( o => Guid.NewGuid() ).ToList();
-                                list.Clear();
-                                list.AddRange( copy.AsParallel() );
-                            }
+                            ShuffleByGuid( ref list, iterations );
                         }
                         break;
 
                     case ShufflingType.Random: {
-                            while ( iterations > 0 ) {
-                                iterations--;
-                                var copy = list.AsParallel().OrderBy( o => Randem.Next() ).ThenBy( o => Randem.Next() ).ToList();
-                                list.Clear();
-                                list.AddRange( copy.AsParallel() );
-                            }
+                            ShuffleByRandomThenByRandom( ref list, iterations );
                         }
                         break;
 
                     case ShufflingType.HarkerShuffle: {
-                            var copy = new ParallelList<T>();
-
-                            while ( iterations > 0 ) {
-                                iterations--;
-
-                                copy.Clear();
-
-                                while ( list.Any() ) {
-                                    var index = Randem.Next( minValue: 0, maxValue: list.Count() );
-                                    copy.AddAndWait( list[ index ] );
-                                    list.RemoveAt( index );
-                                }
-
-                                list.AddRange( copy.AsParallel() );
-                            }
-                        }
+                        ShuffleByHarker( ref list, iterations );
+                    }
                         break;
 
                     case ShufflingType.ByBuckets: {
@@ -585,6 +561,42 @@ namespace Librainian.Collections {
             }
             catch ( IndexOutOfRangeException exception ) {
                 exception.Log();
+            }
+        }
+
+        private static void ShuffleByHarker< T >( ref List< T > list, ushort iterations ) {
+            var copy = new ParallelList< T >();
+
+            while ( iterations > 0 ) {
+                iterations--;
+
+                copy.Clear();
+
+                while ( list.Any() ) {
+                    var index = Randem.Next( minValue: 0, maxValue: list.Count() );
+                    copy.AddAndWait( list[ index ] );   //TODO test other Add()s
+                    list.RemoveAt( index );
+                }
+
+                list.AddRange( copy.AsParallel() );
+            }
+        }
+
+        private static void ShuffleByRandomThenByRandom< T >( ref List< T > list, ushort iterations ) {
+            while ( iterations > 0 ) {
+                iterations--;
+                var copy = list.AsParallel().OrderBy( o => Randem.Next() ).ThenBy( o => Randem.Next() ).ToList();
+                list.Clear();
+                list.AddRange( copy.AsParallel() );
+            }
+        }
+
+        private static void ShuffleByGuid< T >( ref List< T > list, ushort iterations ) {
+            while ( iterations > 0 ) {
+                iterations--;
+                var copy = list.AsParallel().OrderBy( arg => Guid.NewGuid() ).ToList();
+                list.Clear();
+                list.AddRange( copy.AsParallel() );
             }
         }
 

@@ -43,7 +43,7 @@ namespace Librainian.Collections {
     /// <copyright>Rick@AIBrain.org 2014</copyright>
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "Count={Count}" )]
-    public class ParallelList<TType> : IList<TType> {
+    public sealed class ParallelList<TType> : IList<TType> {
 
         /// <summary>
         ///     <para>Provide a dataflow block to process messages in a serial fashion.</para>
@@ -96,7 +96,6 @@ namespace Librainian.Collections {
         /// <param name="writeTimeout"></param>
         public ParallelList( TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null )
             : this() {
-            //this._doModifyPrecheck = doModifyPrecheck;
             if ( readTimeout.HasValue ) {
                 this.TimeoutForReads = readTimeout.Value;
             }
@@ -469,6 +468,7 @@ namespace Librainian.Collections {
         ///     Signal that this <see cref="ParallelList{TType}" /> will not be modified any more.
         /// </summary>
         /// <seealso cref="AllowModifications" />
+        /// <seealso cref="IsReadOnly"/>
         public void Complete() {
             try {
                 this._actionBlock.Complete();
@@ -483,11 +483,11 @@ namespace Librainian.Collections {
         ///     <para>Signal that nothing else will be added or removed from this <see cref="ParallelList{TType}" /> and then,</para>
         ///     <para>
         ///         If both <paramref name="timeout" /> and <paramref name="cancellationToken" /> are provided,
-        ///         <see cref="TreeTask.Wait()" /> with it.
+        ///         <see cref="Task.Wait()" /> with it.
         ///     </para>
-        ///     <para>Otherwise, if only a <paramref name="timeout" /> is provided, <see cref="TreeTask.Wait()" /> with it.</para>
+        ///     <para>Otherwise, if only a <paramref name="timeout" /> is provided, <see cref="Task.Wait()" /> with it.</para>
         ///     <para>
-        ///         Otherwise, if only a <paramref name="cancellationToken" /> is provided, <see cref="TreeTask.Wait()" /> with
+        ///         Otherwise, if only a <paramref name="cancellationToken" /> is provided, <see cref="Task.Wait()" /> with
         ///         it.
         ///     </para>
         /// </summary>
