@@ -54,7 +54,7 @@ namespace Librainian.Collections {
             Parallel.ForEach( source: items.AsParallel(), parallelOptions: Randem.Parallelism, body: collection.Add );
         }
 
-        public static UInt64 LongSum( this IEnumerable< int > collection  ) {
+        public static UInt64 LongSum( this IEnumerable<int> collection ) {
             return collection.Aggregate( 0UL, ( current, u ) => current + ( UInt64 )u );
         }
 
@@ -519,6 +519,7 @@ namespace Librainian.Collections {
                             if ( bucketCount < 1 ) {
                                 bucketCount = 1;
                             }
+                            bucketCount++;
                             var buckets = new List<ConcurrentBag<T>>( 1.To( bucketCount ).Select( i => new ConcurrentBag<T>() ) );
                             buckets.Count.Should().Be( bucketCount );
 
