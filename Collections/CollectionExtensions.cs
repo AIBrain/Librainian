@@ -24,6 +24,7 @@ namespace Librainian.Collections {
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Numerics;
+    using System.Threading.Tasks;
     using Annotations;
     using FluentAssertions;
     using Maths;
@@ -42,7 +43,6 @@ namespace Librainian.Collections {
         /// </summary>
         public static readonly Lazy<List<Boolean>> TrueThenFalse = new Lazy<List<Boolean>>( () => new List<Boolean>( new[] { true, false } ) );
 
-/*
         public static void AddRange<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] IEnumerable<T> items ) {
             if ( collection == null ) {
                 throw new ArgumentNullException( "collection" );
@@ -50,9 +50,8 @@ namespace Librainian.Collections {
             if ( items == null ) {
                 throw new ArgumentNullException( "items" );
             }
-            Parallel.ForEach( source: items, parallelOptions: Randem.Parallelism, body: collection.Add );
+            Parallel.ForEach( source: items.AsParallel(), parallelOptions: Randem.Parallelism, body: collection.Add );
         }
-*/
 
         public static void Add<T>( this IProducerConsumerCollection<T> collection, T item ) {
             if ( null == collection ) {
@@ -451,7 +450,7 @@ namespace Librainian.Collections {
         /// <example>Deck.Shuffle( 7 );</example>
         /// <remarks>I know we could just do a list.orderby.random(), but I /want/ to try it this way.
         /// </remarks>
-        public static void Shuffle<T>( [NotNull] this List<T> list, Byte iterations = 1, ShufflingType shufflingType = ShufflingType.Random ) {
+        public static void Shuffle<T>( [NotNull] this List<T> list, UInt16 iterations = 1, ShufflingType shufflingType = ShufflingType.Random ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
             }
@@ -470,13 +469,13 @@ namespace Librainian.Collections {
                 switch ( shufflingType ) {
 
                     case ShufflingType.ByGuid: {
-                        while ( iterations > 0 ) {
-                            iterations--;
-                            var copy = list.AsParallel().OrderBy( o => Guid.NewGuid() ).ToList();
-                            list.Clear();
-                            list.AddRange( copy.AsParallel() );
+                            while ( iterations > 0 ) {
+                                iterations--;
+                                var copy = list.AsParallel().OrderBy( o => Guid.NewGuid() ).ToList();
+                                list.Clear();
+                                list.AddRange( copy.AsParallel() );
+                            }
                         }
-                    }
                         break;
 
                     case ShufflingType.Random: {
@@ -490,7 +489,7 @@ namespace Librainian.Collections {
                         break;
 
                     case ShufflingType.HarkerShuffle: {
-                            var copy = new List<T>();
+                            var copy = new ParallelList<T>();
 
                             while ( iterations > 0 ) {
                                 iterations--;
@@ -499,11 +498,11 @@ namespace Librainian.Collections {
 
                                 while ( list.Any() ) {
                                     var index = Randem.Next( minValue: 0, maxValue: list.Count() );
-                                    copy.Add( list[ index ] );
+                                    copy.AddAndWait( list[ index ] );
                                     list.RemoveAt( index );
                                 }
 
-                                list.AddRange( copy );
+                                list.AddRange( copy.AsParallel() );
                             }
                         }
                         break;
@@ -518,10 +517,12 @@ namespace Librainian.Collections {
                             var buckets = new List<ConcurrentBag<T>>( 1.To( bucketCount ).Select( i => new ConcurrentBag<T>() ) );
                             buckets.Count.Should().Be( bucketCount );
 
+                            var bag = new ConcurrentBag<T>();
+
                             while ( iterations > 0 ) {
                                 iterations--;
 
-                                var bag = new ConcurrentBag<T>( list.AsParallel() );
+                                bag.AddRange( list );
                                 bag.Should().NotBeEmpty( because: "made an unordered copy of all items" );
 
                                 list.Clear();
