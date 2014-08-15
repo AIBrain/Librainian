@@ -31,7 +31,7 @@ namespace Librainian.Measurement.Time {
     using Parsing;
 
     /// <summary>
-    ///     <para><see cref="Span" /> represents the smallest (0) to large(!) duration of time.</para>
+    ///     <para><see cref="Span" /> represents the smallest planckTimes to (absurd)large(!) duration of time.</para>
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Units_of_time" />
     [DataContract( IsReference = true )]
@@ -541,6 +541,15 @@ namespace Librainian.Measurement.Time {
             return new TimeSpan( ( int )span.Days.Value, ( int )span.Hours.Value, ( int )span.Minutes.Value, ( int )span.Seconds.Value, ( int )span.Milliseconds.Value );
         }
 
+        public static implicit operator Span( TimeSpan span ) {
+            return new Span( span );
+        }
+
+        /// <summary>
+        /// assume seconds given
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         public static Span TryParse( [CanBeNull] String text ) {
             try {
                 if ( null == text ) {
@@ -558,7 +567,7 @@ namespace Librainian.Measurement.Time {
 
                 Decimal units;
                 if ( text.IsJustNumbers( out units ) ) {
-                    return new Span( milliseconds: units ); //assume milliseconds given
+                    return new Span( seconds: units ); //assume seconds given
                 }
 
                 if ( text.EndsWith( "milliseconds", StringComparison.InvariantCultureIgnoreCase ) ) {

@@ -525,6 +525,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threading\Tasks.cs" />
     <Compile Include="Threading\Threads.cs" />
+    <Compile Include="Threading\TimerFactory.cs" />
     <Compile Include="Threading\WaitNode.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -567,6 +568,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

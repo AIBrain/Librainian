@@ -168,6 +168,12 @@ namespace Librainian.Parsing {
             }
         }
 
+        /// <summary>
+        /// Return the substring from 0 to the index of the splitter.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="splitter"></param>
+        /// <returns></returns>
         public static String Before( [NotNull] this String s, [NotNull] String splitter ) {
             if ( s == null ) {
                 throw new ArgumentNullException( "s" );
@@ -178,30 +184,10 @@ namespace Librainian.Parsing {
             return s.Substring( 0, s.IndexOf( splitter, StringComparison.InvariantCulture ) ).TrimEnd();
         }
 
-        public static Dictionary<char, int> CharacterCount( this String text ) {
-            //var letters = Enumerable.Range( 'A', 26 ).Select( i => ( char )i );
-            //var q = Enumerable.Range( 'A', 26 ).Select( n => new { n, count = 0 } );
-
-            var chars = new Dictionary<char, int>();
-            for ( var i = 65; i <= 90; i++ ) {
-                chars.Add( ( Char )i, 0 );
-            }
-
-            foreach ( var character in text.ToUpperInvariant().Where( chars.ContainsKey ) ) {
-                chars[ character ]++;
-            }
-            return chars;
-            //foreach ( var kvp in chars ) { Console.WriteLine( "There are {0} {1}'s.", kvp.Value, kvp.Key ); }
-        }
-
         public static IDictionary<Char, UInt64> Count( this String text ) {
             var dict = new ConcurrentDictionary<Char, UInt64>();
             text.AsParallel().ForAll( c => dict.AddOrUpdate( c, 1, ( c1, arg2 ) => arg2 + 1 ) );
             return dict;
-            //return ( text.ToUpperInvariant().GroupBy( p => p ).Select( g => new {
-            //    Character = g.Key,
-            //    Count = g.Count()
-            //} ) ) as IDictionary<char, int>;
         }
 
         public static UInt64 Count( this String text, Char character ) {

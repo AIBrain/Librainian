@@ -208,6 +208,15 @@ namespace Librainian.Measurement.Time {
             return TimeSpan.FromMilliseconds( value: ( Double ) milliseconds.Value );
         }
 
+        /// <summary>
+        /// I don't prefer implicits to Double.. oh well.
+        /// </summary>
+        /// <param name="milliseconds"></param>
+        /// <returns></returns>
+        public static implicit operator Double( Milliseconds milliseconds ) {
+            return ( Double ) milliseconds.Value;
+        }
+
         public static Milliseconds operator -( Milliseconds milliseconds ) {
             return new Milliseconds( milliseconds.Value*-1 );
         }

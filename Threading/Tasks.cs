@@ -143,13 +143,13 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="job"> </param>
         /// <returns> </returns>
-        public static Action Spawn( [NotNull] this Action job ) {
+        public static void Spawn( [NotNull] this Action job ) {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
             //Interlocked.Increment( ref countSpawnsCreated );
             FireAndForget.TryPost( job );
-            return job;
+            //return job;
         }
 
         public static Func< object > NewInstanceByCreate( [NotNull] this Type type ) {

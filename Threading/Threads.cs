@@ -746,12 +746,12 @@ namespace Librainian.Threading {
         /// <param name="action"></param>
         /// <param name="next"></param>
         /// <returns></returns>
-        public static Action Then( this Action action, Action next ) {
+        public static void Then( this Action action, Action next ) {
             if ( action == null ) {
                 throw new ArgumentNullException( "action" );
             }
             action.Spawn();
-            return next.Spawn();
+            next.Spawn();
         }
 
         public static void TimeDebug( [CanBeNull] this String message, Boolean newline = true ) {
@@ -806,12 +806,12 @@ namespace Librainian.Threading {
                                      finally {
                                          timer.Dispose();
                                          DateTime value;
-                                         Blocks.Timers.TryRemove( timer, out value );
+                                         TimerFactory.Timers.TryRemove( timer, out value );
                                          timer = null;
                                      }
                                  };
                 timer.AutoReset = false;
-                Blocks.Timers[ timer ] = DateTime.Now;
+                TimerFactory.Timers[ timer ] = DateTime.Now;
                 timer.Start();
                 return timer;
             }
