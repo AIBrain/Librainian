@@ -10,7 +10,8 @@
         /// <summary>
         /// Container to keep track of any created <see cref="Timer"/> and the <see cref="DateTime"/>.
         /// </summary>
-        [NotNull] private static readonly ConcurrentDictionary<Timer, DateTime> Timers = new ConcurrentDictionary<Timer, DateTime>();
+        [NotNull]
+        private static readonly ConcurrentDictionary<Timer, DateTime> Timers = new ConcurrentDictionary<Timer, DateTime>();
 
         /// <summary>
         /// <para>Creates, but does not start, the <see cref="Timer"/>.</para>
@@ -20,11 +21,12 @@
         /// <param name="onElapsed"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
+        // ReSharper disable once HeapView.ClosureAllocation
         public static Timer Create( this Span interval, [CanBeNull] Action onElapsed ) {
             if ( null == onElapsed ) {
                 onElapsed = () => { };
             }
-            var timer = new Timer( interval: ( Double ) interval.Milliseconds ) {
+            var timer = new Timer( interval: ( Double )interval.Milliseconds ) {
                 AutoReset = false
             };
             timer.Should().NotBeNull();
@@ -35,7 +37,7 @@
                 finally {
                     timer.DoneWith();
                 }
-                
+
             };
             Timers[ timer ] = DateTime.Now;
             return timer;
