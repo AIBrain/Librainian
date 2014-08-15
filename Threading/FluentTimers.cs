@@ -27,7 +27,7 @@
                 onElapsed = () => { };
             }
             interval.Milliseconds.Should().BeGreaterThan( Milliseconds.Zero );
-            var timer = new Timer( interval: ( Double )interval.Milliseconds ) {
+            var timer = new Timer( interval: interval.TotalMilliseconds() ) {
                 AutoReset = false
             };
             timer.Should().NotBeNull();

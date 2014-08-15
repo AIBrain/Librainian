@@ -240,6 +240,7 @@ namespace Librainian.Measurement.Time {
             return new Picoseconds( Value*Picoseconds.InOneNanosecond );
         }
 
+        [Pure]
         public Microseconds ToMicroseconds() {
             return new Microseconds( Value/InOneMicrosecond );
         }

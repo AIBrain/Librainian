@@ -211,6 +211,7 @@ namespace Librainian.Measurement.Time {
             return new Hours( Value/InOneHour );
         }
 
+        [Pure]
         public Seconds ToSeconds() {
             return new Seconds( Value*Seconds.InOneMinute );
         }

@@ -165,10 +165,20 @@ namespace Librainian.Measurement.Time {
             this._lazyTotal = new Lazy<BigInteger>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
         }
 
-        public Double TotalMilliseconds(  ) {
-            Milliseconds mill = this.Milliseconds;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Double GetApproximateMilliseconds(  ) {
+            Milliseconds mill = Milliseconds.Zero;
+            mill += this.Nanoseconds.ToMicroseconds().ToMilliseconds();
+            mill += this.Microseconds.ToMilliseconds();
+            mill += this.Milliseconds;
             mill += this.Seconds.ToMilliseconds();
-            return ( double ) mill.Value;
+            mill += this.Minutes.ToSeconds().ToMilliseconds();
+            mill += this.Hours.ToMinutes().ToSeconds().ToMilliseconds();
+            mill += this.Days.ToHours().ToMinutes().ToSeconds().ToMilliseconds();
+            return ( Double ) mill.Value;
         }
 
 

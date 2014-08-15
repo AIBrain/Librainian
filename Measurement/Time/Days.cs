@@ -194,6 +194,7 @@ namespace Librainian.Measurement.Time {
             return left.Value > right.Value;
         }
 
+        [Pure]
         public Hours ToHours() {
             return new Hours( Value*Hours.InOneDay );
         }

@@ -240,6 +240,7 @@ namespace Librainian.Measurement.Time {
             return ( Milliseconds ) left > right;
         }
 
+        [Pure]
         public Milliseconds ToMilliseconds() {
             return new Milliseconds( Value/InOneMillisecond );
         }

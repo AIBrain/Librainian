@@ -204,6 +204,7 @@ namespace Librainian.Measurement.Time {
             return new Days( Value/InOneDay );
         }
 
+        [Pure]
         public Minutes ToMinutes() {
             return new Minutes( Value*Minutes.InOneHour );
         }
