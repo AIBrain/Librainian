@@ -166,11 +166,11 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        /// 
+        /// <para>Return a <see cref="TimeSpan"/>'s worth of <see cref="Milliseconds"/>.</para>
         /// </summary>
         /// <returns></returns>
-        public Double GetApproximateMilliseconds(  ) {
-            Milliseconds mill = Milliseconds.Zero;
+        public Double GetApproximateMilliseconds() {
+            var mill = Milliseconds.Zero;
             mill += this.Nanoseconds.ToMicroseconds().ToMilliseconds();
             mill += this.Microseconds.ToMilliseconds();
             mill += this.Milliseconds;
@@ -178,7 +178,7 @@ namespace Librainian.Measurement.Time {
             mill += this.Minutes.ToSeconds().ToMilliseconds();
             mill += this.Hours.ToMinutes().ToSeconds().ToMilliseconds();
             mill += this.Days.ToHours().ToMinutes().ToSeconds().ToMilliseconds();
-            return ( Double ) mill.Value;
+            return ( Double )mill.Value;
         }
 
 
