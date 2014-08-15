@@ -15,9 +15,10 @@
         ByHarker,
 
         /// <summary>
-        /// Possibly slower. But uses <see cref="ConcurrentBag{T}"/> (which can introduce more randomness).
+        /// Uses <see cref="ConcurrentBag{T}"/>, which can introduce /some/ randomness, but is horribly nondeterministic and unrandom.
+        /// This method is so horrible, that please: Do NOT use it. If you *have* to, do many many iterations.
         /// </summary>
-        ByBuckets,
+        ByBags,
 
         /// <summary>
         /// Uses <see cref="Guid.NewGuid"/> to introduce randomness.

@@ -488,8 +488,8 @@ namespace Librainian.Collections {
                     }
                         break;
 
-                    case ShufflingType.ByBuckets: {
-                        ShuffleByBuckets( ref list, iterations, originalcount );
+                    case ShufflingType.ByBags: {
+                        ShuffleByBags( ref list, iterations, originalcount );
                     }
                         break;
 
@@ -502,55 +502,31 @@ namespace Librainian.Collections {
             }
         }
 
-        private static void ShuffleByBuckets< T >( ref List< T > list, ushort iterations, long originalcount ) {
-            // make some buckets.
-            var bucketCount = ( int ) Math.Sqrt( originalcount );
-            if ( bucketCount < 1 ) {
-                bucketCount = 1;
-            }
-            bucketCount++; //TODO Math.Ceiling
-            var buckets = new List< ConcurrentBag< T > >( 1.To( bucketCount ).Select( i => new ConcurrentBag< T >() ) );
-            buckets.Count.Should().Be( bucketCount );
+        private static void ShuffleByBags< T >( ref List< T > list, ushort iterations, long originalcount ) {
+            //// make some buckets.
+            //var bucketCount = ( int ) Math.Sqrt( originalcount );
+            //if ( bucketCount < 1 ) {
+            //    bucketCount = 1;
+            //}
+            //bucketCount++; //TODO Math.Ceiling
+            //var buckets = new List< ConcurrentBag< T > >( 1.To( bucketCount ).Select( i => new ConcurrentBag< T >() ) );
+            //buckets.Count.Should().Be( bucketCount );
 
             var bag = new ConcurrentBag< T >();
 
             while ( iterations > 0 ) {
                 iterations--;
 
-                bag.AddRange( list );
+                bag.AddRange( list.AsParallel() );
                 bag.Should().NotBeEmpty( because: "made an unordered copy of all items" );
 
                 list.Clear();
                 list.Should().BeEmpty( because: "emptied the original list" );
 
-                // pull the items out of the bag, and push them each into a random bucket
-                while ( bag.Any() ) {
-                    0.To( bucketCount - 1 ).AsParallel().ForAll( index => {
-                                                                     T item;
-                                                                     if ( bag.TryTake( out item ) ) {
-                                                                         buckets[ index ].Add( item );
-                                                                     }
-                                                                 } );
-                }
-                bag.Should().BeEmpty( "All items should have been taken out of the bag" );
-
-                // pull all the items into the buckets
-                while ( bag.Count < originalcount ) {
-                    0.To( bucketCount - 1 ).AsParallel().ForAll( index => {
-                                                                     T item;
-                                                                     if ( buckets[ index ].TryTake( out item ) ) {
-                                                                         bag.Add( item );
-                                                                     }
-                                                                 } );
-                }
-                if ( bag.LongCount() < originalcount ) {
-                    throw new InvalidOperationException( "something went wrong" );
-                }
-
-                // put them back into the list in another random order.
-                // [optional]
-                // list.AddRange( bag.OrderBy( o => Randem.Next() ) );
+                list.AddRange( bag );
                 list.LongCount().Should().Be( originalcount );
+
+                bag.RemoveAll();
             }
         }
 
