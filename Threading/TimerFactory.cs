@@ -11,23 +11,32 @@
         /// <summary>
         /// Container to keep track of any created <see cref="Timer"/> and the <see cref="DateTime"/>.
         /// </summary>
-        [NotNull] public static readonly ConcurrentDictionary<Timer, DateTime> Timers = new ConcurrentDictionary<Timer, DateTime>();
+        [NotNull] private static readonly ConcurrentDictionary<Timer, DateTime> Timers = new ConcurrentDictionary<Timer, DateTime>();
 
         /// <summary>
-        /// 
+        /// Creates, but does not start, the <see cref="Timer"/>.
         /// </summary>
         /// <param name="interval"></param>
-        /// <param name="onEachInterval"></param>
+        /// <param name="onElapsed"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static Timer Create( this Span interval, Action onEachInterval ) {
-            if ( null == onEachInterval ) {
-                onEachInterval = () => { };
+        public static Timer Create( this Span interval, [CanBeNull] Action onElapsed ) {
+            if ( null == onElapsed ) {
+                onElapsed = () => { };
             }
-            var eachInterval = onEachInterval;
-            var timer = new Timer( interval: interval.Milliseconds );
-            timer.Elapsed += ( sender, args ) => eachInterval();
+            var timer = new Timer( interval: ( Double ) interval.Milliseconds ) {
+                AutoReset = false
+            };
             timer.Should().NotBeNull();
+            timer.Elapsed += ( sender, args ) => {
+                try {
+                    onElapsed();
+                }
+                finally {
+                    timer.DoneWith();
+                }
+                
+            };
             Timers[ timer ] = DateTime.Now;
             return timer;
         }
@@ -37,10 +46,32 @@
                 return;
             }
             DateTime value;
-            Timers.TryRemove( timer , out value);
+            Timers.TryRemove( timer, out value );
             using ( timer ) {
                 timer.Stop();
             }
+        }
+
+        public static Timer AndStart( [NotNull] this Timer timer ) {
+            if ( timer == null ) {
+                throw new ArgumentNullException( "timer" );
+            }
+            timer.AutoReset = false;
+            timer.Start();
+            return timer;
+        }
+
+        /// <summary>
+        /// Make the <paramref name="timer"/> fire only once.
+        /// </summary>
+        /// <param name="timer"></param>
+        /// <returns></returns>
+        public static Timer Once( [NotNull] this Timer timer ) {
+            if ( timer == null ) {
+                throw new ArgumentNullException( "timer" );
+            }
+            timer.AutoReset = false;
+            return timer;
         }
     }
 }

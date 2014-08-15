@@ -304,7 +304,7 @@ namespace Librainian.Measurement.Time {
                     this.Milliseconds += truncate;
                 }
 
-                while ( this.Milliseconds.Value > Milliseconds.InOneSecond ) {
+                while ( this.Milliseconds > Milliseconds.InOneSecond ) {
                     var truncate = Math.Truncate( this.Milliseconds.Value / Milliseconds.InOneSecond );
                     this.Milliseconds -= truncate * Milliseconds.InOneSecond;
                     this.Seconds += truncate;

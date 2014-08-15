@@ -53,7 +53,8 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>
         /// </summary>
-        [CanBeNull] private Timer _timer;
+        [CanBeNull]
+        private Timer _timer;
 
         public TickingClock( DateTime time, Granularity granularity = Granularity.Seconds ) {
             this.Hour = new Hour( time.Hour );
@@ -72,7 +73,7 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         [CanBeNull]
-        public Action< Hour > OnHourTick { get; set; }
+        public Action<Hour> OnHourTick { get; set; }
 
         [CanBeNull]
         public Action OnMinuteTick { get; set; }
@@ -131,27 +132,27 @@ namespace Librainian.Measurement.Time.Clocks {
             }
             switch ( granularity ) {
                 case Granularity.Milliseconds:
-                    this._timer = new Timer( interval: ( Double ) Milliseconds.One.Value ) {
-                                                                                               AutoReset = true
-                                                                                           };
+                    this._timer = new Timer( interval: Milliseconds.One ) {
+                        AutoReset = true
+                    };
                     this._timer.Elapsed += this.OnMillisecondElapsed;
                     break;
                 case Granularity.Seconds:
-                    this._timer = new Timer( interval: ( Double ) Seconds.One.Value ) {
-                                                                                          AutoReset = true
-                                                                                      };
+                    this._timer = new Timer( interval: ( Double )Seconds.One.Value ) {
+                        AutoReset = true
+                    };
                     this._timer.Elapsed += this.OnSecondElapsed;
                     break;
                 case Granularity.Minutes:
-                    this._timer = new Timer( interval: ( Double ) Minutes.One.Value ) {
-                                                                                          AutoReset = true
-                                                                                      };
+                    this._timer = new Timer( interval: ( Double )Minutes.One.Value ) {
+                        AutoReset = true
+                    };
                     this._timer.Elapsed += this.OnMinuteElapsed;
                     break;
                 case Granularity.Hours:
-                    this._timer = new Timer( interval: ( Double ) Hours.One.Value ) {
-                                                                                        AutoReset = true
-                                                                                    };
+                    this._timer = new Timer( interval: ( Double )Hours.One.Value ) {
+                        AutoReset = true
+                    };
                     this._timer.Elapsed += this.OnHourElapsed;
                     break;
                 default:

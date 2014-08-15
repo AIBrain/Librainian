@@ -80,24 +80,7 @@ namespace Librainian.Threading {
                 if ( delay < Milliseconds.One ) {
                     delay = Milliseconds.One;
                 }
-                var timer = TimerFactory.Create( delay, () => { } );
-                var timer = new Timer( interval: delay.TotalMilliseconds );
-                timer.Elapsed += ( sender, args ) => {
-                    //timer.Stop(); //not needed because AutoReset = false;
-                    try {
-                        target.TryPost( item );
-                    }
-                    finally {
-                        if ( timer != null ) {
-                            DateTime value;
-                            TimerFactory.Timers.TryRemove( timer, out value );
-                            timer.Dispose();
-                        }
-                    }
-                    timer = null;
-                };
-                timer.AutoReset = false;
-                TimerFactory.Timers[ timer ] = DateTime.UtcNow;
+                var timer = TimerFactory.Create( delay, () => target.TryPost( item ) );
                 timer.Start();
                 return timer;
             }

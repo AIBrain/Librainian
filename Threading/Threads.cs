@@ -796,24 +796,11 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "action" );
             }
             try {
-                var timer = new Timer( interval: afterDelay.TotalMilliseconds );
-                timer.Elapsed += ( sender, args ) => {
-                                     try {
-                                         if ( condition() ) {
-                                             action();
-                                         }
-                                     }
-                                     finally {
-                                         timer.Dispose();
-                                         DateTime value;
-                                         TimerFactory.Timers.TryRemove( timer, out value );
-                                         timer = null;
-                                     }
-                                 };
-                timer.AutoReset = false;
-                TimerFactory.Timers[ timer ] = DateTime.Now;
-                timer.Start();
-                return timer;
+                return TimerFactory.Create( afterDelay, () => {
+                    if ( condition() ) {
+                        action();
+                    }
+                } ).Once().AndStart();
             }
             catch ( Exception exception ) {
                 exception.Log();

@@ -213,8 +213,12 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="milliseconds"></param>
         /// <returns></returns>
-        public static implicit operator Double( Milliseconds milliseconds ) {
+        public static explicit operator Double( Milliseconds milliseconds ) {
             return ( Double ) milliseconds.Value;
+        }
+
+        public static implicit operator Decimal( Milliseconds milliseconds ) {
+            return milliseconds.Value;
         }
 
         public static Milliseconds operator -( Milliseconds milliseconds ) {
