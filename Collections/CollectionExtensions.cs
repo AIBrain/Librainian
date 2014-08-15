@@ -112,6 +112,7 @@ namespace Librainian.Collections {
             }
 
             collection.Capacity = collection.Count();
+            //collection.TrimExcess();
         }
 
         public static Boolean Has< T >( [NotNull] this Enum type, T value ) where T : struct {

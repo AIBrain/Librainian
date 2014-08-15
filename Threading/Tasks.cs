@@ -29,132 +29,8 @@ namespace Librainian.Threading {
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
     using Annotations;
-    using Maths;
     using Measurement.Time;
     using Timer = System.Timers.Timer;
-
-    public class Job : IComparable<Job> {
-        public readonly Percentage Priority;
-        public readonly Action Action;
-
-        public Job( Single priority, Action action  ) {
-            this.Priority = priority;
-            this.Action = action;
-        }
-
-        /// <summary>
-        /// Compares the current object with another object of the same type.
-        /// </summary>
-        /// <returns>
-        /// A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref name="other"/> parameter.Zero This object is equal to <paramref name="other"/>. Greater than zero This object is greater than <paramref name="other"/>. 
-        /// </returns>
-        /// <param name="other">An object to compare with this object.</param>
-        public int CompareTo( Job other ) {
-            return this.Priority.CompareTo( other.Priority );
-        }
-    }
-
-    public class PriorityBlock {
-
-
-        public BufferBlock<Job> Input { get; private set; }
-        public TransformManyBlock<Job, Job> Triages { get; private set; }
-        public ActionBlock<Action> Output { get; private set; }
-        public CancellationToken CancellationToken { get; private set; }
-
-        public PriorityBlock() {
-            this.CancellationToken = new CancellationToken( false );
-            this.Input = new BufferBlock<Job>();
-            this.Output = new ActionBlock<Action>( action => { }, Blocks.SingleProducer.ConsumeSensible );
-            this.Doctor = Task.Run( () => this.Triage() );
-        }
-
-        public void Add( [NotNull] Job job ) {
-            if ( job == null ) {
-                throw new ArgumentNullException( "job" );
-            }
-            this._jobs.Add( job );
-            this.Input.TryPost( job );
-        }
-
-        public void AddJobs( [NotNull]IEnumerable< Job> jobs ) {
-            if ( jobs == null ) {
-                throw new ArgumentNullException( "jobs" );
-            }
-            var enumerable = jobs as IList< Job > ?? jobs.ToList();
-            foreach ( var job in enumerable ) {
-                this.Input.TryPost( job );
-            }
-            foreach ( var job in enumerable ) {
-                this.Input.TryPost( job );
-            }
-        }
-
-        private readonly List<Job> _jobs = new List<Job>( 1 );
-
-        private async Task Triage() {
-            while ( true ) {
-
-                await Task.WhenAny( Input.OutputAvailableAsync( CancellationToken ) );
-
-                Job item;
-                if ( Input.TryReceive( null, out item ) ) {
-
-                    var highest = _jobs.OrderByDescending( job => job.Priority ).FirstOrDefault();
-
-                    await this.Output.SendAsync( item.Action, CancellationToken );
-                }
-                
-
-                if ( this._highestPriorityTarget.TryReceive( out item ) ) { await this.Input.SendAsync( item ); }
-                else if ( this._higherPriorityTarget.TryReceive( out item ) ) { await this.Input.SendAsync( item ); }
-                else if ( this._normalPriorityTarget.TryReceive( out item ) ) { await this.Input.SendAsync( item ); }
-                else if ( this._lowestPriorityTarget.TryReceive( out item ) ) { await this.Input.SendAsync( item ); }
-                else if ( this._lowestPriorityTarget.TryReceive( out item ) ) { await this.Input.SendAsync( item ); }
-                else {
-                    // both input blocks must be completed
-                    this.Input.Complete();
-                    return;
-                }
-            }
-        }
-
-
-
-
-        //[NotNull]
-        //private readonly BufferBlock<T> _lowestPriorityTarget = new BufferBlock<T>( new DataflowBlockOptions { BoundedCapacity = 1 } );
-        //[NotNull]
-        //private readonly BufferBlock<T> _lowerPriorityTarget = new BufferBlock<T>( new DataflowBlockOptions { BoundedCapacity = 1 } );
-        //[NotNull]
-        //private readonly BufferBlock<T> _normalPriorityTarget = new BufferBlock<T>( new DataflowBlockOptions { BoundedCapacity = 1 } );
-        //[NotNull]
-        //private readonly BufferBlock<T> _higherPriorityTarget = new BufferBlock<T>( new DataflowBlockOptions { BoundedCapacity = 1 } );
-        //[NotNull]
-        //private readonly BufferBlock<T> _highestPriorityTarget = new BufferBlock<T>( new DataflowBlockOptions { BoundedCapacity = 1 } );
-
-        //private readonly SortedList< Job,Single> _PriorityTargets = new SortedList< Job, float >(   )
-
-
-        public Task Doctor { get; private set; }
-
-        [NotNull]
-        public ITargetBlock<T> HighestPriorityTarget { get { return this._highestPriorityTarget; } }
-
-        [NotNull]
-        public ITargetBlock<T> HigherPriorityTarget { get { return this._higherPriorityTarget; } }
-
-        [NotNull]
-        public ITargetBlock<T> NormalPriorityTarget { get { return this._normalPriorityTarget; } }
-
-        [NotNull]
-        public ITargetBlock<T> LowerPriorityTarget { get { return this._lowerPriorityTarget; } }
-
-        [NotNull]
-        public ITargetBlock<T> LowestPriorityTarget { get { return this._lowestPriorityTarget; } }
-
-
-    }
 
     public static class Tasks {
         public static long Counter;
@@ -163,9 +39,9 @@ namespace Librainian.Threading {
 
         public static readonly TaskFactory FactoryLater = new TaskFactory( creationOptions: TaskCreationOptions.None, continuationOptions: TaskContinuationOptions.None );
 
-        private static readonly BufferBlock<Job> JobsBlock = new BufferBlock<Job>( dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
+        private static readonly BufferBlock<OneJob> JobsBlock = new BufferBlock<OneJob>( dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
 
-        public static readonly TransformBlock<Job, Job> PriorityBlock = new TransformBlock<Job, Job>();
+        public static readonly TransformBlock<OneJob, OneJob> PriorityBlock = new TransformBlock<OneJob, OneJob>();
 
         /// <summary>
         ///     dataflowBlockOptions: <see cref="Blocks.ManyProducers.ConsumeSensible" />

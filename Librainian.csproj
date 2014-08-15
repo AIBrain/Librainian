@@ -510,10 +510,12 @@
     <Compile Include="Maths\UBigInteger.cs" />
     <Compile Include="Maths\UInt64Range.cs" />
     <Compile Include="Maths\Weight.cs" />
+    <Compile Include="Threading\OneJob.cs" />
     <Compile Include="Threading\OpenOrClosed.cs" />
     <Compile Include="Threading\Pipeline.cs" />
     <Compile Include="Threading\PolicyOnLockRecursion.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Threading\PriorityBlock.cs" />
     <Compile Include="Threading\Randem.cs" />
     <Compile Include="Threading\ReaderWriterCount.cs" />
     <Compile Include="Threading\RecursiveCounts.cs" />
