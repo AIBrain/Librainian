@@ -172,7 +172,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static implicit operator Span( Zeptoseconds zeptoseconds ) {
-            return new Span( seconds: zeptoseconds.Value );
+            return new Span( zeptoseconds: zeptoseconds.Value );
         }
 
         public static implicit operator TimeSpan( Zeptoseconds zeptoseconds ) {

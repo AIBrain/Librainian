@@ -27,7 +27,11 @@
                 onElapsed = () => { };
             }
             interval.Milliseconds.Should().BeGreaterThan( Milliseconds.Zero );
-            var timer = new Timer( interval: interval.TotalMilliseconds() ) {
+
+            var mills = interval.GetApproximateMilliseconds();
+            mills.Should().BeGreaterThan( 0 );
+
+            var timer = new Timer( interval: mills ) {
                 AutoReset = false
             };
             timer.Should().NotBeNull();

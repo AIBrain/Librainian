@@ -201,7 +201,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static implicit operator Span( Milliseconds milliseconds ) {
-            return new Span( milliseconds );
+            return new Span( milliseconds: milliseconds );
         }
 
         public static implicit operator TimeSpan( Milliseconds milliseconds ) {
