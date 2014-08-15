@@ -45,9 +45,9 @@ namespace Librainian.Measurement.Time {
 
         /// <summary>
         /// </summary>
-        public static readonly Span MatrixID = new Span( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
+        public static readonly Span MatrixID = new Span( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
 
-        public static readonly Span Infinity = new Span( milleniums: Decimal.MaxValue ); //not the largest Span possible, but anything larger.. wow. just wow.
+        public static readonly Span Infinity = new Span( yoctoseconds: Decimal.MaxValue, zeptoseconds: Decimal.MaxValue, attoseconds: Decimal.MaxValue, femtoseconds: Decimal.MaxValue, picoseconds: Decimal.MaxValue, nanoseconds: Decimal.MaxValue, microseconds: Decimal.MaxValue, milliseconds: Decimal.MaxValue, seconds: Decimal.MaxValue, minutes: Decimal.MaxValue, hours: Decimal.MaxValue, days: Decimal.MaxValue, weeks: Decimal.MaxValue, months: Decimal.MaxValue ); //not the largest Span possible, but anything larger.. wow. just wow.
         public static readonly Span Forever = new Span( years: Decimal.MaxValue ); //not the largest Span possible, but anything larger.. wow. just wow.
 
         /// <summary>
@@ -67,8 +67,6 @@ namespace Librainian.Measurement.Time {
         ///     How many <seealso cref="Hours" /> does this <seealso cref="Span" /> span?
         /// </summary>
         public readonly Hours Hours;
-
-        public readonly Boolean IsNormalized;
 
         /// <summary>
         ///     <para>A microsecond is an SI unit of time equal to one millionth (10−6 or 1/1,000,000) of a second.</para>
@@ -197,7 +195,6 @@ namespace Librainian.Measurement.Time {
         /// <param name="weeks"></param>
         /// <param name="months"></param>
         /// <param name="years"></param>
-        /// <param name="normalize"></param>
         /// <param name="yoctoseconds"></param>
         /// <param name="zeptoseconds"></param>
         public Span( Yoctoseconds yoctoseconds = default( Yoctoseconds ), Zeptoseconds zeptoseconds = default( Zeptoseconds ), Attoseconds attoseconds = default( Attoseconds ), Femtoseconds femtoseconds = default( Femtoseconds ), Picoseconds picoseconds = default( Picoseconds ), Nanoseconds nanoseconds = default( Nanoseconds ), Microseconds microseconds = default( Microseconds ), Milliseconds milliseconds = default( Milliseconds ), Seconds seconds = default( Seconds ), Minutes minutes = default( Minutes ), Hours hours = default( Hours ), Days days = default( Days ), Weeks weeks = default( Weeks ), Months months = default( Months ), Years years = default( Years ) )
@@ -564,7 +561,12 @@ namespace Librainian.Measurement.Time {
             return new TimeSpan( ( int )span.Days.Value, ( int )span.Hours.Value, ( int )span.Minutes.Value, ( int )span.Seconds.Value, ( int )span.Milliseconds.Value );
         }
 
-        public static implicit operator Span( TimeSpan span ) {
+        /// <summary>
+        /// <para>Allow an explicit cast from a <see cref="TimeSpan"/> into a <see cref="Span"/>.</para>
+        /// </summary>
+        /// <param name="span"></param>
+        /// <returns></returns>
+        public static explicit operator Span( TimeSpan span ) {
             return new Span( span );
         }
 

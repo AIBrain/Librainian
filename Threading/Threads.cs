@@ -788,7 +788,7 @@ namespace Librainian.Threading {
         /// <param name="afterDelay"></param>
         /// <param name="action"></param>
         /// <param name="condition"></param>
-        public static Timer When( this TimeSpan afterDelay, Func< Boolean > condition, Action action ) {
+        public static Timer When( this Span afterDelay, Func< Boolean > condition, Action action ) {
             if ( condition == null ) {
                 throw new ArgumentNullException( "condition" );
             }
@@ -796,11 +796,11 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "action" );
             }
             try {
-                return FluentTimers.Create( afterDelay, () => {
-                    if ( condition() ) {
-                        action();
-                    }
-                } ).Once().AndStart();
+                return afterDelay.Create( () => {
+                                            if ( condition() ) {
+                                                action();
+                                            }
+                                        } ).Once().AndStart();
             }
             catch ( Exception exception ) {
                 exception.Log();

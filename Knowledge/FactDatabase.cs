@@ -67,26 +67,26 @@ namespace Librainian.Knowledge {
         }
 
         public void DoRandomEntry( ActionBlock< Sentence > action ) {
-            Tasks.Spawn( () => {
-                             if ( null == action ) {
-                                 return;
-                             }
+            Tasks.Spawn( ( () => {
+                               if ( null == action ) {
+                                   return;
+                               }
 
-                             //pick random line from random file 
-                             var file = this.KNBFiles.OrderBy( o => Randem.Next() ).FirstOrDefault();
-                             if ( null == file ) {
-                                 return;
-                             }
+                               //pick random line from random file 
+                               var file = this.KNBFiles.OrderBy( o => Randem.Next() ).FirstOrDefault();
+                               if ( null == file ) {
+                                   return;
+                               }
 
-                             //pick random line
-                             var line = File.ReadLines( file.FullName ).Where( s => !String.IsNullOrWhiteSpace( s ) ).Where( s => Char.IsLetter( s[ 0 ] ) ).OrderBy( o => Randem.Next() ).FirstOrDefault();
+                               //pick random line
+                               var line = File.ReadLines( file.FullName ).Where( s => !String.IsNullOrWhiteSpace( s ) ).Where( s => Char.IsLetter( s[ 0 ] ) ).OrderBy( o => Randem.Next() ).FirstOrDefault();
 
-                             //TODO new ActionBlock<Action>( action: action => {
-                             //Threads.AIBrain().Input( line );
-                             if ( !String.IsNullOrEmpty( line ) ) {
-                                 action.TryPost( new Sentence( line ) );
-                             }
-                         } );
+                               //TODO new ActionBlock<Action>( action: action => {
+                               //Threads.AIBrain().Input( line );
+                               if ( !String.IsNullOrEmpty( line ) ) {
+                                   action.TryPost( new Sentence( line ) );
+                               }
+                           } ) );
         }
 
         public void Initialize() {

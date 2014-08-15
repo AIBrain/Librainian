@@ -1,29 +1,31 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
+//
 // "Librainian/Tasks.cs" was last cleaned by Rick on 2014/08/15 at 10:39 AM
-#endregion
+
+#endregion License & Information
 
 namespace Librainian.Threading {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
@@ -31,12 +33,10 @@ namespace Librainian.Threading {
     using Measurement.Time;
     using Timer = System.Timers.Timer;
 
-
     /// <summary>
     /// Execute an <see cref="Action"/> on a <see cref="Timer"/>.
     /// </summary>
     public static class Tasks {
-
         //private static readonly BufferBlock<OneJob> JobsBlock = new BufferBlock<OneJob>( dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
 
         //public static readonly TransformBlock<OneJob, OneJob> PriorityBlock = new TransformBlock<OneJob, OneJob>();
@@ -75,12 +75,11 @@ namespace Librainian.Threading {
         /// </summary>
         public static readonly CancellationToken CancelNewJobsToken = new CancellationToken( false );
 
-
         //public static UInt64 GetSpawnsWaiting() {
         //    return ( UInt64 )Interlocked.Read( ref spawnCounter );
         //}
 
-        private static void Spawn( Action job, Single priority = 0.50f, Span? delay = null ) {
+        public static void Spawn( this Action job, Single priority = 0.50f, Span? delay = null ) {
             if ( CancelNewJobsToken.IsCancellationRequested ) {
                 return;
             }
@@ -89,11 +88,9 @@ namespace Librainian.Threading {
                 JobPriorityBlock.Add( onejob );
             }
             else {
-                delay.Value.Create( () => Spawn( job, priority ) ).AndStart();
+                delay.Value.Create( () => job.Spawn( priority ) ).AndStart();
             }
         }
-
-        //TODO make priorty Spawns
 
         /// <summary>
         /// </summary>
@@ -149,23 +146,21 @@ namespace Librainian.Threading {
             return maxPortThreads;
         }
 
-        /// <summary>
-        ///     <para>Post the <paramref name="job" /> to the <see cref="FireAndForget" /> dataflow.</para>
-        /// </summary>
-        /// <param name="job"></param>
-        /// <param name="delay"></param>
-        /// <param name="priority"></param>
-        public static void Spawn( [NotNull] this Action job, Span? delay = null, Priority priority = Priority.Normal ) {
-            if ( job == null ) {
-                throw new ArgumentNullException( "job" );
-            }
-            AddThenFireAndForget( job: job, delay: delay );
-        }
+        ///// <summary>
+        /////     <para>Post the <paramref name="job" /> to the <see cref="FireAndForget" /> dataflow.</para>
+        ///// </summary>
+        ///// <param name="job"></param>
+        ///// <param name="delay"></param>
+        ///// <param name="priority"></param>
+        //public static void Spawn( [NotNull] this Action job, Span? delay = null, Single priority ) {
+        //    if ( job == null ) {
+        //        throw new ArgumentNullException( "job" );
+        //    }
+        //    AddThenFireAndForget( job: job, delay: delay );
+        //}
 
         /// <summary>
-        ///     Do the <paramref name="job" /> with a <see cref="FireAndForget" /> dataflow after a
-        ///     <see cref="System.Threading.Timer" />
-        ///     .
+        ///     Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />     .
         /// </summary>
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
@@ -174,13 +169,24 @@ namespace Librainian.Threading {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            AddThenFireAndForget( job: job, delay: delay );
+            Spawn( job, 0.5f, ( Span ) delay );
         }
 
         /// <summary>
-        ///     Do the <paramref name="job" /> with a <see cref="FireAndForget" /> dataflow after a
-        ///     <see cref="System.Threading.Timer" />
-        ///     .
+        ///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
+        /// </summary>
+        /// <param name="delay"> </param>
+        /// <param name="job"> </param>
+        /// <returns> </returns>
+        public static void Then( this Span delay, [NotNull] Action job ) {
+            if ( job == null ) {
+                throw new ArgumentNullException( "job" );
+            }
+            Spawn( job, 0.5f, delay );
+        }
+
+        /// <summary>
+        ///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
         /// </summary>
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
@@ -189,13 +195,11 @@ namespace Librainian.Threading {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            AddThenFireAndForget( job: job, delay: delay );
+            job.Spawn( delay: delay );
         }
 
         /// <summary>
-        ///     Do the <paramref name="job" /> with a <see cref="FireAndForget" /> dataflow after a
-        ///     <see cref="System.Threading.Timer" /> fires off.
-        ///     .
+        ///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
         /// </summary>
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
@@ -204,13 +208,11 @@ namespace Librainian.Threading {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            AddThenFireAndForget( job: job, delay: delay );
+            job.Spawn( delay: delay );
         }
 
         /// <summary>
-        ///     Do the <paramref name="job" /> with a <see cref="FireAndForget" /> dataflow after a
-        ///     <see cref="System.Threading.Timer" />
-        ///     .
+        ///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
         /// </summary>
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
@@ -219,7 +221,7 @@ namespace Librainian.Threading {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            AddThenFireAndForget( job: job, delay: delay );
+            job.Spawn( delay: delay );
         }
 
         /// <summary>
@@ -455,7 +457,7 @@ namespace Librainian.Threading {
             if ( !target.Post( item ) ) {
                 //var bob = target as IDataflowBlock;
                 //if ( bob.Completion.IsCompleted  )
-                TryPost( target: target, item: item, delay: Threads.GetSlicingAverage() ); //retry
+                TryPost( target: target, item: item, delay: ( Span ) Threads.GetSlicingAverage() ); //retry
             }
         }
 
@@ -482,7 +484,6 @@ namespace Librainian.Threading {
                 throw;
             }
         }
-
     }
 
     //public enum Priority : byte {
