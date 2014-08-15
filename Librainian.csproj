@@ -525,7 +525,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threading\Tasks.cs" />
     <Compile Include="Threading\Threads.cs" />
-    <Compile Include="Threading\TimerFactory.cs" />
+    <Compile Include="Threading\FluentTimers.cs" />
     <Compile Include="Threading\WaitNode.cs" />
   </ItemGroup>
   <ItemGroup>

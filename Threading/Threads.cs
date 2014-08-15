@@ -796,7 +796,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "action" );
             }
             try {
-                return TimerFactory.Create( afterDelay, () => {
+                return FluentTimers.Create( afterDelay, () => {
                     if ( condition() ) {
                         action();
                     }

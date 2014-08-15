@@ -6,7 +6,7 @@
     using FluentAssertions;
     using Measurement.Time;
 
-    public static class TimerFactory {
+    public static class FluentTimers {
         /// <summary>
         /// Container to keep track of any created <see cref="Timer"/> and the <see cref="DateTime"/>.
         /// </summary>
@@ -56,17 +56,22 @@
             }
         }
 
+        /// <summary>
+        /// <para>Start the <paramref name="timer"/>.</para>
+        /// </summary>
+        /// <param name="timer"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static Timer AndStart( [NotNull] this Timer timer ) {
             if ( timer == null ) {
                 throw new ArgumentNullException( "timer" );
             }
-            timer.AutoReset = false;
             timer.Start();
             return timer;
         }
 
         /// <summary>
-        /// Make the <paramref name="timer"/> fire only once.
+        /// <para>Make the <paramref name="timer"/> fire only once.</para>
         /// </summary>
         /// <param name="timer"></param>
         /// <returns></returns>

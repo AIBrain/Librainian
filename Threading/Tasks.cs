@@ -14,7 +14,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Tasks.cs" was last cleaned by Rick on 2014/08/11 at 12:41 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/Tasks.cs" was last cleaned by Rick on 2014/08/15 at 10:26 AM
 #endregion
 
 namespace Librainian.Threading {
@@ -36,32 +38,56 @@ namespace Librainian.Threading {
 
         public static readonly TaskFactory FactoryLater = new TaskFactory( creationOptions: TaskCreationOptions.None, continuationOptions: TaskContinuationOptions.None );
 
+        public enum Priority : byte {
+            Lowest, Low, Normal, High, Highest
+        }
+
         /// <summary>
         ///     dataflowBlockOptions: <see cref="Blocks.ManyProducers.ConsumeSensible" />
         /// </summary>
-        public static readonly ActionBlock< Action > FireAndForget = new ActionBlock< Action >( action: action => {
-                                                                                                            if ( null == action ) {
-                                                                                                                return;
-                                                                                                            }
-                                                                                                            try {
-                                                                                                                if ( !CancelFireAndForgets ) {
-                                                                                                                    action();
-                                                                                                                }
-                                                                                                            }
-                                                                                                            catch ( Exception exception ) {
-                                                                                                                exception.Log();
-                                                                                                            }
-                                                                                                        }, dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
+        private static readonly ActionBlock<Action> FireAndForget = new ActionBlock<Action>( action: action => {
+            if ( null == action ) {
+                return;
+            }
+            try {
+                if ( !CancelJobs ) {
+                    action();
+                }
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
+            finally {
+                Interlocked.Decrement( ref spawnCounter );
+            }
+        }, dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
 
-        //private static long countSpawnsCreated;
-
-        //private static long countSpawnsConsumed;
+        private static long spawnCounter;
 
         /// <summary>
-        ///     Cancel has been requested. Don't do any more spawns.
+        ///     <para>Cancel has been requested. Don't queue or start any more spawns.</para>
         /// </summary>
         /// <remarks>Please don't set this to true.</remarks>
-        public static Boolean CancelFireAndForgets { get; set; }
+        public static Boolean CancelJobs { get; set; }
+
+        public static long GetSpawnsWaiting() {
+            return Interlocked.Read( ref spawnCounter );
+        }
+
+        private static void IncrementAndThenFireAndForget( Action job, Span? delay = null, Priority priority = Priority.Normal ) {
+            if ( CancelJobs ) {
+                return;
+            }
+            Interlocked.Increment( ref spawnCounter );
+            if ( delay.HasValue ) {
+                FireAndForget.TryPost( item: job, delay: delay.Value );
+            }
+            else {
+                FireAndForget.TryPost( item: job );
+            }
+        }
+
+        //TODO make priorty Spawns
 
         /// <summary>
         /// </summary>
@@ -82,23 +108,27 @@ namespace Librainian.Threading {
         ///     Console.WriteLine("{0}: {1}", DateTime.Now, result);
         ///     }
         /// </example>
-        public static Task< Task< T > >[] Interleaved< T >( [CanBeNull] IEnumerable< Task< T > > tasks ) {
+        public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
+            if ( tasks == null ) {
+                throw new ArgumentNullException( "tasks" );
+            }
+
             var inputTasks = tasks.ToList();
 
-            var buckets = new TaskCompletionSource< Task< T > >[inputTasks.Count];
+            var buckets = new TaskCompletionSource<Task<T>>[ inputTasks.Count ];
 
-            var results = new Task< Task< T > >[buckets.Length];
+            var results = new Task<Task<T>>[ buckets.Length ];
 
             for ( var i = 0; i < buckets.Length; i++ ) {
-                buckets[ i ] = new TaskCompletionSource< Task< T > >();
+                buckets[ i ] = new TaskCompletionSource<Task<T>>();
                 results[ i ] = buckets[ i ].Task;
             }
 
             var nextTaskIndex = -1;
-            Action< Task< T > > continuation = completed => {
-                                                   var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
-                                                   bucket.TrySetResult( completed );
-                                               };
+            Action<Task<T>> continuation = completed => {
+                var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
+                bucket.TrySetResult( completed );
+            };
 
             foreach ( var inputTask in inputTasks ) {
                 inputTask.ContinueWith( continuation, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default );
@@ -107,57 +137,38 @@ namespace Librainian.Threading {
             return results;
         }
 
-        /*
-                public static int GetMaximumActiveWorkerThreads() {
-                    int maxWorkerThreads, maxPortThreads;
-                    ThreadPool.GetMaxThreads( out maxWorkerThreads, out maxPortThreads );
-                    return maxPortThreads;
-                }
-        */
+        public static int GetMaximumActiveWorkerThreads() {
+            int maxWorkerThreads, maxPortThreads;
+            ThreadPool.GetMaxThreads( workerThreads: out maxWorkerThreads, completionPortThreads: out maxPortThreads );
+            return maxPortThreads;
+        }
 
-        /*
-                public static long GetAndResetSpawnsCreated() {
-                    var created = Interlocked.Read( ref countSpawnsCreated );
-                    Interlocked.Add( ref countSpawnsCreated, -created );
-                    return created;
-                }
-        */
-
-        /*
-                public static Single GetAndResetSpawnsConsumed() {
-                    var consumed = Interlocked.Read( ref countSpawnsConsumed );
-                    Interlocked.Add( ref countSpawnsConsumed, -consumed );
-                    return consumed;
-                }
-        */
-
-        public static Func< object > NewInstanceByLambda( [NotNull] this Type type ) {
+        public static Func<object> NewInstanceByLambda( [NotNull] this Type type ) {
             if ( type == null ) {
                 throw new ArgumentNullException( "type" );
             }
-            return Expression.Lambda< Func< object > >( Expression.New( type ) ).Compile();
+            return Expression.Lambda<Func<object>>( Expression.New( type ) ).Compile();
         }
 
         /// <summary>
-        ///     Post the <paramref name="job" /> to the <see cref="FireAndForget" /> dataflow.
+        ///     <para>Post the <paramref name="job" /> to the <see cref="FireAndForget" /> dataflow.</para>
         /// </summary>
-        /// <param name="job"> </param>
-        /// <returns> </returns>
-        public static void Spawn( [NotNull] this Action job ) {
+        /// <param name="job"></param>
+        /// <param name="delay"></param>
+        /// <param name="priority"></param>
+        public static void Spawn( [NotNull] this Action job, Span? delay = null, Priority priority = Priority.Normal ) {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            //Interlocked.Increment( ref countSpawnsCreated );
-            FireAndForget.TryPost( job );
-            //return job;
+            IncrementAndThenFireAndForget( job: job, delay: delay );
         }
 
-        public static Func< object > NewInstanceByCreate( [NotNull] this Type type ) {
+        public static Func<object> NewInstanceByCreate( [NotNull] this Type type ) {
             if ( type == null ) {
                 throw new ArgumentNullException( "type" );
             }
             var localType = type; // create a local copy to prevent adverse effects of closure
-            Func< object > func = ( () => Activator.CreateInstance( localType ) ); // curry the localType
+            Func<object> func = ( () => Activator.CreateInstance( localType ) ); // curry the localType
             return func;
         }
 
@@ -169,12 +180,11 @@ namespace Librainian.Threading {
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
         /// <returns> </returns>
-        public static Timer Then( this TimeSpan delay, [NotNull] Action job ) {
+        public static void Then( this TimeSpan delay, [NotNull] Action job ) {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            //Interlocked.Increment( ref countSpawnsCreated );
-            return FireAndForget.TryPost( item: job, delay: delay );
+            IncrementAndThenFireAndForget( job: job, delay: delay );
         }
 
         /// <summary>
@@ -185,12 +195,26 @@ namespace Librainian.Threading {
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
         /// <returns> </returns>
-        public static Timer Then( this Milliseconds delay, [NotNull] Action job ) {
+        public static void Then( this Milliseconds delay, [NotNull] Action job ) {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            //Interlocked.Increment( ref countSpawnsCreated );
-            return FireAndForget.TryPost( item: job, delay: delay );
+            IncrementAndThenFireAndForget( job: job, delay: delay );
+        }
+
+        /// <summary>
+        ///     Do the <paramref name="job" /> with a <see cref="FireAndForget" /> dataflow after a
+        ///     <see cref="System.Threading.Timer" /> fires off.
+        ///     .
+        /// </summary>
+        /// <param name="delay"> </param>
+        /// <param name="job"> </param>
+        /// <returns> </returns>
+        public static void Then( this Seconds delay, [NotNull] Action job ) {
+            if ( job == null ) {
+                throw new ArgumentNullException( "job" );
+            }
+            IncrementAndThenFireAndForget( job: job, delay: delay );
         }
 
         /// <summary>
@@ -201,28 +225,11 @@ namespace Librainian.Threading {
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
         /// <returns> </returns>
-        public static Timer Then( this Seconds delay, [NotNull] Action job ) {
+        public static void Then( this Minutes delay, [NotNull] Action job ) {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            //Interlocked.Increment( ref countSpawnsCreated );
-            return FireAndForget.TryPost( item: job, delay: delay );
-        }
-
-        /// <summary>
-        ///     Do the <paramref name="job" /> with a <see cref="FireAndForget" /> dataflow after a
-        ///     <see cref="System.Threading.Timer" />
-        ///     .
-        /// </summary>
-        /// <param name="delay"> </param>
-        /// <param name="job"> </param>
-        /// <returns> </returns>
-        public static Timer Then( this Minutes delay, [NotNull] Action job ) {
-            if ( job == null ) {
-                throw new ArgumentNullException( "job" );
-            }
-            //Interlocked.Increment( ref countSpawnsCreated );
-            return FireAndForget.TryPost( item: job, delay: delay );
+            IncrementAndThenFireAndForget( job: job, delay: delay );
         }
 
         /// <summary>
@@ -234,16 +241,16 @@ namespace Librainian.Threading {
         /// <returns></returns>
         public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) {
             return () => {
-                       if ( pre != null ) {
-                           pre();
-                       }
-                       if ( action != null ) {
-                           action();
-                       }
-                       if ( post != null ) {
-                           post();
-                       }
-                   };
+                if ( pre != null ) {
+                    pre();
+                }
+                if ( action != null ) {
+                    action();
+                }
+                if ( post != null ) {
+                    post();
+                }
+            };
         }
 
         ///// <summary>
@@ -440,5 +447,50 @@ namespace Librainian.Threading {
         //        }
         //    } );
         //}
+        /// <summary>
+        ///     Keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="target"></param>
+        /// <param name="item"></param>
+        public static void TryPost<T>( this ITargetBlock<T> target, T item ) {
+            if ( target == null ) {
+#if DEBUG
+                throw new ArgumentNullException( "target" );
+#else
+                return;
+#endif
+            }
+
+            if ( !target.Post( item ) ) {
+                //var bob = target as IDataflowBlock;
+                //if ( bob.Completion.IsCompleted  )
+                TryPost( target: target, item: item, delay: Threads.GetSlicingAverage() ); //retry
+            }
+        }
+
+        /// <summary>
+        ///     After a delay, keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="target"></param>
+        /// <param name="item"></param>
+        /// <param name="delay"></param>
+        public static Timer TryPost<T>( this ITargetBlock<T> target, T item, Span delay ) {
+            if ( target == null ) {
+                throw new ArgumentNullException( "target" );
+            }
+
+            try {
+                if ( delay < Milliseconds.One ) {
+                    delay = Milliseconds.One;
+                }
+                return delay.Create( () => target.TryPost( item ) ).AndStart();
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+                throw;
+            }
+        }
     }
 }
