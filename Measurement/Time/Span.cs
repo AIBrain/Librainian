@@ -175,7 +175,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="timeSpan"></param>
         /// <param name="normalize"></param>
         public Span( TimeSpan timeSpan, Boolean normalize = true )
-            : this( milliseconds: timeSpan.Milliseconds, seconds: timeSpan.Seconds, minutes: timeSpan.Minutes, hours: timeSpan.Hours, days: timeSpan.Days, normalize: normalize ) {
+            : this( milliseconds: timeSpan.Milliseconds, seconds: timeSpan.Seconds, minutes: timeSpan.Minutes, hours: timeSpan.Hours, days: timeSpan.Days ) {
         }
 
         /// <summary>
@@ -200,8 +200,8 @@ namespace Librainian.Measurement.Time {
         /// <param name="normalize"></param>
         /// <param name="yoctoseconds"></param>
         /// <param name="zeptoseconds"></param>
-        public Span( Yoctoseconds yoctoseconds = default( Yoctoseconds ), Zeptoseconds zeptoseconds = default( Zeptoseconds ), Attoseconds attoseconds = default( Attoseconds ), Femtoseconds femtoseconds = default( Femtoseconds ), Picoseconds picoseconds = default( Picoseconds ), Nanoseconds nanoseconds = default( Nanoseconds ), Microseconds microseconds = default( Microseconds ), Milliseconds milliseconds = default( Milliseconds ), Seconds seconds = default( Seconds ), Minutes minutes = default( Minutes ), Hours hours = default( Hours ), Days days = default( Days ), Weeks weeks = default( Weeks ), Months months = default( Months ), Years years = default( Years ), Boolean normalize = true )
-            : this( yoctoseconds: yoctoseconds.Value, zeptoseconds: zeptoseconds.Value, attoseconds: attoseconds.Value, femtoseconds: femtoseconds.Value, picoseconds: picoseconds.Value, nanoseconds: nanoseconds.Value, microseconds: microseconds.Value, milliseconds: milliseconds.Value, seconds: seconds.Value, minutes: minutes.Value, hours: hours.Value, days: days.Value, weeks: weeks.Value, months: months.Value, years: years.Value, normalize: normalize ) {
+        public Span( Yoctoseconds yoctoseconds = default( Yoctoseconds ), Zeptoseconds zeptoseconds = default( Zeptoseconds ), Attoseconds attoseconds = default( Attoseconds ), Femtoseconds femtoseconds = default( Femtoseconds ), Picoseconds picoseconds = default( Picoseconds ), Nanoseconds nanoseconds = default( Nanoseconds ), Microseconds microseconds = default( Microseconds ), Milliseconds milliseconds = default( Milliseconds ), Seconds seconds = default( Seconds ), Minutes minutes = default( Minutes ), Hours hours = default( Hours ), Days days = default( Days ), Weeks weeks = default( Weeks ), Months months = default( Months ), Years years = default( Years ) )
+            : this( yoctoseconds: yoctoseconds.Value, zeptoseconds: zeptoseconds.Value, attoseconds: attoseconds.Value, femtoseconds: femtoseconds.Value, picoseconds: picoseconds.Value, nanoseconds: nanoseconds.Value, microseconds: microseconds.Value, milliseconds: milliseconds.Value, seconds: seconds.Value, minutes: minutes.Value, hours: hours.Value, days: days.Value, weeks: weeks.Value, months: months.Value, years: years.Value ) {
         }
 
         /// <summary>
@@ -225,125 +225,148 @@ namespace Librainian.Measurement.Time {
         /// <param name="weeks"></param>
         /// <param name="months"></param>
         /// <param name="years"></param>
-        /// <param name="centuries"></param>
-        /// <param name="milleniums"></param>
-        /// <param name="normalize"></param>
-        public Span( /*BigInteger planckTimes = default( BigInteger ),*/ Decimal yoctoseconds = 0, Decimal zeptoseconds = 0, Decimal attoseconds = 0, Decimal femtoseconds = 0, Decimal picoseconds = 0, Decimal nanoseconds = 0, Decimal microseconds = 0, Decimal milliseconds = 0, Decimal seconds = 0, Decimal minutes = 0, Decimal hours = 0, Decimal days = 0, Decimal weeks = 0, Decimal months = 0, Decimal years = 0, Decimal centuries = 0, Decimal milleniums = 0, Boolean normalize = true )
+        public Span( Decimal yoctoseconds = 0, Decimal zeptoseconds = 0, Decimal attoseconds = 0, Decimal femtoseconds = 0, Decimal picoseconds = 0, Decimal nanoseconds = 0, Decimal microseconds = 0, Decimal milliseconds = 0, Decimal seconds = 0, Decimal minutes = 0, Decimal hours = 0, Decimal days = 0, Decimal weeks = 0, Decimal months = 0, Decimal years = 0 )
             : this() {
             //TODO Unit testing needed to verify the math.
 
             //this.PlanckTimes = new PlanckTimes( planckTimes.IfLessThanZeroThenZero() );
             this.PlanckTimes = PlanckTimes.Zero;
-            this.Yoctoseconds = new Yoctoseconds( yoctoseconds.IfLessThanZeroThenZero() );
-            this.Zeptoseconds = new Zeptoseconds( zeptoseconds.IfLessThanZeroThenZero() );
-            this.Attoseconds = new Attoseconds( attoseconds.IfLessThanZeroThenZero() );
-            this.Femtoseconds = new Femtoseconds( femtoseconds.IfLessThanZeroThenZero() );
-            this.Picoseconds = new Picoseconds( picoseconds.IfLessThanZeroThenZero() );
-            this.Nanoseconds = new Nanoseconds( nanoseconds.IfLessThanZeroThenZero() );
-            this.Microseconds = new Microseconds( microseconds.IfLessThanZeroThenZero() );
-            this.Milliseconds = new Milliseconds( milliseconds.IfLessThanZeroThenZero() );
-            this.Seconds = new Seconds( seconds.IfLessThanZeroThenZero() );
-            this.Minutes = new Minutes( minutes.IfLessThanZeroThenZero() );
-            this.Hours = new Hours( hours.IfLessThanZeroThenZero() );
-            this.Days = new Days( days.IfLessThanZeroThenZero() );
-            this.Weeks = new Weeks( weeks.IfLessThanZeroThenZero() );
-            this.Months = new Months( months.IfLessThanZeroThenZero() );
-            this.Years = new Years( years.IfLessThanZeroThenZero() );
+            this.PlanckTimes += new Yoctoseconds( yoctoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Zeptoseconds( zeptoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Attoseconds( attoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Femtoseconds( femtoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Picoseconds( picoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Nanoseconds( nanoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Microseconds( microseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Milliseconds( milliseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Seconds( seconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Minutes( minutes.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Hours( hours.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Days( days.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Weeks( weeks.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Months( months.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Years( years.IfLessThanZeroThenZero() ).ToPlanckTimes();
 
-            if ( normalize ) {
-                //NOTE the order here is important.
 
-                //BUG the "while"s used below can probably be changed to "if"s because of the math, which should work the first time.
+            var span = new Span( planckTimes: this.PlanckTimes.Value ); //cheat
 
-                while ( this.PlanckTimes.Value > PlanckTimes.InOneYoctosecond ) {
-                    var truncate = this.PlanckTimes.Value / PlanckTimes.InOneYoctosecond;
-                    this.PlanckTimes -= truncate * PlanckTimes.InOneYoctosecond;
-                    truncate.ThrowIfOutOfDecimalRange();
-                    this.Yoctoseconds += ( Decimal )truncate;
-                }
+            this.PlanckTimes = span.PlanckTimes;
+            this.Yoctoseconds = span.Yoctoseconds;
+            this.Zeptoseconds = span.Zeptoseconds;
+            this.Attoseconds = span.Attoseconds;
+            this.Femtoseconds = span.Femtoseconds;
+            this.Picoseconds = span.Picoseconds;
+            this.Nanoseconds = span.Nanoseconds;
+            this.Microseconds = span.Microseconds;
+            this.Milliseconds = span.Milliseconds;
+            this.Seconds = span.Seconds;
+            this.Minutes = span.Minutes;
+            this.Hours = span.Hours;
+            this.Days = span.Days;
+            this.Weeks = span.Weeks;
+            this.Months = span.Months;
+            this.Years = span.Years;
 
-                while ( this.Yoctoseconds.Value > Yoctoseconds.InOneZeptosecond ) {
-                    var truncate = Math.Truncate( this.Yoctoseconds.Value / Yoctoseconds.InOneZeptosecond );
-                    this.Yoctoseconds -= truncate * Yoctoseconds.InOneZeptosecond;
-                    this.Zeptoseconds += truncate;
-                }
+            //if ( normalize ) {
+            //    //NOTE the order here is important.
 
-                while ( this.Zeptoseconds.Value > Zeptoseconds.InOneAttosecond ) {
-                    var truncate = Math.Truncate( this.Zeptoseconds.Value / Zeptoseconds.InOneAttosecond );
-                    this.Zeptoseconds -= truncate * Yoctoseconds.InOneZeptosecond;
-                    this.Attoseconds += truncate;
-                }
+            //    //BUG the "while"s used below can probably be changed to "if"s because of the math, which should work the first time.
 
-                while ( this.Attoseconds.Value > Attoseconds.InOneFemtosecond ) {
-                    var truncate = Math.Truncate( this.Attoseconds.Value / Attoseconds.InOneFemtosecond );
-                    this.Attoseconds -= truncate * Attoseconds.InOneFemtosecond;
-                    this.Femtoseconds += truncate;
-                }
+            //    while ( this.PlanckTimes.Value > PlanckTimes.InOneYoctosecond ) {
+            //        var truncate = this.PlanckTimes.Value / PlanckTimes.InOneYoctosecond;
+            //        this.PlanckTimes -= truncate * PlanckTimes.InOneYoctosecond;
+            //        truncate.ThrowIfOutOfDecimalRange();
+            //        this.Yoctoseconds += ( Decimal )truncate;
+            //    }
 
-                while ( this.Femtoseconds.Value > Femtoseconds.InOnePicosecond ) {
-                    var truncate = Math.Truncate( this.Femtoseconds.Value / Femtoseconds.InOnePicosecond );
-                    this.Femtoseconds -= truncate * Femtoseconds.InOnePicosecond;
-                    this.Picoseconds += truncate;
-                }
+            //    while ( this.Yoctoseconds.Value > Yoctoseconds.InOneZeptosecond ) {
+            //        var truncate = Math.Truncate( this.Yoctoseconds.Value / Yoctoseconds.InOneZeptosecond );
+            //        this.Yoctoseconds -= truncate * Yoctoseconds.InOneZeptosecond;
+            //        this.Zeptoseconds += truncate;
+            //    }
 
-                while ( this.Picoseconds.Value > Picoseconds.InOneNanosecond ) {
-                    var truncate = Math.Truncate( this.Picoseconds.Value / Picoseconds.InOneNanosecond );
-                    this.Picoseconds -= truncate * Picoseconds.InOneNanosecond;
-                    this.Nanoseconds += truncate;
-                }
+            //    while ( this.Zeptoseconds.Value > Zeptoseconds.InOneAttosecond ) {
+            //        var truncate = Math.Truncate( this.Zeptoseconds.Value / Zeptoseconds.InOneAttosecond );
+            //        this.Zeptoseconds -= truncate * Yoctoseconds.InOneZeptosecond;
+            //        this.Attoseconds += truncate;
+            //    }
 
-                while ( this.Nanoseconds.Value > Nanoseconds.InOneMicrosecond ) {
-                    var truncate = Math.Truncate( this.Nanoseconds.Value / Nanoseconds.InOneMicrosecond );
-                    this.Nanoseconds -= truncate * Nanoseconds.InOneMicrosecond;
-                    this.Microseconds += truncate;
-                }
+            //    while ( this.Attoseconds.Value > Attoseconds.InOneFemtosecond ) {
+            //        var truncate = Math.Truncate( this.Attoseconds.Value / Attoseconds.InOneFemtosecond );
+            //        this.Attoseconds -= truncate * Attoseconds.InOneFemtosecond;
+            //        this.Femtoseconds += truncate;
+            //    }
 
-                while ( this.Microseconds.Value > Microseconds.InOneMillisecond ) {
-                    var truncate = Math.Truncate( this.Microseconds.Value / Microseconds.InOneMillisecond );
-                    this.Microseconds -= truncate * Microseconds.InOneMillisecond;
-                    this.Milliseconds += truncate;
-                }
+            //    while ( this.Femtoseconds.Value > Femtoseconds.InOnePicosecond ) {
+            //        var truncate = Math.Truncate( this.Femtoseconds.Value / Femtoseconds.InOnePicosecond );
+            //        this.Femtoseconds -= truncate * Femtoseconds.InOnePicosecond;
+            //        this.Picoseconds += truncate;
+            //    }
 
-                while ( this.Milliseconds > Milliseconds.InOneSecond ) {
-                    var truncate = Math.Truncate( this.Milliseconds.Value / Milliseconds.InOneSecond );
-                    this.Milliseconds -= truncate * Milliseconds.InOneSecond;
-                    this.Seconds += truncate;
-                }
+            //    while ( this.Picoseconds.Value > Picoseconds.InOneNanosecond ) {
+            //        var truncate = Math.Truncate( this.Picoseconds.Value / Picoseconds.InOneNanosecond );
+            //        this.Picoseconds -= truncate * Picoseconds.InOneNanosecond;
+            //        this.Nanoseconds += truncate;
+            //    }
 
-                while ( this.Seconds.Value > Seconds.InOneMinute ) {
-                    var truncate = Math.Truncate( this.Seconds.Value / Seconds.InOneMinute );
-                    this.Seconds -= truncate * Seconds.InOneMinute;
-                    this.Minutes += truncate;
-                }
+            //    while ( this.Nanoseconds.Value > Nanoseconds.InOneMicrosecond ) {
+            //        var truncate = Math.Truncate( this.Nanoseconds.Value / Nanoseconds.InOneMicrosecond );
+            //        this.Nanoseconds -= truncate * Nanoseconds.InOneMicrosecond;
+            //        this.Microseconds += truncate;
+            //    }
 
-                while ( this.Minutes.Value > Minutes.InOneHour ) {
-                    var truncate = Math.Truncate( this.Minutes.Value / Minutes.InOneHour );
-                    this.Minutes -= truncate * Minutes.InOneHour;
-                    this.Hours += truncate;
-                }
+            //    while ( this.Microseconds.Value > Microseconds.InOneMillisecond ) {
+            //        var truncate = Math.Truncate( this.Microseconds.Value / Microseconds.InOneMillisecond );
+            //        this.Microseconds -= truncate * Microseconds.InOneMillisecond;
+            //        this.Milliseconds += truncate;
+            //    }
 
-                while ( this.Hours.Value > Hours.InOneDay ) {
-                    var truncate = Math.Truncate( this.Hours.Value / Hours.InOneDay );
-                    this.Hours -= truncate * Hours.InOneDay;
-                    this.Days += truncate;
-                }
+            //    while ( this.Milliseconds > Milliseconds.InOneSecond ) {
+            //        var truncate = Math.Truncate( this.Milliseconds.Value / Milliseconds.InOneSecond );
+            //        this.Milliseconds -= truncate * Milliseconds.InOneSecond;
+            //        this.Seconds += truncate;
+            //    }
 
-                while ( this.Days.Value > Days.InOneWeek ) {
-                    var truncate = Math.Truncate( this.Days.Value / Days.InOneWeek );
-                    this.Days -= truncate * Days.InOneWeek;
-                    this.Weeks += truncate;
-                }
+            //    while ( this.Seconds.Value > Seconds.InOneMinute ) {
+            //        var truncate = Math.Truncate( this.Seconds.Value / Seconds.InOneMinute );
+            //        this.Seconds -= truncate * Seconds.InOneMinute;
+            //        this.Minutes += truncate;
+            //    }
 
-                while ( this.Months.Value > Months.InOneYear ) {
-                    var truncate = Math.Truncate( this.Months.Value / Months.InOneYear );
-                    this.Months -= truncate * Months.InOneYear;
-                    this.Years += truncate;
-                }
+            //    while ( this.Minutes.Value > Minutes.InOneHour ) {
+            //        var truncate = Math.Truncate( this.Minutes.Value / Minutes.InOneHour );
+            //        this.Minutes -= truncate * Minutes.InOneHour;
+            //        this.Hours += truncate;
+            //    }
 
-                this.IsNormalized = true;
-            } else {
-                this.IsNormalized = false;
-            }
+            //    while ( this.Hours.Value > Hours.InOneDay ) {
+            //        var truncate = Math.Truncate( this.Hours.Value / Hours.InOneDay );
+            //        this.Hours -= truncate * Hours.InOneDay;
+            //        this.Days += truncate;
+            //    }
+
+            //    while ( this.Days.Value > Days.InOneWeek ) {
+            //        var truncate = Math.Truncate( this.Days.Value / Days.InOneWeek );
+            //        this.Days -= truncate * Days.InOneWeek;
+            //        this.Weeks += truncate;
+            //    }
+
+            //    while ( this.Months.Value > Months.InOneYear ) {
+            //        var truncate = Math.Truncate( this.Months.Value / Months.InOneYear );
+            //        this.Months -= truncate * Months.InOneYear;
+            //        this.Years += truncate;
+            //    }
+
+            //    if ( this.Months.Value < Months.InOneYear ) { break; }
+            //    if ( normalize ) {
+
+
+            //    }
+
+            //    this.IsNormalized = true;
+            //} else {
+            //    this.IsNormalized = false;
+            //}
 
             var tmpThis = this;
             this._lazyTotal = new Lazy<BigInteger>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
@@ -433,7 +456,7 @@ namespace Librainian.Measurement.Time {
             var months = left.Months + right.Months;
             var years = left.Years + right.Years;
 
-            return new Span( yoctoseconds: yoctoseconds, zeptoseconds: zeptoseconds, attoseconds: attoseconds, femtoseconds: femtoseconds, picoseconds: picoseconds, nanoseconds: nanoseconds, microseconds: microseconds, milliseconds: milliseconds, seconds: seconds, minutes: minutes, hours: hours, days: days, months: months, years: years, normalize: true );
+            return new Span( yoctoseconds: yoctoseconds, zeptoseconds: zeptoseconds, attoseconds: attoseconds, femtoseconds: femtoseconds, picoseconds: picoseconds, nanoseconds: nanoseconds, microseconds: microseconds, milliseconds: milliseconds, seconds: seconds, minutes: minutes, hours: hours, days: days, months: months, years: years );
         }
 
         /// <summary>

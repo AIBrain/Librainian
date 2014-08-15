@@ -57,7 +57,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="microsecond"></param>
         public Time( Byte hour = 0, Byte minute = 0, Byte second = 0, Byte millisecond = 0, Byte microsecond = 0 )
             : this() {
-            var span = new Span( hours: hour, minutes: minute, seconds: second, milliseconds: millisecond, microseconds: microsecond, normalize: true );
+            var span = new Span( hours: hour, minutes: minute, seconds: second, milliseconds: millisecond, microseconds: microsecond );
             this.Hour = new Hour( ( Byte )span.Hours.Value );
             this.Minute = new Minute( ( Byte )span.Minutes.Value );
             this.Second = new Second( ( Byte )span.Seconds.Value );
