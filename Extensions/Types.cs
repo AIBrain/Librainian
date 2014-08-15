@@ -14,13 +14,16 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Types.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/Types.cs" was last cleaned by Rick on 2014/08/15 at 2:22 PM
 #endregion
 
 namespace Librainian.Extensions {
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -35,23 +38,7 @@ namespace Librainian.Extensions {
             try {
                 var sourceValue = field.GetValue( source );
 
-                if ( mergeDictionaries ) {
-                    var sourceAsDictionary = sourceValue as IDictionary;
-                    if ( null == sourceAsDictionary ) {
-                        return;
-                    }
-                    var destAsDictionary = field.GetValue( destination ) as IDictionary;
-                    if ( null == destAsDictionary ) {
-                        return;
-                    }
-                    foreach ( var key in sourceAsDictionary.Keys ) {
-                        try {
-                            destAsDictionary[ key ] = sourceAsDictionary[ key ];
-                        }
-                        catch ( Exception exception ) {
-                            exception.Log();
-                        }
-                    }
+                if ( mergeDictionaries && sourceValue is IDictionary && MergeDictions( sourceValue as IDictionary, field, destination ) ) {
                     return;
                 }
 
@@ -69,6 +56,25 @@ namespace Librainian.Extensions {
             catch ( ArgumentException exception ) {
                 exception.Log();
             }
+        }
+
+        public static Boolean MergeDictions< TSource >( IDictionary sourceValue, FieldInfo field, TSource destination ) {
+            if ( null == sourceValue ) {
+                return false;
+            }
+            var destAsDictionary = field.GetValue( destination ) as IDictionary;
+            if ( null == destAsDictionary ) {
+                return false;
+            }
+            foreach ( var key in sourceValue.Keys ) {
+                try {
+                    destAsDictionary[ key ] = sourceValue[ key ];
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -222,10 +228,7 @@ namespace Librainian.Extensions {
         /// <summary>
         ///     Get all <see cref="Type" /> from <see cref="AppDomain.CurrentDomain" /> that should be
         ///     able to be created via
-        ///     <see
-        ///         cref="Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
-        /// " />
-        ///     .
+        ///     <see cref="Activator.CreateInstance(Type,BindingFlags,Binder,object[],CultureInfo) " />.
         /// </summary>
         /// <param name="baseType"></param>
         /// <returns></returns>
@@ -234,6 +237,22 @@ namespace Librainian.Extensions {
                 throw new ArgumentNullException( "baseType" );
             }
             return AppDomain.CurrentDomain.GetAssemblies().SelectMany( assembly => assembly.GetTypes(), ( assembly, type ) => type ).Where( arg => baseType.IsAssignableFrom( arg ) && arg.IsClass && !arg.IsAbstract );
+        }
+
+        public static Func< object > NewInstanceByLambda( [NotNull] this Type type ) {
+            if ( type == null ) {
+                throw new ArgumentNullException( "type" );
+            }
+            return Expression.Lambda< Func< object > >( Expression.New( type ) ).Compile();
+        }
+
+        public static Func< object > NewInstanceByCreate( [NotNull] this Type type ) {
+            if ( type == null ) {
+                throw new ArgumentNullException( "type" );
+            }
+            var localType = type; // create a local copy to prevent adverse effects of closure
+            Func< object > func = ( () => Activator.CreateInstance( localType ) ); // curry the localType
+            return func;
         }
     }
 }

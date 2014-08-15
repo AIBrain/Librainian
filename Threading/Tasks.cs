@@ -21,7 +21,6 @@
 
 namespace Librainian.Threading {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
@@ -32,63 +31,65 @@ namespace Librainian.Threading {
     using Measurement.Time;
     using Timer = System.Timers.Timer;
 
+
+    /// <summary>
+    /// Execute an <see cref="Action"/> on a <see cref="Timer"/>.
+    /// </summary>
     public static class Tasks {
-        public static long Counter;
 
-        public static readonly TaskFactory Factory = new TaskFactory( creationOptions: TaskCreationOptions.PreferFairness, continuationOptions: TaskContinuationOptions.PreferFairness );
+        //private static readonly BufferBlock<OneJob> JobsBlock = new BufferBlock<OneJob>( dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
 
-        public static readonly TaskFactory FactoryLater = new TaskFactory( creationOptions: TaskCreationOptions.None, continuationOptions: TaskContinuationOptions.None );
+        //public static readonly TransformBlock<OneJob, OneJob> PriorityBlock = new TransformBlock<OneJob, OneJob>();
 
-        private static readonly BufferBlock<OneJob> JobsBlock = new BufferBlock<OneJob>( dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
+        ///// <summary>
+        /////     dataflowBlockOptions: <see cref="Blocks.ManyProducers.ConsumeSensible" />
+        ///// </summary>
+        //private static readonly ActionBlock<Action> FireAndForget = new ActionBlock<Action>( action: action => {
+        //    if ( null == action ) {
+        //        return;
+        //    }
+        //    try {
+        //        if ( !CancelJobs ) {
+        //            action();
+        //        }
+        //    }
+        //    catch ( Exception exception ) {
+        //        exception.Log();
+        //    }
+        //    finally {
+        //        Interlocked.Decrement( ref spawnCounter );
+        //    }
+        //}, dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
 
-        public static readonly TransformBlock<OneJob, OneJob> PriorityBlock = new TransformBlock<OneJob, OneJob>();
-
-        /// <summary>
-        ///     dataflowBlockOptions: <see cref="Blocks.ManyProducers.ConsumeSensible" />
-        /// </summary>
-        private static readonly ActionBlock<Action> FireAndForget = new ActionBlock<Action>( action: action => {
-            if ( null == action ) {
-                return;
-            }
-            try {
-                if ( !CancelJobs ) {
-                    action();
-                }
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-            finally {
-                Interlocked.Decrement( ref spawnCounter );
-            }
-        }, dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
-
-        private static long spawnCounter;
-
-        static Tasks() {
-            JobsBlock.LinkTo();
-        }
+        //private static long spawnCounter;
 
         /// <summary>
         ///     <para>Cancel has been requested. Don't queue or start any more spawns.</para>
         /// </summary>
-        /// <remarks>Please don't set this to true.</remarks>
-        public static Boolean CancelJobs { get; set; }
+        public static readonly CancellationToken CancelAllJobsToken = new CancellationToken( false );
 
-        public static long GetSpawnsWaiting() {
-            return Interlocked.Read( ref spawnCounter );
-        }
+        public static readonly PriorityBlock JobPriorityBlock = new PriorityBlock( CancelAllJobsToken );
 
-        private static void IncrementAndThenFireAndForget( Action job, Span? delay = null, Priority priority = Priority.Normal ) {
-            if ( CancelJobs ) {
+        /// <summary>
+        ///     <para>Cancel has been requested. Don't queue any more spawns.</para>
+        /// </summary>
+        public static readonly CancellationToken CancelNewJobsToken = new CancellationToken( false );
+
+
+        //public static UInt64 GetSpawnsWaiting() {
+        //    return ( UInt64 )Interlocked.Read( ref spawnCounter );
+        //}
+
+        private static void Spawn( Action job, Single priority = 0.50f, Span? delay = null ) {
+            if ( CancelNewJobsToken.IsCancellationRequested ) {
                 return;
             }
-            Interlocked.Increment( ref spawnCounter );
-            if ( delay.HasValue ) {
-                FireAndForget.TryPost( item: job, delay: delay.Value );
+            if ( !delay.HasValue ) {
+                var onejob = new OneJob( priority, job );
+                JobPriorityBlock.Add( onejob );
             }
             else {
-                FireAndForget.TryPost( item: job );
+                delay.Value.Create( () => Spawn( job, priority ) ).AndStart();
             }
         }
 
@@ -148,13 +149,6 @@ namespace Librainian.Threading {
             return maxPortThreads;
         }
 
-        public static Func<object> NewInstanceByLambda( [NotNull] this Type type ) {
-            if ( type == null ) {
-                throw new ArgumentNullException( "type" );
-            }
-            return Expression.Lambda<Func<object>>( Expression.New( type ) ).Compile();
-        }
-
         /// <summary>
         ///     <para>Post the <paramref name="job" /> to the <see cref="FireAndForget" /> dataflow.</para>
         /// </summary>
@@ -165,16 +159,7 @@ namespace Librainian.Threading {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            IncrementAndThenFireAndForget( job: job, delay: delay );
-        }
-
-        public static Func<object> NewInstanceByCreate( [NotNull] this Type type ) {
-            if ( type == null ) {
-                throw new ArgumentNullException( "type" );
-            }
-            var localType = type; // create a local copy to prevent adverse effects of closure
-            Func<object> func = ( () => Activator.CreateInstance( localType ) ); // curry the localType
-            return func;
+            AddThenFireAndForget( job: job, delay: delay );
         }
 
         /// <summary>
@@ -189,7 +174,7 @@ namespace Librainian.Threading {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            IncrementAndThenFireAndForget( job: job, delay: delay );
+            AddThenFireAndForget( job: job, delay: delay );
         }
 
         /// <summary>
@@ -204,7 +189,7 @@ namespace Librainian.Threading {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            IncrementAndThenFireAndForget( job: job, delay: delay );
+            AddThenFireAndForget( job: job, delay: delay );
         }
 
         /// <summary>
@@ -219,7 +204,7 @@ namespace Librainian.Threading {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            IncrementAndThenFireAndForget( job: job, delay: delay );
+            AddThenFireAndForget( job: job, delay: delay );
         }
 
         /// <summary>
@@ -234,7 +219,7 @@ namespace Librainian.Threading {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            IncrementAndThenFireAndForget( job: job, delay: delay );
+            AddThenFireAndForget( job: job, delay: delay );
         }
 
         /// <summary>

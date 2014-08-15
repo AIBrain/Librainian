@@ -12,14 +12,16 @@ namespace Librainian.Threading {
 
     public class PriorityBlock {
 
+        [NotNull]
         public BufferBlock<OneJob> Input { get; private set; }
 
+        [NotNull]
         public ActionBlock<Action> Output { get; private set; }
 
         public CancellationToken CancellationToken { get; private set; }
 
-        public PriorityBlock() {
-            this.CancellationToken = new CancellationToken( false );
+        public PriorityBlock( CancellationToken cancellationToken ) {
+            this.CancellationToken = cancellationToken;
             this.Input = new BufferBlock<OneJob>();
             this.Output = new ActionBlock<Action>( action => {
                 if ( action != null ) {
@@ -53,12 +55,13 @@ namespace Librainian.Threading {
         private readonly ConcurrentQueue<OneJob> _jobs = new ConcurrentQueue<OneJob>();
 
         private async Task Triage() {
+            Threads.Report.Enter( );
             while ( !this.CancellationToken.IsCancellationRequested ) {
                 await Task.WhenAny( this.Input.OutputAvailableAsync( this.CancellationToken ) );
 
                 OneJob item;
                 if ( !this.Input.TryReceive( null, out item ) ) {
-                    continue;   //Hello? Hello? Hmm. No one is there. Go back to waiting.
+                    continue;   //Hello? Hello? Hmm. No one is there. Go back to waiting. Lock yor doors too.
                 }
 
                 var highest = this._jobs.OrderByDescending( job => job.Priority ).FirstOrDefault();
@@ -73,6 +76,7 @@ namespace Librainian.Threading {
 
                 await this.Output.SendAsync( highest.Action, this.CancellationToken );
             }
+            Threads.Report.Exit();
         }
 
         public Task TheDoctorsTask { get; private set; }
