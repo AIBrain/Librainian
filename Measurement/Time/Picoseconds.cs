@@ -167,11 +167,11 @@ namespace Librainian.Measurement.Time {
         }
 
         public static implicit operator Femtoseconds( Picoseconds picoseconds ) {
-            return ToFemtoseconds( picoseconds );
+            return picoseconds.ToFemtoseconds();
         }
 
         public static implicit operator Nanoseconds( Picoseconds picoseconds ) {
-            return ToNanoseconds( picoseconds );
+            return picoseconds.ToNanoseconds();
         }
 
         public static Picoseconds operator -( Picoseconds nanoseconds ) {
@@ -220,12 +220,12 @@ namespace Librainian.Measurement.Time {
             return left.Value > right.Value;
         }
 
-        public static Femtoseconds ToFemtoseconds( Picoseconds picoseconds ) {
-            return new Femtoseconds( picoseconds.Value*Femtoseconds.InOnePicosecond );
+        public Femtoseconds ToFemtoseconds() {
+            return new Femtoseconds( Value*Femtoseconds.InOnePicosecond );
         }
 
-        public static Nanoseconds ToNanoseconds( Picoseconds picoseconds ) {
-            return new Nanoseconds( picoseconds.Value/InOneNanosecond );
+        public Nanoseconds ToNanoseconds() {
+            return new Nanoseconds( Value/InOneNanosecond );
         }
     }
 }

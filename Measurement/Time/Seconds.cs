@@ -35,7 +35,8 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    public struct Seconds : IComparable< Seconds > {
+    public struct Seconds : IComparable<Seconds> {
+
         /// <summary>
         ///     60
         /// </summary>
@@ -85,7 +86,8 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Seconds Zero = new Seconds( value: 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember]
+        public readonly Decimal Value;
 
         static Seconds() {
             Zero.Should().BeLessThan( One );
@@ -105,7 +107,7 @@ namespace Librainian.Measurement.Time {
 
         public Seconds( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = ( Decimal )value;
         }
 
         [UsedImplicitly]
@@ -123,7 +125,7 @@ namespace Librainian.Measurement.Time {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
-            return obj is Seconds && this.Equals( ( Seconds ) obj );
+            return obj is Seconds && this.Equals( ( Seconds )obj );
         }
 
         [Pure]
@@ -163,7 +165,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="seconds"></param>
         /// <returns></returns>
         public static implicit operator Milliseconds( Seconds seconds ) {
-            return ToMilliseconds( seconds );
+            return seconds.ToMilliseconds();
         }
 
         /// <summary>
@@ -172,7 +174,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="seconds"></param>
         /// <returns></returns>
         public static implicit operator Minutes( Seconds seconds ) {
-            return ToMinutes( seconds );
+            return seconds.ToMinutes();
         }
 
         public static implicit operator Span( Seconds seconds ) {
@@ -180,11 +182,11 @@ namespace Librainian.Measurement.Time {
         }
 
         public static implicit operator TimeSpan( Seconds seconds ) {
-            return TimeSpan.FromSeconds( ( Double ) seconds.Value );
+            return TimeSpan.FromSeconds( ( Double )seconds.Value );
         }
 
         public static Seconds operator -( Seconds seconds ) {
-            return new Seconds( seconds.Value*-1 );
+            return new Seconds( seconds.Value * -1 );
         }
 
         public static Seconds operator -( Seconds left, Seconds right ) {
@@ -208,7 +210,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Seconds Combine( Seconds left, BigInteger seconds ) {
-            return new Seconds( ( BigInteger ) left.Value + seconds );
+            return new Seconds( ( BigInteger )left.Value + seconds );
         }
 
         public static Boolean operator <( Seconds left, Seconds right ) {
@@ -216,15 +218,15 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Boolean operator <( Seconds left, Milliseconds right ) {
-            return left < ( Seconds ) right;
+            return left < ( Seconds )right;
         }
 
         public static Boolean operator <( Seconds left, Minutes right ) {
-            return ( Minutes ) left < right;
+            return ( Minutes )left < right;
         }
 
         public static Boolean operator >( Seconds left, Minutes right ) {
-            return ( Minutes ) left > right;
+            return ( Minutes )left > right;
         }
 
         public static Boolean operator >( Seconds left, Seconds right ) {
@@ -232,19 +234,21 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Boolean operator >( Seconds left, Milliseconds right ) {
-            return left > ( Seconds ) right;
+            return left > ( Seconds )right;
         }
 
-        public static Milliseconds ToMilliseconds( Seconds seconds ) {
-            return new Milliseconds( seconds.Value*Milliseconds.InOneSecond );
+        [Pure]
+        public Milliseconds ToMilliseconds() {
+            return new Milliseconds( Value * Milliseconds.InOneSecond );
         }
 
-        public static Minutes ToMinutes( Seconds seconds ) {
-            return new Minutes( value: seconds.Value/InOneMinute );
+        [Pure]
+        public Minutes ToMinutes() {
+            return new Minutes( value: Value / InOneMinute );
         }
 
         public static BigInteger ToPlanckTimes( Seconds seconds ) {
-            return BigInteger.Multiply( PlanckTimes.InOneSecond, new BigInteger( seconds.Value ) );
+            return BigInteger.Multiply( PlanckTimes.InOneSecond,  new BigInteger( seconds.Value )  );
         }
 
         public override int GetHashCode() {

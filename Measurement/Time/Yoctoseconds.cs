@@ -110,11 +110,6 @@ namespace Librainian.Measurement.Time {
             return this.Value.CompareTo( other.Value );
         }
 
-        [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneYoctosecond, new BigInteger( this.Value ) );
-        }
-
         public override int GetHashCode() {
             return this.Value.GetHashCode();
         }
@@ -208,6 +203,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( Yoctoseconds left, Yoctoseconds right ) {
             return left.Value > right.Value;
+        }
+
+        [Pure]
+        public BigInteger ToPlanckTimes() {
+            return BigInteger.Multiply( PlanckTimes.InOneYoctosecond, new BigInteger( this.Value ) );
         }
 
         public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) {

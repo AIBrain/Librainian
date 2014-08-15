@@ -124,7 +124,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static implicit operator Months( Years years ) {
-            return ToMonths( years );
+            return years.ToMonths();
         }
 
         public static implicit operator Span( Years years ) {
@@ -163,13 +163,8 @@ namespace Librainian.Measurement.Time {
             return left.Value > right.Value;
         }
 
-        public static Months ToMonths( Years years ) {
-            var months = years.Value * Months.InOneYear;
-            return new Months( months );
-        }
-
-        public static BigInteger ToPlanckTimes( Years years ) {
-            return BigInteger.Multiply( PlanckTimes.InOneYear, new BigInteger( years.Value ) );
+        public Months ToMonths() {
+            return new Months( this.Value * Months.InOneYear );
         }
 
         public override int GetHashCode() {

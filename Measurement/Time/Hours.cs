@@ -122,7 +122,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="hours"></param>
         /// <returns></returns>
         public static implicit operator Days( Hours hours ) {
-            return ToDays( hours );
+            return hours.ToDays();
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="hours"></param>
         /// <returns></returns>
         public static implicit operator Minutes( Hours hours ) {
-            return ToMinutes( hours );
+            return hours.ToMinutes();
         }
 
         /// <summary>
@@ -200,16 +200,12 @@ namespace Librainian.Measurement.Time {
             return left.Value > right.Value;
         }
 
-        public static Days ToDays( Hours hours ) {
-            return new Days( hours.Value/InOneDay );
+        public Days ToDays() {
+            return new Days( Value/InOneDay );
         }
 
-        public static Minutes ToMinutes( Hours hours ) {
-            return new Minutes( hours.Value*Minutes.InOneHour );
-        }
-
-        public static BigInteger ToPlanckTimes( Hours hours ) {
-            return BigInteger.Multiply( PlanckTimes.InOneHour, new BigInteger( hours.Value ) );
+        public Minutes ToMinutes() {
+            return new Minutes( Value*Minutes.InOneHour );
         }
 
         public override int GetHashCode() {

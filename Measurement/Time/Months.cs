@@ -105,7 +105,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static implicit operator Years( Months months ) {
-            return ToYears( months );
+            return months.ToYears();
         }
 
         public static Months operator -( Months days ) {
@@ -163,8 +163,8 @@ namespace Librainian.Measurement.Time {
             return BigInteger.Multiply( PlanckTimes.InOneMonth, new BigInteger( this.Value ) );
         }
 
-        public static Years ToYears( Months months ) {
-            return new Years( months.Value / InOneYear );
+        public Years ToYears() {
+            return new Years( Value / InOneYear );
         }
 
         public override int GetHashCode() {

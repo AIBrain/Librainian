@@ -167,11 +167,11 @@ namespace Librainian.Measurement.Time {
         }
 
         public static implicit operator Milliseconds( Microseconds microseconds ) {
-            return ToMilliseconds( microseconds );
+            return microseconds.ToMilliseconds();
         }
 
         public static implicit operator Nanoseconds( Microseconds microseconds ) {
-            return ToNanoseconds( microseconds );
+            return microseconds.ToNanoseconds();
         }
 
         public static implicit operator TimeSpan( Microseconds microseconds ) {
@@ -240,16 +240,12 @@ namespace Librainian.Measurement.Time {
             return ( Milliseconds ) left > right;
         }
 
-        public static Milliseconds ToMilliseconds( Microseconds microseconds ) {
-            return new Milliseconds( microseconds.Value/InOneMillisecond );
+        public Milliseconds ToMilliseconds() {
+            return new Milliseconds( Value/InOneMillisecond );
         }
 
-        public static Nanoseconds ToNanoseconds( Microseconds microseconds ) {
-            return new Nanoseconds( microseconds.Value*Nanoseconds.InOneMicrosecond );
-        }
-
-        public static BigInteger ToPlanckTimes( Microseconds microseconds ) {
-            return BigInteger.Multiply( PlanckTimes.InOneMicrosecond, new BigInteger( microseconds.Value ) );
+        public Nanoseconds ToNanoseconds() {
+            return new Nanoseconds( Value*Nanoseconds.InOneMicrosecond );
         }
     }
 }

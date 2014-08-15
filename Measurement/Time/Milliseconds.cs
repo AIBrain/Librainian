@@ -193,11 +193,11 @@ namespace Librainian.Measurement.Time {
         /// <param name="milliseconds"></param>
         /// <returns></returns>
         public static implicit operator Microseconds( Milliseconds milliseconds ) {
-            return ToMicroseconds( milliseconds );
+            return milliseconds.ToMicroseconds();
         }
 
         public static implicit operator Seconds( Milliseconds milliseconds ) {
-            return ToSeconds( milliseconds );
+            return milliseconds.ToSeconds();
         }
 
         public static implicit operator Span( Milliseconds milliseconds ) {
@@ -269,12 +269,12 @@ namespace Librainian.Measurement.Time {
             return ( Seconds ) left > right;
         }
 
-        public static Microseconds ToMicroseconds( Milliseconds milliseconds ) {
-            return new Microseconds( milliseconds.Value*Microseconds.InOneMillisecond );
+        public Microseconds ToMicroseconds() {
+            return new Microseconds( Value*Microseconds.InOneMillisecond );
         }
 
-        public static Seconds ToSeconds( Milliseconds milliseconds ) {
-            return new Seconds( milliseconds.Value/InOneSecond );
+        public Seconds ToSeconds() {
+            return new Seconds( Value/InOneSecond );
         }
 
         public Boolean Equals( Milliseconds other ) {

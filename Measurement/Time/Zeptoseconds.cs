@@ -168,7 +168,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="zeptoseconds"></param>
         /// <returns></returns>
         public static implicit operator Attoseconds( Zeptoseconds zeptoseconds ) {
-            return ToAttoseconds( zeptoseconds );
+            return zeptoseconds.ToAttoseconds();
         }
 
         public static implicit operator Span( Zeptoseconds zeptoseconds ) {
@@ -185,7 +185,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="zeptoseconds"></param>
         /// <returns></returns>
         public static implicit operator Yoctoseconds( Zeptoseconds zeptoseconds ) {
-            return ToYoctoseconds( zeptoseconds );
+            return zeptoseconds.ToYoctoseconds();
         }
 
         public static Zeptoseconds operator -( Zeptoseconds zeptoseconds ) {
@@ -227,19 +227,17 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     <para>Convert to a larger unit.</para>
         /// </summary>
-        /// <param name="zeptoseconds"></param>
         /// <returns></returns>
-        public static Femtoseconds ToAttoseconds( Zeptoseconds zeptoseconds ) {
-            return new Attoseconds( zeptoseconds.Value/InOneAttosecond );
+        public Attoseconds ToAttoseconds() {
+            return new Attoseconds( Value/InOneAttosecond );
         }
 
         /// <summary>
         ///     <para>Convert to a smaller unit.</para>
         /// </summary>
-        /// <param name="zeptoseconds"></param>
         /// <returns></returns>
-        public static Yoctoseconds ToYoctoseconds( Zeptoseconds zeptoseconds ) {
-            return new Yoctoseconds( zeptoseconds.Value*Yoctoseconds.InOneZeptosecond );
+        public Yoctoseconds ToYoctoseconds() {
+            return new Yoctoseconds( Value*Yoctoseconds.InOneZeptosecond );
         }
     }
 }

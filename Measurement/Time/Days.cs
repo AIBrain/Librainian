@@ -112,7 +112,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="days"></param>
         /// <returns></returns>
         public static implicit operator Hours( Days days ) {
-            return ToHours( days );
+            return days.ToHours();
         }
 
         public static implicit operator Span( Days days ) {
@@ -129,7 +129,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="days"></param>
         /// <returns></returns>
         public static implicit operator Weeks( Days days ) {
-            return ToWeeks( days );
+            return days.ToWeeks();
         }
 
         public static Days operator -( Days days ) {
@@ -194,16 +194,12 @@ namespace Librainian.Measurement.Time {
             return left.Value > right.Value;
         }
 
-        public static Hours ToHours( Days days ) {
-            return new Hours( days.Value*Hours.InOneDay );
+        public Hours ToHours() {
+            return new Hours( Value*Hours.InOneDay );
         }
 
-        public static BigInteger ToPlanckTimes( Days days ) {
-            return BigInteger.Multiply( PlanckTimes.InOneDay, new BigInteger( days.Value ) );
-        }
-
-        public static Weeks ToWeeks( Days days ) {
-            return new Weeks( days.Value/InOneWeek );
+        public Weeks ToWeeks() {
+            return new Weeks( Value/InOneWeek );
         }
 
         public override int GetHashCode() {

@@ -199,11 +199,11 @@ namespace Librainian.Measurement.Time {
         }
 
         public static implicit operator Femtoseconds( Attoseconds attoseconds ) {
-            return ToFemtoseconds( attoseconds );
+            return attoseconds.ToFemtoseconds();
         }
 
         public static implicit operator Zeptoseconds( Attoseconds attoseconds ) {
-            return ToZeptoseconds( attoseconds );
+            return attoseconds.ToZeptoseconds();
         }
 
         public static Attoseconds operator -( Attoseconds left, Decimal attoseconds ) {
@@ -237,19 +237,17 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         /// Convert to a larger unit.
         /// </summary>
-        /// <param name="attoseconds"></param>
         /// <returns></returns>
-        public static Femtoseconds ToFemtoseconds( Attoseconds attoseconds ) {
-            return new Femtoseconds( attoseconds.Value / InOneFemtosecond );
+        public Femtoseconds ToFemtoseconds() {
+            return new Femtoseconds( Value / InOneFemtosecond );
         }
 
         /// <summary>
         /// Convert to a smaller unit.
         /// </summary>
-        /// <param name="attoseconds"></param>
         /// <returns></returns>
-        public static Zeptoseconds ToZeptoseconds( Attoseconds attoseconds ) {
-            return new Zeptoseconds( attoseconds.Value * Zeptoseconds.InOneAttosecond );
+        public Zeptoseconds ToZeptoseconds() {
+            return new Zeptoseconds( Value * Zeptoseconds.InOneAttosecond );
         }
 
         public int CompareTo( Attoseconds other ) {

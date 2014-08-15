@@ -39,6 +39,7 @@ namespace Librainian.Measurement.Time {
     [Serializable]
     [Immutable]
     public struct Span : IEquatable<Span>, IComparable<Span>, IComparable<TimeSpan> {
+
         /// <summary>
         /// </summary>
         public static readonly Span Zero = new Span( planckTimes: 0 );
@@ -163,6 +164,13 @@ namespace Librainian.Measurement.Time {
             var tmpThis = this;
             this._lazyTotal = new Lazy<BigInteger>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
         }
+
+        public Double TotalMilliseconds(  ) {
+            Milliseconds mill = this.Milliseconds;
+            mill += this.Seconds.ToMilliseconds();
+            return ( double ) mill.Value;
+        }
+
 
         /// <summary>
         ///     <para>

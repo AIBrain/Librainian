@@ -107,7 +107,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="weeks"></param>
         /// <returns></returns>
         public static implicit operator Days( Weeks weeks ) {
-            return ToDays( weeks );
+            return weeks.ToDays();
         }
 
         public static implicit operator Span( Weeks weeks ) {
@@ -172,12 +172,8 @@ namespace Librainian.Measurement.Time {
             return !Equals( left, right );
         }
 
-        public static Days ToDays( Weeks weeks ) {
-            return new Days( weeks.Value*Days.InOneWeek );
-        }
-
-        public static BigInteger ToPlanckTimes( Weeks weeks ) {
-            return BigInteger.Multiply( PlanckTimes.InOneWeek, new BigInteger( weeks.Value ) );
+        public Days ToDays() {
+            return new Days( Value*Days.InOneWeek );
         }
 
         public override int GetHashCode() {

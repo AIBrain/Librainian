@@ -169,11 +169,11 @@ namespace Librainian.Measurement.Time {
         }
 
         public static implicit operator Attoseconds( Femtoseconds femtoseconds ) {
-            return ToAttoseconds( femtoseconds );
+            return femtoseconds.ToAttoseconds();
         }
 
         public static implicit operator Picoseconds( Femtoseconds femtoseconds ) {
-            return ToPicoseconds( femtoseconds );
+            return femtoseconds.ToPicoseconds();
         }
 
         public static implicit operator Span( Femtoseconds femtoseconds ) {
@@ -220,19 +220,17 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     Convert to a smaller unit.
         /// </summary>
-        /// <param name="femtoseconds"></param>
         /// <returns></returns>
-        public static Attoseconds ToAttoseconds( Femtoseconds femtoseconds ) {
-            return new Attoseconds( femtoseconds.Value*Attoseconds.InOneFemtosecond );
+        public Attoseconds ToAttoseconds() {
+            return new Attoseconds( Value*Attoseconds.InOneFemtosecond );
         }
 
         /// <summary>
         ///     Convert to a larger unit.
         /// </summary>
-        /// <param name="femtoseconds"></param>
         /// <returns></returns>
-        public static Picoseconds ToPicoseconds( Femtoseconds femtoseconds ) {
-            return new Picoseconds( femtoseconds.Value/InOnePicosecond );
+        public Picoseconds ToPicoseconds() {
+            return new Picoseconds( Value/InOnePicosecond );
         }
 
         public Boolean Equals( Femtoseconds other ) {

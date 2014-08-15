@@ -95,7 +95,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public BigInteger ToPlanckTimes() {
-            return ToPlanckTimes( this );
+            return BigInteger.Multiply( PlanckTimes.InOneMinute, new BigInteger( this.Value ) );
         }
 
         public static Minutes Combine( Minutes left, Minutes right ) {
@@ -112,7 +112,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="minutes"></param>
         /// <returns></returns>
         public static implicit operator Hours( Minutes minutes ) {
-            return ToHours( minutes );
+            return minutes.ToHours();
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="minutes"></param>
         /// <returns></returns>
         public static implicit operator Seconds( Minutes minutes ) {
-            return ToSeconds( minutes );
+            return minutes.ToSeconds();
         }
 
         /// <summary>
@@ -207,17 +207,12 @@ namespace Librainian.Measurement.Time {
             return left > ( Minutes ) right;
         }
 
-        public static Hours ToHours( Minutes minutes ) {
-            return new Hours( minutes.Value/InOneHour );
+        public Hours ToHours() {
+            return new Hours( Value/InOneHour );
         }
 
-        [Pure]
-        public static BigInteger ToPlanckTimes( Minutes minutes ) {
-            return BigInteger.Multiply( PlanckTimes.InOneMinute, new BigInteger( minutes.Value ) );
-        }
-
-        public static Seconds ToSeconds( Minutes minutes ) {
-            return new Seconds( minutes.Value*Seconds.InOneMinute );
+        public Seconds ToSeconds() {
+            return new Seconds( Value*Seconds.InOneMinute );
         }
 
         public override int GetHashCode() {
