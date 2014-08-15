@@ -16,7 +16,7 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/Tasks.cs" was last cleaned by Rick on 2014/08/15 at 10:26 AM
+// "Librainian/Tasks.cs" was last cleaned by Rick on 2014/08/15 at 10:39 AM
 #endregion
 
 namespace Librainian.Threading {
@@ -31,16 +31,95 @@ namespace Librainian.Threading {
     using Measurement.Time;
     using Timer = System.Timers.Timer;
 
+    public class PriorityBlock<T> {
+        [NotNull]
+        private readonly BufferBlock<T> _lowestPriorityTarget = new BufferBlock<T>( new DataflowBlockOptions { BoundedCapacity = 1 } );
+        [NotNull]
+        private readonly BufferBlock<T> _lowerPriorityTarget = new BufferBlock<T>( new DataflowBlockOptions { BoundedCapacity = 1 } );
+        [NotNull]
+        private readonly BufferBlock<T> _normalPriorityTarget = new BufferBlock<T>( new DataflowBlockOptions { BoundedCapacity = 1 } );
+        [NotNull]
+        private readonly BufferBlock<T> _higherPriorityTarget = new BufferBlock<T>( new DataflowBlockOptions { BoundedCapacity = 1 } );
+        [NotNull]
+        private readonly BufferBlock<T> _highestPriorityTarget = new BufferBlock<T>( new DataflowBlockOptions { BoundedCapacity = 1 } );
+
+        private readonly BufferBlock<T> _source;
+
+        /// <summary>
+        /// </summary>
+        /// <example>
+        ///     b1.LinkTo(priorityBlock.HighPriorityTarget);
+        ///     b2.LinkTo(priorityBlock.LowPriorityTarget);
+        ///     priorityBlock.Source.LinkTo(a);
+        /// </example>
+        public PriorityBlock() {
+            this._source = new BufferBlock<T>( new DataflowBlockOptions { BoundedCapacity = 1 } );
+            this.TriageTask = Task.Run( () => this.Triage() );
+        }
+
+        public Task TriageTask { get; private set; }
+
+        [NotNull]
+        public ITargetBlock<T> HighestPriorityTarget { get { return this._highestPriorityTarget; } }
+
+        [NotNull]
+        public ITargetBlock<T> HigherPriorityTarget { get { return this._higherPriorityTarget; } }
+
+        [NotNull]
+        public ITargetBlock<T> NormalPriorityTarget { get { return this._normalPriorityTarget; } }
+
+        [NotNull]
+        public ITargetBlock<T> LowerPriorityTarget { get { return this._lowerPriorityTarget; } }
+
+        [NotNull]
+        public ITargetBlock<T> LowestPriorityTarget { get { return this._lowestPriorityTarget; } }
+
+        public ISourceBlock<T> Source { get { return this._source; } }
+
+        private async Task Triage() {
+            while ( true ) {
+                await Task.WhenAny(
+                    this._highestPriorityTarget.OutputAvailableAsync(),
+                    this._higherPriorityTarget.OutputAvailableAsync(),
+                    this._normalPriorityTarget.OutputAvailableAsync(),
+                    this._lowerPriorityTarget.OutputAvailableAsync(),
+                    this._lowestPriorityTarget.OutputAvailableAsync()
+                    );
+
+                T item;
+
+                if ( this._highestPriorityTarget.TryReceive( out item ) ) { await this._source.SendAsync( item ); }
+                else if ( this._higherPriorityTarget.TryReceive( out item ) ) { await this._source.SendAsync( item ); }
+                else if ( this._normalPriorityTarget.TryReceive( out item ) ) { await this._source.SendAsync( item ); }
+                else if ( this._lowestPriorityTarget.TryReceive( out item ) ) { await this._source.SendAsync( item ); }
+                else if ( this._lowestPriorityTarget.TryReceive( out item ) ) { await this._source.SendAsync( item ); }
+                else {
+                    // both input blocks must be completed
+                    this._source.Complete();
+                    return;
+                }
+            }
+        }
+    }
+
     public static class Tasks {
+        public enum Priority : byte {
+            Lowest,
+            Low,
+            Normal,
+            High,
+            Highest
+        }
+
         public static long Counter;
 
         public static readonly TaskFactory Factory = new TaskFactory( creationOptions: TaskCreationOptions.PreferFairness, continuationOptions: TaskContinuationOptions.PreferFairness );
 
         public static readonly TaskFactory FactoryLater = new TaskFactory( creationOptions: TaskCreationOptions.None, continuationOptions: TaskContinuationOptions.None );
 
-        public enum Priority : byte {
-            Lowest, Low, Normal, High, Highest
-        }
+        private static readonly BufferBlock<Job> JobsBlock = new BufferBlock<Job>( dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
+
+        public static readonly TransformBlock<Job, Job> PriorityBlock = new TransformBlock<Job, Job>();
 
         /// <summary>
         ///     dataflowBlockOptions: <see cref="Blocks.ManyProducers.ConsumeSensible" />
@@ -63,6 +142,10 @@ namespace Librainian.Threading {
         }, dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
 
         private static long spawnCounter;
+
+        static Tasks() {
+            JobsBlock.LinkTo();
+        }
 
         /// <summary>
         ///     <para>Cancel has been requested. Don't queue or start any more spawns.</para>
@@ -491,6 +574,11 @@ namespace Librainian.Threading {
                 exception.Log();
                 throw;
             }
+        }
+
+        public struct Job {
+            public Action Action;
+            public Priority Priority;
         }
     }
 }
