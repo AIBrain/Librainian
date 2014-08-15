@@ -35,7 +35,9 @@
                     onElapsed();
                 }
                 finally {
-                    timer.DoneWith();
+                    if ( !timer.AutoReset ) {
+                        timer.DoneWith();    
+                    }
                 }
 
             };
