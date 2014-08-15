@@ -393,26 +393,24 @@ namespace Librainian.Measurement.Time {
         /// <param name="seconds"></param>
         public Span( Decimal seconds )
             : this() {
-            var bob = new Seconds( seconds );
-            var jane = bob.ToPlanckTimes();
-            var frank = new Span( jane );
+            var span = new Span( new Seconds( seconds ).ToPlanckTimes() );
 
-            this.PlanckTimes = frank.PlanckTimes;
-            this.Attoseconds = frank.Attoseconds;
-            this.Days = frank.Days;
-            this.Femtoseconds = frank.Femtoseconds;
-            this.Hours = frank.Hours;
-            this.Microseconds = frank.Microseconds;
-            this.Milliseconds = frank.Milliseconds;
-            this.Minutes = frank.Minutes;
-            this.Months = frank.Months;
-            this.Nanoseconds = frank.Nanoseconds;
-            this.Picoseconds = frank.Picoseconds;
-            this.Seconds = frank.Seconds;
-            this.Weeks = frank.Weeks;
-            this.Years = frank.Years;
-            this.Yoctoseconds = frank.Yoctoseconds;
-            this.Zeptoseconds = frank.Zeptoseconds;
+            this.PlanckTimes = span.PlanckTimes;
+            this.Attoseconds = span.Attoseconds;
+            this.Days = span.Days;
+            this.Femtoseconds = span.Femtoseconds;
+            this.Hours = span.Hours;
+            this.Microseconds = span.Microseconds;
+            this.Milliseconds = span.Milliseconds;
+            this.Minutes = span.Minutes;
+            this.Months = span.Months;
+            this.Nanoseconds = span.Nanoseconds;
+            this.Picoseconds = span.Picoseconds;
+            this.Seconds = span.Seconds;
+            this.Weeks = span.Weeks;
+            this.Years = span.Years;
+            this.Yoctoseconds = span.Yoctoseconds;
+            this.Zeptoseconds = span.Zeptoseconds;
 
             var tmpThis = this;
             this._lazyTotal = new Lazy<BigInteger>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
