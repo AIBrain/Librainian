@@ -4,7 +4,6 @@
     using System.Timers;
     using Annotations;
     using FluentAssertions;
-    using FluentAssertions.Common;
     using Measurement.Time;
 
     public static class TimerFactory {
@@ -14,7 +13,8 @@
         [NotNull] private static readonly ConcurrentDictionary<Timer, DateTime> Timers = new ConcurrentDictionary<Timer, DateTime>();
 
         /// <summary>
-        /// Creates, but does not start, the <see cref="Timer"/>.
+        /// <para>Creates, but does not start, the <see cref="Timer"/>.</para>
+        /// <para>Defaults to a one-time <see cref="Timer.Elapsed"/></para>
         /// </summary>
         /// <param name="interval"></param>
         /// <param name="onElapsed"></param>
@@ -71,6 +71,19 @@
                 throw new ArgumentNullException( "timer" );
             }
             timer.AutoReset = false;
+            return timer;
+        }
+
+        /// <summary>
+        /// Make the <paramref name="timer"/> fire every <see cref="Timer.Interval"/>.
+        /// </summary>
+        /// <param name="timer"></param>
+        /// <returns></returns>
+        public static Timer AutoResetting( [NotNull] this Timer timer ) {
+            if ( timer == null ) {
+                throw new ArgumentNullException( "timer" );
+            }
+            timer.AutoReset = true;
             return timer;
         }
     }

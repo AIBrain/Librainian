@@ -132,7 +132,7 @@ namespace Librainian.Measurement.Time.Clocks {
             }
             switch ( granularity ) {
                 case Granularity.Milliseconds:
-                    this._timer = new Timer( interval: Milliseconds.One ) {
+                    this._timer = new Timer( interval: ( Double )Milliseconds.One ) {
                         AutoReset = true
                     };
                     this._timer.Elapsed += this.OnMillisecondElapsed;
@@ -166,53 +166,57 @@ namespace Librainian.Measurement.Time.Clocks {
             Boolean ticked;
 
             this.Millisecond = this.Millisecond.Next( out ticked );
-            if ( ticked ) {
-                var onMillisecondTick = this.OnMillisecondTick;
-                if ( onMillisecondTick != null ) {
-                    onMillisecondTick();
-                }
-
-                this.OnSecondElapsed( sender, e );
+            if ( !ticked ) {
+                return;
             }
+            var onMillisecondTick = this.OnMillisecondTick;
+            if ( onMillisecondTick != null ) {
+                onMillisecondTick();
+            }
+
+            this.OnSecondElapsed( sender, e );
         }
 
         private void OnSecondElapsed( object sender, ElapsedEventArgs e ) {
             Boolean ticked;
 
             this.Second = this.Second.Next( out ticked );
-            if ( ticked ) {
-                var onSecondTick = this.OnSecondTick;
-                if ( onSecondTick != null ) {
-                    onSecondTick();
-                }
-
-                this.OnMinuteElapsed( sender, e );
+            if ( !ticked ) {
+                return;
             }
+            var onSecondTick = this.OnSecondTick;
+            if ( onSecondTick != null ) {
+                onSecondTick();
+            }
+
+            this.OnMinuteElapsed( sender, e );
         }
 
         private void OnMinuteElapsed( object sender, ElapsedEventArgs e ) {
             Boolean ticked;
 
             this.Minute = this.Minute.Next( out ticked );
-            if ( ticked ) {
-                var onMinuteTick = this.OnMinuteTick;
-                if ( onMinuteTick != null ) {
-                    onMinuteTick();
-                }
-
-                this.OnHourElapsed( sender, e );
+            if ( !ticked ) {
+                return;
             }
+            var onMinuteTick = this.OnMinuteTick;
+            if ( onMinuteTick != null ) {
+                onMinuteTick();
+            }
+
+            this.OnHourElapsed( sender, e );
         }
 
         private void OnHourElapsed( object sender, ElapsedEventArgs e ) {
             Boolean ticked;
 
             this.Hour = this.Hour.Next( out ticked );
-            if ( ticked ) {
-                var onHourTick = this.OnHourTick;
-                if ( onHourTick != null ) {
-                    onHourTick( this.Hour );
-                }
+            if ( !ticked ) {
+                return;
+            }
+            var onHourTick = this.OnHourTick;
+            if ( onHourTick != null ) {
+                onHourTick( this.Hour );
             }
         }
     }
