@@ -96,9 +96,17 @@ namespace Librainian.Maths {
         }
 
         public BigDecimal( BigInteger significand, Int32 exponent ) {
+
+            //BUG is this correct?
+            
+            while ( /*exponent > 0 &&*/ significand % 10 == 0 ) {
+                significand /= 10;
+                exponent -= 1;
+            }
+
             this.Significand = significand;
             this.Exponent = exponent;
-            //BUG is this correct?
+
         }
 
         public BigDecimal( Int32 value )
