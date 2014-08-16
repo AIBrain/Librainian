@@ -1,25 +1,28 @@
 #region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Extensions.cs" was last cleaned by Rick on 2014/08/12 at 11:42 AM
-#endregion
+//
+// "Librainian/ParsingExtensions.cs" was last cleaned by Rick on 2014/08/16 at 4:36 PM
+
+#endregion License & Information
 
 namespace Librainian.Parsing {
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -87,6 +90,7 @@ namespace Librainian.Parsing {
 
         [NotNull]
         public static readonly String AllUppercaseLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() );
+
         [NotNull]
         public static readonly String Alphabet = new String( value: Randem.NextString( 676, lowerCase: true, upperCase: false, numbers: false, symbols: false ).Distinct().Where( Char.IsLetter ).OrderBy( c => c ).Aggregate( String.Empty, ( s, c1 ) => s + ' ' + c1 ).ToArray() ).Trim();
 
@@ -160,17 +164,20 @@ namespace Librainian.Parsing {
             switch ( number % 10 ) {
                 case 1:
                     return String.Format( "{0}st", number );
+
                 case 2:
                     return String.Format( "{0}nd", number );
+
                 case 3:
                     return String.Format( "{0}rd", number );
+
                 default:
                     return String.Format( "{0}th", number );
             }
         }
 
         /// <summary>
-        /// Return the substring from 0 to the index of the splitter.
+        ///     Return the substring from 0 to the index of the splitter.
         /// </summary>
         /// <param name="s"></param>
         /// <param name="splitter"></param>
@@ -257,7 +264,7 @@ namespace Librainian.Parsing {
                 return Int32.MaxValue;
             }
 
-            // Ensure arrays [i] / length1 use shorter length 
+            // Ensure arrays [i] / length1 use shorter length
             if ( length1 > length2 ) {
                 Utility.Swap( ref target, ref source );
                 Utility.Swap( ref length1, ref length2 );
@@ -465,8 +472,8 @@ namespace Librainian.Parsing {
             var result = simplify.Replace( coded.ToString(), "$1" ).Substring( 1 );
 
             // now i need to remove any characters coded as D  from
-            // the front of the String because they're not really 
-            // valid as the first code because they don't have an 
+            // the front of the String because they're not really
+            // valid as the first code because they don't have an
             // actual soundex code value
             result = hwBeginString.Replace( result, String.Empty );
 
@@ -478,31 +485,6 @@ namespace Librainian.Parsing {
 
             // return the first character followed by the coded String
             return String.Format( "{0}{1}", s[ 0 ], result );
-        }
-
-        [Obsolete]
-        public static String InHiddenFormat( this Tuple<string, int> tuple ) {
-            return tuple.AsIndexed().InHiddenFormat();
-        }
-
-        [Obsolete]
-        public static String InHiddenFormat( this String indexed ) {
-            return String.Format( "->{0}->", indexed );
-        }
-
-        [Obsolete]
-        public static String InInputFormat( this Tuple<string, int> tuple ) {
-            return tuple.AsIndexed().InInputFormat();
-        }
-
-        [Obsolete]
-        public static String InInputFormat( this String indexed ) {
-            return String.Format( "|-{0}", indexed );
-        }
-
-        [Obsolete]
-        public static String InOutputFormat( this Tuple<string, int> tuple ) {
-            return tuple.AsIndexed().InOutputFormat();
         }
 
         public static String InOutputFormat( this String indexed ) {
@@ -560,13 +542,19 @@ namespace Librainian.Parsing {
             }
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="sentence"></param>
+        /// <returns></returns>
+        /// <seealso cref="Word"/>
+        /// <seealso cref="Sentence"/>
         public static IEnumerable<string> JustWords( this String sentence ) {
             var result = sentence.ToWords().Where( word => word.Any( Char.IsLetterOrDigit ) );
             return result;
         }
 
         /// <summary>
-        ///     Case insensitive. ( true: cAt == CaT )
+        ///     Case insensitive string comparison. ( true: cAt == CaT )
         ///     <see cref="StringComparison.InvariantCultureIgnoreCase" />
         /// </summary>
         /// <param name="source"></param>
@@ -810,12 +798,14 @@ namespace Librainian.Parsing {
             }
 
             #region Test for an exact match
+
             if ( ExactMatch( source, compare ) ) {
                 matchReasons.Add( "ExactMatch( source, compare )" );
                 floater.Add( 1 );
                 goto noMoreTests;
             }
-            #endregion
+
+            #endregion Test for an exact match
 
             if ( source.SequenceEqual( compare ) ) {
                 goto noMoreTests; //exact match. no more comparisons needed.
@@ -827,11 +817,14 @@ namespace Librainian.Parsing {
             var votes = new VotallyD();
 
             #region Test for any amount of characters
+
             votes.ForA( source.Length );
             votes.ForB( compare.Length );
-            #endregion
+
+            #endregion Test for any amount of characters
 
             #region Test for UTF32Encoding
+
             var sourceIntoUTF32Encoding = new UTF32Encoding( bigEndian: true, byteOrderMark: true, throwOnInvalidCharacters: false ).GetBytes( source );
             votes.ForA( sourceIntoUTF32Encoding.LongCount() );
 
@@ -849,9 +842,11 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-            #endregion
+
+            #endregion Test for UTF32Encoding
 
             #region Test for a string reversal.
+
             var compareReversed = Enumerable.Reverse( compare );
             if ( source.SequenceEqual( compareReversed ) ) {
                 votes.ForA( source.Length );
@@ -862,9 +857,11 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-            #endregion
+
+            #endregion Test for a string reversal.
 
             #region Test for exact match after Distinct()
+
             var sourceDistinct = new String( source.Distinct().ToArray() );
             var compareDistinct = new String( compare.Distinct().ToArray() );
             var compareDistinctReverse = new String( Enumerable.Reverse( compareDistinct ).ToArray() );
@@ -877,9 +874,11 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-            #endregion
+
+            #endregion Test for exact match after Distinct()
 
             #region Test for reversal match after distinct
+
             if ( sourceDistinct.SequenceEqual( compareDistinctReverse ) ) {
                 votes.ForA( sourceDistinct.Length * 2 );
                 votes.ForB( compareDistinctReverse.Length );
@@ -888,9 +887,11 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-            #endregion
+
+            #endregion Test for reversal match after distinct
 
             #region do any chars in source also show in compare
+
             var tempcounter = 0;
             foreach ( var c in source ) {
                 votes.ForA();
@@ -905,9 +906,11 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-            #endregion
+
+            #endregion do any chars in source also show in compare
 
             #region do any chars in compare also show in source
+
             tempcounter = 0;
             foreach ( var c in compare ) {
                 votes.ForB( 1 );
@@ -922,9 +925,11 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-            #endregion
+
+            #endregion do any chars in compare also show in source
 
             #region check for substrings
+
             if ( source.Contains( compare ) ) {
                 votes.ForA( source.Length );
                 votes.ForB( compare.Length );
@@ -942,15 +947,18 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-            #endregion
+
+            #endregion check for substrings
 
             #region DamerauLevenshteinDistance
+
             Single threshold = Math.Max( source.Length, compare.Length );
             var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, target: compare, threshold: ( int )threshold );
             floater.Add( threshold - ( actualDamerauLevenshteinDistance / threshold ) );
 
             if ( stopwatch.Elapsed > timeout ) { }
-            #endregion
+
+            #endregion DamerauLevenshteinDistance
 
         noMoreTests:
             return floater;
@@ -967,7 +975,7 @@ namespace Librainian.Parsing {
             if ( s == null ) {
                 throw new ArgumentNullException( "s" );
             }
-            return FullSoundex( s ).PadRight( length, '0' ) // soundex is no shorter than 
+            return FullSoundex( s ).PadRight( length, '0' ) // soundex is no shorter than
                                    .Substring( 0, length ); // and no longer than length
         }
 
@@ -1139,6 +1147,7 @@ namespace Librainian.Parsing {
             //AIBrain.Brain.BlackBoxClass.Diagnostic( r.Split( sentence ) );
 
             //AIBrain.Brain.BlackBoxClass.Diagnostic( new Regex( @"(\b\b)|(\$\d+\.\d+)" ).Split( sentence ) );
+
             #endregion Testing
 
             if ( sentence == null ) {
@@ -1271,7 +1280,7 @@ namespace Librainian.Parsing {
                 if ( megabytes > Int32.MaxValue ) {
                     return false;
                 }
-                using ( new MemoryFailPoint( ( int ) megabytes ) ) {
+                using ( new MemoryFailPoint( ( int )megabytes ) ) {
                     return true;
                 }
             }
@@ -1290,14 +1299,16 @@ namespace Librainian.Parsing {
                 if ( megabytes > Int32.MaxValue ) {
                     return false;
                 }
-                using ( new MemoryFailPoint( ( int ) megabytes ) ) {
+                using ( new MemoryFailPoint( ( int )megabytes ) ) {
                     return true;
                 }
             }
             catch ( ArgumentOutOfRangeException ) {
                 return false;
             }
-            catch ( OutOfMemoryException ) { return false; }
+            catch ( OutOfMemoryException ) {
+                return false;
+            }
         }
     }
 }
