@@ -329,6 +329,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Maths\BigIntegerRange.cs" />
+    <Compile Include="Maths\Class1.cs" />
     <Compile Include="Maths\RomanNumber.cs" />
     <Compile Include="Maths\MovingAverageCalculator.cs" />
     <Compile Include="Maths\DoubleConverter.cs" />
