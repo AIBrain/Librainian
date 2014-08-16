@@ -23,6 +23,7 @@ namespace Librainian.Measurement.Time {
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.Serialization;
+    using System.Speech.Recognition;
     using Annotations;
     using Collections;
     using FluentAssertions;
@@ -743,20 +744,47 @@ namespace Librainian.Measurement.Time {
             return bob.ToStrings( ", " );
         }
 
-        private static readonly BigDecimal MaximumUsefulDecimal = new BigDecimal( Decimal.MaxValue);
+        private static readonly BigDecimal MaximumUsefulDecimal = new BigDecimal( Decimal.MaxValue );
 
-        public String CompactFormOfSeconds() {
+        public String ApproximatelySeconds() {
 
             BigDecimal bigSeconds = this.Seconds.Value;
-            bigSeconds += this.Milliseconds.Value / Milliseconds.InOneSecond;
-            bigSeconds += this.Microseconds.ToMilliseconds() / Milliseconds.InOneSecond;
-            bigSeconds += this.Nanoseconds.ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
-            bigSeconds += this.Picoseconds.ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
-            bigSeconds += this.Femtoseconds.ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
-            bigSeconds += this.Attoseconds.ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
-            bigSeconds += this.Zeptoseconds.ToAttoseconds().ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
-            bigSeconds += this.Yoctoseconds.ToZeptoseconds().ToAttoseconds().ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
 
+            bigSeconds += this.Milliseconds.ToSeconds().Value;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Microseconds.ToMilliseconds() / Milliseconds.InOneSecond;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Nanoseconds.ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Picoseconds.ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Femtoseconds.ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Attoseconds.ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Zeptoseconds.ToAttoseconds().ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Yoctoseconds.ToZeptoseconds().ToAttoseconds().ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Minutes.ToSeconds().Value ;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Hours.ToMinutes().ToSeconds().Value;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            
+            // Seconds.InOneMinute
+
+
+        display:
             var asSeconds = new Seconds( ( Decimal )bigSeconds );
             return String.Format( "{0} seconds", asSeconds );
         }

@@ -273,6 +273,7 @@ namespace Librainian.Measurement.Time {
             return new Microseconds( Value*Microseconds.InOneMillisecond );
         }
 
+        [Pure]
         public Seconds ToSeconds() {
             return new Seconds( Value/InOneSecond );
         }
