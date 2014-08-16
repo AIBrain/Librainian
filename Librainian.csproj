@@ -224,6 +224,7 @@
     <Compile Include="Database\MMF\Win32MapApis.cs" />
     <Compile Include="Database\SQLDatabaseExtensions.cs" />
     <Compile Include="Database\SQLQuery.cs" />
+    <Compile Include="Extensions\BooleanPredicateBuilder.cs" />
     <Compile Include="Extensions\ReflectionHelper.cs" />
     <Compile Include="Extensions\CoordinatesEx.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
@@ -440,7 +441,6 @@
     <Compile Include="Measurement\Time\Seconds.cs" />
     <Compile Include="Measurement\Time\Span.cs" />
     <Compile Include="Misc\Bitten.cs" />
-    <Compile Include="Misc\BooleanPredicateBuilder.cs" />
     <Compile Include="Misc\CodeEngine.cs" />
     <Compile Include="Misc\UntestedStuff.cs" />
     <Compile Include="Parsing\ClosedMatchContext.cs" />

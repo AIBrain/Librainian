@@ -1,4 +1,4 @@
-﻿#region License & Information
+#region License & Information
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
@@ -17,12 +17,12 @@
 // "Librainian/BooleanPredicateBuilder.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
 #endregion
 
-namespace Librainian.Misc {
+namespace Librainian.Extensions {
     using System;
     using System.Linq.Expressions;
 
     public static class BooleanPredicateBuilder {
-        public static Expression< Func< TTT, Boolean > > True< TTT >() {
+        public static Expression< Func< TTT, bool > > True< TTT >() {
             return f => true;
         }
 
