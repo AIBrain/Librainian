@@ -33,7 +33,6 @@ namespace Librainian.Parsing {
     using System.Linq;
     using System.Net;
     using System.Numerics;
-    using System.Runtime;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
@@ -41,7 +40,6 @@ namespace Librainian.Parsing {
     using Annotations;
     using Collections;
     using Extensions;
-    using Hardware;
     using Linguistics;
     using Maths;
     using Numerics;
@@ -1242,98 +1240,6 @@ namespace Librainian.Parsing {
             }
         }
 
-        public static Boolean CanAllocateMemory( this UInt16 bytes ) {
-            try {
-                if ( bytes <= 1 ) {
-                    return true;
-                }
-                var megabytes = bytes / 1048576;
-                if ( 0 == megabytes ) {
-                    return true;
-                }
-                if ( bytes > Computer.GetAvailableMemeory() ) { GC.Collect(); }
-                using ( new MemoryFailPoint( megabytes ) ) {
-                    return true;
-                }
-            }
-            catch ( ArgumentOutOfRangeException ) {
-                return false;
-            }
-            catch ( OutOfMemoryException ) {
-                return false;
-            }
-        }
 
-        public static Boolean CanAllocateMemory( this Int32 bytes ) {
-            try {
-                if ( bytes <= 1 ) {
-                    return true;
-                }
-                var megabytes = bytes / 1048576;
-                if ( 0 == megabytes ) {
-                    return true;
-                }
-                if ( bytes > Computer.GetAvailableMemeory() ) { GC.Collect(); }
-                using ( new MemoryFailPoint( megabytes ) ) {
-                    return true;
-                }
-            }
-            catch ( ArgumentOutOfRangeException ) {
-                return false;
-            }
-            catch ( OutOfMemoryException ) {
-                return false;
-            }
-        }
-
-        public static Boolean CanAllocateMemory( this Int64 bytes ) {
-            try {
-                if ( bytes <= 1 ) {
-                    return true;
-                }
-                var megabytes = bytes / 1048576;
-                if ( 0 == megabytes ) {
-                    return true;
-                }
-                if ( megabytes > Int32.MaxValue ) {
-                    megabytes = Int32.MaxValue;
-                }
-                if ( bytes > Computer.GetAvailableMemeory() ) { GC.Collect(); }
-                using ( new MemoryFailPoint( ( int )megabytes ) ) {
-                    return true;
-                }
-            }
-            catch ( ArgumentOutOfRangeException ) {
-                return false;
-            }
-            catch ( OutOfMemoryException ) {
-                return false;
-            }
-        }
-
-        public static Boolean CanAllocateMemory( this UInt64 bytes ) {
-            try {
-                if ( bytes <= 1 ) {
-                    return true;
-                }
-                var megabytes = bytes / 1048576;
-                if ( 0 == megabytes ) {
-                    return true;
-                }
-                if ( megabytes > Int32.MaxValue ) {
-                    megabytes = Int32.MaxValue;
-                }
-                if ( bytes > Computer.GetAvailableMemeory() ) { GC.Collect(); }
-                using ( new MemoryFailPoint( ( int )megabytes ) ) {
-                    return true;
-                }
-            }
-            catch ( ArgumentOutOfRangeException ) {
-                return false;
-            }
-            catch ( OutOfMemoryException ) {
-                return false;
-            }
-        }
     }
 }

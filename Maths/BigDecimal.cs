@@ -30,6 +30,7 @@ namespace Librainian.Maths {
     using Annotations;
     using Extensions;
     using FluentAssertions;
+    using Hardware;
     using NUnit.Framework;
     using Parsing;
 
