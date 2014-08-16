@@ -17,10 +17,10 @@
 // "Librainian/ProductExampleClass.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 #endregion
 
-namespace Librainian.Extensions {
+namespace Librainian.Misc {
     using System;
     using System.Linq;
-    using Misc;
+    using Extensions;
 
     internal static class ProductExampleClass {
         private static IQueryable< Product > SearchProducts( IQueryable< Product > products, params String[] keywords ) {

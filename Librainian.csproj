@@ -247,7 +247,6 @@
     <Compile Include="Extensions\PopulateProgressDelegate.cs" />
     <Compile Include="Extensions\PopulateProgressDelegateError.cs" />
     <Compile Include="Extensions\PopulateProgressEventArgs.cs" />
-    <Compile Include="Extensions\ProductExampleClass.cs" />
     <Compile Include="Extensions\RegistryServer.cs" />
     <Compile Include="Extensions\Search.cs" />
     <Compile Include="Extensions\Strings.cs" />
@@ -393,6 +392,7 @@
     <Compile Include="Measurement\Time\Zeptoseconds.cs" />
     <Compile Include="Linguistics\Book.cs" />
     <Compile Include="Linguistics\Page.cs" />
+    <Compile Include="Misc\ProductExampleClass.cs" />
     <Compile Include="Persistence\PersistableSettings.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
