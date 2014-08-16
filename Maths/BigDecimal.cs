@@ -135,6 +135,17 @@ namespace Librainian.Maths {
             this.Exponent = BitConverter.ToInt32( flags, 0 );
         }
 
+        public BigDecimal( String value ) {
+            BigDecimal? number;
+            string whyfailed;
+            if ( !TryParse( value, out number, out whyfailed ) || null == number ) {
+                throw new InvalidOperationException( String.Format( "Unable to parse a BigDecimal from the given string because '{0}'.", whyfailed ) );
+            }
+            this.Significand = number.Value.Significand;
+            this.Exponent = number.Value.Exponent;
+            throw new InvalidOperationException( "Unable to parse a BigDecimal from the given string." );
+        }
+
         /// <summary>
         ///     The significand (aka mantissa) is part of a number consisting of its significant digits.
         /// </summary>
