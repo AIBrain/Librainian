@@ -29,9 +29,7 @@ namespace Librainian.Maths {
     using Annotations;
     using Extensions;
     using FluentAssertions;
-    using MathNet.Numerics;
     using Numerics;
-    using NUnit.Framework;
     using Parsing;
 
     /// <summary>
@@ -100,7 +98,7 @@ namespace Librainian.Maths {
 
             var bobAsString = String.Format("{0}", bob);
 
-            MathNet.Numerics.Random.RandomExtensions.NextBytes
+            //MathNet.Numerics.Random.RandomExtensions.NextBytes
 
             this._answer = (Decimal)bob;
         }

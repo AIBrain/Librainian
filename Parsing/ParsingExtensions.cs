@@ -596,9 +596,9 @@ namespace Librainian.Parsing {
             return value.IsJustNumbers() ? null : value;
         }
 
-        public static Int64 NumberOfDigits( this BigInteger number ) {
+        public static Int32 NumberOfDigits( this BigInteger number ) {
             // do not count the sign
-            return ( number * number.Sign ).ToString( "R" ).Length;
+            return ( number * number.Sign ).ToString().Length;
         }
 
         public static String PadMiddle( int totalLength, String partA, String partB, char paddingChar ) {

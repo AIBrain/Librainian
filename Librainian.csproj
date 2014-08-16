@@ -330,7 +330,6 @@
     </Compile>
     <Compile Include="Maths\BigDecimal2.cs" />
     <Compile Include="Maths\BigIntegerRange.cs" />
-    <Compile Include="Maths\Class1.cs" />
     <Compile Include="Maths\RomanNumber.cs" />
     <Compile Include="Maths\MovingAverageCalculator.cs" />
     <Compile Include="Maths\DoubleConverter.cs" />
