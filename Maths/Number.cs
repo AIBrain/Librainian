@@ -1,32 +1,37 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
+//
 // "Librainian/Number.cs" was last cleaned by Rick on 2014/08/12 at 8:51 AM
-#endregion
+
+#endregion License & Information
 
 namespace Librainian.Maths {
+
     using System;
     using System.Linq;
     using System.Numerics;
     using Annotations;
     using Extensions;
     using FluentAssertions;
+    using MathNet.Numerics;
     using Numerics;
+    using NUnit.Framework;
     using Parsing;
 
     /// <summary>
@@ -36,6 +41,7 @@ namespace Librainian.Maths {
     /// <seealso cref="NumberExtensions.TestNumberParsings"/>
     [Immutable]
     public struct Number {
+
         private readonly BigDecimal _answer;
 
         public BigDecimal Answer {
@@ -48,13 +54,10 @@ namespace Librainian.Maths {
 
         //private readonly Number? _value;
 
-
-
         //public Number( [NotNull] String bigHugeDecimalNumber ) {
         //    if ( bigHugeDecimalNumber == null ) {
         //        throw new ArgumentNullException( "bigHugeDecimalNumber" );
         //    }
-
 
         //    if ( !TryParseNumber( bigHugeDecimalNumber, out this._value ) ) {
         //        throw new ArgumentOutOfRangeException( "bigHugeDecimalNumber", String.Format( "Unable to parse a number from the string {0}", bigHugeDecimalNumber ) );
@@ -71,8 +74,12 @@ namespace Librainian.Maths {
         //    this.Numerator = new BigDecimal();
         //}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
         public Number( BigDecimal numerator, BigDecimal denominator ) {
-
             var numeratorMultiplier = BigInteger.One;
             while ( Math.Truncate( ( Decimal )numerator ) > ( Decimal )numerator ) {
                 numerator *= 10;
@@ -88,18 +95,28 @@ namespace Librainian.Maths {
             //this.Denominator = new BigDecimal( this._value.GetWholePart(), 0 );
         }
 
+        public Number( BigInteger numerator, BigInteger denominator ) {
+            var bob = new BigRational( numerator, denominator );
+
+            var bobAsString = String.Format("{0}", bob);
+
+            MathNet.Numerics.Random.RandomExtensions.NextBytes
+
+            this._answer = (Decimal)bob;
+        }
+
         private Number( BigRational bigRational ) {
             throw new NotImplementedException();
         }
 
-        //public Number( BigRational value ) {
 
+        //public Number( BigRational value ) {
         //    this._value = value;
 
         //}
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="value"></param>
         /// <param name="number"></param>
@@ -124,7 +141,6 @@ namespace Librainian.Maths {
             }
 
             if ( value.Contains( "^" ) ) {
-
                 //TODO add in subset for parsing numbers like "3.14^15"? (exponential notation?)
 
                 //TODO add in subset for parsing numbers like "3.14X10^15"? (exponential notation?)

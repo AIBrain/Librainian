@@ -29,6 +29,9 @@ namespace Librainian.Measurement.Time {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public struct Weeks : IComparable< Weeks > {
+
+        public static readonly UInt16 InOneYear = 52;
+
         /// <summary>
         ///     One <see cref="Weeks" /> .
         /// </summary>
@@ -172,6 +175,7 @@ namespace Librainian.Measurement.Time {
             return !Equals( left, right );
         }
 
+        [Pure]
         public Days ToDays() {
             return new Days( Value*Days.InOneWeek );
         }

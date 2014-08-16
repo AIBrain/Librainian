@@ -14,40 +14,39 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Day.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
+// "Librainian/Month.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
 #endregion
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time.Clocks {
     using System;
     using System.Runtime.Serialization;
     using System.Threading;
-    using Clocks;
     using FluentAssertions;
 
     /// <summary>
-    ///     A simple struct for a Day of the month.
+    ///     A simple struct for a <see cref="Month" />.
     /// </summary>
     [DataContract]
     [Serializable]
-    public struct Day : IClockPart {
+    public struct Month : IClockPart {
         /// <summary>
-        ///     31
+        ///     12
         /// </summary>
-        public const Byte Maximum = 31;
+        public const Byte Maximum = Months.InOneYear;
 
         /// <summary>
         ///     1
         /// </summary>
         public const Byte Minimum = 1;
 
-        [DataMember] private long _value;
+        private long _value;
 
-        static Day() {
+        static Month() {
             Maximum.Should().BeGreaterThan( Minimum );
         }
 
-        public Day( Byte day ) : this() {
-            this.Set( day );
+        public Month( Byte month ) : this() {
+            this.Value = month;
         }
 
         [DataMember]
@@ -57,14 +56,14 @@ namespace Librainian.Measurement.Time {
                 value.Should().BeInRange( Minimum, Maximum );
 
                 if ( value < Minimum || value > Maximum ) {
-                    throw new ArgumentOutOfRangeException( "value", String.Format( "The specified day {0} is out of the valid range {1} to {2}.", value, Minimum, Maximum ) );
+                    throw new ArgumentOutOfRangeException( "value", String.Format( "The specified month {0} is out of the valid range {1} to {2}.", value, Minimum, Maximum ) );
                 }
                 Interlocked.Exchange( ref this._value, value );
             }
         }
 
         /// <summary>
-        ///     Decrease the current hour.
+        ///     Decrease the current month.
         ///     <para>Returns true if the value passed <see cref="Minimum" /></para>
         /// </summary>
         public Boolean Rewind() {
@@ -83,7 +82,7 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        ///     Increase the current hour.
+        ///     Increase the current month.
         ///     <para>Returns true if the value passed <see cref="Maximum" /></para>
         /// </summary>
         public Boolean Tick() {

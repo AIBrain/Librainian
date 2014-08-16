@@ -186,8 +186,14 @@ namespace Librainian.Maths {
         }
 
         public static BigDecimal operator *( BigDecimal left, BigDecimal right ) {
+            return Multiply( left, right );
+        }
+
+        [Pure]
+        public static BigDecimal Multiply( BigDecimal left, BigDecimal right ) {
             return new BigDecimal( mantissa: left.Mantissa * right.Mantissa, exponent: left.Exponent + right.Exponent );
         }
+
 
         public static BigDecimal operator /( BigDecimal dividend, BigDecimal divisor ) {
             var exponentChange = Precision - ( dividend.Mantissa.NumberOfDigits() - divisor.Mantissa.NumberOfDigits() );
@@ -289,6 +295,14 @@ namespace Librainian.Maths {
         public static explicit operator Decimal( BigDecimal value ) {
             return ( Decimal )value.Mantissa * ( Decimal )Math.Pow( 10, value.Exponent );
         }
+
+        //public static explicit operator BigInteger( BigDecimal value ) {
+        //    var man = (BigDecimal)value.Mantissa;
+        //    new BigDecimal(
+        //    man *= BigDecimal.Pow( 10, value.Exponent );
+
+        //    return ( Decimal )value.Mantissa * ( Decimal )Math.Pow( 10, value.Exponent );
+        //}
 
         //public static explicit operator int( BigDecimal value ) {
         //    return ( int )( value.Mantissa * BigInteger.Pow( 10, value.Exponent ) );

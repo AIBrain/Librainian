@@ -17,11 +17,10 @@
 // "Librainian/Year.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
 #endregion
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time.Clocks {
     using System;
     using System.Numerics;
     using System.Runtime.Serialization;
-    using Clocks;
 
     /// <summary>
     ///     A simple struct for a Year.

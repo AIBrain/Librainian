@@ -23,7 +23,6 @@ namespace Librainian.Measurement.Time {
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.Serialization;
-    using System.Speech.Recognition;
     using Annotations;
     using Collections;
     using FluentAssertions;
@@ -754,25 +753,25 @@ namespace Librainian.Measurement.Time {
             bigSeconds += this.Milliseconds.ToSeconds().Value;
             if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
 
-            bigSeconds += this.Microseconds.ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Microseconds.ToMilliseconds().ToSeconds().Value;
             if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
 
-            bigSeconds += this.Nanoseconds.ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Nanoseconds.ToMicroseconds().ToMilliseconds().ToSeconds().Value;
             if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
 
-            bigSeconds += this.Picoseconds.ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Picoseconds.ToNanoseconds().ToMicroseconds().ToMilliseconds().ToSeconds().Value;
             if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
 
-            bigSeconds += this.Femtoseconds.ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Femtoseconds.ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds().ToSeconds().Value;
             if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
 
-            bigSeconds += this.Attoseconds.ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Attoseconds.ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds().ToSeconds().Value;
             if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
 
-            bigSeconds += this.Zeptoseconds.ToAttoseconds().ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Zeptoseconds.ToAttoseconds().ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds().ToSeconds().Value;
             if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
 
-            bigSeconds += this.Yoctoseconds.ToZeptoseconds().ToAttoseconds().ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Yoctoseconds.ToZeptoseconds().ToAttoseconds().ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds().ToSeconds().Value;
             if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
 
             bigSeconds += this.Minutes.ToSeconds().Value ;
@@ -780,8 +779,19 @@ namespace Librainian.Measurement.Time {
 
             bigSeconds += this.Hours.ToMinutes().ToSeconds().Value;
             if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Days.ToHours().ToMinutes().ToSeconds().Value;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Weeks.ToDays().ToHours().ToMinutes().ToSeconds().Value;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Months.ToYears().ToDays().ToHours().ToMinutes().ToSeconds().Value;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+
+            bigSeconds += this.Years.ToDays().ToHours().ToMinutes().ToSeconds().Value;
+            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
             
-            // Seconds.InOneMinute
 
 
         display:

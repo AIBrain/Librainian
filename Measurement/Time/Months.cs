@@ -163,6 +163,7 @@ namespace Librainian.Measurement.Time {
             return BigInteger.Multiply( PlanckTimes.InOneMonth, new BigInteger( this.Value ) );
         }
 
+        [Pure]
         public Years ToYears() {
             return new Years( Value / InOneYear );
         }

@@ -37,7 +37,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BigRationalLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -67,6 +67,9 @@
     <Reference Include="FluentAssertions.Core, Version=3.1.229.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\AIBrain\packages\FluentAssertions.3.1.229\lib\net45\FluentAssertions.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\Universal\packages\MathNet.Numerics.3.2.1\lib\net40\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -332,6 +335,7 @@
     <Compile Include="Maths\Number.cs" />
     <Compile Include="Maths\NumberExtensions.cs" />
     <Compile Include="Maths\RomanConverter.cs" />
+    <Compile Include="Maths\TestUnitsOfMath.cs" />
     <Compile Include="Maths\Votally.cs" />
     <Compile Include="Maths\VotallyD.cs" />
     <Compile Include="Measurement\Currency\AltCoinExtensions.cs" />
@@ -355,12 +359,12 @@
     <Compile Include="Measurement\Time\Clocks\Microsecond.cs" />
     <Compile Include="Measurement\Time\Clocks\Millisecond.cs" />
     <Compile Include="Measurement\Time\Clocks\MomentInTimeClock.cs" />
-    <Compile Include="Measurement\Time\Day.cs" />
+    <Compile Include="Measurement\Time\Clocks\Day.cs" />
     <Compile Include="Measurement\Time\Clocks\Hour.cs" />
     <Compile Include="Measurement\Time\Clocks\ClockPart.cs" />
     <Compile Include="Measurement\Time\ETACalculator.cs" />
     <Compile Include="Measurement\Time\Clocks\Minute.cs" />
-    <Compile Include="Measurement\Time\Month.cs" />
+    <Compile Include="Measurement\Time\Clocks\Month.cs" />
     <Compile Include="Measurement\Time\RoundTo.cs" />
     <Compile Include="Measurement\Time\Clocks\Second.cs" />
     <Compile Include="Measurement\Time\Clocks\TickingClock.cs" />
@@ -382,7 +386,7 @@
     <Compile Include="Measurement\Time\Weeks.cs" />
     <Compile Include="Measurement\Time\UniversalDateTime.cs" />
     <Compile Include="Measurement\Time\WhenRange.cs" />
-    <Compile Include="Measurement\Time\Year.cs" />
+    <Compile Include="Measurement\Time\Clocks\Year.cs" />
     <Compile Include="Measurement\Time\Years.cs" />
     <Compile Include="Measurement\Time\Yoctoseconds.cs" />
     <Compile Include="Measurement\Time\Zeptoseconds.cs" />

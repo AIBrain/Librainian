@@ -24,6 +24,7 @@ namespace Librainian.Measurement.Time {
     using System.Runtime.Serialization;
     using Annotations;
     using FluentAssertions;
+    using Maths;
     using Parsing;
 
     /// <summary>
@@ -35,7 +36,7 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    public struct Seconds : IComparable<Seconds> {
+    public struct Seconds : IComparable<Seconds>, IQuantityOfTime {
 
         /// <summary>
         ///     60
@@ -45,7 +46,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     <see cref="Five" /> <see cref="Seconds" />.
         /// </summary>
-        public static readonly Seconds Five = new Seconds( value: 5 );
+        public static readonly Seconds Five = new Seconds(  5 );
 
         /// <summary>
         ///     <see cref="One" /> <see cref="Seconds" />.
@@ -55,39 +56,39 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     <see cref="Seven" /> <see cref="Seconds" />.
         /// </summary>
-        public static readonly Seconds Seven = new Seconds( value: 7 );
+        public static readonly Seconds Seven = new Seconds(  7 );
 
         /// <summary>
         ///     <see cref="Ten" /> <see cref="Seconds" />.
         /// </summary>
-        public static readonly Seconds Ten = new Seconds( value: 10 );
+        public static readonly Seconds Ten = new Seconds(  10 );
 
         /// <summary>
         ///     <see cref="Thirteen" /> <see cref="Seconds" />.
         /// </summary>
-        public static readonly Seconds Thirteen = new Seconds( value: 13 );
+        public static readonly Seconds Thirteen = new Seconds(  13 );
 
         /// <summary>
         ///     <see cref="Thirty" /> <see cref="Seconds" />.
         /// </summary>
-        public static readonly Seconds Thirty = new Seconds( value: 30 );
+        public static readonly Seconds Thirty = new Seconds(  30 );
 
         /// <summary>
         ///     <see cref="Three" /> <see cref="Seconds" />.
         /// </summary>
-        public static readonly Seconds Three = new Seconds( value: 3 );
+        public static readonly Seconds Three = new Seconds(  3 );
 
         /// <summary>
         ///     <see cref="Two" /> <see cref="Seconds" />.
         /// </summary>
-        public static readonly Seconds Two = new Seconds( value: 2 );
+        public static readonly Seconds Two = new Seconds(  2 );
 
         /// <summary>
         /// </summary>
-        public static readonly Seconds Zero = new Seconds( value: 0 );
+        public static readonly Seconds Zero = new Seconds(  0 );
 
         [DataMember]
-        public readonly Decimal Value;
+        public readonly BigDecimal Value;
 
         static Seconds() {
             Zero.Should().BeLessThan( One );
@@ -130,7 +131,8 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneSecond, new BigInteger( this.Value ) );
+            return  (BigDecimal) PlanckTimes.InOneSecond * this.Value;
+                //BigInteger.Multiply( PlanckTimes.InOneSecond, new BigInteger( ( Decimal ) this.Value ) );
         }
 
         public static Seconds Combine( Seconds left, Seconds right ) {
@@ -239,16 +241,16 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public Milliseconds ToMilliseconds() {
-            return new Milliseconds( Value * Milliseconds.InOneSecond );
+            return new Milliseconds( ( decimal ) ( this.Value * Milliseconds.InOneSecond ) );
         }
 
         [Pure]
         public Minutes ToMinutes() {
-            return new Minutes( value: Value / InOneMinute );
+            return new Minutes( value: ( decimal ) ( this.Value / InOneMinute ) );
         }
 
         public static BigInteger ToPlanckTimes( Seconds seconds ) {
-            return BigInteger.Multiply( PlanckTimes.InOneSecond,  new BigInteger( seconds.Value )  );
+            return BigInteger.Multiply( PlanckTimes.InOneSecond,  new BigInteger( ( decimal ) seconds.Value )  );
         }
 
         public override int GetHashCode() {

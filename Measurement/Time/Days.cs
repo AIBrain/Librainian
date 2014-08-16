@@ -78,6 +78,11 @@ namespace Librainian.Measurement.Time {
         [UsedImplicitly]
         private string DebuggerDisplay { get { return this.ToString(); } }
 
+        /// <summary>
+        /// 365
+        /// </summary>
+        public const UInt16 InOneCommonYear = 365;
+
         public int CompareTo( Days other ) {
             return this.Value.CompareTo( other.Value );
         }

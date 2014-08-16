@@ -163,8 +163,19 @@ namespace Librainian.Measurement.Time {
             return left.Value > right.Value;
         }
 
+        [Pure]
         public Months ToMonths() {
             return new Months( this.Value * Months.InOneYear );
+        }
+
+        [Pure]
+        public Weeks ToWeeks() {
+            return new Weeks( this.Value * Weeks.InOneYear );
+        }
+
+        [Pure]
+        public Days ToDays() {
+            return new Days( this.Value * Days.InOneCommonYear );
         }
 
         public override int GetHashCode() {
