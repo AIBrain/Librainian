@@ -594,16 +594,6 @@ namespace Librainian.Maths {
             if ( !split[ 0 ].Length.CanAllocateMemory() ) {return false;}
             if ( !split[ 1 ].Length.CanAllocateMemory() ) {return false;}
 
-            try {
-                using ( new MemoryFailPoint( split[ 1 ].Length / 1048576 ) ) { }
-            }
-            catch ( ArgumentOutOfRangeException ) {
-                return false;
-            }
-            catch ( InsufficientMemoryException ) {
-                return false;
-            }
-
             BigInteger whole;
 
             if ( !BigInteger.TryParse( split[ 0 ], out whole ) ) {

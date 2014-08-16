@@ -50,8 +50,9 @@ namespace Librainian.Hardware {
         /// </summary>
         /// <returns></returns>
         public static BigInteger GetAvailableMemeory() {
-            var physical = Info.AvailablePhysicalMemory;
-            var virtl = Info.AvailableVirtualMemory;
+            var info = Info;
+            var physical = info.AvailablePhysicalMemory;
+            var virtl = info.AvailableVirtualMemory;
             return physical <= virtl ? physical : virtl;
         }
 
