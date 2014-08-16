@@ -382,7 +382,7 @@ namespace Librainian.Collections {
             //var slim = new ManualResetEventSlim( initialState: false );
             this._slims.Value.Reset();
 
-            this.Add( item: item, afterAdd: this._slims.Value.Set );
+            this.Add( item: item, afterAdd: () => { this._slims.Value.Set(); } );
 
             try {
                 if ( default( TimeSpan ) != timeout && default( CancellationToken ) != cancellationToken ) {
@@ -395,6 +395,7 @@ namespace Librainian.Collections {
                     this._slims.Value.Wait( cancellationToken );
                     return true;
                 }
+                this._slims.Value.Wait( cancellationToken );
             }
             catch ( OperationCanceledException ) {
             }
