@@ -1,22 +1,22 @@
-﻿using System;
-using System.Linq;
+﻿namespace Librainian.Misc {
+    using System;
+    using System.Numerics;
 
-namespace System.Numerics {
-    public struct BigDecimal : IConvertible, IFormattable, IComparable, IComparable<BigDecimal>, IEquatable<BigDecimal> {
-        public static readonly BigDecimal MinusOne = new BigDecimal( BigInteger.MinusOne, 0 );
-        public static readonly BigDecimal Zero = new BigDecimal( BigInteger.Zero, 0 );
-        public static readonly BigDecimal One = new BigDecimal( BigInteger.One, 0 );
+    public struct BigDecimal2 : IConvertible, IFormattable, IComparable, IComparable<BigDecimal2>, IEquatable<BigDecimal2> {
+        public static readonly BigDecimal2 MinusOne = new BigDecimal2( BigInteger.MinusOne, 0 );
+        public static readonly BigDecimal2 Zero = new BigDecimal2( BigInteger.Zero, 0 );
+        public static readonly BigDecimal2 One = new BigDecimal2( BigInteger.One, 0 );
 
         private readonly BigInteger _unscaledValue;
         private readonly int _scale;
 
-        public BigDecimal( double value )
+        public BigDecimal2( double value )
             : this( ( decimal )value ) { }
 
-        public BigDecimal( float value )
+        public BigDecimal2( float value )
             : this( ( decimal )value ) { }
 
-        public BigDecimal( decimal value ) {
+        public BigDecimal2( decimal value ) {
             var bytes = FromDecimal( value );
 
             var unscaledValueBytes = new byte[ 12 ];
@@ -28,56 +28,56 @@ namespace System.Numerics {
             if ( bytes[ 15 ] == 128 )
                 unscaledValue *= BigInteger.MinusOne;
 
-            _unscaledValue = unscaledValue;
-            _scale = scale;
+            this._unscaledValue = unscaledValue;
+            this._scale = scale;
         }
 
-        public BigDecimal( int value )
+        public BigDecimal2( int value )
             : this( new BigInteger( value ), 0 ) { }
 
-        public BigDecimal( long value )
+        public BigDecimal2( long value )
             : this( new BigInteger( value ), 0 ) { }
 
-        public BigDecimal( uint value )
+        public BigDecimal2( uint value )
             : this( new BigInteger( value ), 0 ) { }
 
-        public BigDecimal( ulong value )
+        public BigDecimal2( ulong value )
             : this( new BigInteger( value ), 0 ) { }
 
-        public BigDecimal( BigInteger unscaledValue, int scale ) {
-            _unscaledValue = unscaledValue;
-            _scale = scale;
+        public BigDecimal2( BigInteger unscaledValue, int scale ) {
+            this._unscaledValue = unscaledValue;
+            this._scale = scale;
         }
 
-        public BigDecimal( byte[] value ) {
+        public BigDecimal2( byte[] value ) {
             var number = new byte[ value.Length - 4 ];
             var flags = new byte[ 4 ];
 
             Array.Copy( value, 0, number, 0, number.Length );
             Array.Copy( value, value.Length - 4, flags, 0, 4 );
 
-            _unscaledValue = new BigInteger( number );
-            _scale = BitConverter.ToInt32( flags, 0 );
+            this._unscaledValue = new BigInteger( number );
+            this._scale = BitConverter.ToInt32( flags, 0 );
         }
 
-        public bool IsEven { get { return _unscaledValue.IsEven; } }
-        public bool IsOne { get { return _unscaledValue.IsOne; } }
-        public bool IsPowerOfTwo { get { return _unscaledValue.IsPowerOfTwo; } }
-        public bool IsZero { get { return _unscaledValue.IsZero; } }
-        public int Sign { get { return _unscaledValue.Sign; } }
+        public bool IsEven { get { return this._unscaledValue.IsEven; } }
+        public bool IsOne { get { return this._unscaledValue.IsOne; } }
+        public bool IsPowerOfTwo { get { return this._unscaledValue.IsPowerOfTwo; } }
+        public bool IsZero { get { return this._unscaledValue.IsZero; } }
+        public int Sign { get { return this._unscaledValue.Sign; } }
 
         public override string ToString() {
-            var number = _unscaledValue.ToString( "G" );
+            var number = this._unscaledValue.ToString( "G" );
 
-            if ( _scale > 0 )
-                return number.Insert( number.Length - _scale, "." );
+            if ( this._scale > 0 )
+                return number.Insert( number.Length - this._scale, "." );
 
             return number;
         }
 
         public byte[] ToByteArray() {
-            var unscaledValue = _unscaledValue.ToByteArray();
-            var scale = BitConverter.GetBytes( _scale );
+            var unscaledValue = this._unscaledValue.ToByteArray();
+            var scale = BitConverter.GetBytes( this._scale );
 
             var bytes = new byte[ unscaledValue.Length + scale.Length ];
             Array.Copy( unscaledValue, 0, bytes, 0, unscaledValue.Length );
@@ -117,75 +117,75 @@ namespace System.Numerics {
 
         #region Operators
 
-        public static bool operator ==( BigDecimal left, BigDecimal right ) {
+        public static bool operator ==( BigDecimal2 left, BigDecimal2 right ) {
             return left.Equals( right );
         }
 
-        public static bool operator !=( BigDecimal left, BigDecimal right ) {
+        public static bool operator !=( BigDecimal2 left, BigDecimal2 right ) {
             return !left.Equals( right );
         }
 
-        public static bool operator >( BigDecimal left, BigDecimal right ) {
+        public static bool operator >( BigDecimal2 left, BigDecimal2 right ) {
             return ( left.CompareTo( right ) > 0 );
         }
 
-        public static bool operator >=( BigDecimal left, BigDecimal right ) {
+        public static bool operator >=( BigDecimal2 left, BigDecimal2 right ) {
             return ( left.CompareTo( right ) >= 0 );
         }
 
-        public static bool operator <( BigDecimal left, BigDecimal right ) {
+        public static bool operator <( BigDecimal2 left, BigDecimal2 right ) {
             return ( left.CompareTo( right ) < 0 );
         }
 
-        public static bool operator <=( BigDecimal left, BigDecimal right ) {
+        public static bool operator <=( BigDecimal2 left, BigDecimal2 right ) {
             return ( left.CompareTo( right ) <= 0 );
         }
 
-        public static bool operator ==( BigDecimal left, decimal right ) {
+        public static bool operator ==( BigDecimal2 left, decimal right ) {
             return left.Equals( right );
         }
 
-        public static bool operator !=( BigDecimal left, decimal right ) {
+        public static bool operator !=( BigDecimal2 left, decimal right ) {
             return !left.Equals( right );
         }
 
-        public static bool operator >( BigDecimal left, decimal right ) {
+        public static bool operator >( BigDecimal2 left, decimal right ) {
             return ( left.CompareTo( right ) > 0 );
         }
 
-        public static bool operator >=( BigDecimal left, decimal right ) {
+        public static bool operator >=( BigDecimal2 left, decimal right ) {
             return ( left.CompareTo( right ) >= 0 );
         }
 
-        public static bool operator <( BigDecimal left, decimal right ) {
+        public static bool operator <( BigDecimal2 left, decimal right ) {
             return ( left.CompareTo( right ) < 0 );
         }
 
-        public static bool operator <=( BigDecimal left, decimal right ) {
+        public static bool operator <=( BigDecimal2 left, decimal right ) {
             return ( left.CompareTo( right ) <= 0 );
         }
 
-        public static bool operator ==( decimal left, BigDecimal right ) {
+        public static bool operator ==( decimal left, BigDecimal2 right ) {
             return left.Equals( right );
         }
 
-        public static bool operator !=( decimal left, BigDecimal right ) {
+        public static bool operator !=( decimal left, BigDecimal2 right ) {
             return !left.Equals( right );
         }
 
-        public static bool operator >( decimal left, BigDecimal right ) {
+        public static bool operator >( decimal left, BigDecimal2 right ) {
             return ( left.CompareTo( right ) > 0 );
         }
 
-        public static bool operator >=( decimal left, BigDecimal right ) {
+        public static bool operator >=( decimal left, BigDecimal2 right ) {
             return ( left.CompareTo( right ) >= 0 );
         }
 
-        public static bool operator <( decimal left, BigDecimal right ) {
+        public static bool operator <( decimal left, BigDecimal2 right ) {
             return ( left.CompareTo( right ) < 0 );
         }
 
-        public static bool operator <=( decimal left, BigDecimal right ) {
+        public static bool operator <=( decimal left, BigDecimal2 right ) {
             return ( left.CompareTo( right ) <= 0 );
         }
 
@@ -193,35 +193,35 @@ namespace System.Numerics {
 
         #region Explicity and Implicit Casts
 
-        public static explicit operator byte( BigDecimal value ) { return value.ToType<byte>(); }
-        public static explicit operator sbyte( BigDecimal value ) { return value.ToType<sbyte>(); }
-        public static explicit operator short( BigDecimal value ) { return value.ToType<short>(); }
-        public static explicit operator int( BigDecimal value ) { return value.ToType<int>(); }
-        public static explicit operator long( BigDecimal value ) { return value.ToType<long>(); }
-        public static explicit operator ushort( BigDecimal value ) { return value.ToType<ushort>(); }
-        public static explicit operator uint( BigDecimal value ) { return value.ToType<uint>(); }
-        public static explicit operator ulong( BigDecimal value ) { return value.ToType<ulong>(); }
-        public static explicit operator float( BigDecimal value ) { return value.ToType<float>(); }
-        public static explicit operator double( BigDecimal value ) { return value.ToType<double>(); }
-        public static explicit operator decimal( BigDecimal value ) { return value.ToType<decimal>(); }
-        public static explicit operator BigInteger( BigDecimal value ) {
+        public static explicit operator byte( BigDecimal2 value ) { return value.ToType<byte>(); }
+        public static explicit operator sbyte( BigDecimal2 value ) { return value.ToType<sbyte>(); }
+        public static explicit operator short( BigDecimal2 value ) { return value.ToType<short>(); }
+        public static explicit operator int( BigDecimal2 value ) { return value.ToType<int>(); }
+        public static explicit operator long( BigDecimal2 value ) { return value.ToType<long>(); }
+        public static explicit operator ushort( BigDecimal2 value ) { return value.ToType<ushort>(); }
+        public static explicit operator uint( BigDecimal2 value ) { return value.ToType<uint>(); }
+        public static explicit operator ulong( BigDecimal2 value ) { return value.ToType<ulong>(); }
+        public static explicit operator float( BigDecimal2 value ) { return value.ToType<float>(); }
+        public static explicit operator double( BigDecimal2 value ) { return value.ToType<double>(); }
+        public static explicit operator decimal( BigDecimal2 value ) { return value.ToType<decimal>(); }
+        public static explicit operator BigInteger( BigDecimal2 value ) {
             var scaleDivisor = BigInteger.Pow( new BigInteger( 10 ), value._scale );
             var scaledValue = BigInteger.Divide( value._unscaledValue, scaleDivisor );
             return scaledValue;
         }
 
-        public static implicit operator BigDecimal( byte value ) { return new BigDecimal( value ); }
-        public static implicit operator BigDecimal( sbyte value ) { return new BigDecimal( value ); }
-        public static implicit operator BigDecimal( short value ) { return new BigDecimal( value ); }
-        public static implicit operator BigDecimal( int value ) { return new BigDecimal( value ); }
-        public static implicit operator BigDecimal( long value ) { return new BigDecimal( value ); }
-        public static implicit operator BigDecimal( ushort value ) { return new BigDecimal( value ); }
-        public static implicit operator BigDecimal( uint value ) { return new BigDecimal( value ); }
-        public static implicit operator BigDecimal( ulong value ) { return new BigDecimal( value ); }
-        public static implicit operator BigDecimal( float value ) { return new BigDecimal( value ); }
-        public static implicit operator BigDecimal( double value ) { return new BigDecimal( value ); }
-        public static implicit operator BigDecimal( decimal value ) { return new BigDecimal( value ); }
-        public static implicit operator BigDecimal( BigInteger value ) { return new BigDecimal( value, 0 ); }
+        public static implicit operator BigDecimal2( byte value ) { return new BigDecimal2( value ); }
+        public static implicit operator BigDecimal2( sbyte value ) { return new BigDecimal2( value ); }
+        public static implicit operator BigDecimal2( short value ) { return new BigDecimal2( value ); }
+        public static implicit operator BigDecimal2( int value ) { return new BigDecimal2( value ); }
+        public static implicit operator BigDecimal2( long value ) { return new BigDecimal2( value ); }
+        public static implicit operator BigDecimal2( ushort value ) { return new BigDecimal2( value ); }
+        public static implicit operator BigDecimal2( uint value ) { return new BigDecimal2( value ); }
+        public static implicit operator BigDecimal2( ulong value ) { return new BigDecimal2( value ); }
+        public static implicit operator BigDecimal2( float value ) { return new BigDecimal2( value ); }
+        public static implicit operator BigDecimal2( double value ) { return new BigDecimal2( value ); }
+        public static implicit operator BigDecimal2( decimal value ) { return new BigDecimal2( value ); }
+        public static implicit operator BigDecimal2( BigInteger value ) { return new BigDecimal2( value, 0 ); }
 
         #endregion
 
@@ -245,11 +245,11 @@ namespace System.Numerics {
         }
 
         public override bool Equals( object obj ) {
-            return ( ( obj is BigDecimal ) && Equals( ( BigDecimal )obj ) );
+            return ( ( obj is BigDecimal2 ) && this.Equals( ( BigDecimal2 )obj ) );
         }
 
         public override int GetHashCode() {
-            return _unscaledValue.GetHashCode() ^ _scale.GetHashCode();
+            return this._unscaledValue.GetHashCode() ^ this._scale.GetHashCode();
         }
 
         #region IConvertible Members
@@ -267,11 +267,11 @@ namespace System.Numerics {
         }
 
         char IConvertible.ToChar( IFormatProvider provider ) {
-            throw new InvalidCastException( "Cannot cast BigDecimal to Char" );
+            throw new InvalidCastException( "Cannot cast BigDecimal2 to Char" );
         }
 
         DateTime IConvertible.ToDateTime( IFormatProvider provider ) {
-            throw new InvalidCastException( "Cannot cast BigDecimal to DateTime" );
+            throw new InvalidCastException( "Cannot cast BigDecimal2 to DateTime" );
         }
 
         decimal IConvertible.ToDecimal( IFormatProvider provider ) {
@@ -334,17 +334,17 @@ namespace System.Numerics {
             if ( obj == null )
                 return 1;
 
-            if ( !( obj is BigDecimal ) )
-                throw new ArgumentException( "Compare to object must be a BigDecimal", "obj" );
+            if ( !( obj is BigDecimal2 ) )
+                throw new ArgumentException( "Compare to object must be a BigDecimal2", "obj" );
 
-            return CompareTo( ( BigDecimal )obj );
+            return this.CompareTo( ( BigDecimal2 )obj );
         }
 
         #endregion
 
-        #region IComparable<BigDecimal> Members
+        #region IComparable<BigDecimal2> Members
 
-        public int CompareTo( BigDecimal other ) {
+        public int CompareTo( BigDecimal2 other ) {
             var unscaledValueCompare = this._unscaledValue.CompareTo( other._unscaledValue );
             var scaleCompare = this._scale.CompareTo( other._scale );
 
@@ -364,9 +364,9 @@ namespace System.Numerics {
 
         #endregion
 
-        #region IEquatable<BigDecimal> Members
+        #region IEquatable<BigDecimal2> Members
 
-        public bool Equals( BigDecimal other ) {
+        public bool Equals( BigDecimal2 other ) {
             return this._scale == other._scale && this._unscaledValue == other._unscaledValue;
         }
 
