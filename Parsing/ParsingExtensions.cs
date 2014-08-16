@@ -41,6 +41,7 @@ namespace Librainian.Parsing {
     using Annotations;
     using Collections;
     using Extensions;
+    using Hardware;
     using Linguistics;
     using Maths;
     using Numerics;
@@ -1246,8 +1247,11 @@ namespace Librainian.Parsing {
                 if ( bytes <= 1 ) {
                     return true;
                 }
-                GC.Collect();
                 var megabytes = bytes / 1048576;
+                if ( 0 == megabytes ) {
+                    return true;
+                }
+                if ( bytes > Computer.GetAvailableMemeory() ) { GC.Collect(); }
                 using ( new MemoryFailPoint( megabytes ) ) {
                     return true;
                 }
@@ -1265,8 +1269,11 @@ namespace Librainian.Parsing {
                 if ( bytes <= 1 ) {
                     return true;
                 }
-                GC.Collect();
                 var megabytes = bytes / 1048576;
+                if ( 0 == megabytes ) {
+                    return true;
+                }
+                if ( bytes > Computer.GetAvailableMemeory() ) { GC.Collect(); }
                 using ( new MemoryFailPoint( megabytes ) ) {
                     return true;
                 }
@@ -1284,11 +1291,14 @@ namespace Librainian.Parsing {
                 if ( bytes <= 1 ) {
                     return true;
                 }
-                GC.Collect();
                 var megabytes = bytes / 1048576;
-                if ( megabytes > Int32.MaxValue ) {
-                    return false;
+                if ( 0 == megabytes ) {
+                    return true;
                 }
+                if ( megabytes > Int32.MaxValue ) {
+                    megabytes = Int32.MaxValue;
+                }
+                if ( bytes > Computer.GetAvailableMemeory() ) { GC.Collect(); }
                 using ( new MemoryFailPoint( ( int )megabytes ) ) {
                     return true;
                 }
@@ -1306,11 +1316,14 @@ namespace Librainian.Parsing {
                 if ( bytes <= 1 ) {
                     return true;
                 }
-                GC.Collect();
                 var megabytes = bytes / 1048576;
-                if ( megabytes > Int32.MaxValue ) {
-                    return false;
+                if ( 0 == megabytes ) {
+                    return true;
                 }
+                if ( megabytes > Int32.MaxValue ) {
+                    megabytes = Int32.MaxValue;
+                }
+                if ( bytes > Computer.GetAvailableMemeory() ) { GC.Collect(); }
                 using ( new MemoryFailPoint( ( int )megabytes ) ) {
                     return true;
                 }
