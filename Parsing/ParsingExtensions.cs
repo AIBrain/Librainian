@@ -1243,6 +1243,9 @@ namespace Librainian.Parsing {
 
         public static Boolean CanAllocateMemory( this UInt16 bytes ) {
             try {
+                if ( bytes <= 1 ) {
+                    return true;
+                }
                 GC.Collect();
                 var megabytes = bytes / 1048576;
                 using ( new MemoryFailPoint( megabytes ) ) {
@@ -1259,6 +1262,9 @@ namespace Librainian.Parsing {
 
         public static Boolean CanAllocateMemory( this Int32 bytes ) {
             try {
+                if ( bytes <= 1 ) {
+                    return true;
+                }
                 GC.Collect();
                 var megabytes = bytes / 1048576;
                 using ( new MemoryFailPoint( megabytes ) ) {
@@ -1275,6 +1281,9 @@ namespace Librainian.Parsing {
 
         public static Boolean CanAllocateMemory( this Int64 bytes ) {
             try {
+                if ( bytes <= 1 ) {
+                    return true;
+                }
                 GC.Collect();
                 var megabytes = bytes / 1048576;
                 if ( megabytes > Int32.MaxValue ) {
@@ -1294,6 +1303,9 @@ namespace Librainian.Parsing {
 
         public static Boolean CanAllocateMemory( this UInt64 bytes ) {
             try {
+                if ( bytes <= 1 ) {
+                    return true;
+                }
                 GC.Collect();
                 var megabytes = bytes / 1048576;
                 if ( megabytes > Int32.MaxValue ) {

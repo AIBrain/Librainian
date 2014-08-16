@@ -590,15 +590,8 @@ namespace Librainian.Maths {
                 return false;
             }
 
-            try {
-                using ( new MemoryFailPoint( split[ 0 ].Length / 1048576 ) ) { }
-            }
-            catch ( ArgumentOutOfRangeException ) {
-                return false;
-            }
-            catch ( InsufficientMemoryException ) {
-                return false;
-            }
+            if ( !split[ 0 ].Length.CanAllocateMemory() ) {return false;}
+            if ( !split[ 1 ].Length.CanAllocateMemory() ) {return false;}
 
             try {
                 using ( new MemoryFailPoint( split[ 1 ].Length / 1048576 ) ) { }
