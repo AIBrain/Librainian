@@ -382,7 +382,7 @@ namespace Librainian.Collections {
             //var slim = new ManualResetEventSlim( initialState: false );
             this._slims.Value.Reset();
 
-            this.Add( item: item, afterAdd: () => { this._slims.Value.Set(); } );
+            this.Add( item: item, afterAdd: () => this._slims.Value.Set() );
 
             try {
                 if ( default( TimeSpan ) != timeout && default( CancellationToken ) != cancellationToken ) {
@@ -391,11 +391,8 @@ namespace Librainian.Collections {
                 if ( default( TimeSpan ) != timeout ) {
                     return this._actionBlock.Completion.Wait( timeout: timeout );
                 }
-                if ( default( CancellationToken ) != cancellationToken ) {
-                    this._slims.Value.Wait( cancellationToken );
-                    return true;
-                }
                 this._slims.Value.Wait( cancellationToken );
+                return true;
             }
             catch ( OperationCanceledException ) {
             }
@@ -434,7 +431,8 @@ namespace Librainian.Collections {
             try {
                 if ( asParallel ) {
                     items.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( item => this.TryAdd( item, afterEachAdd ) );
-                } else {
+                }
+                else {
                     foreach ( var item in items ) {
                         this.TryAdd( item: item, afterAdd: afterEachAdd );
                     }

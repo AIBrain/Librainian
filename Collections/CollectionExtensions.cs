@@ -458,19 +458,17 @@ namespace Librainian.Collections {
         /// <param name="iterations"></param>
         /// <param name="shufflingType"></param>
         /// <example>Deck.Shuffle( 7 );</example>
-        public static void Shuffle<T>( [NotNull] this List<T> list, UInt16 iterations = 1, ShufflingType shufflingType = ShufflingType.ByRandom ) {
+        public static void Shuffle<T>( [NotNull] this List<T> list, UInt64 iterations = 1, ShufflingType shufflingType = ShufflingType.AutoChoice ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
             }
             try {
-                if ( iterations < 1 ) {
-                    iterations = 1;
+                if ( list.LongCount() <= 0 ) {
+                    return; //nothing to shuffle
                 }
 
-                var originalcount = list.LongCount();
-
-                if ( originalcount <= 0 ) {
-                    return; //nothing to shuffle
+                if ( iterations < 1 ) {
+                    iterations = 1;
                 }
 
                 switch ( shufflingType ) {
@@ -490,7 +488,7 @@ namespace Librainian.Collections {
                         break;
 
                     case ShufflingType.ByBags: {
-                            ShuffleByBags( ref list, iterations, originalcount );
+                            ShuffleByBags( ref list, iterations, list.LongCount() );
                         }
                         break;
 
@@ -503,7 +501,7 @@ namespace Librainian.Collections {
             }
         }
 
-        private static void ShuffleByBags<T>( ref List<T> list, ushort iterations, long originalcount ) {
+        private static void ShuffleByBags<T>( ref List<T> list, UInt32 iterations, long originalcount ) {
             //// make some buckets.
             //var bucketCount = ( int ) Math.Sqrt( originalcount );
             //if ( bucketCount < 1 ) {
@@ -531,46 +529,40 @@ namespace Librainian.Collections {
             }
         }
 
-        private static void ShuffleByHarker<T>( ref List<T> list, ushort iterations ) {
+        private static void ShuffleByHarker<T>( ref List<T> list, UInt32 iterations ) {
 
             var itemCount = list.Count;
 
             var copy = new List<T>( itemCount );
-            //var copy = new ParallelList< T >();
 
             while ( iterations > 0 ) {
                 iterations--;
 
-                var itemsRemaining = itemCount;
-                var itemsCopied = 0;
-                copy.Clear();
-
-                while ( itemsRemaining > 0 ) {
-                    var index = Randem.Next( minValue: 0, maxValue: itemCount - itemsCopied );
+                while ( list.Any() ) {
+                    var index = Randem.Next( minValue: 0, maxValue: list.Count );
                     copy.Add( list[ index ] );
                     list.RemoveAt( index );
-                    itemsRemaining--;
-                    itemsCopied++;
-                    ( itemsCopied + itemsRemaining ).Should().Be( itemCount );
                 }
 
-                //while ( copy.CountOfItemsWaitingToBeAdded > 0 ) {Thread.Yield();}
-
-                list.AddRange( copy.AsParallel() );
-
+                while ( copy.Any() ) {
+                    var index = Randem.Next( minValue: 0, maxValue: copy.Count );
+                    list.Add( copy[ index ] );
+                    copy.RemoveAt( index );
+                }
             }
+            list.Count.Should().Be( itemCount );
         }
 
-        private static void ShuffleByRandomThenByRandom<T>( ref List<T> list, ushort iterations ) {
+        private static void ShuffleByRandomThenByRandom<T>( ref List<T> list, UInt64 iterations ) {
             while ( iterations > 0 ) {
                 iterations--;
-                var copy = list.AsParallel().OrderBy( o => Randem.Next() ).ThenBy( o => Randem.Next() ).ToList();
+                var copy = list.OrderBy( o => Randem.NextDouble() ).ThenBy( o => Randem.NextDouble() ).ToList();
                 list.Clear();
-                list.AddRange( copy.AsParallel() );
+                list.AddRange( copy );
             }
         }
 
-        private static void ShuffleByGuid<T>( ref List<T> list, ushort iterations ) {
+        private static void ShuffleByGuid<T>( ref List<T> list, UInt64 iterations ) {
             while ( iterations > 0 ) {
                 iterations--;
                 var copy = list.AsParallel().OrderBy( arg => Guid.NewGuid() ).ToList();

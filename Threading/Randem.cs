@@ -134,7 +134,7 @@ namespace Librainian.Threading {
         public static int Next( int maxValue ) {
             return Instance.Next( maxValue );
         }
-        
+
         /// <summary>
         /// <para>Returns a nonnegative random number less than <paramref name="maxValue" />.</para>
         /// </summary>
@@ -307,6 +307,15 @@ namespace Librainian.Threading {
         /// <returns></returns>
         public static Double NextDouble( Double min = 0, Double max = 1 ) {
             return min + ( Instance.NextDouble() * ( max - min ) );
+        }
+
+        /// <summary>
+        /// Returns a random Double beetween 0 and 1
+        /// </summary>
+        /// <returns></returns>
+        [Pure]
+        public static Double NextDouble() {
+            return Instance.NextDouble();
         }
 
         /// <summary>
