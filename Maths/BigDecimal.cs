@@ -42,7 +42,7 @@ namespace Librainian.Maths {
     ///     <para>Based on http://stackoverflow.com/a/4524254</para>
     ///     <para>Author: Jan Christoph Bernack (contact: jc.bernack at googlemail.com)</para>
     ///     <para>Joined with code from nberardi from gist 2667136</para>
-    ///     <para>Rewritten into an immutable struct by Rick in August 2014</para>
+    ///     <para>Rewritten into an immutable struct by Rick@aibrain.org in August 2014</para>
     /// </summary>
     /// <seealso cref="http://stackoverflow.com/a/13813535/956364" />
     /// <seealso cref="http://gist.github.com/nberardi/2667136" />
