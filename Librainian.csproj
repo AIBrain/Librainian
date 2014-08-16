@@ -391,7 +391,7 @@
     <Compile Include="Measurement\Time\Years.cs" />
     <Compile Include="Measurement\Time\Yoctoseconds.cs" />
     <Compile Include="Measurement\Time\Zeptoseconds.cs" />
-    <Compile Include="Misc\BigDecimal.cs" />
+    <Compile Include="Misc\BigDecimal2.cs" />
     <Compile Include="Linguistics\Book.cs" />
     <Compile Include="Linguistics\Page.cs" />
     <Compile Include="Persistence\PersistableSettings.cs" />
