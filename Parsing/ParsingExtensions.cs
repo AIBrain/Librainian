@@ -30,6 +30,7 @@ namespace Librainian.Parsing {
     using System.Linq;
     using System.Net;
     using System.Numerics;
+    using System.Runtime;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
@@ -1231,10 +1232,72 @@ namespace Librainian.Parsing {
             }
         }
 
-        //public static class Alphabet {
-        //    public static class English {
-        //        public const String Numbers = "0123456789";
+        public static Boolean CanAllocateMemory( this UInt16 bytes ) {
+            try {
+                GC.Collect();
+                var megabytes = bytes / 1048576;
+                using ( new MemoryFailPoint( megabytes ) ) {
+                    return true;
+                }
+            }
+            catch ( ArgumentOutOfRangeException ) {
+                return false;
+            }
+            catch ( OutOfMemoryException ) {
+                return false;
+            }
+        }
 
-        //        public const String Uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        public static Boolean CanAllocateMemory( this Int32 bytes ) {
+            try {
+                GC.Collect();
+                var megabytes = bytes / 1048576;
+                using ( new MemoryFailPoint( megabytes ) ) {
+                    return true;
+                }
+            }
+            catch ( ArgumentOutOfRangeException ) {
+                return false;
+            }
+            catch ( OutOfMemoryException ) {
+                return false;
+            }
+        }
+
+        public static Boolean CanAllocateMemory( this Int64 bytes ) {
+            try {
+                GC.Collect();
+                var megabytes = bytes / 1048576;
+                if ( megabytes > Int32.MaxValue ) {
+                    return false;
+                }
+                using ( new MemoryFailPoint( ( int ) megabytes ) ) {
+                    return true;
+                }
+            }
+            catch ( ArgumentOutOfRangeException ) {
+                return false;
+            }
+            catch ( OutOfMemoryException ) {
+                return false;
+            }
+        }
+
+        public static Boolean CanAllocateMemory( this UInt64 bytes ) {
+            try {
+                GC.Collect();
+                var megabytes = bytes / 1048576;
+                if ( megabytes > Int32.MaxValue ) {
+                    return false;
+                }
+                using ( new MemoryFailPoint( ( int ) megabytes ) ) {
+                    return true;
+                }
+            }
+            catch ( ArgumentOutOfRangeException ) {
+                return false;
+            }
+            catch ( OutOfMemoryException ) { return false; }
+        }
     }
 }

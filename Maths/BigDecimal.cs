@@ -44,18 +44,20 @@ namespace Librainian.Maths {
     /// <seealso cref="http://gist.github.com/nberardi/2667136" />
     [UsedImplicitly]
     public struct BigDecimal : IComparable, IComparable< BigDecimal >, IConvertible, IFormattable, IEquatable< BigDecimal > {
-        /// <summary>
-        ///     Sets the maximum precision of division operations.
-        ///     If AlwaysTruncate is set to true all operations are affected.
-        /// </summary>
-        public const Int32 Precision = 100;
 
-        private const Int32 MegaByte = 1048576;
-
+/// <summary>
+/// 1
+/// </summary>
         public static readonly BigDecimal One = new BigDecimal( Decimal.One );
 
+        /// <summary>
+        /// 0
+        /// </summary>
         public static readonly BigDecimal Zero = new BigDecimal( Decimal.Zero );
 
+        /// <summary>
+        /// -1
+        /// </summary>
         public static readonly BigDecimal MinusOne = new BigDecimal( Decimal.MinusOne );
 
         /// <summary>
@@ -98,7 +100,9 @@ namespace Librainian.Maths {
                 throw new ArgumentOutOfRangeException( "value", "Not enough bytes to construct the Significand" );
             }
 
-            using ( new MemoryFailPoint( value.Length/MegaByte ) ) { } //fail fast.
+            if ( !value.Length.CanAllocateMemory() ) {
+                throw new ArgumentOutOfRangeException("value", "'value' is too large to allocate");
+            }
 
             var number = new Byte[value.Length - 4];
             var flags = new Byte[4];
@@ -354,7 +358,7 @@ namespace Librainian.Maths {
         }
 
         public static BigDecimal operator /( BigDecimal dividend, BigDecimal divisor ) {
-            var exponentChange = Precision - ( dividend.Mantissa.NumberOfDigits() - divisor.Mantissa.NumberOfDigits() );
+            var exponentChange = 100 - ( dividend.Mantissa.NumberOfDigits() - divisor.Mantissa.NumberOfDigits() );
             if ( exponentChange < 0 ) {
                 exponentChange = 0;
             }
@@ -616,7 +620,9 @@ namespace Librainian.Maths {
             var unscaledValue = this.Significand.ToByteArray();
             var scale = BitConverter.GetBytes( this.Exponent );
 
-            using ( new MemoryFailPoint( ( unscaledValue.Length + scale.Length )/MegaByte ) ) { } //fail fast
+            if ( !( unscaledValue.Length + scale.Length ).CanAllocateMemory() ) {
+                throw new OutOfMemoryException( "ToByteArray() is too large to allocate" );
+            }
 
             var bytes = new Byte[unscaledValue.Length + scale.Length];
             Array.Copy( unscaledValue, 0, bytes, 0, unscaledValue.Length );
