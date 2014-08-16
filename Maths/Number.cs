@@ -73,7 +73,7 @@ namespace Librainian.Maths {
 
         public Number( BigDecimal numerator, BigDecimal denominator ) {
 
-            BigInteger numeratorMultiplier = BigInteger.One;
+            var numeratorMultiplier = BigInteger.One;
             while ( Math.Truncate( ( Decimal )numerator ) > ( Decimal )numerator ) {
                 numerator *= 10;
                 numeratorMultiplier *= 10;

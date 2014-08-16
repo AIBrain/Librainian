@@ -34,9 +34,9 @@ namespace Librainian.Measurement.Time {
     [UsedImplicitly]
     public class ETACalculator {
         /// <summary>
-        ///     At theese points in time, how far along have we progressed?
+        ///     At these points in time, how far along have we progressed?
         /// </summary>
-        private readonly ConcurrentDictionary< TimeSpan, Single > _datapoints = new ConcurrentDictionary< TimeSpan, Single >();
+        private readonly ConcurrentDictionary<TimeSpan, Single> _datapoints = new ConcurrentDictionary<TimeSpan, Single>();
 
         /// <summary>
         ///     Start our timer so we can keep track of elapsed time.
@@ -63,9 +63,9 @@ namespace Librainian.Measurement.Time {
             this._stopwatch.Start();
             this.Progress = 0;
             this._timer = new Timer {
-                                        Interval = samplingPeriod.TotalMilliseconds,
-                                        AutoReset = true
-                                    };
+                Interval = samplingPeriod.TotalMilliseconds,
+                AutoReset = true
+            };
             this._timer.Elapsed += ( sender, args ) => this.Update();
             this._timer.Start();
         }
@@ -128,11 +128,11 @@ namespace Librainian.Measurement.Time {
         ///     Get the internal data points we have so far.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable< TimeProgression > GetDataPoints() {
+        public IEnumerable<TimeProgression> GetDataPoints() {
             return this._datapoints.OrderBy( pair => pair.Key ).Select( pair => new TimeProgression {
-                                                                                                        MillisecondsPassed = pair.Key.TotalMilliseconds,
-                                                                                                        Progress = pair.Value
-                                                                                                    } );
+                MillisecondsPassed = pair.Key.TotalMilliseconds,
+                Progress = pair.Value
+            } );
         }
     }
 }

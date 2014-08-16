@@ -742,5 +742,9 @@ namespace Librainian.Measurement.Time {
 
             return bob.ToStrings( ", " );
         }
+
+        public String MostCompactForm() { 
+        }
+
     }
 }
