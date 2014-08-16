@@ -1,7 +1,11 @@
-﻿namespace Librainian.Misc {
+﻿namespace Librainian.Maths {
     using System;
     using System.Numerics;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="http://gist.github.com/nberardi/2667136"/>
     public struct BigDecimal2 : IConvertible, IFormattable, IComparable, IComparable<BigDecimal2>, IEquatable<BigDecimal2> {
         public static readonly BigDecimal2 MinusOne = new BigDecimal2( BigInteger.MinusOne, 0 );
         public static readonly BigDecimal2 Zero = new BigDecimal2( BigInteger.Zero, 0 );
