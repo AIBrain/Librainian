@@ -5,12 +5,13 @@
     public enum ShufflingType {
 
         /// <summary>
-        /// Uses OrderBy( Random.Next ).ThenBy( Random.Next ). This might be the fastest.
+        /// Uses OrderBy( Random.Next ).ThenBy( Random.Next ). This is _might_ be the fastest.
         /// </summary>
         ByRandom,
 
         /// <summary>
         /// This is the one I understand the best.
+        /// Works best with smaller lists and more iterations.
         /// </summary>
         ByHarker,
 
