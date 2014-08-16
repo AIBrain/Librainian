@@ -229,6 +229,7 @@ namespace Librainian.Measurement.Time {
         ///     Convert to a larger unit.
         /// </summary>
         /// <returns></returns>
+        [Pure]
         public Picoseconds ToPicoseconds() {
             return new Picoseconds( Value/InOnePicosecond );
         }

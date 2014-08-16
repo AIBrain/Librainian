@@ -224,6 +224,7 @@ namespace Librainian.Measurement.Time {
             return new Femtoseconds( Value*Femtoseconds.InOnePicosecond );
         }
 
+        [Pure]
         public Nanoseconds ToNanoseconds() {
             return new Nanoseconds( Value/InOneNanosecond );
         }

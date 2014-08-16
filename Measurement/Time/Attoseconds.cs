@@ -238,6 +238,7 @@ namespace Librainian.Measurement.Time {
         /// Convert to a larger unit.
         /// </summary>
         /// <returns></returns>
+        [Pure]
         public Femtoseconds ToFemtoseconds() {
             return new Femtoseconds( Value / InOneFemtosecond );
         }

@@ -743,7 +743,22 @@ namespace Librainian.Measurement.Time {
             return bob.ToStrings( ", " );
         }
 
-        public String MostCompactForm() { 
+        private static readonly BigDecimal MaximumUsefulDecimal = new BigDecimal( Decimal.MaxValue);
+
+        public String CompactFormOfSeconds() {
+
+            BigDecimal bigSeconds = this.Seconds.Value;
+            bigSeconds += this.Milliseconds.Value / Milliseconds.InOneSecond;
+            bigSeconds += this.Microseconds.ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Nanoseconds.ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Picoseconds.ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Femtoseconds.ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Attoseconds.ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Zeptoseconds.ToAttoseconds().ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+            bigSeconds += this.Yoctoseconds.ToZeptoseconds().ToAttoseconds().ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds() / Milliseconds.InOneSecond;
+
+            var asSeconds = new Seconds( ( Decimal )bigSeconds );
+            return String.Format( "{0} seconds", asSeconds );
         }
 
     }

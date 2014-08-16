@@ -228,6 +228,7 @@ namespace Librainian.Measurement.Time {
         ///     <para>Convert to a larger unit.</para>
         /// </summary>
         /// <returns></returns>
+        [Pure]
         public Attoseconds ToAttoseconds() {
             return new Attoseconds( Value/InOneAttosecond );
         }

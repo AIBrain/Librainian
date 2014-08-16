@@ -156,7 +156,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="yoctoseconds"></param>
         /// <returns></returns>
         public static implicit operator Zeptoseconds( Yoctoseconds yoctoseconds ) {
-            return ToZeptoseconds( yoctoseconds );
+            return yoctoseconds.ToZeptoseconds();
         }
 
         public static Yoctoseconds operator -( Yoctoseconds yoctoseconds ) {
@@ -214,8 +214,9 @@ namespace Librainian.Measurement.Time {
             return new PlanckTimes( BigInteger.Multiply( PlanckTimes.InOneYoctosecond, new BigInteger( yoctoseconds.Value ) ) );
         }
 
-        public static Zeptoseconds ToZeptoseconds( Yoctoseconds yoctoseconds ) {
-            return new Zeptoseconds( yoctoseconds.Value/InOneZeptosecond );
+        [Pure]
+        public Zeptoseconds ToZeptoseconds() {
+            return new Zeptoseconds( Value/InOneZeptosecond );
         }
     }
 }
