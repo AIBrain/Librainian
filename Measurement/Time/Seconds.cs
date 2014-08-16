@@ -88,7 +88,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Seconds Zero = new Seconds(  0 );
 
         [DataMember]
-        public readonly BigDecimal Value;
+        public readonly Decimal Value;
 
         static Seconds() {
             Zero.Should().BeLessThan( One );
@@ -131,8 +131,9 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public BigInteger ToPlanckTimes() {
-            return  (BigDecimal) PlanckTimes.InOneSecond * this.Value;
-                //BigInteger.Multiply( PlanckTimes.InOneSecond, new BigInteger( ( Decimal ) this.Value ) );
+            var seconds = new BigDecimal( this.Value );
+            seconds *= PlanckTimes.InOneSecond;
+            return ( BigInteger ) seconds;
         }
 
         public static Seconds Combine( Seconds left, Seconds right ) {
@@ -241,16 +242,12 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public Milliseconds ToMilliseconds() {
-            return new Milliseconds( ( decimal ) ( this.Value * Milliseconds.InOneSecond ) );
+            return new Milliseconds( this.Value * Milliseconds.InOneSecond );
         }
 
         [Pure]
         public Minutes ToMinutes() {
-            return new Minutes( value: ( decimal ) ( this.Value / InOneMinute ) );
-        }
-
-        public static BigInteger ToPlanckTimes( Seconds seconds ) {
-            return BigInteger.Multiply( PlanckTimes.InOneSecond,  new BigInteger( ( decimal ) seconds.Value )  );
+            return new Minutes( value: this.Value / InOneMinute );
         }
 
         public override int GetHashCode() {

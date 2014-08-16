@@ -1,5 +1,4 @@
 ﻿namespace Librainian.Maths {
-    using System.Numerics;
     using NUnit.Framework;
 
     public static class TestUnitsOfMath {
