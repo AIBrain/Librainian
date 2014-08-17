@@ -8,6 +8,8 @@
         [Test]
         public static void TestNumberConversions() {
 
+            Console.WriteLine( "Calculating..." );
+
             var test = BigDecimal.Parse( "0" );
             test.Should().Be( BigDecimal.Zero );
 
@@ -35,11 +37,13 @@
             var test2 = BigDecimal.Parse( "111111.111111" );
             ( ( Decimal )test2 ).Should().Be( 111111.111111M );
 
-            test2 += test2 * test2;
-            ( ( Decimal )test ).Should().Be( 12345679012.320987654321M );
-            
+            test2 = test2 * test2;
+            ( ( Decimal )test2 ).Should().Be( 12345679012.320987654321M );
 
-            Console.WriteLine( test2.ToString() );
+            test2 -= BigDecimal.Parse( "12345678970.320987654321" );
+
+            var answer = test2.ToString();
+            Console.WriteLine( "The Answer is {0}", answer );
 
         }
 
