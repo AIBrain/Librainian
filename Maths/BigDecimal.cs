@@ -22,7 +22,6 @@
 namespace Librainian.Maths {
     using System;
     using System.Diagnostics;
-    using System.Globalization;
     using System.Numerics;
     using Annotations;
     using Extensions;
@@ -624,7 +623,7 @@ namespace Librainian.Maths {
         }
 
         public string ToScientificString() {
-            return 
+            return MathExtensions.ToScientificString( this );
         }
 
         /*
