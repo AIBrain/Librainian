@@ -24,6 +24,7 @@ namespace Librainian.Threading {
     /// <summary>
     ///     A simple atomic gate
     /// </summary>
+    // TODO unfinished
     public sealed class Gate {
         private int _value;
 
