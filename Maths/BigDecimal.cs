@@ -26,7 +26,6 @@ namespace Librainian.Maths {
     using System;
     using System.Linq;
     using System.Numerics;
-    using System.Runtime;
     using Annotations;
     using Extensions;
     using FluentAssertions;
@@ -96,17 +95,15 @@ namespace Librainian.Maths {
         }
 
         public BigDecimal( BigInteger significand, Int32 exponent ) {
-
-            //BUG is this correct?
-            
-            while ( /*exponent > 0 &&*/ significand % 10 == 0 ) {
-                significand /= 10;
-                exponent -= 1;
-            }
-
             this.Significand = significand;
             this.Exponent = exponent;
 
+            //BUG is this correct?
+
+            while ( /*exponent > 0 &&*/ Significand % 10 == 0 ) {
+                Significand /= 10;
+                this.Exponent -= 1;
+            }
         }
 
         public BigDecimal( Int32 value )
@@ -599,8 +596,8 @@ namespace Librainian.Maths {
                 return false;
             }
 
-            if ( !split[ 0 ].Length.CanAllocateMemory() ) {return false;}
-            if ( !split[ 1 ].Length.CanAllocateMemory() ) {return false;}
+            if ( !split[ 0 ].Length.CanAllocateMemory() ) { return false; }
+            if ( !split[ 1 ].Length.CanAllocateMemory() ) { return false; }
 
             BigInteger whole;
 
