@@ -510,7 +510,20 @@ namespace Librainian.Maths {
                     return result;
                 }
 
-                result = result.Insert( result.Length + this.Exponent, "." );
+                var at = result.Length + this.Exponent;
+
+                var padLeft = at == 0;
+
+                result = result.Insert( at, "." );
+
+                if ( padLeft ) {
+                    result = result.Insert( at, "0" );
+                }
+            }
+
+            if ( this.Sign == -1 ) {
+                result = string.Format( "-{0}", result );
+
             }
 
             return result;
@@ -621,32 +634,45 @@ namespace Librainian.Maths {
                 whyParseFailed = "";
                 return false;
             }
+            var left = split[ 0 ];
+            var right = split[ 1 ];
 
-            if ( !split[ 0 ].Length.CanAllocateMemory() ) {
+            var verifyLengthOfLeft = left.Length;
+            if ( !verifyLengthOfLeft.CanAllocateMemory() ) {
                 return false;
             }
-            if ( !split[ 1 ].Length.CanAllocateMemory() ) {
-                return false;
-            }
-
-            BigInteger whole;
-
-            if ( !BigInteger.TryParse( split[ 0 ], out whole ) ) {
+            BigInteger leftOfDecimalPoint;
+            if ( !BigInteger.TryParse( left, out leftOfDecimalPoint ) ) {
                 //we were unable to parse the first string (all to the left of the decimal point)
                 return false;
             }
 
-            BigInteger fraction;
+            var verifyLengthOfRight = right.Length;
+            if ( !verifyLengthOfRight.CanAllocateMemory() ) {
+                return false;
+            }
+            BigInteger rightOfDecimalPoint;
 
-            if ( !BigInteger.TryParse( split[ 1 ], out fraction ) ) {
+            var neededToPadFollowingTheZeroButBeforeTheNumbers = right[ 0 ] == '0';
+
+            if ( neededToPadFollowingTheZeroButBeforeTheNumbers ) {
+                right =  '1' + right.Substring(1);  //fake out BigInteger by replacing the leading zero with a 1
+            }
+            //BUG if the string split[1] had a bunch of leading zeros, they are getting trimmed out here.
+            //TODO do some sort of multiplier. Or add a 1.0 in front, with a multiplier. then take off that after the recombine?
+
+            if ( !BigInteger.TryParse( right, out rightOfDecimalPoint ) ) {
                 //we were unable to parse the second string (all to the right of the decimal point)
                 return false;
             }
 
-            var fractionLength = fraction.ToString().Length;
+            //fraction = fraction.ToString().p
+
+
+            var fractionLength = rightOfDecimalPoint.ToString().Length;
 
             var ratioInteger = BigInteger.Pow( 10, fractionLength ); //we want the ratio of top/bottom to scale up past the decimal point
-            whole *= ratioInteger; //append a whole lot of zeroes
+            leftOfDecimalPoint *= ratioInteger; //append a whole lot of zeroes
 
             //BigDecimal recombined = wholeInteger + fractionInteger;
 
@@ -654,14 +680,14 @@ namespace Librainian.Maths {
 
             //recombined /= ratioDecimal;
 
-            whole += fraction; //reconstruct the part that was after the decimal point
+            leftOfDecimalPoint += rightOfDecimalPoint; //reconstruct the part that was after the decimal point
+            if ( neededToPadFollowingTheZeroButBeforeTheNumbers ) {
+                
+            }
 
-            number = whole;
+            number = leftOfDecimalPoint;
 
-            number = number / ratioInteger;
-
-            //TODO does BigRational already reduce?
-            //var leastCommonDenominator = BigRational.LeastCommonDenominator( bob.Numerator, bob.Denominator );
+            number /= ratioInteger;
 
             return true; //whew.
         }

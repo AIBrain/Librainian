@@ -7,6 +7,9 @@
         [Test]
         public static void TestNumberConversions() {
 
+            var number4 = new BigDecimal( "0.12342345" );
+            Console.WriteLine( number4.ToString() );
+
             var number1 = new BigDecimal( "1.1234567890" );
             Console.WriteLine( number1.ToString() );
 
@@ -14,9 +17,8 @@
 
             var number3 = new BigDecimal( "1.123423451596195601509123590612345690815906901569813560915691569156901612691690166501961550" );
             
-            var number4 = new BigDecimal( "0.12342345" );
             
-            var number5 = new BigDecimal( "0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012342345" );
+            var number5 = new BigDecimal( "0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000123123123" );
             
             var number6 = number2 + number3;
 
