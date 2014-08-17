@@ -45,6 +45,7 @@
             var answer = test2.ToString();
             Console.WriteLine( "The Answer is {0}.", answer );
 
+            Console.WriteLine( "Now, please input the question." );
         }
 
     }
