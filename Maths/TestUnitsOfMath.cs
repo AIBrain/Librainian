@@ -1,5 +1,6 @@
 ﻿namespace Librainian.Maths {
     using System;
+    using FluentAssertions;
     using NUnit.Framework;
 
     public static class TestUnitsOfMath {
@@ -7,22 +8,38 @@
         [Test]
         public static void TestNumberConversions() {
 
-            var number4 = new BigDecimal( "0.12342345" );
-            Console.WriteLine( number4.ToString() );
+            var test = BigDecimal.Parse( "0" );
+            test.Should().Be( BigDecimal.Zero );
 
-            var number1 = new BigDecimal( "1.1234567890" );
-            Console.WriteLine( number1.ToString() );
+            test += BigDecimal.Parse( "1" );
+            test.Should().Be( BigDecimal.One );
 
-            var number2 = new BigDecimal( "12369238762396823626626790362397690346234690723896743672340965234906539036626366466.12342345" );
+            test += BigDecimal.Parse( "0.000123" );
+            ( ( Decimal )test ).Should().Be( 1.000123m );
 
-            var number3 = new BigDecimal( "1.123423451596195601509123590612345690815906901569813560915691569156901612691690166501961550" );
-            
-            
-            var number5 = new BigDecimal( "0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000123123123" );
-            
-            var number6 = number2 + number3;
+            test += BigDecimal.Parse( "-10.000123" );
+            ( ( Decimal )test ).Should().Be( -8.999877M );
 
-            var number7 = number5 + number5;
+            test += BigDecimal.Parse( "11.1234567890" );
+            ( ( Decimal )test ).Should().Be( 2.123579789M );
+
+            test += BigDecimal.Parse( "-0.12342345" );
+            ( ( Decimal )test ).Should().Be( 2.000156339M );
+
+            test += BigDecimal.Parse( "1.1234567890" );
+            ( ( Decimal )test ).Should().Be( 3.123613128M );
+
+
+            test += BigDecimal.Parse( "-001.1234567890" );
+
+            var test2 = BigDecimal.Parse( "1111111111111111111111111111111111111111.11111111111111111111111111111111111111111111111111111111111111111111111" );
+
+            test2 += test2 + test2;
+
+            test2 += test2 * test2;
+
+            Console.WriteLine( test2.ToString() );
+
         }
 
     }

@@ -589,6 +589,14 @@ namespace Librainian.Parsing {
             return ( number * number.Sign ).ToString().Length;
         }
 
+        public static String Append( [CanBeNull] this String result, [CanBeNull] String appendThis ) {
+            return String.Format( "{0}{1}", result ?? String.Empty, appendThis ?? String.Empty );
+        }
+
+        public static String Prepend( [CanBeNull] this String result, [CanBeNull] String prependThis ) {
+            return String.Format( "{0}{1}", prependThis ?? String.Empty, result ?? String.Empty );
+        }
+
         public static String PadMiddle( int totalLength, String partA, String partB, char paddingChar ) {
             var result = partA + partB;
             while ( result.Length < totalLength ) {

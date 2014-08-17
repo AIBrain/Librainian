@@ -16,17 +16,16 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/BigDecimal.cs" was last cleaned by Rick on 2014/08/16 at 6:45 PM
+// "Librainian/BigDecimal.cs" was last cleaned by Rick on 2014/08/17 at 9:06 AM
 #endregion
 
 namespace Librainian.Maths {
     using System;
     using System.Diagnostics;
-    using System.Linq;
+    using System.Globalization;
     using System.Numerics;
     using Annotations;
     using Extensions;
-    using FluentAssertions;
     using Hardware;
     using NUnit.Framework;
     using Parsing;
@@ -84,9 +83,6 @@ namespace Librainian.Maths {
 
         public BigDecimal( float value ) : this( ( Decimal )value ) { }
 
-        [UsedImplicitly]
-        private string DebuggerDisplay { get { return this.ToString(); } }
-
         public BigDecimal( BigInteger significand, Int32 exponent ) {
             this.Significand = significand;
             this.Exponent = exponent;
@@ -129,15 +125,18 @@ namespace Librainian.Maths {
             this.Exponent = BitConverter.ToInt32( flags, 0 );
         }
 
-        public BigDecimal( String value ) {
-            BigDecimal? number;
-            string whyfailed;
-            if ( !TryParse( value, out number, out whyfailed ) || null == number ) {
-                throw new InvalidOperationException( String.Format( "Unable to parse a BigDecimal from the given string because '{0}'.", whyfailed ) );
-            }
-            this.Significand = number.Value.Significand;
-            this.Exponent = number.Value.Exponent;
-        }
+        [UsedImplicitly]
+        private string DebuggerDisplay { get { return this.ToString(); } }
+
+        //public BigDecimal( String value ) {
+        //    BigDecimal? number;
+        //    string whyfailed;
+        //    if ( !TryParse( value, out number, out whyfailed ) || null == number ) {
+        //        throw new InvalidOperationException( String.Format( "Unable to parse a BigDecimal from the given string because '{0}'.", whyfailed ) );
+        //    }
+        //    this.Significand = number.Value.Significand;
+        //    this.Exponent = number.Value.Exponent;
+        //}
 
         /// <summary>
         ///     The significand (aka mantissa) is part of a number consisting of its significant digits.
@@ -191,10 +190,7 @@ namespace Librainian.Maths {
             if ( this < other ) {
                 return -1;
             }
-            if ( this > other ) {
-                return 1;
-            }
-            return 0;
+            return this > other ? 1 : 0;
         }
 
         object IConvertible.ToType( Type conversionType, IFormatProvider provider ) {
@@ -226,11 +222,12 @@ namespace Librainian.Maths {
         }
 
         char IConvertible.ToChar( IFormatProvider provider ) {
-            throw new InvalidCastException( "Cannot cast BigDecimal2 to Char" );
+            throw new InvalidCastException( "Cannot cast BigDecimal to Char" );
         }
 
         DateTime IConvertible.ToDateTime( IFormatProvider provider ) {
-            throw new InvalidCastException( "Cannot cast BigDecimal2 to DateTime" );
+            //TODO use a span -> plancks -> UDT (universaldatetime)
+            throw new InvalidCastException( "Cannot cast BigDecimal to DateTime" );
         }
 
         Decimal IConvertible.ToDecimal( IFormatProvider provider ) {
@@ -481,6 +478,7 @@ namespace Librainian.Maths {
         //    return shortened;
         //}
 
+        [Pure]
         public override Boolean Equals( [CanBeNull] object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
@@ -488,6 +486,7 @@ namespace Librainian.Maths {
             return obj is BigDecimal && Equals( this, ( BigDecimal )obj );
         }
 
+        [Pure]
         public override Int32 GetHashCode() {
             return this.Mantissa.GetHashMerge( this.Exponent );
         }
@@ -499,34 +498,63 @@ namespace Librainian.Maths {
 
         [Pure]
         public override string ToString() {
+            var result = BigInteger.Abs( this.Significand ).ToString(); //get the digits.
 
-            var result = this.Significand.ToString();   //get the digits.
-
-            if ( this.Exponent > 0 ) {
-                result = result.PadRight( this.Exponent, '0' ); //bigger number, add some zeros
+            if ( this.Exponent < 0 ) {
+                var amountOfZeros = Math.Abs( this.Exponent ) - result.Length;
+                if ( amountOfZeros > 0 ) {
+                    var leadingZeros = new String( '0', amountOfZeros );
+                    result = result.Prepend( leadingZeros );
+                    result = result.Prepend( "0." );
+                }
+                else {
+                    var at = result.Length + this.Exponent;
+                    if ( at == 0 ) {
+                        result = result.Insert( at, "0." );
+                    }
+                    else {
+                        result = result.Insert( at, "." );
+                    }
+                }
             }
-            else {
-                if ( IsZero ) {
-                    return result;
+            else if ( this.Exponent == 0 ) {
+                if ( this.Significand.IsZero ) {
+                    // do nothing?
                 }
-
-                var at = result.Length + this.Exponent;
-
-                var padLeft = at == 0;
-
-                result = result.Insert( at, "." );
-
-                if ( padLeft ) {
-                    result = result.Insert( at, "0" );
+                else {
+                    //result = result.Append( "0.{0}" );  //?
                 }
+            }
+            else if ( this.Exponent > 0 ) {
+                var trailingZeros = new String( '0', this.Exponent );
+                result = result.Append( trailingZeros ); //big number, add Exponent zeros on the right
             }
 
             if ( this.Sign == -1 ) {
-                result = string.Format( "-{0}", result );
-
+                result = result.Prepend( "-" );
             }
 
             return result;
+
+
+            //if ( this.Exponent < 0 ) {
+
+            //    result = result.Insert( 0, leadingZeros );
+
+            //}
+            //else if ( this.Exponent > 0 ) {
+            //    var at = result.Length + this.Exponent;
+
+            //    var padLeft = at == 0;
+
+            //    result = result.Insert( at, "." );
+
+            //    if ( padLeft ) {
+            //        result = result.Insert( at, "0" );
+            //    }
+            //}
+
+
         }
 
         private static BigDecimal Add( BigDecimal left, BigDecimal right ) {
@@ -572,125 +600,305 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Attempt to parse a huge decimal from a string.
+        ///     Create a BigDecimal from a string representation
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="number"></param>
+        /// <param name="s"></param>
         /// <returns></returns>
-        public static Boolean TryParse( [CanBeNull] String value, out BigDecimal? number, out String whyParseFailed ) {
-            whyParseFailed = String.Empty;
-            number = null;
-
-            // all whitespace or none?
-            if ( String.IsNullOrWhiteSpace( value ) ) {
-                whyParseFailed = "'value' is null or contained only whitespace";
-                return false;
-            }
-
-            value = value.Trim();
-            if ( String.IsNullOrWhiteSpace( value ) ) {
-                whyParseFailed = "'value' is null or contained only whitespace";
-                return false;
-            }
-
-            if ( value.Contains( "E" ) ) {
-                whyParseFailed = "not implemented yet";
-                //TODO add in subset for parsing numbers like "3.14E15" (scientific notation?)
-                throw new NotImplementedException();
-                return false;
-            }
-
-            if ( value.Contains( "^" ) ) {
-                whyParseFailed = "not implemented yet";
-                //TODO add in subset for parsing numbers like "3.14^15"? (exponential notation?)
-
-                //TODO add in subset for parsing numbers like "3.14X10^15"? (exponential notation?)
-                throw new NotImplementedException();
-                return false;
-            }
-
-            if ( !value.Contains( "." ) ) {
-                value += ".0"; //for parsing large decimals
-            }
-
-            if ( value.Count( '.' ) > 1 ) {
-                whyParseFailed = "'value' contained too many decimal places";
-                return false;
-            }
-
-            if ( value.Count( '-' ) > 1 ) {
-                whyParseFailed = "'value' contained too many minus signs";
-                return false;
-            }
-
-            if ( value.Any( c => !Char.IsDigit( c ) && c != '.' && c != '-' ) ) {
-                whyParseFailed = "all chars must be a digit, a period, or a negative sign";
-                return false;
-            }
-
-            var split = value.Split( '.' );
-            split.Should().HaveCount( expected: 2, because: "otherwise invalid" );
-            if ( split.Length != 2 ) {
-                whyParseFailed = "";
-                return false;
-            }
-            var left = split[ 0 ];
-            var right = split[ 1 ];
-
-            var verifyLengthOfLeft = left.Length;
-            if ( !verifyLengthOfLeft.CanAllocateMemory() ) {
-                return false;
-            }
-            BigInteger leftOfDecimalPoint;
-            if ( !BigInteger.TryParse( left, out leftOfDecimalPoint ) ) {
-                //we were unable to parse the first string (all to the left of the decimal point)
-                return false;
-            }
-
-            var verifyLengthOfRight = right.Length;
-            if ( !verifyLengthOfRight.CanAllocateMemory() ) {
-                return false;
-            }
-            BigInteger rightOfDecimalPoint;
-
-            var neededToPadFollowingTheZeroButBeforeTheNumbers = right[ 0 ] == '0';
-
-            if ( neededToPadFollowingTheZeroButBeforeTheNumbers ) {
-                right =  '1' + right.Substring(1);  //fake out BigInteger by replacing the leading zero with a 1
-            }
-            //BUG if the string split[1] had a bunch of leading zeros, they are getting trimmed out here.
-            //TODO do some sort of multiplier. Or add a 1.0 in front, with a multiplier. then take off that after the recombine?
-
-            if ( !BigInteger.TryParse( right, out rightOfDecimalPoint ) ) {
-                //we were unable to parse the second string (all to the right of the decimal point)
-                return false;
-            }
-
-            //fraction = fraction.ToString().p
-
-
-            var fractionLength = rightOfDecimalPoint.ToString().Length;
-
-            var ratioInteger = BigInteger.Pow( 10, fractionLength ); //we want the ratio of top/bottom to scale up past the decimal point
-            leftOfDecimalPoint *= ratioInteger; //append a whole lot of zeroes
-
-            //BigDecimal recombined = wholeInteger + fractionInteger;
-
-            //var ratioDecimal = ( BigDecimal ) ratioInteger;
-
-            //recombined /= ratioDecimal;
-
-            leftOfDecimalPoint += rightOfDecimalPoint; //reconstruct the part that was after the decimal point
-            if ( neededToPadFollowingTheZeroButBeforeTheNumbers ) {
-                
-            }
-
-            number = leftOfDecimalPoint;
-
-            number /= ratioInteger;
-
-            return true; //whew.
+        public static BigDecimal Parse( string s ) {
+            BigDecimal v;
+            DoParse( buf: s.ToCharArray(), offset: 0, len: s.Length, throwOnError: true, v: out v );
+            return v;
         }
+
+        private static bool CheckExponent( long candidate, bool isZero, out int exponent ) {
+            exponent = ( int )candidate;
+            if ( exponent == candidate ) {
+                return true;
+            }
+            if ( !isZero ) {
+                return false;
+            }
+            exponent = candidate > ( long )int.MaxValue ? int.MaxValue : int.MinValue;
+            return true;
+        }
+
+        private static int CheckExponent( long candidate, bool isZero ) {
+            int exponent;
+            if ( CheckExponent( candidate, isZero, out exponent ) ) {
+                return exponent;
+            }
+            if ( candidate > int.MaxValue ) {
+                throw new ArithmeticException( "Overflow in scale" );
+            }
+            throw new ArithmeticException( "Underflow in scale" );
+        }
+
+        /// <summary>
+        ///     Parse a substring of a character array as a BigDecimal.
+        /// </summary>
+        /// <param name="buf">The character array to parse</param>
+        /// <param name="offset">Start index for parsing</param>
+        /// <param name="len">Number of chars to parse.</param>
+        /// <param name="throwOnError">If true, an error causes an exception to be thrown. If false, false is returned.</param>
+        /// <param name="v">The BigDecimal corresponding to the characters.</param>
+        /// <returns>True if successful, false if not (or throws if throwOnError is true).</returns>
+        /// <remarks>
+        ///     Ugly. We could use a RegEx, but trying to avoid unnecessary allocation, I guess.
+        ///     [+-]?\d*(\.\d*)?([Ee][+-]?\d+)?  with additional constraint that one of the two d* must have at least one char.
+        /// </remarks>
+        private static Boolean DoParse( char[] buf, int offset, int len, bool throwOnError, out BigDecimal v ) {
+            v = default( BigDecimal );
+            if ( len == 0 ) {
+                if ( throwOnError ) {
+                    throw new FormatException( "Empty string" );
+                }
+                return false;
+            }
+            if ( offset + len > buf.Length ) {
+                if ( throwOnError ) {
+                    throw new FormatException( "offset+len past the end of the char array" );
+                }
+                return false;
+            }
+            var sourceIndex1 = offset;
+            var flag = false;
+            switch ( buf[ offset ] ) {
+                case '-':
+                case '+':
+                    flag = true;
+                    ++offset;
+                    --len;
+                    break;
+            }
+            for ( ; len > 0 && char.IsDigit( buf[ offset ] ); --len ) {
+                ++offset;
+            }
+            var num1 = offset - sourceIndex1;
+            var num2 = offset - sourceIndex1 - ( flag ? 1 : 0 );
+            var sourceIndex2 = offset;
+            var length1 = 0;
+            if ( len > 0 && buf[ offset ] == 46 ) {
+                ++offset;
+                --len;
+                sourceIndex2 = offset;
+                for ( ; len > 0 && char.IsDigit( buf[ offset ] ); --len ) {
+                    ++offset;
+                }
+                length1 = offset - sourceIndex2;
+            }
+            var sourceIndex3 = -1;
+            var length2 = 0;
+            if ( len > 0 && ( buf[ offset ] == 101 || buf[ offset ] == 69 ) ) {
+                ++offset;
+                --len;
+                sourceIndex3 = offset;
+                if ( len == 0 ) {
+                    if ( throwOnError ) {
+                        throw new FormatException( "Missing exponent" );
+                    }
+                    return false;
+                }
+                switch ( buf[ offset ] ) {
+                    case '-':
+                    case '+':
+                        ++offset;
+                        --len;
+                        break;
+                }
+                if ( len == 0 ) {
+                    if ( throwOnError ) {
+                        throw new FormatException( "Missing exponent" );
+                    }
+                    return false;
+                }
+                for ( ; len > 0 && char.IsDigit( buf[ offset ] ); --len ) {
+                    ++offset;
+                }
+                length2 = offset - sourceIndex3;
+                if ( length2 == 0 ) {
+                    if ( throwOnError ) {
+                        throw new FormatException( "Missing exponent" );
+                    }
+                    return false;
+                }
+            }
+            if ( len != 0 ) {
+                if ( throwOnError ) {
+                    throw new FormatException( "Unused characters at end" );
+                }
+                return false;
+            }
+            var num3 = num2 + length1;
+            if ( num3 == 0 ) {
+                if ( throwOnError ) {
+                    throw new FormatException( "No digits in coefficient" );
+                }
+                return false;
+            }
+            var chArray1 = new char[ num1 + length1 ];
+            Array.Copy( buf, sourceIndex1, chArray1, 0, num1 );
+            if ( length1 > 0 ) {
+                Array.Copy( buf, sourceIndex2, chArray1, num1, length1 );
+            }
+            var coeff = BigInteger.Parse( new string( chArray1 ) );
+            var result = 0;
+            if ( length2 > 0 ) {
+                var chArray2 = new char[ length2 ];
+                Array.Copy( buf, sourceIndex3, chArray2, 0, length2 );
+                if ( throwOnError ) {
+                    result = int.Parse( new string( chArray2 ), CultureInfo.InvariantCulture );
+                }
+                else if ( !int.TryParse( new string( chArray2 ), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out result ) ) {
+                    return false;
+                }
+            }
+            var exp = num2 - num3;
+            if ( result != 0 ) {
+                try {
+                    exp = CheckExponent( exp + result, coeff.IsZero );
+                }
+                catch ( ArithmeticException ex ) {
+                    if ( !throwOnError ) {
+                        return false;
+                    }
+                    throw;
+                }
+            }
+            for ( var index = flag ? 1 : 0; index < num1 + length1 && num3 > 1 && ( int )chArray1[ index ] == 48; ++index ) {
+                --num3;
+            }
+            v = new BigDecimal( coeff, exp );
+            return true;
+        }
+
+        ///// <summary>
+        /////     Attempt to parse a huge decimal from a string.
+        ///// </summary>
+        ///// <param name="value"></param>
+        ///// <param name="number"></param>
+        ///// <param name="whyParseFailed"></param>
+        ///// <returns></returns>
+        //public static Boolean TryParse( [CanBeNull] String value, out BigDecimal? number, out String whyParseFailed ) {
+        //    whyParseFailed = String.Empty;
+        //    number = null;
+
+        //    //BigDecimal bob = Parse( value );
+        //    //number = bob;
+
+        //    clojure.lang.BigDecimal bigDecimal;
+        //    if ( clojure.lang.BigDecimal.TryParse( value, out bigDecimal ) ) {
+        //        number = new BigDecimal( bigDecimal.Coefficient, bigDecimal.Exponent );
+        //        return true;
+        //    }
+
+        //    // all whitespace or none?
+        //    if ( String.IsNullOrWhiteSpace( value ) ) {
+        //        whyParseFailed = "'value' is null or contained only whitespace";
+        //        return false;
+        //    }
+
+        //    value = value.Trim();
+        //    if ( String.IsNullOrWhiteSpace( value ) ) {
+        //        whyParseFailed = "'value' is null or contained only whitespace";
+        //        return false;
+        //    }
+
+        //    if ( value.Contains( "E" ) ) {
+        //        whyParseFailed = "not implemented yet";
+        //        //TODO add in subset for parsing numbers like "3.14E15" (scientific notation?)
+        //        throw new NotImplementedException();
+        //        return false;
+        //    }
+
+        //    if ( value.Contains( "^" ) ) {
+        //        whyParseFailed = "not implemented yet";
+        //        //TODO add in subset for parsing numbers like "3.14^15"? (exponential notation?)
+
+        //        //TODO add in subset for parsing numbers like "3.14X10^15"? (exponential notation?)
+        //        throw new NotImplementedException();
+        //        return false;
+        //    }
+
+        //    if ( !value.Contains( "." ) ) {
+        //        value += ".0"; //for parsing large decimals
+        //    }
+
+        //    if ( value.Count( '.' ) > 1 ) {
+        //        whyParseFailed = "'value' contained too many decimal places";
+        //        return false;
+        //    }
+
+        //    if ( value.Count( '-' ) > 1 ) {
+        //        whyParseFailed = "'value' contained too many minus signs";
+        //        return false;
+        //    }
+
+        //    if ( value.Any( c => !Char.IsDigit( c ) && c != '.' && c != '-' ) ) {
+        //        whyParseFailed = "all chars must be a digit, a period, or a negative sign";
+        //        return false;
+        //    }
+
+        //    var split = value.Split( '.' );
+        //    split.Should().HaveCount( expected: 2, because: "otherwise invalid" );
+        //    if ( split.Length != 2 ) {
+        //        whyParseFailed = "";
+        //        return false;
+        //    }
+        //    var wholeSide = split[ 0 ];
+
+        //    var wholeSideLength = wholeSide.Length;
+        //    if ( !wholeSideLength.CanAllocateMemory() ) {
+        //        return false;
+        //    }
+        //    BigInteger leftOfDecimalPoint;
+        //    if ( !BigInteger.TryParse( wholeSide, out leftOfDecimalPoint ) ) {
+        //        //we were unable to parse the first string (all to the left of the decimal point)
+        //        return false;
+        //    }
+
+        //    var fractionSide = split[ 1 ];
+        //    var fractionSideLength = fractionSide.Length;
+        //    if ( !fractionSideLength.CanAllocateMemory() ) {
+        //        return false;
+        //    }
+
+        //    BigInteger fractionInteger;
+
+        //    var needToPadFractionSide = fractionSide[ 0 ] == '0';
+
+        //    if ( needToPadFractionSide ) {
+        //        //fractionSide = '1' + fractionSide;  //fake out BigInteger by replacing the leading zero with a 1
+        //    }
+        //    //BUG if the string split[1] had a bunch of leading zeros, they are getting trimmed out here.
+        //    //TODO do some sort of multiplier. Or add a 1.0 in front, with a multiplier. then take off that after the recombine?
+        //    //but it messes with the ratio
+
+        //    if ( !BigInteger.TryParse( fractionSide, out fractionInteger ) ) {
+        //        //we were unable to parse the second string (all to the right of the decimal point)
+        //        return false;
+        //    }
+
+        //    var fractionLength = fractionInteger.ToString().Length;
+
+        //    var multiplier = BigInteger.Pow( 10, fractionLength ); //we want the ratio of top/bottom to scale up past the decimal point and back down later
+
+        //    leftOfDecimalPoint *= multiplier; //append a whole lot of zeroes "1000000000"
+        //    leftOfDecimalPoint += fractionInteger; //reconstruct the part that was after the decimal point "123456789"
+        //    // so now it looks like "1123456789"
+
+        //    if ( needToPadFractionSide ) {
+        //        var zeros = new string( '0', fractionSideLength - fractionLength );
+        //        var bside = leftOfDecimalPoint.ToString();
+        //        bside = bside.Insert( wholeSideLength - 1, zeros );
+        //        leftOfDecimalPoint = BigInteger.Parse( bside, NumberStyles.AllowDecimalPoint );
+        //    }
+
+        //    number = leftOfDecimalPoint;
+
+        //    number /= multiplier;
+
+        //    return true; //whew.
+        //}
 
         [Pure]
         public Byte[] ToByteArray() {
