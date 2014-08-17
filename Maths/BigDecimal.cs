@@ -605,9 +605,10 @@ namespace Librainian.Maths {
         /// <param name="s"></param>
         /// <returns></returns>
         public static BigDecimal Parse( string s ) {
-            BigDecimal v;
-            DoParse( buf: s.ToCharArray(), offset: 0, len: s.Length, throwOnError: true, v: out v );
-            return v;
+            var bigDecimal = clojure.lang.BigDecimal.Parse( s.ToCharArray(), 0, s.Length );
+            var bigInteger = BigInteger.Parse( bigDecimal.Coefficient.ToString() );
+            var result = new BigDecimal( bigInteger , bigDecimal.Exponent );
+            return result;
         }
 
         private static bool CheckExponent( long candidate, bool isZero, out int exponent ) {
