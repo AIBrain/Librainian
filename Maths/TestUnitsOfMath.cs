@@ -43,7 +43,7 @@
             test2 -= BigDecimal.Parse( "12345678970.320987654321" );
 
             var answer = test2.ToString();
-            Console.WriteLine( "The Answer is {0}", answer );
+            Console.WriteLine( "The Answer is {0}.", answer );
 
         }
 

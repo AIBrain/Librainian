@@ -1396,5 +1396,47 @@ namespace Librainian.Maths {
 
             return BigInteger.TryParse( split[ 0 ], out beforeDecimalPoint ) && BigInteger.TryParse( split[ 1 ], out afterDecimalPoint );
         }
+
+        /// <summary>
+        /// Convert from <see cref="clojure.lang.BigDecimal"/> into a <see cref="BigDecimal"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static BigDecimal ToBigDecimal( this clojure.lang.BigDecimal value ) {
+            var result = new BigDecimal( value.Coefficient.ToBigInteger(), value.Exponent );
+            return result;
+        }
+
+        /// <summary>
+        /// Convert from <see cref="clojure.lang.BigInteger"/> into a <see cref="BigInteger"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static BigInteger ToBigInteger( this clojure.lang.BigInteger value ) {
+            var result = BigInteger.Parse( value.ToString() );
+            return result;
+        }
+
+        /// <summary>
+        ///     Create a BigDecimal from a string representation
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static BigDecimal ToBigDecimal( this String value ) {
+            var bigDecimal = clojure.lang.BigDecimal.Parse( value.ToCharArray(), 0, value.Length );
+            return bigDecimal.ToBigDecimal();
+        }
+
+        /// <summary>
+        ///     <para>Convert most of a <see cref="BigDecimal"/> into a <see cref="BigInteger"/></para>
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static BigInteger ToBigInteger(this BigDecimal value ) {
+            var scaleDivisor = BigInteger.Pow( 10, value.Exponent );
+            var scaledValue = BigInteger.Divide( value.Mantissa, scaleDivisor );
+            return scaledValue;
+        }
+
     }
 }

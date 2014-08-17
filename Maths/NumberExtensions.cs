@@ -1,14 +1,7 @@
 namespace Librainian.Maths {
-    using System;
-    using System.Linq;
-    using System.Numerics;
-    using FluentAssertions;
-    using NUnit.Framework;
-    using Parsing;
-    using Threading;
-
     public static class NumberExtensions {
 
+/*
         /// <summary>
         /// Converts the given string into a <see cref="BigDecimal"/> or null.
         /// </summary>
@@ -100,14 +93,16 @@ namespace Librainian.Maths {
             //var leastCommonDenominator = this._value.LeastCommonDenominator( bob.Numerator, bob.Denominator );
             //bob /= leastCommonDenominator;
         }
+*/
 
 
+/*
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         /// <seealso cref="Number"/>
-        [Test]
+        //[Test]
         public static Boolean TestNumberParsings() {
 
             //var bob = "18913489007071346701367013467767613401616136.136301590214084662236232265343672235925607263623468709823672366";
@@ -124,5 +119,6 @@ namespace Librainian.Maths {
 
             return true;
         }
+*/
     }
 }

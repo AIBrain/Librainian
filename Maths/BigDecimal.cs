@@ -128,15 +128,11 @@ namespace Librainian.Maths {
         [UsedImplicitly]
         private string DebuggerDisplay { get { return this.ToString(); } }
 
-        //public BigDecimal( String value ) {
-        //    BigDecimal? number;
-        //    string whyfailed;
-        //    if ( !TryParse( value, out number, out whyfailed ) || null == number ) {
-        //        throw new InvalidOperationException( String.Format( "Unable to parse a BigDecimal from the given string because '{0}'.", whyfailed ) );
-        //    }
-        //    this.Significand = number.Value.Significand;
-        //    this.Exponent = number.Value.Exponent;
-        //}
+        public BigDecimal( String value ) {
+            var number = value.ToBigDecimal();
+            this.Significand = number.Significand;
+            this.Exponent = number.Exponent;
+        }
 
         /// <summary>
         ///     The significand (aka mantissa) is part of a number consisting of its significant digits.
@@ -521,9 +517,6 @@ namespace Librainian.Maths {
                 if ( this.Significand.IsZero ) {
                     // do nothing?
                 }
-                else {
-                    //result = result.Append( "0.{0}" );  //?
-                }
             }
             else if ( this.Exponent > 0 ) {
                 var trailingZeros = new String( '0', this.Exponent );
@@ -594,183 +587,189 @@ namespace Librainian.Maths {
         /// <param name="value"></param>
         /// <returns></returns>
         public static explicit operator BigInteger( BigDecimal value ) {
-            var scaleDivisor = BigInteger.Pow( 10, value.Exponent );
-            var scaledValue = BigInteger.Divide( value.Mantissa, scaleDivisor );
-            return scaledValue;
+            //var scaleDivisor = BigInteger.Pow( 10, value.Exponent );
+            //var scaledValue = BigInteger.Divide( value.Mantissa, scaleDivisor );
+            return value.ToBigInteger();
         }
 
         /// <summary>
-        ///     Create a BigDecimal from a string representation
+        ///     <para>Create a BigDecimal from a string representation.</para>
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        public static BigDecimal Parse( string s ) {
-            var bigDecimal = clojure.lang.BigDecimal.Parse( s.ToCharArray(), 0, s.Length );
-            var bigInteger = BigInteger.Parse( bigDecimal.Coefficient.ToString() );
-            var result = new BigDecimal( bigInteger , bigDecimal.Exponent );
-            return result;
+        public static BigDecimal Parse( [NotNull] string value ) {
+            if ( value == null ) {
+                throw new ArgumentNullException( "value" );
+            }
+            return value.ToBigDecimal();
         }
 
-        private static bool CheckExponent( long candidate, bool isZero, out int exponent ) {
-            exponent = ( int )candidate;
-            if ( exponent == candidate ) {
-                return true;
-            }
-            if ( !isZero ) {
-                return false;
-            }
-            exponent = candidate > ( long )int.MaxValue ? int.MaxValue : int.MinValue;
-            return true;
-        }
-
-        private static int CheckExponent( long candidate, bool isZero ) {
-            int exponent;
-            if ( CheckExponent( candidate, isZero, out exponent ) ) {
-                return exponent;
-            }
-            if ( candidate > int.MaxValue ) {
-                throw new ArithmeticException( "Overflow in scale" );
-            }
-            throw new ArithmeticException( "Underflow in scale" );
-        }
-
-        /// <summary>
-        ///     Parse a substring of a character array as a BigDecimal.
-        /// </summary>
-        /// <param name="buf">The character array to parse</param>
-        /// <param name="offset">Start index for parsing</param>
-        /// <param name="len">Number of chars to parse.</param>
-        /// <param name="throwOnError">If true, an error causes an exception to be thrown. If false, false is returned.</param>
-        /// <param name="v">The BigDecimal corresponding to the characters.</param>
-        /// <returns>True if successful, false if not (or throws if throwOnError is true).</returns>
-        /// <remarks>
-        ///     Ugly. We could use a RegEx, but trying to avoid unnecessary allocation, I guess.
-        ///     [+-]?\d*(\.\d*)?([Ee][+-]?\d+)?  with additional constraint that one of the two d* must have at least one char.
-        /// </remarks>
-        private static Boolean DoParse( char[] buf, int offset, int len, bool throwOnError, out BigDecimal v ) {
-            v = default( BigDecimal );
-            if ( len == 0 ) {
-                if ( throwOnError ) {
-                    throw new FormatException( "Empty string" );
-                }
-                return false;
-            }
-            if ( offset + len > buf.Length ) {
-                if ( throwOnError ) {
-                    throw new FormatException( "offset+len past the end of the char array" );
-                }
-                return false;
-            }
-            var sourceIndex1 = offset;
-            var flag = false;
-            switch ( buf[ offset ] ) {
-                case '-':
-                case '+':
-                    flag = true;
-                    ++offset;
-                    --len;
-                    break;
-            }
-            for ( ; len > 0 && char.IsDigit( buf[ offset ] ); --len ) {
-                ++offset;
-            }
-            var num1 = offset - sourceIndex1;
-            var num2 = offset - sourceIndex1 - ( flag ? 1 : 0 );
-            var sourceIndex2 = offset;
-            var length1 = 0;
-            if ( len > 0 && buf[ offset ] == 46 ) {
-                ++offset;
-                --len;
-                sourceIndex2 = offset;
-                for ( ; len > 0 && char.IsDigit( buf[ offset ] ); --len ) {
-                    ++offset;
-                }
-                length1 = offset - sourceIndex2;
-            }
-            var sourceIndex3 = -1;
-            var length2 = 0;
-            if ( len > 0 && ( buf[ offset ] == 101 || buf[ offset ] == 69 ) ) {
-                ++offset;
-                --len;
-                sourceIndex3 = offset;
-                if ( len == 0 ) {
-                    if ( throwOnError ) {
-                        throw new FormatException( "Missing exponent" );
+        /*
+                private static bool CheckExponent( long candidate, bool isZero, out int exponent ) {
+                    exponent = ( int )candidate;
+                    if ( exponent == candidate ) {
+                        return true;
                     }
-                    return false;
-                }
-                switch ( buf[ offset ] ) {
-                    case '-':
-                    case '+':
-                        ++offset;
-                        --len;
-                        break;
-                }
-                if ( len == 0 ) {
-                    if ( throwOnError ) {
-                        throw new FormatException( "Missing exponent" );
-                    }
-                    return false;
-                }
-                for ( ; len > 0 && char.IsDigit( buf[ offset ] ); --len ) {
-                    ++offset;
-                }
-                length2 = offset - sourceIndex3;
-                if ( length2 == 0 ) {
-                    if ( throwOnError ) {
-                        throw new FormatException( "Missing exponent" );
-                    }
-                    return false;
-                }
-            }
-            if ( len != 0 ) {
-                if ( throwOnError ) {
-                    throw new FormatException( "Unused characters at end" );
-                }
-                return false;
-            }
-            var num3 = num2 + length1;
-            if ( num3 == 0 ) {
-                if ( throwOnError ) {
-                    throw new FormatException( "No digits in coefficient" );
-                }
-                return false;
-            }
-            var chArray1 = new char[ num1 + length1 ];
-            Array.Copy( buf, sourceIndex1, chArray1, 0, num1 );
-            if ( length1 > 0 ) {
-                Array.Copy( buf, sourceIndex2, chArray1, num1, length1 );
-            }
-            var coeff = BigInteger.Parse( new string( chArray1 ) );
-            var result = 0;
-            if ( length2 > 0 ) {
-                var chArray2 = new char[ length2 ];
-                Array.Copy( buf, sourceIndex3, chArray2, 0, length2 );
-                if ( throwOnError ) {
-                    result = int.Parse( new string( chArray2 ), CultureInfo.InvariantCulture );
-                }
-                else if ( !int.TryParse( new string( chArray2 ), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out result ) ) {
-                    return false;
-                }
-            }
-            var exp = num2 - num3;
-            if ( result != 0 ) {
-                try {
-                    exp = CheckExponent( exp + result, coeff.IsZero );
-                }
-                catch ( ArithmeticException ex ) {
-                    if ( !throwOnError ) {
+                    if ( !isZero ) {
                         return false;
                     }
-                    throw;
+                    exponent = candidate > ( long )int.MaxValue ? int.MaxValue : int.MinValue;
+                    return true;
                 }
-            }
-            for ( var index = flag ? 1 : 0; index < num1 + length1 && num3 > 1 && ( int )chArray1[ index ] == 48; ++index ) {
-                --num3;
-            }
-            v = new BigDecimal( coeff, exp );
-            return true;
-        }
+        */
+
+        /*
+                private static int CheckExponent( long candidate, bool isZero ) {
+                    int exponent;
+                    if ( CheckExponent( candidate, isZero, out exponent ) ) {
+                        return exponent;
+                    }
+                    if ( candidate > int.MaxValue ) {
+                        throw new ArithmeticException( "Overflow in scale" );
+                    }
+                    throw new ArithmeticException( "Underflow in scale" );
+                }
+        */
+
+        /*
+                /// <summary>
+                ///     Parse a substring of a character array as a BigDecimal.
+                /// </summary>
+                /// <param name="buf">The character array to parse</param>
+                /// <param name="offset">Start index for parsing</param>
+                /// <param name="len">Number of chars to parse.</param>
+                /// <param name="throwOnError">If true, an error causes an exception to be thrown. If false, false is returned.</param>
+                /// <param name="v">The BigDecimal corresponding to the characters.</param>
+                /// <returns>True if successful, false if not (or throws if throwOnError is true).</returns>
+                /// <remarks>
+                ///     Ugly. We could use a RegEx, but trying to avoid unnecessary allocation, I guess.
+                ///     [+-]?\d*(\.\d*)?([Ee][+-]?\d+)?  with additional constraint that one of the two d* must have at least one char.
+                /// </remarks>
+                private static Boolean DoParse( char[] buf, int offset, int len, bool throwOnError, out BigDecimal v ) {
+                    v = default( BigDecimal );
+                    if ( len == 0 ) {
+                        if ( throwOnError ) {
+                            throw new FormatException( "Empty string" );
+                        }
+                        return false;
+                    }
+                    if ( offset + len > buf.Length ) {
+                        if ( throwOnError ) {
+                            throw new FormatException( "offset+len past the end of the char array" );
+                        }
+                        return false;
+                    }
+                    var sourceIndex1 = offset;
+                    var flag = false;
+                    switch ( buf[ offset ] ) {
+                        case '-':
+                        case '+':
+                            flag = true;
+                            ++offset;
+                            --len;
+                            break;
+                    }
+                    for ( ; len > 0 && char.IsDigit( buf[ offset ] ); --len ) {
+                        ++offset;
+                    }
+                    var num1 = offset - sourceIndex1;
+                    var num2 = offset - sourceIndex1 - ( flag ? 1 : 0 );
+                    var sourceIndex2 = offset;
+                    var length1 = 0;
+                    if ( len > 0 && buf[ offset ] == 46 ) {
+                        ++offset;
+                        --len;
+                        sourceIndex2 = offset;
+                        for ( ; len > 0 && char.IsDigit( buf[ offset ] ); --len ) {
+                            ++offset;
+                        }
+                        length1 = offset - sourceIndex2;
+                    }
+                    var sourceIndex3 = -1;
+                    var length2 = 0;
+                    if ( len > 0 && ( buf[ offset ] == 101 || buf[ offset ] == 69 ) ) {
+                        ++offset;
+                        --len;
+                        sourceIndex3 = offset;
+                        if ( len == 0 ) {
+                            if ( throwOnError ) {
+                                throw new FormatException( "Missing exponent" );
+                            }
+                            return false;
+                        }
+                        switch ( buf[ offset ] ) {
+                            case '-':
+                            case '+':
+                                ++offset;
+                                --len;
+                                break;
+                        }
+                        if ( len == 0 ) {
+                            if ( throwOnError ) {
+                                throw new FormatException( "Missing exponent" );
+                            }
+                            return false;
+                        }
+                        for ( ; len > 0 && char.IsDigit( buf[ offset ] ); --len ) {
+                            ++offset;
+                        }
+                        length2 = offset - sourceIndex3;
+                        if ( length2 == 0 ) {
+                            if ( throwOnError ) {
+                                throw new FormatException( "Missing exponent" );
+                            }
+                            return false;
+                        }
+                    }
+                    if ( len != 0 ) {
+                        if ( throwOnError ) {
+                            throw new FormatException( "Unused characters at end" );
+                        }
+                        return false;
+                    }
+                    var num3 = num2 + length1;
+                    if ( num3 == 0 ) {
+                        if ( throwOnError ) {
+                            throw new FormatException( "No digits in coefficient" );
+                        }
+                        return false;
+                    }
+                    var chArray1 = new char[ num1 + length1 ];
+                    Array.Copy( buf, sourceIndex1, chArray1, 0, num1 );
+                    if ( length1 > 0 ) {
+                        Array.Copy( buf, sourceIndex2, chArray1, num1, length1 );
+                    }
+                    var coeff = BigInteger.Parse( new string( chArray1 ) );
+                    var result = 0;
+                    if ( length2 > 0 ) {
+                        var chArray2 = new char[ length2 ];
+                        Array.Copy( buf, sourceIndex3, chArray2, 0, length2 );
+                        if ( throwOnError ) {
+                            result = int.Parse( new string( chArray2 ), CultureInfo.InvariantCulture );
+                        }
+                        else if ( !int.TryParse( new string( chArray2 ), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out result ) ) {
+                            return false;
+                        }
+                    }
+                    var exp = num2 - num3;
+                    if ( result != 0 ) {
+                        try {
+                            exp = CheckExponent( exp + result, coeff.IsZero );
+                        }
+                        catch ( ArithmeticException ex ) {
+                            if ( !throwOnError ) {
+                                return false;
+                            }
+                            throw;
+                        }
+                    }
+                    for ( var index = flag ? 1 : 0; index < num1 + length1 && num3 > 1 && ( int )chArray1[ index ] == 48; ++index ) {
+                        --num3;
+                    }
+                    v = new BigDecimal( coeff, exp );
+                    return true;
+                }
+        */
 
         ///// <summary>
         /////     Attempt to parse a huge decimal from a string.
