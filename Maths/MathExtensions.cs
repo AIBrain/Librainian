@@ -24,6 +24,7 @@ namespace Librainian.Maths {
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
+    using System.Web.ModelBinding;
     using Annotations;
     using Collections;
     using FluentAssertions;
@@ -1397,6 +1398,12 @@ namespace Librainian.Maths {
             return BigInteger.TryParse( split[ 0 ], out beforeDecimalPoint ) && BigInteger.TryParse( split[ 1 ], out afterDecimalPoint );
         }
 
+        [CanBeNull]
+        public static String ToScientificString( BigDecimal value ) {
+            var bob = new clojure.lang.BigDecimal( value.Significand.ToBigInteger(), value.Exponent );
+            return bob.ToScientificString();
+        }
+
         /// <summary>
         /// Convert from <see cref="clojure.lang.BigDecimal"/> into a <see cref="BigDecimal"/>.
         /// </summary>
@@ -1414,6 +1421,16 @@ namespace Librainian.Maths {
         /// <returns></returns>
         public static BigInteger ToBigInteger( this clojure.lang.BigInteger value ) {
             var result = BigInteger.Parse( value.ToString() );
+            return result;
+        }
+
+        /// <summary>
+        /// Convert from <see cref="BigInteger"/> into a <see cref="clojure.lang.BigInteger"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static clojure.lang.BigInteger ToBigInteger( this BigInteger value ) {
+            var result = clojure.lang.BigInteger.Parse( value.ToString() );
             return result;
         }
 

@@ -604,6 +604,29 @@ namespace Librainian.Maths {
             return value.ToBigDecimal();
         }
 
+        /// <summary>
+        ///     <para>Create a BigDecimal from a string representation.</para>
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static Boolean TryParse( [CanBeNull] string value, out BigDecimal? answer ) {
+            answer = null;
+            if ( String.IsNullOrWhiteSpace( value ) ) {
+                return false;
+            }
+            try {
+                answer= value.ToBigDecimal();
+                return true;
+            }
+            catch ( FormatException ) {}
+            catch ( ArithmeticException ) { }
+            return false;
+        }
+
+        public string ToScientificString() {
+            return 
+        }
+
         /*
                 private static bool CheckExponent( long candidate, bool isZero, out int exponent ) {
                     exponent = ( int )candidate;
