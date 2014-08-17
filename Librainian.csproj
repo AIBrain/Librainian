@@ -154,6 +154,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
+    <Reference Include="WolframAPI">
+      <HintPath>..\Universal\packages\WolframAPI.1.2\lib\WolframAPI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmazedSaint\DynamicExtensions.cs" />
@@ -557,6 +560,7 @@
     <None Include="app.config" />
     <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
+    <None Include="README.textile" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="PatternRecognition\" />
