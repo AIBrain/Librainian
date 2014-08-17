@@ -34,8 +34,6 @@
 
             var test2 = BigDecimal.Parse( "1111111111111111111111111111111111111111.11111111111111111111111111111111111111111111111111111111111111111111111" );
 
-            test2 += test2 + test2;
-
             test2 += test2 * test2;
 
             Console.WriteLine( test2.ToString() );
