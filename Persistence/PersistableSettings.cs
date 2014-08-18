@@ -71,7 +71,7 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     check if we have a storagepath given for AIBrain.
+        ///     check if we have a storage folder.
         ///     if we don't, popup a dialog to ask.
         ///     Settings.
         /// </summary>
@@ -111,11 +111,7 @@ namespace Librainian.Persistence {
                 }
 
                 try {
-                    var randomFileName = Path.GetRandomFileName();
-                    var temp = Path.Combine( this.MainStoragePath.FullName, String.Format( "{0}", randomFileName ) );
-                    NtfsAlternateStream.WriteAllText( temp, Randem.NextString( 144, true, true, true, true ) );
-                    NtfsAlternateStream.Delete( temp );
-                    File.Delete( randomFileName );
+                    this.TestForReadWriteAccess();
                 }
                 catch ( Exception ) {
                     var dialogResult = MessageBox.Show( String.Format( "Unable to write to storage folder [{0}]. Retry?", this.MainStoragePath ), "No Access", MessageBoxButtons.RetryCancel );
@@ -129,6 +125,18 @@ namespace Librainian.Persistence {
             }
             finally {
                 String.Format( "Using storage folder `{0}`.", this.MainStoragePath ).TimeDebug();
+            }
+        }
+
+        private void TestForReadWriteAccess() {
+            var randomFileName = Path.GetRandomFileName();
+            try {
+                var temp = Path.Combine( this.MainStoragePath.FullName, String.Format( "{0}", randomFileName ) );
+                NtfsAlternateStream.WriteAllText( temp, text: Randem.NextString( 144, true, true, true, true ) );
+                NtfsAlternateStream.Delete( temp );
+            }
+            finally {
+                File.Delete( randomFileName );
             }
         }
 

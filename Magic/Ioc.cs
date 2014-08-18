@@ -29,12 +29,12 @@ namespace Librainian.Magic {
         [NotNull]
         public static IIocContainer Container {
             get {
-                if ( null == container ) {
-                    container = new NinjectIocContainer();
-                    container.Should().NotBeNull();
+                if ( null != container ) {
+                    return container;
                 }
+                container = new NinjectIocContainer();
+                container.Should().NotBeNull();
                 return container; }
-            private set { container = value; }
         }
 
         //static Ioc() {
