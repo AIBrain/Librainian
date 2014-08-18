@@ -51,7 +51,7 @@ namespace Librainian.Speech {
     /// <summary>
     ///     Use whatever TTS engine is available...
     /// </summary>
-    public class SpeechOutput : NinjectModule, IInitializable, IStartable, ISpeechOutput {
+    public sealed class SpeechOutput : NinjectModule, IInitializable, IStartable, ISpeechOutput {
         [CanBeNull]
         private SpeechSynthesizer SpeechSynthesizer { get; set; }
 

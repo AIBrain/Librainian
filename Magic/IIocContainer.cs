@@ -21,8 +21,12 @@
 
 namespace Librainian.Magic {
     using System;
+    using Ninject;
 
     public interface IIocContainer {
+
+        IKernel Kernel { get; set;  }
+
         object Get( Type type );
 
         T Get< T >();

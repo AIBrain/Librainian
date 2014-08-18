@@ -36,10 +36,5 @@ namespace Librainian.Magic {
                 container.Should().NotBeNull();
                 return container; }
         }
-
-        //static Ioc() {
-        //    Container = new NinjectIocContainer();
-            
-        //}
     }
 }

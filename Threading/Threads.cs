@@ -323,6 +323,7 @@ namespace Librainian.Threading {
         /// <param name="memberName"></param>
         /// <param name="sourceFilePath"></param>
         /// <param name="sourceLineNumber"></param>
+        [DebuggerStepThrough]
         public static void Log( [CanBeNull] this Exception exception, [CanBeNull] String message = "", [CanBeNull] [CallerMemberName] String memberName = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
@@ -350,7 +351,8 @@ namespace Librainian.Threading {
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static int MarshalSizeOf< T >() where T : struct {
+        [DebuggerStepThrough]
+        public static int MarshalSizeOf<T>() where T : struct {
             return Marshal.SizeOf( typeof ( T ) );
         }
 
@@ -753,6 +755,7 @@ namespace Librainian.Threading {
             next.Spawn();
         }
 
+        [DebuggerStepThrough]
         public static void TimeDebug( [CanBeNull] this String message, Boolean newline = true ) {
             if ( message == null ) {
                 return;
@@ -817,7 +820,7 @@ namespace Librainian.Threading {
             if ( selector == null ) {
                 throw new ArgumentNullException( "selector" );
             }
-            return Task.Factory.StartNew( selector );
+            return Task.Run( selector );
         }
 
         /// <summary>
@@ -832,7 +835,7 @@ namespace Librainian.Threading {
             if ( selector == null ) {
                 throw new ArgumentNullException( "selector" );
             }
-            return Task.Factory.StartNew( () => selector( input ) );
+            return Task.Run( () => selector( input ) );
         }
 
         /// <summary>
@@ -888,7 +891,7 @@ namespace Librainian.Threading {
         [DllImport( "kernel32.dll" )]
         private static extern IntPtr SetThreadAffinityMask( IntPtr hThread, IntPtr dwThreadAffinityMask );
 
-        public class ContextCallOnlyXTimes {
+        public sealed class ContextCallOnlyXTimes {
             public long CallsAllowed;
 
             public ContextCallOnlyXTimes( long times ) {
@@ -905,6 +908,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="method"></param>
             /// <param name="FullMethodPath"></param>
+            [DebuggerStepThrough]
             public static void Enter( [CallerMemberName] String method = "", [Custom] String FullMethodPath = "" ) {
                 //if ( String.IsNullOrWhiteSpace( method ) ) {
                 //    return;
@@ -917,6 +921,7 @@ namespace Librainian.Threading {
             ///     TODO add in the threadID
             /// </summary>
             /// <param name="method"></param>
+            [DebuggerStepThrough]
             public static void Exit( [CallerMemberName] String method = "" ) {
                 //if ( String.IsNullOrWhiteSpace( method ) ) {
                 //    return;
