@@ -17,7 +17,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/NinjectIocContainer.cs" was last cleaned by Rick on 2014/08/17 at 10:28 PM
+// "Librainian/NinjectIocContainer.cs" was last cleaned by Rick on 2014/08/18 at 2:45 AM
 
 #endregion License & Information
 
@@ -33,20 +33,24 @@ namespace Librainian.Magic {
     using Threading;
 
     public sealed class NinjectIocContainer : IIocContainer {
-        public NinjectIocContainer() {
-            this.Kernel = new StandardKernel();
+        //private readonly Boolean _alreadyLoadedAsses;
 
+        public NinjectIocContainer() {
+            this.Kernel.Should().BeNull();
+            this.Kernel = new StandardKernel();
             this.Kernel.Should().NotBeNull();
-            this.LoadAndBindInterfaces();
+            String.Format( "Modules loaded: {0}", this.Kernel.GetModules().ToStrings() ).TimeDebug();
         }
 
         public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
             if ( modules == null ) {
                 throw new ArgumentNullException( "modules" );
             }
+            this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel( modules );
             this.Kernel.Should().NotBeNull();
-            this.LoadAndBindInterfaces();
+
+            String.Format( "Modules loaded: {0}", this.Kernel.GetModules().ToStrings() ).TimeDebug();
         }
 
         public IKernel Kernel { get; set; }
@@ -77,38 +81,16 @@ namespace Librainian.Magic {
             return this.Kernel.TryGet<T>();
         }
 
-        private void LoadAndBindInterfaces() {
-            String.Format( "Wiring up Ninject..." ).TimeDebug();
-
-            this.Kernel.Should().NotBeNull();
-
-            //Kernel.Scan( scanner => {
-            //    scanner.From( typeof( BusinessProcess ).Assembly );
-            //    scanner.BindWith<DefaultBindingGenerator>();
-            //} );
-
-            //        this.Kernel.Bind( x => x
-            //.From( this.GetType().Assembly )
-            //.SelectAllClasses()
-            //.InNamespaceOf( this.GetType() )
-            //.BindAllInterfaces()
-            //.Configure( b => b.InSingletonScope() )
-            //);
-
-            this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
-            String.Format( "Modules loaded: {0}", this.Kernel.GetModules().ToStrings() ).TimeDebug();
-
-            this.Kernel.Should().NotBeNull();
-            String.Format( "Wired up Ninject..." ).TimeDebug();
-        }
-
+        /// <summary>
+        ///     Warning!
+        /// </summary>
         public void ResetKernel() {
             this.Kernel.Should().NotBeNull();
             this.Kernel.GetModules().ForEach( m => this.Kernel.Unload( m.Name ) );
             this.Kernel.Components.Get<ICache>().Clear();
             this.Kernel.Should().NotBeNull();
 
-            this.LoadAndBindInterfaces();
+            //this.LoadAndBindInterfaces();
         }
     }
 }

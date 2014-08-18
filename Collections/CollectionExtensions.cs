@@ -24,6 +24,7 @@ namespace Librainian.Collections {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
     using System.Linq;
     using System.Numerics;
     using System.Threading.Tasks;
@@ -653,6 +654,7 @@ namespace Librainian.Collections {
         /// <param name="separator"></param>
         /// <param name="atTheEnd"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
         public static String ToStrings<T>( [NotNull] this IEnumerable<T> enumerable, [NotNull] String separator = ", ", String atTheEnd = null ) {
             if ( enumerable == null ) {
                 throw new ArgumentNullException( "enumerable" );

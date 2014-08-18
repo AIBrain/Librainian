@@ -40,6 +40,9 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoRegister">
+      <HintPath>..\AIBrain\packages\NinjectAutoRegister.1.0.0\lib\AutoRegister.dll</HintPath>
+    </Reference>
     <Reference Include="BigRationalLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\AIBrain\packages\BigRationalLibrary.1.0.0.0\lib\NETFramework40\BigRationalLibrary.dll</HintPath>

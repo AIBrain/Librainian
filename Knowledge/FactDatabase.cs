@@ -102,8 +102,8 @@ namespace Librainian.Knowledge {
         }
 
         public override void Load() {
-            Threads.Report.Enter();
-            Threads.Report.Exit();
+            //Threads.Report.Enter();
+            //Threads.Report.Exit();
         }
     }
 }
