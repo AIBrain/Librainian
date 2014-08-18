@@ -39,6 +39,7 @@ namespace Librainian.Magic {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel();
             this.Kernel.Should().NotBeNull();
+            Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
             String.Format( "Modules loaded: {0}", this.Kernel.GetModules().ToStrings() ).TimeDebug();
         }
 
@@ -49,7 +50,7 @@ namespace Librainian.Magic {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel( modules );
             this.Kernel.Should().NotBeNull();
-
+            Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
             String.Format( "Modules loaded: {0}", this.Kernel.GetModules().ToStrings() ).TimeDebug();
         }
 
