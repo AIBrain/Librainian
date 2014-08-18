@@ -172,7 +172,6 @@ namespace Librainian.Threading {
             Thread.EndCriticalRegion();
         }
 
-        [Obsolete]
         public static void ForEach< T >( this IEnumerable< T > items, Action< T > action ) {
             if ( null == items ) {
                 throw new ArgumentNullException( "items" );

@@ -21,9 +21,25 @@
 
 namespace Librainian.Magic {
     using Annotations;
+    using FluentAssertions;
 
     public static class Ioc {
+        private static IIocContainer container;
+
         [NotNull]
-        public static IIocContainer Container { get; set; }
+        public static IIocContainer Container {
+            get {
+                if ( null == container ) {
+                    container = new NinjectIocContainer();
+                    container.Should().NotBeNull();
+                }
+                return container; }
+            private set { container = value; }
+        }
+
+        //static Ioc() {
+        //    Container = new NinjectIocContainer();
+            
+        //}
     }
 }
