@@ -39,8 +39,6 @@ namespace Librainian.Magic {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel();
             this.Kernel.Should().NotBeNull();
-            Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
-            String.Format( "Modules loaded: {0}", this.Kernel.GetModules().ToStrings() ).TimeDebug();
         }
 
         public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
@@ -50,8 +48,6 @@ namespace Librainian.Magic {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel( modules );
             this.Kernel.Should().NotBeNull();
-            Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
-            String.Format( "Modules loaded: {0}", this.Kernel.GetModules().ToStrings() ).TimeDebug();
         }
 
         public IKernel Kernel { get; set; }
