@@ -179,11 +179,16 @@ namespace Librainian.Collections {
             var seq = sequence.ToArray();
 
             var p = 0; // current position in source sequence
+
             var i = 0; // current position in searched sequence
+
             var prospects = new List<int>(); // list of prospective matches
+
             foreach ( var item in source ) {
                 // Remove bad prospective matches
-                prospects.RemoveAll( k => !comparer.Equals( item, seq[ p - k ] ) );
+                var item1 = item;
+                var p1 = p;
+                prospects.RemoveAll( k => !comparer.Equals( item1, seq[ p1 - k ] ) );
 
                 // Is it the start of a prospective match ?
                 if ( comparer.Equals( item, seq[ 0 ] ) ) {

@@ -32,24 +32,42 @@ namespace Librainian.Collections {
     /// <typeparam name="TKey">The type of the keys in the dictionary</typeparam>
     /// <typeparam name="TValue">The type of the values in the dictionary</typeparam>
     [DataContract( IsReference = true )]
-    public class OrderedDictionary< TKey, TValue > : IOrderedDictionary< TKey, TValue > where TKey : class {
-        [DataMember] [OptionalField] private const int DefaultInitialCapacity = 0;
+    public class OrderedDictionary<TKey, TValue> : IOrderedDictionary<TKey, TValue> where TKey : class {
+        [DataMember]
+        [OptionalField]
+        private const int DefaultInitialCapacity = 0;
 
-        [DataMember] [OptionalField] private static readonly String _keyTypeName = typeof ( TKey ).FullName;
+        [DataMember]
+        [OptionalField]
+        private static readonly String _keyTypeName = typeof( TKey ).FullName;
 
-        [DataMember] [OptionalField] private static readonly Boolean _valueTypeIsReferenceType = !typeof ( ValueType ).IsAssignableFrom( typeof ( TValue ) );
+        [DataMember]
+        [OptionalField]
+        private static readonly Boolean _valueTypeIsReferenceType = !typeof( ValueType ).IsAssignableFrom( typeof( TValue ) );
 
-        [DataMember] [OptionalField] private static readonly String _valueTypeName = typeof ( TValue ).FullName;
+        [DataMember]
+        [OptionalField]
+        private static readonly String _valueTypeName = typeof( TValue ).FullName;
 
-        [DataMember] [OptionalField] private IEqualityComparer< TKey > _comparer;
+        [DataMember]
+        [OptionalField]
+        private readonly IEqualityComparer<TKey> _comparer;
 
-        [DataMember] [OptionalField] private Dictionary< TKey, TValue > _dictionary;
+        [DataMember]
+        [OptionalField]
+        private Dictionary<TKey, TValue> _dictionary;
 
-        [DataMember] [OptionalField] private int _initialCapacity;
+        [DataMember]
+        [OptionalField]
+        private readonly int _initialCapacity;
 
-        [DataMember] [OptionalField] private List< KeyValuePair< TKey, TValue > > _list;
+        [DataMember]
+        [OptionalField]
+        private List<KeyValuePair<TKey, TValue>> _list;
 
-        [DataMember] [OptionalField] private object _syncRoot;
+        [DataMember]
+        [OptionalField]
+        private object _syncRoot;
 
         /// <summary>
         ///     Initializes a new instance of the
@@ -100,7 +118,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     for the type of the key.
         /// </param>
-        public OrderedDictionary( IEqualityComparer< TKey > comparer ) : this( DefaultInitialCapacity, comparer ) { }
+        public OrderedDictionary( IEqualityComparer<TKey> comparer ) : this( DefaultInitialCapacity, comparer ) { }
 
         /// <summary>
         ///     Initializes a new instance of the
@@ -130,7 +148,7 @@ namespace Librainian.Collections {
         /// <exception cref="ArgumentOutOfRangeException">
         ///     <paramref name="capacity" /> is less than 0
         /// </exception>
-        public OrderedDictionary( int capacity, IEqualityComparer< TKey > comparer ) {
+        public OrderedDictionary( int capacity, IEqualityComparer<TKey> comparer ) {
             if ( 0 > capacity ) {
                 throw new ArgumentOutOfRangeException( "capacity", "'capacity' must be non-negative" );
             }
@@ -147,7 +165,7 @@ namespace Librainian.Collections {
         ///     <see cref="OrderedDictionary{TKey,TValue}">OrderedDictionary&lt;TKey,TValue&gt;</see>
         /// </value>
         /// <remarks>Accessing this property will create the dictionary object if necessary</remarks>
-        private Dictionary< TKey, TValue > Dictionary { get { return this._dictionary ?? ( this._dictionary = new Dictionary< TKey, TValue >( this._initialCapacity, this._comparer ) ); } }
+        private Dictionary<TKey, TValue> Dictionary { get { return this._dictionary ?? ( this._dictionary = new Dictionary<TKey, TValue>( this._initialCapacity, this._comparer ) ); } }
 
         /// <summary>
         ///     Gets the list object that stores the key/value pairs.
@@ -157,7 +175,7 @@ namespace Librainian.Collections {
         ///     <see cref="OrderedDictionary{TKey,TValue}">OrderedDictionary&lt;TKey,TValue&gt;</see>
         /// </value>
         /// <remarks>Accessing this property will create the list object if necessary.</remarks>
-        private List< KeyValuePair< TKey, TValue > > List { get { return this._list ?? ( this._list = new List< KeyValuePair< TKey, TValue > >( this._initialCapacity ) ); } }
+        private List<KeyValuePair<TKey, TValue>> List { get { return this._list ?? ( this._list = new List<KeyValuePair<TKey, TValue>>( this._initialCapacity ) ); } }
 
         #region IOrderedDictionary<TKey,TValue> Members
         /// <summary>
@@ -257,7 +275,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     continue to be reflected in the key collection.
         /// </remarks>
-        ICollection IDictionary.Keys { get { return ( ICollection ) this.Keys; } }
+        ICollection IDictionary.Keys { get { return ( ICollection )this.Keys; } }
 
         /// <summary>
         ///     Gets an <see cref="ICollection" /> object containing the values in the
@@ -293,7 +311,7 @@ namespace Librainian.Collections {
         ///         cref="ICollection" />
         ///     .
         /// </remarks>
-        ICollection IDictionary.Values { get { return ( ICollection ) this.Values; } }
+        ICollection IDictionary.Values { get { return ( ICollection )this.Values; } }
 
         /// <summary>
         ///     Gets a value indicating whether the
@@ -354,7 +372,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     continue to be reflected in the key collection.
         /// </remarks>
-        public ICollection< TKey > Keys { get { return this.Dictionary.Keys; } }
+        public ICollection<TKey> Keys { get { return this.Dictionary.Keys; } }
 
         /// <summary>
         ///     Gets an <see cref="T:ICollection{TValue}">ICollection&lt;TValue&gt;</see> object
@@ -382,7 +400,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     continue to be reflected in the value collection.
         /// </remarks>
-        public ICollection< TValue > Values { get { return this.Dictionary.Values; } }
+        public ICollection<TValue> Values { get { return this.Dictionary.Values; } }
 
         /// <summary>
         ///     Gets or sets the value with the specified key.
@@ -443,7 +461,7 @@ namespace Librainian.Collections {
 
                 var key = this.List[ index ].Key;
 
-                this.List[ index ] = new KeyValuePair< TKey, TValue >( key, value );
+                this.List[ index ] = new KeyValuePair<TKey, TValue>( key, value );
                 this.Dictionary[ key ] = value;
             }
         }
@@ -463,7 +481,7 @@ namespace Librainian.Collections {
             set {
                 if ( this.Dictionary.ContainsKey( key ) ) {
                     this.Dictionary[ key ] = value;
-                    this.List[ this.IndexOfKey( key ) ] = new KeyValuePair< TKey, TValue >( key, value );
+                    this.List[ this.IndexOfKey( key ) ] = new KeyValuePair<TKey, TValue>( key, value );
                 }
                 else {
                     this.Add( key, value );
@@ -515,7 +533,7 @@ namespace Librainian.Collections {
         /// </exception>
         public int Add( TKey key, TValue value ) {
             this.Dictionary.Add( key, value );
-            this.List.Add( new KeyValuePair< TKey, TValue >( key, value ) );
+            this.List.Add( new KeyValuePair<TKey, TValue>( key, value ) );
             return this.Count - 1;
         }
 
@@ -593,7 +611,7 @@ namespace Librainian.Collections {
         ///     </see>
         /// </remarks>
         void ICollection.CopyTo( Array array, int index ) {
-            ( ( ICollection ) this.List ).CopyTo( array, index );
+            ( ( ICollection )this.List ).CopyTo( array, index );
         }
 
         /// <summary>
@@ -614,7 +632,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     .
         /// </param>
-        void ICollection< KeyValuePair< TKey, TValue > >.Add( KeyValuePair< TKey, TValue > item ) {
+        void ICollection<KeyValuePair<TKey, TValue>>.Add( KeyValuePair<TKey, TValue> item ) {
             this.Add( item.Key, item.Value );
         }
 
@@ -643,8 +661,8 @@ namespace Librainian.Collections {
         ///     ;
         ///     otherwise, <see langword="false" />.
         /// </returns>
-        Boolean ICollection< KeyValuePair< TKey, TValue > >.Contains( KeyValuePair< TKey, TValue > item ) {
-            return ( ( ICollection< KeyValuePair< TKey, TValue > > ) this.Dictionary ).Contains( item );
+        Boolean ICollection<KeyValuePair<TKey, TValue>>.Contains( KeyValuePair<TKey, TValue> item ) {
+            return ( ( ICollection<KeyValuePair<TKey, TValue>> )this.Dictionary ).Contains( item );
         }
 
         /// <summary>
@@ -678,8 +696,8 @@ namespace Librainian.Collections {
         /// <param name="arrayIndex">
         ///     The zero-based index in <paramref name="array" /> at which copying begins.
         /// </param>
-        void ICollection< KeyValuePair< TKey, TValue > >.CopyTo( KeyValuePair< TKey, TValue >[] array, int arrayIndex ) {
-            ( ( ICollection< KeyValuePair< TKey, TValue > > ) this.Dictionary ).CopyTo( array, arrayIndex );
+        void ICollection<KeyValuePair<TKey, TValue>>.CopyTo( KeyValuePair<TKey, TValue>[] array, int arrayIndex ) {
+            ( ( ICollection<KeyValuePair<TKey, TValue>> )this.Dictionary ).CopyTo( array, arrayIndex );
         }
 
         /// <summary>
@@ -710,7 +728,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     .
         /// </returns>
-        Boolean ICollection< KeyValuePair< TKey, TValue > >.Remove( KeyValuePair< TKey, TValue > item ) {
+        Boolean ICollection<KeyValuePair<TKey, TValue>>.Remove( KeyValuePair<TKey, TValue> item ) {
             return this.Remove( item.Key );
         }
 
@@ -850,7 +868,7 @@ namespace Librainian.Collections {
         ///         OrderedDictionary&lt;TKey,TValue&gt;
         ///     </see>
         /// </exception>
-        void IDictionary< TKey, TValue >.Add( TKey key, TValue value ) {
+        void IDictionary<TKey, TValue>.Add( TKey key, TValue value ) {
             this.Add( key, value );
         }
 
@@ -858,7 +876,7 @@ namespace Librainian.Collections {
             return this.List.GetEnumerator();
         }
 
-        IEnumerator< KeyValuePair< TKey, TValue > > IEnumerable< KeyValuePair< TKey, TValue > >.GetEnumerator() {
+        IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() {
             return this.List.GetEnumerator();
         }
 
@@ -895,7 +913,7 @@ namespace Librainian.Collections {
             }
 
             this.Dictionary.Add( key, value );
-            this.List.Insert( index, new KeyValuePair< TKey, TValue >( key, value ) );
+            this.List.Insert( index, new KeyValuePair<TKey, TValue>( key, value ) );
         }
 
         IDictionaryEnumerator IOrderedDictionary.GetEnumerator() {
@@ -1088,7 +1106,7 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( "keyObject" );
             }
             if ( keyObject is TKey ) {
-                return ( TKey ) keyObject;
+                return ( TKey )keyObject;
             }
             throw new ArgumentException( "'key' must be of type " + _keyTypeName, "key" );
         }
@@ -1124,7 +1142,7 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( "value" );
             }
             if ( value is TValue ) {
-                return ( TValue ) value;
+                return ( TValue )value;
             }
             throw new ArgumentException( "'value' must be of type " + _valueTypeName, "value" );
         }

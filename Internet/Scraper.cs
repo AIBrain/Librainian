@@ -33,23 +33,23 @@ namespace Librainian.Internet {
     [DataContract]
     [Obsolete]
     public static class Scraper {
-        [DataMember] [OptionalField] private static ReaderWriterLockSlim mAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+        [DataMember] [OptionalField] private static readonly ReaderWriterLockSlim MAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
         /// <summary>
         ///     TODO: concurrentbag
         /// </summary>
-        [DataMember] [OptionalField] private static List< WebSite > mWebsites = new List< WebSite >();
+        [DataMember] [OptionalField] private static readonly List< WebSite > MWebsites = new List< WebSite >();
 
-        [DataMember] [OptionalField] private static CookieContainer cookies = new CookieContainer();
+        [DataMember] [OptionalField] private static readonly CookieContainer Cookies = new CookieContainer();
 
         public static List< WebSite > ScrapedSites {
             get {
                 try {
-                    mAccess.EnterReadLock();
-                    return mWebsites.Where( w => w.ResponseCount > 0 ) as List< WebSite >;
+                    MAccess.EnterReadLock();
+                    return MWebsites.Where( w => w.ResponseCount > 0 ) as List< WebSite >;
                 }
                 finally {
-                    mAccess.ExitReadLock();
+                    MAccess.ExitReadLock();
                 }
             }
         }
@@ -79,20 +79,20 @@ namespace Librainian.Internet {
                                           //ResponseAction = responseaction
                                       };
                 try {
-                    mAccess.EnterWriteLock();
-                    mWebsites.Add( web );
+                    MAccess.EnterWriteLock();
+                    MWebsites.Add( web );
                 }
                 finally {
-                    mAccess.ExitWriteLock();
+                    MAccess.ExitWriteLock();
                 }
             }
             else {
                 try {
-                    mAccess.EnterWriteLock();
-                    mWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => { r.RequestCount++; } );
+                    MAccess.EnterWriteLock();
+                    MWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => { r.RequestCount++; } );
                 }
                 finally {
-                    mAccess.ExitWriteLock();
+                    MAccess.ExitWriteLock();
                 }
             }
 
@@ -101,11 +101,11 @@ namespace Librainian.Internet {
 
         public static Boolean IsSiteQueued( Uri uri ) {
             try {
-                mAccess.EnterReadLock();
-                return mWebsites.Exists( w => w.Location.Equals( uri ) );
+                MAccess.EnterReadLock();
+                return MWebsites.Exists( w => w.Location.Equals( uri ) );
             }
             finally {
-                mAccess.ExitReadLock();
+                MAccess.ExitReadLock();
             }
         }
 
@@ -118,7 +118,7 @@ namespace Librainian.Internet {
 
                 if ( null == web.Request ) {
                     try {
-                        mAccess.EnterWriteLock();
+                        MAccess.EnterWriteLock();
                         web.Request = WebRequest.Create( web.Location ) as HttpWebRequest;
                         if ( web.Request != null ) {
                             web.Request.AllowAutoRedirect = true;
@@ -126,7 +126,7 @@ namespace Librainian.Internet {
                             web.Request.AuthenticationLevel = AuthenticationLevel.None;
                             web.Request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
                             web.Request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );
-                            web.Request.CookieContainer = cookies;
+                            web.Request.CookieContainer = Cookies;
                             web.Request.KeepAlive = true;
                             web.Request.MaximumAutomaticRedirections = 300;
                             web.Request.Method = "GET";
@@ -138,7 +138,7 @@ namespace Librainian.Internet {
                         web.WhenRequestStarted = DateTime.UtcNow;
                     }
                     finally {
-                        mAccess.ExitWriteLock();
+                        MAccess.ExitWriteLock();
                     }
                 }
                 if ( web.Request != null ) {
@@ -152,11 +152,11 @@ namespace Librainian.Internet {
 
         private static WebSite GetNextToScrape() {
             try {
-                mAccess.EnterReadLock();
-                return mWebsites.FirstOrDefault( w => w.WhenRequestStarted.Equals( DateTime.MinValue ) );
+                MAccess.EnterReadLock();
+                return MWebsites.FirstOrDefault( w => w.WhenRequestStarted.Equals( DateTime.MinValue ) );
             }
             finally {
-                mAccess.ExitReadLock();
+                MAccess.ExitReadLock();
             }
         }
 
@@ -171,7 +171,7 @@ namespace Librainian.Internet {
 
                 Debug.WriteLineIf( response.IsFromCache, String.Format( "from cache {0}", web.Location ) );
 
-                mAccess.EnterWriteLock();
+                MAccess.EnterWriteLock();
                 web.ResponseCount++;
                 web.WhenResponseCame = DateTime.UtcNow;
                 web.Document = document;
@@ -179,7 +179,7 @@ namespace Librainian.Internet {
                     web.Location = response.ResponseUri;
                     //AddSiteToScrape( response.ResponseUri, web.ResponseAction );
                 }
-                mAccess.ExitWriteLock();
+                MAccess.ExitWriteLock();
 
                 //TODO
                 //if ( web.ResponseAction is Action<WebSite> ) {
