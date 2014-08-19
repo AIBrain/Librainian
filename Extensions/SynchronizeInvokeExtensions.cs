@@ -40,7 +40,7 @@ namespace Librainian.Extensions {
                 }
             }
             catch ( ObjectDisposedException exception ) {
-                exception.Log();
+                exception.Error();
             }
         }
 

@@ -430,7 +430,7 @@ namespace Librainian.Threading {
                 return span;
             }
             catch ( ArgumentOutOfRangeException exception ) {
-                exception.Log();
+                exception.Error();
                 return min;
             } //return TimeSpan.FromTicks( value: min.Ticks + Instance.Next( minValue: minTicks, maxValue: maxTicks ) );
         }

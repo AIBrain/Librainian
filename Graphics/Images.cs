@@ -168,7 +168,7 @@ namespace Librainian.Graphics {
             catch ( NotSupportedException ) { }
             catch ( OutOfMemoryException ) { }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
             return false;
         }

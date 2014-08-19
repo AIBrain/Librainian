@@ -45,16 +45,16 @@ namespace Librainian.Extensions {
                 field.SetValue( destination, sourceValue );
             }
             catch ( TargetException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( NotSupportedException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( FieldAccessException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( ArgumentException exception ) {
-                exception.Log();
+                exception.Error();
             }
         }
 
@@ -71,7 +71,7 @@ namespace Librainian.Extensions {
                     destAsDictionary[ key ] = sourceValue[ key ];
                 }
                 catch ( Exception exception ) {
-                    exception.Log();
+                    exception.Error();
                 }
             }
             return false;
@@ -132,19 +132,19 @@ namespace Librainian.Extensions {
                 prop.SetValue( destination, sourceValue, null );
             }
             catch ( TargetParameterCountException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( TargetException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( NotSupportedException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( FieldAccessException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( ArgumentException exception ) {
-                exception.Log();
+                exception.Error();
             }
         }
 

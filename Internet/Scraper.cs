@@ -62,7 +62,7 @@ namespace Librainian.Internet {
                 }
             }
             catch ( Exception Exception ) {
-                Exception.Log();
+                Exception.Error();
             }
         }
 
@@ -146,7 +146,7 @@ namespace Librainian.Internet {
                 }
             }
             catch ( Exception Exception ) {
-                Exception.Log();
+                Exception.Error();
             }
         }
 
@@ -189,7 +189,7 @@ namespace Librainian.Internet {
             }
             catch ( WebException ) { }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
         }
 

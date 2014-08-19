@@ -37,6 +37,7 @@ namespace Librainian.Threading {
     using Extensions;
     using Maths;
     using Measurement.Time;
+    using NLog;
     using Timer = System.Timers.Timer;
 
     public static class Threads {
@@ -63,12 +64,12 @@ namespace Librainian.Threading {
         public static Action ActionBarrier( [CanBeNull] this Action action, long? callsAllowed = null ) {
             var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
             return () => {
-                       if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
-                           if ( action != null ) {
-                               action();
-                           }
-                       }
-                   };
+                if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
+                    if ( action != null ) {
+                        action();
+                    }
+                }
+            };
         }
 
         /// <summary>
@@ -80,13 +81,13 @@ namespace Librainian.Threading {
         /// <returns></returns>
         /// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier( action: Bar, remainingCallsAllowed: 2 );</example>
         /// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
-        public static Action ActionBarrier< T1 >( [CanBeNull] this Action< T1 > action, T1 parameter, long? callsAllowed = null ) {
+        public static Action ActionBarrier<T1>( [CanBeNull] this Action<T1> action, T1 parameter, long? callsAllowed = null ) {
             var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
             return () => {
-                       if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 && action != null ) {
-                           action( parameter );
-                       }
-                   };
+                if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 && action != null ) {
+                    action( parameter );
+                }
+            };
         }
 
         /// <summary>
@@ -112,12 +113,12 @@ namespace Librainian.Threading {
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static int CalcSizeInBytes< T >( this T obj ) {
+        public static int CalcSizeInBytes<T>( this T obj ) {
             if ( Equals( obj, default( T ) ) ) {
                 return 0;
             }
 
-            var type = typeof ( T );
+            var type = typeof( T );
             var sizeInBytes = GetSizeOfPrimitives( type );
             var fields = type.GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
 
@@ -129,34 +130,34 @@ namespace Librainian.Threading {
                 if ( Equals( obj, default( T ) ) ) {
                     continue;
                 }
-                if ( field.FieldType == typeof ( String ) ) {
+                if ( field.FieldType == typeof( String ) ) {
                     var s = fv as String ?? String.Empty;
                     sizeInBytes += Encoding.Unicode.GetByteCount( s );
                 }
-                else if ( field.FieldType.IsSubclassOf( typeof ( IList ) ) ) {
+                else if ( field.FieldType.IsSubclassOf( typeof( IList ) ) ) {
                     var list = fv as IList;
                     if ( list != null ) {
                         var count = list.Count;
-                        sizeInBytes += count*list[ 0 ].CalcSizeInBytes();
+                        sizeInBytes += count * list[ 0 ].CalcSizeInBytes();
                     }
                 }
-                else if ( field.FieldType.IsSubclassOf( typeof ( IDictionary ) ) ) {
+                else if ( field.FieldType.IsSubclassOf( typeof( IDictionary ) ) ) {
                     var dictionary = fv as IDictionary;
                     if ( dictionary != null ) {
-                        sizeInBytes = dictionary.Keys.Cast< object >().Aggregate( sizeInBytes, ( current, key ) => current + dictionary[ key ].CalcSizeInBytes() );
+                        sizeInBytes = dictionary.Keys.Cast<object>().Aggregate( sizeInBytes, ( current, key ) => current + dictionary[ key ].CalcSizeInBytes() );
                     }
                 }
-                else if ( field.FieldType.IsSubclassOf( typeof ( IEnumerable ) ) ) {
+                else if ( field.FieldType.IsSubclassOf( typeof( IEnumerable ) ) ) {
                     var enumerable = fv as IEnumerable;
                     if ( enumerable != null ) {
-                        sizeInBytes = enumerable.Cast< object >().Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
+                        sizeInBytes = enumerable.Cast<object>().Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
                     }
                 }
                 else if ( field.FieldType.IsArray ) {
                     var list = fv as IList;
                     if ( list != null ) {
                         var count = list.Count;
-                        sizeInBytes += count*list[ 0 ].CalcSizeInBytes();
+                        sizeInBytes += count * list[ 0 ].CalcSizeInBytes();
                     }
                 }
             }
@@ -172,7 +173,7 @@ namespace Librainian.Threading {
             Thread.EndCriticalRegion();
         }
 
-        public static void ForEach< T >( this IEnumerable< T > items, Action< T > action ) {
+        public static void ForEach<T>( this IEnumerable<T> items, Action<T> action ) {
             if ( null == items ) {
                 throw new ArgumentNullException( "items" );
             }
@@ -208,60 +209,60 @@ namespace Librainian.Threading {
             }
         }
 
-        public static IEnumerable< T > GetEnums< T >( this T hmm ) {
-            return Enum.GetValues( typeof ( T ) ).Cast< T >();
+        public static IEnumerable<T> GetEnums<T>( this T hmm ) {
+            return Enum.GetValues( typeof( T ) ).Cast<T>();
             //also: return ( T[] )Enum.GetValues( typeof( T ) );    //prob faster
         }
 
         public static int GetSizeOfPrimitives( this Type type ) {
-            if ( type == typeof ( Byte ) ) {
-                return sizeof ( Byte );
+            if ( type == typeof( Byte ) ) {
+                return sizeof( Byte );
             }
-            if ( type == typeof ( UInt16 ) ) {
-                return sizeof ( UInt16 );
+            if ( type == typeof( UInt16 ) ) {
+                return sizeof( UInt16 );
             }
-            if ( type == typeof ( UInt32 ) ) {
-                return sizeof ( UInt32 );
+            if ( type == typeof( UInt32 ) ) {
+                return sizeof( UInt32 );
             }
-            if ( type == typeof ( UInt64 ) ) {
-                return sizeof ( UInt64 );
-            }
-
-            if ( type == typeof ( SByte ) ) {
-                return sizeof ( SByte );
-            }
-            if ( type == typeof ( Int16 ) ) {
-                return sizeof ( Int16 );
-            }
-            if ( type == typeof ( Int32 ) ) {
-                return sizeof ( Int32 );
-            }
-            if ( type == typeof ( Int64 ) ) {
-                return sizeof ( Int64 );
+            if ( type == typeof( UInt64 ) ) {
+                return sizeof( UInt64 );
             }
 
-            if ( type == typeof ( Single ) ) {
-                return sizeof ( Single );
+            if ( type == typeof( SByte ) ) {
+                return sizeof( SByte );
             }
-            if ( type == typeof ( Double ) ) {
-                return sizeof ( Double );
+            if ( type == typeof( Int16 ) ) {
+                return sizeof( Int16 );
             }
-            if ( type == typeof ( Decimal ) ) {
-                return sizeof ( Decimal );
+            if ( type == typeof( Int32 ) ) {
+                return sizeof( Int32 );
             }
-            if ( type == typeof ( Boolean ) ) {
-                return sizeof ( Boolean );
+            if ( type == typeof( Int64 ) ) {
+                return sizeof( Int64 );
             }
 
-            return sizeof ( UInt64 ); //HACK assume 8 bytes on a 64 bit proc..?
+            if ( type == typeof( Single ) ) {
+                return sizeof( Single );
+            }
+            if ( type == typeof( Double ) ) {
+                return sizeof( Double );
+            }
+            if ( type == typeof( Decimal ) ) {
+                return sizeof( Decimal );
+            }
+            if ( type == typeof( Boolean ) ) {
+                return sizeof( Boolean );
+            }
+
+            return sizeof( UInt64 ); //HACK assume 8 bytes on a 64 bit proc..?
         }
 
         public static TimeSpan GetSlice( Boolean? setProcessorAffinity = null ) {
             if ( setProcessorAffinity.HasValue && setProcessorAffinity.Value ) {
                 try {
-                    var affinityMask = ( long ) CurrentProcess.ProcessorAffinity;
+                    var affinityMask = ( long )CurrentProcess.ProcessorAffinity;
                     affinityMask &= 0xFFFF; // use any of the available processors
-                    CurrentProcess.ProcessorAffinity = ( IntPtr ) affinityMask;
+                    CurrentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
                 }
                 catch ( Win32Exception ) {
                     /*swallow*/
@@ -286,9 +287,9 @@ namespace Librainian.Threading {
 
             if ( setProcessorAffinity.HasValue && setProcessorAffinity.Value ) {
                 try {
-                    var affinityMask = ( long ) CurrentProcess.ProcessorAffinity;
+                    var affinityMask = ( long )CurrentProcess.ProcessorAffinity;
                     affinityMask &= 0xFFFF; // use any of the available processors
-                    CurrentProcess.ProcessorAffinity = ( IntPtr ) affinityMask;
+                    CurrentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
                 }
                 catch ( Win32Exception ) {
                     /*swallow*/
@@ -302,7 +303,7 @@ namespace Librainian.Threading {
             }
 
             String.Format( "Performing {0} timeslice calibrations.", ProcessorCount ).TimeDebug();
-            SliceAverageCache = new Milliseconds( ( decimal ) ( 1 + Math.Ceiling( 0.To( ProcessorCount ).Select( i => GetSlice() ).Average( span => span.TotalMilliseconds ) ) ) );
+            SliceAverageCache = new Milliseconds( ( decimal )( 1 + Math.Ceiling( 0.To( ProcessorCount ).Select( i => GetSlice() ).Average( span => span.TotalMilliseconds ) ) ) );
             String.Format( "Timeslice calibration is {0}.", SliceAverageCache.Value.Simpler() ).TimeDebug();
             return SliceAverageCache.Value;
         }
@@ -312,8 +313,10 @@ namespace Librainian.Threading {
         /// </summary>
         /// <returns></returns>
         public static long GetTimerAccuracy() {
-            return 1000000000L/Stopwatch.Frequency;
+            return 1000000000L / Stopwatch.Frequency;
         }
+
+        public static readonly Logger Logger = LogManager.GetLogger( "Librainian" );
 
         /// <summary>
         ///     TODO replace this with a proper IoC container.
@@ -324,22 +327,28 @@ namespace Librainian.Threading {
         /// <param name="sourceFilePath"></param>
         /// <param name="sourceLineNumber"></param>
         [DebuggerStepThrough]
-        public static void Log( [CanBeNull] this Exception exception, [CanBeNull] String message = "", [CanBeNull] [CallerMemberName] String memberName = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
+        public static void Error( [CanBeNull] this Exception exception, [CanBeNull] String message = "", [CanBeNull] [CallerMemberName] String memberName = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
+
             if ( Debugger.IsAttached ) {
+
+                Logger.Debug( memberName, exception );
+
+                if ( !String.IsNullOrEmpty( message ) ) {
+                    Debug.WriteLine( "[{0}]", message );
+                }
+                Debug.Indent();
+                Debug.WriteLine( "[Method: {0}]", memberName );
+                if ( exception != null ) {
+                    Debug.WriteLine( "[Exception: {0}]", exception.Message );
+                    Debug.WriteLine( "[In: {0}]", exception.Source );
+                    Debug.WriteLine( "[Msg: {0}]", exception.Message );
+                }
+                Debug.Unindent();
                 Debugger.Break();
             }
-            if ( !String.IsNullOrEmpty( message ) ) {
-                Debug.WriteLine( "[{0}]", message );
+            else {
+                Logger.Error( exception );
             }
-            Debug.Indent();
-            //TODO write the rest of the parameters
-            Debug.WriteLine( "[Method: {0}]", memberName );
-            if ( exception != null ) {
-                Debug.WriteLine( "[Exception: {0}]", exception.Message );
-                Debug.WriteLine( "[In: {0}]", exception.Source );
-                Debug.WriteLine( "[Msg: {0}]", exception.Message );
-            }
-            Debug.Unindent();
         }
 
         //    e.GetObjectData( si, ctx );
@@ -353,7 +362,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [DebuggerStepThrough]
         public static int MarshalSizeOf<T>() where T : struct {
-            return Marshal.SizeOf( typeof ( T ) );
+            return Marshal.SizeOf( typeof( T ) );
         }
 
         //public static void PreserveStackTrace( this Exception e ) {
@@ -377,7 +386,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static int MarshalSizeOf< T >( this T obj ) {
+        public static int MarshalSizeOf<T>( this T obj ) {
             return Marshal.SizeOf( obj );
         }
 
@@ -396,20 +405,20 @@ namespace Librainian.Threading {
             try {
                 using ( var s = new NullStream() ) {
                     var serializer = new NetDataContractSerializer {
-                                                                       AssemblyFormat = FormatterAssemblyStyle.Full
-                                                                   };
+                        AssemblyFormat = FormatterAssemblyStyle.Full
+                    };
                     serializer.WriteObject( stream: s, graph: bob );
                     return s.Length;
                 }
             }
             catch ( InvalidDataContractException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( SerializationException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
             return 0;
         }
@@ -457,7 +466,7 @@ namespace Librainian.Threading {
         /// <param name="description"> </param>
         /// <param name="inParallel"> </param>
         /// <returns> </returns>
-        public static Boolean Run( this IEnumerable< Action > tasks, Action< String > output = null, String description = null, Boolean inParallel = true ) {
+        public static Boolean Run( this IEnumerable<Action> tasks, Action<String> output = null, String description = null, Boolean inParallel = true ) {
             if ( Equals( tasks, null ) ) {
                 return false;
             }
@@ -483,7 +492,7 @@ namespace Librainian.Threading {
         /// <param name="description"> </param>
         /// <param name="inParallel"> </param>
         /// <returns> </returns>
-        public static Boolean Run( this IEnumerable< Func< Boolean > > tasks, Action< String > output = null, String description = null, Boolean inParallel = true ) {
+        public static Boolean Run( this IEnumerable<Func<Boolean>> tasks, Action<String> output = null, String description = null, Boolean inParallel = true ) {
             if ( Equals( tasks, null ) ) {
                 return false;
             }
@@ -512,33 +521,33 @@ namespace Librainian.Threading {
             if ( next == null ) {
                 throw new ArgumentNullException( "next" );
             }
-            var tcs = new TaskCompletionSource< object >(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
 
             first.ContinueWith( task => {
-                                    if ( first.IsFaulted ) {
-                                        if ( first.Exception != null ) {
-                                            tcs.TrySetException( first.Exception.InnerExceptions );
-                                        }
-                                    }
-                                    else if ( first.IsCanceled ) {
-                                        tcs.TrySetCanceled();
-                                    }
-                                    else {
-                                        try {
-                                            next();
-                                            tcs.TrySetResult( null );
-                                        }
-                                        catch ( Exception ex ) {
-                                            tcs.TrySetException( ex );
-                                        }
-                                    }
-                                } );
+                if ( first.IsFaulted ) {
+                    if ( first.Exception != null ) {
+                        tcs.TrySetException( first.Exception.InnerExceptions );
+                    }
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        next();
+                        tcs.TrySetResult( null );
+                    }
+                    catch ( Exception ex ) {
+                        tcs.TrySetException( ex );
+                    }
+                }
+            } );
 
             return tcs.Task;
         }
 
         [Obsolete( "use continuewith", true )]
-        public static Task< T2 > Then< T2 >( this Task first, Func< Task< T2 > > next ) {
+        public static Task<T2> Then<T2>( this Task first, Func<Task<T2>> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
             }
@@ -546,48 +555,48 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "next" );
             }
 
-            var tcs = new TaskCompletionSource< T2 >(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( obj => {
-                                    if ( first.IsFaulted ) {
-                                        if ( first.Exception != null ) {
-                                            tcs.TrySetException( first.Exception.InnerExceptions );
-                                        }
+                if ( first.IsFaulted ) {
+                    if ( first.Exception != null ) {
+                        tcs.TrySetException( first.Exception.InnerExceptions );
+                    }
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        var t = next();
+                        if ( t == null ) {
+                            tcs.TrySetCanceled();
+                        }
+                        else {
+                            t.ContinueWith( obj1 => {
+                                if ( t.IsFaulted ) {
+                                    if ( t.Exception != null ) {
+                                        tcs.TrySetException( t.Exception.InnerExceptions );
                                     }
-                                    else if ( first.IsCanceled ) {
-                                        tcs.TrySetCanceled();
-                                    }
-                                    else {
-                                        try {
-                                            var t = next();
-                                            if ( t == null ) {
-                                                tcs.TrySetCanceled();
-                                            }
-                                            else {
-                                                t.ContinueWith( obj1 => {
-                                                                    if ( t.IsFaulted ) {
-                                                                        if ( t.Exception != null ) {
-                                                                            tcs.TrySetException( t.Exception.InnerExceptions );
-                                                                        }
-                                                                    }
-                                                                    else if ( t.IsCanceled ) {
-                                                                        tcs.TrySetCanceled();
-                                                                    }
-                                                                    else {
-                                                                        tcs.TrySetResult( t.Result );
-                                                                    }
-                                                                }, TaskContinuationOptions.ExecuteSynchronously );
-                                            }
-                                        }
-                                        catch ( Exception exc ) {
-                                            tcs.TrySetException( exc );
-                                        }
-                                    }
-                                }, TaskContinuationOptions.ExecuteSynchronously );
+                                }
+                                else if ( t.IsCanceled ) {
+                                    tcs.TrySetCanceled();
+                                }
+                                else {
+                                    tcs.TrySetResult( t.Result );
+                                }
+                            }, TaskContinuationOptions.ExecuteSynchronously );
+                        }
+                    }
+                    catch ( Exception exc ) {
+                        tcs.TrySetException( exc );
+                    }
+                }
+            }, TaskContinuationOptions.ExecuteSynchronously );
             return tcs.Task;
         }
 
         [Obsolete( "use continuewith", true )]
-        public static Task Then< T1 >( this Task< T1 > first, Action< T1 > next ) {
+        public static Task Then<T1>( this Task<T1> first, Action<T1> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
             }
@@ -595,33 +604,33 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "next" );
             }
 
-            var tcs = new TaskCompletionSource< object >(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
 
             first.ContinueWith( task => {
-                                    if ( first.IsFaulted ) {
-                                        if ( first.Exception != null ) {
-                                            tcs.TrySetException( first.Exception.InnerExceptions );
-                                        }
-                                    }
-                                    else if ( first.IsCanceled ) {
-                                        tcs.TrySetCanceled();
-                                    }
-                                    else {
-                                        try {
-                                            next( first.Result );
-                                            tcs.TrySetResult( null );
-                                        }
-                                        catch ( Exception ex ) {
-                                            tcs.TrySetException( ex );
-                                        }
-                                    }
-                                } );
+                if ( first.IsFaulted ) {
+                    if ( first.Exception != null ) {
+                        tcs.TrySetException( first.Exception.InnerExceptions );
+                    }
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        next( first.Result );
+                        tcs.TrySetResult( null );
+                    }
+                    catch ( Exception ex ) {
+                        tcs.TrySetException( ex );
+                    }
+                }
+            } );
 
             return tcs.Task;
         }
 
         [Obsolete( "use continuewith", true )]
-        public static Task Then< T1 >( this Task< T1 > first, Func< T1, Task > next ) {
+        public static Task Then<T1>( this Task<T1> first, Func<T1, Task> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
             }
@@ -629,45 +638,45 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "next" );
             }
 
-            var tcs = new TaskCompletionSource< object >(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
-                                    if ( first.IsFaulted ) {
-                                        tcs.TrySetException( first.Exception.InnerExceptions );
-                                    }
-                                    else if ( first.IsCanceled ) {
-                                        tcs.TrySetCanceled();
-                                    }
-                                    else {
-                                        try {
-                                            var t = next( first.Result );
-                                            if ( t == null ) {
-                                                tcs.TrySetCanceled();
-                                            }
-                                            else {
-                                                t.ContinueWith( delegate {
-                                                                    if ( t.IsFaulted ) {
-                                                                        tcs.TrySetException( t.Exception.InnerExceptions );
-                                                                    }
-                                                                    else if ( t.IsCanceled ) {
-                                                                        tcs.TrySetCanceled();
-                                                                    }
-                                                                    else {
-                                                                        tcs.TrySetResult( null );
-                                                                    }
-                                                                }, TaskContinuationOptions.ExecuteSynchronously );
-                                            }
-                                        }
-                                        catch ( Exception exc ) {
-                                            tcs.TrySetException( exc );
-                                        }
-                                    }
-                                }, TaskContinuationOptions.ExecuteSynchronously );
+                if ( first.IsFaulted ) {
+                    tcs.TrySetException( first.Exception.InnerExceptions );
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        var t = next( first.Result );
+                        if ( t == null ) {
+                            tcs.TrySetCanceled();
+                        }
+                        else {
+                            t.ContinueWith( delegate {
+                                if ( t.IsFaulted ) {
+                                    tcs.TrySetException( t.Exception.InnerExceptions );
+                                }
+                                else if ( t.IsCanceled ) {
+                                    tcs.TrySetCanceled();
+                                }
+                                else {
+                                    tcs.TrySetResult( null );
+                                }
+                            }, TaskContinuationOptions.ExecuteSynchronously );
+                        }
+                    }
+                    catch ( Exception exc ) {
+                        tcs.TrySetException( exc );
+                    }
+                }
+            }, TaskContinuationOptions.ExecuteSynchronously );
 
             return tcs.Task;
         }
 
         [Obsolete( "use continuewith", true )]
-        public static Task< T2 > Then< T1, T2 >( this Task< T1 > first, Func< T1, T2 > next ) {
+        public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, T2> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
             }
@@ -675,29 +684,29 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "next" );
             }
 
-            var tcs = new TaskCompletionSource< T2 >(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
-                                    if ( first.IsFaulted ) {
-                                        tcs.TrySetException( first.Exception.InnerExceptions );
-                                    }
-                                    else if ( first.IsCanceled ) {
-                                        tcs.TrySetCanceled();
-                                    }
-                                    else {
-                                        try {
-                                            var result = next( first.Result );
-                                            tcs.TrySetResult( result );
-                                        }
-                                        catch ( Exception ex ) {
-                                            tcs.TrySetException( ex );
-                                        }
-                                    }
-                                } );
+                if ( first.IsFaulted ) {
+                    tcs.TrySetException( first.Exception.InnerExceptions );
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        var result = next( first.Result );
+                        tcs.TrySetResult( result );
+                    }
+                    catch ( Exception ex ) {
+                        tcs.TrySetException( ex );
+                    }
+                }
+            } );
             return tcs.Task;
         }
 
         [Obsolete( "use continuewith", true )]
-        public static Task< T2 > Then< T1, T2 >( this Task< T1 > first, Func< T1, Task< T2 > > next ) {
+        public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, Task<T2>> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
             }
@@ -705,39 +714,39 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "next" );
             }
 
-            var tcs = new TaskCompletionSource< T2 >(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
-                                    if ( first.IsFaulted ) {
-                                        tcs.TrySetException( first.Exception.InnerExceptions );
-                                    }
-                                    else if ( first.IsCanceled ) {
-                                        tcs.TrySetCanceled();
-                                    }
-                                    else {
-                                        try {
-                                            var t = next( first.Result );
-                                            if ( t == null ) {
-                                                tcs.TrySetCanceled();
-                                            }
-                                            else {
-                                                t.ContinueWith( delegate {
-                                                                    if ( t.IsFaulted ) {
-                                                                        tcs.TrySetException( t.Exception.InnerExceptions );
-                                                                    }
-                                                                    else if ( t.IsCanceled ) {
-                                                                        tcs.TrySetCanceled();
-                                                                    }
-                                                                    else {
-                                                                        tcs.TrySetResult( t.Result );
-                                                                    }
-                                                                }, TaskContinuationOptions.ExecuteSynchronously );
-                                            }
-                                        }
-                                        catch ( Exception exc ) {
-                                            tcs.TrySetException( exc );
-                                        }
-                                    }
-                                }, TaskContinuationOptions.ExecuteSynchronously );
+                if ( first.IsFaulted ) {
+                    tcs.TrySetException( first.Exception.InnerExceptions );
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        var t = next( first.Result );
+                        if ( t == null ) {
+                            tcs.TrySetCanceled();
+                        }
+                        else {
+                            t.ContinueWith( delegate {
+                                if ( t.IsFaulted ) {
+                                    tcs.TrySetException( t.Exception.InnerExceptions );
+                                }
+                                else if ( t.IsCanceled ) {
+                                    tcs.TrySetCanceled();
+                                }
+                                else {
+                                    tcs.TrySetResult( t.Result );
+                                }
+                            }, TaskContinuationOptions.ExecuteSynchronously );
+                        }
+                    }
+                    catch ( Exception exc ) {
+                        tcs.TrySetException( exc );
+                    }
+                }
+            }, TaskContinuationOptions.ExecuteSynchronously );
             return tcs.Task;
         }
 
@@ -775,12 +784,12 @@ namespace Librainian.Threading {
         /// <param name="source"> </param>
         /// <param name="x"> </param>
         /// <returns> </returns>
-        public static IEnumerable< TSource > Top< TSource >( [NotNull] this IEnumerable< TSource > source, Double x ) {
+        public static IEnumerable<TSource> Top<TSource>( [NotNull] this IEnumerable<TSource> source, Double x ) {
             if ( source == null ) {
                 throw new ArgumentNullException( "source" );
             }
-            var sources = source as IList< TSource > ?? source.ToList();
-            return sources.Take( ( int ) ( x*sources.Count() ) );
+            var sources = source as IList<TSource> ?? source.ToList();
+            return sources.Take( ( int )( x * sources.Count() ) );
         }
 
         /// <summary>
@@ -790,7 +799,7 @@ namespace Librainian.Threading {
         /// <param name="afterDelay"></param>
         /// <param name="action"></param>
         /// <param name="condition"></param>
-        public static Timer When( this Span afterDelay, Func< Boolean > condition, Action action ) {
+        public static Timer When( this Span afterDelay, Func<Boolean> condition, Action action ) {
             if ( condition == null ) {
                 throw new ArgumentNullException( "condition" );
             }
@@ -799,13 +808,13 @@ namespace Librainian.Threading {
             }
             try {
                 return afterDelay.Create( () => {
-                                            if ( condition() ) {
-                                                action();
-                                            }
-                                        } ).Once().AndStart();
+                    if ( condition() ) {
+                        action();
+                    }
+                } ).Once().AndStart();
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
                 return null;
             }
         }
@@ -816,7 +825,7 @@ namespace Librainian.Threading {
         /// <typeparam name="T"></typeparam>
         /// <param name="selector"></param>
         /// <returns></returns>
-        public static Task< T > Wrap< T >( [NotNull] this Func< T > selector ) {
+        public static Task<T> Wrap<T>( [NotNull] this Func<T> selector ) {
             if ( selector == null ) {
                 throw new ArgumentNullException( "selector" );
             }
@@ -831,7 +840,7 @@ namespace Librainian.Threading {
         /// <param name="selector"></param>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static Task< TOut > Wrap< TIn, TOut >( [NotNull] this Func< TIn, TOut > selector, TIn input ) {
+        public static Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, TIn input ) {
             if ( selector == null ) {
                 throw new ArgumentNullException( "selector" );
             }
@@ -867,14 +876,14 @@ namespace Librainian.Threading {
                 }
             }
             catch ( OutOfMemoryException lowMemory ) {
-                lowMemory.Log();
+                lowMemory.Error();
                 Garbage();
             }
             catch ( Exception exception ) {
                 if ( null != onException ) {
                     return onException.Wrap();
                 }
-                exception.Log();
+                exception.Error();
             }
             return false;
         }

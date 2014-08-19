@@ -75,7 +75,7 @@ namespace Librainian.Extensions {
                 return dirInfo.SetCompression( compressed );
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
             return false;
         }

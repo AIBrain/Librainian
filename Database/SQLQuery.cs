@@ -122,7 +122,7 @@ namespace Librainian.Database {
                 }
             }
             catch ( InvalidOperationException exception ) {
-                exception.Log();
+                exception.Error();
             }
 
             try {
@@ -131,7 +131,7 @@ namespace Librainian.Database {
                 }
             }
             catch ( InvalidOperationException exception ) {
-                exception.Log();
+                exception.Error();
             }
         }
 
@@ -248,7 +248,7 @@ namespace Librainian.Database {
                     "timeout.wav".TryPlayFile();
                     goto TryAgain;
                 }
-                exception.Log();
+                exception.Error();
                 throw;
             }
             return null;
@@ -282,10 +282,10 @@ namespace Librainian.Database {
                     Task.Delay( Seconds.One ).Wait();
                     goto TryAgain;
                 }
-                exception.Log();
+                exception.Error();
             }
             catch ( InvalidOperationException exception ) {
-                exception.Log();
+                exception.Error();
             }
             return false;
         }

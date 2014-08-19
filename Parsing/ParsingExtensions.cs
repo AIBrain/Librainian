@@ -364,7 +364,7 @@ namespace Librainian.Parsing {
                 return sb.ToString().Trim();
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
                 return s;
             }
         }
@@ -536,7 +536,7 @@ namespace Librainian.Parsing {
                 return sb.ToString();
             }
             catch ( Exception error ) {
-                error.Log();
+                error.Error();
                 return s;
             }
         }

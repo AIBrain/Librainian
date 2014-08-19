@@ -177,7 +177,7 @@ namespace AIBrain
                 return true;
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
                 return false;
             }
         }
@@ -217,7 +217,7 @@ namespace AIBrain
                     return loResult;
                 }
                 catch ( Exception exception ) {
-                    exception.Log();
+                    exception.Error();
                     return null;
                 }
             }
@@ -231,7 +231,7 @@ namespace AIBrain
                 return true;
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
                 return false;
             }
         }

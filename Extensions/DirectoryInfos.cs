@@ -187,7 +187,7 @@ namespace Librainian.Extensions {
                 Assert.True( directoryInfo.Exists );
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
                 return null;
             }
             return directoryInfo;
@@ -252,7 +252,7 @@ namespace Librainian.Extensions {
                 }
             }
             catch ( ManagementException exception ) {
-                exception.Log();
+                exception.Error();
             }
             return false;
         }

@@ -118,7 +118,7 @@ namespace Librainian.Speech {
                 this.SpeechSynthesizer.Speak( message );
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
         }
 
@@ -152,7 +152,7 @@ namespace Librainian.Speech {
                 speechSynthesizer.StateChanged += ( sender, e ) => speechFeedbackEvent( e );
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
         }
     }

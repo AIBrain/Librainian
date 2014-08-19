@@ -248,7 +248,7 @@ namespace Librainian.Extensions {
                     if ( ex is SecurityException ) {
                         return true;
                     }
-                    ex.Log();
+                    ex.Error();
                     return false;
                 } );
             }
@@ -298,7 +298,7 @@ namespace Librainian.Extensions {
                                 }
                             }
                             catch ( Exception exception ) {
-                                exception.Log();
+                                exception.Error();
                             }
                             if ( searchStyle == SearchStyle.FoldersFirst ) {
                                 FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, startingFolder: folder, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
@@ -317,7 +317,7 @@ namespace Librainian.Extensions {
                                         }
                                     }
                                     catch ( Exception exception ) {
-                                        exception.Log();
+                                        exception.Error();
                                     }
                                 } );
 #if DEEPDEBUG
@@ -342,7 +342,7 @@ namespace Librainian.Extensions {
                                     if ( ex is SecurityException ) {
                                         return true;
                                     }
-                                    ex.Log();
+                                    ex.Error();
                                     return false;
                                 } );
                             }
@@ -373,7 +373,7 @@ namespace Librainian.Extensions {
                             if ( ex is SecurityException ) {
                                 return true;
                             }
-                            ex.Log();
+                            ex.Error();
                             return false;
                         } );
                     }
@@ -397,7 +397,7 @@ namespace Librainian.Extensions {
                     if ( ex is SecurityException ) {
                         return true;
                     }
-                    ex.Log();
+                    ex.Error();
                     return false;
                 } );
             }

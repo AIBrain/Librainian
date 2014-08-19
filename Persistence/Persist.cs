@@ -89,13 +89,13 @@ namespace Librainian.Persistence {
                     }
                 }
                 catch ( SecurityException exception ) {
-                    exception.Log();
+                    exception.Error();
                 }
                 catch ( ArgumentException exception ) {
-                    exception.Log();
+                    exception.Error();
                 }
                 catch ( PathTooLongException exception ) {
-                    exception.Log();
+                    exception.Error();
                 }
             }
             return false;
@@ -134,15 +134,15 @@ namespace Librainian.Persistence {
                         }
                     }
                     catch ( SerializationException exception ) {
-                        exception.Log();
+                        exception.Error();
                     }
                     catch ( IsolatedStorageException exception ) {
-                        exception.Log();
+                        exception.Error();
                     }
                 }
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
             return new T();
         }
@@ -180,7 +180,7 @@ namespace Librainian.Persistence {
                         }
                     }
                     catch ( IsolatedStorageException exception ) {
-                        exception.Log();
+                        exception.Error();
                         return false;
                     }
 
@@ -191,7 +191,7 @@ namespace Librainian.Persistence {
                         }
                     }
                     catch ( IsolatedStorageException exception ) {
-                        exception.Log();
+                        exception.Error();
                         return false;
                     }
 
@@ -215,25 +215,25 @@ namespace Librainian.Persistence {
                         }
                     }
                     catch ( InvalidOperationException exception ) {
-                        exception.Log();
+                        exception.Error();
                         return false;
                     }
                     catch ( ArgumentNullException exception ) {
-                        exception.Log();
+                        exception.Error();
                         return false;
                     }
                     catch ( SerializationException exception ) {
-                        exception.Log();
+                        exception.Error();
                         return false;
                     }
                     catch ( Exception exception ) {
-                        exception.Log();
+                        exception.Error();
                         return false;
                     }
                 }
             }
             catch ( IsolatedStorageException exception ) {
-                exception.Log();
+                exception.Error();
             }
             return false;
         }
@@ -276,15 +276,15 @@ namespace Librainian.Persistence {
                             }
                         }
                         catch ( IsolatedStorageException exception ) {
-                            exception.Log();
+                            exception.Error();
                             return false;
                         }
                         catch ( PathTooLongException exception ) {
-                            exception.Log();
+                            exception.Error();
                             return false;
                         }
                         catch ( ArgumentException exception ) {
-                            exception.Log();
+                            exception.Error();
                             return false;
                         }
 
@@ -317,31 +317,31 @@ namespace Librainian.Persistence {
                             }
                         }
                         catch ( InvalidDataContractException exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
                         catch ( SerializationException exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
                         catch ( QuotaExceededException exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
                         catch ( ArgumentNullException exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
                         catch ( ArgumentException exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
                     }
                 }
             }
             catch ( IsolatedStorageException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( SecurityException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
             return false;
         }
@@ -371,11 +371,11 @@ namespace Librainian.Persistence {
                             dir = Path.GetDirectoryName( fileName );
                         }
                         catch ( PathTooLongException exception ) {
-                            exception.Log();
+                            exception.Error();
                             return false;
                         }
                         catch ( ArgumentException exception ) {
-                            exception.Log();
+                            exception.Error();
                             return false;
                         }
                         if ( !String.IsNullOrEmpty( dir ) && !isf.DirectoryExists( dir ) ) {
@@ -383,7 +383,7 @@ namespace Librainian.Persistence {
                                 isf.CreateDirectory( dir );
                             }
                             catch ( IsolatedStorageException exception ) {
-                                exception.Log();
+                                exception.Error();
                                 return false;
                             }
                         }
@@ -408,31 +408,31 @@ namespace Librainian.Persistence {
                             }
                         }
                         catch ( InvalidDataContractException exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
                         catch ( SerializationException exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
                         catch ( QuotaExceededException exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
                         catch ( ArgumentNullException exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
                         catch ( ArgumentException exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
                     }
                 }
                 catch ( IsolatedStorageException exception ) {
-                    exception.Log();
+                    exception.Error();
                 }
             }
             catch ( SecurityException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
             return false;
         }
@@ -474,7 +474,7 @@ namespace Librainian.Persistence {
                             }
                         }
                         catch ( IsolatedStorageException exception ) {
-                            exception.Log();
+                            exception.Error();
                             return false;
                         }
 
@@ -485,7 +485,7 @@ namespace Librainian.Persistence {
                             }
                         }
                         catch ( IsolatedStorageException exception ) {
-                            exception.Log();
+                            exception.Error();
                             return false;
                         }
 
@@ -508,17 +508,17 @@ namespace Librainian.Persistence {
                             }
                         }
                         catch ( InvalidOperationException exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
                         catch ( ArgumentNullException exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
                         catch ( SerializationException exception ) {
                             deletefile = true;
-                            exception.Log();
+                            exception.Error();
                         }
                         catch ( Exception exception ) {
-                            exception.Log();
+                            exception.Error();
                         }
 
                         try {
@@ -528,14 +528,14 @@ namespace Librainian.Persistence {
                             }
                         }
                         catch ( IsolatedStorageException exception ) {
-                            exception.Log();
+                            exception.Error();
                             return false;
                         }
                     }
                 }
             }
             catch ( IsolatedStorageException exception ) {
-                exception.Log();
+                exception.Error();
             }
             return false;
         }
@@ -674,16 +674,16 @@ namespace Librainian.Persistence {
                                     }
                                 }
                                 catch ( InvalidOperationException exception ) {
-                                    exception.Log();
+                                    exception.Error();
                                 }
                                 catch ( ArgumentNullException exception ) {
-                                    exception.Log();
+                                    exception.Error();
                                 }
                                 catch ( SerializationException exception ) {
-                                    exception.Log();
+                                    exception.Error();
                                 }
                                 catch ( Exception exception ) {
-                                    exception.Log();
+                                    exception.Error();
                                 }
                             }
                         }
@@ -691,7 +691,7 @@ namespace Librainian.Persistence {
                 }
             }
             catch ( IsolatedStorageException exception ) {
-                exception.Log();
+                exception.Error();
             }
             return false;
         }
@@ -775,27 +775,27 @@ namespace Librainian.Persistence {
                         return stream.Seek( offset: 0, origin: SeekOrigin.End ) > 0;
                     }
                     catch ( ArgumentException exception ) {
-                        exception.Log();
+                        exception.Error();
                     }
                 }
             }
             catch ( IsolatedStorageException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( ArgumentNullException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( ArgumentException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( DirectoryNotFoundException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( FileNotFoundException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( ObjectDisposedException exception ) {
-                exception.Log();
+                exception.Error();
             }
             return false;
         }
@@ -839,23 +839,23 @@ namespace Librainian.Persistence {
                                 }
                             }
                             catch ( InvalidOperationException exception ) {
-                                exception.Log();
+                                exception.Error();
                             }
                             catch ( ArgumentNullException exception ) {
-                                exception.Log();
+                                exception.Error();
                             }
                             catch ( SerializationException exception ) {
-                                exception.Log();
+                                exception.Error();
                             }
                             catch ( Exception exception ) {
-                                exception.Log();
+                                exception.Error();
                             }
                         }
                     }
                 }
             }
             catch ( IsolatedStorageException exception ) {
-                exception.Log();
+                exception.Error();
             }
             return new TSource();
         }
@@ -916,16 +916,16 @@ namespace Librainian.Persistence {
                 return true;
             }
             catch ( InvalidOperationException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( ArgumentNullException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( SerializationException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
             return false;
         }
@@ -959,10 +959,10 @@ namespace Librainian.Persistence {
                 return true;
             }
             catch ( SerializationException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
             return false;
         }

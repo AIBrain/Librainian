@@ -480,7 +480,7 @@ namespace Librainian.Threading {
                 return delay.Create( () => target.TryPost( item ) ).AndStart();
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
                 throw;
             }
         }

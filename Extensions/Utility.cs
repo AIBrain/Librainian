@@ -41,7 +41,7 @@ namespace Librainian.Extensions {
                                                Debugger.Break();
                                            }
                                            var message = String.Format( "Caught Uncaught Contract Failure\r\n{0}\r\n{1}\r\n{2}\r\n{3}", e.Condition, e.FailureKind, e.Handled, e.Message );
-                                           e.OriginalException.Log( message: message );
+                                           e.OriginalException.Error( message: message );
                                        };
         }
 
@@ -75,22 +75,22 @@ namespace Librainian.Extensions {
                 }
             }
             catch ( UnauthorizedAccessException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( ArgumentNullException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( DirectoryNotFoundException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( PathTooLongException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( SecurityException exception ) {
-                exception.Log();
+                exception.Error();
             }
             catch ( IOException exception ) {
-                exception.Log();
+                exception.Error();
             }
         }
 
@@ -123,13 +123,13 @@ namespace Librainian.Extensions {
                     Console.CursorVisible = true;
                 }
                 catch ( ArgumentOutOfRangeException exception ) {
-                    exception.Log();
+                    exception.Error();
                 }
                 catch ( IOException exception ) {
-                    exception.Log();
+                    exception.Error();
                 }
                 catch ( SecurityException exception ) {
-                    exception.Log();
+                    exception.Error();
                 }
                 finally {
                     ConsoleOutputSynch.ExitWriteLock();
@@ -214,7 +214,7 @@ namespace Librainian.Extensions {
                     }
                 }
                 catch ( FileNotFoundException exception ) {
-                    exception.Log();
+                    exception.Error();
                 }
             }
             return String.Empty;

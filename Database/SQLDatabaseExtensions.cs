@@ -55,7 +55,7 @@ namespace Librainian.Database {
                 }
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
 
             //Generic.Report( String.Format( "Database ping actual: {0}.", stopwatch.Elapsed.Simple() ) );
@@ -81,7 +81,7 @@ namespace Librainian.Database {
                 }
             }
             catch ( Exception exception ) {
-                exception.Log();
+                exception.Error();
             }
         }
 

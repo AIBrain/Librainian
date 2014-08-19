@@ -124,7 +124,7 @@ namespace Librainian.Maths {
                 }
             }
             catch ( DivideByZeroException exception ) {
-                exception.Log();
+                exception.Error();
             }
             return 0;
         }
@@ -138,7 +138,7 @@ namespace Librainian.Maths {
                 }
             }
             catch ( DivideByZeroException exception ) {
-                exception.Log();
+                exception.Error();
             }
             return 0;
         }

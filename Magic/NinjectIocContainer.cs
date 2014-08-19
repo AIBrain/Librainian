@@ -37,7 +37,7 @@ namespace Librainian.Magic {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel();
             "".TimeDebug();
-            this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() 
+            this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
             this.Kernel.Should().NotBeNull();
         }
 

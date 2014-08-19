@@ -73,7 +73,7 @@ namespace Librainian.Maths {
                     }
                 }
                 catch ( DivideByZeroException exception ) {
-                    exception.Log();
+                    exception.Error();
                 }
                 return 0;
             }
@@ -90,7 +90,7 @@ namespace Librainian.Maths {
                     return ( Double )chance;
                 }
                 catch ( DivideByZeroException exception ) {
-                    exception.Log();
+                    exception.Error();
                     return 0;
                 }
             }
