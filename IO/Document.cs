@@ -1,28 +1,25 @@
 ﻿#region License & Information
-
 // This notice must be kept visible in the source.
-//
+// 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
+// 
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-//
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/Document.cs" was last cleaned by Rick on 2014/08/13 at 3:11 PM
-
-#endregion License & Information
+// 
+// "Librainian/Document.cs" was last cleaned by Rick on 2014/08/19 at 1:27 PM
+#endregion
 
 namespace Librainian.IO {
-
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -39,50 +36,42 @@ namespace Librainian.IO {
     /// <seealso cref="IOExtensions.SameContent(Document,Document)" />
     [DataContract( IsReference = true )]
     [Immutable]
-    public sealed class Document : IEquatable<Document> {
-
+    public sealed class Document : IEquatable< Document > {
         /// <summary>
         ///     "\"
         /// </summary>
-        [NotNull]
-        public static readonly String FolderSeparator = new String( new[] { Path.DirectorySeparatorChar } );
+        [NotNull] public static readonly String FolderSeparator = new String( new[] { Path.DirectorySeparatorChar } );
 
         /// <summary>
         ///     "/"
         /// </summary>
-        [NotNull]
-        public static readonly String FolderAltSeparator = new String( new[] { Path.AltDirectorySeparatorChar } );
+        [NotNull] public static readonly String FolderAltSeparator = new String( new[] { Path.AltDirectorySeparatorChar } );
 
         /// <summary>
         ///     "/"
         /// </summary>
-        [NotNull]
-        public static readonly List<char> InvalidPathChars = new List<char>( Path.GetInvalidPathChars() );
+        [NotNull] public static readonly List< char > InvalidPathChars = new List< char >( Path.GetInvalidPathChars() );
 
         /// <summary>
         ///     <para>The extension of the <see cref="FileName" />, including the ".".</para>
         /// </summary>
-        [NotNull]
-        public readonly String Extension;
+        [NotNull] public readonly String Extension;
 
         /// <summary>
         ///     <para>The file's name, including the extension.</para>
         /// </summary>
         /// <seealso cref="Path.GetFileNameWithoutExtension" />
-        [NotNull]
-        public readonly String FileName;
+        [NotNull] public readonly String FileName;
 
         /// <summary>
         ///     <para>FYI: A folder always ends with the <see cref="FolderSeparator" />.</para>
         /// </summary>
-        [NotNull]
-        public readonly String Folder;
+        [NotNull] public readonly String Folder;
 
         /// <summary>
         ///     <para>The <see cref="Folder" /> combined with the <see cref="FileName" />.</para>
         /// </summary>
-        [NotNull]
-        public readonly String FullPathWithFileName;
+        [NotNull] public readonly String FullPathWithFileName;
 
         /// <summary>
         ///     The last known size of the file.
@@ -129,7 +118,7 @@ namespace Librainian.IO {
             this.FileName = Path.GetFileName( fullPathWithFilename );
             this.Extension = Path.GetExtension( fullPathWithFilename );
 
-            this.Size = ( UInt64 )file.Length;
+            this.Size = ( UInt64 ) file.Length;
 
             this.FullPathWithFileName = Path.Combine( this.Folder, this.FileName );
         }
@@ -138,21 +127,13 @@ namespace Librainian.IO {
         ///     Returns true if the <see cref="Document" /> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public Boolean FileExists {
-            get {
-                return File.Exists( this.FullPathWithFileName );
-            }
-        }
+        public Boolean FileExists { get { return File.Exists( this.FullPathWithFileName ); } }
 
         /// <summary>
         ///     Returns true if the <see cref="Document.Folder" /> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public Boolean FolderExists {
-            get {
-                return Directory.Exists( this.Folder );
-            }
-        }
+        public Boolean FolderExists { get { return Directory.Exists( this.Folder ); } }
 
         /// <summary>
         ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
@@ -169,7 +150,7 @@ namespace Librainian.IO {
 
         public UInt64 GetSize() {
             var info = new FileInfo( this.FullPathWithFileName );
-            return !info.Exists ? UInt64.MinValue : ( UInt64 )info.Length;
+            return !info.Exists ? UInt64.MinValue : ( UInt64 ) info.Length;
         }
 
         /// <summary>
@@ -207,7 +188,7 @@ namespace Librainian.IO {
         /// <param name="obj"></param>
         /// <returns></returns>
         public override Boolean Equals( [CanBeNull] object obj ) {
-            return obj is Document && Equals( this, ( Document )obj );
+            return obj is Document && Equals( this, ( Document ) obj );
         }
 
         //[NotNull]
@@ -250,7 +231,7 @@ namespace Librainian.IO {
         ///     Enumerates a <see cref="Document" /> as a sequence of <see cref="Byte" />.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<byte> AsByteArray() {
+        public IEnumerable< byte > AsByteArray() {
             var info = new FileInfo( this.FullPathWithFileName );
             return info.AsByteArray();
         }

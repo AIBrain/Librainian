@@ -14,7 +14,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/IOExtensions.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/IOExtensions.cs" was last cleaned by Rick on 2014/08/19 at 1:27 PM
 #endregion
 
 namespace Librainian.IO {
@@ -114,7 +116,7 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
-        public static IEnumerable<byte> AsByteArray( [NotNull] this FileInfo fileInfo ) {
+        public static IEnumerable< byte > AsByteArray( [NotNull] this FileInfo fileInfo ) {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( "fileInfo" );
             }
@@ -135,7 +137,7 @@ namespace Librainian.IO {
                     if ( b == -1 ) {
                         yield break;
                     }
-                    yield return ( Byte )b;
+                    yield return ( Byte ) b;
                 }
             }
         }
@@ -148,20 +150,20 @@ namespace Librainian.IO {
         /// <param name="progress"></param>
         /// <param name="eta"></param>
         /// <returns></returns>
-        public static Task Copy( Document source, Document destination, Action<double> progress, Action<TimeSpan> eta ) {
+        public static Task Copy( Document source, Document destination, Action< double > progress, Action< TimeSpan > eta ) {
             return Task.Run( () => {
-                //TODO
-            } );
+                                 //TODO
+                             } );
         }
 
         public static MemoryStream TryCopyStream( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
-        //TODO
-        TryAgain:
+            //TODO
+            TryAgain:
             var memoryStream = new MemoryStream();
             try {
                 if ( File.Exists( filePath ) ) {
                     using ( var fileStream = File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare ) ) {
-                        var length = ( int )fileStream.Length;
+                        var length = ( int ) fileStream.Length;
                         if ( length > 0 ) {
                             fileStream.CopyTo( memoryStream, length ); //int-long possible issue.
                             memoryStream.Seek( 0, SeekOrigin.Begin );
@@ -182,15 +184,15 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        /// <para>Returns true if the <see cref="Document"/> no longer seems to exist.</para>
-        /// <para>Returns null if existance cannot be determined.</para>
+        ///     <para>Returns true if the <see cref="Document" /> no longer seems to exist.</para>
+        ///     <para>Returns null if existance cannot be determined.</para>
         /// </summary>
         /// <param name="document"></param>
-        /// <param name="bePatient">The delete will retry for a default of <see cref="Seconds.Five"/>.</param>
+        /// <param name="bePatient">The delete will retry for a default of <see cref="Seconds.Five" />.</param>
         /// <returns></returns>
         public static Boolean? TryDeleting( this Document document, Boolean bePatient = true ) {
             var stopwatch = Stopwatch.StartNew();
-        TryAgain:
+            TryAgain:
             try {
                 if ( !document.FileExists ) {
                     return true;
@@ -198,10 +200,8 @@ namespace Librainian.IO {
                 File.Delete( path: document.FullPathWithFileName );
                 return !File.Exists( document.FullPathWithFileName );
             }
-            catch ( DirectoryNotFoundException ) {
-            }
-            catch ( PathTooLongException ) {
-            }
+            catch ( DirectoryNotFoundException ) { }
+            catch ( PathTooLongException ) { }
             catch ( IOException ) {
                 // IOExcception is thrown if the file is in use by another process.
                 if ( bePatient && stopwatch.Elapsed <= Seconds.Five ) {
@@ -211,10 +211,8 @@ namespace Librainian.IO {
                     goto TryAgain;
                 }
             }
-            catch ( UnauthorizedAccessException ) {
-            }
-            catch ( ArgumentNullException ) {
-            }
+            catch ( UnauthorizedAccessException ) { }
+            catch ( ArgumentNullException ) { }
             finally {
                 stopwatch.Stop();
             }
@@ -244,8 +242,8 @@ namespace Librainian.IO {
         }
 
         public static FileStream TryOpenForReading( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
-        //TODO
-        TryAgain:
+            //TODO
+            TryAgain:
             try {
                 if ( File.Exists( filePath ) ) {
                     return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
