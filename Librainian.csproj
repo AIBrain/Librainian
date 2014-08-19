@@ -576,7 +576,6 @@
     <None Include="README.textile" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Computer\" />
     <Folder Include="PatternRecognition\" />
   </ItemGroup>
   <ItemGroup>
