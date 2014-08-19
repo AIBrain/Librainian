@@ -32,11 +32,12 @@ namespace Librainian.Magic {
     using Threading;
 
     public sealed class NinjectIocContainer : IIocContainer {
-        //private readonly Boolean _alreadyLoadedAsses;
 
         public NinjectIocContainer() {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel();
+            "".TimeDebug();
+            this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() 
             this.Kernel.Should().NotBeNull();
         }
 
