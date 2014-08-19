@@ -37,7 +37,6 @@ namespace Librainian.Threading {
     using Extensions;
     using Maths;
     using Measurement.Time;
-    using NLog;
     using Timer = System.Timers.Timer;
 
     public static class Threads {
@@ -316,8 +315,6 @@ namespace Librainian.Threading {
             return 1000000000L / Stopwatch.Frequency;
         }
 
-        public static readonly Logger Logger = LogManager.GetLogger( "Librainian" );
-
         /// <summary>
         ///     TODO replace this with a proper IoC container.
         /// </summary>
@@ -329,26 +326,42 @@ namespace Librainian.Threading {
         [DebuggerStepThrough]
         public static void Error( [CanBeNull] this Exception exception, [CanBeNull] String message = "", [CanBeNull] [CallerMemberName] String memberName = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
 
+#if DEBUG
+            if ( !String.IsNullOrEmpty( message ) ) {
+                Debug.WriteLine( "[{0}]", message );
+            }
+            Debug.Indent();
+            Debug.WriteLine( "[Method: {0}]", memberName );
+            if ( exception != null ) {
+                Debug.WriteLine( "[Exception: {0}]", exception.Message );
+                Debug.WriteLine( "[In: {0}]", exception.Source );
+                Debug.WriteLine( "[Msg: {0}]", exception.Message );
+                Debug.WriteLine( "[Source: {0}]", sourceFilePath );
+                Debug.WriteLine( "[Line: {0}]", sourceLineNumber );
+            }
+            Debug.Unindent();
+#else
+
+            if ( !String.IsNullOrEmpty( message ) ) {
+                Trace.WriteLine( "[{0}]", message );
+            }
+            Trace.Indent();
+            Trace.WriteLine( "[Method: {0}]", memberName );
+            if ( exception != null ) {
+                Trace.WriteLine( "[Exception: {0}]", exception.Message );
+                Trace.WriteLine( "[In: {0}]", exception.Source );
+                Trace.WriteLine( "[Msg: {0}]", exception.Message );
+                Trace.WriteLine( "[Source: {0}]", sourceFilePath );
+                Trace.WriteLine( "[Line: {0}]", sourceLineNumber );
+            }
+            Trace.Unindent();
+#endif
+
             if ( Debugger.IsAttached ) {
-
-                Logger.Debug( memberName, exception );
-
-                if ( !String.IsNullOrEmpty( message ) ) {
-                    Debug.WriteLine( "[{0}]", message );
-                }
-                Debug.Indent();
-                Debug.WriteLine( "[Method: {0}]", memberName );
-                if ( exception != null ) {
-                    Debug.WriteLine( "[Exception: {0}]", exception.Message );
-                    Debug.WriteLine( "[In: {0}]", exception.Source );
-                    Debug.WriteLine( "[Msg: {0}]", exception.Message );
-                }
-                Debug.Unindent();
                 Debugger.Break();
             }
-            else {
-                Logger.Error( exception );
-            }
+
+
         }
 
         //    e.GetObjectData( si, ctx );

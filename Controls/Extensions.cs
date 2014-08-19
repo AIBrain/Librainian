@@ -92,6 +92,18 @@ namespace Librainian.Controls {
             }
             return control.InvokeRequired ? ( Boolean ) control.Invoke( new Func< Boolean >( () => control.Checked ) ) : control.Checked;
         }
+        
+        /// <summary>
+        ///     Threadsafe <see cref="Control.ForeColor" /> check.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <returns></returns>
+        public static Color ForeColor( [CanBeNull] this Control control ) {
+            if ( null == control ) {
+                return default(Color);
+            }
+            return control.InvokeRequired ? ( Color )control.Invoke( new Func<Color>( () => control.ForeColor ) ) : control.ForeColor;
+        }
 
         /// <summary>
         ///     Threadsafe get.
@@ -251,6 +263,27 @@ namespace Librainian.Controls {
             }
             else {
                 control.Checked = value;
+                control.Refresh();
+            }
+        }
+        
+        /// <summary>
+        ///     Safely set the <see cref="Control.ForeColor" /> of the control across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="value"></param>
+        public static void ForeColor( [CanBeNull] this Control control, Color value ) {
+            if ( null == control ) {
+                return;
+            }
+            if ( control.InvokeRequired ) {
+                control.BeginInvoke( new Action( () => {
+                                                     control.ForeColor = value;
+                                                     control.Refresh();
+                                                 } ) );
+            }
+            else {
+                control.ForeColor = value;
                 control.Refresh();
             }
         }
