@@ -19,7 +19,6 @@
 
 namespace Librainian.Controls {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Drawing;
     using System.Linq;
@@ -31,7 +30,6 @@ namespace Librainian.Controls {
     using Threading;
 
     public static class Extensions {
-        private static readonly List< Timer > FormTimers = new List< Timer >();
 
         /// <summary>
         ///     Just changes the cursor to the <see cref="Cursors.WaitCursor" />.
@@ -468,7 +466,7 @@ namespace Librainian.Controls {
         /// <param name="delay"></param>
         /// <returns></returns>
         /// <seealso cref="Push"/>
-        public static void PerformThreadSafeClick( [CanBeNull] this Button control, TimeSpan? delay = null ) {
+        public static void PerformClickThreadSafe( [CanBeNull] this Button control, TimeSpan? delay = null ) {
             control.Push( delay );
         }
 
@@ -481,25 +479,13 @@ namespace Librainian.Controls {
         /// <param name="delay"></param>
         /// <returns></returns>
         public static void Push( [CanBeNull] this Button control, TimeSpan? delay = null ) {
-            if ( !delay.HasValue ) {
-                delay = Seconds.One;
+            if ( control == null ) {
+                return;
             }
-            var timer = new Timer {
-                                      Interval = ( int ) delay.Value.TotalMilliseconds
-                                  };
-            timer.Tick += ( sender, args ) => {
-                              timer.Stop();
-
-                              if ( control != null ) {
-                                  control.InvokeIfRequired( control.PerformClick );
-                              }
-                              using ( timer ) {
-                                  FormTimers.Remove( timer );
-                                  //timer = null;
-                              }
-                          };
-            FormTimers.Add( timer );
-            timer.Start();
+            if ( !delay.HasValue ) {
+                delay = Milliseconds.One;
+            }
+            ( ( Span ) delay.Value ).Create( () => control.InvokeIfRequired( control.PerformClick ) ).AndStart();
         }
 
         /// <summary>

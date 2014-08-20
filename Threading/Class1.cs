@@ -38,7 +38,7 @@ namespace Librainian.Threading {
             [CanBeNull]
             public Action OnTimeout { get; internal set; }  //would events be okay here? are either Action or Events serializable?
 
-            //[CanBeNull]public Action OnSuccess { get; internal set; }
+            [CanBeNull]public Action OnSuccess { get; internal set; }
 
             public readonly CancellationToken CancellationToken = new CancellationToken( false );
         }
@@ -79,10 +79,10 @@ namespace Librainian.Threading {
                 return false;
             }
 
-            //if ( null == this.Current.OnSuccess ) {
-            //    Debug.WriteLine( "The player is missing {0}.", this.Current.OnSuccess );
-            //    return false;
-            //}
+            if ( null == this.Current.OnSuccess ) {
+                Debug.WriteLine( "The player is missing {0}.", this.Current.OnSuccess );
+                return false;
+            }
 
             Debug.WriteLine( "The player is ready." );
             return true;
@@ -175,9 +175,9 @@ namespace Librainian.Threading {
         /// ".....and....ACTION!"
         /// </summary>
         /// <param name="actor"></param>
-        public static Actor Act( this Actor actor ) {
+        public static async Actor Act( this Actor actor ) {
             //var cancel = new CancellationToken( false );
-            foreach ( var player1 in actor.Actions.GetConsumingEnumerable( cancel ) ) {
+            foreach ( var player1 in actor.Actions.GetConsumingEnumerable(  ) ) {
                 if ( null == player1 ) {
                     continue;
                 }
@@ -197,14 +197,12 @@ namespace Librainian.Threading {
                 }
 
 
-                //var timer = new System.Timers.Timer(  );
-                var task = Task.Run( () => player.TheAct(), cancel );
+                var task = Task.Run( () => player.TheAct() );
+                var runner = Task.Delay( player.ActingTimeout.Value );
 
-                if ( !task.Wait( player.ActingTimeout.Value ) ) {
-                    // true if the Task completed execution within the allotted time;
-                }
-                else {
-                }
+                var result = await Task.WhenAny( task, runner);
+
+                
 
             }
 

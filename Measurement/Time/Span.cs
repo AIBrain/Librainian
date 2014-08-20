@@ -167,6 +167,7 @@ namespace Librainian.Measurement.Time {
 
         /// <summary>
         /// <para>Return a <see cref="TimeSpan"/>'s worth of <see cref="Milliseconds"/>.</para>
+        /// <para><see cref="Days"/>+<see cref="Hours"/>+<see cref="Minutes"/>+<see cref="Seconds"/>+<see cref="Milliseconds"/>+<see cref="Microseconds"/>+<see cref="Nanoseconds"/></para>
         /// </summary>
         /// <returns></returns>
         public Double GetApproximateMilliseconds() {
