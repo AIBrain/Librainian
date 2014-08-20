@@ -31,7 +31,7 @@ namespace Librainian.Magic {
         IKernel Kernel { get; set;  }
 
         [CanBeNull]
-        ContainerBuilder ContainerBuilder { get; set; }
+        IContainer BuildedContainer { get; set; }
 
         [CanBeNull]
         Object Get( Type type );

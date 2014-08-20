@@ -41,22 +41,25 @@ namespace Librainian.Magic {
            this.ContainerBuilder = new ContainerBuilder();
            this.ContainerBuilder.Should().NotBeNull();
            this.ContainerBuilder.RegisterAssemblyModules( AppDomain.CurrentDomain.GetAssemblies() );
-           this.ContainerBuilder.r
+           this.BuildedContainer  = this.ContainerBuilder.Build();
        }
 
        [CanBeNull]
        public IKernel Kernel { get; set; }
+
+       public IContainer BuildedContainer { get; set; }
 
        [NotNull]
        public ContainerBuilder ContainerBuilder { get; set; }
 
        [CanBeNull]
        public object Get( Type type ) {
-           return null;
+           return this.BuildedContainer.Resolve();
+           throw new NotImplementedException();
        }
 
        public T Get< T >() {
-           throw new NotImplementedException();
+           return this.BuildedContainer.Resolve<T>();
        }
 
        public T Get< T >( string name, string value ) {
