@@ -38,7 +38,8 @@ namespace Librainian.Threading {
             [CanBeNull]
             public Action OnTimeout { get; internal set; }  //would events be okay here? are either Action or Events serializable?
 
-            [CanBeNull]public Action OnSuccess { get; internal set; }
+            [CanBeNull]
+            public Action OnSuccess { get; internal set; }
 
             [CanBeNull]
             public CancellationToken? CancellationToken { get; internal set; }
@@ -138,21 +139,30 @@ namespace Librainian.Threading {
         public static async void ActorTest() {
 
             var bobDole = Actor.Do( () => Console.WriteLine( "Hello." ) )
-                .LimitRunTime( TimeSpan.FromSeconds( 1 ), () => Console.WriteLine( "..uh..what?" ) )
+                .LimitActing( TimeSpan.FromMilliseconds( 1 ), () => Console.WriteLine( "..uh..what?" ) )
                 .Then( () => Console.WriteLine( "This is Bob Dole." ) )
                 .Then( () => Console.WriteLine( "I just wanted to say." ) )
                 .Then( () => Console.WriteLine( "Some about." ) )
                 .EndScene()
-                .EndScene()
-                .Act()
-                ;
+                .EndScene();
 
-            await bobDole;
+            var bobBush = Actor.Do( () => {
+                //repeat with some delays. to cause the limit on purpose
+                Console.WriteLine( "Holler there." );
+            } )
+                .LimitActing( TimeSpan.FromMilliseconds( 1 ), () => Console.WriteLine( "..uh..what?" ) )
+                .Then( () => Console.WriteLine( "This is Bob Dole." ) )
+                .Then( () => Console.WriteLine( "I just wanted to say." ) )
+                .Then( () => Console.WriteLine( "Some about." ) )
+                .EndScene()
+                .EndScene();
+
+            await bobDole.Act();
             Console.WriteLine( bobDole.Result );
 
         }
 
-        public static Actor LimitRunTime( this Actor actor, TimeSpan timeSpan, Action onTimeout ) {
+        public static Actor LimitActing( this Actor actor, TimeSpan timeSpan, Action onTimeout ) {
             actor.Current.ActingTimeout = timeSpan;    //if there was a value already there, just overwrite it.
             actor.Current.OnTimeout = onTimeout;    //if there was a value already there, just overwrite it.
             return actor;
@@ -177,9 +187,9 @@ namespace Librainian.Threading {
         /// ".....and....ACTION!"
         /// </summary>
         /// <param name="actor"></param>
-        public static async Task< Actor > Act( this Actor actor ) {
+        public static async Task<Actor> Act( this Actor actor ) {
             //var cancel = new CancellationToken( false );
-            foreach ( var player1 in actor.Actions.GetConsumingEnumerable(  ) ) {
+            foreach ( var player1 in actor.Actions.GetConsumingEnumerable() ) {
                 if ( null == player1 ) {
                     continue;
                 }
@@ -195,16 +205,16 @@ namespace Librainian.Threading {
                 }
 
                 if ( null == player.OnSuccess ) {
-                    Console.WriteLine(  );
+                    Console.WriteLine();
                 }
 
 
                 var task = Task.Run( () => player.TheAct() );
                 var runner = Task.Delay( player.ActingTimeout.Value );
 
-                var result = await Task.WhenAny( task, runner);
+                var result = await Task.WhenAny( task, runner );
 
-                
+
 
             }
 
