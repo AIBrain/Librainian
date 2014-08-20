@@ -40,7 +40,8 @@ namespace Librainian.Threading {
 
             [CanBeNull]public Action OnSuccess { get; internal set; }
 
-            public readonly CancellationToken CancellationToken = new CancellationToken( false );
+            [CanBeNull]
+            public CancellationToken? CancellationToken { get; internal set; }
         }
 
         [NotNull]
@@ -62,6 +63,7 @@ namespace Librainian.Threading {
         }
 
         public Boolean IsReady() {
+            Debug.WriteLine( "Checking if the player is ready." );
             this.Current.Should().NotBeNull( because: "logic" );
 
             if ( null == this.Current.TheAct ) {
@@ -133,7 +135,7 @@ namespace Librainian.Threading {
     public static class ActorExtensions {
 
         [Test]
-        public static Boolean ActorTest() {
+        public static async void ActorTest() {
 
             var bobDole = Actor.Do( () => Console.WriteLine( "Hello." ) )
                 .LimitRunTime( TimeSpan.FromSeconds( 1 ), () => Console.WriteLine( "..uh..what?" ) )
@@ -145,9 +147,9 @@ namespace Librainian.Threading {
                 .Act()
                 ;
 
-            Console.WriteLine( bobDole );
+            await bobDole;
+            Console.WriteLine( bobDole.Result );
 
-            return true;
         }
 
         public static Actor LimitRunTime( this Actor actor, TimeSpan timeSpan, Action onTimeout ) {
@@ -175,7 +177,7 @@ namespace Librainian.Threading {
         /// ".....and....ACTION!"
         /// </summary>
         /// <param name="actor"></param>
-        public static async Actor Act( this Actor actor ) {
+        public static async Task< Actor > Act( this Actor actor ) {
             //var cancel = new CancellationToken( false );
             foreach ( var player1 in actor.Actions.GetConsumingEnumerable(  ) ) {
                 if ( null == player1 ) {
