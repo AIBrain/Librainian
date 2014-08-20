@@ -26,55 +26,12 @@ namespace Librainian.Magic {
     using System;
     using Annotations;
     using Autofac;
-    using Castle.Components.DictionaryAdapter.Xml;
     using FluentAssertions;
     using Ninject;
     using Ninject.Activation.Caching;
     using Ninject.Modules;
+    using Parsing;
     using Threading;
-
-   public class AutofacContainer : IIocContainer {
-
-       public AutofacContainer() {
-           this.Kernel = null;
-           this.Kernel.Should().BeNull();
-           this.ContainerBuilder = new ContainerBuilder();
-           this.ContainerBuilder.Should().NotBeNull();
-           this.ContainerBuilder.RegisterAssemblyModules( AppDomain.CurrentDomain.GetAssemblies() );
-           this.BuildedContainer  = this.ContainerBuilder.Build();
-       }
-
-       [CanBeNull]
-       public IKernel Kernel { get; set; }
-
-       public IContainer BuildedContainer { get; set; }
-
-       [NotNull]
-       public ContainerBuilder ContainerBuilder { get; set; }
-
-       [CanBeNull]
-       public object Get( Type type ) {
-           return this.BuildedContainer.Resolve();
-           throw new NotImplementedException();
-       }
-
-       public T Get< T >() {
-           return this.BuildedContainer.Resolve<T>();
-       }
-
-       public T Get< T >( string name, string value ) {
-           throw new NotImplementedException();
-       }
-
-       public void Inject( object item ) {
-           throw new NotImplementedException();
-       }
-
-       public T TryGet< T >() {
-           throw new NotImplementedException();
-       }
-   }
-
 
     public sealed class NinjectIocContainer : IIocContainer {
 
@@ -99,6 +56,9 @@ namespace Librainian.Magic {
         [NotNull]
         public IKernel Kernel { get; set; }
 
+        [Obsolete( "User Kernel instead" )]
+        public IContainer BuildedContainer { get; set; }
+
         [CanBeNull]
         public ContainerBuilder ContainerBuilder { get; set; }
 
@@ -112,7 +72,7 @@ namespace Librainian.Magic {
         }
 
         public T Get<T>( string name, string value ) {
-            var result = this.Kernel.TryGet<T>( metadata => metadata.Has( name ) && ( string.Equals( metadata.Get<string>( name ), value, StringComparison.InvariantCultureIgnoreCase ) ) );
+            var result = this.Kernel.TryGet<T>( metadata => metadata.Has( name ) &&  metadata.Get<string>( name ).Like(  value ) );
 
             if ( Equals( result, default( T ) ) ) {
                 throw new InvalidOperationException( null );
