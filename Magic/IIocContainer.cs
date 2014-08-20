@@ -21,20 +21,31 @@
 
 namespace Librainian.Magic {
     using System;
+    using Annotations;
+    using Autofac;
     using Ninject;
 
     public interface IIocContainer {
 
+        [CanBeNull]
         IKernel Kernel { get; set;  }
 
-        object Get( Type type );
+        [CanBeNull]
+        ContainerBuilder ContainerBuilder { get; set; }
 
-        T Get< T >();
+        [CanBeNull]
+        Object Get( Type type );
 
-        T Get< T >( string name, string value );
+        [CanBeNull]
+        T Get<T>();
+
+        [CanBeNull]
+        T Get<T>( string name, string value );
 
         void Inject( object item );
 
-        T TryGet< T >();
+        [CanBeNull]
+        T TryGet<T>();
     }
+
 }

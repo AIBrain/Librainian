@@ -25,19 +25,62 @@ namespace Librainian.Magic {
 
     using System;
     using Annotations;
+    using Autofac;
+    using Castle.Components.DictionaryAdapter.Xml;
     using FluentAssertions;
     using Ninject;
     using Ninject.Activation.Caching;
     using Ninject.Modules;
     using Threading;
 
+   public class AutofacContainer : IIocContainer {
+
+       public AutofacContainer() {
+           this.Kernel = null;
+           this.Kernel.Should().BeNull();
+           this.ContainerBuilder = new ContainerBuilder();
+           this.ContainerBuilder.Should().NotBeNull();
+           this.ContainerBuilder.RegisterAssemblyModules( AppDomain.CurrentDomain.GetAssemblies() );
+           this.ContainerBuilder.r
+       }
+
+       [CanBeNull]
+       public IKernel Kernel { get; set; }
+
+       [NotNull]
+       public ContainerBuilder ContainerBuilder { get; set; }
+
+       [CanBeNull]
+       public object Get( Type type ) {
+           return null;
+       }
+
+       public T Get< T >() {
+           throw new NotImplementedException();
+       }
+
+       public T Get< T >( string name, string value ) {
+           throw new NotImplementedException();
+       }
+
+       public void Inject( object item ) {
+           throw new NotImplementedException();
+       }
+
+       public T TryGet< T >() {
+           throw new NotImplementedException();
+       }
+   }
+
+
     public sealed class NinjectIocContainer : IIocContainer {
 
         public NinjectIocContainer() {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel();
-            "".TimeDebug();
+            "Ninject is loading assemblies...".TimeDebug();
             this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
+            "Ninject has loading assemblies.".TimeDebug();
             this.Kernel.Should().NotBeNull();
         }
 
@@ -50,7 +93,11 @@ namespace Librainian.Magic {
             this.Kernel.Should().NotBeNull();
         }
 
+        [NotNull]
         public IKernel Kernel { get; set; }
+
+        [CanBeNull]
+        public ContainerBuilder ContainerBuilder { get; set; }
 
         public object Get( Type type ) {
             return this.Kernel.Get( type );
