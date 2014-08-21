@@ -23,6 +23,7 @@ namespace Librainian.Measurement.Time {
     using System;
     using System.Diagnostics;
     using System.Threading;
+    using Annotations;
     using NUnit.Framework;
     using Threading;
 
@@ -32,6 +33,7 @@ namespace Librainian.Measurement.Time {
         public static ulong RunThreadingTimerTest( Span howLong ) {
             try {
                 var state = new Object();
+                _threadingCounter = 0;
                 using ( var threadingTimer = new Timer( callback: Callback, state: state, dueTime: 0, period: 0 ) ) {
                     var stopwatch = Stopwatch.StartNew();
                     while ( stopwatch.Elapsed < howLong ) {
@@ -39,7 +41,8 @@ namespace Librainian.Measurement.Time {
                     }
                     stopwatch.Stop();
 
-                    var perMillisecond = _threadingCounter/howLong.GetApproximateMilliseconds();
+                    var mills = howLong.GetApproximateMilliseconds();
+                    var perMillisecond = _threadingCounter/mills;
                     Debug.WriteLine( "System.Threading.TimerTest counted {0} in {1} ({2})", _threadingCounter, howLong, perMillisecond );
                 }
             }
@@ -51,7 +54,7 @@ namespace Librainian.Measurement.Time {
             _threadingCounter++;
         }
 
-        [Test]
+        [Test, UsedImplicitly]
         public static void RunTests() {
             Console.WriteLine( RunSystemTimerTest( Milliseconds.Five ) );
             Console.WriteLine( RunThreadingTimerTest( Milliseconds.Five ) );
@@ -72,7 +75,8 @@ namespace Librainian.Measurement.Time {
                     stopwatch.Stop();
                     systemTimer.Stop();
 
-                    var perMillisecond = counter/howLong.GetApproximateMilliseconds();
+                    var mills = howLong.GetApproximateMilliseconds();
+                    var perMillisecond = counter/mills;
                     Debug.WriteLine( "System.Timer.TimerTest counted {0} in {1} ({2})", counter, howLong, perMillisecond );
                 }
             }
