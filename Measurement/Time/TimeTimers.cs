@@ -22,7 +22,6 @@
 namespace Librainian.Measurement.Time {
     using System;
     using System.Diagnostics;
-    using System.Runtime.CompilerServices;
     using System.Threading;
     using NUnit.Framework;
     using Threading;
@@ -30,7 +29,6 @@ namespace Librainian.Measurement.Time {
     public class TimeTimers {
         private static ulong _threadingCounter;
 
-        [Test]
         public static ulong RunThreadingTimerTest( Span howLong ) {
             try {
                 var state = new Object();
@@ -53,28 +51,30 @@ namespace Librainian.Measurement.Time {
             _threadingCounter++;
         }
 
-        public void RunTests() {
-            RunSystemTimerTest( Milliseconds.Five );
+        [Test]
+        public static void RunTests() {
+            Console.WriteLine( RunSystemTimerTest( Milliseconds.Five ) );
+            Console.WriteLine( RunThreadingTimerTest( Milliseconds.Five ) );
         }
 
-        [Test]
         public static ulong RunSystemTimerTest( Span howLong ) {
             var counter = 0UL;
             try {
-                var systemTimer = new System.Timers.Timer();
-                systemTimer.Stop(); //jic
-                systemTimer.Interval = Double.Epsilon;
-                systemTimer.Elapsed += ( sender, args ) => { counter++; };
-                systemTimer.AutoReset = false;
-                var stopwatch = Stopwatch.StartNew();
-                systemTimer.Start();
-                while ( stopwatch.Elapsed < howLong ) {
-                    Tasks.DoNothing();
+                using ( var systemTimer = new System.Timers.Timer() ) {
+                    systemTimer.Interval = Double.Epsilon;
+                    systemTimer.Elapsed += ( sender, args ) => { counter++; };
+                    systemTimer.AutoReset = false;
+                    var stopwatch = Stopwatch.StartNew();
+                    systemTimer.Start();
+                    while ( stopwatch.Elapsed < howLong ) {
+                        Tasks.DoNothing();
+                    }
+                    stopwatch.Stop();
+                    systemTimer.Stop();
+
+                    var perMillisecond = counter/howLong.GetApproximateMilliseconds();
+                    Debug.WriteLine( "System.Timer.TimerTest counted {0} in {1} ({2})", counter, howLong, perMillisecond );
                 }
-                stopwatch.Stop();
-                systemTimer.Stop();
-                var perMillisecond = counter/howLong.GetApproximateMilliseconds();
-                Debug.WriteLine( "System.Timer.TimerTest counted {0} in {1} ({2})", counter, howLong, perMillisecond );
             }
             catch ( Exception ) { }
             return counter;
