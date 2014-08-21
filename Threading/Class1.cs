@@ -149,6 +149,7 @@ namespace Librainian.Threading {
             var bobBush = Actor.Do( () => {
                 //repeat with some delays. to cause the limit on purpose
                 Console.WriteLine( "Holler there." );
+                Console.WriteLine( "Holler there." );
             } )
                 .LimitActing( TimeSpan.FromMilliseconds( 1 ), () => Console.WriteLine( "..uh..what?" ) )
                 .Then( () => Console.WriteLine( "This is Bob Dole." ) )
@@ -157,8 +158,8 @@ namespace Librainian.Threading {
                 .EndScene()
                 .EndScene();
 
-            await bobDole.Act();
-            Console.WriteLine( bobDole.Result );
+            var answer = await bobDole.Act();
+            Console.WriteLine( answer );
 
         }
 

@@ -28,7 +28,8 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Lol" />
     public struct UniversalDateTime : IComparable< UniversalDateTime > {
-        [UsedImplicitly] public static readonly PlanckTimes PlancksUpTo1900 = new PlanckTimes( new Seconds( 4.415E17m ).ToPlanckTimes() );
+
+        public static readonly PlanckTimes PlancksUpTo1900 = new PlanckTimes( new Seconds( 4.3E17m ) );
 
         public static readonly UniversalDateTime One = new UniversalDateTime( BigInteger.One );
 
@@ -60,10 +61,11 @@ namespace Librainian.Measurement.Time {
             var span = CalcSpanSince( dateTime );
 
             this.Value = span.TotalPlanckTimes;
-            this.Date = new Date( span ); //we can use span here because the values have been normalized.
-            this.Time = new Time( span ); //we can use span here because the values have been normalized.
+            this.Date = new Date( span ); //we can use span here because the values have been normalized. Should()
+            this.Time = new Time( span ); //we can use span here because the values have been normalized. Should()
         }
 
+        [Pure]
         public int CompareTo( UniversalDateTime other ) {
             return this.Value.CompareTo( other.Value );
         }
@@ -74,9 +76,8 @@ namespace Librainian.Measurement.Time {
         /// <param name="dateTime"></param>
         /// <returns></returns>
         public static Span CalcSpanSince( DateTime dateTime ) {
-            var timebackwhen = PlancksUpTo1900.Value;
             var timePassedSinceThen = new Span( dateTime - DateTime.MinValue ).TotalPlanckTimes;
-            var span = new Span( planckTimes: timebackwhen + timePassedSinceThen );
+            var span = new Span( planckTimes: PlancksUpTo1900.Value + timePassedSinceThen );
             return span;
         }
 

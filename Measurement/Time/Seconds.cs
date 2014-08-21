@@ -131,7 +131,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public BigInteger ToPlanckTimes() {
-            var seconds = new BigDecimal( this.Value );
+            var seconds = new BigDecimal( this.Value ); //avoid overflow?
             seconds *= PlanckTimes.InOneSecond;
             return ( BigInteger ) seconds;
         }

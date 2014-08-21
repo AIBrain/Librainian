@@ -84,7 +84,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly PlanckTimes Zero = new PlanckTimes( value: 0 );
 
-        [DataMember] public readonly BigInteger Value; //TODO Shouldn't this be a BigInteger ? according to wikipedia planck units by definition cannot be spilt into smaller units.
+        [DataMember] public readonly BigInteger Value;  //according to wikipedia planck units by definition cannot be spilt into smaller units.
 
         static PlanckTimes() {
             Zero.Should().BeLessThan( One );
@@ -94,7 +94,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public PlanckTimes( long value ) {
-            this.Value = value;
+            this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
         }
 
         //public PlanckTimes( Decimal value ) {
@@ -102,22 +102,18 @@ namespace Librainian.Measurement.Time {
         //}
 
         public PlanckTimes( BigInteger value ) {
-            //value.Should().BeInRange( Constants.MinimumUsefulValue, Constants.MaximumUsefulValue );
+            this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
+        }
 
-            //if ( value < Constants.MinimumUsefulValue ) {
-            //    throw new OverflowException( Constants.ValueIsTooLow );
-            //}
-
-            //if ( value > Constants.MaximumUsefulValue ) {
-            //    throw new OverflowException( Constants.ValueIsTooHigh );
-            //}
-            //this.Value = ( Decimal )value;
-            this.Value = value;
+        public PlanckTimes( Seconds seconds ) {
+            var value = seconds.ToPlanckTimes();
+            this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
         }
 
         [UsedImplicitly]
         private string DebuggerDisplay { get { return this.ToString(); } }
 
+        [Pure]
         public int CompareTo( PlanckTimes other ) {
             return this.Value.CompareTo( other.Value );
         }
