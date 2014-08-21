@@ -133,7 +133,7 @@ namespace Librainian.Measurement.Time {
         public BigInteger ToPlanckTimes() {
             var seconds = new BigDecimal( this.Value ); //avoid overflow?
             seconds *= PlanckTimes.InOneSecond;
-            return ( BigInteger ) seconds;
+            return ( BigInteger ) seconds;  //gets truncated here. oh well.
         }
 
         public static Seconds Combine( Seconds left, Seconds right ) {
