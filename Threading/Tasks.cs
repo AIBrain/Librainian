@@ -26,6 +26,7 @@ namespace Librainian.Threading {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
@@ -111,24 +112,24 @@ namespace Librainian.Threading {
         ///     Console.WriteLine("{0}: {1}", DateTime.Now, result);
         ///     }
         /// </example>
-        public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
+        public static Task< Task< T > >[] Interleaved<T>( [NotNull] IEnumerable< Task< T > > tasks ) {
             if ( tasks == null ) {
                 throw new ArgumentNullException( "tasks" );
             }
 
             var inputTasks = tasks.ToList();
 
-            var buckets = new TaskCompletionSource<Task<T>>[ inputTasks.Count ];
+            var buckets = new TaskCompletionSource< Task< T > >[ inputTasks.Count ];
 
-            var results = new Task<Task<T>>[ buckets.Length ];
+            var results = new Task< Task< T > >[ buckets.Length ];
 
             for ( var i = 0; i < buckets.Length; i++ ) {
-                buckets[ i ] = new TaskCompletionSource<Task<T>>();
+                buckets[ i ] = new TaskCompletionSource< Task< T > >();
                 results[ i ] = buckets[ i ].Task;
             }
 
             var nextTaskIndex = -1;
-            Action<Task<T>> continuation = completed => {
+            Action< Task< T > > continuation = completed => {
                 var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
                 bucket.TrySetResult( completed );
             };
@@ -445,7 +446,7 @@ namespace Librainian.Threading {
         /// <typeparam name="T"></typeparam>
         /// <param name="target"></param>
         /// <param name="item"></param>
-        public static void TryPost<T>( this ITargetBlock<T> target, T item ) {
+        public static void TryPost<T>( this ITargetBlock< T > target, T item ) {
             if ( target == null ) {
 #if DEBUG
                 throw new ArgumentNullException( "target" );
@@ -468,7 +469,7 @@ namespace Librainian.Threading {
         /// <param name="target"></param>
         /// <param name="item"></param>
         /// <param name="delay"></param>
-        public static Timer TryPost<T>( this ITargetBlock<T> target, T item, Span delay ) {
+        public static Timer TryPost<T>( this ITargetBlock< T > target, T item, Span delay ) {
             if ( target == null ) {
                 throw new ArgumentNullException( "target" );
             }
@@ -484,6 +485,12 @@ namespace Librainian.Threading {
                 throw;
             }
         }
+
+        /// <summary>
+        /// Has attributes <see cref="MethodImplOptions.NoInlining"/> and <see cref="MethodImplOptions.NoOptimization"/>.
+        /// </summary>
+        [MethodImpl( MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+        public static void DoNothing(  ) { }
     }
 
     //public enum Priority : byte {
