@@ -3,6 +3,7 @@ namespace Librainian.Measurement.Time {
     using System;
     using System.Diagnostics;
     using Maths;
+    using NUnit.Framework;
 
     public class TimeTimers {
 
@@ -10,8 +11,8 @@ namespace Librainian.Measurement.Time {
 
         public TimeTimers() {
             var state = new Object();
-            this.ThreadingTimer = new System.Threading.Timer( Callback, state,0,0 );
-            
+            this.ThreadingTimer = new System.Threading.Timer( Callback, state, 0, 0 );
+
         }
 
         private static void Callback( object state ) {
@@ -22,6 +23,7 @@ namespace Librainian.Measurement.Time {
             RunSystemTimerTest( Milliseconds.Five );
         }
 
+        [Test]
         public static ulong RunSystemTimerTest( Span howLong ) {
             var counter = 0UL;
             try {
@@ -32,15 +34,15 @@ namespace Librainian.Measurement.Time {
                 systemTimer.AutoReset = false;
                 var stopwatch = Stopwatch.StartNew();
                 systemTimer.Start();
-                while ( stopwatch.Elapsed < howLong ) { }
+                while ( stopwatch.Elapsed < howLong ) {
+                    ;
+                }
                 stopwatch.Stop();
                 systemTimer.Stop();
-                var per = counter/howLong.GetApproximateMilliseconds();
-                Debug.WriteLine( "System.Timer.TimerTest counted {0} in {1} ({2})", counter );
+                var perMillisecond = counter / howLong.GetApproximateMilliseconds();
+                Debug.WriteLine( "System.Timer.TimerTest counted {0} in {1} ({2})", counter, howLong, perMillisecond );
             }
             catch ( Exception ) {
-                
-                throw;
             }
             return counter;
         }
