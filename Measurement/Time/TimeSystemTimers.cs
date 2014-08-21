@@ -27,14 +27,15 @@ namespace Librainian.Measurement.Time {
     using NUnit.Framework;
     using Threading;
 
-    public class TimeTimers {
+    [TestFixture]
+    public static class TimeSystemTimers {
         private static ulong _threadingCounter;
 
         public static ulong RunThreadingTimerTest( Span howLong ) {
+            _threadingCounter = 0;
             try {
                 var state = new Object();
-                _threadingCounter = 0;
-                using ( var threadingTimer = new Timer( callback: Callback, state: state, dueTime: 0, period: 0 ) ) {
+                using ( var threadingTimer = new Timer( callback: Callback, state: state, dueTime: ( int )Milliseconds.One.Value, period: ( int )Milliseconds.One.Value ) ) {
                     var stopwatch = Stopwatch.StartNew();
                     while ( stopwatch.Elapsed < howLong ) {
                         Tasks.DoNothing();
@@ -42,8 +43,8 @@ namespace Librainian.Measurement.Time {
                     stopwatch.Stop();
 
                     var mills = howLong.GetApproximateMilliseconds();
-                    var perMillisecond = _threadingCounter/mills;
-                    Debug.WriteLine( "System.Threading.TimerTest counted {0} in {1} ({2})", _threadingCounter, howLong, perMillisecond );
+                    var millsPer = mills / _threadingCounter;
+                    Debug.WriteLine( "System.Threading.TimerTest counted to {0} in {1} ({2})", _threadingCounter, howLong, millsPer );
                 }
             }
             catch { }
@@ -56,28 +57,28 @@ namespace Librainian.Measurement.Time {
 
         [Test, UsedImplicitly]
         public static void RunTests() {
-            Console.WriteLine( RunSystemTimerTest( Milliseconds.Five ) );
-            Console.WriteLine( RunThreadingTimerTest( Milliseconds.Five ) );
+            Console.WriteLine( RunSystemTimerTest( Milliseconds.OneThousandNine ) );
+            Console.WriteLine( RunThreadingTimerTest( Milliseconds.OneThousandNine ) );
         }
 
         public static ulong RunSystemTimerTest( Span howLong ) {
             var counter = 0UL;
             try {
-                using ( var systemTimer = new System.Timers.Timer() ) {
-                    systemTimer.Interval = Double.Epsilon;
+                using ( var systemTimer = new System.Timers.Timer( ( double ) Milliseconds.One ) { AutoReset = true } ) {
                     systemTimer.Elapsed += ( sender, args ) => { counter++; };
-                    systemTimer.AutoReset = false;
-                    var stopwatch = Stopwatch.StartNew();
+
                     systemTimer.Start();
+                    var stopwatch = Stopwatch.StartNew();
                     while ( stopwatch.Elapsed < howLong ) {
                         Tasks.DoNothing();
                     }
+
                     stopwatch.Stop();
                     systemTimer.Stop();
 
                     var mills = howLong.GetApproximateMilliseconds();
-                    var perMillisecond = counter/mills;
-                    Debug.WriteLine( "System.Timer.TimerTest counted {0} in {1} ({2})", counter, howLong, perMillisecond );
+                    var millsPer = mills / counter;
+                    Debug.WriteLine( "System.Timer.TimerTest counted to {0} in {1} ({2})", counter, howLong, millsPer );
                 }
             }
             catch ( Exception ) { }
