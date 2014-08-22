@@ -36,7 +36,7 @@ namespace Librainian.IO {
     /// <seealso cref="IOExtensions.SameContent(Document,Document)" />
     [DataContract( IsReference = true )]
     [Immutable]
-    public sealed class Document : IEquatable< Document > {
+    public class Document : IEquatable< Document > {
         /// <summary>
         ///     "\"
         /// </summary>

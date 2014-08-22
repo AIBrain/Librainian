@@ -40,6 +40,7 @@ namespace Librainian.Parsing {
     using Annotations;
     using Collections;
     using Extensions;
+    using IO;
     using Linguistics;
     using Maths;
     using Numerics;
@@ -221,18 +222,6 @@ namespace Librainian.Parsing {
                 throw new ArgumentNullException( "encoding" );
             }
             return encoding.GetBytes( text ).Compress();
-        }
-
-        public static byte[] Compress( [NotNull] this byte[] data ) {
-            if ( data == null ) {
-                throw new ArgumentNullException( "data" );
-            }
-            using ( var output = new MemoryStream() ) {
-                using ( var compress = new GZipStream( output, CompressionMode.Compress ) ) {
-                    compress.Write( data, 0, data.Length );
-                }
-                return output.ToArray();
-            }
         }
 
         public static IEnumerable<T> ConcatSingle<T>( [NotNull] this IEnumerable<T> sequence, T element ) {

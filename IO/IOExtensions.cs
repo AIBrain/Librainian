@@ -25,6 +25,7 @@ namespace Librainian.IO {
     using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
+    using System.IO.Compression;
     using System.Linq;
     using System.Management;
     using System.Numerics;
@@ -37,6 +38,43 @@ namespace Librainian.IO {
     using Measurement.Time;
 
     public static class IOExtensions {
+
+        public const int FSCTL_SET_COMPRESSION = 0x9C040;
+
+
+        [DllImport( "kernel32.dll" )]
+        public static extern int DeviceIoControl( IntPtr hDevice, int
+            dwIoControlCode, ref short lpInBuffer, int nInBufferSize, IntPtr
+            lpOutBuffer, int nOutBufferSize, ref int lpBytesReturned, IntPtr
+            lpOverlapped );
+
+        public static int? TurnOnCompression( [NotNull] FileInfo info ) {
+            if ( info == null ) {
+                throw new ArgumentNullException( "info" );
+            }
+            if ( !info.Exists ) {
+                info.Refresh();
+                if ( !info.Exists ) { return null; }
+            }
+
+            var lpBytesReturned = 0;
+            short compressionFormatDefault = 1;
+
+            using ( var fileStream = File.Open( path: info.FullName, mode: FileMode.Open, access: FileAccess.ReadWrite, share: FileShare.None ) ) {
+                var success = false;
+                fileStream.SafeFileHandle.DangerousAddRef( success: ref success );
+                var result = DeviceIoControl(
+                    hDevice: fileStream.SafeFileHandle.DangerousGetHandle(),
+                    dwIoControlCode: FSCTL_SET_COMPRESSION,
+                    lpInBuffer: ref compressionFormatDefault, nInBufferSize: sizeof( short ),
+                    lpOutBuffer: IntPtr.Zero,
+                    nOutBufferSize: 0,
+                    lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
+                fileStream.SafeFileHandle.DangerousRelease();
+
+                return lpBytesReturned;
+            }
+        }
 
         /// <summary>
         ///     poor mans crc
@@ -277,32 +315,53 @@ namespace Librainian.IO {
             return null;
         }
 
-        public static BigInteger GetFileSizeOnDisk( this FileInfo info ) {
+        /// <summary>
+        /// <para>The code above does not work properly on Windows Server 2008 or 2008 R2 or Windows 7 and Vista based systems as cluster size is always zero (GetDiskFreeSpaceW and GetDiskFreeSpace return -1 even with UAC disabled.)</para>
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk"/>
+        public static BigInteger GetFileSizeOnDiskAlt( this FileInfo info ) {
             uint dummy;
             uint sectorsPerCluster;
             uint bytesPerSector;
             var result = WindowsAPIs.GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
             if ( result == 0 ) throw new Win32Exception();
             var clusterSize = sectorsPerCluster * bytesPerSector;
-            BigInteger sizeHigh;
+            UInt64 sizeHigh;
             var losize = WindowsAPIs.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out sizeHigh );
             BigInteger size = ( long )sizeHigh << 32 | losize;
             return ( ( size + clusterSize - 1 ) / clusterSize ) * clusterSize;
         }
 
-        public static BigInteger GetFileSizeOnDisk( string file ) {
-            var info = new FileInfo( file );
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public static BigInteger? GetFileSizeOnDisk( FileInfo info ) {
             UInt64 clusterSize;
-            var driveLetter = info.Directory.Root.FullName.TrimEnd( '\\' ) ;
-            using ( var searcher = new ManagementObjectSearcher( string.Format( "select BlockSize,NumberOfBlocks from Win32_Volume WHERE DriveLetter = '{0}'", driveLetter ) ) ) {
+            var driveLetter = info.Directory.Root.FullName.TrimEnd( '\\' );
+            using ( var searcher = new ManagementObjectSearcher( String.Format( "select BlockSize,NumberOfBlocks from Win32_Volume WHERE DriveLetter = '{0}'", driveLetter ) ) ) {
                 var bob = searcher.Get().Cast<ManagementObject>().First();
                 clusterSize = ( UInt64 )bob[ "BlockSize" ];
             }
-            uint hosize;
-            var losize = WindowsAPIs.GetCompressedFileSizeW( file, out hosize );
+            UInt64 hosize;
+            var losize = WindowsAPIs.GetCompressedFileSizeW( info.FullName, out hosize );
             BigInteger size = ( long )hosize << 32 | losize;
             return ( ( size + clusterSize - 1 ) / clusterSize ) * clusterSize;
         }
 
+        public static byte[] Compress( [NotNull] this byte[] data ) {
+            if ( data == null ) {
+                throw new ArgumentNullException( "data" );
+            }
+            using ( var output = new MemoryStream() ) {
+                using ( var compress = new GZipStream( output, CompressionMode.Compress ) ) {
+                    compress.Write( data, 0, data.Length );
+                }
+                return output.ToArray();
+            }
+        }
     }
 }

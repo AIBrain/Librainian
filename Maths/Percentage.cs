@@ -1,36 +1,34 @@
 #region License & Information
-
 // This notice must be kept visible in the source.
-//
+// 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
+// 
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-//
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/Percentage.cs" was last cleaned by Rick on 2014/08/15 at 1:00 PM
-
-#endregion License & Information
+// 
+// "Librainian/Percentage.cs" was last cleaned by Rick on 2014/08/22 at 9:40 AM
+#endregion
 
 namespace Librainian.Maths {
-
     using System;
+    using System.Numerics;
     using System.Runtime.Serialization;
     using Annotations;
     using Extensions;
     using Numerics;
 
     /// <summary>
-    ///     <para>Restricts the value to between 0.0 and 1.0</para>
+    ///     <para>Restricts the value to between 0.0 and 1.0.</para>
     /// </summary>
     [DataContract( IsReference = true )]
     [Serializable]
@@ -47,8 +45,20 @@ namespace Librainian.Maths {
         /// </summary>
         public const Double Minimum = 0d;
 
+        [CanBeNull]
         [DataMember]
-        public readonly BigRational Value;
+        public readonly BigInteger? Denominator;
+
+        [CanBeNull]
+        [DataMember]
+        public readonly BigInteger? LeastCommonDenominator;
+
+        [CanBeNull]
+        [DataMember]
+        public readonly BigInteger? Numerator;
+        
+        [DataMember]
+        public readonly BigRational Quotient;  //TODO BigDecimal any better here?
 
         /// <summary>
         ///     Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.
@@ -56,24 +66,57 @@ namespace Librainian.Maths {
         /// <param name="value"></param>
         public Percentage( Double value ) {
             if ( value >= Maximum ) {
-                this.Value = Maximum;
+                this.Quotient = Maximum;
             }
             else if ( value <= Minimum ) {
-                this.Value = Minimum;
+                this.Quotient = Minimum;
             }
             else {
-                this.Value = value;
+                this.Quotient = value;
             }
         }
 
-        public Percentage( Double numerator, Double denominator ) {
-            this.Value = denominator <= 0 ? new BigRational( 0.0 ) : new BigRational( numerator / denominator );
+        public Percentage( Decimal numerator, Decimal denominator ) : this( ( Double )numerator, ( Double )denominator ) { }
 
-            if ( this.Value < Minimum ) {
-                this.Value = Minimum;
+        public Percentage( Double numerator, Double denominator ) {
+            if ( Double.IsNaN( numerator ) ) {
+                throw new ArgumentOutOfRangeException( "numerator", "Numerator is not a number." );
             }
-            else if ( this.Value > Maximum ) {
-                this.Value = Maximum;
+            if ( Double.IsNaN( denominator ) ) {
+                throw new ArgumentOutOfRangeException( "denominator", "Denominator is not a number." );
+            }
+
+            this.Numerator = new BigInteger( numerator );
+            this.Denominator = new BigInteger( denominator );
+
+            this.LeastCommonDenominator = BigRational.LeastCommonDenominator( this.Numerator, this.Denominator );
+
+            this.Quotient = denominator <= 0 ? new BigRational( 0.0 ) : new BigRational( numerator / denominator );
+
+            if ( this.Quotient < Minimum ) {
+                this.Quotient = Minimum;
+            }
+            else if ( this.Quotient > Maximum ) {
+                this.Quotient = Maximum;
+            }
+        }
+
+        public Percentage( BigInteger numerator, BigInteger denominator ) {
+            this.Numerator = numerator;
+            this.Denominator = denominator;
+            this.LeastCommonDenominator = BigRational.LeastCommonDenominator( this.Numerator, this.Denominator );
+            if ( denominator <= 0 ) {
+                this.Quotient = new BigRational( 0.0 );
+            }
+            else {
+                this.Quotient = new BigRational( numerator / denominator );
+            }
+
+            if ( this.Quotient < Minimum ) {
+                this.Quotient = Minimum;
+            }
+            else if ( this.Quotient > Maximum ) {
+                this.Quotient = Maximum;
             }
         }
 
@@ -83,25 +126,25 @@ namespace Librainian.Maths {
         /// <param name="value"></param>
         public Percentage( BigRational value ) {
             if ( value >= Maximum ) {
-                this.Value = Maximum;
+                this.Quotient = Maximum;
             }
             else if ( value <= Minimum ) {
-                this.Value = Minimum;
+                this.Quotient = Minimum;
             }
             else {
-                this.Value = value;
+                this.Quotient = value;
             }
         }
 
         public int CompareTo( Double other ) {
-            return this.Value.CompareTo( other );
+            return this.Quotient.CompareTo( other );
         }
 
         public int CompareTo( [NotNull] Percentage other ) {
             if ( other == null ) {
                 throw new ArgumentNullException( "other" );
             }
-            return this.Value.CompareTo( other.Value );
+            return this.Quotient.CompareTo( other.Quotient );
         }
 
         public Boolean Equals( [NotNull] Percentage other ) {
@@ -124,7 +167,7 @@ namespace Librainian.Maths {
             if ( right == null ) {
                 throw new ArgumentNullException( "right" );
             }
-            return left.Value == right.Value;
+            return left.Quotient == right.Quotient;
         }
 
         public static Percentage Parse( [NotNull] String value ) {
@@ -147,7 +190,7 @@ namespace Librainian.Maths {
         }
 
         public override String ToString() {
-            return String.Format( "{0}", this.Value );
+            return String.Format( "{0}", this.Quotient );
         }
 
         /// <summary>
@@ -157,11 +200,11 @@ namespace Librainian.Maths {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Percentage Combine( Percentage left, Percentage right ) {
-            return new Percentage( ( left.Value + right.Value ) / 2.0 );
+            return new Percentage( ( left.Quotient + right.Quotient ) / 2.0 );
         }
 
         public static implicit operator Double( Percentage special ) {
-            return ( Double )special.Value;
+            return ( Double )special.Quotient;
         }
 
         //public static implicit operator Decimal( Percentage special ) {
@@ -171,7 +214,7 @@ namespace Librainian.Maths {
         public static implicit operator Percentage( Single value ) {
             return new Percentage( value );
         }
-        
+
         public static implicit operator Percentage( Double value ) {
             return new Percentage( value );
         }

@@ -37,6 +37,7 @@ namespace Librainian.Threading {
     using Collections;
     using Extensions;
     using FluentAssertions;
+    using IO;
     using Maths;
     using Measurement.Time;
     using NUnit.Framework;
@@ -563,6 +564,20 @@ namespace Librainian.Threading {
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
             }
+        }
+
+        public static Percentage GetRandomness( this Action<byte[]> randomFunc, UInt16 bytesToTest ) {
+
+
+
+            var buffer = new byte[ bytesToTest ];
+            randomFunc( buffer );
+
+            var compressed = buffer.Compress();
+
+            var result = new Percentage( compressed.LongLength, buffer.LongLength );
+
+            return result;
         }
     }
 }
