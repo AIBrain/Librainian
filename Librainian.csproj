@@ -296,7 +296,6 @@
     <Compile Include="Geometry\Matrix4.cs" />
     <Compile Include="Geometry\Vector3.cs" />
     <Compile Include="Graphics\Images.cs" />
-    <Compile Include="Hardware\Beeps.cs" />
     <Compile Include="Hardware\Virtual\Gaming\Card.cs" />
     <Compile Include="Hardware\Virtual\Gaming\Deck.cs" />
     <Compile Include="Hardware\Virtual\Gaming\DiceCup.cs" />
