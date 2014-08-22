@@ -152,7 +152,7 @@ namespace Librainian.Threading {
                 Console.WriteLine( "Holler there." );
             } )
                 .LimitActing( TimeSpan.FromMilliseconds( 1 ), () => Console.WriteLine( "..uh..what?" ) )
-                .Then( () => Console.WriteLine( "This is Bob Dole." ) )
+                .Then( () => Console.WriteLine( "This is Bob Bush." ) )
                 .Then( () => Console.WriteLine( "I just wanted to say." ) )
                 .Then( () => Console.WriteLine( "Some about." ) )
                 .EndScene()
