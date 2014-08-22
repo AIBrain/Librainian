@@ -321,16 +321,16 @@ namespace Librainian.IO {
         /// <param name="info"></param>
         /// <returns></returns>
         /// <seealso cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk"/>
-        public static BigInteger GetFileSizeOnDiskAlt( this FileInfo info ) {
+        public static UInt64? GetFileSizeOnDiskAlt( this FileInfo info ) {
             uint dummy;
             uint sectorsPerCluster;
             uint bytesPerSector;
-            var result = WindowsAPIs.GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
+            var result = WindowsAPI.GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
             if ( result == 0 ) throw new Win32Exception();
             var clusterSize = sectorsPerCluster * bytesPerSector;
             UInt64 sizeHigh;
-            var losize = WindowsAPIs.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out sizeHigh );
-            BigInteger size = ( long )sizeHigh << 32 | losize;
+            var losize = WindowsAPI.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out sizeHigh );
+            UInt64 size = ( long )sizeHigh << 32 | losize;
             return ( ( size + clusterSize - 1 ) / clusterSize ) * clusterSize;
         }
 
@@ -347,7 +347,7 @@ namespace Librainian.IO {
                 clusterSize = ( UInt64 )bob[ "BlockSize" ];
             }
             UInt64 hosize;
-            var losize = WindowsAPIs.GetCompressedFileSizeW( info.FullName, out hosize );
+            var losize = WindowsAPI.GetCompressedFileSizeW( info.FullName, out hosize );
             BigInteger size = ( long )hosize << 32 | losize;
             return ( ( size + clusterSize - 1 ) / clusterSize ) * clusterSize;
         }

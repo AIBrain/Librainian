@@ -14,7 +14,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Win32MapApis.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/WindowsAPI.cs" was last cleaned by Rick on 2014/08/22 at 1:06 PM
 #endregion
 
 namespace Librainian.IO {
@@ -25,7 +27,7 @@ namespace Librainian.IO {
     ///     Win32 APIs used by the library
     /// </summary>
     /// <remarks>Defines the PInvoke functions we use to access the FileMapping Win32 APIs</remarks>
-    public class WindowsAPIs {
+    public class WindowsAPI {
         [DllImport( "kernel32", SetLastError = true )]
         public static extern Boolean CloseHandle( IntPtr handle );
 
@@ -48,38 +50,33 @@ namespace Librainian.IO {
         public static extern IntPtr CreateFile( String lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile );
 
         /// <summary>
-        /// <para>Retrieves the actual number of bytes of disk storage used to store a specified file as a transacted operation.</para>
-        ///  <para>If the file is located on a volume that supports compression and the file is compressed, the value obtained is the compressed size of the specified file.</para>
-        ///  <para>If the file is located on a volume that supports sparse files and the file is a sparse file, the value obtained is the sparse size of the specified file.</para>
+        ///     <para>
+        ///         Retrieves the actual number of bytes of disk storage used to store a specified file as a transacted
+        ///         operation.
+        ///     </para>
+        ///     <para>
+        ///         If the file is located on a volume that supports compression and the file is compressed, the value obtained
+        ///         is the compressed size of the specified file.
+        ///     </para>
+        ///     <para>
+        ///         If the file is located on a volume that supports sparse files and the file is a sparse file, the value
+        ///         obtained is the sparse size of the specified file.
+        ///     </para>
         /// </summary>
         /// <param name="lpFileName"></param>
         /// <param name="lpFileSizeHigh"></param>
         /// <returns></returns>
-        /// <seealso cref="http://msdn.microsoft.com/en-us/library/windows/desktop/aa364930(v=vs.85).aspx"/>
+        /// <seealso cref="http://msdn.microsoft.com/en-us/library/windows/desktop/aa364930(v=vs.85).aspx" />
         [DllImport( "kernel32.dll" )]
-        public static extern uint GetCompressedFileSizeW( [In, MarshalAs( UnmanagedType.LPWStr )] string lpFileName,
-                                                   [Out, MarshalAs( UnmanagedType.U8 )] out UInt64 lpFileSizeHigh );
+        public static extern UInt64 GetCompressedFileSizeW( [In] [MarshalAs( UnmanagedType.LPWStr )] string lpFileName, [Out] [MarshalAs( UnmanagedType.U8 )] out UInt64 lpFileSizeHigh );
 
         [DllImport( "kernel32.dll", SetLastError = true, PreserveSig = true )]
-        public static extern int GetDiskFreeSpaceW( [In, MarshalAs( UnmanagedType.LPWStr )] string lpRootPathName,
-                                             out uint lpSectorsPerCluster, out uint lpBytesPerSector, out uint lpNumberOfFreeClusters,
-                                             out uint lpTotalNumberOfClusters );
+        public static extern UInt64 GetDiskFreeSpaceW( [In] [MarshalAs( UnmanagedType.LPWStr )] string lpRootPathName, out uint lpSectorsPerCluster, out uint lpBytesPerSector, out uint lpNumberOfFreeClusters, out uint lpTotalNumberOfClusters );
 
         [DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
-        static extern bool MoveFileWithProgress( string lpExistingFileName,
-           string lpNewFileName, CopyProgressRoutine lpProgressRoutine,
-           IntPtr lpData, MoveFileFlags dwFlags );
-
+        private static extern bool MoveFileWithProgress( string lpExistingFileName, string lpNewFileName, CopyProgressRoutine lpProgressRoutine, IntPtr lpData, MoveFileFlags dwFlags );
     }
 
-    delegate CopyProgressResult CopyProgressRoutine(
-    long TotalFileSize,
-    long TotalBytesTransferred,
-    long StreamSize,
-    long StreamBytesTransferred,
-    uint dwStreamNumber,
-    CopyProgressCallbackReason dwCallbackReason,
-    IntPtr hSourceFile,
-    IntPtr hDestinationFile,
-    IntPtr lpData );
+    internal delegate CopyProgressResult CopyProgressRoutine( long totalFileSize, long totalBytesTransferred, long streamSize, 
+    long streamBytesTransferred, uint dwStreamNumber, CopyProgressCallbackReason dwCallbackReason, IntPtr hSourceFile, IntPtr hDestinationFile, IntPtr lpData );
 }
