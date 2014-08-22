@@ -297,10 +297,10 @@
     <Compile Include="Geometry\Matrix4.cs" />
     <Compile Include="Geometry\Vector3.cs" />
     <Compile Include="Graphics\Images.cs" />
-    <Compile Include="Hardware\Virtual\Gaming\Card.cs" />
-    <Compile Include="Hardware\Virtual\Gaming\Deck.cs" />
-    <Compile Include="Hardware\Virtual\Gaming\DiceCup.cs" />
-    <Compile Include="Hardware\Virtual\Gaming\TraditionalDice.cs" />
+    <Compile Include="Gaming\Card.cs" />
+    <Compile Include="Gaming\Deck.cs" />
+    <Compile Include="Gaming\DiceCup.cs" />
+    <Compile Include="Gaming\TraditionalDice.cs" />
     <Compile Include="IO\CopyProgressCallbackReason.cs" />
     <Compile Include="IO\CopyProgressResult.cs" />
     <Compile Include="IO\MoveFileFlags.cs" />
@@ -592,6 +592,7 @@
     <None Include="README.textile" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Hardware\Virtual\Gaming\" />
     <Folder Include="PatternRecognition\" />
   </ItemGroup>
   <ItemGroup>
