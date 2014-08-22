@@ -24,6 +24,7 @@ namespace Librainian.Measurement.Time {
     using System.Runtime.Serialization;
     using Annotations;
     using FluentAssertions;
+    using Maths;
 
     /// <summary>
     /// </summary>
@@ -80,7 +81,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Yoctoseconds Zero = new Yoctoseconds( 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly BigDecimal Value;
 
         static Yoctoseconds() {
             Zero.Should().BeLessThan( One );

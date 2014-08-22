@@ -39,6 +39,7 @@ namespace Librainian.Maths {
     ///     <para>Author: Jan Christoph Bernack (contact: jc.bernack at googlemail.com)</para>
     ///     <para>Joined with code from nberardi from gist 2667136</para>
     ///     <para>Rewritten into an immutable struct by Rick@aibrain.org in August 2014</para>
+    ///     <para>Added the parsing ability from the 'clojure' project.</para>
     /// </summary>
     /// <seealso cref="http://stackoverflow.com/a/13813535/956364" />
     /// <seealso cref="http://gist.github.com/nberardi/2667136" />
@@ -607,6 +608,7 @@ namespace Librainian.Maths {
         ///     <para>Create a BigDecimal from a string representation.</para>
         /// </summary>
         /// <param name="value"></param>
+        /// <param name="answer"></param>
         /// <returns></returns>
         public static Boolean TryParse( [CanBeNull] string value, out BigDecimal? answer ) {
             answer = null;

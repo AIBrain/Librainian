@@ -84,7 +84,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly PlanckTimes Zero = new PlanckTimes( value: 0 );
 
-        [DataMember] public readonly BigInteger Value;  //according to wikipedia planck units by definition cannot be spilt into smaller units.
+        [DataMember] public readonly BigInteger Value;  //according to wikipedia, planck units by definition cannot be spilt into smaller units.
 
         static PlanckTimes() {
             Zero.Should().BeLessThan( One );
