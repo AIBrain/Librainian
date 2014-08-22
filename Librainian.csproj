@@ -592,7 +592,7 @@
     <None Include="README.textile" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Hardware\Virtual\Gaming\" />
+    <Folder Include="Hardware\Virtual\" />
     <Folder Include="PatternRecognition\" />
   </ItemGroup>
   <ItemGroup>
