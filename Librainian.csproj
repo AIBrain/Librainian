@@ -218,6 +218,7 @@
     <Compile Include="Collections\VirtualList.cs" />
     <Compile Include="Collections\WithTime.cs" />
     <Compile Include="Collections\WordToGuidAndGuidToWord.cs" />
+    <Compile Include="Computer.cs" />
     <Compile Include="Controls\AutoLayoutWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -296,7 +297,6 @@
     <Compile Include="Geometry\Vector3.cs" />
     <Compile Include="Graphics\Images.cs" />
     <Compile Include="Hardware\Beeps.cs" />
-    <Compile Include="Hardware\Computer.cs" />
     <Compile Include="Hardware\Network.cs" />
     <Compile Include="Hardware\Virtual\Gaming\Card.cs" />
     <Compile Include="Hardware\Virtual\Gaming\Deck.cs" />

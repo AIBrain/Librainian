@@ -1,4 +1,4 @@
-﻿#region License & Information
+#region License & Information
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
@@ -19,7 +19,7 @@
 // "Librainian/Computer.cs" was last cleaned by Rick on 2014/08/19 at 1:26 PM
 #endregion
 
-namespace Librainian.Hardware {
+namespace Librainian {
     using System;
     using System.Collections.Generic;
     using System.Linq;
