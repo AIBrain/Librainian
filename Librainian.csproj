@@ -504,6 +504,8 @@
     <Compile Include="Speech\Speecher.cs" />
     <Compile Include="Speech\SpeechOutput.cs" />
     <Compile Include="Speech\SpeechToText.cs" />
+    <Compile Include="Threading\Actor.cs" />
+    <Compile Include="Threading\ActorException.cs" />
     <Compile Include="Threading\AsyncLazy.cs" />
     <Compile Include="Threading\AsyncLock.cs" />
     <Compile Include="Threading\AsyncReaderWriterLock.cs" />
@@ -512,7 +514,7 @@
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Threading\AbandonableTask.cs" />
     <Compile Include="Security\MersenneTwister.cs" />
-    <Compile Include="Threading\Class1.cs" />
+    <Compile Include="Threading\ActorExtensions.cs" />
     <Compile Include="Threading\CustomAttribute.cs" />
     <Compile Include="Extensions\Combiner.cs" />
     <Compile Include="Extensions\GuidExtensions.cs" />

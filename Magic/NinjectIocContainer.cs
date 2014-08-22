@@ -26,6 +26,7 @@ namespace Librainian.Magic {
     using System;
     using Annotations;
     using Autofac;
+    using Collections;
     using FluentAssertions;
     using Ninject;
     using Ninject.Activation.Caching;

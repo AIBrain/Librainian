@@ -172,20 +172,6 @@ namespace Librainian.Threading {
             Thread.EndCriticalRegion();
         }
 
-        public static void ForEach<T>( this IEnumerable<T> items, Action<T> action ) {
-            if ( null == items ) {
-                throw new ArgumentNullException( "items" );
-            }
-            if ( null == action ) {
-                throw new ArgumentNullException( "action" );
-            }
-
-            foreach ( var item in items.Where( item => !Equals( item, null ) ) ) {
-                action( item );
-                //yield return item;
-            }
-        }
-
         /// <summary>
         ///     Gets the number of frames in the <see cref="StackTrace" />
         /// </summary>
@@ -253,7 +239,7 @@ namespace Librainian.Threading {
                 return sizeof( Boolean );
             }
 
-            return sizeof( UInt64 ); //HACK assume 8 bytes on a 64 bit proc..?
+            return sizeof( UInt64 ); //HACK assume 8 bytes..?
         }
 
         public static TimeSpan GetSlice( Boolean? setProcessorAffinity = null ) {

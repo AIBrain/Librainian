@@ -23,13 +23,5 @@ namespace Librainian.Hardware {
     using System;
     using Threading;
 
-    public static class Beeps {
-        public static void Low() {
-            Console.Beep( frequency: 440, duration: ( int ) Threads.GetSlicingAverage().TotalMilliseconds );
-        }
-
-        public static void High() {
-            Console.Beep( frequency: 14917, duration: ( int ) Threads.GetSlicingAverage().TotalMilliseconds );
-        }
-    }
+    
 }
