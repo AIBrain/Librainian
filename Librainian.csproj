@@ -250,7 +250,6 @@
     <Compile Include="Database\MMF\MemMapCache.cs" />
     <Compile Include="Database\MMF\SerializerException.cs" />
     <Compile Include="Database\MMF\ValueTypeCheck.cs" />
-    <Compile Include="Database\MMF\Win32MapApis.cs" />
     <Compile Include="Database\SQLDatabaseExtensions.cs" />
     <Compile Include="Database\SQLQuery.cs" />
     <Compile Include="Extensions\BooleanPredicateBuilder.cs" />
@@ -303,6 +302,7 @@
     <Compile Include="Hardware\Virtual\Gaming\Deck.cs" />
     <Compile Include="Hardware\Virtual\Gaming\DiceCup.cs" />
     <Compile Include="Hardware\Virtual\Gaming\TraditionalDice.cs" />
+    <Compile Include="IO\WindowsAPIs.cs" />
     <Compile Include="Magic\AutofacContainer.cs" />
     <Compile Include="Magic\IIocContainer.cs" />
     <Compile Include="Magic\Ioc.cs" />

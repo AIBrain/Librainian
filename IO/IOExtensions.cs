@@ -22,9 +22,13 @@
 namespace Librainian.IO {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Management;
+    using System.Numerics;
+    using System.Runtime.InteropServices;
     using System.Security;
     using System.Threading;
     using System.Threading.Tasks;
@@ -33,6 +37,7 @@ namespace Librainian.IO {
     using Measurement.Time;
 
     public static class IOExtensions {
+
         /// <summary>
         ///     poor mans crc
         /// </summary>
@@ -116,7 +121,7 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
-        public static IEnumerable< byte > AsByteArray( [NotNull] this FileInfo fileInfo ) {
+        public static IEnumerable<byte> AsByteArray( [NotNull] this FileInfo fileInfo ) {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( "fileInfo" );
             }
@@ -137,7 +142,7 @@ namespace Librainian.IO {
                     if ( b == -1 ) {
                         yield break;
                     }
-                    yield return ( Byte ) b;
+                    yield return ( Byte )b;
                 }
             }
         }
@@ -150,20 +155,20 @@ namespace Librainian.IO {
         /// <param name="progress"></param>
         /// <param name="eta"></param>
         /// <returns></returns>
-        public static Task Copy( Document source, Document destination, Action< double > progress, Action< TimeSpan > eta ) {
+        public static Task Copy( Document source, Document destination, Action<double> progress, Action<TimeSpan> eta ) {
             return Task.Run( () => {
-                                 //TODO
-                             } );
+                //TODO
+            } );
         }
 
         public static MemoryStream TryCopyStream( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
-            //TODO
-            TryAgain:
+        //TODO
+        TryAgain:
             var memoryStream = new MemoryStream();
             try {
                 if ( File.Exists( filePath ) ) {
                     using ( var fileStream = File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare ) ) {
-                        var length = ( int ) fileStream.Length;
+                        var length = ( int )fileStream.Length;
                         if ( length > 0 ) {
                             fileStream.CopyTo( memoryStream, length ); //int-long possible issue.
                             memoryStream.Seek( 0, SeekOrigin.Begin );
@@ -192,7 +197,7 @@ namespace Librainian.IO {
         /// <returns></returns>
         public static Boolean? TryDeleting( this Document document, Boolean bePatient = true ) {
             var stopwatch = Stopwatch.StartNew();
-            TryAgain:
+        TryAgain:
             try {
                 if ( !document.FileExists ) {
                     return true;
@@ -242,8 +247,8 @@ namespace Librainian.IO {
         }
 
         public static FileStream TryOpenForReading( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
-            //TODO
-            TryAgain:
+        //TODO
+        TryAgain:
             try {
                 if ( File.Exists( filePath ) ) {
                     return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
@@ -271,5 +276,33 @@ namespace Librainian.IO {
             }
             return null;
         }
+
+        public static BigInteger GetFileSizeOnDisk( this FileInfo info ) {
+            uint dummy;
+            uint sectorsPerCluster;
+            uint bytesPerSector;
+            var result = WindowsAPIs.GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
+            if ( result == 0 ) throw new Win32Exception();
+            var clusterSize = sectorsPerCluster * bytesPerSector;
+            BigInteger sizeHigh;
+            var losize = WindowsAPIs.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out sizeHigh );
+            BigInteger size = ( long )sizeHigh << 32 | losize;
+            return ( ( size + clusterSize - 1 ) / clusterSize ) * clusterSize;
+        }
+
+        public static BigInteger GetFileSizeOnDisk( string file ) {
+            var info = new FileInfo( file );
+            UInt64 clusterSize;
+            var driveLetter = info.Directory.Root.FullName.TrimEnd( '\\' ) ;
+            using ( var searcher = new ManagementObjectSearcher( string.Format( "select BlockSize,NumberOfBlocks from Win32_Volume WHERE DriveLetter = '{0}'", driveLetter ) ) ) {
+                var bob = searcher.Get().Cast<ManagementObject>().First();
+                clusterSize = ( UInt64 )bob[ "BlockSize" ];
+            }
+            uint hosize;
+            var losize = WindowsAPIs.GetCompressedFileSizeW( file, out hosize );
+            BigInteger size = ( long )hosize << 32 | losize;
+            return ( ( size + clusterSize - 1 ) / clusterSize ) * clusterSize;
+        }
+
     }
 }
