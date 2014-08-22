@@ -285,6 +285,7 @@
     <Compile Include="Extensions\Utility.cs" />
     <Compile Include="Extensions\WaitTime.cs" />
     <Compile Include="Extensions\XMLExtensions.cs" />
+    <Compile Include="Gaming\Class1.cs" />
     <Compile Include="Geometry\DD\GeometryEx.cs" />
     <Compile Include="Geometry\DD\Intersection.cs" />
     <Compile Include="Geometry\DD\Line.cs" />
