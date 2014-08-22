@@ -32,13 +32,17 @@ namespace Librainian {
 
     public static class Computer {
 
-        public static class Beeps {
+        public static class Beep {
             public static void Low() {
-                Console.Beep( frequency: 440, duration: ( int )Threads.GetSlicingAverage().TotalMilliseconds );
+                At( 440, Threads.GetSlicingAverage() );
+            }
+
+            public static void At( int frequency, TimeSpan duration ) {
+                Console.Beep( frequency: frequency, duration: ( int )duration.TotalMilliseconds );
             }
 
             public static void High() {
-                Console.Beep( frequency: 14917, duration: ( int )Threads.GetSlicingAverage().TotalMilliseconds );
+                At( 14917, Threads.GetSlicingAverage() );
             }
         }
 
@@ -165,7 +169,7 @@ namespace Librainian {
                 }
         */
 
-        public static IEnumerable< string > GetVersions() {
+        public static IEnumerable<string> GetVersions() {
             return AppDomain.CurrentDomain.GetAssemblies().Select( assembly => String.Format( "Assembly: {0}, {1}", assembly.GetName().Name, assembly.GetName().Version ) );
         }
 
@@ -174,7 +178,7 @@ namespace Librainian {
                 if ( bytes <= 1 ) {
                     return true;
                 }
-                var megabytes = bytes/OneMegaByte;
+                var megabytes = bytes / OneMegaByte;
                 if ( megabytes <= BigInteger.Zero ) {
                     return true;
                 }
@@ -184,7 +188,7 @@ namespace Librainian {
                 if ( bytes > GetAvailableMemeory() ) {
                     GC.Collect();
                 }
-                using ( new MemoryFailPoint( ( int ) megabytes ) ) {
+                using ( new MemoryFailPoint( ( int )megabytes ) ) {
                     return true;
                 }
             }
@@ -197,18 +201,18 @@ namespace Librainian {
         }
 
         public static Boolean CanAllocateMemory( this UInt64 bytes ) {
-            return ( ( BigInteger ) bytes ).CanAllocateMemory();
+            return ( ( BigInteger )bytes ).CanAllocateMemory();
         }
 
         public static Boolean CanAllocateMemory( this Int64 bytes ) {
-            return ( ( BigInteger ) bytes ).CanAllocateMemory();
+            return ( ( BigInteger )bytes ).CanAllocateMemory();
         }
 
         public static Boolean CanAllocateMemory( this Int32 bytes ) {
-            return ( ( BigInteger ) bytes ).CanAllocateMemory();
+            return ( ( BigInteger )bytes ).CanAllocateMemory();
         }
 
-        public static IEnumerable< string > GetWorkingMACAddresses() {
+        public static IEnumerable<string> GetWorkingMACAddresses() {
             return from nic in NetworkInterface.GetAllNetworkInterfaces()
                    where nic.OperationalStatus == OperationalStatus.Up
                    select nic.GetPhysicalAddress().ToString();
