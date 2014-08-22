@@ -302,6 +302,9 @@
     <Compile Include="Hardware\Virtual\Gaming\Deck.cs" />
     <Compile Include="Hardware\Virtual\Gaming\DiceCup.cs" />
     <Compile Include="Hardware\Virtual\Gaming\TraditionalDice.cs" />
+    <Compile Include="IO\CopyProgressCallbackReason.cs" />
+    <Compile Include="IO\CopyProgressResult.cs" />
+    <Compile Include="IO\MoveFileFlags.cs" />
     <Compile Include="IO\WindowsAPIs.cs" />
     <Compile Include="Magic\AutofacContainer.cs" />
     <Compile Include="Magic\IIocContainer.cs" />
