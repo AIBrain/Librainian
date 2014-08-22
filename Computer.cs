@@ -23,6 +23,7 @@ namespace Librainian {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.NetworkInformation;
     using System.Numerics;
     using System.Runtime;
     using Annotations;
@@ -193,6 +194,12 @@ namespace Librainian {
 
         public static Boolean CanAllocateMemory( this Int32 bytes ) {
             return ( ( BigInteger ) bytes ).CanAllocateMemory();
+        }
+
+        public static IEnumerable< string > GetWorkingMACAddresses() {
+            return from nic in NetworkInterface.GetAllNetworkInterfaces()
+                   where nic.OperationalStatus == OperationalStatus.Up
+                   select nic.GetPhysicalAddress().ToString();
         }
     }
 }
