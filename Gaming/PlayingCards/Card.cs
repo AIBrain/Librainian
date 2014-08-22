@@ -14,26 +14,20 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Deck.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
+// "Librainian/Card.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 #endregion
 
-namespace Librainian.Hardware.Virtual.Gaming {
-    using System;
-    using Annotations;
-    using Collections;
-    using Librainian.Gaming;
+namespace Librainian.Gaming.PlayingCards {
+    using Extensions;
 
-    public class Deck {
-        /// <summary>
-        ///     list of cards contained in this deck.
-        /// </summary>
-        [NotNull] private readonly ParallelList< Card > _cards = new ParallelList< Card >();
+    [Immutable]
+    public class Card {
+        public readonly FaceValues FaceValue;
+        public readonly Suites Suite;
 
-        public void AddCard( [NotNull] Card card ) {
-            if ( card == null ) {
-                throw new ArgumentNullException( "card" );
-            }
-            this._cards.Add( card );
+        public Card( Suites suite, FaceValues faceValue ) {
+            this.FaceValue = faceValue;
+            this.Suite = suite;
         }
     }
 }

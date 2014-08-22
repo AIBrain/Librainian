@@ -415,11 +415,11 @@ namespace Librainian.Collections {
         ///     Add a collection of items.
         /// </summary>
         /// <param name="items"></param>
-        /// <param name="asParallel">Enables parallelization of the <paramref name="items" />.</param>
+        /// <param name="useParallels">Enables parallelization of the <paramref name="items" />.</param>
         /// <param name="afterEachAdd"><see cref="Action" /> to perform after each add.</param>
         /// <param name="afterRangeAdded"><see cref="Action" /> to perform after range added.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public void AddRange( [NotNull] IEnumerable<TType> items, Boolean asParallel = true, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
+        public void AddRange( [NotNull] IEnumerable<TType> items, Byte useParallels = 0, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
             if ( null == items ) {
                 throw new ArgumentNullException( "items" );
             }
@@ -429,8 +429,8 @@ namespace Librainian.Collections {
             }
 
             try {
-                if ( asParallel ) {
-                    items.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( item => this.TryAdd( item, afterEachAdd ) );
+                if ( useParallels >= 1 ) {
+                    items.AsParallel().WithDegreeOfParallelism( useParallels ).ForAll( item => this.TryAdd( item, afterEachAdd ) );
                 }
                 else {
                     foreach ( var item in items ) {
