@@ -27,15 +27,6 @@ namespace Librainian.Measurement.Time {
     using Librainian.Extensions;
     using Parsing;
 
-    public interface IQuantityOfTime {
-        int GetHashCode();
-
-        [Pure]
-        BigInteger ToPlanckTimes();
-
-        string ToString();
-    }
-
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]

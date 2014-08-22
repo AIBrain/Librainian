@@ -26,22 +26,22 @@ namespace Librainian.Measurement.Length {
         /// <summary>
         ///     One <see cref="Millimeters" /> .
         /// </summary>
-        public static readonly Millimeters One = new Millimeters( millimeters: 1 );
+        public static readonly Millimeters One = new Millimeters(  1 );
 
         /// <summary>
         ///     Two <see cref="Millimeters" /> .
         /// </summary>
-        public static readonly Millimeters Two = new Millimeters( millimeters: 2 );
+        public static readonly Millimeters Two = new Millimeters(  2 );
 
         /// <summary>
         ///     About zero. :P
         /// </summary>
-        public static readonly Millimeters MinValue = new Millimeters( millimeters: Decimal.MinValue );
+        public static readonly Millimeters MinValue = new Millimeters(  Decimal.MinValue );
 
         /// <summary>
         ///     About 584.9 million years.
         /// </summary>
-        public static readonly Millimeters MaxValue = new Millimeters( millimeters: Decimal.MaxValue );
+        public static readonly Millimeters MaxValue = new Millimeters(  Decimal.MaxValue );
 
         [DataMember] public readonly Decimal Value;
 

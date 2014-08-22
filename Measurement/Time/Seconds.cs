@@ -51,7 +51,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     <see cref="One" /> <see cref="Seconds" />.
         /// </summary>
-        public static readonly Seconds One = new Seconds( value: 1 );
+        public static readonly Seconds One = new Seconds(  1 );
 
         /// <summary>
         ///     <see cref="Seven" /> <see cref="Seconds" />.

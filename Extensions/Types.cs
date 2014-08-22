@@ -31,7 +31,7 @@ namespace Librainian.Extensions {
     using Threading;
 
     public static class Types {
-        public static void CopyField< TSource >( this TSource source, TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
+        public static void CopyField<TSource>( this TSource source, TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( field == null ) {
                 throw new ArgumentNullException( "field" );
             }
@@ -58,7 +58,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static Boolean MergeDictions< TSource >( IDictionary sourceValue, FieldInfo field, TSource destination ) {
+        public static Boolean MergeDictions<TSource>( IDictionary sourceValue, FieldInfo field, TSource destination ) {
             if ( null == sourceValue ) {
                 return false;
             }
@@ -85,7 +85,7 @@ namespace Librainian.Extensions {
         /// <param name="source"></param>
         /// <param name="destination"></param>
         /// <returns></returns>
-        public static Boolean CopyFields< TSource >( this TSource source, TSource destination ) {
+        public static Boolean CopyFields<TSource>( this TSource source, TSource destination ) {
             try {
                 var sourceFields = source.GetType().GetAllFields();
                 var destFields = destination.GetType().GetAllFields();
@@ -108,7 +108,7 @@ namespace Librainian.Extensions {
         /// <param name="source"></param>
         /// <param name="destination"></param>
         /// <returns></returns>
-        public static Boolean CopyProperties< TSource >( this TSource source, TSource destination ) {
+        public static Boolean CopyProperties<TSource>( this TSource source, TSource destination ) {
             try {
                 var sourceProps = source.GetType().GetAllProperties().Where( prop => prop.CanRead );
                 var destProps = destination.GetType().GetAllProperties().Where( prop => prop.CanWrite );
@@ -123,7 +123,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static void CopyProperty< TSource >( this TSource source, TSource destination, [NotNull] PropertyInfo prop ) {
+        public static void CopyProperty<TSource>( this TSource source, TSource destination, [NotNull] PropertyInfo prop ) {
             if ( prop == null ) {
                 throw new ArgumentNullException( "prop" );
             }
@@ -164,7 +164,7 @@ namespace Librainian.Extensions {
         /// <param name="source"></param>
         /// <param name="destination"></param>
         /// <returns></returns>
-        public static Boolean DeepClone< TSource >( this TSource source, TSource destination ) {
+        public static Boolean DeepClone<TSource>( this TSource source, TSource destination ) {
             if ( ReferenceEquals( source, destination ) ) {
                 return false;
             }
@@ -186,9 +186,9 @@ namespace Librainian.Extensions {
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static IEnumerable< FieldInfo > GetAllFields( [CanBeNull] this Type type ) {
+        public static IEnumerable<FieldInfo> GetAllFields( [CanBeNull] this Type type ) {
             if ( null == type ) {
-                return Enumerable.Empty< FieldInfo >();
+                return Enumerable.Empty<FieldInfo>();
             }
 
             const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -200,30 +200,49 @@ namespace Librainian.Extensions {
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static IEnumerable< PropertyInfo > GetAllProperties( [CanBeNull] this Type type ) {
+        public static IEnumerable<PropertyInfo> GetAllProperties( [CanBeNull] this Type type ) {
             if ( null == type ) {
-                return Enumerable.Empty< PropertyInfo >();
+                return Enumerable.Empty<PropertyInfo>();
             }
 
             const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
             return type.GetProperties( flags ).Union( GetAllProperties( type.BaseType ) );
         }
 
-        public static string GetName< T >( [CanBeNull] this Expression< Func< T > > propertyExpression ) {
+/*
+        public static string GetName<T>( [CanBeNull] this Expression<Func<T>> propertyExpression ) {
             if ( null == propertyExpression ) {
                 return String.Empty;
             }
             var memberExpression = propertyExpression.Body as MemberExpression;
             return memberExpression != null ? memberExpression.Member.Name : String.Empty;
         }
+*/
 
-        public static string GetPropertyName< T >( [CanBeNull] this Expression< Func< T > > propertyExpression ) {
+        public static string GetPropertyName<T>( [CanBeNull] this Expression<Func<T>> propertyExpression ) {
             if ( propertyExpression == null ) {
                 throw new ArgumentNullException( "propertyExpression" );
             }
             var memberExpression = propertyExpression.Body as MemberExpression;
             return memberExpression != null ? memberExpression.Member.Name : String.Empty;
         }
+
+/*
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="getMethod"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://stackoverflow.com/a/557711"/>
+        public static T GetProperty<T>( MethodBase getMethod ) {
+            if ( !getMethod.Name.StartsWith( "get_" ) ) {
+                throw new ArgumentException(
+                    "GetProperty must be called from a property" );
+            }
+            return GetValue<T>( getMethod.Name.Substring( 4 ) );
+        }
+*/
 
         /// <summary>
         ///     Get all <see cref="Type" /> from <see cref="AppDomain.CurrentDomain" /> that should be
@@ -232,26 +251,26 @@ namespace Librainian.Extensions {
         /// </summary>
         /// <param name="baseType"></param>
         /// <returns></returns>
-        public static IEnumerable< Type > GetTypesDerivedFrom( [CanBeNull] this Type baseType ) {
+        public static IEnumerable<Type> GetTypesDerivedFrom( [CanBeNull] this Type baseType ) {
             if ( baseType == null ) {
                 throw new ArgumentNullException( "baseType" );
             }
             return AppDomain.CurrentDomain.GetAssemblies().SelectMany( assembly => assembly.GetTypes(), ( assembly, type ) => type ).Where( arg => baseType.IsAssignableFrom( arg ) && arg.IsClass && !arg.IsAbstract );
         }
 
-        public static Func< object > NewInstanceByLambda( [NotNull] this Type type ) {
+        public static Func<object> NewInstanceByLambda( [NotNull] this Type type ) {
             if ( type == null ) {
                 throw new ArgumentNullException( "type" );
             }
-            return Expression.Lambda< Func< object > >( Expression.New( type ) ).Compile();
+            return Expression.Lambda<Func<object>>( Expression.New( type ) ).Compile();
         }
 
-        public static Func< object > NewInstanceByCreate( [NotNull] this Type type ) {
+        public static Func<object> NewInstanceByCreate( [NotNull] this Type type ) {
             if ( type == null ) {
                 throw new ArgumentNullException( "type" );
             }
             var localType = type; // create a local copy to prevent adverse effects of closure
-            Func< object > func = ( () => Activator.CreateInstance( localType ) ); // curry the localType
+            Func<object> func = ( () => Activator.CreateInstance( localType ) ); // curry the localType
             return func;
         }
     }

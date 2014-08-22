@@ -380,6 +380,8 @@
     <Compile Include="Measurement\Physics\MilliElectronVolts.cs" />
     <Compile Include="Measurement\Physics\TeraElectronVolts.cs" />
     <Compile Include="Measurement\Length\PlanckLengths.cs" />
+    <Compile Include="Measurement\Length\Foot.cs" />
+    <Compile Include="Measurement\Time\IQuantityOfTime.cs" />
     <Compile Include="Measurement\Time\TimeSystemTimers.cs" />
     <Compile Include="Measurement\Time\Clocks\AMorPM.cs" />
     <Compile Include="Measurement\Time\Attoseconds.cs" />
