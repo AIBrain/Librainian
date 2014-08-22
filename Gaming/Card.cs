@@ -17,7 +17,7 @@
 // "Librainian/Card.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 #endregion
 
-namespace Librainian.Hardware.Virtual.Gaming {
+namespace Librainian.Gaming {
     using Extensions;
 
     public enum Suites {

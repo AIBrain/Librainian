@@ -21,6 +21,7 @@ namespace Librainian.Hardware.Virtual.Gaming {
     using System;
     using Annotations;
     using Collections;
+    using Librainian.Gaming;
 
     public class Deck {
         /// <summary>
