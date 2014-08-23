@@ -872,6 +872,25 @@ namespace Librainian.Controls {
             } );
         }
 
+
+        /// <summary>
+        ///     Safely set the <see cref="ProgressBar.Style" /> of the <see cref="ProgressBar" /> across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="value"></param>
+        public static void Style( [CanBeNull] this ProgressBar control, ProgressBarStyle value ) {
+            if ( null == control ) {
+                return;
+            }
+            control.OnThread( () => {
+                if ( control.IsDisposed ) {
+                    return;
+                }
+                control.Style = value;
+                control.Refresh();
+            } );
+        }
+
         /// <summary>
         ///     Safely set the <see cref="ProgressBar.Maximum" /> of the <see cref="ProgressBar" /> across threads.
         /// </summary>
@@ -1110,5 +1129,6 @@ namespace Librainian.Controls {
         //        CreateDivInsideBrowser( ref webbrowser, message );
         //    }
         //}
+
     }
 }
