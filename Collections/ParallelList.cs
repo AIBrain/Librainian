@@ -184,7 +184,10 @@ namespace Librainian.Collections {
 
         public TType this[ int index ] {
             get {
-                return this.Clone()[ index ];
+                if ( this.Clone().Count > index ) {
+                    return this.Clone()[ index ];
+                }
+                return default ( TType );   //is this better than a throw?
             }
             set {
                 if ( !this.AllowModifications ) {
