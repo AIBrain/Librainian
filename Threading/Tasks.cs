@@ -491,6 +491,33 @@ namespace Librainian.Threading {
         /// </summary>
         [MethodImpl( MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
         public static void DoNothing(  ) { }
+
+        /// <summary>
+        ///     Start a timer. When it fires, check the <paramref name="condition" />, and if true do the
+        ///     <paramref name="action" />.
+        /// </summary>
+        /// <param name="afterDelay"></param>
+        /// <param name="action"></param>
+        /// <param name="condition"></param>
+        public static System.Threading.Timer When( this Span afterDelay, Func< Boolean > condition, Action action ) {
+            if ( condition == null ) {
+                throw new ArgumentNullException( "condition" );
+            }
+            if ( action == null ) {
+                throw new ArgumentNullException( "action" );
+            }
+            try {
+                return afterDelay.Create( () => {
+                                              if ( condition() ) {
+                                                  action();
+                                              }
+                                          } ).Once().AndStart();
+            }
+            catch ( Exception exception ) {
+                exception.Error();
+                return null;
+            }
+        }
     }
 
     //public enum Priority : byte {

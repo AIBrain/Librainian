@@ -51,28 +51,50 @@ namespace Librainian.IO {
         [NotNull]
         public readonly String FullPath;
 
+        [NotNull]
         public readonly DirectoryInfo DirectoryInfo;
+        [NotNull]
+        public readonly Uri UriInfo;
 
         public Folder( [NotNull] String path ) {
             if ( path == null ) {
                 throw new ArgumentNullException( "path" );
             }
 
-            this.FullPath = CleanedUpPath( path) ?? String.Empty;
-            if ( String.IsNullOrWhiteSpace(this.FullPath) ) {
-                throw new ArgumentNullException( "path","The path `{0}` is invalid" );
+            var bob = CleanUpPath( path );
+            if ( null == bob ) {
+                throw new InvalidOperationException
+            }
+
+            this.DirectoryInfo = ;
+            this.FullPath = ?? String.Empty;
+            if ( String.IsNullOrWhiteSpace( this.FullPath ) ) {
+                throw new ArgumentNullException( "path", "The path `{0}` is invalid" );
             }
         }
 
         [CanBeNull]
-        private static String CleanedUpPath( string path ) {
-            if ( String.IsNullOrWhiteSpace( path ) ) {
-                return null;
+        public static DirectoryInfo CleanUpPath( String path, out Uri uri ) {
+            uri = null;
+            try {
+                if ( String.IsNullOrWhiteSpace( path ) ) {
+                    return null;
+                }
+                path = path.Trim();
+                if ( String.IsNullOrWhiteSpace( path ) ) {
+                    return null;
+                }
+                if ( Uri.TryCreate( path, UriKind.Absolute, out uri ) ) {
+                    DirectoryInfo.WithShortDatePath
+                    return new DirectoryInfo( uri.LocalPath );
+                }
+
             }
-            path = path.Trim();
-            if ( String.IsNullOrWhiteSpace( path ) ) {
-                return null;
-            }
+            catch ( UriFormatException ) { }
+            catch ( SecurityException ) { }
+            catch ( PathTooLongException ) { }
+            catch ( InvalidOperationException ) { }
+            return null;
         }
     }
 
@@ -83,33 +105,38 @@ namespace Librainian.IO {
     /// <seealso cref="IOExtensions.SameContent(Document,Document)" />
     [DataContract( IsReference = true )]
     [Immutable]
-    public class Document : IEquatable< Document >, IEnumerable<Byte> {
+    public class Document : IEquatable<Document>, IEnumerable<Byte> {
 
         /// <summary>
         ///     "/"
         /// </summary>
-        [NotNull] public static readonly List< char > InvalidPathChars = new List< char >( Path.GetInvalidPathChars() );
+        [NotNull]
+        public static readonly List<char> InvalidPathChars = new List<char>( Path.GetInvalidPathChars() );
 
         /// <summary>
         ///     <para>The extension of the <see cref="FileName" />, including the ".".</para>
         /// </summary>
-        [NotNull] public readonly String Extension;
+        [NotNull]
+        public readonly String Extension;
 
         /// <summary>
         ///     <para>The file's name, including the extension.</para>
         /// </summary>
         /// <seealso cref="Path.GetFileNameWithoutExtension" />
-        [NotNull] public readonly String FileName;
+        [NotNull]
+        public readonly String FileName;
 
         /// <summary>
         ///     <para>FYI: A folder always ends with the <see cref="IO.Folder.FolderSeparator" />.</para>
         /// </summary>
-        [NotNull] public readonly String Folder;
+        [NotNull]
+        public readonly String Folder;
 
         /// <summary>
         ///     <para>The <see cref="Folder" /> combined with the <see cref="FileName" />.</para>
         /// </summary>
-        [NotNull] public readonly String FullPathWithFileName;
+        [NotNull]
+        public readonly String FullPathWithFileName;
 
         /// <summary>
         ///     The last known size of the file.
@@ -156,7 +183,7 @@ namespace Librainian.IO {
             this.FileName = Path.GetFileName( fullPathWithFilename );
             this.Extension = Path.GetExtension( fullPathWithFilename );
 
-            this.Size = ( UInt64 ) file.Length;
+            this.Size = ( UInt64 )file.Length;
 
             this.FullPathWithFileName = Path.Combine( this.Folder, this.FileName );
         }
@@ -188,7 +215,7 @@ namespace Librainian.IO {
 
         public UInt64 GetSize() {
             var info = new FileInfo( this.FullPathWithFileName );
-            return !info.Exists ? UInt64.MinValue : ( UInt64 ) info.Length;
+            return !info.Exists ? UInt64.MinValue : ( UInt64 )info.Length;
         }
 
         /// <summary>
@@ -233,7 +260,7 @@ namespace Librainian.IO {
         /// <returns>
         /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
         /// </returns>
-        public IEnumerator< byte > GetEnumerator() {
+        public IEnumerator<byte> GetEnumerator() {
             return this.AsByteArray().GetEnumerator();
         }
 
@@ -246,7 +273,7 @@ namespace Librainian.IO {
         /// <param name="obj"></param>
         /// <returns></returns>
         public override Boolean Equals( [CanBeNull] object obj ) {
-            return obj is Document && Equals( this, ( Document ) obj );
+            return obj is Document && Equals( this, ( Document )obj );
         }
 
         //[NotNull]
@@ -289,7 +316,7 @@ namespace Librainian.IO {
         ///     Enumerates a <see cref="Document" /> as a sequence of <see cref="Byte" />.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable< byte > AsByteArray() {
+        public IEnumerable<byte> AsByteArray() {
             var info = new FileInfo( this.FullPathWithFileName );
             return info.AsByteArray();
         }

@@ -1,23 +1,28 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/Threads.cs" was last cleaned by Rick on 2014/08/11 at 12:41 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Threads.cs" was last cleaned by Rick on 2014/08/22 at 11:46 PM
+
+#endregion License & Information
 
 namespace Librainian.Threading {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -37,9 +42,9 @@ namespace Librainian.Threading {
     using Extensions;
     using Maths;
     using Measurement.Time;
-    using Timer = System.Timers.Timer;
 
     public static class Threads {
+
         /// <summary>
         ///     <para>Holder for <see cref="Process.GetCurrentProcess" />.</para>
         /// </summary>
@@ -199,47 +204,55 @@ namespace Librainian.Threading {
             //also: return ( T[] )Enum.GetValues( typeof( T ) );    //prob faster
         }
 
-        public static int GetSizeOfPrimitives( this Type type ) {
-            if ( type == typeof( Byte ) ) {
-                return sizeof( Byte );
+        public static int GetSizeOfPrimitives<T>( this T type ) {
+            var total = 0;
+            if ( type is UInt64 ) {
+                total += sizeof( UInt64 );
             }
-            if ( type == typeof( UInt16 ) ) {
-                return sizeof( UInt16 );
+            if ( type is Int64 ) {
+                total += sizeof( Int64 );
             }
-            if ( type == typeof( UInt32 ) ) {
-                return sizeof( UInt32 );
+            if ( type is Decimal ) {
+                total += sizeof( Decimal );
             }
-            if ( type == typeof( UInt64 ) ) {
-                return sizeof( UInt64 );
-            }
-
-            if ( type == typeof( SByte ) ) {
-                return sizeof( SByte );
-            }
-            if ( type == typeof( Int16 ) ) {
-                return sizeof( Int16 );
-            }
-            if ( type == typeof( Int32 ) ) {
-                return sizeof( Int32 );
-            }
-            if ( type == typeof( Int64 ) ) {
-                return sizeof( Int64 );
+            if ( type is Double ) {
+                total += sizeof( Double );
             }
 
-            if ( type == typeof( Single ) ) {
-                return sizeof( Single );
-            }
-            if ( type == typeof( Double ) ) {
-                return sizeof( Double );
-            }
-            if ( type == typeof( Decimal ) ) {
-                return sizeof( Decimal );
-            }
-            if ( type == typeof( Boolean ) ) {
-                return sizeof( Boolean );
+            if ( type is UInt32 ) {
+                total += sizeof( UInt32 );
             }
 
-            return sizeof( UInt64 ); //HACK assume 8 bytes..?
+            if ( type is UInt16 ) {
+                total += sizeof( UInt16 );
+            }
+            if ( type is Byte ) {
+                total += sizeof( Byte );
+            }
+
+            if ( type is SByte ) {
+                total += sizeof( SByte );
+            }
+            if ( type is Int16 ) {
+                total += sizeof( Int16 );
+            }
+            if ( type is Int32 ) {
+                total += sizeof( Int32 );
+            }
+
+            if ( type is Single ) {
+                total += sizeof( Single );
+            }
+            if ( type is Boolean ) {
+                total += sizeof( Boolean );
+            }
+
+            var s = type as string;
+            if ( s != null ) {
+                total += s.Length;
+            }
+
+            return total;
         }
 
         public static TimeSpan GetSlice( Boolean? setProcessorAffinity = null ) {
@@ -249,15 +262,9 @@ namespace Librainian.Threading {
                     affinityMask &= 0xFFFF; // use any of the available processors
                     CurrentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
                 }
-                catch ( Win32Exception ) {
-                    /*swallow*/
-                }
-                catch ( NotSupportedException ) {
-                    /*swallow*/
-                }
-                catch ( InvalidOperationException ) {
-                    /*swallow*/
-                }
+                catch ( Win32Exception ) { }
+                catch ( NotSupportedException ) { }
+                catch ( InvalidOperationException ) { }
             }
 
             var stopwatch = Stopwatch.StartNew();
@@ -311,7 +318,6 @@ namespace Librainian.Threading {
         /// <param name="sourceLineNumber"></param>
         [DebuggerStepThrough]
         public static void Error( [CanBeNull] this Exception exception, [CanBeNull] String message = "", [CanBeNull] [CallerMemberName] String memberName = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
-
 #if DEBUG
             if ( !String.IsNullOrEmpty( message ) ) {
                 Debug.WriteLine( "[{0}]", message );
@@ -346,8 +352,6 @@ namespace Librainian.Threading {
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
             }
-
-
         }
 
         //    e.GetObjectData( si, ctx );
@@ -792,33 +796,6 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     Start a timer. When it fires, check the <paramref name="condition" />, and if true do the
-        ///     <paramref name="action" />.
-        /// </summary>
-        /// <param name="afterDelay"></param>
-        /// <param name="action"></param>
-        /// <param name="condition"></param>
-        public static Timer When( this Span afterDelay, Func<Boolean> condition, Action action ) {
-            if ( condition == null ) {
-                throw new ArgumentNullException( "condition" );
-            }
-            if ( action == null ) {
-                throw new ArgumentNullException( "action" );
-            }
-            try {
-                return afterDelay.Create( () => {
-                    if ( condition() ) {
-                        action();
-                    }
-                } ).Once().AndStart();
-            }
-            catch ( Exception exception ) {
-                exception.Error();
-                return null;
-            }
-        }
-
-        /// <summary>
         ///     var result = await Wrap( () => OldNonAsyncFunction( ) );
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -911,6 +888,7 @@ namespace Librainian.Threading {
         }
 
         public static class Report {
+
             /// <summary>
             ///     TODO add in the threadID
             /// </summary>

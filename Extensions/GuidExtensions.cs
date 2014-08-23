@@ -34,19 +34,22 @@ namespace Librainian.Extensions {
             var s = path.ToPaths().ToList();
             s.RemoveAll( s1 => s1.Any( c => !Char.IsDigit( c ) ) );
 
-            if ( s.Count >= 16 ) {
-                var b = new byte[s.Count];
-                for ( var i = 0; i < s.Count; i++ ) {
-                    b[ i ] = Convert.ToByte( s[ i ] );
-                }
-                try {
-                    var result = new Guid( b );
-                    return result;
-                }
-                catch ( ArgumentException exception ) {
-                    exception.Error();
-                }
+            if ( s.Count < 16 ) {
+                return Guid.Empty;
             }
+
+            var b = new byte[s.Count];
+            for ( var i = 0; i < s.Count; i++ ) {
+                b[ i ] = Convert.ToByte( s[ i ] );
+            }
+            try {
+                var result = new Guid( b );
+                return result;
+            }
+            catch ( ArgumentException exception ) {
+                exception.Error();
+            }
+
             return Guid.Empty;
         }
 
