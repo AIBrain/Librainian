@@ -27,6 +27,7 @@ namespace Librainian.Maths {
     using System.Runtime.Serialization;
     using System.Security.Permissions;
     using System.Text;
+    using Annotations;
 
     /// <summary>
     ///     <para>Decompiled from BigRationalLibrary. Where BigRationalLibrary came from, I don't know. But thanks!</para>
@@ -47,10 +48,10 @@ namespace Librainian.Maths {
         public static readonly BiggerRational One = new BiggerRational( BigInteger.One );
         public static readonly BiggerRational MinusOne = new BiggerRational( BigInteger.MinusOne );
 
-        private static readonly BigInteger SBnDoublePrecision = BigInteger.Pow( 10, 308 );
+        private static readonly BigInteger SBnDoublePrecision = BigInteger.Pow( 10, DoubleMaxScale );
         private static readonly BigInteger SBnDoubleMaxValue = ( BigInteger )double.MaxValue;
         private static readonly BigInteger SBnDoubleMinValue = ( BigInteger )double.MinValue;
-        private static readonly BigInteger SBnDecimalPrecision = BigInteger.Pow( 10, 28 );
+        private static readonly BigInteger SBnDecimalPrecision = BigInteger.Pow( 10, DecimalMaxScale );
 
         private static readonly BigInteger SBnDecimalMaxValue = ( BigInteger )new Decimal( -1, -1, -1, false, 0 );
         private static readonly BigInteger SBnDecimalMinValue = ( BigInteger )new Decimal( -1, -1, -1, true, 0 );
@@ -98,7 +99,7 @@ namespace Librainian.Maths {
 
         public BiggerRational( Decimal value ) {
             var bits = Decimal.GetBits( value );
-            if ( bits == null || bits.Length != 4 || ( ( bits[ 3 ] & 2130771967 ) != 0 || ( bits[ 3 ] & 16711680 ) > 1835008 ) ) {
+            if ( bits == null || bits.Length != 4 || ( ( bits[ 3 ] & 2130771967 ) != 0 || ( bits[ 3 ] & DecimalScaleMask ) > 1835008 ) ) {
                 throw new ArgumentException( "invalid Decimal", "value" );
             }
             if ( value == new Decimal( 0 ) ) {
@@ -109,7 +110,7 @@ namespace Librainian.Maths {
                 if ( ( bits[ 3 ] & int.MinValue ) != 0 ) {
                     this.Numerator = BigInteger.Negate( this.Numerator );
                 }
-                this.Denominator = BigInteger.Pow( 10, ( bits[ 3 ] & 16711680 ) >> 16 );
+                this.Denominator = BigInteger.Pow( 10, ( bits[ 3 ] & DecimalScaleMask ) >> 16 );
                 this.Simplify();
             }
         }
@@ -419,8 +420,8 @@ namespace Librainian.Maths {
             return Multiply(r1,r2);
         }
 
-        public static BiggerRational operator /( BiggerRational r1, BiggerRational r2 ) {
-            return new BiggerRational( r1.Numerator * r2.Denominator, r1.Denominator * r2.Numerator );
+        public static BiggerRational operator /( BiggerRational dividend, BiggerRational divisor ) {
+            return Divide( dividend, divisor );
         }
 
         public static BiggerRational operator %( BiggerRational r1, BiggerRational r2 ) {
@@ -456,8 +457,7 @@ namespace Librainian.Maths {
         }
 
         public static BiggerRational Abs( BiggerRational r ) {
-            //if ( r.Numerator.Sign >= 0 ) {return r;}  //I think this optimization wouldn't matter much.
-            return new BiggerRational( BigInteger.Abs( r.Numerator ), r.Denominator );
+            return r.Numerator.Sign >= 0 ? r : new BiggerRational( BigInteger.Abs( r.Numerator ), r.Denominator );
         }
 
         public static BiggerRational Negate( BiggerRational r ) {
@@ -481,7 +481,7 @@ namespace Librainian.Maths {
         }
 
         public static BiggerRational Divide( BiggerRational dividend, BiggerRational divisor ) {
-            return dividend / divisor;
+            return new BiggerRational( dividend.Numerator * divisor.Denominator, dividend.Denominator * divisor.Numerator );
         }
 
         public static BiggerRational Remainder( BiggerRational dividend, BiggerRational divisor ) {
@@ -515,6 +515,7 @@ namespace Librainian.Maths {
             return bigRational;
         }
 
+        [UsedImplicitly]
         public static BigInteger LeastCommonDenominator( BiggerRational r1, BiggerRational r2 ) {
             return r1.Denominator * r2.Denominator / BigInteger.GreatestCommonDivisor( r1.Denominator, r2.Denominator );
         }
