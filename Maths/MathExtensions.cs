@@ -1454,5 +1454,36 @@ namespace Librainian.Maths {
             return scaledValue;
         }
 
+        /// <summary>
+        /// Combine two bytes into one <see cref="UInt16"/>.
+        /// </summary>
+        /// <param name="low"></param>
+        /// <param name="high"></param>
+        /// <returns></returns>
+        public static UInt16 CombineBytes( this Byte low, Byte high) {
+            return BitConverter.ToUInt16( BitConverter.IsLittleEndian ? new[] { high, low } : new[] { low, high }, 0 );
+        } 
+        
+        /// <summary>
+        /// Combine two bytes into one <see cref="UInt16"/> with little endianess.
+        /// </summary>
+        /// <param name="low"></param>
+        /// <param name="high"></param>
+        /// <returns></returns>
+        /// <seealso cref="CombineTwoBytesHighEndianess"/>
+        public static UInt16 CombineTwoBytesLittleEndianess( this Byte low, Byte high ) {
+            return ( UInt16 )( low + ( high << 8 ) );    //BUG is this backwards?
+        }
+
+        /// <summary>
+        /// Combine two bytes into one <see cref="UInt16"/> with little endianess.
+        /// </summary>
+        /// <param name="low"></param>
+        /// <param name="high"></param>
+        /// <returns></returns>
+        /// <seealso cref="CombineTwoBytesLittleEndianess"/>
+        public static UInt16 CombineTwoBytesHighEndianess( this Byte low, Byte high) {
+            return ( UInt16 )( high + ( low << 8 ) );    //BUG is this backwards?
+        }
     }
 }

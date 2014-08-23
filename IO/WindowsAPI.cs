@@ -16,7 +16,7 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/WindowsAPI.cs" was last cleaned by Rick on 2014/08/22 at 1:06 PM
+// "Librainian/WindowsAPI.cs" was last cleaned by Rick on 2014/08/22 at 3:43 PM
 #endregion
 
 namespace Librainian.IO {
@@ -68,15 +68,14 @@ namespace Librainian.IO {
         /// <returns></returns>
         /// <seealso cref="http://msdn.microsoft.com/en-us/library/windows/desktop/aa364930(v=vs.85).aspx" />
         [DllImport( "kernel32.dll" )]
-        public static extern UInt64 GetCompressedFileSizeW( [In] [MarshalAs( UnmanagedType.LPWStr )] string lpFileName, [Out] [MarshalAs( UnmanagedType.U8 )] out UInt64 lpFileSizeHigh );
+        public static extern uint GetCompressedFileSizeW( [In] [MarshalAs( UnmanagedType.LPWStr )] string lpFileName, [Out] [MarshalAs( UnmanagedType.U4 )] out uint lpFileSizeHigh );
 
         [DllImport( "kernel32.dll", SetLastError = true, PreserveSig = true )]
-        public static extern UInt64 GetDiskFreeSpaceW( [In] [MarshalAs( UnmanagedType.LPWStr )] string lpRootPathName, out uint lpSectorsPerCluster, out uint lpBytesPerSector, out uint lpNumberOfFreeClusters, out uint lpTotalNumberOfClusters );
+        public static extern uint GetDiskFreeSpaceW( [In] [MarshalAs( UnmanagedType.LPWStr )] string lpRootPathName, out uint lpSectorsPerCluster, out uint lpBytesPerSector, out uint lpNumberOfFreeClusters, out uint lpTotalNumberOfClusters );
 
         [DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
         private static extern bool MoveFileWithProgress( string lpExistingFileName, string lpNewFileName, CopyProgressRoutine lpProgressRoutine, IntPtr lpData, MoveFileFlags dwFlags );
     }
 
-    internal delegate CopyProgressResult CopyProgressRoutine( long totalFileSize, long totalBytesTransferred, long streamSize, 
-    long streamBytesTransferred, uint dwStreamNumber, CopyProgressCallbackReason dwCallbackReason, IntPtr hSourceFile, IntPtr hDestinationFile, IntPtr lpData );
+    internal delegate CopyProgressResult CopyProgressRoutine( long totalFileSize, long totalBytesTransferred, long streamSize, long streamBytesTransferred, uint dwStreamNumber, CopyProgressCallbackReason dwCallbackReason, IntPtr hSourceFile, IntPtr hDestinationFile, IntPtr lpData );
 }

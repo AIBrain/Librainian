@@ -21,8 +21,7 @@
 
 #endregion License & Information
 
-namespace Librainian.Hardware.Virtual.Gaming {
-
+namespace Librainian.Gaming {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -31,17 +30,6 @@ namespace Librainian.Hardware.Virtual.Gaming {
     using Collections;
     using Measurement.Time;
     using Threading;
-
-    public interface IDice {
-
-        /// <summary>
-        ///     <para>Rolls the dice to determine which side lands face-up.</para>
-        /// </summary>
-        /// <returns>The side which landed face-up</returns>
-        UInt16 Roll();
-
-        IEnumerable<ushort> GetLastFewRolls();
-    }
 
     public class TraditionalDice : IDice {
         public readonly UInt16 NumberOfSides;
@@ -81,7 +69,7 @@ namespace Librainian.Hardware.Virtual.Gaming {
         /// <returns>The side which landed face-up</returns>
         public UInt16 Roll() {
             var result = ( UInt16 )( Randem.Next( this.NumberOfSides ) + 1 );
-            var key = this._lastFewRolls.AddAsync( result, OnAfterAdd ).ContinueWith( task => {
+            var key = this._lastFewRolls.AddAsync( result, this.OnAfterAdd ).ContinueWith( task => {
                 DateTime dummy;
                 var removed = this._tasks.TryRemove( task, out dummy );
                 if ( removed ) {

@@ -21,8 +21,7 @@
 
 #endregion License & Information
 
-namespace Librainian.Hardware.Virtual.Gaming {
-
+namespace Librainian.Gaming {
     using System;
     using System.Collections.Concurrent;
     using Annotations;

@@ -25,7 +25,6 @@ namespace Librainian.Maths {
     using System.Numerics;
     using Annotations;
     using Extensions;
-    using Hardware;
     using NUnit.Framework;
     using Parsing;
 

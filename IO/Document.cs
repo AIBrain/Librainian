@@ -21,6 +21,7 @@
 
 namespace Librainian.IO {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.Serialization;
@@ -36,7 +37,7 @@ namespace Librainian.IO {
     /// <seealso cref="IOExtensions.SameContent(Document,Document)" />
     [DataContract( IsReference = true )]
     [Immutable]
-    public class Document : IEquatable< Document > {
+    public class Document : IEquatable< Document >, IEnumerable<Byte> {
         /// <summary>
         ///     "\"
         /// </summary>
@@ -177,6 +178,26 @@ namespace Librainian.IO {
             unchecked {
                 return this.FullPathWithFileName.GetHashCode();
             }
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
+        /// </returns>
+        IEnumerator IEnumerable.GetEnumerator() {
+            return this.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+        /// </returns>
+        public IEnumerator< byte > GetEnumerator() {
+            return this.AsByteArray().GetEnumerator();
         }
 
         /// <summary>

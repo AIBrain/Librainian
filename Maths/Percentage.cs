@@ -61,23 +61,23 @@ namespace Librainian.Maths {
         public readonly BigRational Quotient;  //TODO BigDecimal any better here?
 
         /// <summary>
-        ///     Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.
+        ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
         /// </summary>
         /// <param name="value"></param>
-        public Percentage( Double value ) {
-            if ( value >= Maximum ) {
-                this.Quotient = Maximum;
-            }
-            else if ( value <= Minimum ) {
-                this.Quotient = Minimum;
-            }
-            else {
-                this.Quotient = value;
-            }
-        }
+        public Percentage( Double value ) : this( ( BigInteger ) value, BigInteger.One) {}
 
-        public Percentage( Decimal numerator, Decimal denominator ) : this( ( Double )numerator, ( Double )denominator ) { }
+        /// <summary>
+        /// <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        public Percentage( Decimal numerator, Decimal denominator ) : this( ( Double )numerator, ( Double )denominator ) {}
 
+        /// <summary>
+        /// <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
         public Percentage( Double numerator, Double denominator ) {
             if ( Double.IsNaN( numerator ) ) {
                 throw new ArgumentOutOfRangeException( "numerator", "Numerator is not a number." );
@@ -89,7 +89,7 @@ namespace Librainian.Maths {
             this.Numerator = new BigInteger( numerator );
             this.Denominator = new BigInteger( denominator );
 
-            this.LeastCommonDenominator = BigRational.LeastCommonDenominator( this.Numerator, this.Denominator );
+            this.LeastCommonDenominator = BigRational.LeastCommonDenominator( this.Numerator.Value, this.Denominator.Value );
 
             this.Quotient = denominator <= 0 ? new BigRational( 0.0 ) : new BigRational( numerator / denominator );
 
@@ -101,16 +101,17 @@ namespace Librainian.Maths {
             }
         }
 
+        /// <summary>
+        /// <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
         public Percentage( BigInteger numerator, BigInteger denominator ) {
             this.Numerator = numerator;
             this.Denominator = denominator;
-            this.LeastCommonDenominator = BigRational.LeastCommonDenominator( this.Numerator, this.Denominator );
-            if ( denominator <= 0 ) {
-                this.Quotient = new BigRational( 0.0 );
-            }
-            else {
-                this.Quotient = new BigRational( numerator / denominator );
-            }
+            this.LeastCommonDenominator = BigRational.LeastCommonDenominator( this.Numerator.Value, this.Denominator.Value );
+
+            this.Quotient = denominator <= 0 ? new BigRational( 0.0 ) : new BigRational( numerator / denominator );
 
             if ( this.Quotient < Minimum ) {
                 this.Quotient = Minimum;
@@ -121,25 +122,18 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.
+        ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
         /// </summary>
         /// <param name="value"></param>
-        public Percentage( BigRational value ) {
-            if ( value >= Maximum ) {
-                this.Quotient = Maximum;
-            }
-            else if ( value <= Minimum ) {
-                this.Quotient = Minimum;
-            }
-            else {
-                this.Quotient = value;
-            }
+        public Percentage( BigRational value ) : this( value.Numerator, value.Denominator ) {
         }
 
+        [Pure]
         public int CompareTo( Double other ) {
             return this.Quotient.CompareTo( other );
         }
 
+        [Pure]
         public int CompareTo( [NotNull] Percentage other ) {
             if ( other == null ) {
                 throw new ArgumentNullException( "other" );

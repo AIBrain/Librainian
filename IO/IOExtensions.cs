@@ -34,6 +34,7 @@ namespace Librainian.IO {
     using System.Threading;
     using System.Threading.Tasks;
     using Annotations;
+    using Extensions;
     using Maths;
     using Measurement.Time;
 
@@ -186,6 +187,43 @@ namespace Librainian.IO {
         }
 
         /// <summary>
+        ///     Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <returns></returns>
+        // TODO this needs a unit test for endianness
+        public static IEnumerable<UInt16> AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
+            if ( fileInfo == null ) {
+                throw new ArgumentNullException( "fileInfo" );
+            }
+            if ( !fileInfo.Exists ) {
+                fileInfo.Refresh(); //check one more time
+                if ( !fileInfo.Exists ) {
+                    yield break;
+                }
+            }
+
+            using ( var stream = new FileStream( fileInfo.FullName, FileMode.Open ) ) {
+                if ( !stream.CanRead ) {
+                    throw new NotSupportedException( String.Format( "Cannot read from file {0}", fileInfo.FullName ) );
+                }
+
+                using ( var buffered = new BufferedStream( stream ) ) {
+                    var low = buffered.ReadByte();
+                    if ( low == -1 ) { yield break; }
+
+                    var high = buffered.ReadByte();
+                    if ( high == -1 ) {
+                        yield return ( ( byte ) low ).CombineBytes( high: 0 );
+                        yield break;
+                    }
+
+                    yield return ( ( byte ) low ).CombineBytes( high: ( byte ) high );
+                }
+            }
+        }
+
+        /// <summary>
         ///     Starts a task to provides
         /// </summary>
         /// <param name="source"></param>
@@ -321,17 +359,21 @@ namespace Librainian.IO {
         /// <param name="info"></param>
         /// <returns></returns>
         /// <seealso cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk"/>
-        public static UInt64? GetFileSizeOnDiskAlt( this FileInfo info ) {
+        public static uint? GetFileSizeOnDiskAlt( this FileInfo info ) {
             uint dummy;
             uint sectorsPerCluster;
             uint bytesPerSector;
             var result = WindowsAPI.GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
             if ( result == 0 ) throw new Win32Exception();
             var clusterSize = sectorsPerCluster * bytesPerSector;
-            UInt64 sizeHigh;
+            uint sizeHigh;
             var losize = WindowsAPI.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out sizeHigh );
-            UInt64 size = ( long )sizeHigh << 32 | losize;
+            var size = sizeHigh << 32 | losize;
             return ( ( size + clusterSize - 1 ) / clusterSize ) * clusterSize;
+        }
+
+        public static uint? GetFileSizeOnDisk( Document document ) {
+            return document.FullPathWithFileName
         }
 
         /// <summary>
@@ -339,18 +381,20 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        public static BigInteger? GetFileSizeOnDisk( FileInfo info ) {
-            UInt64 clusterSize;
+        public static uint? GetFileSizeOnDisk( this FileInfo info ) {
+            uint clusterSize;
             var driveLetter = info.Directory.Root.FullName.TrimEnd( '\\' );
             using ( var searcher = new ManagementObjectSearcher( String.Format( "select BlockSize,NumberOfBlocks from Win32_Volume WHERE DriveLetter = '{0}'", driveLetter ) ) ) {
                 var bob = searcher.Get().Cast<ManagementObject>().First();
-                clusterSize = ( UInt64 )bob[ "BlockSize" ];
+                clusterSize = ( uint )bob[ "BlockSize" ];
             }
-            UInt64 hosize;
+            uint hosize;
             var losize = WindowsAPI.GetCompressedFileSizeW( info.FullName, out hosize );
-            BigInteger size = ( long )hosize << 32 | losize;
+            var size = hosize << 32 | losize;
             return ( ( size + clusterSize - 1 ) / clusterSize ) * clusterSize;
         }
+
+
 
         public static byte[] Compress( [NotNull] this byte[] data ) {
             if ( data == null ) {

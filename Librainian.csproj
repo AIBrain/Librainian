@@ -286,6 +286,7 @@
     <Compile Include="Extensions\Utility.cs" />
     <Compile Include="Extensions\WaitTime.cs" />
     <Compile Include="Extensions\XMLExtensions.cs" />
+    <Compile Include="Gaming\IDice.cs" />
     <Compile Include="Gaming\PlayingCards\FaceValues.cs" />
     <Compile Include="Gaming\PlayingCards\Suites.cs" />
     <Compile Include="Geometry\DD\GeometryEx.cs" />
@@ -363,6 +364,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Maths\BigIntegerRange.cs" />
+    <Compile Include="Maths\BiggerRational.cs" />
     <Compile Include="Maths\RomanNumber.cs" />
     <Compile Include="Maths\MovingAverageCalculator.cs" />
     <Compile Include="Maths\DoubleConverter.cs" />

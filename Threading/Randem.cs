@@ -575,7 +575,7 @@ namespace Librainian.Threading {
 
             var compressed = buffer.Compress();
 
-            var result = new Percentage( compressed.LongLength, buffer.LongLength );
+            var result = new Percentage( ( BigInteger ) compressed.LongLength, buffer.LongLength );
 
             return result;
         }
