@@ -17,7 +17,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ParallelList.cs" was last cleaned by Rick on 2014/08/13 at 10:39 PM
+// "Librainian/ParallelList.cs" was last cleaned by Rick on 2014/08/23 at 2:27 PM
 
 #endregion License & Information
 
@@ -131,63 +131,38 @@ namespace Librainian.Collections {
         /// <summary>
         ///     <para>Returns the count of items waiting to be added to this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeAdded {
-            get {
-                return this._waitingToBeAddedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+        public int CountOfItemsWaitingToBeAdded { get { return this._waitingToBeAddedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
 
         /// <summary>
         ///     <para>Returns the count of items waiting to be changed in this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeChanged {
-            get {
-                return this._waitingToBeChangedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+        public int CountOfItemsWaitingToBeChanged { get { return this._waitingToBeChangedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
 
         /// <summary>
         ///     <para>Returns the count of items waiting to be inserted to this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeInserted {
-            get {
-                return this._waitingToBeInsertedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+        public int CountOfItemsWaitingToBeInserted { get { return this._waitingToBeInsertedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
 
-        public TimeSpan TimeoutForReads {
-            get;
-            set;
-        }
+        public TimeSpan TimeoutForReads { get; set; }
 
-        public TimeSpan TimeoutForWrites {
-            get;
-            set;
-        }
+        public TimeSpan TimeoutForWrites { get; set; }
 
         /// <summary>
         ///     <para>Count of items currently in this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int Count {
-            get {
-                return this._itemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+        public int Count { get { return this._itemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
 
         /// <summary>
         /// </summary>
         /// <seealso cref="AllowModifications" />
-        public Boolean IsReadOnly {
-            get;
-            private set;
-        }
+        public Boolean IsReadOnly { get; private set; }
 
         public TType this[ int index ] {
             get {
-                if ( this.Clone().Count > index ) {
-                    return this.Clone()[ index ];
+                if ( index < 0 ) {
+                    throw new IndexOutOfRangeException();
                 }
-                return default ( TType );   //is this better than a throw?
+                return this.Read( () => this._list[ index ] );
             }
             set {
                 if ( !this.AllowModifications ) {
@@ -397,21 +372,15 @@ namespace Librainian.Collections {
                 this._slims.Value.Wait( cancellationToken );
                 return true;
             }
-            catch ( OperationCanceledException ) {
-            }
-            catch ( ArgumentOutOfRangeException ) {
-            }
-            catch ( ObjectDisposedException ) {
-            }
-            catch ( AggregateException ) {
-            }
+            catch ( OperationCanceledException ) { }
+            catch ( ArgumentOutOfRangeException ) { }
+            catch ( ObjectDisposedException ) { }
+            catch ( AggregateException ) { }
             return false;
         }
 
         public Task AddAsync( TType item, Action afterAdd = null ) {
-            return Task.Run( () => {
-                this.TryAdd( item: item, afterAdd: afterAdd );
-            } );
+            return Task.Run( () => { this.TryAdd( item: item, afterAdd: afterAdd ); } );
         }
 
         /// <summary>
@@ -470,7 +439,7 @@ namespace Librainian.Collections {
         ///     Signal that this <see cref="ParallelList{TType}" /> will not be modified any more.
         /// </summary>
         /// <seealso cref="AllowModifications" />
-        /// <seealso cref="IsReadOnly"/>
+        /// <seealso cref="IsReadOnly" />
         public void Complete() {
             try {
                 this._actionBlock.Complete();
