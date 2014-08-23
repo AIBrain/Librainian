@@ -61,6 +61,8 @@ namespace Librainian.IO {
             var lpBytesReturned = 0;
             short compressionFormatDefault = 1;
 
+            Microsoft.Scripting.Math.BigInteger bob;
+
             using ( var fileStream = File.Open( path: info.FullName, mode: FileMode.Open, access: FileAccess.ReadWrite, share: FileShare.None ) ) {
                 var success = false;
                 fileStream.SafeFileHandle.DangerousAddRef( success: ref success );

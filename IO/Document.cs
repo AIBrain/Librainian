@@ -30,7 +30,6 @@ namespace Librainian.IO {
     using Collections;
     using Extensions;
     using Maths;
-    using Microsoft.Scripting.Math;
 
     /// <summary>
     ///     <para>A wrapper for a file, the extension, the [parent] folder, and the file's size all from a given full path.</para>
