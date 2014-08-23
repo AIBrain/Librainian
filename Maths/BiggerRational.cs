@@ -16,7 +16,7 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/Class1.cs" was last cleaned by Rick on 2014/08/22 at 6:13 PM
+// "Librainian/BiggerRational.cs" was last cleaned by Rick on 2014/08/22 at 8:23 PM
 #endregion
 
 namespace Librainian.Maths {
@@ -37,7 +37,7 @@ namespace Librainian.Maths {
     /// </summary>
     [ComVisible( false )]
     [Serializable]
-    public struct BiggerRational : IComparable, IComparable<BiggerRational>, IDeserializationCallback, IEquatable<BiggerRational>, ISerializable {
+    public struct BiggerRational : IComparable, IComparable< BiggerRational >, IDeserializationCallback, IEquatable< BiggerRational >, ISerializable {
         private const int DoubleMaxScale = 308;
         private const int DecimalScaleMask = 16711680;
         private const int DecimalSignMask = -2147483648;
@@ -49,12 +49,12 @@ namespace Librainian.Maths {
         public static readonly BiggerRational MinusOne = new BiggerRational( BigInteger.MinusOne );
 
         private static readonly BigInteger SBnDoublePrecision = BigInteger.Pow( 10, DoubleMaxScale );
-        private static readonly BigInteger SBnDoubleMaxValue = ( BigInteger )double.MaxValue;
-        private static readonly BigInteger SBnDoubleMinValue = ( BigInteger )double.MinValue;
+        private static readonly BigInteger SBnDoubleMaxValue = ( BigInteger ) double.MaxValue;
+        private static readonly BigInteger SBnDoubleMinValue = ( BigInteger ) double.MinValue;
         private static readonly BigInteger SBnDecimalPrecision = BigInteger.Pow( 10, DecimalMaxScale );
 
-        private static readonly BigInteger SBnDecimalMaxValue = ( BigInteger )new Decimal( -1, -1, -1, false, 0 );
-        private static readonly BigInteger SBnDecimalMinValue = ( BigInteger )new Decimal( -1, -1, -1, true, 0 );
+        private static readonly BigInteger SBnDecimalMaxValue = ( BigInteger ) new Decimal( -1, -1, -1, false, 0 );
+        private static readonly BigInteger SBnDecimalMinValue = ( BigInteger ) new Decimal( -1, -1, -1, true, 0 );
 
         public BigInteger Denominator;
         public BigInteger Numerator;
@@ -78,7 +78,7 @@ namespace Librainian.Maths {
             ulong man;
             bool isFinite;
             SplitDoubleIntoParts( value, out sign, out exp, out man, out isFinite );
-            if ( ( long )man == 0L ) {
+            if ( ( long ) man == 0L ) {
                 this = Zero;
             }
             else {
@@ -106,7 +106,7 @@ namespace Librainian.Maths {
                 this = Zero;
             }
             else {
-                this.Numerator = new BigInteger( ( ulong )( uint )bits[ 2 ] << 32 | ( uint )bits[ 1 ] ) << 32 | ( uint )bits[ 0 ];
+                this.Numerator = new BigInteger( ( ulong ) ( uint ) bits[ 2 ] << 32 | ( uint ) bits[ 1 ] ) << 32 | ( uint ) bits[ 0 ];
                 if ( ( bits[ 3 ] & int.MinValue ) != 0 ) {
                     this.Numerator = BigInteger.Negate( this.Numerator );
                 }
@@ -144,11 +144,11 @@ namespace Librainian.Maths {
             }
             else if ( denominator.Sign < 0 ) {
                 this.Denominator = BigInteger.Negate( denominator );
-                this.Numerator = BigInteger.Negate( whole ) * this.Denominator + BigInteger.Negate( numerator );
+                this.Numerator = BigInteger.Negate( whole )*this.Denominator + BigInteger.Negate( numerator );
             }
             else {
                 this.Denominator = denominator;
-                this.Numerator = whole * denominator + numerator;
+                this.Numerator = whole*denominator + numerator;
             }
             this.Simplify();
         }
@@ -157,8 +157,8 @@ namespace Librainian.Maths {
             if ( info == null ) {
                 throw new ArgumentNullException( "info" );
             }
-            this.Numerator = ( BigInteger )info.GetValue( "Numerator", typeof( BigInteger ) );
-            this.Denominator = ( BigInteger )info.GetValue( "Denominator", typeof( BigInteger ) );
+            this.Numerator = ( BigInteger ) info.GetValue( "Numerator", typeof ( BigInteger ) );
+            this.Denominator = ( BigInteger ) info.GetValue( "Denominator", typeof ( BigInteger ) );
         }
 
         public int Sign { get { return this.Numerator.Sign; } }
@@ -170,7 +170,7 @@ namespace Librainian.Maths {
             if ( !( obj is BiggerRational ) ) {
                 throw new ArgumentException( "Argument must be of type BiggerRational", "obj" );
             }
-            return Compare( this, ( BiggerRational )obj );
+            return Compare( this, ( BiggerRational ) obj );
         }
 
         public int CompareTo( BiggerRational other ) {
@@ -201,15 +201,8 @@ namespace Librainian.Maths {
             }
         }
 
-        public static Boolean Equals(BiggerRational me, BiggerRational other ) {
-            if ( me.Denominator == other.Denominator ) {
-                return me.Numerator == other.Numerator;
-            }
-            return me.Numerator * other.Denominator == me.Denominator * other.Numerator;
-        }
-
         public bool Equals( BiggerRational other ) {
-           return Equals( this, other );
+            return Equals( this, other );
         }
 
         [SecurityPermission( SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter )]
@@ -221,40 +214,47 @@ namespace Librainian.Maths {
             info.AddValue( "Denominator", this.Denominator );
         }
 
+        public static Boolean Equals( BiggerRational me, BiggerRational other ) {
+            if ( me.Denominator == other.Denominator ) {
+                return me.Numerator == other.Numerator;
+            }
+            return me.Numerator*other.Denominator == me.Denominator*other.Numerator;
+        }
+
         [CLSCompliant( false )]
         public static explicit operator sbyte( BiggerRational value ) {
-            return ( sbyte )BigInteger.Divide( value.Numerator, value.Denominator );
+            return ( sbyte ) BigInteger.Divide( value.Numerator, value.Denominator );
         }
 
         [CLSCompliant( false )]
         public static explicit operator ushort( BiggerRational value ) {
-            return ( ushort )BigInteger.Divide( value.Numerator, value.Denominator );
+            return ( ushort ) BigInteger.Divide( value.Numerator, value.Denominator );
         }
 
         [CLSCompliant( false )]
         public static explicit operator uint( BiggerRational value ) {
-            return ( uint )BigInteger.Divide( value.Numerator, value.Denominator );
+            return ( uint ) BigInteger.Divide( value.Numerator, value.Denominator );
         }
 
         [CLSCompliant( false )]
         public static explicit operator ulong( BiggerRational value ) {
-            return ( ulong )BigInteger.Divide( value.Numerator, value.Denominator );
+            return ( ulong ) BigInteger.Divide( value.Numerator, value.Denominator );
         }
 
         public static explicit operator byte( BiggerRational value ) {
-            return ( byte )BigInteger.Divide( value.Numerator, value.Denominator );
+            return ( byte ) BigInteger.Divide( value.Numerator, value.Denominator );
         }
 
         public static explicit operator short( BiggerRational value ) {
-            return ( short )BigInteger.Divide( value.Numerator, value.Denominator );
+            return ( short ) BigInteger.Divide( value.Numerator, value.Denominator );
         }
 
         public static explicit operator int( BiggerRational value ) {
-            return ( int )BigInteger.Divide( value.Numerator, value.Denominator );
+            return ( int ) BigInteger.Divide( value.Numerator, value.Denominator );
         }
 
         public static explicit operator long( BiggerRational value ) {
-            return ( long )BigInteger.Divide( value.Numerator, value.Denominator );
+            return ( long ) BigInteger.Divide( value.Numerator, value.Denominator );
         }
 
         public static explicit operator BigInteger( BiggerRational value ) {
@@ -262,14 +262,14 @@ namespace Librainian.Maths {
         }
 
         public static explicit operator float( BiggerRational value ) {
-            return ( float )( double )value;
+            return ( float ) ( double ) value;
         }
 
         public static explicit operator double( BiggerRational value ) {
             if ( SafeCastToDouble( value.Numerator ) && SafeCastToDouble( value.Denominator ) ) {
-                return ( double )value.Numerator / ( double )value.Denominator;
+                return ( double ) value.Numerator/( double ) value.Denominator;
             }
-            var bigInteger = value.Numerator * SBnDoublePrecision / value.Denominator;
+            var bigInteger = value.Numerator*SBnDoublePrecision/value.Denominator;
             if ( bigInteger.IsZero ) {
                 return value.Sign >= 0 ? 0.0 : BitConverter.Int64BitsToDouble( long.MinValue );
             }
@@ -278,7 +278,7 @@ namespace Librainian.Maths {
             for ( var index = 308; index > 0; --index ) {
                 if ( !flag ) {
                     if ( SafeCastToDouble( bigInteger ) ) {
-                        num = ( double )bigInteger;
+                        num = ( double ) bigInteger;
                         flag = true;
                     }
                     else {
@@ -295,9 +295,9 @@ namespace Librainian.Maths {
 
         public static explicit operator Decimal( BiggerRational value ) {
             if ( SafeCastToDecimal( value.Numerator ) && SafeCastToDecimal( value.Denominator ) ) {
-                return ( Decimal )value.Numerator / ( Decimal )value.Denominator;
+                return ( Decimal ) value.Numerator/( Decimal ) value.Denominator;
             }
-            var bigInteger = value.Numerator * SBnDecimalPrecision / value.Denominator;
+            var bigInteger = value.Numerator*SBnDecimalPrecision/value.Denominator;
             if ( bigInteger.IsZero ) {
                 return new Decimal( 0 );
             }
@@ -307,8 +307,8 @@ namespace Librainian.Maths {
                 }
                 else {
                     var decimalUint32 = new DecimalUInt32 {
-                        dec = ( Decimal )bigInteger
-                    };
+                                                              dec = ( Decimal ) bigInteger
+                                                          };
                     decimalUint32.flags = decimalUint32.flags & -16711681 | index << 16;
                     return decimalUint32.dec;
                 }
@@ -318,38 +318,38 @@ namespace Librainian.Maths {
 
         [CLSCompliant( false )]
         public static implicit operator BiggerRational( sbyte value ) {
-            return new BiggerRational( ( BigInteger )value );
+            return new BiggerRational( ( BigInteger ) value );
         }
 
         [CLSCompliant( false )]
         public static implicit operator BiggerRational( ushort value ) {
-            return new BiggerRational( ( BigInteger )value );
+            return new BiggerRational( ( BigInteger ) value );
         }
 
         [CLSCompliant( false )]
         public static implicit operator BiggerRational( uint value ) {
-            return new BiggerRational( ( BigInteger )value );
+            return new BiggerRational( ( BigInteger ) value );
         }
 
         [CLSCompliant( false )]
         public static implicit operator BiggerRational( ulong value ) {
-            return new BiggerRational( ( BigInteger )value );
+            return new BiggerRational( ( BigInteger ) value );
         }
 
         public static implicit operator BiggerRational( byte value ) {
-            return new BiggerRational( ( BigInteger )value );
+            return new BiggerRational( ( BigInteger ) value );
         }
 
         public static implicit operator BiggerRational( short value ) {
-            return new BiggerRational( ( BigInteger )value );
+            return new BiggerRational( ( BigInteger ) value );
         }
 
         public static implicit operator BiggerRational( int value ) {
-            return new BiggerRational( ( BigInteger )value );
+            return new BiggerRational( ( BigInteger ) value );
         }
 
         public static implicit operator BiggerRational( long value ) {
-            return new BiggerRational( ( BigInteger )value );
+            return new BiggerRational( ( BigInteger ) value );
         }
 
         public static implicit operator BiggerRational( BigInteger value ) {
@@ -417,7 +417,7 @@ namespace Librainian.Maths {
         }
 
         public static BiggerRational operator *( BiggerRational r1, BiggerRational r2 ) {
-            return Multiply(r1,r2);
+            return Multiply( r1, r2 );
         }
 
         public static BiggerRational operator /( BiggerRational dividend, BiggerRational divisor ) {
@@ -425,7 +425,7 @@ namespace Librainian.Maths {
         }
 
         public static BiggerRational operator %( BiggerRational r1, BiggerRational r2 ) {
-            return new BiggerRational( r1.Numerator * r2.Denominator % r1.Denominator * r2.Numerator, r1.Denominator * r2.Denominator );
+            return new BiggerRational( r1.Numerator*r2.Denominator%r1.Denominator*r2.Numerator, r1.Denominator*r2.Denominator );
         }
 
         public BigInteger GetWholePart() {
@@ -437,7 +437,7 @@ namespace Librainian.Maths {
         }
 
         public override bool Equals( object obj ) {
-            return obj is BiggerRational && Equals( this, ( BiggerRational )obj );
+            return obj is BiggerRational && Equals( this, ( BiggerRational ) obj );
         }
 
         public override int GetHashCode() {
@@ -469,30 +469,30 @@ namespace Librainian.Maths {
         }
 
         public static BiggerRational Add( BiggerRational r1, BiggerRational r2 ) {
-            return new BiggerRational( r1.Numerator * r2.Denominator + r1.Denominator * r2.Numerator, r1.Denominator * r2.Denominator );
+            return new BiggerRational( r1.Numerator*r2.Denominator + r1.Denominator*r2.Numerator, r1.Denominator*r2.Denominator );
         }
 
         public static BiggerRational Subtract( BiggerRational r1, BiggerRational r2 ) {
-            return new BiggerRational( r1.Numerator * r2.Denominator - r1.Denominator * r2.Numerator, r1.Denominator * r2.Denominator );
+            return new BiggerRational( r1.Numerator*r2.Denominator - r1.Denominator*r2.Numerator, r1.Denominator*r2.Denominator );
         }
 
         public static BiggerRational Multiply( BiggerRational r1, BiggerRational r2 ) {
-            return new BiggerRational( r1.Numerator * r2.Numerator, r1.Denominator * r2.Denominator );
+            return new BiggerRational( r1.Numerator*r2.Numerator, r1.Denominator*r2.Denominator );
         }
 
         public static BiggerRational Divide( BiggerRational dividend, BiggerRational divisor ) {
-            return new BiggerRational( dividend.Numerator * divisor.Denominator, dividend.Denominator * divisor.Numerator );
+            return new BiggerRational( dividend.Numerator*divisor.Denominator, dividend.Denominator*divisor.Numerator );
         }
 
         public static BiggerRational Remainder( BiggerRational dividend, BiggerRational divisor ) {
-            return dividend % divisor;
+            return dividend%divisor;
         }
 
         public static BiggerRational DivRem( BiggerRational dividend, BiggerRational divisor, out BiggerRational remainder ) {
-            var numerator = dividend.Numerator * divisor.Denominator;
-            var denominator1 = dividend.Denominator * divisor.Numerator;
-            var denominator2 = dividend.Denominator * divisor.Denominator;
-            remainder = new BiggerRational( numerator % denominator1, denominator2 );
+            var numerator = dividend.Numerator*divisor.Denominator;
+            var denominator1 = dividend.Denominator*divisor.Numerator;
+            var denominator2 = dividend.Denominator*divisor.Denominator;
+            remainder = new BiggerRational( numerator%denominator1, denominator2 );
             return new BiggerRational( numerator, denominator1 );
         }
 
@@ -517,11 +517,11 @@ namespace Librainian.Maths {
 
         [UsedImplicitly]
         public static BigInteger LeastCommonDenominator( BiggerRational r1, BiggerRational r2 ) {
-            return r1.Denominator * r2.Denominator / BigInteger.GreatestCommonDivisor( r1.Denominator, r2.Denominator );
+            return r1.Denominator*r2.Denominator/BigInteger.GreatestCommonDivisor( r1.Denominator, r2.Denominator );
         }
 
         public static int Compare( BiggerRational r1, BiggerRational r2 ) {
-            return BigInteger.Compare( r1.Numerator * r2.Denominator, r2.Numerator * r1.Denominator );
+            return BigInteger.Compare( r1.Numerator*r2.Denominator, r2.Numerator*r1.Denominator );
         }
 
         private void Simplify() {
@@ -532,8 +532,8 @@ namespace Librainian.Maths {
             if ( !( bigInteger > BigInteger.One ) ) {
                 return;
             }
-            this.Numerator = this.Numerator / bigInteger;
-            this.Denominator = this.Denominator / bigInteger;
+            this.Numerator = this.Numerator/bigInteger;
+            this.Denominator = this.Denominator/bigInteger;
         }
 
         public static bool SafeCastToDouble( BigInteger value ) {
@@ -554,13 +554,13 @@ namespace Librainian.Maths {
             DoubleVsUlong doubleVsUlong;
             doubleVsUlong.uu = 0UL;
             doubleVsUlong.dbl = dbl;
-            sign = 1 - ( ( int )( doubleVsUlong.uu >> 62 ) & 2 );
+            sign = 1 - ( ( int ) ( doubleVsUlong.uu >> 62 ) & 2 );
             man = doubleVsUlong.uu & 4503599627370495UL;
-            exp = ( int )( doubleVsUlong.uu >> 52 ) & 2047;
+            exp = ( int ) ( doubleVsUlong.uu >> 52 ) & 2047;
             switch ( exp ) {
                 case 0:
                     isFinite = true;
-                    if ( ( long )man == 0L ) {
+                    if ( ( long ) man == 0L ) {
                         return;
                     }
                     exp = -1074;
@@ -580,7 +580,7 @@ namespace Librainian.Maths {
         private static double GetDoubleFromParts( int sign, int exp, ulong man ) {
             DoubleVsUlong doubleVsUlong;
             doubleVsUlong.dbl = 0.0;
-            if ( ( long )man == 0L ) {
+            if ( ( long ) man == 0L ) {
                 doubleVsUlong.uu = 0UL;
             }
             else {
@@ -600,7 +600,7 @@ namespace Librainian.Maths {
                     doubleVsUlong.uu = exp >= -52 ? man >> -exp : 0UL;
                 }
                 else {
-                    doubleVsUlong.uu = ( ulong )( ( long )man & 4503599627370495L | ( long )exp << 52 );
+                    doubleVsUlong.uu = ( ulong ) ( ( long ) man & 4503599627370495L | ( long ) exp << 52 );
                 }
             }
             if ( sign < 0 ) {
@@ -610,34 +610,34 @@ namespace Librainian.Maths {
         }
 
         private static int CbitHighZero( ulong uu ) {
-            if ( ( ( long )uu & -4294967296L ) == 0L ) {
-                return 32 + CbitHighZero( ( uint )uu );
+            if ( ( ( long ) uu & -4294967296L ) == 0L ) {
+                return 32 + CbitHighZero( ( uint ) uu );
             }
-            return CbitHighZero( ( uint )( uu >> 32 ) );
+            return CbitHighZero( ( uint ) ( uu >> 32 ) );
         }
 
         private static int CbitHighZero( uint u ) {
-            if ( ( int )u == 0 ) {
+            if ( ( int ) u == 0 ) {
                 return 32;
             }
             var num = 0;
-            if ( ( ( int )u & -65536 ) == 0 ) {
+            if ( ( ( int ) u & -65536 ) == 0 ) {
                 num += 16;
                 u <<= 16;
             }
-            if ( ( ( int )u & -16777216 ) == 0 ) {
+            if ( ( ( int ) u & -16777216 ) == 0 ) {
                 num += 8;
                 u <<= 8;
             }
-            if ( ( ( int )u & -268435456 ) == 0 ) {
+            if ( ( ( int ) u & -268435456 ) == 0 ) {
                 num += 4;
                 u <<= 4;
             }
-            if ( ( ( int )u & -1073741824 ) == 0 ) {
+            if ( ( ( int ) u & -1073741824 ) == 0 ) {
                 num += 2;
                 u <<= 2;
             }
-            if ( ( ( int )u & int.MinValue ) == 0 ) {
+            if ( ( ( int ) u & int.MinValue ) == 0 ) {
                 ++num;
             }
             return num;
@@ -645,18 +645,14 @@ namespace Librainian.Maths {
 
         [StructLayout( LayoutKind.Explicit )]
         internal struct DecimalUInt32 {
-            [FieldOffset( 0 )]
-            public Decimal dec;
-            [FieldOffset( 0 )]
-            public int flags;
+            [FieldOffset( 0 )] public Decimal dec;
+            [FieldOffset( 0 )] public int flags;
         }
 
         [StructLayout( LayoutKind.Explicit )]
         internal struct DoubleVsUlong {
-            [FieldOffset( 0 )]
-            public double dbl;
-            [FieldOffset( 0 )]
-            public ulong uu;
+            [FieldOffset( 0 )] public double dbl;
+            [FieldOffset( 0 )] public ulong uu;
         }
     }
 }

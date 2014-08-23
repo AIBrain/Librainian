@@ -33,10 +33,13 @@ namespace Librainian.IO {
     using System.Security;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows.Forms;
     using Annotations;
     using Extensions;
+    using FluentAssertions;
     using Maths;
     using Measurement.Time;
+    using Properties;
 
     public static class IOExtensions {
 
@@ -407,5 +410,47 @@ namespace Librainian.IO {
                 return output.ToArray();
             }
         }
+
+        [CanBeNull]
+        public static DirectoryInfo ChooseDirectoryDialog( this Environment.SpecialFolder startFolder, String path, String description = "Please select a folder." ) {
+            using ( var folderDialog = new FolderBrowserDialog {
+                Description = description,
+                RootFolder = Environment.SpecialFolder.MyComputer,
+                ShowNewFolderButton = false
+            } ) {
+
+                if ( folderDialog.ShowDialog() == DialogResult.OK ) {
+                    return new DirectoryInfo( folderDialog.SelectedPath );
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        ///     Opens a folder
+        /// </summary>
+        public static void OpenDirectoryWithExplorer( [CanBeNull] this DirectoryInfo folder ) {
+            folder.Should().NotBeNull();
+            if ( null == folder ) {
+                return;
+            }
+            if ( !folder.Exists ) {
+                folder.Refresh();
+                if ( !folder.Exists ) {
+                    return;
+                }
+            }
+
+            var windowsFolder = Environment.GetEnvironmentVariable( "SystemRoot" );
+            windowsFolder.Should().NotBeNullOrWhiteSpace();
+            if ( String.IsNullOrWhiteSpace(windowsFolder) ) {
+                return;
+            }
+
+            var proc = Process.Start( fileName: String.Format( "{0}\\explorer.exe", windowsFolder ), arguments: String.Format( "/e,\"{0}\"", folder.FullName ) );
+            proc.Responding.Should().Be( true );
+        }
     }
+
+
 }

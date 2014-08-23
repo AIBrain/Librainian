@@ -30,6 +30,52 @@ namespace Librainian.IO {
     using Collections;
     using Extensions;
 
+    [DataContract( IsReference = true )]
+    [Immutable]
+    public class Folder {
+        /// <summary>
+        ///     "\"
+        /// </summary>
+        [NotNull]
+        public static readonly String FolderSeparator = new String( new[] { Path.DirectorySeparatorChar } );
+
+        /// <summary>
+        ///     "/"
+        /// </summary>
+        [NotNull]
+        public static readonly String FolderAltSeparator = new String( new[] { Path.AltDirectorySeparatorChar } );
+
+        /// <summary>
+        ///     <para>The <see cref="Folder" />.</para>
+        /// </summary>
+        [NotNull]
+        public readonly String FullPath;
+
+        public readonly DirectoryInfo DirectoryInfo;
+
+        public Folder( [NotNull] String path ) {
+            if ( path == null ) {
+                throw new ArgumentNullException( "path" );
+            }
+
+            this.FullPath = CleanedUpPath( path) ?? String.Empty;
+            if ( String.IsNullOrWhiteSpace(this.FullPath) ) {
+                throw new ArgumentNullException( "path","The path `{0}` is invalid" );
+            }
+        }
+
+        [CanBeNull]
+        private static String CleanedUpPath( string path ) {
+            if ( String.IsNullOrWhiteSpace( path ) ) {
+                return null;
+            }
+            path = path.Trim();
+            if ( String.IsNullOrWhiteSpace( path ) ) {
+                return null;
+            }
+        }
+    }
+
     /// <summary>
     ///     <para>A wrapper for a file, the extension, the [parent] folder, and the file's size all from a given full path.</para>
     ///     <para>Also contains static string versions from <see cref="Path" /></para>
@@ -38,15 +84,6 @@ namespace Librainian.IO {
     [DataContract( IsReference = true )]
     [Immutable]
     public class Document : IEquatable< Document >, IEnumerable<Byte> {
-        /// <summary>
-        ///     "\"
-        /// </summary>
-        [NotNull] public static readonly String FolderSeparator = new String( new[] { Path.DirectorySeparatorChar } );
-
-        /// <summary>
-        ///     "/"
-        /// </summary>
-        [NotNull] public static readonly String FolderAltSeparator = new String( new[] { Path.AltDirectorySeparatorChar } );
 
         /// <summary>
         ///     "/"
@@ -65,7 +102,7 @@ namespace Librainian.IO {
         [NotNull] public readonly String FileName;
 
         /// <summary>
-        ///     <para>FYI: A folder always ends with the <see cref="FolderSeparator" />.</para>
+        ///     <para>FYI: A folder always ends with the <see cref="IO.Folder.FolderSeparator" />.</para>
         /// </summary>
         [NotNull] public readonly String Folder;
 
@@ -108,12 +145,12 @@ namespace Librainian.IO {
             var file = new FileInfo( fullPathWithFilename );
 
             this.Folder = Path.GetDirectoryName( fullPathWithFilename ) ?? String.Empty;
-            while ( !this.Folder.EndsWith( FolderAltSeparator ) ) {
+            while ( !this.Folder.EndsWith( IO.Folder.FolderAltSeparator ) ) {
                 this.Folder = this.Folder.Substring( 0, this.Folder.Length - 1 ); //trim off extra "/"
             }
 
-            if ( !this.Folder.EndsWith( FolderSeparator ) ) {
-                this.Folder += FolderSeparator;
+            if ( !this.Folder.EndsWith( IO.Folder.FolderSeparator ) ) {
+                this.Folder += IO.Folder.FolderSeparator;
             }
 
             this.FileName = Path.GetFileName( fullPathWithFilename );
