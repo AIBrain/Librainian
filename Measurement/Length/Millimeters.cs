@@ -48,7 +48,7 @@ namespace Librainian.Measurement.Length {
         static Millimeters() {
             //Assert.That( One < Centimeter.One );
             //Assert.That( One < Inch.One );
-            //Assert.That( One < Foot.One );
+            //Assert.That( One < Feet.One );
         }
 
         public Millimeters( Decimal millimeters ) {

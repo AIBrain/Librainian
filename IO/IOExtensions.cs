@@ -28,18 +28,15 @@ namespace Librainian.IO {
     using System.IO.Compression;
     using System.Linq;
     using System.Management;
-    using System.Numerics;
     using System.Runtime.InteropServices;
     using System.Security;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using Annotations;
-    using Extensions;
     using FluentAssertions;
     using Maths;
     using Measurement.Time;
-    using Properties;
 
     public static class IOExtensions {
 

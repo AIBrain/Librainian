@@ -46,7 +46,7 @@ namespace Librainian.Measurement.Length {
 
         static Meters() {
             //Assert.That( One < Inch.One );
-            //Assert.That( One < Foot.One );
+            //Assert.That( One < Feet.One );
         }
 
         public Meters( Decimal meters ) {

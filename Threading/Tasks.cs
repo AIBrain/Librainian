@@ -32,7 +32,6 @@ namespace Librainian.Threading {
     using System.Threading.Tasks.Dataflow;
     using Annotations;
     using Measurement.Time;
-    using Timer = System.Timers.Timer;
 
     /// <summary>
     /// Execute an <see cref="Action"/> on a <see cref="Timer"/>.
@@ -469,7 +468,7 @@ namespace Librainian.Threading {
         /// <param name="target"></param>
         /// <param name="item"></param>
         /// <param name="delay"></param>
-        public static Timer TryPost<T>( this ITargetBlock< T > target, T item, Span delay ) {
+        public static System.Timers.Timer TryPost<T>( this ITargetBlock< T > target, T item, Span delay ) {
             if ( target == null ) {
                 throw new ArgumentNullException( "target" );
             }
@@ -499,7 +498,7 @@ namespace Librainian.Threading {
         /// <param name="afterDelay"></param>
         /// <param name="action"></param>
         /// <param name="condition"></param>
-        public static System.Threading.Timer When( this Span afterDelay, Func< Boolean > condition, Action action ) {
+        public static System.Timers.Timer When( this Span afterDelay, Func< Boolean > condition, Action action ) {
             if ( condition == null ) {
                 throw new ArgumentNullException( "condition" );
             }

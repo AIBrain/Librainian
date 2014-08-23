@@ -376,6 +376,7 @@
     <Compile Include="Maths\VotallyD.cs" />
     <Compile Include="Measurement\Currency\AltCoinExtensions.cs" />
     <Compile Include="Measurement\Currency\BTC\ICoin.cs" />
+    <Compile Include="Measurement\Length\IQuantityOfDistance.cs" />
     <Compile Include="Measurement\Physics\AtomicMassUnits.cs" />
     <Compile Include="Measurement\Physics\KiloElectronVolts.cs" />
     <Compile Include="Measurement\Physics\SpeedOfLight.cs" />
@@ -387,7 +388,7 @@
     <Compile Include="Measurement\Physics\MilliElectronVolts.cs" />
     <Compile Include="Measurement\Physics\TeraElectronVolts.cs" />
     <Compile Include="Measurement\Length\PlanckLengths.cs" />
-    <Compile Include="Measurement\Length\Foot.cs" />
+    <Compile Include="Measurement\Length\Feet.cs" />
     <Compile Include="Measurement\Time\IQuantityOfTime.cs" />
     <Compile Include="Measurement\Time\TimeSystemTimers.cs" />
     <Compile Include="Measurement\Time\Clocks\AMorPM.cs" />

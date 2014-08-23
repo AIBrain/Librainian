@@ -47,7 +47,7 @@ namespace Librainian.Measurement.Length {
 
         static Inches() {
             //Assert.That( One < Inch.One );
-            //Assert.That( One < Foot.One );
+            //Assert.That( One < Feet.One );
         }
 
         public Inches( Decimal inches ) {
