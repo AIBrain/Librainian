@@ -1,23 +1,28 @@
 #region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/UBigInteger.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/UBigInteger.cs" was last cleaned by Rick on 2014/08/23 at 12:47 AM
+
+#endregion License & Information
 
 namespace Librainian.Maths {
+
     using System;
     using System.Globalization;
     using System.Numerics;
@@ -27,11 +32,11 @@ namespace Librainian.Maths {
     using Numerics;
 
     /// <summary>
-    ///     Unsigned biginteger class.
+    ///     <para>Unsigned biginteger class.</para>
     /// </summary>
-    [UsedImplicitly]
     [Immutable]
-    public struct UBigInteger : IComparable, IComparable< UBigInteger > {
+    public struct UBigInteger : IComparable, IComparable<UBigInteger> {
+
         /// <summary>
         ///     <para>
         ///         The lowest <see cref="UBigInteger" /> that is higher than <see cref="Zero" />.
@@ -55,10 +60,10 @@ namespace Librainian.Maths {
         /// </summary>
         public static readonly UBigInteger Zero = new UBigInteger( 0 );
 
-        private readonly BigInteger _internalNumber;
+        private readonly BigInteger _internalValue;
 
-        public UBigInteger( UInt64 number ) {
-            this._internalNumber = number;
+        public UBigInteger( UInt64 value ) {
+            this._internalValue = value;
         }
 
         public UBigInteger( [NotNull] byte[] bytes ) {
@@ -66,31 +71,31 @@ namespace Librainian.Maths {
             if ( bytes == null ) {
                 throw new ArgumentNullException( "bytes" );
             }
-            var bytesWith00attheendnd = new byte[bytes.Length + 1];
+            var bytesWith00attheendnd = new byte[ bytes.Length + 1 ];
             bytes.CopyTo( bytesWith00attheendnd, 0 );
             bytesWith00attheendnd[ bytes.Length ] = 0;
-            this._internalNumber = new BigInteger( bytesWith00attheendnd );
+            this._internalValue = new BigInteger( bytesWith00attheendnd );
 
-            this._internalNumber.Should().BeGreaterOrEqualTo( 0 );
-            if ( this._internalNumber < 0 ) {
+            this._internalValue.Should().BeGreaterOrEqualTo( 0 );
+            if ( this._internalValue < 0 ) {
                 throw new ArgumentOutOfRangeException();
             }
         }
 
-        public UBigInteger( Int64 number ) {
-            number.Should().BeGreaterOrEqualTo( 0 );
-            if ( number < 0 ) {
+        public UBigInteger( Int64 value ) {
+            value.Should().BeGreaterOrEqualTo( 0 );
+            if ( value < 0 ) {
                 throw new ArgumentOutOfRangeException();
             }
-            this._internalNumber = number;
+            this._internalValue = value;
         }
 
-        private UBigInteger( BigInteger number ) {
-            number.Should().BeGreaterOrEqualTo( BigInteger.Zero );
-            if ( number < BigInteger.Zero ) {
+        private UBigInteger( BigInteger value ) {
+            value.Should().BeGreaterOrEqualTo( BigInteger.Zero );
+            if ( value < BigInteger.Zero ) {
                 throw new ArgumentOutOfRangeException();
             }
-            this._internalNumber = number;
+            this._internalValue = value;
         }
 
         [Pure]
@@ -101,48 +106,36 @@ namespace Librainian.Maths {
             if ( !( obj is UBigInteger ) ) {
                 throw new InvalidCastException();
             }
-            return this._internalNumber.CompareTo( ( UBigInteger ) obj );
+            return this._internalValue.CompareTo( ( UBigInteger )obj );
         }
 
         [Pure]
         public int CompareTo( UBigInteger number ) {
-            return this._internalNumber.CompareTo( number._internalNumber );
+            return this._internalValue.CompareTo( number._internalValue );
         }
-
-        /*
-         * wtf was this prop doing here?
-                public UBigInteger Number {
-                    get { return new UBigInteger( this._internalNumber ); }
-
-                    set {
-                        value.Should().BeGreaterOrEqualTo( 0 );
-                        this._internalNumber = new BigInteger( value.ToByteArray() );
-                    }
-                }
-        */
 
         public static UBigInteger Add( UBigInteger left, UBigInteger right ) {
-            return new UBigInteger( BigInteger.Add( left._internalNumber, right._internalNumber ) );
+            return new UBigInteger( BigInteger.Add( left._internalValue, right._internalValue ) );
         }
 
-        //public static explicit operator Int32( UBigInteger number ) {
-        //    return ( Int32 )number._internalNumber;
-        //}
+        public static explicit operator Int32( UBigInteger number ) {
+            return ( Int32 )number._internalValue;
+        }
 
-        //public static explicit operator Int64( UBigInteger number ) {
-        //    return ( Int64 )number._internalNumber;
-        //}
+        public static explicit operator Int64( UBigInteger number ) {
+            return ( Int64 )number._internalValue;
+        }
 
-        //public static explicit operator UInt64( UBigInteger number ) {
-        //    return ( UInt64 )number._internalNumber;
-        //}
+        public static explicit operator UInt64( UBigInteger number ) {
+            return ( UInt64 )number._internalValue;
+        }
 
-        public static implicit operator Decimal( UBigInteger number ) {
-            return ( Decimal ) number._internalNumber;
+        public static explicit operator Decimal( UBigInteger number ) {
+            return ( Decimal )number._internalValue;
         }
 
         public static implicit operator BigInteger( UBigInteger number ) {
-            return number._internalNumber;
+            return number._internalValue;
         }
 
         public static implicit operator UBigInteger( long number ) {
@@ -150,124 +143,129 @@ namespace Librainian.Maths {
         }
 
         public static UBigInteger Multiply( UBigInteger left, UBigInteger right ) {
-            return new UBigInteger( BigInteger.Multiply( left._internalNumber, right._internalNumber ) );
+            return new UBigInteger( BigInteger.Multiply( left._internalValue, right._internalValue ) );
         }
 
         public static UBigInteger operator -( UBigInteger number ) {
-            return new UBigInteger( -number._internalNumber );
+            return new UBigInteger( -number._internalValue );
         }
 
         public static UBigInteger operator -( UBigInteger left, UBigInteger right ) {
-            return new UBigInteger( left._internalNumber - right._internalNumber );
+            return new UBigInteger( left._internalValue - right._internalValue );
         }
 
         public static UBigInteger operator %( UBigInteger dividend, UBigInteger divisor ) {
-            return new UBigInteger( dividend._internalNumber%divisor._internalNumber );
+            return new UBigInteger( dividend._internalValue % divisor._internalValue );
         }
 
         public static UBigInteger operator &( UBigInteger left, UBigInteger right ) {
-            return new UBigInteger( left._internalNumber & right._internalNumber );
+            return new UBigInteger( left._internalValue & right._internalValue );
         }
 
         public static UBigInteger operator *( UBigInteger left, UBigInteger right ) {
-            return new UBigInteger( left._internalNumber*right._internalNumber );
+            return new UBigInteger( left._internalValue * right._internalValue );
         }
 
         public static UBigInteger operator /( UBigInteger left, UBigInteger right ) {
-            return new UBigInteger( left._internalNumber/right._internalNumber );
+            return new UBigInteger( left._internalValue / right._internalValue );
         }
 
         public static Double operator /( Double left, UBigInteger right ) {
             right.Should().BeGreaterThan( Zero );
-            var rational = new BigRational( numerator: new BigInteger( left ), denominator: right._internalNumber );
-            return ( Double ) rational;
+            var rational = new BigRational( numerator: new BigInteger( left ), denominator: right._internalValue );
+            return ( Double )rational;
         }
 
         public static UBigInteger operator +( UBigInteger left, UBigInteger right ) {
-            return new UBigInteger( left._internalNumber + right._internalNumber );
+            return new UBigInteger( left._internalValue + right._internalValue );
         }
 
         public static Boolean operator <( UBigInteger left, long right ) {
-            return left._internalNumber < right;
+            return left._internalValue < right;
         }
 
         public static Boolean operator <( UBigInteger left, UBigInteger right ) {
-            return left._internalNumber < right._internalNumber;
+            return left._internalValue < right._internalValue;
         }
 
         public static Boolean operator <( UBigInteger left, ulong right ) {
-            return left._internalNumber < right;
+            return left._internalValue < right;
         }
 
         public static Boolean operator <( ulong left, UBigInteger right ) {
-            return left < right._internalNumber;
+            return left < right._internalValue;
         }
 
         public static UBigInteger operator <<( UBigInteger number, int shift ) {
-            return new UBigInteger( number._internalNumber << shift );
+            return new UBigInteger( number._internalValue << shift );
         }
 
         public static Boolean operator <=( UBigInteger left, ulong right ) {
-            return left._internalNumber <= right;
+            return left._internalValue <= right;
         }
 
         public static Boolean operator <=( UBigInteger left, UBigInteger right ) {
-            return left._internalNumber <= right._internalNumber;
+            return left._internalValue <= right._internalValue;
         }
 
         public static Boolean operator >( UBigInteger left, long right ) {
-            return left._internalNumber > right;
+            return left._internalValue > right;
         }
 
         public static Boolean operator >( UBigInteger left, UInt64 right ) {
-            return left._internalNumber > right;
+            return left._internalValue > right;
         }
 
         public static Boolean operator >( UInt64 left, UBigInteger right ) {
-            return left > right._internalNumber;
+            return left > right._internalValue;
         }
 
         public static Boolean operator >( UBigInteger left, UBigInteger right ) {
-            return left._internalNumber > right._internalNumber;
+            return left._internalValue > right._internalValue;
         }
 
         public static Boolean operator >=( UBigInteger left, UInt64 right ) {
-            return left._internalNumber >= right;
+            return left._internalValue >= right;
         }
 
         public static Boolean operator >=( UBigInteger left, UBigInteger right ) {
-            return left._internalNumber >= right._internalNumber;
+            return left._internalValue >= right._internalValue;
         }
 
         public static UBigInteger Parse( [NotNull] string number, NumberStyles style ) {
             if ( number == null ) {
                 throw new ArgumentNullException( "number" );
             }
-            return new UBigInteger( number: BigInteger.Parse( number, style ) );
+            return new UBigInteger( value: BigInteger.Parse( number, style ) );
         }
 
         public static UBigInteger Pow( UBigInteger number, int exponent ) {
-            return new UBigInteger( BigInteger.Pow( number._internalNumber, exponent ) );
+            return new UBigInteger( BigInteger.Pow( number._internalValue, exponent ) );
         }
 
         [Pure]
         public int CompareTo( long other ) {
-            return this._internalNumber.CompareTo( other );
+            return this._internalValue.CompareTo( other );
+        }
+
+        [Pure]
+        public int CompareTo( ulong other ) {
+            return this._internalValue.CompareTo( other );
         }
 
         [Pure]
         public byte[] ToByteArray() {
-            return this._internalNumber.ToByteArray();
+            return this._internalValue.ToByteArray();
         }
 
         [Pure]
         public override string ToString() {
-            return this._internalNumber.ToString();
+            return this._internalValue.ToString();
         }
 
         [Pure]
         public string ToString( string format ) {
-            return this._internalNumber.ToString( format );
+            return this._internalValue.ToString( format );
         }
 
         //public static BigInteger Parse(string value)

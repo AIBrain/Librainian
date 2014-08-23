@@ -376,7 +376,7 @@ namespace Librainian.IO {
         }
 
         public static uint? GetFileSizeOnDisk( Document document ) {
-            return document.FullPathWithFileName
+            return GetFileSizeOnDisk( new FileInfo( document.FullPathWithFileName ) );
         }
 
         /// <summary>

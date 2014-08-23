@@ -306,6 +306,7 @@
     <Compile Include="Gaming\TraditionalDice.cs" />
     <Compile Include="IO\CopyProgressCallbackReason.cs" />
     <Compile Include="IO\CopyProgressResult.cs" />
+    <Compile Include="IO\Folder.cs" />
     <Compile Include="IO\MoveFileFlags.cs" />
     <Compile Include="IO\WindowsAPI.cs" />
     <Compile Include="Magic\AutofacContainer.cs" />

@@ -29,74 +29,8 @@ namespace Librainian.IO {
     using Annotations;
     using Collections;
     using Extensions;
-
-    [DataContract( IsReference = true )]
-    [Immutable]
-    public class Folder {
-        /// <summary>
-        ///     "\"
-        /// </summary>
-        [NotNull]
-        public static readonly String FolderSeparator = new String( new[] { Path.DirectorySeparatorChar } );
-
-        /// <summary>
-        ///     "/"
-        /// </summary>
-        [NotNull]
-        public static readonly String FolderAltSeparator = new String( new[] { Path.AltDirectorySeparatorChar } );
-
-        /// <summary>
-        ///     <para>The <see cref="Folder" />.</para>
-        /// </summary>
-        [NotNull]
-        public readonly String FullPath;
-
-        [NotNull]
-        public readonly DirectoryInfo DirectoryInfo;
-        [NotNull]
-        public readonly Uri UriInfo;
-
-        public Folder( [NotNull] String path ) {
-            if ( path == null ) {
-                throw new ArgumentNullException( "path" );
-            }
-
-            var bob = CleanUpPath( path );
-            if ( null == bob ) {
-                throw new InvalidOperationException
-            }
-
-            this.DirectoryInfo = ;
-            this.FullPath = ?? String.Empty;
-            if ( String.IsNullOrWhiteSpace( this.FullPath ) ) {
-                throw new ArgumentNullException( "path", "The path `{0}` is invalid" );
-            }
-        }
-
-        [CanBeNull]
-        public static DirectoryInfo CleanUpPath( String path, out Uri uri ) {
-            uri = null;
-            try {
-                if ( String.IsNullOrWhiteSpace( path ) ) {
-                    return null;
-                }
-                path = path.Trim();
-                if ( String.IsNullOrWhiteSpace( path ) ) {
-                    return null;
-                }
-                if ( Uri.TryCreate( path, UriKind.Absolute, out uri ) ) {
-                    DirectoryInfo.WithShortDatePath
-                    return new DirectoryInfo( uri.LocalPath );
-                }
-
-            }
-            catch ( UriFormatException ) { }
-            catch ( SecurityException ) { }
-            catch ( PathTooLongException ) { }
-            catch ( InvalidOperationException ) { }
-            return null;
-        }
-    }
+    using Maths;
+    using Microsoft.Scripting.Math;
 
     /// <summary>
     ///     <para>A wrapper for a file, the extension, the [parent] folder, and the file's size all from a given full path.</para>
@@ -126,11 +60,14 @@ namespace Librainian.IO {
         [NotNull]
         public readonly String FileName;
 
+        [NotNull]
+        public readonly FileInfo FileInfo;
+
         /// <summary>
-        ///     <para>FYI: A folder always ends with the <see cref="IO.Folder.FolderSeparator" />.</para>
+        ///     <para>FYI: A folder does not always ends with a <see cref="IO.Folder.FolderSeparator" />... .. . / \</para>
         /// </summary>
         [NotNull]
-        public readonly String Folder;
+        public readonly Folder Folder;
 
         /// <summary>
         ///     <para>The <see cref="Folder" /> combined with the <see cref="FileName" />.</para>
@@ -171,21 +108,14 @@ namespace Librainian.IO {
 
             var file = new FileInfo( fullPathWithFilename );
 
-            this.Folder = Path.GetDirectoryName( fullPathWithFilename ) ?? String.Empty;
-            while ( !this.Folder.EndsWith( IO.Folder.FolderAltSeparator ) ) {
-                this.Folder = this.Folder.Substring( 0, this.Folder.Length - 1 ); //trim off extra "/"
-            }
-
-            if ( !this.Folder.EndsWith( IO.Folder.FolderSeparator ) ) {
-                this.Folder += IO.Folder.FolderSeparator;
-            }
+            this.Folder = new Folder( Path.GetDirectoryName( fullPathWithFilename ) );
 
             this.FileName = Path.GetFileName( fullPathWithFilename );
             this.Extension = Path.GetExtension( fullPathWithFilename );
 
             this.Size = ( UInt64 )file.Length;
 
-            this.FullPathWithFileName = Path.Combine( this.Folder, this.FileName );
+            this.FullPathWithFileName = Path.Combine( this.Folder.DirectoryInfo.FullName, this.FileName );
         }
 
         /// <summary>
@@ -198,7 +128,7 @@ namespace Librainian.IO {
         ///     Returns true if the <see cref="Document.Folder" /> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public Boolean FolderExists { get { return Directory.Exists( this.Folder ); } }
+        public Boolean FolderExists { get { return Directory.Exists( this.Folder.DirectoryInfo.FullName ); } }
 
         /// <summary>
         ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
@@ -213,9 +143,13 @@ namespace Librainian.IO {
             return !ReferenceEquals( null, other ) && Equals( this, other );
         }
 
-        public UInt64 GetSize() {
+        /// <summary>
+        /// <para>Returns the file's size or 0.</para>
+        /// </summary>
+        /// <returns></returns>
+        public UBigInteger GetSize() {
             var info = new FileInfo( this.FullPathWithFileName );
-            return !info.Exists ? UInt64.MinValue : ( UInt64 )info.Length;
+            return !info.Exists ? UBigInteger.Zero : info.Length;
         }
 
         /// <summary>

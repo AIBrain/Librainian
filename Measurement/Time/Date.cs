@@ -25,6 +25,7 @@ namespace Librainian.Measurement.Time {
     using Librainian.Extensions;
 
     /// <summary>
+    /// <see cref="Year"/>, <see cref="Month"/>, and <see cref="Day"/>.
     /// </summary>
     [Immutable]
     public struct Date {

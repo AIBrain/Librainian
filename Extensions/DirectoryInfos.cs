@@ -221,19 +221,20 @@ namespace Librainian.Extensions {
                 return false;
             }
             var ds = new DirectorySecurity( fileSystemInfo.FullName, AccessControlSections.Access );
-            if ( ds.AreAccessRulesProtected ) {
-                using ( var wi = WindowsIdentity.GetCurrent() ) {
-                    if ( wi != null ) {
-                        var wp = new WindowsPrincipal( wi );
-                        var isProtected = !wp.IsInRole( WindowsBuiltInRole.Administrator ); // Not running as admin
-                        return isProtected;
-                    }
-                }
+            if ( !ds.AreAccessRulesProtected ) {
+                return false;
             }
-
-            return false;
+            using ( var wi = WindowsIdentity.GetCurrent() ) {
+                if ( wi == null ) {
+                    return false;
+                }
+                var wp = new WindowsPrincipal( wi );
+                var isProtected = !wp.IsInRole( WindowsBuiltInRole.Administrator ); // Not running as admin
+                return isProtected;
+            }
         }
 
+        [Pure]
         public static Boolean IsReparsePoint( this NativeWin32.Win32FindData data ) {
             return ( data.dwFileAttributes & FileAttributes.ReparsePoint ) == FileAttributes.ReparsePoint;
         }
@@ -284,5 +285,7 @@ namespace Librainian.Extensions {
             var path = Path.Combine( basePath.FullName, d.Year.ToString(), d.DayOfYear.ToString(), d.Hour.ToString() );
             return new DirectoryInfo( path );
         }
+
+        
     }
 }
