@@ -426,7 +426,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Opens a folder
+        ///     Opens a folder with Explorer.exe
         /// </summary>
         public static void OpenDirectoryWithExplorer( [CanBeNull] this DirectoryInfo folder ) {
             folder.Should().NotBeNull();

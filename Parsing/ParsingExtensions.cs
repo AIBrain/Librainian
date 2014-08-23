@@ -542,8 +542,8 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        ///     Case insensitive string comparison. ( true: cAt == CaT )
-        ///     <see cref="StringComparison.InvariantCultureIgnoreCase" />
+        ///     <para>Case insensitive string comparison. ( true: cAt == CaT )</para>
+        ///     <para><see cref="StringComparison.InvariantCultureIgnoreCase" /></para>
         /// </summary>
         /// <param name="source"></param>
         /// <param name="compare"></param>
@@ -558,7 +558,11 @@ namespace Librainian.Parsing {
         [Pure]
         [CanBeNull]
         public static String NullIfBlank( [CanBeNull] this String theString ) {
-            return String.IsNullOrWhiteSpace( theString ) ? null : ( String.IsNullOrWhiteSpace( theString.Trim() ) ? null : theString );
+            if ( null == theString || String.IsNullOrWhiteSpace( theString ) ) {
+                return null;
+            }
+            theString = theString.Trim();
+            return String.IsNullOrWhiteSpace( theString ) ? null : theString;
         }
 
         public static String NullIfEmpty( [CanBeNull] this String value ) {
