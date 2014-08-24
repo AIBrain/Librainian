@@ -24,6 +24,7 @@
 namespace Librainian.Magic {
 
     using System;
+    using System.Linq;
     using Annotations;
     using Collections;
     using FluentAssertions;
@@ -38,11 +39,7 @@ namespace Librainian.Magic {
         public NinjectIocContainer() {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel();
-
-            "Ninject is loading assemblies...".TimeDebug();
-            this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
-            "Ninject has loading assemblies.".TimeDebug();
-
+            ResetKernel();
             this.Kernel.Should().NotBeNull();
         }
 
@@ -74,7 +71,7 @@ namespace Librainian.Magic {
         }
 
         public T Get<T>( string name, string value ) {
-            var result = this.Kernel.TryGet<T>( metadata => metadata.Has( name ) &&  metadata.Get<string>( name ).Like(  value ) );
+            var result = this.Kernel.TryGet<T>( metadata => metadata.Has( name ) && metadata.Get<string>( name ).Like( value ) );
 
             if ( Equals( result, default( T ) ) ) {
                 throw new InvalidOperationException( null );
@@ -99,7 +96,11 @@ namespace Librainian.Magic {
             this.Kernel.Components.Get<ICache>().Clear();
             this.Kernel.Should().NotBeNull();
 
-            //this.LoadAndBindInterfaces();
+            "Ninject is loading assemblies...".TimeDebug();
+            this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
+            String.Format( "Ninject has loaded {0} assemblies.", this.Kernel.GetModules().LongCount() ).TimeDebug();
+            String.Format( "{0}", this.Kernel.GetModules().ToStrings() ).TimeDebug();
+
         }
     }
 }

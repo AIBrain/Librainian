@@ -171,11 +171,57 @@ namespace Librainian.IO {
         }
 
         /// <summary>
+        ///     <para>performs a byte by byte file comparison</para>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="SecurityException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        /// <exception cref="PathTooLongException"></exception>
+        /// <exception cref="NotSupportedException"></exception>
+        /// <exception cref="IOException"></exception>
+        /// <exception cref="DirectoryNotFoundException"></exception>
+        /// <exception cref="FileNotFoundException"></exception>
+        public static Boolean SameContent( [CanBeNull] this Document left, [CanBeNull] FileInfo right ) {
+            if ( left == null || right == null ) {
+                return false;
+            }
+
+            return left.Length == ( UInt64 )right.Length && left.AsByteArray().SequenceEqual( right.AsByteArray() );
+        }
+        
+        /// <summary>
+        ///     <para>performs a byte by byte file comparison</para>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="SecurityException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        /// <exception cref="PathTooLongException"></exception>
+        /// <exception cref="NotSupportedException"></exception>
+        /// <exception cref="IOException"></exception>
+        /// <exception cref="DirectoryNotFoundException"></exception>
+        /// <exception cref="FileNotFoundException"></exception>
+        public static Boolean SameContent( [CanBeNull] this  FileInfo left, [CanBeNull]Document right ) {
+            if ( left == null || right == null ) {
+                return false;
+            }
+
+            return ( UInt64 )left.Length == right.Length && left.AsByteArray().SequenceEqual( right.AsByteArray() );
+        }
+
+        /// <summary>
         ///     Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
-        public static IEnumerable< byte > AsByteArray( [NotNull] this FileInfo fileInfo ) {
+        public static IEnumerable<Byte> AsByteArray( [NotNull] this FileInfo fileInfo ) {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( "fileInfo" );
             }
@@ -207,7 +253,7 @@ namespace Librainian.IO {
         /// <param name="fileInfo"></param>
         /// <returns></returns>
         // TODO this needs a unit test for endianness
-        public static IEnumerable< ushort > AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
+        public static IEnumerable<ushort> AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( "fileInfo" );
             }
@@ -246,7 +292,7 @@ namespace Librainian.IO {
         /// <param name="progress"></param>
         /// <param name="eta"></param>
         /// <returns></returns>
-        public static Task Copy( Document source, Document destination, Action< double > progress, Action< TimeSpan > eta ) {
+        public static Task Copy( Document source, Document destination, Action<double> progress, Action<TimeSpan> eta ) {
             return Task.Run( () => {
                 var computer = new Computer();
                 //TODO file monitor/watcher?
@@ -528,10 +574,10 @@ namespace Librainian.IO {
         [CanBeNull]
         public static Folder AskUserForStorageFolder( String hint ) {
             var folderBrowserDialog = new FolderBrowserDialog {
-                                                                  ShowNewFolderButton = true,
-                                                                  Description = String.Format( "Please direct me to a storage folder for {0}.", hint ),
-                                                                  RootFolder = Environment.SpecialFolder.MyComputer
-                                                              };
+                ShowNewFolderButton = true,
+                Description = String.Format( "Please direct me to a storage folder for {0}.", hint ),
+                RootFolder = Environment.SpecialFolder.MyComputer
+            };
 
             var owner = WindowWrapper.CreateWindowWrapper( Threads.CurrentProcess.MainWindowHandle );
 

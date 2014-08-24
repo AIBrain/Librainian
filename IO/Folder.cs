@@ -25,6 +25,7 @@ namespace Librainian.IO {
 
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization;
@@ -32,9 +33,13 @@ namespace Librainian.IO {
     using Annotations;
     using Extensions;
 
+    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [DataContract( IsReference = true )]
     [Immutable]
     public class Folder {
+
+        [UsedImplicitly]
+        private String DebuggerDisplay { get { return this.FullName; } }
 
         /// <summary>
         ///     "\"
@@ -58,50 +63,74 @@ namespace Librainian.IO {
         ///     <para>The <see cref="Folder" />.</para>
         /// </summary>
         [NotNull]
-        public readonly String OriginalPath;
+        public readonly String OriginalFullPath;
 
         [NotNull]
         public readonly Uri Uri;
 
         /// <summary>
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="fullPath"></param>
         /// <exception cref="InvalidOperationException"></exception>
-        public Folder( [NotNull] String path ) {
-            if ( String.IsNullOrWhiteSpace( path ) ) {
+        public Folder( [NotNull] String fullPath ) {
+            if ( String.IsNullOrWhiteSpace( fullPath ) ) {
                 throw new ArgumentNullException( "path" );
             }
 
-            this.OriginalPath = path;
+            this.OriginalFullPath = fullPath;
 
-            if ( !IOExtensions.TryGetFolderFromPath( path, out this._directoryInfo, out this.Uri ) ) {
-                throw new InvalidOperationException( String.Format( "Unable to parse path {0}", path ) );
+            if ( !IOExtensions.TryGetFolderFromPath( fullPath, out this._directoryInfo, out this.Uri ) ) {
+                throw new InvalidOperationException( String.Format( "Unable to parse path {0}", fullPath ) );
             }
+        }
+
+        /// <summary>
+        /// <para>Check if this <see cref="Folder"/> contains any <see cref="Folder"/> or <see cref="Document"/>.</para>
+        /// </summary>
+        /// <returns></returns>
+        public Boolean IsEmpty() {
+            return !this.GetFolders().Any() && !this.GetDocuments().Any();
+        }
+
+        public Folder( Environment.SpecialFolder specialFolder )
+            : this( Environment.GetFolderPath( specialFolder ) ) {
+        }
+
+        public Folder( Environment.SpecialFolder specialFolder, String appName, String subFolder )
+            : this( Path.Combine( Environment.GetFolderPath( specialFolder ), appName, subFolder ) ) {
+        }
+
+        public Folder( Environment.SpecialFolder specialFolder, String companyName ,String applicationName, String subFolder )
+            : this( Path.Combine( Environment.GetFolderPath( specialFolder ), companyName, applicationName, subFolder ) ) {
+        }
+
+        public Folder( String fullPath, String subFolder )
+            : this( Path.Combine( fullPath, subFolder ) ) {
         }
 
         /// <summary>
         /// <para>Returns an enumerable collection of <see cref="Document"/> in the current directory.</para>
         /// </summary>
         /// <returns></returns>
-        public IEnumerable< Document > GetDocuments() {
+        public IEnumerable<Document> GetDocuments() {
             return this._directoryInfo.EnumerateFiles().Select( fileInfo => new Document( fileInfo.FullName ) );
         }
 
-        public IEnumerable< Folder > GetFolders() {
+        public IEnumerable<Folder> GetFolders() {
             return this._directoryInfo.EnumerateDirectories().Select( fileInfo => new Folder( fileInfo.FullName ) );
         }
 
         public IEnumerable<Folder> GetFolders( String searchPattern ) {
-            if ( String.IsNullOrEmpty( searchPattern) ) {
+            if ( String.IsNullOrEmpty( searchPattern ) ) {
                 yield break;
             }
             foreach ( var fileInfo in this._directoryInfo.EnumerateDirectories( searchPattern ) ) {
                 yield return new Folder( fileInfo.FullName );
             }
         }
-        
+
         public IEnumerable<Folder> GetFolders( String searchPattern, SearchOption searchOption ) {
-            if ( String.IsNullOrEmpty( searchPattern) ) {
+            if ( String.IsNullOrEmpty( searchPattern ) ) {
                 yield break;
             }
             foreach ( var fileInfo in this._directoryInfo.EnumerateDirectories( searchPattern, searchOption ) ) {
@@ -113,7 +142,7 @@ namespace Librainian.IO {
             return this._directoryInfo.EnumerateFiles( searchPattern ).Select( fileInfo => new Document( fileInfo.FullName ) );
         }
 
-        public IEnumerable<Document> GetDocuments(IEnumerable< String> searchPatterns ) {
+        public IEnumerable<Document> GetDocuments( IEnumerable<String> searchPatterns ) {
             return searchPatterns.SelectMany( this.GetDocuments );
         }
 

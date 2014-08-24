@@ -25,8 +25,10 @@ namespace Librainian.Persistence {
 
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Dynamic;
     using System.IO;
+    using System.Runtime.Serialization;
     using Annotations;
     using FluentAssertions;
     using IO;
@@ -46,6 +48,9 @@ namespace Librainian.Persistence {
     /// <summary>
     ///     <para>A little wrapper over the PersistentDictionary class.</para>
     /// </summary>
+    [DataContract( IsReference = true )]
+    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [Serializable]
     public class PersistTable<TKey, TValue> : IInitializable, IPersistTable where TKey : IComparable<TKey> {
 
         [NotNull]
@@ -65,16 +70,23 @@ namespace Librainian.Persistence {
             }
 
             this.Dictionary = new PersistentDictionary<TKey, TValue>( directory );
+
+            TestForReadWriteAccess();
         }
 
         public PersistTable( [NotNull] String fullpath )
             : this( new Folder( fullpath ) ) {
         }
 
+        [UsedImplicitly]
+        private String DebuggerDisplay { get { return this.Dictionary.ToString(); } }
+
+
         /// <summary>
         /// No path given? Use the programdata\thisapp.exe type of path.
         /// </summary>
         public PersistTable() {
+            throw new NotImplementedException();
             var name = Types.GetPropertyName( () => this );
             //TODO
         }
@@ -172,7 +184,7 @@ namespace Librainian.Persistence {
             if ( !this.Folder.TryGetTempDocument( out document ) ) {
                 return false;
             }
-            var text = Randem.NextString( length: 10241024, lowers: true, uppers: true, numbers: true, symbols: true );
+            var text = Randem.NextString( length: 1024, lowers: true, uppers: true, numbers: true, symbols: true );
             document.AppendText( text );
             document.TryDeleting();
             return true;

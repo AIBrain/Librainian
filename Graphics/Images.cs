@@ -1,23 +1,28 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/Images.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Images.cs" was last cleaned by Rick on 2014/08/24 at 6:51 AM
+
+#endregion License & Information
 
 namespace Librainian.Graphics {
+
     using System;
     using System.Drawing;
     using System.Drawing.Drawing2D;
@@ -28,9 +33,11 @@ namespace Librainian.Graphics {
     using System.Text;
     using System.Windows.Media.Imaging;
     using Annotations;
+    using IO;
     using Threading;
 
     public static class Images {
+
         [CanBeNull]
         public static DateTime? GetProperteryAsDateTime( [CanBeNull] this PropertyItem item ) {
             if ( null == item ) {
@@ -56,6 +63,13 @@ namespace Librainian.Graphics {
             }
 
             return null;
+        }
+
+        public static DateTime ImageCreationBestGuess( [NotNull] this Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( "document" );
+            }
+            return ImageCreationBestGuess( new FileInfo( document.FullPathWithFileName) );
         }
 
         public static DateTime ImageCreationBestGuess( [CanBeNull] this FileSystemInfo info ) {
@@ -103,6 +117,25 @@ namespace Librainian.Graphics {
                 /*swallow. .*/
             }
             return bestGuess;
+        }
+
+        /// <summary>
+        ///     <para>Returns true if the file could be loaded as an image.</para>
+        ///     <para>
+        ///         Uses
+        ///         <see
+        ///             cref="BitmapImage" />
+        ///         first, and then
+        ///     </para>
+        ///     <para><see cref="Image.FromFile(string)" /> next.</para>
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        public static Boolean IsaValidImage( [NotNull] this Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( "document" );
+            }
+            return IsaValidImage( new FileInfo( document.FullPathWithFileName ) );
         }
 
         /// <summary>
@@ -181,13 +214,13 @@ namespace Librainian.Graphics {
             var sourceWidth = imgToResize.Width;
             var sourceHeight = imgToResize.Height;
 
-            var nPercentW = ( size.Width/( Single ) sourceWidth );
-            var nPercentH = ( size.Height/( Single ) sourceHeight );
+            var nPercentW = ( size.Width / ( Single )sourceWidth );
+            var nPercentH = ( size.Height / ( Single )sourceHeight );
 
             var nPercent = nPercentH < nPercentW ? nPercentH : nPercentW;
 
-            var destWidth = ( int ) ( sourceWidth*nPercent );
-            var destHeight = ( int ) ( sourceHeight*nPercent );
+            var destWidth = ( int )( sourceWidth * nPercent );
+            var destHeight = ( int )( sourceHeight * nPercent );
 
             using ( var bitmap = new Bitmap( width: destWidth, height: destHeight ) ) {
                 using ( var g = Graphics.FromImage( image: bitmap ) ) {
@@ -201,6 +234,7 @@ namespace Librainian.Graphics {
         }
 
         public static class FileNameExtension {
+
             /// <summary>
             ///     <see cref="http://wikipedia.org/wiki/TIFF" />
             /// </summary>

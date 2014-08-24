@@ -1,28 +1,32 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
+//
 // "Librainian/Document.cs" was last cleaned by Rick on 2014/08/19 at 1:27 PM
-#endregion
+
+#endregion License & Information
 
 namespace Librainian.IO {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Net;
     using System.Numerics;
@@ -41,7 +45,12 @@ namespace Librainian.IO {
     /// <seealso cref="IOExtensions.SameContent(Document,Document)" />
     [DataContract( IsReference = true )]
     [Immutable]
+    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [Serializable]
     public class Document : IEquatable<Document>, IEnumerable<Byte> {
+
+        [UsedImplicitly]
+        private String DebuggerDisplay { get { return this.FullPathWithFileName; } }
 
         public static readonly Document Empty = new Document();
 
@@ -58,7 +67,7 @@ namespace Librainian.IO {
         public readonly String Extension;
 
         /// <summary>
-        ///     <para>The file's name, including the extension.</para>
+        ///     <para>Just the file's name, including the extension.</para>
         /// </summary>
         /// <seealso cref="Path.GetFileNameWithoutExtension" />
         [NotNull]
@@ -137,9 +146,8 @@ namespace Librainian.IO {
 
         public readonly String OriginalPathWithFileName;
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <exception cref="UnauthorizedAccessException"></exception>
         /// <exception cref="NotSupportedException"></exception>
@@ -160,13 +168,13 @@ namespace Librainian.IO {
         /// <exception cref="IOException"></exception>
         public Boolean Exists { get { return File.Exists( this.FullPathWithFileName ); } }
 
-/*
-        /// <summary>
-        ///     Returns true if the <see cref="Document.Folder" /> currently exists.
-        /// </summary>
-        /// <exception cref="IOException"></exception>
-        public Boolean FolderExists { get { return this.Folder.Exists; } }
-*/
+        /*
+                /// <summary>
+                ///     Returns true if the <see cref="Document.Folder" /> currently exists.
+                /// </summary>
+                /// <exception cref="IOException"></exception>
+                public Boolean FolderExists { get { return this.Folder.Exists; } }
+        */
 
         /// <summary>
         ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
@@ -201,10 +209,10 @@ namespace Librainian.IO {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] Document left, [CanBeNull] Document right ) {
-            if ( left == null ) {
+            if ( ReferenceEquals( left, null ) ) {
                 throw new ArgumentNullException( "left" );
             }
-            if ( right == null ) {
+            if ( ReferenceEquals( right, null ) ) {
                 throw new ArgumentNullException( "right" );
             }
             return left.Size == right.Size && String.Equals( left.FullPathWithFileName, right.FullPathWithFileName, StringComparison.InvariantCultureIgnoreCase );
@@ -275,7 +283,6 @@ namespace Librainian.IO {
                 }
             };
             webClient.DownloadFileAsync( new Uri( this.FullPathWithFileName ), destination );
-            
 
             return true;
         }
@@ -330,20 +337,30 @@ namespace Librainian.IO {
         /// <para>Then the <paramref name="text"/> is appended to the file.</para>
         /// </summary>
         /// <param name="text"></param>
-        public async void AppendText( String text ) {
-
+        public void AppendText( String text ) {
             if ( this.Exists ) {
                 using ( var writer = File.AppendText( this.FullPathWithFileName ) ) {
-                    await writer.WriteLineAsync( text );
+                    writer.WriteLine( text );
+                    writer.Flush();
+                    writer.Close();
                 }
             }
             else {
                 using ( var writer = File.CreateText( this.FullPathWithFileName ) ) {
-                    await writer.WriteLineAsync( text );
+                    writer.WriteLine( text );
+                    writer.Flush();
+                    writer.Close();
                 }
             }
+        }
 
-
+        /// <summary>
+        /// <para>Returns true if the <see cref="Document"/> no longer exists.</para>
+        /// </summary>
+        /// <returns></returns>
+        public Boolean Delete() {
+            this._fileInfo.Delete();
+            return Exists;
         }
     }
 }
