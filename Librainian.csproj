@@ -271,7 +271,6 @@
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\DummyXMLResolver.cs" />
     <Compile Include="Extensions\EventArgs.cs" />
-    <Compile Include="Extensions\FileInfos.cs" />
     <Compile Include="Extensions\FileSizeFormatProvider.cs" />
     <Compile Include="Extensions\FileSizeFormatProviderExtensions.cs" />
     <Compile Include="Extensions\FuzzyPredicateBuilder.cs" />
