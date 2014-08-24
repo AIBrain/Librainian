@@ -25,7 +25,6 @@ namespace Librainian.Magic {
 
     using System;
     using Annotations;
-    using Autofac;
     using Collections;
     using FluentAssertions;
     using Ninject;
@@ -39,9 +38,11 @@ namespace Librainian.Magic {
         public NinjectIocContainer() {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel();
+
             "Ninject is loading assemblies...".TimeDebug();
             this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
             "Ninject has loading assemblies.".TimeDebug();
+
             this.Kernel.Should().NotBeNull();
         }
 
@@ -57,11 +58,11 @@ namespace Librainian.Magic {
         [NotNull]
         public IKernel Kernel { get; set; }
 
-        [Obsolete( "User Kernel instead" )]
-        public IContainer BuildedContainer { get; set; }
+        //[Obsolete( "User Kernel instead" )]
+        //public IContainer BuildedContainer { get; set; }
 
-        [CanBeNull]
-        public ContainerBuilder ContainerBuilder { get; set; }
+        //[CanBeNull]
+        //public ContainerBuilder ContainerBuilder { get; set; }
 
         public object Get( Type type ) {
             return this.Kernel.Get( type );

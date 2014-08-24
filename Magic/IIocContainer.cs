@@ -22,7 +22,6 @@
 namespace Librainian.Magic {
     using System;
     using Annotations;
-    using Autofac;
     using Ninject;
 
     public interface IIocContainer {
@@ -30,8 +29,8 @@ namespace Librainian.Magic {
         [CanBeNull]
         IKernel Kernel { get; set;  }
 
-        [CanBeNull]
-        IContainer BuildedContainer { get; set; }
+        //[CanBeNull]
+        //IContainer BuildedContainer { get; set; }
 
         [CanBeNull]
         Object Get( Type type );
