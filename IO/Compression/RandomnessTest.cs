@@ -3,6 +3,7 @@ namespace Librainian.IO.Compression {
     using System;
     using System.IO;
     using System.IO.Compression;
+    using System.Linq;
     using System.Numerics;
     using Annotations;
     using Extensions;
@@ -22,40 +23,33 @@ namespace Librainian.IO.Compression {
             return ( Double )result;
         }
 
-        public GZipStream GZipStream;
+        private readonly GZipStream _gZipStream;
 
-        public readonly NullStream NullStream;
+        private readonly NullStream _nullStream;
 
         public RandomnessTest() {
-            this.NullStream = new NullStream();
-            this.GZipStream = new GZipStream( stream: NullStream, compressionLevel: CompressionLevel.Optimal);
+            this._nullStream = new NullStream();
+            this._gZipStream = new GZipStream( stream: this._nullStream, compressionLevel: CompressionLevel.Optimal);
         }
 
-        public void FeedItData( [NotNull] byte[] data ) {
+        public void FeedItData( [NotNull] byte[] data) {
             if ( data == null ) {
                 throw new ArgumentNullException( "data" );
             }
             HowManyBytesFed += data.LongLength;
-            var compressed = Compress( data );
-            HowManyBytesAsCompressed += compressed.LongLength;
+            this._gZipStream.Write( data, 0, data.Length );
+            HowManyBytesAsCompressed += this._nullStream.Length;
+            this._nullStream.Seek( 0, SeekOrigin.Begin );   //rewind our 'position' so we don't overrun a long
+        }
 
-            Console.WriteLine( String.Format( "Current compression is now {0:P4}", this.GetCurrentCompressionRatio() ));
+        private void Report() {
+            Console.WriteLine( String.Format( "Current compression is now {0:P4}", this.GetCurrentCompressionRatio() ) );
         }
 
         public void FeedItData( Document document ) {
-            //TODO
+            var data = document.AsByteArray().ToArray();
+            FeedItData( data );
         }
 
-        public static byte[] Compress( [NotNull] byte[] data ) {
-           if ( data == null ) {
-               throw new ArgumentNullException( "data" );
-           }
-           using ( var output = new MemoryStream() ) {
-               using ( var compress = new GZipStream( output, CompressionLevel.Optimal ) ) {
-                   compress.Write( data, 0, data.Length );
-               }
-               return output.ToArray();
-           }
-       }
     }
 }
