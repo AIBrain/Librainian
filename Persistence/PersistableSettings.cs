@@ -50,7 +50,7 @@ namespace Librainian.Persistence {
     }
 
     /// <summary>
-    ///     atm I love this class.
+    ///     atm, I love this class.
     /// </summary>
     public class PersistableSettings : IInitializable, IPersistableSettings {
         public void Initialize() {

@@ -37,6 +37,9 @@ namespace Librainian.IO {
     using FluentAssertions;
     using Maths;
     using Measurement.Time;
+    using Microsoft.Scripting.Math;
+    using Microsoft.VisualBasic.Devices;
+    using Microsoft.VisualBasic.FileIO;
 
     public static class IOExtensions {
 
@@ -49,7 +52,7 @@ namespace Librainian.IO {
             lpOutBuffer, int nOutBufferSize, ref int lpBytesReturned, IntPtr
             lpOverlapped );
 
-        public static int? TurnOnCompression( [NotNull] FileInfo info ) {
+        public static int? TurnOnCompression( [NotNull] this FileInfo info ) {
             if ( info == null ) {
                 throw new ArgumentNullException( "info" );
             }
@@ -61,19 +64,25 @@ namespace Librainian.IO {
             var lpBytesReturned = 0;
             short compressionFormatDefault = 1;
 
-            Microsoft.Scripting.Math.BigInteger bob;
+            BigInteger bob;
 
             using ( var fileStream = File.Open( path: info.FullName, mode: FileMode.Open, access: FileAccess.ReadWrite, share: FileShare.None ) ) {
                 var success = false;
-                fileStream.SafeFileHandle.DangerousAddRef( success: ref success );
-                var result = DeviceIoControl(
-                    hDevice: fileStream.SafeFileHandle.DangerousGetHandle(),
-                    dwIoControlCode: FSCTL_SET_COMPRESSION,
-                    lpInBuffer: ref compressionFormatDefault, nInBufferSize: sizeof( short ),
-                    lpOutBuffer: IntPtr.Zero,
-                    nOutBufferSize: 0,
-                    lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
-                fileStream.SafeFileHandle.DangerousRelease();
+
+                try {
+                    fileStream.SafeFileHandle.DangerousAddRef( success: ref success );
+
+                    var result = DeviceIoControl(
+                        hDevice: fileStream.SafeFileHandle.DangerousGetHandle(),
+                        dwIoControlCode: FSCTL_SET_COMPRESSION,
+                        lpInBuffer: ref compressionFormatDefault, nInBufferSize: sizeof( short ),
+                        lpOutBuffer: IntPtr.Zero,
+                        nOutBufferSize: 0,
+                        lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
+                }
+                finally {
+                    fileStream.SafeFileHandle.DangerousRelease();
+                }
 
                 return lpBytesReturned;
             }
@@ -111,7 +120,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>performs a byte by byte file comparison</para>
+        ///     <para>Performs a byte by byte file comparison, but ignores the <see cref="Document"/> file names.</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -216,11 +225,11 @@ namespace Librainian.IO {
 
                     var high = buffered.ReadByte();
                     if ( high == -1 ) {
-                        yield return ( ( byte ) low ).CombineBytes( high: 0 );
+                        yield return ( ( Byte )low ).CombineBytes( high: 0 );
                         yield break;
                     }
 
-                    yield return ( ( byte ) low ).CombineBytes( high: ( byte ) high );
+                    yield return ( ( Byte )low ).CombineBytes( high: ( Byte )high );
                 }
             }
         }
@@ -235,7 +244,10 @@ namespace Librainian.IO {
         /// <returns></returns>
         public static Task Copy( Document source, Document destination, Action<double> progress, Action<TimeSpan> eta ) {
             return Task.Run( () => {
-                //TODO
+                var computer = new Computer();
+                var bob = new Monitor
+                //TODO file monitor/watcher?
+                computer.FileSystem.CopyFile( source.FullPathWithFileName, destination.FullPathWithFileName, UIOption.AllDialogs, UICancelOption.DoNothing);
             } );
         }
 
@@ -442,12 +454,58 @@ namespace Librainian.IO {
 
             var windowsFolder = Environment.GetEnvironmentVariable( "SystemRoot" );
             windowsFolder.Should().NotBeNullOrWhiteSpace();
-            if ( String.IsNullOrWhiteSpace(windowsFolder) ) {
+            if ( String.IsNullOrWhiteSpace( windowsFolder ) ) {
                 return;
             }
 
             var proc = Process.Start( fileName: String.Format( "{0}\\explorer.exe", windowsFolder ), arguments: String.Format( "/e,\"{0}\"", folder.FullName ) );
             proc.Responding.Should().Be( true );
+        }
+
+        /// <summary>
+        /// Returns a temporary <see cref="Document"/>, but does not create it.
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public static Document GetTempDocument( Folder folder ) {
+            try {
+                var randomFile = Path.GetTempFileName();
+                File.Delete( randomFile );
+
+                var randomFileName = Path.Combine( folder.FullName, Path.GetFileName( randomFile ) );
+
+                return new Document( randomFileName );
+            }
+            catch ( DirectoryNotFoundException ) { }
+            catch ( PathTooLongException ) { }
+            catch ( IOException ) { }
+            catch ( NotSupportedException ) { }
+            catch ( UnauthorizedAccessException ) { }
+            return null;
+        }
+
+        public static Boolean TryGetFolderFromPath( String path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri ) {
+            directoryInfo = null;
+            uri = null;
+            try {
+                if ( String.IsNullOrWhiteSpace( path ) ) {
+                    return false;
+                }
+                path = path.Trim();
+                if ( String.IsNullOrWhiteSpace( path ) ) {
+                    return false;
+                }
+                if ( Uri.TryCreate( path, UriKind.Absolute, out uri ) ) {
+                    directoryInfo = new DirectoryInfo( uri.LocalPath );
+                    return true;
+                }
+            }
+            catch ( UriFormatException ) { }
+            catch ( SecurityException ) { }
+            catch ( PathTooLongException ) { }
+            catch ( InvalidOperationException ) { }
+            return false;
         }
     }
 

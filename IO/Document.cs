@@ -24,11 +24,14 @@ namespace Librainian.IO {
     using System.Collections;
     using System.Collections.Generic;
     using System.IO;
+    using System.Net;
+    using System.Numerics;
     using System.Runtime.Serialization;
     using System.Security;
     using Annotations;
     using Collections;
     using Extensions;
+    using Magic;
     using Maths;
 
     /// <summary>
@@ -60,7 +63,7 @@ namespace Librainian.IO {
         public readonly String FileName;
 
         [NotNull]
-        public readonly FileInfo FileInfo;
+        private readonly FileInfo _fileInfo;
 
         /// <summary>
         ///     <para>FYI: A folder does not always ends with a <see cref="IO.Folder.FolderSeparator" />... .. . / \</para>
@@ -75,12 +78,26 @@ namespace Librainian.IO {
         public readonly String FullPathWithFileName;
 
         /// <summary>
-        ///     The last known size of the file.
+        ///     <para>The last known size of the file.</para>
         /// </summary>
-        public readonly UInt64 Size;
+        public UInt64 Size { get { return this.Length; } }
+
+        /// <summary>
+        /// <para>The last known size of the file.</para>
+        /// </summary>
+        public UInt64 Length {
+            get {
+                this.Refresh();
+                return ( UInt64 )this._fileInfo.Length;
+            }
+        }
 
         static Document() {
             InvalidPathChars.Fix();
+        }
+
+        public void Refresh() {
+            this._fileInfo.Refresh();
         }
 
         /// <summary>
@@ -104,18 +121,19 @@ namespace Librainian.IO {
             if ( String.IsNullOrWhiteSpace( fullPathWithFilename ) ) {
                 throw new ArgumentNullException( "fullPathWithFilename" );
             }
+            this.OriginalPathWithFileName = fullPathWithFilename;
 
-            var file = new FileInfo( fullPathWithFilename );
+            this._fileInfo = new FileInfo( fullPathWithFilename );
 
             this.Folder = new Folder( Path.GetDirectoryName( fullPathWithFilename ) );
 
             this.FileName = Path.GetFileName( fullPathWithFilename );
             this.Extension = Path.GetExtension( fullPathWithFilename );
 
-            this.Size = ( UInt64 )file.Length;
-
-            this.FullPathWithFileName = Path.Combine( this.Folder.DirectoryInfo.FullName, this.FileName );
+            this.FullPathWithFileName = Path.Combine( this.Folder.FullName, this.FileName );
         }
+
+        public readonly String OriginalPathWithFileName;
 
         /// <summary>
         ///     Returns true if the <see cref="Document" /> currently exists.
@@ -127,7 +145,7 @@ namespace Librainian.IO {
         ///     Returns true if the <see cref="Document.Folder" /> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public Boolean FolderExists { get { return Directory.Exists( this.Folder.DirectoryInfo.FullName ); } }
+        public Boolean FolderExists { get { return this.Folder.Exists; } }
 
         /// <summary>
         ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
@@ -172,9 +190,7 @@ namespace Librainian.IO {
         }
 
         public override int GetHashCode() {
-            unchecked {
-                return this.FullPathWithFileName.GetHashCode();
-            }
+            return this.FullPathWithFileName.GetHashCode();
         }
 
         /// <summary>
@@ -207,6 +223,35 @@ namespace Librainian.IO {
         /// <returns></returns>
         public override Boolean Equals( [CanBeNull] object obj ) {
             return obj is Document && Equals( this, ( Document )obj );
+        }
+
+        //public delegate void IntDelegate( int Int );
+
+        //public event IntDelegate FileCopyProgress = i => { };
+
+        /// <summary>
+        /// Returns true if a file copy was started.
+        /// </summary>
+        /// <param name="destination">can this be a folder or a file?!?!</param>
+        /// <param name="onProgress"></param>
+        /// <param name="onCompleted"></param>
+        /// <returns></returns>
+        public Boolean CopyFileWithProgress( string destination, Action<Percentage> onProgress, Action onCompleted  ) {
+            var webClient = Ioc.Container.TryGet<WebClient>();
+
+            if ( webClient == null ) {
+                return false;
+            }
+            webClient.DownloadProgressChanged += ( sender, args ) => {
+                                                     var percentage = new Percentage( ( BigInteger )args.BytesReceived, args.TotalBytesToReceive );
+                                                     if ( onProgress != null ) {
+                                                         onProgress( percentage );
+                                                     }
+                                                 };
+            webClient.DownloadFileCompleted += ( sender, args ) => onCompleted();
+            webClient.DownloadFileAsync( new Uri( this.FullPathWithFileName ), destination );
+
+            return true;
         }
 
         //[NotNull]

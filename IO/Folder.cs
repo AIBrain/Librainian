@@ -24,7 +24,10 @@
 namespace Librainian.IO {
 
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using System.Runtime.Serialization;
     using System.Security;
     using Annotations;
@@ -47,7 +50,10 @@ namespace Librainian.IO {
         public static readonly String FolderAltSeparator = new String( new[] { Path.AltDirectorySeparatorChar } );
 
         [NotNull]
-        public readonly DirectoryInfo DirectoryInfo;
+        private readonly DirectoryInfo _directoryInfo;
+
+        [NotNull]
+        public string FullName { get { return this._directoryInfo.FullName; } }
 
         /// <summary>
         ///     <para>The <see cref="Folder" />.</para>
@@ -69,12 +75,55 @@ namespace Librainian.IO {
 
             this.OriginalPath = path;
 
-            var cleanUpPath = GetFolderFromPath( path, out this.Uri );
-            if ( null == cleanUpPath ) {
+            if ( !IOExtensions.TryGetFolderFromPath( path, out this._directoryInfo, out this.Uri ) ) {
                 throw new InvalidOperationException( String.Format( "Unable to parse path {0}", path ) );
             }
+        }
 
-            this.DirectoryInfo = cleanUpPath;
+        /// <summary>
+        /// <para>Returns an enumerable collection of <see cref="Document"/> in the current directory.</para>
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable< Document > GetDocuments() {
+            return this._directoryInfo.EnumerateFiles().Select( fileInfo => new Document( fileInfo.FullName ) );
+        }
+
+        public IEnumerable< Folder > GetFolders() {
+            return this._directoryInfo.EnumerateDirectories().Select( fileInfo => new Folder( fileInfo.FullName ) );
+        }
+
+        public IEnumerable<Folder> GetFolders( String searchPattern ) {
+            if ( String.IsNullOrEmpty( searchPattern) ) {
+                yield break;
+            }
+            foreach ( var fileInfo in this._directoryInfo.EnumerateDirectories( searchPattern ) ) {
+                yield return new Folder( fileInfo.FullName );
+            }
+        }
+        
+        public IEnumerable<Folder> GetFolders( String searchPattern, SearchOption searchOption ) {
+            if ( String.IsNullOrEmpty( searchPattern) ) {
+                yield break;
+            }
+            foreach ( var fileInfo in this._directoryInfo.EnumerateDirectories( searchPattern, searchOption ) ) {
+                yield return new Folder( fileInfo.FullName );
+            }
+        }
+
+        public IEnumerable<Document> GetDocuments( String searchPattern ) {
+            return this._directoryInfo.EnumerateFiles( searchPattern ).Select( fileInfo => new Document( fileInfo.FullName ) );
+        }
+
+        public IEnumerable<Document> GetDocuments(IEnumerable< String> searchPatterns ) {
+            return searchPatterns.SelectMany( this.GetDocuments );
+        }
+
+        public IEnumerable<Document> GetDocuments( IEnumerable<String> searchPatterns, SearchOption searchOption ) {
+            return searchPatterns.SelectMany( searchPattern => this.GetDocuments( searchPattern, searchOption ) );
+        }
+
+        public IEnumerable<Document> GetDocuments( String searchPattern, SearchOption searchOption ) {
+            return this._directoryInfo.EnumerateFiles( searchPattern, searchOption ).Select( fileInfo => new Document( fileInfo.FullName ) );
         }
 
         /// <summary>
@@ -83,28 +132,41 @@ namespace Librainian.IO {
         /// <exception cref="IOException"></exception>
         /// <exception cref="SecurityException"></exception>
         /// <exception cref="PathTooLongException"></exception>
-        public Boolean Exists { get { return Directory.Exists( this.DirectoryInfo.FullName ); } }
-
-        [CanBeNull]
-        public static DirectoryInfo GetFolderFromPath( String path, out Uri uri ) {
-            uri = null;
-            try {
-                if ( String.IsNullOrWhiteSpace( path ) ) {
-                    return null;
-                }
-                path = path.Trim();
-                if ( String.IsNullOrWhiteSpace( path ) ) {
-                    return null;
-                }
-                if ( Uri.TryCreate( path, UriKind.Absolute, out uri ) ) {
-                    return new DirectoryInfo( uri.LocalPath );
-                }
+        public Boolean Exists {
+            get {
+                this._directoryInfo.Refresh();
+                return this._directoryInfo.Exists;
             }
-            catch ( UriFormatException ) { }
-            catch ( SecurityException ) { }
-            catch ( PathTooLongException ) { }
-            catch ( InvalidOperationException ) { }
-            return null;
+        }
+
+        /// <summary>
+        /// <para>Returns True if the folder now exists.</para>
+        /// </summary>
+        /// <returns></returns>
+        /// <seealso cref="Delete"/>
+        public Boolean Create() {
+            try {
+                this._directoryInfo.Create();
+                return this.Exists;
+            }
+            catch ( IOException ) {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// <para>Returns True if the folder no longers exists.</para>
+        /// </summary>
+        /// <returns></returns>
+        /// <seealso cref="Create"/>
+        public Boolean Delete() {
+            try {
+                this._directoryInfo.Delete();
+                return !this.Exists;
+            }
+            catch ( IOException ) {
+                return false;
+            }
         }
     }
 }
