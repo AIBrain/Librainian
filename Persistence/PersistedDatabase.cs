@@ -17,7 +17,7 @@
 // "Librainian/PersistedDatabase.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 #endregion
 
-namespace Librainian.Knowledge {
+namespace Librainian.Persistence {
     using System;
     using System.Collections;
     using System.Collections.Concurrent;
@@ -25,9 +25,8 @@ namespace Librainian.Knowledge {
     using System.ComponentModel;
     using System.Runtime.Serialization;
     using Annotations;
-    using Extensions;
+    using Librainian.Extensions;
     using Measurement.Time;
-    using Persistence;
 
     [DataContract( IsReference = true )]
     public class PersistedDatabase< TKey, TValue > : IEnumerable< KeyValuePair< TKey, TValue > > {

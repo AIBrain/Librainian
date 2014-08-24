@@ -1,4 +1,4 @@
-namespace Librainian.Extensions {
+namespace Librainian.IO {
     public enum SearchStyle {
         /// <summary>
         /// </summary>

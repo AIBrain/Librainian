@@ -36,8 +36,7 @@ namespace Librainian.Persistence {
     using Threading;
 
     public static class Storage {
-        [UsedImplicitly]
-        public static readonly Lazy<DirectoryInfo> DataLocation = new Lazy<DirectoryInfo>( () => {
+        private static readonly Lazy<DirectoryInfo> DataLocation = new Lazy<DirectoryInfo>( () => {
             var common = Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData );
             var assemby = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
             var name = Path.GetFileNameWithoutExtension( assemby.Location );
@@ -46,7 +45,7 @@ namespace Librainian.Persistence {
             return result;
         } );
 
-        public static readonly Lazy<DirectoryInfo> ConfigLocation = new Lazy<DirectoryInfo>( () => {
+        private static readonly Lazy<DirectoryInfo> ConfigLocation = new Lazy<DirectoryInfo>( () => {
             var common = Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData );
             var assemby = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
             var name = Path.GetFileNameWithoutExtension( assemby.Location );
@@ -59,7 +58,7 @@ namespace Librainian.Persistence {
         } );
 
         static Storage() {
-            EnableIsolatedStorageCompression();
+            //EnableIsolatedStorageCompression();
         }
 
         public static Boolean EnableIsolatedStorageCompression() {

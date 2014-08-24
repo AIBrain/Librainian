@@ -265,6 +265,7 @@
     <Compile Include="Database\MMF\ValueTypeCheck.cs" />
     <Compile Include="Database\SQLDatabaseExtensions.cs" />
     <Compile Include="Database\SQLQuery.cs" />
+    <Compile Include="Extensions\BigNullStream.cs" />
     <Compile Include="Extensions\BooleanPredicateBuilder.cs" />
     <Compile Include="Extensions\ReflectionHelper.cs" />
     <Compile Include="Extensions\CoordinatesEx.cs" />
@@ -289,7 +290,6 @@
     <Compile Include="Extensions\PopulateProgressEventArgs.cs" />
     <Compile Include="Extensions\RegistryServer.cs" />
     <Compile Include="Extensions\Search.cs" />
-    <Compile Include="Extensions\SearchStyle.cs" />
     <Compile Include="Extensions\Strings.cs" />
     <Compile Include="Extensions\SynchronizeInvokeExtensions.cs" />
     <Compile Include="Extensions\Types.cs" />
@@ -315,10 +315,12 @@
     <Compile Include="Gaming\PlayingCards\Deck.cs" />
     <Compile Include="Gaming\DiceCup.cs" />
     <Compile Include="Gaming\TraditionalDice.cs" />
+    <Compile Include="IO\Compression\RandomnessTest.cs" />
     <Compile Include="IO\CopyProgressCallbackReason.cs" />
     <Compile Include="IO\CopyProgressResult.cs" />
     <Compile Include="IO\Folder.cs" />
     <Compile Include="IO\MoveFileFlags.cs" />
+    <Compile Include="IO\SearchStyle.cs" />
     <Compile Include="IO\WindowsAPI.cs" />
     <Compile Include="Magic\AutofacContainer.cs" />
     <Compile Include="Magic\IIocContainer.cs" />
@@ -347,7 +349,6 @@
     <Compile Include="Knowledge\BasicBelief.cs" />
     <Compile Include="Knowledge\Belief.cs" />
     <Compile Include="Knowledge\Person.cs" />
-    <Compile Include="Knowledge\PersistedDatabase.cs" />
     <Compile Include="Knowledge\Domain.cs" />
     <Compile Include="Knowledge\FactDatabase.cs" />
     <Compile Include="Knowledge\Logic\Axiom.cs" />
@@ -445,6 +446,7 @@
     <Compile Include="Linguistics\Page.cs" />
     <Compile Include="Misc\ProductExampleClass.cs" />
     <Compile Include="Persistence\PersistableSettings.cs" />
+    <Compile Include="Persistence\PersistedDatabase.cs" />
     <Compile Include="Persistence\PersistTable.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
