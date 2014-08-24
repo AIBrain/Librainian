@@ -51,7 +51,7 @@ namespace Librainian.IO {
     public class Document : IEquatable<Document>, IEnumerable<Byte> {
 
         [UsedImplicitly]
-        private String DebuggerDisplay { get { return this.FullPathWithFileName; } }
+        public String DebuggerDisplay { get { return this.FullPathWithFileName; } }
 
         public static readonly Document Empty = new Document();
 
@@ -75,7 +75,7 @@ namespace Librainian.IO {
         public readonly String FileName;
 
         [NotNull]
-        private readonly FileInfo _fileInfo;
+        protected readonly FileInfo FileInfo;
 
         /// <summary>
         ///     <para>FYI: A folder does not always ends with a <see cref="IO.Folder.FolderSeparator" />... .. . / \</para>
@@ -90,26 +90,27 @@ namespace Librainian.IO {
         public readonly String FullPathWithFileName;
 
         /// <summary>
-        ///     <para>The last known size of the file.</para>
+        /// <para>Gets the current size of the <see cref="Document"/>.</para>
         /// </summary>
+        /// <seealso cref="Length"/>
         public UInt64 Size { get { return this.Length; } }
 
         /// <summary>
-        /// <para>The last known size of the file.</para>
+        /// <para>Gets the current size of the <see cref="Document"/>.</para>
         /// </summary>
         public UInt64 Length {
             get {
-                this.Refresh();
-                return ( UInt64 )this._fileInfo.Length;
+                return !this.Exists ? 0UL : ( UInt64 )this.FileInfo.Length;
             }
         }
+
 
         static Document() {
             InvalidPathChars.Fix();
         }
 
         public void Refresh() {
-            this._fileInfo.Refresh();
+            this.FileInfo.Refresh();
         }
 
         /// <summary>
@@ -135,7 +136,7 @@ namespace Librainian.IO {
             }
             this.OriginalPathWithFileName = fullPathWithFilename;
 
-            this._fileInfo = new FileInfo( fullPathWithFilename );
+            this.FileInfo = new FileInfo( fullPathWithFilename );
 
             this.Folder = new Folder( Path.GetDirectoryName( fullPathWithFilename ) );
 
@@ -148,12 +149,11 @@ namespace Librainian.IO {
         public readonly String OriginalPathWithFileName;
 
         /// <summary>
-        ///
+        /// Empty?
         /// </summary>
         /// <exception cref="UnauthorizedAccessException"></exception>
         /// <exception cref="NotSupportedException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        /// <exception cref=""></exception>
         private Document() {
             this.Folder = new Folder( Directory.GetCurrentDirectory() );
             Document document;
@@ -167,7 +167,12 @@ namespace Librainian.IO {
         ///     Returns true if the <see cref="Document" /> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public Boolean Exists { get { return File.Exists( this.FullPathWithFileName ); } }
+        public Boolean Exists {
+            get {
+                this.FileInfo.Refresh();
+                return this.FileInfo.Exists;
+            }
+        }
 
         /*
                 /// <summary>
@@ -190,17 +195,9 @@ namespace Librainian.IO {
             return !ReferenceEquals( null, other ) && Equals( this, other );
         }
 
-        /// <summary>
-        /// <para>Returns the file's size or 0.</para>
-        /// </summary>
-        /// <returns></returns>
-        public UBigInteger GetSize() {
-            var info = new FileInfo( this.FullPathWithFileName );
-            return !info.Exists ? UBigInteger.Zero : info.Length;
-        }
 
         /// <summary>
-        ///     <para>Static comparison of the file names (case insensitive) and file sizes for equality.</para>
+        ///     <para>Static case insensitive comparison of the file names and file sizes for equality.</para>
         ///     <para>
         ///         To compare the contents of two <see cref="Document" /> use
         ///         <see cref="IOExtensions.SameContent(Document,Document)" />.
@@ -213,12 +210,16 @@ namespace Librainian.IO {
             if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
-            if ( ReferenceEquals( left, null ) || ReferenceEquals( right, null )  ) {
+            if ( ReferenceEquals( left, null ) || ReferenceEquals( right, null ) ) {
                 return false;
             }
-            return left.Size == right.Size && left.FullPathWithFileName.Like(right.FullPathWithFileName );
+            return left.Size == right.Size && left.FullPathWithFileName.Like( right.FullPathWithFileName );
         }
 
+        /// <summary>
+        /// (file name, not contents)
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode() {
             return this.FullPathWithFileName.GetHashCode();
         }
@@ -360,7 +361,7 @@ namespace Librainian.IO {
         /// </summary>
         /// <returns></returns>
         public Boolean Delete() {
-            this._fileInfo.Delete();
+            this.FileInfo.Delete();
             return Exists;
         }
     }

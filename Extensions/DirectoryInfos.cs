@@ -27,6 +27,7 @@ namespace Librainian.Extensions {
     using System.Security.Principal;
     using Annotations;
     using NUnit.Framework;
+    using Parsing;
     using Threading;
 
     public static class DirectoryInfos {
@@ -206,7 +207,10 @@ namespace Librainian.Extensions {
         }
 
         public static Boolean IsIgnoreFolder( this NativeWin32.Win32FindData data ) {
-            return data.cFileName.EndsWith( "$RECYCLE.BIN", StringComparison.InvariantCultureIgnoreCase ) || data.cFileName.Equals( "TEMP", StringComparison.InvariantCultureIgnoreCase ) || data.cFileName.Equals( "TMP", StringComparison.InvariantCultureIgnoreCase ) || SystemFolders.Contains( new DirectoryInfo( data.cFileName ) );
+            return data.cFileName.EndsLike( "$RECYCLE.BIN" )
+                || data.cFileName.Like( "TEMP" )
+                || data.cFileName.Like( "TMP" )
+                || SystemFolders.Contains( new DirectoryInfo( data.cFileName ) );
         }
 
         public static Boolean IsParentOrCurrent( this NativeWin32.Win32FindData data ) {

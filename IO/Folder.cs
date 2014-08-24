@@ -55,10 +55,10 @@ namespace Librainian.IO {
         public static readonly String FolderAltSeparator = new String( new[] { Path.AltDirectorySeparatorChar } );
 
         [NotNull]
-        private readonly DirectoryInfo _directoryInfo;
+        protected readonly DirectoryInfo DirectoryInfo;
 
         [NotNull]
-        public string FullName { get { return this._directoryInfo.FullName; } }
+        public string FullName { get { return this.DirectoryInfo.FullName; } }
 
         /// <summary>
         ///     <para>The <see cref="Folder" />.</para>
@@ -80,7 +80,7 @@ namespace Librainian.IO {
 
             this.OriginalFullPath = fullPath;
 
-            if ( !IOExtensions.TryGetFolderFromPath( fullPath, out this._directoryInfo, out this.Uri ) ) {
+            if ( !IOExtensions.TryGetFolderFromPath( fullPath, out this.DirectoryInfo, out this.Uri ) ) {
                 throw new InvalidOperationException( String.Format( "Unable to parse path {0}", fullPath ) );
             }
         }
@@ -125,7 +125,7 @@ namespace Librainian.IO {
             : this( Path.Combine( Environment.GetFolderPath( specialFolder ), appName, subFolder ) ) {
         }
 
-        public Folder( Environment.SpecialFolder specialFolder, String companyName ,String applicationName, String subFolder )
+        public Folder( Environment.SpecialFolder specialFolder, String companyName, String applicationName, String subFolder )
             : this( Path.Combine( Environment.GetFolderPath( specialFolder ), companyName, applicationName, subFolder ) ) {
         }
 
@@ -138,18 +138,30 @@ namespace Librainian.IO {
         /// </summary>
         /// <returns></returns>
         public IEnumerable<Document> GetDocuments() {
-            return this._directoryInfo.EnumerateFiles().Select( fileInfo => new Document( fileInfo.FullName ) );
+            if ( !this.DirectoryInfo.Exists ) {
+                this.DirectoryInfo.Refresh();
+                if ( !this.DirectoryInfo.Exists ) {
+                    return Enumerable.Empty<Document>();
+                }
+            }
+            return this.DirectoryInfo.EnumerateFiles().Select( fileInfo => new Document( fileInfo.FullName ) );
         }
 
         public IEnumerable<Folder> GetFolders() {
-            return this._directoryInfo.EnumerateDirectories().Select( fileInfo => new Folder( fileInfo.FullName ) );
+            if ( !this.DirectoryInfo.Exists ) {
+                this.DirectoryInfo.Refresh();
+                if ( !this.DirectoryInfo.Exists ) {
+                    return Enumerable.Empty<Folder>();
+                }
+            }
+            return this.DirectoryInfo.EnumerateDirectories().Select( fileInfo => new Folder( fileInfo.FullName ) );
         }
 
         public IEnumerable<Folder> GetFolders( String searchPattern ) {
             if ( String.IsNullOrEmpty( searchPattern ) ) {
                 yield break;
             }
-            foreach ( var fileInfo in this._directoryInfo.EnumerateDirectories( searchPattern ) ) {
+            foreach ( var fileInfo in this.DirectoryInfo.EnumerateDirectories( searchPattern ) ) {
                 yield return new Folder( fileInfo.FullName );
             }
         }
@@ -158,13 +170,13 @@ namespace Librainian.IO {
             if ( String.IsNullOrEmpty( searchPattern ) ) {
                 yield break;
             }
-            foreach ( var fileInfo in this._directoryInfo.EnumerateDirectories( searchPattern, searchOption ) ) {
+            foreach ( var fileInfo in this.DirectoryInfo.EnumerateDirectories( searchPattern, searchOption ) ) {
                 yield return new Folder( fileInfo.FullName );
             }
         }
 
         public IEnumerable<Document> GetDocuments( String searchPattern ) {
-            return this._directoryInfo.EnumerateFiles( searchPattern ).Select( fileInfo => new Document( fileInfo.FullName ) );
+            return this.DirectoryInfo.EnumerateFiles( searchPattern ).Select( fileInfo => new Document( fileInfo.FullName ) );
         }
 
         public IEnumerable<Document> GetDocuments( IEnumerable<String> searchPatterns ) {
@@ -176,7 +188,7 @@ namespace Librainian.IO {
         }
 
         public IEnumerable<Document> GetDocuments( String searchPattern, SearchOption searchOption ) {
-            return this._directoryInfo.EnumerateFiles( searchPattern, searchOption ).Select( fileInfo => new Document( fileInfo.FullName ) );
+            return this.DirectoryInfo.EnumerateFiles( searchPattern, searchOption ).Select( fileInfo => new Document( fileInfo.FullName ) );
         }
 
         /// <summary>
@@ -187,8 +199,8 @@ namespace Librainian.IO {
         /// <exception cref="PathTooLongException"></exception>
         public Boolean Exists {
             get {
-                this._directoryInfo.Refresh();
-                return this._directoryInfo.Exists;
+                this.DirectoryInfo.Refresh();
+                return this.DirectoryInfo.Exists;
             }
         }
 
@@ -199,7 +211,7 @@ namespace Librainian.IO {
         /// <seealso cref="Delete"/>
         public Boolean Create() {
             try {
-                this._directoryInfo.Create();
+                this.DirectoryInfo.Create();
                 return this.Exists;
             }
             catch ( IOException ) {
@@ -214,7 +226,7 @@ namespace Librainian.IO {
         /// <seealso cref="Create"/>
         public Boolean Delete() {
             try {
-                this._directoryInfo.Delete();
+                this.DirectoryInfo.Delete();
                 return !this.Exists;
             }
             catch ( IOException ) {

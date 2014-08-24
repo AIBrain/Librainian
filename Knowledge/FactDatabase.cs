@@ -20,12 +20,14 @@
 namespace Librainian.Knowledge {
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks.Dataflow;
     using Extensions;
+    using IO;
     using Linguistics;
     using Measurement.Time;
     using Ninject;
@@ -38,11 +40,11 @@ namespace Librainian.Knowledge {
 
         int AddFile( FileInfo dataFile, ProgressChangedEventHandler feedback = null );
 
-        void DoRandomEntry( ActionBlock< Sentence > action );
+        void DoRandomEntry( ActionBlock<Sentence> action );
     }
 
     public class FactDatabase : NinjectModule, IInitializable, IFactDatabase {
-        public readonly ConcurrentBag< FileInfo > KNBFiles = new ConcurrentBag< FileInfo >();
+        public readonly ConcurrentBag<FileInfo> KNBFiles = new ConcurrentBag<FileInfo>();
 
         public int FilesFound { get; set; }
 
@@ -66,39 +68,47 @@ namespace Librainian.Knowledge {
             return 0;
         }
 
-        public void DoRandomEntry( ActionBlock< Sentence > action ) {
+        public void DoRandomEntry( ActionBlock<Sentence> action ) {
             Tasks.Spawn( ( () => {
-                               if ( null == action ) {
-                                   return;
-                               }
+                if ( null == action ) {
+                    return;
+                }
 
-                               //pick random line from random file 
-                               var file = this.KNBFiles.OrderBy( o => Randem.Next() ).FirstOrDefault();
-                               if ( null == file ) {
-                                   return;
-                               }
+                //pick random line from random file 
+                var file = this.KNBFiles.OrderBy( o => Randem.Next() ).FirstOrDefault();
+                if ( null == file ) {
+                    return;
+                }
 
-                               //pick random line
-                               var line = File.ReadLines( file.FullName ).Where( s => !String.IsNullOrWhiteSpace( s ) ).Where( s => Char.IsLetter( s[ 0 ] ) ).OrderBy( o => Randem.Next() ).FirstOrDefault();
+                //pick random line
+                var line = File.ReadLines( file.FullName ).Where( s => !String.IsNullOrWhiteSpace( s ) ).Where( s => Char.IsLetter( s[ 0 ] ) ).OrderBy( o => Randem.Next() ).FirstOrDefault();
 
-                               //TODO new ActionBlock<Action>( action: action => {
-                               //Threads.AIBrain().Input( line );
-                               if ( !String.IsNullOrEmpty( line ) ) {
-                                   action.TryPost( new Sentence( line ) );
-                               }
-                           } ) );
+                //TODO new ActionBlock<Action>( action: action => {
+                //Threads.AIBrain().Input( line );
+                if ( !String.IsNullOrEmpty( line ) ) {
+                    action.TryPost( new Sentence( line ) );
+                }
+            } ) );
         }
 
         public void Initialize() {
             Seconds.One.Then( () => {
-                                  Threads.Report.Enter();
-                                  FileInfos.FindFiles( fileSearchPatterns: new[] { "*.knb" }, startingFolder: Environment.SpecialFolder.CommonDocuments, onFindFile: file => this.AddFile( dataFile: file ), cancellationToken: new CancellationToken() );
-                                  FileInfos.FindFiles( fileSearchPatterns: new[] { "*.knb" }, startingFolder: Environment.SpecialFolder.MyDocuments, onFindFile: file => this.AddFile( dataFile: file ), cancellationToken: new CancellationToken() );
-                                  if ( !this.KNBFiles.Any() ) {
-                                      FileInfos.FindFiles( fileSearchPatterns: new[] { "*.knb" }, onFindFile: file => this.AddFile( dataFile: file ), cancellationToken: new CancellationToken() );
-                                  }
-                                  Threads.Report.Exit();
-                              } );
+                Threads.Report.Enter();
+                var cancellationToken = new CancellationToken();
+
+                IEnumerable<string> fileSearchPatterns = new[] { "*.knb" };
+                Action<FileInfo> onFindFile = file => this.AddFile( dataFile: file );
+                IOExtensions.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellationToken: cancellationToken, startingFolder: new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.CommonDocuments ) ), onFindFile: onFindFile, onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+
+                IEnumerable<string> fileSearchPatterns1 = new[] { "*.knb" };
+                CancellationToken cancellationToken1 = new CancellationToken();
+                Action<FileInfo> onFindFile1 = file => this.AddFile( dataFile: file );
+                IOExtensions.FindFiles( fileSearchPatterns: fileSearchPatterns1, cancellationToken: cancellationToken1, startingFolder: new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ) ), onFindFile: onFindFile1, onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+                if ( !this.KNBFiles.Any() ) {
+                    IOExtensions.SearchAllDrives( fileSearchPatterns: new[] { "*.knb" }, onFindFile: file => this.AddFile( dataFile: file ), cancellationToken: new CancellationToken() );
+                }
+                Threads.Report.Exit();
+            } );
         }
 
         public override void Load() {

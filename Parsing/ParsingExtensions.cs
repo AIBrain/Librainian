@@ -553,6 +553,20 @@ namespace Librainian.Parsing {
             return ( source ?? String.Empty ).Equals( compare ?? String.Empty, StringComparison.InvariantCultureIgnoreCase );
         }
 
+
+        /// <summary>
+        ///     <para>Case insensitive string-end comparison. </para>
+        /// <para>( true example: cAt == CaT )</para>
+        ///     <para><see cref="StringComparison.InvariantCultureIgnoreCase" /></para>
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="compare"></param>
+        /// <returns></returns>
+        public static Boolean EndsLike( this String source, String compare ) {
+            return source.EndsWith( compare, StringComparison.InvariantCultureIgnoreCase );
+            //( source ?? String.Empty ).Equals( compare ?? String.Empty,  );
+        }
+
         //        public const String Lowercase = "abcdefghijklmnopqrstuvwxyz";
         //    }
         //}
