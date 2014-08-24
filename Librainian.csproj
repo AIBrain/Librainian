@@ -47,9 +47,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac">
-      <HintPath>..\Universal\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
-    </Reference>
     <Reference Include="AutoRegister">
       <HintPath>..\AIBrain\packages\NinjectAutoRegister.1.0.0\lib\AutoRegister.dll</HintPath>
     </Reference>
