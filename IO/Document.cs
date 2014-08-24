@@ -37,6 +37,7 @@ namespace Librainian.IO {
     using Extensions;
     using Magic;
     using Maths;
+    using Parsing;
 
     /// <summary>
     ///     <para>A wrapper for a file, the extension, the [parent] folder, and the file's size all from a given full path.</para>
@@ -209,13 +210,13 @@ namespace Librainian.IO {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] Document left, [CanBeNull] Document right ) {
-            if ( ReferenceEquals( left, null ) ) {
-                throw new ArgumentNullException( "left" );
+            if ( ReferenceEquals( left, right ) ) {
+                return true;
             }
-            if ( ReferenceEquals( right, null ) ) {
-                throw new ArgumentNullException( "right" );
+            if ( ReferenceEquals( left, null ) || ReferenceEquals( right, null )  ) {
+                return false;
             }
-            return left.Size == right.Size && String.Equals( left.FullPathWithFileName, right.FullPathWithFileName, StringComparison.InvariantCultureIgnoreCase );
+            return left.Size == right.Size && left.FullPathWithFileName.Like(right.FullPathWithFileName );
         }
 
         public override int GetHashCode() {

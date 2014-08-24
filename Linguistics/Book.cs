@@ -53,6 +53,8 @@ namespace Librainian.Linguistics {
             return this.GetEnumerator();
         }
 
+        //TODO public static Boolean Equals
+
         public Boolean Equals( [CanBeNull] Book other ) {
             if ( ReferenceEquals( other, null ) ) {
                 return false;

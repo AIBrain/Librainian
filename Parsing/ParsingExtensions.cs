@@ -542,7 +542,8 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        ///     <para>Case insensitive string comparison. ( true: cAt == CaT )</para>
+        ///     <para>Case insensitive string comparison. </para>
+        /// <para>( true example: cAt == CaT )</para>
         ///     <para><see cref="StringComparison.InvariantCultureIgnoreCase" /></para>
         /// </summary>
         /// <param name="source"></param>

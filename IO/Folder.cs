@@ -32,6 +32,7 @@ namespace Librainian.IO {
     using System.Security;
     using Annotations;
     using Extensions;
+    using Parsing;
 
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [DataContract( IsReference = true )]
@@ -82,6 +83,30 @@ namespace Librainian.IO {
             if ( !IOExtensions.TryGetFolderFromPath( fullPath, out this._directoryInfo, out this.Uri ) ) {
                 throw new InvalidOperationException( String.Format( "Unable to parse path {0}", fullPath ) );
             }
+        }
+
+        /// <summary>
+        ///     <para>Static comparison of the file names (case insensitive) and file sizes for equality.</para>
+        ///     <para>
+        ///         To compare the contents of two <see cref="Document" /> use
+        ///         <see cref="IOExtensions.SameContent(Document,Document)" />.
+        ///     </para>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals( [CanBeNull] Folder left, [CanBeNull] Folder right ) {
+            if ( ReferenceEquals( left, right ) ) {
+                return true;
+            }
+            if ( ReferenceEquals( left, null ) || ReferenceEquals( right, null ) ) {
+                return false;
+            }
+            return left.FullName.Like( right.FullName );
+        }
+
+        public override int GetHashCode() {
+            return this.FullName.GetHashCode();
         }
 
         /// <summary>
