@@ -29,6 +29,7 @@ namespace Librainian.IO {
     using System.Runtime.Serialization;
     using System.Security;
     using Annotations;
+    using CodeFluent.Runtime.BinaryServices;
     using Collections;
     using CsQuery.Engine.PseudoClassSelectors;
     using Extensions;
@@ -138,14 +139,20 @@ namespace Librainian.IO {
 
         public readonly String OriginalPathWithFileName;
 
-        private Document() {
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        /// <exception cref="NotSupportedException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref=""></exception>
+        private Document() {
             this.Folder = new Folder( Directory.GetCurrentDirectory() );
-            var temp = this.Folder.GetTempDocument();
-            if ( null == temp ) {
+            Document document;
+            if ( !this.Folder.TryGetTempDocument( out document ) ) {
                 throw new DirectoryNotFoundException();
             }
-            var document = new Document( temp.FullPathWithFileName );
             document.DeepClone( this );
         }
 
@@ -153,13 +160,15 @@ namespace Librainian.IO {
         ///     Returns true if the <see cref="Document" /> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public Boolean FileExists { get { return File.Exists( this.FullPathWithFileName ); } }
+        public Boolean Exists { get { return File.Exists( this.FullPathWithFileName ); } }
 
+/*
         /// <summary>
         ///     Returns true if the <see cref="Document.Folder" /> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
         public Boolean FolderExists { get { return this.Folder.Exists; } }
+*/
 
         /// <summary>
         ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
@@ -268,6 +277,7 @@ namespace Librainian.IO {
                 }
             };
             webClient.DownloadFileAsync( new Uri( this.FullPathWithFileName ), destination );
+            
 
             return true;
         }
@@ -315,6 +325,27 @@ namespace Librainian.IO {
         public IEnumerable<byte> AsByteArray() {
             var info = new FileInfo( this.FullPathWithFileName );
             return info.AsByteArray();
+        }
+
+        /// <summary>
+        /// <para>If the file does not exist, it is created.</para>
+        /// <para>Then the <paramref name="text"/> is appended to the file.</para>
+        /// </summary>
+        /// <param name="text"></param>
+        public async void AppendText( String text ) {
+
+            if ( this.Exists ) {
+                using ( var writer = File.AppendText( this.FullPathWithFileName ) ) {
+                    await writer.WriteLineAsync( text );
+                }
+            }
+            else {
+                using ( var writer = File.CreateText( this.FullPathWithFileName ) ) {
+                    await writer.WriteLineAsync( text );
+                }
+            }
+
+
         }
     }
 }

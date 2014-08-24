@@ -366,39 +366,21 @@ namespace Librainian.Threading {
         /// Generate a random string.
         /// </summary>
         /// <param name="length">How many characters long.</param>
-        /// <param name="lowerCase"><see cref="ParsingExtensions.Lowercase"/></param>
-        /// <param name="upperCase"><see cref="ParsingExtensions.Uppercase"/></param>
+        /// <param name="lowers"><see cref="ParsingExtensions.Lowercase"/></param>
+        /// <param name="uppers"><see cref="ParsingExtensions.Uppercase"/></param>
         /// <param name="numbers"><see cref="ParsingExtensions.Numbers"/></param>
         /// <param name="symbols"><see cref="ParsingExtensions.Symbols"/></param>
         /// <returns></returns>
-        public static String NextString( int length = 11, Boolean lowerCase = false, Boolean upperCase = false, Boolean numbers = false, Boolean symbols = false ) {
-            //var charPool = String.Concat( lowerCase ? Extensions.Lowercase : String.Empty, upperCase ? Extensions.Uppercase : String.Empty, numbers ? Extensions.Numbers : String.Empty, symbols ? Extensions.Symbols : String.Empty );
+        public static String NextString( int length = 11, Boolean lowers = false, Boolean uppers = false, Boolean numbers = false, Boolean symbols = false ) {
+
             var sb = new StringBuilder();
-            if ( lowerCase ) { sb.Append( ParsingExtensions.Lowercase ); }
-            if ( upperCase ) { sb.Append( ParsingExtensions.Uppercase ); }
+            if ( lowers ) { sb.Append( ParsingExtensions.Lowercase ); }
+            if ( uppers ) { sb.Append( ParsingExtensions.Uppercase ); }
             if ( numbers ) { sb.Append( ParsingExtensions.Numbers ); }
             if ( symbols ) { sb.Append( ParsingExtensions.Symbols ); }
 
             var charPool = sb.ToString();
             return new String( Enumerable.Range( 0, length ).Select( i => charPool[ Next( 0, charPool.Length ) ] ).ToArray() );
-
-            //var values = String.Join( String.Empty, Enumerable.Repeat( charPool[ r.Next( 0, charPool.Length ) ], length ).ToArray() );
-            //return values;
-
-            //var sb = new StringBuilder( capacity: length );
-            //for ( var i = 0; i < length; i++ ) {
-            //    //sb.Append( charPool[ r.Next( 0, charPool.Length ) ] );
-            //    s += charPool[ r.Next( 0, charPool.Length ) ];
-            //}
-
-            //var charArray = new char[ length ];
-            ////Pick a random integer in the character pool
-            ////Set it to the output character array
-            //for ( var i = 0; i < charArray.Length; i++ ) {
-            //    charArray[ i ] = charPool[ r.Next( 0, charPool.Length ) ];
-            //}
-
-            //return new String( charArray );
         }
 
         /// <summary>

@@ -92,7 +92,7 @@ namespace Librainian.Parsing {
         public static readonly String AllUppercaseLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() );
 
         [NotNull]
-        public static readonly String Alphabet = new String( value: Randem.NextString( 676, lowerCase: true, upperCase: false, numbers: false, symbols: false ).Distinct().Where( Char.IsLetter ).OrderBy( c => c ).Aggregate( String.Empty, ( s, c1 ) => s + ' ' + c1 ).ToArray() ).Trim();
+        public static readonly String Alphabet = new String( value: Randem.NextString( 676, lowers: true, uppers: false, numbers: false, symbols: false ).Where( Char.IsLetter ).Distinct().OrderBy( c => c ).Aggregate( String.Empty, ( s, c1 ) => s + ' ' + c1 ).ToArray() ).Trim();
 
         [NotNull]
         public static readonly Lazy<PluralizationService> LazyPluralizationService = new Lazy<PluralizationService>( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );

@@ -289,7 +289,7 @@ namespace Librainian.IO {
             var stopwatch = Stopwatch.StartNew();
         TryAgain:
             try {
-                if ( !document.FileExists ) {
+                if ( !document.Exists ) {
                     return true;
                 }
                 File.Delete( path: document.FullPathWithFileName );
@@ -468,12 +468,15 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        /// Returns a temporary <see cref="Document"/>, but does not create it.
+        /// Returns a temporary <see cref="Document"/>, but does not create it in the file system.
         /// </summary>
         /// <param name="folder"></param>
         /// <param name="document"></param>
         /// <returns></returns>
-        public static Boolean TryGetTempDocument( this Folder folder, [NotNull] out Document document ) {
+        public static Boolean TryGetTempDocument( [NotNull] this Folder folder, [NotNull] out Document document ) {
+            if ( folder == null ) {
+                throw new ArgumentNullException( "folder" );
+            }
             try {
                 var randomFile = Path.GetTempFileName();
                 File.Delete( randomFile );
