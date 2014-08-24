@@ -235,17 +235,16 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Starts a task to provides
+        ///     Starts a task to copy a file
         /// </summary>
         /// <param name="source"></param>
         /// <param name="destination"></param>
         /// <param name="progress"></param>
         /// <param name="eta"></param>
         /// <returns></returns>
-        public static Task Copy( Document source, Document destination, Action<double> progress, Action<TimeSpan> eta ) {
+        public static Task Copy( Document source, Document destination, Action<Double> progress, Action<TimeSpan> eta ) {
             return Task.Run( () => {
                 var computer = new Computer();
-                var bob = new Monitor
                 //TODO file monitor/watcher?
                 computer.FileSystem.CopyFile( source.FullPathWithFileName, destination.FullPathWithFileName, UIOption.AllDialogs, UICancelOption.DoNothing);
             } );
@@ -468,7 +467,7 @@ namespace Librainian.IO {
         /// <param name="folder"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static Document GetTempDocument( Folder folder ) {
+        public static Document GetTempDocument( this Folder folder ) {
             try {
                 var randomFile = Path.GetTempFileName();
                 File.Delete( randomFile );

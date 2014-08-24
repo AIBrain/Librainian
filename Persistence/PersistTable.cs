@@ -115,11 +115,8 @@ namespace Librainian.Persistence {
 
         private void TestForReadWriteAccess() {
 
-            var randomFile = Path.GetTempFileName();
-            File.Delete( randomFile );
-
-            var randomFileName = Path.Combine( this.Folder.FullName, Path.GetFileName( randomFile ) );
             try {
+                var randomFileName = this.Folder.GetTempDocument();
                 var temp = Path.Combine( this.MainStoragePath.FullName, String.Format( "{0}", randomFileName ) );
                 NtfsAlternateStream.WriteAllText( temp, text: Randem.NextString( 144, true, true, true, true ) );
                 NtfsAlternateStream.Delete( temp );

@@ -248,7 +248,11 @@ namespace Librainian.IO {
                                                          onProgress( percentage );
                                                      }
                                                  };
-            webClient.DownloadFileCompleted += ( sender, args ) => onCompleted();
+            webClient.DownloadFileCompleted += ( sender, args ) => {
+                                                   if ( onCompleted != null ) {
+                                                       onCompleted();
+                                                   }
+                                               };
             webClient.DownloadFileAsync( new Uri( this.FullPathWithFileName ), destination );
 
             return true;
