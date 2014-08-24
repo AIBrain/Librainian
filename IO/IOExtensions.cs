@@ -40,6 +40,7 @@ namespace Librainian.IO {
     using Microsoft.Scripting.Math;
     using Microsoft.VisualBasic.Devices;
     using Microsoft.VisualBasic.FileIO;
+    using NUnit.Framework;
 
     public static class IOExtensions {
 
@@ -246,7 +247,7 @@ namespace Librainian.IO {
             return Task.Run( () => {
                 var computer = new Computer();
                 //TODO file monitor/watcher?
-                computer.FileSystem.CopyFile( source.FullPathWithFileName, destination.FullPathWithFileName, UIOption.AllDialogs, UICancelOption.DoNothing);
+                computer.FileSystem.CopyFile( source.FullPathWithFileName, destination.FullPathWithFileName, UIOption.AllDialogs, UICancelOption.DoNothing );
             } );
         }
 
@@ -461,27 +462,35 @@ namespace Librainian.IO {
             proc.Responding.Should().Be( true );
         }
 
+        [Test]
+        public static Boolean TestEmptyDocument() {
+            return true;
+        }
+
         /// <summary>
         /// Returns a temporary <see cref="Document"/>, but does not create it.
         /// </summary>
         /// <param name="folder"></param>
+        /// <param name="document"></param>
         /// <returns></returns>
-        [CanBeNull]
-        public static Document GetTempDocument( this Folder folder ) {
+        public static Boolean TryGetTempDocument( this Folder folder, [NotNull] out Document document ) {
             try {
                 var randomFile = Path.GetTempFileName();
                 File.Delete( randomFile );
 
                 var randomFileName = Path.Combine( folder.FullName, Path.GetFileName( randomFile ) );
 
-                return new Document( randomFileName );
+                document = new Document( randomFileName );
+                return true;
             }
             catch ( DirectoryNotFoundException ) { }
             catch ( PathTooLongException ) { }
             catch ( IOException ) { }
             catch ( NotSupportedException ) { }
             catch ( UnauthorizedAccessException ) { }
-            return null;
+            // ReSharper disable once AssignNullToNotNullAttribute
+            document = null;
+            return false;
         }
 
         public static Boolean TryGetFolderFromPath( String path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri ) {

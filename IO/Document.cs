@@ -30,6 +30,7 @@ namespace Librainian.IO {
     using System.Security;
     using Annotations;
     using Collections;
+    using CsQuery.Engine.PseudoClassSelectors;
     using Extensions;
     using Magic;
     using Maths;
@@ -42,6 +43,8 @@ namespace Librainian.IO {
     [DataContract( IsReference = true )]
     [Immutable]
     public class Document : IEquatable<Document>, IEnumerable<Byte> {
+
+        public static readonly Document Empty = new Document();
 
         /// <summary>
         ///     "/"
@@ -134,6 +137,17 @@ namespace Librainian.IO {
         }
 
         public readonly String OriginalPathWithFileName;
+
+        private Document() {
+
+            this.Folder = new Folder( Directory.GetCurrentDirectory() );
+            var temp = this.Folder.GetTempDocument();
+            if ( null == temp ) {
+                throw new DirectoryNotFoundException();
+            }
+            var document = new Document( temp.FullPathWithFileName );
+            document.DeepClone( this );
+        }
 
         /// <summary>
         ///     Returns true if the <see cref="Document" /> currently exists.
@@ -236,23 +250,23 @@ namespace Librainian.IO {
         /// <param name="onProgress"></param>
         /// <param name="onCompleted"></param>
         /// <returns></returns>
-        public Boolean CopyFileWithProgress( string destination, Action<Percentage> onProgress, Action onCompleted  ) {
+        public Boolean CopyFileWithProgress( string destination, Action<Percentage> onProgress, Action onCompleted ) {
             var webClient = Ioc.Container.TryGet<WebClient>();
 
             if ( webClient == null ) {
                 return false;
             }
             webClient.DownloadProgressChanged += ( sender, args ) => {
-                                                     var percentage = new Percentage( ( BigInteger )args.BytesReceived, args.TotalBytesToReceive );
-                                                     if ( onProgress != null ) {
-                                                         onProgress( percentage );
-                                                     }
-                                                 };
+                var percentage = new Percentage( ( BigInteger )args.BytesReceived, args.TotalBytesToReceive );
+                if ( onProgress != null ) {
+                    onProgress( percentage );
+                }
+            };
             webClient.DownloadFileCompleted += ( sender, args ) => {
-                                                   if ( onCompleted != null ) {
-                                                       onCompleted();
-                                                   }
-                                               };
+                if ( onCompleted != null ) {
+                    onCompleted();
+                }
+            };
             webClient.DownloadFileAsync( new Uri( this.FullPathWithFileName ), destination );
 
             return true;

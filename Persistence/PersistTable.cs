@@ -1,5 +1,9 @@
 namespace Librainian.Persistence {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using System.Dynamic;
     using System.IO;
     using System.Windows.Forms;
     using Annotations;
@@ -17,6 +21,21 @@ namespace Librainian.Persistence {
     ///    <para>A little wrapper over the PersistentDictionary class.</para>
     /// </summary>
     public class PersistTable<TKey, TValue> : IInitializable where TKey : IComparable<TKey> {
+
+        private dynamic ToExpando( IEnumerable< KeyValuePair< TKey, TValue > > dictionary ) {
+            var expandoObject = new ExpandoObject() as IDictionary<TKey, TValue>;
+
+            if ( null != expandoObject ) {
+
+                foreach ( var keyValuePair in dictionary ) {
+                    expandoObject[ keyValuePair.Key ] = keyValuePair.Value;
+                }
+            }
+
+
+            return expandoObject;
+        }
+
 
         [NotNull]
         public Folder Folder { get; private set; }
@@ -113,12 +132,12 @@ namespace Librainian.Persistence {
                 }
         */
 
+
         private void TestForReadWriteAccess() {
 
             try {
                 var randomFileName = this.Folder.GetTempDocument();
-                var temp = Path.Combine( this.MainStoragePath.FullName, String.Format( "{0}", randomFileName ) );
-                NtfsAlternateStream.WriteAllText( temp, text: Randem.NextString( 144, true, true, true, true ) );
+                NtfsAlternateStream.WriteAllText( randomFileName.FullPathWithFileName, text: Randem.NextString( 144, true, true, true, true ) );
                 NtfsAlternateStream.Delete( temp );
             }
             finally {
