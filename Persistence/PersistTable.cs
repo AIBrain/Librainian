@@ -27,20 +27,26 @@ namespace Librainian.Persistence {
     using System.Collections.Generic;
     using System.Dynamic;
     using System.IO;
-    using System.Windows.Forms;
     using Annotations;
-    using Controls;
     using FluentAssertions;
     using IO;
+    using Librainian.Extensions;
     using Microsoft.Isam.Esent.Collections.Generic;
     using Ninject;
     using Parsing;
     using Threading;
 
+    public interface IPersistTable {
+        [NotNull]
+        Folder Folder { get; }
+
+        void Initialize();
+    }
+
     /// <summary>
     ///     <para>A little wrapper over the PersistentDictionary class.</para>
     /// </summary>
-    public class PersistTable<TKey, TValue> : IInitializable where TKey : IComparable<TKey> {
+    public class PersistTable<TKey, TValue> : IInitializable, IPersistTable where TKey : IComparable<TKey> {
 
         [NotNull]
         public readonly PersistentDictionary<TKey, TValue> Dictionary;
@@ -63,6 +69,14 @@ namespace Librainian.Persistence {
 
         public PersistTable( [NotNull] String fullpath )
             : this( new Folder( fullpath ) ) {
+        }
+
+        /// <summary>
+        /// No path given? Use the programdata\thisapp.exe type of path.
+        /// </summary>
+        public PersistTable() {
+            var name = Types.GetPropertyName( () => this );
+            //TODO
         }
 
         [NotNull]
@@ -98,7 +112,7 @@ namespace Librainian.Persistence {
                 /// <returns></returns>
                 public void ValidateStorageFolder() {
                     try {
-                    //TODO recheck all this logic some other day
+
                     Again:
                         if ( null == this.MainStoragePath ) {
                             this.AskUserForStorageFolder();
@@ -162,26 +176,6 @@ namespace Librainian.Persistence {
             document.AppendText( text );
             document.TryDeleting();
             return true;
-        }
-
-        /// <summary>
-        ///     ask user for folder/network path where to store AIBrain
-        /// </summary>
-        public void AskUserForStorageFolder() {
-            var folderBrowserDialog = new FolderBrowserDialog {
-                ShowNewFolderButton = true,
-                Description = "Please direct me to a folder.",
-                RootFolder = Environment.SpecialFolder.MyComputer
-            };
-
-            var owner = WindowWrapper.CreateWindowWrapper( Threads.CurrentProcess.MainWindowHandle );
-
-            var dialog = folderBrowserDialog.ShowDialog( owner );
-
-            if ( dialog != DialogResult.OK || folderBrowserDialog.SelectedPath.IsNullOrWhiteSpace() ) {
-                return;
-            }
-            this.MainStoragePath = new DirectoryInfo( folderBrowserDialog.SelectedPath );
         }
     }
 }

@@ -34,6 +34,7 @@ namespace Librainian.IO {
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using Annotations;
+    using Controls;
     using FluentAssertions;
     using Maths;
     using Measurement.Time;
@@ -41,6 +42,8 @@ namespace Librainian.IO {
     using Microsoft.VisualBasic.Devices;
     using Microsoft.VisualBasic.FileIO;
     using NUnit.Framework;
+    using Parsing;
+    using Threading;
 
     public static class IOExtensions {
 
@@ -172,7 +175,7 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
-        public static IEnumerable<byte> AsByteArray( [NotNull] this FileInfo fileInfo ) {
+        public static IEnumerable< byte > AsByteArray( [NotNull] this FileInfo fileInfo ) {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( "fileInfo" );
             }
@@ -204,7 +207,7 @@ namespace Librainian.IO {
         /// <param name="fileInfo"></param>
         /// <returns></returns>
         // TODO this needs a unit test for endianness
-        public static IEnumerable<UInt16> AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
+        public static IEnumerable< ushort > AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( "fileInfo" );
             }
@@ -243,7 +246,7 @@ namespace Librainian.IO {
         /// <param name="progress"></param>
         /// <param name="eta"></param>
         /// <returns></returns>
-        public static Task Copy( Document source, Document destination, Action<Double> progress, Action<TimeSpan> eta ) {
+        public static Task Copy( Document source, Document destination, Action< double > progress, Action< TimeSpan > eta ) {
             return Task.Run( () => {
                 var computer = new Computer();
                 //TODO file monitor/watcher?
@@ -517,6 +520,27 @@ namespace Librainian.IO {
             catch ( PathTooLongException ) { }
             catch ( InvalidOperationException ) { }
             return false;
+        }
+
+        /// <summary>
+        ///     ask user for folder/network path where to store dictionary
+        /// </summary>
+        [CanBeNull]
+        public static Folder AskUserForStorageFolder( String hint ) {
+            var folderBrowserDialog = new FolderBrowserDialog {
+                                                                  ShowNewFolderButton = true,
+                                                                  Description = String.Format( "Please direct me to a storage folder for {0}.", hint ),
+                                                                  RootFolder = Environment.SpecialFolder.MyComputer
+                                                              };
+
+            var owner = WindowWrapper.CreateWindowWrapper( Threads.CurrentProcess.MainWindowHandle );
+
+            var dialog = folderBrowserDialog.ShowDialog( owner );
+
+            if ( dialog != DialogResult.OK || folderBrowserDialog.SelectedPath.IsNullOrWhiteSpace() ) {
+                return null;
+            }
+            return new Folder( folderBrowserDialog.SelectedPath );
         }
     }
 
