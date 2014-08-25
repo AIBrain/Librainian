@@ -46,7 +46,10 @@ namespace Librainian {
             }
         }
 
-        public static readonly BigInteger OneMegaByte = new BigInteger( 1048576 );
+        /// <summary>
+        /// Just cast down to UInt32
+        /// </summary>
+        public static readonly BigInteger OneMegaByte = new BigInteger( 1024*1024 );
 
         /// <summary>
         ///     Provides properties for getting information about the computer's memory, loaded assemblies, name, and operating

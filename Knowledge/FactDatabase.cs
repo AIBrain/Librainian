@@ -26,7 +26,6 @@ namespace Librainian.Knowledge {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks.Dataflow;
-    using Extensions;
     using IO;
     using Linguistics;
     using Measurement.Time;
@@ -101,9 +100,9 @@ namespace Librainian.Knowledge {
                 IOExtensions.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellationToken: cancellationToken, startingFolder: new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.CommonDocuments ) ), onFindFile: onFindFile, onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
 
                 IEnumerable<string> fileSearchPatterns1 = new[] { "*.knb" };
-                CancellationToken cancellationToken1 = new CancellationToken();
                 Action<FileInfo> onFindFile1 = file => this.AddFile( dataFile: file );
-                IOExtensions.FindFiles( fileSearchPatterns: fileSearchPatterns1, cancellationToken: cancellationToken1, startingFolder: new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ) ), onFindFile: onFindFile1, onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+                IOExtensions.FindFiles( fileSearchPatterns: fileSearchPatterns1, cancellationToken: cancellationToken, startingFolder: new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ) ), onFindFile: onFindFile1, onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+
                 if ( !this.KNBFiles.Any() ) {
                     IOExtensions.SearchAllDrives( fileSearchPatterns: new[] { "*.knb" }, onFindFile: file => this.AddFile( dataFile: file ), cancellationToken: new CancellationToken() );
                 }

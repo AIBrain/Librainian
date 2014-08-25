@@ -27,7 +27,7 @@ namespace Librainian.Measurement.Time {
     ///     <para><see cref="PlanckTimes" /> since the big bang of <i>this</i> universe.</para>
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Lol" />
-    public struct UniversalDateTime : IComparable< UniversalDateTime > {
+    public struct UniversalDateTime : IComparable<UniversalDateTime> {
 
         public static readonly PlanckTimes PlancksUpTo1900AD = new PlanckTimes( new Seconds( 4.3E17m ) );
 
@@ -65,6 +65,12 @@ namespace Librainian.Measurement.Time {
             this.Time = new Time( span ); //we can use span here because the values have been normalized. Should()
         }
 
+        public static UniversalDateTime Now {
+            get {
+
+            }
+        }
+
         [Pure]
         public int CompareTo( UniversalDateTime other ) {
             return this.Value.CompareTo( other.Value );
@@ -86,7 +92,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static UniversalDateTime operator -( UniversalDateTime universalDateTime ) {
-            return new UniversalDateTime( universalDateTime.Value*-1 );
+            return new UniversalDateTime( universalDateTime.Value * -1 );
         }
 
         public static Boolean operator <( UniversalDateTime left, UniversalDateTime right ) {

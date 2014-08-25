@@ -1,55 +1,69 @@
-﻿
+﻿#region License & Information
+
+// This notice must be kept visible in the source.
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations and Royalties can be paid via
+// PayPal: paypal@aibrain.org
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/RandomnessTest.cs" was last cleaned by Rick on 2014/08/24 at 2:50 PM
+
+#endregion License & Information
+
 namespace Librainian.IO.Compression {
+
     using System;
-    using System.IO;
-    using System.IO.Compression;
-    using System.Linq;
-    using System.Numerics;
+    using System.Diagnostics;
     using Annotations;
-    using Extensions;
-    using Numerics;
+    using NUnit.Framework;
+    using Threading;
 
-    public class RandomnessTest {
+    [TestFixture]
+    public static class RandomnessTest {
+        public static RandomnessFeeeding RandomnessFeeeding;
 
-        public BigInteger HowManyBytesFed = BigInteger.Zero;
-        public BigInteger HowManyBytesAsCompressed = BigInteger.Zero;
-
-        /// <summary>
-        /// The higher the compressed 'data' is, the less the randomness it was.
-        /// </summary>
-        /// <returns></returns>
-        public Double GetCurrentCompressionRatio() {
-            var result = 1.0 - new BigRational( HowManyBytesAsCompressed, this.HowManyBytesFed );
-            return ( Double )result;
+        [TestFixtureSetUp, UsedImplicitly]
+        public static void Init() {
+            RandomnessFeeeding = new RandomnessFeeeding();
         }
 
-        private readonly GZipStream _gZipStream;
-
-        private readonly NullStream _nullStream;
-
-        public RandomnessTest() {
-            this._nullStream = new NullStream();
-            this._gZipStream = new GZipStream( stream: this._nullStream, compressionLevel: CompressionLevel.Optimal);
+        [TestFixtureTearDown]
+        public static void Done() {
+            RandomnessFeeeding.Dispose();
         }
 
-        public void FeedItData( [NotNull] byte[] data) {
-            if ( data == null ) {
-                throw new ArgumentNullException( "data" );
+        [Test, UsedImplicitly]
+        public static Boolean RunSimulation() {
+            var buffer = new Byte[ ( UInt32 )Computer.OneMegaByte ];   //one megabytes
+            var bufferLength = buffer.LongLength;
+            var randem = Randem.ThreadSafeRandom;
+
+            var counter = 10;
+
+            while ( counter-- > 0 ) {
+                Debug.WriteLine( "Generating {0} bytes of data..", bufferLength );
+                randem.Value.NextBytes( buffer );
+
+                Debug.WriteLine( "Feeding {0} bytes of data into compressor...", bufferLength );
+                var before = RandomnessFeeeding.HowManyBytesFed;
+                RandomnessFeeeding.FeedItData( buffer );
+                var after = RandomnessFeeeding.HowManyBytesFed;
+
+                RandomnessFeeeding.Report();
             }
-            HowManyBytesFed += data.LongLength;
-            this._gZipStream.Write( data, 0, data.Length );
-            HowManyBytesAsCompressed += this._nullStream.Length;
-            this._nullStream.Seek( 0, SeekOrigin.Begin );   //rewind our 'position' so we don't overrun a long
-        }
 
-        private void Report() {
-            Console.WriteLine( String.Format( "Current compression is now {0:P4}", this.GetCurrentCompressionRatio() ) );
+            return true;
         }
-
-        public void FeedItData( Document document ) {
-            var data = document.AsByteArray().ToArray();
-            FeedItData( data );
-        }
-
     }
 }

@@ -99,6 +99,12 @@
       <HintPath>..\Universal\packages\Clojure.1.5.0.2\lib\net40\Microsoft.Scripting.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="MongoDB.Bson">
+      <HintPath>..\Universal\packages\mongocsharpdriver.1.9.2\lib\net35\MongoDB.Bson.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Driver">
+      <HintPath>..\Universal\packages\mongocsharpdriver.1.9.2\lib\net35\MongoDB.Driver.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\AIBrain\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
@@ -315,6 +321,7 @@
     <Compile Include="Gaming\PlayingCards\Deck.cs" />
     <Compile Include="Gaming\DiceCup.cs" />
     <Compile Include="Gaming\TraditionalDice.cs" />
+    <Compile Include="IO\Compression\RandomnessFeeeding.cs" />
     <Compile Include="IO\Compression\RandomnessTest.cs" />
     <Compile Include="IO\CopyProgressCallbackReason.cs" />
     <Compile Include="IO\CopyProgressResult.cs" />

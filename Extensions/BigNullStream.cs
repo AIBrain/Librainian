@@ -1,12 +1,14 @@
 namespace Librainian.Extensions {
     using System;
     using System.IO;
-    using System.Numerics;
 
-    public class BigNullStream : Stream {
-        private BigInteger _length;
+    /// <summary>
+    /// TODO make this class able to use a BigInteger
+    /// </summary>
+    public abstract class BigNullStream : Stream {
+        private long _length;
 
-        private BigInteger _position;
+        private long _position;
 
         public override Boolean CanRead { get { return false; } }
 
@@ -14,9 +16,9 @@ namespace Librainian.Extensions {
 
         public override Boolean CanWrite { get { return true; } }
 
-        public override BigInteger Length { get { return this._length; } }
+        public override long Length { get { return this._length; } }
 
-        public override BigInteger Position {
+        public override long Position {
             get { return this._position; }
 
             set {

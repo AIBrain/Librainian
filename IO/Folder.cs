@@ -30,8 +30,6 @@ namespace Librainian.IO {
     using System.Linq;
     using System.Runtime.Serialization;
     using System.Security;
-    using System.Threading;
-    using System.Threading.Tasks;
     using Annotations;
     using Extensions;
     using Parsing;
@@ -236,13 +234,14 @@ namespace Librainian.IO {
             }
         }
 
-       public Task FindFilesAsync(
-            IEnumerable<String> fileSearchPatterns
-            , DirectoryInfo startingFolder
-            , CancellationToken cancellationToken
-            , Action<FileInfo> onFindFile = null
-            , Action<DirectoryInfo> onEachDirectory = null
-            , SearchStyle searchStyle = SearchStyle.FilesFirst
-            )
+        //TODO
+       //public Task FindFilesAsync(
+       //     IEnumerable<String> fileSearchPatterns
+       //     , DirectoryInfo startingFolder
+       //     , CancellationToken cancellationToken
+       //     , Action<FileInfo> onFindFile = null
+       //     , Action<DirectoryInfo> onEachDirectory = null
+       //     , SearchStyle searchStyle = SearchStyle.FilesFirst
+       //     )
     }
 }
