@@ -203,6 +203,8 @@
     <Compile Include="Collections\AbstractQueue.cs" />
     <Compile Include="Collections\BlockingQueue.cs" />
     <Compile Include="Collections\ImmutableList.cs" />
+    <Compile Include="Collections\IPotpourri.cs" />
+    <Compile Include="Collections\Potpourri.cs" />
     <Compile Include="Collections\ShufflingType.cs" />
     <Compile Include="Collections\TestParallelList.cs" />
     <Compile Include="Collections\TreeTraversalType.cs" />
