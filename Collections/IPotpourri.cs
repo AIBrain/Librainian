@@ -27,7 +27,7 @@ namespace Librainian.Collections {
     using System.Numerics;
     using Annotations;
 
-    public interface IPotpourri<TKey> {
+    public interface IPotpourri<TKey> : IEnumerable<KeyValuePair<TKey, BigInteger>> {
 
         void Add( TKey key, BigInteger count );
 
@@ -37,8 +37,13 @@ namespace Librainian.Collections {
 
         BigInteger Count();
 
+        BigInteger Count( TKey key );
+
         IEnumerable<KeyValuePair< TKey, BigInteger > > Get();
 
         Boolean Remove( TKey key, BigInteger count );
+
+        Boolean RemoveAll( TKey key );
+
     }
 }
