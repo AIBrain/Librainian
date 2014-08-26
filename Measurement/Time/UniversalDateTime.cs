@@ -29,7 +29,11 @@ namespace Librainian.Measurement.Time {
     /// <seealso cref="http://wikipedia.org/wiki/Lol" />
     public struct UniversalDateTime : IComparable<UniversalDateTime> {
 
-        public static readonly PlanckTimes PlancksUpTo1900AD = new PlanckTimes( new Seconds( 4.3E17m ) );
+        /// <summary>
+        /// <para>The value of this constant is equivalent to 00:00:00.0000000, January 1, 0001.</para>
+        /// <para>430,000,000,000,000,000 seconds</para>
+        /// </summary>
+        public static readonly PlanckTimes PlancksUpToMinDateTime = new PlanckTimes( new Seconds( 4.3E17m ) );
 
         public static readonly UniversalDateTime One = new UniversalDateTime( BigInteger.One );
 
@@ -67,7 +71,7 @@ namespace Librainian.Measurement.Time {
 
         public static UniversalDateTime Now {
             get {
-
+                return new UniversalDateTime( DateTime.UtcNow );
             }
         }
 
@@ -82,8 +86,9 @@ namespace Librainian.Measurement.Time {
         /// <param name="dateTime"></param>
         /// <returns></returns>
         public static Span CalcSpanSince( DateTime dateTime ) {
-            var timePassedSinceThen = new Span( dateTime - DateTime.MinValue ).TotalPlanckTimes;
-            var span = new Span( planckTimes: PlancksUpTo1900AD.Value + timePassedSinceThen );
+            var sinceThen = new Span( dateTime - DateTime.MinValue );
+            var plancksSinceThen = sinceThen.TotalPlanckTimes;
+            var span = new Span( planckTimes: PlancksUpToMinDateTime.Value + plancksSinceThen );
             return span;
         }
 

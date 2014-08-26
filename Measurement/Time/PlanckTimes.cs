@@ -14,7 +14,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/PlanckTimes.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/PlanckTimes.cs" was last cleaned by Rick on 2014/08/25 at 6:12 PM
 #endregion
 
 namespace Librainian.Measurement.Time {
@@ -46,9 +48,11 @@ namespace Librainian.Measurement.Time {
     [Serializable]
     public struct PlanckTimes : IComparable< PlanckTimes >, IQuantityOfTime {
         /// <summary>
-        ///     18548608483392000000
+        ///     <para>Possible numbers are:</para>
+        ///     <para>18548608483392000000</para>
+        ///     <para>18550948324478400000</para>
         /// </summary>
-        public static readonly BigInteger InOneYoctosecond = new BigInteger( 18548608483392000000m ); //where did I get this number???
+        public static readonly BigInteger InOneYoctosecond = new BigInteger( 18548608483392000000m ); //where did I get this number??? It's so.. accurate?
 
         public static readonly BigInteger InOneZeptosecond = BigInteger.Multiply( InOneYoctosecond, Yoctoseconds.InOneZeptosecond );
         public static readonly BigInteger InOneAttosecond = BigInteger.Multiply( InOneZeptosecond, Zeptoseconds.InOneAttosecond );
@@ -84,7 +88,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly PlanckTimes Zero = new PlanckTimes( value: 0 );
 
-        [DataMember] public readonly BigInteger Value;  //according to wikipedia, planck units by definition cannot be spilt into smaller units.
+        [DataMember] public readonly BigInteger Value; //according to wikipedia, planck units by definition cannot be spilt into smaller units.
 
         static PlanckTimes() {
             Zero.Should().BeLessThan( One );
@@ -93,22 +97,17 @@ namespace Librainian.Measurement.Time {
             One.Should().BeLessThan( Yoctoseconds.One );
         }
 
-        public PlanckTimes( long value ) {
-            this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
-        }
+        public PlanckTimes( long value ) : this( ( BigInteger ) value ) { }
 
-        //public PlanckTimes( Decimal value ) {
-        //    this.Value = new BigInteger( value );
-        //}
+        public PlanckTimes( Decimal value ) : this( ( BigInteger ) value ) { }
 
         public PlanckTimes( BigInteger value ) {
             this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
         }
 
-        public PlanckTimes( Seconds seconds ) {
-            var value = seconds.ToPlanckTimes();
-            this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
-        }
+        public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes() ) { }
+
+        public PlanckTimes( Years years ) : this( years.ToPlanckTimes() ) { }
 
         [UsedImplicitly]
         private string DebuggerDisplay { get { return this.ToString(); } }
