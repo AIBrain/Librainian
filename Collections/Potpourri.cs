@@ -14,7 +14,7 @@ namespace Librainian.Collections {
     [DataContract( IsReference = true )]
     [Serializable]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    public class Potpourri<TKey> : IPotpourri<TKey> {
+    public abstract class Potpourri<TKey> : IPotpourri<TKey> {
 
         [DataMember]
         [NotNull]
@@ -28,7 +28,7 @@ namespace Librainian.Collections {
         }
 
         [UsedImplicitly]
-        private string DebuggerDisplay {
+        protected string DebuggerDisplay {
             get {
                 return string.Format( "{0}({1}) ", this.FriendlyName, this.Container.Select( pair => pair.Key.ToString() ).ToStrings() );
             }
@@ -72,7 +72,7 @@ namespace Librainian.Collections {
         /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
         /// </returns>
         public IEnumerator<KeyValuePair<TKey, BigInteger>> GetEnumerator() {
-            return this.Get().GetEnumerator();
+            return this.Container.GetEnumerator();
         }
 
         /// <summary>
