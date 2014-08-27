@@ -1,23 +1,28 @@
 #region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/AtomicMassUnits.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/AtomicMassUnits.cs" was last cleaned by Rick on 2014/08/27 at 3:33 AM
+
+#endregion License & Information
 
 namespace Librainian.Measurement.Physics {
+
     using System;
     using System.Diagnostics;
     using System.Numerics;
@@ -34,18 +39,7 @@ namespace Librainian.Measurement.Physics {
     /// <seealso cref="http://www.wolframalpha.com/input/?i=1+unified+atomic+mass+units+convert+to+electronvolts" />
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
-    public struct AtomicMassUnits : IComparable< ElectronVolts >, IComparable< AtomicMassUnits > {
-        private const Decimal InOneElectronVolt = 0.000000001073544m;
-
-        private const Decimal InOneGigaElectronVolt = 1.073544m;
-
-        private const Decimal InOneKiloElectronVolt = 0.000001073544m;
-
-        private const Decimal InOneMegaElectronVolt = 0.001073544m;
-
-        private const Decimal InOneMilliElectronVolt = 0.000000000001073544m;
-
-        private const Decimal InOneTeraElectronVolt = 1073.544m;
+    public struct AtomicMassUnits : IComparable<ElectronVolts>, IComparable<AtomicMassUnits> {
 
         /// <summary>
         ///     About 79228162514264337593543950335.
@@ -70,25 +64,41 @@ namespace Librainian.Measurement.Physics {
         public static readonly ElectronVolts OneAtomicUnitEqualsElectronVolt = new MegaElectronVolts( 931.494m );
         public static readonly AtomicMassUnits OneElectronVoltEqualsAtomicMassUnits = new AtomicMassUnits( 0.000000001073544m );
         public static readonly AtomicMassUnits Zero = new AtomicMassUnits( 0 );
+
+        /// <summary>
+        ///
+        /// </summary>
         public readonly Decimal Value;
 
-        public AtomicMassUnits( Decimal value ) : this() {
+        /// <summary>
+        ///
+        /// </summary>
+        private const Decimal InOneElectronVolt = 0.000000001073544m;
+
+        private const Decimal InOneGigaElectronVolt = 1.073544m;
+
+        private const Decimal InOneKiloElectronVolt = 0.000001073544m;
+
+        private const Decimal InOneMegaElectronVolt = 0.001073544m;
+
+        private const Decimal InOneMilliElectronVolt = 0.000000000001073544m;
+
+        private const Decimal InOneTeraElectronVolt = 1073.544m;
+
+        public AtomicMassUnits( Decimal value )
+            : this() {
             this.Value = value;
         }
 
         public AtomicMassUnits( BigRational aBigFraction ) {
-            this.Value = ( Decimal ) aBigFraction;
+            this.Value = ( Decimal )aBigFraction;
         }
 
         [UsedImplicitly]
-        private string DebuggerDisplay { get { return this.Display(); } }
-
-        public int CompareTo( AtomicMassUnits other ) {
-            return this.Value.CompareTo( other.Value );
-        }
-
-        public int CompareTo( ElectronVolts other ) {
-            return this.ToElectronVolts().Value.CompareTo( other.Value );
+        private string DebuggerDisplay {
+            get {
+                return this.Display();
+            }
         }
 
         public static AtomicMassUnits operator -( AtomicMassUnits electronVolts ) {
@@ -99,38 +109,38 @@ namespace Librainian.Measurement.Physics {
         //    return gigaElectronVolts.ToElectronVolts();
         //}
         public static AtomicMassUnits operator *( AtomicMassUnits left, AtomicMassUnits right ) {
-            return new AtomicMassUnits( left.Value*right.Value );
+            return new AtomicMassUnits( left.Value * right.Value );
         }
 
         //public static implicit operator AtomicMassUnits( MegaElectronVolts megaElectronVolts ) {
         //    return megaElectronVolts.ToElectronVolts();
         //}
         public static AtomicMassUnits operator *( AtomicMassUnits left, Decimal right ) {
-            return new AtomicMassUnits( left.Value*right );
+            return new AtomicMassUnits( left.Value * right );
         }
 
         public static AtomicMassUnits operator *( Decimal left, AtomicMassUnits right ) {
-            return new AtomicMassUnits( left*right.Value );
+            return new AtomicMassUnits( left * right.Value );
         }
 
         public static AtomicMassUnits operator *( BigDecimal left, AtomicMassUnits right ) {
-            var res = left*right.Value;
-            return new AtomicMassUnits( ( Decimal ) res );
+            var res = left * right.Value;
+            return new AtomicMassUnits( ( Decimal )res );
         }
 
         public static AtomicMassUnits operator *( BigInteger left, AtomicMassUnits right ) {
             var lhs = new BigDecimal( left, 0 );
             var rhs = new BigDecimal( right.Value );
-            var res = lhs*rhs;
-            return new AtomicMassUnits( ( Decimal ) res );
+            var res = lhs * rhs;
+            return new AtomicMassUnits( ( Decimal )res );
         }
 
         public static AtomicMassUnits operator /( AtomicMassUnits left, AtomicMassUnits right ) {
-            return new AtomicMassUnits( left.Value/right.Value );
+            return new AtomicMassUnits( left.Value / right.Value );
         }
 
         public static AtomicMassUnits operator /( AtomicMassUnits left, Decimal right ) {
-            return new AtomicMassUnits( left.Value/right );
+            return new AtomicMassUnits( left.Value / right );
         }
 
         public static MegaElectronVolts operator +( AtomicMassUnits left, MegaElectronVolts right ) {
@@ -151,6 +161,16 @@ namespace Librainian.Measurement.Physics {
 
         public static Boolean operator >( AtomicMassUnits left, AtomicMassUnits right ) {
             return left.Value > right.Value;
+        }
+
+        [Pure]
+        public int CompareTo( AtomicMassUnits other ) {
+            return this.Value.CompareTo( other.Value );
+        }
+
+        [Pure]
+        public int CompareTo( ElectronVolts other ) {
+            return this.ToElectronVolts().Value.CompareTo( other.Value );
         }
 
         public int CompareTo( TeraElectronVolts other ) {
@@ -178,27 +198,27 @@ namespace Librainian.Measurement.Physics {
         }
 
         public AtomicMassUnits ToElectronVolts() {
-            return new AtomicMassUnits( this.Value*InOneElectronVolt );
+            return new AtomicMassUnits( this.Value * InOneElectronVolt );
         }
 
         public GigaElectronVolts ToGigaElectronVolts() {
-            return new GigaElectronVolts( this.Value*InOneGigaElectronVolt );
+            return new GigaElectronVolts( this.Value * InOneGigaElectronVolt );
         }
 
         public KiloElectronVolts ToKiloElectronVolts() {
-            return new KiloElectronVolts( this.Value*InOneKiloElectronVolt );
+            return new KiloElectronVolts( this.Value * InOneKiloElectronVolt );
         }
 
         public MegaElectronVolts ToMegaElectronVolts() {
-            return new MegaElectronVolts( this.Value*InOneMegaElectronVolt );
+            return new MegaElectronVolts( this.Value * InOneMegaElectronVolt );
         }
 
         public MilliElectronVolts ToMilliElectronVolts() {
-            return new MilliElectronVolts( this.Value*InOneMilliElectronVolt );
+            return new MilliElectronVolts( this.Value * InOneMilliElectronVolt );
         }
 
         public TeraElectronVolts ToTeraElectronVolts() {
-            return new TeraElectronVolts( this.Value*InOneTeraElectronVolt );
+            return new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
         }
     }
 }

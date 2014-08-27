@@ -14,7 +14,7 @@ namespace Librainian.Collections {
     [DataContract( IsReference = true )]
     [Serializable]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    public abstract class Potpourri<TKey> : IPotpourri<TKey> where TKey : class {
+    public  class Potpourri<TKey> : IPotpourri<TKey> where TKey : class {
 
         [DataMember]
         [NotNull]
@@ -34,6 +34,13 @@ namespace Librainian.Collections {
             }
         }
 
+        public void Add( TKey key ) {
+            if ( Equals( key, default( TKey ) ) ) {
+                return;
+            }
+            this.Container.AddOrUpdate( key: key, addValue: BigInteger.One, updateValueFactory: ( particles, integer ) => integer + BigInteger.One );
+        }
+
         public void Add( TKey key, BigInteger count ) {
             if ( Equals( key, default( TKey ) ) ) {
                 return;
@@ -41,10 +48,18 @@ namespace Librainian.Collections {
             this.Container.AddOrUpdate( key: key, addValue: count, updateValueFactory: ( particles, integer ) => integer + count );
         }
 
-        public void Add( KeyValuePair<TKey, BigInteger> keyValuePair ) {
+        public void Add( KeyValuePair< TKey, BigInteger > keyValuePair ) {
             this.Add( keyValuePair.Key, keyValuePair.Value );
-
         }
+
+        //public void Add( KeyValuePair<TKey, BigInteger> keyValuePair ) {
+        //    this.Add( keyValuePair.Key, keyValuePair.Value );
+        //}
+
+        public void Add( Tuple<TKey, BigInteger> keyValuePair ) {
+            this.Add( keyValuePair.Item1, keyValuePair.Item2 );
+        }
+
 
         public void Clear() {
             this.Container.Clear();
