@@ -14,7 +14,7 @@ namespace Librainian.Collections {
     [DataContract( IsReference = true )]
     [Serializable]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    public  class Potpourri<TKey> : IPotpourri<TKey> where TKey : class {
+    public class Potpourri<TKey> : IPotpourri<TKey> where TKey : class {
 
         [DataMember]
         [NotNull]
@@ -48,13 +48,9 @@ namespace Librainian.Collections {
             this.Container.AddOrUpdate( key: key, addValue: count, updateValueFactory: ( particles, integer ) => integer + count );
         }
 
-        public void Add( KeyValuePair< TKey, BigInteger > keyValuePair ) {
+        public void Add( KeyValuePair<TKey, BigInteger> keyValuePair ) {
             this.Add( keyValuePair.Key, keyValuePair.Value );
         }
-
-        //public void Add( KeyValuePair<TKey, BigInteger> keyValuePair ) {
-        //    this.Add( keyValuePair.Key, keyValuePair.Value );
-        //}
 
         public void Add( Tuple<TKey, BigInteger> keyValuePair ) {
             this.Add( keyValuePair.Item1, keyValuePair.Item2 );
@@ -77,8 +73,8 @@ namespace Librainian.Collections {
             return this.Container.Aggregate( BigInteger.Zero, ( current, kvp ) => current + kvp.Value );
         }
 
-        public BigInteger Count<TParticle>(  ) {
-            return this.Container.Where( pair => pair.Key is TParticle  ).Aggregate( BigInteger.Zero, ( current, kvp ) => current + kvp.Value );   //BUG is this right?
+        public BigInteger Count<TParticle>() {
+            return this.Container.Where( pair => pair.Key is TParticle ).Aggregate( BigInteger.Zero, ( current, kvp ) => current + kvp.Value );   //BUG is this right?
         }
 
         /// <summary>
