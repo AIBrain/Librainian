@@ -14,7 +14,7 @@ namespace Librainian.Collections {
     [DataContract( IsReference = true )]
     [Serializable]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    public abstract class Potpourri<TKey> : IPotpourri<TKey> {
+    public abstract class Potpourri<TKey> : IPotpourri<TKey> where TKey : class {
 
         [DataMember]
         [NotNull]
@@ -41,11 +41,16 @@ namespace Librainian.Collections {
             this.Container.AddOrUpdate( key: key, addValue: count, updateValueFactory: ( particles, integer ) => integer + count );
         }
 
+        public void Add( KeyValuePair<TKey, BigInteger> keyValuePair ) {
+            this.Add( keyValuePair.Key, keyValuePair.Value );
+
+        }
+
         public void Clear() {
             this.Container.Clear();
         }
 
-        public Boolean Contains( [CanBeNull] TKey key ) {
+        public Boolean Contains( TKey key ) {
             BigInteger value;
             if ( !this.Container.TryGetValue( key, out value ) ) {
                 return false;
@@ -65,8 +70,16 @@ namespace Librainian.Collections {
             return this.Container;
         }
 
-        public IEnumerable< KeyValuePair< TKey, BigInteger > > Get< TSdfgsd >() {
-            return this.Container.Cast< TSdfgsd >() as IEnumerable< KeyValuePair< TKey, BigInteger > >;
+        public IEnumerable<KeyValuePair<TKey, BigInteger>> Get<TCertainType>() {
+            var keys = this.Container.Keys.Cast<TCertainType>();
+            foreach ( var certainType in keys ) {
+                var key = certainType as TKey;
+                if ( key != null ) {
+                    yield return new KeyValuePair<TKey, BigInteger>( key, this.Container[ key ] );
+                }
+            }
+            //yield return new KeyValuePair< TCertainType, BigInteger >( result.Key as TCertainType, result.Value );
+
         }
 
         /// <summary>

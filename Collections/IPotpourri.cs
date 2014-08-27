@@ -31,6 +31,8 @@ namespace Librainian.Collections {
 
         void Add( TKey key, BigInteger count );
 
+        void Add( KeyValuePair<TKey, BigInteger> keyValuePair );
+
         void Clear();
 
         Boolean Contains( [CanBeNull] TKey key );
@@ -39,9 +41,9 @@ namespace Librainian.Collections {
 
         BigInteger Count( TKey key );
 
-        IEnumerable<KeyValuePair< TKey, BigInteger > > Get();
+        IEnumerable<KeyValuePair<TKey, BigInteger>> Get();
 
-        IEnumerable<KeyValuePair<TKey, BigInteger>> Get<TSdfgsd>(  );
+        IEnumerable<KeyValuePair<TKey, BigInteger>> Get<TCertainType>();
 
         Boolean Remove( TKey key, BigInteger count );
 
