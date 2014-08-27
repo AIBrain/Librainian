@@ -65,6 +65,10 @@ namespace Librainian.Collections {
             return this.Container;
         }
 
+        public IEnumerable< KeyValuePair< TKey, BigInteger > > Get< TSdfgsd >() {
+            return this.Container.Cast< TSdfgsd >() as IEnumerable< KeyValuePair< TKey, BigInteger > >;
+        }
+
         /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>

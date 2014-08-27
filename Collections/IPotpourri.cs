@@ -41,6 +41,8 @@ namespace Librainian.Collections {
 
         IEnumerable<KeyValuePair< TKey, BigInteger > > Get();
 
+        IEnumerable<KeyValuePair<TKey, BigInteger>> Get<TSdfgsd>(  );
+
         Boolean Remove( TKey key, BigInteger count );
 
         Boolean RemoveAll( TKey key );
