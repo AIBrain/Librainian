@@ -77,25 +77,24 @@ namespace Librainian.Collections {
             return this.Container.Aggregate( BigInteger.Zero, ( current, kvp ) => current + kvp.Value );
         }
 
-        public BigInteger Count( TKey key ) {
-            return this.Container.Where( pair => Equals( pair.Key, key ) ).Aggregate( BigInteger.Zero, ( current, kvp ) => current + kvp.Value );   //BUG is this right?
+        public BigInteger Count<TParticle>(  ) {
+            return this.Container.Where( pair => pair.Key is TParticle  ).Aggregate( BigInteger.Zero, ( current, kvp ) => current + kvp.Value );   //BUG is this right?
         }
 
         public IEnumerable<KeyValuePair<TKey, BigInteger>> Get() {
             return this.Container;
         }
 
-        public IEnumerable<KeyValuePair<TKey, BigInteger>> Get<TCertainType>() {
-            var keys = this.Container.Keys.Cast<TCertainType>();
-            foreach ( var certainType in keys ) {
-                var key = certainType as TKey;
-                if ( key != null ) {
-                    yield return new KeyValuePair<TKey, BigInteger>( key, this.Container[ key ] );
-                }
-            }
-            //yield return new KeyValuePair< TCertainType, BigInteger >( result.Key as TCertainType, result.Value );
+        //public IEnumerable<KeyValuePair<TKey, BigInteger>> Get<TCertainType>() {
+        //    var keys = this.Container.Keys.Cast<TCertainType>();
+        //    foreach ( TKey certainType in keys ) {
+        //        if ( certainType != null ) {
+        //            yield return new KeyValuePair<TCertainType, BigInteger>( certainType, this.Container[ certainType ] );
+        //        }
+        //    }
+        //    //yield return new KeyValuePair< TCertainType, BigInteger >( result.Key as TCertainType, result.Value );
 
-        }
+        //}
 
         /// <summary>
         /// Returns an enumerator that iterates through the collection.

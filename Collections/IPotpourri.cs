@@ -39,11 +39,11 @@ namespace Librainian.Collections {
 
         BigInteger Count();
 
-        BigInteger Count( TKey key );
+        BigInteger Count<TParticle>(  );
 
         IEnumerable<KeyValuePair<TKey, BigInteger>> Get();
 
-        IEnumerable<KeyValuePair<TKey, BigInteger>> Get<TCertainType>();
+        //IEnumerable<KeyValuePair<TCertainType, BigInteger>> Get<TCertainType>();
 
         Boolean Remove( TKey key, BigInteger count );
 
