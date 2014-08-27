@@ -332,8 +332,11 @@
     <Compile Include="IO\SearchStyle.cs" />
     <Compile Include="IO\WindowsAPI.cs" />
     <Compile Include="Magic\AutofacContainer.cs" />
+    <Compile Include="Magic\BetterDisposableClass.cs" />
     <Compile Include="Magic\IIocContainer.cs" />
     <Compile Include="Magic\Ioc.cs" />
+    <Compile Include="Magic\ManagedDisposable.cs" />
+    <Compile Include="Magic\NativeDisposable.cs" />
     <Compile Include="Magic\NinjectIocContainer.cs" />
     <Compile Include="IO\Crc32.cs" />
     <Compile Include="IO\IOExtensions.cs" />

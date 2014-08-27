@@ -10,6 +10,7 @@ namespace Librainian.Collections {
     using System.Runtime.Serialization;
     using Annotations;
     using Extensions;
+    using FluentAssertions;
 
     [DataContract( IsReference = true )]
     [Serializable]
@@ -127,14 +128,15 @@ namespace Librainian.Collections {
 
         public Boolean Remove( TKey key, BigInteger count ) {
             var before = this.Count();
-            if ( before > count ) {
+            count.Should().BeGreaterOrEqualTo( before );
+            if ( count > before ) {
                 count = before; //only remove what is there at the moment.
             }
             var newValue = this.Container.AddOrUpdate( key: key, addValue: 0, updateValueFactory: ( particles, integer ) => integer - count );
             return before != newValue;
         }
 
-        public bool RemoveAll( TKey key ) {
+        public Boolean RemoveAll( TKey key ) {
             BigInteger value;
             return this.Container.TryRemove( key, out value );
         }
