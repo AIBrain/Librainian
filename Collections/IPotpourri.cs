@@ -41,9 +41,18 @@ namespace Librainian.Collections {
 
         BigInteger Count<TParticle>(  );
 
+        /// <summary>
+        /// Get all particles
+        /// </summary>
+        /// <returns></returns>
         IEnumerable<KeyValuePair<TKey, BigInteger>> Get();
 
-        //IEnumerable<KeyValuePair<TCertainType, BigInteger>> Get<TCertainType>();
+        /// <summary>
+        /// Get all particles of type(<see cref="TParticle"/>).
+        /// </summary>
+        /// <typeparam name="TParticle"></typeparam>
+        /// <returns></returns>
+        IEnumerable< KeyValuePair< TKey, BigInteger > > Get< TParticle >();
 
         Boolean Remove( TKey key, BigInteger count );
 

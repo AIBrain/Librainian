@@ -81,8 +81,21 @@ namespace Librainian.Collections {
             return this.Container.Where( pair => pair.Key is TParticle  ).Aggregate( BigInteger.Zero, ( current, kvp ) => current + kvp.Value );   //BUG is this right?
         }
 
+        /// <summary>
+        /// Get all particles
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<KeyValuePair<TKey, BigInteger>> Get() {
             return this.Container;
+        }
+
+        /// <summary>
+        /// Get all particles of type(<see cref="TParticle"/>).
+        /// </summary>
+        /// <typeparam name="TParticle"></typeparam>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePair<TKey, BigInteger>> Get<TParticle>() {
+            return this.Container.Where( pair => pair.Key is TParticle );
         }
 
         //public IEnumerable<KeyValuePair<TKey, BigInteger>> Get<TCertainType>() {
