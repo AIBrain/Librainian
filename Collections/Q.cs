@@ -37,7 +37,7 @@ namespace Librainian.Collections {
 
         [NonSerialized] private Segment _tail;
 
-        private T[] m_serializationArray;
+        private T[] _serializationArray;
 
         public Q() {
             this._head = this._tail = new Segment( 0L );
@@ -126,18 +126,14 @@ namespace Librainian.Collections {
         }
 
         public void Enqueue( T item ) {
-#pragma warning disable 420
             while ( !this._tail.TryAppend( item, ref this._tail ) ) {
-#pragma warning restore 420
                 Thread.Yield();
             }
         }
 
         public Boolean TryDequeue( out T result ) {
             while ( !this.IsEmpty ) {
-#pragma warning disable 420
                 if ( this._head.TryRemove( out result, ref this._head ) ) {
-#pragma warning restore 420
                     return true;
                 }
             }
@@ -185,13 +181,13 @@ namespace Librainian.Collections {
 
         [OnDeserialized]
         private void OnDeserialized( StreamingContext context ) {
-            this.InitializeFromCollection( this.m_serializationArray );
-            this.m_serializationArray = null;
+            this.InitializeFromCollection( this._serializationArray );
+            this._serializationArray = null;
         }
 
         [OnSerializing]
         private void OnSerializing( StreamingContext context ) {
-            this.m_serializationArray = this.ToArray();
+            this._serializationArray = this.ToArray();
         }
 
         private List< T > ToList() {
