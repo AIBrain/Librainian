@@ -17,7 +17,7 @@
 // "Librainian/AutoNumber.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
 #endregion
 
-namespace Librainian.Persistence {
+namespace Librainian.Maths {
     using System;
     using System.Runtime.Serialization;
     using System.Threading;
@@ -63,7 +63,7 @@ namespace Librainian.Persistence {
         }
 
         public void Ensure( UInt64 atLeast ) {
-            if ( this.Identity < atLeast ) {
+            if ( this.Identity < atLeast ) {    //TODO make this an atomic operation
                 this.Reseed( atLeast );
             }
         }

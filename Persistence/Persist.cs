@@ -31,6 +31,7 @@ namespace Librainian.Persistence {
     using System.ServiceModel;
     using Annotations;
     using CodeFluent.Runtime.BinaryServices;
+    using IO.Streams;
     using Librainian.Extensions;
     using Parsing;
     using Threading;
@@ -624,7 +625,7 @@ namespace Librainian.Persistence {
         ////            //}
         ////        }
         ////        catch ( Exception exception ) {
-        ////            exception.Log();
+        ////            exception.Error();
         ////        }
         ////    }
         ////    return false;
@@ -739,16 +740,16 @@ namespace Librainian.Persistence {
         //                            return true;
         //                        }
         //                        catch ( InvalidOperationException exception ) {
-        //                            exception.Log();
+        //                            exception.Error();
         //                        }
         //                        catch ( ArgumentNullException exception ) {
-        //                            exception.Log();
+        //                            exception.Error();
         //                        }
         //                        catch ( SerializationException exception ) {
-        //                            exception.Log();
+        //                            exception.Error();
         //                        }
         //                        catch ( Exception exception ) {
-        //                            exception.Log();
+        //                            exception.Error();
         //                        }
         //                    }
         //                }
@@ -756,7 +757,7 @@ namespace Librainian.Persistence {
         //        }
         //    }
         //    catch ( IsolatedStorageException exception ) {
-        //        exception.Log();
+        //        exception.Error();
         //    }
         //    return false;
         //}
@@ -874,7 +875,7 @@ namespace Librainian.Persistence {
         //                info.SetValue( dest, sourceValue, null );
         //            }
         //            catch ( ArgumentException exception ) {
-        //                exception.Log();
+        //                exception.Error();
         //            }
         //        }
         //    }
@@ -884,8 +885,7 @@ namespace Librainian.Persistence {
         //    return result;
         //}
         /// <summary>
-        ///     Attempts to deserialize an NTFS alternate stream with the <paramref name="attribute" /> to the file
-        ///     <paramref name="location" />.
+        ///     <para>Attempts to deserialize an NTFS alternate stream with the <paramref name="attribute" /> to the file <paramref name="location" />.</para>
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
         /// <param name="attribute"></param>
@@ -1016,19 +1016,19 @@ namespace Librainian.Persistence {
         //                    }
         //                }
         //                catch ( XmlException exception ) {
-        //                    exception.Log();
+        //                    exception.Error();
         //                }
         //                catch ( SerializationException exception ) {
-        //                    exception.Log();
+        //                    exception.Error();
         //                }
         //                catch ( Exception exception ) {
-        //                    exception.Log();
+        //                    exception.Error();
         //                }
         //            }
         //        }
         //    }
         //    catch ( IsolatedStorageException exception ) {
-        //        exception.Log();
+        //        exception.Error();
         //    }
         //    return false;
         //}

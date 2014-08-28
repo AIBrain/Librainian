@@ -144,7 +144,7 @@ namespace Librainian {
                             //}
                         }
                         catch ( Exception exception ) {
-                            exception.Log();
+                            exception.Error();
                             return 0;
                         }
                     }
@@ -166,7 +166,7 @@ namespace Librainian {
                         }
                     }
                     catch ( Exception exception ) {
-                        exception.Log();
+                        exception.Error();
                         return 0;
                     }
                 }

@@ -1,4 +1,4 @@
-﻿#region License & Information
+#region License & Information
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
@@ -17,49 +17,49 @@
 // "Librainian/ContainerStream.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
 #endregion
 
-namespace Librainian.Persistence {
+namespace Librainian.IO.Streams {
     using System;
     using System.IO;
 
     public abstract class ContainerStream : Stream {
-        protected readonly Stream _stream;
+        protected readonly Stream Stream;
 
         protected ContainerStream( Stream stream ) {
             if ( null == stream ) {
                 throw new ArgumentNullException( "stream" );
             }
-            this._stream = stream;
+            this.Stream = stream;
         }
 
-        protected Stream ContainedStream { get { return this._stream; } }
+        protected Stream ContainedStream { get { return this.Stream; } }
 
-        public override Boolean CanRead { get { return this._stream.CanRead; } }
+        public override Boolean CanRead { get { return this.Stream.CanRead; } }
 
-        public override Boolean CanSeek { get { return this._stream.CanSeek; } }
+        public override Boolean CanSeek { get { return this.Stream.CanSeek; } }
 
-        public override Boolean CanWrite { get { return this._stream.CanWrite; } }
+        public override Boolean CanWrite { get { return this.Stream.CanWrite; } }
 
-        public override long Length { get { return this._stream.Length; } }
+        public override long Length { get { return this.Stream.Length; } }
 
         public override long Position {
             get {
                 //var str = this._stream as IsolatedStorageFileStream;
                 //if ( null != str ) { return str.Position; }
-                return this._stream.Position;
+                return this.Stream.Position;
             }
-            set { this._stream.Position = value; }
+            set { this.Stream.Position = value; }
         }
 
         public override void Flush() {
-            this._stream.Flush();
+            this.Stream.Flush();
         }
 
         public override int Read( byte[] buffer, int offset, int count ) {
-            return this._stream.Read( buffer, offset, count );
+            return this.Stream.Read( buffer, offset, count );
         }
 
         public override void Write( byte[] buffer, int offset, int count ) {
-            this._stream.Write( buffer, offset, count );
+            this.Stream.Write( buffer, offset, count );
         }
     }
 }

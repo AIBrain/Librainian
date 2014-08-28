@@ -325,10 +325,12 @@
     <Compile Include="Gaming\TraditionalDice.cs" />
     <Compile Include="IO\Compression\RandomnessFeeeding.cs" />
     <Compile Include="IO\Compression\RandomnessTest.cs" />
+    <Compile Include="IO\Streams\ContainerStream.cs" />
     <Compile Include="IO\CopyProgressCallbackReason.cs" />
     <Compile Include="IO\CopyProgressResult.cs" />
     <Compile Include="IO\Folder.cs" />
     <Compile Include="IO\MoveFileFlags.cs" />
+    <Compile Include="IO\Streams\ProgressStream.cs" />
     <Compile Include="IO\SearchStyle.cs" />
     <Compile Include="IO\WindowsAPI.cs" />
     <Compile Include="Magic\AutofacContainer.cs" />
@@ -457,6 +459,7 @@
     <Compile Include="Linguistics\Book.cs" />
     <Compile Include="Linguistics\Page.cs" />
     <Compile Include="Misc\ProductExampleClass.cs" />
+    <Compile Include="Persistence\IPersistTable.cs" />
     <Compile Include="Persistence\PersistableSettings.cs" />
     <Compile Include="Persistence\PersistedDatabase.cs" />
     <Compile Include="Persistence\PersistTable.cs" />
@@ -525,13 +528,11 @@
     <Compile Include="Parsing\Sequence.cs" />
     <Compile Include="Linguistics\Word.cs" />
     <Compile Include="Parsing\WordGuid.cs" />
-    <Compile Include="Persistence\AutoNumber.cs" />
-    <Compile Include="Persistence\ContainerStream.cs" />
+    <Compile Include="Maths\AutoNumber.cs" />
     <Compile Include="Persistence\DeserializeReportStats.cs" />
     <Compile Include="Persistence\Extensions.cs" />
     <Compile Include="Persistence\Persist.cs" />
     <Compile Include="Persistence\Persistable.cs" />
-    <Compile Include="Persistence\ReadProgressStream.cs" />
     <Compile Include="Security\Windows.cs" />
     <Compile Include="Speech\Speecher.cs" />
     <Compile Include="Speech\SpeechOutput.cs" />

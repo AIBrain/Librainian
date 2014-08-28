@@ -17,7 +17,7 @@
 // "Librainian/ReadProgressStream.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
 #endregion
 
-namespace Librainian.Persistence {
+namespace Librainian.IO.Streams {
     using System;
     using System.ComponentModel;
     using System.Diagnostics;
@@ -59,7 +59,7 @@ namespace Librainian.Persistence {
         /// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed. </exception>
         /// <filterpriority>1</filterpriority>
         public override long Seek( long offset, SeekOrigin origin ) {
-            return this._stream.Seek( offset: offset, origin: origin );
+            return this.Stream.Seek( offset: offset, origin: origin );
         }
 
         /// <summary>
@@ -74,11 +74,11 @@ namespace Librainian.Persistence {
         /// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed. </exception>
         /// <filterpriority>2</filterpriority>
         public override void SetLength( long value ) {
-            this._stream.SetLength( value: value );
+            this.Stream.SetLength( value: value );
         }
 
         public override int Read( byte[] buffer, int offset, int count ) {
-            var amountRead = this._stream.Read( buffer, offset, count );
+            var amountRead = this.Stream.Read( buffer, offset, count );
             if ( this.ProgressChanged != null ) {
                 var newProgress = ( int ) ( 10240.0D*( ( this.Position/( Double ) this.Length ) ) );
                 if ( newProgress > this._lastProgress && ( DateTime.UtcNow - this._lastProgressUpdate ) > TimeSpan.FromSeconds( 1 ) ) {
@@ -118,7 +118,7 @@ namespace Librainian.Persistence {
         /// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed. </exception>
         /// <filterpriority>1</filterpriority>
         public override void Write( byte[] buffer, int offset, int count ) {
-            this._stream.Write( buffer: buffer, offset: offset, count: count );
+            this.Stream.Write( buffer: buffer, offset: offset, count: count );
         }
 
         public event ProgressChangedEventHandler ProgressChanged;

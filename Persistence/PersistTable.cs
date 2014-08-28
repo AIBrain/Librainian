@@ -38,20 +38,13 @@ namespace Librainian.Persistence {
     using Parsing;
     using Threading;
 
-    public interface IPersistTable {
-        [NotNull]
-        Folder Folder { get; }
-
-        void Initialize();
-    }
-
     /// <summary>
     ///     <para>A little wrapper over the PersistentDictionary class.</para>
     /// </summary>
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
-    public class PersistTable<TKey, TValue> : IInitializable, IPersistTable where TKey : IComparable<TKey> {
+    public class PersistTable<TKey, TValue> : IInitializable, IPersistTable where TKey : /*struct,*/ IComparable<TKey>  {
 
         [NotNull]
         public readonly PersistentDictionary<TKey, TValue> Dictionary;
@@ -176,18 +169,23 @@ namespace Librainian.Persistence {
         */
 
         /// <summary>
-        ///     Return true if we can read & write in the <see cref="Folder" />.
+        ///     Return true if we can read/write in the <see cref="Folder" />.
         /// </summary>
         /// <returns></returns>
         private Boolean TestForReadWriteAccess() {
-            Document document;
-            if ( !this.Folder.TryGetTempDocument( out document ) ) {
-                return false;
+            try {
+                Document document;
+                if ( this.Folder.TryGetTempDocument( out document ) ) {
+                    var text = Randem.NextString( length: 1024, lowers: true, uppers: true, numbers: true, symbols: true );
+                    document.AppendText( text );
+                    document.TryDeleting();
+                    return true;
+                }
             }
-            var text = Randem.NextString( length: 1024, lowers: true, uppers: true, numbers: true, symbols: true );
-            document.AppendText( text );
-            document.TryDeleting();
-            return true;
+            catch ( Exception ) {
+                
+            }
+            return false;
         }
     }
 }

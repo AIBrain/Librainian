@@ -29,10 +29,13 @@ namespace Librainian.Persistence {
     using Measurement.Time;
 
     [DataContract( IsReference = true )]
-    public class PersistedDatabase< TKey, TValue > : IEnumerable< KeyValuePair< TKey, TValue > > {
+    public class PersistedDatabase<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> {
         /// <summary>
         /// </summary>
-        [NotNull] [DataMember] [OptionalField] public readonly ConcurrentDictionary< TKey, TValue > Collection = new ConcurrentDictionary< TKey, TValue >();
+        [NotNull]
+        [DataMember]
+        [OptionalField]
+        public readonly ConcurrentDictionary<TKey, TValue> Collection = new ConcurrentDictionary<TKey, TValue>();
 
         /// <summary>
         /// </summary>
@@ -49,20 +52,32 @@ namespace Librainian.Persistence {
         }
 
         [CanBeNull]
-        public ProgressChangedEventHandler Feedback { get; set; }
+        public ProgressChangedEventHandler Feedback {
+            get;
+            set;
+        }
 
         /// <summary>
         /// </summary>
         [CanBeNull]
-        public Action OnAfterDeserialized { get; set; }
+        public Action OnAfterDeserialized {
+            get;
+            set;
+        }
 
         /// <summary>
         /// </summary>
-        public DateTime? WhenDeserialized { get; private set; }
+        public DateTime? WhenDeserialized {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// </summary>
-        public DateTime? WhenSerialized { get; private set; }
+        public DateTime? WhenSerialized {
+            get;
+            private set;
+        }
 
         /// <summary>
         ///     indexer. return the value, or default().
@@ -75,10 +90,12 @@ namespace Librainian.Persistence {
                 return this.Collection.TryGetValue( key, out result ) ? result : default( TValue );
             }
 
-            set { this.Collection[ key ] = value; }
+            set {
+                this.Collection[ key ] = value;
+            }
         }
 
-        public IEnumerator< KeyValuePair< TKey, TValue > > GetEnumerator() {
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
             return this.Collection.GetEnumerator();
         }
 
@@ -98,7 +115,7 @@ namespace Librainian.Persistence {
         ///     Call when ready to load data back in.
         /// </summary>
         public void Deserialize() {
-            if ( !this._persistPath.Loader< PersistedDatabase< TKey, TValue > >( database => database.DeepClone( destination: this ), this.Feedback ) ) {
+            if ( !this._persistPath.Loader<PersistedDatabase<TKey, TValue>>( database => database.DeepClone( destination: this ), this.Feedback ) ) {
                 return;
             }
 

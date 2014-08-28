@@ -111,7 +111,7 @@ namespace Librainian.Collections {
         //        this.bob.WaitOne( timeout: timeToStall.Value );
         //    }
         //    catch ( Exception exception ) {
-        //        exception.Log();
+        //        exception.Error();
         //    }
         //}
     }
