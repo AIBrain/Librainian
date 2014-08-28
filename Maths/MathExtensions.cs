@@ -35,6 +35,8 @@ namespace Librainian.Maths {
     using Threading;
 
     public static class MathExtensions {
+        // ReSharper disable UnusedMember.Global
+
         public delegate int FibonacciCalculator( int n );
 
         public const Boolean No = !Yes;
@@ -1548,18 +1550,19 @@ namespace Librainian.Maths {
         /// <param name="n"></param>
         /// <returns></returns>
         /// <seealso cref="http://stackoverflow.com/questions/429165/raising-a-decimal-to-a-power-of-decimal"/>
-        public static decimal Pow( decimal x, uint n ) {
-            var A = 1m;
+        public static decimal Pow( Decimal x, UInt32 n ) {
+            var a = 1m;
             var e = new BitArray( BitConverter.GetBytes( n ) );
-            var t = e.Count;
 
-            for ( var i = t - 1 ; i >= 0 ; --i ) {
-                A *= A;
+            for ( var i = e.Count - 1 ; i >= 0 ; --i ) {
+                a *= a;
                 if ( e[ i ] ) {
-                    A *= x;
+                    a *= x;
                 }
             }
-            return A;
+            return a;
         }
     }
+
+    // ReSharper restore UnusedMember.Global
 }
