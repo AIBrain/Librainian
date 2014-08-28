@@ -67,7 +67,7 @@ namespace Librainian.Maths {
 
         public static readonly BigRational ThreeOverTwo = new BigRational( 3, 2 );
         public static readonly BigRational OneOverTwo = new BigRational( 1, 2 );
-        public static readonly BigRational MinusOneOverTwo = new BigRational( 1, 2 );
+        public static readonly BigRational MinusOneOverTwo = new BigRational( -1, 2 );
 
         /// <summary>
         ///     ConvertBigIntToBcd
