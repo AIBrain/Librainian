@@ -27,7 +27,7 @@ namespace Librainian.Magic {
     public interface IIocContainer {
 
         [CanBeNull]
-        IKernel Kernel { get; set;  }
+        IKernel Kernel { get; }
 
         //[CanBeNull]
         //IContainer BuildedContainer { get; set; }

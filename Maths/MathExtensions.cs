@@ -21,6 +21,7 @@
 
 namespace Librainian.Maths {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
@@ -78,11 +79,11 @@ namespace Librainian.Maths {
             var strNumber = numberToConvert.ToString();
             var currentNumber = string.Empty;
 
-            for ( var i = 0; i < howManyBytes; i++ ) {
+            for ( var i = 0 ; i < howManyBytes ; i++ ) {
                 convertedNumber[ i ] = 0xff;
             }
 
-            for ( var i = 0; i < strNumber.Length; i++ ) {
+            for ( var i = 0 ; i < strNumber.Length ; i++ ) {
                 currentNumber += strNumber[ i ];
 
                 if ( i == strNumber.Length - 1 && i % 2 == 0 ) {
@@ -170,7 +171,7 @@ namespace Librainian.Maths {
             var b = 1;
             yield return 1;
 
-            for ( var i = 0; i < max - 1; i++ ) {
+            for ( var i = 0 ; i < max - 1 ; i++ ) {
                 var c = a + b;
                 yield return c;
 
@@ -284,7 +285,8 @@ namespace Librainian.Maths {
             while ( x != y ) {
                 if ( x > y ) {
                     x = x - y;
-                } else {
+                }
+                else {
                     y = y - x;
                 }
             }
@@ -305,7 +307,8 @@ namespace Librainian.Maths {
             while ( x != y ) {
                 if ( x > y ) {
                     x = x - y;
-                } else {
+                }
+                else {
                     y = y - x;
                 }
             }
@@ -655,13 +658,13 @@ namespace Librainian.Maths {
         public static Boolean PassProbabilityTest() {
             var lower = new List<Boolean>();
             var probability = -0.33f;
-            for ( var i = 0; i < 1048576 * 10; i++ ) {
+            for ( var i = 0 ; i < 1048576 * 10 ; i++ ) {
                 lower.Add( probability.Probability() );
             }
 
             var higher = new List<Boolean>();
             probability = 0.123f;
-            for ( var i = 0; i < 1048576 * 10; i++ ) {
+            for ( var i = 0 ; i < 1048576 * 10 ; i++ ) {
                 higher.Add( probability.Probability() );
             }
 
@@ -911,11 +914,12 @@ namespace Librainian.Maths {
             int offset;
             if ( startValue < end ) {
                 offset = 1;
-            } else {
+            }
+            else {
                 offset = -1;
             }
 
-            for ( var i = startValue; i != end + offset; i += offset ) {
+            for ( var i = startValue ; i != end + offset ; i += offset ) {
                 yield return i;
             }
         }
@@ -933,14 +937,15 @@ namespace Librainian.Maths {
             }
 
             if ( start <= end ) {
-                for ( var b = start; b <= end; b += step ) {
+                for ( var b = start ; b <= end ; b += step ) {
                     yield return b;
                     if ( b == Byte.MaxValue ) {
                         yield break;
                     } //special case to deal with overflow
                 }
-            } else {
-                for ( var b = start; b >= end; b -= step ) {
+            }
+            else {
+                for ( var b = start ; b >= end ; b -= step ) {
                     yield return b;
                     if ( b == Byte.MinValue ) {
                         yield break;
@@ -968,14 +973,15 @@ namespace Librainian.Maths {
             var reFrom = ( UInt64 )start; //bug here is the bug if from is less than zero
 
             if ( start <= ( decimal )end ) {
-                for ( var ul = reFrom; ul <= end; ul += step ) {
+                for ( var ul = reFrom ; ul <= end ; ul += step ) {
                     yield return ul;
                     if ( ul == UInt64.MaxValue ) {
                         yield break;
                     } //special case to deal with overflow
                 }
-            } else {
-                for ( var ul = reFrom; ul >= end; ul -= step ) {
+            }
+            else {
+                for ( var ul = reFrom ; ul >= end ; ul -= step ) {
                     yield return ul;
                     if ( ul == UInt64.MinValue ) {
                         yield break;
@@ -1003,14 +1009,15 @@ namespace Librainian.Maths {
             var reFrom = start; //bug here is the bug if from is less than zero
 
             if ( start <= end ) {
-                for ( var ul = reFrom; ul <= end; ul += step ) {
+                for ( var ul = reFrom ; ul <= end ; ul += step ) {
                     yield return ul;
                     if ( ul == int.MaxValue ) {
                         yield break;
                     } //special case to deal with overflow
                 }
-            } else {
-                for ( var ul = reFrom; ul >= end; ul -= step ) {
+            }
+            else {
+                for ( var ul = reFrom ; ul >= end ; ul -= step ) {
                     yield return ul;
                     if ( ul == int.MinValue ) {
                         yield break;
@@ -1032,14 +1039,15 @@ namespace Librainian.Maths {
             }
 
             if ( @from <= end ) {
-                for ( var ul = @from; ul <= end; ul += step ) {
+                for ( var ul = @from ; ul <= end ; ul += step ) {
                     yield return ul;
                     if ( ul == UInt64.MaxValue ) {
                         yield break;
                     } //special case to deal with overflow
                 }
-            } else {
-                for ( var ul = @from; ul >= end; ul -= step ) {
+            }
+            else {
+                for ( var ul = @from ; ul >= end ; ul -= step ) {
                     yield return ul;
                     if ( ul == UInt64.MinValue ) {
                         yield break;
@@ -1061,11 +1069,12 @@ namespace Librainian.Maths {
             }
 
             if ( @from <= to ) {
-                for ( var ul = @from; ul <= to; ul += step ) {
+                for ( var ul = @from ; ul <= to ; ul += step ) {
                     yield return ul;
                 }
-            } else {
-                for ( var ul = @from; ul >= to; ul -= step ) {
+            }
+            else {
+                for ( var ul = @from ; ul >= to ; ul -= step ) {
                     yield return ul;
                 }
             }
@@ -1086,11 +1095,12 @@ namespace Librainian.Maths {
             BigInteger reFrom = @from;
 
             if ( reFrom <= to ) {
-                for ( var ul = reFrom; ul <= to; ul += step ) {
+                for ( var ul = reFrom ; ul <= to ; ul += step ) {
                     yield return ul;
                 }
-            } else {
-                for ( var ul = reFrom; ul >= to; ul -= step ) {
+            }
+            else {
+                for ( var ul = reFrom ; ul >= to ; ul -= step ) {
                     yield return ul;
                 }
             }
@@ -1138,11 +1148,12 @@ namespace Librainian.Maths {
             BigDecimal reFrom = start;
 
             if ( reFrom <= to ) {
-                for ( var ul = reFrom; ul <= to; ul = ul + step ) {
+                for ( var ul = reFrom ; ul <= to ; ul = ul + step ) {
                     yield return ul;
                 }
-            } else {
-                for ( var ul = reFrom; ul >= to; ul -= step ) {
+            }
+            else {
+                for ( var ul = reFrom ; ul >= to ; ul -= step ) {
                     yield return ul;
                 }
             }
@@ -1170,13 +1181,17 @@ namespace Librainian.Maths {
 
                     if ( diff.TotalDays > 0 ) {
                         step = TimeSpan.FromDays( 1 );
-                    } else if ( diff.TotalHours > 0 ) {
+                    }
+                    else if ( diff.TotalHours > 0 ) {
                         step = TimeSpan.FromHours( 1 );
-                    } else if ( diff.TotalMinutes > 0 ) {
+                    }
+                    else if ( diff.TotalMinutes > 0 ) {
                         step = TimeSpan.FromMinutes( 1 );
-                    } else if ( diff.TotalSeconds > 0 ) {
+                    }
+                    else if ( diff.TotalSeconds > 0 ) {
                         step = TimeSpan.FromSeconds( 1 );
-                    } else {
+                    }
+                    else {
                         step = TimeSpan.FromMilliseconds( 1 );
                     }
                 }
@@ -1186,11 +1201,12 @@ namespace Librainian.Maths {
             }
 
             if ( @from <= to ) {
-                for ( var dt = @from; dt <= to; dt += step.Value ) {
+                for ( var dt = @from ; dt <= to ; dt += step.Value ) {
                     yield return dt;
                 }
-            } else {
-                for ( var dt = @from; dt >= to; dt -= step.Value ) {
+            }
+            else {
+                for ( var dt = @from ; dt >= to ; dt -= step.Value ) {
                     yield return dt;
                 }
             }
@@ -1198,14 +1214,14 @@ namespace Librainian.Maths {
 
         public static IEnumerable<double> To( this Double start, Double end ) {
             var count = end - start + 1;
-            for ( var i = 0; i < count; i++ ) {
+            for ( var i = 0 ; i < count ; i++ ) {
                 yield return start + i;
             }
         }
 
         public static IEnumerable<decimal> To( this Decimal start, Decimal end ) {
             var count = end - start + 1;
-            for ( var i = 0; i < count; i++ ) {
+            for ( var i = 0 ; i < count ; i++ ) {
                 yield return start + i;
             }
         }
@@ -1448,7 +1464,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static BigInteger ToBigInteger(this BigDecimal value ) {
+        public static BigInteger ToBigInteger( this BigDecimal value ) {
             var scaleDivisor = BigInteger.Pow( 10, value.Exponent );
             var scaledValue = BigInteger.Divide( value.Mantissa, scaleDivisor );
             return scaledValue;
@@ -1460,10 +1476,10 @@ namespace Librainian.Maths {
         /// <param name="low"></param>
         /// <param name="high"></param>
         /// <returns></returns>
-        public static UInt16 CombineBytes( this Byte low, Byte high) {
+        public static UInt16 CombineBytes( this Byte low, Byte high ) {
             return BitConverter.ToUInt16( BitConverter.IsLittleEndian ? new[] { high, low } : new[] { low, high }, 0 );
-        } 
-        
+        }
+
         /// <summary>
         /// Combine two bytes into one <see cref="UInt16"/> with little endianess.
         /// </summary>
@@ -1482,8 +1498,68 @@ namespace Librainian.Maths {
         /// <param name="high"></param>
         /// <returns></returns>
         /// <seealso cref="CombineTwoBytesLittleEndianess"/>
-        public static UInt16 CombineTwoBytesHighEndianess( this Byte low, Byte high) {
+        public static UInt16 CombineTwoBytesHighEndianess( this Byte low, Byte high ) {
             return ( UInt16 )( high + ( low << 8 ) );    //BUG is this backwards?
+        }
+
+        /// <summary>
+        /// <para>In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or typical value of a set of numbers by using the product of their values (as opposed to the arithmetic mean which uses their sum).</para>
+        ///  <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://wikipedia.org/wiki/Geometric_mean"/>
+        public static double GeometricMean( this IEnumerable< Double > data, int items ) {
+            var aggregate = data.Aggregate( 1.0, ( current, d ) => current * d );
+            return Math.Pow( aggregate, ( 1.0 / items ) );
+        }
+
+        /// <summary>
+        /// <para>In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or typical value of a set of numbers by using the product of their values (as opposed to the arithmetic mean which uses their sum).</para>
+        ///  <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://wikipedia.org/wiki/Geometric_mean"/>
+        public static Decimal GeometricMean( this IEnumerable<Decimal> data, int items ) {
+            var aggregate = data.Aggregate( 1.0m, ( current, d ) => current * d );
+            return ( Decimal )Math.Pow( ( Double )aggregate, ( Double )( 1.0m / items ) );   //BUG conversion errors here
+        }
+        
+        /// <summary>
+        /// <para>In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or typical value of a set of numbers by using the product of their values (as opposed to the arithmetic mean which uses their sum).</para>
+        ///  <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://wikipedia.org/wiki/Geometric_mean"/>
+        public static BigDecimal GeometricMean( this IEnumerable<BigDecimal> data, int items ) {
+            var aggregate = data.Aggregate( BigDecimal.One, ( current, d ) => current * d );
+            return BigDecimal.Pow( ( double ) aggregate, 1.0 / items );   //BUG conversion errors here
+        }
+
+        /// <summary>
+        /// <see cref="Decimal"/> raised to the nth power.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://stackoverflow.com/questions/429165/raising-a-decimal-to-a-power-of-decimal"/>
+        public static decimal Pow( decimal x, uint n ) {
+            var A = 1m;
+            var e = new BitArray( BitConverter.GetBytes( n ) );
+            var t = e.Count;
+
+            for ( var i = t - 1 ; i >= 0 ; --i ) {
+                A *= A;
+                if ( e[ i ] ) {
+                    A *= x;
+                }
+            }
+            return A;
         }
     }
 }
