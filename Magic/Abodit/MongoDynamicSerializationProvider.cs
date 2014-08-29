@@ -1,7 +1,6 @@
 ﻿
-namespace Librainian.Magic {
+namespace Librainian.Magic.Abodit {
     using System;
-    using Abodit;
     using MongoDB.Bson.Serialization;
 
     /// <summary>

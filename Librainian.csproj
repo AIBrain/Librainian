@@ -338,6 +338,7 @@
     <Compile Include="IO\SearchStyle.cs" />
     <Compile Include="IO\WindowsAPI.cs" />
     <Compile Include="Magic\Abodit\IId.cs" />
+    <Compile Include="Magic\Abodit\Proxy.cs" />
     <Compile Include="Magic\Abodit\SimpleDocument.cs" />
     <Compile Include="Magic\AutofacContainer.cs" />
     <Compile Include="Magic\BetterDisposableClass.cs" />

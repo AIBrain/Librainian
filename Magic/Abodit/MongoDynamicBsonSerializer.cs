@@ -97,7 +97,7 @@ namespace Librainian.Magic.Abodit {
         }
 
         public void SetDocumentId( object document, object id ) {
-            MongoDynamic x = ( MongoDynamic )document;
+            var x = ( MongoDynamic )document;
             x.ID = ( ObjectId )id;
         }
 
@@ -119,12 +119,17 @@ namespace Librainian.Magic.Abodit {
                 bsonWriter.WriteName( memberName );
 
                 object memberValue;
-                if ( memberName == "_id" )
-                    memberValue = ( ( MongoDynamic )value ).ID;
-                else if ( memberName == "int" )
-                    memberValue = ( ( MongoDynamic )value ).Int;
-                else
-                    memberValue = Impromptu.InvokeGet( value, memberName );
+                switch ( memberName ) {
+                    case "_id":
+                        memberValue = ( ( MongoDynamic )value ).ID;
+                        break;
+                    case "int":
+                        memberValue = ( ( MongoDynamic )value ).Int;
+                        break;
+                    default:
+                        memberValue = Impromptu.InvokeGet( value, memberName );
+                        break;
+                }
 
                 if ( memberValue == null )
                     bsonWriter.WriteNull();

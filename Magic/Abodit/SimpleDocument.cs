@@ -23,34 +23,9 @@ namespace Librainian.Magic.Abodit {
 
     using System.Collections.Generic;
     using System.Dynamic;
+    using ImpromptuInterface;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
-
-    public class Proxy : DynamicObject {
-        public BsonDocument Document {
-            get;
-            set;
-        }
-
-        public Proxy( BsonDocument document ) {
-            this.Document = document;
-        }
-        public override bool TryGetMember( GetMemberBinder binder, out object result ) {
-            BsonValue res = null;
-            this.Document.TryGetValue( binder.Name, out res );
-            result = res.RawValue;  //Obsolete warning here.
-            //result = BsonTypeMapper.MapToDotNetValue();
-            return true;            // We always support a member even if we don't have it in the dictionary
-        }
-
-        /// <summary>
-        /// Set a property (e.g. person1.Name = "Smith")
-        /// </summary>     
-        public override bool TrySetMember( SetMemberBinder binder, object value ) {
-            this.Document.Add( binder.Name, BsonValue.Create( value ) );
-            return true;
-        }
-    }
 
     /// <summary>
     ///     A very simple document object
@@ -77,7 +52,7 @@ namespace Librainian.Magic.Abodit {
             foreach ( var @interface in typeof( T ).GetInterfaces() ) {
                 this.interfaces.Add( @interface.Name );
             }
-            return Impromptu.ActLike<T>( new Proxy( this.properties ) );
+            return new Proxy( this.properties ).ActLike< T >();
         }
 
         /// <summary>
@@ -87,7 +62,7 @@ namespace Librainian.Magic.Abodit {
             if ( !this.interfaces.Contains( typeof( T ).Name ) ) {
                 return null;
             }
-            return Impromptu.ActLike<T>( new Proxy( this.properties ) );
+            return new Proxy( this.properties ).ActLike< T >();
         }
     }
 }
