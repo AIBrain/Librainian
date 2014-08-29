@@ -79,5 +79,7 @@ namespace Librainian.Measurement.Physics {
             /// </summary>
             public static readonly BigRational Zero = new BigRational( 0m )*Basic;
         }
+
+        public static readonly BigRational HalfSpin = new BigRational( 1, 2 ); //TODO overkill. But correct. lol.
     }
 }
