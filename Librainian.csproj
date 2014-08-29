@@ -416,6 +416,7 @@
     <Compile Include="Measurement\Currency\BTC\ICoin.cs" />
     <Compile Include="Measurement\Length\IQuantityOfDistance.cs" />
     <Compile Include="Measurement\Physics\AtomicMassUnits.cs" />
+    <Compile Include="Measurement\Physics\Forces.cs" />
     <Compile Include="Measurement\Physics\KiloElectronVolts.cs" />
     <Compile Include="Measurement\Physics\SpeedOfLight.cs" />
     <Compile Include="Measurement\Physics\UniversalConstants.cs" />
