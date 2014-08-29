@@ -20,44 +20,21 @@
 namespace Librainian.Collections {
     using System;
     using System.Runtime.Serialization;
+    using Extensions;
 
     [DataContract( IsReference = true )]
+    [Immutable]
     public struct PairOfDoubles {
-        [DataMember] [OptionalField] private Double _high;
 
-        [DataMember] [OptionalField] private Double _low;
-
-        public PairOfDoubles( Double low, Double high ) {
-            this._low = Math.Min( low, high );
-            this._high = Math.Max( low, high );
+        public PairOfDoubles( Double low, Double high ) : this() {
+            this.Low = Math.Min( low, high );
+            this.High = Math.Max( low, high );
         }
 
-        public Double High {
-            get { return this._high; }
+        [DataMember]
+        public Double High {get;private set;}
 
-            set {
-                if ( value < this._low ) {
-                    this._high = this._low;
-                    this._low = value;
-                }
-                else {
-                    this._high = value;
-                }
-            }
-        }
-
-        public Double Low {
-            get { return this._low; }
-
-            set {
-                if ( value > this._high ) {
-                    this._low = this._high;
-                    this._high = value;
-                }
-                else {
-                    this._low = value;
-                }
-            }
-        }
+        [DataMember]
+        public Double Low {get;private set;}
     }
 }

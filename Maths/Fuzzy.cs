@@ -48,7 +48,7 @@ namespace Librainian.Maths {
         /// </summary>
         public const Double MaxValue = 1D;
 
-        public const Double HalfValue = ( MinValue + MaxValue )/2D;
+        public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
 
         /// <summary>
         ///     ~25 to 75% probability.
@@ -63,12 +63,14 @@ namespace Librainian.Maths {
         /// <summary>
         ///     ONLY used in the getter and setter.
         /// </summary>
-        [DataMember] private AtomicDouble _value;
+        [DataMember]
+        private AtomicDouble _value;
 
         /// <summary>
         ///     Initializes a random number between 0 and 1
         /// </summary>
-        public Fuzzy( Double? value = null ) : this() {
+        public Fuzzy( Double? value = null )
+            : this() {
             if ( value.HasValue ) {
                 this.Value = value.Value;
             }
@@ -78,7 +80,9 @@ namespace Librainian.Maths {
         }
 
         public Double Value {
-            get { return this._value; }
+            get {
+                return this._value;
+            }
             set {
                 var correctedvalue = value;
                 if ( value > MaxValue ) {
@@ -148,7 +152,7 @@ namespace Librainian.Maths {
         //public static Fuzzy Combine( Double value1, Fuzzy value2 ) { return new Fuzzy( ( value1 + value2 ) / 2D ); }
 
         public static Double Combine( Double value1, Double value2 ) {
-            return ( value1 + value2 )/2.0D;
+            return ( value1 + value2 ) / 2.0D;
         }
 
         public override String ToString() {
@@ -179,13 +183,13 @@ namespace Librainian.Maths {
         //public Boolean IsUndecided( Fuzzy anotherFuzzy ) { return !IsTruer( anotherFuzzy ) && !IsFalser( anotherFuzzy ); }
 
         public void AdjustTowardsMax() {
-            this.Value = ( this.Value + MaxValue )/2D;
+            this.Value = ( this.Value + MaxValue ) / 2D;
             //return this;
         }
 
         [UsedImplicitly]
         public void AdjustTowardsMin() {
-            this.Value = ( this.Value + MinValue )/2D;
+            this.Value = ( this.Value + MinValue ) / 2D;
             //return this;
         }
     }

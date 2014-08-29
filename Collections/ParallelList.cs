@@ -94,7 +94,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="readTimeout"></param>
         /// <param name="writeTimeout"></param>
-        public ParallelList( TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null )
+        public ParallelList( Span? readTimeout = null, Span? writeTimeout = null )
             : this() {
             if ( readTimeout.HasValue ) {
                 this.TimeoutForReads = readTimeout.Value;
@@ -131,31 +131,56 @@ namespace Librainian.Collections {
         /// <summary>
         ///     <para>Returns the count of items waiting to be added to this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeAdded { get { return this._waitingToBeAddedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
+        public int CountOfItemsWaitingToBeAdded {
+            get {
+                return this._waitingToBeAddedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
+            }
+        }
 
         /// <summary>
         ///     <para>Returns the count of items waiting to be changed in this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeChanged { get { return this._waitingToBeChangedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
+        public int CountOfItemsWaitingToBeChanged {
+            get {
+                return this._waitingToBeChangedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
+            }
+        }
 
         /// <summary>
         ///     <para>Returns the count of items waiting to be inserted to this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeInserted { get { return this._waitingToBeInsertedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
+        public int CountOfItemsWaitingToBeInserted {
+            get {
+                return this._waitingToBeInsertedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
+            }
+        }
 
-        public TimeSpan TimeoutForReads { get; set; }
+        public Span TimeoutForReads {
+            get;
+            set;
+        }
 
-        public TimeSpan TimeoutForWrites { get; set; }
+        public Span TimeoutForWrites {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     <para>Count of items currently in this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int Count { get { return this._itemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable ); } }
+        public int Count {
+            get {
+                return this._itemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
+            }
+        }
 
         /// <summary>
         /// </summary>
         /// <seealso cref="AllowModifications" />
-        public Boolean IsReadOnly { get; private set; }
+        public Boolean IsReadOnly {
+            get;
+            private set;
+        }
 
         public TType this[ int index ] {
             get {
@@ -206,6 +231,49 @@ namespace Librainian.Collections {
                 this._itemCounter = new ThreadLocal<int>( () => 0, trackAllValues: true ); //BUG is this correct?
                 return true;
             } ) );
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <seealso cref="CatchUp"/>
+        public bool AnyWritesPending {
+            get {
+                return 0 == this.CountOfItemsWaitingToBeAdded && 0 == this.CountOfItemsWaitingToBeChanged && 0 == this.CountOfItemsWaitingToBeInserted;
+            }
+        }
+
+        /// <summary>
+        /// <para>Blocks until the list has no write operations pending, until the <paramref name="timeout"/>, or the <paramref name="cancellationToken"/> is set.</para>
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Returns true if list is caught up. (No write operations pending)</returns>
+        public Boolean CatchUp( Span timeout = default (Span), CancellationToken cancellationToken = default( CancellationToken ) ) {
+            if ( timeout == default( Span ) ) {
+                timeout = this.TimeoutForWrites;
+            }
+            var interval = Milliseconds.Hertz111;
+            var stopWatch = Stopwatch.StartNew();
+            while ( this.AllowModifications ) {
+                if ( stopWatch.Elapsed > timeout ) {
+                    break;
+                }
+                if ( !this.AnyWritesPending ) {
+                    break;
+                }
+                Task.Delay( interval, cancellationToken ).Wait( cancellationToken );
+            }
+            return this.AnyWritesPending;
+        }
+
+        /// <summary>
+        /// Blocks and waits.
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <param name="cancellationToken"></param>
+        public void Wait( Span timeout = default (Span), CancellationToken cancellationToken = default( CancellationToken ) ) {
+            this.CatchUp( timeout, cancellationToken );
         }
 
         /// <summary>
@@ -372,15 +440,21 @@ namespace Librainian.Collections {
                 this._slims.Value.Wait( cancellationToken );
                 return true;
             }
-            catch ( OperationCanceledException ) { }
-            catch ( ArgumentOutOfRangeException ) { }
-            catch ( ObjectDisposedException ) { }
-            catch ( AggregateException ) { }
+            catch ( OperationCanceledException ) {
+            }
+            catch ( ArgumentOutOfRangeException ) {
+            }
+            catch ( ObjectDisposedException ) {
+            }
+            catch ( AggregateException ) {
+            }
             return false;
         }
 
         public Task AddAsync( TType item, Action afterAdd = null ) {
-            return Task.Run( () => { this.TryAdd( item: item, afterAdd: afterAdd ); } );
+            return Task.Run( () => {
+                this.TryAdd( item: item, afterAdd: afterAdd );
+            } );
         }
 
         /// <summary>
@@ -620,6 +694,7 @@ namespace Librainian.Collections {
         /// <typeparam name="TFuncResult"></typeparam>
         /// <param name="func"></param>
         /// <returns></returns>
+        /// <seealso cref="CatchUp"/>
         private TFuncResult Write<TFuncResult>( Func<TFuncResult> func ) {
             if ( !this.AllowModifications && func != null ) {
                 return default( TFuncResult );
