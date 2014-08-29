@@ -24,6 +24,7 @@ namespace Librainian.Measurement.Physics {
     using Annotations;
 
     public static class Extensions {
+
         public static String Simpler( this ElectronVolts volts ) {
             var list = new HashSet< String > {
                                                  volts.ToTeraElectronVolts().Display(),
