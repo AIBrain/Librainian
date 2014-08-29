@@ -35,8 +35,14 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly PlanckTimes PlancksUpToMinDateTime = new PlanckTimes( new Seconds( 4.3E17m ) );
 
+        /// <summary>
+        /// <para>1 planck times</para>
+        /// </summary>
         public static readonly UniversalDateTime One = new UniversalDateTime( BigInteger.One );
 
+        /// <summary>
+        /// <para>0 planck times</para>
+        /// </summary>
         public static readonly UniversalDateTime TheBeginning = new UniversalDateTime( BigInteger.Zero );
 
         public static readonly UniversalDateTime UNIX = new UniversalDateTime( Epochs.UNIX );

@@ -54,7 +54,7 @@ namespace Librainian.Threading {
         //        }
         //    }
         //    catch ( Exception exception ) {
-        //        exception.Log();
+        //        exception.Error();
         //    }
         //    finally {
         //        Interlocked.Decrement( ref spawnCounter );
@@ -435,7 +435,7 @@ namespace Librainian.Threading {
         //            }
         //        }
         //        catch ( BarrierPostPhaseException exception ) {
-        //            exception.Log();
+        //            exception.Error();
         //        }
         //    } );
         //}

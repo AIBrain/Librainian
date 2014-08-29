@@ -1,11 +1,11 @@
 ﻿namespace Librainian.Magic {
     using System;
 
-    public class ManagedDisposable : IDisposable {
+    public abstract class ManagedDisposable : IDisposable {
 
-        public virtual void Dispose() {
-            // dispose of managed resources
-        }
-
+        /// <summary>
+        /// dispose of managed resources
+        /// </summary>
+        public abstract void Dispose();
     }
 }

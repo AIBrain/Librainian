@@ -11,11 +11,12 @@ namespace Librainian.Collections {
     using Annotations;
     using Extensions;
     using FluentAssertions;
+    using Magic;
 
     [DataContract( IsReference = true )]
     [Serializable]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    public class Potpourri<TKey> : IPotpourri<TKey> where TKey : class {
+    public class Potpourri<TKey> : ManagedDisposable, IPotpourri<TKey> where TKey : class {
 
         [DataMember]
         [NotNull]
@@ -140,5 +141,10 @@ namespace Librainian.Collections {
             BigInteger value;
             return this.Container.TryRemove( key, out value );
         }
+
+        /// <summary>
+        /// dispose of managed resources
+        /// </summary>
+        public override void Dispose() { }
     }
 }

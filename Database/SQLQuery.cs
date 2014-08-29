@@ -317,7 +317,7 @@ namespace Librainian.Database {
         //            SQLDatabaseExtensions.PlayFile( "timeout.wav" );
         //            goto TryAgain;
         //        }
-        //        exception.Log();
+        //        exception.Error();
         //        throw;
         //    }
         //    return null;

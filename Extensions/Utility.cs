@@ -354,15 +354,15 @@ namespace Librainian.Extensions {
 
         // var memorySize = ( int )Math.Ceiling( bytes / 1048576M ); if ( memorySize < 1 ) {
         // memorySize = 1; } try { using ( new MemoryFailPoint( memorySize ) ) { return true; } }
-        // catch ( AccessViolationException exception ) { exception.Log(); } catch (
+        // catch ( AccessViolationException exception ) { exception.Error(); } catch (
         // InsufficientMemoryException exception ) { if ( Debugger.IsAttached ) { Debugger.Break();
         // } GC.Collect(); var result = GC.WaitForFullGCComplete( millisecondsTimeout: -1 ); if (
         // result == GCNotificationStatus.Succeeded || result == GCNotificationStatus.NotApplicable
         // ) { var amount = GC.GetTotalMemory( forceFullCollection: true ); try { using ( new
         // MemoryFailPoint( memorySize ) ) { return true; } } catch ( InsufficientMemoryException
-        // exception2 ) { exception2.Log(); } } exception.Log(); } catch (
-        // ArgumentOutOfRangeException exception ) { exception.Log(); } catch (
-        // InsufficientExecutionStackException exception ) { exception.Log(); }
+        // exception2 ) { exception2.Log(); } } exception.Error(); } catch (
+        // ArgumentOutOfRangeException exception ) { exception.Error(); } catch (
+        // InsufficientExecutionStackException exception ) { exception.Error(); }
 
         //public static rrrr ssdgsdfgs< ttt, rrr > = Func<rrr> ();
 

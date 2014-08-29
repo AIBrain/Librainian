@@ -34,16 +34,28 @@ namespace Librainian.Collections {
         /// <summary>
         /// </summary>
         /// <remarks>Two dictionaries for speed, one class to rule them all.</remarks>
-        [DataMember] [OptionalField] public readonly ConcurrentDictionary< Guid, String > Guids = new ConcurrentDictionary< Guid, String >();
+        [DataMember]
+        [OptionalField]
+        public readonly ConcurrentDictionary<Guid, String> Guids = new ConcurrentDictionary<Guid, String>();
 
         /// <summary>
         /// </summary>
         /// <remarks>Two dictionaries for speed, one class to rule them all.</remarks>
-        [DataMember] [OptionalField] public readonly ConcurrentDictionary< String, Guid > Words = new ConcurrentDictionary< String, Guid >();
+        [DataMember]
+        [OptionalField]
+        public readonly ConcurrentDictionary<String, Guid> Words = new ConcurrentDictionary<String, Guid>();
 
-        public IEnumerable< Guid > EachGuid { get { return this.Guids.Keys; } }
+        public IEnumerable<Guid> EachGuid {
+            get {
+                return this.Guids.Keys;
+            }
+        }
 
-        public IEnumerable< String > EachWord { get { return this.Words.Keys; } }
+        public IEnumerable<String> EachWord {
+            get {
+                return this.Words.Keys;
+            }
+        }
 
         /// <summary>
         ///     Get or set the guid for this word.
@@ -80,7 +92,9 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         public String this[ Guid key ] {
-            get { return Guid.Empty.Equals( key ) ? String.Empty : this.Guids[ key ]; }
+            get {
+                return Guid.Empty.Equals( key ) ? String.Empty : this.Guids[ key ];
+            }
 
             set {
                 if ( Guid.Empty.Equals( key ) ) {

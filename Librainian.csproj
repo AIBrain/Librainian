@@ -338,6 +338,7 @@
     <Compile Include="Magic\BetterDisposableClass.cs" />
     <Compile Include="Magic\IIocContainer.cs" />
     <Compile Include="Magic\Ioc.cs" />
+    <Compile Include="Magic\MagicExtensions.cs" />
     <Compile Include="Magic\ManagedDisposable.cs" />
     <Compile Include="Magic\NativeDisposable.cs" />
     <Compile Include="Magic\NinjectIocContainer.cs" />

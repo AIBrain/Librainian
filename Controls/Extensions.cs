@@ -1085,7 +1085,7 @@ namespace Librainian.Controls {
         //        return true;
         //    }
         //    catch ( Exception exception ) {
-        //        exception.Log();
+        //        exception.Error();
         //    }
         //    return false;
         //}
