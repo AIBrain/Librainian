@@ -96,7 +96,7 @@ namespace Librainian.Magic.Abodit {
             return true;
         }
 
-        public override void SetDocumentId( object document, object id ) {
+        public void SetDocumentId( object document, object id ) {
             MongoDynamic x = ( MongoDynamic )document;
             x.ID = ( ObjectId )id;
         }

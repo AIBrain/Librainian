@@ -42,15 +42,27 @@ namespace Librainian.Magic.Abodit {
     /// </remarks>
     /// <seealso cref="http://blog.abodit.com/2011/09/dynamic-persistence-with-mongodb-look-no-classes-polymorphism-in-c/"/>
     public class MongoDynamic : DynamicObject, IId {
-        // Dumb name for a property - which is why I chose it - very unlikely it will ever conflict with a real property name
+
+        /// <summary>
+        /// Dumb name for a property - which is why I chose it - very unlikely it will ever conflict with a real property name
+        /// </summary>
         public const string InterfacesField = "int";
-        private static List< Type > cacheOfTypes;
 
-        // A cache of the interface types corresponding to a given 'key' of interface names
-        private static readonly Dictionary< string, Type[] > CacheOfInterfaces = new Dictionary< string, Type[] >();
+        /// <summary>
+        /// 
+        /// </summary>
+        private static List<Type> cacheOfTypes;
 
-        [ BsonIgnore ] // BsonIgnore because Bson serialization will happen on the dynamic interface this class exposes not on this dictionary
-        private readonly Dictionary< string, object > children = new Dictionary< string, object >();
+        /// <summary>
+        /// A cache of the interface types corresponding to a given 'key' of interface names
+        /// </summary>
+        private static readonly Dictionary<string, Type[]> CacheOfInterfaces = new Dictionary<string, Type[]>();
+
+        /// <summary>
+        /// BsonIgnore because Bson serialization will happen on the dynamic interface this class exposes not on this dictionary
+        /// </summary>
+        [BsonIgnore]
+        private readonly Dictionary<string, object> _children = new Dictionary<string, object>();
 
         /// <summary>
         ///     Interfaces that have been added to this object
@@ -59,15 +71,18 @@ namespace Librainian.Magic.Abodit {
         ///     We always begin by supporting the _id interface
         ///     Order is important, we need to see this field before we can deserialize any others
         /// </remarks>
-        [ BsonElement( InterfacesField, Order = 2 ) ] internal HashSet< string > Int = new HashSet< string > {
-                                                                                                                 typeof ( IId ).FullName
-                                                                                                             };
+        [BsonElement( InterfacesField, Order = 2 )]
+        internal HashSet<string> Int = new HashSet<string> { typeof( IId ).FullName };
 
         /// <summary>
         ///     A text version of all interfaces - mostly for debugging purposes, stored in alphabetical order
         /// </summary>
-        [ BsonIgnore ]
-        public string InterfacesAsText { get { return string.Join( ",", this.Int.OrderBy( i => i ) ); } }
+        [BsonIgnore]
+        public string InterfacesAsText {
+            get {
+                return string.Join( ",", this.Int.OrderBy( s => s ) );
+            }
+        }
 
         /// <summary>
         ///     An indexer for use by serialization code
@@ -80,66 +95,65 @@ namespace Librainian.Magic.Abodit {
                     case InterfacesField:
                         return this.Int;
                     default:
-                        return this.children[ key ];
+                        return this._children[ key ];
                 }
             }
 
             set {
-                if ( key == "_id" && value is BsonObjectId ) {
-                    this.ID = ( ( BsonObjectId ) value ).Value;
+                switch ( key ) {
+                    case "_id":
+                        this.ID = value is BsonObjectId ? ( ( BsonObjectId )value ).Value : ( ObjectId )value;
+                        break;
+                    case InterfacesField:
+                        this.Int = new HashSet<string>( ( IEnumerable<string> )value );
+                        break;
+                    default:
+                        this._children[ key ] = value;
+                        break;
                 }
-                else {
-                    switch ( key ) {
-                        case "_id":
-                            this.ID = ( ObjectId ) value;
-                            break;
-                        case InterfacesField:
-                            this.Int = new HashSet< string >( ( IEnumerable< string > ) value );
-                            break;
-                        default:
-                            this.children[ key ] = value;
-                            break;
-                    }
-                }
+
             }
         }
 
-        [ BsonId( Order = 1 ) ]
-        public ObjectId ID { get; set; }
+        [BsonId( Order = 1 )]
+        public ObjectId ID {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     Add support for an interface to this document if it doesn't already have it
         /// </summary>
-        public T AddLike< T >() where T : class {
-            this.Int.Add( typeof ( T ).FullName );
+        public T AddLike<T>() where T : class {
+            this.Int.Add( typeof( T ).FullName );
             // And also act like any interfaces that interface implements (which will include ones they represent too)
-            foreach ( var @interface in typeof ( T ).GetInterfaces() ) {
+            foreach ( var @interface in typeof( T ).GetInterfaces() ) {
                 this.Int.Add( @interface.FullName );
             }
-            return this.ActLike< T >( this.GetAllInterfaces() );
+            return this.ActLike<T>( this.GetAllInterfaces() );
         }
 
         /// <summary>
         ///     Add support for multiple interfaces
         /// </summary>
-        public T AddLike< T >( IEnumerable< Type > otherInterfaces ) where T : class {
-            var allInterfaces = otherInterfaces.Concat( new[] { typeof ( T ) } );
-            var interfaces = allInterfaces as IList< Type > ?? allInterfaces.ToList();
+        public T AddLike<T>( IEnumerable<Type> otherInterfaces ) where T : class {
+            var allInterfaces = otherInterfaces.Concat( new[] { typeof( T ) } );
+            var interfaces = allInterfaces as IList<Type> ?? allInterfaces.ToList();
             var allInterfacesAndDescendants = interfaces.Concat( interfaces.SelectMany( x => x.GetInterfaces() ) );
             foreach ( var @interface in allInterfacesAndDescendants ) {
                 this.Int.Add( @interface.FullName );
             }
-            return this.ActLike< T >( this.GetAllInterfaces() );
+            return this.ActLike<T>( this.GetAllInterfaces() );
         }
 
         /// <summary>
         ///     Cast this object to an interface only if it has previously been created as one of that kind
         /// </summary>
-        public T AsLike< T >() where T : class {
-            if ( !this.Int.Contains( typeof ( T ).FullName ) ) {
+        public T AsLike<T>() where T : class {
+            if ( !this.Int.Contains( typeof( T ).FullName ) ) {
                 return null;
             }
-            return this.ActLike< T >( this.GetAllInterfaces() );
+            return this.ActLike<T>( this.GetAllInterfaces() );
         }
 
         // A rather large cache of all interface types loaded into the App Domain
@@ -167,8 +181,8 @@ namespace Librainian.Magic.Abodit {
         ///     Get a mapping from a field name to a type according to the interfaces on this object
         /// </summary>
         /// <returns></returns>
-        public Dictionary< string, Type > GetTypeMap() {
-            var typeMap = new Dictionary< string, Type >();
+        public Dictionary<string, Type> GetTypeMap() {
+            var typeMap = new Dictionary<string, Type>();
             var interfaces = this.GetAllInterfaces();
             foreach ( var mi in interfaces.SelectMany( intf => intf.GetProperties() ) ) {
                 typeMap[ mi.Name ] = mi.PropertyType;
@@ -199,7 +213,7 @@ namespace Librainian.Magic.Abodit {
                     result = this.Int;
                     return true;
                 default:
-                    this.children.TryGetValue( binder.Name, out result );
+                    this._children.TryGetValue( binder.Name, out result );
                     result = null; // we hope that it's nullable!  If not you have an issue 
                     return true; // when you do a database migration or query a nullable field it won't be in 'children'
             }
@@ -210,21 +224,21 @@ namespace Librainian.Magic.Abodit {
         /// </summary>
         public override bool TrySetMember( SetMemberBinder binder, object value ) {
             if ( binder.Name == "_id" ) {
-                this.ID = ( ObjectId ) value;
+                this.ID = ( ObjectId )value;
                 return true;
             } // you shouldn't need to use this
             if ( binder.Name == InterfacesField ) {
                 throw new AccessViolationException( "You cannot set the interfaces directly, use AddLike() instead" );
             }
             if ( !this.GetTypeMap().ContainsKey( binder.Name ) ) {
-                throw new ArgumentException( "Property '" + binder.Name + "' not found.  You need to call AddLike to specify the interfaces you want to support." );
+                throw new ArgumentException( String.Format( "Property '{0}' not found.  You need to call AddLike to specify the interfaces you want to support.", binder.Name ) );
             }
-            this.children[ binder.Name ] = value;
+            this._children[ binder.Name ] = value;
             return true;
         }
 
-        public override IEnumerable< string > GetDynamicMemberNames() {
-            return new[] { "_id", InterfacesField }.Concat( this.children.Keys );
+        public override IEnumerable<string> GetDynamicMemberNames() {
+            return new[] { "_id", InterfacesField }.Concat( this._children.Keys );
         }
     }
 }
