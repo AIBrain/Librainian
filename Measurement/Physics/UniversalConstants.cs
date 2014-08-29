@@ -51,35 +51,8 @@ namespace Librainian.Measurement.Physics {
         /// </summary>
         public static readonly ElectronVolts ZeroElementaryCharge = 0.0M*ElementaryCharge;
 
-        public static class AsRationals {
-            public static readonly BigRational Basic = new BigRational( ElementaryCharge.Value );
 
-            /// <summary>
-            ///     Precalculated -1/3 of <see cref="ElementaryCharge" />.
-            /// </summary>
-            public static readonly BigRational NegativeOneThird = new BigRational( -1, 3 )*Basic;
 
-            /// <summary>
-            ///     Precalculated -2/3 of <see cref="ElementaryCharge" />.
-            /// </summary>
-            public static readonly BigRational NegativeTwoThirds = new BigRational( -2, 3 )*Basic;
-
-            /// <summary>
-            ///     Precalculated 1/3 of <see cref="ElementaryCharge" />.
-            /// </summary>
-            public static readonly BigRational OneThird = new BigRational( 1, 3 )*Basic;
-
-            /// <summary>
-            ///     Precalculated +2/3 of <see cref="ElementaryCharge" />.
-            /// </summary>
-            public static readonly BigRational PositiveTwoThirds = new BigRational( 2, 3 )*Basic;
-
-            /// <summary>
-            ///     Precalculated +0 of <see cref="ElementaryCharge" />.
-            /// </summary>
-            public static readonly BigRational Zero = new BigRational( 0m )*Basic;
-        }
-
-        public static readonly BigRational HalfSpin = new BigRational( 1, 2 ); //TODO overkill. But correct. lol.
+        public static readonly BigRational HalfSpin = new BigRational( 1, 2 );
     }
 }
