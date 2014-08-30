@@ -18,6 +18,7 @@
 #endregion
 
 namespace Librainian.Measurement.Physics {
+    using System;
     using Numerics;
 
     public static class UniversalConstants {
@@ -53,6 +54,6 @@ namespace Librainian.Measurement.Physics {
 
 
 
-        public static readonly BigRational HalfSpin = new BigRational( 1, 2 );
+        public static readonly Decimal HalfSpin = ( Decimal ) new BigRational( 1, 2 );
     }
 }

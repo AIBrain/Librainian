@@ -23,7 +23,7 @@ namespace Librainian.Collections {
         protected readonly ConcurrentDictionary<TKey, BigInteger> Container = new ConcurrentDictionary<TKey, BigInteger>();
 
         [NotNull]
-        protected string FriendlyName {
+        public string FriendlyName {
             get {
                 return Types.GetPropertyName( () => this );
             }
