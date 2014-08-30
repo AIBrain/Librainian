@@ -78,9 +78,9 @@ namespace Librainian.Maths {
 
         public BigDecimal( Decimal value ) : this( bigDecimal: value ) { }
 
-        public BigDecimal( Double value ) : this( ( Decimal )value ) { }
+        public BigDecimal( Double value ) : this( bigDecimal: value ) {}
 
-        public BigDecimal( float value ) : this( ( Decimal )value ) { }
+        public BigDecimal( float value ) : this( bigDecimal: value ) {}
 
         public BigDecimal( BigInteger significand, Int32 exponent ) {
             this.Significand = significand;
@@ -304,10 +304,6 @@ namespace Librainian.Maths {
                 exponent -= diff;
             }
             return tmp * Math.Exp( d: exponent );
-        }
-
-        public static explicit operator Double( BigDecimal value ) {
-            return ( Double )value.Mantissa * Math.Pow( 10, value.Exponent );
         }
 
         public static implicit operator BigDecimal( Int64 number ) {
@@ -558,6 +554,10 @@ namespace Librainian.Maths {
 
         public static explicit operator float( BigDecimal value ) {
             return Convert.ToSingle( ( Double )value );
+        }
+
+        public static explicit operator Double( BigDecimal value ) {
+            return ( Double )value.Mantissa * Math.Pow( 10, value.Exponent );
         }
 
         public static explicit operator Decimal( BigDecimal value ) {

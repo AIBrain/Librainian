@@ -29,6 +29,7 @@ namespace Librainian.Threading {
     using System.Linq;
     using System.Numerics;
     using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
     using System.Security.Cryptography;
     using System.Text;
     using System.Threading;
@@ -37,6 +38,7 @@ namespace Librainian.Threading {
     using Collections;
     using Extensions;
     using FluentAssertions;
+    using ImpromptuInterface.Dynamic;
     using IO;
     using Maths;
     using Measurement.Time;
@@ -85,7 +87,11 @@ namespace Librainian.Threading {
         /// A thread-local (threadsafe) <see cref="Random" />.
         /// </summary>
         [NotNull]
-        public static Random Instance { get { return ThreadSafeRandom.Value; } }
+        public static Random Instance {
+            get {
+                return ThreadSafeRandom.Value;
+            }
+        }
 
         public static void AddToList( [NotNull] ConcurrentBag<int> list ) {
             if ( list == null ) {
@@ -97,7 +103,7 @@ namespace Librainian.Threading {
         [MethodImpl( MethodImplOptions.NoInlining )]
         public static Double DoBusyWork( this UInt64 iterations ) {
             Double work = 0;
-            for ( var i = 0ul; i < iterations; i++ ) {
+            for ( var i = 0ul ; i < iterations ; i++ ) {
                 work += 1001.671;
             }
             return work;
@@ -268,8 +274,8 @@ namespace Librainian.Threading {
         /// <summary>
         /// </summary>
         /// <returns></returns>
-        public static  Decimal NextDecimal() {
-            return new   Decimal( new[] { NextInt32(), NextInt32(), NextInt32(), NextInt32() } );
+        public static Decimal NextDecimal() {
+            return new Decimal( new[] { NextInt32(), NextInt32(), NextInt32(), NextInt32() } );
         }
 
         /// <summary>
@@ -279,7 +285,7 @@ namespace Librainian.Threading {
         /// <param name="minValue"></param>
         /// <param name="maxValue"></param>
         /// <returns></returns>
-        public static  Decimal NextDecimal(Decimal minValue,Decimal maxValue ) {
+        public static Decimal NextDecimal( Decimal minValue, Decimal maxValue ) {
             var min = Math.Min( minValue, maxValue );
             var max = Math.Max( minValue, maxValue );
             return min + ( NextDecimal() * ( max - min ) );
@@ -300,6 +306,8 @@ namespace Librainian.Threading {
             return NextDouble( min: variance.Low, max: variance.High );
         }
 
+        private static readonly ThreadLocal< Byte[] > LocalByteBuffer = new ThreadLocal< byte[] >( () => new byte[sizeof(double)] );
+
         /// <summary>
         /// Returns a random Double between <paramref name="min" /> and <paramref name="max" />.
         /// </summary>
@@ -307,8 +315,27 @@ namespace Librainian.Threading {
         /// <param name="max"></param>
         /// <returns></returns>
         public static Double NextDouble( Double min = 0, Double max = 1 ) {
-            return min + ( Instance.NextDouble() * ( max - min ) );
+            var range = max - min;
+            if ( Double.IsNaN( range ) ) {
+                throw new ArgumentOutOfRangeException();
+            }
+            if ( !Double.IsInfinity( range ) ) {
+                return min + ( Instance.NextDouble() * range );
+            }
+            Instance.NextBytes( LocalByteBuffer.Value );
+            var result = BitConverter.ToDouble( LocalByteBuffer.Value, 0 );
+            return result;
         }
+
+        [StructLayout( LayoutKind.Explicit ), UsedImplicitly ]
+        internal class UInt64VsDouble {
+            [FieldOffset( 0 )]
+            public readonly Double value;  
+            [FieldOffset( 0 )]
+            public readonly ulong valueulong;
+        }
+
+
 
         /// <summary>
         /// Returns a random Double beetween 0 and 1
@@ -374,10 +401,18 @@ namespace Librainian.Threading {
         public static String NextString( int length = 11, Boolean lowers = false, Boolean uppers = false, Boolean numbers = false, Boolean symbols = false ) {
 
             var sb = new StringBuilder();
-            if ( lowers ) { sb.Append( ParsingExtensions.Lowercase ); }
-            if ( uppers ) { sb.Append( ParsingExtensions.Uppercase ); }
-            if ( numbers ) { sb.Append( ParsingExtensions.Numbers ); }
-            if ( symbols ) { sb.Append( ParsingExtensions.Symbols ); }
+            if ( lowers ) {
+                sb.Append( ParsingExtensions.Lowercase );
+            }
+            if ( uppers ) {
+                sb.Append( ParsingExtensions.Uppercase );
+            }
+            if ( numbers ) {
+                sb.Append( ParsingExtensions.Numbers );
+            }
+            if ( symbols ) {
+                sb.Append( ParsingExtensions.Symbols );
+            }
 
             var charPool = sb.ToString();
             return new String( Enumerable.Range( 0, length ).Select( i => charPool[ Next( 0, charPool.Length ) ] ).ToArray() );
@@ -557,7 +592,7 @@ namespace Librainian.Threading {
 
             var compressed = buffer.Compress();
 
-            var result = new Percentage( ( BigInteger ) compressed.LongLength, buffer.LongLength );
+            var result = new Percentage( ( BigInteger )compressed.LongLength, buffer.LongLength );
 
             return result;
         }
