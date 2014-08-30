@@ -175,7 +175,7 @@ namespace Librainian.Measurement.Length {
             return Combine(  left,  -right.Value );
         }
 
-        public static Feet operator -( Feet left, Decimal seconds ) {
+        public static Feet operator -( Feet left,Decimal seconds ) {
             return Combine( left, -seconds );
         }
 
@@ -183,7 +183,7 @@ namespace Librainian.Measurement.Length {
             return Combine( left, right.Value );
         }
 
-        public static Feet operator +( Feet left, Decimal seconds ) {
+        public static Feet operator +( Feet left,Decimal seconds ) {
             return Combine( left, seconds );
         }
 

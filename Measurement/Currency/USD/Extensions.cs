@@ -134,11 +134,11 @@ namespace Librainian.Measurement.Currency.USD {
         /// <param name="wallet"></param>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public static async Task< decimal > Fund( [NotNull] Wallet wallet, Decimal amount ) {
+        public static async Task<Decimal > Fund( [NotNull] Wallet wallet,Decimal amount ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( "wallet" );
             }
-            var leftOverFund = Decimal.Zero;
+            var leftOverFund =Decimal.Zero;
             var notesAndCoins = amount.Optimal( ref leftOverFund );
             await StartDeposit( wallet, notesAndCoins );
             return leftOverFund;
@@ -152,17 +152,17 @@ namespace Librainian.Measurement.Currency.USD {
         /// <param name="amount"></param>
         /// <param name="leftOverAmount">Fractions of Pennies not accounted for.</param>
         /// <returns></returns>
-        public static Dictionary< IDenomination, ulong > Optimal( this Decimal amount, ref Decimal leftOverAmount ) {
+        public static Dictionary< IDenomination, ulong > Optimal( this  Decimal amount, ref  Decimal leftOverAmount ) {
             var demonsLeft = new List< IDenomination >( PossibleDenominations );
             var result = demonsLeft.ToDictionary< IDenomination, IDenomination, UInt64 >( denomination => denomination, denomination => 0 );
 
             leftOverAmount += amount;
-            while ( leftOverAmount > Decimal.Zero && demonsLeft.Any() ) {
+            while ( leftOverAmount >Decimal.Zero && demonsLeft.Any() ) {
                 var highestBill = demonsLeft.OrderByDescending( denomination => denomination.FaceValue ).First();
 
                 var chunks = ( UInt64 ) ( leftOverAmount/highestBill.FaceValue );
 
-                if ( chunks > Decimal.Zero ) {
+                if ( chunks >Decimal.Zero ) {
                     result[ highestBill ] += chunks;
                     leftOverAmount -= chunks*highestBill.FaceValue;
                 }

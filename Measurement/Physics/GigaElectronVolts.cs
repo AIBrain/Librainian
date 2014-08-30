@@ -32,27 +32,27 @@ namespace Librainian.Measurement.Physics {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct GigaElectronVolts : IComparable< MilliElectronVolts >, IComparable< ElectronVolts >, IComparable< MegaElectronVolts >, IComparable< GigaElectronVolts > {
-        private const Decimal InOneElectronVolt = 1E-9m;
+        private const  Decimal InOneElectronVolt = 1E-9m;
 
-        private const Decimal InOneGigaElectronVolt = 1E0m;
+        private const  Decimal InOneGigaElectronVolt = 1E0m;
 
-        private const Decimal InOneKiloElectronVolt = 1E-6m;
+        private const  Decimal InOneKiloElectronVolt = 1E-6m;
 
-        private const Decimal InOneMegaElectronVolt = 1E-3m;
+        private const  Decimal InOneMegaElectronVolt = 1E-3m;
 
-        private const Decimal InOneMilliElectronVolt = 1E-12m;
+        private const  Decimal InOneMilliElectronVolt = 1E-12m;
 
-        private const Decimal InOneTeraElectronVolt = 1E3m;
+        private const  Decimal InOneTeraElectronVolt = 1E3m;
 
         /// <summary>
         ///     About 79228162514264337593543950335.
         /// </summary>
-        public static readonly GigaElectronVolts MaxValue = new GigaElectronVolts( Decimal.MaxValue );
+        public static readonly GigaElectronVolts MaxValue = new GigaElectronVolts(Decimal.MaxValue );
 
         /// <summary>
         ///     About -79228162514264337593543950335.
         /// </summary>
-        public static readonly GigaElectronVolts MinValue = new GigaElectronVolts( Decimal.MinValue );
+        public static readonly GigaElectronVolts MinValue = new GigaElectronVolts(Decimal.MinValue );
 
         /// <summary>
         /// </summary>
@@ -64,9 +64,9 @@ namespace Librainian.Measurement.Physics {
 
         /// <summary>
         /// </summary>
-        public readonly Decimal Value;
+        public readonly  Decimal Value;
 
-        public GigaElectronVolts( Decimal units ) : this() {
+        public GigaElectronVolts(Decimal units ) : this() {
             this.Value = units;
         }
 
@@ -93,11 +93,11 @@ namespace Librainian.Measurement.Physics {
             return this.Value.CompareTo( other.ToGigaElectronVolts().Value );
         }
 
-        public static GigaElectronVolts operator *( GigaElectronVolts left, Decimal right ) {
+        public static GigaElectronVolts operator *( GigaElectronVolts left,Decimal right ) {
             return new GigaElectronVolts( left.Value*right );
         }
 
-        public static GigaElectronVolts operator *( Decimal left, GigaElectronVolts right ) {
+        public static GigaElectronVolts operator *(Decimal left, GigaElectronVolts right ) {
             return new GigaElectronVolts( left*right.Value );
         }
 

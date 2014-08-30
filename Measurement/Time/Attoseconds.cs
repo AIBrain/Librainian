@@ -154,9 +154,9 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         /// </summary>
         [DataMember]
-        public readonly Decimal Value;
+        public readonly  Decimal Value;
 
-        public Attoseconds( Decimal value ) {
+        public Attoseconds(Decimal value ) {
             this.Value = value;
         }
 
@@ -174,7 +174,7 @@ namespace Librainian.Measurement.Time {
             if ( value > Constants.MaximumUsefulDecimal ) {
                 throw new OverflowException( Constants.ValueIsTooHigh );
             }
-            this.Value = ( Decimal )value;
+            this.Value = (Decimal )value;
         }
 
         [UsedImplicitly]
@@ -184,7 +184,7 @@ namespace Librainian.Measurement.Time {
             return new Attoseconds( left.Value + right.Value );
         }
 
-        public static Attoseconds Combine( Attoseconds left, Decimal attoseconds ) {
+        public static Attoseconds Combine( Attoseconds left,Decimal attoseconds ) {
             return new Attoseconds( left.Value + attoseconds );
         }
 
@@ -206,7 +206,7 @@ namespace Librainian.Measurement.Time {
             return attoseconds.ToZeptoseconds();
         }
 
-        public static Attoseconds operator -( Attoseconds left, Decimal attoseconds ) {
+        public static Attoseconds operator -( Attoseconds left,Decimal attoseconds ) {
             return Combine( left, -attoseconds );
         }
 
@@ -218,7 +218,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Attoseconds operator +( Attoseconds left, Decimal attoseconds ) {
+        public static Attoseconds operator +( Attoseconds left,Decimal attoseconds ) {
             return Combine( left, attoseconds );
         }
 
@@ -240,7 +240,7 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         [Pure]
         public Femtoseconds ToFemtoseconds() {
-            return new Femtoseconds( Value / InOneFemtosecond );
+            return new Femtoseconds( this.Value / InOneFemtosecond );
         }
 
         /// <summary>
@@ -248,7 +248,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <returns></returns>
         public Zeptoseconds ToZeptoseconds() {
-            return new Zeptoseconds( Value * Zeptoseconds.InOneAttosecond );
+            return new Zeptoseconds( this.Value * Zeptoseconds.InOneAttosecond );
         }
 
         public int CompareTo( Attoseconds other ) {

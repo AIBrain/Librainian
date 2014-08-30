@@ -28,18 +28,18 @@ namespace Librainian.Measurement.Physics {
         /// <summary>
         ///     http://www.wolframalpha.com/input/?i=299%2C792%2C458+metres+per+second
         /// </summary>
-        public static readonly Decimal KiloMetersPerSecond = 299792M;
+        public static readonly  Decimal KiloMetersPerSecond = 299792M;
 
-        public static readonly Decimal MetersPerSecond = 299792458M;
+        public static readonly  Decimal MetersPerSecond = 299792458M;
 
         /// <summary>
         ///     http://www.wolframalpha.com/input/?i=299%2C792%2C458+metres+per+second
         /// </summary>
-        public static readonly Decimal MilesPerSecond = 186282M;
+        public static readonly  Decimal MilesPerSecond = 186282M;
 
         /// <summary>
         ///     http://wikipedia.org/wiki/Planck_units
         /// </summary>
-        public static readonly Decimal PlanckUnits = 1M;
+        public static readonly  Decimal PlanckUnits = 1M;
     }
 }

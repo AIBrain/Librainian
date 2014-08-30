@@ -39,7 +39,7 @@ namespace Librainian.Magic {
         public NinjectIocContainer() {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel();
-            ResetKernel();
+            this.ResetKernel();
             this.Kernel.Should().NotBeNull();
         }
 

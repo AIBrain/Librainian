@@ -326,6 +326,7 @@
     <Compile Include="Gaming\PlayingCards\Deck.cs" />
     <Compile Include="Gaming\DiceCup.cs" />
     <Compile Include="Gaming\TraditionalDice.cs" />
+    <Compile Include="Internet\Class1.cs" />
     <Compile Include="IO\Compression\RandomnessFeeeding.cs" />
     <Compile Include="IO\Compression\RandomnessTest.cs" />
     <Compile Include="IO\Streams\StreamString.cs" />

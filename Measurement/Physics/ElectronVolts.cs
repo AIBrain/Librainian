@@ -35,27 +35,27 @@ namespace Librainian.Measurement.Physics {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct ElectronVolts : IComparable< MilliElectronVolts >, IComparable< ElectronVolts >, IComparable< MegaElectronVolts >, IComparable< GigaElectronVolts > {
-        private const Decimal InOneElectronVolt = 1E0m;
+        private const  Decimal InOneElectronVolt = 1E0m;
 
-        private const Decimal InOneGigaElectronVolt = 1E9m;
+        private const  Decimal InOneGigaElectronVolt = 1E9m;
 
-        private const Decimal InOneKiloElectronVolt = 1E3m;
+        private const  Decimal InOneKiloElectronVolt = 1E3m;
 
-        private const Decimal InOneMegaElectronVolt = 1E6m;
+        private const  Decimal InOneMegaElectronVolt = 1E6m;
 
-        private const Decimal InOneMilliElectronVolt = 1E-3m;
+        private const  Decimal InOneMilliElectronVolt = 1E-3m;
 
-        private const Decimal InOneTeraElectronVolt = 1E12m;
+        private const  Decimal InOneTeraElectronVolt = 1E12m;
 
         /// <summary>
         ///     About 79228162514264337593543950335.
         /// </summary>
-        public static readonly ElectronVolts MaxValue = new ElectronVolts( Decimal.MaxValue );
+        public static readonly ElectronVolts MaxValue = new ElectronVolts(Decimal.MaxValue );
 
         /// <summary>
         ///     About -79228162514264337593543950335.
         /// </summary>
-        public static readonly ElectronVolts MinValue = new ElectronVolts( Decimal.MinValue );
+        public static readonly ElectronVolts MinValue = new ElectronVolts(Decimal.MinValue );
 
         public static readonly ElectronVolts NegativeOne = new ElectronVolts( -1 );
 
@@ -68,7 +68,7 @@ namespace Librainian.Measurement.Physics {
         public static readonly ElectronVolts One = new ElectronVolts( 1 );
 
         public static readonly ElectronVolts Zero = new ElectronVolts( 0 );
-        public readonly Decimal Value;
+        public readonly  Decimal Value;
 
         static ElectronVolts() {
             Assert.Greater( UniversalConstants.ElementaryCharge.Value, UniversalConstants.ZeroElementaryCharge.Value );
@@ -77,7 +77,7 @@ namespace Librainian.Measurement.Physics {
             Assert.Greater( UniversalConstants.PositiveTwoThirdsElementaryCharge.Value, UniversalConstants.NegativeTwoThirdsElementaryCharge.Value );
         }
 
-        public ElectronVolts( Decimal value ) : this() {
+        public ElectronVolts(Decimal value ) : this() {
             this.Value = value;
         }
 
@@ -86,7 +86,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public ElectronVolts( BigRational aBigFraction ) {
-            this.Value = ( Decimal ) aBigFraction;
+            this.Value = (Decimal ) aBigFraction;
         }
 
         public ElectronVolts( GigaElectronVolts gigaElectronVolts ) {
@@ -128,31 +128,31 @@ namespace Librainian.Measurement.Physics {
             return new ElectronVolts( left.Value*right.Value );
         }
 
-        public static ElectronVolts operator *( ElectronVolts left, Decimal right ) {
+        public static ElectronVolts operator *( ElectronVolts left,Decimal right ) {
             return new ElectronVolts( left.Value*right );
         }
 
-        public static ElectronVolts operator *( Decimal left, ElectronVolts right ) {
+        public static ElectronVolts operator *(Decimal left, ElectronVolts right ) {
             return new ElectronVolts( left*right.Value );
         }
 
         public static ElectronVolts operator *( BigDecimal left, ElectronVolts right ) {
             var res = left*right.Value;
-            return new ElectronVolts( ( Decimal ) res );
+            return new ElectronVolts( (Decimal ) res );
         }
 
         public static ElectronVolts operator *( BigInteger left, ElectronVolts right ) {
             var lhs = new BigDecimal( left, 0 );
             var rhs = new BigDecimal( right.Value );
             var res = lhs*rhs;
-            return new ElectronVolts( ( Decimal ) res );
+            return new ElectronVolts( (Decimal ) res );
         }
 
         public static ElectronVolts operator /( ElectronVolts left, ElectronVolts right ) {
             return new ElectronVolts( left.Value/right.Value );
         }
 
-        public static ElectronVolts operator /( ElectronVolts left, Decimal right ) {
+        public static ElectronVolts operator /( ElectronVolts left,Decimal right ) {
             return new ElectronVolts( left.Value/right );
         }
 

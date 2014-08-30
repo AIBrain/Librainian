@@ -107,7 +107,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Femtoseconds Zero = new Femtoseconds( value: 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static Femtoseconds() {
             Zero.Should().BeLessThan( One );
@@ -117,7 +117,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeLessThan( Picoseconds.One );
         }
 
-        public Femtoseconds( Decimal value ) {
+        public Femtoseconds(Decimal value ) {
             this.Value = value;
         }
 
@@ -127,7 +127,7 @@ namespace Librainian.Measurement.Time {
 
         public Femtoseconds( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = (Decimal ) value;
         }
 
         [UsedImplicitly]
@@ -154,7 +154,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right.Value );
         }
 
-        public static Femtoseconds Combine( Femtoseconds left, Decimal femtoseconds ) {
+        public static Femtoseconds Combine( Femtoseconds left,Decimal femtoseconds ) {
             return new Femtoseconds( left.Value + femtoseconds );
         }
 
@@ -189,7 +189,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, -right );
         }
 
-        public static Femtoseconds operator -( Femtoseconds left, Decimal femtoseconds ) {
+        public static Femtoseconds operator -( Femtoseconds left,Decimal femtoseconds ) {
             return Combine( left, -femtoseconds );
         }
 
@@ -201,7 +201,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Femtoseconds operator +( Femtoseconds left, Decimal femtoseconds ) {
+        public static Femtoseconds operator +( Femtoseconds left,Decimal femtoseconds ) {
             return Combine( left, femtoseconds );
         }
 
@@ -222,7 +222,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <returns></returns>
         public Attoseconds ToAttoseconds() {
-            return new Attoseconds( Value*Attoseconds.InOneFemtosecond );
+            return new Attoseconds( this.Value*Attoseconds.InOneFemtosecond );
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         [Pure]
         public Picoseconds ToPicoseconds() {
-            return new Picoseconds( Value/InOnePicosecond );
+            return new Picoseconds( this.Value/InOnePicosecond );
         }
 
         public Boolean Equals( Femtoseconds other ) {

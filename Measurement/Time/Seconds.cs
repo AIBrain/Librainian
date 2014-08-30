@@ -88,7 +88,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Seconds Zero = new Seconds(  0 );
 
         [DataMember]
-        public readonly Decimal Value;
+        public readonly  Decimal Value;
 
         static Seconds() {
             Zero.Should().BeLessThan( One );
@@ -98,7 +98,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeGreaterThan( Milliseconds.One );
         }
 
-        public Seconds( Decimal value ) {
+        public Seconds(Decimal value ) {
             this.Value = value;
         }
 
@@ -108,7 +108,7 @@ namespace Librainian.Measurement.Time {
 
         public Seconds( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = (Decimal )value;
         }
 
         [UsedImplicitly]
@@ -140,7 +140,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right.Value );
         }
 
-        public static Seconds Combine( Seconds left, Decimal seconds ) {
+        public static Seconds Combine( Seconds left,Decimal seconds ) {
             return new Seconds( left.Value + seconds );
         }
 
@@ -196,7 +196,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left: left, right: -right );
         }
 
-        public static Seconds operator -( Seconds left, Decimal seconds ) {
+        public static Seconds operator -( Seconds left,Decimal seconds ) {
             return Combine( left, -seconds );
         }
 
@@ -204,7 +204,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Seconds operator +( Seconds left, Decimal seconds ) {
+        public static Seconds operator +( Seconds left,Decimal seconds ) {
             return Combine( left, seconds );
         }
 

@@ -24,13 +24,13 @@ namespace Librainian.Measurement.Currency.USD {
     using Annotations;
 
     /// <summary>
-    ///     A simple, thread-safe, Decimal-based wallet.
+    ///     A simple, thread-safe,  System.Decimal-based wallet.
     /// </summary>
     [DebuggerDisplay( "{Formatted,nq}" )]
     public class SimpleWallet : ISimpleWallet {
         [NotNull] private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-        private Decimal _balance;
+        private  Decimal _balance;
 
         public SimpleWallet() {
             this.Timeout = TimeSpan.FromMinutes( 1 );
@@ -48,7 +48,7 @@ namespace Librainian.Measurement.Currency.USD {
         /// <summary>
         /// </summary>
         /// <exception cref="TimeoutException"></exception>
-        public Decimal Balance {
+        public  Decimal Balance {
             get {
                 try {
                     if ( !this._access.TryEnterReadLock( this.Timeout ) ) {
@@ -75,16 +75,16 @@ namespace Librainian.Measurement.Currency.USD {
             }
         }
 
-        public Action< Decimal > OnBeforeDeposit { get; set; }
-        public Action< Decimal > OnAfterDeposit { get; set; }
+        public Action<Decimal > OnBeforeDeposit { get; set; }
+        public Action<Decimal > OnAfterDeposit { get; set; }
 
-        public Action< Decimal > OnBeforeWithdraw { get; set; }
-        public Action< Decimal > OnAfterWithdraw { get; set; }
+        public Action<Decimal > OnBeforeWithdraw { get; set; }
+        public Action<Decimal > OnAfterWithdraw { get; set; }
 
-        public Action< Decimal > OnAnyUpdate { get; set; }
+        public Action<Decimal > OnAnyUpdate { get; set; }
 
-        public Boolean TryDeposit( Decimal amount, Boolean sanitizeAmount = false ) {
-            if ( amount < Decimal.Zero ) {
+        public Boolean TryDeposit(Decimal amount, Boolean sanitizeAmount = false ) {
+            if ( amount <Decimal.Zero ) {
                 return false;
             }
             try {
@@ -100,8 +100,8 @@ namespace Librainian.Measurement.Currency.USD {
             }
         }
 
-        public Boolean TryWithdraw( Decimal amount, Boolean sanitizeAmount = false ) {
-            if ( amount < Decimal.Zero ) {
+        public Boolean TryWithdraw(Decimal amount, Boolean sanitizeAmount = false ) {
+            if ( amount <Decimal.Zero ) {
                 return false;
             }
             try {
@@ -126,7 +126,7 @@ namespace Librainian.Measurement.Currency.USD {
             }
         }
 
-        public Boolean TryUpdateBalance( Decimal amount, Boolean sanitizeAmount = true ) {
+        public Boolean TryUpdateBalance(Decimal amount, Boolean sanitizeAmount = true ) {
             try {
                 if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
                     return false;

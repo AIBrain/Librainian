@@ -23,7 +23,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
     public interface IDenomination {
         [UsedImplicitly]
-        Decimal FaceValue { get; }
+       Decimal FaceValue { get; }
 
         [UsedImplicitly]
         String Formatted { get; }
@@ -35,28 +35,28 @@ namespace Librainian.Measurement.Currency.BTC {
         [DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public struct BTC : ICoin {
-            public Decimal FaceValue { get { return 1.00M; } }
+            public  Decimal FaceValue { get { return 1.00M; } }
             public String Formatted { get { return String.Format( "฿{0:f8}", this.FaceValue ); } }
         }
 
         [DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public struct mBTC : ICoin {
-            public Decimal FaceValue { get { return 0.001M; } }
+            public  Decimal FaceValue { get { return 0.001M; } }
             public String Formatted { get { return String.Format( "฿{0:f8}", this.FaceValue ); } }
         }
 
         [DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public struct μBTC : ICoin {
-            public Decimal FaceValue { get { return 0.000001M; } }
+            public  Decimal FaceValue { get { return 0.000001M; } }
             public String Formatted { get { return String.Format( "฿{0:f8}", this.FaceValue ); } }
         }
 
         [DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public struct Satoshi : ICoin {
-            public Decimal FaceValue { get { return 0.00000001M; } }
+            public  Decimal FaceValue { get { return 0.00000001M; } }
             public String Formatted { get { return String.Format( "฿{0:f8}", this.FaceValue ); } }
         }
     }

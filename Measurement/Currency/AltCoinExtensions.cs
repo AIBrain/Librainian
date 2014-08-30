@@ -23,7 +23,7 @@ namespace Librainian.Measurement.Currency {
     using System;
 
     public static class AltCoinExtensions {
-        public static String Formatted( this Decimal amount ) {
+        public static String Formatted( this  Decimal amount ) {
             return String.Format( "{0:F8}", amount );
         }
     }

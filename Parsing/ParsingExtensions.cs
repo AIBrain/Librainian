@@ -490,8 +490,8 @@ namespace Librainian.Parsing {
             return Double.TryParse( text, out test );
         }
 
-        public static Boolean IsJustNumbers( [CanBeNull] this String text, out Decimal result ) {
-            return Decimal.TryParse( text ?? String.Empty, out result );
+        public static Boolean IsJustNumbers( [CanBeNull] this String text, out  Decimal result ) {
+            return  Decimal.TryParse( text ?? String.Empty, out result );
         }
 
         public static Boolean IsNullOrEmpty( [CanBeNull] this String value ) {
@@ -664,12 +664,12 @@ namespace Librainian.Parsing {
         /// <param name="number"></param>
         /// <param name="word"></param>
         /// <returns></returns>
-        public static String PluralOf( this Decimal number, [NotNull] String word ) {
+        public static String PluralOf( this  Decimal number, [NotNull] String word ) {
             if ( word == null ) {
                 throw new ArgumentNullException( "word" );
             }
 
-            if ( Decimal.One == number ) {
+            if (Decimal.One == number ) {
                 return word;
             }
 

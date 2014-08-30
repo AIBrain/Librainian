@@ -24,22 +24,22 @@ namespace Librainian.Measurement.Length {
         /// <summary>
         ///     How many <see cref="Millimeters" /> are in a single <see cref="Centimeters" /> ? (10)
         /// </summary>
-        public const Decimal MillimetersInSingleCentimeter = 10m;
+        public const  Decimal MillimetersInSingleCentimeter = 10m;
 
         /// <summary>
         ///     How many <see cref="Millimeters" /> are in a single <see cref="Inches" /> ? (25.4)
         /// </summary>
-        public const Decimal MillimetersInSingleInch = 25.4m;
+        public const  Decimal MillimetersInSingleInch = 25.4m;
 
         /// <summary>
         ///     How many <see cref="Millimeters" /> are in a single <see cref="Meters" /> ? (1000)
         /// </summary>
-        public const Decimal MillimetersInSingleMeter = CentimetersinSingleMeter*MillimetersInSingleCentimeter;
+        public const  Decimal MillimetersInSingleMeter = CentimetersinSingleMeter*MillimetersInSingleCentimeter;
 
         /// <summary>
         ///     How many <see cref="Centimeters" /> are in a single <see cref="Meters" /> ? (100)
         /// </summary>
-        public const Decimal CentimetersinSingleMeter = 100m;
+        public const  Decimal CentimetersinSingleMeter = 100m;
 
         public static int Comparison( this Millimeters lhs, Millimeters rhs ) {
             return lhs.Value.CompareTo( rhs.Value );

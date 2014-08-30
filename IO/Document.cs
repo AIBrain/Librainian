@@ -362,7 +362,7 @@ namespace Librainian.IO {
         /// <returns></returns>
         public Boolean Delete() {
             this.FileInfo.Delete();
-            return Exists;
+            return this.Exists;
         }
     }
 }

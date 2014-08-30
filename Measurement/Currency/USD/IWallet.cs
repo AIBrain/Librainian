@@ -55,7 +55,7 @@ namespace Librainian.Measurement.Currency.USD {
         /// <summary>
         ///     Return the total amount of money contained in this <see cref="Wallet" />.
         /// </summary>
-        Decimal Total { get; }
+       Decimal Total { get; }
 
         /// <summary>
         ///     Attempt to <see cref="Wallet.TryWithdraw(IBankNote,ulong)" /> one or more <see cref="IBankNote" /> from this

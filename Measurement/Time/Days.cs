@@ -52,7 +52,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Days Zero = new Days( 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static Days() {
             Zero.Should().BeLessThan( One );
@@ -62,7 +62,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeGreaterThan( Hours.One );
         }
 
-        public Days( Decimal value ) {
+        public Days(Decimal value ) {
             this.Value = value;
         }
 
@@ -72,7 +72,7 @@ namespace Librainian.Measurement.Time {
 
         public Days( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = (Decimal ) value;
         }
 
         [UsedImplicitly]
@@ -107,7 +107,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right.Value );
         }
 
-        public static Days Combine( Days left, Decimal days ) {
+        public static Days Combine( Days left,Decimal days ) {
             return new Days( left.Value + days );
         }
 
@@ -145,7 +145,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left: left, right: -right );
         }
 
-        public static Days operator -( Days left, Decimal days ) {
+        public static Days operator -( Days left,Decimal days ) {
             return Combine( left, -days );
         }
 
@@ -153,7 +153,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Days operator +( Days left, Decimal days ) {
+        public static Days operator +( Days left,Decimal days ) {
             return Combine( left, days );
         }
 
@@ -201,11 +201,11 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public Hours ToHours() {
-            return new Hours( Value*Hours.InOneDay );
+            return new Hours( this.Value*Hours.InOneDay );
         }
 
         public Weeks ToWeeks() {
-            return new Weeks( Value/InOneWeek );
+            return new Weeks( this.Value/InOneWeek );
         }
 
         public override int GetHashCode() {

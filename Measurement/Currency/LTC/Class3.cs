@@ -23,7 +23,7 @@ namespace Librainian.Measurement.Currency.LTC {
 
     public interface IDenomination {
         [UsedImplicitly]
-        Decimal FaceValue { get; }
+       Decimal FaceValue { get; }
 
         [UsedImplicitly]
         String Formatted { get; }
@@ -42,28 +42,28 @@ namespace Librainian.Measurement.Currency.LTC {
         [DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public struct LTC : ICoin {
-            public Decimal FaceValue { get { return 1.00M; } }
+            public  Decimal FaceValue { get { return 1.00M; } }
             public String Formatted { get { return String.Format( "Ł{0:f8}", this.FaceValue ); } }
         }
 
         [DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public struct mLTC : ICoin {
-            public Decimal FaceValue { get { return 0.001M; } }
+            public  Decimal FaceValue { get { return 0.001M; } }
             public String Formatted { get { return String.Format( "Ł{0:f8}", this.FaceValue ); } }
         }
 
         [DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public struct μLTC : ICoin {
-            public Decimal FaceValue { get { return 0.000001M; } }
+            public  Decimal FaceValue { get { return 0.000001M; } }
             public String Formatted { get { return String.Format( "Ł{0:f8}", this.FaceValue ); } }
         }
 
         [DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public struct Litoshi : ICoin {
-            public Decimal FaceValue { get { return 0.00000001M; } }
+            public  Decimal FaceValue { get { return 0.00000001M; } }
             public String Formatted { get { return String.Format( "Ł{0:f8}", this.FaceValue ); } }
         }
     }

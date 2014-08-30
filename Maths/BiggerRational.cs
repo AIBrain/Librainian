@@ -53,8 +53,8 @@ namespace Librainian.Maths {
         private static readonly BigInteger SBnDoubleMinValue = ( BigInteger ) double.MinValue;
         private static readonly BigInteger SBnDecimalPrecision = BigInteger.Pow( 10, DecimalMaxScale );
 
-        private static readonly BigInteger SBnDecimalMaxValue = ( BigInteger ) new Decimal( -1, -1, -1, false, 0 );
-        private static readonly BigInteger SBnDecimalMinValue = ( BigInteger ) new Decimal( -1, -1, -1, true, 0 );
+        private static readonly BigInteger SBnDecimalMaxValue = ( BigInteger ) new   Decimal( -1, -1, -1, false, 0 );
+        private static readonly BigInteger SBnDecimalMinValue = ( BigInteger ) new   Decimal( -1, -1, -1, true, 0 );
 
         public BigInteger Denominator;
         public BigInteger Numerator;
@@ -97,12 +97,12 @@ namespace Librainian.Maths {
             }
         }
 
-        public BiggerRational( Decimal value ) {
-            var bits = Decimal.GetBits( value );
+        public BiggerRational(Decimal value ) {
+            var bits =Decimal.GetBits( value );
             if ( bits == null || bits.Length != 4 || ( ( bits[ 3 ] & 2130771967 ) != 0 || ( bits[ 3 ] & DecimalScaleMask ) > 1835008 ) ) {
-                throw new ArgumentException( "invalid Decimal", "value" );
+                throw new ArgumentException( "invalid  System.Decimal", "value" );
             }
-            if ( value == new Decimal( 0 ) ) {
+            if ( value == new   Decimal( 0 ) ) {
                 this = Zero;
             }
             else {
@@ -293,13 +293,13 @@ namespace Librainian.Maths {
             return value.Sign >= 0 ? double.PositiveInfinity : double.NegativeInfinity;
         }
 
-        public static explicit operator Decimal( BiggerRational value ) {
+        public static explicit operator  Decimal( BiggerRational value ) {
             if ( SafeCastToDecimal( value.Numerator ) && SafeCastToDecimal( value.Denominator ) ) {
-                return ( Decimal ) value.Numerator/( Decimal ) value.Denominator;
+                return (Decimal ) value.Numerator/(Decimal ) value.Denominator;
             }
             var bigInteger = value.Numerator*SBnDecimalPrecision/value.Denominator;
             if ( bigInteger.IsZero ) {
-                return new Decimal( 0 );
+                return new   Decimal( 0 );
             }
             for ( var index = 28; index >= 0; --index ) {
                 if ( !SafeCastToDecimal( bigInteger ) ) {
@@ -307,13 +307,13 @@ namespace Librainian.Maths {
                 }
                 else {
                     var decimalUint32 = new DecimalUInt32 {
-                                                              dec = ( Decimal ) bigInteger
+                                                              dec = (Decimal ) bigInteger
                                                           };
                     decimalUint32.flags = decimalUint32.flags & -16711681 | index << 16;
                     return decimalUint32.dec;
                 }
             }
-            throw new OverflowException( "Value was either too large or too small for a Decimal." );
+            throw new OverflowException( "Value was either too large or too small for a System.Decimal." );
         }
 
         [CLSCompliant( false )]
@@ -364,7 +364,7 @@ namespace Librainian.Maths {
             return new BiggerRational( value );
         }
 
-        public static implicit operator BiggerRational( Decimal value ) {
+        public static implicit operator BiggerRational(Decimal value ) {
             return new BiggerRational( value );
         }
 
@@ -645,7 +645,7 @@ namespace Librainian.Maths {
 
         [StructLayout( LayoutKind.Explicit )]
         internal struct DecimalUInt32 {
-            [FieldOffset( 0 )] public Decimal dec;
+            [FieldOffset( 0 )] public  Decimal dec;
             [FieldOffset( 0 )] public int flags;
         }
 

@@ -795,7 +795,7 @@ namespace Librainian.Maths {
         */
 
         ///// <summary>
-        /////     Attempt to parse a huge decimal from a string.
+        /////     Attempt to parse a huge Decimal from a string.
         ///// </summary>
         ///// <param name="value"></param>
         ///// <param name="number"></param>
@@ -847,7 +847,7 @@ namespace Librainian.Maths {
         //    }
 
         //    if ( value.Count( '.' ) > 1 ) {
-        //        whyParseFailed = "'value' contained too many decimal places";
+        //        whyParseFailed = "'value' contained too many Decimal places";
         //        return false;
         //    }
 
@@ -875,7 +875,7 @@ namespace Librainian.Maths {
         //    }
         //    BigInteger leftOfDecimalPoint;
         //    if ( !BigInteger.TryParse( wholeSide, out leftOfDecimalPoint ) ) {
-        //        //we were unable to parse the first string (all to the left of the decimal point)
+        //        //we were unable to parse the first string (all to the left of the Decimal point)
         //        return false;
         //    }
 
@@ -897,16 +897,16 @@ namespace Librainian.Maths {
         //    //but it messes with the ratio
 
         //    if ( !BigInteger.TryParse( fractionSide, out fractionInteger ) ) {
-        //        //we were unable to parse the second string (all to the right of the decimal point)
+        //        //we were unable to parse the second string (all to the right of the Decimal point)
         //        return false;
         //    }
 
         //    var fractionLength = fractionInteger.ToString().Length;
 
-        //    var multiplier = BigInteger.Pow( 10, fractionLength ); //we want the ratio of top/bottom to scale up past the decimal point and back down later
+        //    var multiplier = BigInteger.Pow( 10, fractionLength ); //we want the ratio of top/bottom to scale up past the Decimal point and back down later
 
         //    leftOfDecimalPoint *= multiplier; //append a whole lot of zeroes "1000000000"
-        //    leftOfDecimalPoint += fractionInteger; //reconstruct the part that was after the decimal point "123456789"
+        //    leftOfDecimalPoint += fractionInteger; //reconstruct the part that was after the Decimal point "123456789"
         //    // so now it looks like "1123456789"
 
         //    if ( needToPadFractionSide ) {

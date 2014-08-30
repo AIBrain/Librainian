@@ -38,7 +38,9 @@ namespace Librainian.Magic.Abodit {
                     {
                         var bookMark = bsonReader.GetBookmark();
                         if ( bsonReader.FindElement( MongoDynamic.InterfacesField ) ) {
+#pragma warning disable 618
                             md[ MongoDynamic.InterfacesField ] = BsonValue.ReadFrom( bsonReader ).AsBsonArray.Select( x => x.AsString );
+#pragma warning restore 618
                             typeMap = md.GetTypeMap();
                         }
                         else {
@@ -52,10 +54,14 @@ namespace Librainian.Magic.Abodit {
 
                         switch ( name ) {
                             case "_id":
+#pragma warning disable 618
                                 md[ name ] = BsonValue.ReadFrom( bsonReader ).AsObjectId;
+#pragma warning restore 618
                                 break;
                             case MongoDynamic.InterfacesField:
+#pragma warning disable 618
                                 BsonValue.ReadFrom( bsonReader );
+#pragma warning restore 618
                                 break;
                             default: {
                                 if ( typeMap == null )

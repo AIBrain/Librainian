@@ -14,7 +14,9 @@
         public override bool TryGetMember( GetMemberBinder binder, out object result ) {
             BsonValue res = null;
             this.Document.TryGetValue( binder.Name, out res );
+#pragma warning disable 618
             result = res.RawValue;  //Obsolete warning here.
+#pragma warning restore 618
             //result = BsonTypeMapper.MapToDotNetValue();
             return true;            // We always support a member even if we don't have it in the dictionary
         }

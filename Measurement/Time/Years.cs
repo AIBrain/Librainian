@@ -48,7 +48,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Years Zero = new Years( 0 );
 
         [DataMember]
-        public readonly Decimal Value;
+        public readonly  Decimal Value;
 
         static Years() {
             Zero.Should().BeLessThan( One );
@@ -57,7 +57,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeGreaterThan( Months.One );
         }
 
-        public Years( Decimal value ) {
+        public Years(Decimal value ) {
             this.Value = value;
         }
 
@@ -67,7 +67,7 @@ namespace Librainian.Measurement.Time {
 
         public Years( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = (Decimal )value;
         }
 
         [UsedImplicitly]
@@ -97,7 +97,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right.Value );
         }
 
-        public static Years Combine( Years left, Decimal years ) {
+        public static Years Combine( Years left,Decimal years ) {
             return new Years( left.Value + years );
         }
 
@@ -139,7 +139,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left: left, right: -right );
         }
 
-        public static Years operator -( Years left, Decimal years ) {
+        public static Years operator -( Years left,Decimal years ) {
             return Combine( left, -years );
         }
 
@@ -147,7 +147,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Years operator +( Years left, Decimal years ) {
+        public static Years operator +( Years left,Decimal years ) {
             return Combine( left, years );
         }
 

@@ -58,7 +58,7 @@ namespace Librainian.Measurement.Time {
         /// <see cref="http://www.wolframalpha.com/input/?i=converts+1+month+to+hours" />
         public static BigInteger InOneMonth = 730;
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static Hours() {
             Zero.Should().BeLessThan( One );
@@ -68,7 +68,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeGreaterThan( Minutes.One );
         }
 
-        public Hours( Decimal value ) {
+        public Hours(Decimal value ) {
             this.Value = value;
         }
 
@@ -78,7 +78,7 @@ namespace Librainian.Measurement.Time {
 
         public Hours( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = (Decimal ) value;
         }
 
         [UsedImplicitly]
@@ -108,7 +108,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right.Value );
         }
 
-        public static Hours Combine( Hours left, Decimal hours ) {
+        public static Hours Combine( Hours left,Decimal hours ) {
             return new Hours( left.Value + hours );
         }
 
@@ -168,7 +168,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left: left, right: -right );
         }
 
-        public static Hours operator -( Hours left, Decimal hours ) {
+        public static Hours operator -( Hours left,Decimal hours ) {
             return Combine( left, -hours );
         }
 
@@ -176,7 +176,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Hours operator +( Hours left, Decimal hours ) {
+        public static Hours operator +( Hours left,Decimal hours ) {
             return Combine( left, hours );
         }
 
@@ -201,12 +201,12 @@ namespace Librainian.Measurement.Time {
         }
 
         public Days ToDays() {
-            return new Days( Value/InOneDay );
+            return new Days( this.Value/InOneDay );
         }
 
         [Pure]
         public Minutes ToMinutes() {
-            return new Minutes( Value*Minutes.InOneHour );
+            return new Minutes( this.Value*Minutes.InOneHour );
         }
 
         public override int GetHashCode() {

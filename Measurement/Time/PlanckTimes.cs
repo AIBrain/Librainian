@@ -99,7 +99,7 @@ namespace Librainian.Measurement.Time {
 
         public PlanckTimes( long value ) : this( ( BigInteger ) value ) { }
 
-        public PlanckTimes( Decimal value ) : this( ( BigInteger ) value ) { }
+        public PlanckTimes(Decimal value ) : this( ( BigInteger ) value ) { }
 
         public PlanckTimes( BigInteger value ) {
             this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;

@@ -56,7 +56,7 @@ namespace Librainian.Measurement.Frequency {
         /// <summary>
         ///     About zero. :P
         /// </summary>
-        public static readonly BPM MinValue = new BPM( Decimal.MinValue );
+        public static readonly BPM MinValue = new BPM(Decimal.MinValue );
 
         /// <summary>
         ///     One <see cref="BPM" />.
@@ -103,14 +103,14 @@ namespace Librainian.Measurement.Frequency {
         /// </summary>
         public static readonly BPM TwoThousandThree = new BPM( 2003 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static BPM() {
             One.Should().BeLessThan( Two );
             Two.Should().BeGreaterThan( One );
         }
 
-        public BPM( Decimal bpm ) {
+        public BPM(Decimal bpm ) {
             this.Value = bpm;
         }
 

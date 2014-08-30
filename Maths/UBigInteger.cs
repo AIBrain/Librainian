@@ -130,8 +130,8 @@ namespace Librainian.Maths {
             return ( UInt64 )number._internalValue;
         }
 
-        public static explicit operator Decimal( UBigInteger number ) {
-            return ( Decimal )number._internalValue;
+        public static explicit operator  Decimal( UBigInteger number ) {
+            return (Decimal )number._internalValue;
         }
 
         public static implicit operator BigInteger( UBigInteger number ) {

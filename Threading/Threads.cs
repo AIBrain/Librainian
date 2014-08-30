@@ -212,8 +212,8 @@ namespace Librainian.Threading {
             if ( type is Int64 ) {
                 total += sizeof( Int64 );
             }
-            if ( type is Decimal ) {
-                total += sizeof( Decimal );
+            if ( type is  Decimal ) {
+                total += sizeof(Decimal );
             }
             if ( type is Double ) {
                 total += sizeof( Double );
@@ -295,7 +295,7 @@ namespace Librainian.Threading {
             }
 
             String.Format( "Performing {0} timeslice calibrations.", ProcessorCount ).TimeDebug();
-            SliceAverageCache = new Milliseconds( ( decimal )( 1 + Math.Ceiling( 0.To( ProcessorCount ).Select( i => GetSlice() ).Average( span => span.TotalMilliseconds ) ) ) );
+            SliceAverageCache = new Milliseconds( (Decimal )( 1 + Math.Ceiling( 0.To( ProcessorCount ).Select( i => GetSlice() ).Average( span => span.TotalMilliseconds ) ) ) );
             String.Format( "Timeslice calibration is {0}.", SliceAverageCache.Value.Simpler() ).TimeDebug();
             return SliceAverageCache.Value;
         }

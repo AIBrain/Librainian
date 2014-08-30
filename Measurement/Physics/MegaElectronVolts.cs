@@ -32,27 +32,27 @@ namespace Librainian.Measurement.Physics {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct MegaElectronVolts : IComparable< MilliElectronVolts >, IComparable< ElectronVolts >, IComparable< MegaElectronVolts >, IComparable< GigaElectronVolts > {
-        private const Decimal InOneElectronVolt = 1E-6m;
+        private const  Decimal InOneElectronVolt = 1E-6m;
 
-        private const Decimal InOneGigaElectronVolt = 1E3m;
+        private const  Decimal InOneGigaElectronVolt = 1E3m;
 
-        private const Decimal InOneKiloElectronVolt = 1E-3m;
+        private const  Decimal InOneKiloElectronVolt = 1E-3m;
 
-        private const Decimal InOneMegaElectronVolt = 1E0m;
+        private const  Decimal InOneMegaElectronVolt = 1E0m;
 
-        private const Decimal InOneMilliElectronVolt = 1E-9m;
+        private const  Decimal InOneMilliElectronVolt = 1E-9m;
 
-        private const Decimal InOneTeraElectronVolt = 1E6m;
+        private const  Decimal InOneTeraElectronVolt = 1E6m;
 
         /// <summary>
         ///     About 79228162514264337593543950335.
         /// </summary>
-        public static readonly MegaElectronVolts MaxValue = new MegaElectronVolts( units: Decimal.MaxValue );
+        public static readonly MegaElectronVolts MaxValue = new MegaElectronVolts( units:Decimal.MaxValue );
 
         /// <summary>
         ///     About -79228162514264337593543950335.
         /// </summary>
-        public static readonly MegaElectronVolts MinValue = new MegaElectronVolts( units: Decimal.MinValue );
+        public static readonly MegaElectronVolts MinValue = new MegaElectronVolts( units:Decimal.MinValue );
 
         /// <summary>
         /// </summary>
@@ -62,9 +62,9 @@ namespace Librainian.Measurement.Physics {
         /// </summary>
         public static readonly MegaElectronVolts Zero = new MegaElectronVolts( 0 );
 
-        public readonly Decimal Value;
+        public readonly  Decimal Value;
 
-        public MegaElectronVolts( Decimal units ) : this() {
+        public MegaElectronVolts(Decimal units ) : this() {
             this.Value = units;
         }
 

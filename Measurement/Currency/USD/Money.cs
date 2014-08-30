@@ -28,20 +28,20 @@ namespace Librainian.Measurement.Currency.USD {
     public class Money : ICurrency {
         [NotNull] public readonly Wallet Wallet = Extensions.CreateWallet();
 
-        public Money( Decimal amount ) {
+        public Money(Decimal amount ) {
             var leftOverAmount = Extensions.Fund( this.Wallet, amount ).Result;
-            Assert.AreEqual( leftOverAmount, Decimal.Zero );
+            Assert.AreEqual( leftOverAmount,Decimal.Zero );
         }
 
         /// <summary>
         ///     Example new Money(123.4567).Dollars == 123.0000
         /// </summary>
-        public Decimal Dollars { get { return Math.Truncate( this.Wallet.Total ); } }
+        public  Decimal Dollars { get { return Math.Truncate( this.Wallet.Total ); } }
 
         /// <summary>
         ///     Example new Money(123.4567).Cents == 0.4567
         /// </summary>
-        public Decimal Cents {
+        public  Decimal Cents {
             get {
                 var total = this.Wallet.Total;
                 return Math.Truncate( total ) - total;

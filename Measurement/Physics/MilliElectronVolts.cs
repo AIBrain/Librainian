@@ -35,32 +35,32 @@ namespace Librainian.Measurement.Physics {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct MilliElectronVolts : IComparable< MilliElectronVolts >, IComparable< ElectronVolts >, IComparable< MegaElectronVolts >, IComparable< GigaElectronVolts > {
-        private const Decimal InOneElectronVolt = 1E3m;
+        private const  Decimal InOneElectronVolt = 1E3m;
 
-        private const Decimal InOneGigaElectronVolt = 1E12m;
+        private const  Decimal InOneGigaElectronVolt = 1E12m;
 
-        private const Decimal InOneKiloElectronVolt = 1E6m;
+        private const  Decimal InOneKiloElectronVolt = 1E6m;
 
-        private const Decimal InOneMegaElectronVolt = 1E9m;
+        private const  Decimal InOneMegaElectronVolt = 1E9m;
 
-        private const Decimal InOneMilliElectronVolt = 1E0m;
+        private const  Decimal InOneMilliElectronVolt = 1E0m;
 
-        private const Decimal InOneTeraElectronVolt = 1E15m;
+        private const  Decimal InOneTeraElectronVolt = 1E15m;
 
         /// <summary>
         ///     About 79228162514264337593543950335.
         /// </summary>
-        public static readonly MilliElectronVolts MaxValue = new MilliElectronVolts( Decimal.MaxValue );
+        public static readonly MilliElectronVolts MaxValue = new MilliElectronVolts(Decimal.MaxValue );
 
         /// <summary>
         ///     About -79228162514264337593543950335.
         /// </summary>
-        public static readonly MilliElectronVolts MinValue = new MilliElectronVolts( Decimal.MinValue );
+        public static readonly MilliElectronVolts MinValue = new MilliElectronVolts(Decimal.MinValue );
 
         public static readonly MilliElectronVolts Zero = new MilliElectronVolts( 0 );
-        public readonly Decimal Value;
+        public readonly  Decimal Value;
 
-        public MilliElectronVolts( Decimal units ) : this() {
+        public MilliElectronVolts(Decimal units ) : this() {
             this.Value = units;
         }
 

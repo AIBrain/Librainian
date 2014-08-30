@@ -23,16 +23,16 @@ namespace Librainian.Maths {
 
     /// <summary>
     ///     A class to allow the conversion of doubles to string representations of
-    ///     their exact decimal values. The implementation aims for readability over
+    ///     their exact  System.Decimal values. The implementation aims for readability over
     ///     efficiency.
     /// </summary>
     /// <see cref="http://yoda.arachsys.com/csharp/DoubleConverter.cs" />
     public class DoubleConverter {
         /// <summary>
-        ///     Converts the given Double to a string representation of its exact decimal value.
+        ///     Converts the given Double to a string representation of its exact  System.Decimal value.
         /// </summary>
         /// <param name="d">The Double to convert.</param>
-        /// <returns>A string representation of the Double's exact decimal value.</returns>
+        /// <returns>A string representation of the Double's exact  System.Decimal value.</returns>
         public static string ToExactString( Double d ) {
             if ( Double.IsPositiveInfinity( d ) ) {
                 return "+Infinity";
@@ -78,7 +78,7 @@ namespace Librainian.Maths {
                 exponent++;
             }
 
-            /// Construct a new decimal expansion with the mantissa
+            /// Construct a new   System.Decimal expansion with the mantissa
             var ad = new ArbitraryDecimal( mantissa );
 
             // If the exponent is less than 0, we need to repeatedly
@@ -107,15 +107,15 @@ namespace Librainian.Maths {
         /// <summary>Private class used for manipulating
         private class ArbitraryDecimal {
             /// <summary>
-            ///     How many digits are *after* the decimal point
+            ///     How many digits are *after* the  System.Decimal point
             /// </summary>
             private int decimalPoint;
 
-            /// <summary>Digits in the decimal expansion, one byte per digit
+            /// <summary>Digits in the  System.Decimal expansion, one byte per digit
             private byte[] digits;
 
             /// <summary>
-            ///     Constructs an arbitrary decimal expansion from the given long.
+            ///     Constructs an arbitrary  System.Decimal expansion from the given long.
             ///     The long must not be negative.
             /// </summary>
             internal ArbitraryDecimal( long x ) {
@@ -128,7 +128,7 @@ namespace Librainian.Maths {
             }
 
             /// <summary>
-            ///     Converts the value to a proper decimal string representation.
+            ///     Converts the value to a proper  System.Decimal string representation.
             /// </summary>
             public override String ToString() {
                 var digitString = new char[this.digits.Length];
@@ -136,25 +136,25 @@ namespace Librainian.Maths {
                     digitString[ i ] = ( char ) ( this.digits[ i ] + '0' );
                 }
 
-                // Simplest case - nothing after the decimal point,
+                // Simplest case - nothing after the  System.Decimal point,
                 // and last real digit is non-zero, eg value=35
                 if ( this.decimalPoint == 0 ) {
                     return new string( digitString );
                 }
 
-                // Fairly simple case - nothing after the decimal
+                // Fairly simple case - nothing after the  System.Decimal
                 // point, but some 0s to add, eg value=350
                 if ( this.decimalPoint < 0 ) {
                     return new string( digitString ) + new string( '0', -this.decimalPoint );
                 }
 
-                // Nothing before the decimal point, eg 0.035
+                // Nothing before the  System.Decimal point, eg 0.035
                 if ( this.decimalPoint >= digitString.Length ) {
                     return "0." + new string( '0', ( this.decimalPoint - digitString.Length ) ) + new string( digitString );
                 }
 
                 // Most complicated case - part of the string comes
-                // before the decimal point, part comes after it,
+                // before the  System.Decimal point, part comes after it,
                 // eg 3.5
                 return new string( digitString, 0, digitString.Length - this.decimalPoint ) + "." + new string( digitString, digitString.Length - this.decimalPoint, this.decimalPoint );
             }
@@ -210,9 +210,9 @@ namespace Librainian.Maths {
             }
 
             /// <summary>
-            ///     Shifts the decimal point; a negative value makes
-            ///     the decimal expansion bigger (as fewer digits come after the
-            ///     decimal place) and a positive value makes the decimal
+            ///     Shifts the  System.Decimal point; a negative value makes
+            ///     the  System.Decimal expansion bigger (as fewer digits come after the
+            ///      System.Decimal place) and a positive value makes the  System.Decimal
             ///     expansion smaller.
             /// </summary>
             internal void Shift( int amount ) {

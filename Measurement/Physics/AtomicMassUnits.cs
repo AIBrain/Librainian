@@ -44,12 +44,12 @@ namespace Librainian.Measurement.Physics {
         /// <summary>
         ///     About 79228162514264337593543950335.
         /// </summary>
-        public static readonly AtomicMassUnits MaxValue = new AtomicMassUnits( Decimal.MaxValue );
+        public static readonly AtomicMassUnits MaxValue = new AtomicMassUnits(Decimal.MaxValue );
 
         /// <summary>
         ///     About -79228162514264337593543950335.
         /// </summary>
-        public static readonly AtomicMassUnits MinValue = new AtomicMassUnits( Decimal.MinValue );
+        public static readonly AtomicMassUnits MinValue = new AtomicMassUnits(Decimal.MinValue );
 
         public static readonly AtomicMassUnits NegativeOne = new AtomicMassUnits( -1 );
 
@@ -68,30 +68,30 @@ namespace Librainian.Measurement.Physics {
         /// <summary>
         ///
         /// </summary>
-        public readonly Decimal Value;
+        public readonly  Decimal Value;
 
         /// <summary>
         ///
         /// </summary>
-        private const Decimal InOneElectronVolt = 0.000000001073544m;
+        private const  Decimal InOneElectronVolt = 0.000000001073544m;
 
-        private const Decimal InOneGigaElectronVolt = 1.073544m;
+        private const  Decimal InOneGigaElectronVolt = 1.073544m;
 
-        private const Decimal InOneKiloElectronVolt = 0.000001073544m;
+        private const  Decimal InOneKiloElectronVolt = 0.000001073544m;
 
-        private const Decimal InOneMegaElectronVolt = 0.001073544m;
+        private const  Decimal InOneMegaElectronVolt = 0.001073544m;
 
-        private const Decimal InOneMilliElectronVolt = 0.000000000001073544m;
+        private const  Decimal InOneMilliElectronVolt = 0.000000000001073544m;
 
-        private const Decimal InOneTeraElectronVolt = 1073.544m;
+        private const  Decimal InOneTeraElectronVolt = 1073.544m;
 
-        public AtomicMassUnits( Decimal value )
+        public AtomicMassUnits(Decimal value )
             : this() {
             this.Value = value;
         }
 
         public AtomicMassUnits( BigRational aBigFraction ) {
-            this.Value = ( Decimal )aBigFraction;
+            this.Value = (Decimal )aBigFraction;
         }
 
         [UsedImplicitly]
@@ -115,31 +115,31 @@ namespace Librainian.Measurement.Physics {
         //public static implicit operator AtomicMassUnits( MegaElectronVolts megaElectronVolts ) {
         //    return megaElectronVolts.ToElectronVolts();
         //}
-        public static AtomicMassUnits operator *( AtomicMassUnits left, Decimal right ) {
+        public static AtomicMassUnits operator *( AtomicMassUnits left,Decimal right ) {
             return new AtomicMassUnits( left.Value * right );
         }
 
-        public static AtomicMassUnits operator *( Decimal left, AtomicMassUnits right ) {
+        public static AtomicMassUnits operator *(Decimal left, AtomicMassUnits right ) {
             return new AtomicMassUnits( left * right.Value );
         }
 
         public static AtomicMassUnits operator *( BigDecimal left, AtomicMassUnits right ) {
             var res = left * right.Value;
-            return new AtomicMassUnits( ( Decimal )res );
+            return new AtomicMassUnits( (Decimal )res );
         }
 
         public static AtomicMassUnits operator *( BigInteger left, AtomicMassUnits right ) {
             var lhs = new BigDecimal( left, 0 );
             var rhs = new BigDecimal( right.Value );
             var res = lhs * rhs;
-            return new AtomicMassUnits( ( Decimal )res );
+            return new AtomicMassUnits( (Decimal )res );
         }
 
         public static AtomicMassUnits operator /( AtomicMassUnits left, AtomicMassUnits right ) {
             return new AtomicMassUnits( left.Value / right.Value );
         }
 
-        public static AtomicMassUnits operator /( AtomicMassUnits left, Decimal right ) {
+        public static AtomicMassUnits operator /( AtomicMassUnits left,Decimal right ) {
             return new AtomicMassUnits( left.Value / right );
         }
 

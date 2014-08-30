@@ -71,7 +71,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
-        public Percentage( Decimal numerator, Decimal denominator ) : this( ( Double )numerator, ( Double )denominator ) {}
+        public Percentage(Decimal numerator,Decimal denominator ) : this( ( Double )numerator, ( Double )denominator ) {}
 
         /// <summary>
         /// <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
@@ -201,8 +201,8 @@ namespace Librainian.Maths {
             return ( Double )special.Quotient;
         }
 
-        //public static implicit operator Decimal( Percentage special ) {
-        //    return ( Decimal )special.Value;
+        //public static implicit operator  System.Decimal( Percentage special ) {
+        //    return (  System.Decimal )special.Value;
         //}
 
         public static implicit operator Percentage( Single value ) {

@@ -50,7 +50,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Weeks Zero = new Weeks( 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static Weeks() {
             Zero.Should().BeLessThan( One );
@@ -60,7 +60,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeGreaterThan( Days.One );
         }
 
-        public Weeks( Decimal weeks ) : this() {
+        public Weeks(Decimal weeks ) : this() {
             this.Value = weeks;
         }
 
@@ -70,7 +70,7 @@ namespace Librainian.Measurement.Time {
 
         public Weeks( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = (Decimal ) value;
         }
 
         [UsedImplicitly]
@@ -100,7 +100,7 @@ namespace Librainian.Measurement.Time {
             return new Weeks( left.Value + right.Value );
         }
 
-        public static Weeks Combine( Weeks left, Decimal weeks ) {
+        public static Weeks Combine( Weeks left,Decimal weeks ) {
             return new Weeks( left.Value + weeks );
         }
 
@@ -129,7 +129,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Weeks operator +( Weeks left, Decimal weeks ) {
+        public static Weeks operator +( Weeks left,Decimal weeks ) {
             return Combine( left, weeks );
         }
 
@@ -177,7 +177,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public Days ToDays() {
-            return new Days( Value*Days.InOneWeek );
+            return new Days( this.Value*Days.InOneWeek );
         }
 
         public override int GetHashCode() {

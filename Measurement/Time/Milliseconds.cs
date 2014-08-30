@@ -261,12 +261,12 @@ namespace Librainian.Measurement.Time {
         }
 
         public Microseconds ToMicroseconds() {
-            return new Microseconds( Value*Microseconds.InOneMillisecond );
+            return new Microseconds( this.Value*Microseconds.InOneMillisecond );
         }
 
         [Pure]
         public Seconds ToSeconds() {
-            return new Seconds( Value/InOneSecond );
+            return new Seconds( this.Value/InOneSecond );
         }
 
         public Boolean Equals( Milliseconds other ) {

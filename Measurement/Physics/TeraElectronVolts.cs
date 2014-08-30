@@ -32,27 +32,27 @@ namespace Librainian.Measurement.Physics {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct TeraElectronVolts : IComparable< MilliElectronVolts >, IComparable< ElectronVolts >, IComparable< MegaElectronVolts >, IComparable< TeraElectronVolts > {
-        private const Decimal InOneElectronVolt = 1E-12m;
+        private const  Decimal InOneElectronVolt = 1E-12m;
 
-        private const Decimal InOneGigaElectronVolt = 1E-3m;
+        private const  Decimal InOneGigaElectronVolt = 1E-3m;
 
-        private const Decimal InOneKiloElectronVolt = 1E-9m;
+        private const  Decimal InOneKiloElectronVolt = 1E-9m;
 
-        private const Decimal InOneMegaElectronVolt = 1E-6m;
+        private const  Decimal InOneMegaElectronVolt = 1E-6m;
 
-        private const Decimal InOneMilliElectronVolt = 1E-15m;
+        private const  Decimal InOneMilliElectronVolt = 1E-15m;
 
-        private const Decimal InOneTeraElectronVolt = 1E0m;
+        private const  Decimal InOneTeraElectronVolt = 1E0m;
 
         /// <summary>
         ///     About 79228162514264337593543950335.
         /// </summary>
-        public static readonly TeraElectronVolts MaxValue = new TeraElectronVolts( Decimal.MaxValue );
+        public static readonly TeraElectronVolts MaxValue = new TeraElectronVolts(Decimal.MaxValue );
 
         /// <summary>
         ///     About -79228162514264337593543950335.
         /// </summary>
-        public static readonly TeraElectronVolts MinValue = new TeraElectronVolts( Decimal.MinValue );
+        public static readonly TeraElectronVolts MinValue = new TeraElectronVolts(Decimal.MinValue );
 
         /// <summary>
         /// </summary>
@@ -64,9 +64,9 @@ namespace Librainian.Measurement.Physics {
 
         /// <summary>
         /// </summary>
-        public readonly Decimal Value;
+        public readonly  Decimal Value;
 
-        public TeraElectronVolts( Decimal units ) : this() {
+        public TeraElectronVolts(Decimal units ) : this() {
             this.Value = units;
         }
 
@@ -97,11 +97,11 @@ namespace Librainian.Measurement.Physics {
             return this.Value.CompareTo( other.Value );
         }
 
-        public static TeraElectronVolts operator *( TeraElectronVolts left, Decimal right ) {
+        public static TeraElectronVolts operator *( TeraElectronVolts left,Decimal right ) {
             return new TeraElectronVolts( left.Value*right );
         }
 
-        public static TeraElectronVolts operator *( Decimal left, TeraElectronVolts right ) {
+        public static TeraElectronVolts operator *(Decimal left, TeraElectronVolts right ) {
             return new TeraElectronVolts( left*right.Value );
         }
 

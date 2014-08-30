@@ -11,10 +11,10 @@ namespace Librainian.Magic {
         public void Dispose() {
             try {
                 try {
-                    CleanUpManagedResources();
+                    this.CleanUpManagedResources();
                 }
                 finally {
-                    CleanUpNativeResources();
+                    this.CleanUpNativeResources();
                 }
             }
             finally {
@@ -30,7 +30,7 @@ namespace Librainian.Magic {
         }
 
         ~BetterDisposableClass() {
-            CleanUpNativeResources();
+            this.CleanUpNativeResources();
         }
 
     }

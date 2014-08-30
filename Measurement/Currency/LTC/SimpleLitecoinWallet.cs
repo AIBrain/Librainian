@@ -25,7 +25,7 @@ namespace Librainian.Measurement.Currency.LTC {
     using BTC;
 
     /// <summary>
-    ///     A very simple, thread-safe, Decimal-based wallet.
+    ///     A very simple, thread-safe,  System.Decimal-based wallet.
     /// </summary>
     /// <remarks>
     ///     TODO add in support for automatic persisting
@@ -34,24 +34,24 @@ namespace Librainian.Measurement.Currency.LTC {
     [DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
     public class SimpleLitecoinWallet : ISimpleWallet {
-        public const Decimal mBTC1 = mBTC*1.0M;
-        public const Decimal mBTC2 = mBTC*2.0M;
-        public const Decimal mBTC3 = mBTC*3.0M;
-        public const Decimal mBTC4 = mBTC*4.0M;
-        public const Decimal mBTC5 = mBTC*5.0M;
-        public const Decimal TenSatoshi = 10.0m*Satoshi;
-        public const Decimal SatoshiPerBTC = BTC/Satoshi;
-        public const Decimal μBTCPerBTC = BTC/μBTC;
-        public const Decimal mBTCPerBTC = BTC/mBTC;
-        public const Decimal BTC = mBTC*1000.0M;
-        public const Decimal mBTC = μBTC*1000.0M;
-        public const Decimal Satoshi = 0.00000001M;
-        public const Decimal OneSatoshi = 0.00000001M;
-        public const Decimal μBTC = Satoshi*100.0M;
+        public const  Decimal mBTC1 = mBTC*1.0M;
+        public const  Decimal mBTC2 = mBTC*2.0M;
+        public const  Decimal mBTC3 = mBTC*3.0M;
+        public const  Decimal mBTC4 = mBTC*4.0M;
+        public const  Decimal mBTC5 = mBTC*5.0M;
+        public const  Decimal TenSatoshi = 10.0m*Satoshi;
+        public const  Decimal SatoshiPerBTC = BTC/Satoshi;
+        public const  Decimal μBTCPerBTC = BTC/μBTC;
+        public const  Decimal mBTCPerBTC = BTC/mBTC;
+        public const  Decimal BTC = mBTC*1000.0M;
+        public const  Decimal mBTC = μBTC*1000.0M;
+        public const  Decimal Satoshi = 0.00000001M;
+        public const  Decimal OneSatoshi = 0.00000001M;
+        public const  Decimal μBTC = Satoshi*100.0M;
 
         [NotNull] private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-        private Decimal _balance;
+        private  Decimal _balance;
 
         public SimpleLitecoinWallet() {
             this.Timeout = TimeSpan.FromMinutes( 1 );
@@ -61,7 +61,7 @@ namespace Librainian.Measurement.Currency.LTC {
         ///     Initialize the wallet with the specified <paramref name="balance" />.
         /// </summary>
         /// <param name="balance"></param>
-        public SimpleLitecoinWallet( Decimal balance ) : this() {
+        public SimpleLitecoinWallet(Decimal balance ) : this() {
             this._balance = balance.Sanitize();
         }
 
@@ -78,10 +78,10 @@ namespace Librainian.Measurement.Currency.LTC {
 
         public TimeSpan Timeout { get; set; }
 
-        public Decimal Balance {
+        public  Decimal Balance {
             get {
                 try {
-                    return this._access.TryEnterReadLock( this.Timeout ) ? this._balance : Decimal.Zero;
+                    return this._access.TryEnterReadLock( this.Timeout ) ? this._balance :Decimal.Zero;
                 }
                 finally {
                     if ( this._access.IsReadLockHeld ) {
@@ -91,13 +91,13 @@ namespace Librainian.Measurement.Currency.LTC {
             }
         }
 
-        public Action< Decimal > OnBeforeDeposit { get; set; }
-        public Action< Decimal > OnAfterDeposit { get; set; }
+        public Action<Decimal > OnBeforeDeposit { get; set; }
+        public Action<Decimal > OnAfterDeposit { get; set; }
 
-        public Action< Decimal > OnBeforeWithdraw { get; set; }
-        public Action< Decimal > OnAfterWithdraw { get; set; }
+        public Action<Decimal > OnBeforeWithdraw { get; set; }
+        public Action<Decimal > OnAfterWithdraw { get; set; }
 
-        public Action< Decimal > OnAnyUpdate { get; set; }
+        public Action<Decimal > OnAnyUpdate { get; set; }
 
         /// <summary>
         ///     Attempt to deposit btc (larger than zero) to the <see cref="Balance" />.
@@ -105,11 +105,11 @@ namespace Librainian.Measurement.Currency.LTC {
         /// <param name="btc"></param>
         /// <param name="sanitizeBtc"></param>
         /// <returns></returns>
-        public Boolean TryDeposit( Decimal btc, Boolean sanitizeBtc = true ) {
+        public Boolean TryDeposit(Decimal btc, Boolean sanitizeBtc = true ) {
             if ( sanitizeBtc ) {
                 btc = btc.Sanitize();
             }
-            if ( btc < Decimal.Zero ) {
+            if ( btc <Decimal.Zero ) {
                 return false;
             }
             var onBeforeDeposit = this.OnBeforeDeposit;
@@ -132,11 +132,11 @@ namespace Librainian.Measurement.Currency.LTC {
         /// <param name="btc"></param>
         /// <param name="sanitizeBtc"></param>
         /// <returns></returns>
-        public Boolean TryWithdraw( Decimal btc, Boolean sanitizeBtc = true ) {
+        public Boolean TryWithdraw(Decimal btc, Boolean sanitizeBtc = true ) {
             if ( sanitizeBtc ) {
                 btc = btc.Sanitize();
             }
-            if ( btc < Decimal.Zero ) {
+            if ( btc <Decimal.Zero ) {
                 return false;
             }
             try {
@@ -164,7 +164,7 @@ namespace Librainian.Measurement.Currency.LTC {
             }
         }
 
-        public Boolean TryUpdateBalance( Decimal btc, Boolean sanitizeBtc = true ) {
+        public Boolean TryUpdateBalance(Decimal btc, Boolean sanitizeBtc = true ) {
             if ( sanitizeBtc ) {
                 btc = btc.Sanitize();
             }
@@ -197,7 +197,7 @@ namespace Librainian.Measurement.Currency.LTC {
         /// <param name="btc"></param>
         /// <param name="sanitizeBtc"></param>
         /// <returns></returns>
-        public Boolean TryAdd( Decimal btc, Boolean sanitizeBtc = true ) {
+        public Boolean TryAdd(Decimal btc, Boolean sanitizeBtc = true ) {
             if ( sanitizeBtc ) {
                 btc = btc.Sanitize();
             }

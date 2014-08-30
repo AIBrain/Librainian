@@ -135,10 +135,10 @@ namespace Librainian.Measurement.Currency.USD {
         /// <summary>
         ///     Return the total amount of money contained in this <see cref="Wallet" />.
         /// </summary>
-        public Decimal Total {
+        public  Decimal Total {
             get {
-                var total = this._coins.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue*pair.Value );
-                total += this._bankNotes.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue*pair.Value );
+                var total = this._coins.Aggregate(Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue*pair.Value );
+                total += this._bankNotes.Aggregate(Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue*pair.Value );
                 return total;
             }
         }

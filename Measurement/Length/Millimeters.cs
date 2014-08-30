@@ -36,14 +36,14 @@ namespace Librainian.Measurement.Length {
         /// <summary>
         ///     About zero. :P
         /// </summary>
-        public static readonly Millimeters MinValue = new Millimeters(  Decimal.MinValue );
+        public static readonly Millimeters MinValue = new Millimeters( Decimal.MinValue );
 
         /// <summary>
         ///     About 584.9 million years.
         /// </summary>
-        public static readonly Millimeters MaxValue = new Millimeters(  Decimal.MaxValue );
+        public static readonly Millimeters MaxValue = new Millimeters( Decimal.MaxValue );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static Millimeters() {
             //Assert.That( One < Centimeter.One );
@@ -51,7 +51,7 @@ namespace Librainian.Measurement.Length {
             //Assert.That( One < Feet.One );
         }
 
-        public Millimeters( Decimal millimeters ) {
+        public Millimeters(Decimal millimeters ) {
             this.Value = millimeters;
         }
 

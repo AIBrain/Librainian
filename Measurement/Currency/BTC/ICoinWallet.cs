@@ -41,7 +41,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <summary>
         ///     Return the total amount of money contained in this <see cref="CoinWallet" />.
         /// </summary>
-        Decimal Total { get; }
+       Decimal Total { get; }
 
         /// <summary>
         ///     Attempt to <see cref="CoinWallet.TryWithdraw(ICoin,ulong)" /> one or more <see cref="ICoin" /> from this

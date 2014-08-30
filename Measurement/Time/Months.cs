@@ -52,7 +52,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Months Zero = new Months( 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly   Decimal Value;
 
         static Months() {
             Zero.Should().BeLessThan( One );
@@ -61,13 +61,13 @@ namespace Librainian.Measurement.Time {
             One.Should().BeLessThan( Years.One );
         }
 
-        public Months( Decimal value ) {
+        public Months(Decimal value ) {
             this.Value = value;
         }
 
         public Months( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = (Decimal ) value;
         }
 
         private Months( int value ) {
@@ -96,7 +96,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right.Value );
         }
 
-        public static Months Combine( Months left, Decimal months ) {
+        public static Months Combine( Months left,Decimal months ) {
             return new Months( left.Value + months );
         }
 
@@ -116,7 +116,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left: left, right: -right );
         }
 
-        public static Months operator -( Months left, Decimal months ) {
+        public static Months operator -( Months left,Decimal months ) {
             return Combine( left, -months );
         }
 
@@ -165,7 +165,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public Years ToYears() {
-            return new Years( Value / InOneYear );
+            return new Years( this.Value / InOneYear );
         }
 
         public override int GetHashCode() {

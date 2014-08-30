@@ -35,11 +35,11 @@ namespace Librainian.Measurement.Currency {
         [NotNull] private readonly ReaderWriterLockSlim _withwrawLock;
         [DataMember] public Guid WalletID;
 
-        [DataMember] private Decimal _allTimeDeposited;
+        [DataMember] private  Decimal _allTimeDeposited;
 
-        private Decimal _allTimeWithdrawn;
-        private decimal _gain;
-        private decimal _loss;
+        private  Decimal _allTimeWithdrawn;
+        private  Decimal _gain;
+        private  Decimal _loss;
 
         public Statistics( Guid walletID ) : this() {
             if ( walletID == Guid.Empty ) {
@@ -54,7 +54,7 @@ namespace Librainian.Measurement.Currency {
             this.Reset();
         }
 
-        public Decimal AllTimeDeposited {
+        public  Decimal AllTimeDeposited {
             get {
                 try {
                     this._depositLock.EnterReadLock();
@@ -76,7 +76,7 @@ namespace Librainian.Measurement.Currency {
         }
 
         [DataMember]
-        public Decimal AllTimeWithdrawn {
+        public  Decimal AllTimeWithdrawn {
             get {
                 try {
                     this._withwrawLock.EnterReadLock();
@@ -97,7 +97,7 @@ namespace Librainian.Measurement.Currency {
             }
         }
 
-        public Decimal Gains {
+        public  Decimal Gains {
             get {
                 try {
                     this._gainLock.EnterReadLock();
@@ -121,7 +121,7 @@ namespace Librainian.Measurement.Currency {
         [DataMember]
         public DateTime InstanceCreationTime { get; private set; }
 
-        public Decimal Losses {
+        public  Decimal Losses {
             get {
                 try {
                     this._lossLock.EnterReadLock();
@@ -143,10 +143,10 @@ namespace Librainian.Measurement.Currency {
         }
 
         public void Reset() {
-            this.AllTimeDeposited = Decimal.Zero;
-            this.AllTimeWithdrawn = Decimal.Zero;
-            this.Gains = Decimal.Zero;
-            this.Losses = Decimal.Zero;
+            this.AllTimeDeposited =Decimal.Zero;
+            this.AllTimeWithdrawn =Decimal.Zero;
+            this.Gains =Decimal.Zero;
+            this.Losses =Decimal.Zero;
         }
     }
 }

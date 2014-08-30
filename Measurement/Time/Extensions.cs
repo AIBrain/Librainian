@@ -384,13 +384,13 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="value"></param>
         public static void ThrowIfOutOfDecimalRange( this Double value ) {
-            value.Should().BeInRange( ( Double ) Decimal.MinValue, ( Double ) Decimal.MaxValue );
+            value.Should().BeInRange( ( Double )Decimal.MinValue, ( Double )Decimal.MaxValue );
 
-            if ( value < ( Double ) Decimal.MinValue ) {
+            if ( value < ( Double )Decimal.MinValue ) {
                 throw new OverflowException( Constants.ValueIsTooLow );
             }
 
-            if ( value > ( Double ) Decimal.MaxValue ) {
+            if ( value > ( Double )Decimal.MaxValue ) {
                 throw new OverflowException( Constants.ValueIsTooHigh );
             }
         }
@@ -499,7 +499,7 @@ namespace Librainian.Measurement.Time {
         public static Span ToSpan( this Date date ) {
             var span = Span.Zero;
             span += new Years( date.Year );
-            span += new Months( ( decimal ) date.Month.Value );
+            span += new Months( (Decimal ) date.Month.Value );
             span += new Days( date.Day.Value );
             return span;
         }

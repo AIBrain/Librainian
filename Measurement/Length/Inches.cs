@@ -36,21 +36,21 @@ namespace Librainian.Measurement.Length {
         /// <summary>
         ///     About zero. :P
         /// </summary>
-        public static readonly Inches MinValue = new Inches( inches: Decimal.MinValue );
+        public static readonly Inches MinValue = new Inches( inches:Decimal.MinValue );
 
         /// <summary>
         ///     About 584.9 million years.
         /// </summary>
-        public static readonly Inches MaxValue = new Inches( inches: Decimal.MaxValue );
+        public static readonly Inches MaxValue = new Inches( inches:Decimal.MaxValue );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static Inches() {
             //Assert.That( One < Inch.One );
             //Assert.That( One < Feet.One );
         }
 
-        public Inches( Decimal inches ) {
+        public Inches(Decimal inches ) {
             this.Value = inches;
         }
 

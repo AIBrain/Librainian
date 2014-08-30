@@ -104,7 +104,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Nanoseconds Zero = new Nanoseconds( value: 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static Nanoseconds() {
             Zero.Should().BeLessThan( One );
@@ -114,7 +114,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeGreaterThan( Picoseconds.One );
         }
 
-        public Nanoseconds( Decimal value ) {
+        public Nanoseconds(Decimal value ) {
             this.Value = value;
         }
 
@@ -124,7 +124,7 @@ namespace Librainian.Measurement.Time {
 
         public Nanoseconds( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = (Decimal ) value;
         }
 
         [UsedImplicitly]
@@ -162,7 +162,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right.Value );
         }
 
-        public static Nanoseconds Combine( Nanoseconds left, Decimal nanoseconds ) {
+        public static Nanoseconds Combine( Nanoseconds left,Decimal nanoseconds ) {
             return new Nanoseconds( left.Value + nanoseconds );
         }
 
@@ -182,7 +182,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, -right );
         }
 
-        public static Nanoseconds operator -( Nanoseconds left, Decimal nanoseconds ) {
+        public static Nanoseconds operator -( Nanoseconds left,Decimal nanoseconds ) {
             return Combine( left, -nanoseconds );
         }
 
@@ -190,7 +190,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Nanoseconds operator +( Nanoseconds left, Decimal nanoseconds ) {
+        public static Nanoseconds operator +( Nanoseconds left,Decimal nanoseconds ) {
             return Combine( left, nanoseconds );
         }
 
@@ -237,12 +237,12 @@ namespace Librainian.Measurement.Time {
         }
 
         public Picoseconds ToPicoseconds() {
-            return new Picoseconds( Value*Picoseconds.InOneNanosecond );
+            return new Picoseconds( this.Value*Picoseconds.InOneNanosecond );
         }
 
         [Pure]
         public Microseconds ToMicroseconds() {
-            return new Microseconds( Value/InOneMicrosecond );
+            return new Microseconds( this.Value/InOneMicrosecond );
         }
     }
 }

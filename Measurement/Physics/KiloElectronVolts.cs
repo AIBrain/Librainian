@@ -34,27 +34,27 @@ namespace Librainian.Measurement.Physics {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct KiloElectronVolts : IComparable< MilliElectronVolts >, IComparable< ElectronVolts >, IComparable< KiloElectronVolts >, IComparable< MegaElectronVolts >, IComparable< GigaElectronVolts > {
-        private const Decimal InOneElectronVolt = 1E-3m;
+        private const  Decimal InOneElectronVolt = 1E-3m;
 
-        private const Decimal InOneGigaElectronVolt = 1E6m;
+        private const  Decimal InOneGigaElectronVolt = 1E6m;
 
-        private const Decimal InOneKiloElectronVolt = 1E0m;
+        private const  Decimal InOneKiloElectronVolt = 1E0m;
 
-        private const Decimal InOneMegaElectronVolt = 1E3m;
+        private const  Decimal InOneMegaElectronVolt = 1E3m;
 
-        private const Decimal InOneMilliElectronVolt = 1E-6m;
+        private const  Decimal InOneMilliElectronVolt = 1E-6m;
 
-        private const Decimal InOneTeraElectronVolt = 1E9m;
+        private const  Decimal InOneTeraElectronVolt = 1E9m;
 
         /// <summary>
         ///     About 79228162514264337593543950335.
         /// </summary>
-        public static readonly KiloElectronVolts MaxValue = new KiloElectronVolts( Decimal.MaxValue );
+        public static readonly KiloElectronVolts MaxValue = new KiloElectronVolts(Decimal.MaxValue );
 
         /// <summary>
         ///     About -79228162514264337593543950335.
         /// </summary>
-        public static readonly KiloElectronVolts MinValue = new KiloElectronVolts( Decimal.MinValue );
+        public static readonly KiloElectronVolts MinValue = new KiloElectronVolts(Decimal.MinValue );
 
         public static readonly KiloElectronVolts NegativeOne = new KiloElectronVolts( -1 );
 
@@ -67,9 +67,9 @@ namespace Librainian.Measurement.Physics {
         public static readonly KiloElectronVolts One = new KiloElectronVolts( 1 );
 
         public static readonly KiloElectronVolts Zero = new KiloElectronVolts( 0 );
-        public readonly Decimal Value;
+        public readonly  Decimal Value;
 
-        public KiloElectronVolts( Decimal value ) : this() {
+        public KiloElectronVolts(Decimal value ) : this() {
             this.Value = value;
         }
 
@@ -78,7 +78,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public KiloElectronVolts( BigRational aBigFraction ) {
-            this.Value = ( Decimal ) aBigFraction;
+            this.Value = (Decimal ) aBigFraction;
         }
 
         public KiloElectronVolts( GigaElectronVolts gigaElectronVolts ) {
@@ -128,31 +128,31 @@ namespace Librainian.Measurement.Physics {
             return new KiloElectronVolts( left.Value*right.Value );
         }
 
-        public static KiloElectronVolts operator *( KiloElectronVolts left, Decimal right ) {
+        public static KiloElectronVolts operator *( KiloElectronVolts left,Decimal right ) {
             return new KiloElectronVolts( left.Value*right );
         }
 
-        public static KiloElectronVolts operator *( Decimal left, KiloElectronVolts right ) {
+        public static KiloElectronVolts operator *(Decimal left, KiloElectronVolts right ) {
             return new KiloElectronVolts( left*right.Value );
         }
 
         public static KiloElectronVolts operator *( BigDecimal left, KiloElectronVolts right ) {
             var res = left*right.Value;
-            return new KiloElectronVolts( ( Decimal ) res );
+            return new KiloElectronVolts( (Decimal ) res );
         }
 
         public static KiloElectronVolts operator *( BigInteger left, KiloElectronVolts right ) {
             var lhs = new BigDecimal( left, 0 );
             var rhs = new BigDecimal( right.Value );
             var res = lhs*rhs;
-            return new KiloElectronVolts( ( Decimal ) res );
+            return new KiloElectronVolts( (Decimal ) res );
         }
 
         public static KiloElectronVolts operator /( KiloElectronVolts left, KiloElectronVolts right ) {
             return new KiloElectronVolts( left.Value/right.Value );
         }
 
-        public static KiloElectronVolts operator /( KiloElectronVolts left, Decimal right ) {
+        public static KiloElectronVolts operator /( KiloElectronVolts left,Decimal right ) {
             return new KiloElectronVolts( left.Value/right );
         }
 

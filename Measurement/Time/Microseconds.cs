@@ -104,7 +104,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Microseconds Zero = new Microseconds( 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static Microseconds() {
             Zero.Should().BeLessThan( One );
@@ -114,7 +114,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeGreaterThan( Nanoseconds.One );
         }
 
-        public Microseconds( Decimal value ) {
+        public Microseconds(Decimal value ) {
             this.Value = value;
         }
 
@@ -124,7 +124,7 @@ namespace Librainian.Measurement.Time {
 
         public Microseconds( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = (Decimal ) value;
         }
 
         [UsedImplicitly]
@@ -162,7 +162,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right.Value );
         }
 
-        public static Microseconds Combine( Microseconds left, Decimal microseconds ) {
+        public static Microseconds Combine( Microseconds left,Decimal microseconds ) {
             return new Microseconds( left.Value + microseconds );
         }
 
@@ -186,7 +186,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, -right );
         }
 
-        public static Microseconds operator -( Microseconds left, Decimal microseconds ) {
+        public static Microseconds operator -( Microseconds left,Decimal microseconds ) {
             return Combine( left, -microseconds );
         }
 
@@ -194,7 +194,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Microseconds operator +( Microseconds left, Decimal microseconds ) {
+        public static Microseconds operator +( Microseconds left,Decimal microseconds ) {
             return Combine( left, microseconds );
         }
 
@@ -242,11 +242,11 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public Milliseconds ToMilliseconds() {
-            return new Milliseconds( Value/InOneMillisecond );
+            return new Milliseconds( this.Value/InOneMillisecond );
         }
 
         public Nanoseconds ToNanoseconds() {
-            return new Nanoseconds( Value*Nanoseconds.InOneMicrosecond );
+            return new Nanoseconds( this.Value*Nanoseconds.InOneMicrosecond );
         }
     }
 }

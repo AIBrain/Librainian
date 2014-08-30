@@ -268,8 +268,8 @@ namespace Librainian.Threading {
         /// <summary>
         /// </summary>
         /// <returns></returns>
-        public static Decimal NextDecimal() {
-            return new Decimal( new[] { NextInt32(), NextInt32(), NextInt32(), NextInt32() } );
+        public static  Decimal NextDecimal() {
+            return new   Decimal( new[] { NextInt32(), NextInt32(), NextInt32(), NextInt32() } );
         }
 
         /// <summary>
@@ -279,7 +279,7 @@ namespace Librainian.Threading {
         /// <param name="minValue"></param>
         /// <param name="maxValue"></param>
         /// <returns></returns>
-        public static Decimal NextDecimal( Decimal minValue, Decimal maxValue ) {
+        public static  Decimal NextDecimal(Decimal minValue,Decimal maxValue ) {
             var min = Math.Min( minValue, maxValue );
             var max = Math.Max( minValue, maxValue );
             return min + ( NextDecimal() * ( max - min ) );

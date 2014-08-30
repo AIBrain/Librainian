@@ -80,7 +80,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Yoctoseconds Zero = new Yoctoseconds( 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static Yoctoseconds() {
             Zero.Should().BeLessThan( One );
@@ -90,7 +90,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeLessThan( Zeptoseconds.One );
         }
 
-        public Yoctoseconds( Decimal value ) {
+        public Yoctoseconds(Decimal value ) {
             this.Value = value;
         }
 
@@ -100,7 +100,7 @@ namespace Librainian.Measurement.Time {
 
         public Yoctoseconds( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = (Decimal ) value;
         }
 
         [UsedImplicitly]
@@ -133,7 +133,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right.Value );
         }
 
-        public static Yoctoseconds Combine( Yoctoseconds left, Decimal yoctoseconds ) {
+        public static Yoctoseconds Combine( Yoctoseconds left,Decimal yoctoseconds ) {
             return new Yoctoseconds( left.Value + yoctoseconds );
         }
 
@@ -167,7 +167,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left: left, right: -right );
         }
 
-        public static Yoctoseconds operator -( Yoctoseconds left, Decimal seconds ) {
+        public static Yoctoseconds operator -( Yoctoseconds left,Decimal seconds ) {
             return Combine( left, -seconds );
         }
 
@@ -175,7 +175,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Yoctoseconds operator +( Yoctoseconds left, Decimal yoctoseconds ) {
+        public static Yoctoseconds operator +( Yoctoseconds left,Decimal yoctoseconds ) {
             return Combine( left, yoctoseconds );
         }
 
@@ -216,7 +216,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public Zeptoseconds ToZeptoseconds() {
-            return new Zeptoseconds( Value/InOneZeptosecond );
+            return new Zeptoseconds( this.Value/InOneZeptosecond );
         }
     }
 }

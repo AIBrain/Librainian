@@ -64,7 +64,7 @@ namespace Librainian.Persistence {
 
             this.Dictionary = new PersistentDictionary<TKey, TValue>( directory );
 
-            TestForReadWriteAccess();
+            this.TestForReadWriteAccess();
         }
 
         public PersistTable( [NotNull] String fullpath )

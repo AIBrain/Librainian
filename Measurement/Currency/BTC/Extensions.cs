@@ -58,7 +58,7 @@ namespace Librainian.Measurement.Currency.BTC {
         ///     <para>etc...</para>
         /// </param>
         /// <returns></returns>
-        public static String SimplerBTC( this Decimal btc, [NotNull] String coinSuffix = "BTC" ) {
+        public static String SimplerBTC( this  Decimal btc, [NotNull] String coinSuffix = "BTC" ) {
             if ( coinSuffix == null ) {
                 throw new ArgumentNullException( "coinSuffix" );
             }
@@ -86,25 +86,25 @@ namespace Librainian.Measurement.Currency.BTC {
         /// </summary>
         /// <param name="btc"></param>
         /// <returns></returns>
-        public static Decimal Sanitize( this Decimal btc ) {
+        public static  Decimal Sanitize( this  Decimal btc ) {
             var sanitized = btc.ToSatoshi().ToBTC();
             Assert.GreaterOrEqual( btc, sanitized );
             return sanitized;
         }
 
-        public static long ToSatoshi( this Decimal btc ) {
+        public static long ToSatoshi( this  Decimal btc ) {
             return ( long ) ( btc*SimpleBitcoinWallet.SatoshiPerBTC );
         }
 
-        public static Decimal ToBTC( this long satoshi ) {
+        public static  Decimal ToBTC( this long satoshi ) {
             return satoshi/SimpleBitcoinWallet.SatoshiPerBTC;
         }
 
-        public static Decimal TomBTC( this Decimal btc ) {
+        public static  Decimal TomBTC( this  Decimal btc ) {
             return btc*SimpleBitcoinWallet.mBTCPerBTC;
         }
 
-        public static Decimal ToμBTC( this Decimal btc ) {
+        public static  Decimal ToμBTC( this  Decimal btc ) {
             return btc*SimpleBitcoinWallet.μBTCPerBTC;
         }
 
@@ -224,11 +224,11 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="amount"></param>
         /// <param name="optimalAmountOfCoin"></param>
         /// <returns></returns>
-        public static Decimal Fund( [NotNull] this CoinWallet coinWallet, Decimal amount, Boolean optimalAmountOfCoin = true ) {
+        public static  Decimal Fund( [NotNull] this CoinWallet coinWallet,Decimal amount, Boolean optimalAmountOfCoin = true ) {
             if ( coinWallet == null ) {
                 throw new ArgumentNullException( "coinWallet" );
             }
-            var leftOverFund = Decimal.Zero;
+            var leftOverFund =Decimal.Zero;
             coinWallet.Deposit( optimalAmountOfCoin ? amount.Optimal( ref leftOverFund ) : amount.UnOptimal( ref leftOverFund ) );
 
             return leftOverFund;
@@ -258,17 +258,17 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="amount"></param>
         /// <param name="leftOverAmount">Fractions of Pennies not accounted for.</param>
         /// <returns></returns>
-        public static IEnumerable< KeyValuePair< ICoin, ulong > > Optimal( this Decimal amount, ref Decimal leftOverAmount ) {
+        public static IEnumerable< KeyValuePair< ICoin, ulong > > Optimal( this  Decimal amount, ref  Decimal leftOverAmount ) {
             var left = new List< ICoin >( PossibleCoins );
             var result = left.ToDictionary< ICoin, ICoin, UInt64 >( denomination => denomination, denomination => 0 );
 
             leftOverAmount += amount;
-            while ( leftOverAmount > Decimal.Zero && left.Any() ) {
+            while ( leftOverAmount >Decimal.Zero && left.Any() ) {
                 var coin = left.OrderByDescending( denomination => denomination.FaceValue ).First();
 
                 var chunks = ( UInt64 ) ( leftOverAmount/coin.FaceValue );
 
-                if ( chunks > Decimal.Zero ) {
+                if ( chunks >Decimal.Zero ) {
                     result[ coin ] += chunks;
                     leftOverAmount -= chunks*coin.FaceValue;
                 }
@@ -288,17 +288,17 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="amount"></param>
         /// <param name="leftOverAmount">Fractions of coin not accounted for.</param>
         /// <returns></returns>
-        public static IEnumerable< KeyValuePair< ICoin, ulong > > UnOptimal( this Decimal amount, ref Decimal leftOverAmount ) {
+        public static IEnumerable< KeyValuePair< ICoin, ulong > > UnOptimal( this  Decimal amount, ref  Decimal leftOverAmount ) {
             var left = new List< ICoin >( PossibleCoins );
             var result = left.ToDictionary< ICoin, ICoin, UInt64 >( denomination => denomination, denomination => 0 );
 
             leftOverAmount += amount;
-            while ( leftOverAmount > Decimal.Zero && left.Any() ) {
+            while ( leftOverAmount >Decimal.Zero && left.Any() ) {
                 var coin = left.OrderBy( denomination => denomination.FaceValue ).First();
 
                 var chunks = ( UInt64 ) ( leftOverAmount/coin.FaceValue );
 
-                if ( chunks > Decimal.Zero ) {
+                if ( chunks >Decimal.Zero ) {
                     result[ coin ] += chunks;
                     leftOverAmount -= chunks*coin.FaceValue;
                 }

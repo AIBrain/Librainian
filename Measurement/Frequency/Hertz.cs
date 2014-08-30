@@ -26,7 +26,7 @@ namespace Librainian.Measurement.Frequency {
     using Time;
 
     //TODO totally unfinished class, copied from Millsecond
-    //TODO change to some sort of Single, Double, Money, or Decimal..
+    //TODO change to some sort of Single, Double, Money, or  System.Decimal..
 
     /// <summary>
     ///     http://wikipedia.org/wiki/Frequency
@@ -56,7 +56,7 @@ namespace Librainian.Measurement.Frequency {
 
         /// <summary>
         /// </summary>
-        public static readonly Hertz MaxValue = new Hertz( Decimal.MaxValue );
+        public static readonly Hertz MaxValue = new Hertz(Decimal.MaxValue );
 
         /// <summary>
         ///     About zero. :P
@@ -113,7 +113,7 @@ namespace Librainian.Measurement.Frequency {
         /// </summary>
         public static readonly Hertz Zero = new Hertz( 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static Hertz() {
             Assert.AreSame( Zero, MinValue );
@@ -122,13 +122,13 @@ namespace Librainian.Measurement.Frequency {
             Assert.AreEqual( new Hertz( 4.7 ), new Milliseconds( 213 ) );
         }
 
-        public Hertz( Decimal frequency ) {
+        public Hertz(Decimal frequency ) {
             this.Value = frequency < MinValue.Value ? MinValue.Value : ( frequency > MaxValue.Value ? MaxValue.Value : frequency );
         }
 
-        public Hertz( UInt64 frequency ) : this( ( Decimal ) frequency ) { }
+        public Hertz( UInt64 frequency ) : this( (Decimal ) frequency ) { }
 
-        public Hertz( Double frequency ) : this( ( Decimal ) frequency ) { }
+        public Hertz( Double frequency ) : this( (Decimal ) frequency ) { }
 
         [UsedImplicitly]
         private string DebuggerDisplay { get { return string.Format( "{0} hertz ({1})", this.Value, ( ( TimeSpan ) this ).Simpler() ); } }

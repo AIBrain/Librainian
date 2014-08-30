@@ -52,7 +52,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Minutes Zero = new Minutes( value: 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static Minutes() {
             Zero.Should().BeLessThan( One );
@@ -62,7 +62,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeGreaterThan( Seconds.One );
         }
 
-        public Minutes( Decimal value ) {
+        public Minutes(Decimal value ) {
             this.Value = value;
         }
 
@@ -72,7 +72,7 @@ namespace Librainian.Measurement.Time {
 
         public Minutes( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = (Decimal ) value;
         }
 
         [UsedImplicitly]
@@ -102,7 +102,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right.Value );
         }
 
-        public static Minutes Combine( Minutes left, Decimal minutes ) {
+        public static Minutes Combine( Minutes left,Decimal minutes ) {
             return new Minutes( left.Value + minutes );
         }
 
@@ -145,7 +145,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left: left, right: -right );
         }
 
-        public static Minutes operator -( Minutes left, Decimal minutes ) {
+        public static Minutes operator -( Minutes left,Decimal minutes ) {
             return Combine( left, -minutes );
         }
 
@@ -153,7 +153,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Minutes operator +( Minutes left, Decimal minutes ) {
+        public static Minutes operator +( Minutes left,Decimal minutes ) {
             return Combine( left, minutes );
         }
 
@@ -208,12 +208,12 @@ namespace Librainian.Measurement.Time {
         }
 
         public Hours ToHours() {
-            return new Hours( Value/InOneHour );
+            return new Hours( this.Value/InOneHour );
         }
 
         [Pure]
         public Seconds ToSeconds() {
-            return new Seconds( Value*Seconds.InOneMinute );
+            return new Seconds( this.Value*Seconds.InOneMinute );
         }
 
         public override int GetHashCode() {

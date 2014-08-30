@@ -37,21 +37,21 @@ namespace Librainian.Measurement.Length {
         /// <summary>
         ///     About zero. :P
         /// </summary>
-        public static readonly Centimeters MinValue = new Centimeters( centimeters: Decimal.MinValue );
+        public static readonly Centimeters MinValue = new Centimeters( centimeters:Decimal.MinValue );
 
         /// <summary>
         ///     About 584.9 million years.
         /// </summary>
-        public static readonly Centimeters MaxValue = new Centimeters( centimeters: Decimal.MaxValue );
+        public static readonly Centimeters MaxValue = new Centimeters( centimeters:Decimal.MaxValue );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember] public readonly  Decimal Value;
 
         static Centimeters() {
             //Assert.That( One < Inch.One );
             //Assert.That( One < Feet.One );
         }
 
-        public Centimeters( Decimal centimeters ) {
+        public Centimeters(Decimal centimeters ) {
             this.Value = centimeters;
         }
 

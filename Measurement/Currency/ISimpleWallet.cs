@@ -21,19 +21,19 @@ namespace Librainian.Measurement.Currency {
     using System;
 
     public interface ISimpleWallet {
-        Decimal Balance { get; }
-        Action< Decimal > OnBeforeDeposit { get; set; }
-        Action< Decimal > OnAfterDeposit { get; set; }
+       Decimal Balance { get; }
+        Action<Decimal > OnBeforeDeposit { get; set; }
+        Action<Decimal > OnAfterDeposit { get; set; }
 
-        Action< Decimal > OnBeforeWithdraw { get; set; }
-        Action< Decimal > OnAfterWithdraw { get; set; }
+        Action<Decimal > OnBeforeWithdraw { get; set; }
+        Action<Decimal > OnAfterWithdraw { get; set; }
 
-        Action< Decimal > OnAnyUpdate { get; set; }
+        Action<Decimal > OnAnyUpdate { get; set; }
 
-        Boolean TryDeposit( Decimal amount, Boolean sanitizeAmount = true );
+        Boolean TryDeposit(Decimal amount, Boolean sanitizeAmount = true );
 
-        Boolean TryWithdraw( Decimal amount, Boolean sanitizeAmount = true );
+        Boolean TryWithdraw(Decimal amount, Boolean sanitizeAmount = true );
 
-        Boolean TryUpdateBalance( Decimal amount, Boolean sanitizeAmount = true );
+        Boolean TryUpdateBalance(Decimal amount, Boolean sanitizeAmount = true );
     }
 }

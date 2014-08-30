@@ -57,19 +57,19 @@ namespace Librainian.Maths {
 
 
             if ( !BigInteger.TryParse( split[ 0 ], out whole ) ) {
-                //we were unable to parse the first string (all to the left of the decimal point)
+                //we were unable to parse the first string (all to the left of the  System.Decimal point)
                 return null;
             }
 
             if ( !BigInteger.TryParse( split[ 1 ], out fraction ) ) {
-                //we were unable to parse the second string (all to the right of the decimal point)
+                //we were unable to parse the second string (all to the right of the  System.Decimal point)
                 return null;
             }
 
 
             var fractionLength = fraction.ToString().Length;
 
-            var ratio = BigDecimal.Pow( 10, fractionLength ); //we want the ratio of top/bottom to scale up past the decimal
+            var ratio = BigDecimal.Pow( 10, fractionLength ); //we want the ratio of top/bottom to scale up past the  System.Decimal
 
             var wholeAsDecimal = new BigDecimal( whole, 1 );
             var fractionAsDecimal = new BigDecimal( fraction, 1 );

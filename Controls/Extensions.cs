@@ -32,6 +32,7 @@ namespace Librainian.Controls {
     using FluentAssertions;
     using Measurement.Time;
     using Threading;
+    using Timer = System.Timers.Timer;
 
     public static class Extensions {
 
@@ -252,11 +253,11 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
-        public static Decimal Value( [CanBeNull] this NumericUpDown control ) {
+        public static  Decimal Value( [CanBeNull] this NumericUpDown control ) {
             if ( null == control ) {
-                return Decimal.Zero;
+                return  Decimal.Zero;
             }
-            return control.InvokeRequired ? ( Decimal )control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
+            return control.InvokeRequired ? (Decimal )control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
         }
 
         /// <summary>
@@ -743,7 +744,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="spanOff">How long to keep the control off before it resets.</param>
         [CanBeNull]
-        public static System.Timers.Timer Blink( [CanBeNull] this Control control, [CanBeNull] TimeSpan? spanOff = null ) {
+        public static Timer Blink( [CanBeNull] this Control control, [CanBeNull] TimeSpan? spanOff = null ) {
             if ( null == control ) {
                 return null;
             }
@@ -756,7 +757,7 @@ namespace Librainian.Controls {
                 control.BackColor = foreColor;
                 control.Refresh();
             } );
-            var timer = new System.Timers.Timer {
+            var timer = new Timer {
                 AutoReset = false,
                 Interval = spanOff.Value.TotalMilliseconds
             };
