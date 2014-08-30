@@ -25,6 +25,7 @@ namespace Librainian.Internet {
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.DirectoryServices;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
     using Extensions;
@@ -79,22 +80,18 @@ namespace Librainian.Internet {
     /// </summary>
     public sealed class NetworkBrowser {
 
-        public static IEnumerable< DirectoryEntry > GetServerList() {
-
+        /// <summary>
+        /// <para>Returns a list of servers</para>
+        /// </summary>
+        /// <example>Debug.WriteLine( entry.Name );</example>
+        /// <returns></returns>
+        public static IEnumerable<DirectoryEntry> GetServerList() {
             var root = new DirectoryEntry( "WinNT:" );
 
-            foreach ( DirectoryEntry entries in root.Children ) {
-
-                foreach ( DirectoryEntry entry in entries.Children ) {
-
-                    Debug.WriteLine( entry.Name );
-                    //if ( entry.Name != "Schema" ) { yield return entry;}
-                    yield return entry;
-                }
-            }
+            return ( from DirectoryEntry entries in root.Children
+                     from DirectoryEntry entry in entries.Children
+                     select entry ).Where( entry => !entry.Name.Equals( "Schema", StringComparison.Ordinal ) );
         }
-
-
 
         public static ArrayList GetServerListAlt( NativeWin32.SV_101_TYPES ServerType ) {
             int entriesread = 0, totalentries = 0;
@@ -108,7 +105,7 @@ namespace Librainian.Internet {
                 var ret = NativeWin32.NetServerEnum( servername: null, level: 101, bufptr: out buf, prefmaxlen: -1, entriesread: ref entriesread, totalentries: ref totalentries, servertype: ServerType, domain: null, resume_handle: IntPtr.Zero );
 
                 // if the function returned any data, fill the tree view
-                if ( ret == NativeWin32. ERROR_SUCCESS || ret == NativeWin32.ERROR_MORE_DATA || entriesread > 0 ) {
+                if ( ret == NativeWin32.ERROR_SUCCESS || ret == NativeWin32.ERROR_MORE_DATA || entriesread > 0 ) {
                     var ptr = buf;
 
                     for ( var i = 0 ; i < entriesread ; i++ ) {
@@ -167,19 +164,19 @@ namespace Librainian.Internet {
                 var totalEntries = 0;
                 var resHandle = new IntPtr( 0 );
                 var tmpBuffer = new IntPtr( 0 );
-                var ret = NativeWin32.NetServerEnum(  null,  100,  out buffer,  MAX_PREFERRED_LENGTH,  ref entriesRead, ref totalEntries,  NativeWin32.SV_101_TYPES.SV_TYPE_WORKSTATION | NativeWin32.SV_101_TYPES.SV_TYPE_SERVER,  null, resHandle );
+                var ret = NativeWin32.NetServerEnum( null, 100, out buffer, MAX_PREFERRED_LENGTH, ref entriesRead, ref totalEntries, NativeWin32.SV_101_TYPES.SV_TYPE_WORKSTATION | NativeWin32.SV_101_TYPES.SV_TYPE_SERVER, null, resHandle );
                 //if the returned with a NERR_Success 
                 //(C++ term), =0 for C#
                 if ( 0 == ret ) {
                     //loop through all SV_TYPE_WORKSTATION and SV_TYPE_SERVER PC's
-                    for ( var i = 0; i < totalEntries; i++ ) {
+                    for ( var i = 0 ; i < totalEntries ; i++ ) {
                         //get pointer to, Pointer to the 
                         //buffer that received the data from
                         //the call to NetServerEnum. 
                         //Must ensure to use correct size of 
                         //STRUCTURE to ensure correct 
                         //location in memory is pointed to
-                        tmpBuffer = new IntPtr( ( int ) buffer + ( i * sizeofINFO ) );
+                        tmpBuffer = new IntPtr( ( int )buffer + ( i * sizeofINFO ) );
                         //Have now got a pointer to the list 
                         //of SV_TYPE_WORKSTATION and 
                         //SV_TYPE_SERVER PC's, which is unmanaged memory
