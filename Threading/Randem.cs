@@ -319,11 +319,21 @@ namespace Librainian.Threading {
             if ( Double.IsNaN( range ) ) {
                 throw new ArgumentOutOfRangeException();
             }
+            double result;
+
             if ( !Double.IsInfinity( range ) ) {
-                return min + ( Instance.NextDouble() * range );
+                result = min + ( Instance.NextDouble() * range );
+                result.Should().BeInRange( min, max );
+                return result;
             }
-            Instance.NextBytes( LocalByteBuffer.Value );
-            var result = BitConverter.ToDouble( LocalByteBuffer.Value, 0 );
+
+            do {
+                Instance.NextBytes( LocalByteBuffer.Value );
+                result = BitConverter.ToDouble( LocalByteBuffer.Value, 0 );
+            } while ( Double.IsInfinity( result ) || Double.IsNaN( result ) );
+
+            result.Should().BeInRange( min, max );
+
             return result;
         }
 

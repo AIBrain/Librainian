@@ -610,17 +610,37 @@ namespace Librainian.Collections {
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
+        /// <param name="item"></param>
         /// <returns></returns>
         /// <exception cref="IndexOutOfRangeException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="NotSupportedException"></exception>
-        [CanBeNull]
-        public static TType TakeFirst<TType>( this IList<TType> list ) {
+        public static Boolean TakeFirst<TType>( this IList<TType> list, out TType item ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
             }
             if ( list.Count <= 0 ) {
-                return default( TType );
+                item = default( TType );
+                return false;
+            }
+            item = list[ 0 ];
+            list.RemoveAt( 0 );
+            return true;
+        }
+
+        /// <summary>
+        /// <para>Remove and return the first item in the list, otherwise return null.</para>
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public static TType TakeFirst<TType>( this IList<TType> list ) where TType : class {
+            if ( list == null ) {
+                throw new ArgumentNullException( "list" );
+            }
+            if ( list.Count <= 0 ) {
+                return null;
             }
             var item = list[ 0 ];
             list.RemoveAt( 0 );
@@ -632,15 +652,36 @@ namespace Librainian.Collections {
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
+        /// <param name="item"></param>
         /// <returns></returns>
-        [CanBeNull]
-        public static TType TakeLast<TType>( this IList<TType> list ) {
+        public static Boolean TakeLast<TType>( this IList<TType> list, out TType item ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
             }
             var index = list.Count - 1;
             if ( index < 0 ) {
-                return default( TType );
+                item = default( TType );
+                return false;
+            }
+            item = list[ index ];
+            list.RemoveAt( index );
+            return true;
+        }
+
+        /// <summary>
+        /// <para>Remove and return the last item in the list, otherwise return null.</para>
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public static TType TakeLast<TType>( this IList<TType> list ) where TType : class {
+            if ( list == null ) {
+                throw new ArgumentNullException( "list" );
+            }
+            var index = list.Count - 1;
+            if ( index < 0 ) {
+                return null;
             }
             var item = list[ index ];
             list.RemoveAt( index );
@@ -678,9 +719,14 @@ namespace Librainian.Collections {
                 while ( list.Count > 2 ) {
                     list.RemoveAt( 0 );
                 }
-                result += list.TakeFirst();
+                T item;
+                if ( list.TakeFirst( out item ) ) {
+                    result += item;
+                }
                 result += atTheEnd;
-                result += list.TakeFirst();
+                if ( list.TakeFirst( out item ) ) {
+                    result += item;
+                }
             }
             return result;
         }

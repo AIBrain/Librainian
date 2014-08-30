@@ -83,7 +83,8 @@ namespace Librainian.Gaming {
 
         private void OnAfterAdd() {
             if ( this.GetLastFewRolls().Count() > this._keepTrackOfXRolls ) {
-                this._lastFewRolls.TakeFirst();
+                ushort result;
+                this._lastFewRolls.TakeFirst( out result);
             }
             if ( !this._dontTrackRollsOlderThan.HasValue ) {
                 return;

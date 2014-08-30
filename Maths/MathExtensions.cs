@@ -24,8 +24,8 @@ namespace Librainian.Maths {
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Numerics;
     using Annotations;
+    using clojure.lang;
     using Collections;
     using FluentAssertions;
     using Measurement.Time;
@@ -33,6 +33,7 @@ namespace Librainian.Maths {
     using NUnit.Framework;
     using Parsing;
     using Threading;
+    using BigInteger = System.Numerics.BigInteger;
 
     public static class MathExtensions {
         // ReSharper disable UnusedMember.Global
@@ -1544,8 +1545,35 @@ namespace Librainian.Maths {
         }
 
         public static Double SquareRootOfProducts( this IEnumerable<Double> data ) {
-            var aggregate = data.Aggregate( 1.0, ( current, d ) => current * d );
-            return Math.Sqrt( aggregate );
+
+            var sorted = new List<Double>( data.Where( d => Math.Abs( d ) >= Double.Epsilon ).OrderBy( d => d ) );
+
+            var aggregate = BigDecimal.One;
+
+            while ( sorted.Any() ) {
+
+                double smallest;
+                sorted.TakeFirst( out smallest );
+                smallest.Should().NotBe( Double.NaN );
+                smallest.Should().NotBe( Double.NegativeInfinity );
+                smallest.Should().NotBe( Double.PositiveInfinity );
+
+                double largest;
+                if ( !sorted.TakeLast( out largest ) ) {
+                    largest = 1;
+                }
+                largest.Should().NotBe( Double.NaN );
+                largest.Should().NotBe( Double.NegativeInfinity );
+                largest.Should().NotBe( Double.PositiveInfinity );
+
+                aggregate = aggregate * smallest;
+                aggregate = aggregate * largest;
+                //aggregate.Should().NotBe( Double.NaN );
+                //aggregate.Should().NotBe( Double.NegativeInfinity );
+                //aggregate.Should().NotBe( Double.PositiveInfinity );
+            }
+            //foreach ( double d in data ) {aggregate = aggregate * d;}
+            return Math.Sqrt( ( double ) aggregate );
         }
 
         public static Double Root( this Double x, Double root ) {
