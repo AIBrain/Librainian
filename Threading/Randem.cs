@@ -38,7 +38,6 @@ namespace Librainian.Threading {
     using Collections;
     using Extensions;
     using FluentAssertions;
-    using ImpromptuInterface.Dynamic;
     using IO;
     using Maths;
     using Measurement.Time;
