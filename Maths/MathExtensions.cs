@@ -1527,7 +1527,7 @@ namespace Librainian.Maths {
         /// <seealso cref="http://wikipedia.org/wiki/Geometric_mean"/>
         public static  Decimal GeometricMean( this IEnumerable<Decimal> data, int items ) {
             var aggregate = data.Aggregate( 1.0m, ( current, d ) => current * d );
-            return (Decimal )Math.Pow( ( Double )aggregate, ( Double )( 1.0m / items ) );   //BUG conversion errors here
+            return (Decimal )Math.Pow( ( Double )aggregate, ( Double )( 1.0m / items ) );   //BUG possible conversion errors here
         }
         
         /// <summary>
@@ -1540,7 +1540,12 @@ namespace Librainian.Maths {
         /// <seealso cref="http://wikipedia.org/wiki/Geometric_mean"/>
         public static BigDecimal GeometricMean( this IEnumerable<BigDecimal> data, int items ) {
             var aggregate = data.Aggregate( BigDecimal.One, ( current, d ) => current * d );
-            return BigDecimal.Pow( ( double ) aggregate, 1.0 / items );   //BUG conversion errors here
+            return BigDecimal.Pow( ( double )aggregate, 1.0 / items );   //BUG possible conversion errors here
+        }
+
+        public static Double SquareRootOfProduct( this IEnumerable<Double> data ) {
+            var aggregate = data.Aggregate( 1.0, ( current, d ) => current * d );
+            return Math.Sqrt( aggregate );
         }
 
         /// <summary>
