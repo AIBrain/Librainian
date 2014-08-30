@@ -333,7 +333,7 @@ namespace Librainian.IO {
             var stopwatch = Stopwatch.StartNew();
             TryAgain:
             try {
-                if ( !document.Exists ) {
+                if ( !document.Exists() ) {
                     return true;
                 }
                 File.Delete( path: document.FullPathWithFileName );

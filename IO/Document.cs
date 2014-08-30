@@ -100,7 +100,7 @@ namespace Librainian.IO {
         /// </summary>
         public UInt64 Length {
             get {
-                return !this.Exists ? 0UL : ( UInt64 )this.FileInfo.Length;
+                return !this.Exists() ? 0UL : ( UInt64 )this.FileInfo.Length;
             }
         }
 
@@ -167,11 +167,9 @@ namespace Librainian.IO {
         ///     Returns true if the <see cref="Document" /> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public Boolean Exists {
-            get {
-                this.FileInfo.Refresh();
-                return this.FileInfo.Exists;
-            }
+        public bool Exists() {
+            this.FileInfo.Refresh();
+            return this.FileInfo.Exists;
         }
 
         /*
@@ -340,7 +338,7 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="text"></param>
         public void AppendText( String text ) {
-            if ( this.Exists ) {
+            if ( this.Exists() ) {
                 using ( var writer = File.AppendText( this.FullPathWithFileName ) ) {
                     writer.WriteLine( text );
                     writer.Flush();
@@ -362,7 +360,7 @@ namespace Librainian.IO {
         /// <returns></returns>
         public Boolean Delete() {
             this.FileInfo.Delete();
-            return this.Exists;
+            return !this.Exists();
         }
     }
 }

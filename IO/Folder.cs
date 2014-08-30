@@ -119,7 +119,7 @@ namespace Librainian.IO {
         /// </summary>
         /// <returns></returns>
         public Boolean IsEmpty() {
-            return !this.GetFolders().Any() && !this.GetDocuments().Any();
+            return !this.GetFolders("*.*").Any() && !this.GetDocuments("*.*").Any();
         }
 
         public Folder( Environment.SpecialFolder specialFolder )
@@ -149,7 +149,7 @@ namespace Librainian.IO {
                     return Enumerable.Empty<Document>();
                 }
             }
-            return this.DirectoryInfo.EnumerateFiles().Select( fileInfo => new Document( fileInfo.FullName ) );
+            return this.DirectoryInfo.EnumerateFiles( ).Select( fileInfo => new Document( fileInfo.FullName ) );
         }
 
         public IEnumerable<Folder> GetFolders() {
@@ -231,12 +231,15 @@ namespace Librainian.IO {
         /// <seealso cref="Create"/>
         public Boolean Delete() {
             try {
-                this.DirectoryInfo.Delete();
-                return !this.Exists;
+                //safety checks
+                if ( this.IsEmpty() ) {
+                    this.DirectoryInfo.Delete();
+                    return !this.Exists;
+                }
             }
             catch ( IOException ) {
-                return false;
             }
+            return false;
         }
 
         //TODO
