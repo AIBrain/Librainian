@@ -34,10 +34,15 @@ namespace Librainian.IO {
     using Extensions;
     using Parsing;
 
+    /// <summary>
+    /// 
+    /// </summary>
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [DataContract( IsReference = true )]
     [Immutable]
     public class Folder {
+
+        //TODO and in long name (unc) support. Like 'ZedLongPaths' ?
 
         [UsedImplicitly]
         private String DebuggerDisplay { get { return this.FullName; } }
