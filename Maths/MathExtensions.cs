@@ -1549,7 +1549,11 @@ namespace Librainian.Maths {
         }
 
         public static Double Root( this Double x, Double root ) {
-            return Math.Pow( x, ( 1.00 / root ) );
+            return Math.Pow( x, 1.0 / root );
+        }
+
+        public static Double Root( this Decimal x, Decimal root ) {
+            return Math.Pow( ( double )x, ( Double )( 1.0m / root ) );//BUG possible conversion errors here
         }
 
         public static Decimal SquareRootOfProducts( this IEnumerable<Decimal> data ) {
