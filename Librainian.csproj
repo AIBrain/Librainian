@@ -327,6 +327,7 @@
     <Compile Include="Gaming\PlayingCards\Deck.cs" />
     <Compile Include="Gaming\DiceCup.cs" />
     <Compile Include="Gaming\TraditionalDice.cs" />
+    <Compile Include="Internet\UriLinkItem.cs" />
     <Compile Include="Internet\WebClientExtensions.cs" />
     <Compile Include="Internet\SmtpClientExtensions.cs" />
     <Compile Include="Internet\EAPCommon.cs" />

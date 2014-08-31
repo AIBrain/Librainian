@@ -9,19 +9,24 @@ namespace Librainian.Internet {
             // TaskCompletionSource, but only AsyncCompletedEventArg's UserState matches the TCS
             // (this check is important if the same WebClient is used for multiple, asynchronous
             // operations concurrently).  Also unregisters the handler to avoid a leak.
-            if ( e.UserState != tcs ) {
-                return;
+            try {
+                if ( e.UserState != tcs ) {
+                    return;
+                }
+                if ( e.Cancelled ) {
+                    tcs.TrySetCanceled();
+                }
+                else if ( e.Error != null ) {
+                    tcs.TrySetException( e.Error );
+                }
+                else {
+                    tcs.TrySetResult( getResult() );
+                }
             }
-            if ( e.Cancelled ) {
-                tcs.TrySetCanceled();
+            finally {
+                unregisterHandler();
             }
-            else if ( e.Error != null ) {
-                tcs.TrySetException( e.Error );
-            }
-            else {
-                tcs.TrySetResult( getResult() );
-            }
-            unregisterHandler();
+            
         }
     }
 }

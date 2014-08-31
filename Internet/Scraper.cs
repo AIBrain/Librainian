@@ -36,20 +36,26 @@ namespace Librainian.Internet {
     [DataContract]
     [Obsolete]
     public static class Scraper {
-        [DataMember] [OptionalField] private static readonly ReaderWriterLockSlim MAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+        [DataMember]
+        [OptionalField]
+        private static readonly ReaderWriterLockSlim MAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
         /// <summary>
         ///     TODO: concurrentbag
         /// </summary>
-        [DataMember] [OptionalField] private static readonly List< WebSite > MWebsites = new List< WebSite >();
+        [DataMember]
+        [OptionalField]
+        private static readonly List<WebSite> MWebsites = new List<WebSite>();
 
-        [DataMember] [OptionalField] private static readonly CookieContainer Cookies = new CookieContainer();
+        [DataMember]
+        [OptionalField]
+        private static readonly CookieContainer Cookies = new CookieContainer();
 
-        public static List< WebSite > ScrapedSites {
+        public static List<WebSite> ScrapedSites {
             get {
                 try {
                     MAccess.EnterReadLock();
-                    return MWebsites.Where( w => w.ResponseCount > 0 ) as List< WebSite >;
+                    return MWebsites.Where( w => w.ResponseCount > 0 ) as List<WebSite>;
                 }
                 finally {
                     MAccess.ExitReadLock();
@@ -57,7 +63,7 @@ namespace Librainian.Internet {
             }
         }
 
-        public static void AddSiteToScrape( String url, Action< WebSite > responseaction ) {
+        public static void AddSiteToScrape( String url, Action<WebSite> responseaction ) {
             try {
                 Uri uri;
                 if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out uri ) ) {
@@ -69,18 +75,18 @@ namespace Librainian.Internet {
             }
         }
 
-        public static void AddSiteToScrape( Uri uri, Action< WebSite > responseaction ) {
+        public static void AddSiteToScrape( Uri uri, Action<WebSite> responseaction ) {
             if ( !IsSiteQueued( uri ) ) {
                 var web = new WebSite {
-                                          Location = uri,
-                                          Document = String.Empty,
-                                          RequestCount = 0,
-                                          ResponseCount = 0,
-                                          WhenAddedToQueue = DateTime.UtcNow,
-                                          WhenRequestStarted = DateTime.MinValue,
-                                          WhenResponseCame = DateTime.MinValue
-                                          //ResponseAction = responseaction
-                                      };
+                    Location = uri,
+                    Document = String.Empty,
+                    RequestCount = 0,
+                    ResponseCount = 0,
+                    WhenAddedToQueue = DateTime.UtcNow,
+                    WhenRequestStarted = DateTime.MinValue,
+                    WhenResponseCame = DateTime.MinValue
+                    //ResponseAction = responseaction
+                };
                 try {
                     MAccess.EnterWriteLock();
                     MWebsites.Add( web );
@@ -92,7 +98,9 @@ namespace Librainian.Internet {
             else {
                 try {
                     MAccess.EnterWriteLock();
-                    MWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => { r.RequestCount++; } );
+                    MWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => {
+                        r.RequestCount++;
+                    } );
                 }
                 finally {
                     MAccess.ExitWriteLock();
@@ -136,7 +144,7 @@ namespace Librainian.Internet {
                             web.Request.Pipelined = true;
                             web.Request.SendChunked = true;
                             var now = DateTime.Now;
-                            web.Request.UserAgent = String.Format( "AIBrain/{0}.{1}", now.Year, now.Month );
+                            web.Request.UserAgent = String.Format( "AIBrain/{0}.{1}.{2}", now.Year, now.Month, now.Day );
                         }
                         web.WhenRequestStarted = DateTime.UtcNow;
                     }
@@ -190,7 +198,8 @@ namespace Librainian.Internet {
                 //    //web.ResponseAction( web );
                 //}
             }
-            catch ( WebException ) { }
+            catch ( WebException ) {
+            }
             catch ( Exception exception ) {
                 exception.Error();
             }

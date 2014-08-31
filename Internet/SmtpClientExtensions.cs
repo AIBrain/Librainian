@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Librainian.Internet {
     using System.Net.Mail;
+    using System;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// <para>Extension methods for working with SmtpClient asynchronously.</para>
@@ -23,7 +20,6 @@ namespace Librainian.Internet {
 
         /// <summary>Sends an e-mail message asynchronously.</summary>
         /// <param name="smtpClient">The client.</param>
-        /// <param name="message">A MailMessage that contains the message to send.</param>
         /// <param name="from">A String that contains the address information of the message sender.</param>
         /// <param name="recipients">A String that contains the address that the message is sent to.</param>
         /// <param name="subject">A String that contains the subject line for the message.</param>

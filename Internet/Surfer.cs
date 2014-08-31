@@ -170,29 +170,19 @@ namespace Librainian.Internet {
             this.StartNextDownload();
         }
 
-        public static IEnumerable< LinkItem > ParseLinks( Uri baseUri, String webpage ) {
+        public static IEnumerable< UriLinkItem > ParseLinks( Uri baseUri, String webpage ) {
 // ReSharper disable LoopCanBeConvertedToQuery
             foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
 // ReSharper restore LoopCanBeConvertedToQuery
                 var value = match.Groups[ 1 ].Value;
                 var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
 
-                var i = new LinkItem {
+                var i = new UriLinkItem {
                                          Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ),
                                          Href = new Uri( baseUri: baseUri, relativeUri: m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
                                      };
 
                 yield return i;
-            }
-        }
-
-        public struct LinkItem {
-            public Uri Href;
-
-            public String Text;
-
-            public override String ToString() {
-                return String.Format( "{0}  {1}", this.Text, this.Href );
             }
         }
     }
