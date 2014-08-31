@@ -616,6 +616,7 @@
     <Compile Include="Threading\ReaderWriterCount.cs" />
     <Compile Include="Threading\RecursiveCounts.cs" />
     <Compile Include="Threading\Releaser.cs" />
+    <Compile Include="Threading\Report.cs" />
     <Compile Include="Threading\Signal.cs" />
     <Compile Include="Threading\Singleton.cs" />
     <Compile Include="Threading\SlimLock.cs" />

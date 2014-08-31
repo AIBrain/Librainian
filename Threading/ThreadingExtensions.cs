@@ -769,35 +769,5 @@ namespace Librainian.Threading {
                 this.CallsAllowed = times;
             }
         }
-
-        public static class Report {
-
-            /// <summary>
-            ///     TODO add in the threadID
-            /// </summary>
-            /// <param name="method"></param>
-            /// <param name="FullMethodPath"></param>
-            [DebuggerStepThrough]
-            public static void Enter( [CallerMemberName] String method = "", [Custom] String FullMethodPath = "" ) {
-                //if ( String.IsNullOrWhiteSpace( method ) ) {
-                //    return;
-                //}
-                Debug.Indent();
-                String.Format( "{0}: {1}  {2}", "enter", method, FullMethodPath ).TimeDebug();
-            }
-
-            /// <summary>
-            ///     TODO add in the threadID
-            /// </summary>
-            /// <param name="method"></param>
-            [DebuggerStepThrough]
-            public static void Exit( [CallerMemberName] String method = "" ) {
-                //if ( String.IsNullOrWhiteSpace( method ) ) {
-                //    return;
-                //}
-                String.Format( "{0}: {1}", "exit", method ).TimeDebug();
-                Debug.Unindent();
-            }
-        }
     }
 }

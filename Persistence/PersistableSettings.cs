@@ -54,9 +54,9 @@ namespace Librainian.Persistence {
     /// </summary>
     public class PersistableSettings : IInitializable, IPersistableSettings {
         public void Initialize() {
-            ThreadingExtensions.Report.Enter();
+            Report.Enter();
             this.ValidateStorageFolder();
-            ThreadingExtensions.Report.Exit();
+            Report.Exit();
         }
 
         /// <summary>
