@@ -30,7 +30,6 @@ namespace Librainian.Threading {
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
-    using System.Security.Cryptography;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -55,26 +54,11 @@ namespace Librainian.Threading {
         public static readonly ThreadLocal<byte[]> LocalUInt64Buffers = new ThreadLocal<byte[]>( valueFactory: () => new byte[ sizeof( UInt64 ) ], trackAllValues: false );
 
         /// <summary>
-        /// <para> Sets the <see cref="ParallelOptions.MaxDegreeOfParallelism" /> of a <see
-        /// cref="ParallelOptions" /> to <see cref="Threads.ProcessorCount" />. </para>
-        /// </summary>
-        [NotNull]
-        public static readonly ParallelOptions Parallelism = new ParallelOptions {
-            MaxDegreeOfParallelism = Threads.ProcessorCount
-        };
-
-        [NotNull]
-        public static readonly RandomNumberGenerator RNG = RandomNumberGenerator.Create();
-
-        [NotNull]
-        public static readonly ThreadLocal<SHA256Managed> ThreadLocalSHA256Managed = new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
-
-        /// <summary>
         /// Provide to each thread its own <see cref="Random" /> with a random seed.
         /// </summary>
         [NotNull]
         public static readonly ThreadLocal<Random> ThreadSafeRandom = new ThreadLocal<Random>( valueFactory: () => {
-            var hash = ThreadLocalSHA256Managed.Value.ComputeHash( Guid.NewGuid().ToByteArray() );
+            var hash = ThreadingExtensions.ThreadLocalSHA256Managed.Value.ComputeHash( Guid.NewGuid().ToByteArray() );
             var seed = BitConverter.ToInt32( value: hash, startIndex: 0 );
             return new Random( seed.GetHashMerge( Thread.CurrentThread.ManagedThreadId ) );
         }, trackAllValues: false );
@@ -96,7 +80,7 @@ namespace Librainian.Threading {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
             }
-            Parallel.ForEach( 1.To( 128 ), Parallelism, i => list.Add( Next( minValue: Int32.MinValue, maxValue: Int32.MaxValue ) ) );
+            Parallel.ForEach( 1.To( 128 ), ThreadingExtensions.Parallelism, i => list.Add( Next( minValue: Int32.MinValue, maxValue: Int32.MaxValue ) ) );
         }
 
         [MethodImpl( MethodImplOptions.NoInlining )]
@@ -236,7 +220,7 @@ namespace Librainian.Threading {
             }
 
             var buffer = new Byte[ numberOfDigits ];
-            RNG.GetBytes( buffer ); //BUG is this correct? I think it is, but http://stackoverflow.com/questions/2965707/c-sharp-a-random-bigint-generator suggests a "numberOfDigits/8" here.
+            ThreadingExtensions.RNG.GetBytes( buffer ); //BUG is this correct? I think it is, but http://stackoverflow.com/questions/2965707/c-sharp-a-random-bigint-generator suggests a "numberOfDigits/8" here.
             return new BigInteger( buffer );
         }
 
@@ -313,7 +297,7 @@ namespace Librainian.Threading {
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static Double NextDouble( Double min = 0, Double max = 1 ) {
+        public static Double NextDouble( Double min = 0.0, Double max = 1.0 ) {
             var range = max - min;
             if ( Double.IsNaN( range ) ) {
                 throw new ArgumentOutOfRangeException();
@@ -577,12 +561,12 @@ namespace Librainian.Threading {
         [Test]
         public static void StaticRandemTest() {
             var ints = new ConcurrentBag<int>();
-            Parallel.ForEach( source: 1.To( Threads.ProcessorCount ), parallelOptions: Parallelism, body: i => AddToList( ints ) );
+            Parallel.ForEach( source: 1.To( ThreadingExtensions.ProcessorCount ), parallelOptions: ThreadingExtensions.Parallelism, body: i => AddToList( ints ) );
             if ( !ints.Duplicates().Any() ) {
                 return;
             }
             ints.RemoveAll();
-            Parallel.ForEach( 1.To( Threads.ProcessorCount ), Parallelism, i => AddToList( ints ) );
+            Parallel.ForEach( 1.To( ThreadingExtensions.ProcessorCount ), ThreadingExtensions.Parallelism, i => AddToList( ints ) );
             if ( !ints.Duplicates().Any() ) {
                 return;
             }

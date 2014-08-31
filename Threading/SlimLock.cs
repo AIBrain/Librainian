@@ -43,7 +43,7 @@ namespace Librainian.Threading {
         private const uint WaitingUpgrader = 0x20000000;
         private const uint MAX_READER = 0x10000000 - 2;
         private const uint READER_MASK = 0x10000000 - 1;
-        private static readonly int ProcessorCount = Threads.ProcessorCount;
+        private static readonly int ProcessorCount = ThreadingExtensions.ProcessorCount;
         private readonly Boolean _fIsReentrant;
 
         // Lock specifiation for myLock:  This lock protects exactly the local fields associted

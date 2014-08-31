@@ -92,7 +92,7 @@ namespace Librainian.Knowledge {
 
         public void Initialize() {
             Seconds.One.Then( () => {
-                Threads.Report.Enter();
+                ThreadingExtensions.Report.Enter();
                 var cancellationToken = new CancellationToken();
 
                 IEnumerable<string> fileSearchPatterns = new[] { "*.knb" };
@@ -106,7 +106,7 @@ namespace Librainian.Knowledge {
                 if ( !this.KNBFiles.Any() ) {
                     IOExtensions.SearchAllDrives( fileSearchPatterns: new[] { "*.knb" }, onFindFile: file => this.AddFile( dataFile: file ), cancellationToken: new CancellationToken() );
                 }
-                Threads.Report.Exit();
+                ThreadingExtensions.Report.Exit();
             } );
         }
 

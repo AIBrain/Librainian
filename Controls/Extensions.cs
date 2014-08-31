@@ -42,7 +42,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <returns></returns>
         public static void BusyCursor( [CanBeNull] this Control control ) {
-            Threads.Wrap( () => {
+            ThreadingExtensions.Wrap( () => {
                 if ( control != null ) {
                     control.InvokeIfRequired( () => {
                         control.Cursor = Cursors.WaitCursor;
@@ -162,7 +162,7 @@ namespace Librainian.Controls {
             if ( control == null ) {
                 throw new ArgumentNullException( "control" );
             }
-            Threads.Wrap( () => control.OnThread( () => {
+            ThreadingExtensions.Wrap( () => control.OnThread( () => {
                 control.ResetCursor();
                 control.Invalidate( invalidateChildren: false );
             } ) );

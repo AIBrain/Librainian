@@ -26,7 +26,6 @@ namespace Librainian.Threading {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
@@ -111,24 +110,24 @@ namespace Librainian.Threading {
         ///     Console.WriteLine("{0}: {1}", DateTime.Now, result);
         ///     }
         /// </example>
-        public static Task< Task< T > >[] Interleaved<T>( [NotNull] IEnumerable< Task< T > > tasks ) {
+        public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
             if ( tasks == null ) {
                 throw new ArgumentNullException( "tasks" );
             }
 
             var inputTasks = tasks.ToList();
 
-            var buckets = new TaskCompletionSource< Task< T > >[ inputTasks.Count ];
+            var buckets = new TaskCompletionSource<Task<T>>[ inputTasks.Count ];
 
-            var results = new Task< Task< T > >[ buckets.Length ];
+            var results = new Task<Task<T>>[ buckets.Length ];
 
-            for ( var i = 0; i < buckets.Length; i++ ) {
-                buckets[ i ] = new TaskCompletionSource< Task< T > >();
+            for ( var i = 0 ; i < buckets.Length ; i++ ) {
+                buckets[ i ] = new TaskCompletionSource<Task<T>>();
                 results[ i ] = buckets[ i ].Task;
             }
 
             var nextTaskIndex = -1;
-            Action< Task< T > > continuation = completed => {
+            Action<Task<T>> continuation = completed => {
                 var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
                 bucket.TrySetResult( completed );
             };
@@ -138,12 +137,6 @@ namespace Librainian.Threading {
             }
 
             return results;
-        }
-
-        public static int GetMaximumActiveWorkerThreads() {
-            int maxWorkerThreads, maxPortThreads;
-            ThreadPool.GetMaxThreads( workerThreads: out maxWorkerThreads, completionPortThreads: out maxPortThreads );
-            return maxPortThreads;
         }
 
         ///// <summary>
@@ -169,7 +162,7 @@ namespace Librainian.Threading {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            Spawn( job, 0.5f, ( Span ) delay );
+            Spawn( job, 0.5f, ( Span )delay );
         }
 
         /// <summary>
@@ -445,7 +438,7 @@ namespace Librainian.Threading {
         /// <typeparam name="T"></typeparam>
         /// <param name="target"></param>
         /// <param name="item"></param>
-        public static void TryPost<T>( this ITargetBlock< T > target, T item ) {
+        public static void TryPost<T>( this ITargetBlock<T> target, T item ) {
             if ( target == null ) {
 #if DEBUG
                 throw new ArgumentNullException( "target" );
@@ -457,7 +450,7 @@ namespace Librainian.Threading {
             if ( !target.Post( item ) ) {
                 //var bob = target as IDataflowBlock;
                 //if ( bob.Completion.IsCompleted  )
-                TryPost( target: target, item: item, delay: ( Span ) Threads.GetSlicingAverage() ); //retry
+                TryPost( target: target, item: item, delay: ( Span )Threads.GetSlicingAverage() ); //retry
             }
         }
 
@@ -468,7 +461,7 @@ namespace Librainian.Threading {
         /// <param name="target"></param>
         /// <param name="item"></param>
         /// <param name="delay"></param>
-        public static System.Timers.Timer TryPost<T>( this ITargetBlock< T > target, T item, Span delay ) {
+        public static System.Timers.Timer TryPost<T>( this ITargetBlock<T> target, T item, Span delay ) {
             if ( target == null ) {
                 throw new ArgumentNullException( "target" );
             }
@@ -486,19 +479,13 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Has attributes <see cref="MethodImplOptions.NoInlining"/> and <see cref="MethodImplOptions.NoOptimization"/>.
-        /// </summary>
-        [MethodImpl( MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-        public static void DoNothing(  ) { }
-
-        /// <summary>
         ///     Start a timer. When it fires, check the <paramref name="condition" />, and if true do the
         ///     <paramref name="action" />.
         /// </summary>
         /// <param name="afterDelay"></param>
         /// <param name="action"></param>
         /// <param name="condition"></param>
-        public static System.Timers.Timer When( this Span afterDelay, Func< Boolean > condition, Action action ) {
+        public static System.Timers.Timer When( this Span afterDelay, Func<Boolean> condition, Action action ) {
             if ( condition == null ) {
                 throw new ArgumentNullException( "condition" );
             }
@@ -507,10 +494,10 @@ namespace Librainian.Threading {
             }
             try {
                 return afterDelay.Create( () => {
-                                              if ( condition() ) {
-                                                  action();
-                                              }
-                                          } ).Once().AndStart();
+                    if ( condition() ) {
+                        action();
+                    }
+                } ).Once().AndStart();
             }
             catch ( Exception exception ) {
                 exception.Error();
@@ -518,12 +505,5 @@ namespace Librainian.Threading {
             }
         }
     }
-
-    //public enum Priority : byte {
-    //    Lowest,
-    //    Low,
-    //    Normal,
-    //    High,
-    //    Highest
-    //}
+    
 }

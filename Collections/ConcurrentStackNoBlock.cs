@@ -43,7 +43,7 @@ namespace Librainian.Collections {
         }
 
         public void Add( IEnumerable< T > items ) {
-            Parallel.ForEach( items, Randem.Parallelism, this.Push );
+            Parallel.ForEach( items, ThreadingExtensions.Parallelism, this.Push );
         }
 
         public void Add( ParallelQuery< T > items ) {

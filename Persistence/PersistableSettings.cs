@@ -54,9 +54,9 @@ namespace Librainian.Persistence {
     /// </summary>
     public class PersistableSettings : IInitializable, IPersistableSettings {
         public void Initialize() {
-            Threads.Report.Enter();
+            ThreadingExtensions.Report.Enter();
             this.ValidateStorageFolder();
-            Threads.Report.Exit();
+            ThreadingExtensions.Report.Exit();
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Librainian.Persistence {
                                                                   RootFolder = Environment.SpecialFolder.MyComputer
                                                               };
 
-            var owner = WindowWrapper.CreateWindowWrapper( Threads.CurrentProcess.MainWindowHandle );
+            var owner = WindowWrapper.CreateWindowWrapper( ThreadingExtensions.CurrentProcess.MainWindowHandle );
 
             var dialog = folderBrowserDialog.ShowDialog( owner );
 

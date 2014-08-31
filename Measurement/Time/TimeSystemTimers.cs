@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Time {
                 using ( var threadingTimer = new Timer( callback: Callback, state: state, dueTime: ( int )Milliseconds.One.Value, period: ( int )Milliseconds.One.Value ) ) {
                     var stopwatch = Stopwatch.StartNew();
                     while ( stopwatch.Elapsed < howLong ) {
-                        Tasks.DoNothing();
+                        ThreadingExtensions.DoNothing();
                     }
                     stopwatch.Stop();
 
@@ -70,7 +70,7 @@ namespace Librainian.Measurement.Time {
                     systemTimer.Start();
                     var stopwatch = Stopwatch.StartNew();
                     while ( stopwatch.Elapsed < howLong ) {
-                        Tasks.DoNothing();
+                        ThreadingExtensions.DoNothing();
                     }
 
                     stopwatch.Stop();

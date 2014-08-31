@@ -563,6 +563,7 @@
     <Compile Include="Threading\AbandonableTask.cs" />
     <Compile Include="Security\MersenneTwister.cs" />
     <Compile Include="Threading\ActorExtensions.cs" />
+    <Compile Include="Threading\ParallelAlgorithms.cs" />
     <Compile Include="Threading\CustomAttribute.cs" />
     <Compile Include="Extensions\Combiner.cs" />
     <Compile Include="Extensions\GuidExtensions.cs" />
@@ -605,6 +606,7 @@
     <Compile Include="Threading\PolicyOnLockRecursion.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Threading\PriorityBlock.cs" />
+    <Compile Include="Threading\PriorityScheduler.cs" />
     <Compile Include="Threading\Randem.cs" />
     <Compile Include="Threading\ReaderWriterCount.cs" />
     <Compile Include="Threading\RecursiveCounts.cs" />
@@ -615,6 +617,7 @@
     <Compile Include="Extensions\DirectoryInfos.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threading\Tasks.cs" />
+    <Compile Include="Threading\ThreadingExtensions.cs" />
     <Compile Include="Threading\Threads.cs" />
     <Compile Include="Threading\FluentTimers.cs" />
     <Compile Include="Threading\WaitNode.cs" />

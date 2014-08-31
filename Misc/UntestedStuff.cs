@@ -31,7 +31,7 @@ namespace Librainian.Misc {
         private static void InitCounters() {
             // Initialize the list to a counter-per-processor:
             utilizationCounters = new List< PerformanceCounter >();
-            for ( var i = 0; i < Threads.ProcessorCount; i++ ) {
+            for ( var i = 0; i < ThreadingExtensions.ProcessorCount; i++ ) {
                 utilizationCounters.Add( new PerformanceCounter( "Processor", "% Processor Time", i.ToString() ) );
             }
         }

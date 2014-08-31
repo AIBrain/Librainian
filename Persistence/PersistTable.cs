@@ -88,12 +88,12 @@ namespace Librainian.Persistence {
         public Folder Folder { get; private set; }
 
         public void Initialize() {
-            Threads.Report.Enter();
+            ThreadingExtensions.Report.Enter();
             this.Dictionary.Database.Should().NotBeNullOrWhiteSpace();
             if ( this.Dictionary.Database.IsNullOrWhiteSpace() ) {
                 throw new DirectoryNotFoundException( String.Format( "Unable to find or create the folder `{0}`.", this.Folder.FullName ) );
             }
-            Threads.Report.Exit();
+            ThreadingExtensions.Report.Exit();
         }
 
         private dynamic ToExpando( IEnumerable<KeyValuePair<TKey, TValue>> dictionary ) {

@@ -1,28 +1,25 @@
 #region License & Information
-
 // This notice must be kept visible in the source.
-//
+// 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
+// 
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-//
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/ParsingExtensions.cs" was last cleaned by Rick on 2014/08/16 at 4:36 PM
-
-#endregion License & Information
+// 
+// "Librainian/ParsingExtensions.cs" was last cleaned by Rick on 2014/08/31 at 2:23 PM
+#endregion
 
 namespace Librainian.Parsing {
-
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -33,6 +30,8 @@ namespace Librainian.Parsing {
     using System.Linq;
     using System.Net;
     using System.Numerics;
+    using System.Runtime.Serialization;
+    using System.Runtime.Serialization.Formatters;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
@@ -83,19 +82,15 @@ namespace Librainian.Parsing {
         /// </summary>
         public const String Uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        public static readonly String AllLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).OrderBy( c => c ).ToArray() );
+        public static readonly String AllLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Distinct().Where( Char.IsLetter ).OrderBy( c => c ).ToArray() );
 
-        [NotNull]
-        public static readonly String AllLowercaseLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() );
+        [ NotNull ] public static readonly String AllLowercaseLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() );
 
-        [NotNull]
-        public static readonly String AllUppercaseLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() );
+        [ NotNull ] public static readonly String AllUppercaseLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() );
 
-        [NotNull]
-        public static readonly String Alphabet = new String( value: Randem.NextString( 676, lowers: true, uppers: false, numbers: false, symbols: false ).Where( Char.IsLetter ).Distinct().OrderBy( c => c ).Aggregate( String.Empty, ( s, c1 ) => s + ' ' + c1 ).ToArray() ).Trim();
+        [ NotNull ] public static readonly String Alphabet = new String( value: Randem.NextString( 676, lowers: true, uppers: false, numbers: false, symbols: false ).Where( Char.IsLetter ).Distinct().OrderBy( c => c ).Aggregate( String.Empty, ( s, c1 ) => s + ' ' + c1 ).ToArray() ).Trim();
 
-        [NotNull]
-        public static readonly Lazy<PluralizationService> LazyPluralizationService = new Lazy<PluralizationService>( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );
+        [ NotNull ] public static readonly Lazy< PluralizationService > LazyPluralizationService = new Lazy< PluralizationService >( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );
 
         public static readonly String[] OrdinalSuffixes = { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
 
@@ -117,7 +112,7 @@ namespace Librainian.Parsing {
         /// </summary>
         public static readonly string[] UriRfc3986CharsToEscape = { "!", "*", "'", "(", ")" };
 
-        public static String After( [NotNull] this String s, [NotNull] String splitter ) {
+        public static String After( [ NotNull ] this String s, [ NotNull ] String splitter ) {
             if ( s == null ) {
                 throw new ArgumentNullException( "s" );
             }
@@ -132,7 +127,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="tuple"></param>
         /// <returns></returns>
-        public static String AsIndexed( this Tuple<string, int> tuple ) {
+        public static String AsIndexed( this Tuple< string, int > tuple ) {
             return String.Format( "{0}.[{1}]", tuple.Item1, tuple.Item2 );
         }
 
@@ -142,7 +137,7 @@ namespace Librainian.Parsing {
         /// <param name="word"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static String AsIndexed( [NotNull] this String word, int index ) {
+        public static String AsIndexed( [ NotNull ] this String word, int index ) {
             if ( word == null ) {
                 throw new ArgumentNullException( "word" );
             }
@@ -182,7 +177,7 @@ namespace Librainian.Parsing {
         /// <param name="s"></param>
         /// <param name="splitter"></param>
         /// <returns></returns>
-        public static String Before( [NotNull] this String s, [NotNull] String splitter ) {
+        public static String Before( [ NotNull ] this String s, [ NotNull ] String splitter ) {
             if ( s == null ) {
                 throw new ArgumentNullException( "s" );
             }
@@ -192,14 +187,14 @@ namespace Librainian.Parsing {
             return s.Substring( 0, s.IndexOf( splitter, StringComparison.InvariantCulture ) ).TrimEnd();
         }
 
-        public static IDictionary<Char, UInt64> Count( this String text ) {
-            var dict = new ConcurrentDictionary<Char, UInt64>();
+        public static IDictionary< char, ulong > Count( this String text ) {
+            var dict = new ConcurrentDictionary< char, ulong >();
             text.AsParallel().ForAll( c => dict.AddOrUpdate( c, 1, ( c1, arg2 ) => arg2 + 1 ) );
             return dict;
         }
 
         public static UInt64 Count( this String text, Char character ) {
-            return ( UInt64 )text.Where( c => c == character ).LongCount();
+            return ( UInt64 ) text.Where( c => c == character ).LongCount();
         }
 
         /// <summary>
@@ -207,14 +202,14 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static byte[] Compress( [NotNull] this String text ) {
+        public static byte[] Compress( [ NotNull ] this String text ) {
             if ( text == null ) {
                 throw new ArgumentNullException( "text" );
             }
             return Compress( text, Encoding.Default );
         }
 
-        public static byte[] Compress( [NotNull] this String text, [NotNull] Encoding encoding ) {
+        public static byte[] Compress( [ NotNull ] this String text, [ NotNull ] Encoding encoding ) {
             if ( text == null ) {
                 throw new ArgumentNullException( "text" );
             }
@@ -224,7 +219,7 @@ namespace Librainian.Parsing {
             return encoding.GetBytes( text ).Compress();
         }
 
-        public static IEnumerable<T> ConcatSingle<T>( [NotNull] this IEnumerable<T> sequence, T element ) {
+        public static IEnumerable< T > ConcatSingle< T >( [ NotNull ] this IEnumerable< T > sequence, T element ) {
             if ( sequence == null ) {
                 throw new ArgumentNullException( "sequence" );
             }
@@ -261,9 +256,9 @@ namespace Librainian.Parsing {
             var maxi = length1;
             var maxj = length2;
 
-            var dCurrent = new int[ maxi + 1 ];
-            var dMinus1 = new int[ maxi + 1 ];
-            var dMinus2 = new int[ maxi + 1 ];
+            var dCurrent = new int[maxi + 1];
+            var dMinus1 = new int[maxi + 1];
+            var dMinus2 = new int[maxi + 1];
 
             for ( var i = 0; i <= maxi; i++ ) {
                 dCurrent[ i ] = i;
@@ -315,7 +310,7 @@ namespace Librainian.Parsing {
             return ( result > threshold ) ? Int32.MaxValue : result;
         }
 
-        public static byte[] Decompress( [NotNull] this byte[] data ) {
+        public static byte[] Decompress( [ NotNull ] this byte[] data ) {
             if ( data == null ) {
                 throw new ArgumentNullException( "data" );
             }
@@ -327,14 +322,14 @@ namespace Librainian.Parsing {
             }
         }
 
-        public static String DecompressToString( [NotNull] this byte[] data ) {
+        public static String DecompressToString( [ NotNull ] this byte[] data ) {
             if ( data == null ) {
                 throw new ArgumentNullException( "data" );
             }
             return DecompressToString( data, Encoding.Default );
         }
 
-        public static String DecompressToString( [NotNull] this byte[] data, [NotNull] Encoding encoding ) {
+        public static String DecompressToString( [ NotNull ] this byte[] data, [ NotNull ] Encoding encoding ) {
             if ( data == null ) {
                 throw new ArgumentNullException( "data" );
             }
@@ -344,7 +339,7 @@ namespace Librainian.Parsing {
             return encoding.GetString( data.Decompress() );
         }
 
-        public static IEnumerable<char> EnglishOnly( this String s ) {
+        public static IEnumerable< char > EnglishOnly( this String s ) {
             try {
                 var sb = new StringBuilder();
                 foreach ( Match m in Regex.Matches( s, @"(\w+)|(\$\d+\.\d+)" ) ) {
@@ -393,7 +388,7 @@ namespace Librainian.Parsing {
             return escaped.ToString();
         }
 
-        public static Boolean ExactMatch( [NotNull] this String source, [NotNull] String compare ) {
+        public static Boolean ExactMatch( [ NotNull ] this String source, [ NotNull ] String compare ) {
             if ( source == null ) {
                 throw new ArgumentNullException( "source" );
             }
@@ -479,7 +474,7 @@ namespace Librainian.Parsing {
             return String.Format( "{0}-|", indexed );
         }
 
-        public static Boolean IsJustNumbers( [CanBeNull] this String text ) {
+        public static Boolean IsJustNumbers( [ CanBeNull ] this String text ) {
             if ( null == text ) {
                 return false;
             }
@@ -490,15 +485,15 @@ namespace Librainian.Parsing {
             return Double.TryParse( text, out test );
         }
 
-        public static Boolean IsJustNumbers( [CanBeNull] this String text, out  Decimal result ) {
-            return  Decimal.TryParse( text ?? String.Empty, out result );
+        public static Boolean IsJustNumbers( [ CanBeNull ] this String text, out Decimal result ) {
+            return Decimal.TryParse( text ?? String.Empty, out result );
         }
 
-        public static Boolean IsNullOrEmpty( [CanBeNull] this String value ) {
+        public static Boolean IsNullOrEmpty( [ CanBeNull ] this String value ) {
             return String.IsNullOrEmpty( value );
         }
 
-        public static Boolean IsNullOrWhiteSpace( [CanBeNull] this String value ) {
+        public static Boolean IsNullOrWhiteSpace( [ CanBeNull ] this String value ) {
             return String.IsNullOrWhiteSpace( value );
         }
 
@@ -507,7 +502,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="sentence"></param>
         /// <returns></returns>
-        public static IEnumerable<string> JustDigits( this String sentence ) {
+        public static IEnumerable< string > JustDigits( this String sentence ) {
             return RegexJustDigits.Split( sentence );
         }
 
@@ -534,17 +529,19 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="sentence"></param>
         /// <returns></returns>
-        /// <seealso cref="Word"/>
-        /// <seealso cref="Sentence"/>
-        public static IEnumerable<string> JustWords( this String sentence ) {
+        /// <seealso cref="Word" />
+        /// <seealso cref="Sentence" />
+        public static IEnumerable< string > JustWords( this String sentence ) {
             var result = sentence.ToWords().Where( word => word.Any( Char.IsLetterOrDigit ) );
             return result;
         }
 
         /// <summary>
         ///     <para>Case insensitive string comparison. </para>
-        /// <para>( true example: cAt == CaT )</para>
-        ///     <para><see cref="StringComparison.InvariantCultureIgnoreCase" /></para>
+        ///     <para>( true example: cAt == CaT )</para>
+        ///     <para>
+        ///         <see cref="StringComparison.InvariantCultureIgnoreCase" />
+        ///     </para>
         /// </summary>
         /// <param name="source"></param>
         /// <param name="compare"></param>
@@ -553,11 +550,12 @@ namespace Librainian.Parsing {
             return ( source ?? String.Empty ).Equals( compare ?? String.Empty, StringComparison.InvariantCultureIgnoreCase );
         }
 
-
         /// <summary>
         ///     <para>Case insensitive string-end comparison. </para>
-        /// <para>( true example: cAt == CaT )</para>
-        ///     <para><see cref="StringComparison.InvariantCultureIgnoreCase" /></para>
+        ///     <para>( true example: cAt == CaT )</para>
+        ///     <para>
+        ///         <see cref="StringComparison.InvariantCultureIgnoreCase" />
+        ///     </para>
         /// </summary>
         /// <param name="source"></param>
         /// <param name="compare"></param>
@@ -570,9 +568,9 @@ namespace Librainian.Parsing {
         //        public const String Lowercase = "abcdefghijklmnopqrstuvwxyz";
         //    }
         //}
-        [Pure]
-        [CanBeNull]
-        public static String NullIfBlank( [CanBeNull] this String theString ) {
+        [ Pure ]
+        [ CanBeNull ]
+        public static String NullIfBlank( [ CanBeNull ] this String theString ) {
             if ( null == theString || String.IsNullOrWhiteSpace( theString ) ) {
                 return null;
             }
@@ -580,15 +578,15 @@ namespace Librainian.Parsing {
             return String.IsNullOrWhiteSpace( theString ) ? null : theString;
         }
 
-        public static String NullIfEmpty( [CanBeNull] this String value ) {
+        public static String NullIfEmpty( [ CanBeNull ] this String value ) {
             return String.IsNullOrEmpty( value ) ? null : value;
         }
 
-        public static String NullIfEmptyOrWhiteSpace( [CanBeNull] this String value ) {
+        public static String NullIfEmptyOrWhiteSpace( [ CanBeNull ] this String value ) {
             return String.IsNullOrWhiteSpace( value ) ? null : value;
         }
 
-        public static String NullIfJustNumbers( [CanBeNull] this String value ) {
+        public static String NullIfJustNumbers( [ CanBeNull ] this String value ) {
             return value.IsJustNumbers() ? null : value;
         }
 
@@ -597,11 +595,11 @@ namespace Librainian.Parsing {
             return ( number * number.Sign ).ToString().Length;
         }
 
-        public static String Append( [CanBeNull] this String result, [CanBeNull] String appendThis ) {
+        public static String Append( [ CanBeNull ] this String result, [ CanBeNull ] String appendThis ) {
             return String.Format( "{0}{1}", result ?? String.Empty, appendThis ?? String.Empty );
         }
 
-        public static String Prepend( [CanBeNull] this String result, [CanBeNull] String prependThis ) {
+        public static String Prepend( [ CanBeNull ] this String result, [ CanBeNull ] String prependThis ) {
             return String.Format( "{0}{1}", prependThis ?? String.Empty, result ?? String.Empty );
         }
 
@@ -628,7 +626,7 @@ namespace Librainian.Parsing {
         /// <param name="number"></param>
         /// <param name="word"></param>
         /// <returns></returns>
-        public static String PluralOf( this UInt64 number, [NotNull] String word ) {
+        public static String PluralOf( this UInt64 number, [ NotNull ] String word ) {
             if ( word == null ) {
                 throw new ArgumentNullException( "word" );
             }
@@ -647,7 +645,7 @@ namespace Librainian.Parsing {
         /// <param name="number"></param>
         /// <param name="word"></param>
         /// <returns></returns>
-        public static String PluralOf( this Double number, [NotNull] String word ) {
+        public static String PluralOf( this Double number, [ NotNull ] String word ) {
             if ( word == null ) {
                 throw new ArgumentNullException( "word" );
             }
@@ -664,12 +662,12 @@ namespace Librainian.Parsing {
         /// <param name="number"></param>
         /// <param name="word"></param>
         /// <returns></returns>
-        public static String PluralOf( this  Decimal number, [NotNull] String word ) {
+        public static String PluralOf( this Decimal number, [ NotNull ] String word ) {
             if ( word == null ) {
                 throw new ArgumentNullException( "word" );
             }
 
-            if (Decimal.One == number ) {
+            if ( Decimal.One == number ) {
                 return word;
             }
 
@@ -687,7 +685,7 @@ namespace Librainian.Parsing {
         /// <param name="number"></param>
         /// <param name="word"></param>
         /// <returns></returns>
-        public static String PluralOf( this BigDecimal number, [NotNull] String word ) {
+        public static String PluralOf( this BigDecimal number, [ NotNull ] String word ) {
             if ( word == null ) {
                 throw new ArgumentNullException( "word" );
             }
@@ -706,7 +704,7 @@ namespace Librainian.Parsing {
         /// <param name="number"></param>
         /// <param name="word"></param>
         /// <returns></returns>
-        public static String PluralOf( this BigInteger number, [NotNull] String word ) {
+        public static String PluralOf( this BigInteger number, [ NotNull ] String word ) {
             if ( word == null ) {
                 throw new ArgumentNullException( "word" );
             }
@@ -789,8 +787,8 @@ namespace Librainian.Parsing {
         /// <param name="matchReasons">preferably an empty queue</param>
         /// <returns></returns>
         /// <remarks> The score is normalized such that 0 equates to no similarity and 1 is an exact match.</remarks>
-        [UsedImplicitly]
-        public static Double Similarity( [NotNull] this String source, [NotNull] String compare, [NotNull] ref ConcurrentQueue<string> matchReasons, TimeSpan? timeout = null ) {
+        [ UsedImplicitly ]
+        public static Double Similarity( [ NotNull ] this String source, [ NotNull ] String compare, [ NotNull ] ref ConcurrentQueue< string > matchReasons, TimeSpan? timeout = null ) {
             if ( source == null ) {
                 throw new ArgumentNullException( "source" );
             }
@@ -813,13 +811,11 @@ namespace Librainian.Parsing {
             }
 
             #region Test for an exact match
-
             if ( ExactMatch( source, compare ) ) {
                 matchReasons.Add( "ExactMatch( source, compare )" );
                 floater.Add( 1 );
                 goto noMoreTests;
             }
-
             #endregion Test for an exact match
 
             if ( source.SequenceEqual( compare ) ) {
@@ -832,14 +828,11 @@ namespace Librainian.Parsing {
             var votes = new VotallyD();
 
             #region Test for any amount of characters
-
             votes.ForA( source.Length );
             votes.ForB( compare.Length );
-
             #endregion Test for any amount of characters
 
             #region Test for UTF32Encoding
-
             var sourceIntoUTF32Encoding = new UTF32Encoding( bigEndian: true, byteOrderMark: true, throwOnInvalidCharacters: false ).GetBytes( source );
             votes.ForA( sourceIntoUTF32Encoding.LongCount() );
 
@@ -857,11 +850,9 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-
             #endregion Test for UTF32Encoding
 
             #region Test for a string reversal.
-
             var compareReversed = Enumerable.Reverse( compare );
             if ( source.SequenceEqual( compareReversed ) ) {
                 votes.ForA( source.Length );
@@ -872,11 +863,9 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-
             #endregion Test for a string reversal.
 
             #region Test for exact match after Distinct()
-
             var sourceDistinct = new String( source.Distinct().ToArray() );
             var compareDistinct = new String( compare.Distinct().ToArray() );
             var compareDistinctReverse = new String( Enumerable.Reverse( compareDistinct ).ToArray() );
@@ -889,11 +878,9 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-
             #endregion Test for exact match after Distinct()
 
             #region Test for reversal match after distinct
-
             if ( sourceDistinct.SequenceEqual( compareDistinctReverse ) ) {
                 votes.ForA( sourceDistinct.Length * 2 );
                 votes.ForB( compareDistinctReverse.Length );
@@ -902,11 +889,9 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-
             #endregion Test for reversal match after distinct
 
             #region do any chars in source also show in compare
-
             var tempcounter = 0;
             foreach ( var c in source ) {
                 votes.ForA();
@@ -921,11 +906,9 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-
             #endregion do any chars in source also show in compare
 
             #region do any chars in compare also show in source
-
             tempcounter = 0;
             foreach ( var c in compare ) {
                 votes.ForB( 1 );
@@ -940,11 +923,9 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-
             #endregion do any chars in compare also show in source
 
             #region check for substrings
-
             if ( source.Contains( compare ) ) {
                 votes.ForA( source.Length );
                 votes.ForB( compare.Length );
@@ -962,31 +943,28 @@ namespace Librainian.Parsing {
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-
             #endregion check for substrings
 
             #region DamerauLevenshteinDistance
-
             Single threshold = Math.Max( source.Length, compare.Length );
-            var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, target: compare, threshold: ( int )threshold );
+            var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, target: compare, threshold: ( int ) threshold );
             floater.Add( threshold - ( actualDamerauLevenshteinDistance / threshold ) );
 
             if ( stopwatch.Elapsed > timeout ) { }
-
             #endregion DamerauLevenshteinDistance
 
-        noMoreTests:
+            noMoreTests:
             return floater;
         }
 
-        [Test]
+        [ Test ]
         public static void SimilarityTests() {
-            var reasons = new ConcurrentQueue<string>();
+            var reasons = new ConcurrentQueue< string >();
             var test1 = Similarity( "hi", "hello", ref reasons );
             String.Format( "test1 was {0}", test1 ).TimeDebug();
         }
 
-        public static String Soundex( [NotNull] this String s, int length = 4 ) {
+        public static String Soundex( [ NotNull ] this String s, int length = 4 ) {
             if ( s == null ) {
                 throw new ArgumentNullException( "s" );
             }
@@ -994,19 +972,19 @@ namespace Librainian.Parsing {
                                    .Substring( 0, length ); // and no longer than length
         }
 
-        public static IEnumerable<string> SplitToChunks( [NotNull] this string s, int chunks ) {
+        public static IEnumerable< string > SplitToChunks( [ NotNull ] this string s, int chunks ) {
             if ( s == null ) {
                 throw new ArgumentNullException( "s" );
             }
             var res = Enumerable.Range( 0, s.Length ).Select( index => new {
-                index = index,
-                ch = s[ index ]
-            } ).GroupBy( f => f.index / chunks ).Select( g => String.Join( "", g.Select( z => z.ch ) ) );
+                                                                               index = index,
+                                                                               ch = s[ index ]
+                                                                           } ).GroupBy( f => f.index / chunks ).Select( g => String.Join( "", g.Select( z => z.ch ) ) );
 
             return res;
         }
 
-        public static String StringFromResponse( [CanBeNull] this WebResponse response ) {
+        public static String StringFromResponse( [ CanBeNull ] this WebResponse response ) {
             if ( null == response ) {
                 return String.Empty;
             }
@@ -1118,10 +1096,10 @@ namespace Librainian.Parsing {
             return number + OrdinalSuffixes[ ( lt >= 11 && lt <= 13 ) ? 0 : n % 10 ];
         }
 
-        [NotNull]
-        public static IEnumerable<Sentence> ToSentences( [CanBeNull] this String paragraph ) {
+        [ NotNull ]
+        public static IEnumerable< Sentence > ToSentences( [ CanBeNull ] this String paragraph ) {
             if ( paragraph == null ) {
-                return Enumerable.Empty<Sentence>();
+                return Enumerable.Empty< Sentence >();
             }
             //clean it up some
             paragraph = paragraph.Replace( "\t", Singlespace );
@@ -1139,7 +1117,7 @@ namespace Librainian.Parsing {
             return results.Select( s => new Sentence( s ) );
         }
 
-        public static IEnumerable<string> ToWords( [NotNull] this String sentence ) {
+        public static IEnumerable< string > ToWords( [ NotNull ] this String sentence ) {
             //TODO try parsing with different splitters?
             // ...do we mabe want the most or least words or avg ?
 
@@ -1162,7 +1140,6 @@ namespace Librainian.Parsing {
             //AIBrain.Brain.BlackBoxClass.Diagnostic( r.Split( sentence ) );
 
             //AIBrain.Brain.BlackBoxClass.Diagnostic( new Regex( @"(\b\b)|(\$\d+\.\d+)" ).Split( sentence ) );
-
             #endregion Testing
 
             if ( sentence == null ) {
@@ -1244,7 +1221,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static int WordCount( [NotNull] this String input ) {
+        public static int WordCount( [ NotNull ] this String input ) {
             if ( input == null ) {
                 throw new ArgumentNullException( "input" );
             }
@@ -1256,6 +1233,63 @@ namespace Librainian.Parsing {
             }
         }
 
+        public static int ParallelEditDistance( this string s1, string s2 ) {
+            var dist = new int[s1.Length + 1, s2.Length + 1];
+            for ( var i = 0; i <= s1.Length; i++ ) {
+                dist[ i, 0 ] = i;
+            }
+            for ( var j = 0; j <= s2.Length; j++ ) {
+                dist[ 0, j ] = j;
+            }
+            var numBlocks = Environment.ProcessorCount * 4;
 
+            ParallelAlgorithms.Wavefront( ( ( startI, endI, startJ, endJ ) => {
+                                                for ( var i = startI + 1; i <= endI; i++ ) {
+                                                    for ( var j = startJ + 1; j <= endJ; j++ ) {
+                                                        dist[ i, j ] = ( s1[ i - 1 ] == s2[ j - 1 ] ) ? dist[ i - 1, j - 1 ] : 1 + Math.Min( dist[ i - 1, j ], Math.Min( dist[ i, j - 1 ], dist[ i - 1, j - 1 ] ) );
+                                                    }
+                                                }
+                                            } ), s1.Length, s2.Length, numBlocks, numBlocks );
+
+            return dist[ s1.Length, s2.Length ];
+        }
+
+        /// <summary>
+        ///     Gets a <b>horrible</b> ROUGH guesstimate of the memory consumed by an object by using
+        ///     <seealso
+        ///         cref="NetDataContractSerializer" />
+        ///     .
+        /// </summary>
+        /// <param name="bob"> </param>
+        /// <returns> </returns>
+        public static long MemoryUsed( [ NotNull ] this Object bob ) {
+            if ( bob == null ) {
+                throw new ArgumentNullException( "bob" );
+            }
+            try {
+                using ( var s = new NullStream() ) {
+                    var serializer = new NetDataContractSerializer {
+                                                                       AssemblyFormat = FormatterAssemblyStyle.Full
+                                                                   };
+                    serializer.WriteObject( stream: s, graph: bob );
+                    return s.Length;
+                }
+            }
+            catch ( InvalidDataContractException exception ) {
+                exception.Error();
+            }
+            catch ( SerializationException exception ) {
+                exception.Error();
+            }
+            catch ( Exception exception ) {
+                exception.Error();
+            }
+            return 0;
+        }
+
+        public static long MinifyXML( this XmlDocument xml ) {
+            //TODO todo.
+            throw new NotImplementedException();
+        }
     }
 }

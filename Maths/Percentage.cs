@@ -130,7 +130,7 @@ namespace Librainian.Maths {
 
         [Pure]
         public int CompareTo( Double other ) {
-            return this.Quotient.CompareTo( other );
+            return ( (Double)this.Quotient ).CompareTo( other );
         }
 
         [Pure]

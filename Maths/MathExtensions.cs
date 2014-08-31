@@ -1058,6 +1058,16 @@ namespace Librainian.Maths {
             }
         }
 
+        /// <summary>Creates an enumerable that iterates the range [fromInclusive, toExclusive).</summary>
+        /// <param name="fromInclusive">The lower bound, inclusive.</param>
+        /// <param name="toExclusive">The upper bound, exclusive.</param>
+        /// <returns>The enumerable of the range.</returns>
+        public static IEnumerable<BigInteger> To( this BigInteger fromInclusive, BigInteger toExclusive ) {
+            for ( var i = fromInclusive ; i < toExclusive ; i++ )
+                yield return i;
+        }
+
+
         /// <summary>
         ///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
         /// </summary>

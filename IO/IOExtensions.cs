@@ -597,7 +597,7 @@ namespace Librainian.IO {
                 RootFolder = Environment.SpecialFolder.MyComputer
             };
 
-            var owner = WindowWrapper.CreateWindowWrapper( Threads.CurrentProcess.MainWindowHandle );
+            var owner = WindowWrapper.CreateWindowWrapper( ThreadingExtensions.CurrentProcess.MainWindowHandle );
 
             var dialog = folderBrowserDialog.ShowDialog( owner );
 
