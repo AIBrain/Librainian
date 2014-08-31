@@ -41,6 +41,9 @@ namespace Librainian.Extensions {
         [DllImport( "kernel32", SetLastError = true )]
         public static extern Boolean FindClose( IntPtr hFindFile );
 
+        [DllImport( "kernel32.dll" )]
+        public static extern bool AllocConsole(); 
+
         /// <summary>
         ///     Searches a directory for a file or subdirectory with a name that matches a specific name (or partial name if
         ///     wildcards are used).

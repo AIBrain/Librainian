@@ -77,7 +77,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="action"></param>
         /// <param name="refresh"></param>
-        /// <seealso cref="OnThread"/>
+        /// <seealso />
         public static void InvokeIfRequired( [NotNull] this Control control, [NotNull] Action action, Boolean refresh = true ) {
             if ( control == null ) {
                 throw new ArgumentNullException( "control" );
@@ -85,10 +85,10 @@ namespace Librainian.Controls {
             if ( action == null ) {
                 throw new ArgumentNullException( "action" );
             }
+            if ( control.IsDisposed ) {
+                return;
+            }
             if ( control.InvokeRequired ) {
-                if ( control.IsDisposed ) {
-                    return;
-                }
                 if ( refresh ) {
                     action += control.Refresh;  //BUG does this work like this?
                 }
@@ -99,9 +99,7 @@ namespace Librainian.Controls {
                     return;
                 }
                 action();
-                if ( control.IsDisposed ) {
-                    return;
-                } if ( refresh ) {
+                if ( !control.IsDisposed && refresh ) {
                     control.Refresh();
                 }
             }

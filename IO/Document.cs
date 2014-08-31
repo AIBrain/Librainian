@@ -57,6 +57,7 @@ namespace Librainian.IO {
             }
         }
 
+        [NotNull, UsedImplicitly]
         public static readonly Document Empty = new Document();
 
         /// <summary>
@@ -121,6 +122,9 @@ namespace Librainian.IO {
             this.FileInfo.Refresh();
         }
 
+        public Document( [NotNull] String fullPath, String filename ) : this( Path.Combine( fullPath, filename ) ) {
+        }
+
         /// <summary>
         /// </summary>
         /// <param name="fullPathWithFilename"></param>
@@ -169,6 +173,14 @@ namespace Librainian.IO {
                 throw new DirectoryNotFoundException();
             }
             document.DeepClone( this );
+        }
+
+        public Document( FileSystemInfo info )
+            : this( info.FullName ) {
+        }
+
+        public Document( Folder folder, string filename ) : this(folder.FullName, filename) {
+            
         }
 
         /// <summary>

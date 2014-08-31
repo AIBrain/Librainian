@@ -42,10 +42,19 @@ namespace Librainian.IO {
     [Immutable]
     public class Folder {
 
-        //TODO and in long name (unc) support. Like 'ZedLongPaths' ?
+        //TODO add in long name (unc) support. Like 'ZedLongPaths' ?
 
-        [UsedImplicitly]
         private String DebuggerDisplay { get { return this.FullName; } }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        public override string ToString() {
+            return DebuggerDisplay;
+        }
 
         /// <summary>
         ///     "\"
@@ -89,6 +98,7 @@ namespace Librainian.IO {
                 throw new InvalidOperationException( String.Format( "Unable to parse path {0}", fullPath ) );
             }
         }
+
 
         /// <summary>
         ///     <para>Static comparison of the file names (case insensitive) and file sizes for equality.</para>
