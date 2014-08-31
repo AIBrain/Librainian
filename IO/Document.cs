@@ -51,7 +51,11 @@ namespace Librainian.IO {
     public class Document : IEquatable<Document>, IEnumerable<Byte> {
 
         [UsedImplicitly]
-        public String DebuggerDisplay { get { return this.FullPathWithFileName; } }
+        public String DebuggerDisplay {
+            get {
+                return this.FullPathWithFileName;
+            }
+        }
 
         public static readonly Document Empty = new Document();
 
@@ -93,7 +97,11 @@ namespace Librainian.IO {
         /// <para>Gets the current size of the <see cref="Document"/>.</para>
         /// </summary>
         /// <seealso cref="Length"/>
-        public UInt64 Size { get { return this.Length; } }
+        public UInt64 Size {
+            get {
+                return this.Length;
+            }
+        }
 
         /// <summary>
         /// <para>Gets the current size of the <see cref="Document"/>.</para>
@@ -359,8 +367,13 @@ namespace Librainian.IO {
         /// </summary>
         /// <returns></returns>
         public Boolean Delete() {
-            this.FileInfo.Delete();
-            return !this.Exists();
+            try {
+                this.FileInfo.Delete();
+                return !this.Exists();
+            }
+            catch ( IOException ) {
+            }
+            return false;
         }
     }
 }
