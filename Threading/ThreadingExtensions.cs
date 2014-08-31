@@ -16,7 +16,6 @@ namespace Librainian.Threading {
     using Measurement.Time;
 
     public static class ThreadingExtensions {
-
         /// <summary>
         ///     <para>Holder for <see cref="Environment.ProcessorCount" />.</para>
         /// </summary>
