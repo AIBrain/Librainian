@@ -365,6 +365,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="value"></param>
         public static void ThrowIfOutOfDecimalRange( this BigInteger value ) {
+
             value.Should().BeInRange( Constants.MinimumUsefulDecimal, Constants.MaximumUsefulDecimal );
 
             if ( value < Constants.MinimumUsefulDecimal ) {

@@ -95,7 +95,7 @@ namespace Librainian.IO {
             this.OriginalFullPath = fullPath;
 
             if ( !IOExtensions.TryGetFolderFromPath( fullPath, out this.DirectoryInfo, out this.Uri ) ) {
-                throw new InvalidOperationException( String.Format( "Unable to parse path {0}", fullPath ) );
+                throw new InvalidOperationException( String.Format( "Unable to parse a valid path from `{0}`", fullPath ) );
             }
         }
 

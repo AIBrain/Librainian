@@ -740,6 +740,59 @@ namespace Librainian.Parsing {
             return Encoding.UTF8.GetString( base64EncodedBytes );
         }
 
+        /// <summary>
+        /// Returns the wording of a number.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://stackoverflow.com/a/2730393/956364"/>
+        public static string ToVerbalWord(this int number ) {
+            if ( number == 0 )
+                return "zero";
+
+            if ( number < 0 )
+                return "minus " + ToVerbalWord( Math.Abs( number ) );
+
+            var words = String.Empty;
+
+            if ( ( number / 1000000 ) > 0 ) {
+                words += ToVerbalWord( number / 1000000 ) + " million ";
+                number %= 1000000;
+            }
+
+            if ( ( number / 1000 ) > 0 ) {
+                words += ToVerbalWord( number / 1000 ) + " thousand ";
+                number %= 1000;
+            }
+
+            if ( ( number / 100 ) > 0 ) {
+                words += ToVerbalWord( number / 100 ) + " hundred ";
+                number %= 100;
+            }
+
+            if ( number <= 0 ) {
+                return words;
+            }
+
+            if ( words != "" )
+                words += "and ";
+
+            if ( number < 20 )
+                words += UnitsMap[ number ];
+            else {
+                words += TensMap[ number / 10 ];
+                if ( ( number % 10 ) > 0 )
+                    words += "-" + UnitsMap[ number % 10 ];
+            }
+
+            return words;
+        }
+
+        private static readonly String[] UnitsMap = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
+
+        private static readonly String[] TensMap = { "zero", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
+
+
         public static string ReplaceAll( string haystack, string needle, string replacement ) {
             int pos;
             // Avoid a possible infinite loop

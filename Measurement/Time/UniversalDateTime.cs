@@ -63,8 +63,11 @@ namespace Librainian.Measurement.Time {
         public UniversalDateTime( BigInteger planckTimesSinceBigBang ) {
             this.Value = planckTimesSinceBigBang;
             var span = new Span( planckTimes: this.Value );
-            this.Date = new Date( span );
-            this.Time = new Time( span );
+            //TODO
+            //this.Date = new Date( span );
+            //this.Time = new Time( span );
+            this.Date = new Date();
+            this.Time = new Time();
         }
 
         public UniversalDateTime( DateTime dateTime ) {

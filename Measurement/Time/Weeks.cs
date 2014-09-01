@@ -30,7 +30,10 @@ namespace Librainian.Measurement.Time {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public struct Weeks : IComparable< Weeks > {
 
-        public static readonly UInt16 InOneYear = 52;
+        /// <summary>
+        /// 52
+        /// </summary>
+        public const UInt16 InOneYear = 52;
 
         /// <summary>
         ///     One <see cref="Weeks" /> .

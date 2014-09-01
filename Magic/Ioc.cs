@@ -23,7 +23,17 @@ namespace Librainian.Magic {
     using Annotations;
 
     public static class Ioc {
+        [CanBeNull]
+        private static IIocContainer container;
+
         [NotNull]
-        public static IIocContainer Container { get; set; }
+        public static IIocContainer Container {
+            get {
+                return container ?? ( container = new NinjectIocContainer() );
+            }
+            set {
+                container = value;
+            }
+        }
     }
 }

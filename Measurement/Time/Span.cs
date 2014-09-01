@@ -42,11 +42,11 @@ namespace Librainian.Measurement.Time {
 
         /// <summary>
         /// </summary>
-        public static readonly Span Zero = new Span( planckTimes: 0 );
+        public static readonly Span MatrixID = new Span( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
 
         /// <summary>
         /// </summary>
-        public static readonly Span MatrixID = new Span( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
+        public static readonly Span Zero = new Span( planckTimes: 0 );
 
         public static readonly Span Infinity = new Span( yoctoseconds:Decimal.MaxValue, zeptoseconds:Decimal.MaxValue, attoseconds:Decimal.MaxValue, femtoseconds:Decimal.MaxValue, picoseconds:Decimal.MaxValue, nanoseconds:Decimal.MaxValue, microseconds:Decimal.MaxValue, milliseconds:Decimal.MaxValue, seconds:Decimal.MaxValue, minutes:Decimal.MaxValue, hours:Decimal.MaxValue, days:Decimal.MaxValue, weeks:Decimal.MaxValue, months:Decimal.MaxValue ); //not the largest Span possible, but anything larger.. wow. just wow.
         public static readonly Span Forever = new Span( years:Decimal.MaxValue ); //not the largest Span possible, but anything larger.. wow. just wow.
@@ -143,20 +143,48 @@ namespace Librainian.Measurement.Time {
 
             //NOTE the order here is mostly important. I think? maybe not. oh well.
             this.Years = new Years( PlanckTimes.InOneYear.PullPlancks( ref planckTimes ) );
+
             this.Months = new Months( PlanckTimes.InOneMonth.PullPlancks( ref planckTimes ) );
+            this.Months.Value.Should().BeInRange( 0, Months.InOneYear );
+
             this.Weeks = new Weeks( PlanckTimes.InOneWeek.PullPlancks( ref planckTimes ) );
+            this.Weeks.Value.Should().BeInRange( 0, Weeks.InOneYear );
+
             this.Days = new Days( PlanckTimes.InOneDay.PullPlancks( ref planckTimes ) );
+            this.Days.Value.Should().BeInRange( 0, Days.InOneCommonYear + 1 );  //leap year
+
             this.Hours = new Days( PlanckTimes.InOneDay.PullPlancks( ref planckTimes ) );
+            this.Hours.Value.Should().BeInRange( 0, Hours.InOneDay );
+
             this.Minutes = new Minutes( PlanckTimes.InOneMinute.PullPlancks( ref planckTimes ) );
+            this.Minutes.Value.Should().BeInRange( 0, Minutes.InOneHour );
+
             this.Seconds = new Seconds( PlanckTimes.InOneSecond.PullPlancks( ref planckTimes ) );
+            this.Seconds.Value.Should().BeInRange( 0, Seconds.InOneMinute );
+
             this.Milliseconds = new Milliseconds( PlanckTimes.InOneMillisecond.PullPlancks( ref planckTimes ) );
+            this.Milliseconds.Value.Should().BeInRange( 0, Milliseconds.InOneSecond);
+
             this.Microseconds = new Microseconds( PlanckTimes.InOneMicrosecond.PullPlancks( ref planckTimes ) );
+            this.Microseconds.Value.Should().BeInRange( 0, Microseconds.InOneMillisecond );
+
             this.Nanoseconds = new Nanoseconds( PlanckTimes.InOneNanosecond.PullPlancks( ref planckTimes ) );
+            this.Nanoseconds.Value.Should().BeInRange( 0, Nanoseconds.InOneMicrosecond);
+
             this.Picoseconds = new Picoseconds( PlanckTimes.InOnePicosecond.PullPlancks( ref planckTimes ) );
+            this.Picoseconds.Value.Should().BeInRange( 0, Picoseconds.InOneNanosecond );
+
             this.Femtoseconds = new Femtoseconds( PlanckTimes.InOneFemtosecond.PullPlancks( ref planckTimes ) );
+            this.Femtoseconds.Value.Should().BeInRange( 0, Femtoseconds.InOnePicosecond);
+
             this.Attoseconds = new Femtoseconds( PlanckTimes.InOneAttosecond.PullPlancks( ref planckTimes ) );
+            this.Attoseconds.Value.Should().BeInRange( 0, Attoseconds.InOneFemtosecond );
+
             this.Zeptoseconds = new Zeptoseconds( PlanckTimes.InOneZeptosecond.PullPlancks( ref planckTimes ) );
+            this.Zeptoseconds.Value.Should().BeInRange( 0, Zeptoseconds.InOneAttosecond );
+
             this.Yoctoseconds = new Yoctoseconds( PlanckTimes.InOneYoctosecond.PullPlancks( ref planckTimes ) );
+            this.Yoctoseconds.Value.Should().BeInRange( 0, Yoctoseconds.InOneZeptosecond );
 
             planckTimes.ThrowIfOutOfDecimalRange();
             this.PlanckTimes += planckTimes;
