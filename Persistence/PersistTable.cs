@@ -248,7 +248,7 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public static TType DeSerialize<TType>( this String storedAsString ) where TType : class {
             try {
-                var byteArray = Encoding.Unicode.GetBytes( storedAsString );
+                var byteArray = Encoding.Unicode.GetBytes( storedAsString );    //we can base64 encode also.
 
                 using ( var ms = new MemoryStream( byteArray ) ) {
                     ms.Position = 0;

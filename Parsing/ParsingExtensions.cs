@@ -717,9 +717,27 @@ namespace Librainian.Parsing {
             return LazyPluralizationService.Value.Pluralize( word );
         }
 
-        public static String ReadToEnd( this MemoryStream ms ) {
+        public static String ReadToEnd( [ NotNull ] this MemoryStream ms ) {
+            if ( ms == null ) {
+                throw new ArgumentNullException( "ms" );
+            }
             ms.Seek( 0, SeekOrigin.Begin );
-            return new StreamReader( ms ).ReadToEnd();
+            using ( var reader = new StreamReader( ms ) ) {
+                return reader.ReadToEnd();
+            }
+        }
+
+        public static String Base64Encode( this String plainText ) {
+            if ( String.IsNullOrEmpty( plainText ) ) {
+                plainText = String.Empty;
+            }
+            var plainTextBytes = Encoding.UTF8.GetBytes( plainText );
+            return Convert.ToBase64String( plainTextBytes );
+        }
+
+        public static String Base64Decode( String base64EncodedData ) {
+            var base64EncodedBytes = Convert.FromBase64String( base64EncodedData );
+            return Encoding.UTF8.GetString( base64EncodedBytes );
         }
 
         public static string ReplaceAll( string haystack, string needle, string replacement ) {
