@@ -24,11 +24,12 @@
 namespace Librainian.Persistence {
 
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Dynamic;
     using System.IO;
     using System.Runtime.Serialization;
+    using System.Runtime.Serialization.Formatters;
+    using System.Text;
+    using System.Threading;
     using Annotations;
     using FluentAssertions;
     using IO;
@@ -44,10 +45,12 @@ namespace Librainian.Persistence {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
-    public class PersistTable<TKey, TValue> : IInitializable, IPersistTable where TKey : /*struct,*/ IComparable<TKey>  {
+    public class PersistTable<TKey, TValue> : IInitializable, IPersistTable
+        where TKey : /*struct,*/ IComparable<TKey>
+        where TValue : class {
 
         [NotNull]
-        public readonly PersistentDictionary<TKey, TValue> Dictionary;
+        public readonly PersistentDictionary<TKey, String> Dictionary;
 
         public PersistTable( [NotNull] Folder folder ) {
             if ( folder == null ) {
@@ -62,17 +65,45 @@ namespace Librainian.Persistence {
                 throw new DirectoryNotFoundException( String.Format( "Unable to find or create the folder `{0}`.", this.Folder.FullName ) );
             }
 
-            this.Dictionary = new PersistentDictionary<TKey, TValue>( directory );
+            this.Dictionary = new PersistentDictionary<TKey, String>( directory );
 
             this.TestForReadWriteAccess();
         }
+
+
+        /// <summary>
+        /// <para>Here is where we interject NetDataContractSerializer to serialize to and from a String so the PersistentDictionary has no trouble with it.</para>
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [ CanBeNull ]
+        public TValue this[ TKey key ] {
+            get {
+                String storedValue;
+                if ( !this.Dictionary.TryGetValue( key, out storedValue ) ) {
+                    return null;
+                }
+                var deSerialized = storedValue.DeSerialize<TValue>();
+                return deSerialized;
+            }
+            set {
+                var obj = value;
+                var valueToStore = obj.Serialize() ?? String.Empty;
+                this.Dictionary[ key ] = valueToStore;
+            }
+        }
+
 
         public PersistTable( [NotNull] String fullpath )
             : this( new Folder( fullpath ) ) {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay { get { return this.Dictionary.ToString(); } }
+        private String DebuggerDisplay {
+            get {
+                return this.Dictionary.ToString();
+            }
+        }
 
 
         /// <summary>
@@ -85,7 +116,10 @@ namespace Librainian.Persistence {
         }
 
         [NotNull]
-        public Folder Folder { get; private set; }
+        public Folder Folder {
+            get;
+            private set;
+        }
 
         public void Initialize() {
             Report.Enter();
@@ -96,6 +130,7 @@ namespace Librainian.Persistence {
             Report.Exit();
         }
 
+/*
         private dynamic ToExpando( IEnumerable<KeyValuePair<TKey, TValue>> dictionary ) {
             var expandoObject = new ExpandoObject() as IDictionary<TKey, TValue>;
 
@@ -107,6 +142,7 @@ namespace Librainian.Persistence {
 
             return expandoObject;
         }
+*/
 
         /*
                 /// <summary>
@@ -183,9 +219,48 @@ namespace Librainian.Persistence {
                 }
             }
             catch ( Exception ) {
-                
+
             }
             return false;
+        }
+    }
+
+    public static class SerializationExtensions {
+        internal static readonly ThreadLocal<StreamingContext> StreamingContexts = new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ) );
+
+        internal static readonly ThreadLocal<NetDataContractSerializer> Serializers = new ThreadLocal<NetDataContractSerializer>( () => new NetDataContractSerializer( context: StreamingContexts.Value, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false, assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null ) );
+
+        [CanBeNull]
+        public static String Serialize<TType>( this TType obj ) where TType : class {
+            try {
+                using ( var stream = new MemoryStream() ) {
+                    var serializer = Serializers.Value;
+                    serializer.WriteObject( stream, obj );
+                    return stream.ReadToEnd();
+                }
+            }
+            catch ( SerializationException exception ) {
+                exception.Error();
+            }
+            return null;
+        }
+
+        [CanBeNull]
+        public static TType DeSerialize<TType>( this String storedAsString ) where TType : class {
+            try {
+                var byteArray = Encoding.Unicode.GetBytes( storedAsString );
+
+                using ( var ms = new MemoryStream( byteArray ) ) {
+                    ms.Position = 0;
+                    var serializer = Serializers.Value;
+                    var deSerialized = serializer.ReadObject( ms ) as TType;
+                    return deSerialized;
+                }
+            }
+            catch ( SerializationException exception ) {
+                exception.Error();
+            }
+            return null;
         }
     }
 }
