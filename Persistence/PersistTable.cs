@@ -24,10 +24,14 @@
 namespace Librainian.Persistence {
 
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using System.Runtime.Serialization;
     using Annotations;
+    using CsQuery.ExtensionMethods.Internal;
     using FluentAssertions;
     using IO;
     using Librainian.Extensions;
@@ -42,12 +46,11 @@ namespace Librainian.Persistence {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
-    public class PersistTable<TKey, TValue> : IInitializable, IPersistTable
+    public class PersistTable<TKey, TValue> : IInitializable, IPersistTable, IEnumerable<TValue>
         where TKey : /*struct,*/ IComparable<TKey>
         where TValue : class {
 
-        [NotNull]
-        public readonly PersistentDictionary<TKey, String> Dictionary;
+        [NotNull] internal readonly PersistentDictionary<TKey, String> Dictionary;
 
         public PersistTable( [NotNull] Folder folder ) {
             if ( folder == null ) {
@@ -80,7 +83,7 @@ namespace Librainian.Persistence {
                 if ( !this.Dictionary.TryGetValue( key, out storedValue ) ) {
                     return null;
                 }
-                var deSerialized = storedValue.DeSerialize<TValue>();
+                var deSerialized = storedValue.Deserialize<TValue>();
                 return deSerialized;
             }
             set {
@@ -219,6 +222,20 @@ namespace Librainian.Persistence {
 
             }
             return false;
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+        /// </returns>
+        IEnumerator< TValue > IEnumerable< TValue >.GetEnumerator() {
+            return this.Dictionary.Values.Select( value => value.Deserialize<TValue>() ).GetEnumerator();
+        }
+
+        public IEnumerator GetEnumerator() {
+            throw new NotImplementedException();
         }
     }
 }

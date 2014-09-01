@@ -18,7 +18,7 @@ namespace Librainian.Collections {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public class Potpourri<TKey> : ManagedDisposable, IPotpourri<TKey> where TKey : class {
 
-        [DataMember]
+        [DataMember( IsRequired = true )]
         [NotNull]
         protected readonly ConcurrentDictionary<TKey, BigInteger> Container = new ConcurrentDictionary<TKey, BigInteger>();
 

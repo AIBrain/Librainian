@@ -30,7 +30,7 @@ namespace Librainian.Persistence {
         }
 
         [CanBeNull]
-        public static TType DeSerialize<TType>( this String storedAsString ) where TType : class {
+        public static TType Deserialize<TType>( this String storedAsString ) where TType : class {
             try {
                 var byteArray = Encoding.Unicode.GetBytes( storedAsString );    //we can .Base64Encode() if we need.
 
