@@ -24,87 +24,83 @@
 namespace Librainian.Measurement.Time.Clocks {
 
     using System;
+    using System.Linq;
     using System.Runtime.Serialization;
-    using System.Threading;
     using FluentAssertions;
+    using Librainian.Extensions;
+    using Maths;
 
     /// <summary>
     ///     A simple struct for a Day of the month.
     /// </summary>
     [DataContract]
     [Serializable]
+    [Immutable]
     public struct Day : IClockPart {
 
-        /// <summary>
-        ///     31
-        /// </summary>
-        public const Byte Maximum = 31;
+        public static readonly Byte[] ValidDays = 1.To( Days.InOneMonth ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
+
 
         /// <summary>
-        ///     1
+        ///     should be 31
         /// </summary>
-        public const Byte Minimum = 1;
+        public static readonly Byte MaximumValue = ValidDays.Max();
 
-        [DataMember]
-        private long _value;
+        /// <summary>
+        ///     should be 1
+        /// </summary>
+        public static readonly Byte MinimumValue = ValidDays.Min();
+
+        public static readonly Day Maximum = new Day( MaximumValue );
+
+        public static readonly Day Minimum = new Day( MinimumValue );
+
+        [DataMember] public readonly Byte Value;
 
         static Day() {
-            Maximum.Should().BeGreaterThan( Minimum );
+            MaximumValue.Should().BeGreaterThan( MinimumValue );
         }
 
-        public Day( Byte day )
-            : this() {
-            this.Set( day );
+        public Day( Byte value ): this() {
+            if ( !ValidDays.Contains( value ) ) {
+                throw new ArgumentOutOfRangeException( "value", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", value, MinimumValue, MaximumValue ) );
+            }
+            this.Value = value;
         }
 
-        [DataMember]
-        public Byte Value {
-            get {
-                return ( Byte )Interlocked.Read( ref this._value );
-            }
 
-            set {
-                value.Should().BeInRange( Minimum, Maximum );
+        public static explicit operator SByte( Day value ) {
+            return ( SByte )value.Value;
+        }
 
-                if ( value < Minimum || value > Maximum ) {
-                    throw new ArgumentOutOfRangeException( "value", String.Format( "The specified day {0} is out of the valid range {1} to {2}.", value, Minimum, Maximum ) );
-                }
-                Interlocked.Exchange( ref this._value, value );
-            }
+        public static implicit operator Byte( Day value ) {
+            return value.Value;
         }
 
         /// <summary>
-        ///     Decrease the current hour.
-        ///     <para>Returns true if the value passed <see cref="Minimum" /></para>
+        ///     Provide the next <see cref="Day"/>.
         /// </summary>
-        public Boolean Rewind() {
-            var value = ( int )this.Value;
-            value--;
-            if ( value < Minimum ) {
-                this.Value = Maximum;
-                return true;
+        public Day Next( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value + 1;
+            if ( next > MaximumValue ) {
+                next = MinimumValue;
+                ticked = true;
             }
-            this.Value = ( Byte )value;
-            return false;
-        }
-
-        public void Set( Byte value ) {
-            this.Value = value;
+            return new Day( ( Byte )next );
         }
 
         /// <summary>
-        ///     Increase the current hour.
-        ///     <para>Returns true if the value passed <see cref="Maximum" /></para>
+        ///     Provide the previous <see cref="Day"/>.
         /// </summary>
-        public Boolean Tick() {
-            var value = this.Value;
-            value++;
-            if ( value > Maximum ) {
-                this.Value = Minimum;
-                return true;
+        public Day Previous( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value - 1;
+            if ( next < MinimumValue ) {
+                next = MaximumValue;
+                ticked = true;
             }
-            this.Value = value;
-            return false;
+            return new Day( ( Byte )next );
         }
     }
 }
