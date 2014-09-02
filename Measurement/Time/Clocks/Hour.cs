@@ -24,10 +24,10 @@
 namespace Librainian.Measurement.Time.Clocks {
 
     using System;
+    using System.Linq;
     using System.Runtime.Serialization;
     using FluentAssertions;
     using Librainian.Extensions;
-    using Maths;
 
     /// <summary>
     ///     <para>A simple struct for an <see cref="Hour" />.</para>
@@ -37,78 +37,73 @@ namespace Librainian.Measurement.Time.Clocks {
     [Immutable]
     public sealed class Hour : IClockPart {
 
-        /// <summary>
-        ///     24
-        /// </summary>
-        public const Byte Maximum = Hours.InOneDay;
+        public static readonly Byte[] ValidHours = Enumerable.Range( 0, Hours.InOneDay ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
 
         /// <summary>
-        ///     1
+        ///    should be 23
         /// </summary>
-        public const Byte Minimum = 1;
+        public static readonly Byte MaximumValue = ValidHours.Max();
 
-        public static readonly Hour Max = new Hour( Maximum );
+        /// <summary>
+        ///   should be 0
+        /// </summary>
+        public static readonly Byte MinimumValue = ValidHours.Min();
 
-        public static readonly Hour Min = new Hour( Minimum );
+        public static readonly Hour MaximumHour = new Hour( MaximumValue );
+
+        public static readonly Hour MinimumHour = new Hour( MinimumValue );
+
+        static Hour() {
+            MaximumValue.Should().BeGreaterThan( MinimumValue );
+        }
 
         [DataMember]
         public readonly Byte Value;
 
-        public Hour( Byte hour ) {
-            Validate( hour );
-            this.Value = hour;
-        }
-
-        public Hour( long hour ) {
-            Validate( hour );
-            this.Value = ( Byte )hour;
+        public Hour( Byte value ) {
+            if ( !ValidHours.Contains( value ) ) {
+                throw new ArgumentOutOfRangeException( "value", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", value, MinimumValue, MaximumValue ) );
+            }
+            this.Value = value;
         }
 
         /// <summary>
         ///     Allow this class to be visibly cast to a <see cref="SByte" />.
         /// </summary>
-        /// <param name="hour"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        public static explicit operator SByte( Hour hour ) {
-            return ( SByte )hour.Value;
+        public static explicit operator SByte( Hour value ) {
+            return ( SByte )value.Value;
         }
 
-        public static implicit operator Byte( Hour hour ) {
-            return hour.Value;
+        public static implicit operator Byte( Hour value ) {
+            return value.Value;
         }
 
         /// <summary>
-        ///     Provide the next hour.
+        ///     Provide the next <see cref="Hour"/>.
         /// </summary>
         public Hour Next( out Boolean ticked ) {
             ticked = false;
             var next = this.Value + 1;
-            if ( next > Maximum ) {
-                next = Minimum;
+            if ( next > MaximumValue ) {
+                next = MinimumValue;
                 ticked = true;
             }
-            return new Hour( next );
+            return new Hour( ( Byte )next );
         }
 
         /// <summary>
-        ///     Provide the previous hour.
+        ///     Provide the previous <see cref="Hour"/>.
         /// </summary>
         public Hour Previous( out Boolean ticked ) {
             ticked = false;
             var next = this.Value - 1;
-            if ( next < Minimum ) {
-                next = Maximum;
+            if ( next < MinimumValue ) {
+                next = MaximumValue;
                 ticked = true;
             }
-            return new Hour( next );
-        }
-
-        private static void Validate( long hour ) {
-            hour.Should().BeInRange( Minimum, Maximum );
-
-            if ( !hour.Between( Minimum, Maximum ) ) {
-                throw new ArgumentOutOfRangeException( "hour", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", hour, Minimum, Maximum ) );
-            }
+            return new Hour( ( Byte )next );
         }
     }
 }
