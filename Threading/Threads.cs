@@ -38,9 +38,9 @@ namespace Librainian.Threading {
         public static TimeSpan GetSlice( Boolean? setProcessorAffinity = null ) {
             if ( setProcessorAffinity.HasValue && setProcessorAffinity.Value ) {
                 try {
-                    var affinityMask = ( long )ThreadingExtensions.CurrentProcess.ProcessorAffinity;
+                    var affinityMask = ( long )Diagnostical.CurrentProcess.ProcessorAffinity;
                     affinityMask &= 0xFFFF; // use any of the available processors
-                    ThreadingExtensions.CurrentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
+                    Diagnostical.CurrentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
                 }
                 catch ( Win32Exception ) { }
                 catch ( NotSupportedException ) { }
@@ -59,9 +59,9 @@ namespace Librainian.Threading {
 
             if ( setProcessorAffinity.HasValue && setProcessorAffinity.Value ) {
                 try {
-                    var affinityMask = ( long )ThreadingExtensions.CurrentProcess.ProcessorAffinity;
+                    var affinityMask = ( long )Diagnostical.CurrentProcess.ProcessorAffinity;
                     affinityMask &= 0xFFFF; // use any of the available processors
-                    ThreadingExtensions.CurrentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
+                    Diagnostical.CurrentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
                 }
                 catch ( Win32Exception ) {
                     /*swallow*/

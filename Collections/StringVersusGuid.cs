@@ -22,7 +22,6 @@ namespace Librainian.Collections {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Runtime.Serialization;
-    using Extensions;
     using Parsing;
 
     /// <summary>
@@ -133,10 +132,10 @@ namespace Librainian.Collections {
             return this.Guids.TryGetValue( key: daguid, value: out value );
         }
 
-        private void InternalTest() {
+        public static void InternalTest( StringVersusGuid stringVersusGuid ) {
             var guid = new Guid( @"bddc4fac-20b9-4365-97bf-c98e84697012" );
-            this[ "AIBrain" ] = guid;
-            this[ guid ].Same( "AIBrain" ).DebugAssert();
+            stringVersusGuid[ "AIBrain" ] = guid;
+            stringVersusGuid[ guid ].Same( "AIBrain" ).BreakIfFalse();
         }
     }
 }

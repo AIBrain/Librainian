@@ -28,7 +28,6 @@ namespace Librainian.Extensions {
     using Annotations;
     using NUnit.Framework;
     using Parsing;
-    using Threading;
 
     public static class DirectoryInfos {
         public static readonly HashSet< DirectoryInfo > SystemFolders = new HashSet< DirectoryInfo >();

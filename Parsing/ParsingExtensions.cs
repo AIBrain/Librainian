@@ -39,7 +39,6 @@ namespace Librainian.Parsing {
     using Annotations;
     using Collections;
     using Extensions;
-    using IO;
     using Linguistics;
     using Maths;
     using Numerics;
@@ -1052,13 +1051,6 @@ namespace Librainian.Parsing {
 
             noMoreTests:
             return floater;
-        }
-
-        [ Test ]
-        public static void SimilarityTests() {
-            var reasons = new ConcurrentQueue< string >();
-            var test1 = Similarity( "hi", "hello", ref reasons );
-            String.Format( "test1 was {0}", test1 ).TimeDebug();
         }
 
         public static String Soundex( [ NotNull ] this String s, int length = 4 ) {

@@ -50,11 +50,6 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     <para>Holder for <see cref="Process.GetCurrentProcess" />.</para>
-        /// </summary>
-        public static readonly Process CurrentProcess = Process.GetCurrentProcess();
-
-        /// <summary>
         ///     About X bytes by polling just and ONLY fields.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -109,28 +104,6 @@ namespace Librainian.Threading {
                 }
             }
             return sizeInBytes;
-        }
-
-        /// <summary>
-        ///     Gets the number of frames in the <see cref="StackTrace" />
-        /// </summary>
-        /// <param name="obj"> </param>
-        /// <returns> </returns>
-        public static int FrameCount( this Object obj ) {
-            return ( new StackTrace( false ) ).FrameCount;
-        }
-
-        /// <summary>
-        ///     Force a memory garbage collection on generation0 and generation1 objects.
-        /// </summary>
-        public static void Garbage() {
-            var before = GC.GetTotalMemory( forceFullCollection: false );
-            Wrap( () => GC.Collect( generation: 1, mode: GCCollectionMode.Optimized, blocking: false ) );
-            var after = GC.GetTotalMemory( forceFullCollection: false );
-
-            if ( after < before ) {
-                String.Format( "{0} bytes freed by the GC.", before - after ).TimeDebug();
-            }
         }
 
         public static IEnumerable< T > GetEnums<T>( this T hmm ) {
@@ -213,52 +186,6 @@ namespace Librainian.Threading {
         public static void End() {
             Thread.EndThreadAffinity();
             Thread.EndCriticalRegion();
-        }
-
-        /// <summary>
-        ///     TODO replace this with a proper IoC container.
-        /// </summary>
-        /// <param name="exception"></param>
-        /// <param name="message"></param>
-        /// <param name="memberName"></param>
-        /// <param name="sourceFilePath"></param>
-        /// <param name="sourceLineNumber"></param>
-        [DebuggerStepThrough]
-        public static void Error( [CanBeNull] this Exception exception, [CanBeNull] String message = "", [CanBeNull] [CallerMemberName] String memberName = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
-#if DEBUG
-            if ( !String.IsNullOrEmpty( message ) ) {
-                Debug.WriteLine( "[{0}]", message );
-            }
-            Debug.Indent();
-            Debug.WriteLine( "[Method: {0}]", memberName );
-            if ( exception != null ) {
-                Debug.WriteLine( "[Exception: {0}]", exception.Message );
-                Debug.WriteLine( "[In: {0}]", exception.Source );
-                Debug.WriteLine( "[Msg: {0}]", exception.Message );
-                Debug.WriteLine( "[Source: {0}]", sourceFilePath );
-                Debug.WriteLine( "[Line: {0}]", sourceLineNumber );
-            }
-            Debug.Unindent();
-#else
-
-            if ( !String.IsNullOrEmpty( message ) ) {
-                Trace.WriteLine( "[{0}]", message );
-            }
-            Trace.Indent();
-            Trace.WriteLine( "[Method: {0}]", memberName );
-            if ( exception != null ) {
-                Trace.WriteLine( "[Exception: {0}]", exception.Message );
-                Trace.WriteLine( "[In: {0}]", exception.Source );
-                Trace.WriteLine( "[Msg: {0}]", exception.Message );
-                Trace.WriteLine( "[Source: {0}]", sourceFilePath );
-                Trace.WriteLine( "[Line: {0}]", sourceLineNumber );
-            }
-            Trace.Unindent();
-#endif
-
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
         }
 
         /// <summary>
@@ -736,7 +663,7 @@ namespace Librainian.Threading {
             }
             catch ( OutOfMemoryException lowMemory ) {
                 lowMemory.Error();
-                Garbage();
+                Diagnostical.Garbage();
             }
             catch ( Exception exception ) {
                 if ( null != onException ) {

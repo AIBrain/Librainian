@@ -24,7 +24,6 @@ namespace Librainian.Internet.Wiki {
     using System.Xml;
     using System.Xml.Linq;
     using Parsing;
-    using Threading;
 
     public class WikiPedia {
         private static XmlDocument BaseResponse { get { return "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc(); } }

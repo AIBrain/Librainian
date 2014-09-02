@@ -6,8 +6,6 @@ namespace Librainian.Persistence {
     using System.Text;
     using System.Threading;
     using Annotations;
-    using Parsing;
-    using Threading;
 
     public static class SerializationExtensions {
         internal static readonly ThreadLocal<StreamingContext> StreamingContexts = new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ) );

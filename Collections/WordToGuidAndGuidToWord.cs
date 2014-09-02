@@ -24,9 +24,6 @@ namespace Librainian.Collections {
     using System.IO;
     using System.Runtime.Serialization;
     using Annotations;
-    using Extensions;
-    using NUnit.Framework;
-    using Parsing;
     using Persistence;
 
     /// <summary>
@@ -39,9 +36,13 @@ namespace Librainian.Collections {
 
         private readonly String _baseCollectionNameExt = String.Empty;
 
-        [DataMember] [OptionalField] private readonly ConcurrentDictionary< Guid, String > _guids = new ConcurrentDictionary< Guid, String >();
+        [DataMember]
+        [OptionalField]
+        private readonly ConcurrentDictionary<Guid, String> _guids = new ConcurrentDictionary<Guid, String>();
 
-        [DataMember] [OptionalField] private readonly ConcurrentDictionary< String, Guid > _words = new ConcurrentDictionary< String, Guid >();
+        [DataMember]
+        [OptionalField]
+        private readonly ConcurrentDictionary<String, Guid> _words = new ConcurrentDictionary<String, Guid>();
 
         public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) {
             if ( baseCollectionName == null ) {
@@ -62,11 +63,23 @@ namespace Librainian.Collections {
             }
         }
 
-        public int Count { get { return Math.Min( this._words.Count, this._guids.Count ); } }
+        public int Count {
+            get {
+                return Math.Min( this._words.Count, this._guids.Count );
+            }
+        }
 
-        public IEnumerable< Guid > EachGuid { get { return this._guids.Keys; } }
+        public IEnumerable<Guid> EachGuid {
+            get {
+                return this._guids.Keys;
+            }
+        }
 
-        public IEnumerable< String > EachWord { get { return this._words.Keys; } }
+        public IEnumerable<String> EachWord {
+            get {
+                return this._words.Keys;
+            }
+        }
 
         /// <summary>
         ///     Get or set the guid for this word.
@@ -74,7 +87,9 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         public Guid this[ String key ] {
-            get { return String.IsNullOrEmpty( key ) ? Guid.Empty : this._words[ key ]; }
+            get {
+                return String.IsNullOrEmpty( key ) ? Guid.Empty : this._words[ key ];
+            }
 
             set {
                 if ( String.IsNullOrEmpty( key ) ) {
@@ -96,7 +111,9 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         public String this[ Guid key ] {
-            get { return Guid.Empty.Equals( key ) ? String.Empty : this._guids[ key ]; }
+            get {
+                return Guid.Empty.Equals( key ) ? String.Empty : this._guids[ key ];
+            }
 
             set {
                 if ( Guid.Empty.Equals( key ) ) {
@@ -111,7 +128,7 @@ namespace Librainian.Collections {
                     if ( !String.IsNullOrEmpty( oldstringfortheguid ) ) {
                         Guid oldguid;
                         this._words.TryRemove( oldstringfortheguid, out oldguid );
-                        oldguid.Equals( key ).DebugAssert();
+                        oldguid.Equals( key ).BreakIfFalse();
                         this.IsDirty = true;
                     }
                 }
@@ -155,18 +172,11 @@ namespace Librainian.Collections {
             return this._words.Values.Contains( daguid ) && this._guids.Keys.Contains( daguid );
         }
 
-        [Test]
-        public void InternalTest() {
-            var g = new Guid( @"bddc4fac-20b9-4365-97bf-c98e84697012" );
-            this[ "AIBrain" ] = g;
-            this[ g ].Same( "AIBrain" ).DebugAssert();
-        }
-
         public Boolean Load() {
             if ( this._baseCollectionName == null ) {
                 return false;
             }
-            this.InternalTest();
+            Diagnostical.TestWordVsGuid( this );
 
             //var filename = Path.ChangeExtension( this.BaseCollectionName, this.BaseCollectionNameExt );
             //var storage = Storage.Loader<ConcurrentDictionary<String, Guid>>( filename, source => Cloning.DeepClone( Source: source, Destination: this ) );

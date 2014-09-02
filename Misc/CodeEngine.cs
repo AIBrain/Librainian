@@ -26,7 +26,6 @@ namespace Librainian.Misc {
     using Microsoft.CSharp;
     using NUnit.Framework;
     using Persistence;
-    using Threading;
 
     public class CodeEngine {
         public static readonly CSharpCodeProvider CSharpCodeProvider = new CSharpCodeProvider();

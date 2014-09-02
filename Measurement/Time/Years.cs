@@ -123,7 +123,7 @@ namespace Librainian.Measurement.Time {
             return !Equals( left, right );
         }
 
-        public static explicit operator Months( Years years ) {
+        public static implicit operator Months( Years years ) {
             return years.ToMonths();
         }
 

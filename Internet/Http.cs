@@ -27,7 +27,6 @@ namespace Librainian.Internet {
     using System.Net.Cache;
     using System.Threading;
     using System.Windows.Forms;
-    using Extensions;
 
     public class Http {
         /*
@@ -114,7 +113,7 @@ namespace Librainian.Internet {
         }
 
         public static IAsyncResult GetAsynch( Uri uri ) {
-            uri.IsWellFormedOriginalString().DebugAssert();
+            uri.IsWellFormedOriginalString().BreakIfFalse();
             if ( !uri.IsWellFormedOriginalString() ) {
                 return null;
             }
@@ -134,7 +133,7 @@ namespace Librainian.Internet {
                 return;
             }
 
-            ( result.AsyncState is HttpWebRequest ).DebugAssert(); //heh
+            ( result.AsyncState is HttpWebRequest ).BreakIfFalse(); //heh
             var Request = ( HttpWebRequest ) result.AsyncState;
 
             var Response = ( HttpWebResponse ) Request.GetResponse();
@@ -183,7 +182,7 @@ namespace Librainian.Internet {
         /// <param name="uri"></param>
         /// <returns></returns>
         public static IAsyncResult GetStart( Uri uri ) {
-            uri.IsWellFormedOriginalString().DebugAssert();
+            uri.IsWellFormedOriginalString().BreakIfFalse();
             if ( !uri.IsWellFormedOriginalString() ) {
                 return null;
             }
@@ -214,7 +213,7 @@ namespace Librainian.Internet {
         /// </summary>
         /// <param name="uri"></param>
         public static void Wait( Uri uri ) {
-            uri.IsWellFormedOriginalString().DebugAssert();
+            uri.IsWellFormedOriginalString().BreakIfFalse();
             if ( !uri.IsWellFormedOriginalString() ) {
                 return;
             }
@@ -230,7 +229,7 @@ namespace Librainian.Internet {
         }
 
         public static String Get( Uri uri ) {
-            uri.IsWellFormedOriginalString().DebugAssert();
+            uri.IsWellFormedOriginalString().BreakIfFalse();
             if ( !uri.IsWellFormedOriginalString() ) {
                 return null;
             }

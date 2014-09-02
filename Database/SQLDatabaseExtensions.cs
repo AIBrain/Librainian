@@ -26,7 +26,6 @@ namespace Librainian.Database {
     using System.Net.NetworkInformation;
     using System.Threading;
     using Measurement.Time;
-    using Threading;
 
     public static class SQLDatabaseExtensions {
         /// <summary>

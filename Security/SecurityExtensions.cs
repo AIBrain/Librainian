@@ -28,7 +28,6 @@ namespace Librainian.Security {
     using System.Text;
     using System.Threading;
     using Annotations;
-    using Threading;
 
     public static class SecurityExtensions {
         public static readonly ThreadLocal<MD5> Md5S = new ThreadLocal<MD5>( MD5.Create );

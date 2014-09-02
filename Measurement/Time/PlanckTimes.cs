@@ -27,7 +27,6 @@ namespace Librainian.Measurement.Time {
     using Annotations;
     using FluentAssertions;
     using Maths;
-    using NUnit.Framework;
 
     /// <summary>
     ///     <para>In physics, the Planck time (tP) is the unit of time in the system of natural units known as Planck units.</para>

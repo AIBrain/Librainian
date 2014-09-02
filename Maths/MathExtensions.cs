@@ -656,26 +656,6 @@ namespace Librainian.Maths {
             return x / 3.0f;
         }
 
-        [Test]
-        public static Boolean PassProbabilityTest() {
-            var lower = new List<Boolean>();
-            var probability = -0.33f;
-            for ( var i = 0 ; i < 1048576 * 10 ; i++ ) {
-                lower.Add( probability.Probability() );
-            }
-
-            var higher = new List<Boolean>();
-            probability = 0.123f;
-            for ( var i = 0 ; i < 1048576 * 10 ; i++ ) {
-                higher.Add( probability.Probability() );
-            }
-
-            lower.RemoveAll( b => !b );
-            higher.RemoveAll( b => !b );
-
-            return higher.Count > lower.Count;
-        }
-
         public static int Percent( this int x, Single percent ) {
             return ( int )( ( x * percent ) / 100.0f );
         }

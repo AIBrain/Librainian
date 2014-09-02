@@ -34,7 +34,6 @@ namespace Librainian.Graphics {
     using System.Windows.Media.Imaging;
     using Annotations;
     using IO;
-    using Threading;
 
     public static class Images {
 

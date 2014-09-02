@@ -108,6 +108,10 @@ namespace Librainian.Measurement.Time {
             return months.ToYears();
         }
 
+        public static implicit operator Weeks( Months months ) {
+            return months.ToWeeks();
+        }
+
         public static Months operator -( Months days ) {
             return new Months( days.Value*-1 );
         }
@@ -166,6 +170,11 @@ namespace Librainian.Measurement.Time {
         [Pure]
         public Years ToYears() {
             return new Years( this.Value / InOneCommonYear );
+        }
+
+        [Pure]
+        public Weeks ToWeeks() {
+            return new Weeks( this.Value * Weeks.InOneMonth );
         }
 
         public override int GetHashCode() {

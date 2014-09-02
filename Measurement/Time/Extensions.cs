@@ -26,7 +26,6 @@ namespace Librainian.Measurement.Time {
     using Annotations;
     using FluentAssertions;
     using Maths;
-    using Threading;
 
     public static class Extensions {
         static Extensions() {

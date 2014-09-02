@@ -22,7 +22,6 @@ namespace Librainian.Maths {
     using System.Runtime.Serialization;
     using System.Threading;
     using Annotations;
-    using Threading;
 
     /// <summary>
     ///     <para>Ups: Probability between 0.0 and 100.0%</para>

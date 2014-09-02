@@ -22,7 +22,6 @@ namespace Librainian.Knowledge {
     using System.Runtime.Serialization;
     using Annotations;
     using Collections;
-    using Extensions;
     using Maths;
     using Persistence;
 

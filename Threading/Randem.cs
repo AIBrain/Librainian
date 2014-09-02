@@ -289,7 +289,7 @@ namespace Librainian.Threading {
             return NextDouble( min: variance.Low, max: variance.High );
         }
 
-        private static readonly ThreadLocal< Byte[] > LocalByteBuffer = new ThreadLocal< byte[] >( () => new byte[sizeof(double)] );
+        private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<byte[]>( () => new byte[ sizeof( double ) ] );
 
         /// <summary>
         /// Returns a random Double between <paramref name="min" /> and <paramref name="max" />.
@@ -320,10 +320,10 @@ namespace Librainian.Threading {
             return result;
         }
 
-        [StructLayout( LayoutKind.Explicit ), UsedImplicitly ]
+        [StructLayout( LayoutKind.Explicit ), UsedImplicitly]
         internal class UInt64VsDouble {
             [FieldOffset( 0 )]
-            public readonly Double value;  
+            public readonly Double value;
             [FieldOffset( 0 )]
             public readonly ulong valueulong;
         }
@@ -558,27 +558,7 @@ namespace Librainian.Threading {
             }
         }
 
-        [Test]
-        public static void StaticRandemTest() {
-            var ints = new ConcurrentBag<int>();
-            Parallel.ForEach( source: 1.To( ThreadingExtensions.ProcessorCount ), parallelOptions: ThreadingExtensions.Parallelism, body: i => AddToList( ints ) );
-            if ( !ints.Duplicates().Any() ) {
-                return;
-            }
-            ints.RemoveAll();
-            Parallel.ForEach( 1.To( ThreadingExtensions.ProcessorCount ), ThreadingExtensions.Parallelism, i => AddToList( ints ) );
-            if ( !ints.Duplicates().Any() ) {
-                return;
-            }
-            String.Format( "WARNING: Duplicate Randem.Next() found in static test!" ).TimeDebug();
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
-        }
-
         public static Percentage GetRandomness( this Action<byte[]> randomFunc, UInt16 bytesToTest ) {
-
-
 
             var buffer = new byte[ bytesToTest ];
             randomFunc( buffer );

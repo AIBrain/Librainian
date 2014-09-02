@@ -31,6 +31,7 @@ namespace Librainian.IO {
     using System.Management;
     using System.Runtime.InteropServices;
     using System.Security;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
@@ -42,7 +43,6 @@ namespace Librainian.IO {
     using Microsoft.Scripting.Math;
     using Microsoft.VisualBasic.Devices;
     using Microsoft.VisualBasic.FileIO;
-    using NUnit.Framework;
     using Parsing;
     using Threading;
     using SearchOption = System.IO.SearchOption;
@@ -214,7 +214,7 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
-        public static IEnumerable<byte> AsByteArray( [NotNull] this FileInfo fileInfo ) {
+        public static IEnumerable< byte > AsByteArray( [NotNull] this FileInfo fileInfo ) {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( "fileInfo" );
             }
@@ -246,7 +246,7 @@ namespace Librainian.IO {
         /// <param name="fileInfo"></param>
         /// <returns></returns>
         // TODO this needs a unit test for endianness
-        public static IEnumerable<ushort> AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
+        public static IEnumerable< ushort > AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( "fileInfo" );
             }
@@ -287,7 +287,7 @@ namespace Librainian.IO {
         /// <param name="progress"></param>
         /// <param name="eta"></param>
         /// <returns></returns>
-        public static Task Copy( Document source, Document destination, Action<double> progress, Action<TimeSpan> eta ) {
+        public static Task Copy( Document source, Document destination, Action< double > progress, Action< TimeSpan > eta ) {
             return Task.Run( () => {
                 var computer = new Computer();
                 //TODO file monitor/watcher?
@@ -511,10 +511,7 @@ namespace Librainian.IO {
             proc.Responding.Should().Be( true );
         }
 
-        [Test]
-        public static Boolean TestEmptyDocument() {
-            return true;
-        }
+       
 
         /// <summary>
         ///     Returns a temporary <see cref="Document" />, but does not create it in the file system.
@@ -597,7 +594,7 @@ namespace Librainian.IO {
                 RootFolder = Environment.SpecialFolder.MyComputer
             };
 
-            var owner = WindowWrapper.CreateWindowWrapper( ThreadingExtensions.CurrentProcess.MainWindowHandle );
+            var owner = WindowWrapper.CreateWindowWrapper( Diagnostical.CurrentProcess.MainWindowHandle );
 
             var dialog = folderBrowserDialog.ShowDialog( owner );
 
@@ -652,7 +649,7 @@ namespace Librainian.IO {
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
-        public static void SearchAllDrives( [NotNull] IEnumerable<String> fileSearchPatterns, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+        public static void SearchAllDrives( [NotNull] IEnumerable< string > fileSearchPatterns, CancellationToken cancellationToken, Action< FileInfo > onFindFile = null, Action< DirectoryInfo > onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( "fileSearchPatterns" );
             }
@@ -705,7 +702,7 @@ namespace Librainian.IO {
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
-        public static void FindFiles( IEnumerable<String> fileSearchPatterns, DirectoryInfo startingFolder, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+        public static void FindFiles( IEnumerable< string > fileSearchPatterns, DirectoryInfo startingFolder, CancellationToken cancellationToken, Action< FileInfo > onFindFile = null, Action< DirectoryInfo > onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( "fileSearchPatterns" );
             }
@@ -713,7 +710,7 @@ namespace Librainian.IO {
                 throw new ArgumentNullException( "startingFolder" );
             }
             try {
-                var searchPatterns = fileSearchPatterns as IList<String> ?? fileSearchPatterns.ToList();
+                var searchPatterns = fileSearchPatterns as IList< string > ?? fileSearchPatterns.ToList();
                 searchPatterns.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( searchPattern => {
 #if DEEPDEBUG
                     String.Format( "Searching folder {0} for {1}.", startingFolder.FullName, searchPattern ).TimeDebug();
@@ -900,6 +897,104 @@ namespace Librainian.IO {
             var formatted = String.Format( "{0} {1}{2}", Path.GetFileNameWithoutExtension( info.Name ), now, newExtension ?? info.Extension );
             var path = Path.Combine( info.Directory.FullName, formatted );
             return new FileInfo( path );
+        }
+
+        /// <summary>
+        ///     untested. is this written correctly? would it read from a *slow* media but not block the calling function?
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="bufferSize"></param>
+        /// <param name="fileMissingRetries"></param>
+        /// <param name="retryDelay"></param>
+        /// <returns></returns>
+        public static async Task< string > ReadTextAsync( String filePath, int? bufferSize = 4096, int? fileMissingRetries = 10, TimeSpan? retryDelay = null ) {
+            if ( String.IsNullOrWhiteSpace( filePath ) ) {
+                throw new ArgumentNullException( "filePath" );
+            }
+
+            if ( !bufferSize.HasValue ) {
+                bufferSize = 4096;
+            }
+            if ( !retryDelay.HasValue ) {
+                retryDelay = Seconds.One;
+            }
+
+            while ( fileMissingRetries.HasValue && fileMissingRetries.Value > 0 ) {
+                if ( File.Exists( filePath ) ) {
+                    break;
+                }
+                await Task.Delay( retryDelay.Value );
+                fileMissingRetries--;
+            }
+
+            if ( File.Exists( filePath ) ) {
+                try {
+                    using ( var sourceStream = new FileStream( path: filePath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: bufferSize.Value, useAsync: true ) ) {
+                        var sb = new StringBuilder( bufferSize.Value );
+                        var buffer = new byte[bufferSize.Value];
+                        int numRead;
+                        while ( ( numRead = await sourceStream.ReadAsync( buffer, 0, buffer.Length ) ) != 0 ) {
+                            var text = Encoding.Unicode.GetString( buffer, 0, numRead );
+                            sb.Append( text );
+                        }
+
+                        return sb.ToString();
+                    }
+                }
+                catch ( FileNotFoundException exception ) {
+                    exception.Error();
+                }
+            }
+            return String.Empty;
+        }
+
+        /// <summary>
+        ///     Example: WriteTextAsync( fullPath: fullPath, text: message ).Wait();
+        ///     Example: await WriteTextAsync( fullPath: fullPath, text: message );
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static async void AppendTextAsync( this FileInfo fileInfo, String text ) {
+            if ( fileInfo == null ) {
+                throw new ArgumentNullException( "fileInfo" );
+            }
+            if ( String.IsNullOrWhiteSpace( fileInfo.FullName ) || String.IsNullOrWhiteSpace( text ) ) {
+                return;
+            }
+            try {
+                //using ( var str = new StreamWriter( fileInfo.FullName, true, Encoding.Unicode ) ) { return str.WriteLineAsync( text ); }
+                var encodedText = Encoding.Unicode.GetBytes( text );
+                var length = encodedText.Length;
+
+                //hack
+                //using ( var bob = File.Create( fileInfo.FullName, length, FileOptions.Asynchronous | FileOptions.RandomAccess | FileOptions.WriteThrough  ) ) {
+                //    bob.WriteAsync
+                //}
+
+                using ( var sourceStream = new FileStream( path: fileInfo.FullName, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length, useAsync: true ) ) {
+                    await sourceStream.WriteAsync( buffer: encodedText, offset: 0, count: length );
+                    await sourceStream.FlushAsync();
+                }
+            }
+            catch ( UnauthorizedAccessException exception ) {
+                exception.Error();
+            }
+            catch ( ArgumentNullException exception ) {
+                exception.Error();
+            }
+            catch ( DirectoryNotFoundException exception ) {
+                exception.Error();
+            }
+            catch ( PathTooLongException exception ) {
+                exception.Error();
+            }
+            catch ( SecurityException exception ) {
+                exception.Error();
+            }
+            catch ( IOException exception ) {
+                exception.Error();
+            }
         }
     }
 }

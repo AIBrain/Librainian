@@ -27,7 +27,6 @@ namespace Librainian.Speech {
     using Annotations;
     using Ninject;
     using Ninject.Modules;
-    using Threading;
 
     public interface ISpeechOutput {
         IEnumerable< InstalledVoice > GetVoices();

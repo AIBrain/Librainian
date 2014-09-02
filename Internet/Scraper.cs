@@ -31,7 +31,6 @@ namespace Librainian.Internet {
     using System.Threading;
     using Collections;
     using Parsing;
-    using Threading;
 
     [DataContract]
     [Obsolete]

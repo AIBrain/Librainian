@@ -26,9 +26,6 @@ namespace Librainian.Maths {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using FluentAssertions;
-    using NUnit.Framework;
-    using Threading;
 
     /// <summary>
     /// Based on the idea from lavz24.
@@ -69,23 +66,6 @@ namespace Librainian.Maths {
             }
 
             return result.Aggregate( String.Empty, ( current, romanNumber ) => current + romanNumber.ToString() );
-        }
-
-        [Test]
-        public static Boolean TestRoman() {
-            short a = 0;
-            short b = 1;
-            short c = 1234;
-            short d = 3999;
-            short e = 4000;
-
-            String.Format( "{0} {1}", a, a.ToRoman().Should() ).TimeDebug();
-            String.Format( "{0} {1}", b, b.ToRoman() ).TimeDebug();
-            String.Format( "{0} {1}", c, c.ToRoman() ).TimeDebug();
-            String.Format( "{0} {1}", d, d.ToRoman() ).TimeDebug();
-            String.Format( "{0} {1}", e, e.ToRoman() ).TimeDebug();
-
-            return true;
         }
     }
 }

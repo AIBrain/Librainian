@@ -24,10 +24,7 @@ namespace Librainian.Extensions {
     using System.IO;
     using System.Linq;
     using System.Security;
-    using System.Text;
     using System.Threading;
-    using System.Threading.Tasks;
-    using Measurement.Time;
     using Threading;
 
     public static class Utility {
@@ -37,61 +34,10 @@ namespace Librainian.Extensions {
 
         static Utility() {
             Contract.ContractFailed += ( sender, e ) => {
-                                           if ( Debugger.IsAttached ) {
-                                               Debugger.Break();
-                                           }
                                            var message = String.Format( "Caught Uncaught Contract Failure\r\n{0}\r\n{1}\r\n{2}\r\n{3}", e.Condition, e.FailureKind, e.Handled, e.Message );
+                                           Debugger.IsAttached.BreakIfTrue( message );
                                            e.OriginalException.Error( message: message );
                                        };
-        }
-
-        /// <summary>
-        ///     Example: WriteTextAsync( fullPath: fullPath, text: message ).Wait();
-        ///     Example: await WriteTextAsync( fullPath: fullPath, text: message );
-        /// </summary>
-        /// <param name="fileInfo"></param>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static async void AppendTextAsync( this FileInfo fileInfo, String text ) {
-            if ( fileInfo == null ) {
-                throw new ArgumentNullException( "fileInfo" );
-            }
-            if ( String.IsNullOrWhiteSpace( fileInfo.FullName ) || String.IsNullOrWhiteSpace( text ) ) {
-                return;
-            }
-            try {
-                //using ( var str = new StreamWriter( fileInfo.FullName, true, Encoding.Unicode ) ) { return str.WriteLineAsync( text ); }
-                var encodedText = Encoding.Unicode.GetBytes( text );
-                var length = encodedText.Length;
-
-                //hack
-                //using ( var bob = File.Create( fileInfo.FullName, length, FileOptions.Asynchronous | FileOptions.RandomAccess | FileOptions.WriteThrough  ) ) {
-                //    bob.WriteAsync
-                //}
-
-                using ( var sourceStream = new FileStream( path: fileInfo.FullName, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length, useAsync: true ) ) {
-                    await sourceStream.WriteAsync( buffer: encodedText, offset: 0, count: length );
-                    await sourceStream.FlushAsync();
-                }
-            }
-            catch ( UnauthorizedAccessException exception ) {
-                exception.Error();
-            }
-            catch ( ArgumentNullException exception ) {
-                exception.Error();
-            }
-            catch ( DirectoryNotFoundException exception ) {
-                exception.Error();
-            }
-            catch ( PathTooLongException exception ) {
-                exception.Error();
-            }
-            catch ( SecurityException exception ) {
-                exception.Error();
-            }
-            catch ( IOException exception ) {
-                exception.Error();
-            }
         }
 
         /// <summary>
@@ -140,28 +86,10 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static void DebugAssert( this Boolean condition ) {
-            if ( condition ) {
-                return;
-            }
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
-        }
-
         //    Console.SetCursorPosition( left: Console.WindowWidth - ( text.Length + 1 ), top: 0 );
         //    Console.Write( text );
         //    Console.SetCursorPosition( left: oldLeft, top: oldTop );
         //}
-        public static void DebugAssert( this Boolean condition, String message ) {
-            if ( condition ) {
-                return;
-            }
-            Debug.WriteLine( message );
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
-        }
 
         public static void OnSet< T >( this EventHandler< T > @event, object sender, T e ) where T : EventArgs {
             throw new NotImplementedException();
@@ -171,54 +99,6 @@ namespace Librainian.Extensions {
 
         //    return false;
         //}
-        /// <summary>
-        ///     untested. is this written correctly? would it read from a *slow* media but not block the calling function?
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="bufferSize"></param>
-        /// <param name="fileMissingRetries"></param>
-        /// <param name="retryDelay"></param>
-        /// <returns></returns>
-        public static async Task< string > ReadTextAsync( String filePath, int? bufferSize = 4096, int? fileMissingRetries = 10, TimeSpan? retryDelay = null ) {
-            if ( String.IsNullOrWhiteSpace( filePath ) ) {
-                throw new ArgumentNullException( "filePath" );
-            }
-
-            if ( !bufferSize.HasValue ) {
-                bufferSize = 4096;
-            }
-            if ( !retryDelay.HasValue ) {
-                retryDelay = Seconds.One;
-            }
-
-            while ( fileMissingRetries.HasValue && fileMissingRetries.Value > 0 ) {
-                if ( File.Exists( filePath ) ) {
-                    break;
-                }
-                await Task.Delay( retryDelay.Value );
-                fileMissingRetries--;
-            }
-
-            if ( File.Exists( filePath ) ) {
-                try {
-                    using ( var sourceStream = new FileStream( path: filePath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: bufferSize.Value, useAsync: true ) ) {
-                        var sb = new StringBuilder( bufferSize.Value );
-                        var buffer = new byte[bufferSize.Value];
-                        int numRead;
-                        while ( ( numRead = await sourceStream.ReadAsync( buffer, 0, buffer.Length ) ) != 0 ) {
-                            var text = Encoding.Unicode.GetString( buffer, 0, numRead );
-                            sb.Append( text );
-                        }
-
-                        return sb.ToString();
-                    }
-                }
-                catch ( FileNotFoundException exception ) {
-                    exception.Error();
-                }
-            }
-            return String.Empty;
-        }
 
         public static void Spin( String text ) {
             var oldTop = Console.CursorTop;
@@ -375,13 +255,5 @@ namespace Librainian.Extensions {
         //    } while ( true );
         //    // ReSharper disable once FunctionNeverReturns
         //}
-        public class HTML {
-            public const String EmptyHTML5 = "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta charset=\"utf-8\" /><title id=\"title1\"></title></head><body><header id=\"header1\"></header><article id=\"article1\"></article><footer id=\"footer1\"></footer></body></html>";
-
-            /// <summary>
-            ///     an empty document.
-            /// </summary>
-            public static String EmptyHTMLDocument { get { return String.Format( "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.0 Transitional//EN'>{0}<html>{1}<head>{2}<title>AIBrain</title>{3}<style>{4}body {{ background-color: gainsboro; font-family: Arial; font-size: 10pt; }}{5}div {{ margin-bottom: 3pt; }}{6}div.Critical {{ color: crimson; font-weight: bolder; }}{7}div.Error {{ color: firebrick; }}{8}div.Warning {{ color: purple; }}{9}div.Information {{ color: green; }}{10}div.Write {{ color: green; }}{11}div.WriteLine {{ color: green; }}{12}div.Verbose {{ color: dimgray; }}{13}div span {{ margin-right: 2px; vertical-align: top; }}{14}div span.Dingbat {{ display: none; }}{15}div span.DateTime {{ display: inline; Single : left; width: 3em; height: auto }}{16}div span.Source {{ display: none; Single : left; width: 8em; height: auto; }}{17}div span.ThreadId {{ display: inline; Single: left; width: 2em; height: auto; text-align: right; }}{18}div span.MessageType {{ display: none; Single: left; width: 6em; height: auto; text-align: left; }}{19}div span.MessageText {{ display: inline; width: 100%; position:relative; }}{20}div.Critical span.MessageText {{ font-weight: bold; }}{21}div span.CallStack {{ display: none; margin-left: 1em; }}{22}</style>{23}</head>{24}<body>{25}</body>{26}</html>{27}", Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine, Environment.NewLine ); } }
-        }
     }
 }

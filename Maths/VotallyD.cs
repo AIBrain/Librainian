@@ -23,7 +23,6 @@ namespace Librainian.Maths {
     using System.Runtime.Serialization;
     using System.Threading;
     using Annotations;
-    using Threading;
 
     /// <summary>
     ///     <para>Keep track of votes for candidate A and candidate B.</para>

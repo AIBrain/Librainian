@@ -29,7 +29,6 @@ namespace Librainian.Maths {
     using System.Threading;
     using Annotations;
     using Numerics;
-    using Threading;
 
     /// <summary>
     /// <para>Keep count of Yes or No votes.</para>

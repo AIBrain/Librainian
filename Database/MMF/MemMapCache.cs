@@ -25,7 +25,6 @@ namespace Librainian.Database.MMF {
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Text;
-    using Threading;
 
     public class MemMapCache< T > {
         private const String DELIM = "[!@#]";

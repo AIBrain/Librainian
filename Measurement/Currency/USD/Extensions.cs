@@ -25,7 +25,6 @@ namespace Librainian.Measurement.Currency.USD {
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
     using Annotations;
-    using Librainian.Extensions;
     using NUnit.Framework;
     using Threading;
 

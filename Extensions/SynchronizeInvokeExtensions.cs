@@ -21,7 +21,6 @@ namespace Librainian.Extensions {
     using System;
     using System.ComponentModel;
     using System.Windows.Forms;
-    using Threading;
 
     public static class SynchronizeInvokeExtensions {
         public static void InvokeA< T >( this T invokable, Action< T > action, T argument = default( T ) ) where T : ISynchronizeInvoke {

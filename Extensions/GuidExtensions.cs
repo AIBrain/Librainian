@@ -20,12 +20,10 @@
 namespace Librainian.Extensions {
     using System;
     using System.IO;
-    using System.Linq;
     using System.Security.Cryptography;
     using System.Text;
     using Maths;
     using NUnit.Framework;
-    using Threading;
 
     public static class GuidExtensions {
         public static readonly SHA1CryptoServiceProvider CryptoProvider = new SHA1CryptoServiceProvider();

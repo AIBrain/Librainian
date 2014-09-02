@@ -36,7 +36,6 @@ namespace Librainian.Persistence {
     using Librainian.Extensions;
     using Microsoft.Isam.Esent.Collections.Generic;
     using Ninject;
-    using Parsing;
     using Threading;
 
     /// <summary>

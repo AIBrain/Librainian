@@ -26,7 +26,6 @@ namespace Librainian.Persistence {
     using Controls;
     using Librainian.Extensions;
     using Ninject;
-    using Parsing;
     using Threading;
 
     public interface IPersistableSettings {
@@ -151,7 +150,7 @@ namespace Librainian.Persistence {
                                                                   RootFolder = Environment.SpecialFolder.MyComputer
                                                               };
 
-            var owner = WindowWrapper.CreateWindowWrapper( ThreadingExtensions.CurrentProcess.MainWindowHandle );
+            var owner = WindowWrapper.CreateWindowWrapper( Diagnostical.CurrentProcess.MainWindowHandle );
 
             var dialog = folderBrowserDialog.ShowDialog( owner );
 
