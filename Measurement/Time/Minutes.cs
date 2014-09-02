@@ -231,6 +231,7 @@ namespace Librainian.Measurement.Time {
             return new Seconds( this.Value * Seconds.InOneMinute );
         }
 
+        [Pure]
         public override string ToString() {
             return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "minute" ) );
         }

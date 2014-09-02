@@ -334,9 +334,9 @@ namespace Librainian.Measurement.Time {
         /// <param name="planckTimes"></param>
         /// <returns></returns>
         public static BigInteger PullPlancks( this BigInteger constant, ref BigInteger planckTimes ) {
-            if ( planckTimes <= constant ) {
-                return BigInteger.Zero;
-            }
+            //if ( planckTimes < constant ) {
+            //    return BigInteger.Zero;
+            //}
             var integer = BigInteger.Divide( planckTimes, constant );
             planckTimes -= BigInteger.Multiply( integer, constant );
             return integer;

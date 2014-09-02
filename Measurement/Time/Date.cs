@@ -88,7 +88,7 @@ namespace Librainian.Measurement.Time {
         //    : this( year: ( BigInteger )years.Value, month: ( BigInteger )months.Value, day: ( BigInteger )days.Value ) {
         //}
 
-        public Date( Span span ) {
+        internal Date( Span span ) {
             this.Year = new Year( span.GetWholeYears() );
             this.Month = new Month( ( byte )span.Months.Value );
             this.Day = new Day( ( byte )span.Days.Value );

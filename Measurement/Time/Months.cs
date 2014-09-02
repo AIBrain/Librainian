@@ -178,6 +178,7 @@ namespace Librainian.Measurement.Time {
             return BigInteger.Multiply( PlanckTimes.InOneMonth, new BigInteger( this.Value ) );
         }
 
+        [Pure]
         public override string ToString() {
             return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "month" ) );
         }

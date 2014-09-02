@@ -256,6 +256,7 @@ namespace Librainian.Measurement.Time {
             return BigInteger.Multiply( PlanckTimes.InOneMicrosecond, new BigInteger( this.Value ) );
         }
 
+        [Pure]
         public override string ToString() {
             return String.Format( "{0} µs", this.Value );
         }

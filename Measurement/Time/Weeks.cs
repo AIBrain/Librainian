@@ -221,6 +221,7 @@ namespace Librainian.Measurement.Time {
             return BigInteger.Multiply( PlanckTimes.InOneWeek, new BigInteger( this.Value ) );
         }
 
+        [Pure]
         public override string ToString() {
             return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "week" ) );
         }

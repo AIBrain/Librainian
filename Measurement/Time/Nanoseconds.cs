@@ -252,6 +252,7 @@ namespace Librainian.Measurement.Time {
             return BigInteger.Multiply( PlanckTimes.InOneNanosecond, new BigInteger( this.Value ) );
         }
 
+        [Pure]
         public override string ToString() {
             return String.Format( "{0} ns", this.Value );
         }

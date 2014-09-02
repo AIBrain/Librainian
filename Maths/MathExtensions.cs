@@ -557,6 +557,10 @@ namespace Librainian.Maths {
             return ( Int64 )( number / 2.0d );
         }
 
+        public static Decimal Half( this Decimal number ) {
+            return number / 2.0m;
+        }
+
         /// <summary>
         ///     <para>
         ///         If the <paramref name="number" /> is less than <see cref="Decimal.Zero" />, then return

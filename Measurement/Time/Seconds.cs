@@ -283,6 +283,7 @@ namespace Librainian.Measurement.Time {
             return ( BigInteger )seconds; //gets truncated here. oh well.
         }
 
+        [Pure]
         public override string ToString() {
             return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "second" ) );
         }

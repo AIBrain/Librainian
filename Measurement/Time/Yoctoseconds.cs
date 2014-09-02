@@ -212,6 +212,7 @@ namespace Librainian.Measurement.Time {
             return obj is Yoctoseconds && this.Equals( ( Yoctoseconds )obj );
         }
 
+        [Pure]
         public override int GetHashCode() {
             return this.Value.GetHashCode();
         }
@@ -221,6 +222,7 @@ namespace Librainian.Measurement.Time {
             return BigInteger.Multiply( PlanckTimes.InOneYoctosecond, new BigInteger( this.Value ) );
         }
 
+        [Pure]
         public override string ToString() {
             return String.Format( "{0} ys", this.Value );
         }

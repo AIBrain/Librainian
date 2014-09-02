@@ -254,6 +254,7 @@ namespace Librainian.Measurement.Time {
             return this.Value;
         }
 
+        [Pure]
         public override String ToString() {
             return String.Format( "{0} tP", this.Value );
         }

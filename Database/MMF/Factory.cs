@@ -32,8 +32,8 @@ namespace Librainian.Database.MMF {
     ///     Class which tries to create a ISerializeDeserialize based on pointer movement (unsafe).
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class CreateUnsafeSerializer< T > {
-        private readonly Type _type = typeof ( T );
+    public class CreateUnsafeSerializer<T> {
+        private readonly Type _type = typeof( T );
 
         private int _addCount;
 
@@ -43,11 +43,11 @@ namespace Librainian.Database.MMF {
 
         private int _size;
 
-        public ISerializeDeserialize< T > GetSerializer() {
+        public ISerializeDeserialize<T> GetSerializer() {
             if ( !this.CanGetSize() ) {
                 return null;
             }
-            var checker = new ValueTypeCheck( typeof ( T ) );
+            var checker = new ValueTypeCheck( typeof( T ) );
             if ( !checker.OnlyValueTypes() ) {
                 return null;
             }
@@ -55,7 +55,7 @@ namespace Librainian.Database.MMF {
             if ( res.Errors.Count > 0 ) {
                 throw new SerializerException( res.Errors[ 0 ].ErrorText );
             }
-            return ( ISerializeDeserialize< T > ) res.CompiledAssembly.CreateInstance( "UnsafeConverter" );
+            return ( ISerializeDeserialize<T> )res.CompiledAssembly.CreateInstance( "UnsafeConverter" );
         }
 
         private static void BytesToObjectCode( StringBuilder sb, string typeFullName ) {
@@ -70,7 +70,7 @@ namespace Librainian.Database.MMF {
 
         private Boolean CanGetSize() {
             try {
-                this._size = Marshal.SizeOf( typeof ( T ) );
+                this._size = Marshal.SizeOf<T>();
             }
             catch ( ArgumentException ) {
                 return false;
@@ -79,7 +79,7 @@ namespace Librainian.Database.MMF {
         }
 
         private CompilerResults CompileCode() {
-            var providerOptions = new Dictionary< string, string > {
+            var providerOptions = new Dictionary<string, string> {
                                                                        { "CompilerVersion", "v3.5" }
                                                                    };
             CodeDomProvider provider = new CSharpCodeProvider( providerOptions );
@@ -94,7 +94,7 @@ namespace Librainian.Database.MMF {
             sb.AppendLine( "using System;" );
             sb.AppendLine();
 
-            var interfaceType = typeof ( ISerializeDeserialize< T > );
+            var interfaceType = typeof( ISerializeDeserialize<T> );
 
             sb.AppendFormat( "public class UnsafeConverter : {0}.ISerializeDeserialize<{1}>", interfaceType.Namespace, typeFullName );
             sb.Append( "{" );
@@ -113,7 +113,7 @@ namespace Librainian.Database.MMF {
             do {
                 this.MovePointers( sb );
                 this.SetPointerLength( length );
-                sb.AppendFormat( @"*(({0}*)dest+{1}) = *(({0}*)src+{1});", this._ptrType, this._addCount/this._ptrSize );
+                sb.AppendFormat( @"*(({0}*)dest+{1}) = *(({0}*)src+{1});", this._ptrType, this._addCount / this._ptrSize );
                 length -= this._ptrSize;
                 this._addCount += this._ptrSize;
             } while ( length > 0 );
@@ -121,19 +121,19 @@ namespace Librainian.Database.MMF {
 
         private CompilerParameters GetCompilerParameters() {
             var cParameters = new CompilerParameters {
-                                                         GenerateInMemory = true,
-                                                         GenerateExecutable = false,
-                                                         TreatWarningsAsErrors = false,
-                                                         IncludeDebugInformation = false,
-                                                         CompilerOptions = "/optimize /unsafe"
-                                                     };
+                GenerateInMemory = true,
+                GenerateExecutable = false,
+                TreatWarningsAsErrors = false,
+                IncludeDebugInformation = false,
+                CompilerOptions = "/optimize /unsafe"
+            };
             cParameters.ReferencedAssemblies.Add( Assembly.GetExecutingAssembly().Location );
             cParameters.ReferencedAssemblies.Add( this._type.Assembly.Location );
             return cParameters;
         }
 
         private void MovePointers( StringBuilder sb ) {
-            var modifer = this._addCount/this._ptrSize;
+            var modifer = this._addCount / this._ptrSize;
             if ( modifer >= this._ptrSize ) {
                 sb.AppendFormat( "dest += {0};", this._addCount );
                 sb.AppendFormat( "src += {0};", this._addCount );
@@ -178,28 +178,28 @@ namespace Librainian.Database.MMF {
         }
     }
 
-    public class Factory< T > {
-        private static readonly HashSet< Type > _compiledUnsafeSerializer = new HashSet< Type >();
+    public class Factory<T> {
+        private static readonly HashSet<Type> _compiledUnsafeSerializer = new HashSet<Type>();
 
-        private static readonly Dictionary< Type, ISerializeDeserialize< T > > DictionaryCache = new Dictionary< Type, ISerializeDeserialize< T > >();
+        private static readonly Dictionary<Type, ISerializeDeserialize<T>> DictionaryCache = new Dictionary<Type, ISerializeDeserialize<T>>();
 
-        public ISerializeDeserialize< T > GetSerializer() {
-            ISerializeDeserialize< T > result;
-            var objectType = typeof ( T );
+        public ISerializeDeserialize<T> GetSerializer() {
+            ISerializeDeserialize<T> result;
+            var objectType = typeof( T );
             if ( !DictionaryCache.TryGetValue( objectType, out result ) ) {
                 DictionaryCache[ objectType ] = result = PickOptimalSerializer();
             }
-            Debug.WriteLine( "{0} uses {1}", typeof ( T ), result.GetType() );
+            Debug.WriteLine( "{0} uses {1}", typeof( T ), result.GetType() );
             return result;
         }
 
-        public ISerializeDeserialize< T > GetSerializer( string name ) {
+        public ISerializeDeserialize<T> GetSerializer( string name ) {
             return ( from pair in DictionaryCache
                      where pair.Value.GetType().AssemblyQualifiedName == name
                      select pair.Value ).FirstOrDefault();
         }
 
-        public List< ISerializeDeserialize< T > > GetValidSerializers() {
+        public List<ISerializeDeserialize<T>> GetValidSerializers() {
             CompileAndRegisterUnsafeSerializer();
 
             var listOfSerializers = GetListOfGenericSerializers().ToList();
@@ -213,13 +213,13 @@ namespace Librainian.Database.MMF {
             return benchmarkTimes.Values.ToList();
         }
 
-        private static int BenchMarkSerializer( ISerializeDeserialize< T > serDeser ) {
+        private static int BenchMarkSerializer( ISerializeDeserialize<T> serDeser ) {
             object[] args = null;
-            if ( typeof ( T ) == typeof ( string ) ) {
+            if ( typeof( T ) == typeof( string ) ) {
                 args = new object[] { new[] { 'T', 'e', 's', 't', 'T', 'e', 's', 't', 'T', 'e', 's', 't' } };
             }
             try {
-                var classInstance = ( T ) Activator.CreateInstance( typeof ( T ), args );
+                var classInstance = ( T )Activator.CreateInstance( typeof( T ), args );
                 var sw = Stopwatch.StartNew();
                 var count = 0;
                 while ( sw.ElapsedMilliseconds < 500 ) {
@@ -236,8 +236,8 @@ namespace Librainian.Database.MMF {
             }
         }
 
-        private static SortedDictionary< int, ISerializeDeserialize< T > > BenchmarkSerializers( IEnumerable< Type > listOfSerializers ) {
-            var benchmarkTimes = new SortedDictionary< int, ISerializeDeserialize< T > >();
+        private static SortedDictionary<int, ISerializeDeserialize<T>> BenchmarkSerializers( IEnumerable<Type> listOfSerializers ) {
+            var benchmarkTimes = new SortedDictionary<int, ISerializeDeserialize<T>>();
             foreach ( var type in listOfSerializers ) {
                 var serializer = InstantiateSerializer( type );
                 if ( !serializer.CanSerializeType() ) {
@@ -258,20 +258,20 @@ namespace Librainian.Database.MMF {
 
         private static void CompileAndRegisterUnsafeSerializer() {
             try {
-                if ( _compiledUnsafeSerializer.Contains( typeof ( T ) ) ) {
+                if ( _compiledUnsafeSerializer.Contains( typeof( T ) ) ) {
                     return;
                 }
-                var createUnsafeSerializer = new CreateUnsafeSerializer< T >();
+                var createUnsafeSerializer = new CreateUnsafeSerializer<T>();
                 createUnsafeSerializer.GetSerializer();
-                _compiledUnsafeSerializer.Add( typeof ( T ) );
+                _compiledUnsafeSerializer.Add( typeof( T ) );
             }
             catch ( SerializerException ) {
                 // ignore errors
             }
         }
 
-        private static IEnumerable< Type > GetListOfGenericSerializers() {
-            var interfaceGenricType = typeof ( ISerializeDeserialize< T > );
+        private static IEnumerable<Type> GetListOfGenericSerializers() {
+            var interfaceGenricType = typeof( ISerializeDeserialize<T> );
             var serializers = from assembly in AppDomain.CurrentDomain.GetAssemblies()
                               from genericType in assembly.GetTypes()
                               from interfaceType in genericType.GetInterfaces().Where( iType => ( iType.Name == interfaceGenricType.Name && genericType.IsGenericTypeDefinition ) )
@@ -279,8 +279,8 @@ namespace Librainian.Database.MMF {
             return serializers; //.ToList();
         }
 
-        private static IEnumerable< Type > GetListOfImplementedSerializers() {
-            var interfaceGenricType = typeof ( ISerializeDeserialize< T > );
+        private static IEnumerable<Type> GetListOfImplementedSerializers() {
+            var interfaceGenricType = typeof( ISerializeDeserialize<T> );
             var serializers = from assembly in AppDomain.CurrentDomain.GetAssemblies()
                               from implementedType in assembly.GetTypes()
                               from interfaceType in implementedType.GetInterfaces().Where( iType => iType == interfaceGenricType )
@@ -288,12 +288,12 @@ namespace Librainian.Database.MMF {
             return serializers; //.ToList();
         }
 
-        private static ISerializeDeserialize< T > InstantiateSerializer( Type type ) {
-            var instType = type.IsGenericTypeDefinition ? type.MakeGenericType( typeof ( T ) ) : type;
-            return ( ISerializeDeserialize< T > ) Activator.CreateInstance( instType );
+        private static ISerializeDeserialize<T> InstantiateSerializer( Type type ) {
+            var instType = type.IsGenericTypeDefinition ? type.MakeGenericType( typeof( T ) ) : type;
+            return ( ISerializeDeserialize<T> )Activator.CreateInstance( instType );
         }
 
-        private static ISerializeDeserialize< T > PickOptimalSerializer() {
+        private static ISerializeDeserialize<T> PickOptimalSerializer() {
             CompileAndRegisterUnsafeSerializer();
 
             var listOfSerializers = GetListOfGenericSerializers().ToList();
