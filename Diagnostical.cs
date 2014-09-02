@@ -32,6 +32,7 @@ namespace Librainian {
     using FluentAssertions;
     using Maths;
     using Measurement.Time;
+    using Measurement.Time.Clocks;
     using NUnit.Framework;
     using Parsing;
     using Threading;
@@ -172,14 +173,14 @@ namespace Librainian {
 
         [Test]
         public static void TestSimilarities() {
-            var reasons = new ConcurrentQueue<string>();
+            var reasons = new ConcurrentQueue< string >();
             var test1 = ParsingExtensions.Similarity( "hi", "hello", ref reasons );
             String.Format( "test1 was {0}", test1 ).TimeDebug();
         }
 
         [Test]
         public static void TestRandems() {
-            var ints = new ConcurrentBag<int>();
+            var ints = new ConcurrentBag< int >();
             Parallel.ForEach( source: 1.To( ThreadingExtensions.ProcessorCount ), parallelOptions: ThreadingExtensions.Parallelism, body: i => Randem.AddToList( ints ) );
             if ( !ints.Duplicates().Any() ) {
                 return;
@@ -214,13 +215,13 @@ namespace Librainian {
 
         [Test]
         public static Boolean PassProbabilityTest() {
-            var lower = new List<bool>();
+            var lower = new List< bool >();
             var probability = -0.33f;
             for ( var i = 0 ; i < 1048576 * 10 ; i++ ) {
                 lower.Add( probability.Probability() );
             }
 
-            var higher = new List<bool>();
+            var higher = new List< bool >();
             probability = 0.123f;
             for ( var i = 0 ; i < 1048576 * 10 ; i++ ) {
                 higher.Add( probability.Probability() );
@@ -273,6 +274,30 @@ namespace Librainian {
             Console.WriteLine( "The Answer is {0}.", answer );
 
             Console.WriteLine( "Now, please input the question." );
+        }
+
+        [Test]
+        public static void TestHour() {
+            Hour.Min.Value.Should().BeLessThan( Hour.Max.Value );
+            Hour.Max.Value.Should().BeGreaterThan( Hour.Min.Value );
+        }
+
+        [Test]
+        public static void TestMinute() {
+            Minute.Min.Value.Should().BeLessThan( Minute.Max.Value );
+            Minute.Max.Value.Should().BeGreaterThan( Minute.Min.Value );
+        }
+
+        [Test]
+        public static void TestSecond() {
+            Second.Min.Value.Should().BeLessThan( Second.Max.Value );
+            Second.Max.Value.Should().BeGreaterThan( Second.Min.Value );
+        }
+
+        [Test]
+        public static void TestMillisecond() {
+            Millisecond.Min.Value.Should().BeLessThan( Millisecond.Max.Value );
+            Millisecond.Max.Value.Should().BeGreaterThan( Millisecond.Min.Value );
         }
     }
 }

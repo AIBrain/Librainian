@@ -20,33 +20,5 @@
 #endregion
 
 namespace Librainian.Measurement.Time.Clocks {
-    using FluentAssertions;
-    using NUnit.Framework;
-
-    public static class ClockExtensions {
-
-        [Test]
-        public static void TestHour() {
-            Hour.Min.Value.Should().BeLessThan( Hour.Max.Value );
-            Hour.Max.Value.Should().BeGreaterThan( Hour.Min.Value );
-        }
-
-        [Test]
-        public static void TestMinute() {
-            Minute.Min.Value.Should().BeLessThan( Minute.Max.Value );
-            Minute.Max.Value.Should().BeGreaterThan( Minute.Min.Value );
-        }
-
-        [Test]
-        public static void TestSecond() {
-            Second.Min.Value.Should().BeLessThan( Second.Max.Value );
-            Second.Max.Value.Should().BeGreaterThan( Second.Min.Value );
-        } 
-        
-        [Test]
-        public static void TestMillisecond() {
-            Millisecond.Min.Value.Should().BeLessThan( Millisecond.Max.Value );
-            Millisecond.Max.Value.Should().BeGreaterThan( Millisecond.Min.Value );
-        }
-    }
+    public static class ClockExtensions { }
 }
