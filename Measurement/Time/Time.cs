@@ -59,29 +59,29 @@ namespace Librainian.Measurement.Time {
         /// <param name="microsecond"></param>
         public Time( Byte hour = 0, Byte minute = 0, Byte second = 0, UInt16 millisecond = 0, UInt16 microsecond = 0 )
             : this() {
-            var span = new Span( hours: hour, minutes: minute, seconds: second, milliseconds: millisecond, microseconds: microsecond );
-            this.Hour = new Hour( ( Byte )span.Hours.Value );
-            this.Minute = new Minute( ( Byte )span.Minutes.Value );
-            this.Second = new Second( ( Byte )span.Seconds.Value );
-            this.Millisecond = new Millisecond( ( UInt16 )span.Milliseconds.Value );
-            this.Microsecond = new Microsecond( ( UInt16 )span.Microseconds.Value );
+            //var span = new Span( hours: hour, minutes: minute, seconds: second, milliseconds: millisecond, microseconds: microsecond );
+            this.Hour = new Hour( hour );
+            this.Minute = new Minute( minute );
+            this.Second = new Second( second );
+            this.Millisecond = new Millisecond( millisecond );
+            this.Microsecond = new Microsecond( microsecond );
         }
 
         /// <summary>
         /// </summary>
         /// <param name="dateTime"></param>
         public Time( DateTime dateTime )
-            : this( hour: ( Byte )dateTime.Hour, minute: ( Byte )dateTime.Minute, second: ( Byte )dateTime.Second, millisecond: ( ushort )dateTime.Millisecond ) {
+            : this( hour: ( Byte )dateTime.Hour, minute: ( Byte )dateTime.Minute, second: ( Byte )dateTime.Second, millisecond: ( UInt16 )dateTime.Millisecond ) {
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="span"></param>
-        public Time( Span span ) : this(
-            hour: ( byte ) span.Hours.Value,
-            minute: ( Byte )span.Minutes.Value,
-            second: ( Byte )span.Seconds.Value, millisecond: ( ushort )span.Milliseconds.Value, microsecond: ( ushort )span.Microseconds.Value ) {
-        }
+        ///// <summary>
+        ///// </summary>
+        ///// <param name="span"></param>
+        //public Time( Span span ) : this(
+        //    hour: ( byte ) span.Hours.Value,
+        //    minute: ( Byte )span.Minutes.Value,
+        //    second: ( Byte )span.Seconds.Value, millisecond: ( ushort )span.Milliseconds.Value, microsecond: ( ushort )span.Microseconds.Value ) {
+        //}
 
         /// <summary>
         ///     Get the local system's computer time.

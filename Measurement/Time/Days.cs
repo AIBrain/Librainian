@@ -94,6 +94,8 @@ namespace Librainian.Measurement.Time {
             }
         }
 
+        public const Byte InOneMonth = 31;
+
         public static Days Combine( Days left, Days right ) {
             return Combine( left, right.Value );
         }

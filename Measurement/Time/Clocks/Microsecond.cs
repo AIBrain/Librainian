@@ -24,6 +24,7 @@
 namespace Librainian.Measurement.Time.Clocks {
 
     using System;
+    using System.Linq;
     using System.Runtime.Serialization;
     using FluentAssertions;
     using Librainian.Extensions;
@@ -37,89 +38,80 @@ namespace Librainian.Measurement.Time.Clocks {
     [Immutable]
     public sealed class Microsecond : IClockPart {
 
-        /// <summary>
-        ///     1000
-        /// </summary>
-        public const UInt16 Maximum = Microseconds.InOneMillisecond;
+        public static readonly UInt16[] ValidMicroseconds = Enumerable.Range( 0, Microseconds.InOneMillisecond ).Select( u => ( UInt16 )u ).OrderBy( u => u ).ToArray();
 
         /// <summary>
-        ///     1
+        ///     999
         /// </summary>
-        public const Byte Minimum = 1;
+        public static readonly UInt16 MaximumValue = ValidMicroseconds.Max();
 
         /// <summary>
-        ///     60
+        ///     0
         /// </summary>
-        public static readonly Microsecond Max = new Microsecond( Maximum );
+        public static readonly UInt16 MinimumValue = ValidMicroseconds.Min();
 
         /// <summary>
-        ///     1
+        ///     
         /// </summary>
-        public static readonly Microsecond Min = new Microsecond( Minimum );
+        public static readonly Microsecond Maxium = new Microsecond( MaximumValue );
+
+        /// <summary>
+        ///     
+        /// </summary>
+        public static readonly Microsecond Minimum = new Microsecond( MinimumValue );
 
         [DataMember]
         public readonly UInt16 Value;
 
-        public Microsecond( UInt16 microsecond ) {
-            Validate( microsecond );
-            this.Value = microsecond;
+        static Microsecond() {
+            MaximumValue.Should().BeGreaterThan( MinimumValue );
         }
 
-        public Microsecond( long microsecond ) {
-            Validate( microsecond );
-            this.Value = ( UInt16 )microsecond;
-        }
-
-        /// <summary>
-        ///     Provide the next microsecond.
-        /// </summary>
-        public Microsecond Next {
-            get {
-                var next = this.Value + 1;
-                if ( next > Maximum ) {
-                    next = Minimum;
-                }
-                return new Microsecond( next );
+        public Microsecond( UInt16 value ) {
+            if ( !ValidMicroseconds.Contains( value ) ) {
+                throw new ArgumentOutOfRangeException( "value", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", value, MinimumValue, MaximumValue ) );
             }
+            this.Value = value;
         }
 
-        /// <summary>
-        ///     Provide the previous microsecond.
-        /// </summary>
-        public Microsecond Previous {
-            get {
-                var next = this.Value - 1;
-                if ( next < Minimum ) {
-                    next = Maximum;
-                }
-                return new Microsecond( next );
-            }
-        }
 
         /// <summary>
         ///     Allow this class to be visibly cast to an <see cref="Int16" />.
         /// </summary>
-        /// <param name="microsecond"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        public static explicit operator Int16( Microsecond microsecond ) {
-            return ( Int16 )microsecond.Value;
+        public static explicit operator Int16( Microsecond value ) {
+            return ( Int16 )value.Value;
+        }
+
+        public static implicit operator UInt16( Microsecond value ) {
+            return value.Value;
         }
 
         /// <summary>
-        ///     Allow this class to be read as a <see cref="UInt16" />.
+        ///     Provide the next <see cref="Hour"/>.
         /// </summary>
-        /// <param name="microsecond"></param>
-        /// <returns></returns>
-        public static implicit operator UInt16( Microsecond microsecond ) {
-            return microsecond.Value;
+        public Microsecond Next( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value + 1;
+            if ( next > MaximumValue ) {
+                next = MinimumValue;
+                ticked = true;
+            }
+            return new Microsecond( ( UInt16 )next );
         }
 
-        private static void Validate( long microsecond ) {
-            microsecond.Should().BeInRange( 1, Maximum );
-
-            if ( !microsecond.Between( Minimum, Maximum ) ) {
-                throw new ArgumentOutOfRangeException( "microsecond", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", microsecond, Minimum, Maximum ) );
+        /// <summary>
+        ///     Provide the previous <see cref="Hour"/>.
+        /// </summary>
+        public Microsecond Previous( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value - 1;
+            if ( next < MinimumValue ) {
+                next = MaximumValue;
+                ticked = true;
             }
+            return new Microsecond( ( UInt16 )next );
         }
     }
 }

@@ -49,9 +49,9 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         public static readonly Byte MinimumValue = ValidHours.Min();
 
-        public static readonly Hour MaximumHour = new Hour( MaximumValue );
+        public static readonly Hour Maximum = new Hour( MaximumValue );
 
-        public static readonly Hour MinimumHour = new Hour( MinimumValue );
+        public static readonly Hour Minimum = new Hour( MinimumValue );
 
         static Hour() {
             MaximumValue.Should().BeGreaterThan( MinimumValue );

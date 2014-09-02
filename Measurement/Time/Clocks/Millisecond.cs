@@ -24,6 +24,7 @@
 namespace Librainian.Measurement.Time.Clocks {
 
     using System;
+    using System.Linq;
     using System.Runtime.Serialization;
     using FluentAssertions;
     using Librainian.Extensions;
@@ -36,6 +37,8 @@ namespace Librainian.Measurement.Time.Clocks {
     [Serializable]
     [Immutable]
     public sealed class Millisecond : IClockPart {
+
+        public static readonly UInt16[] ValidMilliseconds = Enumerable.Range( 0, Microseconds.InOneMillisecond ).Select( u => ( UInt16 )u ).OrderBy( u => u ).ToArray();
 
         /// <summary>
         ///     1000

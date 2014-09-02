@@ -24,6 +24,7 @@
 namespace Librainian.Magic {
 
     using System;
+    using System.Diagnostics;
     using System.Linq;
     using Annotations;
     using Collections;
@@ -83,6 +84,7 @@ namespace Librainian.Magic {
             this.Kernel.Inject( item );
         }
 
+        [DebuggerStepThrough]
         public T TryGet<T>() {
             return this.Kernel.TryGet<T>();
         }

@@ -52,14 +52,14 @@ namespace Librainian.Measurement.Time {
         public readonly Year Year;
 
         public Date( BigInteger year, Byte month, Byte day ) {
-            while ( day > Day.Maximum ) {
-                day -= Day.Maximum;
+            while ( day > Day.MaximumValue ) {
+                day -= Day.MaximumValue;
                 month++;
             }
             this.Day = new Day( day );
 
-            while ( month > Month.Maximum ) {
-                month -= Month.Maximum;
+            while ( month > Month.MaximumValue ) {
+                month -= Month.MaximumValue;
                 year++;
             }
             this.Month = new Month( month );
@@ -90,15 +90,15 @@ namespace Librainian.Measurement.Time {
 
         internal Date( Span span ) {
             this.Year = new Year( span.GetWholeYears() );
-            if ( span.Months.Value < 1 ) {
-                this.Month = new Month( 1 );    
+            if ( span.Months.Value < Month.MinimumValue ) {
+                this.Month = new Month( Month.MinimumValue );    
             }
             else {
                 this.Month = new Month( ( byte )span.Months.Value );    
             }
 
-            if ( span.Days.Value  < 1 ) {
-                this.Day = new Day( 1 );
+            if ( span.Days.Value  < Day.MinimumValue ) {
+                this.Day = new Day( Day.MinimumValue );
             }
             else {
                 this.Day = new Day( ( byte )span.Days.Value );    

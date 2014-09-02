@@ -71,17 +71,18 @@ namespace Librainian.Measurement.Time {
 
             //TODO
             this.Date = new Date( span );
-            this.Time = new Time( span );
+            //this.Time = new Time( span );
             //this.Date = new Date();
-            //this.Time = new Time();
+            this.Time = new Time();
         }
 
         public UniversalDateTime( DateTime dateTime ) {
             var span = CalcSpanSince( dateTime );
 
             this.Value = span.TotalPlanckTimes;
-            this.Date = new Date( span ); //we can use span here because the values have been normalized. Should()Have()Been()
-            this.Time = new Time( span ); //we can use span here because the values have been normalized. Should()Have()Been()
+            this.Date = new Date( span ); //we can use span here because the values have been normalized. Should()Have()Been()?
+            //this.Time = new Time( span ); 
+            this.Time = new Time();
         }
 
         public static UniversalDateTime Now {

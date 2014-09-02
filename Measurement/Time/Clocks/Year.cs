@@ -34,9 +34,9 @@ namespace Librainian.Measurement.Time.Clocks {
     [Serializable]
     public struct Year : IClockPart {
 
-        public Year( BigInteger year )
+        public Year( BigInteger value )
             : this() {
-            this.Value = year;
+                this.Value = value;
         }
 
         [DataMember]
@@ -45,8 +45,8 @@ namespace Librainian.Measurement.Time.Clocks {
             private set;
         }
 
-        public static implicit operator BigInteger( Year year ) {
-            return year.Value;
+        public static implicit operator BigInteger( Year value ) {
+            return value.Value;
         }
 
         public static Boolean operator <( Year left, Year right ) {

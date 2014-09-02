@@ -1207,8 +1207,8 @@ namespace Librainian.Maths {
         /// <summary>
         ///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
         /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
+        /// <param name="start">inclusive</param>
+        /// <param name="end">inclusive</param>
         /// <param name="step"></param>
         /// <returns></returns>
         public static IEnumerable<int> To( this int start, int end, int step = 1 ) {

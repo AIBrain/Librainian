@@ -24,6 +24,7 @@
 namespace Librainian.Measurement.Time.Clocks {
 
     using System;
+    using System.Linq;
     using System.Runtime.Serialization;
     using FluentAssertions;
     using Librainian.Extensions;
@@ -35,32 +36,37 @@ namespace Librainian.Measurement.Time.Clocks {
     [Serializable]
     [Immutable]
     public sealed class Minute : IClockPart {
-        public const byte Maximum = Minutes.InOneHour;
-
-        public const byte Minimum = 1;
+        public static readonly Byte[] ValidMinutes = Enumerable.Range( 0, Minutes.InOneHour ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
 
         /// <summary>
-        ///     60
+        ///    should be 23
         /// </summary>
-        public static readonly Minute Max = new Minute( Maximum );
+        public static readonly Byte MaximumValue = ValidMinutes.Max();
 
         /// <summary>
+        ///   should be 0
         /// </summary>
-        public static readonly Minute Min = new Minute( Minimum );
+        public static readonly Byte MinimumValue = ValidMinutes.Min();
+
+        public static readonly Hour MaximumMinute = new Hour( MaximumValue );
+
+        public static readonly Hour MinimumMinute = new Hour( MinimumValue );
+
+        static Minute() {
+            MaximumValue.Should().BeGreaterThan( MinimumValue );
+        }
 
         [DataMember]
         public readonly Byte Value;
 
-        public Minute( Byte minute ) {
-            Validate( minute );
-            this.Value = minute;
+        public Minute( Byte value ) {
+            if ( !ValidMinutes.Contains( value ) ) {
+                throw new ArgumentOutOfRangeException( "value", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", value, MinimumValue, MaximumValue ) );
+            }
+            this.Value = value;
         }
 
-        public Minute( long minute ) {
-            Validate( minute );
-            this.Value = ( Byte )minute;
-        }
-
+     
         /// <summary>
         ///     Allow this class to be visibly cast to a <see cref="SByte" />.
         /// </summary>
