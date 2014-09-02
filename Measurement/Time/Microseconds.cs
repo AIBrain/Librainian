@@ -1,23 +1,28 @@
 #region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/Microseconds.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Microseconds.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
+
+#endregion License & Information
 
 namespace Librainian.Measurement.Time {
+
     using System;
     using System.Diagnostics;
     using System.Numerics;
@@ -28,7 +33,8 @@ namespace Librainian.Measurement.Time {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
-    public struct Microseconds : IComparable< Microseconds >, IQuantityOfTime {
+    public struct Microseconds : IComparable<Microseconds>, IQuantityOfTime {
+
         /// <summary>
         ///     1000
         /// </summary>
@@ -104,7 +110,8 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Microseconds Zero = new Microseconds( 0 );
 
-        [DataMember] public readonly  Decimal Value;
+        [DataMember]
+        public readonly Decimal Value;
 
         static Microseconds() {
             Zero.Should().BeLessThan( One );
@@ -114,7 +121,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeGreaterThan( Nanoseconds.One );
         }
 
-        public Microseconds(Decimal value ) {
+        public Microseconds( Decimal value ) {
             this.Value = value;
         }
 
@@ -124,86 +131,26 @@ namespace Librainian.Measurement.Time {
 
         public Microseconds( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = (Decimal ) value;
+            this.Value = ( Decimal )value;
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay { get { return this.ToString(); } }
-
-        public int CompareTo( Microseconds other ) {
-            return this.Value.CompareTo( other.Value );
-        }
-
-        [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneMicrosecond, new BigInteger( this.Value ) );
-        }
-
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
-
-        public override string ToString() {
-            return String.Format( "{0} µs", this.Value );
-        }
-
-        public Boolean Equals( Microseconds other ) {
-            return Equals( this, other );
-        }
-
-        public override Boolean Equals( object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
-                return false;
+        private String DebuggerDisplay {
+            get {
+                return this.ToString();
             }
-            return obj is Microseconds && this.Equals( ( Microseconds ) obj );
         }
 
         public static Microseconds Combine( Microseconds left, Microseconds right ) {
             return Combine( left, right.Value );
         }
 
-        public static Microseconds Combine( Microseconds left,Decimal microseconds ) {
+        public static Microseconds Combine( Microseconds left, Decimal microseconds ) {
             return new Microseconds( left.Value + microseconds );
         }
 
-        public static implicit operator Milliseconds( Microseconds microseconds ) {
-            return microseconds.ToMilliseconds();
-        }
-
-        public static implicit operator Nanoseconds( Microseconds microseconds ) {
-            return microseconds.ToNanoseconds();
-        }
-
-        public static implicit operator TimeSpan( Microseconds microseconds ) {
-            return TimeSpan.FromMilliseconds( value: ( Double ) microseconds.Value );
-        }
-
-        public static Microseconds operator -( Microseconds milliseconds ) {
-            return new Microseconds( milliseconds.Value*-1 );
-        }
-
-        public static Microseconds operator -( Microseconds left, Microseconds right ) {
-            return Combine( left, -right );
-        }
-
-        public static Microseconds operator -( Microseconds left,Decimal microseconds ) {
-            return Combine( left, -microseconds );
-        }
-
-        public static Microseconds operator +( Microseconds left, Microseconds right ) {
-            return Combine( left, right );
-        }
-
-        public static Microseconds operator +( Microseconds left,Decimal microseconds ) {
-            return Combine( left, microseconds );
-        }
-
-        public static Microseconds operator +( Microseconds left, BigInteger microseconds ) {
-            return Combine( left, microseconds );
-        }
-
         public static Microseconds Combine( Microseconds left, BigInteger microseconds ) {
-            return new Microseconds( ( BigInteger ) left.Value + microseconds );
+            return new Microseconds( ( BigInteger )left.Value + microseconds );
         }
 
         /// <summary>
@@ -216,12 +163,44 @@ namespace Librainian.Measurement.Time {
             return left.Value == right.Value;
         }
 
-        public static Boolean operator ==( Microseconds left, Microseconds right ) {
-            return Equals( left, right );
+        public static implicit operator Milliseconds( Microseconds microseconds ) {
+            return microseconds.ToMilliseconds();
+        }
+
+        public static implicit operator Nanoseconds( Microseconds microseconds ) {
+            return microseconds.ToNanoseconds();
+        }
+
+        public static implicit operator TimeSpan( Microseconds microseconds ) {
+            return TimeSpan.FromMilliseconds( value: ( Double )microseconds.Value );
+        }
+
+        public static Microseconds operator -( Microseconds milliseconds ) {
+            return new Microseconds( milliseconds.Value * -1 );
+        }
+
+        public static Microseconds operator -( Microseconds left, Microseconds right ) {
+            return Combine( left, -right );
+        }
+
+        public static Microseconds operator -( Microseconds left, Decimal microseconds ) {
+            return Combine( left, -microseconds );
         }
 
         public static Boolean operator !=( Microseconds left, Microseconds right ) {
             return !Equals( left, right );
+        }
+
+        public static Microseconds operator +( Microseconds left, Microseconds right ) {
+            return Combine( left, right );
+        }
+
+        public static Microseconds operator +( Microseconds left, Decimal microseconds ) {
+            return Combine( left, microseconds );
+        }
+
+        public static Microseconds operator +( Microseconds left, BigInteger microseconds ) {
+            return Combine( left, microseconds );
         }
 
         public static Boolean operator <( Microseconds left, Microseconds right ) {
@@ -229,7 +208,11 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Boolean operator <( Microseconds left, Milliseconds right ) {
-            return ( Milliseconds ) left < right;
+            return ( Milliseconds )left < right;
+        }
+
+        public static Boolean operator ==( Microseconds left, Microseconds right ) {
+            return Equals( left, right );
         }
 
         public static Boolean operator >( Microseconds left, Microseconds right ) {
@@ -237,16 +220,44 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Boolean operator >( Microseconds left, Milliseconds right ) {
-            return ( Milliseconds ) left > right;
+            return ( Milliseconds )left > right;
+        }
+
+        public int CompareTo( Microseconds other ) {
+            return this.Value.CompareTo( other.Value );
+        }
+
+        public Boolean Equals( Microseconds other ) {
+            return Equals( this, other );
+        }
+
+        public override Boolean Equals( object obj ) {
+            if ( ReferenceEquals( null, obj ) ) {
+                return false;
+            }
+            return obj is Microseconds && this.Equals( ( Microseconds )obj );
+        }
+
+        public override int GetHashCode() {
+            return this.Value.GetHashCode();
         }
 
         [Pure]
         public Milliseconds ToMilliseconds() {
-            return new Milliseconds( this.Value/InOneMillisecond );
+            return new Milliseconds( this.Value / InOneMillisecond );
         }
 
         public Nanoseconds ToNanoseconds() {
-            return new Nanoseconds( this.Value*Nanoseconds.InOneMicrosecond );
+            return new Nanoseconds( this.Value * Nanoseconds.InOneMicrosecond );
+        }
+
+        [Pure]
+        public BigInteger ToPlanckTimes() {
+            return BigInteger.Multiply( PlanckTimes.InOneMicrosecond, new BigInteger( this.Value ) );
+        }
+
+        public override string ToString() {
+            return String.Format( "{0} µs", this.Value );
         }
     }
 }

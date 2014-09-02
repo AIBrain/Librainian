@@ -1,23 +1,28 @@
 #region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/Years.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Years.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
+
+#endregion License & Information
 
 namespace Librainian.Measurement.Time {
+
     using System;
     using System.Diagnostics;
     using System.Numerics;
@@ -29,6 +34,7 @@ namespace Librainian.Measurement.Time {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public struct Years : IComparable<Years>, IQuantityOfTime {
+
         /// <summary>
         ///     One <see cref="Years" /> .
         /// </summary>
@@ -48,7 +54,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Years Zero = new Years( 0 );
 
         [DataMember]
-        public readonly  Decimal Value;
+        public readonly Decimal Value;
 
         static Years() {
             Zero.Should().BeLessThan( One );
@@ -57,7 +63,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeGreaterThan( Months.One );
         }
 
-        public Years(Decimal value ) {
+        public Years( Decimal value ) {
             this.Value = value;
         }
 
@@ -67,37 +73,21 @@ namespace Librainian.Measurement.Time {
 
         public Years( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = (Decimal )value;
+            this.Value = ( Decimal )value;
         }
 
         [UsedImplicitly]
-        private string DebuggerDisplay { get { return this.ToString(); } }
-
-        public int CompareTo( Years other ) {
-            return this.Value.CompareTo( other.Value );
-        }
-
-        public Boolean Equals( Years other ) {
-            return Equals( this, other );
-        }
-
-        public override Boolean Equals( object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
-                return false;
+        private string DebuggerDisplay {
+            get {
+                return this.ToString();
             }
-            return obj is Years && this.Equals( ( Years )obj );
-        }
-
-        [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneYear, new BigInteger( this.Value ) );
         }
 
         public static Years Combine( Years left, Years right ) {
             return Combine( left, right.Value );
         }
 
-        public static Years Combine( Years left,Decimal years ) {
+        public static Years Combine( Years left, Decimal years ) {
             return new Years( left.Value + years );
         }
 
@@ -113,14 +103,6 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static Boolean Equals( Years left, Years right ) {
             return left.Value == right.Value;
-        }
-
-        public static Boolean operator ==( Years left, Years right ) {
-            return Equals( left, right );
-        }
-
-        public static Boolean operator !=( Years left, Years right ) {
-            return !Equals( left, right );
         }
 
         public static implicit operator Months( Years years ) {
@@ -139,15 +121,19 @@ namespace Librainian.Measurement.Time {
             return Combine( left: left, right: -right );
         }
 
-        public static Years operator -( Years left,Decimal years ) {
+        public static Years operator -( Years left, Decimal years ) {
             return Combine( left, -years );
+        }
+
+        public static Boolean operator !=( Years left, Years right ) {
+            return !Equals( left, right );
         }
 
         public static Years operator +( Years left, Years right ) {
             return Combine( left, right );
         }
 
-        public static Years operator +( Years left,Decimal years ) {
+        public static Years operator +( Years left, Decimal years ) {
             return Combine( left, years );
         }
 
@@ -159,8 +145,36 @@ namespace Librainian.Measurement.Time {
             return left.Value < right.Value;
         }
 
+        public static Boolean operator ==( Years left, Years right ) {
+            return Equals( left, right );
+        }
+
         public static Boolean operator >( Years left, Years right ) {
             return left.Value > right.Value;
+        }
+
+        public int CompareTo( Years other ) {
+            return this.Value.CompareTo( other.Value );
+        }
+
+        public Boolean Equals( Years other ) {
+            return Equals( this, other );
+        }
+
+        public override Boolean Equals( object obj ) {
+            if ( ReferenceEquals( null, obj ) ) {
+                return false;
+            }
+            return obj is Years && this.Equals( ( Years )obj );
+        }
+
+        public override int GetHashCode() {
+            return this.Value.GetHashCode();
+        }
+
+        [Pure]
+        public Days ToDays() {
+            return new Days( this.Value * Days.InOneCommonYear );
         }
 
         [Pure]
@@ -169,26 +183,22 @@ namespace Librainian.Measurement.Time {
         }
 
         [Pure]
-        public Weeks ToWeeks() {
-            return new Weeks( this.Value * Weeks.InOneCommonYear );
+        public BigInteger ToPlanckTimes() {
+            return BigInteger.Multiply( PlanckTimes.InOneYear, new BigInteger( this.Value ) );
         }
 
-        [Pure]
-        public Days ToDays() {
-            return new Days( this.Value * Days.InOneCommonYear );
-        }
-        
         [Pure]
         public Seconds ToSeconds() {
             return new Seconds( this.Value * Seconds.InOneCommonYear );
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
-
         public override string ToString() {
             return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "year" ) );
+        }
+
+        [Pure]
+        public Weeks ToWeeks() {
+            return new Weeks( this.Value * Weeks.InOneCommonYear );
         }
     }
 }

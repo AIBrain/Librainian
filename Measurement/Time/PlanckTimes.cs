@@ -1,32 +1,34 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/PlanckTimes.cs" was last cleaned by Rick on 2014/08/25 at 6:12 PM
-#endregion
+//
+// "Librainian/PlanckTimes.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
+
+#endregion License & Information
 
 namespace Librainian.Measurement.Time {
+
     using System;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.Serialization;
     using Annotations;
     using FluentAssertions;
-    using Maths;
 
     /// <summary>
     ///     <para>In physics, the Planck time (tP) is the unit of time in the system of natural units known as Planck units.</para>
@@ -47,28 +49,43 @@ namespace Librainian.Measurement.Time {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     public struct PlanckTimes : IComparable<PlanckTimes>, IQuantityOfTime {
+        public static readonly BigInteger InOneAttosecond = new BigInteger( 1.855E25 );
+
+        public static readonly BigInteger InOneDay = new BigInteger( 1.603E48 );
+
+        public static readonly BigInteger InOneFemtosecond = new BigInteger( 1.855E28 );
+
+        public static readonly BigInteger InOneHour = new BigInteger( 6.678E46 );
+
+        public static readonly BigInteger InOneMicrosecond = new BigInteger( 1.855E37 );
+
+        public static readonly BigInteger InOneMillisecond = new BigInteger( 1.855E40 );
+
+        public static readonly BigInteger InOneMinute = new BigInteger( 1.113E45 );
+
+        public static readonly BigInteger InOneMonth = new BigInteger( 4.875E49 );
+
+        public static readonly BigInteger InOneNanosecond = new BigInteger( 1.855E34 );
+
+        public static readonly BigInteger InOnePicosecond = new BigInteger( 1.855E31 );
+
+        public static readonly BigInteger InOneSecond = new BigInteger( 1.855E43 );
+
+        public static readonly BigInteger InOneWeek = new BigInteger( 1.122E49 );
+
+        public static readonly BigInteger InOneYear = new BigInteger( 5.85E50 );
+
         /// <summary>
         ///     <para>Possible numbers are:</para>
-        ///     <para>18548608483392000000</para>    //where did I get this number??? It's so.. specific?
+        ///     <para>18548608483392000000</para>
+        ///     //where did I get this number??? It's so.. specific?
         ///     <para>18550948324478400000</para>
         ///     <para>18550000000000000000</para>
         ///     <para>18548608483392000000m</para>
         /// </summary>
         public static readonly BigInteger InOneYoctosecond = new BigInteger( 1.855E19 );
+
         public static readonly BigInteger InOneZeptosecond = new BigInteger( 1.855E22 );
-        public static readonly BigInteger InOneAttosecond = new BigInteger( 1.855E25 );
-        public static readonly BigInteger InOneFemtosecond = new BigInteger( 1.855E28 );
-        public static readonly BigInteger InOnePicosecond = new BigInteger( 1.855E31 );
-        public static readonly BigInteger InOneNanosecond = new BigInteger( 1.855E34 );
-        public static readonly BigInteger InOneMicrosecond = new BigInteger( 1.855E37 );
-        public static readonly BigInteger InOneMillisecond = new BigInteger( 1.855E40 );
-        public static readonly BigInteger InOneSecond = new BigInteger( 1.855E43 );
-        public static readonly BigInteger InOneMinute = new BigInteger( 1.113E45 );
-        public static readonly BigInteger InOneHour = new BigInteger( 6.678E46 );
-        public static readonly BigInteger InOneDay = new BigInteger( 1.603E48 );
-        public static readonly BigInteger InOneWeek = new BigInteger( 1.122E49 );
-        public static readonly BigInteger InOneMonth = new BigInteger( 4.875E49 );
-        public static readonly BigInteger InOneYear = new BigInteger( 5.85E50 );
 
         //public static readonly BigInteger InOneMinute = InOneSecond * Seconds.InOneMinute;  //new BigInteger( 1.113E45 );
         //public static readonly BigInteger InOneHour = InOneMinute * Minutes.InOneHour;  //new BigInteger( 6.678E46 );
@@ -144,41 +161,22 @@ namespace Librainian.Measurement.Time {
             }
         }
 
-        [Pure]
-        public int CompareTo( PlanckTimes other ) {
-            return this.Value.CompareTo( other.Value );
-        }
-
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
-
-        [Pure]
-        public BigInteger ToPlanckTimes() {
-            return this.Value;
-        }
-
-        public override String ToString() {
-            return String.Format( "{0} tP", this.Value );
-        }
-
-        public Boolean Equals( PlanckTimes other ) {
-            return Equals( this, other );
-        }
-
-        public override Boolean Equals( object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
-                return false;
-            }
-            return obj is PlanckTimes && this.Equals( ( PlanckTimes )obj );
-        }
-
         public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) {
             return new PlanckTimes( left.Value + right.Value );
         }
 
         public static PlanckTimes Combine( PlanckTimes left, BigInteger planckTimes ) {
             return new PlanckTimes( left.Value + planckTimes );
+        }
+
+        /// <summary>
+        ///     <para>static equality test</para>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals( PlanckTimes left, PlanckTimes right ) {
+            return left.Value == right.Value;
         }
 
         public static implicit operator Span( PlanckTimes planckTimes ) {
@@ -198,8 +196,24 @@ namespace Librainian.Measurement.Time {
             return Combine( left, -planckTimes );
         }
 
+        public static Boolean operator !=( PlanckTimes left, PlanckTimes right ) {
+            return !Equals( left, right );
+        }
+
+        public static PlanckTimes operator +( PlanckTimes left, PlanckTimes right ) {
+            return Combine( left, right );
+        }
+
+        public static PlanckTimes operator +( PlanckTimes left, BigInteger planckTimes ) {
+            return Combine( left, planckTimes );
+        }
+
         public static Boolean operator <( PlanckTimes left, PlanckTimes right ) {
             return left.Value < right.Value;
+        }
+
+        public static Boolean operator ==( PlanckTimes left, PlanckTimes right ) {
+            return Equals( left, right );
         }
 
         public static Boolean operator >( PlanckTimes left, PlanckTimes right ) {
@@ -215,30 +229,33 @@ namespace Librainian.Measurement.Time {
             return new Yoctoseconds( planckTimes.Value / InOneYoctosecond );
         }
 
-        public static PlanckTimes operator +( PlanckTimes left, PlanckTimes right ) {
-            return Combine( left, right );
+        [Pure]
+        public int CompareTo( PlanckTimes other ) {
+            return this.Value.CompareTo( other.Value );
         }
 
-        /// <summary>
-        ///     <para>static equality test</para>
-        /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        public static Boolean Equals( PlanckTimes left, PlanckTimes right ) {
-            return left.Value == right.Value;
+        public Boolean Equals( PlanckTimes other ) {
+            return Equals( this, other );
         }
 
-        public static Boolean operator ==( PlanckTimes left, PlanckTimes right ) {
-            return Equals( left, right );
+        public override Boolean Equals( object obj ) {
+            if ( ReferenceEquals( null, obj ) ) {
+                return false;
+            }
+            return obj is PlanckTimes && this.Equals( ( PlanckTimes )obj );
         }
 
-        public static Boolean operator !=( PlanckTimes left, PlanckTimes right ) {
-            return !Equals( left, right );
+        public override int GetHashCode() {
+            return this.Value.GetHashCode();
         }
 
-        public static PlanckTimes operator +( PlanckTimes left, BigInteger planckTimes ) {
-            return Combine( left, planckTimes );
+        [Pure]
+        public BigInteger ToPlanckTimes() {
+            return this.Value;
+        }
+
+        public override String ToString() {
+            return String.Format( "{0} tP", this.Value );
         }
     }
 }

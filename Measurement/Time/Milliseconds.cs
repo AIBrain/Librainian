@@ -1,23 +1,28 @@
 #region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/Milliseconds.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Milliseconds.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
+
+#endregion License & Information
 
 namespace Librainian.Measurement.Time {
+
     using System;
     using System.Diagnostics;
     using System.Numerics;
@@ -31,7 +36,8 @@ namespace Librainian.Measurement.Time {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     [Immutable]
-    public struct Milliseconds : IComparable< Milliseconds >, IQuantityOfTime {
+    public struct Milliseconds : IComparable<Milliseconds>, IQuantityOfTime {
+
         /// <summary>
         ///     1000
         /// </summary>
@@ -112,7 +118,8 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Milliseconds Zero = new Milliseconds( 0 );
 
-        [DataMember] public readonly Decimal Value;
+        [DataMember]
+        public readonly Decimal Value;
 
         static Milliseconds() {
             Zero.Should().BeLessThan( One );
@@ -132,32 +139,19 @@ namespace Librainian.Measurement.Time {
 
         public Milliseconds( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = ( Decimal )value;
         }
 
         public Milliseconds( Double value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal ) value;
+            this.Value = ( Decimal )value;
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay { get { return this.ToString(); } }
-
-        public int CompareTo( Milliseconds other ) {
-            return this.Value.CompareTo( other.Value );
-        }
-
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
-
-        [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneMillisecond, new BigInteger( this.Value ) );
-        }
-
-        public override string ToString() {
-            return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "millisecond" ) );
+        private String DebuggerDisplay {
+            get {
+                return this.ToString();
+            }
         }
 
         public static Milliseconds Combine( Milliseconds left, Decimal milliseconds ) {
@@ -165,7 +159,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Milliseconds Combine( Milliseconds left, BigInteger milliseconds ) {
-            return new Milliseconds( ( BigInteger ) left.Value + milliseconds );
+            return new Milliseconds( ( BigInteger )left.Value + milliseconds );
         }
 
         /// <summary>
@@ -176,6 +170,19 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static Boolean Equals( Milliseconds left, Milliseconds right ) {
             return left.Value == right.Value;
+        }
+
+        /// <summary>
+        ///     I don't prefer implicits to Double.. oh well.
+        /// </summary>
+        /// <param name="milliseconds"></param>
+        /// <returns></returns>
+        public static explicit operator Double( Milliseconds milliseconds ) {
+            return ( Double )milliseconds.Value;
+        }
+
+        public static implicit operator Decimal( Milliseconds milliseconds ) {
+            return milliseconds.Value;
         }
 
         /// <summary>
@@ -195,25 +202,8 @@ namespace Librainian.Measurement.Time {
             return new Span( milliseconds: milliseconds );
         }
 
-        public static implicit operator TimeSpan( Milliseconds milliseconds ) {
-            return TimeSpan.FromMilliseconds( value: ( Double ) milliseconds.Value );
-        }
-
-        /// <summary>
-        /// I don't prefer implicits to Double.. oh well.
-        /// </summary>
-        /// <param name="milliseconds"></param>
-        /// <returns></returns>
-        public static explicit operator Double( Milliseconds milliseconds ) {
-            return ( Double ) milliseconds.Value;
-        }
-
-        public static implicit operator Decimal( Milliseconds milliseconds ) {
-            return milliseconds.Value;
-        }
-
         public static Milliseconds operator -( Milliseconds milliseconds ) {
-            return new Milliseconds( milliseconds.Value*-1 );
+            return new Milliseconds( milliseconds.Value * -1 );
         }
 
         public static Milliseconds operator -( Milliseconds left, Milliseconds right ) {
@@ -245,7 +235,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Boolean operator <( Milliseconds left, Seconds right ) {
-            return ( Seconds ) left < right;
+            return ( Seconds )left < right;
         }
 
         public static Boolean operator ==( Milliseconds left, Milliseconds right ) {
@@ -257,16 +247,11 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Boolean operator >( Milliseconds left, Seconds right ) {
-            return ( Seconds ) left > right;
+            return ( Seconds )left > right;
         }
 
-        public Microseconds ToMicroseconds() {
-            return new Microseconds( this.Value*Microseconds.InOneMillisecond );
-        }
-
-        [Pure]
-        public Seconds ToSeconds() {
-            return new Seconds( this.Value/InOneSecond );
+        public int CompareTo( Milliseconds other ) {
+            return this.Value.CompareTo( other.Value );
         }
 
         public Boolean Equals( Milliseconds other ) {
@@ -277,7 +262,33 @@ namespace Librainian.Measurement.Time {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
-            return obj is Milliseconds && this.Equals( ( Milliseconds ) obj );
+            return obj is Milliseconds && this.Equals( ( Milliseconds )obj );
+        }
+
+        public override int GetHashCode() {
+            return this.Value.GetHashCode();
+        }
+
+        public Microseconds ToMicroseconds() {
+            return new Microseconds( this.Value * Microseconds.InOneMillisecond );
+        }
+
+        [Pure]
+        public BigInteger ToPlanckTimes() {
+            return BigInteger.Multiply( PlanckTimes.InOneMillisecond, new BigInteger( this.Value ) );
+        }
+
+        [Pure]
+        public Seconds ToSeconds() {
+            return new Seconds( this.Value / InOneSecond );
+        }
+
+        public override string ToString() {
+            return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "millisecond" ) );
+        }
+
+        public static implicit operator TimeSpan( Milliseconds milliseconds ) {
+            return TimeSpan.FromMilliseconds( value: ( Double )milliseconds.Value );
         }
     }
 }

@@ -1,23 +1,28 @@
 #region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/Extensions.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Extensions.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
+
+#endregion License & Information
 
 namespace Librainian.Measurement.Time {
+
     using System;
     using System.Diagnostics;
     using System.Numerics;
@@ -28,8 +33,10 @@ namespace Librainian.Measurement.Time {
     using Maths;
 
     public static class Extensions {
+
         static Extensions() {
             try {
+
                 // Time.Milliseconds.One.Should().BeLessThan(  Time.Seconds.One );
 
                 //Assert.That( Time.Milliseconds.One < Time.Seconds.One );
@@ -53,6 +60,63 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static DateTime BeginningOfDay( this DateTime date ) {
             return new DateTime( year: date.Year, month: date.Month, day: date.Day, hour: 0, minute: 0, second: 0, millisecond: 0, kind: date.Kind );
+        }
+
+        [Pure]
+        public static BigInteger CalcTotalPlanckTimes( this Span span ) {
+            var counter = BigInteger.Zero;
+
+            // These if are a super minor optimization. The result should still calc the same.
+            if ( span.PlanckTimes.Value > 0 ) {
+                counter += span.PlanckTimes.ToPlanckTimes();
+            }
+            if ( span.Yoctoseconds.Value > 0 ) {
+                counter += span.Yoctoseconds.ToPlanckTimes();
+            }
+            if ( span.Zeptoseconds.Value > 0 ) {
+                counter += span.Zeptoseconds.ToPlanckTimes();
+            }
+            if ( span.Attoseconds.Value > 0 ) {
+                counter += span.Attoseconds.ToPlanckTimes();
+            }
+            if ( span.Femtoseconds.Value > 0 ) {
+                counter += span.Femtoseconds.ToPlanckTimes();
+            }
+            if ( span.Picoseconds.Value > 0 ) {
+                counter += span.Picoseconds.ToPlanckTimes();
+            }
+            if ( span.Nanoseconds.Value > 0 ) {
+                counter += span.Nanoseconds.ToPlanckTimes();
+            }
+            if ( span.Microseconds.Value > 0 ) {
+                counter += span.Microseconds.ToPlanckTimes();
+            }
+            if ( span.Milliseconds.Value > 0 ) {
+                counter += span.Milliseconds.ToPlanckTimes();
+            }
+            if ( span.Seconds.Value > 0 ) {
+                counter += span.Seconds.ToPlanckTimes();
+            }
+            if ( span.Minutes.Value > 0 ) {
+                counter += span.Minutes.ToPlanckTimes();
+            }
+            if ( span.Hours.Value > 0 ) {
+                counter += span.Hours.ToPlanckTimes();
+            }
+            if ( span.Days.Value > 0 ) {
+                counter += span.Days.ToPlanckTimes();
+            }
+
+            //if ( span.Weeks.Value > 0 ) {
+            //    counter += span.Weeks.ToPlanckTimes();
+            //}
+            if ( span.Months.Value > 0 ) {
+                counter += span.Months.ToPlanckTimes();
+            }
+            if ( span.Years.Value > 0 ) {
+                counter += span.Years.ToPlanckTimes();
+            }
+            return counter;
         }
 
         /// <summary>
@@ -80,7 +144,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="scalar"></param>
         /// <returns></returns>
         public static TimeSpan Divided( this TimeSpan timeSpan, Double scalar ) {
-            return TimeSpan.FromTicks( ( long ) ( timeSpan.Ticks/scalar ) );
+            return TimeSpan.FromTicks( ( long )( timeSpan.Ticks / scalar ) );
         }
 
         /// <summary>
@@ -112,7 +176,7 @@ namespace Librainian.Measurement.Time {
             }
 
             var milliseconds = timeElapsed.TotalMilliseconds; // example: 5 seconds elapsed so far
-            var remainingTime = ( milliseconds/progress ) - milliseconds; // should be 15 seconds ( 20 - 5)
+            var remainingTime = ( milliseconds / progress ) - milliseconds; // should be 15 seconds ( 20 - 5)
             return TimeSpan.FromMilliseconds( value: remainingTime );
         }
 
@@ -181,18 +245,19 @@ namespace Librainian.Measurement.Time {
         /// <param name="year">Year to test.</param>
         /// <copyright>Tommy Dugger & Jared Chavez</copyright>
         public static Boolean IsLeapYear( this long year ) {
+
             // not divisible by 4? not a leap year
-            if ( year%4 != 0 ) {
+            if ( year % 4 != 0 ) {
                 return false;
             }
 
             // divisible by 4 and not divisible by 100? always a leap year
-            if ( year%100 != 0 ) {
+            if ( year % 100 != 0 ) {
                 return true;
             }
 
             // divisible by 4 and 100? Only a leap year if also divisible by 400
-            return year%400 == 0;
+            return year % 400 == 0;
         }
 
         public static DateTime LastDayOfTheMonth( this DateTime date ) {
@@ -302,17 +367,17 @@ namespace Librainian.Measurement.Time {
         public static String Simpler( this TimeSpan ts ) {
             var sb = new StringBuilder();
 
-            if ( ts.Days > ( 365*2 ) ) {
-                sb.AppendFormat( " {0:n0} years", ts.Days/365 );
+            if ( ts.Days > ( 365 * 2 ) ) {
+                sb.AppendFormat( " {0:n0} years", ts.Days / 365 );
             }
             else if ( ts.Days > 365 ) {
-                sb.AppendFormat( " {0} year", ts.Days/365 );
+                sb.AppendFormat( " {0} year", ts.Days / 365 );
             }
             else if ( ts.Days > 14 ) {
-                sb.AppendFormat( " {0:n0} weeks", ts.Days/7 );
+                sb.AppendFormat( " {0:n0} weeks", ts.Days / 7 );
             }
             else if ( ts.Days > 7 ) {
-                sb.AppendFormat( " {0} week", ts.Days/7 );
+                sb.AppendFormat( " {0} week", ts.Days / 7 );
             }
             else if ( ts.Days > 1 ) {
                 sb.AppendFormat( " {0:n0} days", ts.Days );
@@ -363,8 +428,8 @@ namespace Librainian.Measurement.Time {
         ///     </para>
         /// </summary>
         /// <param name="value"></param>
+        [DebuggerStepThrough]
         public static void ThrowIfOutOfDecimalRange( this BigInteger value ) {
-
             value.Should().BeInRange( Constants.MinimumUsefulDecimal, Constants.MaximumUsefulDecimal );
 
             if ( value < Constants.MinimumUsefulDecimal ) {
@@ -402,7 +467,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="scalar"></param>
         /// <returns></returns>
         public static TimeSpan Times( this TimeSpan timeSpan, Double scalar ) {
-            return TimeSpan.FromTicks( value: ( Int64 ) ( timeSpan.Ticks*scalar ) );
+            return TimeSpan.FromTicks( value: ( Int64 )( timeSpan.Ticks * scalar ) );
         }
 
         public static Span TimeStatement( [CanBeNull] this Action action ) {
@@ -430,6 +495,14 @@ namespace Librainian.Measurement.Time {
             return sb.ToString();
         }
 
+        public static Span ToSpan( this Date date ) {
+            var span = Span.Zero;
+            span += new Years( date.Year );
+            span += new Months( ( Decimal )date.Month.Value );
+            span += new Days( date.Day.Value );
+            return span;
+        }
+
         /// <summary>
         ///     Seconds since 1970-01-01
         /// </summary>
@@ -437,86 +510,24 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static ulong ToUNIXTimestamp( this DateTime date ) {
             var diff = date - Epochs.UNIX;
-            return ( ulong ) diff.TotalSeconds;
-        }
-
-        [Pure]
-        public static BigInteger CalcTotalPlanckTimes( this Span span ) {
-            var counter = BigInteger.Zero;
-
-            // These if are a super minor optimization. The result should still calc the same.
-            if ( span.PlanckTimes.Value > 0 ) {
-                counter += span.PlanckTimes.ToPlanckTimes();
-            }
-            if ( span.Yoctoseconds.Value > 0 ) {
-                counter += span.Yoctoseconds.ToPlanckTimes();
-            }
-            if ( span.Zeptoseconds.Value > 0 ) {
-                counter += span.Zeptoseconds.ToPlanckTimes();
-            }
-            if ( span.Attoseconds.Value > 0 ) {
-                counter += span.Attoseconds.ToPlanckTimes();
-            }
-            if ( span.Femtoseconds.Value > 0 ) {
-                counter += span.Femtoseconds.ToPlanckTimes();
-            }
-            if ( span.Picoseconds.Value > 0 ) {
-                counter += span.Picoseconds.ToPlanckTimes();
-            }
-            if ( span.Nanoseconds.Value > 0 ) {
-                counter += span.Nanoseconds.ToPlanckTimes();
-            }
-            if ( span.Microseconds.Value > 0 ) {
-                counter += span.Microseconds.ToPlanckTimes();
-            }
-            if ( span.Milliseconds.Value > 0 ) {
-                counter += span.Milliseconds.ToPlanckTimes();
-            }
-            if ( span.Seconds.Value > 0 ) {
-                counter += span.Seconds.ToPlanckTimes();
-            }
-            if ( span.Minutes.Value > 0 ) {
-                counter += span.Minutes.ToPlanckTimes();
-            }
-            if ( span.Hours.Value > 0 ) {
-                counter += span.Hours.ToPlanckTimes();
-            }
-            if ( span.Days.Value > 0 ) {
-                counter += span.Days.ToPlanckTimes();
-            }
-            //if ( span.Weeks.Value > 0 ) {
-            //    counter += span.Weeks.ToPlanckTimes();
-            //}
-            if ( span.Months.Value > 0 ) {
-                counter += span.Months.ToPlanckTimes();
-            }
-            if ( span.Years.Value > 0 ) {
-                counter += span.Years.ToPlanckTimes();
-            }
-            return counter;
-        }
-
-        public static Span ToSpan( this Date date ) {
-            var span = Span.Zero;
-            span += new Years( date.Year );
-            span += new Months( (Decimal ) date.Month.Value );
-            span += new Days( date.Day.Value );
-            return span;
+            return ( ulong )diff.TotalSeconds;
         }
 
         public static Boolean TryConvertToDateTime( this Date date, out DateTime? dateTime ) {
             try {
                 if ( date.Year.Value.Between( DateTime.MinValue.Year, DateTime.MaxValue.Year ) ) {
-                    dateTime = new DateTime( year: ( int ) date.Year.Value, month: date.Month.Value, day: date.Day.Value );
+                    dateTime = new DateTime( year: ( int )date.Year.Value, month: date.Month.Value, day: date.Day.Value );
                     return true;
                 }
             }
-            catch ( ArgumentOutOfRangeException ) { }
+            catch ( ArgumentOutOfRangeException ) {
+            }
             dateTime = null;
             return false;
         }
 
         #region untested code pulled from https://github.com/FluentDateTime/FluentDateTime/blob/master/FluentDateTime/DateTime/DateTimeExtensions.cs
+
         /// <summary>
         ///     Adds the given number of business days to the <see cref="DateTime" />.
         /// </summary>
@@ -526,7 +537,7 @@ namespace Librainian.Measurement.Time {
         public static DateTime AddBusinessDays( this DateTime current, int days ) {
             var sign = Math.Sign( days );
             var unsignedDays = Math.Abs( days );
-            for ( var i = 0; i < unsignedDays; i++ ) {
+            for ( var i = 0 ; i < unsignedDays ; i++ ) {
                 do {
                     current = current.AddDays( sign );
                 } while ( current.DayOfWeek == DayOfWeek.Saturday || current.DayOfWeek == DayOfWeek.Sunday );
@@ -824,36 +835,36 @@ namespace Librainian.Measurement.Time {
 
             switch ( rt ) {
                 case RoundTo.Second: {
-                    rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind );
-                    if ( dateTime.Millisecond >= 500 ) {
-                        rounded = rounded.AddSeconds( 1 );
+                        rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind );
+                        if ( dateTime.Millisecond >= 500 ) {
+                            rounded = rounded.AddSeconds( 1 );
+                        }
+                        break;
                     }
-                    break;
-                }
                 case RoundTo.Minute: {
-                    rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Kind );
-                    if ( dateTime.Second >= 30 ) {
-                        rounded = rounded.AddMinutes( 1 );
+                        rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Kind );
+                        if ( dateTime.Second >= 30 ) {
+                            rounded = rounded.AddMinutes( 1 );
+                        }
+                        break;
                     }
-                    break;
-                }
                 case RoundTo.Hour: {
-                    rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0, dateTime.Kind );
-                    if ( dateTime.Minute >= 30 ) {
-                        rounded = rounded.AddHours( 1 );
+                        rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0, dateTime.Kind );
+                        if ( dateTime.Minute >= 30 ) {
+                            rounded = rounded.AddHours( 1 );
+                        }
+                        break;
                     }
-                    break;
-                }
                 case RoundTo.Day: {
-                    rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, dateTime.Kind );
-                    if ( dateTime.Hour >= 12 ) {
-                        rounded = rounded.AddDays( 1 );
+                        rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, dateTime.Kind );
+                        if ( dateTime.Hour >= 12 ) {
+                            rounded = rounded.AddDays( 1 );
+                        }
+                        break;
                     }
-                    break;
-                }
                 default: {
-                    throw new ArgumentOutOfRangeException( "rt" );
-                }
+                        throw new ArgumentOutOfRangeException( "rt" );
+                    }
             }
 
             return rounded;
@@ -981,6 +992,7 @@ namespace Librainian.Measurement.Time {
         }
 
         /*
+
                 /// <summary>
                 ///     Increases supplied <see cref="DateTime" /> for 7 days ie returns the Next Week.
                 /// </summary>
@@ -990,6 +1002,7 @@ namespace Librainian.Measurement.Time {
         */
 
         /*
+
                 /// <summary>
                 ///     Decreases supplied <see cref="DateTime" /> for 7 days ie returns the Previous Week.
                 /// </summary>
@@ -997,6 +1010,7 @@ namespace Librainian.Measurement.Time {
                     return start - 1.Weeks();
                 }
         */
+
         #endregion untested code pulled from https://github.com/FluentDateTime/FluentDateTime/blob/master/FluentDateTime/DateTime/DateTimeExtensions.cs
     }
 }

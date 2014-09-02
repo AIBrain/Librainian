@@ -1,23 +1,28 @@
 #region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/Picoseconds.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Picoseconds.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
+
+#endregion License & Information
 
 namespace Librainian.Measurement.Time {
+
     using System;
     using System.Diagnostics;
     using System.Numerics;
@@ -28,7 +33,8 @@ namespace Librainian.Measurement.Time {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
-    public struct Picoseconds : IComparable< Picoseconds >, IQuantityOfTime {
+    public struct Picoseconds : IComparable<Picoseconds>, IQuantityOfTime {
+
         /// <summary>
         ///     1000
         /// </summary>
@@ -104,7 +110,8 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Picoseconds Zero = new Picoseconds( 0 );
 
-        [DataMember] public readonly  Decimal Value;
+        [DataMember]
+        public readonly Decimal Value;
 
         static Picoseconds() {
             Zero.Should().BeLessThan( One );
@@ -114,7 +121,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeGreaterThan( Femtoseconds.One );
         }
 
-        public Picoseconds(Decimal value ) {
+        public Picoseconds( Decimal value ) {
             this.Value = value;
         }
 
@@ -124,66 +131,22 @@ namespace Librainian.Measurement.Time {
 
         public Picoseconds( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = (Decimal ) value;
+            this.Value = ( Decimal )value;
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay { get { return this.ToString(); } }
-
-        public int CompareTo( Picoseconds other ) {
-            return this.Value.CompareTo( other.Value );
-        }
-
-        [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOnePicosecond, new BigInteger( this.Value ) );
-        }
-
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
-
-        public override string ToString() {
-            return String.Format( "{0} ps", this.Value );
-        }
-
-        public Boolean Equals( Picoseconds other ) {
-            return Equals( this, other );
-        }
-
-        public override Boolean Equals( object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
-                return false;
+        private String DebuggerDisplay {
+            get {
+                return this.ToString();
             }
-            return obj is Picoseconds && this.Equals( ( Picoseconds ) obj );
         }
 
         public static Picoseconds Combine( Picoseconds left, Picoseconds right ) {
             return Combine( left, right.Value );
         }
 
-        public static Picoseconds Combine( Picoseconds left,Decimal picoseconds ) {
+        public static Picoseconds Combine( Picoseconds left, Decimal picoseconds ) {
             return new Picoseconds( left.Value + picoseconds );
-        }
-
-        public static implicit operator Femtoseconds( Picoseconds picoseconds ) {
-            return picoseconds.ToFemtoseconds();
-        }
-
-        public static implicit operator Nanoseconds( Picoseconds picoseconds ) {
-            return picoseconds.ToNanoseconds();
-        }
-
-        public static Picoseconds operator -( Picoseconds nanoseconds ) {
-            return new Picoseconds( nanoseconds.Value*-1 );
-        }
-
-        public static Picoseconds operator -( Picoseconds left, Picoseconds right ) {
-            return Combine( left, -right );
-        }
-
-        public static Picoseconds operator -( Picoseconds left,Decimal nanoseconds ) {
-            return Combine( left, -nanoseconds );
         }
 
         /// <summary>
@@ -196,8 +159,24 @@ namespace Librainian.Measurement.Time {
             return left.Value == right.Value;
         }
 
-        public static Boolean operator ==( Picoseconds left, Picoseconds right ) {
-            return Equals( left, right );
+        public static implicit operator Femtoseconds( Picoseconds picoseconds ) {
+            return picoseconds.ToFemtoseconds();
+        }
+
+        public static implicit operator Nanoseconds( Picoseconds picoseconds ) {
+            return picoseconds.ToNanoseconds();
+        }
+
+        public static Picoseconds operator -( Picoseconds nanoseconds ) {
+            return new Picoseconds( nanoseconds.Value * -1 );
+        }
+
+        public static Picoseconds operator -( Picoseconds left, Picoseconds right ) {
+            return Combine( left, -right );
+        }
+
+        public static Picoseconds operator -( Picoseconds left, Decimal nanoseconds ) {
+            return Combine( left, -nanoseconds );
         }
 
         public static Boolean operator !=( Picoseconds left, Picoseconds right ) {
@@ -208,7 +187,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Picoseconds operator +( Picoseconds left,Decimal nanoseconds ) {
+        public static Picoseconds operator +( Picoseconds left, Decimal nanoseconds ) {
             return Combine( left, nanoseconds );
         }
 
@@ -216,17 +195,49 @@ namespace Librainian.Measurement.Time {
             return left.Value < right.Value;
         }
 
+        public static Boolean operator ==( Picoseconds left, Picoseconds right ) {
+            return Equals( left, right );
+        }
+
         public static Boolean operator >( Picoseconds left, Picoseconds right ) {
             return left.Value > right.Value;
         }
 
+        public int CompareTo( Picoseconds other ) {
+            return this.Value.CompareTo( other.Value );
+        }
+
+        public Boolean Equals( Picoseconds other ) {
+            return Equals( this, other );
+        }
+
+        public override Boolean Equals( object obj ) {
+            if ( ReferenceEquals( null, obj ) ) {
+                return false;
+            }
+            return obj is Picoseconds && this.Equals( ( Picoseconds )obj );
+        }
+
+        public override int GetHashCode() {
+            return this.Value.GetHashCode();
+        }
+
         public Femtoseconds ToFemtoseconds() {
-            return new Femtoseconds( this.Value*Femtoseconds.InOnePicosecond );
+            return new Femtoseconds( this.Value * Femtoseconds.InOnePicosecond );
         }
 
         [Pure]
         public Nanoseconds ToNanoseconds() {
-            return new Nanoseconds( this.Value/InOneNanosecond );
+            return new Nanoseconds( this.Value / InOneNanosecond );
+        }
+
+        [Pure]
+        public BigInteger ToPlanckTimes() {
+            return BigInteger.Multiply( PlanckTimes.InOnePicosecond, new BigInteger( this.Value ) );
+        }
+
+        public override string ToString() {
+            return String.Format( "{0} ps", this.Value );
         }
     }
 }

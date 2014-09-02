@@ -2,20 +2,22 @@
 
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
 //
-// "Librainian/Time.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Time.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
 
 #endregion License & Information
 
@@ -34,11 +36,11 @@ namespace Librainian.Measurement.Time {
 
         /// <summary>
         /// </summary>
-        public readonly Millisecond Millisecond;
-        
+        public readonly Microsecond Microsecond;
+
         /// <summary>
         /// </summary>
-        public readonly Microsecond Microsecond;
+        public readonly Millisecond Millisecond;
 
         /// <summary>
         /// </summary>
@@ -68,19 +70,17 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         /// </summary>
         /// <param name="dateTime"></param>
-        public Time( DateTime dateTime )
-            : this( hour: ( Byte )dateTime.Hour, minute: ( Byte )dateTime.Minute, second: ( Byte )dateTime.Second, millisecond: ( Byte )dateTime.Millisecond ) {
+        public Time( DateTime dateTime ) : this( hour: ( Byte )dateTime.Hour, minute: ( Byte )dateTime.Minute, second: ( Byte )dateTime.Second, millisecond: ( Byte )dateTime.Millisecond ) {
         }
 
         /// <summary>
         /// </summary>
         /// <param name="span"></param>
-        public Time( Span span )
-            : this( hour: ( Byte )span.Hours.Value, minute: ( Byte )span.Minutes.Value, second: ( Byte )span.Seconds.Value, millisecond: ( Byte )span.Milliseconds.Value, microsecond: ( Byte )span.Microseconds.Value ) {
+        public Time( Span span ) : this( hour: ( Byte )span.Hours.Value, minute: ( Byte )span.Minutes.Value, second: ( Byte )span.Seconds.Value, millisecond: ( Byte )span.Milliseconds.Value, microsecond: ( Byte )span.Microseconds.Value ) {
         }
 
         /// <summary>
-        /// Get the local system's computer time.
+        ///     Get the local system's computer time.
         /// </summary>
         public static Time Now {
             get {

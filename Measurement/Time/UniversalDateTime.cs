@@ -1,23 +1,28 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/UniversalDateTime.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/UniversalDateTime.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
+
+#endregion License & Information
 
 namespace Librainian.Measurement.Time {
+
     using System;
     using System.Numerics;
     using Annotations;
@@ -30,18 +35,18 @@ namespace Librainian.Measurement.Time {
     public struct UniversalDateTime : IComparable<UniversalDateTime> {
 
         /// <summary>
-        /// <para>The value of this constant is equivalent to 00:00:00.0000000, January 1, 0001.</para>
-        /// <para>430,000,000,000,000,000 seconds</para>
-        /// </summary>
-        public static readonly PlanckTimes PlancksUpToMinDateTime = new PlanckTimes( new Seconds( 4.3E17m ) );
-
-        /// <summary>
-        /// <para>1 planck times</para>
+        ///     <para>1 planck times</para>
         /// </summary>
         public static readonly UniversalDateTime One = new UniversalDateTime( BigInteger.One );
 
         /// <summary>
-        /// <para>0 planck times</para>
+        ///     <para>The value of this constant is equivalent to 00:00:00.0000000, January 1, 0001.</para>
+        ///     <para>430,000,000,000,000,000 seconds</para>
+        /// </summary>
+        public static readonly PlanckTimes PlancksUpToMinDateTime = new PlanckTimes( new Seconds( 4.3E17m ) );
+
+        /// <summary>
+        ///     <para>0 planck times</para>
         /// </summary>
         public static readonly UniversalDateTime TheBeginning = new UniversalDateTime( BigInteger.Zero );
 
@@ -63,6 +68,7 @@ namespace Librainian.Measurement.Time {
         public UniversalDateTime( BigInteger planckTimesSinceBigBang ) {
             this.Value = planckTimesSinceBigBang;
             var span = new Span( planckTimes: this.Value );
+
             //TODO
             //this.Date = new Date( span );
             //this.Time = new Time( span );
@@ -82,11 +88,6 @@ namespace Librainian.Measurement.Time {
             get {
                 return new UniversalDateTime( DateTime.UtcNow );
             }
-        }
-
-        [Pure]
-        public int CompareTo( UniversalDateTime other ) {
-            return this.Value.CompareTo( other.Value );
         }
 
         /// <summary>
@@ -115,6 +116,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( UniversalDateTime left, UniversalDateTime right ) {
             return left.Value > right.Value;
+        }
+
+        [Pure]
+        public int CompareTo( UniversalDateTime other ) {
+            return this.Value.CompareTo( other.Value );
         }
 
         private static UniversalDateTime Combine( UniversalDateTime left, BigInteger value ) {

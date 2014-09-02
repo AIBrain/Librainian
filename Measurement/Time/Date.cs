@@ -1,23 +1,28 @@
 #region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/Date.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Date.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
+
+#endregion License & Information
 
 namespace Librainian.Measurement.Time {
+
     using System;
     using System.Numerics;
     using Annotations;
@@ -25,10 +30,11 @@ namespace Librainian.Measurement.Time {
     using Librainian.Extensions;
 
     /// <summary>
-    /// <see cref="Year"/>, <see cref="Month"/>, and <see cref="Day"/>.
+    ///     <see cref="Year" />, <see cref="Month" />, and <see cref="Day" />.
     /// </summary>
     [Immutable]
     public struct Date {
+
         /// <summary>
         ///     <para>The day of the month. (valid range is 1 to 31)</para>
         /// </summary>
@@ -67,7 +73,8 @@ namespace Librainian.Measurement.Time {
             this.Day = day;
         }
 
-        public Date( DateTime dateTime ) : this( year: dateTime.Year, month: ( Byte ) dateTime.Month, day: ( Byte ) dateTime.Day ) { }
+        public Date( DateTime dateTime ) : this( year: dateTime.Year, month: ( Byte )dateTime.Month, day: ( Byte )dateTime.Day ) {
+        }
 
         //public Date( long year, long month, long day )
         //    : this( year: new Year( year ), month: new Month( month ), day: new Day( day ) ) {
@@ -83,13 +90,21 @@ namespace Librainian.Measurement.Time {
 
         public Date( Span span ) {
             this.Year = new Year( span.GetWholeYears() );
-            this.Month = new Month( ( byte ) span.Months.Value );
-            this.Day = new Day( ( byte ) span.Days.Value );
+            this.Month = new Month( ( byte )span.Months.Value );
+            this.Day = new Day( ( byte )span.Days.Value );
         }
 
-        public static Date Now { get { return new Date( DateTime.Now ); } }
+        public static Date Now {
+            get {
+                return new Date( DateTime.Now );
+            }
+        }
 
-        public static Date UtcNow { get { return new Date( DateTime.UtcNow ); } }
+        public static Date UtcNow {
+            get {
+                return new Date( DateTime.UtcNow );
+            }
+        }
 
         public static implicit operator DateTime?( Date date ) {
             DateTime? dateTime;
@@ -100,12 +115,12 @@ namespace Librainian.Measurement.Time {
             return left.ToSpan().TotalPlanckTimes < right.ToSpan().TotalPlanckTimes;
         }
 
-        public static Boolean operator >( Date left, Date right ) {
-            return left.ToSpan().TotalPlanckTimes > right.ToSpan().TotalPlanckTimes;
-        }
-
         public static Boolean operator <=( Date left, Date right ) {
             return left.ToSpan().TotalPlanckTimes <= right.ToSpan().TotalPlanckTimes;
+        }
+
+        public static Boolean operator >( Date left, Date right ) {
+            return left.ToSpan().TotalPlanckTimes > right.ToSpan().TotalPlanckTimes;
         }
 
         public static Boolean operator >=( Date left, Date right ) {

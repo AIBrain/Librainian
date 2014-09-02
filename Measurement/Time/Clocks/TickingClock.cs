@@ -1,25 +1,28 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/TickingClock.cs" was last cleaned by Rick on 2014/08/12 at 9:56 AM
-#endregion
+//
+// "Librainian/TickingClock.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
+
+#endregion License & Information
 
 namespace Librainian.Measurement.Time.Clocks {
+
     using System;
     using System.Timers;
     using Annotations;
@@ -44,12 +47,6 @@ namespace Librainian.Measurement.Time.Clocks {
     ///     </para>
     /// </summary>
     public class TickingClock : IStandardClock {
-        public enum Granularity {
-            Milliseconds,
-            Seconds,
-            Minutes,
-            Hours
-        }
 
         /// <summary>
         /// </summary>
@@ -72,40 +69,63 @@ namespace Librainian.Measurement.Time.Clocks {
             this.ResetTimer( granularity );
         }
 
-        [CanBeNull]
-        public Action<Hour> OnHourTick { get; set; }
-
-        [CanBeNull]
-        public Action OnMinuteTick { get; set; }
-
-        [CanBeNull]
-        public Action OnSecondTick { get; set; }
-
-        [CanBeNull]
-        public Action OnMillisecondTick { get; set; }
-
-        /// <summary>
-        /// </summary>
-        public Millisecond Millisecond { get; private set; }
-
-        /// <summary>
-        /// </summary>
-        public Hour Hour { get; private set; }
-
-        /// <summary>
-        /// </summary>
-        public Minute Minute { get; private set; }
-
-        /// <summary>
-        /// </summary>
-        public Second Second { get; private set; }
-
-        public Boolean IsAM() {
-            return !this.IsPM();
+        public enum Granularity {
+            Milliseconds,
+            Seconds,
+            Minutes,
+            Hours
         }
 
-        public Boolean IsPM() {
-            return this.Hour.Value >= 12;
+        /// <summary>
+        /// </summary>
+        public Hour Hour {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// </summary>
+        public Millisecond Millisecond {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// </summary>
+        public Minute Minute {
+            get;
+            private set;
+        }
+
+        [CanBeNull]
+        public Action<Hour> OnHourTick {
+            get;
+            set;
+        }
+
+        [CanBeNull]
+        public Action OnMillisecondTick {
+            get;
+            set;
+        }
+
+        [CanBeNull]
+        public Action OnMinuteTick {
+            get;
+            set;
+        }
+
+        [CanBeNull]
+        public Action OnSecondTick {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// </summary>
+        public Second Second {
+            get;
+            private set;
         }
 
         public Time GetTime() {
@@ -124,6 +144,14 @@ namespace Librainian.Measurement.Time.Clocks {
             }
         }
 
+        public Boolean IsAM() {
+            return !this.IsPM();
+        }
+
+        public Boolean IsPM() {
+            return this.Hour.Value >= 12;
+        }
+
         public void ResetTimer( Granularity granularity ) {
             if ( null != this._timer ) {
                 using ( this._timer ) {
@@ -137,29 +165,46 @@ namespace Librainian.Measurement.Time.Clocks {
                     };
                     this._timer.Elapsed += this.OnMillisecondElapsed;
                     break;
+
                 case Granularity.Seconds:
                     this._timer = new Timer( interval: ( Double )Seconds.One.Value ) {
                         AutoReset = true
                     };
                     this._timer.Elapsed += this.OnSecondElapsed;
                     break;
+
                 case Granularity.Minutes:
                     this._timer = new Timer( interval: ( Double )Minutes.One.Value ) {
                         AutoReset = true
                     };
                     this._timer.Elapsed += this.OnMinuteElapsed;
                     break;
+
                 case Granularity.Hours:
                     this._timer = new Timer( interval: ( Double )Hours.One.Value ) {
                         AutoReset = true
                     };
                     this._timer.Elapsed += this.OnHourElapsed;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException( "granularity" );
             }
 
             this._timer.Start();
+        }
+
+        private void OnHourElapsed( object sender, ElapsedEventArgs e ) {
+            Boolean ticked;
+
+            this.Hour = this.Hour.Next( out ticked );
+            if ( !ticked ) {
+                return;
+            }
+            var onHourTick = this.OnHourTick;
+            if ( onHourTick != null ) {
+                onHourTick( this.Hour );
+            }
         }
 
         private void OnMillisecondElapsed( object sender, ElapsedEventArgs e ) {
@@ -177,21 +222,6 @@ namespace Librainian.Measurement.Time.Clocks {
             this.OnSecondElapsed( sender, e );
         }
 
-        private void OnSecondElapsed( object sender, ElapsedEventArgs e ) {
-            Boolean ticked;
-
-            this.Second = this.Second.Next( out ticked );
-            if ( !ticked ) {
-                return;
-            }
-            var onSecondTick = this.OnSecondTick;
-            if ( onSecondTick != null ) {
-                onSecondTick();
-            }
-
-            this.OnMinuteElapsed( sender, e );
-        }
-
         private void OnMinuteElapsed( object sender, ElapsedEventArgs e ) {
             Boolean ticked;
 
@@ -207,17 +237,19 @@ namespace Librainian.Measurement.Time.Clocks {
             this.OnHourElapsed( sender, e );
         }
 
-        private void OnHourElapsed( object sender, ElapsedEventArgs e ) {
+        private void OnSecondElapsed( object sender, ElapsedEventArgs e ) {
             Boolean ticked;
 
-            this.Hour = this.Hour.Next( out ticked );
+            this.Second = this.Second.Next( out ticked );
             if ( !ticked ) {
                 return;
             }
-            var onHourTick = this.OnHourTick;
-            if ( onHourTick != null ) {
-                onHourTick( this.Hour );
+            var onSecondTick = this.OnSecondTick;
+            if ( onSecondTick != null ) {
+                onSecondTick();
             }
+
+            this.OnMinuteElapsed( sender, e );
         }
     }
 }

@@ -1,23 +1,28 @@
 #region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/Femtoseconds.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Femtoseconds.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
+
+#endregion License & Information
 
 namespace Librainian.Measurement.Time {
+
     using System;
     using System.Diagnostics;
     using System.Numerics;
@@ -31,7 +36,8 @@ namespace Librainian.Measurement.Time {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
-    public struct Femtoseconds : IComparable< Femtoseconds >, IQuantityOfTime {
+    public struct Femtoseconds : IComparable<Femtoseconds>, IQuantityOfTime {
+
         /// <summary>
         ///     1000
         /// </summary>
@@ -107,7 +113,8 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Femtoseconds Zero = new Femtoseconds( value: 0 );
 
-        [DataMember] public readonly  Decimal Value;
+        [DataMember]
+        public readonly Decimal Value;
 
         static Femtoseconds() {
             Zero.Should().BeLessThan( One );
@@ -117,7 +124,7 @@ namespace Librainian.Measurement.Time {
             One.Should().BeLessThan( Picoseconds.One );
         }
 
-        public Femtoseconds(Decimal value ) {
+        public Femtoseconds( Decimal value ) {
             this.Value = value;
         }
 
@@ -127,34 +134,21 @@ namespace Librainian.Measurement.Time {
 
         public Femtoseconds( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = (Decimal ) value;
+            this.Value = ( Decimal )value;
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay { get { return this.ToString(); } }
-
-        public int CompareTo( Femtoseconds other ) {
-            return this.Value.CompareTo( other.Value );
-        }
-
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
-
-        [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneFemtosecond, new BigInteger( this.Value ) );
-        }
-
-        public override string ToString() {
-            return String.Format( "{0} fs", this.Value );
+        private String DebuggerDisplay {
+            get {
+                return this.ToString();
+            }
         }
 
         public static Femtoseconds Combine( Femtoseconds left, Femtoseconds right ) {
             return Combine( left, right.Value );
         }
 
-        public static Femtoseconds Combine( Femtoseconds left,Decimal femtoseconds ) {
+        public static Femtoseconds Combine( Femtoseconds left, Decimal femtoseconds ) {
             return new Femtoseconds( left.Value + femtoseconds );
         }
 
@@ -182,14 +176,14 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Femtoseconds operator -( Femtoseconds femtoseconds ) {
-            return new Femtoseconds( femtoseconds.Value*-1 );
+            return new Femtoseconds( femtoseconds.Value * -1 );
         }
 
         public static Femtoseconds operator -( Femtoseconds left, Femtoseconds right ) {
             return Combine( left, -right );
         }
 
-        public static Femtoseconds operator -( Femtoseconds left,Decimal femtoseconds ) {
+        public static Femtoseconds operator -( Femtoseconds left, Decimal femtoseconds ) {
             return Combine( left, -femtoseconds );
         }
 
@@ -201,7 +195,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Femtoseconds operator +( Femtoseconds left,Decimal femtoseconds ) {
+        public static Femtoseconds operator +( Femtoseconds left, Decimal femtoseconds ) {
             return Combine( left, femtoseconds );
         }
 
@@ -217,21 +211,8 @@ namespace Librainian.Measurement.Time {
             return left.Value > right.Value;
         }
 
-        /// <summary>
-        ///     Convert to a smaller unit.
-        /// </summary>
-        /// <returns></returns>
-        public Attoseconds ToAttoseconds() {
-            return new Attoseconds( this.Value*Attoseconds.InOneFemtosecond );
-        }
-
-        /// <summary>
-        ///     Convert to a larger unit.
-        /// </summary>
-        /// <returns></returns>
-        [Pure]
-        public Picoseconds ToPicoseconds() {
-            return new Picoseconds( this.Value/InOnePicosecond );
+        public int CompareTo( Femtoseconds other ) {
+            return this.Value.CompareTo( other.Value );
         }
 
         public Boolean Equals( Femtoseconds other ) {
@@ -242,7 +223,37 @@ namespace Librainian.Measurement.Time {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
-            return obj is Femtoseconds && this.Equals( ( Femtoseconds ) obj );
+            return obj is Femtoseconds && this.Equals( ( Femtoseconds )obj );
+        }
+
+        public override int GetHashCode() {
+            return this.Value.GetHashCode();
+        }
+
+        /// <summary>
+        ///     Convert to a smaller unit.
+        /// </summary>
+        /// <returns></returns>
+        public Attoseconds ToAttoseconds() {
+            return new Attoseconds( this.Value * Attoseconds.InOneFemtosecond );
+        }
+
+        /// <summary>
+        ///     Convert to a larger unit.
+        /// </summary>
+        /// <returns></returns>
+        [Pure]
+        public Picoseconds ToPicoseconds() {
+            return new Picoseconds( this.Value / InOnePicosecond );
+        }
+
+        [Pure]
+        public BigInteger ToPlanckTimes() {
+            return BigInteger.Multiply( PlanckTimes.InOneFemtosecond, new BigInteger( this.Value ) );
+        }
+
+        public override string ToString() {
+            return String.Format( "{0} fs", this.Value );
         }
     }
 }

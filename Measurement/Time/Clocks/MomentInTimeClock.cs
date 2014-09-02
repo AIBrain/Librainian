@@ -2,22 +2,22 @@
 
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/MomentInTimeClock.cs" was last cleaned by Rick on 2014/08/12 at 7:41 AM
+// "Librainian/MomentInTimeClock.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
 
 #endregion License & Information
 
@@ -27,7 +27,7 @@ namespace Librainian.Measurement.Time.Clocks {
     using Librainian.Extensions;
 
     /// <summary>
-    /// A clock that stays at the set moment in time.
+    ///     A clock that stays at the set moment in time.
     /// </summary>
     [Immutable]
     public class MomentInTimeClock : IStandardClock {
@@ -51,11 +51,20 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Second = new Second( time.Second );
         }
 
-        public Hour Hour { get; private set; }
+        public Hour Hour {
+            get;
+            private set;
+        }
 
-        public Minute Minute { get; private set; }
+        public Minute Minute {
+            get;
+            private set;
+        }
 
-        public Second Second { get; private set; }
+        public Second Second {
+            get;
+            private set;
+        }
 
         public Time GetTime() {
             return new Time( hour: this.Hour, minute: this.Minute, second: this.Second );
