@@ -210,7 +210,6 @@
     <Compile Include="Collections\IPotpourri.cs" />
     <Compile Include="Collections\Potpourri.cs" />
     <Compile Include="Collections\ShufflingType.cs" />
-    <Compile Include="Collections\TestParallelList.cs" />
     <Compile Include="Collections\TreeTraversalType.cs" />
     <Compile Include="Collections\CollectionDebugView.cs" />
     <Compile Include="Collections\ConcurrentCollection.cs" />
@@ -277,6 +276,7 @@
     <Compile Include="Database\MMF\ValueTypeCheck.cs" />
     <Compile Include="Database\SQLDatabaseExtensions.cs" />
     <Compile Include="Database\SQLQuery.cs" />
+    <Compile Include="Diagnostical.cs" />
     <Compile Include="Extensions\BigNullStream.cs" />
     <Compile Include="Extensions\BooleanPredicateBuilder.cs" />
     <Compile Include="Extensions\ReflectionHelper.cs" />

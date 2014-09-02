@@ -309,7 +309,6 @@ namespace Librainian.Measurement.Time {
             this.PlanckTimes += new Months( months.IfLessThanZeroThenZero() ).ToPlanckTimes();
             this.PlanckTimes += new Years( years.IfLessThanZeroThenZero() ).ToPlanckTimes();
 
-
             var span = new Span( planckTimes: this.PlanckTimes.Value ); //cheat
 
             this.PlanckTimes = span.PlanckTimes;
@@ -325,7 +324,7 @@ namespace Librainian.Measurement.Time {
             this.Minutes = span.Minutes;
             this.Hours = span.Hours;
             this.Days = span.Days;
-            //this.Weeks = span.Weeks;
+            this.Weeks = span.Weeks;
             this.Months = span.Months;
             this.Years = span.Years;
 

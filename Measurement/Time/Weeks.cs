@@ -113,17 +113,17 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="weeks"></param>
         /// <returns></returns>
-        public static explicit operator Days( Weeks weeks ) {
+        public static implicit operator Days( Weeks weeks ) {
             return weeks.ToDays();
         }
 
-        public static explicit operator Months( Weeks weeks ) {
+        public static implicit operator Months( Weeks weeks ) {
             return weeks.ToMonths();
         }
 
-        //public static implicit operator Span( Weeks weeks ) {
-        //    return new Span( weeks: weeks.Value );
-        //}
+        public static implicit operator Span( Weeks weeks ) {
+            return new Span( weeks: weeks.Value );
+        }
 
         public static Weeks operator -( Weeks days ) {
             return new Weeks( days.Value * -1 );

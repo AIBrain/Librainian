@@ -1,11 +1,326 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Librainian.Threading.Tasks">
-    <Position X="0.5" Y="0.75" Width="2.25" />
+  <Class Name="Librainian.Measurement.Time.Epochs" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAgAAAAACAAoAAAIQkAAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Threading\Tasks.cs</FileName>
+      <HashCode>AAAAAAAAAIAAAACAAAACAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Measurement\Time\Epochs.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="Librainian.Measurement.Time.ETACalculator" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAyAAAAAAAIgBAAAAAAAAQAAIAAABAAAAAAAAACAAAA=</HashCode>
+      <FileName>Measurement\Time\ETACalculator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Librainian.Measurement.Time.Extensions" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ilAABDKECgGaAmYAQRmAJCBCAMCUMAIQcEDRBQIAAAA=</HashCode>
+      <FileName>Measurement\Time\Extensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Librainian.Measurement.Time.TimeProgression" Collapsed="true">
+    <Position X="11" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Measurement\Time\TimeProgression.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Librainian.Measurement.Time.TimeSystemTimers" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAABAAAAAIAAAAAAAAAAAAAABQAA=</HashCode>
+      <FileName>Measurement\Time\TimeSystemTimers.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Librainian.Measurement.Time.Clocks.ClockExtensions" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAABAAAAAAAQAAAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Measurement\Time\Clocks\ClockExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Librainian.Measurement.Time.Clocks.Hour" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ggAAAACAABCAAgAAEAAAAAAAABAAAAACAAAgAAAAAAA=</HashCode>
+      <FileName>Measurement\Time\Clocks\Hour.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Librainian.Measurement.Time.Clocks.Microsecond" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ggAAAACAABCAAgAAEAAAAAAAAAABAAAAAAAgAAAEAAA=</HashCode>
+      <FileName>Measurement\Time\Clocks\Microsecond.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Librainian.Measurement.Time.Clocks.Millisecond" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ggAAAACAABCAAgAAEAAAAAAAAAABAAAAAAAgAAAEAAA=</HashCode>
+      <FileName>Measurement\Time\Clocks\Millisecond.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Librainian.Measurement.Time.Clocks.Minute" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ggAAAACAABCAAgAAEAAAAAAAABAAAAACAAAgAAAAAAA=</HashCode>
+      <FileName>Measurement\Time\Clocks\Minute.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Librainian.Measurement.Time.Clocks.MomentInTimeClock" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAACAAIAAAAAACIAAAAAAAAAAAA=</HashCode>
+      <FileName>Measurement\Time\Clocks\MomentInTimeClock.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Librainian.Measurement.Time.Clocks.Second" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ggAAAACAABCAAgAAEAAAAAAAABAAAAACAAAgAAAAAAA=</HashCode>
+      <FileName>Measurement\Time\Clocks\Second.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Librainian.Measurement.Time.Clocks.TickingClock" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QQAAAIAAAACwAAAAAAACAAIACABAICoAJAAAAAAAAAA=</HashCode>
+      <FileName>Measurement\Time\Clocks\TickingClock.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Struct Name="Librainian.Measurement.Time.Attoseconds" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AoQACQAAgcAAgAQE0AGAQwBAhQAEAIAAAAohCAQAAqg=</HashCode>
+      <FileName>Measurement\Time\Attoseconds.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Date" Collapsed="true">
+    <Position X="4" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAQAAAAJAAAAAAAAACAAgAAACAAAAAEAAAAAAAAJQA=</HashCode>
+      <FileName>Measurement\Time\Date.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Days" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAgBAAgAQEwAGAAgAgAQAEAKAAAAAxCAAQAqA=</HashCode>
+      <FileName>Measurement\Time\Days.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Femtoseconds" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAgVAAgAQE0AGAAgBABQAEIIAAAgghCAQgKqA=</HashCode>
+      <FileName>Measurement\Time\Femtoseconds.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Hours" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAghAAgAQEwgGAAiAAAQAAAKACAAAhCAAQAqA=</HashCode>
+      <FileName>Measurement\Time\Hours.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Microseconds" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAEAIgUAAgEQM0AGAAgBABQAMAKAAAAghCAQAAqA=</HashCode>
+      <FileName>Measurement\Time\Microseconds.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Milliseconds" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BgAACAAAgdAAgAQE0AGCAgBABQAkAKQAAAhhCAQAA6A=</HashCode>
+      <FileName>Measurement\Time\Milliseconds.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Minutes" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAgBAAkAQEwAGAAgAgAQAgAKAAAAAhCAAQAqA=</HashCode>
+      <FileName>Measurement\Time\Minutes.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Months" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAgBAEgAQEwAGAAgAAAQAAAIAAAAAhCAAQAqA=</HashCode>
+      <FileName>Measurement\Time\Months.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Nanoseconds" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BgAAAAAAgUAAgAQE0AGAAwBABQAEIIQAAgghCAQAAqA=</HashCode>
+      <FileName>Measurement\Time\Nanoseconds.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Picoseconds" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAIgUAAhEQE0AGAAgBAhQAEAIAAAAghCAQAAqA=</HashCode>
+      <FileName>Measurement\Time\Picoseconds.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.PlanckTimes" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AARAAAAAgBAAFAQMwAGEAyAAAQCEAICEAAhhCAAQJqE=</HashCode>
+      <FileName>Measurement\Time\PlanckTimes.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Seconds" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAIEAAgBAEgAQE0AGAAqACAQAMAKACAQghCAAAAqE=</HashCode>
+      <FileName>Measurement\Time\Seconds.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Span" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>UIAAAACAgADQEAQEwCGAAgEEAQAJIqAEQAgBAERAByk=</HashCode>
+      <FileName>Measurement\Time\Span.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.SpanRange" Collapsed="true">
+    <Position X="9.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAEAAAAEBAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Measurement\Time\SpanRange.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Time" Collapsed="true">
+    <Position X="11" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAACAAAAAAAAAAAIAACAAACIAAAAAAAAAIAg=</HashCode>
+      <FileName>Measurement\Time\Time.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.TimeSpanRange" Collapsed="true">
+    <Position X="2.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAABAAAAAAEAAAAEBAAAAABCAAgAEAAAAgAAg=</HashCode>
+      <FileName>Measurement\Time\TimeSpanRange.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.UniversalDateTime" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAASAAAGQAgAAACAAAAABAAAhCAAAAYA=</HashCode>
+      <FileName>Measurement\Time\UniversalDateTime.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Weeks" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAghAAgAQEwAGAAiAAAQAAAIAAAAAhSAASQqA=</HashCode>
+      <FileName>Measurement\Time\Weeks.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.WhenRange" Collapsed="true">
+    <Position X="7.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAEAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Measurement\Time\WhenRange.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Years" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAghAAgAQEwAGAAgAAAQAAAIAAAAAhSAASAqA=</HashCode>
+      <FileName>Measurement\Time\Years.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Yoctoseconds" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAACAAAgBAAgAQE2AGAAoAAAQCEAIAAAQghCAAAAqg=</HashCode>
+      <FileName>Measurement\Time\Yoctoseconds.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Zeptoseconds" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAgBAAgAQE0AGEAoAAAQAEAKCAAQghCAAwCqA=</HashCode>
+      <FileName>Measurement\Time\Zeptoseconds.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Clocks.Day" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gBAAAACAAAAABAAAAAAAAAAAABAAAAAAAAAgAAAAQAA=</HashCode>
+      <FileName>Measurement\Time\Clocks\Day.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Clocks.Month" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gBAAAACAAAAABAAAAAAAAAAAABAAAAAAAAAgAAAAQAA=</HashCode>
+      <FileName>Measurement\Time\Clocks\Month.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="Librainian.Measurement.Time.Clocks.Year" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAACAAgAAABAAAAAAAAAgAAAAYAA=</HashCode>
+      <FileName>Measurement\Time\Clocks\Year.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Enum Name="Librainian.Measurement.Time.Era" Collapsed="true">
+    <Position X="4" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Measurement\Time\Era.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Librainian.Measurement.Time.RoundTo" Collapsed="true">
+    <Position X="5.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAAAIAAAAAACIAAAAAAAAAAAA=</HashCode>
+      <FileName>Measurement\Time\RoundTo.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Librainian.Measurement.Time.Clocks.AMorPM" Collapsed="true">
+    <Position X="2.25" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Measurement\Time\Clocks\AMorPM.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

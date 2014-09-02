@@ -26,6 +26,7 @@ namespace Librainian.Measurement.Time {
     using System.Runtime.Serialization;
     using Annotations;
     using FluentAssertions;
+    using Maths;
     using NUnit.Framework;
 
     /// <summary>
@@ -55,7 +56,6 @@ namespace Librainian.Measurement.Time {
         ///     <para>18548608483392000000m</para>
         /// </summary>
         public static readonly BigInteger InOneYoctosecond = new BigInteger( 1.855E19 );
-
         public static readonly BigInteger InOneZeptosecond = new BigInteger( 1.855E22 );
         public static readonly BigInteger InOneAttosecond = new BigInteger( 1.855E25 );
         public static readonly BigInteger InOneFemtosecond = new BigInteger( 1.855E28 );
@@ -64,12 +64,12 @@ namespace Librainian.Measurement.Time {
         public static readonly BigInteger InOneMicrosecond = new BigInteger( 1.855E37 );
         public static readonly BigInteger InOneMillisecond = new BigInteger( 1.855E40 );
         public static readonly BigInteger InOneSecond = new BigInteger( 1.855E43 );
-        public static readonly BigInteger InOneMinute = new BigInteger( 1.113E45 );
-        public static readonly BigInteger InOneHour = new BigInteger( 6.678E46 );
-        public static readonly BigInteger InOneDay = new BigInteger( 1.603E48 );
-        public static readonly BigInteger InOneWeek = new BigInteger( 1.122E49 );
-        public static readonly BigInteger InOneMonth = new BigInteger( 4.875E49 );
-        public static readonly BigInteger InOneYear = new BigInteger( 5.85E50 );
+        public static readonly BigInteger InOneMinute = InOneSecond * Seconds.InOneMinute;  //new BigInteger( 1.113E45 );
+        public static readonly BigInteger InOneHour = InOneMinute * Minutes.InOneHour;  //new BigInteger( 6.678E46 );
+        public static readonly BigInteger InOneDay = InOneHour * Hours.InOneDay;    //new BigInteger( 1.603E48 );
+        public static readonly BigInteger InOneWeek = InOneDay * Days.InOneWeek;    //new BigInteger( 1.122E49 );
+        public static readonly BigInteger InOneMonth = ( BigInteger ) ( InOneWeek * ( BigDecimal )Weeks.InOneMonth );    //new BigInteger( 4.875E49 );
+        public static readonly BigInteger InOneYear = InOneSecond * Seconds.InOneCommonYear; // new BigInteger( 5.85E50 );
 
         //public static readonly BigInteger InOneZeptosecond = BigInteger.Multiply( InOneYoctosecond, Yoctoseconds.InOneZeptosecond );
         //public static readonly BigInteger InOneAttosecond = BigInteger.Multiply( InOneZeptosecond, Zeptoseconds.InOneAttosecond );
@@ -198,26 +198,6 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( PlanckTimes left, PlanckTimes right ) {
             return left.Value > right.Value;
-        }
-
-        [Test]
-        public static void TestConstants() {
-            //InOneMillenium.Should().BeGreaterThan( InOneCentury );
-            //InOneCentury.Should().BeGreaterThan( InOneYear );
-            InOneYear.Should().BeGreaterThan( InOneMonth );
-            InOneMonth.Should().BeGreaterThan( InOneWeek );
-            InOneWeek.Should().BeGreaterThan( InOneDay );
-            InOneDay.Should().BeGreaterThan( InOneHour );
-            InOneHour.Should().BeGreaterThan( InOneMinute );
-            InOneMinute.Should().BeGreaterThan( InOneSecond );
-            InOneSecond.Should().BeGreaterThan( InOneMillisecond );
-            InOneMillisecond.Should().BeGreaterThan( InOneMicrosecond );
-            InOneMicrosecond.Should().BeGreaterThan( InOneNanosecond );
-            InOneNanosecond.Should().BeGreaterThan( InOnePicosecond );
-            InOnePicosecond.Should().BeGreaterThan( InOneFemtosecond );
-            InOneFemtosecond.Should().BeGreaterThan( InOneAttosecond );
-            InOneAttosecond.Should().BeGreaterThan( InOneZeptosecond );
-            InOneZeptosecond.Should().BeGreaterThan( InOneYoctosecond );
         }
 
         /// <summary>

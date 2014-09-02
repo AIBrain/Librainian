@@ -133,7 +133,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
-        public static explicit operator Weeks( Days days ) {
+        public static implicit operator Weeks( Days days ) {
             return days.ToWeeks();
         }
 
