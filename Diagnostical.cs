@@ -278,26 +278,26 @@ namespace Librainian {
 
         [Test]
         public static void TestHour() {
-            Hour.Min.Value.Should().BeLessThan( Hour.Max.Value );
-            Hour.Max.Value.Should().BeGreaterThan( Hour.Min.Value );
+            Hour.Minimum.Value.Should().BeLessThan( Hour.Maximum.Value );
+            Hour.Maximum.Value.Should().BeGreaterThan( Hour.Minimum.Value );
         }
 
         [Test]
         public static void TestMinute() {
-            Minute.Min.Value.Should().BeLessThan( Minute.Max.Value );
-            Minute.Max.Value.Should().BeGreaterThan( Minute.Min.Value );
+            Minute.Minimum.Value.Should().BeLessThan( Minute.Maximum.Value );
+            Minute.Maximum.Value.Should().BeGreaterThan( Minute.Minimum.Value );
         }
 
         [Test]
         public static void TestSecond() {
-            Second.Min.Value.Should().BeLessThan( Second.Max.Value );
-            Second.Max.Value.Should().BeGreaterThan( Second.Min.Value );
+            Second.Minimum.Value.Should().BeLessThan( Second.Maximum.Value );
+            Second.Maximum.Value.Should().BeGreaterThan( Second.Minimum.Value );
         }
 
         [Test]
         public static void TestMillisecond() {
-            Millisecond.Min.Value.Should().BeLessThan( Millisecond.Max.Value );
-            Millisecond.Max.Value.Should().BeGreaterThan( Millisecond.Min.Value );
+            Millisecond.Minimum.Value.Should().BeLessThan( Millisecond.Maximum.Value );
+            Millisecond.Maximum.Value.Should().BeGreaterThan( Millisecond.Minimum.Value );
         }
     }
 }

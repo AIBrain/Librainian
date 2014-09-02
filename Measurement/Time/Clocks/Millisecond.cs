@@ -52,7 +52,7 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <summary>
         ///     
         /// </summary>
-        public static readonly Millisecond Maxium = new Millisecond( MaximumValue );
+        public static readonly Millisecond Maximum = new Millisecond( MaximumValue );
 
         /// <summary>
         ///     

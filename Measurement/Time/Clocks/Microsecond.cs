@@ -27,7 +27,7 @@ namespace Librainian.Measurement.Time.Clocks {
     using System.Linq;
     using System.Runtime.Serialization;
     using FluentAssertions;
-    using Librainian.Extensions;y
+    using Librainian.Extensions;
 
     /// <summary>
     ///     A simple struct for a <see cref="Microsecond" />.
@@ -93,10 +93,11 @@ namespace Librainian.Measurement.Time.Clocks {
         public Microsecond Next( out Boolean ticked ) {
             ticked = false;
             var next = this.Value + 1;
-            if ( next > MaximumValue ) {
-                next = MinimumValue;
-                ticked = true;
+            if ( next <= MaximumValue ) {
+                return new Microsecond( ( UInt16 ) next );
             }
+            next = MinimumValue;
+            ticked = true;
             return new Microsecond( ( UInt16 )next );
         }
 
@@ -106,10 +107,11 @@ namespace Librainian.Measurement.Time.Clocks {
         public Microsecond Previous( out Boolean ticked ) {
             ticked = false;
             var next = this.Value - 1;
-            if ( next < MinimumValue ) {
-                next = MaximumValue;
-                ticked = true;
+            if ( next >= MinimumValue ) {
+                return new Microsecond( ( UInt16 ) next );
             }
+            next = MaximumValue;
+            ticked = true;
             return new Microsecond( ( UInt16 )next );
         }
     }

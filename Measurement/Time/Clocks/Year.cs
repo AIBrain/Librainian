@@ -58,21 +58,19 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         /// <summary>
-        ///     Decrease the current month.
+        ///     Decrease the current year.
         /// </summary>
-        public Boolean Rewind() {
+        public Boolean Previous() {
             this.Value--;
             return false;
         }
 
-        public void Set( Byte value ) {
-            this.Value = value;
-        }
+      
 
         /// <summary>
         ///     <para>Increase the year.</para>
         /// </summary>
-        public Boolean Tick() {
+        public Boolean Next() {
             this.Value++;
             return false;
         }

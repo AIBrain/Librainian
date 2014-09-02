@@ -17,13 +17,14 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/TickingClock.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
+// "Librainian/TickingClock.cs" was last cleaned by Rick on 2014/09/02 at 11:25 AM
 
 #endregion License & Information
 
 namespace Librainian.Measurement.Time.Clocks {
 
     using System;
+    using System.Runtime.Serialization;
     using System.Timers;
     using Annotations;
 
@@ -46,6 +47,7 @@ namespace Librainian.Measurement.Time.Clocks {
     ///         </para>
     ///     </para>
     /// </summary>
+    [DataContract( IsReference = true )]
     public class TickingClock : IStandardClock {
 
         /// <summary>
@@ -54,10 +56,10 @@ namespace Librainian.Measurement.Time.Clocks {
         private Timer _timer;
 
         public TickingClock( DateTime time, Granularity granularity = Granularity.Seconds ) {
-            this.Hour = new Hour( time.Hour );
-            this.Minute = new Minute( time.Minute );
-            this.Second = new Second( time.Second );
-            this.Millisecond = new Millisecond( time.Millisecond );
+            this.Hour = new Hour( ( byte )time.Hour );
+            this.Minute = new Minute( ( byte )time.Minute );
+            this.Second = new Second( ( byte )time.Second );
+            this.Millisecond = new Millisecond( ( ushort )time.Millisecond );
             this.ResetTimer( granularity );
         }
 
@@ -78,6 +80,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>
         /// </summary>
+        [DataMember]
         public Hour Hour {
             get;
             private set;
@@ -85,6 +88,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>
         /// </summary>
+        [DataMember]
         public Millisecond Millisecond {
             get;
             private set;
@@ -92,6 +96,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>
         /// </summary>
+        [DataMember]
         public Minute Minute {
             get;
             private set;
@@ -123,6 +128,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>
         /// </summary>
+        [DataMember]
         public Second Second {
             get;
             private set;

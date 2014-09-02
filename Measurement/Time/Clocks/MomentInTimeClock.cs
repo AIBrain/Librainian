@@ -50,7 +50,7 @@ namespace Librainian.Measurement.Time.Clocks {
         public MomentInTimeClock( DateTime time ) {
             this.Hour = new Hour( ( byte ) time.Hour );
             this.Minute = new Minute( ( byte ) time.Minute );
-            this.Second = new Second( time.Second );
+            this.Second = new Second( ( byte ) time.Second );
         }
 
         [DataMember]

@@ -62,7 +62,7 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         /// <summary>
-        ///     Provide the next minute.
+        ///     Provide the next second.
         /// </summary>
         public Second Next( out Boolean ticked ) {
             ticked = false;
@@ -75,7 +75,7 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         /// <summary>
-        ///     Provide the previous minute.
+        ///     Provide the previous second.
         /// </summary>
         public Second Previous( out Boolean ticked ) {
             ticked = false;
