@@ -46,28 +46,45 @@ namespace Librainian.Measurement.Time {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
-    public struct PlanckTimes : IComparable< PlanckTimes >, IQuantityOfTime {
+    public struct PlanckTimes : IComparable<PlanckTimes>, IQuantityOfTime {
         /// <summary>
         ///     <para>Possible numbers are:</para>
-        ///     <para>18548608483392000000</para>
+        ///     <para>18548608483392000000</para>    //where did I get this number??? It's so.. specific?
         ///     <para>18550948324478400000</para>
+        ///     <para>18550000000000000000</para>
+        ///     <para>18548608483392000000m</para>
         /// </summary>
-        public static readonly BigInteger InOneYoctosecond = new BigInteger( 18548608483392000000m ); //where did I get this number??? It's so.. accurate?
+        public static readonly BigInteger InOneYoctosecond = new BigInteger( 1.855E19 );
 
-        public static readonly BigInteger InOneZeptosecond = BigInteger.Multiply( InOneYoctosecond, Yoctoseconds.InOneZeptosecond );
-        public static readonly BigInteger InOneAttosecond = BigInteger.Multiply( InOneZeptosecond, Zeptoseconds.InOneAttosecond );
-        public static readonly BigInteger InOneFemtosecond = BigInteger.Multiply( InOneAttosecond, Attoseconds.InOneFemtosecond );
-        public static readonly BigInteger InOnePicosecond = BigInteger.Multiply( InOneFemtosecond, Femtoseconds.InOnePicosecond );
-        public static readonly BigInteger InOneNanosecond = BigInteger.Multiply( InOnePicosecond, Picoseconds.InOneNanosecond );
-        public static readonly BigInteger InOneMicrosecond = BigInteger.Multiply( InOneNanosecond, Nanoseconds.InOneMicrosecond );
-        public static readonly BigInteger InOneMillisecond = BigInteger.Multiply( InOneMicrosecond, Microseconds.InOneMillisecond );
-        public static readonly BigInteger InOneSecond = BigInteger.Multiply( InOneMillisecond, Milliseconds.InOneSecond );
-        public static readonly BigInteger InOneMinute = BigInteger.Multiply( InOneSecond, Seconds.InOneMinute );
-        public static readonly BigInteger InOneHour = BigInteger.Multiply( InOneMinute, Minutes.InOneHour );
-        public static readonly BigInteger InOneDay = BigInteger.Multiply( InOneHour, Hours.InOneDay );
-        public static readonly BigInteger InOneWeek = BigInteger.Multiply( InOneDay, Days.InOneWeek );
-        public static readonly BigInteger InOneMonth = BigInteger.Multiply( InOneHour, Hours.InOneMonth );
-        public static readonly BigInteger InOneYear = BigInteger.Multiply( InOneMonth, Months.InOneYear );
+        public static readonly BigInteger InOneZeptosecond = new BigInteger( 1.855E22 );
+        public static readonly BigInteger InOneAttosecond = new BigInteger( 1.855E25 );
+        public static readonly BigInteger InOneFemtosecond = new BigInteger( 1.855E28 );
+        public static readonly BigInteger InOnePicosecond = new BigInteger( 1.855E31 );
+        public static readonly BigInteger InOneNanosecond = new BigInteger( 1.855E34 );
+        public static readonly BigInteger InOneMicrosecond = new BigInteger( 1.855E37 );
+        public static readonly BigInteger InOneMillisecond = new BigInteger( 1.855E40 );
+        public static readonly BigInteger InOneSecond = new BigInteger( 1.855E43 );
+        public static readonly BigInteger InOneMinute = new BigInteger( 1.113E45 );
+        public static readonly BigInteger InOneHour = new BigInteger( 6.678E46 );
+        public static readonly BigInteger InOneDay = new BigInteger( 1.603E48 );
+        public static readonly BigInteger InOneWeek = new BigInteger( 1.122E49 );
+        public static readonly BigInteger InOneMonth = new BigInteger( 4.875E49 );
+        public static readonly BigInteger InOneYear = new BigInteger( 5.85E50 );
+
+        //public static readonly BigInteger InOneZeptosecond = BigInteger.Multiply( InOneYoctosecond, Yoctoseconds.InOneZeptosecond );
+        //public static readonly BigInteger InOneAttosecond = BigInteger.Multiply( InOneZeptosecond, Zeptoseconds.InOneAttosecond );
+        //public static readonly BigInteger InOneFemtosecond = BigInteger.Multiply( InOneAttosecond, Attoseconds.InOneFemtosecond );
+        //public static readonly BigInteger InOnePicosecond = BigInteger.Multiply( InOneFemtosecond, Femtoseconds.InOnePicosecond );
+        //public static readonly BigInteger InOneNanosecond = BigInteger.Multiply( InOnePicosecond, Picoseconds.InOneNanosecond );
+        //public static readonly BigInteger InOneMicrosecond = BigInteger.Multiply( InOneNanosecond, Nanoseconds.InOneMicrosecond );
+        //public static readonly BigInteger InOneMillisecond = BigInteger.Multiply( InOneMicrosecond, Microseconds.InOneMillisecond );
+        //public static readonly BigInteger InOneSecond = BigInteger.Multiply( InOneMillisecond, Milliseconds.InOneSecond );
+        //public static readonly BigInteger InOneMinute = BigInteger.Multiply( InOneSecond, Seconds.InOneMinute );
+        //public static readonly BigInteger InOneHour = BigInteger.Multiply( InOneMinute, Minutes.InOneHour );
+        //public static readonly BigInteger InOneDay = BigInteger.Multiply( InOneHour, Hours.InOneDay );
+        //public static readonly BigInteger InOneWeek = BigInteger.Multiply( InOneDay, Days.InOneWeek );
+        //public static readonly BigInteger InOneMonth = BigInteger.Multiply( InOneHour, Hours.InOneMonth );
+        //public static readonly BigInteger InOneYear = BigInteger.Multiply( InOneMonth, Months.InOneYear );
 
         //public static readonly BigInteger InOneCentury = BigInteger.Multiply( InOneYear, Years.InOneCentury );
         //public static readonly BigInteger InOneMillenium = BigInteger.Multiply( InOneCentury, Centuries.InOneMillenium );
@@ -88,7 +105,8 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly PlanckTimes Zero = new PlanckTimes( value: 0 );
 
-        [DataMember] public readonly BigInteger Value; //according to wikipedia, planck units by definition cannot be spilt into smaller units.
+        [DataMember]
+        public readonly BigInteger Value; //according to wikipedia, planck units by definition cannot be spilt into smaller units.
 
         static PlanckTimes() {
             Zero.Should().BeLessThan( One );
@@ -97,20 +115,28 @@ namespace Librainian.Measurement.Time {
             One.Should().BeLessThan( Yoctoseconds.One );
         }
 
-        public PlanckTimes( long value ) : this( ( BigInteger ) value ) { }
+        public PlanckTimes( long value ) : this( ( BigInteger )value ) {
+        }
 
-        public PlanckTimes(Decimal value ) : this( ( BigInteger ) value ) { }
+        public PlanckTimes( Decimal value ) : this( ( BigInteger )value ) {
+        }
 
         public PlanckTimes( BigInteger value ) {
             this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
         }
 
-        public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes() ) { }
+        public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes() ) {
+        }
 
-        public PlanckTimes( Years years ) : this( years.ToPlanckTimes() ) { }
+        public PlanckTimes( Years years ) : this( years.ToPlanckTimes() ) {
+        }
 
         [UsedImplicitly]
-        private string DebuggerDisplay { get { return this.ToString(); } }
+        private string DebuggerDisplay {
+            get {
+                return this.ToString();
+            }
+        }
 
         [Pure]
         public int CompareTo( PlanckTimes other ) {
@@ -138,7 +164,7 @@ namespace Librainian.Measurement.Time {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
-            return obj is PlanckTimes && this.Equals( ( PlanckTimes ) obj );
+            return obj is PlanckTimes && this.Equals( ( PlanckTimes )obj );
         }
 
         public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) {
@@ -200,7 +226,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="planckTimes"></param>
         /// <returns></returns>
         public static Yoctoseconds ToYoctoseconds( PlanckTimes planckTimes ) {
-            return new Yoctoseconds( planckTimes.Value/InOneYoctosecond );
+            return new Yoctoseconds( planckTimes.Value / InOneYoctosecond );
         }
 
         public static PlanckTimes operator +( PlanckTimes left, PlanckTimes right ) {

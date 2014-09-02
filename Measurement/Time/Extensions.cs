@@ -485,9 +485,9 @@ namespace Librainian.Measurement.Time {
             if ( span.Days.Value > 0 ) {
                 counter += span.Days.ToPlanckTimes();
             }
-            if ( span.Weeks.Value > 0 ) {
-                counter += span.Weeks.ToPlanckTimes();
-            }
+            //if ( span.Weeks.Value > 0 ) {
+            //    counter += span.Weeks.ToPlanckTimes();
+            //}
             if ( span.Months.Value > 0 ) {
                 counter += span.Months.ToPlanckTimes();
             }

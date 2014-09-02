@@ -33,7 +33,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         /// 52
         /// </summary>
-        public const UInt16 InOneYear = 52;
+        public const Decimal InOneYear = 52.4m;
 
         /// <summary>
         ///     One <see cref="Weeks" /> .
@@ -116,9 +116,9 @@ namespace Librainian.Measurement.Time {
             return weeks.ToDays();
         }
 
-        public static implicit operator Span( Weeks weeks ) {
-            return new Span( weeks: weeks.Value );
-        }
+        //public static implicit operator Span( Weeks weeks ) {
+        //    return new Span( weeks: weeks.Value );
+        //}
 
         public static Weeks operator -( Weeks days ) {
             return new Weeks( days.Value*-1 );

@@ -28,7 +28,7 @@ namespace Librainian.Measurement.Time {
 
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    public struct Minutes : IComparable< Minutes > {
+    public struct Minutes : IComparable< Minutes >, IQuantityOfTime {
         /// <summary>
         ///     60
         /// </summary>

@@ -788,6 +788,32 @@ namespace Librainian.Parsing {
             return words;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://stackoverflow.com/a/7829529/956364"/>
+        public static string ToVerbalWord( this decimal number ) {
+            if ( number == 0 )
+                return "zero";
+
+            if ( number < 0 )
+                return "minus " + ToVerbalWord( Math.Abs( number ) );
+
+            var intPortion = ( int )number;
+            var fraction = ( number - intPortion ) * 100;
+            var decPortion = ( int )fraction;
+
+            var words = ToVerbalWord( intPortion );
+            if ( decPortion <= 0 ) {
+                return words;
+            }
+            words += " and ";
+            words += ToVerbalWord( decPortion );
+            return words;
+        }
+
         private static readonly String[] UnitsMap = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
 
         private static readonly String[] TensMap = { "zero", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };

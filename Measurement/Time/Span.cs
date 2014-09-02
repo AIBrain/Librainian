@@ -44,12 +44,30 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Span MatrixID = new Span( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
 
+        static Span() {
+            MatrixID.Years.Value.Should().Be( 1 );
+            MatrixID.Months.Value.Should().Be( 1 );
+            MatrixID.Weeks.Value.Should().Be( 1 );
+            MatrixID.Days.Value.Should().Be( 1 );
+            MatrixID.Hours.Value.Should().Be( 1 );
+            MatrixID.Minutes.Value.Should().Be( 1 );
+            MatrixID.Seconds.Value.Should().Be( 1 );
+            MatrixID.Milliseconds.Value.Should().Be( 1 );
+            MatrixID.Microseconds.Value.Should().Be( 1 );
+            MatrixID.Nanoseconds.Value.Should().Be( 1 );
+            MatrixID.Picoseconds.Value.Should().Be( 1 );
+            MatrixID.Attoseconds.Value.Should().Be( 1 );
+            MatrixID.Femtoseconds.Value.Should().Be( 1 );
+            MatrixID.Zeptoseconds.Value.Should().Be( 1 );
+            MatrixID.Yoctoseconds.Value.Should().Be( 1 );
+        }
+
         /// <summary>
         /// </summary>
         public static readonly Span Zero = new Span( planckTimes: 0 );
 
-        public static readonly Span Infinity = new Span( yoctoseconds:Decimal.MaxValue, zeptoseconds:Decimal.MaxValue, attoseconds:Decimal.MaxValue, femtoseconds:Decimal.MaxValue, picoseconds:Decimal.MaxValue, nanoseconds:Decimal.MaxValue, microseconds:Decimal.MaxValue, milliseconds:Decimal.MaxValue, seconds:Decimal.MaxValue, minutes:Decimal.MaxValue, hours:Decimal.MaxValue, days:Decimal.MaxValue, weeks:Decimal.MaxValue, months:Decimal.MaxValue ); //not the largest Span possible, but anything larger.. wow. just wow.
-        public static readonly Span Forever = new Span( years:Decimal.MaxValue ); //not the largest Span possible, but anything larger.. wow. just wow.
+        public static readonly Span Infinity = new Span( yoctoseconds: Decimal.MaxValue, zeptoseconds: Decimal.MaxValue, attoseconds: Decimal.MaxValue, femtoseconds: Decimal.MaxValue, picoseconds: Decimal.MaxValue, nanoseconds: Decimal.MaxValue, microseconds: Decimal.MaxValue, milliseconds: Decimal.MaxValue, seconds: Decimal.MaxValue, minutes: Decimal.MaxValue, hours: Decimal.MaxValue, days: Decimal.MaxValue, weeks: Decimal.MaxValue, months: Decimal.MaxValue ); //not the largest Span possible, but anything larger.. wow. just wow.
+        public static readonly Span Forever = new Span( years: Decimal.MaxValue ); //not the largest Span possible, but anything larger.. wow. just wow.
 
         /// <summary>
         /// </summary>
@@ -148,7 +166,7 @@ namespace Librainian.Measurement.Time {
             this.Months.Value.Should().BeInRange( 0, Months.InOneYear );
 
             this.Weeks = new Weeks( PlanckTimes.InOneWeek.PullPlancks( ref planckTimes ) );
-            this.Weeks.Value.Should().BeInRange( 0, Weeks.InOneYear );
+            this.Weeks.Value.Should().BeInRange( 0.0m, Weeks.InOneYear );
 
             this.Days = new Days( PlanckTimes.InOneDay.PullPlancks( ref planckTimes ) );
             this.Days.Value.Should().BeInRange( 0, Days.InOneCommonYear + 1 );  //leap year
@@ -163,19 +181,19 @@ namespace Librainian.Measurement.Time {
             this.Seconds.Value.Should().BeInRange( 0, Seconds.InOneMinute );
 
             this.Milliseconds = new Milliseconds( PlanckTimes.InOneMillisecond.PullPlancks( ref planckTimes ) );
-            this.Milliseconds.Value.Should().BeInRange( 0, Milliseconds.InOneSecond);
+            this.Milliseconds.Value.Should().BeInRange( 0, Milliseconds.InOneSecond );
 
             this.Microseconds = new Microseconds( PlanckTimes.InOneMicrosecond.PullPlancks( ref planckTimes ) );
             this.Microseconds.Value.Should().BeInRange( 0, Microseconds.InOneMillisecond );
 
             this.Nanoseconds = new Nanoseconds( PlanckTimes.InOneNanosecond.PullPlancks( ref planckTimes ) );
-            this.Nanoseconds.Value.Should().BeInRange( 0, Nanoseconds.InOneMicrosecond);
+            this.Nanoseconds.Value.Should().BeInRange( 0, Nanoseconds.InOneMicrosecond );
 
             this.Picoseconds = new Picoseconds( PlanckTimes.InOnePicosecond.PullPlancks( ref planckTimes ) );
             this.Picoseconds.Value.Should().BeInRange( 0, Picoseconds.InOneNanosecond );
 
             this.Femtoseconds = new Femtoseconds( PlanckTimes.InOneFemtosecond.PullPlancks( ref planckTimes ) );
-            this.Femtoseconds.Value.Should().BeInRange( 0, Femtoseconds.InOnePicosecond);
+            this.Femtoseconds.Value.Should().BeInRange( 0, Femtoseconds.InOnePicosecond );
 
             this.Attoseconds = new Femtoseconds( PlanckTimes.InOneAttosecond.PullPlancks( ref planckTimes ) );
             this.Attoseconds.Value.Should().BeInRange( 0, Attoseconds.InOneFemtosecond );
@@ -269,7 +287,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="weeks"></param>
         /// <param name="months"></param>
         /// <param name="years"></param>
-        public Span(Decimal yoctoseconds = 0,Decimal zeptoseconds = 0,Decimal attoseconds = 0,Decimal femtoseconds = 0,Decimal picoseconds = 0,Decimal nanoseconds = 0,Decimal microseconds = 0,Decimal milliseconds = 0,Decimal seconds = 0,Decimal minutes = 0,Decimal hours = 0,Decimal days = 0,Decimal weeks = 0,Decimal months = 0,Decimal years = 0 )
+        public Span( Decimal yoctoseconds = 0, Decimal zeptoseconds = 0, Decimal attoseconds = 0, Decimal femtoseconds = 0, Decimal picoseconds = 0, Decimal nanoseconds = 0, Decimal microseconds = 0, Decimal milliseconds = 0, Decimal seconds = 0, Decimal minutes = 0, Decimal hours = 0, Decimal days = 0, Decimal weeks = 0, Decimal months = 0, Decimal years = 0 )
             : this() {
             //TODO Unit testing needed to verify the math.
 
@@ -307,7 +325,7 @@ namespace Librainian.Measurement.Time {
             this.Minutes = span.Minutes;
             this.Hours = span.Hours;
             this.Days = span.Days;
-            this.Weeks = span.Weeks;
+            //this.Weeks = span.Weeks;
             this.Months = span.Months;
             this.Years = span.Years;
 
@@ -420,7 +438,7 @@ namespace Librainian.Measurement.Time {
         ///     TODO untested
         /// </summary>
         /// <param name="seconds"></param>
-        public Span(Decimal seconds )
+        public Span( Decimal seconds )
             : this() {
             var span = new Span( new Seconds( seconds ).ToPlanckTimes() );
 
@@ -436,7 +454,7 @@ namespace Librainian.Measurement.Time {
             this.Nanoseconds = span.Nanoseconds;
             this.Picoseconds = span.Picoseconds;
             this.Seconds = span.Seconds;
-            this.Weeks = span.Weeks;
+            //this.Weeks = span.Weeks;
             this.Years = span.Years;
             this.Yoctoseconds = span.Yoctoseconds;
             this.Zeptoseconds = span.Zeptoseconds;
@@ -635,7 +653,7 @@ namespace Librainian.Measurement.Time {
                     return new Span( result ); //cheat and use the existing TimeSpan parsing code...
                 }
 
-               Decimal units;
+                Decimal units;
                 if ( text.IsJustNumbers( out units ) ) {
                     return new Span( seconds: units ); //assume seconds given
                 }
@@ -714,55 +732,55 @@ namespace Librainian.Measurement.Time {
         /// </returns>
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode() {
-            return this.PlanckTimes.GetHashMerge( this.Yoctoseconds.GetHashMerge( this.Zeptoseconds.GetHashMerge( this.Attoseconds.GetHashMerge( this.Femtoseconds.GetHashMerge( this.Picoseconds.GetHashMerge( this.Nanoseconds.GetHashMerge( this.Microseconds.GetHashMerge( this.Milliseconds.GetHashMerge( this.Seconds.GetHashMerge( this.Minutes.GetHashMerge( this.Hours.GetHashMerge( this.Days.GetHashMerge( this.Weeks.GetHashMerge( this.Months.GetHashMerge( this.Years ) ) ) ) ) ) ) ) ) ) ) ) ) ) );
+            return this.PlanckTimes.GetHashMerge( this.Yoctoseconds.GetHashMerge( this.Zeptoseconds.GetHashMerge( this.Attoseconds.GetHashMerge( this.Femtoseconds.GetHashMerge( this.Picoseconds.GetHashMerge( this.Nanoseconds.GetHashMerge( this.Microseconds.GetHashMerge( this.Milliseconds.GetHashMerge( this.Seconds.GetHashMerge( this.Minutes.GetHashMerge( this.Hours.GetHashMerge( this.Days.GetHashMerge( /*this.Weeks.GetHashMerge(*/ this.Months.GetHashMerge( this.Years ) /*)*/ ) ) ) ) ) ) ) ) ) ) ) ) );
         }
 
         public override String ToString() {
             var bob = new Queue<string>( 20 );
 
-            if ( this.Years.Value !=Decimal.Zero ) {
+            if ( this.Years.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Years.ToString() );
             }
-            if ( this.Months.Value !=Decimal.Zero ) {
+            if ( this.Months.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Months.ToString() );
             }
-            if ( this.Weeks.Value !=Decimal.Zero ) {
-                bob.Enqueue( this.Weeks.ToString() );
-            }
-            if ( this.Days.Value !=Decimal.Zero ) {
+            //if ( this.Weeks.Value !=Decimal.Zero ) {
+            //    bob.Enqueue( this.Weeks.ToString() );
+            //}
+            if ( this.Days.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Days.ToString() );
             }
-            if ( this.Hours.Value !=Decimal.Zero ) {
+            if ( this.Hours.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Hours.ToString() );
             }
-            if ( this.Minutes.Value !=Decimal.Zero ) {
+            if ( this.Minutes.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Minutes.ToString() );
             }
-            if ( this.Seconds.Value !=Decimal.Zero ) {
+            if ( this.Seconds.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Seconds.ToString() );
             }
-            if ( this.Milliseconds.Value !=Decimal.Zero ) {
+            if ( this.Milliseconds.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Milliseconds.ToString() );
             }
-            if ( this.Microseconds.Value !=Decimal.Zero ) {
+            if ( this.Microseconds.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Microseconds.ToString() );
             }
-            if ( this.Nanoseconds.Value !=Decimal.Zero ) {
+            if ( this.Nanoseconds.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Nanoseconds.ToString() );
             }
-            if ( this.Picoseconds.Value !=Decimal.Zero ) {
+            if ( this.Picoseconds.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Picoseconds.ToString() );
             }
-            if ( this.Femtoseconds.Value !=Decimal.Zero ) {
+            if ( this.Femtoseconds.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Femtoseconds.ToString() );
             }
-            if ( this.Attoseconds.Value !=Decimal.Zero ) {
+            if ( this.Attoseconds.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Attoseconds.ToString() );
             }
-            if ( this.Zeptoseconds.Value !=Decimal.Zero ) {
+            if ( this.Zeptoseconds.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Zeptoseconds.ToString() );
             }
-            if ( this.Yoctoseconds.Value !=Decimal.Zero ) {
+            if ( this.Yoctoseconds.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Yoctoseconds.ToString() );
             }
             if ( this.PlanckTimes.Value != BigInteger.Zero ) {
@@ -772,59 +790,92 @@ namespace Librainian.Measurement.Time {
             return bob.ToStrings( ", " );
         }
 
-        private static readonly BigDecimal MaximumUsefulDecimal = new BigDecimal(Decimal.MaxValue );
+        private static readonly BigDecimal MaximumUsefulDecimal = new BigDecimal( Decimal.MaxValue );
 
         public String ApproximatelySeconds() {
 
             BigDecimal bigSeconds = this.Seconds.Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Milliseconds.ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Microseconds.ToMilliseconds().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Nanoseconds.ToMicroseconds().ToMilliseconds().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Picoseconds.ToNanoseconds().ToMicroseconds().ToMilliseconds().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Femtoseconds.ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Attoseconds.ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Zeptoseconds.ToAttoseconds().ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Yoctoseconds.ToZeptoseconds().ToAttoseconds().ToFemtoseconds().ToPicoseconds().ToNanoseconds().ToMicroseconds().ToMilliseconds().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
-            bigSeconds += this.Minutes.ToSeconds().Value ;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            bigSeconds += this.Minutes.ToSeconds().Value;
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Hours.ToMinutes().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Days.ToHours().ToMinutes().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Weeks.ToDays().ToHours().ToMinutes().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Months.ToYears().ToDays().ToHours().ToMinutes().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
 
             bigSeconds += this.Years.ToDays().ToHours().ToMinutes().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) { goto display; }
-            
+            if ( bigSeconds >= MaximumUsefulDecimal ) {
+                goto display;
+            }
+
 
 
         display:
-            var asSeconds = new Seconds( (Decimal )bigSeconds );
+            if ( bigSeconds >= MaximumUsefulDecimal ) { //  ||||
+                bigSeconds = MaximumUsefulDecimal;  // HACK VVVV
+            }
+            var asSeconds = new Seconds( ( Decimal )bigSeconds );
             return String.Format( "{0} seconds", asSeconds );
         }
 
