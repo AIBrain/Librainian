@@ -74,14 +74,17 @@ namespace Librainian.Measurement.Time {
             : this( hour: ( Byte )dateTime.Hour, minute: ( Byte )dateTime.Minute, second: ( Byte )dateTime.Second, millisecond: ( UInt16 )dateTime.Millisecond ) {
         }
 
-        ///// <summary>
-        ///// </summary>
-        ///// <param name="span"></param>
-        //public Time( Span span ) : this(
-        //    hour: ( byte ) span.Hours.Value,
-        //    minute: ( Byte )span.Minutes.Value,
-        //    second: ( Byte )span.Seconds.Value, millisecond: ( ushort )span.Milliseconds.Value, microsecond: ( ushort )span.Microseconds.Value ) {
-        //}
+        /// <summary>
+        /// </summary>
+        /// <param name="span"></param>
+        public Time( Span span )
+            : this(
+                hour: ( byte )span.Hours.Value,
+                minute: ( Byte )span.Minutes.Value,
+                second: ( Byte )span.Seconds.Value,
+            millisecond: ( ushort )span.Milliseconds.Value,
+            microsecond: ( ushort )span.Microseconds.Value ) {
+        }
 
         /// <summary>
         ///     Get the local system's computer time.
