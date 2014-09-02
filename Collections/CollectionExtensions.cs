@@ -719,6 +719,7 @@ namespace Librainian.Collections {
                 while ( list.Count > 2 ) {
                     list.RemoveAt( 0 );
                 }
+                result += separator;
                 T item;
                 if ( list.TakeFirst( out item ) ) {
                     result += item;
