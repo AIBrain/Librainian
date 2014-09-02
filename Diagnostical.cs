@@ -36,13 +36,15 @@ namespace Librainian {
     using Parsing;
     using Threading;
 
-    [ TestFixture ]
+    [TestFixture]
     public static class Diagnostical {
-        [ TestFixtureSetUp ]
-        public static void Setup() { }
+        [TestFixtureSetUp]
+        public static void Setup() {
+        }
 
-        [ TestFixtureTearDown ]
-        public static void TearDown() { }
+        [TestFixtureTearDown]
+        public static void TearDown() {
+        }
 
         [Test]
         public static void TestPlanckTimes() {
@@ -67,7 +69,7 @@ namespace Librainian {
             if ( condition ) {
                 return;
             }
-            if ( !String.IsNullOrEmpty( message) ) {
+            if ( !String.IsNullOrEmpty( message ) ) {
                 Debug.WriteLine( message );
             }
             if ( Debugger.IsAttached ) {
@@ -80,7 +82,7 @@ namespace Librainian {
             if ( !condition ) {
                 return;
             }
-            if ( !String.IsNullOrEmpty( message) ) {
+            if ( !String.IsNullOrEmpty( message ) ) {
                 Debug.WriteLine( message );
             }
             if ( Debugger.IsAttached ) {
@@ -168,16 +170,16 @@ namespace Librainian {
             wordToGuidAndGuidToWord[ g ].Same( "AIBrain" ).BreakIfFalse();
         }
 
-        [ Test ]
+        [Test]
         public static void TestSimilarities() {
-            var reasons = new ConcurrentQueue< string >();
+            var reasons = new ConcurrentQueue<string>();
             var test1 = ParsingExtensions.Similarity( "hi", "hello", ref reasons );
             String.Format( "test1 was {0}", test1 ).TimeDebug();
         }
 
         [Test]
         public static void TestRandems() {
-            var ints = new ConcurrentBag< int >();
+            var ints = new ConcurrentBag<int>();
             Parallel.ForEach( source: 1.To( ThreadingExtensions.ProcessorCount ), parallelOptions: ThreadingExtensions.Parallelism, body: i => Randem.AddToList( ints ) );
             if ( !ints.Duplicates().Any() ) {
                 return;
@@ -212,13 +214,13 @@ namespace Librainian {
 
         [Test]
         public static Boolean PassProbabilityTest() {
-            var lower = new List< bool >();
+            var lower = new List<bool>();
             var probability = -0.33f;
             for ( var i = 0 ; i < 1048576 * 10 ; i++ ) {
                 lower.Add( probability.Probability() );
             }
 
-            var higher = new List< bool >();
+            var higher = new List<bool>();
             probability = 0.123f;
             for ( var i = 0 ; i < 1048576 * 10 ; i++ ) {
                 higher.Add( probability.Probability() );

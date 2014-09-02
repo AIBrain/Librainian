@@ -418,7 +418,6 @@
     <Compile Include="Maths\DoubleConverter.cs" />
     <Compile Include="Maths\NumberExtensions.cs" />
     <Compile Include="Maths\RomanConverter.cs" />
-    <Compile Include="Maths\TestUnitsOfMath.cs" />
     <Compile Include="Maths\Votally.cs" />
     <Compile Include="Maths\VotallyD.cs" />
     <Compile Include="Measurement\Currency\AltCoinExtensions.cs" />
