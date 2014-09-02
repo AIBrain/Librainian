@@ -1,23 +1,26 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
+//
 // "Librainian/DoubleConverter.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
-#endregion
+
+#endregion License & Information
 
 namespace Librainian.Maths {
+
     using System;
     using System.Globalization;
 
@@ -28,6 +31,7 @@ namespace Librainian.Maths {
     /// </summary>
     /// <see cref="http://yoda.arachsys.com/csharp/DoubleConverter.cs" />
     public class DoubleConverter {
+
         /// <summary>
         ///     Converts the given Double to a string representation of its exact  System.Decimal value.
         /// </summary>
@@ -46,9 +50,10 @@ namespace Librainian.Maths {
 
             // Translate the Double into sign, exponent and mantissa.
             var bits = BitConverter.DoubleToInt64Bits( d );
+
             // Note that the shift is sign-extended, hence the test against -1 not 1
             var negative = ( bits < 0 );
-            var exponent = ( int ) ( ( bits >> 52 ) & 0x7ffL );
+            var exponent = ( int )( ( bits >> 52 ) & 0x7ffL );
             var mantissa = bits & 0xfffffffffffffL;
 
             // Subnormal numbers; exponent is effectively one higher,
@@ -56,8 +61,9 @@ namespace Librainian.Maths {
             if ( exponent == 0 ) {
                 exponent++;
             }
-                // Normal numbers; leave exponent as it is but add extra
-                // bit to the front of the mantissa
+
+            // Normal numbers; leave exponent as it is but add extra
+            // bit to the front of the mantissa
             else {
                 mantissa = mantissa | ( 1L << 52 );
             }
@@ -85,14 +91,15 @@ namespace Librainian.Maths {
             // divide by 2 - which is the equivalent of multiplying
             // by 5 and dividing by 10.
             if ( exponent < 0 ) {
-                for ( var i = 0; i < -exponent; i++ ) {
+                for ( var i = 0 ; i < -exponent ; i++ ) {
                     ad.MultiplyBy( 5 );
                 }
                 ad.Shift( -exponent );
             }
-                // Otherwise, we need to repeatedly multiply by 2
+
+            // Otherwise, we need to repeatedly multiply by 2
             else {
-                for ( var i = 0; i < exponent; i++ ) {
+                for ( var i = 0 ; i < exponent ; i++ ) {
                     ad.MultiplyBy( 2 );
                 }
             }
@@ -106,6 +113,7 @@ namespace Librainian.Maths {
 
         /// <summary>Private class used for manipulating
         private class ArbitraryDecimal {
+
             /// <summary>
             ///     How many digits are *after* the  System.Decimal point
             /// </summary>
@@ -120,9 +128,9 @@ namespace Librainian.Maths {
             /// </summary>
             internal ArbitraryDecimal( long x ) {
                 var tmp = x.ToString( CultureInfo.InvariantCulture );
-                this.digits = new byte[tmp.Length];
-                for ( var i = 0; i < tmp.Length; i++ ) {
-                    this.digits[ i ] = ( byte ) ( tmp[ i ] - '0' );
+                this.digits = new byte[ tmp.Length ];
+                for ( var i = 0 ; i < tmp.Length ; i++ ) {
+                    this.digits[ i ] = ( byte )( tmp[ i ] - '0' );
                 }
                 this.Normalize();
             }
@@ -131,9 +139,9 @@ namespace Librainian.Maths {
             ///     Converts the value to a proper  System.Decimal string representation.
             /// </summary>
             public override String ToString() {
-                var digitString = new char[this.digits.Length];
-                for ( var i = 0; i < this.digits.Length; i++ ) {
-                    digitString[ i ] = ( char ) ( this.digits[ i ] + '0' );
+                var digitString = new char[ this.digits.Length ];
+                for ( var i = 0 ; i < this.digits.Length ; i++ ) {
+                    digitString[ i ] = ( char )( this.digits[ i ] + '0' );
                 }
 
                 // Simplest case - nothing after the  System.Decimal point,
@@ -164,11 +172,11 @@ namespace Librainian.Maths {
             ///     only be 2 or 5.
             /// </summary>
             internal void MultiplyBy( int amount ) {
-                var result = new byte[this.digits.Length + 1];
-                for ( var i = this.digits.Length - 1; i >= 0; i-- ) {
-                    var resultDigit = this.digits[ i ]*amount + result[ i + 1 ];
-                    result[ i ] = ( byte ) ( resultDigit/10 );
-                    result[ i + 1 ] = ( byte ) ( resultDigit%10 );
+                var result = new byte[ this.digits.Length + 1 ];
+                for ( var i = this.digits.Length - 1 ; i >= 0 ; i-- ) {
+                    var resultDigit = this.digits[ i ] * amount + result[ i + 1 ];
+                    result[ i ] = ( byte )( resultDigit / 10 );
+                    result[ i + 1 ] = ( byte )( resultDigit % 10 );
                 }
                 if ( result[ 0 ] != 0 ) {
                     this.digits = result;
@@ -184,13 +192,13 @@ namespace Librainian.Maths {
             /// </summary>
             internal void Normalize() {
                 int first;
-                for ( first = 0; first < this.digits.Length; first++ ) {
+                for ( first = 0 ; first < this.digits.Length ; first++ ) {
                     if ( this.digits[ first ] != 0 ) {
                         break;
                     }
                 }
                 int last;
-                for ( last = this.digits.Length - 1; last >= 0; last-- ) {
+                for ( last = this.digits.Length - 1 ; last >= 0 ; last-- ) {
                     if ( this.digits[ last ] != 0 ) {
                         break;
                     }
@@ -200,8 +208,8 @@ namespace Librainian.Maths {
                     return;
                 }
 
-                var tmp = new byte[last - first + 1];
-                for ( var i = 0; i < tmp.Length; i++ ) {
+                var tmp = new byte[ last - first + 1 ];
+                for ( var i = 0 ; i < tmp.Length ; i++ ) {
                     tmp[ i ] = this.digits[ i + first ];
                 }
 

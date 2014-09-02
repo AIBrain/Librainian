@@ -67,6 +67,7 @@ namespace Librainian.Maths {
         }
 
         public UBigInteger( [NotNull] byte[] bytes ) {
+
             // http: //stackoverflow.com/questions/5649190/byte-to-unsigned-biginteger
             if ( bytes == null ) {
                 throw new ArgumentNullException( "bytes" );
@@ -98,24 +99,12 @@ namespace Librainian.Maths {
             this._internalValue = value;
         }
 
-        [Pure]
-        public int CompareTo( [NotNull] object obj ) {
-            if ( obj == null ) {
-                throw new ArgumentNullException( "obj" );
-            }
-            if ( !( obj is UBigInteger ) ) {
-                throw new InvalidCastException();
-            }
-            return this._internalValue.CompareTo( ( UBigInteger )obj );
-        }
-
-        [Pure]
-        public int CompareTo( UBigInteger number ) {
-            return this._internalValue.CompareTo( number._internalValue );
-        }
-
         public static UBigInteger Add( UBigInteger left, UBigInteger right ) {
             return new UBigInteger( BigInteger.Add( left._internalValue, right._internalValue ) );
+        }
+
+        public static explicit operator Decimal( UBigInteger number ) {
+            return ( Decimal )number._internalValue;
         }
 
         public static explicit operator Int32( UBigInteger number ) {
@@ -124,14 +113,6 @@ namespace Librainian.Maths {
 
         public static explicit operator Int64( UBigInteger number ) {
             return ( Int64 )number._internalValue;
-        }
-
-        public static explicit operator UInt64( UBigInteger number ) {
-            return ( UInt64 )number._internalValue;
-        }
-
-        public static explicit operator  Decimal( UBigInteger number ) {
-            return (Decimal )number._internalValue;
         }
 
         public static implicit operator BigInteger( UBigInteger number ) {
@@ -241,6 +222,26 @@ namespace Librainian.Maths {
 
         public static UBigInteger Pow( UBigInteger number, int exponent ) {
             return new UBigInteger( BigInteger.Pow( number._internalValue, exponent ) );
+        }
+
+        [Pure]
+        public int CompareTo( [NotNull] object obj ) {
+            if ( obj == null ) {
+                throw new ArgumentNullException( "obj" );
+            }
+            if ( !( obj is UBigInteger ) ) {
+                throw new InvalidCastException();
+            }
+            return this._internalValue.CompareTo( ( UBigInteger )obj );
+        }
+
+        [Pure]
+        public int CompareTo( UBigInteger number ) {
+            return this._internalValue.CompareTo( number._internalValue );
+        }
+
+        public static explicit operator UInt64( UBigInteger number ) {
+            return ( UInt64 )number._internalValue;
         }
 
         [Pure]

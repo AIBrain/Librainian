@@ -22,6 +22,7 @@ namespace Librainian.Measurement.Currency.LTC {
     using System.Diagnostics;
     using System.Threading;
     using Annotations;
+    using BTC;
 
     /// <summary>
     ///     A very simple, thread-safe,  System.Decimal-based wallet.

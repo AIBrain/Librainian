@@ -1,25 +1,28 @@
 #region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
+//
 // "Librainian/Percentage.cs" was last cleaned by Rick on 2014/08/22 at 9:40 AM
-#endregion
+
+#endregion License & Information
 
 namespace Librainian.Maths {
+
     using System;
     using System.Numerics;
     using System.Runtime.Serialization;
@@ -56,7 +59,7 @@ namespace Librainian.Maths {
         [CanBeNull]
         [DataMember]
         public readonly BigInteger? Numerator;
-        
+
         [DataMember]
         public readonly BigRational Quotient;  //TODO BigDecimal any better here?
 
@@ -64,14 +67,16 @@ namespace Librainian.Maths {
         ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
         /// </summary>
         /// <param name="value"></param>
-        public Percentage( Double value ) : this( ( BigInteger ) value, BigInteger.One) {}
+        public Percentage( Double value ) : this( ( BigInteger )value, BigInteger.One ) {
+        }
 
         /// <summary>
         /// <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
-        public Percentage(Decimal numerator,Decimal denominator ) : this( ( Double )numerator, ( Double )denominator ) {}
+        public Percentage( Decimal numerator, Decimal denominator ) : this( ( Double )numerator, ( Double )denominator ) {
+        }
 
         /// <summary>
         /// <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
@@ -125,27 +130,18 @@ namespace Librainian.Maths {
         ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
         /// </summary>
         /// <param name="value"></param>
-        public Percentage( BigRational value ) : this( value.Numerator, value.Denominator ) {
+        public Percentage( BigRational value )
+            : this( value.Numerator, value.Denominator ) {
         }
 
-        [Pure]
-        public int CompareTo( Double other ) {
-            return ( (Double)this.Quotient ).CompareTo( other );
-        }
-
-        [Pure]
-        public int CompareTo( [NotNull] Percentage other ) {
-            if ( other == null ) {
-                throw new ArgumentNullException( "other" );
-            }
-            return this.Quotient.CompareTo( other.Quotient );
-        }
-
-        public Boolean Equals( [NotNull] Percentage other ) {
-            if ( other == null ) {
-                throw new ArgumentNullException( "other" );
-            }
-            return Equals( this, other );
+        /// <summary>
+        ///     Lerp?
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Percentage Combine( Percentage left, Percentage right ) {
+            return new Percentage( ( left.Quotient + right.Quotient ) / 2.0 );
         }
 
         /// <summary>
@@ -162,6 +158,25 @@ namespace Librainian.Maths {
                 throw new ArgumentNullException( "right" );
             }
             return left.Quotient == right.Quotient;
+        }
+
+        public static implicit operator Double( Percentage special ) {
+            return ( Double )special.Quotient;
+        }
+
+        public static implicit operator Percentage( Single value ) {
+            return new Percentage( value );
+        }
+
+        //public static implicit operator  System.Decimal( Percentage special ) {
+        //    return (  System.Decimal )special.Value;
+        //}
+        public static implicit operator Percentage( Double value ) {
+            return new Percentage( value );
+        }
+
+        public static Percentage operator +( Percentage left, Percentage right ) {
+            return Combine( left, right );
         }
 
         public static Percentage Parse( [NotNull] String value ) {
@@ -183,38 +198,28 @@ namespace Librainian.Maths {
             return !Double.IsNaN( value );
         }
 
+        [Pure]
+        public int CompareTo( Double other ) {
+            return ( ( Double )this.Quotient ).CompareTo( other );
+        }
+
+        [Pure]
+        public int CompareTo( [NotNull] Percentage other ) {
+            if ( other == null ) {
+                throw new ArgumentNullException( "other" );
+            }
+            return this.Quotient.CompareTo( other.Quotient );
+        }
+
+        public Boolean Equals( [NotNull] Percentage other ) {
+            if ( other == null ) {
+                throw new ArgumentNullException( "other" );
+            }
+            return Equals( this, other );
+        }
+
         public override String ToString() {
             return String.Format( "{0}", this.Quotient );
-        }
-
-        /// <summary>
-        ///     Lerp?
-        /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        public static Percentage Combine( Percentage left, Percentage right ) {
-            return new Percentage( ( left.Quotient + right.Quotient ) / 2.0 );
-        }
-
-        public static implicit operator Double( Percentage special ) {
-            return ( Double )special.Quotient;
-        }
-
-        //public static implicit operator  System.Decimal( Percentage special ) {
-        //    return (  System.Decimal )special.Value;
-        //}
-
-        public static implicit operator Percentage( Single value ) {
-            return new Percentage( value );
-        }
-
-        public static implicit operator Percentage( Double value ) {
-            return new Percentage( value );
-        }
-
-        public static Percentage operator +( Percentage left, Percentage right ) {
-            return Combine( left, right );
         }
     }
 }

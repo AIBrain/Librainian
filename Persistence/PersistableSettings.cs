@@ -26,6 +26,7 @@ namespace Librainian.Persistence {
     using Controls;
     using Librainian.Extensions;
     using Ninject;
+    using Parsing;
     using Threading;
 
     public interface IPersistableSettings {

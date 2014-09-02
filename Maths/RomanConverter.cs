@@ -34,7 +34,7 @@ namespace Librainian.Maths {
     public static class RomanConverter {
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public static readonly RomanNumber[] RomanValues = { RomanNumber.I, RomanNumber.IV, RomanNumber.V, RomanNumber.IX, RomanNumber.X, RomanNumber.XL, RomanNumber.L, RomanNumber.XC, RomanNumber.C, RomanNumber.CD, RomanNumber.D, RomanNumber.CM, RomanNumber.M };
 
@@ -47,6 +47,7 @@ namespace Librainian.Maths {
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static string ToRoman( this short number ) {
             if ( !number.Between( ( short )1, ( short )3999 ) ) {
+
                 // per https://en.wikipedia.org/wiki/Roman_numerals#Large_numbers
                 //throw new ArgumentOutOfRangeException( "number" );
                 return String.Empty;
@@ -56,10 +57,11 @@ namespace Librainian.Maths {
 
             var currentRoman = RomanValues.Length - 1;
 
-            for ( var i = ( int )number; i > 0; ) {
+            for ( var i = ( int )number ; i > 0 ; ) {
                 if ( i < ( int )RomanValues[ currentRoman ] ) {
                     --currentRoman;
-                } else {
+                }
+                else {
                     result.Enqueue( RomanValues[ currentRoman ] );
                     i -= ( int )RomanValues[ currentRoman ];
                 }

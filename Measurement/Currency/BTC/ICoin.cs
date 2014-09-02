@@ -21,7 +21,7 @@ namespace Librainian.Measurement.Currency.BTC {
     /// <summary>
     /// </summary>
     /// <see cref="http://wikipedia.org/wiki/Bitcoin" />
-    /// <see cref="https://en.bitcoin.it/wiki/FAQ" />
-    /// <see cref="https://en.bitcoin.it/wiki/Units" />
+    /// <see cref="http://en.bitcoin.it/wiki/FAQ" />
+    /// <see cref="http://bitcoin.it/wiki/Units" />
     public interface ICoin : IDenomination { }
 }

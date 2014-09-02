@@ -95,26 +95,70 @@ namespace Librainian.Maths {
             }
         }
 
-        public Boolean IsLandslideNo { get { return this.IsNoWinning && this.No > this.HalfOfVotes(); } }
+        public Boolean IsLandslideNo {
+            get {
+                return this.IsNoWinning && this.No > this.HalfOfVotes();
+            }
+        }
 
-        public Boolean IsLandslideYes { get { return this.IsYesWinning && this.Yes > this.HalfOfVotes(); } }
-
-        [UsedImplicitly]
-        public Boolean IsNoWinning { get { return this.No > this.Yes && this.Yes > 1 && this.No > 1; } }
-
-        public Boolean IsProtiguous { get { return this.IsTied() && this.Votes >= 2; } }
-
-        [UsedImplicitly]
-        public Boolean IsYesWinning { get { return this.Yes > this.No && this.Yes > 1 && this.No > 1; } }
-
-        public UInt64 No { get { return Thread.VolatileRead( ref this._votesNo ); } private set { Thread.VolatileWrite( ref this._votesNo, value ); } }
-
-        public UInt64 Votes { get { return this.Yes + this.No; } }
-
-        public UInt64 Yes { get { return Thread.VolatileRead( ref this._votesYes ); } private set { Thread.VolatileWrite( ref this._votesYes, value ); } }
+        public Boolean IsLandslideYes {
+            get {
+                return this.IsYesWinning && this.Yes > this.HalfOfVotes();
+            }
+        }
 
         [UsedImplicitly]
-        private string DebuggerDisplay { get { return this.ToString(); } }
+        public Boolean IsNoWinning {
+            get {
+                return this.No > this.Yes && this.Yes > 1 && this.No > 1;
+            }
+        }
+
+        public Boolean IsProtiguous {
+            get {
+                return this.IsTied() && this.Votes >= 2;
+            }
+        }
+
+        [UsedImplicitly]
+        public Boolean IsYesWinning {
+            get {
+                return this.Yes > this.No && this.Yes > 1 && this.No > 1;
+            }
+        }
+
+        public UInt64 No {
+            get {
+                return Thread.VolatileRead( ref this._votesNo );
+            }
+
+            private set {
+                Thread.VolatileWrite( ref this._votesNo, value );
+            }
+        }
+
+        public UInt64 Votes {
+            get {
+                return this.Yes + this.No;
+            }
+        }
+
+        public UInt64 Yes {
+            get {
+                return Thread.VolatileRead( ref this._votesYes );
+            }
+
+            private set {
+                Thread.VolatileWrite( ref this._votesYes, value );
+            }
+        }
+
+        [UsedImplicitly]
+        private string DebuggerDisplay {
+            get {
+                return this.ToString();
+            }
+        }
 
         public static Votally Combine( [NotNull] Votally left, [NotNull] Votally right ) {
             if ( left == null ) {
@@ -146,6 +190,13 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
+        /// <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
+        /// </summary>
+        public void VoteNo( UInt64 votes = 1 ) {
+            this.No += votes;
+        }
+
+        /// <summary>
         /// <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
         /// </summary>
         public void VoteYes( UInt64 votes = 1 ) {
@@ -155,10 +206,9 @@ namespace Librainian.Maths {
         /// <summary>
         /// <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void VoteNo( UInt64 votes = 1 ) {
-            this.No += votes;
+        public void WithdrawNoVote( UInt64 votes = 1 ) {
+            this.No -= votes;
         }
-
 
         /// <summary>
         /// <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
@@ -166,15 +216,5 @@ namespace Librainian.Maths {
         public void WithdrawYesVote( UInt64 votes = 1 ) {
             this.Yes -= votes;
         }
-
-
-        /// <summary>
-        /// <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
-        /// </summary>
-        public void WithdrawNoVote( UInt64 votes = 1 ) {
-            this.No -= votes;
-        }
-
-      
     }
 }

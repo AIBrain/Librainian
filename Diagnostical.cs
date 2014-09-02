@@ -174,7 +174,7 @@ namespace Librainian {
         [Test]
         public static void TestSimilarities() {
             var reasons = new ConcurrentQueue< string >();
-            var test1 = ParsingExtensions.Similarity( "hi", "hello", ref reasons );
+            var test1 = "hi".Similarity( "hello", ref reasons );
             String.Format( "test1 was {0}", test1 ).TimeDebug();
         }
 
