@@ -32,7 +32,7 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <summary>
         ///     12
         /// </summary>
-        public const Byte Maximum = Months.InOneYear;
+        public const Byte Maximum = Months.InOneCommonYear;
 
         /// <summary>
         ///     1

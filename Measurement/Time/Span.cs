@@ -163,10 +163,10 @@ namespace Librainian.Measurement.Time {
             this.Years = new Years( PlanckTimes.InOneYear.PullPlancks( ref planckTimes ) );
 
             this.Months = new Months( PlanckTimes.InOneMonth.PullPlancks( ref planckTimes ) );
-            this.Months.Value.Should().BeInRange( 0, Months.InOneYear );
+            this.Months.Value.Should().BeInRange( 0, Months.InOneCommonYear );
 
             this.Weeks = new Weeks( PlanckTimes.InOneWeek.PullPlancks( ref planckTimes ) );
-            this.Weeks.Value.Should().BeInRange( 0.0m, Weeks.InOneYear );
+            this.Weeks.Value.Should().BeInRange( 0.0m, Weeks.InOneCommonYear );
 
             this.Days = new Days( PlanckTimes.InOneDay.PullPlancks( ref planckTimes ) );
             this.Days.Value.Should().BeInRange( 0, Days.InOneCommonYear + 1 );  //leap year

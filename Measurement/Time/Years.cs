@@ -123,7 +123,7 @@ namespace Librainian.Measurement.Time {
             return !Equals( left, right );
         }
 
-        public static implicit operator Months( Years years ) {
+        public static explicit operator Months( Years years ) {
             return years.ToMonths();
         }
 
@@ -165,17 +165,22 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public Months ToMonths() {
-            return new Months( this.Value * Months.InOneYear );
+            return new Months( this.Value * Months.InOneCommonYear );
         }
 
         [Pure]
         public Weeks ToWeeks() {
-            return new Weeks( this.Value * Weeks.InOneYear );
+            return new Weeks( this.Value * Weeks.InOneCommonYear );
         }
 
         [Pure]
         public Days ToDays() {
             return new Days( this.Value * Days.InOneCommonYear );
+        }
+        
+        [Pure]
+        public Seconds ToSeconds() {
+            return new Seconds( this.Value * Seconds.InOneCommonYear );
         }
 
         public override int GetHashCode() {

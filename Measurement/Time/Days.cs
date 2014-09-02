@@ -133,7 +133,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
-        public static implicit operator Weeks( Days days ) {
+        public static explicit operator Weeks( Days days ) {
             return days.ToWeeks();
         }
 
@@ -204,10 +204,12 @@ namespace Librainian.Measurement.Time {
             return new Hours( this.Value*Hours.InOneDay );
         }
 
+        [Pure]
         public Weeks ToWeeks() {
             return new Weeks( this.Value/InOneWeek );
         }
 
+        [Pure]
         public override int GetHashCode() {
             return this.Value.GetHashCode();
         }

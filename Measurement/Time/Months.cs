@@ -32,7 +32,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     12
         /// </summary>
-        public const Byte InOneYear = 12;
+        public const Byte InOneCommonYear = 12;
 
         /// <summary>
         ///     One <see cref="Months" /> .
@@ -165,7 +165,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public Years ToYears() {
-            return new Years( this.Value / InOneYear );
+            return new Years( this.Value / InOneCommonYear );
         }
 
         public override int GetHashCode() {

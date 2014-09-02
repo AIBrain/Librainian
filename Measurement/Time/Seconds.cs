@@ -114,6 +114,8 @@ namespace Librainian.Measurement.Time {
         [UsedImplicitly]
         private string DebuggerDisplay { get { return this.ToString(); } }
 
+        public const UInt32 InOneCommonYear = 31536000;
+
         public int CompareTo( Seconds other ) {
             return this.Value.CompareTo( other.Value );
         }

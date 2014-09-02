@@ -14,7 +14,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Weeks.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/Weeks.cs" was last cleaned by Rick on 2014/09/02 at 2:56 AM
 #endregion
 
 namespace Librainian.Measurement.Time {
@@ -26,14 +28,18 @@ namespace Librainian.Measurement.Time {
     using FluentAssertions;
     using Parsing;
 
-    [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [ DataContract( IsReference = true ) ]
+    [ DebuggerDisplay( "{DebuggerDisplay,nq}" ) ]
     public struct Weeks : IComparable< Weeks > {
+        /// <summary>
+        ///     52.4
+        /// </summary>
+        public const Decimal InOneCommonYear = 52.14m;
 
         /// <summary>
-        /// 52
+        ///     4.345
         /// </summary>
-        public const Decimal InOneYear = 52.4m;
+        public const Decimal InOneMonth = 4.345m;
 
         /// <summary>
         ///     One <see cref="Weeks" /> .
@@ -53,17 +59,17 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Weeks Zero = new Weeks( 0 );
 
-        [DataMember] public readonly  Decimal Value;
+        [ DataMember ] public readonly Decimal Value;
 
         static Weeks() {
             Zero.Should().BeLessThan( One );
             One.Should().BeGreaterThan( Zero );
             One.Should().Be( One );
-            //One.Should().BeLessThan( Months.One );
+            One.Should().BeLessThan( Months.One );
             One.Should().BeGreaterThan( Days.One );
         }
 
-        public Weeks(Decimal weeks ) : this() {
+        public Weeks( Decimal weeks ) : this() {
             this.Value = weeks;
         }
 
@@ -73,10 +79,10 @@ namespace Librainian.Measurement.Time {
 
         public Weeks( BigInteger value ) {
             value.ThrowIfOutOfDecimalRange();
-            this.Value = (Decimal ) value;
+            this.Value = ( Decimal ) value;
         }
 
-        [UsedImplicitly]
+        [ UsedImplicitly ]
         private string DebuggerDisplay { get { return this.ToString(); } }
 
         public int CompareTo( Weeks other ) {
@@ -94,16 +100,11 @@ namespace Librainian.Measurement.Time {
             return obj is Weeks && this.Equals( ( Weeks ) obj );
         }
 
-        [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneWeek, new BigInteger( this.Value ) );
-        }
-
         public static Weeks Combine( Weeks left, Weeks right ) {
             return new Weeks( left.Value + right.Value );
         }
 
-        public static Weeks Combine( Weeks left,Decimal weeks ) {
+        public static Weeks Combine( Weeks left, Decimal weeks ) {
             return new Weeks( left.Value + weeks );
         }
 
@@ -112,8 +113,12 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="weeks"></param>
         /// <returns></returns>
-        public static implicit operator Days( Weeks weeks ) {
+        public static explicit operator Days( Weeks weeks ) {
             return weeks.ToDays();
+        }
+
+        public static explicit operator Months( Weeks weeks ) {
+            return weeks.ToMonths();
         }
 
         //public static implicit operator Span( Weeks weeks ) {
@@ -121,7 +126,7 @@ namespace Librainian.Measurement.Time {
         //}
 
         public static Weeks operator -( Weeks days ) {
-            return new Weeks( days.Value*-1 );
+            return new Weeks( days.Value * -1 );
         }
 
         public static Weeks operator -( Weeks left, Weeks right ) {
@@ -132,7 +137,7 @@ namespace Librainian.Measurement.Time {
             return Combine( left, right );
         }
 
-        public static Weeks operator +( Weeks left,Decimal weeks ) {
+        public static Weeks operator +( Weeks left, Decimal weeks ) {
             return Combine( left, weeks );
         }
 
@@ -150,6 +155,14 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator <( Weeks left, Days right ) {
             return left < ( Weeks ) right;
+        }
+
+        public static Boolean operator <( Weeks left, Months right ) {
+            return ( Months ) left < right;
+        }
+
+        public static bool operator >( Weeks left, Months right ) {
+            return ( Months ) left > right;
         }
 
         public static Boolean operator >( Weeks left, Days right ) {
@@ -178,11 +191,22 @@ namespace Librainian.Measurement.Time {
             return !Equals( left, right );
         }
 
-        [Pure]
+        [ Pure ]
         public Days ToDays() {
-            return new Days( this.Value*Days.InOneWeek );
+            return new Days( this.Value * Days.InOneWeek );
         }
 
+        [ Pure ]
+        public Months ToMonths() {
+            return new Months( this.Value / InOneMonth );
+        }
+
+        [ Pure ]
+        public BigInteger ToPlanckTimes() {
+            return BigInteger.Multiply( PlanckTimes.InOneWeek, new BigInteger( this.Value ) );
+        }
+
+        [ Pure ]
         public override int GetHashCode() {
             return this.Value.GetHashCode();
         }
