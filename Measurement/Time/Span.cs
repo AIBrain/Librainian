@@ -171,7 +171,7 @@ namespace Librainian.Measurement.Time {
             this.Days = new Days( PlanckTimes.InOneDay.PullPlancks( ref planckTimes ) );
             this.Days.Value.Should().BeInRange( 0, Days.InOneCommonYear + 1 );  //leap year
 
-            this.Hours = new Days( PlanckTimes.InOneDay.PullPlancks( ref planckTimes ) );
+            this.Hours = new Days( PlanckTimes.InOneHour.PullPlancks( ref planckTimes ) );
             this.Hours.Value.Should().BeInRange( 0, Hours.InOneDay );
 
             this.Minutes = new Minutes( PlanckTimes.InOneMinute.PullPlancks( ref planckTimes ) );

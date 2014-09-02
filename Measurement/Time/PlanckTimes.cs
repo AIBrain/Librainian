@@ -63,12 +63,19 @@ namespace Librainian.Measurement.Time {
         public static readonly BigInteger InOneMicrosecond = new BigInteger( 1.855E37 );
         public static readonly BigInteger InOneMillisecond = new BigInteger( 1.855E40 );
         public static readonly BigInteger InOneSecond = new BigInteger( 1.855E43 );
-        public static readonly BigInteger InOneMinute = InOneSecond * Seconds.InOneMinute;  //new BigInteger( 1.113E45 );
-        public static readonly BigInteger InOneHour = InOneMinute * Minutes.InOneHour;  //new BigInteger( 6.678E46 );
-        public static readonly BigInteger InOneDay = InOneHour * Hours.InOneDay;    //new BigInteger( 1.603E48 );
-        public static readonly BigInteger InOneWeek = InOneDay * Days.InOneWeek;    //new BigInteger( 1.122E49 );
-        public static readonly BigInteger InOneMonth = ( BigInteger ) ( InOneWeek * ( BigDecimal )Weeks.InOneMonth );    //new BigInteger( 4.875E49 );
-        public static readonly BigInteger InOneYear = InOneSecond * Seconds.InOneCommonYear; // new BigInteger( 5.85E50 );
+        public static readonly BigInteger InOneMinute = new BigInteger( 1.113E45 );
+        public static readonly BigInteger InOneHour = new BigInteger( 6.678E46 );
+        public static readonly BigInteger InOneDay = new BigInteger( 1.603E48 );
+        public static readonly BigInteger InOneWeek = new BigInteger( 1.122E49 );
+        public static readonly BigInteger InOneMonth = new BigInteger( 4.875E49 );
+        public static readonly BigInteger InOneYear = new BigInteger( 5.85E50 );
+
+        //public static readonly BigInteger InOneMinute = InOneSecond * Seconds.InOneMinute;  //new BigInteger( 1.113E45 );
+        //public static readonly BigInteger InOneHour = InOneMinute * Minutes.InOneHour;  //new BigInteger( 6.678E46 );
+        //public static readonly BigInteger InOneDay = InOneHour * Hours.InOneDay;    //new BigInteger( 1.603E48 );
+        //public static readonly BigInteger InOneWeek = InOneDay * Days.InOneWeek;    //new BigInteger( 1.122E49 );
+        //public static readonly BigInteger InOneMonth = ( BigInteger ) ( InOneWeek * ( BigDecimal )Weeks.InOneMonth );    //new BigInteger( 4.875E49 );
+        //public static readonly BigInteger InOneYear = InOneSecond * Seconds.InOneCommonYear; // new BigInteger( 5.85E50 );
 
         //public static readonly BigInteger InOneZeptosecond = BigInteger.Multiply( InOneYoctosecond, Yoctoseconds.InOneZeptosecond );
         //public static readonly BigInteger InOneAttosecond = BigInteger.Multiply( InOneZeptosecond, Zeptoseconds.InOneAttosecond );
