@@ -152,7 +152,7 @@ namespace Librainian.Measurement.Currency.USD {
         /// <param name="amount"></param>
         /// <param name="leftOverAmount">Fractions of Pennies not accounted for.</param>
         /// <returns></returns>
-        public static Dictionary< IDenomination, ulong > Optimal( this  Decimal amount, ref  Decimal leftOverAmount ) {
+        public static Dictionary< IDenomination, ulong > Optimal( this Decimal amount, ref  Decimal leftOverAmount ) {
             var demonsLeft = new List< IDenomination >( PossibleDenominations );
             var result = demonsLeft.ToDictionary< IDenomination, IDenomination, UInt64 >( denomination => denomination, denomination => 0 );
 

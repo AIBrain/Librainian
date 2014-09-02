@@ -234,7 +234,7 @@ namespace Librainian.Maths {
             return number * number * number;
         }
 
-        public static Decimal Cubed( this  Decimal number ) {
+        public static Decimal Cubed( this Decimal number ) {
             return number * number * number;
         }
 
@@ -566,7 +566,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public static Decimal IfLessThanZeroThenZero( this  Decimal number ) {
+        public static Decimal IfLessThanZeroThenZero( this Decimal number ) {
             return number < Decimal.Zero ? Decimal.Zero : number;
         }
 
@@ -596,11 +596,11 @@ namespace Librainian.Maths {
             return number < BigDecimal.Zero ? BigDecimal.Zero : number;
         }
 
-        public static Double Intercept( [NotNull] List<TimeProgression> data ) {
+        public static Double Intercept( [NotNull] this List<TimeProgression> data ) {
             if ( data == null ) {
                 throw new ArgumentNullException( "data" );
             }
-            var slope = Slope( data );
+            var slope = data.Slope();
             return data.Average( d => d.Progress ) - slope * data.Average( d => d.MillisecondsPassed );
         }
 
@@ -670,7 +670,7 @@ namespace Librainian.Maths {
         /// <param name="source"> Source value. </param>
         /// <param name="target"> Target value. </param>
         /// <param name="amount"> Value between 0 and 1 indicating the weight of value2. </param>
-        public static Double Lerp( this  Double source, Double target, Single amount ) {
+        public static Double Lerp( this Double source, Double target, Single amount ) {
             return source + ( target - source ) * amount;
         }
 
@@ -690,7 +690,7 @@ namespace Librainian.Maths {
         /// <param name="source"> Source value. </param>
         /// <param name="target"> Target value. </param>
         /// <param name="amount"> Value between 0 and 1 indicating the weight of value2. </param>
-        public static UInt32 Lerp( this  UInt32 source, UInt32 target, Single amount ) {
+        public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) {
             return ( UInt32 )( source + ( ( target - source ) * amount ) );
         }
 
@@ -734,7 +734,7 @@ namespace Librainian.Maths {
             return Math.Abs( number - target ) <= Single.Epsilon;
         }
 
-        public static Boolean Near( this  Decimal number, Decimal target ) {
+        public static Boolean Near( this Decimal number, Decimal target ) {
             return Math.Abs( number - target ) <= EpsilonDecimal;
         }
 
@@ -836,7 +836,7 @@ namespace Librainian.Maths {
         /// <param name="n"></param>
         /// <returns></returns>
         /// <seealso cref="http://stackoverflow.com/questions/429165/raising-a-Decimal-to-a-power-of-Decimal"/>
-        public static Decimal Pow( Decimal x, UInt32 n ) {
+        public static Decimal Pow( this Decimal x, UInt32 n ) {
             var a = 1m;
             var e = new BitArray( BitConverter.GetBytes( n ) );
 
@@ -969,7 +969,7 @@ namespace Librainian.Maths {
             return 1.0D - ( 2.0D / ( 1.0D + Math.Exp( value ) ) );
         }
 
-        public static Double Slope( [NotNull] List<TimeProgression> data ) {
+        public static Double Slope( [NotNull] this List<TimeProgression> data ) {
             if ( data == null ) {
                 throw new ArgumentNullException( "data" );
             }
@@ -984,7 +984,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Tuple<Decimal, Decimal> Split( this  Decimal value ) {
+        public static Tuple<Decimal, Decimal> Split( this Decimal value ) {
             var parts = value.ToString( "R" ).Split( '.' );
             var result = new Tuple<Decimal, Decimal>( Decimal.Parse( parts[ 0 ] ), Decimal.Parse( "0." + parts[ 1 ] ) );
             return result;
@@ -1020,7 +1020,7 @@ namespace Librainian.Maths {
             return number * number;
         }
 
-        public static Decimal Squared( this  Decimal number ) {
+        public static Decimal Squared( this Decimal number ) {
             return number * number;
         }
 
@@ -1435,7 +1435,7 @@ namespace Librainian.Maths {
         //    if ( step == 0UL ) {
         //        step = 1UL;
         //    }
-        public static IEnumerable<Decimal> To( this  Decimal start, Decimal end ) {
+        public static IEnumerable<Decimal> To( this Decimal start, Decimal end ) {
             var count = end - start + 1;
             for ( var i = 0 ; i < count ; i++ ) {
                 yield return start + i;
@@ -1578,7 +1578,7 @@ namespace Librainian.Maths {
                 }
         */
 
-        public static Boolean TrySplitDecimal( this  Decimal value, out BigInteger beforeDecimalPoint, out BigInteger afterDecimalPoint ) {
+        public static Boolean TrySplitDecimal( this Decimal value, out BigInteger beforeDecimalPoint, out BigInteger afterDecimalPoint ) {
             var theString = value.ToString();
             if ( !theString.Contains( "." ) ) {
                 theString += ".0";
@@ -1599,7 +1599,7 @@ namespace Librainian.Maths {
             return number * 2d;
         }
 
-        public static Decimal Twice( this  Decimal number ) {
+        public static Decimal Twice( this Decimal number ) {
             return number * 2m;
         }
     }

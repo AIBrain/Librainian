@@ -59,7 +59,7 @@ namespace Librainian.Measurement.Currency.BTC {
         ///     <para>etc...</para>
         /// </param>
         /// <returns></returns>
-        public static String SimplerBTC( this  Decimal btc, [NotNull] String coinSuffix = "BTC" ) {
+        public static String SimplerBTC( this Decimal btc, [NotNull] String coinSuffix = "BTC" ) {
             if ( coinSuffix == null ) {
                 throw new ArgumentNullException( "coinSuffix" );
             }
@@ -87,13 +87,13 @@ namespace Librainian.Measurement.Currency.BTC {
         /// </summary>
         /// <param name="btc"></param>
         /// <returns></returns>
-        public static Decimal Sanitize( this  Decimal btc ) {
+        public static Decimal Sanitize( this Decimal btc ) {
             var sanitized = btc.ToSatoshi().ToBTC();
             Assert.GreaterOrEqual( btc, sanitized );
             return sanitized;
         }
 
-        public static long ToSatoshi( this  Decimal btc ) {
+        public static long ToSatoshi( this Decimal btc ) {
             return ( long )( btc * SimpleBitcoinWallet.SatoshiPerBTC );
         }
 
@@ -101,11 +101,11 @@ namespace Librainian.Measurement.Currency.BTC {
             return satoshi / SimpleBitcoinWallet.SatoshiPerBTC;
         }
 
-        public static Decimal TomBTC( this  Decimal btc ) {
+        public static Decimal TomBTC( this Decimal btc ) {
             return btc * SimpleBitcoinWallet.mBTCPerBTC;
         }
 
-        public static Decimal ToμBTC( this  Decimal btc ) {
+        public static Decimal ToμBTC( this Decimal btc ) {
             return btc * SimpleBitcoinWallet.μBTCPerBTC;
         }
 
@@ -259,7 +259,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="amount"></param>
         /// <param name="leftOverAmount">Fractions of Pennies not accounted for.</param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<ICoin, ulong>> Optimal( this  Decimal amount, ref  Decimal leftOverAmount ) {
+        public static IEnumerable<KeyValuePair<ICoin, ulong>> Optimal( this Decimal amount, ref  Decimal leftOverAmount ) {
             var left = new List<ICoin>( PossibleCoins );
             var result = left.ToDictionary<ICoin, ICoin, UInt64>( denomination => denomination, denomination => 0 );
 
@@ -289,7 +289,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="amount"></param>
         /// <param name="leftOverAmount">Fractions of coin not accounted for.</param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<ICoin, ulong>> UnOptimal( this  Decimal amount, ref  Decimal leftOverAmount ) {
+        public static IEnumerable<KeyValuePair<ICoin, ulong>> UnOptimal( this Decimal amount, ref  Decimal leftOverAmount ) {
             var left = new List<ICoin>( PossibleCoins );
             var result = left.ToDictionary<ICoin, ICoin, UInt64>( denomination => denomination, denomination => 0 );
 

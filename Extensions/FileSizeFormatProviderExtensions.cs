@@ -26,7 +26,7 @@ namespace Librainian.Extensions {
         /// <summary>
         ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" string.
         /// </summary>
-        public static String ToFileSize( this  Decimal @bytes ) {
+        public static String ToFileSize( this Decimal @bytes ) {
             return String.Format( FormatProvider, "{0:fs}", @bytes );
         }
 

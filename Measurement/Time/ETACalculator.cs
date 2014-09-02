@@ -106,7 +106,7 @@ namespace Librainian.Measurement.Time {
 
             var datapoints = this.GetDataPoints().ToList();
 
-            var intercept = MathExtensions.Intercept( datapoints );
+            var intercept = datapoints.Intercept();
 
             estimateTimeRemaing += TimeSpan.FromMilliseconds( intercept );
 
