@@ -57,7 +57,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="second"></param>
         /// <param name="millisecond"></param>
         /// <param name="microsecond"></param>
-        public Time( Byte hour = 0, Byte minute = 0, Byte second = 0, Byte millisecond = 0, Byte microsecond = 0 )
+        public Time( Byte hour = 0, Byte minute = 0, Byte second = 0, UInt16 millisecond = 0, UInt16 microsecond = 0 )
             : this() {
             var span = new Span( hours: hour, minutes: minute, seconds: second, milliseconds: millisecond, microseconds: microsecond );
             this.Hour = new Hour( ( Byte )span.Hours.Value );
@@ -70,13 +70,17 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         /// </summary>
         /// <param name="dateTime"></param>
-        public Time( DateTime dateTime ) : this( hour: ( Byte )dateTime.Hour, minute: ( Byte )dateTime.Minute, second: ( Byte )dateTime.Second, millisecond: ( Byte )dateTime.Millisecond ) {
+        public Time( DateTime dateTime )
+            : this( hour: ( Byte )dateTime.Hour, minute: ( Byte )dateTime.Minute, second: ( Byte )dateTime.Second, millisecond: ( ushort )dateTime.Millisecond ) {
         }
 
         /// <summary>
         /// </summary>
         /// <param name="span"></param>
-        public Time( Span span ) : this( hour: ( Byte )span.Hours.Value, minute: ( Byte )span.Minutes.Value, second: ( Byte )span.Seconds.Value, millisecond: ( Byte )span.Milliseconds.Value, microsecond: ( Byte )span.Microseconds.Value ) {
+        public Time( Span span ) : this(
+            hour: ( byte ) span.Hours.Value,
+            minute: ( Byte )span.Minutes.Value,
+            second: ( Byte )span.Seconds.Value, millisecond: ( ushort )span.Milliseconds.Value, microsecond: ( ushort )span.Microseconds.Value ) {
         }
 
         /// <summary>
@@ -85,14 +89,14 @@ namespace Librainian.Measurement.Time {
         public static Time Now {
             get {
                 var now = DateTime.Now;
-                return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( Byte )now.Millisecond );
+                return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( ushort )now.Millisecond );
             }
         }
 
         public static Time UtcNow {
             get {
                 var now = DateTime.UtcNow;
-                return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( Byte )now.Millisecond );
+                return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( ushort )now.Millisecond );
             }
         }
 

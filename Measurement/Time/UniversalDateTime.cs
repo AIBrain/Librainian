@@ -70,10 +70,10 @@ namespace Librainian.Measurement.Time {
             var span = new Span( planckTimes: this.Value );
 
             //TODO
-            //this.Date = new Date( span );
-            //this.Time = new Time( span );
-            this.Date = new Date();
-            this.Time = new Time();
+            this.Date = new Date( span );
+            this.Time = new Time( span );
+            //this.Date = new Date();
+            //this.Time = new Time();
         }
 
         public UniversalDateTime( DateTime dateTime ) {

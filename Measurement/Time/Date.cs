@@ -90,8 +90,20 @@ namespace Librainian.Measurement.Time {
 
         internal Date( Span span ) {
             this.Year = new Year( span.GetWholeYears() );
-            this.Month = new Month( ( byte )span.Months.Value );
-            this.Day = new Day( ( byte )span.Days.Value );
+            if ( span.Months.Value < 1 ) {
+                this.Month = new Month( 1 );    
+            }
+            else {
+                this.Month = new Month( ( byte )span.Months.Value );    
+            }
+
+            if ( span.Days.Value  < 1 ) {
+                this.Day = new Day( 1 );
+            }
+            else {
+                this.Day = new Day( ( byte )span.Days.Value );    
+            }
+            
         }
 
         public static Date Now {
