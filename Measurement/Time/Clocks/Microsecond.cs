@@ -27,13 +27,12 @@ namespace Librainian.Measurement.Time.Clocks {
     using System.Linq;
     using System.Runtime.Serialization;
     using FluentAssertions;
-    using Librainian.Extensions;
-    using Maths;
+    using Librainian.Extensions;y
 
     /// <summary>
     ///     A simple struct for a <see cref="Microsecond" />.
     /// </summary>
-    [DataContract]
+    [DataContract( IsReference = true )]
     [Serializable]
     [Immutable]
     public sealed class Microsecond : IClockPart {
@@ -89,7 +88,7 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         /// <summary>
-        ///     Provide the next <see cref="Hour"/>.
+        ///     Provide the next <see cref="Microsecond"/>.
         /// </summary>
         public Microsecond Next( out Boolean ticked ) {
             ticked = false;
@@ -102,7 +101,7 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         /// <summary>
-        ///     Provide the previous <see cref="Hour"/>.
+        ///     Provide the previous <see cref="Microsecond"/>.
         /// </summary>
         public Microsecond Previous( out Boolean ticked ) {
             ticked = false;

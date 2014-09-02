@@ -32,14 +32,14 @@ namespace Librainian.Measurement.Time.Clocks {
     /// <summary>
     ///     A simple struct for a <see cref="Minute" />.
     /// </summary>
-    [DataContract]
+    [DataContract( IsReference = true )]
     [Serializable]
     [Immutable]
     public sealed class Minute : IClockPart {
         public static readonly Byte[] ValidMinutes = Enumerable.Range( 0, Minutes.InOneHour ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
 
         /// <summary>
-        ///    should be 23
+        ///    should be 59
         /// </summary>
         public static readonly Byte MaximumValue = ValidMinutes.Max();
 
@@ -48,9 +48,9 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         public static readonly Byte MinimumValue = ValidMinutes.Min();
 
-        public static readonly Hour MaximumMinute = new Hour( MaximumValue );
+        public static readonly Hour Maximum = new Hour( MaximumValue );
 
-        public static readonly Hour MinimumMinute = new Hour( MinimumValue );
+        public static readonly Hour Minimum = new Hour( MinimumValue );
 
         static Minute() {
             MaximumValue.Should().BeGreaterThan( MinimumValue );
@@ -70,19 +70,19 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <summary>
         ///     Allow this class to be visibly cast to a <see cref="SByte" />.
         /// </summary>
-        /// <param name="minute"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        public static explicit operator SByte( Minute minute ) {
-            return ( SByte )minute.Value;
+        public static explicit operator SByte( Minute value ) {
+            return ( SByte )value.Value;
         }
 
         /// <summary>
         ///     Allow this class to be read as a <see cref="Byte" />.
         /// </summary>
-        /// <param name="minute"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        public static implicit operator Byte( Minute minute ) {
-            return minute.Value;
+        public static implicit operator Byte( Minute value ) {
+            return value.Value;
         }
 
         /// <summary>
@@ -91,11 +91,11 @@ namespace Librainian.Measurement.Time.Clocks {
         public Minute Next( out Boolean ticked ) {
             ticked = false;
             var next = this.Value + 1;
-            if ( next > Maximum ) {
-                next = Minimum;
+            if ( next > MaximumValue ) {
+                next = MinimumValue;
                 ticked = true;
             }
-            return new Minute( next );
+            return new Minute( ( byte ) next );
         }
 
         /// <summary>
@@ -104,19 +104,11 @@ namespace Librainian.Measurement.Time.Clocks {
         public Minute Previous( out Boolean ticked ) {
             ticked = false;
             var next = this.Value - 1;
-            if ( next < Minimum ) {
-                next = Maximum;
+            if ( next < MinimumValue ) {
+                next = MaximumValue;
                 ticked = true;
             }
-            return new Minute( next );
-        }
-
-        private static void Validate( long minute ) {
-            minute.Should().BeInRange( Minimum, Maximum );
-
-            if ( minute < 1 || minute > Maximum ) {
-                throw new ArgumentOutOfRangeException( "minute", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", minute, Minimum, Maximum ) );
-            }
+            return new Minute( ( byte ) next );
         }
     }
 }

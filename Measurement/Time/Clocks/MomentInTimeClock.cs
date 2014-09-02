@@ -24,11 +24,13 @@
 namespace Librainian.Measurement.Time.Clocks {
 
     using System;
+    using System.Runtime.Serialization;
     using Librainian.Extensions;
 
     /// <summary>
     ///     A clock that stays at the set moment in time.
     /// </summary>
+    [DataContract(IsReference = true)]
     [Immutable]
     public class MomentInTimeClock : IStandardClock {
 
@@ -46,21 +48,24 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         public MomentInTimeClock( DateTime time ) {
-            this.Hour = new Hour( time.Hour );
-            this.Minute = new Minute( time.Minute );
+            this.Hour = new Hour( ( byte ) time.Hour );
+            this.Minute = new Minute( ( byte ) time.Minute );
             this.Second = new Second( time.Second );
         }
 
+        [DataMember]
         public Hour Hour {
             get;
             private set;
         }
 
+        [DataMember]
         public Minute Minute {
             get;
             private set;
         }
 
+        [DataMember]
         public Second Second {
             get;
             private set;

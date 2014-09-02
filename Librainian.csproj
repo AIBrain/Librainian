@@ -435,6 +435,7 @@
     <Compile Include="Measurement\Physics\TeraElectronVolts.cs" />
     <Compile Include="Measurement\Length\PlanckLengths.cs" />
     <Compile Include="Measurement\Length\Feet.cs" />
+    <Compile Include="Measurement\Time\Clocks\Second.cs" />
     <Compile Include="Measurement\Time\IQuantityOfTime.cs" />
     <Compile Include="Measurement\Time\TimeSystemTimers.cs" />
     <Compile Include="Measurement\Time\Clocks\AMorPM.cs" />
@@ -452,7 +453,6 @@
     <Compile Include="Measurement\Time\Clocks\Minute.cs" />
     <Compile Include="Measurement\Time\Clocks\Month.cs" />
     <Compile Include="Measurement\Time\RoundTo.cs" />
-    <Compile Include="Measurement\Time\Clocks\Second.cs" />
     <Compile Include="Measurement\Time\Clocks\TickingClock.cs" />
     <Compile Include="Measurement\Time\Date.cs" />
     <Compile Include="Measurement\Time\Days.cs" />

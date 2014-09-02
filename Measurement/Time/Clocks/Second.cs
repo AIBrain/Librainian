@@ -12,17 +12,17 @@ namespace Librainian.Measurement.Time.Clocks {
     [Serializable]
     [Immutable]
     public sealed class Second : IClockPart {
-        public static readonly Byte[] ValidMinutes = Enumerable.Range( 0, Seconds.InOneMinute ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
+        public static readonly Byte[] ValidSeconds = Enumerable.Range( 0, Seconds.InOneMinute ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
 
         /// <summary>
         ///    should be 59
         /// </summary>
-        public static readonly Byte MaximumValue = ValidMinutes.Max();
+        public static readonly Byte MaximumValue = ValidSeconds.Max();
 
         /// <summary>
         ///   should be 0
         /// </summary>
-        public static readonly Byte MinimumValue = ValidMinutes.Min();
+        public static readonly Byte MinimumValue = ValidSeconds.Min();
 
         public static readonly Hour Maximum = new Hour( MaximumValue );
 
@@ -36,7 +36,7 @@ namespace Librainian.Measurement.Time.Clocks {
         public readonly Byte Value;
 
         public Second( Byte value ) {
-            if ( !ValidMinutes.Contains( value ) ) {
+            if ( !ValidSeconds.Contains( value ) ) {
                 throw new ArgumentOutOfRangeException( "value", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", value, MinimumValue, MaximumValue ) );
             }
             this.Value = value;
@@ -67,8 +67,8 @@ namespace Librainian.Measurement.Time.Clocks {
         public Second Next( out Boolean ticked ) {
             ticked = false;
             var next = this.Value + 1;
-            if ( next > Maximum ) {
-                next = Minimum;
+            if ( next > MaximumValue ) {
+                next = MinimumValue;
                 ticked = true;
             }
             return new Second( ( byte ) next );
@@ -80,8 +80,8 @@ namespace Librainian.Measurement.Time.Clocks {
         public Second Previous( out Boolean ticked ) {
             ticked = false;
             var next = this.Value - 1;
-            if ( next < Minimum ) {
-                next = Maximum;
+            if ( next < MinimumValue ) {
+                next = MaximumValue;
                 ticked = true;
             }
             return new Second( ( byte ) next );
