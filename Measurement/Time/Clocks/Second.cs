@@ -24,9 +24,9 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         public static readonly Byte MinimumValue = ValidSeconds.Min();
 
-        public static readonly Hour Maximum = new Hour( MaximumValue );
+        public static readonly Second Maximum = new Second( MaximumValue );
 
-        public static readonly Hour Minimum = new Hour( MinimumValue );
+        public static readonly Second Minimum = new Second( MinimumValue );
 
         static Second() {
             MaximumValue.Should().BeGreaterThan( MinimumValue );

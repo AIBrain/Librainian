@@ -646,6 +646,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Librainian.psproj" />
+    <None Include="Measurement\Time\TimeMap.dgml" />
     <None Include="packages.config" />
     <None Include="README.textile" />
   </ItemGroup>

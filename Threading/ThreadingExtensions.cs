@@ -301,12 +301,15 @@ namespace Librainian.Threading {
             if ( !Equals( output, null ) && !String.IsNullOrWhiteSpace( description ) ) {
                 output( description );
             }
-            var notnull = tasks.Where( task => !Equals( task, default( Action ) ) );
             if ( inParallel ) {
-                var result = Parallel.ForEach( notnull, task => task() );
+                var result = Parallel.ForEach( tasks, task => {
+                                                            if ( task != null ) {
+                                                                task();
+                                                            }
+                                                        } );
                 return result.IsCompleted;
             }
-            foreach ( var task in notnull ) {
+            foreach ( var task in tasks ) {
                 task();
             }
             return true;

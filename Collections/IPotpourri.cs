@@ -52,7 +52,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <typeparam name="TParticle"></typeparam>
         /// <returns></returns>
-        IEnumerable< KeyValuePair< TKey, BigInteger > > Get< TParticle >();
+        IEnumerable<KeyValuePair<TParticle, BigInteger>> Get<TParticle>();
 
         Boolean Remove( TKey key, BigInteger count );
 

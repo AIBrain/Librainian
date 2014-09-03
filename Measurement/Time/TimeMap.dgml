@@ -1,0 +1,490 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph DataVirtualized="True" GraphDirection="RightToLeft" Layout="ForceDirected" ZoomLevel="-1" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="(@1 @2 @28 Member=OnHourTick)" Category="CodeSchema_Property" Bounds="0,320.391666335978,121.499061454048,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="OnHourTick" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/TickingClock.cs StartLineNumber=99 StartCharacterOffset=8 EndLineNumber=99 EndCharacterOffset=8)" />
+    <Node Id="(@1 @2 Type=IStandardClock @42)" Category="CodeSchema_Property" Bounds="68.1191986452326,209.431711778322,84.9623947873815,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="Hour" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/IStandardClock.cs StartLineNumber=31 StartCharacterOffset=8 EndLineNumber=31 EndCharacterOffset=8)" />
+    <Node Id="(@1 @2 Type=IStandardClock @51)" Category="CodeSchema_Property" Bounds="416.340137994392,621.828983572526,96.0557281207147,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="Minute" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/IStandardClock.cs StartLineNumber=37 StartCharacterOffset=8 EndLineNumber=37 EndCharacterOffset=8)" />
+    <Node Id="(@1 @2 Type=IStandardClock @54)" Category="CodeSchema_Property" Bounds="373.235851069363,-5.6843418860808E-14,97.5290614540481,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="Second" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/IStandardClock.cs StartLineNumber=43 StartCharacterOffset=8 EndLineNumber=43 EndCharacterOffset=8)" />
+    <Node Id="(@1 @2 Type=IStandardClockWithSmallUnits @42)" Category="CodeSchema_Property" Bounds="76.4270477115046,379.878231579215,84.9623947873815,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="Hour" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/IStandardClockWithSmallUnits.cs StartLineNumber=29 StartCharacterOffset=8 EndLineNumber=29 EndCharacterOffset=8)" />
+    <Node Id="(@1 @2 Type=IStandardClockWithSmallUnits @51)" Category="CodeSchema_Property" Bounds="473.413741170109,566.828983572526,96.0557281207147,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="Minute" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/IStandardClockWithSmallUnits.cs StartLineNumber=41 StartCharacterOffset=8 EndLineNumber=41 EndCharacterOffset=8)" />
+    <Node Id="(@1 @2 Type=IStandardClockWithSmallUnits @54)" Category="CodeSchema_Property" Bounds="491.728845650292,144.007020734198,97.5290614540481,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="Second" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/IStandardClockWithSmallUnits.cs StartLineNumber=45 StartCharacterOffset=8 EndLineNumber=45 EndCharacterOffset=8)" />
+    <Node Id="@10" Category="CodeSchema_Class" Bounds="361.648745650292,122.028983572526,100.08,25" CodeSchemaProperty_IsFinal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="Second" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Icon="CodeSchema_Class" Label="Second" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Second.cs StartLineNumber=10 StartCharacterOffset=4 EndLineNumber=10 EndCharacterOffset=4)" />
+    <Node Id="@16" Category="CodeSchema_Method" Bounds="358.659579713298,226.216434285189,62.5183333333334,25.959808" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CommonLabel="Hour" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Constructor" Label="Hour" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Hour.cs StartLineNumber=62 StartCharacterOffset=8 EndLineNumber=62 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@17" Category="CodeSchema_Method" Bounds="258.845932739028,-196.545259048128,73.6066666666667,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CommonLabel="Minute" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Constructor" Label="Minute" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Minute.cs StartLineNumber=61 StartCharacterOffset=8 EndLineNumber=61 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@18" Category="CodeSchema_Method" Bounds="199.240899206693,-191.344897420239,75.08,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CommonLabel="Second" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Constructor" Label="Second" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Second.cs StartLineNumber=37 StartCharacterOffset=8 EndLineNumber=37 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@20" Category="CodeSchema_Method" Bounds="248.577473691823,177.028983572526,145.94,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CommonLabel="MomentInTimeClock" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Constructor" Label="MomentInTimeClock" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/MomentInTimeClock.cs StartLineNumber=47 StartCharacterOffset=8 EndLineNumber=47 EndCharacterOffset=8)" />
+    <Node Id="@21" Category="CodeSchema_Method" Bounds="269.012594787381,288.948983572526,145.94,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CommonLabel="MomentInTimeClock" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Constructor" Label="MomentInTimeClock" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/MomentInTimeClock.cs StartLineNumber=41 StartCharacterOffset=8 EndLineNumber=41 EndCharacterOffset=8)" />
+    <Node Id="@22" Category="CodeSchema_Method" Bounds="389.669626714087,286.436584448235,60.8320039999999,25.9598080000001" CodeSchemaProperty_IsPublic="True" CommonLabel="Next" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Method" Label="Next" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Hour.cs StartLineNumber=85 StartCharacterOffset=8 EndLineNumber=85 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@23" Category="CodeSchema_Method" Bounds="168.019266072362,-196.545259048128,60.8266666666667,25.96" CodeSchemaProperty_IsPublic="True" CommonLabel="Next" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Method" Label="Next" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Minute.cs StartLineNumber=90 StartCharacterOffset=8 EndLineNumber=90 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@24" Category="CodeSchema_Method" Bounds="108.414232540026,-191.344897420239,60.8266666666667,25.96" CodeSchemaProperty_IsPublic="True" CommonLabel="Next" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Method" Label="Next" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Second.cs StartLineNumber=66 StartCharacterOffset=8 EndLineNumber=66 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@25" Category="CodeSchema_Method" Bounds="380.654323149349,165.47260913357,80.8191251466669,25.94831872" CodeSchemaProperty_IsPublic="True" CommonLabel="Previous" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Method" Label="Previous" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Hour.cs StartLineNumber=98 StartCharacterOffset=8 EndLineNumber=98 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@26" Category="CodeSchema_Method" Bounds="362.452599405695,-196.545259048128,80.7366666666667,25.96" CodeSchemaProperty_IsPublic="True" CommonLabel="Previous" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Method" Label="Previous" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Minute.cs StartLineNumber=103 StartCharacterOffset=8 EndLineNumber=103 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@27" Category="CodeSchema_Method" Bounds="304.320899206693,-191.344897420239,80.7366666666667,25.96" CodeSchemaProperty_IsPublic="True" CommonLabel="Previous" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Method" Label="Previous" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Second.cs StartLineNumber=79 StartCharacterOffset=8 EndLineNumber=79 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@29" Category="CodeSchema_Method" Bounds="322.316736901412,344.908983572526,102.336666666667,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CommonLabel="TickingClock" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Constructor" Label="TickingClock" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/TickingClock.cs StartLineNumber=55 StartCharacterOffset=8 EndLineNumber=55 EndCharacterOffset=8)" />
+    <Node Id="@30" Category="CodeSchema_Method" Bounds="311.462255135974,400.868983572526,102.336666666667,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CommonLabel="TickingClock" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Constructor" Label="TickingClock" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/TickingClock.cs StartLineNumber=63 StartCharacterOffset=8 EndLineNumber=63 EndCharacterOffset=8)" />
+    <Node Id="@31" Category="CodeSchema_Method" Bounds="195.9401,351.233149218668,93.8980208266667,25.9483187200001" CodeSchemaProperty_IsOperator="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="op_Implicit" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Operator" Label="op_Implicit" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Hour.cs StartLineNumber=78 StartCharacterOffset=8 EndLineNumber=78 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@32" Category="CodeSchema_Method" Bounds="290.042599405695,-84.6252590481276,93.9766666666667,25.96" CodeSchemaProperty_IsOperator="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="op_Implicit" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Operator" Label="op_Implicit" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Minute.cs StartLineNumber=83 StartCharacterOffset=8 EndLineNumber=83 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@33" Category="CodeSchema_Method" Bounds="230.437565873359,-79.4248974202388,93.9766666666667,25.96" CodeSchemaProperty_IsOperator="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="op_Implicit" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Operator" Label="op_Implicit" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Second.cs StartLineNumber=59 StartCharacterOffset=8 EndLineNumber=59 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@34" Category="CodeSchema_Method" Bounds="319.838120826666,351.233149218668,91.968455653333,25.9483187200001" CodeSchemaProperty_IsOperator="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="op_Explicit" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Operator" Label="op_Explicit" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Hour.cs StartLineNumber=74 StartCharacterOffset=8 EndLineNumber=74 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@35" Category="CodeSchema_Method" Bounds="168.019266072362,-84.6252590481276,92.0233333333333,25.96" CodeSchemaProperty_IsOperator="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="op_Explicit" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Operator" Label="op_Explicit" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Minute.cs StartLineNumber=74 StartCharacterOffset=8 EndLineNumber=74 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@36" Category="CodeSchema_Method" Bounds="108.414232540026,-79.4248974202388,92.0233333333334,25.96" CodeSchemaProperty_IsOperator="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="op_Explicit" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Operator" Label="op_Explicit" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Second.cs StartLineNumber=50 StartCharacterOffset=8 EndLineNumber=50 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@38" Category="CodeSchema_Method" Bounds="235.150006139965,226.212283709943,93.5094735733333,25.94831872" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPrivate="True" CodeSchemaProperty_IsStatic="True" CommonLabel="static Hour" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Constructor" Label="static Hour" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Hour.cs StartLineNumber=55 StartCharacterOffset=8 EndLineNumber=55 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@39" Category="CodeSchema_Method" Bounds="168.019266072362,-28.6652590481276,104.676666666667,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPrivate="True" CodeSchemaProperty_IsStatic="True" CommonLabel="static Minute" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Constructor" Label="static Minute" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Minute.cs StartLineNumber=54 StartCharacterOffset=8 EndLineNumber=54 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@4" Category="CodeSchema_Class" Bounds="151.499161454048,291.54645385487,87.5133333333333,25" CodeSchemaProperty_IsFinal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="Hour" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Icon="CodeSchema_Class" Label="Hour" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Hour.cs StartLineNumber=34 StartCharacterOffset=4 EndLineNumber=34 EndCharacterOffset=4)" />
+    <Node Id="@40" Category="CodeSchema_Method" Bounds="108.414232540026,-23.4648974202388,106.15,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPrivate="True" CodeSchemaProperty_IsStatic="True" CommonLabel="static Second" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Constructor" Label="static Second" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Second.cs StartLineNumber=30 StartCharacterOffset=8 EndLineNumber=30 EndCharacterOffset=8)" UseManualLocation="True" />
+    <Node Id="@41" Category="CodeSchema_Method" Bounds="251.239764494857,232.988983572526,145.94,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CommonLabel="MomentInTimeClock" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Constructor" Label="MomentInTimeClock" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/MomentInTimeClock.cs StartLineNumber=34 StartCharacterOffset=8 EndLineNumber=34 EndCharacterOffset=8)" />
+    <Node Id="@43" Category="CodeSchema_Property" Bounds="229.995452526364,122.028983572526,84.9623947873815,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="Hour" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/MomentInTimeClock.cs StartLineNumber=53 StartCharacterOffset=8 EndLineNumber=53 EndCharacterOffset=8)" />
+    <Node Id="@44" Category="CodeSchema_Property" Bounds="234.508018948601,456.828983572526,84.9623947873815,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="Hour" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/TickingClock.cs StartLineNumber=80 StartCharacterOffset=8 EndLineNumber=80 EndCharacterOffset=8)" />
+    <Node Id="@45" Category="CodeSchema_Field" Bounds="195.9401,155.96,89.6642201066666,25.91907328" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" DelayedCrossGroupLinksState="Fetched" Label="Maximum" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Hour.cs StartLineNumber=51 StartCharacterOffset=36 EndLineNumber=51 EndCharacterOffset=36)" UseManualLocation="True" />
+    <Node Id="@46" Category="CodeSchema_Field" Bounds="285.862599405695,-140.585259048128,89.76,25.96" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" DelayedCrossGroupLinksState="Fetched" Label="Maximum" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Minute.cs StartLineNumber=50 StartCharacterOffset=38 EndLineNumber=50 EndCharacterOffset=38)" UseManualLocation="True" />
+    <Node Id="@47" Category="CodeSchema_Field" Bounds="226.257565873359,-135.384897420239,89.76,25.96" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" DelayedCrossGroupLinksState="Fetched" Label="Maximum" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Second.cs StartLineNumber=26 StartCharacterOffset=38 EndLineNumber=26 EndCharacterOffset=38)" UseManualLocation="True" />
+    <Node Id="@48" Category="CodeSchema_Field" Bounds="196.494532344243,295.314075938668,87.8292647733333,25.91907328" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" DelayedCrossGroupLinksState="Fetched" Label="Minimum" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Hour.cs StartLineNumber=53 StartCharacterOffset=36 EndLineNumber=53 EndCharacterOffset=36)" UseManualLocation="True" />
+    <Node Id="@49" Category="CodeSchema_Field" Bounds="168.019266072362,-140.585259048128,87.8433333333334,25.96" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" DelayedCrossGroupLinksState="Fetched" Label="Minimum" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Minute.cs StartLineNumber=52 StartCharacterOffset=38 EndLineNumber=52 EndCharacterOffset=38)" UseManualLocation="True" />
+    <Node Id="@50" Category="CodeSchema_Field" Bounds="108.414232540026,-135.384897420239,87.8433333333333,25.96" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" DelayedCrossGroupLinksState="Fetched" Label="Minimum" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Second.cs StartLineNumber=28 StartCharacterOffset=38 EndLineNumber=28 EndCharacterOffset=38)" UseManualLocation="True" />
+    <Node Id="@52" Category="CodeSchema_Property" Bounds="238.090406497957,511.828983572526,96.055728120715,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="Minute" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/MomentInTimeClock.cs StartLineNumber=58 StartCharacterOffset=8 EndLineNumber=58 EndCharacterOffset=8)" />
+    <Node Id="@53" Category="CodeSchema_Property" Bounds="443.799021802641,401.828984481351,96.0557281207149,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="Minute" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/TickingClock.cs StartLineNumber=94 StartCharacterOffset=8 EndLineNumber=94 EndCharacterOffset=8)" />
+    <Node Id="@55" Category="CodeSchema_Property" Bounds="284.38768477817,67.0289835725258,97.5290614540481,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="Second" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/MomentInTimeClock.cs StartLineNumber=63 StartCharacterOffset=8 EndLineNumber=63 EndCharacterOffset=8)" />
+    <Node Id="@56" Category="CodeSchema_Property" Bounds="444.952694787382,283.487051010709,97.5290614540483,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Property Assignment" Group="Collapsed" Label="Second" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/TickingClock.cs StartLineNumber=125 StartCharacterOffset=8 EndLineNumber=125 EndCharacterOffset=8)" />
+    <Node Id="@57" Category="CodeSchema_Method" Bounds="36.6342535415384,264.431666335978,84.2366666666667,25.96" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="TestHour" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Method" Label="TestHour" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/users/rick/projects/librainian/diagnostical.cs StartLineNumber=278 StartCharacterOffset=8 EndLineNumber=278 EndCharacterOffset=8)" />
+    <Node Id="@58" Category="CodeSchema_Method" Bounds="360.501733595174,676.828983572526,95.33,25.96" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="TestMinute" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Method" Label="TestMinute" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/users/rick/projects/librainian/diagnostical.cs StartLineNumber=284 StartCharacterOffset=8 EndLineNumber=284 EndCharacterOffset=8)" />
+    <Node Id="@59" Category="CodeSchema_Method" Bounds="465.275117842705,55.0000389813905,96.8033333333333,25.96" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="TestSecond" DelayedCrossGroupLinksState="Fetched" FunctionTypeFlags="Method" Label="TestSecond" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/users/rick/projects/librainian/diagnostical.cs StartLineNumber=290 StartCharacterOffset=8 EndLineNumber=290 EndCharacterOffset=8)" />
+    <Node Id="@6" Category="CodeSchema_Class" Bounds="381.540779912891,456.828983572526,121.203333333333,25" CodeSchemaProperty_IsFinal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="Millisecond" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Icon="CodeSchema_Class" Label="Millisecond" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///C:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Millisecond.cs StartLineNumber=34 StartCharacterOffset=4 EndLineNumber=34 EndCharacterOffset=4)" />
+    <Node Id="@8" Category="CodeSchema_Class" Bounds="364.146234618672,511.828983572526,98.6066666666667,25" CodeSchemaProperty_IsFinal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="Minute" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Icon="CodeSchema_Class" Label="Minute" Language="{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}" SourceLocation="(Assembly=file:///c:/Users/Rick/Projects/Librainian/Measurement/Time/Clocks/Minute.cs StartLineNumber=34 StartCharacterOffset=4 EndLineNumber=34 EndCharacterOffset=4)" />
+  </Nodes>
+  <Links>
+    <Link Source="(@1 @2 @28 Member=OnHourTick)" Target="@4" Category="References" Bounds="117.984630150697,315.244545652941,25.0540799085848,5.37291020930064" IsSourceVirtualized="True" Weight="4" />
+    <Link Source="(@1 @2 Type=IStandardClock @42)" Target="@4" Category="CodeSchema_ReturnTypeLink" Bounds="123.487155155039,234.431711778322,52.4217495617025,50.8484610922741" IsSourceVirtualized="True" Weight="1" />
+    <Link Source="(@1 @2 Type=IStandardClock @51)" Target="@8" Category="CodeSchema_ReturnTypeLink" Bounds="423.01640767289,544.996397797675,35.5654086883654,76.8325857748509" IsSourceVirtualized="True" Weight="1" />
+    <Link Source="(@1 @2 Type=IStandardClock @54)" Target="@10" Category="CodeSchema_ReturnTypeLink" Bounds="413.502827830697,24.9999999999999,7.44128480690006,88.0609448000702" IsSourceVirtualized="True" Weight="1" />
+    <Link Source="(@1 @2 Type=IStandardClockWithSmallUnits @42)" Target="@4" Category="CodeSchema_ReturnTypeLink" Bounds="129.712338629411,323.355532512925,48.8541221562605,56.5226990662903" IsSourceVirtualized="True" Weight="1" />
+    <Link Source="(@1 @2 Type=IStandardClockWithSmallUnits @51)" Target="@8" Category="CodeSchema_ReturnTypeLink" Bounds="446.013013100537,540.913442281747,50.8849472939146,25.9155412907789" IsSourceVirtualized="True" Weight="1" />
+    <Link Source="(@1 @2 Type=IStandardClockWithSmallUnits @54)" Target="@10" Category="CodeSchema_ReturnTypeLink" Bounds="470.49529102498,144.563191444551,21.2995148456207,3.6343532539193" IsSourceVirtualized="True" Weight="1" />
+    <Link Source="@10" Target="@18" Category="Contains" FetchingParent="@10" />
+    <Link Source="@10" Target="@24" Category="Contains" FetchingParent="@10" />
+    <Link Source="@10" Target="@27" Category="Contains" FetchingParent="@10" />
+    <Link Source="@10" Target="@33" Category="Contains" FetchingParent="@10" />
+    <Link Source="@10" Target="@36" Category="Contains" FetchingParent="@10" />
+    <Link Source="@10" Target="@40" Category="Contains" FetchingParent="@10" />
+    <Link Source="@10" Target="@47" Category="Contains" FetchingParent="@10" />
+    <Link Source="@10" Target="@50" Category="Contains" FetchingParent="@10" />
+    <Link Source="@20" Target="@10" Bounds="203.0146484375,31.2349338531494,78.1867065429688,244.140157699585" />
+    <Link Source="@20" Target="@16" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@20" Target="@17" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@20" Target="@18" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@20" Target="@4" Bounds="-1443.35048617084,25.8415384615384,237.924889960999,93.7276596026427" />
+    <Link Source="@20" Target="@43" Category="CodeSchema_Calls" Bounds="289.495265667078,153.770413185291,20.571687250456,23.2585703872355" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@20" Target="@52" Category="CodeSchema_Calls" Bounds="231.275680541992,202.988983154297,58.4828033447266,305.265167236328" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@20" Target="@55" Category="CodeSchema_Calls" Bounds="322.910883799875,100.979741034003,7.98815916692621,76.0492425385229" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@20" Target="@8" Bounds="208.144180297852,-41.8204154968262,100.004409790039,302.392375946045" />
+    <Link Source="@21" Target="@10" Bounds="290.430236816406,31.0763282775879,20.3311462402344,76.418773651123" />
+    <Link Source="@21" Target="@16" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@21" Target="@17" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@21" Target="@18" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@21" Target="@31" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@21" Target="@32" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@21" Target="@33" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@21" Target="@4" Bounds="-1605.84913928486,25.8415384615384,400.130089465942,111.955158670015" />
+    <Link Source="@21" Target="@43" Category="CodeSchema_Calls" Bounds="239.154983520508,153.454605102539,62.9630584716797,135.494369506836" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@21" Target="@52" Category="CodeSchema_Calls" Bounds="301.58349609375,314.908996582031,28.6227416992188,189.860107421875" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@21" Target="@55" Category="CodeSchema_Calls" Bounds="338.268096923828,100.766105651855,68.3211059570313,188.18286895752" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@21" Target="@8" Bounds="338.849103750746,-40.5726516955842,13.5270612951177,22.3046135877462" />
+    <Link Source="@22" Target="@16" Category="CodeSchema_Calls" Bounds="400.451936490472,260.22304840807,13.1314959385504,26.2135360401651" Weight="1" />
+    <Link Source="@22" Target="@4" Category="CodeSchema_ReturnTypeLink" Bounds="450.501617431641,299.416473388672,44.4718322753906,12.3222961425781" Weight="1" />
+    <Link Source="@23" Target="@17" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@23" Target="@8" Category="CodeSchema_ReturnTypeLink" Weight="1" />
+    <Link Source="@24" Target="@10" Category="CodeSchema_ReturnTypeLink" Bounds="79.4142303466797,-178.365158081055,29.0000076293945,6.25190734863281" Weight="1" />
+    <Link Source="@24" Target="@18" Category="CodeSchema_Calls" Bounds="169.240901387533,-178.365157971075,21.0000129191081,0" Weight="1" />
+    <Link Source="@25" Target="@16" Category="CodeSchema_Calls" Bounds="400.679258220236,191.42092785357,13.7330248243054,26.7866950548495" Weight="1" />
+    <Link Source="@25" Target="@4" Category="CodeSchema_ReturnTypeLink" Bounds="461.473449707031,178.446762084961,33.5,12.3222808837891" Weight="1" />
+    <Link Source="@26" Target="@17" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@26" Target="@8" Category="CodeSchema_ReturnTypeLink" Weight="1" />
+    <Link Source="@27" Target="@10" Category="CodeSchema_ReturnTypeLink" Bounds="344.689208984375,-240.344985961914,6.25192260742188,48.9998321533203" Weight="1" />
+    <Link Source="@27" Target="@18" Category="CodeSchema_Calls" Bounds="283.320914306641,-178.365157971075,20.9999766031901,0" Weight="1" />
+    <Link Source="@29" Target="@10" Bounds="202.134872436523,31.2349109649658,69.7898101806641,300.100202560425" />
+    <Link Source="@29" Target="@16" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@29" Target="@17" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@29" Target="@18" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@29" Target="@4" Bounds="-991.07702456364,25.8415384615385,8.62794457879113,21.640026221439" />
+    <Link Source="@29" Target="@44" Category="CodeSchema_Calls" Bounds="283.522552490234,370.868988037109,61.4475402832031,77.36279296875" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@29" Target="@53" Category="CodeSchema_Calls" Bounds="400.701171264512,370.868983572526,56.7926325640812,27.085744937363" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@29" Target="@56" Category="CodeSchema_Calls" Bounds="398.696130874435,312.606774975309,62.7405962819996,32.3022085972167" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@29" Target="@6" Category="CodeSchema_Calls" Bounds="393.421112060547,370.868988037109,43.7938537597656,77.1922302246094" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@29" Target="@8" Bounds="264.985778808594,-43.2121391296387,35.0689086914063,191.864101409912" />
+    <Link Source="@30" Target="@10" Bounds="201.517532348633,31.234899520874,79.3985443115234,132.220209121704" />
+    <Link Source="@30" Target="@16" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@30" Target="@17" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@30" Target="@18" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@30" Target="@31" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@30" Target="@32" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@30" Target="@33" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@30" Target="@4" Bounds="-889.159666421775,25.8415384615385,28.9371075131222,24.5726889063552" />
+    <Link Source="@30" Target="@44" Category="CodeSchema_Calls" Bounds="303.838282785892,426.828983572526,38.7558058598995,25.1066984998594" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@30" Target="@53" Category="CodeSchema_Calls" Bounds="413.798921802641,414.039088451679,21.0001621143581,0.0780215617916724" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@30" Target="@56" Category="CodeSchema_Calls" Bounds="391.145568847656,315.883819580078,88.780029296875,84.9851684570313" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@30" Target="@6" Category="CodeSchema_Calls" Bounds="381.233038329997,426.828983572526,35.6140217941493,24.8499529013608" IsTargetVirtualized="True" Weight="2" />
+    <Link Source="@30" Target="@8" Bounds="263.158599853516,-43.2121391296387,44.2383117675781,135.904102325439" />
+    <Link Source="@31" Target="@4" Category="References" Bounds="242.889114379883,377.181457519531,12.322265625,33.5" Weight="1" />
+    <Link Source="@32" Target="@8" Category="References" Weight="1" />
+    <Link Source="@33" Target="@10" Category="References" Bounds="277.425903320313,-53.4648971557617,6.25192260742188,84.9599170684814" Weight="1" />
+    <Link Source="@34" Target="@4" Category="References" Bounds="365.822357177734,377.181457519531,12.322265625,33.5" Weight="1" />
+    <Link Source="@35" Target="@8" Category="References" Weight="1" />
+    <Link Source="@36" Target="@10" Category="References" Bounds="79.4142303466797,-66.4449615478516,29,6.25191116333008" Weight="1" />
+    <Link Source="@38" Target="@16" Category="CodeSchema_Calls" Bounds="328.659479713298,239.190726294057,21.0001000377661,0.00192382935000524" Weight="2" />
+    <Link Source="@38" Target="@45" Category="CodeSchema_FieldWrite" Bounds="252.905075881676,189.646170482689,21.4049106583102,36.5661132272541" Weight="1" />
+    <Link Source="@38" Target="@48" Category="CodeSchema_FieldWrite" Bounds="252.827019532113,252.160602429943,21.2851007111037,35.4381701564032" Weight="1" />
+    <Link Source="@39" Target="@17" Category="CodeSchema_Calls" Weight="2" />
+    <Link Source="@39" Target="@46" Category="CodeSchema_FieldWrite" Weight="1" />
+    <Link Source="@39" Target="@49" Category="CodeSchema_FieldWrite" Weight="1" />
+    <Link Source="@4" Target="@16" Category="Contains" FetchingParent="@4" />
+    <Link Source="@4" Target="@22" Category="Contains" FetchingParent="@4" />
+    <Link Source="@4" Target="@25" Category="Contains" FetchingParent="@4" />
+    <Link Source="@4" Target="@31" Category="Contains" FetchingParent="@4" />
+    <Link Source="@4" Target="@34" Category="Contains" FetchingParent="@4" />
+    <Link Source="@4" Target="@38" Category="Contains" FetchingParent="@4" />
+    <Link Source="@4" Target="@45" Category="Contains" FetchingParent="@4" />
+    <Link Source="@4" Target="@48" Category="Contains" FetchingParent="@4" />
+    <Link Source="@40" Target="@18" Category="CodeSchema_Calls" Bounds="180.885589599609,-156.661102294922,50.3710784912109,133.196245193481" Weight="2" />
+    <Link Source="@40" Target="@47" Category="CodeSchema_FieldWrite" Bounds="174.205752545477,-102.996181826558,77.9169237957045,79.5313238554835" Weight="1" />
+    <Link Source="@40" Target="@50" Category="CodeSchema_FieldWrite" Bounds="180.885589599609,-105.764022827148,28.5724639892578,82.299165725708" Weight="1" />
+    <Link Source="@41" Target="@10" Bounds="203.529830932617,31.2349281311035,80.2382354736328,188.180171966553" />
+    <Link Source="@41" Target="@16" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@41" Target="@17" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@41" Target="@18" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@41" Target="@31" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@41" Target="@32" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@41" Target="@33" Category="CodeSchema_Calls" Weight="1" />
+    <Link Source="@41" Target="@4" Bounds="-1768.34779239888,25.8415384615384,562.500465035691,122.02879388504" />
+    <Link Source="@41" Target="@43" Category="CodeSchema_Calls" Bounds="238.443298339844,154.701690673828,51.873291015625,78.2872924804688" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@41" Target="@52" Category="CodeSchema_Calls" Bounds="230.366958618164,258.948974609375,68.0251922607422,248.701568603516" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@41" Target="@55" Category="CodeSchema_Calls" Bounds="338.268096923828,100.766105651855,66.383544921875,132.222877502441" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@41" Target="@8" Bounds="250.267532348633,-43.0816993713379,49.8773956298828,247.693668365479" />
+    <Link Source="@43" Target="@4" Category="References" Bounds="203.452972412109,147.02897644043,55.8796691894531,136.140060424805" IsSourceVirtualized="True" Weight="4">
+      <Category Ref="CodeSchema_ReturnTypeLink" />
+    </Link>
+    <Link Source="@44" Target="@4" Category="References" Bounds="205.426599489288,324.613946008999,65.381277817869,132.215037563527" IsSourceVirtualized="True" Weight="4">
+      <Category Ref="CodeSchema_ReturnTypeLink" />
+    </Link>
+    <Link Source="@45" Target="@4" Category="References" Bounds="240.772216796875,102.459999084473,12.322265625,53.5000076293945" Weight="1" />
+    <Link Source="@46" Target="@8" Category="References" Weight="1" />
+    <Link Source="@47" Target="@10" Category="References" Bounds="272.351043701172,-240.344985961914,15.3916931152344,104.959930419922" Weight="1" />
+    <Link Source="@48" Target="@4" Category="References" Bounds="162.440093994141,308.273620605469,34.054443359375,12.322265625" Weight="1" />
+    <Link Source="@49" Target="@8" Category="References" Weight="1" />
+    <Link Source="@50" Target="@10" Category="References" Bounds="79.4142303466797,-122.405059814453,29,6.25190734863281" Weight="1" />
+    <Link Source="@52" Target="@8" Category="References" Bounds="334.146134618672,524.328983572526,21.0001000000001,0" IsSourceVirtualized="True" Weight="4">
+      <Category Ref="CodeSchema_ReturnTypeLink" />
+    </Link>
+    <Link Source="@53" Target="@8" Category="References" Bounds="460.407928466797,426.828979492188,44.2542419433594,82.2142333984375" IsSourceVirtualized="True" Weight="4">
+      <Category Ref="CodeSchema_ReturnTypeLink" />
+    </Link>
+    <Link Source="@55" Target="@10" Category="References" Bounds="351.001426901807,92.0289835725262,35.4660975109276,24.8373000372841" IsSourceVirtualized="True" Weight="4">
+      <Category Ref="CodeSchema_ReturnTypeLink" />
+    </Link>
+    <Link Source="@56" Target="@10" Category="References" Bounds="422.11584956781,155.052831512758,65.2507734987249,128.43421949795" IsSourceVirtualized="True" Weight="4">
+      <Category Ref="CodeSchema_ReturnTypeLink" />
+    </Link>
+    <Link Source="@57" Target="@4" Bounds="-884.58359196907,25.8415384615385,244.408561120782,94.7355517121554" />
+    <Link Source="@57" Target="@45" Category="CodeSchema_FieldRead" Weight="2" />
+    <Link Source="@57" Target="@48" Category="CodeSchema_FieldRead" Weight="2" />
+    <Link Source="@58" Target="@46" Category="CodeSchema_FieldRead" Weight="2" />
+    <Link Source="@58" Target="@49" Category="CodeSchema_FieldRead" Weight="2" />
+    <Link Source="@58" Target="@8" Bounds="352.980136359069,-103.268038107838,37.7967083584333,25.0306905009031" />
+    <Link Source="@59" Target="@10" Bounds="321.686250742142,-261.344897420239,12.3082342982638,22.1343046948319" />
+    <Link Source="@59" Target="@47" Category="CodeSchema_FieldRead" Weight="2" />
+    <Link Source="@59" Target="@50" Category="CodeSchema_FieldRead" Weight="2" />
+    <Link Source="@8" Target="@17" Category="Contains" FetchingParent="@8" />
+    <Link Source="@8" Target="@23" Category="Contains" FetchingParent="@8" />
+    <Link Source="@8" Target="@26" Category="Contains" FetchingParent="@8" />
+    <Link Source="@8" Target="@32" Category="Contains" FetchingParent="@8" />
+    <Link Source="@8" Target="@35" Category="Contains" FetchingParent="@8" />
+    <Link Source="@8" Target="@39" Category="Contains" FetchingParent="@8" />
+    <Link Source="@8" Target="@46" Category="Contains" FetchingParent="@8" />
+    <Link Source="@8" Target="@49" Category="Contains" FetchingParent="@8" />
+  </Links>
+  <Categories>
+    <Category Id="CodeSchema_Calls" Label="Calls" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Called By" OutgoingActionLabel="Calls" />
+    <Category Id="CodeSchema_Class" Label="Class" BasedOn="CodeSchema_Type" CanBeDataDriven="True" DefaultAction="Node:Both:CodeSchema_Member" Icon="CodeSchema_Class" NavigationActionLabel="Classes" />
+    <Category Id="CodeSchema_Field" Label="Field" BasedOn="CodeSchema_Member" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_Field" NavigationActionLabel="Fields" />
+    <Category Id="CodeSchema_FieldRead" Label="Field Read" BasedOn="CodeSchema_FieldReference" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Read By" OutgoingActionLabel="Reads Fields" />
+    <Category Id="CodeSchema_FieldReference" Label="Field Reference" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Referenced By" OutgoingActionLabel="References Fields" />
+    <Category Id="CodeSchema_FieldWrite" Label="Field Write" BasedOn="CodeSchema_FieldReference" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Written By" OutgoingActionLabel="Writes Fields" />
+    <Category Id="CodeSchema_Member" Label="Member" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_Field" NavigationActionLabel="Members" />
+    <Category Id="CodeSchema_Method" Label="Method" BasedOn="CodeSchema_Member" CanBeDataDriven="True" DefaultAction="Link:Forward:CodeSchema_Calls" Icon="CodeSchema_Method" NavigationActionLabel="Methods" />
+    <Category Id="CodeSchema_Property" Label="Property" BasedOn="CodeSchema_Member" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_Property" NavigationActionLabel="Properties" />
+    <Category Id="CodeSchema_ReturnTypeLink" Label="Return" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Return types" OutgoingActionLabel="Return types" />
+    <Category Id="CodeSchema_Type" Label="Type" CanBeDataDriven="True" DefaultAction="Node:Both:CodeSchema_Member" Icon="CodeSchema_Class" NavigationActionLabel="Types" />
+    <Category Id="Contains" Label="Contains" Description="Whether the source of the link contains the target object" CanBeDataDriven="False" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Contained By" IsContainment="True" OutgoingActionLabel="Contains" />
+    <Category Id="References" Label="References" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Referenced By" OutgoingActionLabel="References" />
+  </Categories>
+  <Properties>
+    <Property Id="Bounds" DataType="System.Windows.Rect" />
+    <Property Id="CanBeDataDriven" Label="CanBeDataDriven" Description="CanBeDataDriven" DataType="System.Boolean" />
+    <Property Id="CanLinkedNodesBeDataDriven" Label="CanLinkedNodesBeDataDriven" Description="CanLinkedNodesBeDataDriven" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsConstructor" Label="Is Constructor" Description="Flag to indicate the method is a constructor" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsFinal" Label="Is Final" Description="Flag to indicate the member is 'Final' and cannot be derived from" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsOperator" Label="Is Operator" Description="Flag indicating if this method defines a new operator" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsPrivate" Label="Is Private" Description="Flag to indicate the scope is Private" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsPublic" Label="Is Public" Description="Flag to indicate the scope is Public" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsStatic" Label="Is Static" Description="Flag to indicate the member is a static member" DataType="System.Boolean" />
+    <Property Id="CommonLabel" DataType="System.String" />
+    <Property Id="DataVirtualized" Label="Data Virtualized" Description="If true, the graph can contain nodes and links that represent data for virtualized nodes/links (i.e. not actually created in the graph)." DataType="System.Boolean" />
+    <Property Id="DefaultAction" Label="DefaultAction" Description="DefaultAction" DataType="System.String" />
+    <Property Id="DelayedChildNodesState" Label="Delayed Child Nodes State" Description="Unspecified if the delayed child nodes state is not specified. NotFetched if the group contains child nodes that are not fetched into the graph yet. Fetched if the group has all its delayed child nodes already fetched." DataType="Microsoft.VisualStudio.GraphModel.DelayedDataState" />
+    <Property Id="DelayedCrossGroupLinksState" Label="Delayed Cross-Group Links State" Description="Unspecified if the delayed cross-group links state is not specified. NotFetched if delayed cross-group links on this node are not fetched into the graph yet. Fetched if all delayed cross-group links have already fetched." DataType="Microsoft.VisualStudio.GraphModel.DelayedDataState" />
+    <Property Id="Expression" DataType="System.String" />
+    <Property Id="FetchingParent" DataType="Microsoft.VisualStudio.GraphModel.GraphNodeId" />
+    <Property Id="FunctionTypeFlags" Label="FunctionTypeFlags" Description="FunctionTypeFlags" DataType="System.String" />
+    <Property Id="GraphDirection" DataType="Microsoft.VisualStudio.Diagrams.Layout.LayoutOrientation" />
+    <Property Id="Group" Label="Group" Description="Display the node as a group" DataType="Microsoft.VisualStudio.GraphModel.GraphGroupStyle" />
+    <Property Id="GroupLabel" DataType="System.String" />
+    <Property Id="Icon" Label="Icon" Description="Icon" DataType="System.String" />
+    <Property Id="IncomingActionLabel" Label="IncomingActionLabel" Description="IncomingActionLabel" DataType="System.String" />
+    <Property Id="IsContainment" DataType="System.Boolean" />
+    <Property Id="IsEnabled" DataType="System.Boolean" />
+    <Property Id="IsSourceVirtualized" Label="Link Source Virtualized" Description="If true, the link source end contains data for virtualized nodes/links (i.e. not actually created in the graph)." DataType="System.Boolean" />
+    <Property Id="IsTargetVirtualized" Label="Link Target Virtualized" Description="If true, the link target end contains data for virtualized nodes/links (i.e. not actually created in the graph)." DataType="System.Boolean" />
+    <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+    <Property Id="Language" Label="Language" Description="Language" DataType="System.String" />
+    <Property Id="Layout" DataType="System.String" />
+    <Property Id="NavigationActionLabel" Label="NavigationActionLabel" Description="NavigationActionLabel" DataType="System.String" />
+    <Property Id="OutgoingActionLabel" Label="OutgoingActionLabel" Description="OutgoingActionLabel" DataType="System.String" />
+    <Property Id="SourceLocation" Label="Start Line Number" DataType="Microsoft.VisualStudio.GraphModel.CodeSchema.SourceLocation" />
+    <Property Id="TargetType" DataType="System.Type" />
+    <Property Id="UseManualLocation" DataType="System.Boolean" />
+    <Property Id="Value" DataType="System.String" />
+    <Property Id="ValueLabel" DataType="System.String" />
+    <Property Id="Visibility" Label="Visibility" Description="Defines whether a node in the graph is visible or not" DataType="System.Windows.Visibility" />
+    <Property Id="Weight" Label="Weight" Description="Weight" DataType="System.Double" />
+    <Property Id="ZoomLevel" DataType="System.String" />
+  </Properties>
+  <QualifiedNames>
+    <Name Id="Assembly" Label="Assembly" ValueType="Uri" />
+    <Name Id="Member" Label="Member" ValueType="System.Object" />
+    <Name Id="Name" Label="Name" ValueType="System.String" />
+    <Name Id="Namespace" Label="Namespace" ValueType="System.String" />
+    <Name Id="OverloadingParameters" Label="Parameter" ValueType="Microsoft.VisualStudio.GraphModel.GraphNodeIdCollection" Formatter="NameValueNoEscape" />
+    <Name Id="ParamKind" Label="Parameter Kind" ValueType="Microsoft.VisualStudio.GraphModel.CodeSchema.ParamKind" />
+    <Name Id="ParentType" Label="Parent Type" ValueType="System.Object" />
+    <Name Id="Type" Label="Type" ValueType="System.Object" />
+  </QualifiedNames>
+  <IdentifierAliases>
+    <Alias n="1" Uri="Assembly=$(722e3411-b605-4af8-adea-d2d18bc9cd2c.OutputPathUri)" />
+    <Alias n="2" Id="Namespace=Librainian.Measurement.Time.Clocks" />
+    <Alias n="3" Id="Type=Hour" />
+    <Alias n="4" Id="(@1 @2 @3)" />
+    <Alias n="6" Id="(@1 @2 Type=Millisecond)" />
+    <Alias n="7" Id="Type=Minute" />
+    <Alias n="8" Id="(@1 @2 @7)" />
+    <Alias n="9" Id="Type=Second" />
+    <Alias n="10" Id="(@1 @2 @9)" />
+    <Alias n="11" Id="(@1 Namespace=Librainian.Measurement.Time Type=Time)" />
+    <Alias n="12" Id="Name=.ctor" />
+    <Alias n="13" Uri="Assembly=$(FxReferenceAssembliesUri)/.NETFramework/v4.5.1/mscorlib.dll" />
+    <Alias n="14" Id="Namespace=System" />
+    <Alias n="15" Id="(@13 @14 Type=Byte)" />
+    <Alias n="16" Id="(@1 @2 @3 Member=(@12 OverloadingParameters=[@15]))" />
+    <Alias n="17" Id="(@1 @2 @7 Member=(@12 OverloadingParameters=[@15]))" />
+    <Alias n="18" Id="(@1 @2 @9 Member=(@12 OverloadingParameters=[@15]))" />
+    <Alias n="19" Id="Type=MomentInTimeClock" />
+    <Alias n="20" Id="(@1 @2 @19 Member=(@12 OverloadingParameters=[(@13 @14 Type=DateTime)]))" />
+    <Alias n="21" Id="(@1 @2 @19 Member=(@12 OverloadingParameters=[@11]))" />
+    <Alias n="22" Id="(@1 @2 @3 Member=(Name=Next OverloadingParameters=[(@13 @14 Type=Boolean ParamKind=Ref)]))" />
+    <Alias n="23" Id="(@1 @2 @7 Member=(Name=Next OverloadingParameters=[(@13 @14 Type=Boolean ParamKind=Ref)]))" />
+    <Alias n="24" Id="(@1 @2 @9 Member=(Name=Next OverloadingParameters=[(@13 @14 Type=Boolean ParamKind=Ref)]))" />
+    <Alias n="25" Id="(@1 @2 @3 Member=(Name=Previous OverloadingParameters=[(@13 @14 Type=Boolean ParamKind=Ref)]))" />
+    <Alias n="26" Id="(@1 @2 @7 Member=(Name=Previous OverloadingParameters=[(@13 @14 Type=Boolean ParamKind=Ref)]))" />
+    <Alias n="27" Id="(@1 @2 @9 Member=(Name=Previous OverloadingParameters=[(@13 @14 Type=Boolean ParamKind=Ref)]))" />
+    <Alias n="28" Id="Type=TickingClock" />
+    <Alias n="29" Id="(@1 @2 @28 Member=(@12 OverloadingParameters=[(@13 @14 Type=DateTime),(@1 @2 Type=(Name=Granularity ParentType=TickingClock))]))" />
+    <Alias n="30" Id="(@1 @2 @28 Member=(@12 OverloadingParameters=[@11,(@1 @2 Type=(Name=Granularity ParentType=TickingClock))]))" />
+    <Alias n="31" Id="(@1 @2 @3 Member=(Name=op_Implicit OverloadingParameters=[@4,(@13 @14 Type=Byte ParamKind=Return)]))" />
+    <Alias n="32" Id="(@1 @2 @7 Member=(Name=op_Implicit OverloadingParameters=[@8,(@13 @14 Type=Byte ParamKind=Return)]))" />
+    <Alias n="33" Id="(@1 @2 @9 Member=(Name=op_Implicit OverloadingParameters=[@10,(@13 @14 Type=Byte ParamKind=Return)]))" />
+    <Alias n="34" Id="(@1 @2 @3 Member=(Name=op_Explicit OverloadingParameters=[@4,(@13 @14 Type=SByte ParamKind=Return)]))" />
+    <Alias n="35" Id="(@1 @2 @7 Member=(Name=op_Explicit OverloadingParameters=[@8,(@13 @14 Type=SByte ParamKind=Return)]))" />
+    <Alias n="36" Id="(@1 @2 @9 Member=(Name=op_Explicit OverloadingParameters=[@10,(@13 @14 Type=SByte ParamKind=Return)]))" />
+    <Alias n="38" Id="(@1 @2 @3 Member=.cctor)" />
+    <Alias n="39" Id="(@1 @2 @7 Member=.cctor)" />
+    <Alias n="40" Id="(@1 @2 @9 Member=.cctor)" />
+    <Alias n="41" Id="(@1 @2 @19 Member=.ctor)" />
+    <Alias n="42" Id="Member=Hour" />
+    <Alias n="43" Id="(@1 @2 @19 @42)" />
+    <Alias n="44" Id="(@1 @2 @28 @42)" />
+    <Alias n="45" Id="(@1 @2 @3 Member=Maximum)" />
+    <Alias n="46" Id="(@1 @2 @7 Member=Maximum)" />
+    <Alias n="47" Id="(@1 @2 @9 Member=Maximum)" />
+    <Alias n="48" Id="(@1 @2 @3 Member=Minimum)" />
+    <Alias n="49" Id="(@1 @2 @7 Member=Minimum)" />
+    <Alias n="50" Id="(@1 @2 @9 Member=Minimum)" />
+    <Alias n="51" Id="Member=Minute" />
+    <Alias n="52" Id="(@1 @2 @19 @51)" />
+    <Alias n="53" Id="(@1 @2 @28 @51)" />
+    <Alias n="54" Id="Member=Second" />
+    <Alias n="55" Id="(@1 @2 @19 @54)" />
+    <Alias n="56" Id="(@1 @2 @28 @54)" />
+    <Alias n="57" Id="(@1 Namespace=Librainian Type=Diagnostical Member=TestHour)" />
+    <Alias n="58" Id="(@1 Namespace=Librainian Type=Diagnostical Member=TestMinute)" />
+    <Alias n="59" Id="(@1 Namespace=Librainian Type=Diagnostical Member=TestSecond)" />
+  </IdentifierAliases>
+  <Styles>
+    <Style TargetType="Node" GroupLabel="Results" ValueLabel="True">
+      <Condition Expression="HasCategory('QueryResult')" />
+      <Setter Property="Background" Value="#FFBCFFBE" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Assembly" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Assembly')" />
+      <Setter Property="Background" Value="#FF094167" />
+      <Setter Property="Stroke" Value="#FF094167" />
+      <Setter Property="Icon" Value="CodeSchema_Assembly" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Namespace" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Namespace')" />
+      <Setter Property="Background" Value="#FF0E619A" />
+      <Setter Property="Stroke" Value="#FF0E619A" />
+      <Setter Property="Icon" Value="CodeSchema_Namespace" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Interface" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Interface')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Stroke" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Interface" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Struct" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Struct')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Stroke" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Struct" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Enumeration" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Enum')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Stroke" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Enum" />
+      <Setter Property="LayoutSettings" Value="List" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Delegate" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Delegate')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Stroke" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Delegate" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Class" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Type')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Stroke" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Class" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Property" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Property')" />
+      <Setter Property="Background" Value="#FFE0E0E0" />
+      <Setter Property="Stroke" Value="#FFE0E0E0" />
+      <Setter Property="Icon" Value="CodeSchema_Property" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Method" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Method') Or HasCategory('CodeSchema_CallStackUnresolvedMethod')" />
+      <Setter Property="Background" Value="#FFE0E0E0" />
+      <Setter Property="Stroke" Value="#FFE0E0E0" />
+      <Setter Property="Icon" Value="CodeSchema_Method" />
+      <Setter Property="LayoutSettings" Value="List" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Event" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Event')" />
+      <Setter Property="Background" Value="#FFE0E0E0" />
+      <Setter Property="Stroke" Value="#FFE0E0E0" />
+      <Setter Property="Icon" Value="CodeSchema_Event" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Field" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Field')" />
+      <Setter Property="Background" Value="#FFE0E0E0" />
+      <Setter Property="Stroke" Value="#FFE0E0E0" />
+      <Setter Property="Icon" Value="CodeSchema_Field" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Out Parameter" ValueLabel="Has category">
+      <Condition Expression="CodeSchemaProperty_IsOut = 'True'" />
+      <Setter Property="Icon" Value="CodeSchema_OutParameter" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Parameter" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Parameter')" />
+      <Setter Property="Icon" Value="CodeSchema_Parameter" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Local Variable" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_LocalExpression')" />
+      <Setter Property="Icon" Value="CodeSchema_LocalExpression" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Externals" ValueLabel="Has category">
+      <Condition Expression="HasCategory('Externals')" />
+      <Setter Property="Background" Value="#FF424242" />
+      <Setter Property="Stroke" Value="#FF424242" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Inherits From" ValueLabel="Has category">
+      <Condition Expression="HasCategory('InheritsFrom')" />
+      <Setter Property="Stroke" Value="#FF00A600" />
+      <Setter Property="StrokeDashArray" Value="2 0" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Implements" ValueLabel="Has category">
+      <Condition Expression="HasCategory('Implements')" />
+      <Setter Property="Stroke" Value="#8000A600" />
+      <Setter Property="StrokeDashArray" Value="2 2" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Calls" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Calls')" />
+      <Setter Property="Stroke" Value="#FFFF00FF" />
+      <Setter Property="StrokeDashArray" Value="2 0" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Function Pointer" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_FunctionPointer')" />
+      <Setter Property="Stroke" Value="#FFFF00FF" />
+      <Setter Property="StrokeDashArray" Value="2 2" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Field Reference" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_FieldReference')" />
+      <Setter Property="Stroke" Value="#FF00AEEF" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Inherits From" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('InheritsFrom') And Target.HasCategory('CodeSchema_Class')" />
+      <Setter Property="TargetDecorator" Value="OpenArrow" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Implements" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('Implements') And Target.HasCategory('CodeSchema_Interface')" />
+      <Setter Property="TargetDecorator" Value="OpenArrow" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Field Read" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="Target.HasCategory('CodeSchema_Field') And HasCategory('CodeSchema_FieldRead')" />
+      <Setter Property="StrokeDashArray" Value="2 2" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Comment Link" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="Source.HasCategory('Comment')" />
+      <Setter Property="Stroke" Value="#FFE5C365" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Cursor Location Changed" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="IsCursorLocation" />
+      <Setter Property="IndicatorWest" Value="WestIndicator" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Disabled Breakpoint Location Changed" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="DisabledBreakpointCount" />
+      <Setter Property="IndicatorWest" Value="WestIndicator" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Enabled Breakpoint Location Changed" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="EnabledBreakpointCount" />
+      <Setter Property="IndicatorWest" Value="WestIndicator" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Instruction Pointer Location Changed" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="IsInstructionPointerLocation" />
+      <Setter Property="IndicatorWest" Value="WestIndicator" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Current Callstack Changed" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="IsCurrentCallstackFrame" />
+      <Setter Property="IndicatorWest" Value="WestIndicator" />
+    </Style>
+  </Styles>
+  <Paths>
+    <Path Id="722e3411-b605-4af8-adea-d2d18bc9cd2c.OutputPath" Value="C:\Users\Rick\Projects\Librainian\bin\Debug\Librainian.dll" />
+    <Path Id="722e3411-b605-4af8-adea-d2d18bc9cd2c.OutputPathUri" Value="file:///C:/Users/Rick/Projects/Librainian/bin/Debug/Librainian.dll" />
+    <Path Id="FxReferenceAssemblies" Value="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework" />
+    <Path Id="FxReferenceAssembliesUri" Value="file:///C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework" />
+  </Paths>
+</DirectedGraph>

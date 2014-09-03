@@ -12,6 +12,7 @@ namespace Librainian.Collections {
     using Extensions;
     using FluentAssertions;
     using Magic;
+    using Maths;
 
     [DataContract( IsReference = true )]
     [Serializable]
@@ -92,8 +93,11 @@ namespace Librainian.Collections {
         /// </summary>
         /// <typeparam name="TParticle"></typeparam>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<TKey, BigInteger>> Get<TParticle>() {
-            return this.Container.Where( pair => pair.Key is TParticle );
+        public IEnumerable<KeyValuePair<TParticle, BigInteger>> Get<TParticle>() {
+            //var results = this.Container.Where( pair => pair.Key is TParticle );
+            var results = this.Container.Cast<KeyValuePair<TParticle, BigInteger>>();
+            return results;
+            //return results;
         }
 
         //public IEnumerable<KeyValuePair<TKey, BigInteger>> Get<TCertainType>() {
