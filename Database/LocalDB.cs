@@ -25,9 +25,49 @@ namespace Librainian.Database {
 
     using System;
     using System.Data;
+    using System.Data.Common;
     using System.Data.SqlClient;
+    using System.Data.SqlLocalDb;
     using System.IO;
     using System.Reflection;
+    using Annotations;
+    using FluentAssertions;
+
+    public static class LocalDB {
+
+        public static readonly ISqlLocalDbProvider Provider = new SqlLocalDbProvider();
+
+        private static ISqlLocalDbInstance instance;
+        private static DbConnectionStringBuilder connectionStringBuilder;
+
+        [CanBeNull]
+        public static ISqlLocalDbInstance Database( String dbName ) {
+            Instance = Provider.GetOrCreateInstance( dbName );
+            return Instance;
+        }
+
+        [CanBeNull]
+        public static ISqlLocalDbInstance Instance {
+            get {
+                return instance;
+            }
+            set {
+                value.Should().NotBeNull();
+                instance = value;
+                if ( null != instance ) {
+                    instance.Start();
+                }
+            }
+        }
+
+        [ CanBeNull ]
+        public static DbConnectionStringBuilder GetConnectionStringBuilder() {
+            if ( null == connectionStringBuilder && Instance != null ) {
+                connectionStringBuilder = Instance.CreateConnectionStringBuilder();
+            }
+            return connectionStringBuilder;
+        }
+    }
 
     public class LocalDb : IDisposable {
         public const string DatabaseDirectory = "Data";
@@ -37,15 +77,30 @@ namespace Librainian.Database {
             this.CreateDatabase();
         }
 
-        public string ConnectionStringName { get; private set; }
+        public string ConnectionStringName {
+            get;
+            private set;
+        }
 
-        public string DatabaseName { get; private set; }
+        public string DatabaseName {
+            get;
+            private set;
+        }
 
-        public string OutputFolder { get; private set; }
+        public string OutputFolder {
+            get;
+            private set;
+        }
 
-        public string DatabaseMdfPath { get; private set; }
+        public string DatabaseMdfPath {
+            get;
+            private set;
+        }
 
-        public string DatabaseLogPath { get; private set; }
+        public string DatabaseLogPath {
+            get;
+            private set;
+        }
 
         public void Dispose() {
             this.DetachDatabase();
@@ -90,14 +145,16 @@ namespace Librainian.Database {
                     cmd.ExecuteNonQuery();
                 }
             }
-            catch { }
+            catch {
+            }
             finally {
-                if ( File.Exists( this.DatabaseMdfPath ) ) {
-                    File.Delete( this.DatabaseMdfPath );
-                }
-                if ( File.Exists( this.DatabaseLogPath ) ) {
-                    File.Delete( this.DatabaseLogPath );
-                }
+                //wtf?
+                //if ( File.Exists( this.DatabaseMdfPath ) ) {
+                //    File.Delete( this.DatabaseMdfPath );
+                //}
+                //if ( File.Exists( this.DatabaseLogPath ) ) {
+                //    File.Delete( this.DatabaseLogPath );
+                //}
             }
         }
     }
