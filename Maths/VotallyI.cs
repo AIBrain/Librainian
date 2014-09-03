@@ -36,12 +36,12 @@ namespace Librainian.Maths {
     [DataContract( IsReference = true )]
     [Serializable]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    public class Votally {
+    public class VotallyI {
 
         /// <summary>
         /// No vote for either.
         /// </summary>
-        public static readonly Votally Zero = new Votally( votesYes: 0, votesNo: 0 );
+        public static readonly VotallyI Zero = new VotallyI( votesYes: 0, votesNo: 0 );
 
         /// <summary>
         /// ONLY used in the getter and setter.
@@ -57,7 +57,7 @@ namespace Librainian.Maths {
         [OptionalField]
         private UInt64 _votesYes;
 
-        public Votally( UInt64 votesYes = 0, UInt64 votesNo = 0 ) {
+        public VotallyI( UInt64 votesYes = 0, UInt64 votesNo = 0 ) {
             this.Yes = votesYes;
             this.No = votesNo;
         }
@@ -160,7 +160,7 @@ namespace Librainian.Maths {
             }
         }
 
-        public static Votally Combine( [NotNull] Votally left, [NotNull] Votally right ) {
+        public static VotallyI Combine( [NotNull] VotallyI left, [NotNull] VotallyI right ) {
             if ( left == null ) {
                 throw new ArgumentNullException( "left" );
             }
@@ -173,8 +173,8 @@ namespace Librainian.Maths {
             return result;
         }
 
-        public Votally Clone() {
-            return new Votally( votesYes: this.Yes, votesNo: this.No );
+        public VotallyI Clone() {
+            return new VotallyI( votesYes: this.Yes, votesNo: this.No );
         }
 
         public UInt64 HalfOfVotes() {

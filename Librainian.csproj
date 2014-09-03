@@ -417,7 +417,7 @@
     <Compile Include="Maths\MovingAverageCalculator.cs" />
     <Compile Include="Maths\DoubleConverter.cs" />
     <Compile Include="Maths\RomanConverter.cs" />
-    <Compile Include="Maths\Votally.cs" />
+    <Compile Include="Maths\VotallyI.cs" />
     <Compile Include="Maths\VotallyD.cs" />
     <Compile Include="Measurement\Currency\AltCoinExtensions.cs" />
     <Compile Include="Measurement\Currency\BTC\ICoin.cs" />
@@ -645,10 +645,8 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Librainian.psproj" />
     <None Include="Measurement\Time\TimeMap.dgml" />
     <None Include="packages.config" />
-    <None Include="README.textile" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="PatternRecognition\" />

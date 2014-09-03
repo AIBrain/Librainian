@@ -26,6 +26,7 @@ namespace Librainian.IO.Compression {
     using System;
     using System.Diagnostics;
     using Annotations;
+    using Maths;
     using NUnit.Framework;
     using Threading;
 
@@ -45,7 +46,7 @@ namespace Librainian.IO.Compression {
 
         [Test, UsedImplicitly]
         public static Boolean RunSimulation() {
-            var buffer = new Byte[ ( UInt32 )Computer.OneMegaByte ];   //one megabytes
+            var buffer = new Byte[ ( UInt32 )MathExtensions.OneMegaByteBI ];   //one megabytes
             var bufferLength = buffer.LongLength;
             var randem = Randem.ThreadSafeRandom;
 

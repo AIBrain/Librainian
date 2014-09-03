@@ -27,6 +27,7 @@ namespace Librainian {
     using System.Numerics;
     using System.Runtime;
     using Annotations;
+    using Maths;
     using Microsoft.VisualBasic.Devices;
     using Threading;
 
@@ -47,17 +48,16 @@ namespace Librainian {
         }
 
         /// <summary>
-        /// Just cast down to UInt32
-        /// </summary>
-        public static readonly BigInteger OneMegaByte = new BigInteger( 1024*1024 );
-
-        /// <summary>
         ///     Provides properties for getting information about the computer's memory, loaded assemblies, name, and operating
         ///     system.
         /// </summary>
         // TODO how slow is this class?
         [NotNull]
-        public static ComputerInfo Info { get { return new ComputerInfo(); } }
+        public static ComputerInfo Info {
+            get {
+                return new ComputerInfo();
+            }
+        }
 
         /// <summary>
         ///     //TODO description. Bytes?
@@ -181,7 +181,7 @@ namespace Librainian {
                 if ( bytes <= 1 ) {
                     return true;
                 }
-                var megabytes = bytes / OneMegaByte;
+                var megabytes = bytes / MathExtensions.OneMegaByteBI;
                 if ( megabytes <= BigInteger.Zero ) {
                     return true;
                 }

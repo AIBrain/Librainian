@@ -39,7 +39,7 @@ namespace Librainian.Database.MMF {
 
         public MemMapCache() {
             this.Encoding = Encoding.ASCII;
-            this.ChunkSize = 1024*1024*30; //10MB
+            this.ChunkSize = 1024*1024*30;
 
             this.Server = "127.0.0.1"; //limited to local
             this.Port = 57742;
