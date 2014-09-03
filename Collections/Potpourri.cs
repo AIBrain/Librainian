@@ -12,7 +12,6 @@ namespace Librainian.Collections {
     using Extensions;
     using FluentAssertions;
     using Magic;
-    using Maths;
 
     [DataContract( IsReference = true )]
     [Serializable]
