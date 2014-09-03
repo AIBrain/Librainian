@@ -25,6 +25,21 @@ namespace Librainian.Maths {
     using System.Linq;
 
     public class PrimeNumbers {
+
+        public static long[][] GoldenPrimes = {
+                                                   new long[]{1,1},
+                                                   new long[]{41,59},
+                                                   new long[]{2377,1677},
+                                                   new long[]{147299,187507},
+                                                   new long[]{9132313,5952585},
+                                                   new long[]{566201239,643566407},
+                                                   new[]{35104476161,22071637057},
+                                                   new[]{2176477521929,294289236153},
+                                                   new[]{134941606358731,88879354792675},
+                                                   new[]{8366379594239857,7275288500431249},
+                                                   new[]{518715534842869223,280042546585394647}
+                                               };
+
         public static readonly HashSet<int> MemoizedPrimes = new HashSet<int>();
 
         public static IEnumerable<int> PotentialPrimes() {
