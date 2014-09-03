@@ -648,9 +648,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="ClassDiagram1.cd" />
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="Measurement\Time\TimeMap.dgml" />
     <None Include="packages.config" />
   </ItemGroup>
