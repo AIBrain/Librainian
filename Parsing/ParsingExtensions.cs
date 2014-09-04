@@ -84,7 +84,7 @@ namespace Librainian.Parsing {
         public static readonly String AllLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).OrderBy( c => c ).ToArray() );
 
         [NotNull]
-        public static readonly String AllLowercaseLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() );
+        public static readonly String AllLowercaseLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).Where( Char.IsLower ).OrderBy( c => c ).ToArray() );
 
         [NotNull]
         public static readonly String AllUppercaseLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() );

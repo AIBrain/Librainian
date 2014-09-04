@@ -29,7 +29,6 @@ namespace Librainian.Maths {
     using Collections;
     using FluentAssertions;
     using Measurement.Time;
-    using Microsoft.Isam.Esent.Interop;
     using Numerics;
     using Parsing;
     using Threading;
@@ -50,6 +49,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
+        [Pure]
         public static Decimal Epsilon( this Decimal number ) {
             return EpsilonDecimal;
         }
@@ -81,7 +81,7 @@ namespace Librainian.Maths {
         public static readonly BigRational ThreeOverTwo = new BigRational( 3, 2 );
 
         /// <summary>
-        ///     Just cast down to UInt32
+        ///     Just cast down to int
         /// </summary>
         public static readonly BigInteger OneMegaByteBI = new BigInteger( 1048576 );
 
@@ -107,12 +107,11 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
-        public static UInt64 AddWithoutOverFlow( this UInt64 left, UInt64 right ) {
-            var integer = new UBigInteger( left ) + new UBigInteger( right );
-            if ( integer >= new UBigInteger( UInt64.MaxValue ) ) {
-                return UInt64.MaxValue;
-            }
-            return ( UInt64 ) integer;
+        /// <param name="overflowed"></param>
+        public static UBigInteger AddWithoutOverFlow( this UInt64 left, UInt64 right, out Boolean overflowed ) {
+            var result = new UBigInteger( left ) + new UBigInteger( right );
+            overflowed = result >= UInt64.MaxValue;
+            return result;
         }
 
         /// <summary>
@@ -120,16 +119,12 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
+        /// <param name="overflowed"></param>
         /// <returns></returns>
-        public static UInt64 AddWithoutOverFlow( this UInt64 left, long right ) {
-            var integer = new BigInteger( left ) + new BigInteger( right );
-            if ( integer >= new UBigInteger( UInt64.MaxValue ) ) {
-                return UInt64.MaxValue;
-            }
-            if ( integer < UInt64.MinValue ) {
-                return UInt64.MinValue;
-            }
-            return ( UInt64 ) integer;
+        public static BigInteger AddWithoutOverFlow( this UInt64 left, long right, out Boolean overflowed ) {
+            var result = new BigInteger( left ) + new BigInteger( right );
+            overflowed = result >= UInt64.MaxValue;
+            return result;
         }
 
         /// <summary>

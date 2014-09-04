@@ -37,6 +37,7 @@ namespace Librainian.Threading {
     using Extensions;
     using FluentAssertions;
     using IO;
+    using Linguistics;
     using Maths;
     using Measurement.Time;
     using NUnit.Framework;
@@ -536,6 +537,27 @@ namespace Librainian.Threading {
         public static String RandomString( int length = 10, Boolean lowerCase = true, Boolean upperCase = false, Boolean numbers = false, Boolean symbols = false ) {
             var charPool = String.Concat( lowerCase ? ParsingExtensions.AllLowercaseLetters : String.Empty, upperCase ? ParsingExtensions.AllUppercaseLetters : String.Empty, numbers ? ParsingExtensions.Numbers : String.Empty, symbols ? ParsingExtensions.Symbols : String.Empty );
             return new String( Enumerable.Range( 0, length ).Select( i => charPool[ Next( 0, charPool.Length ) ] ).ToArray() );
+        }
+
+        public static Word RandomWord( int avglength = 5, Boolean lowerCase = true, Boolean upperCase = true, Boolean numbers = false, Boolean symbols = false ) {
+            var word = RandomString( Next( avglength - 2, avglength + 2 ), lowerCase, upperCase, numbers, symbols );
+            return new Word( word );
+        }
+
+        public static Sentence RandomSentence( int avgWords = 8 ) {
+            var list = new List<Word>();
+
+            if ( NextBoolean() ) {
+                ++avgWords;
+            }
+            else if ( NextBoolean() ) {
+                --avgWords;
+            } 
+
+            for ( var i = 0 ; i < avgWords ; i++ ) {
+                list.Add( RandomWord() );
+            }
+            return new Sentence( list );
         }
 
         /// <summary>

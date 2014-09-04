@@ -44,7 +44,7 @@ namespace Librainian.Extensions {
             var desktop = GetDesktopWindow();
             var progMan = FindWindowEx( desktop, IntPtr.Zero, "Progman", "Program Manager" );
             var defView = FindWindowEx( progMan, IntPtr.Zero, "SHELLDLL_DefView", string.Empty );
-            var listView = FindWindowEx( defView, IntPtr.Zero, "SysListView32", "FolderView" );
+            //var listView = FindWindowEx( defView, IntPtr.Zero, "SysListView32", "FolderView" );
 
             return defView;
         }

@@ -147,7 +147,7 @@ namespace Librainian.Database {
             }
             catch {
             }
-            finally {
+            //finally {
                 //wtf?
                 //if ( File.Exists( this.DatabaseMdfPath ) ) {
                 //    File.Delete( this.DatabaseMdfPath );
@@ -155,7 +155,7 @@ namespace Librainian.Database {
                 //if ( File.Exists( this.DatabaseLogPath ) ) {
                 //    File.Delete( this.DatabaseLogPath );
                 //}
-            }
+            //}
         }
     }
 }
