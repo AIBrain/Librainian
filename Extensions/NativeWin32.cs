@@ -26,8 +26,28 @@ namespace Librainian.Extensions {
     public static class NativeWin32 {
         public const int MaxPath = 260;
 
-       public const uint ERROR_SUCCESS = 0;
-       public const uint ERROR_MORE_DATA = 234;
+        public const uint ERROR_SUCCESS = 0;
+        public const uint ERROR_MORE_DATA = 234;
+
+        [DllImport( "user32.dll" )]
+        internal static extern IntPtr FindWindowEx( IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow );
+
+        [DllImport( "user32.dll", EntryPoint = "GetDesktopWindow" )]
+        internal static extern IntPtr GetDesktopWindow();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <seealso cref="http://www.facepunch.com/showthread.php?t=1312991"/>
+        public static IntPtr GetDesktopHandle() {
+            var desktop = GetDesktopWindow();
+            var progMan = FindWindowEx( desktop, IntPtr.Zero, "Progman", "Program Manager" );
+            var defView = FindWindowEx( progMan, IntPtr.Zero, "SHELLDLL_DefView", string.Empty );
+            var listView = FindWindowEx( defView, IntPtr.Zero, "SysListView32", "FolderView" );
+
+            return defView;
+        }
 
         /// <summary>
         ///     Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, or FindFirstStreamW function.
@@ -42,7 +62,7 @@ namespace Librainian.Extensions {
         public static extern Boolean FindClose( IntPtr hFindFile );
 
         [DllImport( "kernel32.dll" )]
-        public static extern bool AllocConsole(); 
+        public static extern bool AllocConsole();
 
         /// <summary>
         ///     Searches a directory for a file or subdirectory with a name that matches a specific name (or partial name if
@@ -100,7 +120,8 @@ namespace Librainian.Extensions {
         ///     like this ensures that the handle is properly cleaned up with FindClose.
         /// </summary>
         public class SafeSearchHandle : SafeHandleZeroOrMinusOneIsInvalid {
-            public SafeSearchHandle() : base( true ) { }
+            public SafeSearchHandle() : base( true ) {
+            }
 
             protected override Boolean ReleaseHandle() {
                 return FindClose( this.handle );
@@ -131,12 +152,14 @@ namespace Librainian.Extensions {
 
             public uint dwReserved1;
 
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxPath )] public String cFileName;
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxPath )]
+            public String cFileName;
 
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )] public String cAlternateFileName;
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
+            public String cAlternateFileName;
         }
 
-     
+
         /// <summary>
         /// The NetServerEnum function lists all servers of the specified type that are visible in a domain.
         /// </summary>
@@ -152,7 +175,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         /// <seealso cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum"/>
         [DllImport( "netapi32.dll", EntryPoint = "NetServerEnum" )]
-        public static extern int NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )]string servername, int level, out IntPtr bufptr, int prefmaxlen, ref int entriesread, ref int totalentries,SV_101_TYPES servertype, [MarshalAs( UnmanagedType.LPWStr )]string domain, IntPtr resume_handle );
+        public static extern int NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )]string servername, int level, out IntPtr bufptr, int prefmaxlen, ref int entriesread, ref int totalentries, SV_101_TYPES servertype, [MarshalAs( UnmanagedType.LPWStr )]string domain, IntPtr resume_handle );
 
         /// <summary>
         ///     Netapi32.dll : The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates. Call NetApiBufferFree to free the memory that other network management functions return.
