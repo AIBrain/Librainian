@@ -272,5 +272,22 @@ namespace Librainian.Extensions {
             Func<object> func = ( () => Activator.CreateInstance( localType ) ); // curry the localType
             return func;
         }
+
+        /// <summary>
+        /// <para>Checks a type to see if it derives from a raw generic (e.g. List[[]])</para>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="generic"></param>
+        /// <returns></returns>
+        public static bool IsSubclassOfRawGeneric( this Type type, Type generic ) {
+            while ( type != typeof( object ) ) {
+                var cur = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+                if ( generic == cur ) {
+                    return true;
+                }
+                type = type.BaseType;
+            }
+            return false;
+        }
     }
 }

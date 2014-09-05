@@ -24,14 +24,17 @@
 namespace Librainian.Database {
 
     using System;
+    using System.Collections.Concurrent;
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
     using System.Data.SqlLocalDb;
     using System.IO;
     using System.Reflection;
+    using System.Windows.Media.Converters;
     using Annotations;
     using FluentAssertions;
+    using IO;
 
     public static class LocalDB {
 
@@ -40,10 +43,32 @@ namespace Librainian.Database {
         private static ISqlLocalDbInstance instance;
         private static DbConnectionStringBuilder connectionStringBuilder;
 
+        public static readonly ConcurrentDictionary<String, ISqlLocalDbInstance> Instances = new ConcurrentDictionary< string, ISqlLocalDbInstance >();  
+
         [CanBeNull]
-        public static ISqlLocalDbInstance Database( String dbName ) {
-            Instance = Provider.GetOrCreateInstance( dbName );
-            return Instance;
+        public static ISqlLocalDbInstance GetInstance( this String instanceName ) {
+            ISqlLocalDbInstance result;
+            if ( Instances.TryGetValue( instanceName, out result ) ) {
+                return result;
+            }
+            Instances[ instanceName ] = Provider.GetOrCreateInstance( instanceName );
+            result = Instances[ instanceName ];
+            return result;
+        }
+
+        //private static Lazy<ISqlLocalDbInstance> instanceLazy = new Lazy<ISqlLocalDbInstance>( () => Instance );
+
+        public static Boolean TryPut<TData>( String genericThingHere  ) {
+            //send data to localdb?
+            //how?
+            return false;
+        }
+
+        public static Boolean TryGet<TData>( String genericThingHere, out TData result ) {
+            //get data from localdb?
+            //how?
+            result = default( TData );
+            return false;
         }
 
         [CanBeNull]
@@ -56,11 +81,28 @@ namespace Librainian.Database {
                 instance = value;
                 if ( null != instance ) {
                     instance.Start();
+                    OutputFolder = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), DatabaseDirectory );
+                    var mdfFilename = string.Format( "{0}.mdf", DatabaseName );
+                    DatabaseMdfPath = Path.Combine( OutputFolder, mdfFilename );
+                    DatabaseLogPath = Path.Combine( OutputFolder, String.Format( "{0}_log.ldf", DatabaseName ) );
+
                 }
             }
         }
 
-        [ CanBeNull ]
+        private static Lazy<Folder> datebaseBaseFolder = new Lazy<Folder>();
+
+
+        public static Folder DatebaseMDFFolder {
+            get;
+            set;
+        }
+        public static Folder DatebaseLDFFolder {
+            get;
+            set;
+        }
+
+        [CanBeNull]
         public static DbConnectionStringBuilder GetConnectionStringBuilder() {
             if ( null == connectionStringBuilder && Instance != null ) {
                 connectionStringBuilder = Instance.CreateConnectionStringBuilder();
@@ -148,13 +190,13 @@ namespace Librainian.Database {
             catch {
             }
             //finally {
-                //wtf?
-                //if ( File.Exists( this.DatabaseMdfPath ) ) {
-                //    File.Delete( this.DatabaseMdfPath );
-                //}
-                //if ( File.Exists( this.DatabaseLogPath ) ) {
-                //    File.Delete( this.DatabaseLogPath );
-                //}
+            //wtf?
+            //if ( File.Exists( this.DatabaseMdfPath ) ) {
+            //    File.Delete( this.DatabaseMdfPath );
+            //}
+            //if ( File.Exists( this.DatabaseLogPath ) ) {
+            //    File.Delete( this.DatabaseLogPath );
+            //}
             //}
         }
     }
