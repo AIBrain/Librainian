@@ -25,6 +25,7 @@ namespace Librainian.Database {
 
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
@@ -34,6 +35,7 @@ namespace Librainian.Database {
     using System.Reflection;
     using System.Security;
     using Annotations;
+    using Collections;
     using FluentAssertions;
     using IO;
     using Persistence;
@@ -54,7 +56,7 @@ namespace Librainian.Database {
             return result;
         }
 
-        [ NotNull ]
+        [NotNull]
         public static DbConnectionStringBuilder GetConnectionStringBuilder( this String instanceName ) {
             DbConnectionStringBuilder result;
             if ( Builders.TryGetValue( instanceName, out result ) ) {
@@ -67,11 +69,11 @@ namespace Librainian.Database {
         }
 
 
-        public static readonly ConcurrentDictionary<String, ISqlLocalDbInstance> Instances = new ConcurrentDictionary<string, ISqlLocalDbInstance>();
-        public static readonly ConcurrentDictionary<String, Document[]> InstanceFiles = new ConcurrentDictionary<string, Document[]>();
-        public static readonly ConcurrentDictionary<String, DbConnectionStringBuilder> Builders = new ConcurrentDictionary<string, DbConnectionStringBuilder>();
-        public static readonly ConcurrentDictionary<String, Document> DataPointers = new ConcurrentDictionary< String, Document >();
-        public static readonly ConcurrentDictionary<String, Document> LogPointers = new ConcurrentDictionary< String, Document >();
+        public static readonly ConcurrentDictionary<String, ISqlLocalDbInstance> Instances = new ConcurrentDictionary<String, ISqlLocalDbInstance>();
+        public static readonly ConcurrentDictionary<String, ParallelList<Document>> InstanceFiles = new ConcurrentDictionary<String, ParallelList<Document>>();
+        public static readonly ConcurrentDictionary<String, DbConnectionStringBuilder> Builders = new ConcurrentDictionary<String, DbConnectionStringBuilder>();
+        public static readonly ConcurrentDictionary<String, Document> DataPointers = new ConcurrentDictionary<String, Document>();
+        public static readonly ConcurrentDictionary<String, Document> LogPointers = new ConcurrentDictionary<String, Document>();
 
         static LocalDB() {
             var name = "Properties";
@@ -80,7 +82,9 @@ namespace Librainian.Database {
             var mdf = new Document( Path.Combine( Storage.DataFolder.Value.FullName, String.Format( "{0}.mdf", name ) ) );
             var ldf = new Document( Path.Combine( Storage.DataFolder.Value.FullName, String.Format( "{0}.ldf", name ) ) );
 
-            InstanceFiles[ "Properties" ] = new[] { new Document( mdf ), new Document( ldf ) }.ToArray();
+            var list = new[] { mdf, ldf }.ToList();
+            InstanceFiles[ "Properties" ].AddRange( list);
+
             Builders[ "Properties" ].SetPhysicalFileName( mdf );
 
             instance.Start();

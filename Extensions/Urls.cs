@@ -14,20 +14,24 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Urls.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/Urls.cs" was last cleaned by Rick on 2014/09/05 at 3:31 PM
 #endregion
 
 namespace Librainian.Extensions {
     using System;
     using System.IO;
+    using System.Text;
     using System.Text.RegularExpressions;
+    using System.Web;
 
     public static class Urls {
         public static String GetSuggestedNameFromUrl( String url, String defaultValue ) {
             var res = Path.GetFileNameWithoutExtension( url );
 
             //check if there is no file name, i.e. just folder name + query String
-            if ( !String.IsNullOrEmpty( res ) && !IsNameOnlyQueryString( res ) ) {
+            if ( !String.IsNullOrEmpty( res ) && !res.IsNameOnlyQueryString() ) {
                 return defaultValue;
             }
             res = Path.GetFileName( Path.GetDirectoryName( url ) );
@@ -35,8 +39,60 @@ namespace Librainian.Extensions {
             return String.IsNullOrEmpty( res ) ? defaultValue : Regex.Replace( res, @"[^\w]", "_", RegexOptions.Singleline ).Substring( 0, 50 );
         }
 
-        private static Boolean IsNameOnlyQueryString( String res ) {
+        public static Boolean IsNameOnlyQueryString( this String res ) {
             return !String.IsNullOrEmpty( res ) && res[ 0 ] == '?';
+        }
+
+        public static string UrlDecode( this string input ) {
+            return HttpUtility.UrlDecode( input );
+        }
+
+        /// <summary>
+        ///     Uses Uri.EscapeDataString() based on recommendations on MSDN
+        ///     http://blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
+        /// </summary>
+        public static string UrlEncode( this string input ) {
+            if ( input == null ) {
+                throw new ArgumentNullException( "input" );
+            }
+
+            const int maxLength = 32766;
+
+            if ( input.Length <= maxLength ) {
+                return Uri.EscapeDataString( input );
+            }
+
+            var sb = new StringBuilder( input.Length * 2 );
+            var index = 0;
+            while ( index < input.Length ) {
+                var length = Math.Min( input.Length - index, maxLength );
+                var subString = input.Substring( index, length );
+                sb.Append( Uri.EscapeDataString( subString ) );
+                index += subString.Length;
+            }
+
+            return sb.ToString();
+        }
+
+        public static string HtmlDecode( this string input ) {
+            return HttpUtility.HtmlDecode( input );
+        }
+
+        public static string HtmlEncode( this string input ) {
+            return HttpUtility.HtmlEncode( input );
+        }
+
+        public static string HtmlAttributeEncode( this string input ) {
+            return HttpUtility.HtmlAttributeEncode( input );
+        }
+
+        /// <summary>
+        /// Check that a string is not null or empty
+        /// </summary>
+        /// <param name="input">String to check</param>
+        /// <returns>bool</returns>
+        public static bool HasValue( this string input ) {
+            return !string.IsNullOrEmpty( input );
         }
     }
 }

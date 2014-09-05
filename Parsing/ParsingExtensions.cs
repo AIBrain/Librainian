@@ -93,7 +93,7 @@ namespace Librainian.Parsing {
         public static readonly String Alphabet = new String( value: Randem.NextString( 676, lowers: true, uppers: false, numbers: false, symbols: false ).Where( Char.IsLetter ).Distinct().OrderBy( c => c ).Aggregate( String.Empty, ( s, c1 ) => s + ' ' + c1 ).ToArray() ).Trim();
 
         [NotNull]
-        public static readonly Lazy<PluralizationService> LazyPluralizationService = new Lazy<PluralizationService>( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );
+        public static readonly Lazy< PluralizationService > LazyPluralizationService = new Lazy< PluralizationService >( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );
 
         public static readonly String[] OrdinalSuffixes = { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
 
@@ -130,7 +130,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="tuple"></param>
         /// <returns></returns>
-        public static String AsIndexed( this Tuple<string, int> tuple ) {
+        public static String AsIndexed( this Tuple< string, int > tuple ) {
             return String.Format( "{0}.[{1}]", tuple.Item1, tuple.Item2 );
         }
 
@@ -190,8 +190,8 @@ namespace Librainian.Parsing {
             return s.Substring( 0, s.IndexOf( splitter, StringComparison.InvariantCulture ) ).TrimEnd();
         }
 
-        public static IDictionary<char, ulong> Count( this String text ) {
-            var dict = new ConcurrentDictionary<char, ulong>();
+        public static IDictionary< char, ulong > Count( this String text ) {
+            var dict = new ConcurrentDictionary< char, ulong >();
             text.AsParallel().ForAll( c => dict.AddOrUpdate( c, 1, ( c1, arg2 ) => arg2 + 1 ) );
             return dict;
         }
@@ -222,7 +222,7 @@ namespace Librainian.Parsing {
             return encoding.GetBytes( text ).Compress();
         }
 
-        public static IEnumerable<T> ConcatSingle<T>( [NotNull] this IEnumerable<T> sequence, T element ) {
+        public static IEnumerable< T > ConcatSingle<T>( [NotNull] this IEnumerable< T > sequence, T element ) {
             if ( sequence == null ) {
                 throw new ArgumentNullException( "sequence" );
             }
@@ -342,7 +342,7 @@ namespace Librainian.Parsing {
             return encoding.GetString( data.Decompress() );
         }
 
-        public static IEnumerable<char> EnglishOnly( this String s ) {
+        public static IEnumerable< char > EnglishOnly( this String s ) {
             try {
                 var sb = new StringBuilder();
                 foreach ( Match m in Regex.Matches( s, @"(\w+)|(\$\d+\.\d+)" ) ) {
@@ -513,7 +513,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="sentence"></param>
         /// <returns></returns>
-        public static IEnumerable<string> JustDigits( this String sentence ) {
+        public static IEnumerable< string > JustDigits( this String sentence ) {
             return RegexJustDigits.Split( sentence );
         }
 
@@ -542,7 +542,7 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         /// <seealso cref="Word" />
         /// <seealso cref="Sentence" />
-        public static IEnumerable<string> JustWords( this String sentence ) {
+        public static IEnumerable< string > JustWords( this String sentence ) {
             var result = sentence.ToWords().Where( word => word.Any( Char.IsLetterOrDigit ) );
             return result;
         }
@@ -896,7 +896,7 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         /// <remarks> The score is normalized such that 0 equates to no similarity and 1 is an exact match.</remarks>
         [UsedImplicitly]
-        public static Double Similarity( [NotNull] this String source, [NotNull] String compare, [NotNull] ref ConcurrentQueue<string> matchReasons, TimeSpan? timeout = null ) {
+        public static Double Similarity( [NotNull] this String source, [NotNull] String compare, [NotNull] ref ConcurrentQueue< string > matchReasons, TimeSpan? timeout = null ) {
             if ( source == null ) {
                 throw new ArgumentNullException( "source" );
             }
@@ -1074,7 +1074,7 @@ namespace Librainian.Parsing {
                                    .Substring( 0, length ); // and no longer than length
         }
 
-        public static IEnumerable<string> SplitToChunks( [NotNull] this string s, int chunks ) {
+        public static IEnumerable< string > SplitToChunks( [NotNull] this string s, int chunks ) {
             if ( s == null ) {
                 throw new ArgumentNullException( "s" );
             }
@@ -1199,9 +1199,9 @@ namespace Librainian.Parsing {
         }
 
         [NotNull]
-        public static IEnumerable<Sentence> ToSentences( [CanBeNull] this String paragraph ) {
+        public static IEnumerable< Sentence > ToSentences( [CanBeNull] this String paragraph ) {
             if ( paragraph == null ) {
-                return Enumerable.Empty<Sentence>();
+                return Enumerable.Empty< Sentence >();
             }
             //clean it up some
             paragraph = paragraph.Replace( "\t", Singlespace );
@@ -1219,7 +1219,7 @@ namespace Librainian.Parsing {
             return results.Select( s => new Sentence( s ) );
         }
 
-        public static IEnumerable<string> ToWords( [NotNull] this String sentence ) {
+        public static IEnumerable< string > ToWords( [NotNull] this String sentence ) {
             //TODO try parsing with different splitters?
             // ...do we mabe want the most or least words or avg ?
 
@@ -1394,6 +1394,17 @@ namespace Librainian.Parsing {
             throw new NotImplementedException();
         }
 
-
+        /// <summary>
+        /// Remove leading and trailing " from a string
+        /// </summary>
+        /// <param name="input">String to parse</param>
+        /// <returns>String</returns>
+        public static string RemoveSurroundingQuotes( this string input ) {
+            if ( input.StartsWith( "\"" ) && input.EndsWith( "\"" ) ) {
+                // remove leading/trailing quotes
+                input = input.Substring( 1, input.Length - 2 );
+            }
+            return input;
+        }
     }
 }

@@ -313,7 +313,6 @@
     <Compile Include="Extensions\Types.cs" />
     <Compile Include="Extensions\Urls.cs" />
     <Compile Include="Extensions\Utility.cs" />
-    <Compile Include="Extensions\WaitTime.cs" />
     <Compile Include="Extensions\XMLExtensions.cs" />
     <Compile Include="Gaming\IDice.cs" />
     <Compile Include="Gaming\PlayingCards\FaceValues.cs" />
