@@ -29,6 +29,7 @@ namespace Librainian.Persistence {
     using System.Runtime.Serialization.Formatters;
     using System.Security;
     using System.ServiceModel;
+    using System.Windows.Forms;
     using Annotations;
     using CodeFluent.Runtime.BinaryServices;
     using IO;
@@ -43,10 +44,11 @@ namespace Librainian.Persistence {
         /// <para><see cref="Folder"/> to store (and pull) application data (current user, local machine, per executable).</para>
         /// </summary>
         public static readonly Lazy<Folder> DataFolder = new Lazy<Folder>( () => {
-            var folderPath = Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData );
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( ( Assembly.GetExecutingAssembly() ?? Assembly.GetEntryAssembly() ).Location );
-            var fullPath = Path.Combine( folderPath, fileNameWithoutExtension );
-            var folder = new Folder( fullPath );
+            //var folderPath = Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData );
+            //var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( ( Assembly.GetExecutingAssembly() ?? Assembly.GetEntryAssembly() ).Location );
+            //var fullPath = Path.Combine( folderPath, fileNameWithoutExtension );
+
+            var folder = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.CompanyName, Application.ProductName );
             if ( !folder.Exists ) {
                 folder.Create();
             }
@@ -959,7 +961,7 @@ namespace Librainian.Persistence {
             }
             try {
                 if ( String.IsNullOrWhiteSpace( location ) ) {
-                    location = ConfigLocation.Value.FullName;
+                    location = DataFolder.Value.FullName;
                 }
                 var filename = String.Format( "{0}:{1}", location, attribute );
                 var context = new StreamingContext( StreamingContextStates.All );

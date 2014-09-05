@@ -39,6 +39,10 @@ namespace Librainian.IO {
     using Maths;
     using Parsing;
 
+
+    public interface IDocument : IEquatable<Document>, IEnumerable<Byte> {
+    }
+
     /// <summary>
     ///     <para>A wrapper for a file, the extension, the [parent] folder, and the file's size all from a given full path.</para>
     ///     <para>Also contains static string versions from <see cref="Path" /></para>
@@ -48,7 +52,7 @@ namespace Librainian.IO {
     [Immutable]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
-    public class Document : IEquatable<Document>, IEnumerable<Byte> {
+    public class Document : IDocument {
 
         [UsedImplicitly]
         public String DebuggerDisplay {
@@ -58,7 +62,7 @@ namespace Librainian.IO {
         }
 
         [NotNull, UsedImplicitly]
-        public static readonly Document Empty = new Document();
+        public static readonly IDocument Empty = new Document();
 
         /// <summary>
         ///     "/"
@@ -83,7 +87,7 @@ namespace Librainian.IO {
         protected readonly FileInfo FileInfo;
 
         /// <summary>
-        ///     <para>FYI: A folder does not always ends with a <see cref="IO.Folder.FolderSeparator" />... .. . / \</para>
+        ///     <para>The <see cref="Folder"/> this <see cref="Document"/> is stored.</para>
         /// </summary>
         [NotNull]
         public readonly Folder Folder;
@@ -97,32 +101,45 @@ namespace Librainian.IO {
         /// <summary>
         /// <para>Gets the current size of the <see cref="Document"/>.</para>
         /// </summary>
-        /// <seealso cref="Length"/>
-        public UInt64 Size {
+        /// <seealso cref="GetLength"/>
+        [CanBeNull]
+        public UInt64? Size {
             get {
-                return this.Length;
+                return this.GetLength();
             }
         }
 
         /// <summary>
         /// <para>Gets the current size of the <see cref="Document"/>.</para>
         /// </summary>
-        public UInt64 Length {
-            get {
-                return !this.Exists() ? 0UL : ( UInt64 )this.FileInfo.Length;
+        [CanBeNull]
+        public UInt64? GetLength() {
+            this.Refresh();
+            try {
+                if ( this.Exists() ) {
+                    return ( UInt64 )this.FileInfo.Length;
+                }
             }
+            catch ( FileNotFoundException exception ) {
+                exception.Error();
+            }
+            catch ( IOException exception ) {
+                exception.Error();
+            }
+            return null;
         }
-
 
         static Document() {
             InvalidPathChars.Fix();
         }
 
         public void Refresh() {
+            this.Folder.Refresh();
             this.FileInfo.Refresh();
         }
 
-        public Document( [NotNull] String fullPath, String filename ) : this( Path.Combine( fullPath, filename ) ) {
+        public Document( [NotNull] String fullPath, String filename )
+            : this( Path.Combine( fullPath, filename ) ) {
         }
 
         /// <summary>
@@ -179,8 +196,9 @@ namespace Librainian.IO {
             : this( info.FullName ) {
         }
 
-        public Document( Folder folder, string filename ) : this(folder.FullName, filename) {
-            
+        public Document( Folder folder, string filename )
+            : this( folder.FullName, filename ) {
+
         }
 
         /// <summary>
@@ -307,22 +325,6 @@ namespace Librainian.IO {
             return true;
         }
 
-        //[NotNull]
-        //public static implicit operator DirectoryInfo( [NotNull] Document document ) {
-        //    if ( document == null ) {
-        //        throw new ArgumentNullException( "document" );
-        //    }
-        //    return document.Folder;
-        //}
-
-        //[NotNull]
-        //public static implicit operator FileInfo( [NotNull] Document document ) {
-        //    if ( document == null ) {
-        //        throw new ArgumentNullException( "document" );
-        //    }
-        //    return document._file;
-        //}
-
         /// <summary>
         ///     <para>Compares the file names (case insensitive) and file sizes for inequality.</para>
         /// </summary>
@@ -388,4 +390,5 @@ namespace Librainian.IO {
             return false;
         }
     }
+
 }

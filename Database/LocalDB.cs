@@ -30,22 +30,19 @@ namespace Librainian.Database {
     using System.Data.SqlClient;
     using System.Data.SqlLocalDb;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
-    using System.Windows.Media.Converters;
+    using System.Security;
     using Annotations;
     using FluentAssertions;
     using IO;
+    using Persistence;
 
     public static class LocalDB {
 
         public static readonly ISqlLocalDbProvider Provider = new SqlLocalDbProvider();
 
-        private static ISqlLocalDbInstance instance;
-        private static DbConnectionStringBuilder connectionStringBuilder;
-
-        public static readonly ConcurrentDictionary<String, ISqlLocalDbInstance> Instances = new ConcurrentDictionary< string, ISqlLocalDbInstance >();  
-
-        [CanBeNull]
+        [NotNull]
         public static ISqlLocalDbInstance GetInstance( this String instanceName ) {
             ISqlLocalDbInstance result;
             if ( Instances.TryGetValue( instanceName, out result ) ) {
@@ -53,12 +50,80 @@ namespace Librainian.Database {
             }
             Instances[ instanceName ] = Provider.GetOrCreateInstance( instanceName );
             result = Instances[ instanceName ];
+            result.Start();
             return result;
         }
 
+        [ NotNull ]
+        public static DbConnectionStringBuilder GetConnectionStringBuilder( this String instanceName ) {
+            DbConnectionStringBuilder result;
+            if ( Builders.TryGetValue( instanceName, out result ) ) {
+                return result;
+            }
+
+            Builders[ instanceName ] = GetInstance( instanceName ).CreateConnectionStringBuilder();
+
+            return Builders[ instanceName ];
+        }
+
+
+        public static readonly ConcurrentDictionary<String, ISqlLocalDbInstance> Instances = new ConcurrentDictionary<string, ISqlLocalDbInstance>();
+        public static readonly ConcurrentDictionary<String, Document[]> InstanceFiles = new ConcurrentDictionary<string, Document[]>();
+        public static readonly ConcurrentDictionary<String, DbConnectionStringBuilder> Builders = new ConcurrentDictionary<string, DbConnectionStringBuilder>();
+        public static readonly ConcurrentDictionary<String, Document> DataPointers = new ConcurrentDictionary< String, Document >();
+        public static readonly ConcurrentDictionary<String, Document> LogPointers = new ConcurrentDictionary< String, Document >();
+
+        static LocalDB() {
+            var name = "Properties";
+            var instance = GetInstance( name );
+
+            var mdf = new Document( Path.Combine( Storage.DataFolder.Value.FullName, String.Format( "{0}.mdf", name ) ) );
+            var ldf = new Document( Path.Combine( Storage.DataFolder.Value.FullName, String.Format( "{0}.ldf", name ) ) );
+
+            InstanceFiles[ "Properties" ] = new[] { new Document( mdf ), new Document( ldf ) }.ToArray();
+            Builders[ "Properties" ].SetPhysicalFileName( mdf );
+
+            instance.Start();
+        }
+
+
+        //[CanBeNull]
+        //public static ISqlLocalDbInstance Instance {
+        //    get {
+        //        return instance;
+        //    }
+        //    set {
+        //        value.Should().NotBeNull();
+        //        instance = value;
+        //        if ( null != instance ) {
+        //            instance.Start();
+        //            OutputFolder = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), DatabaseDirectory );
+        //            var mdfFilename = string.Format( "{0}.mdf", DatabaseName );
+        //            DatabaseMdfPath = Path.Combine( OutputFolder, mdfFilename );
+        //            DatabaseLogPath = Path.Combine( OutputFolder, String.Format( "{0}_log.ldf", DatabaseName ) );
+
+        //        }
+        //    }
+        //}
+
+        public static object DatabaseName {
+            get;
+            private set;
+        }
+
+        public static string OutputFolder {
+            get;
+            set;
+        }
+
+        private static Lazy<Folder> datebaseBaseFolder = new Lazy<Folder>();
+
+
+
+
         //private static Lazy<ISqlLocalDbInstance> instanceLazy = new Lazy<ISqlLocalDbInstance>( () => Instance );
 
-        public static Boolean TryPut<TData>( String genericThingHere  ) {
+        public static Boolean TryPut<TData>( String genericThingHere ) {
             //send data to localdb?
             //how?
             return false;
@@ -71,44 +136,6 @@ namespace Librainian.Database {
             return false;
         }
 
-        [CanBeNull]
-        public static ISqlLocalDbInstance Instance {
-            get {
-                return instance;
-            }
-            set {
-                value.Should().NotBeNull();
-                instance = value;
-                if ( null != instance ) {
-                    instance.Start();
-                    OutputFolder = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), DatabaseDirectory );
-                    var mdfFilename = string.Format( "{0}.mdf", DatabaseName );
-                    DatabaseMdfPath = Path.Combine( OutputFolder, mdfFilename );
-                    DatabaseLogPath = Path.Combine( OutputFolder, String.Format( "{0}_log.ldf", DatabaseName ) );
-
-                }
-            }
-        }
-
-        private static Lazy<Folder> datebaseBaseFolder = new Lazy<Folder>();
-
-
-        public static Folder DatebaseMDFFolder {
-            get;
-            set;
-        }
-        public static Folder DatebaseLDFFolder {
-            get;
-            set;
-        }
-
-        [CanBeNull]
-        public static DbConnectionStringBuilder GetConnectionStringBuilder() {
-            if ( null == connectionStringBuilder && Instance != null ) {
-                connectionStringBuilder = Instance.CreateConnectionStringBuilder();
-            }
-            return connectionStringBuilder;
-        }
     }
 
     public class LocalDb : IDisposable {

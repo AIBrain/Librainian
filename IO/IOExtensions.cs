@@ -183,7 +183,7 @@ namespace Librainian.IO {
                 return false;
             }
 
-            return left.Length == ( UInt64 )right.Length && left.AsByteArray().SequenceEqual( right.AsByteArray() );
+            return left.GetLength() == ( UInt64 )right.Length && left.AsByteArray().SequenceEqual( right.AsByteArray() );
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace Librainian.IO {
                 return false;
             }
 
-            return ( UInt64 )left.Length == right.Length && left.AsByteArray().SequenceEqual( right.AsByteArray() );
+            return ( UInt64 )left.Length == right.GetLength() && left.AsByteArray().SequenceEqual( right.AsByteArray() );
         }
 
         /// <summary>

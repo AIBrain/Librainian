@@ -154,7 +154,7 @@ namespace Librainian.IO {
         /// <returns></returns>
         public IEnumerable<Document> GetDocuments() {
             if ( !this.DirectoryInfo.Exists ) {
-                this.DirectoryInfo.Refresh();
+                this.Refresh();
                 if ( !this.DirectoryInfo.Exists ) {
                     return Enumerable.Empty<Document>();
                 }
@@ -164,7 +164,7 @@ namespace Librainian.IO {
 
         public IEnumerable<Folder> GetFolders() {
             if ( !this.DirectoryInfo.Exists ) {
-                this.DirectoryInfo.Refresh();
+                this.Refresh();
                 if ( !this.DirectoryInfo.Exists ) {
                     return Enumerable.Empty<Folder>();
                 }
@@ -214,7 +214,7 @@ namespace Librainian.IO {
         /// <exception cref="PathTooLongException"></exception>
         public Boolean Exists {
             get {
-                this.DirectoryInfo.Refresh();
+                this.Refresh();
                 return this.DirectoryInfo.Exists;
             }
         }
@@ -261,5 +261,11 @@ namespace Librainian.IO {
        //     , Action<DirectoryInfo> onEachDirectory = null
        //     , SearchStyle searchStyle = SearchStyle.FilesFirst
        //     )
+
+
+        public void Refresh() {
+            this.DirectoryInfo.Refresh();
+
+        }
     }
 }
