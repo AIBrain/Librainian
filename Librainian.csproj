@@ -481,8 +481,6 @@
     <Compile Include="Linguistics\Book.cs" />
     <Compile Include="Linguistics\Page.cs" />
     <Compile Include="Misc\ProductExampleClass.cs" />
-    <Compile Include="Persistence\IPersistableSettings.cs" />
-    <Compile Include="Persistence\IPersistTable.cs" />
     <Compile Include="Persistence\PersistableSettings.cs" />
     <Compile Include="Persistence\PersistedDatabase.cs" />
     <Compile Include="Persistence\PersistTable.cs" />

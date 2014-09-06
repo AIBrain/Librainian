@@ -34,7 +34,7 @@ namespace Librainian.Persistence {
     /// <summary>
     ///     atm, I love this class.
     /// </summary>
-    public class PersistableSettings : IInitializable, IPersistableSettings {
+    public class PersistableSettings : IInitializable {
         public void Initialize() {
             Report.Enter();
             this.ValidateStorageFolder();

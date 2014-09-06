@@ -21,10 +21,7 @@ namespace Librainian.Knowledge {
     using System;
     using System.Runtime.Serialization;
     using Annotations;
-    using Collections;
-    using Extensions;
     using Maths;
-    using Persistence;
 
     [DataContract( IsReference = true )]
     public class Factoid {
