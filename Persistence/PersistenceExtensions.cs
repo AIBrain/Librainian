@@ -22,7 +22,7 @@ namespace Librainian.Persistence {
     using System.Collections.Concurrent;
     using Collections;
 
-    public static class Extensions {
+    public static class PersistenceExtensions {
         /// <summary>
         ///     Persist an object to an IsolatedStorageFile.<br />
         ///     Mark class with [DataContract( Namespace = "http://aibrain.org" )]<br />

@@ -29,12 +29,14 @@ namespace Librainian.Measurement.Time {
     using System.Runtime.Serialization;
     using Annotations;
     using FluentAssertions;
+    using Librainian.Extensions;
 
     /// <summary>
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Yoctosecond" />
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [Immutable]
     public struct Yoctoseconds : IComparable<Yoctoseconds>, IQuantityOfTime {
 
         /// <summary>

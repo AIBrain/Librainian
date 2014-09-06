@@ -294,7 +294,8 @@ namespace Librainian.Threading {
         public static Decimal NextDecimal( Decimal minValue, Decimal maxValue ) {
             var min = Math.Min( minValue, maxValue );
             var max = Math.Max( minValue, maxValue );
-            return min + ( NextDecimal() * ( max - min ) );
+            var range = max - min;
+            return min + ( NextDecimal() * range );
         }
 
         /// <summary>
@@ -311,7 +312,7 @@ namespace Librainian.Threading {
             return NextDouble( min: variance.Low, max: variance.High );
         }
 
-        private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<byte[]>( () => new byte[ sizeof( double ) ] );
+        private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<byte[]>( () => new byte[ sizeof( double ) ], false );
 
         /// <summary>
         /// Returns a random Double between <paramref name="min" /> and <paramref name="max" />.
@@ -587,8 +588,8 @@ namespace Librainian.Threading {
         /// </summary>
         /// <remarks>Given one number, return two random numbers that add up to <param name="goal"></param></remarks>
         public static void Split( int goal, out int lowResult, out int highResult ) {
-            var half = goal.Half();
-            var quarter = half.Half();
+            var half = goal.HalfOf();
+            var quarter = half.HalfOf();
             var firstNum = Instance.Next( minValue: half - quarter, maxValue: half + quarter );
             var secondNum = goal - firstNum;
             if ( firstNum > secondNum ) {

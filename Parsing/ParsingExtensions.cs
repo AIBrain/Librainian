@@ -16,7 +16,7 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/ParsingExtensions.cs" was last cleaned by Rick on 2014/09/05 at 3:44 PM
+// "Librainian/ParsingExtensions.cs" was last cleaned by Rick on 2014/09/06 at 7:29 AM
 #endregion
 
 namespace Librainian.Parsing {
@@ -112,9 +112,35 @@ namespace Librainian.Parsing {
         /// </summary>
         public static readonly string[] UriRfc3986CharsToEscape = { "!", "*", "'", "(", ")" };
 
+        private static readonly String[] TensMap = { "zero", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
         private static readonly String[] UnitsMap = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
 
-        private static readonly String[] TensMap = { "zero", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
+        /// <summary>
+        ///     Add dashes to a pascal-cased string
+        /// </summary>
+        /// <param name="pascalCasedWord">String to convert</param>
+        /// <returns>string</returns>
+        public static string AddDashes( this string pascalCasedWord ) {
+            return Regex.Replace( Regex.Replace( Regex.Replace( pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1-$2" ), @"([a-z\d])([A-Z])", "$1-$2" ), @"[\s]", "-" );
+        }
+
+        /// <summary>
+        ///     Add an undescore prefix to a pascasl-cased string
+        /// </summary>
+        /// <param name="pascalCasedWord"></param>
+        /// <returns></returns>
+        public static string AddUnderscorePrefix( this string pascalCasedWord ) {
+            return string.Format( "_{0}", pascalCasedWord );
+        }
+
+        /// <summary>
+        ///     Add underscores to a pascal-cased string
+        /// </summary>
+        /// <param name="pascalCasedWord">String to convert</param>
+        /// <returns>string</returns>
+        public static string AddUnderscores( this string pascalCasedWord ) {
+            return Regex.Replace( Regex.Replace( Regex.Replace( pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1_$2" ), @"([a-z\d])([A-Z])", "$1_$2" ), @"[-\s]", "_" );
+        }
 
         public static String After( [ NotNull ] this String s, [ NotNull ] String splitter ) {
             if ( s == null ) {
@@ -124,6 +150,10 @@ namespace Librainian.Parsing {
                 throw new ArgumentNullException( "splitter" );
             }
             return s.Substring( s.IndexOf( splitter, StringComparison.InvariantCulture ) + 1 ).TrimStart();
+        }
+
+        public static String Append( [ CanBeNull ] this String result, [ CanBeNull ] String appendThis ) {
+            return String.Format( "{0}{1}", result ?? String.Empty, appendThis ?? String.Empty );
         }
 
         /// <summary>
@@ -175,6 +205,19 @@ namespace Librainian.Parsing {
             }
         }
 
+        public static String Base64Decode( String base64EncodedData ) {
+            var base64EncodedBytes = Convert.FromBase64String( base64EncodedData );
+            return Encoding.UTF8.GetString( base64EncodedBytes );
+        }
+
+        public static String Base64Encode( this String plainText ) {
+            if ( String.IsNullOrEmpty( plainText ) ) {
+                plainText = String.Empty;
+            }
+            var plainTextBytes = Encoding.UTF8.GetBytes( plainText );
+            return Convert.ToBase64String( plainTextBytes );
+        }
+
         /// <summary>
         ///     Return the substring from 0 to the index of the splitter.
         /// </summary>
@@ -189,16 +232,6 @@ namespace Librainian.Parsing {
                 throw new ArgumentNullException( "splitter" );
             }
             return s.Substring( 0, s.IndexOf( splitter, StringComparison.InvariantCulture ) ).TrimEnd();
-        }
-
-        public static IDictionary< char, ulong > Count( this String text ) {
-            var dict = new ConcurrentDictionary< char, ulong >();
-            text.AsParallel().ForAll( c => dict.AddOrUpdate( c, 1, ( c1, arg2 ) => arg2 + 1 ) );
-            return dict;
-        }
-
-        public static UInt64 Count( this String text, Char character ) {
-            return ( UInt64 ) text.Where( c => c == character ).LongCount();
         }
 
         /// <summary>
@@ -231,6 +264,16 @@ namespace Librainian.Parsing {
                 yield return item;
             }
             yield return element;
+        }
+
+        public static IDictionary< char, ulong > Count( this String text ) {
+            var dict = new ConcurrentDictionary< char, ulong >();
+            text.AsParallel().ForAll( c => dict.AddOrUpdate( c, 1, ( c1, arg2 ) => arg2 + 1 ) );
+            return dict;
+        }
+
+        public static UInt64 Count( this String text, Char character ) {
+            return ( UInt64 ) text.Where( c => c == character ).LongCount();
         }
 
         /// <summary>
@@ -341,6 +384,21 @@ namespace Librainian.Parsing {
                 throw new ArgumentNullException( "encoding" );
             }
             return encoding.GetString( data.Decompress() );
+        }
+
+        /// <summary>
+        ///     <para>Case insensitive string-end comparison. </para>
+        ///     <para>( true example: cAt == CaT )</para>
+        ///     <para>
+        ///         <see cref="StringComparison.InvariantCultureIgnoreCase" />
+        ///     </para>
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="compare"></param>
+        /// <returns></returns>
+        public static Boolean EndsLike( this String source, String compare ) {
+            return source.EndsWith( compare, StringComparison.InvariantCultureIgnoreCase );
+            //( source ?? String.Empty ).Equals( compare ?? String.Empty,  );
         }
 
         public static IEnumerable< char > EnglishOnly( this String s ) {
@@ -474,6 +532,44 @@ namespace Librainian.Parsing {
             return String.Format( "{0}{1}", s[ 0 ], result );
         }
 
+        /// <summary>
+        ///     Return possible variants of a name for name matching.
+        /// </summary>
+        /// <param name="input">String to convert</param>
+        /// <param name="culture">The culture to use for conversion</param>
+        /// <returns>IEnumerable&lt;string&gt;</returns>
+        public static IEnumerable< string > GetNameVariants( this string input, CultureInfo culture ) {
+            if ( String.IsNullOrEmpty( input ) ) {
+                yield break;
+            }
+
+            yield return input;
+
+            // try camel cased name
+            yield return input.ToCamelCase( culture );
+
+            // try lower cased name
+            yield return input.ToLower( culture );
+
+            // try name with underscores
+            yield return input.AddUnderscores();
+
+            // try name with underscores with lower case
+            yield return input.AddUnderscores().ToLower( culture );
+
+            // try name with dashes
+            yield return input.AddDashes();
+
+            // try name with dashes with lower case
+            yield return input.AddDashes().ToLower( culture );
+
+            // try name with underscore prefix
+            yield return input.AddUnderscorePrefix();
+
+            // try name with underscore prefix, using camel case
+            yield return input.ToCamelCase( culture ).AddUnderscorePrefix();
+        }
+
         public static String InOutputFormat( this String indexed ) {
             return String.Format( "{0}-|", indexed );
         }
@@ -499,6 +595,15 @@ namespace Librainian.Parsing {
 
         public static Boolean IsNullOrWhiteSpace( [ CanBeNull ] this String value ) {
             return String.IsNullOrWhiteSpace( value );
+        }
+
+        /// <summary>
+        ///     Checks to see if a string is all uppper case
+        /// </summary>
+        /// <param name="inputString">String to check</param>
+        /// <returns>bool</returns>
+        public static bool IsUpperCase( this string inputString ) {
+            return Regex.IsMatch( inputString, @"^[A-Z]+$" );
         }
 
         /// <summary>
@@ -564,18 +669,50 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        ///     <para>Case insensitive string-end comparison. </para>
-        ///     <para>( true example: cAt == CaT )</para>
-        ///     <para>
-        ///         <see cref="StringComparison.InvariantCultureIgnoreCase" />
-        ///     </para>
+        ///     Convert the first letter of a string to lower case
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="compare"></param>
-        /// <returns></returns>
-        public static Boolean EndsLike( this String source, String compare ) {
-            return source.EndsWith( compare, StringComparison.InvariantCultureIgnoreCase );
-            //( source ?? String.Empty ).Equals( compare ?? String.Empty,  );
+        /// <param name="word">String to convert</param>
+        /// <returns>string</returns>
+        public static string MakeInitialLowerCase( this string word ) {
+            return String.Concat( word.Substring( 0, 1 ).ToLower(), word.Substring( 1 ) );
+        }
+
+        /// <summary>
+        ///     Gets a <b>horrible</b> ROUGH guesstimate of the memory consumed by an object by using
+        ///     <seealso
+        ///         cref="NetDataContractSerializer" />
+        ///     .
+        /// </summary>
+        /// <param name="bob"> </param>
+        /// <returns> </returns>
+        public static long MemoryUsed( [ NotNull ] this Object bob ) {
+            if ( bob == null ) {
+                throw new ArgumentNullException( "bob" );
+            }
+            try {
+                using ( var s = new NullStream() ) {
+                    var serializer = new NetDataContractSerializer {
+                                                                       AssemblyFormat = FormatterAssemblyStyle.Full
+                                                                   };
+                    serializer.WriteObject( stream: s, graph: bob );
+                    return s.Length;
+                }
+            }
+            catch ( InvalidDataContractException exception ) {
+                exception.Error();
+            }
+            catch ( SerializationException exception ) {
+                exception.Error();
+            }
+            catch ( Exception exception ) {
+                exception.Error();
+            }
+            return 0;
+        }
+
+        public static long MinifyXML( this XmlDocument xml ) {
+            //TODO todo.
+            throw new NotImplementedException();
         }
 
         //        public const String Lowercase = "abcdefghijklmnopqrstuvwxyz";
@@ -608,14 +745,6 @@ namespace Librainian.Parsing {
             return ( number * number.Sign ).ToString().Length;
         }
 
-        public static String Append( [ CanBeNull ] this String result, [ CanBeNull ] String appendThis ) {
-            return String.Format( "{0}{1}", result ?? String.Empty, appendThis ?? String.Empty );
-        }
-
-        public static String Prepend( [ CanBeNull ] this String result, [ CanBeNull ] String prependThis ) {
-            return String.Format( "{0}{1}", prependThis ?? String.Empty, result ?? String.Empty );
-        }
-
         public static String PadMiddle( int totalLength, String partA, String partB, char paddingChar ) {
             var result = partA + partB;
             while ( result.Length < totalLength ) {
@@ -631,6 +760,27 @@ namespace Librainian.Parsing {
         public static String PadMiddle( int totalLength, String partA, String partB, String partC, char paddingChar ) {
             var padding = "".PadRight( ( totalLength - ( partA.Length + partB.Length + partC.Length ) ) / 2, '_' );
             return partA + padding + partB + "".PadRight( totalLength - ( partA.Length + padding.Length + partB.Length + partC.Length ), '_' ) + partC;
+        }
+
+        public static int ParallelEditDistance( this string s1, string s2 ) {
+            var dist = new int[s1.Length + 1, s2.Length + 1];
+            for ( var i = 0; i <= s1.Length; i++ ) {
+                dist[ i, 0 ] = i;
+            }
+            for ( var j = 0; j <= s2.Length; j++ ) {
+                dist[ 0, j ] = j;
+            }
+            var numBlocks = Environment.ProcessorCount * 4;
+
+            ParallelAlgorithms.Wavefront( ( ( startI, endI, startJ, endJ ) => {
+                                                for ( var i = startI + 1; i <= endI; i++ ) {
+                                                    for ( var j = startJ + 1; j <= endJ; j++ ) {
+                                                        dist[ i, j ] = ( s1[ i - 1 ] == s2[ j - 1 ] ) ? dist[ i - 1, j - 1 ] : 1 + Math.Min( dist[ i - 1, j ], Math.Min( dist[ i, j - 1 ], dist[ i - 1, j - 1 ] ) );
+                                                    }
+                                                }
+                                            } ), s1.Length, s2.Length, numBlocks, numBlocks );
+
+            return dist[ s1.Length, s2.Length ];
         }
 
         /// <summary>
@@ -730,6 +880,10 @@ namespace Librainian.Parsing {
             return LazyPluralizationService.Value.Pluralize( word );
         }
 
+        public static String Prepend( [ CanBeNull ] this String result, [ CanBeNull ] String prependThis ) {
+            return String.Format( "{0}{1}", prependThis ?? String.Empty, result ?? String.Empty );
+        }
+
         public static String ReadToEnd( [ NotNull ] this MemoryStream ms ) {
             if ( ms == null ) {
                 throw new ArgumentNullException( "ms" );
@@ -740,97 +894,17 @@ namespace Librainian.Parsing {
             }
         }
 
-        public static String Base64Encode( this String plainText ) {
-            if ( String.IsNullOrEmpty( plainText ) ) {
-                plainText = String.Empty;
-            }
-            var plainTextBytes = Encoding.UTF8.GetBytes( plainText );
-            return Convert.ToBase64String( plainTextBytes );
-        }
-
-        public static String Base64Decode( String base64EncodedData ) {
-            var base64EncodedBytes = Convert.FromBase64String( base64EncodedData );
-            return Encoding.UTF8.GetString( base64EncodedBytes );
-        }
-
         /// <summary>
-        ///     Returns the wording of a number.
+        ///     Remove leading and trailing " from a string
         /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        /// <seealso cref="http://stackoverflow.com/a/2730393/956364" />
-        public static string ToVerbalWord( this int number ) {
-            if ( number == 0 ) {
-                return "zero";
+        /// <param name="input">String to parse</param>
+        /// <returns>String</returns>
+        public static string RemoveSurroundingQuotes( this string input ) {
+            if ( input.StartsWith( "\"" ) && input.EndsWith( "\"" ) ) {
+                // remove leading/trailing quotes
+                input = input.Substring( 1, input.Length - 2 );
             }
-
-            if ( number < 0 ) {
-                return "minus " + ToVerbalWord( Math.Abs( number ) );
-            }
-
-            var words = String.Empty;
-
-            if ( ( number / 1000000 ) > 0 ) {
-                words += ToVerbalWord( number / 1000000 ) + " million ";
-                number %= 1000000;
-            }
-
-            if ( ( number / 1000 ) > 0 ) {
-                words += ToVerbalWord( number / 1000 ) + " thousand ";
-                number %= 1000;
-            }
-
-            if ( ( number / 100 ) > 0 ) {
-                words += ToVerbalWord( number / 100 ) + " hundred ";
-                number %= 100;
-            }
-
-            if ( number <= 0 ) {
-                return words;
-            }
-
-            if ( words != "" ) {
-                words += "and ";
-            }
-
-            if ( number < 20 ) {
-                words += UnitsMap[ number ];
-            }
-            else {
-                words += TensMap[ number / 10 ];
-                if ( ( number % 10 ) > 0 ) {
-                    words += "-" + UnitsMap[ number % 10 ];
-                }
-            }
-
-            return words;
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        /// <seealso cref="http://stackoverflow.com/a/7829529/956364" />
-        public static string ToVerbalWord( this decimal number ) {
-            if ( number == 0 ) {
-                return "zero";
-            }
-
-            if ( number < 0 ) {
-                return "minus " + ToVerbalWord( Math.Abs( number ) );
-            }
-
-            var intPortion = ( int ) number;
-            var fraction = ( number - intPortion ) * 100;
-            var decPortion = ( int ) fraction;
-
-            var words = ToVerbalWord( intPortion );
-            if ( decPortion <= 0 ) {
-                return words;
-            }
-            words += " and ";
-            words += ToVerbalWord( decPortion );
-            return words;
+            return input;
         }
 
         public static string ReplaceAll( string haystack, string needle, string replacement ) {
@@ -1190,6 +1264,15 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
+        ///     Converts a string to camel case
+        /// </summary>
+        /// <param name="lowercaseAndUnderscoredWord">String to convert</param>
+        /// <returns>String</returns>
+        public static string ToCamelCase( this string lowercaseAndUnderscoredWord, CultureInfo culture ) {
+            return MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord, culture ) );
+        }
+
+        /// <summary>
         ///     Same as <see cref="AsOrdinal" />, but might be slightly faster performance-wise.
         /// </summary>
         /// <param name="number"></param>
@@ -1198,6 +1281,42 @@ namespace Librainian.Parsing {
             var n = Math.Abs( number );
             var lt = n % 100;
             return number + OrdinalSuffixes[ ( lt >= 11 && lt <= 13 ) ? 0 : n % 10 ];
+        }
+
+        /// <summary>
+        ///     Converts a string to pascal case with the option to remove underscores
+        /// </summary>
+        /// <param name="text">String to convert</param>
+        /// <param name="culture"></param>
+        /// <param name="removeUnderscores">Option to remove underscores</param>
+        /// <returns></returns>
+        public static string ToPascalCase( this string text, CultureInfo culture, bool removeUnderscores = true ) {
+            if ( String.IsNullOrEmpty( text ) ) {
+                return text;
+            }
+
+            text = text.Replace( "_", " " );
+            var joinString = removeUnderscores ? String.Empty : "_";
+            var words = text.Split( ' ' );
+            if ( words.Length <= 1 && !words[ 0 ].IsUpperCase() ) {
+                return String.Concat( words[ 0 ].Substring( 0, 1 ).ToUpper( culture ), words[ 0 ].Substring( 1 ) );
+            }
+
+            for ( var i = 0; i < words.Length; i++ ) {
+                if ( words[ i ].Length <= 0 ) {
+                    continue;
+                }
+                var word = words[ i ];
+                var restOfWord = word.Substring( 1 );
+
+                if ( restOfWord.IsUpperCase() ) {
+                    restOfWord = restOfWord.ToLower( culture );
+                }
+
+                var firstChar = char.ToUpper( word[ 0 ], culture );
+                words[ i ] = String.Concat( firstChar, restOfWord );
+            }
+            return String.Join( joinString, words );
         }
 
         [ NotNull ]
@@ -1219,6 +1338,86 @@ namespace Librainian.Parsing {
 
             var results = RegexBySentenceStackoverflow.Split( input: paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trim() ).Where( ts => !String.IsNullOrWhiteSpace( ts ) && !ts.Equals( "." ) );
             return results.Select( s => new Sentence( s ) );
+        }
+
+        /// <summary>
+        ///     Returns the wording of a number.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://stackoverflow.com/a/2730393/956364" />
+        public static string ToVerbalWord( this int number ) {
+            if ( number == 0 ) {
+                return "zero";
+            }
+
+            if ( number < 0 ) {
+                return "minus " + ToVerbalWord( Math.Abs( number ) );
+            }
+
+            var words = String.Empty;
+
+            if ( ( number / 1000000 ) > 0 ) {
+                words += ToVerbalWord( number / 1000000 ) + " million ";
+                number %= 1000000;
+            }
+
+            if ( ( number / 1000 ) > 0 ) {
+                words += ToVerbalWord( number / 1000 ) + " thousand ";
+                number %= 1000;
+            }
+
+            if ( ( number / 100 ) > 0 ) {
+                words += ToVerbalWord( number / 100 ) + " hundred ";
+                number %= 100;
+            }
+
+            if ( number <= 0 ) {
+                return words;
+            }
+
+            if ( words != "" ) {
+                words += "and ";
+            }
+
+            if ( number < 20 ) {
+                words += UnitsMap[ number ];
+            }
+            else {
+                words += TensMap[ number / 10 ];
+                if ( ( number % 10 ) > 0 ) {
+                    words += "-" + UnitsMap[ number % 10 ];
+                }
+            }
+
+            return words;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://stackoverflow.com/a/7829529/956364" />
+        public static string ToVerbalWord( this decimal number ) {
+            if ( number == 0 ) {
+                return "zero";
+            }
+
+            if ( number < 0 ) {
+                return "minus " + ToVerbalWord( Math.Abs( number ) );
+            }
+
+            var intPortion = ( int ) number;
+            var fraction = ( number - intPortion ) * 100;
+            var decPortion = ( int ) fraction;
+
+            var words = ToVerbalWord( intPortion );
+            if ( decPortion <= 0 ) {
+                return words;
+            }
+            words += " and ";
+            words += ToVerbalWord( decPortion );
+            return words;
         }
 
         public static IEnumerable< string > ToWords( [ NotNull ] this String sentence ) {
@@ -1335,215 +1534,6 @@ namespace Librainian.Parsing {
             catch ( Exception ) {
                 return -1;
             }
-        }
-
-        public static int ParallelEditDistance( this string s1, string s2 ) {
-            var dist = new int[s1.Length + 1, s2.Length + 1];
-            for ( var i = 0; i <= s1.Length; i++ ) {
-                dist[ i, 0 ] = i;
-            }
-            for ( var j = 0; j <= s2.Length; j++ ) {
-                dist[ 0, j ] = j;
-            }
-            var numBlocks = Environment.ProcessorCount * 4;
-
-            ParallelAlgorithms.Wavefront( ( ( startI, endI, startJ, endJ ) => {
-                                                for ( var i = startI + 1; i <= endI; i++ ) {
-                                                    for ( var j = startJ + 1; j <= endJ; j++ ) {
-                                                        dist[ i, j ] = ( s1[ i - 1 ] == s2[ j - 1 ] ) ? dist[ i - 1, j - 1 ] : 1 + Math.Min( dist[ i - 1, j ], Math.Min( dist[ i, j - 1 ], dist[ i - 1, j - 1 ] ) );
-                                                    }
-                                                }
-                                            } ), s1.Length, s2.Length, numBlocks, numBlocks );
-
-            return dist[ s1.Length, s2.Length ];
-        }
-
-        /// <summary>
-        ///     Gets a <b>horrible</b> ROUGH guesstimate of the memory consumed by an object by using
-        ///     <seealso
-        ///         cref="NetDataContractSerializer" />
-        ///     .
-        /// </summary>
-        /// <param name="bob"> </param>
-        /// <returns> </returns>
-        public static long MemoryUsed( [ NotNull ] this Object bob ) {
-            if ( bob == null ) {
-                throw new ArgumentNullException( "bob" );
-            }
-            try {
-                using ( var s = new NullStream() ) {
-                    var serializer = new NetDataContractSerializer {
-                                                                       AssemblyFormat = FormatterAssemblyStyle.Full
-                                                                   };
-                    serializer.WriteObject( stream: s, graph: bob );
-                    return s.Length;
-                }
-            }
-            catch ( InvalidDataContractException exception ) {
-                exception.Error();
-            }
-            catch ( SerializationException exception ) {
-                exception.Error();
-            }
-            catch ( Exception exception ) {
-                exception.Error();
-            }
-            return 0;
-        }
-
-        public static long MinifyXML( this XmlDocument xml ) {
-            //TODO todo.
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///     Remove leading and trailing " from a string
-        /// </summary>
-        /// <param name="input">String to parse</param>
-        /// <returns>String</returns>
-        public static string RemoveSurroundingQuotes( this string input ) {
-            if ( input.StartsWith( "\"" ) && input.EndsWith( "\"" ) ) {
-                // remove leading/trailing quotes
-                input = input.Substring( 1, input.Length - 2 );
-            }
-            return input;
-        }
-
-        /// <summary>
-        ///     Checks to see if a string is all uppper case
-        /// </summary>
-        /// <param name="inputString">String to check</param>
-        /// <returns>bool</returns>
-        public static bool IsUpperCase( this string inputString ) {
-            return Regex.IsMatch( inputString, @"^[A-Z]+$" );
-        }
-
-        /// <summary>
-        ///     Converts a string to pascal case with the option to remove underscores
-        /// </summary>
-        /// <param name="text">String to convert</param>
-        /// <param name="culture"></param>
-        /// <param name="removeUnderscores">Option to remove underscores</param>
-        /// <returns></returns>
-        public static string ToPascalCase( this string text, CultureInfo culture, bool removeUnderscores = true ) {
-            if ( String.IsNullOrEmpty( text ) ) {
-                return text;
-            }
-
-            text = text.Replace( "_", " " );
-            var joinString = removeUnderscores ? String.Empty : "_";
-            var words = text.Split( ' ' );
-            if ( words.Length <= 1 && !words[ 0 ].IsUpperCase() ) {
-                return String.Concat( words[ 0 ].Substring( 0, 1 ).ToUpper( culture ), words[ 0 ].Substring( 1 ) );
-            }
-
-            for ( var i = 0; i < words.Length; i++ ) {
-                if ( words[ i ].Length <= 0 ) {
-                    continue;
-                }
-                var word = words[ i ];
-                var restOfWord = word.Substring( 1 );
-
-                if ( restOfWord.IsUpperCase() ) {
-                    restOfWord = restOfWord.ToLower( culture );
-                }
-
-                var firstChar = char.ToUpper( word[ 0 ], culture );
-                words[ i ] = String.Concat( firstChar, restOfWord );
-            }
-            return String.Join( joinString, words );
-        }
-
-        /// <summary>
-        /// Convert the first letter of a string to lower case
-        /// </summary>
-        /// <param name="word">String to convert</param>
-        /// <returns>string</returns>
-        public static string MakeInitialLowerCase( this string word ) {
-            return String.Concat( word.Substring( 0, 1 ).ToLower(), word.Substring( 1 ) );
-        }
-
-
-
-        /// <summary>
-        /// Converts a string to camel case
-        /// </summary>
-        /// <param name="lowercaseAndUnderscoredWord">String to convert</param>
-        /// <returns>String</returns>
-        public static string ToCamelCase( this string lowercaseAndUnderscoredWord, CultureInfo culture ) {
-            return MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord, culture ) );
-        }
-
-        /// <summary>
-        /// Add underscores to a pascal-cased string
-        /// </summary>
-        /// <param name="pascalCasedWord">String to convert</param>
-        /// <returns>string</returns>
-        public static string AddUnderscores( this string pascalCasedWord ) {
-            return
-                Regex.Replace(
-                    Regex.Replace( Regex.Replace( pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1_$2" ), @"([a-z\d])([A-Z])",
-                        "$1_$2" ), @"[-\s]", "_" );
-        }
-
-        /// <summary>
-        /// Add dashes to a pascal-cased string
-        /// </summary>
-        /// <param name="pascalCasedWord">String to convert</param>
-        /// <returns>string</returns>
-        public static string AddDashes( this string pascalCasedWord ) {
-            return
-                Regex.Replace(
-                    Regex.Replace(
-                        Regex.Replace( pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1-$2" ),
-                    @"([a-z\d])([A-Z])",
-                "$1-$2" ), @"[\s]", "-" );
-        }
-
-        /// <summary>
-        /// Add an undescore prefix to a pascasl-cased string
-        /// </summary>
-        /// <param name="pascalCasedWord"></param>
-        /// <returns></returns>
-        public static string AddUnderscorePrefix( this string pascalCasedWord ) {
-            return string.Format( "_{0}", pascalCasedWord );
-        }
-
-        /// <summary>
-        /// Return possible variants of a name for name matching.
-        /// </summary>
-        /// <param name="input">String to convert</param>
-        /// <param name="culture">The culture to use for conversion</param>
-        /// <returns>IEnumerable&lt;string&gt;</returns>
-        public static IEnumerable<string> GetNameVariants( this string input, CultureInfo culture ) {
-            if ( String.IsNullOrEmpty( input ) )
-                yield break;
-
-            yield return input;
-
-            // try camel cased name
-            yield return input.ToCamelCase( culture );
-
-            // try lower cased name
-            yield return input.ToLower( culture );
-
-            // try name with underscores
-            yield return input.AddUnderscores();
-
-            // try name with underscores with lower case
-            yield return input.AddUnderscores().ToLower( culture );
-
-            // try name with dashes
-            yield return input.AddDashes();
-
-            // try name with dashes with lower case
-            yield return input.AddDashes().ToLower( culture );
-
-            // try name with underscore prefix
-            yield return input.AddUnderscorePrefix();
-
-            // try name with underscore prefix, using camel case
-            yield return input.ToCamelCase( culture ).AddUnderscorePrefix();
         }
     }
 }

@@ -29,10 +29,12 @@ namespace Librainian.Measurement.Time {
     using System.Runtime.Serialization;
     using Annotations;
     using FluentAssertions;
+    using Librainian.Extensions;
 
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
+    [Immutable]
     public struct Microseconds : IComparable<Microseconds>, IQuantityOfTime {
 
         /// <summary>

@@ -553,7 +553,7 @@
     <Compile Include="Parsing\WordGuid.cs" />
     <Compile Include="Maths\AutoNumber.cs" />
     <Compile Include="Persistence\DeserializeReportStats.cs" />
-    <Compile Include="Persistence\Extensions.cs" />
+    <Compile Include="Persistence\PersistenceExtensions.cs" />
     <Compile Include="Persistence\Persist.cs" />
     <Compile Include="Persistence\Persistable.cs" />
     <Compile Include="Security\Windows.cs" />

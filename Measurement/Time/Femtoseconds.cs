@@ -29,6 +29,7 @@ namespace Librainian.Measurement.Time {
     using System.Runtime.Serialization;
     using Annotations;
     using FluentAssertions;
+    using Librainian.Extensions;
 
     /// <summary>
     /// </summary>
@@ -36,6 +37,7 @@ namespace Librainian.Measurement.Time {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
+    [Immutable]
     public struct Femtoseconds : IComparable<Femtoseconds>, IQuantityOfTime {
 
         /// <summary>

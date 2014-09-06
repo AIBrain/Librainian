@@ -29,6 +29,7 @@ namespace Librainian.Measurement.Time {
     using System.Runtime.Serialization;
     using Annotations;
     using FluentAssertions;
+    using Librainian.Extensions;
     using NUnit.Framework;
 
     /// <summary>
@@ -36,6 +37,7 @@ namespace Librainian.Measurement.Time {
     /// <seealso cref="http://wikipedia.org/wiki/Zeptosecond" />
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [Immutable]
     public struct Zeptoseconds : IComparable<Zeptoseconds>, IQuantityOfTime {
 
         /// <summary>
