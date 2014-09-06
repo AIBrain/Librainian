@@ -21,12 +21,15 @@ namespace Librainian.Measurement.Physics {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using Annotations;
 
     public static class Extensions {
 
+        public static Expression<Func<Double, Double>> FahrenheitToCelsius = fahrenheit => ( fahrenheit - 32.0 ) * 5.0 / 9.0;
+
         public static String Simpler( this ElectronVolts volts ) {
-            var list = new HashSet< String > {
+            var list = new HashSet<String> {
                                                  volts.ToTeraElectronVolts().Display(),
                                                  volts.ToGigaElectronVolts().Display(),
                                                  volts.ToMegaElectronVolts().Display(),
@@ -37,7 +40,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public static String Simpler( this KiloElectronVolts volts ) {
-            var list = new HashSet< String > {
+            var list = new HashSet<String> {
                                                  volts.ToTeraElectronVolts().Display(),
                                                  volts.ToGigaElectronVolts().Display(),
                                                  volts.ToMegaElectronVolts().Display(),
@@ -48,7 +51,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public static String Simpler( this MegaElectronVolts volts ) {
-            var list = new HashSet< String > {
+            var list = new HashSet<String> {
                                                  volts.ToTeraElectronVolts().Display(),
                                                  volts.ToGigaElectronVolts().Display(),
                                                  volts.ToMegaElectronVolts().Display(),
@@ -59,7 +62,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public static String Simpler( this GigaElectronVolts volts ) {
-            var list = new HashSet< String > {
+            var list = new HashSet<String> {
                                                  volts.ToTeraElectronVolts().Display(),
                                                  volts.ToGigaElectronVolts().Display(),
                                                  volts.ToMegaElectronVolts().Display(),
@@ -70,7 +73,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public static String Simpler( this TeraElectronVolts volts ) {
-            var list = new HashSet< String > {
+            var list = new HashSet<String> {
                                                  volts.ToTeraElectronVolts().Display(),
                                                  volts.ToGigaElectronVolts().Display(),
                                                  volts.ToMegaElectronVolts().Display(),
@@ -80,7 +83,7 @@ namespace Librainian.Measurement.Physics {
             return list.OrderBy( s => s.Length ).FirstOrDefault() ?? "n/a";
         }
 
-        public static MegaElectronVolts Sum( [NotNull] this IEnumerable< ElectronVolts > volts ) {
+        public static MegaElectronVolts Sum( [NotNull] this IEnumerable<ElectronVolts> volts ) {
             if ( volts == null ) {
                 throw new ArgumentNullException( "volts" );
             }
@@ -89,14 +92,14 @@ namespace Librainian.Measurement.Physics {
             return result;
         }
 
-        public static GigaElectronVolts Sum( [NotNull] this IEnumerable< MegaElectronVolts > volts ) {
+        public static GigaElectronVolts Sum( [NotNull] this IEnumerable<MegaElectronVolts> volts ) {
             if ( volts == null ) {
                 throw new ArgumentNullException( "volts" );
             }
             return volts.Aggregate( GigaElectronVolts.Zero, ( current, megaElectronVolts ) => current + megaElectronVolts.ToGigaElectronVolts() );
         }
 
-        public static TeraElectronVolts Sum( [NotNull] this IEnumerable< GigaElectronVolts > volts ) {
+        public static TeraElectronVolts Sum( [NotNull] this IEnumerable<GigaElectronVolts> volts ) {
             if ( volts == null ) {
                 throw new ArgumentNullException( "volts" );
             }
