@@ -25,7 +25,7 @@ namespace Librainian.Persistence {
     using System.ComponentModel;
     using System.Runtime.Serialization;
     using Annotations;
-    using Librainian.Extensions;
+    using Extensions;
     using Measurement.Time;
 
     [DataContract( IsReference = true )]

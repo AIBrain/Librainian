@@ -45,8 +45,9 @@ namespace Librainian.Knowledge {
         public Percentage Truthiness { get; private set; }
     }
 
+/*
     [DataContract( IsReference = true )]
-    public class Teacher : Persistable {
+    public class Teacher  {
         [DataMember] public ThreadSafeList< Topic > Topics = new ThreadSafeList< Topic >();
 
         public void AddTopic( String topic ) {
@@ -80,4 +81,5 @@ namespace Librainian.Knowledge {
             }
         }
     }
+*/
 }

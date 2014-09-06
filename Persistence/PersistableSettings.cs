@@ -25,30 +25,11 @@ namespace Librainian.Persistence {
     using CodeFluent.Runtime.BinaryServices;
     using Controls;
     using IO;
-    using Librainian.Extensions;
+    using Extensions;
     using Ninject;
     using Parsing;
+    using Properties;
     using Threading;
-
-    public interface IPersistableSettings {
-        /// <summary>
-        ///     Returns the <see cref="MainStoragePath" /> as a <see cref="DirectoryInfo" />.
-        /// </summary>
-        DirectoryInfo MainStoragePath { get; set; }
-
-        /// <summary>
-        ///     check if we have a storagepath given for AIBrain.
-        ///     if we don't, popup a dialog to ask.
-        ///     Settings.
-        /// </summary>
-        /// <returns></returns>
-        void ValidateStorageFolder();
-
-        /// <summary>
-        ///     ask user for folder/network path where to store AIBrain
-        /// </summary>
-        void AskUserForStorageFolder();
-    }
 
     /// <summary>
     ///     atm, I love this class.
@@ -148,7 +129,7 @@ namespace Librainian.Persistence {
         public void AskUserForStorageFolder() {
             var folderBrowserDialog = new FolderBrowserDialog {
                                                                   ShowNewFolderButton = true,
-                                                                  Description = "Please direct me to a folder where I can store my memory.",
+                                                                  Description = Resources._Please_direct_me_to_a_folder_,
                                                                   RootFolder = Environment.SpecialFolder.MyComputer
                                                               };
 

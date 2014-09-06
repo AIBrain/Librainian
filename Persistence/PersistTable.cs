@@ -33,7 +33,7 @@ namespace Librainian.Persistence {
     using Annotations;
     using FluentAssertions;
     using IO;
-    using Librainian.Extensions;
+    using Extensions;
     using Microsoft.Isam.Esent.Collections.Generic;
     using Ninject;
     using Parsing;

@@ -77,8 +77,8 @@ namespace Librainian.Database {
             var name = "Properties";
             var instance = GetInstance( name );
 
-            var mdf = new Document( Path.Combine( Storage.DataFolder.Value.FullName, String.Format( "{0}.mdf", name ) ) );
-            var ldf = new Document( Path.Combine( Storage.DataFolder.Value.FullName, String.Format( "{0}.ldf", name ) ) );
+            var mdf = new Document( Path.Combine( PersistenceExtensions.DataFolder.Value.FullName, String.Format( "{0}.mdf", name ) ) );
+            var ldf = new Document( Path.Combine( PersistenceExtensions.DataFolder.Value.FullName, String.Format( "{0}.ldf", name ) ) );
 
             var list = new[] { mdf, ldf }.ToList();
             InstanceFiles[ "Properties" ].AddRange( list);

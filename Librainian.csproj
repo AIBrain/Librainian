@@ -397,7 +397,7 @@
     <Compile Include="Knowledge\Ontology.cs" />
     <Compile Include="Knowledge\SentenceOfThings.cs" />
     <Compile Include="Knowledge\SubClass.cs" />
-    <Compile Include="Knowledge\Teacher.cs" />
+    <Compile Include="Knowledge\Factoid.cs" />
     <Compile Include="Knowledge\Thing.cs" />
     <Compile Include="Knowledge\Topic.cs" />
     <Compile Include="Knowledge\TypeOrClass.cs" />
@@ -481,11 +481,11 @@
     <Compile Include="Linguistics\Book.cs" />
     <Compile Include="Linguistics\Page.cs" />
     <Compile Include="Misc\ProductExampleClass.cs" />
+    <Compile Include="Persistence\IPersistableSettings.cs" />
     <Compile Include="Persistence\IPersistTable.cs" />
     <Compile Include="Persistence\PersistableSettings.cs" />
     <Compile Include="Persistence\PersistedDatabase.cs" />
     <Compile Include="Persistence\PersistTable.cs" />
-    <Compile Include="Persistence\SerializationExtensions.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -554,8 +554,6 @@
     <Compile Include="Maths\AutoNumber.cs" />
     <Compile Include="Persistence\DeserializeReportStats.cs" />
     <Compile Include="Persistence\PersistenceExtensions.cs" />
-    <Compile Include="Persistence\Persist.cs" />
-    <Compile Include="Persistence\Persistable.cs" />
     <Compile Include="Security\Windows.cs" />
     <Compile Include="Speech\Speecher.cs" />
     <Compile Include="Speech\SpeechOutput.cs" />
