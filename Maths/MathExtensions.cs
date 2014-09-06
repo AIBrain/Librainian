@@ -547,6 +547,7 @@ namespace Librainian.Maths {
             return ( Byte )( number / 2 );
         }
 
+        [Pure]
         public static TimeSpan HalfOf( this TimeSpan timeSpan ) {
             return TimeSpan.FromTicks( timeSpan.Ticks.HalfOf() );
         }

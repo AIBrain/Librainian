@@ -482,7 +482,6 @@
     <Compile Include="Linguistics\Page.cs" />
     <Compile Include="Misc\ProductExampleClass.cs" />
     <Compile Include="Persistence\PersistableSettings.cs" />
-    <Compile Include="Persistence\PersistedDatabase.cs" />
     <Compile Include="Persistence\PersistTable.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

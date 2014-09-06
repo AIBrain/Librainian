@@ -31,10 +31,33 @@ namespace Librainian.Persistence {
     using Properties;
     using Threading;
 
+    public interface IPersistableSettings {
+        void Initialize();
+
+        /// <summary>
+        ///     Returns the <see cref="MainStoragePath" /> as a <see cref="DirectoryInfo" />.
+        /// </summary>
+        DirectoryInfo MainStoragePath { get; set; }
+
+        /// <summary>
+        ///     check if we have a storage folder.
+        ///     if we don't, popup a dialog to ask.
+        ///     Settings.
+        /// </summary>
+        /// <returns></returns>
+        void ValidateStorageFolder();
+
+        /// <summary>
+        ///     ask user for folder/network path where to store AIBrain
+        /// </summary>
+        [UsedImplicitly]
+        void AskUserForStorageFolder();
+    }
+
     /// <summary>
     ///     atm, I love this class.
     /// </summary>
-    public class PersistableSettings : IInitializable {
+    public class PersistableSettings : IInitializable, IPersistableSettings {
         public void Initialize() {
             Report.Enter();
             this.ValidateStorageFolder();
