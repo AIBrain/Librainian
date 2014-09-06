@@ -31,23 +31,45 @@ namespace Librainian.IO {
     using System.Management;
     using System.Runtime.InteropServices;
     using System.Security;
+    using System.Security.AccessControl;
+    using System.Security.Principal;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using Annotations;
     using Controls;
+    using Extensions;
     using FluentAssertions;
     using Maths;
     using Measurement.Time;
     using Microsoft.Scripting.Math;
     using Microsoft.VisualBasic.Devices;
     using Microsoft.VisualBasic.FileIO;
+    using NUnit.Framework;
     using Parsing;
     using Threading;
     using SearchOption = System.IO.SearchOption;
 
     public static class IOExtensions {
+        static IOExtensions() {
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.System ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.SystemX86 ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.AdminTools ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.CDBurning ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.Windows ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.Cookies ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.History ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.InternetCache ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.PrinterShortcuts ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFilesX86 ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.Programs ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.SendTo ) ) );
+            SystemFolders.Add( new DirectoryInfo( Path.GetTempPath() ) );
+            //TODO foreach on Environment.SpecialFolder
+        }
+
         public const int FSCTL_SET_COMPRESSION = 0x9C040;
 
         [DllImport( "kernel32.dll" )]
@@ -995,6 +1017,304 @@ namespace Librainian.IO {
             catch ( IOException exception ) {
                 exception.Error();
             }
+        }
+
+        public static readonly HashSet< DirectoryInfo > SystemFolders = new HashSet< DirectoryInfo >();
+
+        /// <summary>
+        ///     No guarantee of return order. Also, because of the way the operating system works
+        ///     (random-access), a directory may be created or deleted even after a search.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="searchPattern"></param>
+        /// <returns></returns>
+        public static IEnumerable< DirectoryInfo > BetterEnumerateDirectories( this DirectoryInfo target, String searchPattern = "*" ) {
+            if ( null == target ) {
+                yield break;
+            }
+            var searchPath = Path.Combine( target.FullName, searchPattern );
+            NativeWin32.Win32FindData findData;
+            using ( var hFindFile = NativeWin32.FindFirstFile( searchPath, out findData ) ) {
+                do {
+                    if ( hFindFile.IsInvalid ) {
+                        break;
+                    }
+
+                    if ( IsParentOrCurrent( findData ) ) {
+                        continue;
+                    }
+
+                    if ( IsReparsePoint( findData ) ) {
+                        continue;
+                    }
+
+                    if ( !IsDirectory( findData ) ) {
+                        continue;
+                    }
+
+                    if ( IsIgnoreFolder( findData ) ) {
+                        continue;
+                    }
+
+                    var subFolder = Path.Combine( target.FullName, findData.cFileName );
+
+                    // @"\\?\" +System.IO.PathTooLongException
+                    if ( subFolder.Length >= 260 ) {
+                        continue; //HACK
+                    }
+
+                    var subInfo = new DirectoryInfo( subFolder );
+
+                    if ( IsProtected( subInfo ) ) {
+                        continue;
+                    }
+
+                    yield return subInfo;
+
+                    foreach ( var info in subInfo.BetterEnumerateDirectories( searchPattern ) ) {
+                        yield return info;
+                    }
+                } while ( NativeWin32.FindNextFile( hFindFile, out findData ) );
+            }
+        }
+
+        public static IEnumerable< FileInfo > BetterEnumerateFiles( [NotNull] this DirectoryInfo target, [NotNull] String searchPattern = "*" ) {
+            if ( target == null ) {
+                throw new ArgumentNullException( "target" );
+            }
+            if ( searchPattern == null ) {
+                throw new ArgumentNullException( "searchPattern" );
+            }
+
+            //if ( null == target ) {
+            //    yield break;
+            //}
+            var searchPath = Path.Combine( target.FullName, searchPattern );
+            NativeWin32.Win32FindData findData;
+            using ( var hFindFile = NativeWin32.FindFirstFile( searchPath, out findData ) ) {
+                do {
+                    //Application.DoEvents();
+
+                    if ( hFindFile.IsInvalid ) {
+                        break;
+                    }
+
+                    if ( IsParentOrCurrent( findData ) ) {
+                        continue;
+                    }
+                    if ( IsReparsePoint( findData ) ) {
+                        continue;
+                    }
+
+                    if ( !IsFile( findData ) ) {
+                        continue;
+                    }
+
+                    var newfName = Path.Combine( target.FullName, findData.cFileName );
+                    yield return new FileInfo( newfName );
+                } while ( NativeWin32.FindNextFile( hFindFile, out findData ) );
+            }
+        }
+
+        /// <summary>
+        ///     Before: @"c:\hello\world".
+        ///     After: @"c:\hello\world\23468923475634836.extension"
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="withExtension"></param>
+        /// <param name="toBase"></param>
+        /// <returns></returns>
+        public static FileInfo DateAndTimeAsFile( this DirectoryInfo info, String withExtension, int toBase = 16 ) {
+            if ( info == null ) {
+                throw new ArgumentNullException( "info" );
+            }
+
+            var now = Convert.ToString( value: DateTime.UtcNow.ToBinary(), toBase: toBase );
+            var fileName = String.Format( "{0}{1}", now, withExtension ?? info.Extension );
+            var path = Path.Combine( info.FullName, fileName );
+            return new FileInfo( path );
+        }
+
+        /// <summary>
+        ///     If the <paramref name="directoryInfo" /> does not exist, attempt to create it.
+        /// </summary>
+        /// <param name="directoryInfo"></param>
+        /// <param name="changeCompressionTo">
+        ///     Suggest if folder comperssion be Enabled or Disabled. Defaults to null.
+        /// </param>
+        /// <param name="requestReadAccess"></param>
+        /// <param name="requestWriteAccess"></param>
+        /// <returns></returns>
+        public static DirectoryInfo Ensure( this DirectoryInfo directoryInfo, Boolean? changeCompressionTo = null, Boolean? requestReadAccess = null, Boolean? requestWriteAccess = null ) {
+            Assert.NotNull( directoryInfo );
+            if ( directoryInfo == null ) {
+                throw new ArgumentNullException( "directoryInfo" );
+            }
+            try {
+                Assert.False( String.IsNullOrWhiteSpace( directoryInfo.FullName ) );
+                directoryInfo.Refresh();
+                if ( !directoryInfo.Exists ) {
+                    directoryInfo.Create();
+                    directoryInfo.Refresh();
+                }
+
+                if ( changeCompressionTo.HasValue ) {
+                    directoryInfo.SetCompression( changeCompressionTo.Value );
+                    directoryInfo.Refresh();
+                }
+
+                if ( requestReadAccess.HasValue ) {
+                    directoryInfo.Refresh();
+                }
+
+                if ( requestWriteAccess.HasValue ) {
+                    var temp = Path.Combine( directoryInfo.FullName, Path.GetRandomFileName() );
+                    File.WriteAllText( temp, "Delete Me!" );
+                    File.Delete( temp );
+                    directoryInfo.Refresh();
+                }
+                Assert.True( directoryInfo.Exists );
+            }
+            catch ( Exception exception ) {
+                exception.Error();
+                return null;
+            }
+            return directoryInfo;
+        }
+
+        public static DriveInfo GetDriveWithLargestAvailableFreeSpace() {
+            return DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).FirstOrDefault( driveInfo => driveInfo.AvailableFreeSpace >= DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).Max( info => info.AvailableFreeSpace ) );
+        }
+
+        public static Boolean IsDirectory( this NativeWin32.Win32FindData data ) {
+            return ( data.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory;
+        }
+
+        public static Boolean IsFile( this NativeWin32.Win32FindData data ) {
+            return !IsDirectory( data );
+        }
+
+        public static Boolean IsIgnoreFolder( this NativeWin32.Win32FindData data ) {
+            return data.cFileName.EndsLike( "$RECYCLE.BIN" )
+                   || data.cFileName.Like( "TEMP" )
+                   || data.cFileName.Like( "TMP" )
+                   || SystemFolders.Contains( new DirectoryInfo( data.cFileName ) );
+        }
+
+        public static Boolean IsParentOrCurrent( this NativeWin32.Win32FindData data ) {
+            return data.cFileName == "." || data.cFileName == "..";
+        }
+
+        public static Boolean IsProtected( [NotNull] this FileSystemInfo fileSystemInfo ) {
+            if ( fileSystemInfo == null ) {
+                throw new ArgumentNullException( "fileSystemInfo" );
+            }
+            if ( !fileSystemInfo.Exists ) {
+                return false;
+            }
+            var ds = new DirectorySecurity( fileSystemInfo.FullName, AccessControlSections.Access );
+            if ( !ds.AreAccessRulesProtected ) {
+                return false;
+            }
+            using ( var wi = WindowsIdentity.GetCurrent() ) {
+                if ( wi == null ) {
+                    return false;
+                }
+                var wp = new WindowsPrincipal( wi );
+                var isProtected = !wp.IsInRole( WindowsBuiltInRole.Administrator ); // Not running as admin
+                return isProtected;
+            }
+        }
+
+        [Pure]
+        public static Boolean IsReparsePoint( this NativeWin32.Win32FindData data ) {
+            return ( data.dwFileAttributes & FileAttributes.ReparsePoint ) == FileAttributes.ReparsePoint;
+        }
+
+        public static Boolean SetCompression( this DirectoryInfo directoryInfo, Boolean compressed = true ) {
+            try {
+                if ( directoryInfo.Exists ) {
+                    using ( var dir = new ManagementObject( directoryInfo.ToManagementPath() ) ) {
+                        var outParams = dir.InvokeMethod( compressed ? "Compress" : "Uncompress", null, null );
+                        if ( null == outParams ) {
+                            return false;
+                        }
+                        var result = Convert.ToUInt32( outParams.Properties[ "ReturnValue" ].Value );
+                        return result == 0;
+                    }
+                }
+            }
+            catch ( ManagementException exception ) {
+                exception.Error();
+            }
+            return false;
+        }
+
+        public static ManagementPath ToManagementPath( this DirectoryInfo systemPath ) {
+            var fullPath = systemPath.FullName;
+            while ( fullPath.EndsWith( "\\" ) ) {
+                fullPath = fullPath.Substring( 0, fullPath.Length - 1 );
+            }
+            fullPath = String.Format( "Win32_Directory.Name=\"{0}\"", fullPath.Replace( "\\", "\\\\" ) );
+            var managed = new ManagementPath( fullPath );
+            return managed;
+        }
+
+        public static IEnumerable< string > ToPaths( [NotNull] this DirectoryInfo directoryInfo ) {
+            if ( directoryInfo == null ) {
+                throw new ArgumentNullException( "directoryInfo" );
+            }
+            return directoryInfo.ToString().Split( Path.DirectorySeparatorChar );
+        }
+
+        /// <summary>
+        ///     (does not create path)
+        /// </summary>
+        /// <param name="basePath"></param>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        public static DirectoryInfo WithShortDatePath( this DirectoryInfo basePath, DateTime d ) {
+            var path = Path.Combine( basePath.FullName, d.Year.ToString(), d.DayOfYear.ToString(), d.Hour.ToString() );
+            return new DirectoryInfo( path );
+        }
+
+        /// <summary>
+        ///     Given the <paramref name="path" /> and <paramref name="searchPattern" /> pick any one
+        ///     file and return the <see cref="FileSystemInfo.FullName" /> .
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="searchPattern"></param>
+        /// <param name="searchOption"></param>
+        /// <returns></returns>
+        public static String GetRandomFile( String path, String searchPattern = "*.*", SearchOption searchOption = SearchOption.TopDirectoryOnly ) {
+            if ( !Directory.Exists( path ) ) {
+                return String.Empty;
+            }
+            var dir = new DirectoryInfo( path );
+            if ( !dir.Exists ) {
+                return String.Empty;
+            }
+            var files = Directory.EnumerateFiles( path: dir.FullName, searchPattern: searchPattern, searchOption: searchOption );
+            var pickedfile = files.OrderBy( r => Randem.Next() ).FirstOrDefault();
+            if ( pickedfile != null && File.Exists( pickedfile ) ) {
+                return new FileInfo( pickedfile ).FullName;
+            }
+            return String.Empty;
+        }
+
+        public static Boolean SetCompression( this String folderPath, Boolean compressed = true ) {
+            if ( String.IsNullOrWhiteSpace( folderPath ) ) {
+                return false;
+            }
+
+            try {
+                var dirInfo = new DirectoryInfo( folderPath );
+                return dirInfo.SetCompression( compressed );
+            }
+            catch ( Exception exception ) {
+                exception.Error();
+            }
+            return false;
         }
     }
 }

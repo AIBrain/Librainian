@@ -576,7 +576,6 @@
     <Compile Include="Extensions\Combiner.cs" />
     <Compile Include="Extensions\GuidExtensions.cs" />
     <Compile Include="Extensions\Enum.cs" />
-    <Compile Include="Extensions\FileSystemExtensions.cs" />
     <Compile Include="Extensions\NativeWin32.cs" />
     <Compile Include="Threading\FileSingleton.cs" />
     <Compile Include="Threading\Gate.cs" />
