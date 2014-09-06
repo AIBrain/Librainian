@@ -257,8 +257,31 @@ namespace Librainian.Threading {
         /// <summary>
         /// </summary>
         /// <returns></returns>
+        public static Decimal NextDecimalFullRange() {
+            do {
+                try {
+                    return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( byte ) Next( 0, 9 ) );
+                }
+                catch ( ArgumentOutOfRangeException exception ) {
+                    exception.Error();
+                }
+            } while ( true );
+        }
+
+        /// <summary>
+        /// Between 0 and 1.
+        /// </summary>
+        /// <returns></returns>
         public static Decimal NextDecimal() {
-            return new Decimal( new[] { NextInt32(), NextInt32(), NextInt32(), NextInt32() } );
+            do {
+                try {
+                    return ( Decimal ) NextDouble();    //TODO meh. fake it for now.
+                    //return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( byte ) Next( 0, 9 ) );
+                }
+                catch ( ArgumentOutOfRangeException exception ) {
+                    exception.Error();
+                }
+            } while ( true );
         }
 
         /// <summary>
@@ -275,8 +298,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Returns a random Double between <paramref name="range.Min" /> and <paramref
-        /// name="range.Max" />.
+        /// <para>Returns a random Double between <paramref name="range.Min" /> and <paramref name="range.Max" />.</para>
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
@@ -552,7 +574,7 @@ namespace Librainian.Threading {
             }
             else if ( NextBoolean() ) {
                 --avgWords;
-            } 
+            }
 
             for ( var i = 0 ; i < avgWords ; i++ ) {
                 list.Add( RandomWord() );
