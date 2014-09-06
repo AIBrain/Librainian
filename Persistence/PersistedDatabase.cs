@@ -18,16 +18,7 @@
 #endregion
 
 namespace Librainian.Persistence {
-    using System;
-    using System.Collections;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Runtime.Serialization;
-    using Annotations;
-    using Extensions;
-    using Measurement.Time;
-
+/*
     [DataContract( IsReference = true )]
     public class PersistedDatabase<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> {
         /// <summary>
@@ -132,4 +123,5 @@ namespace Librainian.Persistence {
             }
         }
     }
+*/
 }
