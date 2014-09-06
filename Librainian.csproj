@@ -308,7 +308,6 @@
     <Compile Include="Extensions\PopulateProgressEventArgs.cs" />
     <Compile Include="Extensions\RegistryServer.cs" />
     <Compile Include="Extensions\Search.cs" />
-    <Compile Include="Extensions\Strings.cs" />
     <Compile Include="Extensions\SynchronizeInvokeExtensions.cs" />
     <Compile Include="Extensions\Types.cs" />
     <Compile Include="Extensions\Urls.cs" />

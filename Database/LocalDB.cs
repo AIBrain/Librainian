@@ -25,7 +25,6 @@ namespace Librainian.Database {
 
     using System;
     using System.Collections.Concurrent;
-    using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
@@ -33,13 +32,12 @@ namespace Librainian.Database {
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Security;
     using Annotations;
     using Collections;
-    using FluentAssertions;
     using IO;
     using Persistence;
 
+    [Obsolete("work in progress. reiventing the same damn wheel.")]
     public static class LocalDB {
 
         public static readonly ISqlLocalDbProvider Provider = new SqlLocalDbProvider();
@@ -85,7 +83,7 @@ namespace Librainian.Database {
             var list = new[] { mdf, ldf }.ToList();
             InstanceFiles[ "Properties" ].AddRange( list);
 
-            Builders[ "Properties" ].SetPhysicalFileName( mdf );
+            //Builders[ "Properties" ].SetPhysicalFileName( mdf );
 
             instance.Start();
         }
