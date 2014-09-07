@@ -165,7 +165,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         public static Boolean DeepClone<TSource>( this TSource source, TSource destination ) {
             if ( ReferenceEquals( source, destination ) ) {
-                return false;
+                return true;
             }
             if ( Equals( source, default( TSource ) ) ) {
                 return false;

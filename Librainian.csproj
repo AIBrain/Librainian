@@ -337,6 +337,8 @@
     <Compile Include="Internet\InternetExtensions.cs" />
     <Compile Include="Internet\PingExtensions.cs" />
     <Compile Include="Internet\NetworkBrowser.cs" />
+    <Compile Include="IO\WMIOperation.cs" />
+    <Compile Include="IO\NetworkAdapter.cs" />
     <Compile Include="IO\Compression\RandomnessFeeeding.cs" />
     <Compile Include="IO\Compression\RandomnessTest.cs" />
     <Compile Include="IO\Streams\StreamString.cs" />

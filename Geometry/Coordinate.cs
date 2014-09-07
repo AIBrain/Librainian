@@ -132,10 +132,17 @@ namespace Librainian.Geometry {
         }
 
         public override Boolean Equals( object obj ) {
+            if ( ReferenceEquals( this, obj ) ) {
+                return true;
+            }
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
-            return obj is Coordinate && Equals( this, obj as Coordinate );
+            var coord = obj as Coordinate;
+            if ( coord == default ( Coordinate) ) {
+                return false;
+            }
+            return Equals( this, coord );
         }
 
         public static implicit operator Point( Coordinate coordinate ) {
