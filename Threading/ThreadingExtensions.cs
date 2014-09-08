@@ -30,8 +30,8 @@ namespace Librainian.Threading {
             MaxDegreeOfParallelism = Environment.ProcessorCount
         };
 
-        [NotNull]
-        public static readonly RandomNumberGenerator RNG = RandomNumberGenerator.Create();
+        //[NotNull]
+        //public static readonly RandomNumberGenerator RNG = RandomNumberGenerator.Create();
 
         [NotNull]
         public static readonly ThreadLocal< SHA256Managed > ThreadLocalSHA256Managed = new ThreadLocal< SHA256Managed >( valueFactory: () => new SHA256Managed(), trackAllValues: false );

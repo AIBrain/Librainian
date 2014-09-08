@@ -78,27 +78,27 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// <para>Cryptographically more secure than <see cref="Random"/>.</para>
+        /// <para>More cryptographically strong than <see cref="Random"/>.</para>
         /// </summary>
         [NotNull]
         public static readonly ThreadLocal<RandomNumberGenerator> RNG = new ThreadLocal<RandomNumberGenerator>( () => new RNGCryptoServiceProvider() );
 
         [Pure]
-        public static Int16 Int16( this RandomNumberGenerator rng ) {
+        public static Int16 GetInt16( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof( Int16 ) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToInt16( data, 0 );
         }
 
         [Pure]
-        public static Int32 Int32( this RandomNumberGenerator rng ) {
+        public static Int32 GetInt32( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof( Int32 ) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToInt32( data, 0 );
         }
 
         [Pure]
-        public static Int64 Int64( this RandomNumberGenerator rng ) {
+        public static Int64 GetInt64( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof( Int64 ) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToInt64( data, 0 );
@@ -106,42 +106,42 @@ namespace Librainian.Threading {
 
 
         [Pure]
-        public static UInt16 UInt16( this RandomNumberGenerator rng ) {
+        public static UInt16 GetUInt16( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof( UInt16 ) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToUInt16( data, 0 );
         }
 
         [Pure]
-        public static UInt32 UInt32( this RandomNumberGenerator rng ) {
+        public static UInt32 GetUInt32( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof( UInt32 ) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToUInt32( data, 0 );
         }
 
         [Pure]
-        public static UInt64 UInt64( this RandomNumberGenerator rng ) {
+        public static UInt64 GetUInt64( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof( UInt64 ) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToUInt64( data, 0 );
         }
 
         [Pure]
-        public static Char Char( this RandomNumberGenerator rng ) {
+        public static Char GetChar( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof( Char ) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToChar( data, 0 );
         }
 
         [Pure]
-        public static Single Single( this RandomNumberGenerator rng ) {
+        public static Single GetSingle( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof( Single ) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToSingle( data, 0 );
         }
 
         [Pure]
-        public static Double Double( this RandomNumberGenerator rng ) {
+        public static Double GetDouble( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof( Double ) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToDouble( data, 0 );
@@ -291,7 +291,7 @@ namespace Librainian.Threading {
             }
 
             var buffer = new Byte[ numberOfDigits ];
-            ThreadingExtensions.RNG.GetBytes( buffer ); //BUG is this correct? I think it is, but http://stackoverflow.com/questions/2965707/c-sharp-a-random-bigint-generator suggests a "numberOfDigits/8" here.
+            RNG.Value.GetBytes( buffer ); //BUG is this correct? I think it is, but http://stackoverflow.com/questions/2965707/c-sharp-a-random-bigint-generator suggests a "numberOfDigits/8" here.
             return new BigInteger( buffer );
         }
 

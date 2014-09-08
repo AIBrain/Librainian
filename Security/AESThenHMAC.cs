@@ -22,6 +22,7 @@ namespace Librainian.Security {
     using System.IO;
     using System.Security.Cryptography;
     using System.Text;
+    using Threading;
 
     /// <summary>
     ///     This work (Modern Encryption of a String C#, by James Tuley), identified by James Tuley, is free of known copyright
@@ -35,7 +36,8 @@ namespace Librainian.Security {
         public const int SaltBitSize = 64;
         public const int Iterations = 10000;
         public const int MinPasswordLength = 12;
-        private static readonly RandomNumberGenerator Random = RandomNumberGenerator.Create();
+
+        //private static readonly RandomNumberGenerator Random = RandomNumberGenerator.Create();
 
         //Preconfigured Encryption Parameters
 
@@ -47,7 +49,7 @@ namespace Librainian.Security {
         /// <returns></returns>
         public static byte[] NewKey() {
             var key = new byte[KeyBitSize/8];
-            Random.GetBytes( key );
+            Randem.RNG.Value.GetBytes( key );
             return key;
         }
 
