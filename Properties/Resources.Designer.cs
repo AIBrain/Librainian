@@ -61,7 +61,7 @@ namespace Librainian.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please direct me to a folder where I can store my memory..
+        ///   Looks up a localized string similar to Please direct me to a folder..
         /// </summary>
         internal static string _Please_direct_me_to_a_folder_ {
             get {

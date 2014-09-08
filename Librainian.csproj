@@ -336,6 +336,14 @@
     <Compile Include="Gaming\GameContainer.cs" />
     <Compile Include="Gaming\Dice.cs" />
     <Compile Include="Internet\HTMLExtensions.cs" />
+    <Compile Include="Internet\Servers\ILogger.cs" />
+    <Compile Include="Internet\Servers\Extensions.cs" />
+    <Compile Include="Internet\Servers\WebServer.cs" />
+    <Compile Include="Internet\Servers\Cookie.cs" />
+    <Compile Include="Internet\Servers\Cookies.cs" />
+    <Compile Include="Internet\Servers\HttpProcessor.cs" />
+    <Compile Include="Internet\Servers\HttpServer.cs" />
+    <Compile Include="Internet\Servers\SimpleHttpLogger.cs" />
     <Compile Include="Internet\UriLinkItem.cs" />
     <Compile Include="Internet\WebClientExtensions.cs" />
     <Compile Include="Internet\SmtpClientExtensions.cs" />
