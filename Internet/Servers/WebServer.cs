@@ -120,8 +120,9 @@ namespace Librainian.Internet.Servers {
                 Debug.WriteLine( "Webserver running..." );
                 try {
                     while ( this._httpListener.IsListening ) {
+                        Debug.WriteLine( "Webserver listening.." );
                         await Task.Run( async () => {
-                            var listenerContext = await this._httpListener.GetContextAsync();  // Waits for an incoming request as an asynchronous operation.
+                            var listenerContext = await this._httpListener.GetContextAsync( );  // Waits for an incoming request as an asynchronous operation.
                             if ( listenerContext == null ) {
                                 return;
                             }

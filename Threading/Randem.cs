@@ -29,6 +29,7 @@ namespace Librainian.Threading {
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
+    using System.Security.Cryptography;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -74,6 +75,76 @@ namespace Librainian.Threading {
             get {
                 return ThreadSafeRandom.Value;
             }
+        }
+
+        /// <summary>
+        /// <para>Cryptographically more secure than <see cref="Random"/>.</para>
+        /// </summary>
+        [NotNull]
+        public static readonly ThreadLocal<RandomNumberGenerator> RNG = new ThreadLocal<RandomNumberGenerator>( () => new RNGCryptoServiceProvider() );
+
+        [Pure]
+        public static Int16 Int16( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof( Int16 ) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToInt16( data, 0 );
+        }
+
+        [Pure]
+        public static Int32 Int32( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof( Int32 ) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToInt32( data, 0 );
+        }
+
+        [Pure]
+        public static Int64 Int64( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof( Int64 ) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToInt64( data, 0 );
+        }
+
+
+        [Pure]
+        public static UInt16 UInt16( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof( UInt16 ) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToUInt16( data, 0 );
+        }
+
+        [Pure]
+        public static UInt32 UInt32( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof( UInt32 ) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToUInt32( data, 0 );
+        }
+
+        [Pure]
+        public static UInt64 UInt64( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof( UInt64 ) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToUInt64( data, 0 );
+        }
+
+        [Pure]
+        public static Char Char( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof( Char ) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToChar( data, 0 );
+        }
+
+        [Pure]
+        public static Single Single( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof( Single ) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToSingle( data, 0 );
+        }
+
+        [Pure]
+        public static Double Double( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof( Double ) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToDouble( data, 0 );
         }
 
         public static void AddToList( [NotNull] ConcurrentBag<int> list ) {
@@ -260,7 +331,7 @@ namespace Librainian.Threading {
         public static Decimal NextDecimalFullRange() {
             do {
                 try {
-                    return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( byte ) Next( 0, 9 ) );
+                    return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( byte )Next( 0, 9 ) );
                 }
                 catch ( ArgumentOutOfRangeException exception ) {
                     exception.Error();
@@ -275,7 +346,7 @@ namespace Librainian.Threading {
         public static Decimal NextDecimal() {
             do {
                 try {
-                    return ( Decimal ) NextDouble();    //TODO meh. fake it for now.
+                    return ( Decimal )NextDouble();    //TODO meh. fake it for now.
                     //return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( byte ) Next( 0, 9 ) );
                 }
                 catch ( ArgumentOutOfRangeException exception ) {
