@@ -311,7 +311,13 @@
     <Compile Include="Extensions\Urls.cs" />
     <Compile Include="Extensions\Utility.cs" />
     <Compile Include="Extensions\XMLExtensions.cs" />
+    <Compile Include="Gaming\DiceCup.cs" />
     <Compile Include="Gaming\IDice.cs" />
+    <Compile Include="Gaming\IDiceCup.cs" />
+    <Compile Include="Gaming\IGameContainer.cs" />
+    <Compile Include="Gaming\IGameItem.cs" />
+    <Compile Include="Gaming\IPlayerTable.cs" />
+    <Compile Include="Gaming\PlayerTable.cs" />
     <Compile Include="Gaming\PlayingCards\FaceValues.cs" />
     <Compile Include="Gaming\PlayingCards\Suites.cs" />
     <Compile Include="Geometry\DD\GeometryEx.cs" />
@@ -327,7 +333,7 @@
     <Compile Include="Graphics\Images.cs" />
     <Compile Include="Gaming\PlayingCards\Card.cs" />
     <Compile Include="Gaming\PlayingCards\Deck.cs" />
-    <Compile Include="Gaming\DiceCup.cs" />
+    <Compile Include="Gaming\GameContainer.cs" />
     <Compile Include="Gaming\TraditionalDice.cs" />
     <Compile Include="Internet\HTMLExtensions.cs" />
     <Compile Include="Internet\UriLinkItem.cs" />
