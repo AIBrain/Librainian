@@ -36,7 +36,7 @@ namespace Librainian.Gaming {
     using Threading;
 
     [DataContract( IsReference = true )]
-    public class TraditionalDice : IDice {
+    public class Dice : IDice {
         private readonly Span? _dontTrackRollsOlderThan;
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Librainian.Gaming {
         /// </summary>
         private readonly uint _keepTrackOfXRolls;
 
-        public TraditionalDice( UInt16 numberOfSides = 6, UInt32 keepTrackOfXRolls = 10, Span? dontTrackRollsOlderThan = null, Span? timeout = null ) {
+        public Dice( UInt16 numberOfSides = 6, UInt32 keepTrackOfXRolls = 10, Span? dontTrackRollsOlderThan = null, Span? timeout = null ) {
             this.Tasks = new ConcurrentDictionary<Task, DateTime>();
             this.LastFewRolls = new ParallelList<UInt16>();
             this.NumberOfSides = numberOfSides;

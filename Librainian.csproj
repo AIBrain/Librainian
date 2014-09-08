@@ -334,7 +334,7 @@
     <Compile Include="Gaming\PlayingCards\Card.cs" />
     <Compile Include="Gaming\PlayingCards\Deck.cs" />
     <Compile Include="Gaming\GameContainer.cs" />
-    <Compile Include="Gaming\TraditionalDice.cs" />
+    <Compile Include="Gaming\Dice.cs" />
     <Compile Include="Internet\HTMLExtensions.cs" />
     <Compile Include="Internet\UriLinkItem.cs" />
     <Compile Include="Internet\WebClientExtensions.cs" />

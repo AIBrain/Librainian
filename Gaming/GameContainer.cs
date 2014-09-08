@@ -75,7 +75,7 @@ namespace Librainian.Gaming {
             return true;
         }
 
-        public void MoveAll<TPieceType>( IGameContainer destination ) {
+        public void MoveAll<TPieceType>( IGameContainer destination, Action onEachItem = null ) {
             var localDump = new List<IGameItem>();
             while ( Contents.Cast<TPieceType>().Any() ) {
                 IGameItem item;
