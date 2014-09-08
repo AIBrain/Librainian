@@ -212,11 +212,9 @@ namespace Librainian.IO {
         /// <exception cref="IOException"></exception>
         /// <exception cref="SecurityException"></exception>
         /// <exception cref="PathTooLongException"></exception>
-        public Boolean Exists {
-            get {
-                this.Refresh();
-                return this.DirectoryInfo.Exists;
-            }
+        public bool Exists() {
+            this.Refresh();
+            return this.DirectoryInfo.Exists;
         }
 
         /// <summary>
@@ -227,7 +225,7 @@ namespace Librainian.IO {
         public Boolean Create() {
             try {
                 this.DirectoryInfo.Create();
-                return this.Exists;
+                return this.Exists();
             }
             catch ( IOException ) {
                 return false;
@@ -244,7 +242,7 @@ namespace Librainian.IO {
                 //safety checks
                 if ( this.IsEmpty() ) {
                     this.DirectoryInfo.Delete();
-                    return !this.Exists;
+                    return !this.Exists();
                 }
             }
             catch ( IOException ) {

@@ -60,7 +60,7 @@ namespace Librainian.Persistence {
 
             this.Folder.Create();
 
-            if ( !this.Folder.Exists ) {
+            if ( !this.Folder.Exists() ) {
                 throw new DirectoryNotFoundException( String.Format( "Unable to find or create the folder `{0}`.", this.Folder.FullName ) );
             }
 

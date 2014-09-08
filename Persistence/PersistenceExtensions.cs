@@ -185,7 +185,7 @@ namespace Librainian.Persistence {
                                                                                //var fullPath = Path.Combine( folderPath, fileNameWithoutExtension );
 
                                                                                var folder = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.CompanyName, Application.ProductName );
-                                                                               if ( !folder.Exists ) {
+                                                                               if ( !folder.Exists() ) {
                                                                                    folder.Create();
                                                                                }
                                                                                return folder;

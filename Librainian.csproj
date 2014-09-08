@@ -504,6 +504,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Security\Crc64.cs" />
+    <Compile Include="Security\Crc64Iso.cs" />
     <Compile Include="Security\Impersonator.cs" />
     <Compile Include="Security\SecurityExtensions.cs" />
     <Compile Include="Security\Encryption2.cs" />
