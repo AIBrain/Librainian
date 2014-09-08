@@ -22,17 +22,19 @@
 #endregion License & Information
 
 namespace Librainian.Gaming {
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.Serialization;
     using System.Threading.Tasks;
     using Collections;
     using Measurement.Time;
     using Threading;
 
+    [DataContract( IsReference = true )]
     public class TraditionalDice : IDice {
-        public readonly UInt16 NumberOfSides;
         private readonly Span? _dontTrackRollsOlderThan;
 
         /// <summary>
@@ -40,12 +42,10 @@ namespace Librainian.Gaming {
         /// </summary>
         private readonly uint _keepTrackOfXRolls;
 
+        [DataMember]
         private readonly ParallelList<UInt16> _lastFewRolls = new ParallelList<UInt16>();
 
         private readonly ConcurrentDictionary<Task, DateTime> _tasks = new ConcurrentDictionary<Task, DateTime>();
-
-        private TraditionalDice() {
-        }
 
         public TraditionalDice( UInt16 numberOfSides = 4, UInt32 keepTrackOfXRolls = 10, Span? dontTrackRollsOlderThan = null, Span? timeout = null ) {
             this.NumberOfSides = numberOfSides;
@@ -57,6 +57,15 @@ namespace Librainian.Gaming {
             }
             this._lastFewRolls.TimeoutForReads = timeout.Value;
             this._lastFewRolls.TimeoutForWrites = timeout.Value;
+        }
+
+        private TraditionalDice() {
+        }
+
+        [DataMember]
+        public UInt16 NumberOfSides {
+            get;
+            private set;
         }
 
         public IEnumerable<ushort> GetLastFewRolls() {
@@ -75,7 +84,6 @@ namespace Librainian.Gaming {
                 if ( removed ) {
                     String.Format( "Old roll {0} removed", dummy ).TimeDebug();
                 }
-
             } );
             this._tasks.TryAdd( key, DateTime.Now );
             return result;
@@ -84,7 +92,7 @@ namespace Librainian.Gaming {
         private void OnAfterAdd() {
             if ( this.GetLastFewRolls().Count() > this._keepTrackOfXRolls ) {
                 ushort result;
-                this._lastFewRolls.TakeFirst( out result);
+                this._lastFewRolls.TakeFirst( out result );
             }
             if ( !this._dontTrackRollsOlderThan.HasValue ) {
                 return;
