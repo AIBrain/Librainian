@@ -880,6 +880,16 @@ namespace Librainian.Maths {
             return newTotal;
         }
 
+        public static T Max<T>( T value, params T[] values ) where T : IComparable<T> {
+            var max = value;
+            foreach ( var other in values ) {
+                if ( 0 > max.CompareTo( other ) ) {
+                    max = other;
+                }
+            }
+            return max;
+        }
+
         public static Double Phi( this Double x ) {
             // constants
             const Double a1 = 0.254829592;

@@ -601,7 +601,7 @@ namespace Librainian.Threading {
                 return;
             }
             if ( newline ) {
-                Debug.WriteLine( "[{0:s}].({1}) {2}", DateTime.UtcNow, Thread.CurrentThread.ManagedThreadId, message );
+                Debug.WriteLine( "[{0:s}].({1}) {2}", DateTime.Now, Thread.CurrentThread.ManagedThreadId, message );
             }
             else {
                 Debug.Write( String.Format( "[] {0}", message ) );
