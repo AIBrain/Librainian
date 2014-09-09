@@ -97,7 +97,15 @@ namespace Librainian.Measurement.Currency.BTC {
             return ( long )( btc * SimpleBitcoinWallet.SatoshiPerBTC );
         }
 
-        public static Decimal ToBTC( this long satoshi ) {
+        public static Decimal ToBTC( this Int16 satoshi ) {
+            return satoshi / SimpleBitcoinWallet.SatoshiPerBTC;
+        }
+
+        public static Decimal ToBTC( this Int32 satoshi ) {
+            return satoshi / SimpleBitcoinWallet.SatoshiPerBTC;
+        }
+
+        public static Decimal ToBTC( this Int64 satoshi ) {
             return satoshi / SimpleBitcoinWallet.SatoshiPerBTC;
         }
 

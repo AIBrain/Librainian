@@ -710,7 +710,7 @@ namespace Librainian.Controls {
                 var stopwatch = Stopwatch.StartNew();
                 do {
                     stopwatch.Restart();
-                    control.Blink();
+                    control.Flash();
                     stopwatch.Stop();
                     //await Task.Delay( stopwatch.Elapsed );
                 } while ( DateTime.Now < until );
@@ -745,7 +745,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="spanOff">How long to keep the control off before it resets.</param>
         [CanBeNull]
-        public static Timer Blink( [CanBeNull] this Control control, [CanBeNull] TimeSpan? spanOff = null ) {
+        public static Timer Flash( [CanBeNull] this Control control, [CanBeNull] Span? spanOff = null ) {
             if ( null == control ) {
                 return null;
             }
@@ -758,22 +758,11 @@ namespace Librainian.Controls {
                 control.BackColor = foreColor;
                 control.Refresh();
             } );
-            var timer = new Timer {
-                AutoReset = false,
-                Interval = spanOff.Value.TotalMilliseconds
-            };
-            timer.Elapsed += ( sender, args ) => {
-                control.OnThread( () => {
-                    control.ResetForeColor();
-                    control.ResetBackColor();
-                    control.Refresh();
-                } );
-                using ( timer ) {
-                }
-            };
-            GC.KeepAlive( timer );
-            timer.Start();
-            return timer;
+            return spanOff.Value.Create( () => control.OnThread( () => {
+                control.ResetForeColor();
+                control.ResetBackColor();
+                control.Refresh();
+            } ) ).Once().AndStart();
         }
 
         public static Boolean RemoveTags( this WebBrowser browser, String tagName, int keepAtMost = 50 ) {
