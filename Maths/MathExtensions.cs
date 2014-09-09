@@ -835,25 +835,49 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        /// Add <paramref name="percent"/> of <paramref name="number"/> to <paramref name="number"/>.
+        /// <para>Add <paramref name="percentTax"/> of <paramref name="number"/> to <paramref name="number"/>.</para>
+        /// <para>If the tax is 6% on $50, then you would call this function like this:</para>
+        /// <para> var withTax = AddTaxPercent( 50.00, 6.0 );</para>
+        /// <para> Assert( withTax == 53.00 );</para>
         /// </summary>
         /// <param name="number"></param>
-        /// <param name="percent"></param>
+        /// <param name="percentTax"></param>
         /// <returns></returns>
-        public static Decimal AddPercent( this Decimal number, Decimal percent ) {
-            var percentOfNumber = number * percent;
-            return number + percentOfNumber;
+        public static Decimal AddTaxPercent( this Decimal number, Decimal percentTax ) {
+            var taxInDecimal = percentTax / 100.0m;
+            var tax = 1.0m + taxInDecimal;
+            var total = number * tax;
+            return total;
         }
 
         /// <summary>
-        /// Subtract <paramref name="percent"/> of <paramref name="number"/> from <paramref name="number"/>.
+        /// <para>Add <paramref name="decimalTax"/> of <paramref name="number"/> to <paramref name="number"/>.</para>
+        /// <para>If the tax is 6% on $50, then you would call this function like this:</para>
+        /// <para> var withTax = AddTax( 50.00, 0.06 );</para>
+        /// <para> Assert( withTax == 53.00 );</para>
         /// </summary>
         /// <param name="number"></param>
-        /// <param name="percent"></param>
+        /// <param name="decimalTax"></param>
         /// <returns></returns>
-        public static Decimal SubtractPercent( this Decimal number, Decimal percent ) {
-            var percentOfNumber = number * percent;
-            return number - percentOfNumber;
+        public static Decimal AddTax( this Decimal number, Decimal decimalTax ) {
+            var tax = 1.0m + decimalTax;
+            var total = number * tax;
+            return total;
+        }
+
+        /// <summary>
+        /// Subtract <paramref name="decimalTax"/> of <paramref name="total"/> from <paramref name="total"/>.
+        /// <para>If the tax was 6% on $53, then you would call this function like this:</para>
+        /// <para> var withTax = SubtractTax( 53.00, 0.06 );</para>
+        /// <para> Assert( withTax == 50.00 );</para>
+        /// </summary>
+        /// <param name="total"></param>
+        /// <param name="decimalTax"></param>
+        /// <returns></returns>
+        public static Decimal SubtractTax( this Decimal total, Decimal decimalTax ) {
+            var tax = 1.0m + decimalTax;
+            var newTotal = total / tax;
+            return newTotal;
         }
 
         public static Double Phi( this Double x ) {
