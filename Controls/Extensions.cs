@@ -63,7 +63,9 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return;
             }
-            if ( null == action ) { return; }
+            if ( null == action ) {
+                return;
+            }
             control.InvokeIfRequired( () => {
                 action();
                 if ( refresh ) {
@@ -115,7 +117,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return false;
             }
-            return control.InvokeRequired ? ( Boolean )control.Invoke( new Func< bool >( () => control.Checked ) ) : control.Checked;
+            return control.InvokeRequired ? ( Boolean )control.Invoke( new Func<bool>( () => control.Checked ) ) : control.Checked;
         }
 
         /// <summary>
@@ -127,7 +129,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return default( Color );
             }
-            return control.InvokeRequired ? ( Color )control.Invoke( new Func< Color >( () => control.ForeColor ) ) : control.ForeColor;
+            return control.InvokeRequired ? ( Color )control.Invoke( new Func<Color>( () => control.ForeColor ) ) : control.ForeColor;
         }
 
         /// <summary>
@@ -139,7 +141,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return 0;
             }
-            return control.InvokeRequired ? ( int )control.Invoke( new Func< int >( () => control.Maximum ) ) : control.Maximum;
+            return control.InvokeRequired ? ( int )control.Invoke( new Func<int>( () => control.Maximum ) ) : control.Maximum;
         }
 
         /// <summary>
@@ -178,7 +180,7 @@ namespace Librainian.Controls {
             if ( null == form ) {
                 return new Size();
             }
-            return form.InvokeRequired ? ( Size )form.Invoke( new Func< Size >( () => form.Size ) ) : form.Size;
+            return form.InvokeRequired ? ( Size )form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
         }
 
         /// <summary>
@@ -244,7 +246,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return String.Empty;
             }
-            return control.InvokeRequired ? control.Invoke( new Func< string >( () => control.Text ) ) as String ?? String.Empty : control.Text;
+            return control.InvokeRequired ? control.Invoke( new Func<string>( () => control.Text ) ) as String ?? String.Empty : control.Text;
         }
 
         /// <summary>
@@ -252,11 +254,11 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
-        public static  Decimal Value( [CanBeNull] this NumericUpDown control ) {
+        public static Decimal Value( [CanBeNull] this NumericUpDown control ) {
             if ( null == control ) {
-                return  Decimal.Zero;
+                return Decimal.Zero;
             }
-            return control.InvokeRequired ? (Decimal )control.Invoke( new Func< decimal >( () => control.Value ) ) : control.Value;
+            return control.InvokeRequired ? ( Decimal )control.Invoke( new Func<decimal>( () => control.Value ) ) : control.Value;
         }
 
         /// <summary>
@@ -268,7 +270,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return 0;
             }
-            return control.InvokeRequired ? ( int )control.Invoke( new Func< int >( () => control.Value ) ) : control.Value;
+            return control.InvokeRequired ? ( int )control.Invoke( new Func<int>( () => control.Value ) ) : control.Value;
         }
 
         /// <summary>
@@ -559,7 +561,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return 0;
             }
-            return control.InvokeRequired ? ( int )control.Invoke( new Func< int >( () => control.Minimum ) ) : control.Minimum;
+            return control.InvokeRequired ? ( int )control.Invoke( new Func<int>( () => control.Minimum ) ) : control.Minimum;
         }
 
         /// <summary>
@@ -766,7 +768,8 @@ namespace Librainian.Controls {
                     control.ResetBackColor();
                     control.Refresh();
                 } );
-                using ( timer ) { }
+                using ( timer ) {
+                }
             };
             GC.KeepAlive( timer );
             timer.Start();
@@ -916,8 +919,8 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="a"></param>
         /// <returns></returns>
-        private static async Task< string > StringAsync( String a ) {
-            return await Task< string >.Factory.StartNew( () => a );
+        private static async Task<string> StringAsync( String a ) {
+            return await Task<string>.Factory.StartNew( () => a );
         }
 
         /*
@@ -1130,7 +1133,7 @@ namespace Librainian.Controls {
         //    }
         //}
 
-        public static void InvokeA< T >( this T invokable, Action< T > action, T argument = default( T ) ) where T : ISynchronizeInvoke {
+        public static void InvokeA<T>( this T invokable, Action<T> action, T argument = default( T ) ) where T : ISynchronizeInvoke {
             try {
                 if ( Equals( invokable, default( T ) ) ) {
                     return;
@@ -1150,9 +1153,10 @@ namespace Librainian.Controls {
             }
         }
 
-        public static T InvokeF< T >( this T invokable, Func< T > function, T argument = default( T ) ) where T : class, ISynchronizeInvoke {
+        public static T InvokeF<T>( this T invokable, Func<T> function, T argument = default( T ) ) where T : class, ISynchronizeInvoke {
             if ( invokable.InvokeRequired ) {
-                if ( invokable is Control && ( invokable as Control ).IsDisposed ) { }
+                if ( invokable is Control && ( invokable as Control ).IsDisposed ) {
+                }
                 else {
                     return invokable.Invoke( function, new object[] { argument } ) as T;
                 }

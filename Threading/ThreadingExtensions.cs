@@ -34,7 +34,7 @@ namespace Librainian.Threading {
         //public static readonly RandomNumberGenerator RNG = RandomNumberGenerator.Create();
 
         [NotNull]
-        public static readonly ThreadLocal< SHA256Managed > ThreadLocalSHA256Managed = new ThreadLocal< SHA256Managed >( valueFactory: () => new SHA256Managed(), trackAllValues: false );
+        public static readonly ThreadLocal<SHA256Managed> ThreadLocalSHA256Managed = new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
 
         public static int GetMaximumActiveWorkerThreads() {
             int maxWorkerThreads, maxPortThreads;
@@ -106,7 +106,7 @@ namespace Librainian.Threading {
             return sizeInBytes;
         }
 
-        public static IEnumerable< T > GetEnums<T>( this T hmm ) {
+        public static IEnumerable<T> GetEnums<T>( this T hmm ) {
             return Enum.GetValues( typeof( T ) ).Cast<T>();
             //also: return ( T[] )Enum.GetValues( typeof( T ) );    //prob faster
         }
@@ -230,12 +230,12 @@ namespace Librainian.Threading {
         public static Action ActionBarrier( [CanBeNull] this Action action, long? callsAllowed = null ) {
             var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
             return () => {
-                       if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
-                           if ( action != null ) {
-                               action();
-                           }
-                       }
-                   };
+                if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
+                    if ( action != null ) {
+                        action();
+                    }
+                }
+            };
         }
 
         /// <summary>
@@ -250,10 +250,10 @@ namespace Librainian.Threading {
         public static Action ActionBarrier<T1>( [CanBeNull] this Action<T1> action, T1 parameter, long? callsAllowed = null ) {
             var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
             return () => {
-                       if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 && action != null ) {
-                           action( parameter );
-                       }
-                   };
+                if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 && action != null ) {
+                    action( parameter );
+                }
+            };
         }
 
         /// <summary>
@@ -265,7 +265,7 @@ namespace Librainian.Threading {
             if ( null == action ) {
                 return;
             }
-            for ( var i = 0; i < Math.Abs( times ); i++ ) {
+            for ( var i = 0 ; i < Math.Abs( times ) ; i++ ) {
                 action();
             }
         }
@@ -274,7 +274,7 @@ namespace Librainian.Threading {
             if ( null == action ) {
                 return;
             }
-            for ( var i = 0; i < Math.Abs( times ); i++ ) {
+            for ( var i = 0 ; i < Math.Abs( times ) ; i++ ) {
                 action();
             }
         }
@@ -303,10 +303,10 @@ namespace Librainian.Threading {
             }
             if ( inParallel ) {
                 var result = Parallel.ForEach( tasks, task => {
-                                                            if ( task != null ) {
-                                                                task();
-                                                            }
-                                                        } );
+                    if ( task != null ) {
+                        task();
+                    }
+                } );
                 return result.IsCompleted;
             }
             foreach ( var task in tasks ) {
@@ -355,24 +355,24 @@ namespace Librainian.Threading {
             var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
 
             first.ContinueWith( task => {
-                                    if ( first.IsFaulted ) {
-                                        if ( first.Exception != null ) {
-                                            tcs.TrySetException( first.Exception.InnerExceptions );
-                                        }
-                                    }
-                                    else if ( first.IsCanceled ) {
-                                        tcs.TrySetCanceled();
-                                    }
-                                    else {
-                                        try {
-                                            next();
-                                            tcs.TrySetResult( null );
-                                        }
-                                        catch ( Exception ex ) {
-                                            tcs.TrySetException( ex );
-                                        }
-                                    }
-                                } );
+                if ( first.IsFaulted ) {
+                    if ( first.Exception != null ) {
+                        tcs.TrySetException( first.Exception.InnerExceptions );
+                    }
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        next();
+                        tcs.TrySetResult( null );
+                    }
+                    catch ( Exception ex ) {
+                        tcs.TrySetException( ex );
+                    }
+                }
+            } );
 
             return tcs.Task;
         }
@@ -388,41 +388,41 @@ namespace Librainian.Threading {
 
             var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( obj => {
-                                    if ( first.IsFaulted ) {
-                                        if ( first.Exception != null ) {
-                                            tcs.TrySetException( first.Exception.InnerExceptions );
-                                        }
+                if ( first.IsFaulted ) {
+                    if ( first.Exception != null ) {
+                        tcs.TrySetException( first.Exception.InnerExceptions );
+                    }
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        var t = next();
+                        if ( t == null ) {
+                            tcs.TrySetCanceled();
+                        }
+                        else {
+                            t.ContinueWith( obj1 => {
+                                if ( t.IsFaulted ) {
+                                    if ( t.Exception != null ) {
+                                        tcs.TrySetException( t.Exception.InnerExceptions );
                                     }
-                                    else if ( first.IsCanceled ) {
-                                        tcs.TrySetCanceled();
-                                    }
-                                    else {
-                                        try {
-                                            var t = next();
-                                            if ( t == null ) {
-                                                tcs.TrySetCanceled();
-                                            }
-                                            else {
-                                                t.ContinueWith( obj1 => {
-                                                                    if ( t.IsFaulted ) {
-                                                                        if ( t.Exception != null ) {
-                                                                            tcs.TrySetException( t.Exception.InnerExceptions );
-                                                                        }
-                                                                    }
-                                                                    else if ( t.IsCanceled ) {
-                                                                        tcs.TrySetCanceled();
-                                                                    }
-                                                                    else {
-                                                                        tcs.TrySetResult( t.Result );
-                                                                    }
-                                                                }, TaskContinuationOptions.ExecuteSynchronously );
-                                            }
-                                        }
-                                        catch ( Exception exc ) {
-                                            tcs.TrySetException( exc );
-                                        }
-                                    }
-                                }, TaskContinuationOptions.ExecuteSynchronously );
+                                }
+                                else if ( t.IsCanceled ) {
+                                    tcs.TrySetCanceled();
+                                }
+                                else {
+                                    tcs.TrySetResult( t.Result );
+                                }
+                            }, TaskContinuationOptions.ExecuteSynchronously );
+                        }
+                    }
+                    catch ( Exception exc ) {
+                        tcs.TrySetException( exc );
+                    }
+                }
+            }, TaskContinuationOptions.ExecuteSynchronously );
             return tcs.Task;
         }
 
@@ -438,24 +438,24 @@ namespace Librainian.Threading {
             var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
 
             first.ContinueWith( task => {
-                                    if ( first.IsFaulted ) {
-                                        if ( first.Exception != null ) {
-                                            tcs.TrySetException( first.Exception.InnerExceptions );
-                                        }
-                                    }
-                                    else if ( first.IsCanceled ) {
-                                        tcs.TrySetCanceled();
-                                    }
-                                    else {
-                                        try {
-                                            next( first.Result );
-                                            tcs.TrySetResult( null );
-                                        }
-                                        catch ( Exception ex ) {
-                                            tcs.TrySetException( ex );
-                                        }
-                                    }
-                                } );
+                if ( first.IsFaulted ) {
+                    if ( first.Exception != null ) {
+                        tcs.TrySetException( first.Exception.InnerExceptions );
+                    }
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        next( first.Result );
+                        tcs.TrySetResult( null );
+                    }
+                    catch ( Exception ex ) {
+                        tcs.TrySetException( ex );
+                    }
+                }
+            } );
 
             return tcs.Task;
         }
@@ -471,37 +471,37 @@ namespace Librainian.Threading {
 
             var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
-                                    if ( first.IsFaulted ) {
-                                        tcs.TrySetException( first.Exception.InnerExceptions );
-                                    }
-                                    else if ( first.IsCanceled ) {
-                                        tcs.TrySetCanceled();
-                                    }
-                                    else {
-                                        try {
-                                            var t = next( first.Result );
-                                            if ( t == null ) {
-                                                tcs.TrySetCanceled();
-                                            }
-                                            else {
-                                                t.ContinueWith( delegate {
-                                                                    if ( t.IsFaulted ) {
-                                                                        tcs.TrySetException( t.Exception.InnerExceptions );
-                                                                    }
-                                                                    else if ( t.IsCanceled ) {
-                                                                        tcs.TrySetCanceled();
-                                                                    }
-                                                                    else {
-                                                                        tcs.TrySetResult( null );
-                                                                    }
-                                                                }, TaskContinuationOptions.ExecuteSynchronously );
-                                            }
-                                        }
-                                        catch ( Exception exc ) {
-                                            tcs.TrySetException( exc );
-                                        }
-                                    }
-                                }, TaskContinuationOptions.ExecuteSynchronously );
+                if ( first.IsFaulted ) {
+                    tcs.TrySetException( first.Exception.InnerExceptions );
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        var t = next( first.Result );
+                        if ( t == null ) {
+                            tcs.TrySetCanceled();
+                        }
+                        else {
+                            t.ContinueWith( delegate {
+                                if ( t.IsFaulted ) {
+                                    tcs.TrySetException( t.Exception.InnerExceptions );
+                                }
+                                else if ( t.IsCanceled ) {
+                                    tcs.TrySetCanceled();
+                                }
+                                else {
+                                    tcs.TrySetResult( null );
+                                }
+                            }, TaskContinuationOptions.ExecuteSynchronously );
+                        }
+                    }
+                    catch ( Exception exc ) {
+                        tcs.TrySetException( exc );
+                    }
+                }
+            }, TaskContinuationOptions.ExecuteSynchronously );
 
             return tcs.Task;
         }
@@ -517,22 +517,22 @@ namespace Librainian.Threading {
 
             var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
-                                    if ( first.IsFaulted ) {
-                                        tcs.TrySetException( first.Exception.InnerExceptions );
-                                    }
-                                    else if ( first.IsCanceled ) {
-                                        tcs.TrySetCanceled();
-                                    }
-                                    else {
-                                        try {
-                                            var result = next( first.Result );
-                                            tcs.TrySetResult( result );
-                                        }
-                                        catch ( Exception ex ) {
-                                            tcs.TrySetException( ex );
-                                        }
-                                    }
-                                } );
+                if ( first.IsFaulted ) {
+                    tcs.TrySetException( first.Exception.InnerExceptions );
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        var result = next( first.Result );
+                        tcs.TrySetResult( result );
+                    }
+                    catch ( Exception ex ) {
+                        tcs.TrySetException( ex );
+                    }
+                }
+            } );
             return tcs.Task;
         }
 
@@ -547,37 +547,37 @@ namespace Librainian.Threading {
 
             var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
-                                    if ( first.IsFaulted ) {
-                                        tcs.TrySetException( first.Exception.InnerExceptions );
-                                    }
-                                    else if ( first.IsCanceled ) {
-                                        tcs.TrySetCanceled();
-                                    }
-                                    else {
-                                        try {
-                                            var t = next( first.Result );
-                                            if ( t == null ) {
-                                                tcs.TrySetCanceled();
-                                            }
-                                            else {
-                                                t.ContinueWith( delegate {
-                                                                    if ( t.IsFaulted ) {
-                                                                        tcs.TrySetException( t.Exception.InnerExceptions );
-                                                                    }
-                                                                    else if ( t.IsCanceled ) {
-                                                                        tcs.TrySetCanceled();
-                                                                    }
-                                                                    else {
-                                                                        tcs.TrySetResult( t.Result );
-                                                                    }
-                                                                }, TaskContinuationOptions.ExecuteSynchronously );
-                                            }
-                                        }
-                                        catch ( Exception exc ) {
-                                            tcs.TrySetException( exc );
-                                        }
-                                    }
-                                }, TaskContinuationOptions.ExecuteSynchronously );
+                if ( first.IsFaulted ) {
+                    tcs.TrySetException( first.Exception.InnerExceptions );
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        var t = next( first.Result );
+                        if ( t == null ) {
+                            tcs.TrySetCanceled();
+                        }
+                        else {
+                            t.ContinueWith( delegate {
+                                if ( t.IsFaulted ) {
+                                    tcs.TrySetException( t.Exception.InnerExceptions );
+                                }
+                                else if ( t.IsCanceled ) {
+                                    tcs.TrySetCanceled();
+                                }
+                                else {
+                                    tcs.TrySetResult( t.Result );
+                                }
+                            }, TaskContinuationOptions.ExecuteSynchronously );
+                        }
+                    }
+                    catch ( Exception exc ) {
+                        tcs.TrySetException( exc );
+                    }
+                }
+            }, TaskContinuationOptions.ExecuteSynchronously );
             return tcs.Task;
         }
 
