@@ -59,7 +59,7 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Hour = new Hour( ( byte )time.Hour );
             this.Minute = new Minute( ( byte )time.Minute );
             this.Second = new Second( ( byte )time.Second );
-            this.Millisecond = new Millisecond( ( ushort )time.Millisecond );
+            this.Millisecond = new Millisecond( ( UInt16 )time.Millisecond );
             this.ResetTimer( granularity );
         }
 

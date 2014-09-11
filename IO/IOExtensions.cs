@@ -185,7 +185,7 @@ namespace Librainian.IO {
         /// <param name="fileInfo"></param>
         /// <returns></returns>
         // TODO this needs a unit test for endianness
-        public static IEnumerable<ushort> AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
+        public static IEnumerable<UInt16> AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( "fileInfo" );
             }

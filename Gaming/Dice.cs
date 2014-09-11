@@ -60,7 +60,7 @@ namespace Librainian.Gaming {
             this.RollTheDice();
         }
 
-        public ushort GetCurrentSideFaceUp { get; private set; }
+        public UInt16 GetCurrentSideFaceUp { get; private set; }
 
         [DataMember]
         public UInt16 NumberOfSides {
@@ -79,7 +79,7 @@ namespace Librainian.Gaming {
             set;
         }
 
-        public IEnumerable<ushort> GetLastFewRolls() {
+        public IEnumerable<UInt16> GetLastFewRolls() {
             return this.LastFewRolls;
         }
 

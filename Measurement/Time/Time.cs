@@ -82,8 +82,8 @@ namespace Librainian.Measurement.Time {
                 hour: ( byte )span.Hours.Value,
                 minute: ( Byte )span.Minutes.Value,
                 second: ( Byte )span.Seconds.Value,
-            millisecond: ( ushort )span.Milliseconds.Value,
-            microsecond: ( ushort )span.Microseconds.Value ) {
+            millisecond: ( UInt16 )span.Milliseconds.Value,
+            microsecond: ( UInt16 )span.Microseconds.Value ) {
         }
 
         /// <summary>
@@ -92,14 +92,14 @@ namespace Librainian.Measurement.Time {
         public static Time Now {
             get {
                 var now = DateTime.Now;
-                return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( ushort )now.Millisecond );
+                return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( UInt16 )now.Millisecond );
             }
         }
 
         public static Time UtcNow {
             get {
                 var now = DateTime.UtcNow;
-                return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( ushort )now.Millisecond );
+                return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( UInt16 )now.Millisecond );
             }
         }
 

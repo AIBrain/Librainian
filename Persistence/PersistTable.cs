@@ -39,15 +39,30 @@ namespace Librainian.Persistence {
     using Parsing;
     using Threading;
 
+    public interface IPersistTable< in TKey, TValue > : IInitializable, IEnumerable< TValue > where TKey : IComparable where TValue : class {
+        /// <summary>
+        /// <para>Here is where we interject NetDataContractSerializer to serialize to and from a String so the PersistentDictionary has no trouble with it.</para>
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [ CanBeNull ]
+        TValue this[ TKey key ] { get; set; }
+
+        [ NotNull ]
+        Folder Folder { get; }
+
+        void Initialize();
+
+        IEnumerator GetEnumerator();
+    }
+
     /// <summary>
     ///     <para>A little wrapper over the PersistentDictionary class.</para>
     /// </summary>
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
-    public class PersistTable<TKey, TValue> : IInitializable, IEnumerable<TValue>
-        where TKey : /*struct,*/ IComparable<TKey>
-        where TValue : class {
+    public class PersistTable<TKey, TValue> : IPersistTable< TKey, TValue > where TKey : IComparable<TKey>, IComparable where TValue : class {
 
         [NotNull] internal readonly PersistentDictionary<TKey, String> Dictionary;
 

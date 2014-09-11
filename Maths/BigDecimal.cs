@@ -598,7 +598,7 @@ namespace Librainian.Maths {
             return Convert.ChangeType( value, conversionType );
         }
 
-        ushort IConvertible.ToUInt16( IFormatProvider provider ) {
+        UInt16 IConvertible.ToUInt16( IFormatProvider provider ) {
             return Convert.ToUInt16( this );
         }
 
@@ -1046,8 +1046,8 @@ namespace Librainian.Maths {
             return value.ToType<UInt32>();
         }
 
-        public static explicit operator ushort( BigDecimal value ) {
-            return value.ToType<ushort>();
+        public static explicit operator UInt16( BigDecimal value ) {
+            return value.ToType<UInt16>();
         }
 
         public static implicit operator BigDecimal( Byte value ) {
@@ -1066,7 +1066,7 @@ namespace Librainian.Maths {
             return new BigDecimal( value );
         }
 
-        public static implicit operator BigDecimal( ushort value ) {
+        public static implicit operator BigDecimal( UInt16 value ) {
             return new BigDecimal( value );
         }
 

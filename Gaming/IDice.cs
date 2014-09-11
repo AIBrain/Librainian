@@ -12,6 +12,6 @@ namespace Librainian.Gaming {
 
         UInt16 GetCurrentSideFaceUp { get; }
 
-        IEnumerable<ushort> GetLastFewRolls();
+        IEnumerable<UInt16> GetLastFewRolls();
     }
 }

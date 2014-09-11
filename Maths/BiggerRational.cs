@@ -221,8 +221,8 @@ namespace Librainian.Maths {
         }
 
         [CLSCompliant( false )]
-        public static explicit operator ushort( BiggerRational value ) {
-            return ( ushort )BigInteger.Divide( value.Numerator, value.Denominator );
+        public static explicit operator UInt16( BiggerRational value ) {
+            return ( UInt16 )BigInteger.Divide( value.Numerator, value.Denominator );
         }
 
         public static explicit operator Decimal( BiggerRational value ) {
@@ -254,7 +254,7 @@ namespace Librainian.Maths {
         }
 
         [CLSCompliant( false )]
-        public static implicit operator BiggerRational( ushort value ) {
+        public static implicit operator BiggerRational( UInt16 value ) {
             return new BiggerRational( ( BigInteger )value );
         }
 

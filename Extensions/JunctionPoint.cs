@@ -112,10 +112,10 @@ namespace Librainian.Extensions {
 
                 var reparseDataBuffer = new REPARSE_DATA_BUFFER {
                                                                     ReparseTag = IO_REPARSE_TAG_MOUNT_POINT,
-                                                                    ReparseDataLength = ( ushort ) ( targetDirBytes.Length + 12 ),
+                                                                    ReparseDataLength = ( UInt16 ) ( targetDirBytes.Length + 12 ),
                                                                     SubstituteNameOffset = 0,
-                                                                    SubstituteNameLength = ( ushort ) targetDirBytes.Length,
-                                                                    PrintNameOffset = ( ushort ) ( targetDirBytes.Length + 2 ),
+                                                                    SubstituteNameLength = ( UInt16 ) targetDirBytes.Length,
+                                                                    PrintNameOffset = ( UInt16 ) ( targetDirBytes.Length + 2 ),
                                                                     PrintNameLength = 0,
                                                                     PathBuffer = new byte[0x3ff0]
                                                                 };
@@ -346,37 +346,37 @@ namespace Librainian.Extensions {
 
             /// <summary>
             ///     Size, in bytes, of the data after the Reserved member. This can be calculated by: (4
-            ///     * sizeof(ushort)) + SubstituteNameLength + PrintNameLength + (namesAreNullTerminated
+            ///     * sizeof(UInt16)) + SubstituteNameLength + PrintNameLength + (namesAreNullTerminated
             ///     ? 2 * sizeof(char) : 0);
             /// </summary>
-            public ushort ReparseDataLength;
+            public UInt16 ReparseDataLength;
 
             /// <summary>
             ///     Reserved; do not use.
             /// </summary>
-            public readonly ushort Reserved;
+            public readonly UInt16 Reserved;
 
             /// <summary>
             ///     Offset, in bytes, of the substitute name string in the PathBuffer array.
             /// </summary>
-            public ushort SubstituteNameOffset;
+            public UInt16 SubstituteNameOffset;
 
             /// <summary>
             ///     Length, in bytes, of the substitute name string. If this string is null-terminated,
             ///     SubstituteNameLength does not include space for the null character.
             /// </summary>
-            public ushort SubstituteNameLength;
+            public UInt16 SubstituteNameLength;
 
             /// <summary>
             ///     Offset, in bytes, of the print name string in the PathBuffer array.
             /// </summary>
-            public ushort PrintNameOffset;
+            public UInt16 PrintNameOffset;
 
             /// <summary>
             ///     Length, in bytes, of the print name string. If this string is null-terminated,
             ///     PrintNameLength does not include space for the null character.
             /// </summary>
-            public ushort PrintNameLength;
+            public UInt16 PrintNameLength;
 
             /// <summary>
             ///     A buffer containing the unicode-encoded path string. The path string contains the
