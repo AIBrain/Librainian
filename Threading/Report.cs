@@ -31,8 +31,24 @@ namespace Librainian.Threading {
         }
 
         [DebuggerStepThrough]
-        public static void Info( String message, [CallerMemberName] String method = "" ) {
-            String.Format( "{0}: {1}", method.NullIfEmpty() ?? "?", message ).TimeDebug();
+        public static void Before( String message, [CallerMemberName] String method = "" ) {
+            message = String.Format( "[{0} {1}.{2}.{3}] {4}", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(), Thread.CurrentThread.ManagedThreadId, method.NullIfEmpty() ?? "?", message );
+#if DEBUG
+            Debug.Write( message );
+#endif
+#if TRACE
+            Trace.Write( message );
+#endif
+        }
+
+        [DebuggerStepThrough]
+        public static void After( String message, [CallerMemberName] String method = "" ) {
+#if DEBUG
+            Debug.WriteLine( message );
+#endif
+#if TRACE
+            Trace.WriteLine( message );
+#endif
         }
 
         [DebuggerStepThrough]

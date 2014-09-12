@@ -79,19 +79,17 @@ namespace Librainian.Maths {
             }
         }
 
-        public double ChanceA {
-            get {
-                try {
-                    var votes = this.Votes;
-                    if ( !votes.Near( 0 ) ) {
-                        return this.A / votes;
-                    }
+        public double ChanceA() {
+            try {
+                var votes = this.Votes;
+                if ( !votes.Near( 0 ) ) {
+                    return this.A / votes;
                 }
-                catch ( DivideByZeroException exception ) {
-                    exception.Error();
-                }
-                return 0;
             }
+            catch ( DivideByZeroException exception ) {
+                exception.Error();
+            }
+            return 0;
         }
 
         public double ChanceB {
@@ -192,7 +190,7 @@ namespace Librainian.Maths {
         }
 
         public override String ToString() {
-            return String.Format( "A has {0:P1} and B has {1:P1} of {2:F1} votes.", this.ChanceA, this.ChanceB, this.Votes );
+            return String.Format( "A has {0:P1} and B has {1:P1} of {2:F1} votes.", this.ChanceA(), this.ChanceB, this.Votes );
         }
 
         /// <summary>

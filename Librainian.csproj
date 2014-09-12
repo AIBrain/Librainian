@@ -336,6 +336,8 @@
     <Compile Include="Gaming\PlayingCards\Deck.cs" />
     <Compile Include="Gaming\GameContainer.cs" />
     <Compile Include="Gaming\Dice.cs" />
+    <Compile Include="Internet\CaptchaSite.cs" />
+    <Compile Include="Internet\CaptchaStatus.cs" />
     <Compile Include="Internet\HTMLExtensions.cs" />
     <Compile Include="Internet\Servers\ILogger.cs" />
     <Compile Include="Internet\Servers\Extensions.cs" />

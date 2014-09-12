@@ -62,69 +62,53 @@ namespace Librainian.Maths {
             this.No = votesNo;
         }
 
-        public Double ChanceNo {
-            get {
-                try {
-                    var votes = this.Votes;
-                    if ( !votes.Near( 0 ) ) {
-                        var result = new BigRational( this.No, votes );
-                        return ( Double )result;
-                    }
+        public double ChanceNo() {
+            try {
+                var votes = this.Votes;
+                if ( !votes.Near( 0 ) ) {
+                    var result = new BigRational( this.No, votes );
+                    return ( Double ) result;
                 }
-                catch ( DivideByZeroException exception ) {
-                    exception.Error();
+            }
+            catch ( DivideByZeroException exception ) {
+                exception.Error();
+            }
+            return 0;
+        }
+
+        public double ChanceYes() {
+            try {
+                var votes = this.Votes;
+                if ( votes.Near( 0 ) ) {
+                    return 0;
                 }
+                var chance = new BigRational( this.Yes, votes );
+                return ( Double ) chance;
+            }
+            catch ( DivideByZeroException exception ) {
+                exception.Error();
                 return 0;
             }
         }
 
-        public Double ChanceYes {
-            get {
-                try {
-                    var votes = this.Votes;
-                    if ( votes.Near( 0 ) ) {
-                        return 0;
-                    }
-                    var chance = new BigRational( this.Yes, votes );
-                    return ( Double )chance;
-                }
-                catch ( DivideByZeroException exception ) {
-                    exception.Error();
-                    return 0;
-                }
-            }
+        public bool IsLandslideNo() {
+            return this.IsNoWinning() && this.No > this.HalfOfVotes();
         }
 
-        public Boolean IsLandslideNo {
-            get {
-                return this.IsNoWinning && this.No > this.HalfOfVotes();
-            }
+        public bool IsLandslideYes() {
+            return this.IsYesWinning() && this.Yes > this.HalfOfVotes();
         }
 
-        public Boolean IsLandslideYes {
-            get {
-                return this.IsYesWinning && this.Yes > this.HalfOfVotes();
-            }
+        public bool IsNoWinning() {
+            return this.No > this.Yes && this.Yes > 1 && this.No > 1;
         }
 
-        [UsedImplicitly]
-        public Boolean IsNoWinning {
-            get {
-                return this.No > this.Yes && this.Yes > 1 && this.No > 1;
-            }
+        public bool IsProtiguous() {
+            return this.IsTied() && this.Votes >= 2;
         }
 
-        public Boolean IsProtiguous {
-            get {
-                return this.IsTied() && this.Votes >= 2;
-            }
-        }
-
-        [UsedImplicitly]
-        public Boolean IsYesWinning {
-            get {
-                return this.Yes > this.No && this.Yes > 1 && this.No > 1;
-            }
+        public bool IsYesWinning() {
+            return this.Yes > this.No && this.Yes > 1 && this.No > 1;
         }
 
         public UInt64 No {
@@ -186,7 +170,7 @@ namespace Librainian.Maths {
         }
 
         public override String ToString() {
-            return String.Format( "{0:P1} yes vs {1:p1} no of {2} votes.", this.ChanceYes, this.ChanceNo, this.Votes );
+            return String.Format( "{0:P1} yes vs {1:p1} no of {2} votes.", this.ChanceYes(), this.ChanceNo(), this.Votes );
         }
 
         /// <summary>
