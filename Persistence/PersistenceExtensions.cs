@@ -38,6 +38,7 @@ namespace Librainian.Persistence {
     using System.Text;
     using System.Threading;
     using System.Windows.Forms;
+    using System.Xml;
     using Annotations;
     using CodeFluent.Runtime.BinaryServices;
     using Collections;
@@ -74,7 +75,7 @@ namespace Librainian.Persistence {
         //    return false;
         //}
 
-        internal static readonly ThreadLocal< NetDataContractSerializer > Serializers = new ThreadLocal< NetDataContractSerializer >( () => new NetDataContractSerializer( context: StreamingContexts.Value, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false, assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null ) );
+        internal static readonly ThreadLocal<NetDataContractSerializer> Serializers = new ThreadLocal<NetDataContractSerializer>( () => new NetDataContractSerializer( context: StreamingContexts.Value, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false, assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null ) );
 
         ///// <summary>
         /////   Attempts to Add() the specified filename into the collection.
@@ -99,8 +100,18 @@ namespace Librainian.Persistence {
         //    }
         //    return false;
         //}
-        internal static readonly ThreadLocal< StreamingContext > StreamingContexts = new ThreadLocal< StreamingContext >( () => new StreamingContext( StreamingContextStates.All ) );
+        internal static readonly ThreadLocal<StreamingContext> StreamingContexts = new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ) );
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <param name="storedAsString"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="EncoderFallbackException"></exception>
+        /// <exception cref="FormatException"></exception>
+        /// <exception cref="XmlException"></exception>
         [CanBeNull]
         public static TType Deserialize<TType>( this String storedAsString ) where TType : class {
             try {
@@ -129,7 +140,7 @@ namespace Librainian.Persistence {
         /// <param name="fileName"></param>
         /// <returns>Returns True if the object was saved.</returns>
         [Obsolete( "Not in use yet." )]
-        public static Boolean SaveCollection<T>( this IProducerConsumerCollection< T > collection, String fileName ) {
+        public static Boolean SaveCollection<T>( this IProducerConsumerCollection<T> collection, String fileName ) {
             if ( collection == null ) {
                 throw new ArgumentNullException( "collection" );
             }
@@ -150,7 +161,7 @@ namespace Librainian.Persistence {
         /// <param name="fileName"></param>
         /// <returns>Returns True if the object was saved.</returns>
         [Obsolete( "Not in use yet." )]
-        public static Boolean SaveCollection<T>( this ThreadSafeList< T > collection, String fileName ) where T : class {
+        public static Boolean SaveCollection<T>( this ThreadSafeList<T> collection, String fileName ) where T : class {
             if ( collection == null ) {
                 throw new ArgumentNullException( "collection" );
             }
@@ -161,6 +172,12 @@ namespace Librainian.Persistence {
             return collection.Saver( fileName: fileName );
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         [CanBeNull]
         public static String Serialize<TType>( this TType obj ) where TType : class {
             try {
@@ -180,16 +197,16 @@ namespace Librainian.Persistence {
         /// <para><see cref="Folder"/> to store (and pull) application data (current user, local machine, per executable).</para>
         /// </summary>
         public static readonly Lazy<Folder> DataFolder = new Lazy<Folder>( () => {
-                                                                               //var folderPath = Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData );
-                                                                               //var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( ( Assembly.GetExecutingAssembly() ?? Assembly.GetEntryAssembly() ).Location );
-                                                                               //var fullPath = Path.Combine( folderPath, fileNameWithoutExtension );
+            //var folderPath = Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData );
+            //var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( ( Assembly.GetExecutingAssembly() ?? Assembly.GetEntryAssembly() ).Location );
+            //var fullPath = Path.Combine( folderPath, fileNameWithoutExtension );
 
-                                                                               var folder = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.CompanyName, Application.ProductName );
-                                                                               if ( !folder.Exists() ) {
-                                                                                   folder.Create();
-                                                                               }
-                                                                               return folder;
-                                                                           } );
+            var folder = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.CompanyName, Application.ProductName );
+            if ( !folder.Exists() ) {
+                folder.Create();
+            }
+            return folder;
+        } );
 
         [Obsolete]
         public static Boolean EnableIsolatedStorageCompression() {
@@ -629,7 +646,7 @@ namespace Librainian.Persistence {
 
                                 if ( useCompression ) {
                                     using ( var decompress = new GZipStream( stream: fileStream, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                        obj = Deserialize< TSource >( stream: decompress, feedback: feedback );
+                                        obj = Deserialize<TSource>( stream: decompress, feedback: feedback );
                                     }
                                 }
                                 else {
@@ -722,11 +739,11 @@ namespace Librainian.Persistence {
                                         TSource result;
                                         if ( useCompression ) {
                                             using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                                result = Deserialize< TSource >( stream: decompress, feedback: feedback );
+                                                result = Deserialize<TSource>( stream: decompress, feedback: feedback );
                                             }
                                         }
                                         else {
-                                            result = Deserialize< TSource >( stream: isfs, feedback: feedback );
+                                            result = Deserialize<TSource>( stream: isfs, feedback: feedback );
                                         }
                                         if ( onLoad != null ) {
                                             onLoad( result );
@@ -826,10 +843,10 @@ namespace Librainian.Persistence {
                                     var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( value: "Z", ignoreCase: true, culture: null );
 
                                     if ( !useCompression ) {
-                                        return Deserialize< TSource >( stream: isfs, feedback: feedback );
+                                        return Deserialize<TSource>( stream: isfs, feedback: feedback );
                                     }
                                     using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                        return Deserialize< TSource >( stream: decompress, feedback: feedback );
+                                        return Deserialize<TSource>( stream: decompress, feedback: feedback );
                                     }
                                 }
                             }

@@ -595,19 +595,6 @@ namespace Librainian.Threading {
             next.Spawn();
         }
 
-        [DebuggerStepThrough]
-        public static void TimeDebug( [CanBeNull] this String message, Boolean newline = true ) {
-            if ( message == null ) {
-                return;
-            }
-            if ( newline ) {
-                Debug.WriteLine( "[{0:s}].({1}) {2}", DateTime.Now, Thread.CurrentThread.ManagedThreadId, message );
-            }
-            else {
-                Debug.Write( String.Format( "[] {0}", message ) );
-            }
-        }
-
         /// <summary>
         ///     var result = await Wrap( () => OldNonAsyncFunction( ) );
         /// </summary>

@@ -17,7 +17,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/PersistTable.cs" was last cleaned by Rick on 2014/08/24 at 4:50 AM
+// "Librainian/PersistTable.cs" was last cleaned by Rick on 2014/09/11 at 6:14 PM
 
 #endregion License & Information
 
@@ -31,85 +31,120 @@ namespace Librainian.Persistence {
     using System.Linq;
     using System.Runtime.Serialization;
     using Annotations;
+    using Extensions;
     using FluentAssertions;
     using IO;
-    using Extensions;
     using Microsoft.Isam.Esent.Collections.Generic;
     using Ninject;
     using Parsing;
     using Threading;
 
-    public interface IPersistTable< in TKey, TValue > : IInitializable, IEnumerable< TValue > where TKey : IComparable where TValue : class {
+    public interface IPersistTable<in TKey, TValue> : IInitializable, IEnumerable<TValue>
+        where TKey : IComparable
+        where TValue : class {
+
+        [NotNull]
+        Folder Folder {
+            get;
+        }
+
         /// <summary>
-        /// <para>Here is where we interject NetDataContractSerializer to serialize to and from a String so the PersistentDictionary has no trouble with it.</para>
+        ///     <para>
+        ///         Here is where we interject <see cref="NetDataContractSerializer"/> to serialize to and from a <see cref="String"/> so the
+        ///         <see cref="PersistentDictionary{TKey,TValue}"/> has no trouble with it.
+        ///     </para>
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        [ CanBeNull ]
-        TValue this[ TKey key ] { get; set; }
-
-        [ NotNull ]
-        Folder Folder { get; }
-
-        void Initialize();
-
-        IEnumerator GetEnumerator();
+        [CanBeNull]
+        TValue this[ TKey key ] {
+            get;
+            set;
+        }
     }
 
     /// <summary>
-    ///     <para>A little wrapper over the PersistentDictionary class.</para>
+    ///     <para>A little wrapper over the <see cref="PersistentDictionary{TKey,TValue}"/> class for <see cref="DataContract" /> classes.</para>
     /// </summary>
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
-    public class PersistTable<TKey, TValue> : IPersistTable< TKey, TValue > where TKey : IComparable<TKey>, IComparable where TValue : class {
+    public class PersistTable<TKey, TValue> : IPersistTable<TKey, TValue>
+        where TKey : IComparable<TKey>, IComparable
+        where TValue : class {
 
-        [NotNull] internal readonly PersistentDictionary<TKey, String> Dictionary;
-
-        public PersistTable( [NotNull] Folder folder ) {
-            if ( folder == null ) {
-                throw new ArgumentNullException( "folder" );
-            }
-            this.Folder = folder;
-            var directory = this.Folder.FullName;
-
-            this.Folder.Create();
-
-            if ( !this.Folder.Exists() ) {
-                throw new DirectoryNotFoundException( String.Format( "Unable to find or create the folder `{0}`.", this.Folder.FullName ) );
-            }
-
-            this.Dictionary = new PersistentDictionary<TKey, String>( directory );
-
-            this.TestForReadWriteAccess();
-        }
-
+        [NotNull]
+        internal readonly PersistentDictionary<TKey, String> Dictionary;
 
         /// <summary>
-        /// <para>Here is where we interject NetDataContractSerializer to serialize to and from a String so the PersistentDictionary has no trouble with it.</para>
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        [ CanBeNull ]
-        public TValue this[ TKey key ] {
-            get {
-                String storedValue;
-                if ( !this.Dictionary.TryGetValue( key, out storedValue ) ) {
-                    return null;
-                }
-                var deSerialized = storedValue.Deserialize<TValue>();
-                return deSerialized;
+        /// <param name="specialFolder"></param>
+        /// <param name="tableName"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="PathTooLongException"></exception>
+        /// <exception cref="DirectoryNotFoundException"></exception>
+        /// <exception cref="FileNotFoundException"></exception>
+        public PersistTable( Environment.SpecialFolder specialFolder, String tableName )
+            : this( new Folder( specialFolder, AppDomain.CurrentDomain.FriendlyName, tableName ) ) {
+            try {
+                Report.Enter();
             }
-            set {
-                var obj = value;
-                var valueToStore = obj.Serialize() ?? String.Empty;
-                this.Dictionary[ key ] = valueToStore;
+            finally {
+                Report.Exit();
             }
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="PathTooLongException"></exception>
+        /// <exception cref="DirectoryNotFoundException"></exception>
+        /// <exception cref="FileNotFoundException"></exception>
+        public PersistTable( [CanBeNull] Folder folder ) {
+            try {
+                Report.Enter();
+
+                if ( folder == null ) {
+                    throw new ArgumentNullException( "folder" );
+                }
+                this.Folder = folder;
+                var directory = this.Folder.FullName;
+
+                this.Folder.Create();
+
+                if ( !this.Folder.Exists() ) {
+                    throw new DirectoryNotFoundException( String.Format( "Unable to find or create the folder `{0}`.", this.Folder.FullName ) );
+                }
+
+                this.Dictionary = new PersistentDictionary<TKey, String>( directory );
+
+                this.TestForReadWriteAccess();
+            }
+            finally {
+                Report.Exit();
+            }
+        }
 
         public PersistTable( [NotNull] String fullpath )
             : this( new Folder( fullpath ) ) {
+        }
+
+        /// <summary>
+        ///     No path given? Use the programdata\thisapp.exe type of path.
+        /// </summary>
+        public PersistTable() {
+            throw new NotImplementedException();
+            var name = Types.GetPropertyName( () => this );
+
+            //TODO
+        }
+
+        [NotNull]
+        public Folder Folder {
+            get;
+            private set;
         }
 
         [UsedImplicitly]
@@ -119,20 +154,44 @@ namespace Librainian.Persistence {
             }
         }
 
-
         /// <summary>
-        /// No path given? Use the programdata\thisapp.exe type of path.
+        ///     <para>
+        ///         Here is where we interject NetDataContractSerializer to serialize to and from a <see cref="String" /> so the
+        ///         <see cref="PersistentDictionary{TKey,TValue}" /> has no trouble with it.
+        ///     </para>
         /// </summary>
-        public PersistTable() {
-            throw new NotImplementedException();
-            var name = Types.GetPropertyName( () => this );
-            //TODO
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public TValue this[ TKey key ] {
+            get {
+                String storedValue;
+                if ( !this.Dictionary.TryGetValue( key, out storedValue ) ) {
+                    return null;
+                }
+                var deSerialized = storedValue.Deserialize<TValue>();
+                return deSerialized;
+            }
+
+            set {
+                var obj = value;
+                var valueToStore = obj.Serialize() ?? String.Empty;
+                this.Dictionary[ key ] = valueToStore;
+            }
         }
 
-        [NotNull]
-        public Folder Folder {
-            get;
-            private set;
+        public IEnumerator GetEnumerator() {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
+        /// </returns>
+        IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator() {
+            return this.Dictionary.Values.Select( value => value.Deserialize<TValue>() ).GetEnumerator();
         }
 
         public void Initialize() {
@@ -144,21 +203,22 @@ namespace Librainian.Persistence {
             Report.Exit();
         }
 
-/*
-        private dynamic ToExpando( IEnumerable<KeyValuePair<TKey, TValue>> dictionary ) {
-            var expandoObject = new ExpandoObject() as IDictionary<TKey, TValue>;
+        /*
+                private dynamic ToExpando( IEnumerable<KeyValuePair<TKey, TValue>> dictionary ) {
+                    var expandoObject = new ExpandoObject() as IDictionary<TKey, TValue>;
 
-            if ( null != expandoObject ) {
-                foreach ( var keyValuePair in dictionary ) {
-                    expandoObject[ keyValuePair.Key ] = keyValuePair.Value;
+                    if ( null != expandoObject ) {
+                        foreach ( var keyValuePair in dictionary ) {
+                            expandoObject[ keyValuePair.Key ] = keyValuePair.Value;
+                        }
+                    }
+
+                    return expandoObject;
                 }
-            }
-
-            return expandoObject;
-        }
-*/
+        */
 
         /*
+
                 /// <summary>
                 ///     check if we have a storage folder.
                 ///     if we don't, popup a dialog to ask.
@@ -167,7 +227,6 @@ namespace Librainian.Persistence {
                 /// <returns></returns>
                 public void ValidateStorageFolder() {
                     try {
-
                     Again:
                         if ( null == this.MainStoragePath ) {
                             this.AskUserForStorageFolder();
@@ -233,23 +292,8 @@ namespace Librainian.Persistence {
                 }
             }
             catch ( Exception ) {
-
             }
             return false;
-        }
-
-        /// <summary>
-        /// Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
-        /// </returns>
-        IEnumerator< TValue > IEnumerable< TValue >.GetEnumerator() {
-            return this.Dictionary.Values.Select( value => value.Deserialize<TValue>() ).GetEnumerator();
-        }
-
-        public IEnumerator GetEnumerator() {
-            throw new NotImplementedException();
         }
     }
 }

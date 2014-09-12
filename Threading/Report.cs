@@ -1,7 +1,11 @@
 namespace Librainian.Threading {
+
     using System;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
+    using System.Threading;
+    using Annotations;
+    using Parsing;
 
     public static class Report {
 
@@ -12,11 +16,8 @@ namespace Librainian.Threading {
         /// <param name="fullMethodPath"></param>
         [DebuggerStepThrough]
         public static void Enter( [CallerMemberName] String method = "", [Custom] String fullMethodPath = "" ) {
-            //if ( String.IsNullOrWhiteSpace( method ) ) {
-            //    return;
-            //}
             Debug.Indent();
-            String.Format( "{0}: {1}  {2}", "enter", method, fullMethodPath ).TimeDebug();
+            String.Format( "{0}: {1} {2}", "enter", method ?? String.Empty, fullMethodPath ?? String.Empty ).TimeDebug();
         }
 
         /// <summary>
@@ -25,11 +26,41 @@ namespace Librainian.Threading {
         /// <param name="method"></param>
         [DebuggerStepThrough]
         public static void Exit( [CallerMemberName] String method = "" ) {
-            //if ( String.IsNullOrWhiteSpace( method ) ) {
-            //    return;
-            //}
-            String.Format( "{0}: {1}", "exit", method ).TimeDebug();
+            String.Format( "{0}: {1}", "exit", method ?? String.Empty ).TimeDebug();
             Debug.Unindent();
+        }
+
+        [DebuggerStepThrough]
+        public static void Info( String message, [CallerMemberName] String method = "" ) {
+            String.Format( "{0}: {1}", method.NullIfEmpty() ?? "?", message ).TimeDebug();
+        }
+
+        [DebuggerStepThrough]
+        public static void Message( String message, [CallerMemberName] String method = "" ) {
+            String.Format( "{0}: {1}", method.NullIfEmpty() ?? "?", message ).TimeDebug();
+        }
+
+        [DebuggerStepThrough]
+        public static void TimeDebug( [CanBeNull] this String message, Boolean newline = true ) {
+            if ( message == null ) {
+                return;
+            }
+#if DEBUG
+            if ( newline ) {
+                Debug.WriteLine( "[{0:s}].({1}) {2}", DateTime.Now, Thread.CurrentThread.ManagedThreadId, message );
+            }
+            else {
+                Debug.Write( String.Format( "[] {0}", message ) );
+            }
+#endif
+#if TRACE
+            if ( newline ) {
+                Trace.WriteLine( "[{0:s}].({1}) {2}", DateTime.Now, Thread.CurrentThread.ManagedThreadId, message );
+            }
+            else {
+                Trace.Write( String.Format( "[] {0}", message ) );
+            }
+#endif
         }
     }
 }

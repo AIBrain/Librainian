@@ -30,22 +30,22 @@ namespace Librainian.Security {
     using Annotations;
 
     public static class SecurityExtensions {
-        public static readonly ThreadLocal<MD5> Md5S = new ThreadLocal<MD5>( MD5.Create );
+        public static readonly ThreadLocal< MD5 > Md5S = new ThreadLocal< MD5 >( MD5.Create );
 
         /// <summary>
         /// Provide to each thread its own <see cref="SHA256Managed" />.
         /// </summary>
-        public static readonly ThreadLocal<SHA256Managed> SHA256Local = new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
+        public static readonly ThreadLocal< SHA256Managed > SHA256Local = new ThreadLocal< SHA256Managed >( valueFactory: () => new SHA256Managed(), trackAllValues: false );
 
         /// <summary>
         /// Provide to each thread its own <see cref="SHA256Managed" />.
         /// </summary>
-        public static readonly ThreadLocal<SHA384Managed> SHA384Local = new ThreadLocal<SHA384Managed>( valueFactory: () => new SHA384Managed(), trackAllValues: false );
+        public static readonly ThreadLocal< SHA384Managed > SHA384Local = new ThreadLocal< SHA384Managed >( valueFactory: () => new SHA384Managed(), trackAllValues: false );
 
         /// <summary>
         /// Provide to each thread its own <see cref="SHA256Managed" />.
         /// </summary>
-        public static readonly ThreadLocal<SHA512Managed> SHA512Local = new ThreadLocal<SHA512Managed>( valueFactory: () => new SHA512Managed(), trackAllValues: false );
+        public static readonly ThreadLocal< SHA512Managed > SHA512Local = new ThreadLocal< SHA512Managed >( valueFactory: () => new SHA512Managed(), trackAllValues: false );
 
         public static string DecryptStringUsingRegistryKey( [NotNull] this string decryptValue, [NotNull] string privateKey ) {
 
@@ -213,5 +213,7 @@ namespace Librainian.Security {
             }
             return SHA512Local.Value.ComputeHash( input, 0, input.Length );
         }
+
+        public static readonly SHA1CryptoServiceProvider CryptoProvider = new SHA1CryptoServiceProvider();
     }
 }

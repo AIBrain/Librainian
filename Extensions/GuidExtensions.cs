@@ -21,15 +21,13 @@ namespace Librainian.Extensions {
     using System;
     using System.IO;
     using System.Linq;
-    using System.Security.Cryptography;
     using System.Text;
     using IO;
     using Maths;
     using NUnit.Framework;
+    using Security;
 
     public static class GuidExtensions {
-        public static readonly SHA1CryptoServiceProvider CryptoProvider = new SHA1CryptoServiceProvider();
-
         public static Guid FromPath( this DirectoryInfo path ) {
             var s = path.ToPaths().ToList();
             s.RemoveAll( s1 => s1.Any( c => !Char.IsDigit( c ) ) );
@@ -114,7 +112,7 @@ namespace Librainian.Extensions {
 
         public static Guid ToGuid( this String word ) {
             var stringbytes = Encoding.UTF8.GetBytes( word );
-            var hashedBytes = CryptoProvider.ComputeHash( stringbytes, 0, 16 );
+            var hashedBytes = SecurityExtensions.CryptoProvider.ComputeHash( stringbytes, 0, 16 );
             //Array.Resize( ref hashedBytes, 16 );
             return new Guid( hashedBytes );
         }

@@ -98,9 +98,9 @@ namespace Librainian.Magic {
             this.Kernel.Components.Get<ICache>().Clear();
             this.Kernel.Should().NotBeNull();
 
-            "Ninject is loading assemblies...".TimeDebug();
+            Report.Info( "Ninject is loading assemblies..." );
             this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
-            String.Format( "Ninject has loaded {0} assemblies.", this.Kernel.GetModules().LongCount() ).TimeDebug();
+            Report.Info( String.Format( "Ninject has loaded {0} assemblies.", this.Kernel.GetModules().LongCount() ) );
             String.Format( "{0}", this.Kernel.GetModules().ToStrings() ).TimeDebug();
 
         }

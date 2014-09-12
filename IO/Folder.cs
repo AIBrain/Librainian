@@ -87,6 +87,9 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="fullPath"></param>
         /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="PathTooLongException"></exception>
+        /// <exception cref="DirectoryNotFoundException"></exception>
+        /// <exception cref="FileNotFoundException"></exception>
         public Folder( [NotNull] String fullPath ) {
             if ( String.IsNullOrWhiteSpace( fullPath ) ) {
                 throw new ArgumentNullException( "path" );
