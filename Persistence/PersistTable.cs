@@ -30,6 +30,7 @@ namespace Librainian.Persistence {
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization;
+    using System.Windows.Forms;
     using Annotations;
     using Extensions;
     using FluentAssertions;
@@ -39,7 +40,7 @@ namespace Librainian.Persistence {
     using Parsing;
     using Threading;
 
-    public interface IPersistTable<in TKey, TValue> : IInitializable, IEnumerable<TValue>
+    public interface IPersistTable<in TKey, TValue> : IInitializable, IEnumerable<TValue>, IDisposable
         where TKey : IComparable
         where TValue : class {
 
@@ -76,6 +77,8 @@ namespace Librainian.Persistence {
         [NotNull]
         internal readonly PersistentDictionary<TKey, String> Dictionary;
 
+      
+
         /// <summary>
         /// </summary>
         /// <param name="specialFolder"></param>
@@ -85,7 +88,7 @@ namespace Librainian.Persistence {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         public PersistTable( Environment.SpecialFolder specialFolder, String tableName )
-            : this( new Folder( specialFolder, AppDomain.CurrentDomain.FriendlyName, tableName ) ) {
+            : this( new Folder( specialFolder, Application.CompanyName, Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, tableName ) ) {
             try {
                 Report.Enter();
             }
@@ -132,13 +135,13 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     No path given? Use the programdata\thisapp.exe type of path.
+        ///     No path given? 
         /// </summary>
-        public PersistTable() {
+        private PersistTable() {
             throw new NotImplementedException();
             var name = Types.GetPropertyName( () => this );
 
-            //TODO
+            //TODO Use the programdata\thisapp.exe type of path.
         }
 
         [NotNull]
@@ -294,6 +297,13 @@ namespace Librainian.Persistence {
             catch ( Exception ) {
             }
             return false;
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose() {
+            this.Dictionary.Dispose();
         }
     }
 }
