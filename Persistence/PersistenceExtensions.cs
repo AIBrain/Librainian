@@ -190,6 +190,9 @@ namespace Librainian.Persistence {
             catch ( SerializationException exception ) {
                 exception.Error();
             }
+            catch ( InvalidDataContractException exception ) {
+                exception.Error();
+            }
             return null;
         }
 

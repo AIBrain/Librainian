@@ -1,16 +1,15 @@
 ﻿namespace Librainian.Internet {
     using System;
-    using System.Collections.Concurrent;
     using System.Runtime.Serialization;
     using Annotations;
 
-    [DataContract(IsReference = true)]
+    [DataContract( IsReference = true )]
     public class CaptchaSite {
         /// <summary>
         ///     URI of the captcha.
         /// </summary>
-        [ CanBeNull ]
-        [ DataMember ]
+        [CanBeNull]
+        [DataMember]
         public Uri Location {
             get;
             set;
@@ -22,7 +21,6 @@
             set;
         }
 
-        [ NotNull ] [ DataMember ] public ConcurrentDictionary<DateTime, CaptchaStatus> CaptchaHistory = new ConcurrentDictionary<DateTime, CaptchaStatus>();
 
         /// <summary>
         ///     When this website was added.
@@ -33,23 +31,6 @@
             set;
         }
 
-        ///// <summary>
-        /////     When the last webrequest was started.
-        ///// </summary>
-        //[DataMember]
-        //public DateTime WhenRequestStarted {
-        //    get;
-        //    set;
-        //}
-
-        ///// <summary>
-        /////     When the last webrequest got a  response.
-        ///// </summary>
-        //[DataMember]
-        //public DateTime WhenResponseCame {
-        //    get;
-        //    set;
-        //}
 
         /// <summary>
         ///     A count of the requests to scrape this captcha.
@@ -69,7 +50,7 @@
             set;
         }
 
-       
+
 
     }
 }

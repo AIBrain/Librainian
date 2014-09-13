@@ -47,10 +47,10 @@ namespace Librainian.Persistence {
         where TKey : IComparable<TKey>, IComparable
         where TValue : class {
 
-        [NotNull]
-        internal readonly PersistentDictionary<TKey, String> Dictionary;
+        [ NotNull ]
+        internal PersistentDictionary< TKey, String > Dictionary { get; private set; }
 
-      
+
 
         /// <summary>
         /// </summary>
@@ -150,8 +150,7 @@ namespace Librainian.Persistence {
             }
 
             set {
-                var obj = value;
-                var valueToStore = obj.Serialize() ?? String.Empty;
+                var valueToStore = value.Serialize() ?? String.Empty;
                 this.Dictionary[ key ] = valueToStore;
             }
         }
