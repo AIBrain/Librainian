@@ -1,15 +1,16 @@
 ﻿namespace Librainian.Internet {
     using System;
     using System.Collections.Concurrent;
-    using System.Net;
     using System.Runtime.Serialization;
+    using Annotations;
 
-    [DataContract]
+    [DataContract(IsReference = true)]
     public class CaptchaSite {
         /// <summary>
         ///     URI of the captcha.
         /// </summary>
-        [DataMember]
+        [ CanBeNull ]
+        [ DataMember ]
         public Uri Location {
             get;
             set;
@@ -21,38 +22,37 @@
             set;
         }
 
-        [DataMember]
-        public ConcurrentDictionary<DateTime, CaptchaStatus> CaptchaHistory = new ConcurrentDictionary<DateTime, CaptchaStatus>();
+        [ NotNull ] [ DataMember ] public ConcurrentDictionary<DateTime, CaptchaStatus> CaptchaHistory = new ConcurrentDictionary<DateTime, CaptchaStatus>();
 
         /// <summary>
         ///     When this website was added.
         /// </summary>
         [DataMember]
-        public DateTime WhenAddedToQueue {
+        public DateTime WhenAdded {
             get;
             set;
         }
 
-        /// <summary>
-        ///     When the last webrequest was started.
-        /// </summary>
-        [DataMember]
-        public DateTime WhenRequestStarted {
-            get;
-            set;
-        }
+        ///// <summary>
+        /////     When the last webrequest was started.
+        ///// </summary>
+        //[DataMember]
+        //public DateTime WhenRequestStarted {
+        //    get;
+        //    set;
+        //}
+
+        ///// <summary>
+        /////     When the last webrequest got a  response.
+        ///// </summary>
+        //[DataMember]
+        //public DateTime WhenResponseCame {
+        //    get;
+        //    set;
+        //}
 
         /// <summary>
-        ///     When the last webrequest got a  response.
-        /// </summary>
-        [DataMember]
-        public DateTime WhenResponseCame {
-            get;
-            set;
-        }
-
-        /// <summary>
-        ///     A count of the requests to scrape this website.
+        ///     A count of the requests to scrape this captcha.
         /// </summary>
         [DataMember]
         public UInt64 RequestCount {
@@ -69,13 +69,7 @@
             set;
         }
 
-        /// <summary>
-        ///     The <see cref="HttpWebRequest" />.
-        /// </summary>
-        public HttpWebRequest Request {
-            get;
-            set;
-        }
+       
 
     }
 }

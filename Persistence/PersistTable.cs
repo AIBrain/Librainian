@@ -25,10 +25,8 @@ namespace Librainian.Persistence {
 
     using System;
     using System.Collections;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    using System.Linq;
     using System.Runtime.Serialization;
     using System.Windows.Forms;
     using Annotations;
@@ -36,33 +34,8 @@ namespace Librainian.Persistence {
     using FluentAssertions;
     using IO;
     using Microsoft.Isam.Esent.Collections.Generic;
-    using Ninject;
     using Parsing;
     using Threading;
-
-    public interface IPersistTable<in TKey, TValue> : IInitializable, IEnumerable<TValue>, IDisposable
-        where TKey : IComparable
-        where TValue : class {
-
-        [NotNull]
-        Folder Folder {
-            get;
-        }
-
-        /// <summary>
-        ///     <para>
-        ///         Here is where we interject <see cref="NetDataContractSerializer"/> to serialize to and from a <see cref="String"/> so the
-        ///         <see cref="PersistentDictionary{TKey,TValue}"/> has no trouble with it.
-        ///     </para>
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        TValue this[ TKey key ] {
-            get;
-            set;
-        }
-    }
 
     /// <summary>
     ///     <para>A little wrapper over the <see cref="PersistentDictionary{TKey,TValue}"/> class for <see cref="DataContract" /> classes.</para>
@@ -187,15 +160,15 @@ namespace Librainian.Persistence {
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
-        /// </returns>
-        IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator() {
-            return this.Dictionary.Values.Select( value => value.Deserialize<TValue>() ).GetEnumerator();
-        }
+        ///// <summary>
+        /////     Returns an enumerator that iterates through the collection.
+        ///// </summary>
+        ///// <returns>
+        /////     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
+        ///// </returns>
+        //IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator() {
+        //    return this.Dictionary.Values.Select( value => value.Deserialize<TValue>() ).GetEnumerator();
+        //}
 
         public void Initialize() {
             Report.Enter();

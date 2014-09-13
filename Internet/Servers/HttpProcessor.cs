@@ -461,10 +461,10 @@ namespace Librainian.Internet.Servers {
         /// </summary>
         private void handlePOSTRequest() {
             try {
-                var content_len = 0;
                 var ms = new MemoryStream();
                 var content_length_str = this.GetHeaderValue( "Content-Length" );
                 if ( !string.IsNullOrWhiteSpace( content_length_str ) ) {
+                    var content_len = 0;
                     if ( int.TryParse( content_length_str, out content_len ) ) {
                         if ( content_len > MAX_POST_SIZE ) {
                             this.writeFailure( "413 Request Entity Too Large", "Request Too Large" );

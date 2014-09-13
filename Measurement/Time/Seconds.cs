@@ -109,8 +109,8 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Seconds Zero = new Seconds( 0 );
 
-        [DataMember]
-        public readonly Decimal Value;
+        [ DataMember ]
+        public Decimal Value { get; private set; }
 
         static Seconds() {
             Zero.Should().BeLessThan( One );
@@ -120,15 +120,15 @@ namespace Librainian.Measurement.Time {
             One.Should().BeGreaterThan( Milliseconds.One );
         }
 
-        public Seconds( Decimal value ) {
+        public Seconds( Decimal value ) : this() {
             this.Value = value;
         }
 
-        public Seconds( long value ) {
+        public Seconds( long value ) : this() {
             this.Value = value;
         }
 
-        public Seconds( BigInteger value ) {
+        public Seconds( BigInteger value ) : this() {
             value.ThrowIfOutOfDecimalRange();
             this.Value = ( Decimal )value;
         }
