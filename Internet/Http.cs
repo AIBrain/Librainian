@@ -119,6 +119,7 @@ namespace Librainian.Internet {
             }
 
             var request = WebRequest.Create( uri ) as HttpWebRequest;
+// ReSharper disable once PossibleNullReferenceException
             request.AllowAutoRedirect = true;
             request.UserAgent = "AIBrain Engine";
             request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );

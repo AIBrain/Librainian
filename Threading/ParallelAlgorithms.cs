@@ -190,6 +190,7 @@ namespace Librainian.Threading {
                         // Tasks in the left-most column depend only on the task above them, and
                         // tasks in the top row depend only on the task to their left
                         var antecedent = column == 0 ? prevTaskRow[ 0 ] : prevTaskInCurrentRow;
+// ReSharper disable once PossibleNullReferenceException
                         curTask = antecedent.ContinueWith( p => {
                                                                p.Wait(); // Necessary only to propagate exceptions
                                                                processRowColumnCell( j, i );
@@ -212,6 +213,7 @@ namespace Librainian.Threading {
             }
 
             // Wait for the last task to be done.
+// ReSharper disable once PossibleNullReferenceException
             prevTaskInCurrentRow.Wait();
         }
 

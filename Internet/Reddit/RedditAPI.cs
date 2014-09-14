@@ -127,6 +127,7 @@ namespace Librainian.Internet.Reddit {
             var jSR = new StreamReader( jsonStream );
             var metmp = jSR.ReadToEnd();
             var meData = JSON.ParseJSON( metmp ) as Hashtable; //TODO untested
+// ReSharper disable once PossibleNullReferenceException
             this.me = ( Hashtable ) meData[ "data" ];
 
             return this.me;

@@ -93,6 +93,7 @@ namespace Librainian.Speech {
                 if ( String.IsNullOrEmpty( message ) ) {
                     return;
                 }
+// ReSharper disable once PossibleNullReferenceException
                 message = message.Trim();
 
                 if ( String.IsNullOrEmpty( message ) ) {

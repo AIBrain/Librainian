@@ -96,6 +96,7 @@ namespace Librainian.Magic.Abodit {
 
         public bool GetDocumentId( object document, out object id, out Type idNominalType, out IIdGenerator idGenerator ) {
             var x = document as MongoDynamic;
+// ReSharper disable once PossibleNullReferenceException
             id = x.ID;
             idNominalType = typeof( ObjectId );
             idGenerator = new ObjectIdGenerator();

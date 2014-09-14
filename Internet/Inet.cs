@@ -33,6 +33,7 @@ namespace Librainian.Internet {
 
             // Send the request to the Internet resource and wait for 
             // the response.                 
+// ReSharper disable once PossibleNullReferenceException
             using ( var response = await webReq.GetResponseAsync() )
 
                 // The previous statement abbreviates the following two statements. 

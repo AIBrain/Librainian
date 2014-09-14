@@ -1622,6 +1622,7 @@ namespace Librainian.Maths {
             if ( top.IsNullOrWhiteSpace() ) {
                 return false;
             }
+// ReSharper disable once PossibleNullReferenceException
             top = top.Trim();
 
             var bottom = parts.TakeLast();
