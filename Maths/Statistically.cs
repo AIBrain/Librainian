@@ -25,6 +25,7 @@ namespace Librainian.Maths {
     using System.Runtime.Serialization;
     using System.Threading;
     using Annotations;
+    using Extensions;
 
     /// <summary>
     ///     <para>Ups: Probability between 0.0 and 100.0%</para>
@@ -110,7 +111,6 @@ namespace Librainian.Maths {
             }
         }
 
-        [UsedImplicitly]
         public static Statistically Combine( Statistically value1, Statistically value2 ) {
             return new Statistically( ups: value1.Ups + value2.Ups, downs: value1.Downs + value2.Downs );
         }
