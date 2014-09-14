@@ -115,7 +115,7 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public static TType Deserialize<TType>( this String storedAsString ) where TType : class {
             try {
-                var byteArray = Encoding.Unicode.GetBytes( storedAsString ); //we can .Base64Encode() if we need.
+                var byteArray = Encoding.UTF8.GetBytes( storedAsString ); //we can .Base64Encode() if we need.
 
                 using ( var ms = new MemoryStream( byteArray ) ) {
                     ms.Position = 0;
@@ -181,7 +181,7 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public static String Serialize<TType>( this TType obj ) where TType : class {
             try {
-                using ( var stream = new MemoryStream() ) {
+                using ( var stream = new MemoryStream( ) ) {
                     var serializer = Serializers.Value;
                     serializer.WriteObject( stream, obj );
                     return stream.ReadToEnd();
