@@ -26,7 +26,9 @@ namespace Librainian.Measurement.Currency.BTC {
     using System;
     using System.Diagnostics;
     using System.Threading;
+    using System.Windows.Forms;
     using Annotations;
+    using Controls;
     using Time;
 
     /// <summary>
@@ -39,6 +41,10 @@ namespace Librainian.Measurement.Currency.BTC {
     [DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
     public class SimpleBitcoinWallet : ISimpleWallet {
+
+        [CanBeNull]
+        private readonly Label _flashLabelOnChanges;
+
         public const Decimal BTC = mBTC * 1000.0M;
         public const Decimal mBTC = μBTC * 1000.0M;
         public const Decimal mBTC1 = mBTC * 1.0M;
@@ -62,6 +68,10 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public SimpleBitcoinWallet() {
             this.Timeout = Minutes.One;
+        }
+
+        public SimpleBitcoinWallet( Label flashLabelOnChanges ) {
+            this._flashLabelOnChanges = flashLabelOnChanges;
         }
 
         /// <summary>
@@ -155,6 +165,7 @@ namespace Librainian.Measurement.Currency.BTC {
                     return false;
                 }
                 this._balance += btc;
+                _flashLabelOnChanges.Flash();
                 return true;
             }
             finally {
@@ -212,6 +223,7 @@ namespace Librainian.Measurement.Currency.BTC {
                     return false;
                 }
                 this._balance = btc;
+                _flashLabelOnChanges.Flash();
                 return true;
             }
             finally {
@@ -246,6 +258,7 @@ namespace Librainian.Measurement.Currency.BTC {
                     return false;
                 }
                 this._balance -= btc;
+                _flashLabelOnChanges.Flash();
                 return true;
             }
             finally {
@@ -286,6 +299,7 @@ namespace Librainian.Measurement.Currency.BTC {
                     return false;
                 }
                 this._balance -= btc;
+                _flashLabelOnChanges.Flash();
                 withdrewAmount = btc;
                 return true;
             }

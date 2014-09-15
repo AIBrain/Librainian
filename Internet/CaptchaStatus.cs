@@ -29,7 +29,10 @@ namespace Librainian.Internet {
     public enum CaptchaStatus {
         Untried = 0,
 
-        Searching,
+        SearchingForChallenge,
+        ChallengeNotFound,
+        ChallengeFound,
+        ChallengeTooHard,
 
         LoadingText,
         LoadedText,

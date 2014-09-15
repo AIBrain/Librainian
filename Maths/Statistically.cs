@@ -15,7 +15,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 //
-// "Librainian/Statistically.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Statistically.cs" was last cleaned by Rick on 2014/09/14 at 3:34 PM
 
 #endregion License & Information
 
@@ -23,62 +25,34 @@ namespace Librainian.Maths {
 
     using System;
     using System.Runtime.Serialization;
-    using System.Threading;
     using Annotations;
-    using Extensions;
 
     /// <summary>
     ///     <para>Ups: Probability between 0.0 and 100.0%</para>
     ///     <para>Downs: Probability between 0.0 and 100.0%</para>
     /// </summary>
+    /// <remarks>Not thread safe.</remarks>
     [DataContract( IsReference = true )]
     [Serializable]
     public class Statistically {
         public static readonly Statistically Zero = new Statistically( ups: 0, downs: 0 );
 
-        /// <summary>
-        ///     ONLY used in the getter and setter.
-        /// </summary>
-        [DataMember]
-        [OptionalField]
-        private Double _downs;
-
-        /// <summary>
-        ///     ONLY used in the getter and setter.
-        /// </summary>
-        [DataMember]
-        [OptionalField]
-        private Double _total;
-
-        /// <summary>
-        ///     ONLY used in the getter and setter.
-        /// </summary>
-        [DataMember]
-        [OptionalField]
-        private Double _ups;
-
         public Statistically( Double ups = 0d, Double downs = 0d ) {
             Reset( statistically: this, newUps: ups, newDowns: downs );
         }
 
+        [DataMember]
         public Double Downs {
-            get {
-                return Thread.VolatileRead( ref this._downs );
-            }
-
-            private set {
-                Thread.VolatileWrite( ref this._downs, value );
-            }
+            get;
+            private set;
         }
 
-        [UsedImplicitly]
         public Boolean IsDowner {
             get {
                 return this.Downs > this.Ups;
             }
         }
 
-        [UsedImplicitly]
         public Boolean IsProtiguous {
             get {
                 return this.IsUpper && !this.Downs.Near( 0 ) && !this.Ups.Near( 0 );
@@ -91,24 +65,16 @@ namespace Librainian.Maths {
             }
         }
 
+        [DataMember]
         public Double Total {
-            get {
-                return Thread.VolatileRead( ref this._total );
-            }
-
-            private set {
-                Thread.VolatileWrite( ref this._total, value );
-            }
+            get;
+            private set;
         }
 
+        [DataMember]
         public Double Ups {
-            get {
-                return Thread.VolatileRead( ref this._ups );
-            }
-
-            private set {
-                Thread.VolatileWrite( ref this._ups, value );
-            }
+            get;
+            private set;
         }
 
         public static Statistically Combine( Statistically value1, Statistically value2 ) {
@@ -159,8 +125,7 @@ namespace Librainian.Maths {
             this.Total -= byAmount;
         }
 
-        [UsedImplicitly]
-        public double GetDownProbability() {
+        public Double GetDownProbability() {
             try {
                 var total = this.Total;
                 if ( !total.Near( 0 ) ) {
@@ -173,8 +138,7 @@ namespace Librainian.Maths {
             return 0;
         }
 
-        [UsedImplicitly]
-        public double GetUpProbability() {
+        public Double GetUpProbability() {
             try {
                 var total = this.Total;
                 if ( !total.Near( 0 ) ) {
@@ -211,8 +175,8 @@ namespace Librainian.Maths {
 
         //public static Double Combine( Double value1, Double value2 ) { return ( value1 + value2 ) / 2D; }
 
+        public static Statistically Undecided = new Statistically( 0.5, 0.5 );
         //public static Statistically Truely = new Statistically( Undecided + ( Undecided / 2 ) );
-        //public static Statistically Undecided = new Statistically( 0.5D );
         //public static Statistically Falsely = new Statistically( Undecided - ( Undecided / 2 ) );
 
         //public static Boolean IsTruely( Statistically special ) {

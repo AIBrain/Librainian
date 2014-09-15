@@ -750,7 +750,7 @@ namespace Librainian.Controls {
                 return null;
             }
             if ( !spanOff.HasValue ) {
-                spanOff = Milliseconds.Hertz111;
+                spanOff = Milliseconds.One;
             }
             control.OnThread( () => {
                 var foreColor = control.ForeColor;
