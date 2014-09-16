@@ -75,7 +75,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         [UsedImplicitly]
-        private string DebuggerDisplay { get { return this.Display(); } }
+        private String DebuggerDisplay { get { return this.Display(); } }
 
         public int CompareTo( ElectronVolts other ) {
             return this.Value.CompareTo( other.ToGigaElectronVolts().Value );
@@ -117,7 +117,7 @@ namespace Librainian.Measurement.Physics {
             return left.Value.CompareTo( right.Value ) > 0;
         }
 
-        public string Display() {
+        public String Display() {
             return String.Format( "{0} GeV", this.Value );
         }
 

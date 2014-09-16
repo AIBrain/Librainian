@@ -37,7 +37,7 @@ namespace Librainian.Measurement.Time {
         public static ulong RunSystemTimerTest( Span howLong ) {
             var counter = 0UL;
             try {
-                using ( var systemTimer = new System.Timers.Timer( ( double )Milliseconds.One ) {
+                using ( var systemTimer = new System.Timers.Timer( ( Double )Milliseconds.One ) {
                     AutoReset = true
                 } ) {
                     systemTimer.Elapsed += ( sender, args ) => {

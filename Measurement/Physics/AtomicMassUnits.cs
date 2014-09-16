@@ -95,7 +95,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         [UsedImplicitly]
-        private string DebuggerDisplay {
+        private String DebuggerDisplay {
             get {
                 return this.Display();
             }
@@ -193,7 +193,7 @@ namespace Librainian.Measurement.Physics {
             return this.ToMilliElectronVolts().Value.CompareTo( other.Value );
         }
 
-        public string Display() {
+        public String Display() {
             return String.Format( "{0} u", this.Value );
         }
 

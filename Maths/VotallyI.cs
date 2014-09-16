@@ -62,7 +62,7 @@ namespace Librainian.Maths {
             this.No = votesNo;
         }
 
-        public double ChanceNo() {
+        public Double ChanceNo() {
             try {
                 var votes = this.Votes;
                 if ( !votes.Near( 0 ) ) {
@@ -76,7 +76,7 @@ namespace Librainian.Maths {
             return 0;
         }
 
-        public double ChanceYes() {
+        public Double ChanceYes() {
             try {
                 var votes = this.Votes;
                 if ( votes.Near( 0 ) ) {
@@ -138,7 +138,7 @@ namespace Librainian.Maths {
         }
 
         [UsedImplicitly]
-        private string DebuggerDisplay {
+        private String DebuggerDisplay {
             get {
                 return this.ToString();
             }

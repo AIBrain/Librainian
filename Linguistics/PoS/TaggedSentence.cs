@@ -74,7 +74,7 @@ namespace Librainian.Linguistics.PoS {
         }
 
         [Pure]
-        public override string ToString() {
+        public override String ToString() {
             return this.Tokens.ToStrings( " " );
         }
 

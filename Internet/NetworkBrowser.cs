@@ -21,7 +21,6 @@
 
 namespace Librainian.Internet {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.DirectoryServices;
     using System.Linq;
@@ -92,16 +91,16 @@ namespace Librainian.Internet {
                      select entry ).Where( entry => !entry.Name.Equals( "Schema", StringComparison.Ordinal ) );
         }
 
-        public static ArrayList GetServerListAlt( NativeWin32.SV_101_TYPES ServerType ) {
+        public static IEnumerable<NativeWin32.SERVER_INFO_101> GetServerListAlt( NativeWin32.SV_101_TYPES serverType ) {
             int entriesread = 0, totalentries = 0;
-            var alServers = new ArrayList();
+            var alServers = new List<NativeWin32.SERVER_INFO_101>();
 
             do {
                 // Buffer to store the available servers
                 // Filled by the NetServerEnum function
                 IntPtr buf;
 
-                var ret = NativeWin32.NetServerEnum( servername: null, level: 101, bufptr: out buf, prefmaxlen: -1, entriesread: ref entriesread, totalentries: ref totalentries, servertype: ServerType, domain: null, resume_handle: IntPtr.Zero );
+                var ret = NativeWin32.NetServerEnum( servername: null, level: 101, bufptr: out buf, prefmaxlen: -1, entriesread: ref entriesread, totalentries: ref totalentries, servertype: serverType, domain: null, resume_handle: IntPtr.Zero );
 
                 // if the function returned any data, fill the tree view
                 if ( ret == NativeWin32.ERROR_SUCCESS || ret == NativeWin32.ERROR_MORE_DATA || entriesread > 0 ) {
@@ -143,7 +142,7 @@ namespace Librainian.Internet {
         ///     all the SV_TYPE_WORKSTATION and SV_TYPE_SERVER
         ///     PC's in the Domain
         /// </returns>
-        public static IEnumerable<NativeWin32.SERVER_INFO_101> getNetworkComputers() {
+        public static IEnumerable<NativeWin32.SERVER_INFO_101> GetNetworkComputers() {
             //local fields
             var networkComputers = new List<NativeWin32.SERVER_INFO_101>();
             const int MAX_PREFERRED_LENGTH = -1;
@@ -162,7 +161,6 @@ namespace Librainian.Internet {
                 var entriesRead = 0;
                 var totalEntries = 0;
                 var resHandle = new IntPtr( 0 );
-                var tmpBuffer = new IntPtr( 0 );
                 var ret = NativeWin32.NetServerEnum( null, 100, out buffer, MAX_PREFERRED_LENGTH, ref entriesRead, ref totalEntries, NativeWin32.SV_101_TYPES.SV_TYPE_WORKSTATION | NativeWin32.SV_101_TYPES.SV_TYPE_SERVER, null, resHandle );
                 //if the returned with a NERR_Success 
                 //(C++ term), =0 for C#
@@ -175,7 +173,7 @@ namespace Librainian.Internet {
                         //Must ensure to use correct size of 
                         //STRUCTURE to ensure correct 
                         //location in memory is pointed to
-                        tmpBuffer = new IntPtr( ( int )buffer + ( i * sizeofINFO ) );
+                        var tmpBuffer = new IntPtr( ( int )buffer + ( i * sizeofINFO ) );
                         //Have now got a pointer to the list 
                         //of SV_TYPE_WORKSTATION and 
                         //SV_TYPE_SERVER PC's, which is unmanaged memory
@@ -192,7 +190,7 @@ namespace Librainian.Internet {
                 }
             }
             catch ( Exception ex ) {
-                MessageBox.Show( string.Format( "Problem with acessing network computers in NetworkBrowser().\r\n{0}", ex.Message ), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                MessageBox.Show( String.Format( "Problem with acessing network computers in NetworkBrowser().\r\n{0}", ex.Message ), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
             }
             finally {
                 //The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates
@@ -205,7 +203,7 @@ namespace Librainian.Internet {
         //[ StructLayout( LayoutKind.Sequential ) ]
         //public struct _SERVER_INFO_100 {
         //    internal int sv100_platform_id;
-        //    [ MarshalAs( UnmanagedType.LPWStr ) ] internal string sv100_name;
+        //    [ MarshalAs( UnmanagedType.LPWStr ) ] internal String sv100_name;
         //}
     }
 }

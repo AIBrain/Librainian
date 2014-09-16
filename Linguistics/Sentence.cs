@@ -85,7 +85,7 @@ namespace Librainian.Linguistics {
                     if ( String.IsNullOrEmpty( asString ) ) {
                         continue;
                     }
-                    yield return new Tuple< int, string >( 2, asString );
+                    yield return new Tuple< int, String >( 2, asString );
 
                     foreach ( var possibles in partialSentence.SelectMany( word => word.Possibles() ) ) {
                         yield return possibles;
@@ -94,7 +94,7 @@ namespace Librainian.Linguistics {
             }
         }
 
-        public override string ToString() {
+        public override String ToString() {
             return this._tokens.ToStrings( " " );
         }
 

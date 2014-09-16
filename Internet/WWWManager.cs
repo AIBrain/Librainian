@@ -35,13 +35,13 @@ namespace Librainian.Internet {
                                                                                                    }, true );
 
         public WWWManager() {
-            this.StringsToDownload = new ActionBlock< string >( address => this.StartDownloadingString( address ) );
-            this.DownloadedStrings = new BufferBlock< Tuple< Uri, string > >();
+            this.StringsToDownload = new ActionBlock< String >( address => this.StartDownloadingString( address ) );
+            this.DownloadedStrings = new BufferBlock< Tuple< Uri, String > >();
         }
 
         public ActionBlock< String > StringsToDownload { get; private set; }
 
-        public BufferBlock< Tuple< Uri, string > > DownloadedStrings { get; private set; }
+        public BufferBlock< Tuple< Uri, String > > DownloadedStrings { get; private set; }
 
         //public void 
 
@@ -50,7 +50,7 @@ namespace Librainian.Internet {
             if ( Uri.TryCreate( address, UriKind.Absolute, out uri ) ) {
                 var webclient = WebClients.Value;
                 var stringTaskAsync = webclient.DownloadStringTaskAsync( uri );
-                stringTaskAsync.ContinueWith( task => this.DownloadedStrings.TryPost( new Tuple< Uri, string >( uri, stringTaskAsync.Result ) ), continuationOptions: TaskContinuationOptions.OnlyOnRanToCompletion );
+                stringTaskAsync.ContinueWith( task => this.DownloadedStrings.TryPost( new Tuple< Uri, String >( uri, stringTaskAsync.Result ) ), continuationOptions: TaskContinuationOptions.OnlyOnRanToCompletion );
             }
         }
     }

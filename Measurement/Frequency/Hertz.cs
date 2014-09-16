@@ -131,7 +131,7 @@ namespace Librainian.Measurement.Frequency {
         public Hertz( Double frequency ) : this( (Decimal ) frequency ) { }
 
         [UsedImplicitly]
-        private string DebuggerDisplay { get { return string.Format( "{0} hertz ({1})", this.Value, ( ( TimeSpan ) this ).Simpler() ); } }
+        private String DebuggerDisplay { get { return String.Format( "{0} hertz ({1})", this.Value, ( ( TimeSpan ) this ).Simpler() ); } }
 
         public static implicit operator TimeSpan( Hertz hertz ) {
             return TimeSpan.FromSeconds( ( Double ) ( 1.0M/hertz.Value ) );

@@ -111,7 +111,7 @@ namespace Librainian {
                 ///     http://msdn2.microsoft.com/en-us/library/aa394373(VS.85).aspx
                 /// </remarks>
                 /// <returns></returns>
-                public static string GetCPUDescription() {
+                public static String GetCPUDescription() {
                     try {
                         using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_Processor" ) ) {
                             var sb = new StringBuilder();
@@ -172,7 +172,7 @@ namespace Librainian {
                 }
         */
 
-        public static IEnumerable<string> GetVersions() {
+        public static IEnumerable<String> GetVersions() {
             return AppDomain.CurrentDomain.GetAssemblies().Select( assembly => String.Format( "Assembly: {0}, {1}", assembly.GetName().Name, assembly.GetName().Version ) );
         }
 
@@ -215,7 +215,7 @@ namespace Librainian {
             return ( ( BigInteger )bytes ).CanAllocateMemory();
         }
 
-        public static IEnumerable<string> GetWorkingMACAddresses() {
+        public static IEnumerable<String> GetWorkingMACAddresses() {
             return from nic in NetworkInterface.GetAllNetworkInterfaces()
                    where nic.OperationalStatus == OperationalStatus.Up
                    select nic.GetPhysicalAddress().ToString();

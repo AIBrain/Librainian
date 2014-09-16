@@ -110,35 +110,35 @@ namespace Librainian.Parsing {
         /// <summary>
         ///     The set of characters that are unreserved in RFC 2396 but are NOT unreserved in RFC 3986.
         /// </summary>
-        public static readonly string[] UriRfc3986CharsToEscape = { "!", "*", "'", "(", ")" };
+        public static readonly String[] UriRfc3986CharsToEscape = { "!", "*", "'", "(", ")" };
 
         private static readonly String[] TensMap = { "zero", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
         private static readonly String[] UnitsMap = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
 
         /// <summary>
-        ///     Add dashes to a pascal-cased string
+        ///     Add dashes to a pascal-cased String
         /// </summary>
         /// <param name="pascalCasedWord">String to convert</param>
-        /// <returns>string</returns>
-        public static string AddDashes( this string pascalCasedWord ) {
+        /// <returns>String</returns>
+        public static String AddDashes( this String pascalCasedWord ) {
             return Regex.Replace( Regex.Replace( Regex.Replace( pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1-$2" ), @"([a-z\d])([A-Z])", "$1-$2" ), @"[\s]", "-" );
         }
 
         /// <summary>
-        ///     Add an undescore prefix to a pascasl-cased string
+        ///     Add an undescore prefix to a pascasl-cased String
         /// </summary>
         /// <param name="pascalCasedWord"></param>
         /// <returns></returns>
-        public static string AddUnderscorePrefix( this string pascalCasedWord ) {
-            return string.Format( "_{0}", pascalCasedWord );
+        public static String AddUnderscorePrefix( this String pascalCasedWord ) {
+            return String.Format( "_{0}", pascalCasedWord );
         }
 
         /// <summary>
-        ///     Add underscores to a pascal-cased string
+        ///     Add underscores to a pascal-cased String
         /// </summary>
         /// <param name="pascalCasedWord">String to convert</param>
-        /// <returns>string</returns>
-        public static string AddUnderscores( this string pascalCasedWord ) {
+        /// <returns>String</returns>
+        public static String AddUnderscores( this String pascalCasedWord ) {
             return Regex.Replace( Regex.Replace( Regex.Replace( pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1_$2" ), @"([a-z\d])([A-Z])", "$1_$2" ), @"[-\s]", "_" );
         }
 
@@ -161,7 +161,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="tuple"></param>
         /// <returns></returns>
-        public static String AsIndexed( this Tuple< string, int > tuple ) {
+        public static String AsIndexed( this Tuple< String, int > tuple ) {
             return String.Format( "{0}.[{1}]", tuple.Item1, tuple.Item2 );
         }
 
@@ -387,7 +387,7 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        ///     <para>Case insensitive string-end comparison. </para>
+        ///     <para>Case insensitive String-end comparison. </para>
         ///     <para>( true example: cAt == CaT )</para>
         ///     <para>
         ///         <see cref="StringComparison.InvariantCultureIgnoreCase" />
@@ -416,7 +416,7 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        ///     <para>Escapes a string according to the URI data string rules given in RFC 3986.</para>
+        ///     <para>Escapes a String according to the URI data String rules given in RFC 3986.</para>
         /// </summary>
         /// <param name="value">The value to escape.</param>
         /// <returns>
@@ -433,11 +433,11 @@ namespace Librainian.Parsing {
         ///         <i>doesn't</i>), we can't rely on every host actually having this configuration element present.
         ///     </para>
         /// </remarks>
-        public static string EscapeUriDataStringRfc3986( string value ) {
+        public static String EscapeUriDataStringRfc3986( String value ) {
             // Start with RFC 2396 escaping by calling the .NET method to do the work.
             // This MAY sometimes exhibit RFC 3986 behavior (according to the documentation).
             // If it does, the escaping we do that follows it will be a no-op since the
-            // characters we search for to replace can't possibly exist in the string.
+            // characters we search for to replace can't possibly exist in the String.
             var escaped = new StringBuilder( Uri.EscapeDataString( value ) );
 
             // Upgrade the escaping to RFC 3986, if necessary.
@@ -445,7 +445,7 @@ namespace Librainian.Parsing {
                 escaped.Replace( t, Uri.HexEscape( t[ 0 ] ) );
             }
 
-            // Return the fully-RFC3986-escaped string.
+            // Return the fully-RFC3986-escaped String.
 
             return escaped.ToString();
         }
@@ -537,8 +537,8 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="input">String to convert</param>
         /// <param name="culture">The culture to use for conversion</param>
-        /// <returns>IEnumerable&lt;string&gt;</returns>
-        public static IEnumerable< string > GetNameVariants( this string input, CultureInfo culture ) {
+        /// <returns>IEnumerable&lt;String&gt;</returns>
+        public static IEnumerable< String > GetNameVariants( this String input, CultureInfo culture ) {
             if ( String.IsNullOrEmpty( input ) ) {
                 yield break;
             }
@@ -598,11 +598,11 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        ///     Checks to see if a string is all uppper case
+        ///     Checks to see if a String is all uppper case
         /// </summary>
         /// <param name="inputString">String to check</param>
         /// <returns>bool</returns>
-        public static bool IsUpperCase( this string inputString ) {
+        public static bool IsUpperCase( this String inputString ) {
             return Regex.IsMatch( inputString, @"^[A-Z]+$" );
         }
 
@@ -620,7 +620,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="sentence"></param>
         /// <returns></returns>
-        public static IEnumerable< string > JustDigits( this String sentence ) {
+        public static IEnumerable< String > JustDigits( this String sentence ) {
             return RegexJustDigits.Split( sentence );
         }
 
@@ -649,13 +649,13 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         /// <seealso cref="Word" />
         /// <seealso cref="Sentence" />
-        public static IEnumerable< string > JustWords( this String sentence ) {
+        public static IEnumerable< String > JustWords( this String sentence ) {
             var result = sentence.ToWords().Where( word => word.Any( Char.IsLetterOrDigit ) );
             return result;
         }
 
         /// <summary>
-        ///     <para>Case insensitive string comparison. </para>
+        ///     <para>Case insensitive String comparison. </para>
         ///     <para>( true example: cAt == CaT )</para>
         ///     <para>
         ///         <see cref="StringComparison.InvariantCultureIgnoreCase" />
@@ -669,11 +669,11 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        ///     Convert the first letter of a string to lower case
+        ///     Convert the first letter of a String to lower case
         /// </summary>
         /// <param name="word">String to convert</param>
-        /// <returns>string</returns>
-        public static string MakeInitialLowerCase( this string word ) {
+        /// <returns>String</returns>
+        public static String MakeInitialLowerCase( this String word ) {
             return String.Concat( word.Substring( 0, 1 ).ToLower(), word.Substring( 1 ) );
         }
 
@@ -762,7 +762,7 @@ namespace Librainian.Parsing {
             return partA + padding + partB + "".PadRight( totalLength - ( partA.Length + padding.Length + partB.Length + partC.Length ), '_' ) + partC;
         }
 
-        public static int ParallelEditDistance( this string s1, string s2 ) {
+        public static int ParallelEditDistance( this String s1, String s2 ) {
             var dist = new int[s1.Length + 1, s2.Length + 1];
             for ( var i = 0; i <= s1.Length; i++ ) {
                 dist[ i, 0 ] = i;
@@ -895,11 +895,11 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        ///     Remove leading and trailing " from a string
+        ///     Remove leading and trailing " from a String
         /// </summary>
         /// <param name="input">String to parse</param>
         /// <returns>String</returns>
-        public static string RemoveSurroundingQuotes( this string input ) {
+        public static String RemoveSurroundingQuotes( this String input ) {
             if ( input.StartsWith( "\"" ) && input.EndsWith( "\"" ) ) {
                 // remove leading/trailing quotes
                 input = input.Substring( 1, input.Length - 2 );
@@ -907,7 +907,7 @@ namespace Librainian.Parsing {
             return input;
         }
 
-        public static string ReplaceAll( string haystack, string needle, string replacement ) {
+        public static String ReplaceAll( String haystack, String needle, String replacement ) {
             int pos;
             // Avoid a possible infinite loop
             if ( needle == replacement ) {
@@ -919,7 +919,7 @@ namespace Librainian.Parsing {
             return haystack;
         }
 
-        public static string ReplaceFirst( string haystack, string needle, string replacement ) {
+        public static String ReplaceFirst( String haystack, String needle, String replacement ) {
             var pos = haystack.IndexOf( needle, StringComparison.Ordinal );
             if ( pos < 0 ) {
                 return haystack;
@@ -973,7 +973,7 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         /// <remarks> The score is normalized such that 0 equates to no similarity and 1 is an exact match.</remarks>
         [ UsedImplicitly ]
-        public static Double Similarity( [ NotNull ] this String source, [ NotNull ] String compare, [ NotNull ] ref ConcurrentQueue< string > matchReasons, TimeSpan? timeout = null ) {
+        public static Double Similarity( [ NotNull ] this String source, [ NotNull ] String compare, [ NotNull ] ref ConcurrentQueue< String > matchReasons, TimeSpan? timeout = null ) {
             if ( source == null ) {
                 throw new ArgumentNullException( "source" );
             }
@@ -1037,18 +1037,18 @@ namespace Librainian.Parsing {
             }
             #endregion Test for UTF32Encoding
 
-            #region Test for a string reversal.
+            #region Test for a String reversal.
             var compareReversed = Enumerable.Reverse( compare );
             if ( source.SequenceEqual( compareReversed ) ) {
                 votes.ForA( source.Length );
                 votes.ForB( compare.Length / 2.0 );
-                matchReasons.Add( "partial string reversal" );
+                matchReasons.Add( "partial String reversal" );
             }
 
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
             }
-            #endregion Test for a string reversal.
+            #endregion Test for a String reversal.
 
             #region Test for exact match after Distinct()
             var sourceDistinct = new String( source.Distinct().ToArray() );
@@ -1114,7 +1114,7 @@ namespace Librainian.Parsing {
             if ( source.Contains( compare ) ) {
                 votes.ForA( source.Length );
                 votes.ForB( compare.Length );
-                matchReasons.Add( "found compare string inside source string" );
+                matchReasons.Add( "found compare String inside source String" );
             }
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
@@ -1123,7 +1123,7 @@ namespace Librainian.Parsing {
             if ( compare.Contains( source ) ) {
                 votes.ForA( source.Length );
                 votes.ForB( compare.Length );
-                matchReasons.Add( "found source string inside compare string" );
+                matchReasons.Add( "found source String inside compare String" );
             }
             if ( stopwatch.Elapsed > timeout ) {
                 goto noMoreTests; //no more time for comparison
@@ -1150,7 +1150,7 @@ namespace Librainian.Parsing {
                                    .Substring( 0, length ); // and no longer than length
         }
 
-        public static IEnumerable< string > SplitToChunks( [ NotNull ] this string s, int chunks ) {
+        public static IEnumerable< String > SplitToChunks( [ NotNull ] this String s, int chunks ) {
             if ( s == null ) {
                 throw new ArgumentNullException( "s" );
             }
@@ -1190,7 +1190,7 @@ namespace Librainian.Parsing {
             return Regex.Replace( s, @"<(.|\n)*?>", String.Empty ).Replace( "&nbsp;", " " );
         }
 
-        public static string StripTags( string input, string[] allowedTags ) {
+        public static String StripTags( String input, String[] allowedTags ) {
             var StripHTMLExp = new Regex( @"(<\/?[^>]+>)" );
             var Output = input;
 
@@ -1230,7 +1230,7 @@ namespace Librainian.Parsing {
             return Output;
         }
 
-        public static string StripTagsAndAttributes( string Input, string[] allowedTags ) {
+        public static String StripTagsAndAttributes( String Input, String[] allowedTags ) {
             /* Remove all unwanted tags first */
             var Output = StripTags( Input, allowedTags );
 
@@ -1259,16 +1259,16 @@ namespace Librainian.Parsing {
             Console.WriteLine( StripTags( "<p>George <img src='someimage.png' onmouseover='someFunction()'>W <i>Bush</i></p>", new[] { "p" } ) );
             Console.WriteLine( StripTags( "<a href='http://www.dijksterhuis.org'>Martijn <b>Dijksterhuis</b></a>", new[] { "a" } ) );
 
-            const string test4 = "<a class=\"classof69\" onClick='crosssite.boom()' href='http://www.dijksterhuis.org'>Martijn Dijksterhuis</a>";
+            const String test4 = "<a class=\"classof69\" onClick='crosssite.boom()' href='http://www.dijksterhuis.org'>Martijn Dijksterhuis</a>";
             Console.WriteLine( StripTagsAndAttributes( test4, new[] { "a" } ) );
         }
 
         /// <summary>
-        ///     Converts a string to camel case
+        ///     Converts a String to camel case
         /// </summary>
         /// <param name="lowercaseAndUnderscoredWord">String to convert</param>
         /// <returns>String</returns>
-        public static string ToCamelCase( this string lowercaseAndUnderscoredWord, CultureInfo culture ) {
+        public static String ToCamelCase( this String lowercaseAndUnderscoredWord, CultureInfo culture ) {
             return MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord, culture ) );
         }
 
@@ -1284,13 +1284,13 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        ///     Converts a string to pascal case with the option to remove underscores
+        ///     Converts a String to pascal case with the option to remove underscores
         /// </summary>
         /// <param name="text">String to convert</param>
         /// <param name="culture"></param>
         /// <param name="removeUnderscores">Option to remove underscores</param>
         /// <returns></returns>
-        public static string ToPascalCase( this string text, CultureInfo culture, bool removeUnderscores = true ) {
+        public static String ToPascalCase( this String text, CultureInfo culture, bool removeUnderscores = true ) {
             if ( String.IsNullOrEmpty( text ) ) {
                 return text;
             }
@@ -1346,7 +1346,7 @@ namespace Librainian.Parsing {
         /// <param name="number"></param>
         /// <returns></returns>
         /// <seealso cref="http://stackoverflow.com/a/2730393/956364" />
-        public static string ToVerbalWord( this int number ) {
+        public static String ToVerbalWord( this int number ) {
             if ( number == 0 ) {
                 return "zero";
             }
@@ -1398,7 +1398,7 @@ namespace Librainian.Parsing {
         /// <param name="number"></param>
         /// <returns></returns>
         /// <seealso cref="http://stackoverflow.com/a/7829529/956364" />
-        public static string ToVerbalWord( this decimal number ) {
+        public static String ToVerbalWord( this decimal number ) {
             if ( number == 0 ) {
                 return "zero";
             }
@@ -1420,7 +1420,7 @@ namespace Librainian.Parsing {
             return words;
         }
 
-        public static IEnumerable< string > ToWords( [ NotNull ] this String sentence ) {
+        public static IEnumerable< String > ToWords( [ NotNull ] this String sentence ) {
             //TODO try parsing with different splitters?
             // ...do we mabe want the most or least words or avg ?
 

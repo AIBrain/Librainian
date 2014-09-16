@@ -76,7 +76,7 @@ namespace Librainian.Linguistics {
 
         public IEnumerable< Tuple< int, String > > Possibles() {
             foreach ( var sentence in this ) {
-                yield return new Tuple< int, string >( Level, sentence );
+                yield return new Tuple< int, String >( Level, sentence );
 
                 foreach ( var possible in sentence.Possibles() ) {
                     yield return possible;
@@ -84,7 +84,7 @@ namespace Librainian.Linguistics {
             }
         }
 
-        public override string ToString() {
+        public override String ToString() {
             var sb = new StringBuilder();
             foreach ( var sentence in this.Tokens ) {
                 sb.AppendLine( sentence );

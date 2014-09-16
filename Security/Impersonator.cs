@@ -31,7 +31,7 @@ namespace Librainian.Security {
         private const int LOGON32_PROVIDER_DEFAULT = 0;
         private WindowsImpersonationContext _impersonationContext;
 
-        public Impersonator( string userName, string domainName, string password ) {
+        public Impersonator( String userName, String domainName, String password ) {
             this.ImpersonateValidUser( userName, domainName, password );
         }
 
@@ -46,12 +46,12 @@ namespace Librainian.Security {
         private static extern int DuplicateToken( IntPtr hToken, int impersonationLevel, ref IntPtr hNewToken );
 
         [DllImport( "advapi32.dll", SetLastError = true )]
-        private static extern int LogonUser( string lpszUserName, string lpszDomain, string lpszPassword, int dwLogonType, int dwLogonProvider, ref IntPtr phToken );
+        private static extern int LogonUser( String lpszUserName, String lpszDomain, String lpszPassword, int dwLogonType, int dwLogonProvider, ref IntPtr phToken );
 
         [DllImport( "advapi32.dll", CharSet = CharSet.Auto, SetLastError = true )]
         private static extern Boolean RevertToSelf();
 
-        private void ImpersonateValidUser( string userName, string domain, string password ) {
+        private void ImpersonateValidUser( String userName, String domain, String password ) {
             var token = IntPtr.Zero;
             var tokenDuplicate = IntPtr.Zero;
 

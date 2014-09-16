@@ -30,9 +30,6 @@ namespace Librainian.Threading {
             MaxDegreeOfParallelism = Environment.ProcessorCount
         };
 
-        //[NotNull]
-        //public static readonly RandomNumberGenerator RNG = RandomNumberGenerator.Create();
-
         [NotNull]
         public static readonly ThreadLocal<SHA256Managed> ThreadLocalSHA256Managed = new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
 
@@ -48,6 +45,27 @@ namespace Librainian.Threading {
         [MethodImpl( MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization )]
         public static void DoNothing() {
         }
+
+
+/*
+        /// <summary>Creates a new Task that mirrors the supplied task but that will be canceled after the specified timeout.</summary>
+        /// <typeparam name="TResult">Specifies the type of data contained in the task.</typeparam>
+        /// <param name="task">The task.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <returns>The new Task that may time out.</returns>
+        /// <seealso cref="http://stackoverflow.com/a/20639723/956364"/>
+        public static Task<TResult> WithTimeout<TResult>( this Task<TResult> task, TimeSpan timeout ) {
+            var result = new TaskCompletionSource<TResult>( task.AsyncState );
+            var timer = new Timer( state =>
+                            ( ( TaskCompletionSource<TResult> )state ).TrySetCanceled(),
+                            result, timeout, TimeSpan.FromMilliseconds( -1 ) );
+            task.ContinueWith( t => {
+                timer.Dispose();
+                result.TrySetFromTask( t );
+            }, TaskContinuationOptions.ExecuteSynchronously );
+            return result.Task;
+        }
+*/
 
         /// <summary>
         ///     About X bytes by polling just and ONLY fields.
@@ -154,7 +172,7 @@ namespace Librainian.Threading {
                 total += sizeof( Boolean );
             }
 
-            var s = type as string;
+            var s = type as String;
             if ( s != null ) {
                 total += s.Length;
             }

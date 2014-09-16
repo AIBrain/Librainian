@@ -94,7 +94,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         [UsedImplicitly]
-        private string DebuggerDisplay { get { return this.Display(); } }
+        private String DebuggerDisplay { get { return this.Display(); } }
 
         public int CompareTo( ElectronVolts other ) {
             return this.Value.CompareTo( other.Value );
@@ -176,7 +176,7 @@ namespace Librainian.Measurement.Physics {
             return left.Value > right.Value;
         }
 
-        public string Display() {
+        public String Display() {
             return String.Format( "{0} eV", this.Value );
         }
 

@@ -23,6 +23,7 @@
 
 namespace Librainian.Measurement.Time {
 
+    using System;
     using System.Numerics;
     using Annotations;
 
@@ -33,6 +34,6 @@ namespace Librainian.Measurement.Time {
         [Pure]
         BigInteger ToPlanckTimes();
 
-        string ToString();
+        String ToString();
     }
 }

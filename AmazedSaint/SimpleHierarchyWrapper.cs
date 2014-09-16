@@ -26,12 +26,12 @@ namespace Librainian.AmazedSaint {
     ///     A concrete hierarchy wrapper
     /// </summary>
     public class SimpleHierarchyWrapper : IElasticHierarchyWrapper {
-        private readonly Dictionary< string, ElasticObject > attributes = new Dictionary< string, ElasticObject >();
+        private readonly Dictionary< String, ElasticObject > attributes = new Dictionary< String, ElasticObject >();
 
-        private readonly Dictionary< string, List< ElasticObject > > elements = new Dictionary< string, List< ElasticObject > >();
+        private readonly Dictionary< String, List< ElasticObject > > elements = new Dictionary< String, List< ElasticObject > >();
 
         #region IElasticHierarchyWrapper Members
-        public IEnumerable< KeyValuePair< string, ElasticObject > > Attributes { get { return this.attributes; } }
+        public IEnumerable< KeyValuePair< String, ElasticObject > > Attributes { get { return this.attributes; } }
 
         public IEnumerable< ElasticObject > Elements {
             get {

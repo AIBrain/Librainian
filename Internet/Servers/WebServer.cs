@@ -35,7 +35,7 @@ namespace Librainian.Internet.Servers {
     using FluentAssertions;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>
     public class WebServer {
@@ -56,7 +56,7 @@ namespace Librainian.Internet.Servers {
         /// <param name="method"></param>
         /// <exception cref="HttpListenerException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public WebServer( ICollection<String> prefixes, Func<HttpListenerRequest, string> method ) {
+        public WebServer( ICollection<String> prefixes, Func<HttpListenerRequest, String> method ) {
             this.ImNotReady( String.Empty );
 
             this._httpListener.Should().NotBeNull( "this._httpListener is null." );
@@ -66,7 +66,6 @@ namespace Librainian.Internet.Servers {
                 this.ImNotReady( because: "HttpListener is not supported." );
                 return;
             }
-
 
             prefixes.Should().NotBeNullOrEmpty( "URI prefixes are required, for example http://localhost:8080/index/. " );
             if ( prefixes == null || !prefixes.Any() ) {
@@ -95,7 +94,7 @@ namespace Librainian.Internet.Servers {
             }
         }
 
-        public WebServer( Func<HttpListenerRequest, string> method, params string[] prefixes )
+        public WebServer( Func<HttpListenerRequest, String> method, params String[] prefixes )
             : this( prefixes, method ) {
         }
 
@@ -122,7 +121,7 @@ namespace Librainian.Internet.Servers {
                     while ( this._httpListener.IsListening ) {
                         Debug.WriteLine( "Webserver listening.." );
                         await Task.Run( async () => {
-                            var listenerContext = await this._httpListener.GetContextAsync( );  // Waits for an incoming request as an asynchronous operation.
+                            var listenerContext = await this._httpListener.GetContextAsync();  // Waits for an incoming request as an asynchronous operation.
                             if ( listenerContext == null ) {
                                 return;
                             }
@@ -136,8 +135,10 @@ namespace Librainian.Internet.Servers {
                                 listenerContext.Response.ContentLength64 = buf.Length;
                                 listenerContext.Response.OutputStream.Write( buf, 0, buf.Length );
                             }
+
                             // ReSharper disable once EmptyGeneralCatchClause
                             catch {
+
                                 // suppress any exceptions
                             }
                             finally {
@@ -146,8 +147,10 @@ namespace Librainian.Internet.Servers {
                         }, cancellationToken );
                     }
                 }
+
                 // ReSharper disable once EmptyGeneralCatchClause
                 catch {
+
                     // suppress any exceptions
                 }
             }, cancellationToken );

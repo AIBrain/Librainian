@@ -46,7 +46,7 @@ namespace Librainian.Magic.Abodit {
         /// <summary>
         /// Dumb name for a property - which is why I chose it - very unlikely it will ever conflict with a real property name
         /// </summary>
-        public const string InterfacesField = "int";
+        public const String InterfacesField = "int";
 
         /// <summary>
         /// 
@@ -56,13 +56,13 @@ namespace Librainian.Magic.Abodit {
         /// <summary>
         /// A cache of the interface types corresponding to a given 'key' of interface names
         /// </summary>
-        private static readonly Dictionary<string, Type[]> CacheOfInterfaces = new Dictionary<string, Type[]>();
+        private static readonly Dictionary<String, Type[]> CacheOfInterfaces = new Dictionary<String, Type[]>();
 
         /// <summary>
         /// BsonIgnore because Bson serialization will happen on the dynamic interface this class exposes not on this dictionary
         /// </summary>
         [BsonIgnore]
-        private readonly Dictionary<string, object> _children = new Dictionary<string, object>();
+        private readonly Dictionary<String, object> _children = new Dictionary<String, object>();
 
         /// <summary>
         ///     Interfaces that have been added to this object
@@ -72,22 +72,22 @@ namespace Librainian.Magic.Abodit {
         ///     Order is important, we need to see this field before we can deserialize any others
         /// </remarks>
         [BsonElement( InterfacesField, Order = 2 )]
-        internal HashSet<string> Int = new HashSet<string> { typeof( IId ).FullName };
+        internal HashSet<String> Int = new HashSet<String> { typeof( IId ).FullName };
 
         /// <summary>
         ///     A text version of all interfaces - mostly for debugging purposes, stored in alphabetical order
         /// </summary>
         [BsonIgnore]
-        public string InterfacesAsText {
+        public String InterfacesAsText {
             get {
-                return string.Join( ",", this.Int.OrderBy( s => s ) );
+                return String.Join( ",", this.Int.OrderBy( s => s ) );
             }
         }
 
         /// <summary>
         ///     An indexer for use by serialization code
         /// </summary>
-        internal object this[ string key ] {
+        internal object this[ String key ] {
             get {
                 switch ( key ) {
                     case "_id":
@@ -105,7 +105,7 @@ namespace Librainian.Magic.Abodit {
                         this.ID = value is BsonObjectId ? ( ( BsonObjectId )value ).Value : ( ObjectId )value;
                         break;
                     case InterfacesField:
-                        this.Int = new HashSet<string>( ( IEnumerable<string> )value );
+                        this.Int = new HashSet<String>( ( IEnumerable<String> )value );
                         break;
                     default:
                         this._children[ key ] = value;
@@ -160,7 +160,7 @@ namespace Librainian.Magic.Abodit {
 
         public Type[] GetAllInterfaces() {
             // We always behave like an object with an Id plus any other interfaces we have
-            var key = string.Join( ",", this.Int.OrderBy( i => i ) );
+            var key = String.Join( ",", this.Int.OrderBy( i => i ) );
             if ( CacheOfInterfaces.ContainsKey( key ) ) {
                 return CacheOfInterfaces[ key ];
             }
@@ -181,8 +181,8 @@ namespace Librainian.Magic.Abodit {
         ///     Get a mapping from a field name to a type according to the interfaces on this object
         /// </summary>
         /// <returns></returns>
-        public Dictionary<string, Type> GetTypeMap() {
-            var typeMap = new Dictionary<string, Type>();
+        public Dictionary<String, Type> GetTypeMap() {
+            var typeMap = new Dictionary<String, Type>();
             var interfaces = this.GetAllInterfaces();
             foreach ( var mi in interfaces.SelectMany( intf => intf.GetProperties() ) ) {
                 typeMap[ mi.Name ] = mi.PropertyType;
@@ -237,7 +237,7 @@ namespace Librainian.Magic.Abodit {
             return true;
         }
 
-        public override IEnumerable<string> GetDynamicMemberNames() {
+        public override IEnumerable<String> GetDynamicMemberNames() {
             return new[] { "_id", InterfacesField }.Concat( this._children.Keys );
         }
     }

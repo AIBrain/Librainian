@@ -34,7 +34,7 @@ namespace Librainian.Collections {
     using Threading;
 
     public static class CollectionExtensions {
-        public static readonly List< string > EmptyList = new List< string >();
+        public static readonly List< String > EmptyList = new List< String >();
 
         /// <summary>
         ///     <para>A list containing <see cref="bool.False" /> then <see cref="bool.True" />.</para>
@@ -690,7 +690,7 @@ namespace Librainian.Collections {
 
         /// <summary>
         ///     <para>
-        ///         Returns a string with the <paramref name="separator" /> between each item of an
+        ///         Returns a String with the <paramref name="separator" /> between each item of an
         ///         <paramref name="enumerable" />.
         ///     </para>
         /// </summary>
@@ -708,7 +708,7 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( "separator" );
             }
 
-            string result;
+            String result;
             var list = enumerable as IList< T > ?? enumerable.ToList();
 
             if ( String.IsNullOrEmpty( atTheEnd ) || list.Count <= 2 ) {

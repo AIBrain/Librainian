@@ -164,7 +164,7 @@ namespace Librainian.Parsing {
         }
 
         public String PullNextWord() {
-            var sentence = this.CurrentSentence; //grab a copy of the string at this moment in time
+            var sentence = this.CurrentSentence; //grab a copy of the String at this moment in time
 
             var word = sentence.FirstWord();
 

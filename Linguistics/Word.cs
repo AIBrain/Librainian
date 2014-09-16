@@ -95,7 +95,7 @@ namespace Librainian.Linguistics {
             }
         }
 
-        public override string ToString() {
+        public override String ToString() {
             return this._tokens.ToStrings( "" );
         }
 

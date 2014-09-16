@@ -39,7 +39,7 @@ namespace Librainian.Database.MMF {
 
         private int _ptrSize = 8;
 
-        private string _ptrType = "Int64";
+        private String _ptrType = "Int64";
 
         private int _size;
 
@@ -58,7 +58,7 @@ namespace Librainian.Database.MMF {
             return ( ISerializeDeserialize<T> )res.CompiledAssembly.CreateInstance( "UnsafeConverter" );
         }
 
-        private static void BytesToObjectCode( StringBuilder sb, string typeFullName ) {
+        private static void BytesToObjectCode( StringBuilder sb, String typeFullName ) {
             sb.AppendFormat( "public unsafe {0} BytesToObject( byte[] bytes )", typeFullName );
             sb.Append( "{" );
             sb.Append( @"
@@ -79,7 +79,7 @@ namespace Librainian.Database.MMF {
         }
 
         private CompilerResults CompileCode() {
-            var providerOptions = new Dictionary<string, string> {
+            var providerOptions = new Dictionary<String, String> {
                                                                        { "CompilerVersion", "v3.5" }
                                                                    };
             CodeDomProvider provider = new CSharpCodeProvider( providerOptions );
@@ -87,7 +87,7 @@ namespace Librainian.Database.MMF {
             return provider.CompileAssemblyFromSource( compilerParameters, this.GenerateCode() );
         }
 
-        private string GenerateCode() {
+        private String GenerateCode() {
             var typeFullName = this._type.FullName.Replace( '+', '.' );
 
             var sb = new StringBuilder();
@@ -141,7 +141,7 @@ namespace Librainian.Database.MMF {
             }
         }
 
-        private void ObjectToBytesCode( StringBuilder sb, string typeFullName ) {
+        private void ObjectToBytesCode( StringBuilder sb, String typeFullName ) {
             sb.AppendFormat( "public unsafe byte[] ObjectToBytes({0} srcObject)", typeFullName );
             sb.Append( "{" );
             sb.AppendFormat( "byte[] buffer = new byte[{0}];", this._size );
@@ -193,7 +193,7 @@ namespace Librainian.Database.MMF {
             return result;
         }
 
-        public ISerializeDeserialize<T> GetSerializer( string name ) {
+        public ISerializeDeserialize<T> GetSerializer( String name ) {
             return ( from pair in DictionaryCache
                      where pair.Value.GetType().AssemblyQualifiedName == name
                      select pair.Value ).FirstOrDefault();
@@ -215,7 +215,7 @@ namespace Librainian.Database.MMF {
 
         private static int BenchMarkSerializer( ISerializeDeserialize<T> serDeser ) {
             object[] args = null;
-            if ( typeof( T ) == typeof( string ) ) {
+            if ( typeof( T ) == typeof( String ) ) {
                 args = new object[] { new[] { 'T', 'e', 's', 't', 'T', 'e', 's', 't', 'T', 'e', 's', 't' } };
             }
             try {

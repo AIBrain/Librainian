@@ -30,7 +30,7 @@ namespace Librainian.Extensions {
         public const uint ERROR_MORE_DATA = 234;
 
         [DllImport( "user32.dll" )]
-        internal static extern IntPtr FindWindowEx( IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow );
+        internal static extern IntPtr FindWindowEx( IntPtr hwndParent, IntPtr hwndChildAfter, String lpszClass, String lpszWindow );
 
         [DllImport( "user32.dll", EntryPoint = "GetDesktopWindow" )]
         internal static extern IntPtr GetDesktopWindow();
@@ -43,7 +43,7 @@ namespace Librainian.Extensions {
         public static IntPtr GetDesktopHandle() {
             var desktop = GetDesktopWindow();
             var progMan = FindWindowEx( desktop, IntPtr.Zero, "Progman", "Program Manager" );
-            var defView = FindWindowEx( progMan, IntPtr.Zero, "SHELLDLL_DefView", string.Empty );
+            var defView = FindWindowEx( progMan, IntPtr.Zero, "SHELLDLL_DefView", String.Empty );
             //var listView = FindWindowEx( defView, IntPtr.Zero, "SysListView32", "FolderView" );
 
             return defView;
@@ -63,6 +63,9 @@ namespace Librainian.Extensions {
 
         [DllImport( "kernel32.dll" )]
         public static extern bool AllocConsole();
+
+        [DllImport( "kernel32.dll", SetLastError = true, ExactSpelling = true )]
+        public static extern bool FreeConsole();
 
         /// <summary>
         ///     Searches a directory for a file or subdirectory with a name that matches a specific name (or partial name if
@@ -120,7 +123,8 @@ namespace Librainian.Extensions {
         ///     like this ensures that the handle is properly cleaned up with FindClose.
         /// </summary>
         public class SafeSearchHandle : SafeHandleZeroOrMinusOneIsInvalid {
-            public SafeSearchHandle() : base( true ) {
+            public SafeSearchHandle()
+                : base( true ) {
             }
 
             protected override Boolean ReleaseHandle() {
@@ -175,7 +179,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         /// <seealso cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum"/>
         [DllImport( "netapi32.dll", EntryPoint = "NetServerEnum" )]
-        public static extern int NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )]string servername, int level, out IntPtr bufptr, int prefmaxlen, ref int entriesread, ref int totalentries, SV_101_TYPES servertype, [MarshalAs( UnmanagedType.LPWStr )]string domain, IntPtr resume_handle );
+        public static extern int NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )]String servername, int level, out IntPtr bufptr, int prefmaxlen, ref int entriesread, ref int totalentries, SV_101_TYPES servertype, [MarshalAs( UnmanagedType.LPWStr )]String domain, IntPtr resume_handle );
 
         /// <summary>
         ///     Netapi32.dll : The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates. Call NetApiBufferFree to free the memory that other network management functions return.
@@ -188,7 +192,7 @@ namespace Librainian.Extensions {
             [MarshalAs( UnmanagedType.U4 )]
             public readonly UInt32 sv101_platform_id;
             [MarshalAs( UnmanagedType.LPWStr )]
-            public readonly string sv101_name;
+            public readonly String sv101_name;
 
             [MarshalAs( UnmanagedType.U4 )]
             public readonly UInt32 sv101_version_major;
@@ -197,7 +201,7 @@ namespace Librainian.Extensions {
             [MarshalAs( UnmanagedType.U4 )]
             public readonly UInt32 sv101_type;
             [MarshalAs( UnmanagedType.LPWStr )]
-            public readonly string sv101_comment;
+            public readonly String sv101_comment;
         };
 
         public enum PLATFORM_ID {

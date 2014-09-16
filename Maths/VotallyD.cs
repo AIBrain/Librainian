@@ -79,7 +79,7 @@ namespace Librainian.Maths {
             }
         }
 
-        public double ChanceA() {
+        public Double ChanceA() {
             try {
                 var votes = this.Votes;
                 if ( !votes.Near( 0 ) ) {
@@ -92,7 +92,7 @@ namespace Librainian.Maths {
             return 0;
         }
 
-        public double ChanceB {
+        public Double ChanceB {
             get {
                 try {
                     var votes = this.Votes;
@@ -138,7 +138,7 @@ namespace Librainian.Maths {
         }
 
         [UsedImplicitly]
-        private string DebuggerDisplay {
+        private String DebuggerDisplay {
             get {
                 return this.ToString();
             }

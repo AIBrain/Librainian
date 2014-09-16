@@ -274,7 +274,7 @@ namespace Librainian.Measurement.Time {
         }
 
         [Pure]
-        public override string ToString() {
+        public override String ToString() {
             return String.Format( "{0} as", this.Value );
         }
 

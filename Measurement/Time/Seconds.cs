@@ -134,7 +134,7 @@ namespace Librainian.Measurement.Time {
         }
 
         [UsedImplicitly]
-        private string DebuggerDisplay {
+        private String DebuggerDisplay {
             get {
                 return this.ToString();
             }
@@ -286,7 +286,7 @@ namespace Librainian.Measurement.Time {
         }
 
         [Pure]
-        public override string ToString() {
+        public override String ToString() {
             return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "second" ) );
         }
 

@@ -47,7 +47,7 @@ namespace Librainian.Security {
         /// </summary>
         public static readonly ThreadLocal< SHA512Managed > SHA512Local = new ThreadLocal< SHA512Managed >( valueFactory: () => new SHA512Managed(), trackAllValues: false );
 
-        public static string DecryptStringUsingRegistryKey( [NotNull] this string decryptValue, [NotNull] string privateKey ) {
+        public static String DecryptStringUsingRegistryKey( [NotNull] this String decryptValue, [NotNull] String privateKey ) {
 
             // This is the variable that will be returned to the user
             if ( decryptValue == null ) {
@@ -75,13 +75,13 @@ namespace Librainian.Security {
                 //Create new RSA object passing our key info
                 var rsa = new RSACryptoServiceProvider( csp );
 
-                // Before decryption we must convert this ugly string into a byte array
+                // Before decryption we must convert this ugly String into a byte array
                 var valueToDecrypt = Convert.FromBase64String( decryptValue );
 
-                // Decrypt the passed in string value - Again the false value has to do with padding
+                // Decrypt the passed in String value - Again the false value has to do with padding
                 var plainTextValue = rsa.Decrypt( valueToDecrypt, false );
 
-                // Extract our decrypted byte array into a string value to return to our user
+                // Extract our decrypted byte array into a String value to return to our user
                 decryptedValue = Encoding.UTF8.GetString( plainTextValue );
             }
             catch ( CryptographicException exception ) {
@@ -94,7 +94,7 @@ namespace Librainian.Security {
             return decryptedValue;
         }
 
-        public static string EncryptStringUsingRegistryKey( [NotNull] this string stringToEncrypt, [NotNull] string publicKey ) {
+        public static String EncryptStringUsingRegistryKey( [NotNull] this String stringToEncrypt, [NotNull] String publicKey ) {
 
             // This is the variable that will be returned to the user
             if ( stringToEncrypt == null ) {
@@ -129,7 +129,7 @@ namespace Librainian.Security {
                 // on this point but you can look it up and decide which is better for your use)
                 var bytesEncrypted = rsa.Encrypt( rgb: bytesToEncrypt, fOAEP: false );
 
-                // Extract our encrypted byte array into a string value to return to our user
+                // Extract our encrypted byte array into a String value to return to our user
                 encryptedValue = Convert.ToBase64String( bytesEncrypted );
             }
             catch ( CryptographicException exception ) {

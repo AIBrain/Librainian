@@ -25,7 +25,7 @@ namespace Librainian.Maths {
     using System.Globalization;
 
     /// <summary>
-    ///     A class to allow the conversion of doubles to string representations of
+    ///     A class to allow the conversion of doubles to String representations of
     ///     their exact  System.Decimal values. The implementation aims for readability over
     ///     efficiency.
     /// </summary>
@@ -33,11 +33,11 @@ namespace Librainian.Maths {
     public class DoubleConverter {
 
         /// <summary>
-        ///     Converts the given Double to a string representation of its exact  System.Decimal value.
+        ///     Converts the given Double to a String representation of its exact  System.Decimal value.
         /// </summary>
         /// <param name="d">The Double to convert.</param>
-        /// <returns>A string representation of the Double's exact  System.Decimal value.</returns>
-        public static string ToExactString( Double d ) {
+        /// <returns>A String representation of the Double's exact  System.Decimal value.</returns>
+        public static String ToExactString( Double d ) {
             if ( Double.IsPositiveInfinity( d ) ) {
                 return "+Infinity";
             }
@@ -104,7 +104,7 @@ namespace Librainian.Maths {
                 }
             }
 
-            // Finally, return the string with an appropriate sign
+            // Finally, return the String with an appropriate sign
             if ( negative ) {
                 return "-" + ad;
             }
@@ -136,7 +136,7 @@ namespace Librainian.Maths {
             }
 
             /// <summary>
-            ///     Converts the value to a proper  System.Decimal string representation.
+            ///     Converts the value to a proper  System.Decimal String representation.
             /// </summary>
             public override String ToString() {
                 var digitString = new char[ this.digits.Length ];
@@ -147,24 +147,24 @@ namespace Librainian.Maths {
                 // Simplest case - nothing after the  System.Decimal point,
                 // and last real digit is non-zero, eg value=35
                 if ( this.decimalPoint == 0 ) {
-                    return new string( digitString );
+                    return new String( digitString );
                 }
 
                 // Fairly simple case - nothing after the  System.Decimal
                 // point, but some 0s to add, eg value=350
                 if ( this.decimalPoint < 0 ) {
-                    return new string( digitString ) + new string( '0', -this.decimalPoint );
+                    return new String( digitString ) + new String( '0', -this.decimalPoint );
                 }
 
                 // Nothing before the  System.Decimal point, eg 0.035
                 if ( this.decimalPoint >= digitString.Length ) {
-                    return "0." + new string( '0', ( this.decimalPoint - digitString.Length ) ) + new string( digitString );
+                    return "0." + new String( '0', ( this.decimalPoint - digitString.Length ) ) + new String( digitString );
                 }
 
-                // Most complicated case - part of the string comes
+                // Most complicated case - part of the String comes
                 // before the  System.Decimal point, part comes after it,
                 // eg 3.5
-                return new string( digitString, 0, digitString.Length - this.decimalPoint ) + "." + new string( digitString, digitString.Length - this.decimalPoint, this.decimalPoint );
+                return new String( digitString, 0, digitString.Length - this.decimalPoint ) + "." + new String( digitString, digitString.Length - this.decimalPoint, this.decimalPoint );
             }
 
             /// <summary>

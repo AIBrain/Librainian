@@ -173,7 +173,7 @@ namespace Librainian {
 
         [Test]
         public static void TestSimilarities() {
-            var reasons = new ConcurrentQueue< string >();
+            var reasons = new ConcurrentQueue< String >();
             var test1 = "hi".Similarity( "hello", ref reasons );
             String.Format( "test1 was {0}", test1 ).TimeDebug();
         }
@@ -299,5 +299,7 @@ namespace Librainian {
             Millisecond.Minimum.Value.Should().BeLessThan( Millisecond.Maximum.Value );
             Millisecond.Maximum.Value.Should().BeGreaterThan( Millisecond.Minimum.Value );
         }
+
+        public static Boolean HasConsoleBeenAllocated { get; set; }
     }
 }

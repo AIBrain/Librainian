@@ -183,7 +183,7 @@ namespace Librainian.Maths {
         }
 
         [UsedImplicitly]
-        private string DebuggerDisplay {
+        private String DebuggerDisplay {
             get {
                 return this.ToString();
             }
@@ -434,11 +434,11 @@ namespace Librainian.Maths {
         //    return ( uint )( value.Mantissa * BigInteger.Pow( 10, value.Exponent ) );
         //}
         /// <summary>
-        ///     <para>Create a BigDecimal from a string representation.</para>
+        ///     <para>Create a BigDecimal from a String representation.</para>
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static BigDecimal Parse( [NotNull] string value ) {
+        public static BigDecimal Parse( [NotNull] String value ) {
             if ( value == null ) {
                 throw new ArgumentNullException( "value" );
             }
@@ -459,12 +459,12 @@ namespace Librainian.Maths {
         //    return ( Int32 )( value.Mantissa * BigInteger.Pow( 10, value.Exponent ) );
         //}
         /// <summary>
-        ///     <para>Create a BigDecimal from a string representation.</para>
+        ///     <para>Create a BigDecimal from a String representation.</para>
         /// </summary>
         /// <param name="value"></param>
         /// <param name="answer"></param>
         /// <returns></returns>
-        public static Boolean TryParse( [CanBeNull] string value, out BigDecimal? answer ) {
+        public static Boolean TryParse( [CanBeNull] String value, out BigDecimal? answer ) {
             answer = null;
             if ( String.IsNullOrWhiteSpace( value ) ) {
                 return false;
@@ -578,7 +578,7 @@ namespace Librainian.Maths {
             return Convert.ToSingle( this );
         }
 
-        string IConvertible.ToString( IFormatProvider provider ) {
+        String IConvertible.ToString( IFormatProvider provider ) {
             return Convert.ToString( this );
         }
 
@@ -588,7 +588,7 @@ namespace Librainian.Maths {
             var scaledValue = BigInteger.Divide( this.Significand, scaleDivisor );
 
             if ( scaledValue > new BigInteger( Decimal.MaxValue ) ) {
-                throw new ArgumentOutOfRangeException( "provider", string.Format( "The value {0} cannot fit into {1}.", this.Significand, conversionType.Name ) );
+                throw new ArgumentOutOfRangeException( "provider", String.Format( "The value {0} cannot fit into {1}.", this.Significand, conversionType.Name ) );
             }
 
             var leftOfDecimal = ( Decimal )scaledValue;
@@ -628,16 +628,16 @@ namespace Librainian.Maths {
 
         //    return ( Decimal )value.Mantissa * ( Decimal )Math.Pow( 10, value.Exponent );
         //}
-        public string ToScientificString() {
+        public String ToScientificString() {
             return MathExtensions.ToScientificString( this );
         }
 
-        public string ToString( string format, IFormatProvider formatProvider ) {
+        public String ToString( String format, IFormatProvider formatProvider ) {
             throw new NotImplementedException();
         }
 
         [Pure]
-        public override string ToString() {
+        public override String ToString() {
             var result = BigInteger.Abs( this.Significand ).ToString(); //get the digits.
 
             if ( this.Exponent < 0 ) {
@@ -691,7 +691,7 @@ namespace Librainian.Maths {
             //}
         }
 
-        public string ToStringWithE() {
+        public String ToStringWithE() {
 
             //TODO what is the proper name for this format? "123E45"?
             return String.Concat( this.Mantissa.ToString(), "E", this.Exponent );
@@ -768,7 +768,7 @@ namespace Librainian.Maths {
                     v = default( BigDecimal );
                     if ( len == 0 ) {
                         if ( throwOnError ) {
-                            throw new FormatException( "Empty string" );
+                            throw new FormatException( "Empty String" );
                         }
                         return false;
                     }
@@ -858,15 +858,15 @@ namespace Librainian.Maths {
                     if ( length1 > 0 ) {
                         Array.Copy( buf, sourceIndex2, chArray1, num1, length1 );
                     }
-                    var coeff = BigInteger.Parse( new string( chArray1 ) );
+                    var coeff = BigInteger.Parse( new String( chArray1 ) );
                     var result = 0;
                     if ( length2 > 0 ) {
                         var chArray2 = new char[ length2 ];
                         Array.Copy( buf, sourceIndex3, chArray2, 0, length2 );
                         if ( throwOnError ) {
-                            result = int.Parse( new string( chArray2 ), CultureInfo.InvariantCulture );
+                            result = int.Parse( new String( chArray2 ), CultureInfo.InvariantCulture );
                         }
-                        else if ( !int.TryParse( new string( chArray2 ), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out result ) ) {
+                        else if ( !int.TryParse( new String( chArray2 ), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out result ) ) {
                             return false;
                         }
                     }
@@ -891,7 +891,7 @@ namespace Librainian.Maths {
         */
 
         ///// <summary>
-        /////     Attempt to parse a huge Decimal from a string.
+        /////     Attempt to parse a huge Decimal from a String.
         ///// </summary>
         ///// <param name="value"></param>
         ///// <param name="number"></param>
@@ -971,7 +971,7 @@ namespace Librainian.Maths {
         //    }
         //    BigInteger leftOfDecimalPoint;
         //    if ( !BigInteger.TryParse( wholeSide, out leftOfDecimalPoint ) ) {
-        //        //we were unable to parse the first string (all to the left of the Decimal point)
+        //        //we were unable to parse the first String (all to the left of the Decimal point)
         //        return false;
         //    }
 
@@ -988,12 +988,12 @@ namespace Librainian.Maths {
         //    if ( needToPadFractionSide ) {
         //        //fractionSide = '1' + fractionSide;  //fake out BigInteger by replacing the leading zero with a 1
         //    }
-        //    //BUG if the string split[1] had a bunch of leading zeros, they are getting trimmed out here.
+        //    //BUG if the String split[1] had a bunch of leading zeros, they are getting trimmed out here.
         //    //TODO do some sort of multiplier. Or add a 1.0 in front, with a multiplier. then take off that after the recombine?
         //    //but it messes with the ratio
 
         //    if ( !BigInteger.TryParse( fractionSide, out fractionInteger ) ) {
-        //        //we were unable to parse the second string (all to the right of the Decimal point)
+        //        //we were unable to parse the second String (all to the right of the Decimal point)
         //        return false;
         //    }
 
@@ -1006,7 +1006,7 @@ namespace Librainian.Maths {
         //    // so now it looks like "1123456789"
 
         //    if ( needToPadFractionSide ) {
-        //        var zeros = new string( '0', fractionSideLength - fractionLength );
+        //        var zeros = new String( '0', fractionSideLength - fractionLength );
         //        var bside = leftOfDecimalPoint.ToString();
         //        bside = bside.Insert( wholeSideLength - 1, zeros );
         //        leftOfDecimalPoint = BigInteger.Parse( bside, NumberStyles.AllowDecimalPoint );

@@ -55,7 +55,7 @@ namespace Librainian.Linguistics {
             return ReferenceEquals( this, other ) || Equals( this._token, other._token );
         }
 
-        public override string ToString() {
+        public override String ToString() {
             return String.Format( "{0}", this._token );
         }
 

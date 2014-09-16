@@ -1,12 +1,13 @@
 ﻿namespace Librainian.Internet.Servers {
+
     using System;
 
     public class Cookie {
-        public string name;
-        public string value;
         public TimeSpan expire;
+        public String name;
+        public String value;
 
-        public Cookie( string name, string value, TimeSpan expire ) {
+        public Cookie( String name, String value, TimeSpan expire ) {
             this.name = name;
             this.value = value;
             this.expire = expire;

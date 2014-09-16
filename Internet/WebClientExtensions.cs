@@ -15,7 +15,7 @@ namespace Librainian.Internet {
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI from which to download data.</param>
         /// <returns>A Task that contains the downloaded data.</returns>
-        public static Task<byte[]> DownloadDataTask( this WebClient webClient, string address ) {
+        public static Task<byte[]> DownloadDataTask( this WebClient webClient, String address ) {
             return DownloadDataTask( webClient, new Uri( address ) );
         }
 
@@ -52,7 +52,7 @@ namespace Librainian.Internet {
         /// <param name="address">The URI from which to download data.</param>
         /// <param name="fileName">The name of the local file that is to receive the data.</param>
         /// <returns>A Task that contains the downloaded data.</returns>
-        public static Task DownloadFileTask( this WebClient webClient, string address, string fileName ) {
+        public static Task DownloadFileTask( this WebClient webClient, String address, String fileName ) {
             return DownloadFileTask( webClient, new Uri( address ), fileName );
         }
 
@@ -61,7 +61,7 @@ namespace Librainian.Internet {
         /// <param name="address">The URI from which to download data.</param>
         /// <param name="fileName">The name of the local file that is to receive the data.</param>
         /// <returns>A Task that contains the downloaded data.</returns>
-        public static Task DownloadFileTask( this WebClient webClient, Uri address, string fileName ) {
+        public static Task DownloadFileTask( this WebClient webClient, Uri address, String fileName ) {
             // Create the task to be returned
             var tcs = new TaskCompletionSource<object>( address );
 
@@ -85,21 +85,21 @@ namespace Librainian.Internet {
             return tcs.Task;
         }
 
-        /// <summary>Downloads the resource with the specified URI as a string, asynchronously.</summary>
+        /// <summary>Downloads the resource with the specified URI as a String, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI from which to download data.</param>
-        /// <returns>A Task that contains the downloaded string.</returns>
-        public static Task<string> DownloadStringTask( this WebClient webClient, string address ) {
+        /// <returns>A Task that contains the downloaded String.</returns>
+        public static Task<String> DownloadStringTask( this WebClient webClient, String address ) {
             return DownloadStringTask( webClient, new Uri( address ) );
         }
 
-        /// <summary>Downloads the resource with the specified URI as a string, asynchronously.</summary>
+        /// <summary>Downloads the resource with the specified URI as a String, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI from which to download data.</param>
-        /// <returns>A Task that contains the downloaded string.</returns>
-        public static Task<string> DownloadStringTask( this WebClient webClient, Uri address ) {
+        /// <returns>A Task that contains the downloaded String.</returns>
+        public static Task<String> DownloadStringTask( this WebClient webClient, Uri address ) {
             // Create the task to be returned
-            var tcs = new TaskCompletionSource<string>( address );
+            var tcs = new TaskCompletionSource<String>( address );
 
             // Setup the callback event handler
             DownloadStringCompletedEventHandler handler = null;
@@ -125,7 +125,7 @@ namespace Librainian.Internet {
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI for which the stream should be opened.</param>
         /// <returns>A Task that contains the opened stream.</returns>
-        public static Task<Stream> OpenReadTask( this WebClient webClient, string address ) {
+        public static Task<Stream> OpenReadTask( this WebClient webClient, String address ) {
             return OpenReadTask( webClient, new Uri( address ) );
         }
 
@@ -162,7 +162,7 @@ namespace Librainian.Internet {
         /// <param name="address">The URI for which the stream should be opened.</param>
         /// <param name="method">The HTTP method that should be used to open the stream.</param>
         /// <returns>A Task that contains the opened stream.</returns>
-        public static Task<Stream> OpenWriteTask( this WebClient webClient, string address, string method ) {
+        public static Task<Stream> OpenWriteTask( this WebClient webClient, String address, String method ) {
             return OpenWriteTask( webClient, new Uri( address ), method );
         }
 
@@ -171,7 +171,7 @@ namespace Librainian.Internet {
         /// <param name="address">The URI for which the stream should be opened.</param>
         /// <param name="method">The HTTP method that should be used to open the stream.</param>
         /// <returns>A Task that contains the opened stream.</returns>
-        public static Task<Stream> OpenWriteTask( this WebClient webClient, Uri address, string method ) {
+        public static Task<Stream> OpenWriteTask( this WebClient webClient, Uri address, String method ) {
             // Create the task to be returned
             var tcs = new TaskCompletionSource<Stream>( address );
 
@@ -201,7 +201,7 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the data.</param>
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<byte[]> UploadDataTask( this WebClient webClient, string address, string method, byte[] data ) {
+        public static Task<byte[]> UploadDataTask( this WebClient webClient, String address, String method, byte[] data ) {
             return UploadDataTask( webClient, new Uri( address ), method, data );
         }
 
@@ -211,7 +211,7 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the data.</param>
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<byte[]> UploadDataTask( this WebClient webClient, Uri address, string method, byte[] data ) {
+        public static Task<byte[]> UploadDataTask( this WebClient webClient, Uri address, String method, byte[] data ) {
             // Create the task to be returned
             var tcs = new TaskCompletionSource<byte[]>( address );
 
@@ -241,7 +241,7 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the file.</param>
         /// <param name="fileName">A path to the file to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<byte[]> UploadFileTask( this WebClient webClient, string address, string method, string fileName ) {
+        public static Task<byte[]> UploadFileTask( this WebClient webClient, String address, String method, String fileName ) {
             return UploadFileTask( webClient, new Uri( address ), method, fileName );
         }
 
@@ -251,7 +251,7 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the file.</param>
         /// <param name="fileName">A path to the file to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<byte[]> UploadFileTask( this WebClient webClient, Uri address, string method, string fileName ) {
+        public static Task<byte[]> UploadFileTask( this WebClient webClient, Uri address, String method, String fileName ) {
             // Create the task to be returned
             var tcs = new TaskCompletionSource<byte[]>( address );
 
@@ -275,25 +275,25 @@ namespace Librainian.Internet {
             return tcs.Task;
         }
 
-        /// <summary>Uploads data in a string to the specified resource, asynchronously.</summary>
+        /// <summary>Uploads data in a String to the specified resource, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI to which the data should be uploaded.</param>
         /// <param name="method">The HTTP method that should be used to upload the data.</param>
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<string> UploadStringTask( this WebClient webClient, string address, string method, string data ) {
+        public static Task<String> UploadStringTask( this WebClient webClient, String address, String method, String data ) {
             return UploadStringTask( webClient, new Uri( address ), method, data );
         }
 
-        /// <summary>Uploads data in a string to the specified resource, asynchronously.</summary>
+        /// <summary>Uploads data in a String to the specified resource, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI to which the data should be uploaded.</param>
         /// <param name="method">The HTTP method that should be used to upload the data.</param>
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<string> UploadStringTask( this WebClient webClient, Uri address, string method, string data ) {
+        public static Task<String> UploadStringTask( this WebClient webClient, Uri address, String method, String data ) {
             // Create the task to be returned
-            var tcs = new TaskCompletionSource<string>( address );
+            var tcs = new TaskCompletionSource<String>( address );
 
             // Setup the callback event handler
             UploadStringCompletedEventHandler handler = null;

@@ -32,7 +32,7 @@
 //            return this.BuildedContainer.Resolve<T>();
 //        }
 
-//        public T Get< T >( string name, string value ) {
+//        public T Get< T >( String name, String value ) {
 //            throw new NotImplementedException();
 //        }
 

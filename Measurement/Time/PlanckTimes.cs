@@ -155,7 +155,7 @@ namespace Librainian.Measurement.Time {
         }
 
         [UsedImplicitly]
-        private string DebuggerDisplay {
+        private String DebuggerDisplay {
             get {
                 return this.ToString();
             }

@@ -30,7 +30,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        public override object GetEntity( Uri absoluteUri, string role, Type ofObjectToReturn ) {
+        public override object GetEntity( Uri absoluteUri, String role, Type ofObjectToReturn ) {
             return new MemoryStream();
         }
 

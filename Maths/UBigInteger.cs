@@ -213,7 +213,7 @@ namespace Librainian.Maths {
             return left._internalValue >= right._internalValue;
         }
 
-        public static UBigInteger Parse( [NotNull] string number, NumberStyles style ) {
+        public static UBigInteger Parse( [NotNull] String number, NumberStyles style ) {
             if ( number == null ) {
                 throw new ArgumentNullException( "number" );
             }
@@ -260,16 +260,16 @@ namespace Librainian.Maths {
         }
 
         [Pure]
-        public override string ToString() {
+        public override String ToString() {
             return this._internalValue.ToString();
         }
 
         [Pure]
-        public string ToString( string format ) {
+        public String ToString( String format ) {
             return this._internalValue.ToString( format );
         }
 
-        //public static BigInteger Parse(string value)
+        //public static BigInteger Parse(String value)
         //{
         //    return new BigInteger(System.Numerics.BigInteger.Parse(value));
         //}

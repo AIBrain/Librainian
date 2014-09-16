@@ -47,11 +47,11 @@ namespace Librainian.Internet {
         /// <param name="ping">The Ping.</param>
         /// <param name="hostNameOrAddress">
         ///     A String that identifies the computer that is the destination for the ICMP echo message.
-        ///     The value specified for this parameter can be a host name or a string representation of an IP address.
+        ///     The value specified for this parameter can be a host name or a String representation of an IP address.
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task< PingReply > SendTask( this Ping ping, string hostNameOrAddress, object userToken ) {
+        public static Task< PingReply > SendTask( this Ping ping, String hostNameOrAddress, object userToken ) {
             return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, tcs ) );
         }
 
@@ -76,7 +76,7 @@ namespace Librainian.Internet {
         /// <param name="ping">The Ping.</param>
         /// <param name="hostNameOrAddress">
         ///     A String that identifies the computer that is the destination for the ICMP echo message.
-        ///     The value specified for this parameter can be a host name or a string representation of an IP address.
+        ///     The value specified for this parameter can be a host name or a String representation of an IP address.
         /// </param>
         /// <param name="timeout">
         ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message)
@@ -84,7 +84,7 @@ namespace Librainian.Internet {
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task< PingReply > SendTask( this Ping ping, string hostNameOrAddress, int timeout, object userToken ) {
+        public static Task< PingReply > SendTask( this Ping ping, String hostNameOrAddress, int timeout, object userToken ) {
             return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, tcs ) );
         }
 
@@ -113,7 +113,7 @@ namespace Librainian.Internet {
         /// <param name="ping">The Ping.</param>
         /// <param name="hostNameOrAddress">
         ///     A String that identifies the computer that is the destination for the ICMP echo message.
-        ///     The value specified for this parameter can be a host name or a string representation of an IP address.
+        ///     The value specified for this parameter can be a host name or a String representation of an IP address.
         /// </param>
         /// <param name="timeout">
         ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message)
@@ -125,7 +125,7 @@ namespace Librainian.Internet {
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task< PingReply > SendTask( this Ping ping, string hostNameOrAddress, int timeout, byte[] buffer, object userToken ) {
+        public static Task< PingReply > SendTask( this Ping ping, String hostNameOrAddress, int timeout, byte[] buffer, object userToken ) {
             return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, tcs ) );
         }
 
@@ -158,7 +158,7 @@ namespace Librainian.Internet {
         /// <param name="ping">The Ping.</param>
         /// <param name="hostNameOrAddress">
         ///     A String that identifies the computer that is the destination for the ICMP echo message.
-        ///     The value specified for this parameter can be a host name or a string representation of an IP address.
+        ///     The value specified for this parameter can be a host name or a String representation of an IP address.
         /// </param>
         /// <param name="timeout">
         ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message)
@@ -174,7 +174,7 @@ namespace Librainian.Internet {
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task< PingReply > SendTask( this Ping ping, string hostNameOrAddress, int timeout, byte[] buffer, PingOptions options, object userToken ) {
+        public static Task< PingReply > SendTask( this Ping ping, String hostNameOrAddress, int timeout, byte[] buffer, PingOptions options, object userToken ) {
             return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, options, tcs ) );
         }
 

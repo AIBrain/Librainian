@@ -61,7 +61,7 @@ namespace Librainian.AmazedSaint {
         }
 
         #region IElasticHierarchyWrapper Members
-        public IEnumerable< KeyValuePair< string, ElasticObject > > Attributes { get { return this._elasticProvider.Attributes; } }
+        public IEnumerable< KeyValuePair< String, ElasticObject > > Attributes { get { return this._elasticProvider.Attributes; } }
 
         public IEnumerable< ElasticObject > Elements { get { return this._elasticProvider.Elements; } }
 

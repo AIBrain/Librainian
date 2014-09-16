@@ -68,8 +68,8 @@ namespace Librainian.Security {
         ///     Significantly less secure than using random binary keys.
         ///     Adds additional non secret payload for key generation parameters.
         /// </remarks>
-        public static string SimpleEncryptWithPassword( string secretMessage, string password, byte[] nonSecretPayload = null ) {
-            if ( string.IsNullOrEmpty( secretMessage ) ) {
+        public static String SimpleEncryptWithPassword( String secretMessage, String password, byte[] nonSecretPayload = null ) {
+            if ( String.IsNullOrEmpty( secretMessage ) ) {
                 throw new ArgumentException( "Secret Message Required!", "secretMessage" );
             }
 
@@ -93,11 +93,11 @@ namespace Librainian.Security {
         ///     Significantly less secure than using random binary keys.
         ///     Adds additional non secret payload for key generation parameters.
         /// </remarks>
-        public static byte[] SimpleEncryptWithPassword( byte[] secretMessage, string password, byte[] nonSecretPayload = null ) {
+        public static byte[] SimpleEncryptWithPassword( byte[] secretMessage, String password, byte[] nonSecretPayload = null ) {
             nonSecretPayload = nonSecretPayload ?? new byte[] { };
 
             //User Error Checks
-            if ( string.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
+            if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
                 throw new ArgumentException( String.Format( "Must have a password of at least {0} characters!", MinPasswordLength ), "password" );
             }
 
@@ -232,8 +232,8 @@ namespace Librainian.Security {
         /// <remarks>
         ///     Significantly less secure than using random binary keys.
         /// </remarks>
-        public static string SimpleDecryptWithPassword( string encryptedMessage, string password, int nonSecretPayloadLength = 0 ) {
-            if ( string.IsNullOrWhiteSpace( encryptedMessage ) ) {
+        public static String SimpleDecryptWithPassword( String encryptedMessage, String password, int nonSecretPayloadLength = 0 ) {
+            if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
                 throw new ArgumentException( "Encrypted Message Required!", "encryptedMessage" );
             }
 
@@ -256,9 +256,9 @@ namespace Librainian.Security {
         /// <remarks>
         ///     Significantly less secure than using random binary keys.
         /// </remarks>
-        public static byte[] SimpleDecryptWithPassword( byte[] encryptedMessage, string password, int nonSecretPayloadLength = 0 ) {
+        public static byte[] SimpleDecryptWithPassword( byte[] encryptedMessage, String password, int nonSecretPayloadLength = 0 ) {
             //User Error Checks
-            if ( string.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
+            if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
                 throw new ArgumentException( String.Format( "Must have a password of at least {0} characters!", MinPasswordLength ), "password" );
             }
 
@@ -375,8 +375,8 @@ namespace Librainian.Security {
         /// <remarks>
         ///     Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize +  HMac-Tag(32)) * 1.33 Base64
         /// </remarks>
-        public static string SimpleEncrypt( string secretMessage, byte[] cryptKey, byte[] authKey, byte[] nonSecretPayload = null ) {
-            if ( string.IsNullOrEmpty( secretMessage ) ) {
+        public static String SimpleEncrypt( String secretMessage, byte[] cryptKey, byte[] authKey, byte[] nonSecretPayload = null ) {
+            if ( String.IsNullOrEmpty( secretMessage ) ) {
                 throw new ArgumentException( "Secret Message Required!", "secretMessage" );
             }
 
@@ -396,8 +396,8 @@ namespace Librainian.Security {
         ///     Decrypted Message
         /// </returns>
         /// <exception cref="System.ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
-        public static string SimpleDecrypt( string encryptedMessage, byte[] cryptKey, byte[] authKey, int nonSecretPayloadLength = 0 ) {
-            if ( string.IsNullOrWhiteSpace( encryptedMessage ) ) {
+        public static String SimpleDecrypt( String encryptedMessage, byte[] cryptKey, byte[] authKey, int nonSecretPayloadLength = 0 ) {
+            if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
                 throw new ArgumentException( "Encrypted Message Required!", "encryptedMessage" );
             }
 

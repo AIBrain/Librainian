@@ -246,7 +246,7 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return String.Empty;
             }
-            return control.InvokeRequired ? control.Invoke( new Func<string>( () => control.Text ) ) as String ?? String.Empty : control.Text;
+            return control.InvokeRequired ? control.Invoke( new Func<String>( () => control.Text ) ) as String ?? String.Empty : control.Text;
         }
 
         /// <summary>
@@ -908,8 +908,8 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="a"></param>
         /// <returns></returns>
-        private static async Task<string> StringAsync( String a ) {
-            return await Task<string>.Factory.StartNew( () => a );
+        private static async Task<String> StringAsync( String a ) {
+            return await Task<String>.Factory.StartNew( () => a );
         }
 
         /*

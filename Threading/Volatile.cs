@@ -147,10 +147,10 @@
             }
 
             /// <summary>
-            /// Returns the string representation of the current value.
+            /// Returns the String representation of the current value.
             /// </summary>
-            /// <returns>the string representation of the current value.</returns>
-            public override string ToString() {
+            /// <returns>the String representation of the current value.</returns>
+            public override String ToString() {
                 var value = this.ReadFullFence();
                 return value.ToString();
             }
@@ -286,10 +286,10 @@
             }
 
             /// <summary>
-            /// Returns the string representation of the current value.
+            /// Returns the String representation of the current value.
             /// </summary>
-            /// <returns>the string representation of the current value.</returns>
-            public override string ToString() {
+            /// <returns>the String representation of the current value.</returns>
+            public override String ToString() {
                 var value = this.ReadFullFence();
                 return value.ToString();
             }
@@ -411,10 +411,10 @@
             }
 
             /// <summary>
-            /// Returns the string representation of the current value.
+            /// Returns the String representation of the current value.
             /// </summary>
-            /// <returns>the string representation of the current value.</returns>
-            public override string ToString() {
+            /// <returns>the String representation of the current value.</returns>
+            public override String ToString() {
                 var value = this.ReadFullFence();
                 return value.ToString();
             }
@@ -539,10 +539,10 @@
             }
 
             /// <summary>
-            /// Returns the string representation of the current value.
+            /// Returns the String representation of the current value.
             /// </summary>
-            /// <returns>the string representation of the current value.</returns>
-            public override string ToString() {
+            /// <returns>the String representation of the current value.</returns>
+            public override String ToString() {
                 var value = this.ReadFullFence();
                 return value.ToString();
             }
@@ -1313,10 +1313,10 @@
             }
 
             /// <summary>
-            /// Returns the string representation of the current value.
+            /// Returns the String representation of the current value.
             /// </summary>
-            /// <returns>the string representation of the current value.</returns>
-            public override string ToString() {
+            /// <returns>the String representation of the current value.</returns>
+            public override String ToString() {
                 var value = this.ReadFullFence();
                 return value.ToString();
             }
@@ -1454,10 +1454,10 @@
             }
 
             /// <summary>
-            /// Returns the string representation of the current value.
+            /// Returns the String representation of the current value.
             /// </summary>
-            /// <returns>the string representation of the current value.</returns>
-            public override string ToString() {
+            /// <returns>the String representation of the current value.</returns>
+            public override String ToString() {
                 var value = this.ReadFullFence();
                 return value.ToString();
             }
@@ -1582,10 +1582,10 @@
             }
 
             /// <summary>
-            /// Returns the string representation of the current value.
+            /// Returns the String representation of the current value.
             /// </summary>
-            /// <returns>the string representation of the current value.</returns>
-            public override string ToString() {
+            /// <returns>the String representation of the current value.</returns>
+            public override String ToString() {
                 var value = this.ReadFullFence();
                 return value.ToString();
             }

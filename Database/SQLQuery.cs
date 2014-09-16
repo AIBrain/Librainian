@@ -34,7 +34,7 @@ namespace Librainian.Database {
     [Obsolete( "No access to a local server atm." )]
     public sealed class SQLQuery : IDisposable {
         //[Obsolete( "No access to a local server atm." )]
-        //private static readonly string SQLConnectionString = new SqlConnectionStringBuilder {
+        //private static readonly String SQLConnectionString = new SqlConnectionStringBuilder {
         //    ApplicationIntent = ApplicationIntent.ReadWrite,
         //    ApplicationName = Parameters.EngineName,
         //    AsynchronousProcessing = true,

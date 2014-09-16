@@ -21,6 +21,6 @@ namespace Librainian.Database.MMF {
     using System;
 
     public class SerializerException : Exception {
-        public SerializerException( string message ) : base( message ) { }
+        public SerializerException( String message ) : base( message ) { }
     }
 }

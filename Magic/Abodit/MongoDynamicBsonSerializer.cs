@@ -32,7 +32,7 @@ namespace Librainian.Magic.Abodit {
                     var md = new MongoDynamic();
                     bsonReader.ReadStartDocument();
 
-                    Dictionary<string, Type> typeMap;
+                    Dictionary<String, Type> typeMap;
 
                     // scan document first to find interfaces
                     {
@@ -88,7 +88,7 @@ namespace Librainian.Magic.Abodit {
                     return md;
                 }
                 default: {
-                    var message = string.Format( "Can't deserialize a {0} from BsonType {1}.", nominalType.FullName, bsonType );
+                    var message = String.Format( "Can't deserialize a {0} from BsonType {1}.", nominalType.FullName, bsonType );
                     throw new FormatException( message );
                 }
             }

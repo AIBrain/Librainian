@@ -46,7 +46,7 @@ namespace Librainian.Maths {
         public static readonly BiggerRational Zero = new BiggerRational( BigInteger.Zero );
         public BigInteger Denominator;
         public BigInteger Numerator;
-        private const string CSolidus = "/";
+        private const String CSolidus = "/";
         private const int DecimalMaxScale = 28;
         private const int DecimalScaleMask = 16711680;
         private const int DecimalSignMask = -2147483648;
@@ -54,8 +54,8 @@ namespace Librainian.Maths {
         private static readonly BigInteger SBnDecimalMaxValue = ( BigInteger )new Decimal( -1, -1, -1, false, 0 );
         private static readonly BigInteger SBnDecimalMinValue = ( BigInteger )new Decimal( -1, -1, -1, true, 0 );
         private static readonly BigInteger SBnDecimalPrecision = BigInteger.Pow( 10, DecimalMaxScale );
-        private static readonly BigInteger SBnDoubleMaxValue = ( BigInteger )double.MaxValue;
-        private static readonly BigInteger SBnDoubleMinValue = ( BigInteger )double.MinValue;
+        private static readonly BigInteger SBnDoubleMaxValue = ( BigInteger )Double.MaxValue;
+        private static readonly BigInteger SBnDoubleMinValue = ( BigInteger )Double.MinValue;
         private static readonly BigInteger SBnDoublePrecision = BigInteger.Pow( 10, DoubleMaxScale );
 
         static BiggerRational() {
@@ -66,11 +66,11 @@ namespace Librainian.Maths {
             this.Denominator = BigInteger.One;
         }
 
-        public BiggerRational( double value ) {
-            if ( double.IsNaN( value ) ) {
+        public BiggerRational( Double value ) {
+            if ( Double.IsNaN( value ) ) {
                 throw new ArgumentException( "Argument is not a number", "value" );
             }
-            if ( double.IsInfinity( value ) ) {
+            if ( Double.IsInfinity( value ) ) {
                 throw new ArgumentException( "Argument is infinity", "value" );
             }
             int sign;
@@ -217,7 +217,7 @@ namespace Librainian.Maths {
         }
 
         public static explicit operator float( BiggerRational value ) {
-            return ( float )( double )value;
+            return ( float )( Double )value;
         }
 
         [CLSCompliant( false )]
@@ -292,7 +292,7 @@ namespace Librainian.Maths {
             return new BiggerRational( value );
         }
 
-        public static implicit operator BiggerRational( double value ) {
+        public static implicit operator BiggerRational( Double value ) {
             return new BiggerRational( value );
         }
 
@@ -414,7 +414,7 @@ namespace Librainian.Maths {
             return false;
         }
 
-        public static void SplitDoubleIntoParts( double dbl, out int sign, out int exp, out ulong man, out bool isFinite ) {
+        public static void SplitDoubleIntoParts( Double dbl, out int sign, out int exp, out ulong man, out bool isFinite ) {
             DoubleVsUlong doubleVsUlong;
             doubleVsUlong.uu = 0UL;
             doubleVsUlong.dbl = dbl;
@@ -537,9 +537,9 @@ namespace Librainian.Maths {
             return ( long )BigInteger.Divide( value.Numerator, value.Denominator );
         }
 
-        public static explicit operator double( BiggerRational value ) {
+        public static explicit operator Double( BiggerRational value ) {
             if ( SafeCastToDouble( value.Numerator ) && SafeCastToDouble( value.Denominator ) ) {
-                return ( double )value.Numerator / ( double )value.Denominator;
+                return ( Double )value.Numerator / ( Double )value.Denominator;
             }
             var bigInteger = value.Numerator * SBnDoublePrecision / value.Denominator;
             if ( bigInteger.IsZero ) {
@@ -550,7 +550,7 @@ namespace Librainian.Maths {
             for ( var index = 308 ; index > 0 ; --index ) {
                 if ( !flag ) {
                     if ( SafeCastToDouble( bigInteger ) ) {
-                        num = ( double )bigInteger;
+                        num = ( Double )bigInteger;
                         flag = true;
                     }
                     else {
@@ -562,10 +562,10 @@ namespace Librainian.Maths {
             if ( flag ) {
                 return num;
             }
-            return value.Sign >= 0 ? double.PositiveInfinity : double.NegativeInfinity;
+            return value.Sign >= 0 ? Double.PositiveInfinity : Double.NegativeInfinity;
         }
 
-        public override string ToString() {
+        public override String ToString() {
             var stringBuilder = new StringBuilder();
             stringBuilder.Append( this.Numerator.ToString( "R", CultureInfo.InvariantCulture ) );
             stringBuilder.Append( "/" );
@@ -607,7 +607,7 @@ namespace Librainian.Maths {
             return num;
         }
 
-        private static double GetDoubleFromParts( int sign, int exp, ulong man ) {
+        private static Double GetDoubleFromParts( int sign, int exp, ulong man ) {
             DoubleVsUlong doubleVsUlong;
             doubleVsUlong.dbl = 0.0;
             if ( ( long )man == 0L ) {
@@ -665,7 +665,7 @@ namespace Librainian.Maths {
         internal struct DoubleVsUlong {
 
             [FieldOffset( 0 )]
-            public double dbl;
+            public Double dbl;
 
             [FieldOffset( 0 )]
             public ulong uu;

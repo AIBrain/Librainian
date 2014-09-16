@@ -91,7 +91,7 @@ namespace Librainian.Internet.Wiki {
         //    }
         //}
 
-        public static IEnumerable< string > GetCategories( String titles ) {
+        public static IEnumerable< String > GetCategories( String titles ) {
             try {
                 var uri = new Uri( String.Format( "http://wikipedia.org/w/api.php?action=query&prop=categories&format=xml&titles={0}", titles ) );
                 var webRequest = ( HttpWebRequest ) WebRequest.Create( uri );

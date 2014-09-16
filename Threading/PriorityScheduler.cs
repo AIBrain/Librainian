@@ -50,7 +50,7 @@ namespace Librainian.Threading {
                                                      foreach ( var t in this._tasks.GetConsumingEnumerable() )
                                                          this.TryExecuteTask( t );
                                                  } ) {
-                                                         Name = string.Format( "PriorityScheduler: ", i ),
+                                                         Name = String.Format( "PriorityScheduler: ", i ),
                                                          Priority = this._priority,
                                                          IsBackground = true
                                                      };

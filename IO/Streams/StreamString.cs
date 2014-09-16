@@ -17,7 +17,7 @@ namespace Librainian.IO.Streams {
             this._streamEncoding = new UnicodeEncoding();
         }
 
-        public string ReadString() {
+        public String ReadString() {
             var len = this._ioStream.ReadByte() * 256;
             len += this._ioStream.ReadByte();
             var inBuffer = new byte[ len ];
@@ -26,7 +26,7 @@ namespace Librainian.IO.Streams {
             return this._streamEncoding.GetString( inBuffer );
         }
 
-        public int WriteString( string outString ) {
+        public int WriteString( String outString ) {
             var outBuffer = this._streamEncoding.GetBytes( outString );
             var len = outBuffer.Length;
             if ( len > UInt16.MaxValue ) {

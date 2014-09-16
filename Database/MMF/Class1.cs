@@ -37,8 +37,8 @@ namespace Librainian.Database.MMF {
 
         //using (var memoryMappedFile = MemoryMappedFile.CreateFromFile(localFilePath, FileMode.Open)){}
 
-        public string GetContent( MemoryMappedFile memoryMappedFile, long beginningByteLocation, long bytesToReadIn ) {
-            string content;
+        public String GetContent( MemoryMappedFile memoryMappedFile, long beginningByteLocation, long bytesToReadIn ) {
+            String content;
 
             using ( var memoryMappedViewStream = memoryMappedFile.CreateViewStream( beginningByteLocation, bytesToReadIn, MemoryMappedFileAccess.Read ) ) {
                 var contentArray = new byte[bytesToReadIn];

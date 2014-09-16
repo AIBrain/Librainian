@@ -62,39 +62,39 @@ namespace Librainian.Annotations {
     public sealed class NotNullAttribute : Attribute { }
 
     /// <summary>
-    ///     Indicates that the marked method builds string by format pattern and (optional) arguments.
-    ///     Parameter, which contains format string, should be given in constructor. The format string
-    ///     should be in <see cref="string.Format(IFormatProvider,string,object[])" />-like form
+    ///     Indicates that the marked method builds String by format pattern and (optional) arguments.
+    ///     Parameter, which contains format String, should be given in constructor. The format String
+    ///     should be in <see cref="String.Format(IFormatProvider,String,object[])" />-like form
     /// </summary>
     /// <example>
     ///     <code>
     /// [StringFormatMethod("message")]
-    /// public void ShowError(string message, params object[] args) { /* do something */ }
+    /// public void ShowError(String message, params object[] args) { /* do something */ }
     /// public void Foo() {
-    ///   ShowError("Failed: {0}"); // Warning: Non-existing argument in format string
+    ///   ShowError("Failed: {0}"); // Warning: Non-existing argument in format String
     /// }
     /// </code>
     /// </example>
     [AttributeUsage( AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false, Inherited = true )]
     public sealed class StringFormatMethodAttribute : Attribute {
         /// <param name="formatParameterName">
-        ///     Specifies which parameter of an annotated method should be treated as format-string
+        ///     Specifies which parameter of an annotated method should be treated as format-String
         /// </param>
-        public StringFormatMethodAttribute( string formatParameterName ) {
+        public StringFormatMethodAttribute( String formatParameterName ) {
             this.FormatParameterName = formatParameterName;
         }
 
-        public string FormatParameterName { get; private set; }
+        public String FormatParameterName { get; private set; }
     }
 
     /// <summary>
-    ///     Indicates that the function argument should be string literal and match one
+    ///     Indicates that the function argument should be String literal and match one
     ///     of the parameters of the caller function. For example, ReSharper annotates
     ///     the parameter of <see cref="System.ArgumentNullException" />
     /// </summary>
     /// <example>
     ///     <code>
-    /// public void Foo(string param) {
+    /// public void Foo(String param) {
     ///   if (param == null)
     ///     throw new ArgumentNullException("par"); // Warning: Cannot resolve symbol
     /// }
@@ -112,10 +112,10 @@ namespace Librainian.Annotations {
     ///     The method should be non-static and conform to one of the supported signatures:
     ///     <list>
     ///         <item>
-    ///             <c>NotifyChanged(string)</c>
+    ///             <c>NotifyChanged(String)</c>
     ///         </item>
     ///         <item>
-    ///             <c>NotifyChanged(params string[])</c>
+    ///             <c>NotifyChanged(params String[])</c>
     ///         </item>
     ///         <item>
     ///             <c>NotifyChanged{T}(Expression{Func{T}})</c>
@@ -124,7 +124,7 @@ namespace Librainian.Annotations {
     ///             <c>NotifyChanged{T,U}(Expression{Func{T,U}})</c>
     ///         </item>
     ///         <item>
-    ///             <c>SetProperty{T}(ref T, T, string)</c>
+    ///             <c>SetProperty{T}(ref T, T, String)</c>
     ///         </item>
     ///     </list>
     /// </remarks>
@@ -133,10 +133,10 @@ namespace Librainian.Annotations {
     ///  public class Foo : INotifyPropertyChanged {
     ///    public event PropertyChangedEventHandler PropertyChanged;
     ///    [NotifyPropertyChangedInvocator]
-    ///    protected virtual void NotifyChanged(string propertyName) { ... }
+    ///    protected virtual void NotifyChanged(String propertyName) { ... }
     /// 
-    ///    private string _name;
-    ///    public string Name {
+    ///    private String _name;
+    ///    public String Name {
     ///      get { return _name; }
     ///      set { _name = value; NotifyChanged("LastName"); /* Warning */ }
     ///    }
@@ -162,11 +162,11 @@ namespace Librainian.Annotations {
     public sealed class NotifyPropertyChangedInvocatorAttribute : Attribute {
         public NotifyPropertyChangedInvocatorAttribute() { }
 
-        public NotifyPropertyChangedInvocatorAttribute( string parameterName ) {
+        public NotifyPropertyChangedInvocatorAttribute( String parameterName ) {
             this.ParameterName = parameterName;
         }
 
-        public string ParameterName { get; private set; }
+        public String ParameterName { get; private set; }
     }
 
     /// <summary>
@@ -199,13 +199,13 @@ namespace Librainian.Annotations {
     ///         <item>
     ///             <code>
     /// [ContractAnnotation("halt &lt;= condition: false")]
-    /// public void Assert(Boolean condition, string text) // regular assertion method
+    /// public void Assert(Boolean condition, String text) // regular assertion method
     /// </code>
     ///         </item>
     ///         <item>
     ///             <code>
     /// [ContractAnnotation("s:null => true")]
-    /// public Boolean IsNullOrEmpty(string s) // string.IsNullOrEmpty()
+    /// public Boolean IsNullOrEmpty(String s) // String.IsNullOrEmpty()
     /// </code>
     ///         </item>
     ///         <item>
@@ -218,21 +218,21 @@ namespace Librainian.Annotations {
     ///         <item>
     ///             <code>
     /// [ContractAnnotation("s:null=>false; =>true,result:notnull; =>false, result:null")]
-    /// public Boolean TryParse(string s, out Person result)
+    /// public Boolean TryParse(String s, out Person result)
     /// </code>
     ///         </item>
     ///     </list>
     /// </examples>
     [AttributeUsage( AttributeTargets.Method, AllowMultiple = true, Inherited = true )]
     public sealed class ContractAnnotationAttribute : Attribute {
-        public ContractAnnotationAttribute( [NotNull] string contract ) : this( contract, false ) { }
+        public ContractAnnotationAttribute( [NotNull] String contract ) : this( contract, false ) { }
 
-        public ContractAnnotationAttribute( [NotNull] string contract, Boolean forceFullStates ) {
+        public ContractAnnotationAttribute( [NotNull] String contract, Boolean forceFullStates ) {
             this.Contract = contract;
             this.ForceFullStates = forceFullStates;
         }
 
-        public string Contract { get; private set; }
+        public String Contract { get; private set; }
         public Boolean ForceFullStates { get; private set; }
     }
 
@@ -243,7 +243,7 @@ namespace Librainian.Annotations {
     ///     <code>
     /// [LocalizationRequiredAttribute(true)]
     /// public class Foo {
-    ///   private string str = "my string"; // Warning: Localizable string
+    ///   private String str = "my String"; // Warning: Localizable String
     /// }
     /// </code>
     /// </example>
@@ -397,12 +397,12 @@ namespace Librainian.Annotations {
     public sealed class PublicAPIAttribute : Attribute {
         public PublicAPIAttribute() { }
 
-        public PublicAPIAttribute( [NotNull] string comment ) {
+        public PublicAPIAttribute( [NotNull] String comment ) {
             this.Comment = comment;
         }
 
         [NotNull]
-        public string Comment { get; private set; }
+        public String Comment { get; private set; }
     }
 
     /// <summary>
@@ -441,44 +441,44 @@ namespace Librainian.Annotations {
     public class PathReferenceAttribute : Attribute {
         public PathReferenceAttribute() { }
 
-        public PathReferenceAttribute( [PathReference] string basePath ) {
+        public PathReferenceAttribute( [PathReference] String basePath ) {
             this.BasePath = basePath;
         }
 
         [NotNull]
-        public string BasePath { get; private set; }
+        public String BasePath { get; private set; }
     }
 
     // ASP.NET MVC attributes
 
     [AttributeUsage( AttributeTargets.Assembly, AllowMultiple = true )]
     public sealed class AspMvcAreaMasterLocationFormatAttribute : Attribute {
-        public AspMvcAreaMasterLocationFormatAttribute( string format ) { }
+        public AspMvcAreaMasterLocationFormatAttribute( String format ) { }
     }
 
     [AttributeUsage( AttributeTargets.Assembly, AllowMultiple = true )]
     public sealed class AspMvcAreaPartialViewLocationFormatAttribute : Attribute {
-        public AspMvcAreaPartialViewLocationFormatAttribute( string format ) { }
+        public AspMvcAreaPartialViewLocationFormatAttribute( String format ) { }
     }
 
     [AttributeUsage( AttributeTargets.Assembly, AllowMultiple = true )]
     public sealed class AspMvcAreaViewLocationFormatAttribute : Attribute {
-        public AspMvcAreaViewLocationFormatAttribute( string format ) { }
+        public AspMvcAreaViewLocationFormatAttribute( String format ) { }
     }
 
     [AttributeUsage( AttributeTargets.Assembly, AllowMultiple = true )]
     public sealed class AspMvcMasterLocationFormatAttribute : Attribute {
-        public AspMvcMasterLocationFormatAttribute( string format ) { }
+        public AspMvcMasterLocationFormatAttribute( String format ) { }
     }
 
     [AttributeUsage( AttributeTargets.Assembly, AllowMultiple = true )]
     public sealed class AspMvcPartialViewLocationFormatAttribute : Attribute {
-        public AspMvcPartialViewLocationFormatAttribute( string format ) { }
+        public AspMvcPartialViewLocationFormatAttribute( String format ) { }
     }
 
     [AttributeUsage( AttributeTargets.Assembly, AllowMultiple = true )]
     public sealed class AspMvcViewLocationFormatAttribute : Attribute {
-        public AspMvcViewLocationFormatAttribute( string format ) { }
+        public AspMvcViewLocationFormatAttribute( String format ) { }
     }
 
     /// <summary>
@@ -491,12 +491,12 @@ namespace Librainian.Annotations {
     public sealed class AspMvcActionAttribute : Attribute {
         public AspMvcActionAttribute() { }
 
-        public AspMvcActionAttribute( [NotNull] string anonymousProperty ) {
+        public AspMvcActionAttribute( [NotNull] String anonymousProperty ) {
             this.AnonymousProperty = anonymousProperty;
         }
 
         [NotNull]
-        public string AnonymousProperty { get; private set; }
+        public String AnonymousProperty { get; private set; }
     }
 
     /// <summary>
@@ -508,12 +508,12 @@ namespace Librainian.Annotations {
     public sealed class AspMvcAreaAttribute : PathReferenceAttribute {
         public AspMvcAreaAttribute() { }
 
-        public AspMvcAreaAttribute( [NotNull] string anonymousProperty ) {
+        public AspMvcAreaAttribute( [NotNull] String anonymousProperty ) {
             this.AnonymousProperty = anonymousProperty;
         }
 
         [NotNull]
-        public string AnonymousProperty { get; private set; }
+        public String AnonymousProperty { get; private set; }
     }
 
     /// <summary>
@@ -527,12 +527,12 @@ namespace Librainian.Annotations {
     public sealed class AspMvcControllerAttribute : Attribute {
         public AspMvcControllerAttribute() { }
 
-        public AspMvcControllerAttribute( [NotNull] string anonymousProperty ) {
+        public AspMvcControllerAttribute( [NotNull] String anonymousProperty ) {
             this.AnonymousProperty = anonymousProperty;
         }
 
         [NotNull]
-        public string AnonymousProperty { get; private set; }
+        public String AnonymousProperty { get; private set; }
     }
 
     /// <summary>
@@ -608,7 +608,7 @@ namespace Librainian.Annotations {
     /// <example>
     ///     <code>
     /// [ActionName("Foo")]
-    /// public ActionResult Login(string returnUrl) {
+    /// public ActionResult Login(String returnUrl) {
     ///   ViewBag.ReturnUrl = Url.Action("Foo"); // OK
     ///   return RedirectToAction("Bar"); // Error: Cannot resolve action
     /// }
@@ -621,22 +621,22 @@ namespace Librainian.Annotations {
     public sealed class HtmlElementAttributesAttribute : Attribute {
         public HtmlElementAttributesAttribute() { }
 
-        public HtmlElementAttributesAttribute( [NotNull] string name ) {
+        public HtmlElementAttributesAttribute( [NotNull] String name ) {
             this.Name = name;
         }
 
         [NotNull]
-        public string Name { get; private set; }
+        public String Name { get; private set; }
     }
 
     [AttributeUsage( AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.Property, Inherited = true )]
     public sealed class HtmlAttributeValueAttribute : Attribute {
-        public HtmlAttributeValueAttribute( [NotNull] string name ) {
+        public HtmlAttributeValueAttribute( [NotNull] String name ) {
             this.Name = name;
         }
 
         [NotNull]
-        public string Name { get; private set; }
+        public String Name { get; private set; }
     }
 
     // Razor attributes

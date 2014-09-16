@@ -46,7 +46,7 @@ namespace Librainian.IO {
 
     /// <summary>
     ///     <para>A wrapper for a file, the extension, the [parent] folder, and the file's size all from a given full path.</para>
-    ///     <para>Also contains static string versions from <see cref="Path" /></para>
+    ///     <para>Also contains static String versions from <see cref="Path" /></para>
     /// </summary>
     /// <seealso cref="IOExtensions.SameContent(Document,Document)" />
     [DataContract( IsReference = true )]
@@ -139,7 +139,7 @@ namespace Librainian.IO {
             : this( info.FullName ) {
         }
 
-        public Document( Folder folder, string filename )
+        public Document( Folder folder, String filename )
             : this( folder.FullName, filename ) {
         }
 
@@ -263,7 +263,7 @@ namespace Librainian.IO {
         /// <param name="onProgress"></param>
         /// <param name="onCompleted"></param>
         /// <returns></returns>
-        public Boolean CopyFileWithProgress( string destination, Action<Percentage> onProgress, Action onCompleted ) {
+        public Boolean CopyFileWithProgress( String destination, Action<Percentage> onProgress, Action onCompleted ) {
             var webClient = Ioc.Container.TryGet<WebClient>();
 
             if ( webClient == null ) {

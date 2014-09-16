@@ -209,7 +209,7 @@ namespace Librainian.Extensions {
         }
 
 /*
-        public static string GetName<T>( [CanBeNull] this Expression<Func<T>> propertyExpression ) {
+        public static String GetName<T>( [CanBeNull] this Expression<Func<T>> propertyExpression ) {
             if ( null == propertyExpression ) {
                 return String.Empty;
             }
@@ -218,7 +218,7 @@ namespace Librainian.Extensions {
         }
 */
 
-        public static string GetPropertyName<T>( [CanBeNull] this Expression<Func<T>> propertyExpression ) {
+        public static String GetPropertyName<T>( [CanBeNull] this Expression<Func<T>> propertyExpression ) {
             if ( propertyExpression == null ) {
                 throw new ArgumentNullException( "propertyExpression" );
             }

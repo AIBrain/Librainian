@@ -464,7 +464,7 @@ namespace Librainian.Measurement.Time {
         }
 
         [UsedImplicitly]
-        private string DebuggerDisplay {
+        private String DebuggerDisplay {
             get {
                 return this.ToString();
             }
@@ -834,7 +834,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString() {
-            var bob = new Queue<string>( 20 );
+            var bob = new Queue<String>( 20 );
 
             if ( this.Years.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Years.ToString() );

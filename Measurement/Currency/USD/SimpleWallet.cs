@@ -145,7 +145,7 @@ namespace Librainian.Measurement.Currency.USD {
             }
         }
 
-        public override string ToString() {
+        public override String ToString() {
             return this.Balance.ToString( "C" );
         }
     }

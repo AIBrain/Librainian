@@ -141,7 +141,7 @@ namespace Librainian.Measurement.Time {
 
         //public static Date operator +( Date left, Date right ) {
         //    //what does it mean to add two dates ?
-        //    var days = new Span( days: new   System.Decimal( left.Day.Value + right.Day.Value ), months: new   System.Decimal( left.Month.Value + right.Month.Value ), years: new   System.Decimal(( double ) ( left.Year.Value + right.Year.Value )) );
+        //    var days = new Span( days: new   System.Decimal( left.Day.Value + right.Day.Value ), months: new   System.Decimal( left.Month.Value + right.Month.Value ), years: new   System.Decimal(( Double ) ( left.Year.Value + right.Year.Value )) );
         //    var months = new Span(  );
         //    return days;
         //}

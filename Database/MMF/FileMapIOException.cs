@@ -40,11 +40,11 @@ namespace Librainian.Database.MMF {
             this.Win32ErrorCode = error;
         }
 
-        public FileMapIOException( string message ) : base( message ) { }
+        public FileMapIOException( String message ) : base( message ) { }
 
-        public FileMapIOException( string message, Exception innerException ) : base( message, innerException ) { }
+        public FileMapIOException( String message, Exception innerException ) : base( message, innerException ) { }
 
-        public override string Message {
+        public override String Message {
             get {
                 if ( this.Win32ErrorCode == 0 ) {
                     return base.Message;

@@ -27,7 +27,7 @@ namespace Librainian.Threading {
     public class CustomAttribute : Attribute {
         public static readonly List< MethodInfo > MethodsList = new List< MethodInfo >();
 
-        public string FullMethodPath;
+        public String FullMethodPath;
 
         static CustomAttribute() {
             MethodsList = new List< MethodInfo >( Assembly.GetExecutingAssembly().GetTypes().SelectMany( t => t.GetMethods() ).Where( m => m.GetCustomAttributes( typeof ( CustomAttribute ), false ).Length > 0 ) );
@@ -39,7 +39,7 @@ namespace Librainian.Threading {
         public Boolean someThing;
 */
 
-        public CustomAttribute( [CallerMemberName] string membername = "" ) {
+        public CustomAttribute( [CallerMemberName] String membername = "" ) {
             var method = MethodsList.FirstOrDefault( m => m.Name == membername );
             if ( method == null || method.DeclaringType == null ) {
                 return; //Not suppose to happen, but safety comes first

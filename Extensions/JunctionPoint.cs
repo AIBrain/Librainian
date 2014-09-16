@@ -78,7 +78,7 @@ namespace Librainian.Extensions {
         ///     This prefix indicates to NTFS that the path is to be treated as a non-interpreted path
         ///     in the virtual file system.
         /// </summary>
-        private const string NonInterpretedPathPrefix = @"\??\";
+        private const String NonInterpretedPathPrefix = @"\??\";
 
         /// <summary>
         ///     Creates a junction point from the specified directory to the specified target directory.
@@ -91,7 +91,7 @@ namespace Librainian.Extensions {
         ///     Thrown when the junction point could not be created or when an existing directory was
         ///     found and <paramref name="overwrite" /> if false
         /// </exception>
-        public static void Create( string junctionPoint, string targetDir, Boolean overwrite ) {
+        public static void Create( String junctionPoint, String targetDir, Boolean overwrite ) {
             targetDir = Path.GetFullPath( targetDir );
 
             if ( !Directory.Exists( targetDir ) ) {
@@ -147,7 +147,7 @@ namespace Librainian.Extensions {
         /// </summary>
         /// <remarks>Only works on NTFS.</remarks>
         /// <param name="junctionPoint">The junction point path</param>
-        public static void Delete( string junctionPoint ) {
+        public static void Delete( String junctionPoint ) {
             if ( !Directory.Exists( junctionPoint ) ) {
                 if ( File.Exists( junctionPoint ) ) {
                     throw new IOException( "Path is not a junction point." );
@@ -196,7 +196,7 @@ namespace Librainian.Extensions {
         /// <exception cref="IOException">
         ///     Thrown if the specified path is invalid or some other error occurs
         /// </exception>
-        public static Boolean Exists( string path ) {
+        public static Boolean Exists( String path ) {
             if ( !Directory.Exists( path ) ) {
                 return false;
             }
@@ -217,7 +217,7 @@ namespace Librainian.Extensions {
         ///     Thrown when the specified path does not exist, is invalid, is not a junction point, or
         ///     some other error occurs
         /// </exception>
-        public static string GetTarget( string junctionPoint ) {
+        public static String GetTarget( String junctionPoint ) {
             using ( var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericRead ) ) {
                 var target = InternalGetTarget( handle );
                 if ( target == null ) {
@@ -229,12 +229,12 @@ namespace Librainian.Extensions {
         }
 
         [DllImport( "kernel32.dll", SetLastError = true )]
-        private static extern IntPtr CreateFile( string lpFileName, EFileAccess dwDesiredAccess, EFileShare dwShareMode, IntPtr lpSecurityAttributes, ECreationDisposition dwCreationDisposition, EFileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
+        private static extern IntPtr CreateFile( String lpFileName, EFileAccess dwDesiredAccess, EFileShare dwShareMode, IntPtr lpSecurityAttributes, ECreationDisposition dwCreationDisposition, EFileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
 
         [DllImport( "kernel32.dll", CharSet = CharSet.Auto, SetLastError = true )]
         private static extern Boolean DeviceIoControl( IntPtr hDevice, uint dwIoControlCode, IntPtr InBuffer, int nInBufferSize, IntPtr OutBuffer, int nOutBufferSize, out int pBytesReturned, IntPtr lpOverlapped );
 
-        private static string InternalGetTarget( SafeHandle handle ) {
+        private static String InternalGetTarget( SafeHandle handle ) {
             var outBufferSize = Marshal.SizeOf( typeof ( REPARSE_DATA_BUFFER ) );
             var outBuffer = Marshal.AllocHGlobal( outBufferSize );
 
@@ -270,7 +270,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        private static SafeFileHandle OpenReparsePoint( string reparsePoint, EFileAccess accessMode ) {
+        private static SafeFileHandle OpenReparsePoint( String reparsePoint, EFileAccess accessMode ) {
             var reparsePointHandle = new SafeFileHandle( CreateFile( reparsePoint, accessMode, EFileShare.Read | EFileShare.Write | EFileShare.Delete, IntPtr.Zero, ECreationDisposition.OpenExisting, EFileAttributes.BackupSemantics | EFileAttributes.OpenReparsePoint, IntPtr.Zero ), true );
 
             if ( Marshal.GetLastWin32Error() != 0 ) {
@@ -280,7 +280,7 @@ namespace Librainian.Extensions {
             return reparsePointHandle;
         }
 
-        private static void ThrowLastWin32Error( string message ) {
+        private static void ThrowLastWin32Error( String message ) {
             throw new IOException( message, Marshal.GetExceptionForHR( Marshal.GetHRForLastWin32Error() ) );
         }
 
@@ -357,30 +357,30 @@ namespace Librainian.Extensions {
             public readonly UInt16 Reserved;
 
             /// <summary>
-            ///     Offset, in bytes, of the substitute name string in the PathBuffer array.
+            ///     Offset, in bytes, of the substitute name String in the PathBuffer array.
             /// </summary>
             public UInt16 SubstituteNameOffset;
 
             /// <summary>
-            ///     Length, in bytes, of the substitute name string. If this string is null-terminated,
+            ///     Length, in bytes, of the substitute name String. If this String is null-terminated,
             ///     SubstituteNameLength does not include space for the null character.
             /// </summary>
             public UInt16 SubstituteNameLength;
 
             /// <summary>
-            ///     Offset, in bytes, of the print name string in the PathBuffer array.
+            ///     Offset, in bytes, of the print name String in the PathBuffer array.
             /// </summary>
             public UInt16 PrintNameOffset;
 
             /// <summary>
-            ///     Length, in bytes, of the print name string. If this string is null-terminated,
+            ///     Length, in bytes, of the print name String. If this String is null-terminated,
             ///     PrintNameLength does not include space for the null character.
             /// </summary>
             public UInt16 PrintNameLength;
 
             /// <summary>
-            ///     A buffer containing the unicode-encoded path string. The path string contains the
-            ///     substitute name string and print name string.
+            ///     A buffer containing the unicode-encoded path String. The path String contains the
+            ///     substitute name String and print name String.
             /// </summary>
             [MarshalAs( UnmanagedType.ByValArray, SizeConst = 0x3FF0 )] public byte[] PathBuffer;
         }

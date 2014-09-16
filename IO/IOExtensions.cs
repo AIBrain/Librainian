@@ -379,7 +379,7 @@ namespace Librainian.IO {
         /// <param name="progress"></param>
         /// <param name="eta"></param>
         /// <returns></returns>
-        public static Task Copy( Document source, Document destination, Action<double> progress, Action<TimeSpan> eta ) {
+        public static Task Copy( Document source, Document destination, Action<Double> progress, Action<TimeSpan> eta ) {
             return Task.Run( () => {
                 var computer = new Computer();
 
@@ -503,7 +503,7 @@ namespace Librainian.IO {
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
-        public static void FindFiles( IEnumerable<string> fileSearchPatterns, DirectoryInfo startingFolder, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+        public static void FindFiles( IEnumerable<String> fileSearchPatterns, DirectoryInfo startingFolder, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( "fileSearchPatterns" );
             }
@@ -511,7 +511,7 @@ namespace Librainian.IO {
                 throw new ArgumentNullException( "startingFolder" );
             }
             try {
-                var searchPatterns = fileSearchPatterns as IList<string> ?? fileSearchPatterns.ToList();
+                var searchPatterns = fileSearchPatterns as IList<String> ?? fileSearchPatterns.ToList();
                 searchPatterns.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( searchPattern => {
 #if DEEPDEBUG
                     String.Format( "Searching folder {0} for {1}.", startingFolder.FullName, searchPattern ).TimeDebug();
@@ -821,7 +821,7 @@ namespace Librainian.IO {
         /// <param name="fileMissingRetries"></param>
         /// <param name="retryDelay"></param>
         /// <returns></returns>
-        public static async Task<string> ReadTextAsync( String filePath, int? bufferSize = 4096, int? fileMissingRetries = 10, TimeSpan? retryDelay = null ) {
+        public static async Task<String> ReadTextAsync( String filePath, int? bufferSize = 4096, int? fileMissingRetries = 10, TimeSpan? retryDelay = null ) {
             if ( String.IsNullOrWhiteSpace( filePath ) ) {
                 throw new ArgumentNullException( "filePath" );
             }
@@ -966,7 +966,7 @@ namespace Librainian.IO {
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
-        public static void SearchAllDrives( [NotNull] IEnumerable<string> fileSearchPatterns, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+        public static void SearchAllDrives( [NotNull] IEnumerable<String> fileSearchPatterns, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( "fileSearchPatterns" );
             }
@@ -1051,7 +1051,7 @@ namespace Librainian.IO {
             return managed;
         }
 
-        public static IEnumerable<string> ToPaths( [NotNull] this DirectoryInfo directoryInfo ) {
+        public static IEnumerable<String> ToPaths( [NotNull] this DirectoryInfo directoryInfo ) {
             if ( directoryInfo == null ) {
                 throw new ArgumentNullException( "directoryInfo" );
             }
@@ -1167,7 +1167,7 @@ namespace Librainian.IO {
                 throw new ArgumentNullException( "folder" );
             }
             try {
-                string randomFile = null;
+                String randomFile = null;
                 try {
                     randomFile = Path.GetTempFileName();
                 }

@@ -23,16 +23,16 @@ namespace Librainian.Collections {
         protected readonly ConcurrentDictionary<TKey, BigInteger> Container = new ConcurrentDictionary<TKey, BigInteger>();
 
         [NotNull]
-        public string FriendlyName {
+        public String FriendlyName {
             get {
                 return Types.GetPropertyName( () => this );
             }
         }
 
         [UsedImplicitly]
-        protected string DebuggerDisplay {
+        protected String DebuggerDisplay {
             get {
-                return string.Format( "{0}({1}) ", this.FriendlyName, this.Container.Select( pair => pair.Key.ToString() ).ToStrings() );
+                return String.Format( "{0}({1}) ", this.FriendlyName, this.Container.Select( pair => pair.Key.ToString() ).ToStrings() );
             }
         }
 

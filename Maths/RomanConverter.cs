@@ -45,7 +45,7 @@ namespace Librainian.Maths {
         /// <param name="number"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static string ToRoman( this short number ) {
+        public static String ToRoman( this short number ) {
             if ( !number.Between( ( short )1, ( short )3999 ) ) {
 
                 // per https://en.wikipedia.org/wiki/Roman_numerals#Large_numbers

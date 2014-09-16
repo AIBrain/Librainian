@@ -304,9 +304,9 @@ namespace Librainian.Collections {
         ///     <para>
         ///         Suppose <i>x</i> is a collection known to contain
         ///         only strings. The following code can be used to dump the collection into a newly
-        ///         allocated array of <see cref="string" />s:
-        ///         <code language="c#"> string[] y = (string[])
-        /// x.ToArray(new string[0]); </code>
+        ///         allocated array of <see cref="String" />s:
+        ///         <code language="c#"> String[] y = (String[])
+        /// x.ToArray(new String[0]); </code>
         ///     </para>
         ///     <para>
         ///         Note that <i>ToArray(new T[0])</i> is
@@ -352,12 +352,12 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     Returns a <see cref="string" /> that represents the current <see cref="object" />.
+        ///     Returns a <see cref="String" /> that represents the current <see cref="object" />.
         /// </summary>
         /// <remarks>This implementation list out all the elements separated by comma.</remarks>
-        /// <returns>A <see cref="string" /> that represents the current <see cref="object" />.</returns>
+        /// <returns>A <see cref="String" /> that represents the current <see cref="object" />.</returns>
         /// <filterpriority>2</filterpriority>
-        public override string ToString() {
+        public override String ToString() {
             var sb = new StringBuilder();
             sb.Append( this.GetType().Name ).Append( "(" );
             var first = true;
@@ -376,7 +376,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <remarks>
         ///     If <typeparamref name="T" /> is <see cref="object" /> but array is actually
-        ///     <c>string[]</c>, the returned array is always <c>string[]</c>.
+        ///     <c>String[]</c>, the returned array is always <c>String[]</c>.
         /// </remarks>
         /// <param name="array">The source array.</param>
         /// <param name="length">Expected length of array.</param>

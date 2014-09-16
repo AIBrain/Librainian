@@ -1022,7 +1022,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="input">JSON value to parse</param>
         /// <param name="culture"></param>
         /// <returns>DateTime</returns>
-        public static DateTime ParseJsonDate( this string input, CultureInfo culture ) {
+        public static DateTime ParseJsonDate( this String input, CultureInfo culture ) {
             input = input.Replace( "\n", "" );
             input = input.Replace( "\r", "" );
 
@@ -1047,7 +1047,7 @@ namespace Librainian.Measurement.Time {
             return ExtractDate( input, @"newDate\((-?\d+)*\)", culture );
         }
 
-        private static DateTime ParseFormattedDate( string input, CultureInfo culture ) {
+        private static DateTime ParseFormattedDate( String input, CultureInfo culture ) {
             var formats = new[] {
 				"u", 
 				"s", 
@@ -1070,7 +1070,7 @@ namespace Librainian.Measurement.Time {
             return default( DateTime );
         }
 
-        private static DateTime ExtractDate( string input, string pattern, IFormatProvider culture ) {
+        private static DateTime ExtractDate( String input, String pattern, IFormatProvider culture ) {
             var dt = DateTime.MinValue;
             var regex = new Regex( pattern );
             if ( !regex.IsMatch( input ) ) {

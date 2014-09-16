@@ -36,10 +36,10 @@ namespace Librainian.Extensions {
     public static class Enum< T > where T : struct {
         private static readonly IEnumerable< T > all = Enum.GetValues( typeof ( T ) ).Cast< T >();
 
-        private static readonly Dictionary< string, T > insensitiveNames = all.ToDictionary( k => Enum.GetName( typeof ( T ), k ).ToUpperInvariant() );
+        private static readonly Dictionary< String, T > insensitiveNames = all.ToDictionary( k => Enum.GetName( typeof ( T ), k ).ToUpperInvariant() );
 
-        private static readonly Dictionary< T, string > names = all.ToDictionary( k => k, v => v.ToString() );
-        private static readonly Dictionary< string, T > sensitiveNames = all.ToDictionary( k => Enum.GetName( typeof ( T ), k ) );
+        private static readonly Dictionary< T, String > names = all.ToDictionary( k => k, v => v.ToString() );
+        private static readonly Dictionary< String, T > sensitiveNames = all.ToDictionary( k => Enum.GetName( typeof ( T ), k ) );
         private static readonly Dictionary< int, T > values = all.ToDictionary( k => Convert.ToInt32( k ) );
 
         public static T? CastOrNull( int value ) {
@@ -56,13 +56,13 @@ namespace Librainian.Extensions {
             return all.Where( e => ( Convert.ToInt32( e ) & flagInt ) != 0 );
         }
 
-        public static string GetName( T value ) {
-            string name;
+        public static String GetName( T value ) {
+            String name;
             names.TryGetValue( value, out name );
             return name;
         }
 
-        public static string[] GetNames() {
+        public static String[] GetNames() {
             return names.Values.ToArray();
         }
 
@@ -74,7 +74,7 @@ namespace Librainian.Extensions {
             return names.Keys.Contains( value );
         }
 
-        public static Boolean IsDefined( string value ) {
+        public static Boolean IsDefined( String value ) {
             return sensitiveNames.Keys.Contains( value );
         }
 
@@ -82,7 +82,7 @@ namespace Librainian.Extensions {
             return values.Keys.Contains( value );
         }
 
-        public static T Parse( string value ) {
+        public static T Parse( String value ) {
             T parsed;
             if ( !sensitiveNames.TryGetValue( value, out parsed ) ) {
                 throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", "value" );
@@ -90,7 +90,7 @@ namespace Librainian.Extensions {
             return parsed;
         }
 
-        public static T Parse( string value, Boolean ignoreCase ) {
+        public static T Parse( String value, Boolean ignoreCase ) {
             if ( !ignoreCase ) {
                 return Parse( value );
             }
@@ -102,7 +102,7 @@ namespace Librainian.Extensions {
             return parsed;
         }
 
-        public static T? ParseOrNull( string value ) {
+        public static T? ParseOrNull( String value ) {
             if ( String.IsNullOrEmpty( value ) ) {
                 return null;
             }
@@ -115,7 +115,7 @@ namespace Librainian.Extensions {
             return null;
         }
 
-        public static T? ParseOrNull( string value, Boolean ignoreCase ) {
+        public static T? ParseOrNull( String value, Boolean ignoreCase ) {
             if ( !ignoreCase ) {
                 return ParseOrNull( value );
             }
@@ -139,11 +139,11 @@ namespace Librainian.Extensions {
             return values.TryGetValue( combined, out result ) ? result : default( T );
         }
 
-        public static Boolean TryParse( string value, out T returnValue ) {
+        public static Boolean TryParse( String value, out T returnValue ) {
             return sensitiveNames.TryGetValue( value, out returnValue );
         }
 
-        public static Boolean TryParse( string value, Boolean ignoreCase, out T returnValue ) {
+        public static Boolean TryParse( String value, Boolean ignoreCase, out T returnValue ) {
             return ignoreCase ? insensitiveNames.TryGetValue( value.ToUpperInvariant(), out returnValue ) : TryParse( value, out returnValue );
         }
     }

@@ -68,13 +68,13 @@ namespace Librainian.IO {
         /// <returns></returns>
         /// <seealso cref="http://msdn.microsoft.com/en-us/library/windows/desktop/aa364930(v=vs.85).aspx" />
         [DllImport( "kernel32.dll" )]
-        public static extern uint GetCompressedFileSizeW( [In] [MarshalAs( UnmanagedType.LPWStr )] string lpFileName, [Out] [MarshalAs( UnmanagedType.U4 )] out uint lpFileSizeHigh );
+        public static extern uint GetCompressedFileSizeW( [In] [MarshalAs( UnmanagedType.LPWStr )] String lpFileName, [Out] [MarshalAs( UnmanagedType.U4 )] out uint lpFileSizeHigh );
 
         [DllImport( "kernel32.dll", SetLastError = true, PreserveSig = true )]
-        public static extern uint GetDiskFreeSpaceW( [In] [MarshalAs( UnmanagedType.LPWStr )] string lpRootPathName, out uint lpSectorsPerCluster, out uint lpBytesPerSector, out uint lpNumberOfFreeClusters, out uint lpTotalNumberOfClusters );
+        public static extern uint GetDiskFreeSpaceW( [In] [MarshalAs( UnmanagedType.LPWStr )] String lpRootPathName, out uint lpSectorsPerCluster, out uint lpBytesPerSector, out uint lpNumberOfFreeClusters, out uint lpTotalNumberOfClusters );
 
         [DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
-        private static extern bool MoveFileWithProgress( string lpExistingFileName, string lpNewFileName, CopyProgressRoutine lpProgressRoutine, IntPtr lpData, MoveFileFlags dwFlags );
+        private static extern bool MoveFileWithProgress( String lpExistingFileName, String lpNewFileName, CopyProgressRoutine lpProgressRoutine, IntPtr lpData, MoveFileFlags dwFlags );
     }
 
     internal delegate CopyProgressResult CopyProgressRoutine( long totalFileSize, long totalBytesTransferred, long streamSize, long streamBytesTransferred, uint dwStreamNumber, CopyProgressCallbackReason dwCallbackReason, IntPtr hSourceFile, IntPtr hDestinationFile, IntPtr lpData );

@@ -100,7 +100,7 @@ namespace Librainian.Database {
         //        if ( null != instance ) {
         //            instance.Start();
         //            OutputFolder = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), DatabaseDirectory );
-        //            var mdfFilename = string.Format( "{0}.mdf", DatabaseName );
+        //            var mdfFilename = String.Format( "{0}.mdf", DatabaseName );
         //            DatabaseMdfPath = Path.Combine( OutputFolder, mdfFilename );
         //            DatabaseLogPath = Path.Combine( OutputFolder, String.Format( "{0}_log.ldf", DatabaseName ) );
 
@@ -113,7 +113,7 @@ namespace Librainian.Database {
             private set;
         }
 
-        public static string OutputFolder {
+        public static String OutputFolder {
             get;
             set;
         }
@@ -141,34 +141,34 @@ namespace Librainian.Database {
     }
 
     public class LocalDb : IDisposable {
-        public const string DatabaseDirectory = "Data";
+        public const String DatabaseDirectory = "Data";
 
-        public LocalDb( string databaseName = null ) {
-            this.DatabaseName = string.IsNullOrWhiteSpace( databaseName ) ? Guid.NewGuid().ToString( "N" ) : databaseName;
+        public LocalDb( String databaseName = null ) {
+            this.DatabaseName = String.IsNullOrWhiteSpace( databaseName ) ? Guid.NewGuid().ToString( "N" ) : databaseName;
             this.CreateDatabase();
         }
 
-        public string ConnectionStringName {
+        public String ConnectionStringName {
             get;
             private set;
         }
 
-        public string DatabaseName {
+        public String DatabaseName {
             get;
             private set;
         }
 
-        public string OutputFolder {
+        public String OutputFolder {
             get;
             private set;
         }
 
-        public string DatabaseMdfPath {
+        public String DatabaseMdfPath {
             get;
             private set;
         }
 
-        public string DatabaseLogPath {
+        public String DatabaseLogPath {
             get;
             private set;
         }
@@ -183,7 +183,7 @@ namespace Librainian.Database {
 
         private void CreateDatabase() {
             this.OutputFolder = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), DatabaseDirectory );
-            var mdfFilename = string.Format( "{0}.mdf", this.DatabaseName );
+            var mdfFilename = String.Format( "{0}.mdf", this.DatabaseName );
             this.DatabaseMdfPath = Path.Combine( this.OutputFolder, mdfFilename );
             this.DatabaseLogPath = Path.Combine( this.OutputFolder, String.Format( "{0}_log.ldf", this.DatabaseName ) );
 
@@ -212,7 +212,7 @@ namespace Librainian.Database {
                 using ( var connection = new SqlConnection( connectionString ) ) {
                     connection.Open();
                     var cmd = connection.CreateCommand();
-                    cmd.CommandText = string.Format( "ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; exec sp_detach_db '{0}'", this.DatabaseName );
+                    cmd.CommandText = String.Format( "ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; exec sp_detach_db '{0}'", this.DatabaseName );
                     cmd.ExecuteNonQuery();
                 }
             }

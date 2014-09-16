@@ -22,7 +22,7 @@ namespace Librainian.AmazedSaint {
     using System.Collections.Generic;
 
     public interface IHierarchyWrapperProvider< T > {
-        IEnumerable< KeyValuePair< string, T > > Attributes { get; }
+        IEnumerable< KeyValuePair< String, T > > Attributes { get; }
 
         IEnumerable< T > Elements { get; }
 

@@ -47,12 +47,12 @@ namespace Librainian.IO {
         private String DebuggerDisplay { get { return this.FullName; } }
 
         /// <summary>
-        /// Returns a string that represents the current object.
+        /// Returns a String that represents the current object.
         /// </summary>
         /// <returns>
-        /// A string that represents the current object.
+        /// A String that represents the current object.
         /// </returns>
-        public override string ToString() {
+        public override String ToString() {
             return DebuggerDisplay;
         }
 
@@ -72,7 +72,7 @@ namespace Librainian.IO {
         protected readonly DirectoryInfo DirectoryInfo;
 
         [NotNull]
-        public string FullName { get { return this.DirectoryInfo.FullName; } }
+        public String FullName { get { return this.DirectoryInfo.FullName; } }
 
         /// <summary>
         ///     <para>The <see cref="Folder" />.</para>

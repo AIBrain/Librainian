@@ -57,7 +57,7 @@ namespace Librainian.Maths {
 
         public const Boolean No = !Yes;
 
-        public const string NumberBaseChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        public const String NumberBaseChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         public const Boolean Off = !On;
 
@@ -432,7 +432,7 @@ namespace Librainian.Maths {
         /// <param name="items"></param>
         /// <returns></returns>
         /// <seealso cref="http://wikipedia.org/wiki/Geometric_mean" />
-        public static double GeometricMean( this IEnumerable<double> data, int items ) {
+        public static Double GeometricMean( this IEnumerable<Double> data, int items ) {
             var aggregate = data.Aggregate( 1.0, ( current, d ) => current * d );
             return Math.Pow( aggregate, ( 1.0 / items ) );
         }
@@ -468,7 +468,7 @@ namespace Librainian.Maths {
         /// <seealso cref="http://wikipedia.org/wiki/Geometric_mean" />
         public static BigDecimal GeometricMean( this IEnumerable<BigDecimal> data, int items ) {
             var aggregate = data.Aggregate( BigDecimal.One, ( current, d ) => current * d );
-            return BigDecimal.Pow( ( double )aggregate, 1.0 / items ); //BUG possible conversion errors here
+            return BigDecimal.Pow( ( Double )aggregate, 1.0 / items ); //BUG possible conversion errors here
         }
 
         public static Byte GetHashCodeByte<TLhs>( this TLhs objectA, Byte maximum = Byte.MaxValue ) {
@@ -629,18 +629,18 @@ namespace Librainian.Maths {
 
         /// <summary>
         ///     <see
-        ///         cref="http://stackoverflow.com/questions/17575375/how-do-i-convert-an-int-to-a-string-in-c-sharp-without-using-tostring" />
+        ///         cref="http://stackoverflow.com/questions/17575375/how-do-i-convert-an-int-to-a-String-in-c-sharp-without-using-tostring" />
         /// </summary>
         /// <param name="number"></param>
         /// <param name="base"></param>
         /// <param name="minDigits"></param>
         /// <returns></returns>
-        public static string ToStringWithBase( this int number, int @base, int minDigits = 1 ) {
+        public static String ToStringWithBase( this int number, int @base, int minDigits = 1 ) {
             if ( minDigits < 1 ) {
                 minDigits = 1;
             }
             if ( number == 0 ) {
-                return new string( '0', minDigits );
+                return new String( '0', minDigits );
             }
             var s = "";
             if ( @base < 2 || @base > NumberBaseChars.Length ) {
@@ -1028,7 +1028,7 @@ namespace Librainian.Maths {
         }
 
         public static Double Root( this Decimal x, Decimal root ) {
-            return Math.Pow( ( double )x, ( Double )( 1.0m / root ) ); //BUG possible conversion errors here
+            return Math.Pow( ( Double )x, ( Double )( 1.0m / root ) ); //BUG possible conversion errors here
         }
 
         /// <summary>
@@ -1076,9 +1076,9 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Tuple<double, double> Split( this Double value ) {
+        public static Tuple<Double, Double> Split( this Double value ) {
             var parts = value.ToString( "R" ).Split( '.' );
-            return new Tuple<double, double>( Double.Parse( parts[ 0 ] ), Double.Parse( "0." + parts[ 1 ] ) );
+            return new Tuple<Double, Double>( Double.Parse( parts[ 0 ] ), Double.Parse( "0." + parts[ 1 ] ) );
         }
 
         /// <summary>
@@ -1105,19 +1105,19 @@ namespace Librainian.Maths {
             return number * number;
         }
 
-        public static Double SquareRootOfProducts( this IEnumerable<double> data ) {
-            var sorted = new List<double>( data.Where( d => Math.Abs( d ) >= Double.Epsilon ).OrderBy( d => d ) );
+        public static Double SquareRootOfProducts( this IEnumerable<Double> data ) {
+            var sorted = new List<Double>( data.Where( d => Math.Abs( d ) >= Double.Epsilon ).OrderBy( d => d ) );
 
             var aggregate = BigDecimal.One;
 
             while ( sorted.Any() ) {
-                double smallest;
+                Double smallest;
                 sorted.TakeFirst( out smallest );
                 smallest.Should().NotBe( Double.NaN );
                 smallest.Should().NotBe( Double.NegativeInfinity );
                 smallest.Should().NotBe( Double.PositiveInfinity );
 
-                double largest;
+                Double largest;
                 if ( !sorted.TakeLast( out largest ) ) {
                     largest = 1;
                 }
@@ -1133,8 +1133,8 @@ namespace Librainian.Maths {
                 //aggregate.Should().NotBe( Double.PositiveInfinity );
             }
 
-            //foreach ( double d in data ) {aggregate = aggregate * d;}
-            return Math.Sqrt( ( double )aggregate );
+            //foreach ( Double d in data ) {aggregate = aggregate * d;}
+            return Math.Sqrt( ( Double )aggregate );
         }
 
         public static Decimal SquareRootOfProducts( this IEnumerable<decimal> data ) {
@@ -1142,7 +1142,7 @@ namespace Librainian.Maths {
             return ( Decimal )Math.Sqrt( ( Double )aggregate );
         }
 
-        public static Double StandardDeviation( [NotNull] this IEnumerable<double> values ) {
+        public static Double StandardDeviation( [NotNull] this IEnumerable<Double> values ) {
             if ( values == null ) {
                 throw new ArgumentNullException( "values" );
             }
@@ -1494,7 +1494,7 @@ namespace Librainian.Maths {
         }
 
         //    BigInteger reFrom = start;
-        public static IEnumerable<double> To( this Double start, Double end ) {
+        public static IEnumerable<Double> To( this Double start, Double end ) {
             var count = end - start + 1;
             for ( var i = 0 ; i < count ; i++ ) {
                 yield return start + i;
@@ -1531,7 +1531,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Create a BigDecimal from a string representation
+        ///     Create a BigDecimal from a String representation
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -1571,18 +1571,18 @@ namespace Librainian.Maths {
             return scaledValue;
         }
 
-        public static string ToHex( this IEnumerable<byte> input ) {
+        public static String ToHex( this IEnumerable<byte> input ) {
             if ( input == null ) {
                 throw new ArgumentNullException( "input" );
             }
             return input.Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
         }
 
-        public static string ToHex( this uint value ) {
+        public static String ToHex( this uint value ) {
             return BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
         }
 
-        public static string ToHex( this ulong value ) {
+        public static String ToHex( this ulong value ) {
             return BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
         }
 
@@ -1593,7 +1593,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     <para>Attempt to parse a fraction from a string.</para>
+        ///     <para>Attempt to parse a fraction from a String.</para>
         /// </summary>
         /// <example>
         ///     " 1234 / 346 "
@@ -1647,7 +1647,7 @@ namespace Librainian.Maths {
         }
 
         /*
-                public static string Pluralize( this string value, int count ) {
+                public static String Pluralize( this String value, int count ) {
                     if ( count == 1 ) {
                         return value;
                     }

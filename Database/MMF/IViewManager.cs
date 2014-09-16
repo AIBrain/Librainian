@@ -66,6 +66,6 @@ namespace Librainian.Database.MMF {
         /// <param name="fileName">Filename to store the data</param>
         /// <param name="capacity">Number of items to allocate</param>
         /// <param name="dataSize">Size of datastructure</param>
-        void Initialize( string fileName, long capacity, int dataSize );
+        void Initialize( String fileName, long capacity, int dataSize );
     }
 }

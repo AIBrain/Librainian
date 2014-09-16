@@ -78,7 +78,7 @@ namespace Librainian.Maths {
         /// <returns>
         ///     The String representation of the current value.
         /// </returns>
-        string ToString();
+        String ToString();
 
         /// <summary>
         ///     Atomically sets the value to the <paramref name="newValue" />

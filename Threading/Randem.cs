@@ -49,7 +49,7 @@ namespace Librainian.Threading {
         /// <summary>
         /// </summary>
         [NotNull]
-        public static readonly ConcurrentDictionary<Type, string[]> EnumDictionary = new ConcurrentDictionary<Type, string[]>();
+        public static readonly ConcurrentDictionary<Type, String[]> EnumDictionary = new ConcurrentDictionary<Type, String[]>();
 
         [NotNull]
         public static readonly ThreadLocal<byte[]> LocalUInt64Buffers = new ThreadLocal<byte[]>( valueFactory: () => new byte[ sizeof( UInt64 ) ], trackAllValues: false );
@@ -383,7 +383,7 @@ namespace Librainian.Threading {
             return NextDouble( min: variance.Low, max: variance.High );
         }
 
-        private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<byte[]>( () => new byte[ sizeof( double ) ], false );
+        private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<byte[]>( () => new byte[ sizeof( Double ) ], false );
 
         /// <summary>
         /// Returns a random Double between <paramref name="min" /> and <paramref name="max" />.
@@ -396,7 +396,7 @@ namespace Librainian.Threading {
             if ( Double.IsNaN( range ) ) {
                 throw new ArgumentOutOfRangeException();
             }
-            double result;
+            Double result;
 
             if ( !Double.IsInfinity( range ) ) {
                 result = min + ( Instance.NextDouble() * range );
@@ -477,7 +477,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Generate a random string.
+        /// Generate a random String.
         /// </summary>
         /// <param name="length">How many characters long.</param>
         /// <param name="lowers"><see cref="ParsingExtensions.Lowercase"/></param>

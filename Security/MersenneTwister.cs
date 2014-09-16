@@ -91,7 +91,7 @@
         }
 
         public virtual uint NextUInt( uint maxValue ) {
-            return ( uint )( this.GenerateUInt() / ( ( double )uint.MaxValue / maxValue ) );
+            return ( uint )( this.GenerateUInt() / ( ( Double )uint.MaxValue / maxValue ) );
         }
 
         public virtual uint NextUInt( uint minValue, uint maxValue ) /* throws ArgumentOutOfRangeException */
@@ -100,7 +100,7 @@
                 throw new ArgumentOutOfRangeException();
             }
 
-            return ( uint )( this.GenerateUInt() / ( ( double )uint.MaxValue / ( maxValue - minValue ) ) + minValue );
+            return ( uint )( this.GenerateUInt() / ( ( Double )uint.MaxValue / ( maxValue - minValue ) ) + minValue );
         }
 
         public override int Next() {
@@ -147,8 +147,8 @@
             }
         }
 
-        public override double NextDouble() {
-            return ( double )this.GenerateUInt() / ( ( ulong )uint.MaxValue + 1 );
+        public override Double NextDouble() {
+            return ( Double )this.GenerateUInt() / ( ( ulong )uint.MaxValue + 1 );
         }
     }
 }

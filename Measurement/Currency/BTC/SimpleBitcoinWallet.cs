@@ -40,7 +40,7 @@ namespace Librainian.Measurement.Currency.BTC {
     /// </remarks>
     [DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
-    public class SimpleBitcoinWallet : ISimpleWallet {
+    public class SimpleBitcoinWallet : ISimpleWallet, IEquatable<SimpleBitcoinWallet> {
 
         [CanBeNull]
         private readonly Label _flashLabelOnChanges;
@@ -146,7 +146,15 @@ namespace Librainian.Measurement.Currency.BTC {
             set;
         }
 
-        public override string ToString() {
+        /// <summary>
+        /// Indicates whether the current wallet has the same balance as the <paramref name="other"/> wallet.
+        /// </summary>
+        /// <param name="other">Annother to compare with this wallet.</param>
+        public bool Equals( SimpleBitcoinWallet other ) {
+            return this.Balance == other.Balance;
+        }
+
+        public override String ToString() {
             return String.Format( "฿ {0:f8}", this.Balance );
         }
 
@@ -214,15 +222,14 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         public Boolean TryUpdateBalance( Decimal btc, Boolean sanitizeBtc = true ) {
-            if ( sanitizeBtc ) {
-                btc = btc.Sanitize();
-            }
 
             try {
                 if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
                     return false;
                 }
-                this._balance = btc;
+                
+                this._balance = sanitizeBtc ? btc.Sanitize() : btc;
+
                 _flashLabelOnChanges.Flash();
                 return true;
             }
@@ -320,6 +327,11 @@ namespace Librainian.Measurement.Currency.BTC {
                     onAnyUpdate( btc );
                 }
             }
+        }
+
+        public void TryUpdateBalance( SimpleBitcoinWallet simpleBitcoinWallet ) {
+            this.TryUpdateBalance( simpleBitcoinWallet.Balance );
+
         }
     }
 }

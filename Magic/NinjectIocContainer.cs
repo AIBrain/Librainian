@@ -71,8 +71,8 @@ namespace Librainian.Magic {
             return bob;
         }
 
-        public T Get<T>( string name, string value ) {
-            var result = this.Kernel.TryGet<T>( metadata => metadata.Has( name ) && metadata.Get<string>( name ).Like( value ) );
+        public T Get<T>( String name, String value ) {
+            var result = this.Kernel.TryGet<T>( metadata => metadata.Has( name ) && metadata.Get<String>( name ).Like( value ) );
 
             if ( Equals( result, default( T ) ) ) {
                 throw new InvalidOperationException( null );

@@ -26,28 +26,28 @@ namespace Librainian.Extensions {
         private static readonly LargeSizeFormatProvider FormatProvider = new LargeSizeFormatProvider();
 
         /// <summary>
-        ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" string.
+        ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.
         /// </summary>
         public static String ToLargeSize( this Decimal @bytes ) {
             return String.Format( FormatProvider, "{0:fs}", @bytes );
         }
 
         /// <summary>
-        ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" string.
+        ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.
         /// </summary>
         public static String ToLargeSize( this UInt64 @bytes ) {
             return String.Format( FormatProvider, "{0:fs}", @bytes );
         }
 
         /// <summary>
-        ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" string.
+        ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.
         /// </summary>
         public static String ToLargeSize( this long @bytes ) {
             return String.Format( FormatProvider, "{0:fs}", @bytes );
         }
 
         /// <summary>
-        ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" string.
+        ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.
         /// </summary>
         public static String ToLargeSize( this int @bytes ) {
             return String.Format( FormatProvider, "{0:fs}", @bytes );

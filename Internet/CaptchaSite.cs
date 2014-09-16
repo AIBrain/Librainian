@@ -1,10 +1,18 @@
 ﻿namespace Librainian.Internet {
+
     using System;
     using System.Runtime.Serialization;
     using Annotations;
 
     [DataContract( IsReference = true )]
     public class CaptchaSite {
+
+        [DataMember]
+        public CaptchaStatus CaptchaStatus {
+            get;
+            set;
+        }
+
         /// <summary>
         ///     URI of the captcha.
         /// </summary>
@@ -14,23 +22,6 @@
             get;
             set;
         }
-
-        [DataMember]
-        public CaptchaStatus CaptchaStatus {
-            get;
-            set;
-        }
-
-
-        /// <summary>
-        ///     When this website was added.
-        /// </summary>
-        [DataMember]
-        public DateTime WhenAdded {
-            get;
-            set;
-        }
-
 
         /// <summary>
         ///     A count of the requests to scrape this captcha.
@@ -50,7 +41,13 @@
             set;
         }
 
-
-
+        /// <summary>
+        ///     When this website was added.
+        /// </summary>
+        [DataMember]
+        public DateTime WhenAdded {
+            get;
+            set;
+        }
     }
 }

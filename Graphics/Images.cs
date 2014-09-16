@@ -126,7 +126,7 @@ namespace Librainian.Graphics {
         ///             cref="BitmapImage" />
         ///         first, and then
         ///     </para>
-        ///     <para><see cref="Image.FromFile(string)" /> next.</para>
+        ///     <para><see cref="Image.FromFile(String)" /> next.</para>
         /// </summary>
         /// <param name="document"></param>
         /// <returns></returns>
@@ -145,7 +145,7 @@ namespace Librainian.Graphics {
         ///             cref="BitmapImage" />
         ///         first, and then
         ///     </para>
-        ///     <para><see cref="Image.FromFile(string)" /> next.</para>
+        ///     <para><see cref="Image.FromFile(String)" /> next.</para>
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>

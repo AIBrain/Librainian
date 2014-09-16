@@ -75,7 +75,7 @@ namespace Librainian.Parsing {
             }
         }
 
-        public List< string > GetDefinitions( String word ) {
+        public List< String > GetDefinitions( String word ) {
             var results = new List< String >( 5 );
             return results;
         }

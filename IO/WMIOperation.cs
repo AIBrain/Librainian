@@ -23,6 +23,7 @@
 
 namespace Librainian.IO {
 
+    using System;
     using System.Management;
 
     /// <summary>
@@ -32,7 +33,7 @@ namespace Librainian.IO {
     /// </summary>
     public class WMIOperation {
 
-        public static ManagementObjectCollection WMIQuery( string query ) {
+        public static ManagementObjectCollection WMIQuery( String query ) {
             var oQuery = new ObjectQuery( query );
             using ( var oSearcher = new ManagementObjectSearcher( oQuery ) ) {
                 return oSearcher.Get();

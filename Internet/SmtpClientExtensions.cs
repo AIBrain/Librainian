@@ -26,7 +26,7 @@ namespace Librainian.Internet {
         /// <param name="body">A String that contains the message body.</param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A Task that represents the asynchronous send.</returns>
-        public static Task SendTask( this SmtpClient smtpClient, string from, string recipients, string subject, string body, object userToken ) {
+        public static Task SendTask( this SmtpClient smtpClient, String from, String recipients, String subject, String body, object userToken ) {
             return SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( from, recipients, subject, body, tcs ) );
         }
 

@@ -187,7 +187,7 @@ namespace Librainian.Measurement.Currency.LTC {
             }
         }
 
-        public override string ToString() {
+        public override String ToString() {
             return String.Format( "฿ {0:f8}", this.Balance );
         }
 

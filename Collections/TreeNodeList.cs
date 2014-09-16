@@ -49,8 +49,8 @@ namespace Librainian.Collections {
             return node;
         }
 
-        public override string ToString() {
-            return string.Format( "Count={0}", this.Count );
+        public override String ToString() {
+            return String.Format( "Count={0}", this.Count );
         }
     }
 }

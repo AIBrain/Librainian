@@ -24,7 +24,7 @@ namespace Librainian.Measurement.Currency.BTC {
     using System.Text;
 
     public static class Base58String {
-        private const string Base58Chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+        private const String Base58Chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
         public static Byte[] ToByteArray( String s ) {
             BigInteger bi = 0;

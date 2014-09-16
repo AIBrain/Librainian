@@ -30,18 +30,18 @@ namespace Librainian.Internet.FTP {
             this.Host = "";
         }
 
-        public BasicFTPClient( string theUser, string thePassword, string theHost ) {
+        public BasicFTPClient( String theUser, String thePassword, String theHost ) {
             this.Username = theUser;
             this.Password = thePassword;
             this.Host = theHost;
             this.Port = 21;
         }
 
-        public string Username { get; set; }
+        public String Username { get; set; }
 
-        public string Password { get; set; }
+        public String Password { get; set; }
 
-        public string Host { get; set; }
+        public String Host { get; set; }
 
         public int Port { get; set; }
 
@@ -49,7 +49,7 @@ namespace Librainian.Internet.FTP {
         ///     This method downloads the FTP file specified by "ftppath" and saves it to "destfile". Throws a WebException on
         ///     encountering a network error.
         /// </summary>
-        public void DownloadFile( string ftppath, string destfile ) {
+        public void DownloadFile( String ftppath, String destfile ) {
             // Download the data
             var Data = this.DownloadData( ftppath );
 
@@ -63,7 +63,7 @@ namespace Librainian.Internet.FTP {
         ///     This method downloads the given file name from the FTP server and returns a byte array containing its contents.
         ///     Throws a WebException on encountering a network error.
         /// </summary>
-        public byte[] DownloadData( string path ) {
+        public byte[] DownloadData( String path ) {
             // Get the object used to communicate with the server.
             var request = new WebClient {
                                             Credentials = new NetworkCredential( userName: this.Username, password: this.Password )
@@ -73,7 +73,7 @@ namespace Librainian.Internet.FTP {
             return request.DownloadData( this.BuildServerUri( path ) );
         }
 
-        private Uri BuildServerUri( string Path ) {
+        private Uri BuildServerUri( String Path ) {
             return new Uri( String.Format( "ftp://{0}:{1}/{2}", this.Host, this.Port, Path ) );
         }
 
@@ -83,7 +83,7 @@ namespace Librainian.Internet.FTP {
         /// <param name="ftppath"> Path on the FTP server (/upload/myfile.txt) </param>
         /// <param name="srcfile"> File on the local harddisk to upload </param>
         /// <returns> The server response in a byte[] </returns>
-        public byte[] UploadFile( string ftppath, string srcfile ) {
+        public byte[] UploadFile( String ftppath, String srcfile ) {
             // Read the data from disk
             var fs = new FileStream( srcfile, FileMode.Open );
             var FileData = new byte[fs.Length];
@@ -115,7 +115,7 @@ namespace Librainian.Internet.FTP {
         /// <param name="path"> Path on the FTP server (upload/myfile.txt) </param>
         /// <param name="Data"> A byte[] containing the data to upload </param>
         /// <returns> The server response in a byte[] </returns>
-        public byte[] UploadData( string path, byte[] Data ) {
+        public byte[] UploadData( String path, byte[] Data ) {
             // Get the object used to communicate with the server.
             var request = new WebClient {
                                             Credentials = new NetworkCredential( userName: this.Username, password: this.Password )

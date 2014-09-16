@@ -25,7 +25,7 @@ namespace Librainian.Security {
     using Annotations;
 
     public static class Encryption2 {
-        public static string EncryptString( [NotNull] this string inputString, int dwKeySize, [NotNull] string xmlString ) {
+        public static String EncryptString( [NotNull] this String inputString, int dwKeySize, [NotNull] String xmlString ) {
             // TODO: Add Proper Exception Handlers
             if ( inputString == null ) {
                 throw new ArgumentNullException( "inputString" );
@@ -62,7 +62,7 @@ namespace Librainian.Security {
             return stringBuilder.ToString();
         }
 
-        public static string DecryptString( [NotNull] this string inputString, int dwKeySize, [NotNull] string xmlString ) {
+        public static String DecryptString( [NotNull] this String inputString, int dwKeySize, [NotNull] String xmlString ) {
             // TODO: Add Proper Exception Handlers
             if ( inputString == null ) {
                 throw new ArgumentNullException( "inputString" );

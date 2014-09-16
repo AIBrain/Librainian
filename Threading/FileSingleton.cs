@@ -116,7 +116,7 @@ namespace Librainian.Threading {
             this.Semaphore = null;
         }
 
-        private void Snag( Guid? byGuid = null, FileSystemInfo byInfo = null, string byName = null, TimeSpan? timeout = null ) {
+        private void Snag( Guid? byGuid = null, FileSystemInfo byInfo = null, String byName = null, TimeSpan? timeout = null ) {
             try {
                 this.Snagged = false;
                 this.Semaphore = null;
