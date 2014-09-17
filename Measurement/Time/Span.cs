@@ -44,9 +44,11 @@ namespace Librainian.Measurement.Time {
     [Serializable]
     [Immutable]
     public struct Span : IEquatable<Span>, IComparable<Span>, IComparable<TimeSpan> {
+
         /// <summary>
+        /// <para>1 of each measure of time</para>
         /// </summary>
-        public static readonly Span MatrixID = new Span( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
+        public static readonly Span Identity = new Span( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
 
         public static readonly Span Forever = new Span( yoctoseconds: Decimal.MaxValue, zeptoseconds: Decimal.MaxValue, attoseconds: Decimal.MaxValue, femtoseconds: Decimal.MaxValue, picoseconds: Decimal.MaxValue, nanoseconds: Decimal.MaxValue, microseconds: Decimal.MaxValue, milliseconds: Decimal.MaxValue, seconds: Decimal.MaxValue, minutes: Decimal.MaxValue, hours: Decimal.MaxValue, days: Decimal.MaxValue, weeks: Decimal.MaxValue, months: Decimal.MaxValue, years: Decimal.MaxValue.HalfOf() );
 
@@ -143,21 +145,21 @@ namespace Librainian.Measurement.Time {
         private readonly Lazy<BigInteger> _lazyTotal;
 
         static Span() {
-            MatrixID.Years.Value.Should().Be( 1 );
-            MatrixID.Months.Value.Should().Be( 1 );
-            MatrixID.Weeks.Value.Should().Be( 1 );
-            MatrixID.Days.Value.Should().Be( 1 );
-            MatrixID.Hours.Value.Should().Be( 1 );
-            MatrixID.Minutes.Value.Should().Be( 1 );
-            MatrixID.Seconds.Value.Should().Be( 1 );
-            MatrixID.Milliseconds.Value.Should().Be( 1 );
-            MatrixID.Microseconds.Value.Should().Be( 1 );
-            MatrixID.Nanoseconds.Value.Should().Be( 1 );
-            MatrixID.Picoseconds.Value.Should().Be( 1 );
-            MatrixID.Attoseconds.Value.Should().Be( 1 );
-            MatrixID.Femtoseconds.Value.Should().Be( 1 );
-            MatrixID.Zeptoseconds.Value.Should().Be( 1 );
-            MatrixID.Yoctoseconds.Value.Should().Be( 1 );
+            Identity.Years.Value.Should().Be( 1 );
+            Identity.Months.Value.Should().Be( 1 );
+            Identity.Weeks.Value.Should().Be( 1 );
+            Identity.Days.Value.Should().Be( 1 );
+            Identity.Hours.Value.Should().Be( 1 );
+            Identity.Minutes.Value.Should().Be( 1 );
+            Identity.Seconds.Value.Should().Be( 1 );
+            Identity.Milliseconds.Value.Should().Be( 1 );
+            Identity.Microseconds.Value.Should().Be( 1 );
+            Identity.Nanoseconds.Value.Should().Be( 1 );
+            Identity.Picoseconds.Value.Should().Be( 1 );
+            Identity.Attoseconds.Value.Should().Be( 1 );
+            Identity.Femtoseconds.Value.Should().Be( 1 );
+            Identity.Zeptoseconds.Value.Should().Be( 1 );
+            Identity.Yoctoseconds.Value.Should().Be( 1 );
         }
 
         public Span( BigInteger planckTimes )

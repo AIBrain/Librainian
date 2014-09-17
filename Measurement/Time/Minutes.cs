@@ -53,6 +53,11 @@ namespace Librainian.Measurement.Time {
         public static readonly Minutes Ten = new Minutes( value: 10 );
 
         /// <summary>
+        /// 15
+        /// </summary>
+        public static readonly Minutes Fifteen = new Minutes( value: 15 );
+
+        /// <summary>
         /// 30
         /// </summary>
         public static readonly Minutes Thirty = new Minutes( value: 30 );

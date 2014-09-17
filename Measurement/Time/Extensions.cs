@@ -486,6 +486,10 @@ namespace Librainian.Measurement.Time {
             return new Span( one.Elapsed );
         }
 
+        public static DateTime Ago( this DateTime dateTime, TimeSpan timeSpan ) {
+            return dateTime - timeSpan;
+        }
+
         public static String ToPath( this DateTime dateTime ) {
             var sb = new StringBuilder( String.Empty, 24 );
             sb.AppendFormat( "{0:D}/", dateTime.Year );
