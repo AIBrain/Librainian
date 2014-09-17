@@ -41,28 +41,41 @@ namespace Librainian.Measurement.Currency.BTC {
     [DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
     public class SimpleBitcoinWallet : ISimpleWallet, IEquatable<SimpleBitcoinWallet> {
-
-        [CanBeNull]
-        private readonly Label _flashLabelOnChanges;
-
         public const Decimal BTC = mBTC * 1000.0M;
+
         public const Decimal mBTC = μBTC * 1000.0M;
+
         public const Decimal mBTC1 = mBTC * 1.0M;
+
         public const Decimal mBTC2 = mBTC * 2.0M;
+
         public const Decimal mBTC3 = mBTC * 3.0M;
+
         public const Decimal mBTC4 = mBTC * 4.0M;
+
         public const Decimal mBTC5 = mBTC * 5.0M;
+
         public const Decimal mBTCPerBTC = BTC / mBTC;
-        public const Decimal OneSatoshi = 1.0m * Satoshi;
-        public const Decimal Satoshi = 0.00000001M;
-        public const Decimal SatoshiPerBTC = BTC / Satoshi;
-        public const Decimal TenSatoshi = 10.0m * Satoshi;
-        public const Decimal ZeroSatoshi = 0.00000000M;
-        public const Decimal μBTC = Satoshi * 100.0M;
+
+        public const Decimal OneSatoshi = 1.0m * BTCInOneSatoshi;
+
+        public const Decimal BTCInOneSatoshi = 0.00000001M;
+
+        public const Decimal SatoshiInOneBTC = BTC / BTCInOneSatoshi;
+
+        public const Decimal TenSatoshi = 10.0m * BTCInOneSatoshi;
+
+        public const Decimal ZeroSatoshi = 0.0m * BTCInOneSatoshi;
+
+        public const Decimal μBTC = BTCInOneSatoshi * 100.0M;
+
         public const Decimal μBTCPerBTC = BTC / μBTC;
 
         [NotNull]
         private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+
+        [CanBeNull]
+        private readonly Label _flashLabelOnChanges;
 
         private Decimal _balance;
 
@@ -221,13 +234,18 @@ namespace Librainian.Measurement.Currency.BTC {
             return true;
         }
 
+        /// <summary>
+        /// <para>Directly sets the <see cref="Balance"/> of this wallet.</para>
+        /// </summary>
+        /// <param name="btc"></param>
+        /// <param name="sanitizeBtc"></param>
+        /// <returns></returns>
         public Boolean TryUpdateBalance( Decimal btc, Boolean sanitizeBtc = true ) {
-
             try {
                 if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
                     return false;
                 }
-                
+
                 this._balance = sanitizeBtc ? btc.Sanitize() : btc;
 
                 _flashLabelOnChanges.Flash();
@@ -242,6 +260,10 @@ namespace Librainian.Measurement.Currency.BTC {
                     onAnyUpdate( btc );
                 }
             }
+        }
+
+        public void TryUpdateBalance( SimpleBitcoinWallet simpleBitcoinWallet ) {
+            this.TryUpdateBalance( simpleBitcoinWallet.Balance );
         }
 
         /// <summary>
@@ -327,11 +349,6 @@ namespace Librainian.Measurement.Currency.BTC {
                     onAnyUpdate( btc );
                 }
             }
-        }
-
-        public void TryUpdateBalance( SimpleBitcoinWallet simpleBitcoinWallet ) {
-            this.TryUpdateBalance( simpleBitcoinWallet.Balance );
-
         }
     }
 }

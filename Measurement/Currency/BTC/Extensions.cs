@@ -94,19 +94,19 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         public static long ToSatoshi( this Decimal btc ) {
-            return ( long )( btc * SimpleBitcoinWallet.SatoshiPerBTC );
+            return ( long )( btc * SimpleBitcoinWallet.SatoshiInOneBTC );
         }
 
         public static Decimal ToBTC( this Int16 satoshi ) {
-            return satoshi / SimpleBitcoinWallet.SatoshiPerBTC;
+            return satoshi / SimpleBitcoinWallet.SatoshiInOneBTC;
         }
 
         public static Decimal ToBTC( this Int32 satoshi ) {
-            return satoshi / SimpleBitcoinWallet.SatoshiPerBTC;
+            return satoshi / SimpleBitcoinWallet.SatoshiInOneBTC;
         }
 
         public static Decimal ToBTC( this Int64 satoshi ) {
-            return satoshi / SimpleBitcoinWallet.SatoshiPerBTC;
+            return satoshi / SimpleBitcoinWallet.SatoshiInOneBTC;
         }
 
         public static Decimal TomBTC( this Decimal btc ) {

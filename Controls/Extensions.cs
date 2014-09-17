@@ -195,7 +195,9 @@ namespace Librainian.Controls {
                 if ( control.IsDisposed ) {
                     return;
                 }
-                control.PerformStep();
+                if ( control.Style != ProgressBarStyle.Marquee ) {
+                    control.PerformStep();
+                }
                 control.Refresh();
             } );
         }
