@@ -462,6 +462,17 @@
     <Compile Include="Measurement\Length\PlanckLengths.cs" />
     <Compile Include="Measurement\Length\Feet.cs" />
     <Compile Include="Measurement\Time\Clocks\Second.cs" />
+    <Compile Include="Measurement\Time\FluentTime\AdjustableCurrentTime.cs" />
+    <Compile Include="Measurement\Time\FluentTime\DateTimeCreation.cs" />
+    <Compile Include="Measurement\Time\FluentTime\DateTimeOffsetting.cs" />
+    <Compile Include="Measurement\Time\FluentTime\DateTimeShortCreators.cs" />
+    <Compile Include="Measurement\Time\FluentTime\Next.cs" />
+    <Compile Include="Measurement\Time\FluentTime\TimeSpanCreation.cs" />
+    <Compile Include="Measurement\Time\FluentTime\TimeSpanExtensions.cs" />
+    <Compile Include="Measurement\Time\FluentTime\Today.cs" />
+    <Compile Include="Measurement\Time\FluentTime\Tomorrow.cs" />
+    <Compile Include="Measurement\Time\FluentTime\VariableTimeSpan.cs" />
+    <Compile Include="Measurement\Time\FluentTime\Yesterday.cs" />
     <Compile Include="Measurement\Time\IQuantityOfTime.cs" />
     <Compile Include="Measurement\Time\TimeSystemTimers.cs" />
     <Compile Include="Measurement\Time\Clocks\AMorPM.cs" />
