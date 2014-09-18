@@ -25,7 +25,7 @@ namespace Librainian.Persistence {
         /// <param name="key"></param>
         /// <returns></returns>
         [CanBeNull]
-        TValue this[ TKey key ] {
+        new TValue this[ TKey key ] {
             get;
             set;
         }

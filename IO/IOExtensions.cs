@@ -46,7 +46,6 @@ namespace Librainian.IO {
     using FluentAssertions;
     using Maths;
     using Measurement.Time;
-    using Microsoft.Scripting.Math;
     using Microsoft.VisualBasic.Devices;
     using Microsoft.VisualBasic.FileIO;
     using NUnit.Framework;
@@ -1270,8 +1269,6 @@ namespace Librainian.IO {
 
             var lpBytesReturned = 0;
             short compressionFormatDefault = 1;
-
-            BigInteger bob;
 
             using ( var fileStream = File.Open( path: info.FullName, mode: FileMode.Open, access: FileAccess.ReadWrite, share: FileShare.None ) ) {
                 var success = false;

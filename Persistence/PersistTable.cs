@@ -362,11 +362,14 @@ namespace Librainian.Persistence {
         /// <param name="key">The key of the element to remove.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> is null.</exception>
         /// <exception cref="T:System.NotSupportedException">
-        ///     The <see cref="T:System.Collections.Generic.IDictionary`2" /> is
-        ///     read-only.
+        ///     The <see cref="T:System.Collections.Generic.IDictionary`2" /> is read-only.
         /// </exception>
         public bool Remove( TKey key ) {
-            return this.Dictionary.Remove( key );
+            return this.Dictionary.ContainsKey(key) && this.Dictionary.Remove( key );
+        }
+        
+        public bool TryRemove( TKey key ) {
+            return this.Dictionary.ContainsKey(key) && this.Dictionary.Remove( key );
         }
 
         /// <summary>
@@ -383,6 +386,7 @@ namespace Librainian.Persistence {
         ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
         ///     read-only.
         /// </exception>
+        [Obsolete("haven't fixed this one yet")]
         public bool Remove( KeyValuePair<TKey, TValue> item ) {
             var asItem = new KeyValuePair<TKey, String>( item.Key, Value( item.Value ) ); //TODO ??
             throw new NotImplementedException();

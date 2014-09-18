@@ -996,6 +996,16 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="probability"> </param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
+        public static Boolean Probability( this Double probability ) {
+            var chance = Randem.NextDouble( min: 0.0d, max: 1.0d );
+            return probability >= chance;
+        }
+
+        /// <summary>
+        ///     Returns true <b>if</b> this probability happens.
+        /// </summary>
+        /// <param name="probability"> </param>
+        /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
         public static Boolean Probability( this Single probability ) {
             var chance = Randem.NextSingle( min: 0.0f, max: 1.0f );
             return probability >= chance;

@@ -198,7 +198,7 @@ namespace Librainian.Maths {
             return me.Numerator * other.Denominator == me.Denominator * other.Numerator;
         }
 
-        [CLSCompliant( false )]
+         
         public static explicit operator ulong( BiggerRational value ) {
             return ( ulong )BigInteger.Divide( value.Numerator, value.Denominator );
         }
@@ -211,7 +211,7 @@ namespace Librainian.Maths {
             return BigInteger.Divide( value.Numerator, value.Denominator );
         }
 
-        [CLSCompliant( false )]
+         
         public static explicit operator uint( BiggerRational value ) {
             return ( uint )BigInteger.Divide( value.Numerator, value.Denominator );
         }
@@ -220,7 +220,7 @@ namespace Librainian.Maths {
             return ( float )( Double )value;
         }
 
-        [CLSCompliant( false )]
+         
         public static explicit operator UInt16( BiggerRational value ) {
             return ( UInt16 )BigInteger.Divide( value.Numerator, value.Denominator );
         }
@@ -248,22 +248,22 @@ namespace Librainian.Maths {
             throw new OverflowException( "Value was either too large or too small for a System.Decimal." );
         }
 
-        [CLSCompliant( false )]
+         
         public static implicit operator BiggerRational( sbyte value ) {
             return new BiggerRational( ( BigInteger )value );
         }
 
-        [CLSCompliant( false )]
+         
         public static implicit operator BiggerRational( UInt16 value ) {
             return new BiggerRational( ( BigInteger )value );
         }
 
-        [CLSCompliant( false )]
+         
         public static implicit operator BiggerRational( uint value ) {
             return new BiggerRational( ( BigInteger )value );
         }
 
-        [CLSCompliant( false )]
+         
         public static implicit operator BiggerRational( ulong value ) {
             return new BiggerRational( ( BigInteger )value );
         }
@@ -520,7 +520,7 @@ namespace Librainian.Maths {
             }
         }
 
-        [CLSCompliant( false )]
+         
         public static explicit operator sbyte( BiggerRational value ) {
             return ( sbyte )BigInteger.Divide( value.Numerator, value.Denominator );
         }
