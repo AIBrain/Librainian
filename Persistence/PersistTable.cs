@@ -230,6 +230,13 @@ namespace Librainian.Persistence {
             this[ key ] = value;
         }
 
+        public void TryAdd( TKey key, TValue value ) {
+            if ( !this.Dictionary.ContainsKey( key ) ) {
+                this[ key ] = value;
+            }
+        }
+
+
         /// <summary>
         ///     Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.
         /// </summary>
@@ -508,5 +515,6 @@ namespace Librainian.Persistence {
             }
             return false;
         }
+
     }
 }
