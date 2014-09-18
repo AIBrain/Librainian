@@ -1,12 +1,13 @@
 namespace Librainian.Persistence {
     using System;
+    using System.Collections.Generic;
     using System.Runtime.Serialization;
     using Annotations;
     using IO;
     using Microsoft.Isam.Esent.Collections.Generic;
     using Ninject;
 
-    public interface IPersistTable< in TKey, TValue> : IInitializable, /*IDictionary<TKey,TValue>,*/ IDisposable
+    public interface IPersistTable< TKey, TValue> : IInitializable, IDictionary<TKey,TValue>, IDisposable
         where TKey : IComparable
         where TValue : class {
 
@@ -24,7 +25,7 @@ namespace Librainian.Persistence {
         /// <param name="key"></param>
         /// <returns></returns>
         [CanBeNull]
-        new TValue this[ TKey key ] {
+        TValue this[ TKey key ] {
             get;
             set;
         }

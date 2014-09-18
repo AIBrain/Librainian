@@ -30,6 +30,7 @@ namespace Librainian.IO {
     using System.Linq;
     using System.Runtime.Serialization;
     using System.Security;
+    using System.Windows.Forms;
     using Annotations;
     using Extensions;
     using Parsing;
@@ -143,8 +144,15 @@ namespace Librainian.IO {
             : this( Path.Combine( Environment.GetFolderPath( specialFolder ), appName, subFolder ) ) {
         }
 
+        /// <summary>
+        /// <para>Pass null to automatically fill in <paramref name="companyName"/> and <paramref name="applicationName"/>.</para>
+        /// </summary>
+        /// <param name="specialFolder"></param>
+        /// <param name="companyName"></param>
+        /// <param name="applicationName"></param>
+        /// <param name="subFolder"></param>
         public Folder( Environment.SpecialFolder specialFolder, String companyName, String applicationName, String subFolder )
-            : this( Path.Combine( Environment.GetFolderPath( specialFolder ), companyName, applicationName, subFolder ) ) {
+            : this( Path.Combine( Environment.GetFolderPath( specialFolder ), companyName ?? Application.CompanyName, applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder ) ) {
         }
 
         public Folder( String fullPath, String subFolder )
