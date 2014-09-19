@@ -520,5 +520,8 @@ namespace Librainian.Persistence {
             return false;
         }
 
+        public void Flush() {
+            this.Dictionary.Flush();
+        }
     }
 }

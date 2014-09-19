@@ -23,7 +23,6 @@
         /// <exception cref="ArgumentException"></exception>
         public static Timer Create( this Span interval, [CanBeNull] Action onElapsed ) {
 
-            interval.Milliseconds.Should().BeGreaterOrEqualTo( Milliseconds.Zero );
             if ( interval < Milliseconds.One ) {
                 interval = Milliseconds.One;
             }
@@ -31,8 +30,6 @@
             if ( null == onElapsed ) {
                 onElapsed = () => { };
             }
-
-            interval.Milliseconds.Should().BeGreaterOrEqualTo( Milliseconds.One );
 
             var mills = interval.GetApproximateMilliseconds();
             mills.Should().BeGreaterThan( 0 );

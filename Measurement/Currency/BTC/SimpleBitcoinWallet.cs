@@ -29,6 +29,7 @@ namespace Librainian.Measurement.Currency.BTC {
     using System.Windows.Forms;
     using Annotations;
     using Controls;
+    using Threading;
     using Time;
 
     /// <summary>
@@ -78,12 +79,14 @@ namespace Librainian.Measurement.Currency.BTC {
         private readonly Label _flashLabelOnChanges;
 
         private Decimal _balance;
+        private readonly int _hashcode;
 
         public SimpleBitcoinWallet() {
             this.Timeout = Minutes.One;
+            this._hashcode = Randem.NextInt32();
         }
 
-        public SimpleBitcoinWallet( Label flashLabelOnChanges ) {
+        public SimpleBitcoinWallet( Label flashLabelOnChanges ) : this() {
             this._flashLabelOnChanges = flashLabelOnChanges;
         }
 
@@ -160,11 +163,35 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
+        /// <para>Static comparison.</para>
+        /// <para>Returns true if the wallets are the same instance.</para>
+        /// <para>Returns true if the wallets have the same balance.</para>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals( [ CanBeNull ] SimpleBitcoinWallet left, [ CanBeNull ] SimpleBitcoinWallet right ) {
+
+            if ( ReferenceEquals(left, right) ) {
+                return true;
+            }
+            if ( null == left || null == right ) {
+                return false;
+            }
+
+            return left.Balance == right.Balance;
+        }
+
+        public override int GetHashCode() {
+            return this._hashcode;
+        }
+
+        /// <summary>
         /// Indicates whether the current wallet has the same balance as the <paramref name="other"/> wallet.
         /// </summary>
         /// <param name="other">Annother to compare with this wallet.</param>
         public bool Equals( SimpleBitcoinWallet other ) {
-            return this.Balance == other.Balance;
+            return Equals( this, other );
         }
 
         public override String ToString() {

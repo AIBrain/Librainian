@@ -657,7 +657,10 @@ namespace Librainian.Controls {
         /// <para>Make this <param name="control"></param> <see cref="Usable"/>.</para>
         /// </summary>
         /// <param name="control"></param>
-        public static void TurnOn( this Control control ) {
+        public static void TurnOn( [ CanBeNull ] this Control control ) {
+            if ( null == control ) {
+                return;
+            }
             if ( !TurnOnOrOffReqests.ContainsKey( control ) ) {
                 TurnOnOrOffReqests[ control ] = 0;
             }
