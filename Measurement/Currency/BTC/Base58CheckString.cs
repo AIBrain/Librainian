@@ -21,6 +21,7 @@ namespace Librainian.Measurement.Currency.BTC {
     using System;
     using System.Linq;
     using System.Security.Cryptography;
+    using Parsing;
 
     public static class Base58CheckString {
         public static String FromByteArray( Byte[] b, Byte version ) {

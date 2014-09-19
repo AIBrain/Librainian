@@ -438,6 +438,7 @@
     <Compile Include="Linguistics\Book.cs" />
     <Compile Include="Linguistics\Page.cs" />
     <Compile Include="Misc\ProductExampleClass.cs" />
+    <Compile Include="Parsing\Base58String.cs" />
     <Compile Include="Persistence\IPersistTable.cs" />
     <Compile Include="Persistence\PersistableSettings.cs" />
     <Compile Include="Persistence\PersistTable.cs" />
@@ -454,7 +455,6 @@
     <Compile Include="Security\AESThenHMAC.cs" />
     <Compile Include="Measurement\Currency\BTC\Address.cs" />
     <Compile Include="Measurement\Currency\BTC\Base58CheckString.cs" />
-    <Compile Include="Measurement\Currency\BTC\Base58String.cs" />
     <Compile Include="Measurement\Currency\BTC\Bitcoins.cs" />
     <Compile Include="Measurement\Currency\BTC\BitcoinTransactionMessage.cs" />
     <Compile Include="Measurement\Currency\BTC\CoinWallet.cs" />

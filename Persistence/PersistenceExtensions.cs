@@ -198,6 +198,7 @@ namespace Librainian.Persistence {
 
         /// <summary>
         /// <para><see cref="Folder"/> to store (and pull) application data (current user, local machine, per executable).</para>
+        /// <para><see cref="Environment.SpecialFolder.LocalApplicationData"/></para>
         /// </summary>
         public static readonly Lazy<Folder> DataFolder = new Lazy<Folder>( () => {
             //var folderPath = Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData );

@@ -1,4 +1,4 @@
-﻿#region License & Information
+#region License & Information
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
@@ -17,7 +17,7 @@
 // "Librainian/Base58String.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
 #endregion
 
-namespace Librainian.Measurement.Currency.BTC {
+namespace Librainian.Parsing {
     using System;
     using System.Linq;
     using System.Numerics;
