@@ -59,7 +59,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Milliseconds FiveHundred = new Milliseconds( 500 );
 
         /// <summary>
-        ///     111.1 Hertz <see cref="Milliseconds" />.
+        ///     111.1 Hertz (9 <see cref="Milliseconds" />).
         /// </summary>
         public static readonly Milliseconds Hertz111 = new Milliseconds( 9 );
 

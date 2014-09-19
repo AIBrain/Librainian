@@ -22,6 +22,7 @@
 namespace Librainian.Controls {
 
     using System;
+    using System.Collections.Concurrent;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Drawing;
@@ -653,6 +654,32 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
+        /// <para>Make this <param name="control"></param> <see cref="Usable"/>.</para>
+        /// </summary>
+        /// <param name="control"></param>
+        public static void TurnOn( this Control control ) {
+            if ( !TurnOnOrOffReqests.ContainsKey( control ) ) {
+                TurnOnOrOffReqests[ control ] = 0;
+            }
+            TurnOnOrOffReqests[ control ]++;
+            control.Usable( TurnOnOrOffReqests[ control ] > 0 );
+        }
+
+        private static readonly ConcurrentDictionary<Control, int> TurnOnOrOffReqests = new ConcurrentDictionary<Control, int>();
+
+        /// <summary>
+        /// <para>Make this <param name="control"></param> not <see cref="Usable"/>.</para>
+        /// </summary>
+        /// <param name="control"></param>
+        public static void TurnOff( this Control control ) {
+            if ( !TurnOnOrOffReqests.ContainsKey( control ) ) {
+                TurnOnOrOffReqests[ control ] = 0;
+            }
+            TurnOnOrOffReqests[ control ]--;
+            control.Usable( TurnOnOrOffReqests[ control ] <= 0 );
+        }
+
+        /// <summary>
         ///     Safely set the <see cref="Control.Enabled" /> and <see cref="Control.Visible" /> of a control across threads.
         /// </summary>
         /// <param name="control"></param>
@@ -666,12 +693,21 @@ namespace Librainian.Controls {
                     if ( control.IsDisposed ) {
                         return;
                     }
+                    var anyChange = control.Visible != value || control.Enabled != value;
+                    if ( !anyChange ) {
+                        return;
+                    }
                     control.Visible = value;
                     control.Enabled = value;
                     control.Refresh();
+
                 } ) );
             }
             else {
+                var anyChange = control.Visible != value || control.Enabled != value;
+                if ( !anyChange ) {
+                    return;
+                }
                 control.Visible = value;
                 control.Enabled = value;
                 control.Refresh();

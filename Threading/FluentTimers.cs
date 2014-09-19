@@ -21,18 +21,18 @@
         /// <param name="onElapsed"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        // ReSharper disable once HeapView.ClosureAllocation
         public static Timer Create( this Span interval, [CanBeNull] Action onElapsed ) {
 
             interval.Milliseconds.Should().BeGreaterOrEqualTo( Milliseconds.Zero );
             if ( interval < Milliseconds.One ) {
                 interval = Milliseconds.One;
             }
+
             if ( null == onElapsed ) {
                 onElapsed = () => { };
             }
 
-            interval.Milliseconds.Should().BeGreaterOrEqualTo( Milliseconds.Zero );
+            interval.Milliseconds.Should().BeGreaterOrEqualTo( Milliseconds.One );
 
             var mills = interval.GetApproximateMilliseconds();
             mills.Should().BeGreaterThan( 0 );
@@ -46,10 +46,14 @@
             timer.Should().NotBeNull();
             timer.Elapsed += ( sender, args ) => {
                 try {
+                    timer.Stop();
                     onElapsed();
                 }
                 finally {
-                    if ( !timer.AutoReset ) {
+                    if ( timer.AutoReset ) {
+                        timer.Start();
+                    }
+                    else {
                         timer.DoneWith();
                     }
                 }
