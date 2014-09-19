@@ -23,6 +23,7 @@ namespace Librainian.Measurement.Currency.BTC {
     using System.Security.Cryptography;
     using System.Threading;
     using Annotations;
+    using Parsing;
 
     /// <summary>
     /// </summary>
