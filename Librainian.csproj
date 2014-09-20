@@ -48,7 +48,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BigRationalLibrary">
-      <HintPath>..\CexBot\packages\BigRationalLibrary.1.0.0.0\lib\NETFramework40\BigRationalLibrary.dll</HintPath>
+      <HintPath>..\Universal\packages\BigRationalLibrary.1.0.0.0\lib\NETFramework40\BigRationalLibrary.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Clojure">
       <HintPath>..\CexBot\packages\Clojure.1.6.0.1\lib\net40\Clojure.dll</HintPath>
@@ -139,6 +140,8 @@
     <Compile Include="Collections\AbstractCollection.cs" />
     <Compile Include="Collections\AbstractQueue.cs" />
     <Compile Include="Collections\BlockingQueue.cs" />
+    <Compile Include="Collections\ConcurrentSet.cs" />
+    <Compile Include="Collections\ConcurrentBlockingQueue.cs" />
     <Compile Include="Collections\ImmutableList.cs" />
     <Compile Include="Collections\IPotpourri.cs" />
     <Compile Include="Collections\Potpourri.cs" />

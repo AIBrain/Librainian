@@ -22,13 +22,11 @@ namespace Librainian.Measurement.Currency.BTC {
     using System.Linq;
     using System.Security.Cryptography;
     using System.Threading;
-    using Annotations;
     using Parsing;
 
     /// <summary>
     /// </summary>
     /// <see cref="http://github.com/mb300sd/Bitcoin-Tool" />
-    [UsedImplicitly]
     public class Address {
         public const Byte PUBKEYHASH = 0x00;
         public const Byte SCRIPTHASH = 0x05;

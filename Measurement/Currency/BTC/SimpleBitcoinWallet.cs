@@ -25,6 +25,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
     using System;
     using System.Diagnostics;
+    using System.Runtime.Serialization;
     using System.Threading;
     using System.Windows.Forms;
     using Annotations;
@@ -41,6 +42,7 @@ namespace Librainian.Measurement.Currency.BTC {
     /// </remarks>
     [DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
+    [DataContract(IsReference = true)]
     public class SimpleBitcoinWallet : ISimpleWallet, IEquatable<SimpleBitcoinWallet> {
         public const Decimal BTC = mBTC * 1000.0M;
 
@@ -75,9 +77,10 @@ namespace Librainian.Measurement.Currency.BTC {
         [NotNull]
         private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-        [CanBeNull]
-        private readonly Label _flashLabelOnChanges;
+        [ CanBeNull ]
+        public Label LabelToFlashOnChanges { get; set; }
 
+        [DataMember]
         private Decimal _balance;
         private readonly int _hashcode;
 
@@ -86,8 +89,8 @@ namespace Librainian.Measurement.Currency.BTC {
             this._hashcode = Randem.NextInt32();
         }
 
-        public SimpleBitcoinWallet( Label flashLabelOnChanges ) : this() {
-            this._flashLabelOnChanges = flashLabelOnChanges;
+        public SimpleBitcoinWallet( Label labelToFlashOnChanges ) : this() {
+            this.LabelToFlashOnChanges = labelToFlashOnChanges;
         }
 
         /// <summary>
@@ -125,7 +128,6 @@ namespace Librainian.Measurement.Currency.BTC {
             }
         }
 
-        [UsedImplicitly]
         public String Formatted {
             get {
                 return this.ToString();
@@ -213,7 +215,7 @@ namespace Librainian.Measurement.Currency.BTC {
                     return false;
                 }
                 this._balance += btc;
-                _flashLabelOnChanges.Flash();
+                this.LabelToFlashOnChanges.Flash();
                 return true;
             }
             finally {
@@ -275,7 +277,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
                 this._balance = sanitizeBtc ? btc.Sanitize() : btc;
 
-                _flashLabelOnChanges.Flash();
+                this.LabelToFlashOnChanges.Flash();
                 return true;
             }
             finally {
@@ -314,7 +316,7 @@ namespace Librainian.Measurement.Currency.BTC {
                     return false;
                 }
                 this._balance -= btc;
-                _flashLabelOnChanges.Flash();
+                this.LabelToFlashOnChanges.Flash();
                 return true;
             }
             finally {
@@ -355,7 +357,7 @@ namespace Librainian.Measurement.Currency.BTC {
                     return false;
                 }
                 this._balance -= btc;
-                _flashLabelOnChanges.Flash();
+                this.LabelToFlashOnChanges.Flash();
                 withdrewAmount = btc;
                 return true;
             }
