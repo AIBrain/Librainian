@@ -30,7 +30,6 @@ namespace Librainian.Collections {
     ///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
     /// </summary>
     [DataContract( IsReference = true )]
-    [Obsolete]
     public class WordToGuidAndGuidToWord : Dirtyable {
         private readonly String _baseCollectionName = "WordToGuidAndGuidToWord";
 
