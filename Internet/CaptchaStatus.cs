@@ -32,10 +32,6 @@ namespace Librainian.Internet {
         SearchingForChallenge,
         ChallengeNotFound,
         ChallengeFound,
-        ChallengeTooHard,
-
-        LoadingText,
-        LoadedText,
 
         LoadingImage,
         ErrorLoadingImage,
@@ -44,6 +40,7 @@ namespace Librainian.Internet {
         SolvingImage,
         SolvedImage,
 
-        UnableToSolve,
+        ChallengeNotSolved,
+        SolvedChallenge
     }
 }

@@ -1159,9 +1159,10 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="folder"></param>
         /// <param name="document"></param>
+        /// <param name="extension"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static Boolean TryGetTempDocument( [NotNull] this Folder folder, [NotNull] out Document document ) {
+        public static Boolean TryGetTempDocument( [NotNull] this Folder folder, [NotNull] out Document document, String extension = null ) {
             if ( folder == null ) {
                 throw new ArgumentNullException( "folder" );
             }
@@ -1176,7 +1177,18 @@ namespace Librainian.IO {
                     }
                 }
 
-                var randomFileName = Path.Combine( folder.FullName, Path.GetFileName( randomFile ) );
+                string randomFileName;
+                if ( String.IsNullOrWhiteSpace( extension ) || null == extension ) {
+                    randomFileName = Path.Combine( folder.FullName, Path.GetFileName( randomFile ) );
+                }
+                else {
+                    if ( !extension.StartsWith( "." ) ) {
+                        extension = String.Format( ".{0}", extension );
+                    }
+                    randomFileName = Path.Combine( folder.FullName, Path.GetFileNameWithoutExtension( randomFile ) + extension  );
+                }
+
+
 
                 document = new Document( randomFileName );
                 return true;
