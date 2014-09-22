@@ -27,7 +27,6 @@ namespace Librainian.Internet {
     using System.Collections.Concurrent;
     using System.Drawing;
     using System.Runtime.Serialization;
-    using System.Windows.Media.Imaging;
     using Annotations;
 
     [DataContract( IsReference = true )]
