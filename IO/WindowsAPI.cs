@@ -22,6 +22,7 @@
 namespace Librainian.IO {
     using System;
     using System.Runtime.InteropServices;
+    using System.Text;
 
     /// <summary>
     ///     Win32 APIs used by the library
@@ -48,6 +49,9 @@ namespace Librainian.IO {
 
         [DllImport( "kernel32", SetLastError = true, CharSet = CharSet.Auto )]
         public static extern IntPtr CreateFile( String lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile );
+
+        [DllImport( "shlwapi.dll", CharSet = CharSet.Auto )]
+        public static extern bool PathCompactPathEx( [Out] StringBuilder pszOut, string szPath, int cchMax, int dwFlags );
 
         /// <summary>
         ///     <para>

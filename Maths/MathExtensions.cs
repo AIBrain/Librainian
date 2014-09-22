@@ -34,7 +34,22 @@ namespace Librainian.Maths {
     using Threading;
 
     public static class MathExtensions {
-        // ReSharper disable UnusedMember.Global
+
+        public static Boolean IsOdd( this int value ) {
+            return 0 != value % 2;
+        }
+
+        public static Boolean IsEven( this int value ) {
+            return 0 == value % 2;
+        } 
+        
+        public static Boolean IsOdd( this long value ) {
+            return 0 != value % 2;
+        }
+        
+        public static Boolean IsEven( this long value ) {
+            return 0 == value % 2;
+        }
 
         public delegate int FibonacciCalculator( int n );
 
@@ -1701,7 +1716,36 @@ namespace Librainian.Maths {
             return values.DefaultIfEmpty()
                          .Aggregate( ( ema, nextQuote ) => alpha * nextQuote + ( 1 - alpha ) * ema );
         }
+
+        public static byte[] Concat( this byte[] first, byte[] second ) {
+            var buffer = new byte[ first.Length + second.Length ];
+            Buffer.BlockCopy( first, 0, buffer, 0, first.Length );
+            Buffer.BlockCopy( second, 0, buffer, first.Length, second.Length );
+            return buffer;
+        }
+
+        public static byte[] Concat( this byte[] first, byte second ) {
+            var buffer = new byte[ first.Length + 1 ];
+            Buffer.BlockCopy( first, 0, buffer, 0, first.Length );
+            buffer[ buffer.Length - 1 ] = second;
+            return buffer;
+        }
+
+        public static IEnumerable<T> Concat<T>( this IEnumerable<T> first, T second ) {
+            foreach ( var item in first )
+                yield return item;
+
+            yield return second;
+        }
+
+        public static string ToHexNumberString( this IEnumerable< byte > value ) {
+            return Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
+        }
+
+        public static string ToHexNumberString( this UInt256 value ) {
+            return ToHexNumberString( value.ToByteArray() );
+        }
+
     }
 
-    // ReSharper restore UnusedMember.Global
 }

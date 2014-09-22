@@ -944,15 +944,6 @@ namespace Librainian.Controls {
 
         //[Obsolete( "Untested" )]
 
-        /// <summary>
-        ///     Why?
-        /// </summary>
-        /// <param name="a"></param>
-        /// <returns></returns>
-        private static async Task<String> StringAsync( String a ) {
-            return await Task<String>.Factory.StartNew( () => a );
-        }
-
         /*
         private static void CreateLabelControlInsideFlow( ref FlowLayoutPanel flow, String message ) {
             try {

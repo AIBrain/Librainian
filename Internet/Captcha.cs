@@ -73,12 +73,12 @@ namespace Librainian.Internet {
             }
         }
 
-        [CanBeNull]
-        [DataMember]
-        public String SubmitID {
-            get;
-            set;
-        }
+        //[CanBeNull]
+        //[DataMember]
+        //public String SubmitID {
+        //    get;
+        //    set;
+        //}
 
         [CanBeNull]
         [DataMember]

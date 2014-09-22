@@ -67,43 +67,56 @@ namespace Librainian.Gaming {
         }
 
         public Boolean MoveOne( IGameContainer destination ) {
-            IGameItem item;
-            if ( !this.TryTake( out item ) ) {
+            IGameItem gameItem;
+            if ( !this.TryTake( out gameItem ) ) {
                 return false;
             }
-            destination.Add( item );
+            var dice = gameItem as IDice;
+            if ( dice != null ) {
+                dice.Roll();
+            }
+            destination.Add( gameItem );
             return true;
         }
 
-        public void MoveAll<TPieceType>( IGameContainer destination, Action<TPieceType> onEachItem = null ) where TPieceType : class {
-            var localDump = new List<IGameItem>();
-            while ( Contents.Cast<TPieceType>().Any() ) {
-                IGameItem item;
-                if ( !this.TryTake( out item ) ) {
-                    continue;
-                }
-                if ( item is TPieceType ) {
-                    destination.Add( item );
-                    if ( onEachItem != null ) {
-                        onEachItem(item as TPieceType);
-                    }
-                }
-                else {
-                    localDump.Add( item );
-                }
-            }
-            foreach ( var gameItem in localDump ) {
-                Contents.Add( gameItem );
-            }
-        }
+        //public void MoveAll<TPieceType>( IGameContainer destination, Action<TPieceType> onEachItem = null ) where TPieceType : class {
+        //    var localDump = new List<IGameItem>();
+        //    while ( Contents.Cast<TPieceType>().Any() ) {
+        //        IGameItem item;
+        //        if ( !this.TryTake( out item ) ) {
+        //            continue;
+        //        }
+        //        if ( item is TPieceType ) {
+        //            destination.Add( item );
+        //            if ( onEachItem != null ) {
+        //                onEachItem(item as TPieceType);
+        //            }
+        //        }
+        //        else {
+        //            localDump.Add( item );
+        //        }
+        //    }
+        //    foreach ( var gameItem in localDump ) {
+        //        Contents.Add( gameItem );
+        //    }
+        //}
 
         public Boolean MoveAll( IGameContainer destination ) {
             var diceMoved = 0UL;
-            IGameItem dice;
-            while ( this.Contents.TryTake( out dice ) ) {
-                destination.Add( dice );
-                diceMoved++;
+            while ( this.Contents.Any() ) {
+                if ( this.MoveOne( destination ) ) {
+                    diceMoved++;
+                }
             }
+            //IGameItem gameItem;
+            //while ( this.Contents.TryTake( out gameItem ) ) {
+            //    var dice = gameItem as Dice;
+            //    if ( dice != null ) {
+            //        dice.Roll();
+            //    }
+            //    destination.Add( gameItem );
+                
+            //}
             return diceMoved > 0;
         }
     }

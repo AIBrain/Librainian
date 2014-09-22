@@ -17,50 +17,46 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Dice.cs" was last cleaned by Rick on 2014/08/13 at 12:09 PM
+// "Librainian/Dice.cs" was last cleaned by Rick on 2014/09/21 at 12:30 PM
 
 #endregion License & Information
 
 namespace Librainian.Gaming {
 
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
-    using System.Threading.Tasks;
-    using Annotations;
     using Collections;
     using FluentAssertions;
     using Measurement.Time;
+    using Ninject.Modules;
     using Threading;
 
     [DataContract( IsReference = true )]
-    public class Dice : IDice {
-        private readonly Span? _dontTrackRollsOlderThan;
+    public class Dice : NinjectModule, IDice {
 
         /// <summary>
         ///     Keep track of the most recent rolls.
         /// </summary>
         private readonly uint _keepTrackOfXRolls;
 
-        public Dice( UInt16 numberOfSides = 6, UInt32 keepTrackOfXRolls = 10, Span? dontTrackRollsOlderThan = null, Span? timeout = null ) {
-            this.Tasks = new ConcurrentDictionary<Task, DateTime>();
+        public Dice( UInt16 numberOfSides = 6, UInt32 keepTrackOfXRolls = 10 ) {
+
             this.LastFewRolls = new ParallelList<UInt16>();
             this.NumberOfSides = numberOfSides;
             this._keepTrackOfXRolls = keepTrackOfXRolls;
-            this._dontTrackRollsOlderThan = dontTrackRollsOlderThan;
 
-            if ( !timeout.HasValue ) {
-                timeout = Seconds.Thirty;
-            }
-            this.LastFewRolls.TimeoutForReads = timeout.Value;
-            this.LastFewRolls.TimeoutForWrites = timeout.Value;
+            this.LastFewRolls.TimeoutForReads = Seconds.Thirty;
+            this.LastFewRolls.TimeoutForWrites = Seconds.Thirty;
 
             this.RollTheDice();
         }
 
-        public UInt16 GetCurrentSideFaceUp { get; private set; }
+        public UInt16 GetCurrentSideFaceUp {
+            get;
+            private set;
+        }
 
         [DataMember]
         public UInt16 NumberOfSides {
@@ -74,18 +70,15 @@ namespace Librainian.Gaming {
             set;
         }
 
-        private ConcurrentDictionary<Task, DateTime> Tasks {
-            get;
-            set;
-        }
-
         public IEnumerable<UInt16> GetLastFewRolls() {
             return this.LastFewRolls;
         }
 
-        public void RollTheDice() {
-            this.GetCurrentSideFaceUp = ( UInt16 )( Randem.Next( this.NumberOfSides ) + 1 );
-            this.GetCurrentSideFaceUp.Should().BeInRange( 1, this.NumberOfSides );
+        /// <summary>
+        ///     Loads the module into the kernel.
+        /// </summary>
+        public override void Load() {
+            this.Roll();
         }
 
         /// <summary>
@@ -94,35 +87,18 @@ namespace Librainian.Gaming {
         /// <returns>The side which landed face-up</returns>
         public UInt16 Roll() {
             this.RollTheDice();
-            var with = this.LastFewRolls.AddAsync( this.GetCurrentSideFaceUp, this.Cleanup ).ContinueWith( task => {
-                DateTime dummy;
-                var removed = this.Tasks.TryRemove( task, out dummy );
-                if ( removed ) {
-                    String.Format( "Old roll {0} removed", dummy ).TimeDebug();
-                }
-            } );
-            this.Tasks.TryAdd( with, DateTime.Now );
+            this.LastFewRolls.Add( this.GetCurrentSideFaceUp, this.Cleanup );
             return this.GetCurrentSideFaceUp;
         }
 
-        public async void RollAsync( [NotNull] Action<UInt16> afterRoll ) {
-            if ( afterRoll == null ) {
-                throw new ArgumentNullException( "onRoll" );
-            }
-            await Task.Run( () => this.RollTheDice() ).ContinueWith( task => afterRoll( this.GetCurrentSideFaceUp ) );
+        public void RollTheDice() {
+            this.GetCurrentSideFaceUp = ( UInt16 )( Randem.Next( this.NumberOfSides ) + 1 );
+            this.GetCurrentSideFaceUp.Should().BeInRange( 1, this.NumberOfSides );
         }
 
         private void Cleanup() {
             while ( this.GetLastFewRolls().Count() > this._keepTrackOfXRolls ) {
                 this.LastFewRolls.RemoveAt( 0 );
-            }
-
-            if ( !this._dontTrackRollsOlderThan.HasValue ) {
-                return;
-            }
-            foreach ( var key in this.Tasks.Where( pair => DateTime.Now - pair.Value > this._dontTrackRollsOlderThan.Value ).Select( pair => pair.Key ) ) {
-                DateTime unused;
-                this.Tasks.TryRemove( key, out unused );
             }
         }
     }

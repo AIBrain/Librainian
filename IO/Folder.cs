@@ -30,6 +30,7 @@ namespace Librainian.IO {
     using System.Linq;
     using System.Runtime.Serialization;
     using System.Security;
+    using System.Text;
     using System.Windows.Forms;
     using Annotations;
     using Extensions;
@@ -157,6 +158,16 @@ namespace Librainian.IO {
 
         public Folder( String fullPath, String subFolder )
             : this( Path.Combine( fullPath, subFolder ) ) {
+        }
+
+        /// <summary>
+        /// <para>Shorten the full path with "..."</para>
+        /// </summary>
+        /// <returns></returns>
+        public String ToCompactFormat(  ) {
+            var sb = new StringBuilder();
+            WindowsAPI.PathCompactPathEx( sb, this.FullName, this.FullName.Length, 0 ); //TODO untested. //HACK may be buggy on extensions also
+            return sb.ToString();
         }
 
         /// <summary>

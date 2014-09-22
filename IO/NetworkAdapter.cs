@@ -151,7 +151,6 @@ namespace Librainian.IO {
         /// </summary>
         /// <returns>The list of all NetworkAdapter of the machine</returns>
         public static IEnumerable<NetworkAdapter> GetAllNetworkAdapters() {
-
             //var allNetworkAdapter = new List<NetworkAdapter>();
 
             // Manufacturer <> 'Microsoft'to get all nonvirtual devices.
@@ -160,8 +159,10 @@ namespace Librainian.IO {
             // NetworkAdapter = 'Wireless’
 
             var networkAdapters = WMIOperation.WMIQuery( "SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE Manufacturer <> \'Microsoft\'" );
-            return ( from ManagementBaseObject o in networkAdapters
-                     select o as ManagementObject ).Select( moNetworkAdapter => new NetworkAdapter( Convert.ToInt32( moNetworkAdapter[ "DeviceID" ].ToString() ), moNetworkAdapter[ "ProductName" ].ToString(), ( Convert.ToBoolean( moNetworkAdapter[ "NetEnabled" ].ToString() ) ) ? ( int )EnumNetEnabledStatus.Enabled : ( int )EnumNetEnabledStatus.Disabled, Convert.ToInt32( moNetworkAdapter[ "NetConnectionStatus" ].ToString() ) ) );
+            return from ManagementBaseObject o in networkAdapters
+                   select o as ManagementObject
+                   into moNetworkAdapter
+                   select new NetworkAdapter( Convert.ToInt32( moNetworkAdapter[ "DeviceID" ].ToString() ), moNetworkAdapter[ "ProductName" ].ToString(), ( Convert.ToBoolean( moNetworkAdapter[ "NetEnabled" ].ToString() ) ) ? ( int ) EnumNetEnabledStatus.Enabled : ( int ) EnumNetEnabledStatus.Disabled, Convert.ToInt32( moNetworkAdapter[ "NetConnectionStatus" ].ToString() ) );
 
             //return allNetworkAdapter;
         }

@@ -36,6 +36,7 @@ namespace Librainian.Parsing {
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
+    using System.Threading.Tasks;
     using System.Xml;
     using Annotations;
     using Collections;
@@ -161,7 +162,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="tuple"></param>
         /// <returns></returns>
-        public static String AsIndexed( this Tuple< String, int > tuple ) {
+        public static String AsIndexed( this Tuple< string, int > tuple ) {
             return String.Format( "{0}.[{1}]", tuple.Item1, tuple.Item2 );
         }
 
@@ -538,7 +539,7 @@ namespace Librainian.Parsing {
         /// <param name="input">String to convert</param>
         /// <param name="culture">The culture to use for conversion</param>
         /// <returns>IEnumerable&lt;String&gt;</returns>
-        public static IEnumerable< String > GetNameVariants( this String input, CultureInfo culture ) {
+        public static IEnumerable< string > GetNameVariants( this String input, CultureInfo culture ) {
             if ( String.IsNullOrEmpty( input ) ) {
                 yield break;
             }
@@ -620,7 +621,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="sentence"></param>
         /// <returns></returns>
-        public static IEnumerable< String > JustDigits( this String sentence ) {
+        public static IEnumerable< string > JustDigits( this String sentence ) {
             return RegexJustDigits.Split( sentence );
         }
 
@@ -649,7 +650,7 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         /// <seealso cref="Word" />
         /// <seealso cref="Sentence" />
-        public static IEnumerable< String > JustWords( this String sentence ) {
+        public static IEnumerable< string > JustWords( this String sentence ) {
             var result = sentence.ToWords().Where( word => word.Any( Char.IsLetterOrDigit ) );
             return result;
         }
@@ -973,7 +974,7 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         /// <remarks> The score is normalized such that 0 equates to no similarity and 1 is an exact match.</remarks>
         [ UsedImplicitly ]
-        public static Double Similarity( [ NotNull ] this String source, [ NotNull ] String compare, [ NotNull ] ref ConcurrentQueue< String > matchReasons, TimeSpan? timeout = null ) {
+        public static Double Similarity( [ NotNull ] this String source, [ NotNull ] String compare, [ NotNull ] ref ConcurrentQueue< string > matchReasons, TimeSpan? timeout = null ) {
             if ( source == null ) {
                 throw new ArgumentNullException( "source" );
             }
@@ -1150,7 +1151,7 @@ namespace Librainian.Parsing {
                                    .Substring( 0, length ); // and no longer than length
         }
 
-        public static IEnumerable< String > SplitToChunks( [ NotNull ] this String s, int chunks ) {
+        public static IEnumerable< string > SplitToChunks( [ NotNull ] this String s, int chunks ) {
             if ( s == null ) {
                 throw new ArgumentNullException( "s" );
             }
@@ -1313,7 +1314,7 @@ namespace Librainian.Parsing {
                     restOfWord = restOfWord.ToLower( culture );
                 }
 
-                var firstChar = char.ToUpper( word[ 0 ], culture );
+                var firstChar = Char.ToUpper( word[ 0 ], culture );
                 words[ i ] = String.Concat( firstChar, restOfWord );
             }
             return String.Join( joinString, words );
@@ -1420,7 +1421,7 @@ namespace Librainian.Parsing {
             return words;
         }
 
-        public static IEnumerable< String > ToWords( [ NotNull ] this String sentence ) {
+        public static IEnumerable< string > ToWords( [ NotNull ] this String sentence ) {
             //TODO try parsing with different splitters?
             // ...do we mabe want the most or least words or avg ?
 
@@ -1534,6 +1535,15 @@ namespace Librainian.Parsing {
             catch ( Exception ) {
                 return -1;
             }
+        }
+
+        /// <summary>
+        ///     Why? Because.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        private static async Task<String> GetStringAsync(this String s ) {
+            return await Task.Run( () => s );
         }
     }
 }

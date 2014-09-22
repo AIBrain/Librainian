@@ -296,7 +296,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Generate a random <see cref="Boolean.True" /> or <see cref="Boolean.False" />.
+        /// <para>Generate a random <see cref="Boolean.True" /> or <see cref="Boolean.False" />.</para>
         /// </summary>
         /// <returns></returns>
         public static Boolean NextBoolean() {
@@ -304,7 +304,15 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// <para>Returns a nonnegative random <see cref="Byte" />.</para>
+        /// <para>Generate a random <see cref="Boolean.True" /> or <see cref="Boolean.False" />.</para>
+        /// </summary>
+        /// <returns></returns>
+        public static Boolean NextBooleanFast() {
+            return Instance.Next(2) == 0;
+        }
+
+        /// <summary>
+        /// <para>Returns a random <see cref="Byte" />.</para>
         /// </summary>
         /// <returns></returns>
         public static Byte NextByte() {
@@ -658,7 +666,7 @@ namespace Librainian.Threading {
         /// Generate two random numbers about halfway of <param name="goal"></param> .
         /// </summary>
         /// <remarks>Given one number, return two random numbers that add up to <param name="goal"></param></remarks>
-        public static void Split( int goal, out int lowResult, out int highResult ) {
+        public static void Split( this int goal, out int lowResult, out int highResult ) {
             var half = goal.HalfOf();
             var quarter = half.HalfOf();
             var firstNum = Instance.Next( minValue: half - quarter, maxValue: half + quarter );

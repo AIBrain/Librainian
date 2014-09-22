@@ -26,10 +26,19 @@ namespace Librainian.Magic {
     using Annotations;
 
     public static class Ioc {
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //[ NotNull ] private static readonly NinjectIocContainer  StealthMode = new NinjectIocContainer();
 
-        [CanBeNull]
-        private static IIocContainer container;
+        /// <summary>
+        /// 
+        /// </summary>
+        [ CanBeNull ] private static IIocContainer container;// = StealthMode;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [NotNull]
         public static IIocContainer Container {
             get {

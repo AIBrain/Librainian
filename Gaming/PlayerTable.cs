@@ -3,7 +3,7 @@
 
 
         public void PickupAllDice( IGameContainer container ) {
-            this.MoveAll<IDice>( container );
+            this.MoveAll( container );
         }
 
     }
