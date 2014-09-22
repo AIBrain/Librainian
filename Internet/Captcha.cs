@@ -25,6 +25,7 @@ namespace Librainian.Internet {
 
     using System;
     using System.Collections.Concurrent;
+    using System.Drawing;
     using System.Runtime.Serialization;
     using System.Windows.Media.Imaging;
     using Annotations;
@@ -41,21 +42,29 @@ namespace Librainian.Internet {
 
         [CanBeNull]
         [DataMember]
-        public String ChallengeID {
+        public String ChallengeElementID {
             get;
             set;
         }
 
         [CanBeNull]
         [DataMember]
-        public BitmapImage Image {
+        public Image Image {
             get;
             set;
         }
 
         [CanBeNull]
         [DataMember]
-        public String ResponseID {
+        public Uri ImageUri {
+            get;
+            set;
+        }
+
+
+        [CanBeNull]
+        [DataMember]
+        public String ResponseElementID {
             get;
             set;
         }
