@@ -41,6 +41,10 @@ namespace Librainian.Internet {
         SolvedImage,
 
         ChallengeNotSolved,
-        SolvedChallenge
+        SolvedChallenge,
+        NoImageFound,
+        NoImageFoundToBeSolved,
+        ChallengeStillNotSolved,
+        NoChallengesFound
     }
 }
