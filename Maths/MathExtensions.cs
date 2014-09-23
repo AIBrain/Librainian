@@ -1707,6 +1707,22 @@ namespace Librainian.Maths {
             return number * 2m;
         }
 
+        /// <summary>
+        /// Truncate, don't round. Just chop it off.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="decimalPlaces"></param>
+        /// <returns></returns>
+        public static Decimal Sanitize( this Decimal number, UInt16 decimalPlaces = 8  ) {
+            number *= ( Decimal )Math.Pow( 10, decimalPlaces );
+
+            number = ( UInt64 )number;  //Truncate, don't round. Just chop it off.
+
+            number *= ( Decimal )Math.Pow( 10, -decimalPlaces );
+
+            return number;
+        }
+
         public static Decimal CalcAVG( this IEnumerable<Decimal> values ) {
             return values.DefaultIfEmpty()
                          .Average( arg => arg );

@@ -27,7 +27,7 @@ namespace Librainian.Measurement.Currency {
     using System.Windows.Forms;
     using Annotations;
     using Controls;
-    using Currency.BTC;
+    using BTC;
     using Threading;
     using Time;
 
@@ -251,7 +251,7 @@ namespace Librainian.Measurement.Currency {
             if ( sanitize ) {
                 amount = amount.Sanitize();
             }
-            if ( amount < Decimal.Zero ) {
+            if ( amount <= Decimal.Zero ) {
                 return false;
             }
             Decimal? withdrewAmount = null;

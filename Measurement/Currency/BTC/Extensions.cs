@@ -83,13 +83,13 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        ///     Truncate anything smaller than 1 <see cref="Satoshi" />.
+        ///     Truncate anything lesser than 1 <see cref="Satoshi" />.
         /// </summary>
         /// <param name="btc"></param>
         /// <returns></returns>
         public static Decimal Sanitize( this Decimal btc ) {
             var sanitized = btc.ToSatoshi().ToBTC();
-            Assert.GreaterOrEqual( btc, sanitized );
+            //Assert.GreaterOrEqual( btc, sanitized );
             return sanitized;
         }
 

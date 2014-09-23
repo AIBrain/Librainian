@@ -43,7 +43,7 @@ namespace Librainian.Measurement.Currency.BTC {
     [DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
     [DataContract(IsReference = true)]
-    public class SimpleBitcoinWallet : ISimpleWallet, IEquatable<SimpleBitcoinWallet> {
+    public class SimpleBitcoinWallet : SimpleWallet, IEquatable<SimpleBitcoinWallet> {
         public const Decimal BTC = mBTC * 1000.0M;
 
         public const Decimal mBTC = μBTC * 1000.0M;
@@ -77,8 +77,7 @@ namespace Librainian.Measurement.Currency.BTC {
         [NotNull]
         private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-        [ CanBeNull ]
-        public Label LabelToFlashOnChanges { get; set; }
+      
 
         [DataMember]
         private Decimal _balance;
@@ -115,54 +114,8 @@ namespace Librainian.Measurement.Currency.BTC {
             this._balance = balance.Sanitize();
         }
 
-        public decimal Balance {
-            get {
-                try {
-                    return this._access.TryEnterReadLock( this.Timeout ) ? this._balance : Decimal.Zero;
-                }
-                finally {
-                    if ( this._access.IsReadLockHeld ) {
-                        this._access.ExitReadLock();
-                    }
-                }
-            }
-        }
 
-        public String Formatted {
-            get {
-                return this.ToString();
-            }
-        }
 
-        public Action<Decimal> OnAfterDeposit {
-            get;
-            set;
-        }
-
-        public Action<Decimal> OnAfterWithdraw {
-            get;
-            set;
-        }
-
-        public Action<Decimal> OnAnyUpdate {
-            get;
-            set;
-        }
-
-        public Action<Decimal> OnBeforeDeposit {
-            get;
-            set;
-        }
-
-        public Action<Decimal> OnBeforeWithdraw {
-            get;
-            set;
-        }
-
-        public TimeSpan Timeout {
-            get;
-            set;
-        }
 
         /// <summary>
         /// <para>Static comparison.</para>
@@ -200,96 +153,19 @@ namespace Librainian.Measurement.Currency.BTC {
             return String.Format( "฿ {0:f8}", this.Balance );
         }
 
-        /// <summary>
-        ///     Add any (+-)amount directly to the balance.
-        /// </summary>
-        /// <param name="btc"></param>
-        /// <param name="sanitizeBtc"></param>
-        /// <returns></returns>
-        public Boolean TryAdd( Decimal btc, Boolean sanitizeBtc = true ) {
-            if ( sanitizeBtc ) {
-                btc = btc.Sanitize();
-            }
-            try {
-                if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
-                    return false;
-                }
-                this._balance += btc;
-                this.LabelToFlashOnChanges.Flash();
-                return true;
-            }
-            finally {
-                if ( this._access.IsWriteLockHeld ) {
-                    this._access.ExitWriteLock();
-                }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( btc );
-                }
-            }
-        }
+     
 
-        public Boolean TryAdd( [NotNull] SimpleBitcoinWallet wallet, Boolean sanitizeBtc = true ) {
+      
+
+        public Boolean TryAdd( [NotNull] SimpleBitcoinWallet wallet, Boolean sanitize = true ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( "wallet" );
             }
-            return this.TryAdd( wallet.Balance, sanitizeBtc );
+            return this.TryAdd( wallet.Balance, sanitize );
         }
 
-        /// <summary>
-        ///     Attempt to deposit btc (larger than zero) to the <see cref="Balance" />.
-        /// </summary>
-        /// <param name="amount"></param>
-        /// <param name="sanitize"></param>
-        /// <returns></returns>
-        public Boolean TryDeposit( Decimal amount, Boolean sanitize = true ) {
-            if ( sanitize ) {
-                amount = amount.Sanitize();
-            }
-            if ( amount < Decimal.Zero ) {
-                return false;
-            }
-            var onBeforeDeposit = this.OnBeforeDeposit;
-            if ( onBeforeDeposit != null ) {
-                onBeforeDeposit( amount );
-            }
-            if ( !this.TryAdd( amount ) ) {
-                return false;
-            }
-            var onAfterDeposit = this.OnAfterDeposit;
-            if ( onAfterDeposit != null ) {
-                onAfterDeposit( amount );
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// <para>Directly sets the <see cref="Balance"/> of this wallet.</para>
-        /// </summary>
-        /// <param name="amount"></param>
-        /// <param name="sanitize"></param>
-        /// <returns></returns>
-        public Boolean TryUpdateBalance( Decimal amount, Boolean sanitize = true ) {
-            try {
-                if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
-                    return false;
-                }
-
-                this._balance = sanitize ? amount.Sanitize() : amount;
-
-                this.LabelToFlashOnChanges.Flash();
-                return true;
-            }
-            finally {
-                if ( this._access.IsWriteLockHeld ) {
-                    this._access.ExitWriteLock();
-                }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
-            }
-        }
+      
+      
 
         public void TryUpdateBalance( SimpleBitcoinWallet simpleBitcoinWallet ) {
             this.TryUpdateBalance( simpleBitcoinWallet.Balance );
@@ -298,42 +174,8 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <summary>
         ///     Attempt to withdraw an amount (must be larger than Zero) from the wallet.
         /// </summary>
-        /// <param name="amount"></param>
-        /// <param name="sanitize"></param>
+        /// <param name="wallet"></param>
         /// <returns></returns>
-        public Boolean TryWithdraw( Decimal amount, Boolean sanitize = true ) {
-            if ( sanitize ) {
-                amount = amount.Sanitize();
-            }
-            if ( amount < Decimal.Zero ) {
-                return false;
-            }
-            try {
-                if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
-                    return false;
-                }
-                if ( this._balance < amount ) {
-                    return false;
-                }
-                this._balance -= amount;
-                this.LabelToFlashOnChanges.Flash();
-                return true;
-            }
-            finally {
-                if ( this._access.IsWriteLockHeld ) {
-                    this._access.ExitWriteLock();
-                }
-                var onWithdraw = this.OnAfterWithdraw;
-                if ( onWithdraw != null ) {
-                    onWithdraw( amount );
-                }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
-            }
-        }
-
         public Boolean TryWithdraw( [NotNull] SimpleBitcoinWallet wallet ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( "wallet" );
@@ -341,11 +183,11 @@ namespace Librainian.Measurement.Currency.BTC {
             return this.TryWithdraw( wallet.Balance );
         }
 
-        public Boolean TryWithdraw( Decimal amount, ref SimpleBitcoinWallet intoWallet, Boolean sanitizeBtc = true ) {
-            if ( sanitizeBtc ) {
+        public Boolean TryTransfer( Decimal amount, ref SimpleBitcoinWallet intoWallet, Boolean sanitize = true ) {
+            if ( sanitize ) {
                 amount = amount.Sanitize();
             }
-            if ( amount < Decimal.Zero ) {
+            if ( amount <= Decimal.Zero ) {
                 return false;
             }
             Decimal? withdrewAmount = null;

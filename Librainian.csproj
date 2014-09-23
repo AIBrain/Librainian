@@ -361,7 +361,6 @@
     <Compile Include="Maths\VotallyD.cs" />
     <Compile Include="Measurement\Currency\AltCoinExtensions.cs" />
     <Compile Include="Measurement\Currency\BTC\ICoin.cs" />
-    <Compile Include="Measurement\Currency\BTC\SimpleGHSWallet.cs" />
     <Compile Include="Measurement\Currency\SimpleWallet.cs" />
     <Compile Include="Measurement\Length\IQuantityOfDistance.cs" />
     <Compile Include="Measurement\Physics\AtomicMassUnits.cs" />
@@ -461,7 +460,6 @@
     <Compile Include="Measurement\Currency\ISimpleWallet.cs" />
     <Compile Include="Measurement\Currency\LTC\Class3.cs" />
     <Compile Include="Measurement\Currency\LTC\ICoinWallet.cs" />
-    <Compile Include="Measurement\Currency\LTC\SimpleLitecoinWallet.cs" />
     <Compile Include="Measurement\Currency\Statistics.cs" />
     <Compile Include="Measurement\Currency\TransactionType.cs" />
     <Compile Include="Measurement\Currency\USD\Extensions.cs" />
