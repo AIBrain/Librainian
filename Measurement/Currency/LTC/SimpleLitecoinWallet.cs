@@ -78,10 +78,10 @@ namespace Librainian.Measurement.Currency.LTC {
 
         public TimeSpan Timeout { get; set; }
 
-        public  Decimal Balance {
+        public decimal Balance {
             get {
                 try {
-                    return this._access.TryEnterReadLock( this.Timeout ) ? this._balance :Decimal.Zero;
+                    return this._access.TryEnterReadLock( this.Timeout ) ? this._balance : Decimal.Zero;
                 }
                 finally {
                     if ( this._access.IsReadLockHeld ) {
@@ -102,26 +102,26 @@ namespace Librainian.Measurement.Currency.LTC {
         /// <summary>
         ///     Attempt to deposit btc (larger than zero) to the <see cref="Balance" />.
         /// </summary>
-        /// <param name="btc"></param>
-        /// <param name="sanitizeBtc"></param>
+        /// <param name="amount"></param>
+        /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryDeposit(Decimal btc, Boolean sanitizeBtc = true ) {
-            if ( sanitizeBtc ) {
-                btc = btc.Sanitize();
+        public Boolean TryDeposit(Decimal amount, Boolean sanitize = true ) {
+            if ( sanitize ) {
+                amount = amount.Sanitize();
             }
-            if ( btc <Decimal.Zero ) {
+            if ( amount <Decimal.Zero ) {
                 return false;
             }
             var onBeforeDeposit = this.OnBeforeDeposit;
             if ( onBeforeDeposit != null ) {
-                onBeforeDeposit( btc );
+                onBeforeDeposit( amount );
             }
-            if ( !this.TryAdd( btc ) ) {
+            if ( !this.TryAdd( amount ) ) {
                 return false;
             }
             var onAfterDeposit = this.OnAfterDeposit;
             if ( onAfterDeposit != null ) {
-                onAfterDeposit( btc );
+                onAfterDeposit( amount );
             }
             return true;
         }
@@ -129,24 +129,24 @@ namespace Librainian.Measurement.Currency.LTC {
         /// <summary>
         ///     Attempt to withdraw an amount (must be larger than Zero) from the wallet.
         /// </summary>
-        /// <param name="btc"></param>
-        /// <param name="sanitizeBtc"></param>
+        /// <param name="amount"></param>
+        /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryWithdraw(Decimal btc, Boolean sanitizeBtc = true ) {
-            if ( sanitizeBtc ) {
-                btc = btc.Sanitize();
+        public Boolean TryWithdraw(Decimal amount, Boolean sanitize = true ) {
+            if ( sanitize ) {
+                amount = amount.Sanitize();
             }
-            if ( btc <Decimal.Zero ) {
+            if ( amount <Decimal.Zero ) {
                 return false;
             }
             try {
                 if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
                     return false;
                 }
-                if ( this._balance < btc ) {
+                if ( this._balance < amount ) {
                     return false;
                 }
-                this._balance -= btc;
+                this._balance -= amount;
                 return true;
             }
             finally {
@@ -155,25 +155,25 @@ namespace Librainian.Measurement.Currency.LTC {
                 }
                 var onWithdraw = this.OnAfterWithdraw;
                 if ( onWithdraw != null ) {
-                    onWithdraw( btc );
+                    onWithdraw( amount );
                 }
                 var onAnyUpdate = this.OnAnyUpdate;
                 if ( null != onAnyUpdate ) {
-                    onAnyUpdate( btc );
+                    onAnyUpdate( amount );
                 }
             }
         }
 
-        public Boolean TryUpdateBalance(Decimal btc, Boolean sanitizeBtc = true ) {
-            if ( sanitizeBtc ) {
-                btc = btc.Sanitize();
+        public Boolean TryUpdateBalance(Decimal amount, Boolean sanitize = true ) {
+            if ( sanitize ) {
+                amount = amount.Sanitize();
             }
 
             try {
                 if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
                     return false;
                 }
-                this._balance = btc;
+                this._balance = amount;
                 return true;
             }
             finally {
@@ -182,7 +182,7 @@ namespace Librainian.Measurement.Currency.LTC {
                 }
                 var onAnyUpdate = this.OnAnyUpdate;
                 if ( null != onAnyUpdate ) {
-                    onAnyUpdate( btc );
+                    onAnyUpdate( amount );
                 }
             }
         }
