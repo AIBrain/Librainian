@@ -509,7 +509,7 @@ namespace Librainian.Persistence {
             try {
                 Document document;
                 if ( this.Folder.TryGetTempDocument( out document ) ) {
-                    var text = Randem.NextString( length: 1024, lowers: true, uppers: true, numbers: true, symbols: true );
+                    var text = Randem.NextString( length: 64, lowers: true, uppers: true, numbers: true, symbols: true );
                     document.AppendText( text );
                     document.TryDeleting();
                     return true;

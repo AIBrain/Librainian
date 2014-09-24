@@ -19,7 +19,7 @@
 
 namespace Librainian.Linguistics {
     /// <summary>
-    ///     more than 1 letter, but not a word?
+    ///     more than 1 letter, but not a word? Unicode?
     /// </summary>
     public class CharacterCombo {
         //TODO

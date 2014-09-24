@@ -1155,7 +1155,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Returns a temporary <see cref="Document" />, but does not create it in the file system.
+        ///     Returns a temporary <see cref="Document" /> (but does not create the file in the file system).
         /// </summary>
         /// <param name="folder"></param>
         /// <param name="document"></param>
@@ -1167,29 +1167,16 @@ namespace Librainian.IO {
                 throw new ArgumentNullException( "folder" );
             }
             try {
-                String randomFile = null;
-                try {
-                    randomFile = Path.GetTempFileName();
-                }
-                finally {
-                    if ( randomFile != null ) {
-                        File.Delete( randomFile );
-                    }
-                }
-
-                string randomFileName;
+                var randomFileName = Guid.NewGuid().ToString();
                 if ( String.IsNullOrWhiteSpace( extension ) || null == extension ) {
-                    randomFileName = Path.Combine( folder.FullName, Path.GetFileName( randomFile ) );
+                    randomFileName = Path.Combine( folder.FullName, Path.GetFileName( randomFileName ) );
                 }
                 else {
                     if ( !extension.StartsWith( "." ) ) {
                         extension = String.Format( ".{0}", extension );
                     }
-                    randomFileName = Path.Combine( folder.FullName, Path.GetFileNameWithoutExtension( randomFile ) + extension  );
+                    randomFileName = Path.Combine( folder.FullName, Path.GetFileNameWithoutExtension( randomFileName ) + extension );
                 }
-
-
-
                 document = new Document( randomFileName );
                 return true;
             }
