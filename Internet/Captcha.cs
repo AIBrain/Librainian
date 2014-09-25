@@ -46,12 +46,12 @@ namespace Librainian.Internet {
             set;
         }
 
-        [CanBeNull]
-        [DataMember]
-        public Image Image {
-            get;
-            set;
-        }
+        //[CanBeNull]
+        //[DataMember]
+        //public Image Image {
+        //    get;
+        //    set;
+        //}
 
         [CanBeNull]
         [DataMember]
