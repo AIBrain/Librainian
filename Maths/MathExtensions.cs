@@ -336,8 +336,15 @@ namespace Librainian.Maths {
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public static int gcd( int x, int y ) {
-            return y == 0 ? x : gcd( y, x % y );
+        public static int gcd( this int x, int y ) {
+            while ( true ) {
+                if ( y == 0 ) {
+                    return x;
+                }
+                var x1 = x;
+                x = y;
+                y = x1 % y;
+            }
         }
 
         /// <summary>
@@ -349,8 +356,15 @@ namespace Librainian.Maths {
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public static long gcd( long x, long y ) {
-            return y == 0 ? x : gcd( y, x % y );
+        public static long gcd( this long x, long y ) {
+            while ( true ) {
+                if ( y == 0 ) {
+                    return x;
+                }
+                var x1 = x;
+                x = y;
+                y = x1 % y;
+            }
         }
 
         /// <summary>
