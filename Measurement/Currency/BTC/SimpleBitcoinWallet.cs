@@ -42,7 +42,7 @@ namespace Librainian.Measurement.Currency.BTC {
     /// </remarks>
     [DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
-    [DataContract(IsReference = true)]
+    [DataContract( IsReference = true )]
     public class SimpleBitcoinWallet : SimpleWallet, IEquatable<SimpleBitcoinWallet> {
         public const Decimal BTC = mBTC * 1000.0M;
 
@@ -77,28 +77,26 @@ namespace Librainian.Measurement.Currency.BTC {
         [NotNull]
         private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-      
+
 
         [DataMember]
         private Decimal _balance;
         private readonly int _hashcode;
 
-        public SimpleBitcoinWallet() {
-            this.Timeout = Minutes.One;
-            this._hashcode = Randem.NextInt32();
-        }
 
-        public SimpleBitcoinWallet( Label labelToFlashOnChanges ) : this() {
-            this.LabelToFlashOnChanges = labelToFlashOnChanges;
-        }
+
+
+        //public SimpleBitcoinWallet( Label labelToFlashOnChanges )
+        //    : this() {
+        //    this.LabelToFlashOnChanges = labelToFlashOnChanges;
+        //}
 
         /// <summary>
         ///     Initialize the wallet with the specified amount of satoshi.
         /// </summary>
         /// <param name="satoshi"></param>
         public SimpleBitcoinWallet( long satoshi )
-            : this() {
-            this._balance = satoshi.ToBTC();
+            : this( satoshi.ToBTC() ) {
         }
 
         public SimpleBitcoinWallet( ISimpleWallet wallet )
@@ -109,9 +107,10 @@ namespace Librainian.Measurement.Currency.BTC {
         ///     Initialize the wallet with the specified <paramref name="balance" />.
         /// </summary>
         /// <param name="balance"></param>
-        public SimpleBitcoinWallet( Decimal balance )
-            : this() {
+        public SimpleBitcoinWallet( Decimal balance ) : base( balance ) {
             this._balance = balance.Sanitize();
+            this.Timeout = Minutes.One;
+            this._hashcode = Randem.NextInt32();
         }
 
 
@@ -125,9 +124,9 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [ CanBeNull ] SimpleBitcoinWallet left, [ CanBeNull ] SimpleBitcoinWallet right ) {
+        public static Boolean Equals( [CanBeNull] SimpleBitcoinWallet left, [CanBeNull] SimpleBitcoinWallet right ) {
 
-            if ( ReferenceEquals(left, right) ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
             if ( null == left || null == right ) {
@@ -153,9 +152,9 @@ namespace Librainian.Measurement.Currency.BTC {
             return String.Format( "฿ {0:f8}", this.Balance );
         }
 
-     
 
-      
+
+
 
         public Boolean TryAdd( [NotNull] SimpleBitcoinWallet wallet, Boolean sanitize = true ) {
             if ( wallet == null ) {
@@ -164,8 +163,8 @@ namespace Librainian.Measurement.Currency.BTC {
             return this.TryAdd( wallet.Balance, sanitize );
         }
 
-      
-      
+
+
 
         public void TryUpdateBalance( SimpleBitcoinWallet simpleBitcoinWallet ) {
             this.TryUpdateBalance( simpleBitcoinWallet.Balance );

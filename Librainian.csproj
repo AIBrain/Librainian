@@ -627,12 +627,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Tesseract\src\Tesseract\Tesseract.csproj">
-      <Project>{DA780CA0-2606-4259-91C4-3F38C5C90592}</Project>
-      <Name>Tesseract</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -305,7 +305,10 @@ namespace Librainian.Persistence {
         ///     <paramref name="arrayIndex" /> to the end of the destination <paramref name="array" />.
         /// </exception>
         public void CopyTo( KeyValuePair<TKey, TValue>[] array, int arrayIndex ) {
+
+
             throw new NotImplementedException();
+
         }
 
         /// <summary>

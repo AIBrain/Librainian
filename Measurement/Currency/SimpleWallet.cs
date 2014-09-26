@@ -48,21 +48,19 @@ namespace Librainian.Measurement.Currency {
 
         [ DataMember ] private Decimal _balance;
 
-        public SimpleWallet() {
-            this.Timeout = Minutes.One;
-            this._hashcode = Randem.NextInt32();
-        }
 
-        public SimpleWallet( Label labelToFlashOnChanges ) : this() {
-            this.LabelToFlashOnChanges = labelToFlashOnChanges;
-        }
+        //public SimpleWallet( Label labelToFlashOnChanges ) : this() {
+        //    this.LabelToFlashOnChanges = labelToFlashOnChanges;
+        //}
 
         /// <summary>
         ///     Initialize the wallet with the specified <paramref name="balance" />.
         /// </summary>
         /// <param name="balance"></param>
-        public SimpleWallet( Decimal balance ) : this() {
+        public SimpleWallet( Decimal balance ) {
             this._balance = balance.Sanitize();
+            this.Timeout = Minutes.One;
+            this._hashcode = Randem.NextInt32();
         }
 
         public String Formatted { get { return this.ToString(); } }

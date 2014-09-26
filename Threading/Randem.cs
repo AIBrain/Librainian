@@ -679,6 +679,29 @@ namespace Librainian.Threading {
                 lowResult = firstNum;
                 highResult = secondNum;
             }
+            highResult.Should().BeGreaterThan( lowResult );
+            ( lowResult + highResult ).Should().Be( goal );
+        } 
+        
+        /// <summary>
+        /// Generate two random numbers about halfway of <param name="goal"></param> .
+        /// </summary>
+        /// <remarks>Given one number, return two random numbers that add up to <param name="goal"></param></remarks>
+        public static void Split( this Decimal goal, out Decimal lowResult, out Decimal highResult ) {
+            var half = goal.HalfOf();
+            var quarter = half.HalfOf();
+            var firstNum = NextDecimal( minValue: half - quarter, maxValue: half + quarter );
+            var secondNum = goal - firstNum;
+            if ( firstNum > secondNum ) {
+                lowResult = secondNum;
+                highResult = firstNum;
+            }
+            else {
+                lowResult = firstNum;
+                highResult = secondNum;
+            }
+            highResult.Should().BeGreaterThan( lowResult );
+            ( lowResult + highResult ).Should().Be( goal );
         }
 
         public static Percentage GetRandomness( this Action<byte[]> randomFunc, UInt16 bytesToTest ) {

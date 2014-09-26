@@ -64,6 +64,10 @@ namespace Librainian.Measurement.Currency.BTC {
                 throw new ArgumentNullException( "coinSuffix" );
             }
             btc = btc.Sanitize();
+
+            //var wallet = new SimpleBitcoinWallet( btc );
+            //Console.WriteLine( wallet.Formatted );
+
             var list = new List<String> {
                                               new SimpleBitcoinWallet( btc ).Formatted.TrimEnd( '0' ).TrimEnd( '.' ),
                                               String.Format( "{0:N6}", btc.TomBTC() ).TrimEnd( '0' ).TrimEnd( '.' ) + " m" + coinSuffix,
