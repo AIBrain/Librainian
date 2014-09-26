@@ -27,7 +27,6 @@ namespace Librainian.Measurement.Currency.BTC {
     using System.Diagnostics;
     using System.Runtime.Serialization;
     using System.Threading;
-    using System.Windows.Forms;
     using Annotations;
     using Controls;
     using Threading;
