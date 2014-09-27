@@ -102,15 +102,15 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         public static Decimal ToBTC( this Int16 satoshi ) {
-            return satoshi / SimpleBitcoinWallet.SatoshiInOneBTC;
+            return satoshi / ( decimal ) SimpleBitcoinWallet.SatoshiInOneBTC;
         }
 
         public static Decimal ToBTC( this Int32 satoshi ) {
-            return satoshi / SimpleBitcoinWallet.SatoshiInOneBTC;
+            return satoshi / ( decimal ) SimpleBitcoinWallet.SatoshiInOneBTC;
         }
 
         public static Decimal ToBTC( this Int64 satoshi ) {
-            return satoshi / SimpleBitcoinWallet.SatoshiInOneBTC;
+            return satoshi / ( decimal ) SimpleBitcoinWallet.SatoshiInOneBTC;
         }
 
         public static Decimal TomBTC( this Decimal btc ) {
@@ -118,7 +118,7 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         public static Decimal ToμBTC( this Decimal btc ) {
-            return btc * SimpleBitcoinWallet.μBTCPerBTC;
+            return btc * SimpleBitcoinWallet.μBTCInOneBTC;
         }
 
         /// <summary>

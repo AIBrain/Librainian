@@ -47,33 +47,16 @@ namespace Librainian.Measurement.Currency.BTC {
     [Serializable]
     [DataContract( IsReference = true )]
     public class SimpleBitcoinWallet : IEquatable<SimpleBitcoinWallet> {
-        public const Decimal BTC = mBTC * 1000.0M;
+        public const Decimal BTC = 1M;
 
-        public const Decimal BTCInOneSatoshi = 0.00000001M;
-        public const Decimal mBTC = μBTC * 1000.0M;
+        public const Decimal mBTC               = 0.001M;
+        public const Decimal μBTC               = 0.000001M;
+        public const Decimal TenSatoshi         = 0.0000001M;
+        public const Decimal Satoshi         = 0.00000001M;
 
-        public const Decimal mBTC1 = mBTC * 1.0M;
-
-        public const Decimal mBTC2 = mBTC * 2.0M;
-
-        public const Decimal mBTC3 = mBTC * 3.0M;
-
-        public const Decimal mBTC4 = mBTC * 4.0M;
-
-        public const Decimal mBTC5 = mBTC * 5.0M;
-
-        public const Decimal mBTCPerBTC = BTC / mBTC;
-
-        public const Decimal OneSatoshi = 1.0m * BTCInOneSatoshi;
-        public const Decimal SatoshiInOneBTC = BTC / BTCInOneSatoshi;
-
-        public const Decimal TenSatoshi = 10.0m * BTCInOneSatoshi;
-
-        public const Decimal ZeroSatoshi = 0.0m * BTCInOneSatoshi;
-
-        public const Decimal μBTC = BTCInOneSatoshi * 100.0M;
-
-        public const Decimal μBTCPerBTC = BTC / μBTC;
+        public const UInt64 mBTCPerBTC = ( UInt64 )( BTC / mBTC );
+        public const UInt64 SatoshiInOneBTC = ( UInt64 )( BTC / Satoshi );
+        public const UInt64 μBTCInOneBTC = ( UInt64 )( BTC / μBTC );
 
         [NotNull]
         private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
@@ -108,6 +91,13 @@ namespace Librainian.Measurement.Currency.BTC {
         public SimpleBitcoinWallet()
             : this( 0.0m ) {
         }
+
+        public String Formatted {
+            get {
+                return this.ToString();
+            }
+        }
+
 
         public Decimal Balance {
             get {

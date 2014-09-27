@@ -27,7 +27,7 @@ namespace Librainian.Threading {
         /// </summary>
         [NotNull]
         public static readonly ParallelOptions Parallelism = new ParallelOptions {
-            MaxDegreeOfParallelism = Environment.ProcessorCount
+            MaxDegreeOfParallelism = ProcessorCount
         };
 
         [NotNull]
