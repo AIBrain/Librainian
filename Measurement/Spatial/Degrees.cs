@@ -91,7 +91,7 @@ namespace Librainian.Measurement.Spatial {
             return Math.Abs( left.Value - right.Value ) < Single.Epsilon;
         }
 
-        public static explicit operator Double( Degrees degrees ) {
+        public static implicit operator Double( Degrees degrees ) {
             return degrees.Value;
         }
 
