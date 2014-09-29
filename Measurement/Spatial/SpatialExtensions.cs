@@ -1,31 +1,8 @@
-﻿#region License & Information
-// This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
-// Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Compass.cs" was last cleaned by Rick on 2014/09/29 at 12:30 PM
-#endregion
-
-namespace Librainian.Gaming.Directional {
+﻿namespace Librainian.Measurement.Spatial {
     using System;
-    using System.Runtime.Serialization;
     using AForge.Math;
-    
 
-    public static class CompassExtensions {
+    public static class SpatialExtensions {
 
         /// <summary>
         /// When you have an angle in degrees, that you want to convert in the range of 0-360
@@ -90,7 +67,7 @@ namespace Librainian.Gaming.Directional {
             return To360Angle( angle );
         }
 
-        public static T Clamp<T>( this T val, T min, T max ) where T : IComparable<T> {
+        public static T Clamp<T>( this T val, T min, T max ) where T : IComparable< T > {
             return val.CompareTo( min ) < 0 ? min : ( val.CompareTo( max ) > 0 ? max : val );
         }
 
@@ -110,60 +87,43 @@ namespace Librainian.Gaming.Directional {
         /// </remarks>
         /// <returns></returns>
         public static Single CompassAngleLerp( this Single from, Single to, Single portion ) {
-            var dif = To180Angle( to - from );
+            var dif = To180Angle( to - @from );
             dif *= Clamp01( portion );
-            return To360Angle( from + dif );
+            return To360Angle( @from + dif );
         }
-    }
-
-    [ DataContract( IsReference = true ) ]
-    public class Compass {
-        public const Single Minimum = Single.Epsilon;
-        public const Single Maximum = 360.0f - Single.Epsilon;
-
-        public Single Value { get; set; }
 
         /// <summary>
         /// Clockwise from a top-down view.
         /// </summary>
+        /// <param name="degrees"></param>
         /// <param name="byAmount"></param>
         /// <returns></returns>
-        public Boolean RotateRight( Single byAmount = 1 ) {
+        public static Degrees RotateRight( this Degrees degrees, Single byAmount = 1 ) {
             if ( Single.IsNaN( byAmount ) ) {
-                return false;
+                return degrees;
             }
             if ( Single.IsInfinity( byAmount ) ) {
-                return false;
+                return degrees;
             }
-            if ( byAmount < Minimum ) {
-                byAmount = Minimum;
-            }
-            else if ( byAmount > Maximum ) {
-                byAmount = Maximum;
-            }
-        }
 
-
-        public Boolean RotateLeft( Single byAmount = 1 ) {
+            return degrees + byAmount;
+        } 
+        
+        /// <summary>
+        /// Clockwise from a top-down view.
+        /// </summary>
+        /// <param name="degrees"></param>
+        /// <param name="byAmount"></param>
+        /// <returns></returns>
+        public static Degrees RotateLeft( this Degrees degrees, Single byAmount = 1 ) {
             if ( Single.IsNaN( byAmount ) ) {
-                return false;
+                return degrees;
             }
             if ( Single.IsInfinity( byAmount ) ) {
-                return false;
+                return degrees;
             }
-            if ( byAmount < Minimum ) {
-                byAmount = Minimum;
-            }
-            
-            this.Value -= byAmount;
 
-            this.Value = this.Value.To360Angle();
-
-            
-            //TODO
-            if ( this.Value < CardinalDirections.North ) { }
-
-            return false;
+            return degrees - byAmount;
         }
     }
 }

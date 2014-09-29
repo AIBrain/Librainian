@@ -250,8 +250,6 @@
     <Compile Include="Extensions\Utility.cs" />
     <Compile Include="Extensions\XMLExtensions.cs" />
     <Compile Include="Gaming\DiceCup.cs" />
-    <Compile Include="Gaming\Directional\CardinalDirections.cs" />
-    <Compile Include="Gaming\Directional\Compass.cs" />
     <Compile Include="Gaming\IDice.cs" />
     <Compile Include="Gaming\IDiceCup.cs" />
     <Compile Include="Gaming\IGameContainer.cs" />
@@ -398,7 +396,10 @@
     <Compile Include="Measurement\Physics\TeraElectronVolts.cs" />
     <Compile Include="Measurement\Length\PlanckLengths.cs" />
     <Compile Include="Measurement\Length\Feet.cs" />
+    <Compile Include="Measurement\Spatial\CardinalDirections.cs" />
+    <Compile Include="Measurement\Spatial\Compass.cs" />
     <Compile Include="Measurement\Spatial\Degrees.cs" />
+    <Compile Include="Measurement\Spatial\SpatialExtensions.cs" />
     <Compile Include="Measurement\Time\Clocks\Second.cs" />
     <Compile Include="Measurement\Time\FluentTime\AdjustableCurrentTime.cs" />
     <Compile Include="Measurement\Time\FluentTime\DateTimeCreation.cs" />
@@ -616,6 +617,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Gaming\Directional\" />
     <Folder Include="PatternRecognition\" />
   </ItemGroup>
   <ItemGroup>
