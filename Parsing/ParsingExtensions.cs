@@ -819,6 +819,23 @@ namespace Librainian.Parsing {
 
             return LazyPluralizationService.Value.Pluralize( word );
         }
+        
+        /// <summary>
+        ///     Crude attempt at pluralizing a <paramref name="number" />.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="word"></param>
+        /// <returns></returns>
+        public static String PluralOf( this Single number, [ NotNull ] String word ) {
+            if ( word == null ) {
+                throw new ArgumentNullException( "word" );
+            }
+            if ( number.Near( 1 ) ) {
+                return word;
+            }
+
+            return LazyPluralizationService.Value.Pluralize( word );
+        }
 
         /// <summary>
         ///     Crude attempt at pluralizing a <paramref name="number" />.
