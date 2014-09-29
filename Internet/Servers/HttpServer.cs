@@ -117,7 +117,7 @@ namespace Librainian.Internet.Servers {
             foreach ( var addr in Dns.GetHostEntry( Dns.GetHostName() ).AddressList ) {
                 if ( addr.AddressFamily == AddressFamily.InterNetwork ) {
                     var bytes = addr.GetAddressBytes();
-                    if ( bytes != null && bytes.Length == 4 ) {
+                    if ( bytes.Length == 4 ) {
                         this.LocalIPv4Addresses.Add( bytes );
                     }
                 }

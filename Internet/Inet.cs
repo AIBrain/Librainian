@@ -51,7 +51,9 @@ namespace Librainian.Internet {
                 using ( var responseStream = response.GetResponseStream() ) {
 
                     // Read the bytes in responseStream and copy them to content.
-                    await responseStream.CopyToAsync( content );
+                    if ( responseStream != null ) {
+                        await responseStream.CopyToAsync( content );
+                    }
 
                     // The previous statement abbreviates the following two statements.
 

@@ -61,9 +61,10 @@
       <HintPath>..\UberScraper\packages\AForge.Math.2.2.5\lib\AForge.Math.dll</HintPath>
     </Reference>
     <Reference Include="BigRationalLibrary">
-      <Private>True</Private>
+      <HintPath>..\FlockingAvoidance\packages\BigRationalLibrary.1.0.0.0\lib\NETFramework40\BigRationalLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Clojure">
+      <HintPath>..\FlockingAvoidance\packages\Clojure.1.6.0.1\lib\net40\Clojure.dll</HintPath>
     </Reference>
     <Reference Include="CodeFluent.Runtime.Client">
     </Reference>
@@ -86,17 +87,23 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Dynamic">
+      <HintPath>..\FlockingAvoidance\packages\Clojure.1.6.0.1\lib\net40\Microsoft.Dynamic.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Scripting">
+      <HintPath>..\FlockingAvoidance\packages\Clojure.1.6.0.1\lib\net40\Microsoft.Scripting.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="MongoDB.Bson">
+      <HintPath>..\FlockingAvoidance\packages\mongocsharpdriver.1.9.2\lib\net35\MongoDB.Bson.dll</HintPath>
     </Reference>
     <Reference Include="MongoDB.Driver">
+      <HintPath>..\FlockingAvoidance\packages\mongocsharpdriver.1.9.2\lib\net35\MongoDB.Driver.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
+      <HintPath>..\FlockingAvoidance\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
+      <HintPath>..\FlockingAvoidance\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -243,6 +250,7 @@
     <Compile Include="Extensions\Utility.cs" />
     <Compile Include="Extensions\XMLExtensions.cs" />
     <Compile Include="Gaming\DiceCup.cs" />
+    <Compile Include="Gaming\Directional\Compass.cs" />
     <Compile Include="Gaming\IDice.cs" />
     <Compile Include="Gaming\IDiceCup.cs" />
     <Compile Include="Gaming\IGameContainer.cs" />

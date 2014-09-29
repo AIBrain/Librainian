@@ -14,7 +14,9 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Hertz.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/Hertz.cs" was last cleaned by Rick on 2014/09/28 at 5:42 PM
 #endregion
 
 namespace Librainian.Measurement.Frequency {
@@ -22,6 +24,7 @@ namespace Librainian.Measurement.Frequency {
     using System.Diagnostics;
     using System.Runtime.Serialization;
     using Annotations;
+    using Maths;
     using NUnit.Framework;
     using Time;
 
@@ -31,8 +34,8 @@ namespace Librainian.Measurement.Frequency {
     /// <summary>
     ///     http://wikipedia.org/wiki/Frequency
     /// </summary>
-    [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [ DataContract( IsReference = true ) ]
+    [ DebuggerDisplay( "{DebuggerDisplay,nq}" ) ]
     public class Hertz {
         /// <summary>
         ///     Ten <see cref="Hertz" />s.
@@ -54,14 +57,14 @@ namespace Librainian.Measurement.Frequency {
         /// </summary>
         public static readonly Hertz Hertz111 = new Hertz( 111.1 );
 
-        /// <summary>
-        /// </summary>
-        public static readonly Hertz MaxValue = new Hertz(Decimal.MaxValue );
+        ///// <summary>
+        ///// </summary>
+        //public static readonly Hertz MaxValue = new Hertz( Decimal.MaxValue );
 
-        /// <summary>
-        ///     About zero. :P
-        /// </summary>
-        public static readonly Hertz MinValue = new Hertz( 0 );
+        ///// <summary>
+        /////     About zero. :P
+        ///// </summary>
+        //public static readonly Hertz MinValue = new Hertz( 0 );
 
         /// <summary>
         ///     One <see cref="Hertz" />.
@@ -89,6 +92,21 @@ namespace Librainian.Measurement.Frequency {
         public static readonly Hertz ThreeHundredThirtyThree = new Hertz( 333 );
 
         /// <summary>
+        ///     59.9 <see cref="Hertz" />.
+        /// </summary>
+        public static readonly Hertz FiftyNinePointNine = new Hertz( 59.9 );
+
+        /// <summary>
+        ///     Sixty <see cref="Hertz" />.
+        /// </summary>
+        public static readonly Hertz Sixty = new Hertz( 60 );
+
+        /// <summary>
+        ///     120 <see cref="Hertz" />.
+        /// </summary>
+        public static readonly Hertz OneHundredTwenty = new Hertz( 120 );
+
+        /// <summary>
         ///     Two <see cref="Hertz" />s.
         /// </summary>
         public static readonly Hertz Two = new Hertz( 2 );
@@ -113,28 +131,33 @@ namespace Librainian.Measurement.Frequency {
         /// </summary>
         public static readonly Hertz Zero = new Hertz( 0 );
 
-        [DataMember] public readonly  Decimal Value;
+        [ DataMember ] public readonly Decimal Value;
 
         static Hertz() {
-            Assert.AreSame( Zero, MinValue );
+            //Assert.AreSame( Zero, MinValue );
             Assert.That( One < Two );
             Assert.That( Ten > One );
-            Assert.AreEqual( new Hertz( 4.7 ), new Milliseconds( 213 ) );
+            //Assert.AreEqual( new Hertz( 4.7 ), new Milliseconds( 213 ) );
         }
 
-        public Hertz(Decimal frequency ) {
-            this.Value = frequency < MinValue.Value ? MinValue.Value : ( frequency > MaxValue.Value ? MaxValue.Value : frequency );
+        public Hertz( Decimal frequency ) {
+            if ( frequency <= 0m.Epsilon() ) {
+                this.Value = 0m.Epsilon();
+            }
+            else {
+                this.Value = frequency >= Decimal.MaxValue ? Decimal.MaxValue : frequency;
+            }
         }
 
-        public Hertz( UInt64 frequency ) : this( (Decimal ) frequency ) { }
+        public Hertz( UInt64 frequency ) : this( ( Decimal ) frequency ) { }
 
-        public Hertz( Double frequency ) : this( (Decimal ) frequency ) { }
+        public Hertz( Double frequency ) : this( ( Decimal ) frequency ) { }
 
-        [UsedImplicitly]
+        [ UsedImplicitly ]
         private String DebuggerDisplay { get { return String.Format( "{0} hertz ({1})", this.Value, ( ( TimeSpan ) this ).Simpler() ); } }
 
         public static implicit operator TimeSpan( Hertz hertz ) {
-            return TimeSpan.FromSeconds( ( Double ) ( 1.0M/hertz.Value ) );
+            return TimeSpan.FromSeconds( ( Double ) ( 1.0m / hertz.Value ) );
         }
 
         public static Boolean operator <( Hertz lhs, Hertz rhs ) {
@@ -142,7 +165,7 @@ namespace Librainian.Measurement.Frequency {
         }
 
         public static Boolean operator >( Hertz lhs, Hertz rhs ) {
-            return lhs.Value.CompareTo( rhs ) > 0;
+            return lhs.Value.CompareTo( rhs.Value ) > 0;
         }
     }
 }

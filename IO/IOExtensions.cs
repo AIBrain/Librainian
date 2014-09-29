@@ -665,11 +665,13 @@ namespace Librainian.IO {
         /// <param name="info"></param>
         /// <returns></returns>
         public static uint? GetFileSizeOnDisk( this FileInfo info ) {
-            uint clusterSize;
-            var driveLetter = info.Directory.Root.FullName.TrimEnd( '\\' );
-            using ( var searcher = new ManagementObjectSearcher( String.Format( "select BlockSize,NumberOfBlocks from Win32_Volume WHERE DriveLetter = '{0}'", driveLetter ) ) ) {
-                var bob = searcher.Get().Cast<ManagementObject>().First();
-                clusterSize = ( uint )bob[ "BlockSize" ];
+            uint clusterSize = 1;
+            if ( info.Directory != null ) {
+                var driveLetter = info.Directory.Root.FullName.TrimEnd( '\\' );
+                using ( var searcher = new ManagementObjectSearcher( String.Format( "select BlockSize,NumberOfBlocks from Win32_Volume WHERE DriveLetter = '{0}'", driveLetter ) ) ) {
+                    var bob = searcher.Get().Cast<ManagementObject>().First();
+                    clusterSize = ( uint )bob[ "BlockSize" ];
+                }
             }
             uint hosize;
             var losize = WindowsAPI.GetCompressedFileSizeW( info.FullName, out hosize );
@@ -687,12 +689,14 @@ namespace Librainian.IO {
         /// <returns></returns>
         /// <seealso cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
         public static uint? GetFileSizeOnDiskAlt( this FileInfo info ) {
-            uint dummy;
-            uint sectorsPerCluster;
-            uint bytesPerSector;
-            var result = WindowsAPI.GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
-            if ( result == 0 ) {
-                throw new Win32Exception();
+            uint sectorsPerCluster = 1;
+            uint bytesPerSector = 0;
+            if ( info.Directory != null ) {
+                uint dummy;
+                var result = WindowsAPI.GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
+                if ( result == 0 ) {
+                    throw new Win32Exception();
+                }
             }
             var clusterSize = sectorsPerCluster * bytesPerSector;
             uint sizeHigh;
@@ -789,7 +793,7 @@ namespace Librainian.IO {
             }
 
             var proc = Process.Start( fileName: String.Format( "{0}\\explorer.exe", windowsFolder ), arguments: String.Format( "/e,\"{0}\"", folder.FullName ) );
-            proc.Responding.Should().Be( true );
+            ( proc != null && proc.Responding ).Should().Be( true );
         }
 
         /// <summary>
@@ -1168,7 +1172,7 @@ namespace Librainian.IO {
             }
             try {
                 var randomFileName = Guid.NewGuid().ToString();
-                if ( String.IsNullOrWhiteSpace( extension ) || null == extension ) {
+                if ( String.IsNullOrWhiteSpace( extension ) ) {
                     randomFileName = Path.Combine( folder.FullName, Path.GetFileName( randomFileName ) );
                 }
                 else {
@@ -1273,12 +1277,16 @@ namespace Librainian.IO {
                 var success = false;
 
                 try {
-                    fileStream.SafeFileHandle.DangerousAddRef( success: ref success );
+                    if ( fileStream.SafeFileHandle != null ) {
+                        fileStream.SafeFileHandle.DangerousAddRef( success: ref success );
 
-                    var result = DeviceIoControl( hDevice: fileStream.SafeFileHandle.DangerousGetHandle(), dwIoControlCode: FSCTL_SET_COMPRESSION, lpInBuffer: ref compressionFormatDefault, nInBufferSize: sizeof( short ), lpOutBuffer: IntPtr.Zero, nOutBufferSize: 0, lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
+                        var result = DeviceIoControl( hDevice: fileStream.SafeFileHandle.DangerousGetHandle(), dwIoControlCode: FSCTL_SET_COMPRESSION, lpInBuffer: ref compressionFormatDefault, nInBufferSize: sizeof( short ), lpOutBuffer: IntPtr.Zero, nOutBufferSize: 0, lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
+                    }
                 }
                 finally {
-                    fileStream.SafeFileHandle.DangerousRelease();
+                    if ( fileStream.SafeFileHandle != null ) {
+                        fileStream.SafeFileHandle.DangerousRelease();
+                    }
                 }
 
                 return lpBytesReturned;

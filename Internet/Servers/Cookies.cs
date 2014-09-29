@@ -28,7 +28,7 @@ namespace Librainian.Internet.Servers {
     using System.Web;
 
     public class Cookies {
-        private readonly SortedList<String, Cookie> cookieCollection = new SortedList<String, Cookie>();
+        private readonly SortedList<String, Cookie> _cookieCollection = new SortedList<String, Cookie>();
 
         /// <summary>
         ///     Returns a Cookies instance populated by parsing the specified String.  The String should be the value of the
@@ -42,15 +42,15 @@ namespace Librainian.Internet.Servers {
             if ( str == null ) {
                 return cookies;
             }
-            str = HttpUtility.UrlDecode( str );
+            str = HttpUtility.UrlDecode( str ) ?? String.Empty;
             var parts = str.Split( ';' );
-            for ( var i = 0 ; i < parts.Length ; i++ ) {
-                var idxEquals = parts[ i ].IndexOf( '=' );
+            foreach ( var s in parts ) {
+                var idxEquals = s.IndexOf( '=' );
                 if ( idxEquals < 1 ) {
                     continue;
                 }
-                var name = parts[ i ].Substring( 0, idxEquals ).Trim();
-                var value = parts[ i ].Substring( idxEquals + 1 ).Trim();
+                var name = s.Substring( 0, idxEquals ).Trim();
+                var value = s.Substring( idxEquals + 1 ).Trim();
                 cookies.Add( name, value );
             }
             return cookies;
@@ -77,7 +77,7 @@ namespace Librainian.Internet.Servers {
                 return;
             }
             name = name.ToLower();
-            this.cookieCollection[ name ] = new Cookie( name, value, expireTime );
+            this._cookieCollection[ name ] = new Cookie( name, value, expireTime );
         }
 
         /// <summary>
@@ -87,10 +87,7 @@ namespace Librainian.Internet.Servers {
         /// <returns></returns>
         public Cookie Get( String name ) {
             Cookie cookie;
-            if ( !this.cookieCollection.TryGetValue( name, out cookie ) ) {
-                cookie = null;
-            }
-            return cookie;
+            return this._cookieCollection.TryGetValue( name, out cookie ) ? cookie : null;
         }
 
         /// <summary>
@@ -116,7 +113,7 @@ namespace Librainian.Internet.Servers {
         /// </returns>
         public override String ToString() {
             var cookiesStr = new List<String>();
-            foreach ( var cookie in this.cookieCollection.Values ) {
+            foreach ( var cookie in this._cookieCollection.Values ) {
                 cookiesStr.Add( String.Format( "Set-Cookie: {0}={1}{2}; Path=/", cookie.name, cookie.value, ( cookie.expire == TimeSpan.Zero ? "" : "; Max-Age=" + ( long )cookie.expire.TotalSeconds ) ) );
             }
             return String.Join( "\r\n", cookiesStr );

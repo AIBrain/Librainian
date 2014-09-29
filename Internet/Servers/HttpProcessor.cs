@@ -763,7 +763,9 @@ namespace Librainian.Internet.Servers {
                 if ( argument.Length == 2 ) {
                     var key = HttpUtility.UrlDecode( argument[ 0 ] );
                     if ( !preserveKeyCharacterCase ) {
-                        key = key.ToLower();
+                        if ( key != null ) {
+                            key = key.ToLower();
+                        }
                     }
                     String existingValue;
                     if ( arguments.TryGetValue( key, out existingValue ) ) {

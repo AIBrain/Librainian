@@ -281,11 +281,13 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         public static bool IsSubclassOfRawGeneric( this Type type, Type generic ) {
             while ( type != typeof( object ) ) {
-                var cur = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+                var cur = type != null && type.IsGenericType ? type.GetGenericTypeDefinition() : type;
                 if ( generic == cur ) {
                     return true;
                 }
-                type = type.BaseType;
+                if ( type != null ) {
+                    type = type.BaseType;
+                }
             }
             return false;
         }

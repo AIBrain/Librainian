@@ -490,7 +490,9 @@ namespace Librainian.Threading {
             var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
                 if ( first.IsFaulted ) {
-                    tcs.TrySetException( first.Exception.InnerExceptions );
+                    if ( first.Exception != null ) {
+                        tcs.TrySetException( first.Exception.InnerExceptions );
+                    }
                 }
                 else if ( first.IsCanceled ) {
                     tcs.TrySetCanceled();
@@ -504,7 +506,9 @@ namespace Librainian.Threading {
                         else {
                             t.ContinueWith( delegate {
                                 if ( t.IsFaulted ) {
-                                    tcs.TrySetException( t.Exception.InnerExceptions );
+                                    if ( t.Exception != null ) {
+                                        tcs.TrySetException( t.Exception.InnerExceptions );
+                                    }
                                 }
                                 else if ( t.IsCanceled ) {
                                     tcs.TrySetCanceled();
@@ -536,7 +540,9 @@ namespace Librainian.Threading {
             var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
                 if ( first.IsFaulted ) {
-                    tcs.TrySetException( first.Exception.InnerExceptions );
+                    if ( first.Exception != null ) {
+                        tcs.TrySetException( first.Exception.InnerExceptions );
+                    }
                 }
                 else if ( first.IsCanceled ) {
                     tcs.TrySetCanceled();
@@ -566,7 +572,9 @@ namespace Librainian.Threading {
             var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
                 if ( first.IsFaulted ) {
-                    tcs.TrySetException( first.Exception.InnerExceptions );
+                    if ( first.Exception != null ) {
+                        tcs.TrySetException( first.Exception.InnerExceptions );
+                    }
                 }
                 else if ( first.IsCanceled ) {
                     tcs.TrySetCanceled();
@@ -580,7 +588,9 @@ namespace Librainian.Threading {
                         else {
                             t.ContinueWith( delegate {
                                 if ( t.IsFaulted ) {
-                                    tcs.TrySetException( t.Exception.InnerExceptions );
+                                    if ( t.Exception != null ) {
+                                        tcs.TrySetException( t.Exception.InnerExceptions );
+                                    }
                                 }
                                 else if ( t.IsCanceled ) {
                                     tcs.TrySetCanceled();

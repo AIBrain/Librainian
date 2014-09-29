@@ -4,6 +4,7 @@
     using System.Timers;
     using Annotations;
     using FluentAssertions;
+    using Measurement.Frequency;
     using Measurement.Time;
 
     public static class FluentTimers {
@@ -12,6 +13,10 @@
         /// </summary>
         [NotNull]
         private static readonly ConcurrentDictionary<Timer, DateTime> Timers = new ConcurrentDictionary<Timer, DateTime>();
+
+        public static Timer Create( Hertz frequency, Action onElapsed ) {
+            return Create( new Span( frequency ), onElapsed );
+        }
 
         /// <summary>
         /// <para>Creates, but does not start, the <see cref="Timer"/>.</para>
@@ -110,5 +115,6 @@
             timer.AutoReset = true;
             return timer;
         }
+
     }
 }

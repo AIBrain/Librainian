@@ -57,6 +57,11 @@ namespace Librainian.Threading {
         }
 
         [DebuggerStepThrough]
+        public static void Info( String message ) {
+            String.Format( "{0}:{1}", Thread.CurrentThread.ManagedThreadId, message ).TimeDebug();
+        }
+
+        [DebuggerStepThrough]
         public static void TimeDebug( [CanBeNull] this String message, Boolean newline = true ) {
             if ( message == null ) {
                 return;

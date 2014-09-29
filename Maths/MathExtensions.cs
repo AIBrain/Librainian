@@ -59,6 +59,8 @@ namespace Librainian.Maths {
         [UsedImplicitly]
         public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
 
+
+
         /// <summary>
         /// <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="decimal" />.</para>
         /// <para>1E-28</para>
