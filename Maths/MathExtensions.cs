@@ -23,6 +23,7 @@ namespace Librainian.Maths {
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Drawing;
     using System.Linq;
     using System.Numerics;
     using Annotations;
@@ -785,6 +786,10 @@ namespace Librainian.Maths {
 
         public static Boolean Near( this Single number, Single target ) {
             return Math.Abs( number - target ) <= Single.Epsilon;
+        }
+
+        public static Boolean Near( this PointF here, PointF there ) {
+            return here.X.Near( there.X ) && here.Y.Near( there.Y );
         }
 
         public static Boolean Near( this Decimal number, Decimal target ) {

@@ -1,5 +1,6 @@
 ﻿namespace Librainian.Measurement.Spatial {
     using System;
+    using System.Drawing;
     using AForge.Math;
 
     public static class SpatialExtensions {
@@ -67,11 +68,11 @@
             return To360Angle( angle );
         }
 
-        public static T Clamp<T>( this T val, T min, T max ) where T : IComparable< T > {
+        public static T Clamp<T>( this T val, T min, T max ) where T : IComparable<T> {
             return val.CompareTo( min ) < 0 ? min : ( val.CompareTo( max ) > 0 ? max : val );
         }
 
-        public static Single Clamp01( this Single value  ) {
+        public static Single Clamp01( this Single value ) {
             return Clamp( value, 0.0f, 1.0f );
         }
 
@@ -107,8 +108,8 @@
             }
 
             return degrees + byAmount;
-        } 
-        
+        }
+
         /// <summary>
         /// Clockwise from a top-down view.
         /// </summary>
@@ -124,6 +125,21 @@
             }
 
             return degrees - byAmount;
+        }
+
+        public const Single RadiansToDegrees = ( float ) ( 180.0 / Math.PI );
+        public const Single DegreesToRadians = ( float )( Math.PI / 180.0 );
+
+        public static Single FindAngle( this PointF here, PointF there ) {
+
+            var dx = there.X - here.X;
+            var dy =there.Y  -here.Y;
+            var angle = Math.Atan2( dy, dx ) * RadiansToDegrees;
+            if ( angle < 0 ) {
+                angle = angle + 360; //This is simular to doing 360 Math.Atan2(y1 - y2, x1 - x2) * (180 / Math.PI)
+
+            }
+            return ( Single )angle;
         }
     }
 }
