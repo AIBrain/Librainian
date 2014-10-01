@@ -506,7 +506,10 @@ namespace Librainian.Collections {
         /// </summary>
         /// <returns></returns>
         public List<TType> Clone() {
-            return this.Read( () => this._list.ToList() );
+            return this.Write( func: () => {
+                var copy = this._list.ToList();
+                return copy;
+            }, ignoreAllowModificationsCheck: true );
         }
 
         /// <summary>
@@ -654,7 +657,7 @@ namespace Librainian.Collections {
         /// <returns></returns>
         private TFuncResult Read<TFuncResult>( Func<TFuncResult> func ) {
             if ( !this.AllowModifications && func != null ) {
-                return func(); //list has been marked to not allow any more modifications, go ahead and perform the function.
+                return func(); //list has been marked to not allow any more modifications, go ahead and perform the read function.
             }
 
             if ( !this._readerWriter.TryEnterUpgradeableReadLock( this.TimeoutForReads ) ) {
@@ -693,12 +696,18 @@ namespace Librainian.Collections {
         /// </summary>
         /// <typeparam name="TFuncResult"></typeparam>
         /// <param name="func"></param>
+        /// <param name="ignoreAllowModificationsCheck"></param>
         /// <returns></returns>
         /// <seealso cref="CatchUp"/>
-        private TFuncResult Write<TFuncResult>( Func<TFuncResult> func ) {
-            if ( !this.AllowModifications && func != null ) {
-                return default( TFuncResult );
+        private TFuncResult Write<TFuncResult>( Func<TFuncResult> func, Boolean ignoreAllowModificationsCheck = false ) {
+
+            if ( !ignoreAllowModificationsCheck ) {
+                if ( !this.AllowModifications && func != null ) {
+                    return default( TFuncResult );
+                }
             }
+
+            //BUG what if we want a clone of the list, but it has been marked as !this.AllowModifications
 
             if ( !this._readerWriter.TryEnterWriteLock( this.TimeoutForWrites ) ) {
                 return default( TFuncResult );
