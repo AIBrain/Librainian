@@ -399,6 +399,7 @@
     <Compile Include="Measurement\Spatial\CardinalDirections.cs" />
     <Compile Include="Measurement\Spatial\Compass.cs" />
     <Compile Include="Measurement\Spatial\Degrees.cs" />
+    <Compile Include="Measurement\Spatial\GeoLocation.cs" />
     <Compile Include="Measurement\Spatial\SpatialExtensions.cs" />
     <Compile Include="Measurement\Time\Clocks\Second.cs" />
     <Compile Include="Measurement\Time\FluentTime\AdjustableCurrentTime.cs" />

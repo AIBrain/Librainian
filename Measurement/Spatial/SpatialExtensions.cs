@@ -127,19 +127,54 @@
             return degrees - byAmount;
         }
 
-        public const Single RadiansToDegrees = ( float ) ( 180.0 / Math.PI );
-        public const Single DegreesToRadians = ( float )( Math.PI / 180.0 );
+        //public const Single RadiansToDegrees = ( float ) ( 180.0 / Math.PI );
+        //public const Single DegreesToRadians = ( float )( Math.PI / 180.0 );
 
         public static Single FindAngle( this PointF here, PointF there ) {
 
             var dx = there.X - here.X;
             var dy =there.Y  -here.Y;
-            var angle = Math.Atan2( dy, dx ) * RadiansToDegrees;
+            var angle = RadiansToDegrees( Math.Atan2( dy, dx ) ) ;
             if ( angle < 0 ) {
                 angle = angle + 360; //This is simular to doing 360 Math.Atan2(y1 - y2, x1 - x2) * (180 / Math.PI)
 
             }
             return ( Single )angle;
+        }
+
+        public static GeoLocation FindPointAtDistanceFrom( this GeoLocation startPoint, double initialBearingRadians, double distanceKilometres ) {
+            const double radiusEarthKilometres = 6371.01;
+            var distRatio = distanceKilometres / radiusEarthKilometres;
+            var distRatioSine = Math.Sin( distRatio );
+            var distRatioCosine = Math.Cos( distRatio );
+
+            var startLatRad = DegreesToRadians( startPoint.Latitude );
+            var startLonRad = DegreesToRadians( startPoint.Longitude );
+
+            var startLatCos = Math.Cos( startLatRad );
+            var startLatSin = Math.Sin( startLatRad );
+
+            var endLatRads = Math.Asin( ( startLatSin * distRatioCosine ) + ( startLatCos * distRatioSine * Math.Cos( initialBearingRadians ) ) );
+
+            var endLonRads = startLonRad
+                + Math.Atan2(
+                    Math.Sin( initialBearingRadians ) * distRatioSine * startLatCos,
+                    distRatioCosine - startLatSin * Math.Sin( endLatRads ) );
+
+            return new GeoLocation {
+                Latitude = RadiansToDegrees( endLatRads ),
+                Longitude = RadiansToDegrees( endLonRads )
+            };
+        }
+
+        public static double DegreesToRadians( double degrees ) {
+            const double degToRadFactor = Math.PI / 180;
+            return degrees * degToRadFactor;
+        }
+
+        public static double RadiansToDegrees( double radians ) {
+            const double radToDegFactor = 180 / Math.PI;
+            return radians * radToDegFactor;
         }
     }
 }
