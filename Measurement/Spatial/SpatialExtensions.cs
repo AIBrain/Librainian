@@ -127,6 +127,15 @@
             return degrees - byAmount;
         }
 
+
+        public static Degrees TurnLeft( this Degrees degrees, Single angle ) {
+            return new Degrees( degrees.Value += DegreesToRadians( angle ) );
+        }
+
+        public static Degrees TurnRight( this Degrees degrees, Single angle ) {
+            return new Degrees( degrees.Value -= DegreesToRadians( angle ) );
+        }
+
         //public const Single RadiansToDegrees = ( float ) ( 180.0 / Math.PI );
         //public const Single DegreesToRadians = ( float )( Math.PI / 180.0 );
 
@@ -142,7 +151,7 @@
             return ( Single )angle;
         }
 
-        public static GeoLocation FindPointAtDistanceFrom( this GeoLocation startPoint, double initialBearingRadians, double distanceKilometres ) {
+        public static GeoLocationD FindPointAtDistanceFrom( this GeoLocationD startPoint, Double initialBearingRadians, Double distanceKilometres ) {
             const double radiusEarthKilometres = 6371.01;
             var distRatio = distanceKilometres / radiusEarthKilometres;
             var distRatioSine = Math.Sin( distRatio );
@@ -156,24 +165,31 @@
 
             var endLatRads = Math.Asin( ( startLatSin * distRatioCosine ) + ( startLatCos * distRatioSine * Math.Cos( initialBearingRadians ) ) );
 
-            var endLonRads = startLonRad
-                + Math.Atan2(
-                    Math.Sin( initialBearingRadians ) * distRatioSine * startLatCos,
-                    distRatioCosine - startLatSin * Math.Sin( endLatRads ) );
+            var endLonRads = startLonRad + Math.Atan2( Math.Sin( initialBearingRadians ) * distRatioSine * startLatCos, distRatioCosine - startLatSin * Math.Sin( endLatRads ) );
 
-            return new GeoLocation {
+            return new GeoLocationD {
                 Latitude = RadiansToDegrees( endLatRads ),
                 Longitude = RadiansToDegrees( endLonRads )
             };
         }
 
-        public static double DegreesToRadians( double degrees ) {
-            const double degToRadFactor = Math.PI / 180;
+        public static Single DegreesToRadians( Single degrees ) {
+            const Single degToRadFactor = ( float ) ( Math.PI / 180.0f );
             return degrees * degToRadFactor;
         }
 
-        public static double RadiansToDegrees( double radians ) {
-            const double radToDegFactor = 180 / Math.PI;
+        public static Single RadiansToDegrees( Single radians ) {
+            const Single radToDegFactor = ( float ) ( 180.0f / Math.PI );
+            return radians * radToDegFactor;
+        }
+
+        public static Double DegreesToRadians( Double degrees ) {
+            const double degToRadFactor = Math.PI / 180.0d;
+            return degrees * degToRadFactor;
+        }
+
+        public static Double RadiansToDegrees( Double radians ) {
+            const double radToDegFactor = 180.0d / Math.PI;
             return radians * radToDegFactor;
         }
     }

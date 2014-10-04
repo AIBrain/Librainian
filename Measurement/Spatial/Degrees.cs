@@ -1,4 +1,4 @@
-#region License & Information
+﻿#region License & Information
 
 // This notice must be kept visible in the source.
 //
@@ -28,8 +28,11 @@ namespace Librainian.Measurement.Spatial {
     using System.Runtime.Serialization;
     using Annotations;
     using Extensions;
-    using Parsing;
 
+    /// <summary>
+    /// A degree is a measurement of plane angle, representing 1⁄360 of a full rotation.
+    /// </summary>
+    /// <seealso cref="http://wikipedia.org/wiki/Degree_(angle)"/>
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
@@ -41,7 +44,7 @@ namespace Librainian.Measurement.Spatial {
         /// <summary>
         ///     One <see cref="Degrees" />.
         /// </summary>
-        public static readonly Degrees One = new Degrees( 1 );
+        public static readonly Degrees One = new Degrees( 1f );
 
         [DataMember]
         private float _value;
@@ -51,7 +54,8 @@ namespace Librainian.Measurement.Spatial {
             this.Value = value;
         }
 
-        public Degrees( Double value ) : this( ( Single )value ) {
+        public Degrees( Double value )
+            : this( ( Single )value ) {
         }
 
         public Single Value {
@@ -95,12 +99,17 @@ namespace Librainian.Measurement.Spatial {
             return degrees.Value;
         }
 
+        public static implicit operator Radians( Degrees degrees ) {
+            const Double degToRadFactor = Math.PI / 180.0d;
+            return new Radians( degrees.Value * degToRadFactor );
+        }
+
         public static implicit operator Decimal( Degrees degrees ) {
             return ( Decimal )degrees.Value;
         }
 
         public static Degrees operator -( Degrees degrees ) {
-            return new Degrees( degrees.Value * -1 );
+            return new Degrees( degrees.Value * -1f );
         }
 
         public static Degrees operator -( Degrees left, Degrees right ) {
@@ -147,7 +156,7 @@ namespace Librainian.Measurement.Spatial {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
-            return obj is Degrees && this.Equals( ( Degrees )obj );
+            return obj is Degrees && Equals( this, ( Degrees )obj );
         }
 
         public override int GetHashCode() {
@@ -156,7 +165,7 @@ namespace Librainian.Measurement.Spatial {
 
         [Pure]
         public override String ToString() {
-            return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "degree" ) );
+            return String.Format( "{0} °", this.Value );
         }
     }
 }

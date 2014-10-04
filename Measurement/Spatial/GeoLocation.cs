@@ -22,8 +22,26 @@
 namespace Librainian.Measurement.Spatial {
     using System;
 
-    public struct GeoLocation {
-        public Double Latitude { get; set; }
-        public Double Longitude { get; set; }
+    public struct GeoLocationD {
+        public Double Latitude {
+            get;
+            set;
+        }
+        public Double Longitude {
+            get;
+            set;
+        }
     }
+
+    public struct GeoLocationF {
+        public Single Latitude {
+            get;
+            set;
+        }
+        public Single Longitude {
+            get;
+            set;
+        }
+    }
+
 }
