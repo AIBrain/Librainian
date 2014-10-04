@@ -23,9 +23,9 @@ namespace Librainian.Extensions {
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Text;
+    using FluentAssertions;
     using IO;
     using Maths;
-    using Microsoft.Scripting.Utils;
     using Security;
     using Assert = NUnit.Framework.Assert;
 
@@ -162,7 +162,7 @@ namespace Librainian.Extensions {
                                          , i: ( Byte )dateTime.Month //13
                                          , j: Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
                                          , k: ( Byte )dateTime.Kind ); //15
-                    Assert.AreNotEqual( guid, Guid.Empty );
+                    guid.Should().NotBeEmpty();
                     return guid;
                 }
             }
@@ -171,36 +171,46 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static Guid ToGuid( UInt64 mostImportant, UInt64 somewhatImportant, UInt64 leastImportant ) {
-            var all = mostImportant.GetHashMerge( somewhatImportant ).GetHashMerge( leastImportant );
-            var buffer = new byte[ 16 ];
+        [StructLayout( LayoutKind.Explicit )]
+        public struct GuidMergerUInt64 {
+            [FieldOffset( 0 )]  // bytes 0..15 == 16 bytes
+            public Guid guid;
 
-            try {
-                BitConverter.GetBytes( leastImportant.GetHashCode() ).CopyTo( array: buffer, index: 12 );
-            }
-            catch ( ArgumentOutOfRangeException ) {
-            }
+            [FieldOffset( 0 )]
+            public readonly UInt64 lowest;
 
-            try {
-                BitConverter.GetBytes( somewhatImportant.GetHashCode() ).CopyTo( array: buffer, index: 8 );
-            }
-            catch ( ArgumentOutOfRangeException ) {
-            }
+            [FieldOffset( 4 )]
+            public readonly UInt64 center;
 
-            try {
-                BitConverter.GetBytes( mostImportant.GetHashCode() ).CopyTo( array: buffer, index: 4 );
-            }
-            catch ( ArgumentOutOfRangeException ) {
-            }
+            [FieldOffset( 8 )]  //8+8=16 == sizeof(Guid)
+            public readonly UInt64 highest;
 
-            try {
-                BitConverter.GetBytes( all ).CopyTo( array: buffer, index: 0 );
+            public GuidMergerUInt64( UInt64 most, UInt64 middle, UInt64 least ) {
+                this.guid = Guid.Empty;
+                this.lowest = least;
+                this.center = middle;
+                this.highest = most;
+                if ( most != 0 || middle != 0 || least != 0 ) {
+                    this.guid.Should().NotBeEmpty();
+                }
             }
-            catch ( ArgumentOutOfRangeException ) {
-            }
+        }
 
-            var result = new Guid( buffer );
-            return result;
+        /// <summary>
+        /// A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique identifier is required. Such an identifier has a very low probability of being duplicated.
+        /// </summary>
+        /// <param name="mostImportantbits"></param>
+        /// <param name="somewhatImportantbits"></param>
+        /// <param name="leastImportantbits"></param>
+        /// <returns></returns>
+        public static Guid ToGuid( this UInt64 mostImportantbits, UInt64 somewhatImportantbits, UInt64 leastImportantbits ) {
+            var guidMerger = new GuidMergerUInt64( mostImportantbits, somewhatImportantbits, leastImportantbits );
+            return guidMerger.guid;
+        }
+
+        public static Guid ToGuid( this Tuple<UInt64,UInt64, UInt64> tuple ) {
+            var guidMerger = new GuidMergerUInt64( tuple.Item1, tuple.Item2, tuple.Item3 );
+            return guidMerger.guid;
         }
 
         /// <summary>
