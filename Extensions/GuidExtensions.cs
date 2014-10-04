@@ -197,7 +197,8 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique identifier is required. Such an identifier has a very low probability of being duplicated.
+        /// <para>A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique identifier is required.</para>
+        /// <para>A GUID has a very low probability of being duplicated.</para>
         /// </summary>
         /// <param name="mostImportantbits"></param>
         /// <param name="somewhatImportantbits"></param>

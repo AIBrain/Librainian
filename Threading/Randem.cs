@@ -83,6 +83,7 @@ namespace Librainian.Threading {
         [NotNull]
         public static readonly ThreadLocal<RandomNumberGenerator> RNG = new ThreadLocal<RandomNumberGenerator>( () => new RNGCryptoServiceProvider() );
 
+
         [Pure]
         public static Int16 GetInt16( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof( Int16 ) ];
@@ -184,6 +185,14 @@ namespace Librainian.Threading {
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static int Next( int minValue, int maxValue ) {
             return Instance.Next( minValue: minValue, maxValue: maxValue );
+        }
+
+        public static Guid NextGuid() {
+            return Guid.NewGuid();
+        }
+
+        public static Guid NextGuid( Decimal minValue ) {
+            return Guid.NewGuid();
         }
 
         /// <summary>
