@@ -142,11 +142,10 @@
         public static Single FindAngle( this PointF here, PointF there ) {
 
             var dx = there.X - here.X;
-            var dy =there.Y  -here.Y;
-            var angle = RadiansToDegrees( Math.Atan2( dy, dx ) ) ;
+            var dy = there.Y - here.Y;
+            var angle = RadiansToDegrees( Math.Atan2( dy, dx ) );
             if ( angle < 0 ) {
                 angle = angle + 360; //This is simular to doing 360 Math.Atan2(y1 - y2, x1 - x2) * (180 / Math.PI)
-
             }
             return ( Single )angle;
         }
@@ -174,12 +173,12 @@
         }
 
         public static Single DegreesToRadians( Single degrees ) {
-            const Single degToRadFactor = ( float ) ( Math.PI / 180.0f );
+            const Single degToRadFactor = ( float )( Math.PI / 180.0f );
             return degrees * degToRadFactor;
         }
 
         public static Single RadiansToDegrees( Single radians ) {
-            const Single radToDegFactor = ( float ) ( 180.0f / Math.PI );
+            const Single radToDegFactor = ( float )( 180.0f / Math.PI );
             return radians * radToDegFactor;
         }
 
