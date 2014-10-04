@@ -21,13 +21,38 @@ namespace Librainian.Extensions {
     using System;
     using System.IO;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Text;
     using IO;
     using Maths;
-    using NUnit.Framework;
+    using Microsoft.Scripting.Utils;
     using Security;
+    using Assert = NUnit.Framework.Assert;
 
     public static class GuidExtensions {
+
+        [StructLayout( LayoutKind.Explicit )]
+        public struct DecimalGuidConverter {
+            [FieldOffset( 0 )]
+            public Decimal Decimal;
+            [FieldOffset( 0 )]
+            public Guid Guid;
+        }
+
+        public static Guid ToGuid( this Decimal number ) {
+            DecimalGuidConverter converter;
+            converter.Guid = Guid.Empty;
+            converter.Decimal = number;
+            return converter.Guid;
+        }
+
+        public static Decimal ToDecimal( this Guid guid ) {
+            DecimalGuidConverter converter;
+            converter.Decimal = Decimal.Zero;
+            converter.Guid = guid;
+            return converter.Decimal;
+        }
+
         public static Guid FromPath( this DirectoryInfo path ) {
             var s = path.ToPaths().ToList();
             s.RemoveAll( s1 => s1.Any( c => !Char.IsDigit( c ) ) );
@@ -36,8 +61,8 @@ namespace Librainian.Extensions {
                 return Guid.Empty;
             }
 
-            var b = new byte[s.Count];
-            for ( var i = 0; i < s.Count; i++ ) {
+            var b = new byte[ s.Count ];
+            for ( var i = 0 ; i < s.Count ; i++ ) {
                 b[ i ] = Convert.ToByte( s[ i ] );
             }
             try {
@@ -59,15 +84,15 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         public static Guid Munge( this Guid left, Guid right ) {
             const int bytecount = 16;
-            var destByte = new byte[bytecount];
+            var destByte = new byte[ bytecount ];
             var lhsBytes = left.ToByteArray();
             var rhsBytes = right.ToByteArray();
             Assert.AreEqual( lhsBytes.Length, destByte.Length );
             Assert.AreEqual( rhsBytes.Length, destByte.Length );
 
-            for ( var i = 0; i < bytecount; i++ ) {
+            for ( var i = 0 ; i < bytecount ; i++ ) {
                 unchecked {
-                    destByte[ i ] = ( byte ) ( lhsBytes[ i ] ^ rhsBytes[ i ] );
+                    destByte[ i ] = ( byte )( lhsBytes[ i ] ^ rhsBytes[ i ] );
                 }
             }
             return new Guid( destByte );
@@ -92,13 +117,13 @@ namespace Librainian.Extensions {
                 var year = BitConverter.ToInt32( bytes, 0 );
                 var dayofYear = BitConverter.ToUInt16( bytes, 4 );
                 var millisecond = BitConverter.ToUInt16( bytes, 6 );
-                var dayofweek = ( DayOfWeek ) bytes[ 8 ];
+                var dayofweek = ( DayOfWeek )bytes[ 8 ];
                 var day = bytes[ 9 ];
                 var hour = bytes[ 10 ];
                 var minute = bytes[ 11 ];
                 var second = bytes[ 12 ];
                 var month = bytes[ 13 ];
-                var kind = ( DateTimeKind ) bytes[ 15 ];
+                var kind = ( DateTimeKind )bytes[ 15 ];
                 var result = new DateTime( year: year, month: month, day: day, hour: hour, minute: minute, second: second, millisecond: millisecond, kind: kind );
                 Assert.AreEqual( result.DayOfYear, dayofYear );
                 Assert.AreEqual( result.DayOfWeek, dayofweek );
@@ -126,17 +151,17 @@ namespace Librainian.Extensions {
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
-                    var guid = new Guid( a: ( UInt32 ) dateTime.Year //0,1,2,3
-                                         , b: ( UInt16 ) dateTime.DayOfYear //4,5
-                                         , c: ( UInt16 ) dateTime.Millisecond //6,7
-                                         , d: ( Byte ) dateTime.DayOfWeek //8
-                                         , e: ( Byte ) dateTime.Day //9
-                                         , f: ( Byte ) dateTime.Hour //10
-                                         , g: ( Byte ) dateTime.Minute //11
-                                         , h: ( Byte ) dateTime.Second //12
-                                         , i: ( Byte ) dateTime.Month //13
+                    var guid = new Guid( a: ( UInt32 )dateTime.Year //0,1,2,3
+                                         , b: ( UInt16 )dateTime.DayOfYear //4,5
+                                         , c: ( UInt16 )dateTime.Millisecond //6,7
+                                         , d: ( Byte )dateTime.DayOfWeek //8
+                                         , e: ( Byte )dateTime.Day //9
+                                         , f: ( Byte )dateTime.Hour //10
+                                         , g: ( Byte )dateTime.Minute //11
+                                         , h: ( Byte )dateTime.Second //12
+                                         , i: ( Byte )dateTime.Month //13
                                          , j: Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-                                         , k: ( Byte ) dateTime.Kind ); //15
+                                         , k: ( Byte )dateTime.Kind ); //15
                     Assert.AreNotEqual( guid, Guid.Empty );
                     return guid;
                 }
@@ -148,27 +173,31 @@ namespace Librainian.Extensions {
 
         public static Guid ToGuid( UInt64 mostImportant, UInt64 somewhatImportant, UInt64 leastImportant ) {
             var all = mostImportant.GetHashMerge( somewhatImportant ).GetHashMerge( leastImportant );
-            var buffer = new byte[16];
+            var buffer = new byte[ 16 ];
 
             try {
                 BitConverter.GetBytes( leastImportant.GetHashCode() ).CopyTo( array: buffer, index: 12 );
             }
-            catch ( ArgumentOutOfRangeException ) { }
+            catch ( ArgumentOutOfRangeException ) {
+            }
 
             try {
                 BitConverter.GetBytes( somewhatImportant.GetHashCode() ).CopyTo( array: buffer, index: 8 );
             }
-            catch ( ArgumentOutOfRangeException ) { }
+            catch ( ArgumentOutOfRangeException ) {
+            }
 
             try {
                 BitConverter.GetBytes( mostImportant.GetHashCode() ).CopyTo( array: buffer, index: 4 );
             }
-            catch ( ArgumentOutOfRangeException ) { }
+            catch ( ArgumentOutOfRangeException ) {
+            }
 
             try {
                 BitConverter.GetBytes( all ).CopyTo( array: buffer, index: 0 );
             }
-            catch ( ArgumentOutOfRangeException ) { }
+            catch ( ArgumentOutOfRangeException ) {
+            }
 
             var result = new Guid( buffer );
             return result;

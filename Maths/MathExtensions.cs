@@ -26,6 +26,7 @@ namespace Librainian.Maths {
     using System.Drawing;
     using System.Linq;
     using System.Numerics;
+    using System.Runtime.InteropServices;
     using Annotations;
     using Collections;
     using FluentAssertions;
@@ -35,6 +36,65 @@ namespace Librainian.Maths {
     using Threading;
 
     public static class MathExtensions {
+
+        public struct SixteenBytes {
+            public byte A;
+            public byte B;
+            public byte C;
+            public byte D;
+            public byte E;
+            public byte F;
+            public byte G;
+            public byte H;
+            public byte I;
+            public byte J;
+            public byte K;
+            public byte L;
+            public byte M;
+            public byte N;
+            public byte O;
+            public byte P;
+        }
+
+        [StructLayout( LayoutKind.Explicit )]
+        public struct DecimalReverser {
+            [FieldOffset( 0 )]
+            public Decimal Decimal;
+            [FieldOffset( 0 )]
+            public SixteenBytes Bytes;
+        }
+
+        /// <summary>
+        /// Reverse the <see cref="Byte"/> order in a decimal and return the new number.
+        /// </summary>
+        /// <param name="original"></param>
+        /// <returns></returns>
+        public static Decimal Reverse( this Decimal original ) {
+            DecimalReverser reverser;
+            reverser.Bytes = new SixteenBytes();    //NOP
+            reverser.Decimal = original;
+
+            var copy = reverser.Bytes;
+
+            reverser.Bytes.A = copy.P;
+            reverser.Bytes.B = copy.O;
+            reverser.Bytes.C = copy.N;
+            reverser.Bytes.D = copy.M;
+            reverser.Bytes.E = copy.L;
+            reverser.Bytes.F = copy.K;
+            reverser.Bytes.G = copy.J;
+            reverser.Bytes.H = copy.I;
+            reverser.Bytes.I = copy.H;
+            reverser.Bytes.J = copy.G;
+            reverser.Bytes.K = copy.F;
+            reverser.Bytes.L = copy.E;
+            reverser.Bytes.M = copy.D;
+            reverser.Bytes.N = copy.C;
+            reverser.Bytes.O = copy.B;
+            reverser.Bytes.P = copy.A;
+
+            return reverser.Decimal;
+        }
 
         public static Boolean IsOdd( this int value ) {
             return 0 != value % 2;
