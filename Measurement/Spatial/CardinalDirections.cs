@@ -40,6 +40,10 @@ namespace Librainian.Measurement.Spatial {
         WestNorthWest = ( West + NorthWest ) / 2,
         NorthWest = ( FullNorth + West ) / 2,
         NorthNorthWest = ( FullNorth + NorthWest ) / 2,
+
+        /// <summary>
+        /// 360
+        /// </summary>
         FullNorth = 360,
     }
 }

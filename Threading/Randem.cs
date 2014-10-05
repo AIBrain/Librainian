@@ -676,8 +676,8 @@ namespace Librainian.Threading {
         /// </summary>
         /// <remarks>Given one number, return two random numbers that add up to <param name="goal"></param></remarks>
         public static void Split( this int goal, out int lowResult, out int highResult ) {
-            var half = goal.HalfOf();
-            var quarter = half.HalfOf();
+            var half = goal.Half();
+            var quarter = half.Half();
             var firstNum = Instance.Next( minValue: half - quarter, maxValue: half + quarter );
             var secondNum = goal - firstNum;
             if ( firstNum > secondNum ) {
@@ -697,8 +697,8 @@ namespace Librainian.Threading {
         /// </summary>
         /// <remarks>Given one number, return two random numbers that add up to <param name="goal"></param></remarks>
         public static void Split( this Decimal goal, out Decimal lowResult, out Decimal highResult ) {
-            var half = goal.HalfOf();
-            var quarter = half.HalfOf();
+            var half = goal.Half();
+            var quarter = half.Half();
             var firstNum = NextDecimal( minValue: half - quarter, maxValue: half + quarter );
             var secondNum = goal - firstNum;
             if ( firstNum > secondNum ) {

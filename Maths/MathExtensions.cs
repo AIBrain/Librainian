@@ -627,48 +627,48 @@ namespace Librainian.Maths {
             }
         }
 
-        public static Single HalfOf( this Single number ) {
+        public static Single Half( this Single number ) {
             return number / 2.0f;
         }
 
-        public static Double HalfOf( this Double number ) {
+        public static Double Half( this Double number ) {
             return number / 2.0d;
         }
 
-        public static Byte HalfOf( this Byte number ) {
+        public static Byte Half( this Byte number ) {
             return ( Byte )( number / 2 );
         }
 
         [Pure]
-        public static TimeSpan HalfOf( this TimeSpan timeSpan ) {
-            return TimeSpan.FromTicks( timeSpan.Ticks.HalfOf() );
+        public static TimeSpan Half( this TimeSpan timeSpan ) {
+            return TimeSpan.FromTicks( timeSpan.Ticks.Half() );
         }
 
-        public static Int32 HalfOf( this Int32 number ) {
+        public static Int32 Half( this Int32 number ) {
             return ( Int32 )( number / 2.0f );
         }
 
-        public static Int16 HalfOf( this Int16 number ) {
+        public static Int16 Half( this Int16 number ) {
             return ( Int16 )( number / 2.0f );
         }
 
-        public static UInt16 HalfOf( this UInt16 number ) {
+        public static UInt16 Half( this UInt16 number ) {
             return ( UInt16 )( number / 2.0f );
         }
 
-        public static UInt32 HalfOf( this UInt32 number ) {
+        public static UInt32 Half( this UInt32 number ) {
             return ( UInt32 )( number / 2.0f );
         }
 
-        public static UInt64 HalfOf( this UInt64 number ) {
+        public static UInt64 Half( this UInt64 number ) {
             return ( UInt64 )( number / 2.0d );
         }
 
-        public static Int64 HalfOf( this Int64 number ) {
+        public static Int64 Half( this Int64 number ) {
             return ( Int64 )( number / 2.0d );
         }
 
-        public static Decimal HalfOf( this Decimal number ) {
+        public static Decimal Half( this Decimal number ) {
             return number / 2.0m;
         }
 

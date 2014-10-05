@@ -145,7 +145,7 @@
             var dy = there.Y - here.Y;
             var angle = RadiansToDegrees( Math.Atan2( dy, dx ) );
             if ( angle < 0 ) {
-                angle = angle + 360; //This is simular to doing 360 Math.Atan2(y1 - y2, x1 - x2) * (180 / Math.PI)
+                angle += 360; //This is simular to doing 360 Math.Atan2(y1 - y2, x1 - x2) * (180 / Math.PI)
             }
             return angle;
         }
