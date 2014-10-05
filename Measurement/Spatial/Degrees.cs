@@ -17,7 +17,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Degrees.cs" was last cleaned by Rick on 2014/09/29 at 1:47 PM
+// "Librainian/Degrees.cs" was last cleaned by Rick on 2014/10/04 at 9:57 AM
 
 #endregion License & Information
 
@@ -30,35 +30,31 @@ namespace Librainian.Measurement.Spatial {
     using Extensions;
 
     /// <summary>
-    /// A degree is a measurement of plane angle, representing 1⁄360 of a full rotation.
+    ///     A degree is a measurement of plane angle, representing 1⁄360 of a full rotation.
     /// </summary>
-    /// <seealso cref="http://wikipedia.org/wiki/Degree_(angle)"/>
+    /// <seealso cref="http://wikipedia.org/wiki/Degree_(angle)" />
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     [Immutable]
     public struct Degrees : IComparable<Degrees> {
-        public const Single MaximumValue = 360.0f;
-        public const Single MinimumValue = 0.0f;
+        public const Double MaximumValue = 360.0f;
+        public const Double MinimumValue = 0.0f;
 
         /// <summary>
         ///     One <see cref="Degrees" />.
         /// </summary>
-        public static readonly Degrees One = new Degrees( 1f );
+        public static readonly Degrees One = new Degrees( 1d );
 
         [DataMember]
-        private float _value;
+        private Double _value;
 
-        public Degrees( Single value )
+        public Degrees( Double value )
             : this() {
             this.Value = value;
         }
 
-        public Degrees( Double value )
-            : this( ( Single )value ) {
-        }
-
-        public Single Value {
+        public Double Value {
             get {
                 return this._value;
             }
@@ -81,7 +77,11 @@ namespace Librainian.Measurement.Spatial {
             }
         }
 
-        public static Degrees Combine( Degrees left, Single degrees ) {
+        public int CompareTo( Degrees other ) {
+            return this.Value.CompareTo( other.Value );
+        }
+
+        public static Degrees Combine( Degrees left, Double degrees ) {
             return new Degrees( left.Value + degrees );
         }
 
@@ -92,7 +92,7 @@ namespace Librainian.Measurement.Spatial {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Degrees left, Degrees right ) {
-            return Math.Abs( left.Value - right.Value ) < Single.Epsilon;
+            return Math.Abs( left.Value - right.Value ) < Double.Epsilon;
         }
 
         public static implicit operator Double( Degrees degrees ) {
@@ -116,7 +116,7 @@ namespace Librainian.Measurement.Spatial {
             return Combine( left, -right.Value );
         }
 
-        public static Degrees operator -( Degrees left, Single degrees ) {
+        public static Degrees operator -( Degrees left, Double degrees ) {
             return Combine( left, -degrees );
         }
 
@@ -128,7 +128,7 @@ namespace Librainian.Measurement.Spatial {
             return Combine( left, right.Value );
         }
 
-        public static Degrees operator +( Degrees left, Single degrees ) {
+        public static Degrees operator +( Degrees left, Double degrees ) {
             return Combine( left, degrees );
         }
 
@@ -142,10 +142,6 @@ namespace Librainian.Measurement.Spatial {
 
         public static Boolean operator >( Degrees left, Degrees right ) {
             return left.Value > right.Value;
-        }
-
-        public int CompareTo( Degrees other ) {
-            return this.Value.CompareTo( other.Value );
         }
 
         public Boolean Equals( Degrees other ) {

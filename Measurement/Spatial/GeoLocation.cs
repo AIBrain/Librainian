@@ -22,7 +22,7 @@
 namespace Librainian.Measurement.Spatial {
     using System;
 
-    public struct GeoLocationD {
+    public struct GeoLocation {
         public Double Latitude {
             get;
             set;
