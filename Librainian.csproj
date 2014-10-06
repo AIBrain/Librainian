@@ -543,6 +543,9 @@
     <Compile Include="Threading\AbandonableTask.cs" />
     <Compile Include="Security\MersenneTwister.cs" />
     <Compile Include="Threading\ActorExtensions.cs" />
+    <Compile Include="Threading\RandomOrg\Quota.cs" />
+    <Compile Include="Threading\RandomOrg\IntegerGenerator.cs" />
+    <Compile Include="Threading\RandomOrg\WebInterface.cs" />
     <Compile Include="Threading\Volatile.cs" />
     <Compile Include="Threading\ParallelAlgorithms.cs" />
     <Compile Include="Threading\CustomAttribute.cs" />
