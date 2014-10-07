@@ -17,9 +17,8 @@
 // "Librainian/Segment.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 #endregion
 
-namespace Librainian.Graphics.Line {
+namespace Librainian.Graphics.Geometry {
     using System;
-    using Geometry;
 
     public struct Segment {
         public static Segment Empty;

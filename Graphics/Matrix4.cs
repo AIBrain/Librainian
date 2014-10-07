@@ -17,10 +17,9 @@
 // "Librainian/Matrix4.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 #endregion
 
-namespace Librainian.Geometry {
+namespace Librainian.Graphics {
     using System;
     using System.Windows.Media.Media3D;
-    using Graphics;
 
     internal class Matrix4 : Matrix {
         public static Matrix4 I = NewI();
