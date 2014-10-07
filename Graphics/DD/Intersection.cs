@@ -17,7 +17,7 @@
 // "Librainian/Intersection.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 #endregion
 
-namespace Librainian.Geometry.DD {
+namespace Librainian.Graphics.DD {
     public enum Intersection {
         None,
 

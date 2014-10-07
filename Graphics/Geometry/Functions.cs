@@ -17,11 +17,10 @@
 // "Librainian/Functions.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 #endregion
 
-namespace Librainian.Graphics.Line {
+namespace Librainian.Graphics.Geometry {
     using System;
     using System.Diagnostics;
     using System.Windows.Media.Media3D;
-    using Geometry;
 
     public static class Functions {
         /// <summary>

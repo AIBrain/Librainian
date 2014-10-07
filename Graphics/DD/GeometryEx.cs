@@ -20,8 +20,6 @@
 namespace Librainian.Graphics.DD {
     using System;
     using System.Drawing;
-    using Geometry.DD;
-
 
     public static class GeometryEx {
         
