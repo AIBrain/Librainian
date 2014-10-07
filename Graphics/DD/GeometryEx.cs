@@ -17,13 +17,14 @@
 // "Librainian/GeometryEx.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 #endregion
 
-namespace Librainian.Geometry.DD {
+namespace Librainian.Graphics.DD {
     using System;
     using System.Drawing;
+    using Geometry.DD;
 
-    [Obsolete]
+
     public static class GeometryEx {
-        [Obsolete]
+        
         public static Intersection IntersectionOf( Line line, Polygon polygon ) {
             if ( polygon.Length == 0 ) {
                 return Intersection.None;
@@ -112,7 +113,7 @@ namespace Librainian.Geometry.DD {
             return Intersection.Intersection;
         }
 
-        [Obsolete]
+
         public static Intersection IntersectionOf( PointF point, Polygon polygon ) {
             switch ( polygon.Length ) {
                 case 0:
