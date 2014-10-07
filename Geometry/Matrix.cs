@@ -21,31 +21,31 @@ namespace Librainian.Geometry {
     using System;
 
     public class Matrix {
-        protected readonly int cols;
+        protected readonly int Cols;
 
         protected readonly Single[,] matrix;
 
-        protected readonly int rows;
+        protected readonly int Rows;
 
         protected Matrix( Single[,] matrix ) {
             this.matrix = matrix;
-            this.rows = matrix.GetLength( 0 );
-            this.cols = matrix.GetLength( 1 );
+            this.Rows = matrix.GetLength( 0 );
+            this.Cols = matrix.GetLength( 1 );
         }
 
         protected Matrix( int rows, int cols ) {
             this.matrix = new Single[rows, cols];
-            this.rows = rows;
-            this.cols = cols;
+            this.Rows = rows;
+            this.Cols = cols;
         }
 
         public override String ToString() {
             var res = "";
-            for ( var i = 0; i < this.rows; ++i ) {
+            for ( var i = 0; i < this.Rows; ++i ) {
                 if ( i > 0 ) {
                     res += "|";
                 }
-                for ( var j = 0; j < this.cols; ++j ) {
+                for ( var j = 0; j < this.Cols; ++j ) {
                     if ( j > 0 ) {
                         res += ",";
                     }
@@ -56,8 +56,8 @@ namespace Librainian.Geometry {
         }
 
         protected static Single[,] Multiply( Matrix matrix, Single scalar ) {
-            var rows = matrix.rows;
-            var cols = matrix.cols;
+            var rows = matrix.Rows;
+            var cols = matrix.Cols;
             var m1 = matrix.matrix;
             var m2 = new Single[rows, cols];
             for ( var i = 0; i < rows; ++i ) {
@@ -69,12 +69,12 @@ namespace Librainian.Geometry {
         }
 
         private static Single[,] Multiply( Matrix matrix1, Matrix matrix2 ) {
-            var m1cols = matrix1.cols;
-            if ( m1cols != matrix2.rows ) {
+            var m1cols = matrix1.Cols;
+            if ( m1cols != matrix2.Rows ) {
                 throw new ArgumentException();
             }
-            var m1rows = matrix1.rows;
-            var m2cols = matrix2.cols;
+            var m1rows = matrix1.Rows;
+            var m2cols = matrix2.Cols;
             var m1 = matrix1.matrix;
             var m2 = matrix2.matrix;
             var m3 = new Single[m1rows, m2cols];

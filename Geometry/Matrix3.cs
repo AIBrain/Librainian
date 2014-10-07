@@ -17,41 +17,50 @@
 // "Librainian/Matrix3.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 #endregion
 
-//namespace AI.Geometry {
-//public class Matrix3 : Matrix {
-//    public Matrix3() : base( 3, 3 ) { }
+namespace Librainian.Geometry {
+    using System;
+    using System.Windows.Media.Media3D;
 
-//    public Matrix3( Single[ , ] matrix ) : base( matrix ) {
-//        if ( this.rows != 3 || this.cols != 3 ) {
-//            throw new ArgumentException();
-//        }
-//    }
+    public class Matrix3 : Matrix {
+        public Matrix3() : base( 3, 3 ) {
+        }
 
-//    public static Matrix3 I() { return new Matrix3( new[ , ] { { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } } ); }
+        public Matrix3( Single[ , ] matrix )
+            : base( matrix ) {
+            if ( this.Rows != 3 || this.Cols != 3 ) {
+                throw new ArgumentException();
+            }
+        }
 
-//    public static Vector3 operator *( Matrix3 matrix3, Vector3 v ) {
-//        var m = matrix3.matrix;
-//        return new Vector3( m[ 0, 0 ] * v.X + m[ 0, 1 ] * v.Y + m[ 0, 2 ] * v.Z, m[ 1, 0 ] * v.X + m[ 1, 1 ] * v.Y + m[ 1, 2 ] * v.Z, m[ 2, 0 ] * v.X + m[ 2, 1 ] * v.Y + m[ 2, 2 ] * v.Z );
-//    }
+        public static Matrix3 I() {
+            return new Matrix3( new[ , ] { { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } } );
+        }
 
-//    public static Matrix3 operator *( Matrix3 mat1, Matrix3 mat2 ) {
-//        var m1 = mat1.matrix;
-//        var m2 = mat2.matrix;
-//        var m3 = new Single[ 3,3 ];
-//        m3[ 0, 0 ] = m1[ 0, 0 ] * m2[ 0, 0 ] + m1[ 0, 1 ] * m2[ 1, 0 ] + m1[ 0, 2 ] * m2[ 2, 0 ];
-//        m3[ 0, 1 ] = m1[ 0, 0 ] * m2[ 0, 1 ] + m1[ 0, 1 ] * m2[ 1, 1 ] + m1[ 0, 2 ] * m2[ 2, 1 ];
-//        m3[ 0, 2 ] = m1[ 0, 0 ] * m2[ 0, 2 ] + m1[ 0, 1 ] * m2[ 1, 2 ] + m1[ 0, 2 ] * m2[ 2, 2 ];
-//        m3[ 1, 0 ] = m1[ 1, 0 ] * m2[ 0, 0 ] + m1[ 1, 1 ] * m2[ 1, 0 ] + m1[ 1, 2 ] * m2[ 2, 0 ];
-//        m3[ 1, 1 ] = m1[ 1, 0 ] * m2[ 0, 1 ] + m1[ 1, 1 ] * m2[ 1, 1 ] + m1[ 1, 2 ] * m2[ 2, 1 ];
-//        m3[ 1, 2 ] = m1[ 1, 0 ] * m2[ 0, 2 ] + m1[ 1, 1 ] * m2[ 1, 2 ] + m1[ 1, 2 ] * m2[ 2, 2 ];
-//        m3[ 2, 0 ] = m1[ 2, 0 ] * m2[ 0, 0 ] + m1[ 2, 1 ] * m2[ 1, 0 ] + m1[ 2, 2 ] * m2[ 2, 0 ];
-//        m3[ 2, 1 ] = m1[ 2, 0 ] * m2[ 0, 1 ] + m1[ 2, 1 ] * m2[ 1, 1 ] + m1[ 2, 2 ] * m2[ 2, 1 ];
-//        m3[ 2, 2 ] = m1[ 2, 0 ] * m2[ 0, 2 ] + m1[ 2, 1 ] * m2[ 1, 2 ] + m1[ 2, 2 ] * m2[ 2, 2 ];
-//        return new Matrix3( m3 );
-//    }
+        public static Vector3D operator *( Matrix3 matrix3, Vector3D v ) {
+            var m = matrix3.matrix;
+            return new Vector3D( m[ 0, 0 ] * v.X + m[ 0, 1 ] * v.Y + m[ 0, 2 ] * v.Z, m[ 1, 0 ] * v.X + m[ 1, 1 ] * v.Y + m[ 1, 2 ] * v.Z, m[ 2, 0 ] * v.X + m[ 2, 1 ] * v.Y + m[ 2, 2 ] * v.Z );
+        }
 
-//    public static Matrix3 operator *( Matrix3 m, Single scalar ) { return new Matrix3( Multiply( m, scalar ) ); }
-//}
-//}
+        public static Matrix3 operator *( Matrix3 mat1, Matrix3 mat2 ) {
+            var m1 = mat1.matrix;
+            var m2 = mat2.matrix;
+            var m3 = new Single[ 3, 3 ];
+            m3[ 0, 0 ] = m1[ 0, 0 ] * m2[ 0, 0 ] + m1[ 0, 1 ] * m2[ 1, 0 ] + m1[ 0, 2 ] * m2[ 2, 0 ];
+            m3[ 0, 1 ] = m1[ 0, 0 ] * m2[ 0, 1 ] + m1[ 0, 1 ] * m2[ 1, 1 ] + m1[ 0, 2 ] * m2[ 2, 1 ];
+            m3[ 0, 2 ] = m1[ 0, 0 ] * m2[ 0, 2 ] + m1[ 0, 1 ] * m2[ 1, 2 ] + m1[ 0, 2 ] * m2[ 2, 2 ];
+            m3[ 1, 0 ] = m1[ 1, 0 ] * m2[ 0, 0 ] + m1[ 1, 1 ] * m2[ 1, 0 ] + m1[ 1, 2 ] * m2[ 2, 0 ];
+            m3[ 1, 1 ] = m1[ 1, 0 ] * m2[ 0, 1 ] + m1[ 1, 1 ] * m2[ 1, 1 ] + m1[ 1, 2 ] * m2[ 2, 1 ];
+            m3[ 1, 2 ] = m1[ 1, 0 ] * m2[ 0, 2 ] + m1[ 1, 1 ] * m2[ 1, 2 ] + m1[ 1, 2 ] * m2[ 2, 2 ];
+            m3[ 2, 0 ] = m1[ 2, 0 ] * m2[ 0, 0 ] + m1[ 2, 1 ] * m2[ 1, 0 ] + m1[ 2, 2 ] * m2[ 2, 0 ];
+            m3[ 2, 1 ] = m1[ 2, 0 ] * m2[ 0, 1 ] + m1[ 2, 1 ] * m2[ 1, 1 ] + m1[ 2, 2 ] * m2[ 2, 1 ];
+            m3[ 2, 2 ] = m1[ 2, 0 ] * m2[ 0, 2 ] + m1[ 2, 1 ] * m2[ 1, 2 ] + m1[ 2, 2 ] * m2[ 2, 2 ];
+            return new Matrix3( m3 );
+        }
+
+        public static Matrix3 operator *( Matrix3 m, Single scalar ) {
+            return new Matrix3( Multiply( m, scalar ) );
+        }
+    }
+}
 
 

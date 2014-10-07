@@ -32,7 +32,7 @@ namespace Librainian.Geometry {
     ///     Coded towards speed.
     /// </remarks>
     [DataContract( IsReference = true )]
-    public class Coordinate64 : IEquatable<Coordinate64>, IComparable<Coordinate64> {
+    public struct Coordinate64 : IEquatable<Coordinate64>, IComparable<Coordinate64> {
         /// <summary>
         ///     The smallest value a <see cref="Coordinate64" /> will hold.
         /// </summary>
@@ -124,7 +124,7 @@ namespace Librainian.Geometry {
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Boolean Equals( [CanBeNull] Coordinate64 other ) {
+        public Boolean Equals(   Coordinate64 other ) {
             return Equals( this, other );
         }
 
@@ -134,21 +134,15 @@ namespace Librainian.Geometry {
         /// <param name="lhs"> </param>
         /// <param name="rhs"> </param>
         /// <returns> </returns>
-        public static Boolean Equals( [CanBeNull] Coordinate64 lhs, [CanBeNull] Coordinate64 rhs ) {
-            if ( ReferenceEquals( lhs, rhs ) ) {
-                return true;
-            }
-            if ( null == lhs || null == rhs ) {
-                return false;
-            }
+        public static Boolean Equals(   Coordinate64 lhs,   Coordinate64 rhs ) {
             return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
         }
 
         /// <summary>
-        ///     Returns a new Coordinate as a unit Coordinate. The result is a Coordinate one unit in length pointing in the same
-        ///     direction as the original Coordinate.
+        ///     <para>Returns a new Coordinate as a unit <see cref="Coordinate64"/>.</para>
+        /// <para>The result is a Coordinate one unit in length pointing in the same direction as the original Coordinate.</para>
         /// </summary>
-        public static Coordinate64 Normalize( [NotNull] Coordinate64 coordinate ) {
+        public static Coordinate64 Normalize( Coordinate64 coordinate ) {
             if ( coordinate == null ) {
                 throw new ArgumentNullException( "coordinate" );
             }
@@ -197,7 +191,7 @@ namespace Librainian.Geometry {
             return ( UInt64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
         }
 
-        public override Boolean Equals( [CanBeNull] object obj ) {
+        public override Boolean Equals(   object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
