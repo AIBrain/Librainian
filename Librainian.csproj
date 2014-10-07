@@ -265,9 +265,9 @@
     <Compile Include="Geometry\DD\Polygon.cs" />
     <Compile Include="Geometry\Line\Functions.cs" />
     <Compile Include="Geometry\Line\Segment.cs" />
-    <Compile Include="Geometry\Matrix.cs" />
-    <Compile Include="Geometry\Matrix3.cs" />
-    <Compile Include="Geometry\Matrix4.cs" />
+    <Compile Include="Graphics\Matrix.cs" />
+    <Compile Include="Graphics\Matrix3.cs" />
+    <Compile Include="Graphics\Matrix4.cs" />
     <Compile Include="Graphics\MathUtils.cs" />
     <Compile Include="Graphics\Images.cs" />
     <Compile Include="Gaming\PlayingCards\Card.cs" />
