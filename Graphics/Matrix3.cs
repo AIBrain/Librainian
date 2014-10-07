@@ -20,6 +20,7 @@
 namespace Librainian.Geometry {
     using System;
     using System.Windows.Media.Media3D;
+    using Graphics;
 
     public class Matrix3 : Matrix {
         public Matrix3() : base( 3, 3 ) {
