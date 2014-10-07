@@ -34,14 +34,6 @@ namespace Librainian.Knowledge {
     using Parsing;
     using Threading;
 
-    public interface IFactDatabase {
-        int FilesFound { get; set; }
-
-        int AddFile( FileInfo dataFile, ProgressChangedEventHandler feedback = null );
-
-        void DoRandomEntry( ActionBlock<Sentence> action );
-    }
-
     public class FactDatabase : NinjectModule, IInitializable, IFactDatabase {
         public readonly ConcurrentBag<FileInfo> KNBFiles = new ConcurrentBag<FileInfo>();
 
