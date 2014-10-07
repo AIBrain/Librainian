@@ -37,7 +37,7 @@ namespace Librainian.Measurement.Spatial {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     [Immutable]
-    public struct Radians : IComparable<Radians> {
+    public struct Radians : IComparable< Radians > {
         public const Double MaximumValue = 360.0d;
         public const Double MinimumValue = 0.0d;
 
@@ -100,8 +100,11 @@ namespace Librainian.Measurement.Spatial {
         }
 
         public static implicit operator Degrees( Radians radians ) {
-            const Double radToDegFactor = 180.0d / Math.PI;
-            return new Degrees( radians.Value * radToDegFactor );
+            return ToDegrees( radians );
+        }
+
+        public static Degrees ToDegrees( Radians radians ) {
+            return new Degrees( radians.Value * RadiansToDegreesFactor );
         }
 
         public static implicit operator Decimal( Radians radians ) {
@@ -163,5 +166,10 @@ namespace Librainian.Measurement.Spatial {
         public override String ToString() {
             return String.Format( "{0} ㎭", this.Value );
         }
+
+        /// <summary>
+        /// 180 / Math.PI
+        /// </summary>
+        public const double RadiansToDegreesFactor = 180 / Math.PI;
     }
 }

@@ -172,15 +172,12 @@
             };
         }
 
-        public const double DegToRadFactor = Math.PI / 180.0d;
-        public const double RadToDegFactor = 180.0d / Math.PI;
-
         public static Double DegreesToRadians( Double degrees ) {
-            return degrees * DegToRadFactor;
+            return degrees * Degrees.DegreesToRadiansFactor;
         }
 
         public static Double RadiansToDegrees( Double radians ) {
-            return radians * RadToDegFactor;
+            return radians * Radians.RadiansToDegreesFactor;
         }
     }
 }
