@@ -20,6 +20,7 @@
 namespace Librainian.Extensions {
     using System;
     using Geometry;
+    using Graphics.Geometry;
 
     public static class CoordinatesEx {
         public static Double DistanceTo( this Coordinate from, Coordinate to ) {
