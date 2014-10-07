@@ -263,8 +263,8 @@
     <Compile Include="Graphics\DD\Intersection.cs" />
     <Compile Include="Graphics\DD\Line.cs" />
     <Compile Include="Graphics\DD\Polygon.cs" />
-    <Compile Include="Graphics\Line\Functions.cs" />
-    <Compile Include="Graphics\Line\Segment.cs" />
+    <Compile Include="Graphics\Geometry\Functions.cs" />
+    <Compile Include="Graphics\Geometry\Segment.cs" />
     <Compile Include="Graphics\Matrix.cs" />
     <Compile Include="Graphics\Matrix3.cs" />
     <Compile Include="Graphics\Matrix4.cs" />
@@ -628,6 +628,7 @@
   <ItemGroup>
     <Folder Include="Gaming\Directional\" />
     <Folder Include="Graphics\DDD\" />
+    <Folder Include="Graphics\Line\" />
     <Folder Include="PatternRecognition\" />
   </ItemGroup>
   <ItemGroup>
