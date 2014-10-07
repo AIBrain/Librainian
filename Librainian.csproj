@@ -561,7 +561,7 @@
     <Compile Include="Threading\Gate.cs" />
     <Compile Include="Threading\GCNotification.cs" />
     <Compile Include="Graphics\Geometry\Coordinate.cs" />
-    <Compile Include="Geometry\Coordinate64.cs" />
+    <Compile Include="Graphics\Geometry\Coordinate64.cs" />
     <Compile Include="Threading\Heap.cs" />
     <Compile Include="Threading\ICondition.cs" />
     <Compile Include="Threading\ILock.cs" />
