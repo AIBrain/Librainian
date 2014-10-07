@@ -20,6 +20,7 @@
 namespace Librainian.Geometry {
     using System;
     using System.Windows.Media.Media3D;
+    using Graphics;
 
     internal class Matrix4 : Matrix {
         public static Matrix4 I = NewI();
