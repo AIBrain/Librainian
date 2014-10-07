@@ -17,7 +17,7 @@
 // "Librainian/Matrix.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 #endregion
 
-namespace Librainian.Geometry {
+namespace Librainian.Graphics {
     using System;
 
     public class Matrix {
