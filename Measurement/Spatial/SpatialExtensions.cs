@@ -172,24 +172,15 @@
             };
         }
 
-        //public static Single DegreesToRadians( Single degrees ) {
-        //    const Single degToRadFactor = ( float )( Math.PI / 180.0f );
-        //    return degrees * degToRadFactor;
-        //}
-
-        //public static Single RadiansToDegrees( Single radians ) {
-        //    const Single radToDegFactor = ( float )( 180.0f / Math.PI );
-        //    return radians * radToDegFactor;
-        //}
+        public const double DegToRadFactor = Math.PI / 180.0d;
+        public const double RadToDegFactor = 180.0d / Math.PI;
 
         public static Double DegreesToRadians( Double degrees ) {
-            const double degToRadFactor = Math.PI / 180.0d;
-            return degrees * degToRadFactor;
+            return degrees * DegToRadFactor;
         }
 
         public static Double RadiansToDegrees( Double radians ) {
-            const double radToDegFactor = 180.0d / Math.PI;
-            return radians * radToDegFactor;
+            return radians * RadToDegFactor;
         }
     }
 }
