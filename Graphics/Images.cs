@@ -30,6 +30,7 @@ namespace Librainian.Graphics {
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Text;
     using System.Windows.Media.Imaging;
     using Annotations;
@@ -195,6 +196,7 @@ namespace Librainian.Graphics {
                     return true;
                 }
             }
+            catch ( ExternalException ) { }
             catch ( InvalidOperationException ) { }
             catch ( FileNotFoundException ) { }
             catch ( NotSupportedException ) { }

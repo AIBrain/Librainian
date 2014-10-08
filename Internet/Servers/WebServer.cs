@@ -33,12 +33,26 @@ namespace Librainian.Internet.Servers {
     using System.Threading.Tasks;
     using Annotations;
     using FluentAssertions;
+    using Threading;
 
     /// <summary>
     ///
     /// </summary>
     /// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>
-    public class WebServer {
+    /// <example>
+    /// WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/");
+    /// ws.Run();
+    /// Console.WriteLine("A simple webserver. Press a key to quit.");
+    /// Console.ReadKey();
+    /// ws.Stop();
+    /// </example>
+    /// <example>
+    /// public static string SendResponse(HttpListenerRequest request) {
+    ///     return string.Format("My web page", DateTime.Now);
+    /// }
+    /// </example>
+    [ UsedImplicitly ]
+    public class WebServer : IDisposable {
 
         /// <summary>
         /// </summary>
@@ -116,7 +130,7 @@ namespace Librainian.Internet.Servers {
         /// <seealso cref="Stop"/>
         public Task Run( CancellationToken cancellationToken ) {
             return Task.Run( async () => {
-                Debug.WriteLine( "Webserver running..." );
+                Report.Info( "Webserver running..." );
                 try {
                     while ( this._httpListener.IsListening ) {
                         Debug.WriteLine( "Webserver listening.." );
@@ -157,8 +171,13 @@ namespace Librainian.Internet.Servers {
         }
 
         public void Stop() {
-            using ( _httpListener ) {
-                this._httpListener.Stop();
+            using ( this._httpListener ) {
+                try {
+                    if ( this._httpListener.IsListening ) {
+                        this._httpListener.Stop();
+                    }
+                }
+                catch ( ObjectDisposedException ) {}
                 this._httpListener.Close();
             }
         }
@@ -166,6 +185,13 @@ namespace Librainian.Internet.Servers {
         private void ImNotReady( String because ) {
             this.IsReadyForRequests = false;
             this.NotReadyBecause = because;
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose() {
+            this.Stop();
         }
     }
 }
