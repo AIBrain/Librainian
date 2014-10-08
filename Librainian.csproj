@@ -47,16 +47,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Accord">
-      <HintPath>..\UberScraper\packages\Accord.2.13.1\lib\net40\Accord.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge">
-      <HintPath>..\UberScraper\packages\AForge.2.2.5\lib\AForge.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Imaging, Version=2.2.5.0, Culture=neutral, PublicKeyToken=ba8ddea9676ca48b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\UberScraper\packages\AForge.Imaging.2.2.5\lib\AForge.Imaging.dll</HintPath>
-    </Reference>
     <Reference Include="AForge.Math">
       <HintPath>..\UberScraper\packages\AForge.Math.2.2.5\lib\AForge.Math.dll</HintPath>
     </Reference>
@@ -72,14 +62,8 @@
     <Reference Include="CsQuery">
       <HintPath>..\Universal\packages\CsQuery.1.3.4\lib\net40\CsQuery.dll</HintPath>
     </Reference>
-    <Reference Include="Dynamitey">
-      <HintPath>..\Universal\packages\Dynamitey.1.0.2.0\lib\net40\Dynamitey.dll</HintPath>
-    </Reference>
     <Reference Include="Esent.Collections">
       <HintPath>..\Universal\packages\Microsoft.Database.Collections.Generic.1.9.2.0\lib\net40\Esent.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="Esent.Interop">
-      <HintPath>..\Universal\packages\ManagedEsent.1.9.2.0\lib\net40\Esent.Interop.dll</HintPath>
     </Reference>
     <Reference Include="FluentAssertions, Version=3.2.1.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -93,18 +77,9 @@
       <HintPath>..\Universal\packages\ImpromptuInterface.6.2.2\lib\net40\ImpromptuInterface.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Dynamic">
-      <HintPath>..\FlockingAvoidance\packages\Clojure.1.6.0.1\lib\net40\Microsoft.Dynamic.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Scripting">
-      <HintPath>..\FlockingAvoidance\packages\Clojure.1.6.0.1\lib\net40\Microsoft.Scripting.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="MongoDB.Bson">
       <HintPath>..\FlockingAvoidance\packages\mongocsharpdriver.1.9.2\lib\net35\MongoDB.Bson.dll</HintPath>
-    </Reference>
-    <Reference Include="MongoDB.Driver">
-      <HintPath>..\FlockingAvoidance\packages\mongocsharpdriver.1.9.2\lib\net35\MongoDB.Driver.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
       <HintPath>..\FlockingAvoidance\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
