@@ -40,7 +40,6 @@ namespace Librainian.Magic {
         public NinjectIocContainer() {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel();
-            //this.ResetKernel();
             this.Kernel.Should().NotBeNull();
         }
 
@@ -56,29 +55,23 @@ namespace Librainian.Magic {
         [NotNull]
         public IKernel Kernel { get; set; }
 
-        //[Obsolete( "User Kernel instead" )]
-        //public IContainer BuildedContainer { get; set; }
+        //public object Get( Type type ) {
+        //    return this.Kernel.Get( type );
+        //}
 
-        //[CanBeNull]
-        //public ContainerBuilder ContainerBuilder { get; set; }
+        //public T Get<T>() {
+        //    var bob = this.Kernel.TryGet<T>();
+        //    return bob;
+        //}
 
-        public object Get( Type type ) {
-            return this.Kernel.Get( type );
-        }
+        //public T Get<T>( String name, String value ) {
+        //    var result = this.Kernel.TryGet<T>( metadata => metadata.Has( name ) && metadata.Get<String>( name ).Like( value ) );
 
-        public T Get<T>() {
-            var bob = this.Kernel.TryGet<T>();
-            return bob;
-        }
-
-        public T Get<T>( String name, String value ) {
-            var result = this.Kernel.TryGet<T>( metadata => metadata.Has( name ) && metadata.Get<String>( name ).Like( value ) );
-
-            if ( Equals( result, default( T ) ) ) {
-                throw new InvalidOperationException( null );
-            }
-            return result;
-        }
+        //    if ( Equals( result, default( T ) ) ) {
+        //        throw new InvalidOperationException( null );
+        //    }
+        //    return result;
+        //}
 
         public void Inject( object item ) {
             this.Kernel.Inject( item );

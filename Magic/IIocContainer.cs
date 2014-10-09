@@ -22,8 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Magic {
-
-    using System;
     using Annotations;
     using Ninject;
 
@@ -37,14 +35,14 @@ namespace Librainian.Magic {
         //[CanBeNull]
         //IContainer BuildedContainer { get; set; }
 
-        [CanBeNull]
-        Object Get( Type type );
+        //[CanBeNull]
+        //Object Get( Type type );
 
-        [CanBeNull]
-        T Get<T>();
+        //[CanBeNull]
+        //T Get<T>();
 
-        [CanBeNull]
-        T Get<T>( String name, String value );
+        //[CanBeNull]
+        //T Get<T>( String name, String value );
 
         void Inject( object item );
 
