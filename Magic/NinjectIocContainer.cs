@@ -32,7 +32,6 @@ namespace Librainian.Magic {
     using Ninject;
     using Ninject.Activation.Caching;
     using Ninject.Modules;
-    using Parsing;
     using Threading;
 
     public sealed class NinjectIocContainer : IIocContainer {
