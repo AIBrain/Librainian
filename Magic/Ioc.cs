@@ -34,7 +34,8 @@ namespace Librainian.Magic {
         /// <summary>
         /// 
         /// </summary>
-        [ CanBeNull ] private static IIocContainer container;// = StealthMode;
+        [CanBeNull]
+        private static IIocContainer container;// = StealthMode;
 
         /// <summary>
         /// 
@@ -42,7 +43,10 @@ namespace Librainian.Magic {
         [NotNull]
         public static IIocContainer Container {
             get {
-                return container ?? ( container = new NinjectIocContainer() );
+                if ( container != null ) {
+                    return container;
+                }
+                return container = new NinjectIocContainer();
             }
 
             set {
