@@ -144,6 +144,7 @@
     <Compile Include="Collections\AbstractCollection.cs" />
     <Compile Include="Collections\AbstractQueue.cs" />
     <Compile Include="Collections\BlockingQueue.cs" />
+    <Compile Include="Collections\Observable.cs" />
     <Compile Include="Collections\ConcurrentList.cs" />
     <Compile Include="Collections\ConcurrentSet.cs" />
     <Compile Include="Collections\ConcurrentBlockingQueue.cs" />
