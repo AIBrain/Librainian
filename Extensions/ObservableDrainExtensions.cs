@@ -18,6 +18,11 @@
 #endregion
 
 namespace Librainian.Extensions {
+    using System;
+    using System.Reactive;
+    using System.Reactive.Linq;
+    using System.Reactive.Subjects;
+
     //using System;
     //using System.Reactive;
     //using System.Reactive.Linq;
@@ -29,9 +34,10 @@ namespace Librainian.Extensions {
         //        var queue = new BehaviorSubject<Unit>( new Unit() );
 
         //        return source
-        //            .Zip( queue, ( source1, unit ) => source1 )
+        //            .Zip< >( queue, ( source1, unit ) => source1 )
         //            .SelectMany( source1 => selector( source1 )
-        //                             .Do( _ => { }, () => queue.OnNext( new Unit() ) )
+        //                             .Do( _ => {
+        //                             }, () => queue.OnNext( new Unit() ) )
         //            );
         //    } );
         //}
