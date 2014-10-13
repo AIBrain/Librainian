@@ -672,6 +672,10 @@ namespace Librainian.Maths {
             return number / 2.0m;
         }
 
+        public static Decimal Quarter( this Decimal number ) {
+            return number / 4.0m;
+        }
+
         /// <summary>
         ///     <para>
         ///         If the <paramref name="number" /> is less than <see cref="Decimal.Zero" />, then return

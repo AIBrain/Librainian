@@ -132,6 +132,7 @@
     <Compile Include="Collections\AbstractCollection.cs" />
     <Compile Include="Collections\AbstractQueue.cs" />
     <Compile Include="Collections\BlockingQueue.cs" />
+    <Compile Include="Collections\ConcurrentList.cs" />
     <Compile Include="Collections\ConcurrentSet.cs" />
     <Compile Include="Collections\ConcurrentBlockingQueue.cs" />
     <Compile Include="Collections\ImmutableList.cs" />
@@ -242,6 +243,7 @@
     <Compile Include="Gaming\PlayerTable.cs" />
     <Compile Include="Gaming\PlayingCards\FaceValues.cs" />
     <Compile Include="Gaming\PlayingCards\Suites.cs" />
+    <Compile Include="Graphics\Class1.cs" />
     <Compile Include="Graphics\DD\GeometryEx.cs" />
     <Compile Include="Graphics\DD\Intersection.cs" />
     <Compile Include="Graphics\DD\Line.cs" />
