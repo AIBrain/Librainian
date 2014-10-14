@@ -61,12 +61,6 @@ namespace Librainian.Persistence {
         /// <exception cref="FileNotFoundException"></exception>
         public PersistTable( Environment.SpecialFolder specialFolder, String tableName )
             : this( new Folder( specialFolder, null, null, tableName ) ) {
-            try {
-                Report.Enter();
-            }
-            finally {
-                Report.Exit();
-            }
         }
 
         /// <summary>
