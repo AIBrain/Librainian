@@ -26,6 +26,7 @@ namespace Librainian.Persistence {
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
@@ -164,7 +165,7 @@ namespace Librainian.Persistence {
         /// </returns>
         public ICollection<TValue> Values {
             get {
-                return this.Dictionary.Values.Select( Value ) as ICollection<TValue>;
+                return this.Dictionary.Values.Select( Value ) as ICollection<TValue> ?? new Collection<TValue>();
             }
         }
 
@@ -299,10 +300,7 @@ namespace Librainian.Persistence {
         ///     <paramref name="arrayIndex" /> to the end of the destination <paramref name="array" />.
         /// </exception>
         public void CopyTo( KeyValuePair<TKey, TValue>[] array, int arrayIndex ) {
-
-
-            throw new NotImplementedException();
-
+            //this.Dictionary.CopyTo( array, arrayIndex ); ??
         }
 
         /// <summary>
@@ -362,11 +360,11 @@ namespace Librainian.Persistence {
         ///     The <see cref="T:System.Collections.Generic.IDictionary`2" /> is read-only.
         /// </exception>
         public bool Remove( TKey key ) {
-            return this.Dictionary.ContainsKey(key) && this.Dictionary.Remove( key );
+            return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
         }
-        
+
         public bool TryRemove( TKey key ) {
-            return this.Dictionary.ContainsKey(key) && this.Dictionary.Remove( key );
+            return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
         }
 
         /// <summary>
@@ -383,7 +381,7 @@ namespace Librainian.Persistence {
         ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
         ///     read-only.
         /// </exception>
-        [Obsolete("haven't fixed this one yet")]
+        [Obsolete( "haven't fixed this one yet" )]
         public bool Remove( KeyValuePair<TKey, TValue> item ) {
             var asItem = new KeyValuePair<TKey, String>( item.Key, Value( item.Value ) ); //TODO ??
             throw new NotImplementedException();
