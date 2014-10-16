@@ -37,8 +37,8 @@ namespace Librainian.Measurement.Spatial {
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     [Immutable]
-    public struct Degrees : IComparable< Degrees > {
-        public const Double MaximumValue = ( double ) CardinalDirections.FullNorth;
+    public struct Degrees : IComparable<Degrees> {
+        public const Double MaximumValue = ( double )CardinalDirections.FullNorth;
         public const Double MinimumValue = 0.0f;
 
         /// <summary>
@@ -95,6 +95,10 @@ namespace Librainian.Measurement.Spatial {
             return Math.Abs( left.Value - right.Value ) < Double.Epsilon;
         }
 
+        public static implicit operator Single( Degrees degrees ) {
+            return ( float ) degrees.Value;
+        }
+
         public static implicit operator Double( Degrees degrees ) {
             return degrees.Value;
         }
@@ -103,8 +107,16 @@ namespace Librainian.Measurement.Spatial {
             return ToRadians( degrees );
         }
 
+        public Radians ToRadians() {
+            return ToRadians( this );
+        }
+
         public static Radians ToRadians( Degrees degrees ) {
             return new Radians( degrees.Value * DegreesToRadiansFactor );
+        }
+
+        public static Radians ToRadians( Double degrees ) {
+            return new Radians( degrees * DegreesToRadiansFactor );
         }
 
         public static implicit operator Decimal( Degrees degrees ) {

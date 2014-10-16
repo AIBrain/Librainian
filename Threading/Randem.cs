@@ -470,6 +470,10 @@ namespace Librainian.Threading {
             return ( float )( min + ( Instance.NextDouble() * ( max - min ) ) );
         }
 
+        /// <summary>
+        /// Return a random number somewhere in the ful range of <see cref="Int32"/>.
+        /// </summary>
+        /// <returns></returns>
         public static Int32 NextInt32() {
             unchecked {
                 var firstBits = Instance.Next( 0, 1 << 4 ) << 28;

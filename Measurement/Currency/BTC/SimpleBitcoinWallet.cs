@@ -1,25 +1,21 @@
-﻿#region License & Information
-
-// This notice must be kept visible in the source.
+﻿// This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/SimpleBitcoinWallet.cs" was last cleaned by Rick on 2014/09/26 at 11:57 AM
-
-#endregion License & Information
+// "Librainian/SimpleBitcoinWallet.cs" was last cleaned by Rick on 2014/10/16 at 2:32 AM
 
 namespace Librainian.Measurement.Currency.BTC {
 
@@ -37,25 +33,54 @@ namespace Librainian.Measurement.Currency.BTC {
     }
 
     /// <summary>
-    ///     A very simple, thread-safe,  Decimal-based bitcoin wallet.
+    /// A very simple, thread-safe, Decimal-based bitcoin wallet.
     /// </summary>
     /// <remarks>
-    ///     TODO add in support for automatic persisting
-    ///     TODO add in support for exploring the blockchain
+    /// TODO add in support for automatic persisting TODO add in support for exploring the blockchain
     /// </remarks>
     [DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
     [DataContract( IsReference = true )]
     public class SimpleBitcoinWallet : IEquatable<SimpleBitcoinWallet> {
+
+        /// <summary>
+        /// 1
+        /// </summary>
         public const Decimal BTC = 1M;
 
-        public const Decimal mBTC               = 0.001M;
-        public const Decimal μBTC               = 0.000001M;
-        public const Decimal TenSatoshi         = 0.0000001M;
-        public const Decimal Satoshi         = 0.00000001M;
+        /// <summary>
+        /// 0. 001
+        /// </summary>
+        public const Decimal mBTC = 0.001M;
 
-        public const UInt64 mBTCPerBTC = ( UInt64 )( BTC / mBTC );
+        /// <summary>
+        /// 1000 mBTC are in 1 BTC
+        /// </summary>
+        public const UInt64 mBTCInOneBTC = ( UInt64 )( BTC / mBTC );
+
+        /// <summary>
+        /// 0. 00000001
+        /// </summary>
+        public const Decimal Satoshi = 0.00000001M;
+
+        /// <summary>
+        /// 100,000,000 Satoshi are in 1 BTC
+        /// </summary>
         public const UInt64 SatoshiInOneBTC = ( UInt64 )( BTC / Satoshi );
+
+        /// <summary>
+        /// 0. 0000001
+        /// </summary>
+        public const Decimal TenSatoshi = 0.0000001M;
+
+        /// <summary>
+        /// 0. 000001
+        /// </summary>
+        public const Decimal μBTC = 0.000001M;
+
+        /// <summary>
+        /// 1,000,000 μBTC are in 1 BTC
+        /// </summary>
         public const UInt64 μBTCInOneBTC = ( UInt64 )( BTC / μBTC );
 
         [NotNull]
@@ -67,19 +92,17 @@ namespace Librainian.Measurement.Currency.BTC {
         private Decimal _balance;
 
         /// <summary>
-        ///     Initialize the wallet with the specified amount of satoshi.
+        /// Initialize the wallet with the specified amount of satoshi.
         /// </summary>
         /// <param name="satoshi"></param>
-        public SimpleBitcoinWallet( long satoshi )
-            : this( satoshi.ToBTC() ) {
+        public SimpleBitcoinWallet( long satoshi ) : this( satoshi.ToBTC() ) {
         }
 
-        public SimpleBitcoinWallet( ISimpleWallet wallet )
-            : this( wallet.Balance ) {
+        public SimpleBitcoinWallet( ISimpleWallet wallet ) : this( wallet.Balance ) {
         }
 
         /// <summary>
-        ///     Initialize the wallet with the specified <paramref name="balance" />.
+        /// Initialize the wallet with the specified <paramref name="balance" /> .
         /// </summary>
         /// <param name="balance"></param>
         public SimpleBitcoinWallet( Decimal balance ) {
@@ -88,16 +111,8 @@ namespace Librainian.Measurement.Currency.BTC {
             this._hashcode = Randem.NextInt32();
         }
 
-        public SimpleBitcoinWallet()
-            : this( 0.0m ) {
+        public SimpleBitcoinWallet() : this( 0.0m ) {
         }
-
-        public String Formatted {
-            get {
-                return this.ToString();
-            }
-        }
-
 
         public Decimal Balance {
             get {
@@ -109,6 +124,12 @@ namespace Librainian.Measurement.Currency.BTC {
                         this._access.ExitReadLock();
                     }
                 }
+            }
+        }
+
+        public String Formatted {
+            get {
+                return this.ToString();
             }
         }
 
@@ -143,7 +164,7 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
+        /// <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
         /// </summary>
         public TimeSpan Timeout {
             get;
@@ -151,9 +172,9 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        ///     <para>Static comparison.</para>
-        ///     <para>Returns true if the wallets are the same instance.</para>
-        ///     <para>Returns true if the wallets have the same balance.</para>
+        /// <para>Static comparison.</para>
+        /// <para>Returns true if the wallets are the same instance.</para>
+        /// <para>Returns true if the wallets have the same balance.</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -170,7 +191,8 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        ///     Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.
+        /// Indicates whether the current wallet has the same balance as the
+        /// <paramref name="other" /> wallet.
         /// </summary>
         /// <param name="other">Annother to compare with this wallet.</param>
         public bool Equals( SimpleBitcoinWallet other ) {
@@ -186,7 +208,7 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        ///     Add any (+-)amount directly to the balance.
+        /// Add any (+-)amount directly to the balance.
         /// </summary>
         /// <param name="amount"></param>
         /// <param name="sanitize"></param>
@@ -222,7 +244,7 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        ///     Attempt to deposit amoount (larger than zero) to the <see cref="Balance" />.
+        /// Attempt to deposit amoount (larger than zero) to the <see cref="Balance" /> .
         /// </summary>
         /// <param name="amount"></param>
         /// <param name="sanitize"></param>
@@ -288,7 +310,7 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        ///     <para>Directly sets the <see cref="Balance" /> of this wallet.</para>
+        /// <para>Directly sets the <see cref="Balance" /> of this wallet.</para>
         /// </summary>
         /// <param name="amount"></param>
         /// <param name="sanitize"></param>
@@ -320,8 +342,8 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        ///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
-        ///     <para>If the amount is not available, then nothing is withdrawn.</para>
+        /// <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
+        /// <para>If the amount is not available, then nothing is withdrawn.</para>
         /// </summary>
         /// <param name="amount"></param>
         /// <param name="sanitize"></param>
@@ -360,7 +382,7 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        ///     Attempt to withdraw an amount (must be larger than Zero) from the wallet.
+        /// Attempt to withdraw an amount (must be larger than Zero) from the wallet.
         /// </summary>
         /// <param name="wallet"></param>
         /// <returns></returns>

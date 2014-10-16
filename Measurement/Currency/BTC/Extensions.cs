@@ -114,7 +114,7 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         public static Decimal TomBTC( this Decimal btc ) {
-            return btc * SimpleBitcoinWallet.mBTCPerBTC;
+            return btc * SimpleBitcoinWallet.mBTCInOneBTC;
         }
 
         public static Decimal ToμBTC( this Decimal btc ) {

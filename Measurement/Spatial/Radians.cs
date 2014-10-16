@@ -95,12 +95,24 @@ namespace Librainian.Measurement.Spatial {
             return Math.Abs( left.Value - right.Value ) < Double.Epsilon;
         }
 
+        public static implicit operator Single( Radians radians ) {
+            return ( float ) radians.Value;
+        }
+
         public static implicit operator Double( Radians radians ) {
             return radians.Value;
         }
 
         public static implicit operator Degrees( Radians radians ) {
             return ToDegrees( radians );
+        }
+
+        public static Degrees ToDegrees( Single radians ) {
+            return new Degrees( radians * RadiansToDegreesFactor );
+        }
+
+        public static Degrees ToDegrees( Double radians ) {
+            return new Degrees( radians * RadiansToDegreesFactor );
         }
 
         public static Degrees ToDegrees( Radians radians ) {
@@ -171,5 +183,6 @@ namespace Librainian.Measurement.Spatial {
         /// 180 / Math.PI
         /// </summary>
         public const double RadiansToDegreesFactor = 180 / Math.PI;
+
     }
 }
