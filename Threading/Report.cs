@@ -83,5 +83,10 @@ namespace Librainian.Threading {
             }
 #endif
         }
+
+        [DebuggerStepThrough]
+        public static void Finalized( [CallerMemberName] String method = "" ) {
+            String.Format( "{0}: {1}", "Finalized", method ?? String.Empty ).TimeDebug();
+        }
     }
 }
