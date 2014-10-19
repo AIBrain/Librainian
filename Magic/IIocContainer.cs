@@ -48,5 +48,10 @@ namespace Librainian.Magic {
 
         [CanBeNull]
         T TryGet<T>();
+
+        /// <summary>
+        ///     Warning!
+        /// </summary>
+        void ResetKernel();
     }
 }

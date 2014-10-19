@@ -51,7 +51,6 @@ namespace Librainian.Magic {
             this.Kernel.Should().NotBeNull();
         }
 
-        [NotNull]
         public IKernel Kernel { get; set; }
 
         //public object Get( Type type ) {
@@ -73,7 +72,10 @@ namespace Librainian.Magic {
         //}
 
         public void Inject( object item ) {
-            this.Kernel.Inject( item );
+            var kernel = this.Kernel;
+            if ( kernel != null ) {
+                kernel.Inject( item );
+            }
         }
 
         [DebuggerStepThrough]
@@ -86,7 +88,7 @@ namespace Librainian.Magic {
         /// </summary>
         public void ResetKernel() {
             this.Kernel.Should().NotBeNull();
-            this.Kernel.GetModules().ForEach( m => this.Kernel.Unload( m.Name ) );
+            this.Kernel.GetModules().ForEach( module => this.Kernel.Unload( module.Name ) );
             this.Kernel.Components.Get<ICache>().Clear();
             this.Kernel.Should().NotBeNull();
 
