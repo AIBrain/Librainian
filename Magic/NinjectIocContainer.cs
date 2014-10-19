@@ -40,6 +40,9 @@ namespace Librainian.Magic {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel();
             this.Kernel.Should().NotBeNull();
+            if ( null == this.Kernel ) {
+                throw new InvalidOperationException();
+            }
         }
 
         public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
@@ -49,9 +52,15 @@ namespace Librainian.Magic {
             this.Kernel.Should().BeNull();
             this.Kernel = new StandardKernel( modules );
             this.Kernel.Should().NotBeNull();
+            if ( null == this.Kernel ) {
+                throw new InvalidOperationException();
+            }
         }
 
-        public IKernel Kernel { get; set; }
+        public IKernel Kernel {
+            get;
+            set;
+        }
 
         //public object Get( Type type ) {
         //    return this.Kernel.Get( type );
@@ -72,15 +81,16 @@ namespace Librainian.Magic {
         //}
 
         public void Inject( object item ) {
-            var kernel = this.Kernel;
-            if ( kernel != null ) {
-                kernel.Inject( item );
-            }
+            this.Kernel.Inject( item );
         }
 
         [DebuggerStepThrough]
         public T TryGet<T>() {
-            return this.Kernel.TryGet<T>();
+            var tryGet = this.Kernel.TryGet<T>();
+            if ( Equals( default( T ), tryGet ) ) {
+                tryGet = this.Kernel.TryGet<T>();   //HACK wtf??
+            }
+            return tryGet;
         }
 
         /// <summary>
