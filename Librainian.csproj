@@ -512,7 +512,6 @@
     <Compile Include="Measurement\Time\Span.cs" />
     <Compile Include="Misc\Bitten.cs" />
     <Compile Include="Misc\CodeEngine.cs" />
-    <Compile Include="Misc\UntestedStuff.cs" />
     <Compile Include="Parsing\ClosedMatchContext.cs" />
     <Compile Include="Parsing\ContinuousSentence.cs" />
     <Compile Include="Parsing\TranslationDictionary.cs" />
