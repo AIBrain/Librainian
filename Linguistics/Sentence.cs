@@ -26,7 +26,6 @@ namespace Librainian.Linguistics {
     using System.Runtime.Serialization;
     using Annotations;
     using Collections;
-    using Extensions;
     using FluentAssertions;
     using Parsing;
 
@@ -36,8 +35,11 @@ namespace Librainian.Linguistics {
     /// <seealso cref="http://wikipedia.org/wiki/Sentence_(linguistics)"></seealso>
     /// <seealso cref="Paragraph"></seealso>
     [DataContract( IsReference = true )]
-    [Immutable]
     public sealed class Sentence : IEquatable<Sentence>, IEnumerable<Word> {
+
+        /// <summary>
+        ///
+        /// </summary>
         public const UInt64 Level = Word.Level << 1;
 
         [NotNull]
@@ -52,7 +54,8 @@ namespace Librainian.Linguistics {
         /// A <see cref="Sentence" /> is an ordered sequence of words.
         /// </summary>
         /// <param name="sentence"></param>
-        public Sentence( [NotNull] String sentence ) : this( sentence.ToWords().Select( word => new Word( word ) ) ) {
+        public Sentence( [NotNull] String sentence )
+            : this( sentence.ToWords().Select( word => new Word( word ) ) ) {
         }
 
         /// <summary>
@@ -86,24 +89,26 @@ namespace Librainian.Linguistics {
             return this.GetEnumerator();
         }
 
-        public IEnumerable<Tuple<int, String>> Possibles() {
-            var wordCount = this.Count();
-            for ( var slider = wordCount ; slider > 0 ; slider-- ) {
-                for ( var skip = 0 ; skip < wordCount ; skip++ ) {
-                    var words = this.Skip( skip ).Take( slider );
-                    var partialSentence = new Sentence( words );
-                    var asString = partialSentence.ToString();
-                    if ( String.IsNullOrEmpty( asString ) ) {
-                        continue;
-                    }
-                    yield return new Tuple<int, String>( 2, asString );
+        /*
+                public IEnumerable<Tuple<UInt64, String>> Possibles() {
+                    var wordCount = this.Count();
+                    for ( var slider = wordCount ; slider > 0 ; slider-- ) {
+                        for ( var skip = 0 ; skip < wordCount ; skip++ ) {
+                            var words = this.Skip( skip ).Take( slider );
+                            var partialSentence = new Sentence( words );
+                            var asString = partialSentence.ToString();
+                            if ( String.IsNullOrEmpty( asString ) ) {
+                                continue;
+                            }
+                            yield return new Tuple<UInt64, String>( 2, asString );
 
-                    foreach ( var possibles in partialSentence.SelectMany( word => word.Possibles() ) ) {
-                        yield return possibles;
+                            foreach ( var possibles in partialSentence.SelectMany( word => word.Possibles() ) ) {
+                                yield return possibles;
+                            }
+                        }
                     }
                 }
-            }
-        }
+        */
 
         [NotNull]
         public Word TakeFirst() {
