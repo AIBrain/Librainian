@@ -19,6 +19,7 @@
 
 namespace Librainian.Persistence {
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Windows.Forms;
     using Annotations;
@@ -156,7 +157,7 @@ namespace Librainian.Persistence {
                                                                   RootFolder = Environment.SpecialFolder.MyComputer
                                                               };
 
-            var owner = WindowWrapper.CreateWindowWrapper( Diagnostical.CurrentProcess.MainWindowHandle );
+            var owner = WindowWrapper.CreateWindowWrapper( Process.GetCurrentProcess().MainWindowHandle );
 
             var dialog = folderBrowserDialog.ShowDialog( owner );
 

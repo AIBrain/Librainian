@@ -644,6 +644,12 @@ namespace Librainian.Maths {
             return TimeSpan.FromTicks( timeSpan.Ticks.Half() );
         }
 
+        [Pure]
+        public static TimeSpan Twice( this TimeSpan timeSpan ) {
+            return TimeSpan.FromTicks( timeSpan.Ticks.Twice() );
+        }
+
+
         public static Int32 Half( this Int32 number ) {
             return ( Int32 )( number / 2.0f );
         }
@@ -1794,6 +1800,10 @@ namespace Librainian.Maths {
 
         public static Decimal Twice( this Decimal number ) {
             return number * 2m;
+        }
+
+        public static long Twice( this long number ) {
+            return number * 2L;
         }
 
         /// <summary>

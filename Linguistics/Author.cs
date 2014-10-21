@@ -15,14 +15,12 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/iHasPartOfSpeech.cs" was last cleaned by Rick on 2014/10/21 at 5:02 AM
+// "Librainian/Author.cs" was last cleaned by Rick on 2014/10/21 at 5:02 AM
 
-namespace Librainian.Linguistics.PoS {
+namespace Librainian.Linguistics {
 
-    public interface iHasPartOfSpeech {
+    using Knowledge;
 
-        PartsOfSpeech PartOfSpeech {
-            get;
-        }
+    public class Author : Person {
     }
 }

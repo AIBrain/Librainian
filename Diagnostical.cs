@@ -92,11 +92,6 @@ namespace Librainian {
         }
 
         /// <summary>
-        ///     <para>Holder for <see cref="Process.GetCurrentProcess" />.</para>
-        /// </summary>
-        public static readonly Process CurrentProcess = Process.GetCurrentProcess();
-
-        /// <summary>
         ///     Gets the number of frames in the <see cref="StackTrace" />
         /// </summary>
         /// <param name="obj"> </param>
@@ -181,12 +176,13 @@ namespace Librainian {
         [Test]
         public static void TestRandems() {
             var ints = new ConcurrentBag< int >();
-            Parallel.ForEach( source: 1.To( ThreadingExtensions.ProcessorCount ), parallelOptions: ThreadingExtensions.Parallelism, body: i => Randem.AddToList( ints ) );
+            var processorCount = Environment.ProcessorCount;
+            Parallel.ForEach( source: 1.To( processorCount ), parallelOptions: ThreadingExtensions.Parallelism, body: i => Randem.AddToList( ints ) );
             if ( !ints.Duplicates().Any() ) {
                 return;
             }
             ints.RemoveAll();
-            Parallel.ForEach( 1.To( ThreadingExtensions.ProcessorCount ), ThreadingExtensions.Parallelism, i => Randem.AddToList( ints ) );
+            Parallel.ForEach( 1.To( processorCount ), ThreadingExtensions.Parallelism, i => Randem.AddToList( ints ) );
             if ( !ints.Duplicates().Any() ) {
                 return;
             }

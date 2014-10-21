@@ -24,58 +24,70 @@
 namespace Librainian.Threading {
 
     using System;
-    using System.ComponentModel;
     using System.Diagnostics;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Maths;
     using Measurement.Time;
 
     public static class Threads {
+
+        /// <summary>
+        /// The average time a task context switch takes.
+        /// </summary>
         public static TimeSpan? SliceAverageCache;
 
-        public static TimeSpan GetSlice( Boolean? setProcessorAffinity = null ) {
-            if ( setProcessorAffinity.HasValue && setProcessorAffinity.Value ) {
-                try {
-                    var affinityMask = ( long )Diagnostical.CurrentProcess.ProcessorAffinity;
-                    affinityMask &= 0xFFFF; // use any of the available processors
-                    Diagnostical.CurrentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
-                }
-                catch ( Win32Exception ) { }
-                catch ( NotSupportedException ) { }
-                catch ( InvalidOperationException ) { }
-            }
+        public static TimeSpan GetSlice( /*Boolean? setProcessorAffinity = null*/ ) {
+            //if ( setProcessorAffinity.HasValue && setProcessorAffinity.Value ) {
+            //    try {
+            //        var currentProcess = Process.GetCurrentProcess();
+            //        var affinityMask = ( long )currentProcess.ProcessorAffinity;
+            //        affinityMask &= 0xFFFF; // use any of the available processors
+            //        currentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
+            //    }
+            //    catch ( Win32Exception ) {
+            //    }
+            //    catch ( NotSupportedException ) {
+            //    }
+            //    catch ( InvalidOperationException ) {
+            //    }
+            //}
 
             var stopwatch = Stopwatch.StartNew();
-            Task.Run( () => Thread.Sleep( 1 ) ).Wait();
+            Task.Run( () => Task.Delay( 1 ).Wait() ).Wait();
             return stopwatch.Elapsed;
         }
 
-        public static TimeSpan GetSlicingAverage( Boolean useCache = true, Boolean? setProcessorAffinity = null ) {
+        public static TimeSpan GetSlicingAverage( Boolean useCache = true/*, Boolean? setProcessorAffinity = null*/ ) {
             if ( useCache && SliceAverageCache.HasValue ) {
                 return SliceAverageCache.Value;
             }
 
-            if ( setProcessorAffinity.HasValue && setProcessorAffinity.Value ) {
-                try {
-                    var affinityMask = ( long )Diagnostical.CurrentProcess.ProcessorAffinity;
-                    affinityMask &= 0xFFFF; // use any of the available processors
-                    Diagnostical.CurrentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
-                }
-                catch ( Win32Exception ) {
-                    /*swallow*/
-                }
-                catch ( NotSupportedException ) {
-                    /*swallow*/
-                }
-                catch ( InvalidOperationException ) {
-                    /*swallow*/
-                }
-            }
+            //if ( setProcessorAffinity.HasValue && setProcessorAffinity.Value ) {
+            //    try {
+            //        var currentProcess = Process.GetCurrentProcess();
 
-            String.Format( "Performing {0} timeslice calibrations.", ThreadingExtensions.ProcessorCount ).TimeDebug();
-            SliceAverageCache = new Milliseconds( (Decimal )( 1 + Math.Ceiling( 0.To( ThreadingExtensions.ProcessorCount ).Select( i => GetSlice() ).Average( span => span.TotalMilliseconds ) ) ) );
+            //        var affinityMask = ( long )currentProcess.ProcessorAffinity;
+            //        affinityMask &= 0xFFFF; // use any of the available processors
+
+            //        currentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
+            //    }
+            //    catch ( Win32Exception ) {
+            //        /*swallow*/
+            //    }
+            //    catch ( NotSupportedException ) {
+            //        /*swallow*/
+            //    }
+            //    catch ( InvalidOperationException ) {
+            //        /*swallow*/
+            //    }
+            //}
+
+            String.Format( "Performing {0} timeslice calibration.", Environment.ProcessorCount ).TimeDebug();
+            SliceAverageCache = new Milliseconds( 0.To( Environment.ProcessorCount * Environment.ProcessorCount ).Select( i => GetSlice() ).Average( span => span.TotalMilliseconds ) ) ;
+            if ( SliceAverageCache < Milliseconds.One ) {
+                SliceAverageCache = Milliseconds.One;
+            }
             String.Format( "Timeslice calibration is {0}.", SliceAverageCache.Value.Simpler() ).TimeDebug();
             return SliceAverageCache.Value;
         }
@@ -88,14 +100,5 @@ namespace Librainian.Threading {
             return 1000000000L / Stopwatch.Frequency;
         }
 
-        //    e.GetObjectData( si, ctx );
-        //    mgr.RegisterObject( e, 1, si );
-        //    mgr.DoFixups();
-        //}
-
-        //public static void PreserveStackTrace( this Exception e ) {
-        //    var ctx = new StreamingContext( StreamingContextStates.CrossAppDomain );
-        //    var mgr = new ObjectManager( null, ctx );
-        //    var si = new SerializationInfo( e.GetType(), new FormatterConverter() );
     }
 }

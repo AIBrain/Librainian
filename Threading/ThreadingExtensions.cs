@@ -17,17 +17,17 @@ namespace Librainian.Threading {
 
     public static class ThreadingExtensions {
         /// <summary>
-        ///     <para>Holder for <see cref="Environment.ProcessorCount" />.</para>
-        /// </summary>
-        public static readonly int ProcessorCount = Environment.ProcessorCount;
-
-        /// <summary>
         /// <para> Sets the <see cref="ParallelOptions.MaxDegreeOfParallelism" /> of a <see
         /// cref="ParallelOptions" /> to <see cref="ProcessorCount" />. </para>
+        /// <para>1 core to 1</para>
+        /// <para>2 cores to 2</para>
+        /// <para>4 cores to 4</para>
+        /// <para>8 cores to 8</para>
+        /// <para>n cores to n</para>
         /// </summary>
         [NotNull]
         public static readonly ParallelOptions Parallelism = new ParallelOptions {
-            MaxDegreeOfParallelism = ProcessorCount
+            MaxDegreeOfParallelism = Environment.ProcessorCount
         };
 
         [NotNull]

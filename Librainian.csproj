@@ -305,6 +305,8 @@
     <Compile Include="IO\SearchStyle.cs" />
     <Compile Include="IO\WindowsAPI.cs" />
     <Compile Include="Knowledge\IFactDatabase.cs" />
+    <Compile Include="Linguistics\Author.cs" />
+    <Compile Include="Linguistics\UDC.cs" />
     <Compile Include="Magic\Abodit\IId.cs" />
     <Compile Include="Magic\Abodit\Proxy.cs" />
     <Compile Include="Magic\Abodit\SimpleDocument.cs" />

@@ -61,7 +61,7 @@ namespace Librainian.Threading {
             /// </summary>
             public static readonly ExecutionDataflowBlockOptions ConsumeParallel = new ExecutionDataflowBlockOptions {
                 SingleProducerConstrained = false,
-                MaxDegreeOfParallelism = ThreadingExtensions.ProcessorCount
+                MaxDegreeOfParallelism = Environment.ProcessorCount
             };
 
             /// <summary>
@@ -96,7 +96,7 @@ namespace Librainian.Threading {
             /// </summary>
             public static ExecutionDataflowBlockOptions ConsumeParallel = new ExecutionDataflowBlockOptions {
                 SingleProducerConstrained = true,
-                MaxDegreeOfParallelism = ThreadingExtensions.ProcessorCount
+                MaxDegreeOfParallelism = Environment.ProcessorCount
             };
         }
     }

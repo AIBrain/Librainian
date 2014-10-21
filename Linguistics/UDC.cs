@@ -1,4 +1,4 @@
-﻿// This notice must be kept visible in the source.
+// This notice must be kept visible in the source.
 //
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
@@ -15,23 +15,33 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Domain.cs" was last cleaned by Rick on 2014/10/21 at 5:01 AM
+// "Librainian/UDC.cs" was last cleaned by Rick on 2014/10/21 at 5:02 AM
 
-namespace Librainian.Knowledge {
+namespace Librainian.Linguistics {
 
     using System;
 
     /// <summary>
-    /// where does this knowledge belong? where did this knowledge come from? can be used like the
-    /// rdf:url sources...
+    /// Universal Decimal Classification
     /// </summary>
-    public class Domain {
+    /// <seealso cref="http://wikipedia.org/wiki/Universal_Decimal_Classification"></seealso>
+    /// <example>
+    /// 539. 120 Theoretical problems of elementary particles physics. Theories and models of
+    ///      fundamental interactions.
+    /// 539. 120.2 Symmetries of quantum physics
+    /// 539. 120.224 Reflection in time and space
+    /// </example>
+    public class UDC {
 
-        public Domain( String label ) {
-            this.Label = label;
+        //TODO Should a Book be aware of its own UDC?
+
+        public static readonly UDC Unknown = new UDC( String.Empty );
+
+        public UDC( String notation ) {
+            this.Notation = notation;
         }
 
-        public String Label {
+        public String Notation {
             get;
             private set;
         }

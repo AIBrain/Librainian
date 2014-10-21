@@ -1,53 +1,61 @@
-#region License & Information
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
-// "Librainian/Library.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
-#endregion
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Library.cs" was last cleaned by Rick on 2014/10/21 at 5:02 AM
 
 namespace Librainian.Linguistics {
+
     using System;
     using System.Collections;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
     using Annotations;
     using FluentAssertions;
 
+    /// <summary>
+    /// <para>A <see cref="Library" /> is a cluster of <see cref="Book" /> .</para>
+    /// </summary>
     [DataContract( IsReference = true )]
-    public sealed class Library : IEquatable< Library >, IEnumerable< Book > {
+    public sealed class Library : IEquatable<Library>, IEnumerable<Book> {
+
         /// <summary>
         /// </summary>
-        public const int Level = Book.Level << 1;
+        public const UInt64 Level = Book.Level << 1;
 
-        [NotNull] [DataMember] private readonly List< Book > _tokens = new List< Book >();
+        [NotNull]
+        [DataMember]
+        private readonly ConcurrentDictionary<UDC, Book> _tokens = new ConcurrentDictionary<UDC, Book>();
 
         static Library() {
             Level.Should().BeGreaterThan( Book.Level );
         }
 
-        public Library( [NotNull] Book book ) {
-            this.Add( book );
+        public Library( [NotNull] UDC udc, [NotNull] Book book ) {
+            this.Add( udc, book );
         }
 
-        public IEnumerator< Book > GetEnumerator() {
-            return this._tokens.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
+        public Boolean Add( [NotNull] UDC udc, [NotNull] Book book ) {
+            if ( book == null ) {
+                throw new ArgumentNullException( "book" );
+            }
+            this._tokens.TryAdd( udc, book );
+            return true;
         }
 
         public Boolean Equals( [CanBeNull] Library other ) {
@@ -57,12 +65,12 @@ namespace Librainian.Linguistics {
             return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
 
-        public Boolean Add( [NotNull] Book book ) {
-            if ( book == null ) {
-                throw new ArgumentNullException( "book" );
-            }
-            this._tokens.Add( book );
-            return true;
+        public IEnumerator<Book> GetEnumerator() {
+            return this._tokens.Values.GetEnumerator(); //TODO
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return this.GetEnumerator();
         }
     }
 }

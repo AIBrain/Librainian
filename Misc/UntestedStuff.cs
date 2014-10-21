@@ -18,6 +18,7 @@
 #endregion
 
 namespace Librainian.Misc {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
@@ -31,7 +32,7 @@ namespace Librainian.Misc {
         private static void InitCounters() {
             // Initialize the list to a counter-per-processor:
             utilizationCounters = new List< PerformanceCounter >();
-            for ( var i = 0; i < ThreadingExtensions.ProcessorCount; i++ ) {
+            for ( var i = 0; i < Environment.ProcessorCount; i++ ) {
                 utilizationCounters.Add( new PerformanceCounter( "Processor", "% Processor Time", i.ToString() ) );
             }
         }
