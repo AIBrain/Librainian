@@ -22,6 +22,7 @@
 namespace Librainian {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Net.NetworkInformation;
     using System.Numerics;
@@ -172,7 +173,7 @@ namespace Librainian {
                 }
         */
 
-        public static IEnumerable<String> GetVersions() {
+        public static IEnumerable< string > GetVersions() {
             return AppDomain.CurrentDomain.GetAssemblies().Select( assembly => String.Format( "Assembly: {0}, {1}", assembly.GetName().Name, assembly.GetName().Version ) );
         }
 
@@ -215,10 +216,24 @@ namespace Librainian {
             return ( ( BigInteger )bytes ).CanAllocateMemory();
         }
 
-        public static IEnumerable<String> GetWorkingMACAddresses() {
+        public static IEnumerable< string > GetWorkingMACAddresses() {
             return from nic in NetworkInterface.GetAllNetworkInterfaces()
                    where nic.OperationalStatus == OperationalStatus.Up
                    select nic.GetPhysicalAddress().ToString();
+        }
+
+        private static List< PerformanceCounter > utilizationCounters;
+
+        private static void InitCounters() {
+            // Initialize the list to a counter-per-processor:
+            utilizationCounters = new List< PerformanceCounter >();
+            for ( var i = 0; i < Environment.ProcessorCount; i++ ) {
+                utilizationCounters.Add( new PerformanceCounter( "Processor", "% Processor Time", i.ToString() ) );
+            }
+        }
+
+        private static int GetFreeProcessors() {
+            return utilizationCounters.Count( pc => pc.NextValue() < 0.80f );
         }
     }
 }

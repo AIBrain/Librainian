@@ -97,13 +97,13 @@ namespace Librainian.Linguistics {
             return this.GetEnumerator();
         }
 
-        public IEnumerable<Tuple<int, String>> Possibles() {
+        public IEnumerable<Tuple<UInt64, String>> Possibles() {
             if ( !this._tokens.Any() ) {
                 yield break;
             }
 
             foreach ( var character in this._tokens ) {
-                yield return new Tuple<int, String>( Level, character.ToString() );
+                yield return new Tuple<UInt64, String>( Level, character.ToString() );
             }
         }
 

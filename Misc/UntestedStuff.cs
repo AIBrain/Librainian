@@ -25,21 +25,7 @@ namespace Librainian.Misc {
     using Threading;
 
     internal class UntestedStuff {
-        private static List< PerformanceCounter > utilizationCounters;
-
         //private int _partitions = Math.Min( data.Count, ( int ) Math.Max( 1.0f, ( float ) GetFreeProcessors() / ( 1 - blocking ) ) );
-
-        private static void InitCounters() {
-            // Initialize the list to a counter-per-processor:
-            utilizationCounters = new List< PerformanceCounter >();
-            for ( var i = 0; i < Environment.ProcessorCount; i++ ) {
-                utilizationCounters.Add( new PerformanceCounter( "Processor", "% Processor Time", i.ToString() ) );
-            }
-        }
-
-        private static int GetFreeProcessors() {
-            return utilizationCounters.Count( pc => pc.NextValue() < 0.80f );
-        }
 
         // ForAll<T> change...
     }
