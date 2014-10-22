@@ -961,17 +961,16 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        /// <para>Add <paramref name="decimalTax"/> of <paramref name="number"/> to <paramref name="number"/>.</para>
+        /// <para>Add <paramref name="tax"/> of <paramref name="number"/> to <paramref name="number"/>.</para>
         /// <para>If the tax is 6% on $50, then you would call this function like this:</para>
         /// <para> var withTax = AddTax( 50.00, 0.06 );</para>
         /// <para> Assert( withTax == 53.00 );</para>
         /// </summary>
         /// <param name="number"></param>
-        /// <param name="decimalTax"></param>
+        /// <param name="tax"></param>
         /// <returns></returns>
-        public static Decimal AddTax( this Decimal number, Decimal decimalTax ) {
-            var tax = 1.0m + decimalTax;
-            var total = number * tax;
+        public static Decimal AddTax( this Decimal number, Decimal tax ) {
+            var total = number * ( 1.0m + tax );
             return total;
         }
 
@@ -984,10 +983,9 @@ namespace Librainian.Maths {
         /// <param name="total"></param>
         /// <param name="decimalTax"></param>
         /// <returns></returns>
-        public static Decimal SubtractTax( this Decimal total, Decimal decimalTax ) {
-            var tax = 1.0m + decimalTax;
-            var newTotal = total / tax;
-            return newTotal;
+        public static Decimal SubtractTax( this Decimal total, Decimal tax ) {
+            var taxed = total / ( 1.0m + tax );
+            return taxed;
         }
 
         public static T Max<T>( T value, params T[] values ) where T : IComparable< T > {
