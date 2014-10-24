@@ -27,6 +27,7 @@ namespace Librainian.Maths {
     using System.Numerics;
     using System.Runtime.InteropServices;
     using System.Windows;
+    using System.Windows.Media.Media3D;
     using Annotations;
     using Collections;
     using FluentAssertions;
@@ -860,6 +861,10 @@ namespace Librainian.Maths {
 
         public static Boolean Near( this Point here, Point there ) {
             return here.X.Near( there.X ) && here.Y.Near( there.Y );
+        }
+
+        public static Boolean Near( this Point3D here, Point3D there ) {
+            return here.X.Near( there.X ) && here.Y.Near( there.Y ) && here.Z.Near( there.Z );
         }
 
         //public static Boolean Near( this PointF here, PointF there ) {

@@ -621,7 +621,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Measurement\Time\TimeMap.dgml" />
+    <None Include="Measurement\Time\TimeMap.dgml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
