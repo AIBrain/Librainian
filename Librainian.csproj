@@ -261,6 +261,7 @@
     <Compile Include="Graphics\DD\Intersection.cs" />
     <Compile Include="Graphics\DD\Line.cs" />
     <Compile Include="Graphics\DD\Polygon.cs" />
+    <Compile Include="Graphics\DDD\CoordinateU64.cs" />
     <Compile Include="Graphics\Geometry\Functions.cs" />
     <Compile Include="Graphics\Geometry\Segment.cs" />
     <Compile Include="Graphics\Matrix.cs" />
@@ -374,6 +375,7 @@
     </Compile>
     <Compile Include="Maths\BigIntegerRange.cs" />
     <Compile Include="Maths\BiggerRational.cs" />
+    <Compile Include="Maths\Int64Range.cs" />
     <Compile Include="Maths\UInt256.cs" />
     <Compile Include="Maths\Bits.cs" />
     <Compile Include="Maths\RomanNumber.cs" />
@@ -559,8 +561,8 @@
     <Compile Include="Threading\FileSingleton.cs" />
     <Compile Include="Threading\Gate.cs" />
     <Compile Include="Threading\GCNotification.cs" />
-    <Compile Include="Graphics\Geometry\Coordinate.cs" />
-    <Compile Include="Graphics\Geometry\Coordinate64.cs" />
+    <Compile Include="Graphics\DDD\Coordinate.cs" />
+    <Compile Include="Graphics\DDD\Coordinate64.cs" />
     <Compile Include="Threading\Heap.cs" />
     <Compile Include="Threading\ICondition.cs" />
     <Compile Include="Threading\ILock.cs" />
@@ -628,7 +630,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Gaming\Directional\" />
-    <Folder Include="Graphics\DDD\" />
     <Folder Include="Graphics\Line\" />
     <Folder Include="PatternRecognition\" />
   </ItemGroup>
