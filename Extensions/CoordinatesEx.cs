@@ -19,7 +19,7 @@
 
 namespace Librainian.Extensions {
     using System;
-    using Graphics.Geometry;
+    using Graphics.DDD;
 
     public static class CoordinatesEx {
         public static Double DistanceTo( this Coordinate from, Coordinate to ) {

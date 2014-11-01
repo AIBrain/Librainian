@@ -21,6 +21,7 @@ namespace Librainian.Graphics.Geometry {
     using System;
     using System.Diagnostics;
     using System.Windows.Media.Media3D;
+    using DDD;
 
     public static class Functions {
         /// <summary>

@@ -19,6 +19,7 @@
 
 namespace Librainian.Graphics.Geometry {
     using System;
+    using DDD;
 
     public struct Segment {
         public static Segment Empty;

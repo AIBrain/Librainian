@@ -15,8 +15,7 @@
 //
 // "Librainian/Coordinate.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 
-namespace Librainian.Graphics.Geometry {
-
+namespace Librainian.Graphics.DDD {
     using System;
     using System.Drawing;
     using System.Runtime.Serialization;
@@ -24,7 +23,7 @@ namespace Librainian.Graphics.Geometry {
     using Threading;
 
     /// <summary>
-    /// <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> .</para>
+    /// <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="Single"/>).</para>
     /// </summary>
     /// <remarks>Coded towards speed.</remarks>
     [DataContract( IsReference = true )]

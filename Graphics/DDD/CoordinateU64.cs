@@ -1,4 +1,4 @@
-namespace Librainian.Graphics.Geometry {
+namespace Librainian.Graphics.DDD {
     using System;
     using System.Drawing;
     using System.Runtime.Serialization;

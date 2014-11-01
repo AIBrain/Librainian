@@ -19,7 +19,7 @@
 // "Librainian/Coordinate64.cs" was last cleaned by Rick on 2014/10/07 at 12:18 PM
 #endregion
 
-namespace Librainian.Graphics.Geometry {
+namespace Librainian.Graphics.DDD {
     using System;
     using System.Drawing;
     using System.Runtime.Serialization;
