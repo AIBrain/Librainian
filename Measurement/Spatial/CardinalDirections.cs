@@ -24,7 +24,15 @@
 namespace Librainian.Measurement.Spatial {
 
     public enum CardinalDirections {
+
+        /// <summary>
+        /// 0 (equal to 360)
+        /// </summary>
         North = 0,
+
+        /// <summary>
+        /// 22
+        /// </summary>
         NorthNorthEast = ( North + NorthEast ) / 2,
         NorthEast = ( North + East ) / 2,
         EastNorthEast = ( East + NorthEast ) / 2,

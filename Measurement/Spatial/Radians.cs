@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Spatial {
     [Serializable]
     [Immutable]
     public struct Radians : IComparable< Radians > {
-        public const Double MaximumValue = 360.0d;
+        public const Double MaximumValue = 360.0d;  //TODO is this correct?
         public const Double MinimumValue = 0.0d;
 
         /// <summary>
