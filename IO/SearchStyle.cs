@@ -7,5 +7,10 @@ namespace Librainian.IO {
         /// <summary>
         /// </summary>
         FoldersFirst,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        FirstFound,
     }
 }

@@ -502,7 +502,7 @@ namespace Librainian.IO {
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
-        public static void FindFiles( IEnumerable<String> fileSearchPatterns, DirectoryInfo startingFolder, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+        public static void FindFiles( this IEnumerable<String> fileSearchPatterns, DirectoryInfo startingFolder, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( "fileSearchPatterns" );
             }
@@ -537,7 +537,7 @@ namespace Librainian.IO {
                                 exception.Error();
                             }
                             if ( searchStyle == SearchStyle.FoldersFirst ) {
-                                FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, startingFolder: folder, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
+                                searchPatterns.FindFiles( cancellationToken: cancellationToken, startingFolder: folder, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
                             }
 
                             try {
@@ -588,12 +588,8 @@ namespace Librainian.IO {
                                 } );
                             }
 
-                            if ( searchStyle == SearchStyle.FilesFirst ) {
-                                FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, startingFolder: folder, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
-                            }
-                            else {
-                                FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, startingFolder: folder, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
-                            }
+                            searchPatterns.FindFiles( cancellationToken: cancellationToken, startingFolder: folder, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
+                            
                         } );
                     }
                     catch ( UnauthorizedAccessException ) {
@@ -979,7 +975,7 @@ namespace Librainian.IO {
                         return;
                     }
                     String.Format( "Scanning [{0}]", drive.VolumeLabel ).TimeDebug();
-                    FindFiles( fileSearchPatterns: fileSearchPatterns, cancellationToken: cancellationToken, startingFolder: drive.RootDirectory, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
+                    fileSearchPatterns.FindFiles( cancellationToken: cancellationToken, startingFolder: drive.RootDirectory, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
                 } );
             }
             catch ( UnauthorizedAccessException ) {
