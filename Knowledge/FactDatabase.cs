@@ -95,11 +95,11 @@ namespace Librainian.Knowledge {
 
                 IEnumerable<String> fileSearchPatterns = new[] { "*.knb" };
                 Action<FileInfo> onFindFile = file => this.AddFile( dataFile: file );
-                fileSearchPatterns.FindFiles( cancellationToken: cancellationToken, startingFolder: new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.CommonDocuments ) ), onFindFile: onFindFile, onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+                new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.CommonDocuments ) ).FindFiles( fileSearchPatterns: fileSearchPatterns, cancellationToken: cancellationToken, onFindFile: onFindFile, onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
 
                 IEnumerable<String> fileSearchPatterns1 = new[] { "*.knb" };
                 Action<FileInfo> onFindFile1 = file => this.AddFile( dataFile: file );
-                fileSearchPatterns1.FindFiles( cancellationToken: cancellationToken, startingFolder: new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ) ), onFindFile: onFindFile1, onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+                new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ) ).FindFiles( fileSearchPatterns: fileSearchPatterns1, cancellationToken: cancellationToken, onFindFile: onFindFile1, onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
 
                 if ( !this.KNBFiles.Any() ) {
                     IOExtensions.SearchAllDrives( fileSearchPatterns: new[] { "*.knb" }, onFindFile: file => this.AddFile( dataFile: file ), cancellationToken: new CancellationToken() );
