@@ -48,6 +48,11 @@ namespace Librainian.Measurement.Time {
         public static readonly Hours One = new Hours( 1 );
 
         /// <summary>
+        ///     Eight <see cref="Hours" /> .
+        /// </summary>
+        public static readonly Hours Eight = new Hours( 8 );
+
+        /// <summary>
         /// </summary>
         public static readonly Hours Ten = new Hours( 10 );
 
