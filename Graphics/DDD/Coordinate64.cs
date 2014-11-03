@@ -25,9 +25,10 @@ namespace Librainian.Graphics.DDD {
     using System.Runtime.Serialization;
     using Annotations;
     using Maths;
+    using Threading;
 
     /// <summary>
-    ///     A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> .
+    ///     A 3D point; with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> integers.
     /// </summary>
     /// <remarks>
     ///     Coded towards speed.
@@ -37,7 +38,13 @@ namespace Librainian.Graphics.DDD {
 
         public static readonly Coordinate64 AtMaxValues = new Coordinate64( x: Int64.MaxValue, y: Int64.MaxValue, z: Int64.MaxValue );
 
-        public static readonly Coordinate64 MinValue = new Coordinate64( x: Int64.MinValue, y: Int64.MinValue, z: Int64.MinValue );
+        public static readonly Coordinate64 AtMinValues = new Coordinate64( x: Int64.MinValue, y: Int64.MinValue, z: Int64.MinValue );
+
+        public static readonly Coordinate64 Center = new Coordinate64( x: 0, y: 0, z: 0 );
+
+        public static Coordinate64 Random() {
+            return new Coordinate64( x: Randem.NextInt64(), y: Randem.NextInt64(), z: Randem.NextInt64() );
+        }
 
         [DataMember]
         [OptionalField]

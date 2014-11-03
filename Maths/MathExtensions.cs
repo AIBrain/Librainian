@@ -892,6 +892,10 @@ namespace Librainian.Maths {
             return number - target <= UInt64.MinValue;
         }
 
+        public static Boolean Near( this Int64 number, Int64 target ) {
+            return number - target <= Int64.MinValue;
+        }
+
         public static Boolean Near( this UBigInteger number, UBigInteger target ) {
             return number - target <= UBigInteger.Epsilon;
         }
