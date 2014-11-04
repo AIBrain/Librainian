@@ -38,7 +38,6 @@ namespace Librainian.Persistence {
     using System.ServiceModel;
     using System.Text;
     using System.Threading;
-    using System.Threading.Tasks;
     using System.Windows.Forms;
     using System.Xml;
     using Annotations;
@@ -970,15 +969,16 @@ namespace Librainian.Persistence {
         /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="dictionary"></param>
-        /// <param name="toFolder"></param>
+        /// <param name="folder"></param>
         /// <returns></returns>
-        public static Boolean SerializeDictionary<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dictionary, Folder toFolder )
+        public static Boolean SerializeDictionary<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dictionary, Folder folder )
             where TKey : IComparable<TKey> {
 
             try {
                 Report.Enter();
                 var stopwatch = Stopwatch.StartNew();
-                using ( var persistentDictionary = new PersistentDictionary<TKey, TValue>( dictionary, toFolder.FullName ) ) {
+                Report.Info( String.Format( "Serializing dictionary to {0}.", folder ) );
+                using ( var persistentDictionary = new PersistentDictionary<TKey, TValue>( dictionary, folder.FullName ) ) {
                     persistentDictionary.Flush();
                 }
                 stopwatch.Stop();

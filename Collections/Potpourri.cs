@@ -25,7 +25,7 @@ namespace Librainian.Collections {
         [NotNull]
         public String FriendlyName {
             get {
-                return Types.GetPropertyName( () => this );
+                return Types.Name( () => this );
             }
         }
 

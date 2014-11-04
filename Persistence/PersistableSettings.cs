@@ -71,9 +71,9 @@ namespace Librainian.Persistence {
         public DirectoryInfo MainStoragePath {
             get {
                 DirectoryInfo value;
-                return Types.GetPropertyName( () => this.MainStoragePath ).TryGet( out value ) ? value : null;
+                return Types.Name( () => this.MainStoragePath ).TryGet( out value ) ? value : null;
             }
-            set { value.TrySave( Types.GetPropertyName( () => this.MainStoragePath ) ); }
+            set { value.TrySave( Types.Name( () => this.MainStoragePath ) ); }
         }
 
         /// <summary>
