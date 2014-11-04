@@ -321,7 +321,7 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        ///     Example: Console.WriteLine( 3.Hours().FromNow() );
+        ///     Example: Console.WriteLine( 3.Minutes().FromNow() );
         /// </summary>
         /// <param name="minutes"> </param>
         /// <returns> </returns>
@@ -355,7 +355,7 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        ///     Example: Console.WriteLine( 3.Hours().FromNow() );
+        ///     Example: Console.WriteLine( 3.Seconds().FromNow() );
         /// </summary>
         /// <param name="seconds"> </param>
         /// <returns> </returns>
@@ -368,60 +368,64 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="ts"> </param>
         public static String Simpler( this TimeSpan ts ) {
-            var sb = new StringBuilder();
 
-            if ( ts.Days > ( 365 * 2 ) ) {
-                sb.AppendFormat( " {0:n0} years", ts.Days / 365 );
-            }
-            else if ( ts.Days > 365 ) {
-                sb.AppendFormat( " {0} year", ts.Days / 365 );
-            }
-            else if ( ts.Days > 14 ) {
-                sb.AppendFormat( " {0:n0} weeks", ts.Days / 7 );
-            }
-            else if ( ts.Days > 7 ) {
-                sb.AppendFormat( " {0} week", ts.Days / 7 );
-            }
-            else if ( ts.Days > 1 ) {
-                sb.AppendFormat( " {0:n0} days", ts.Days );
-            }
-            else if ( ts.Days == 1 ) {
-                sb.AppendFormat( " {0} day", ts.Days );
-            }
+            var span = ( Span ) ts;
+            return span.ToString();
 
-            if ( ts.Hours > 1 ) {
-                sb.AppendFormat( " {0:n0} hours", ts.Hours );
-            }
-            else if ( ts.Hours == 1 ) {
-                sb.AppendFormat( " {0} hour", ts.Hours );
-            }
+            //var sb = new StringBuilder();
 
-            if ( ts.Minutes > 1 ) {
-                sb.AppendFormat( " {0:n0} minutes", ts.Minutes );
-            }
-            else if ( ts.Minutes == 1 ) {
-                sb.AppendFormat( " {0} minute", ts.Minutes );
-            }
+            //if ( ts.Days > ( 365 * 2 ) ) {
+            //    sb.AppendFormat( " {0:n0} years", ts.Days / 365 );
+            //}
+            //else if ( ts.Days > 365 ) {
+            //    sb.AppendFormat( " {0} year", ts.Days / 365 );
+            //}
+            //else if ( ts.Days > 14 ) {
+            //    sb.AppendFormat( " {0:n0} weeks", ts.Days / 7 );
+            //}
+            //else if ( ts.Days > 7 ) {
+            //    sb.AppendFormat( " {0} week", ts.Days / 7 );
+            //}
+            //else if ( ts.Days > 1 ) {
+            //    sb.AppendFormat( " {0:n0} days", ts.Days );
+            //}
+            //else if ( ts.Days == 1 ) {
+            //    sb.AppendFormat( " {0} day", ts.Days );
+            //}
 
-            if ( ts.Seconds > 1 ) {
-                sb.AppendFormat( " {0:n0} seconds", ts.Seconds );
-            }
-            else if ( ts.Seconds == 1 ) {
-                sb.AppendFormat( " {0} second", ts.Seconds );
-            }
+            //if ( ts.Hours > 1 ) {
+            //    sb.AppendFormat( " {0:n0} hours", ts.Hours );
+            //}
+            //else if ( ts.Hours == 1 ) {
+            //    sb.AppendFormat( " {0} hour", ts.Hours );
+            //}
 
-            if ( ts.Milliseconds > 1 ) {
-                sb.AppendFormat( " {0:n0} milliseconds", ts.Milliseconds );
-            }
-            else if ( ts.Milliseconds == 1 ) {
-                sb.AppendFormat( " {0} millisecond", ts.Milliseconds );
-            }
+            //if ( ts.Minutes > 1 ) {
+            //    sb.AppendFormat( " {0:n0} minutes", ts.Minutes );
+            //}
+            //else if ( ts.Minutes == 1 ) {
+            //    sb.AppendFormat( " {0} minute", ts.Minutes );
+            //}
 
-            if ( String.IsNullOrEmpty( sb.ToString().Trim() ) ) {
-                sb.Append( " 0 milliseconds " );
-            }
+            //if ( ts.Seconds > 1 ) {
+            //    sb.AppendFormat( " {0:n0} seconds", ts.Seconds );
+            //}
+            //else if ( ts.Seconds == 1 ) {
+            //    sb.AppendFormat( " {0} second", ts.Seconds );
+            //}
 
-            return sb.ToString().Trim();
+            //if ( ts.Milliseconds > 1 ) {
+            //    sb.AppendFormat( " {0:n0} milliseconds", ts.Milliseconds );
+            //}
+            //else if ( ts.Milliseconds == 1 ) {
+            //    sb.AppendFormat( " {0} millisecond", ts.Milliseconds );
+            //}
+
+            //if ( String.IsNullOrEmpty( sb.ToString().Trim() ) ) {
+            //    sb.Append( " 0 milliseconds " );
+            //}
+
+            //return sb.ToString().Trim();
         }
 
         /// <summary>

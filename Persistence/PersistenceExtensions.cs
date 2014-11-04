@@ -977,7 +977,7 @@ namespace Librainian.Persistence {
             try {
                 Report.Enter();
                 var stopwatch = Stopwatch.StartNew();
-                Report.Info( String.Format( "Serializing dictionary to {0}.", folder ) );
+                Report.Info( String.Format( "Serializing dictionary to {0}...", folder ) );
                 using ( var persistentDictionary = new PersistentDictionary<TKey, TValue>( dictionary, folder.FullName ) ) {
                     persistentDictionary.Flush();
                 }
@@ -992,5 +992,7 @@ namespace Librainian.Persistence {
 
             return true;
         }
+
+       
     }
 }
