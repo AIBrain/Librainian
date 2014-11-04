@@ -26,6 +26,7 @@ namespace Librainian.Persistence {
     using System;
     using System.Collections.Concurrent;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.IO;
     using System.IO.Compression;
     using System.IO.IsolatedStorage;
@@ -37,6 +38,7 @@ namespace Librainian.Persistence {
     using System.ServiceModel;
     using System.Text;
     using System.Threading;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
     using System.Xml;
     using Annotations;
@@ -44,6 +46,8 @@ namespace Librainian.Persistence {
     using Collections;
     using IO;
     using IO.Streams;
+    using Measurement.Time;
+    using Microsoft.Isam.Esent.Collections.Generic;
     using Parsing;
     using Threading;
 
@@ -181,7 +185,7 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public static String Serialize<TType>( this TType obj ) where TType : class {
             try {
-                using ( var stream = new MemoryStream( ) ) {
+                using ( var stream = new MemoryStream() ) {
                     var serializer = Serializers.Value;
                     serializer.WriteObject( stream, obj );
                     return stream.ReadToEnd();
@@ -956,8 +960,37 @@ namespace Librainian.Persistence {
             return false;
         }
 
-        private static Boolean FileCannotBeRead( IsolatedStorageFile isf, String fileName ) {
+        public static Boolean FileCannotBeRead( this IsolatedStorageFile isf, String fileName ) {
             return !FileCanBeRead( isf: isf, fileName: fileName );
+        }
+
+        /// <summary>
+        /// <para>Persist the <paramref name="dictionary"/> into a <see cref="PersistentDictionary{TKey,TValue}"/>.</para>
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dictionary"></param>
+        /// <param name="toFolder"></param>
+        /// <returns></returns>
+        public static Boolean SerializeDictionary<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dictionary, Folder toFolder )
+            where TKey : IComparable<TKey> {
+
+            try {
+                Report.Enter();
+                var stopwatch = Stopwatch.StartNew();
+                using ( var persistentDictionary = new PersistentDictionary<TKey, TValue>( dictionary, toFolder.FullName ) ) {
+                    persistentDictionary.Flush();
+                }
+                stopwatch.Stop();
+                Report.Info( String.Format( "Serialized dictionary in {0}.", stopwatch.Elapsed.Simpler() ) );
+                Report.Exit();
+            }
+            catch ( Exception exception ) {
+                exception.Error();
+                return false;
+            }
+
+            return true;
         }
     }
 }
