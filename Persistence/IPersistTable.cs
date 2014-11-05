@@ -5,9 +5,8 @@ namespace Librainian.Persistence {
     using Annotations;
     using IO;
     using Microsoft.Isam.Esent.Collections.Generic;
-    using Ninject;
 
-    public interface IPersistTable< TKey, TValue> : IInitializable, IDictionary<TKey,TValue>, IDisposable
+    public interface IPersistTable< TKey, TValue> :  IDictionary<TKey,TValue>, IDisposable
         where TKey : IComparable
         where TValue : class {
 

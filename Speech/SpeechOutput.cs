@@ -25,32 +25,12 @@ namespace Librainian.Speech {
     using System.Threading;
     using System.Windows.Forms;
     using Annotations;
-    using Ninject;
-    using Ninject.Modules;
 
-    public interface ISpeechOutput {
-        IEnumerable< InstalledVoice > GetVoices();
-
-        /// <summary>
-        ///     Pumps message loop while Talking
-        /// </summary>
-        void Wait();
-
-        Boolean IsTalking();
-
-        /// <summary>
-        ///     Start speaking ASAP
-        ///     Start speaking (optionally interrupting anything already being said).
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="interruptTalking"></param>
-        void Speak( [CanBeNull] String message, Boolean interruptTalking = false );
-    }
 
     /// <summary>
     ///     Use whatever TTS engine is available...
     /// </summary>
-    public sealed class SpeechOutput : NinjectModule, IInitializable, IStartable, ISpeechOutput {
+    public sealed class SpeechOutput  {
         [CanBeNull]
         private SpeechSynthesizer SpeechSynthesizer { get; set; }
 
@@ -107,7 +87,7 @@ namespace Librainian.Speech {
                 }
 
                 if ( message.Contains( "AIBrain" ) ) {
-                    message = message.Replace( "AIBrain", "A-I-Brain" ); //ugh..
+                    message = message.Replace( "AIBrain", "A-I-Brain" ); //HACK ugh.
                 }
 
                 message = message.Trim();
@@ -131,7 +111,6 @@ namespace Librainian.Speech {
             }
         }
 
-        public override void Load() { }
 
         public void AttachEvents( Action< EventArgs > speechFeedbackEvent = null ) {
             try {

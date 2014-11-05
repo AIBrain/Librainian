@@ -30,12 +30,10 @@ namespace Librainian.Knowledge {
     using IO;
     using Linguistics;
     using Measurement.Time;
-    using Ninject;
-    using Ninject.Modules;
     using Parsing;
     using Threading;
 
-    public class FactDatabase : NinjectModule, IInitializable, IFactDatabase {
+    public class FactDatabase  {
         public readonly ConcurrentBag<FileInfo> KNBFiles = new ConcurrentBag<FileInfo>();
 
         public int FilesFound {
@@ -108,10 +106,5 @@ namespace Librainian.Knowledge {
             } );
         }
 
-        public override void Load() {
-
-            //Threads.Report.Enter();
-            //Threads.Report.Exit();
-        }
     }
 }

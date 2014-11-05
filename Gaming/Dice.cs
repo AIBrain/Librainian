@@ -1,25 +1,21 @@
-﻿#region License & Information
-
-// This notice must be kept visible in the source.
+﻿// This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Dice.cs" was last cleaned by Rick on 2014/09/21 at 12:30 PM
-
-#endregion License & Information
+// "Librainian/Dice.cs" was last cleaned by Rick on 2014/11/05 at 1:48 PM
 
 namespace Librainian.Gaming {
 
@@ -30,27 +26,27 @@ namespace Librainian.Gaming {
     using Collections;
     using FluentAssertions;
     using Measurement.Time;
-    using Ninject.Modules;
     using Threading;
 
     [DataContract( IsReference = true )]
-    public class Dice : NinjectModule, IDice {
+    public class Dice {
 
         /// <summary>
-        ///     Keep track of the most recent rolls.
+        /// Keep track of the most recent rolls.
         /// </summary>
-        private readonly uint _keepTrackOfXRolls;
+        private readonly uint _keepTrackOfRecentRolls;
 
-        public Dice( UInt16 numberOfSides = 6, UInt32 keepTrackOfXRolls = 10 ) {
-
-            this.LastFewRolls = new ParallelList<UInt16>();
+        public Dice( UInt16 numberOfSides = 6, UInt32 keepTrackOfRecentRolls = 10 ) {
             this.NumberOfSides = numberOfSides;
-            this._keepTrackOfXRolls = keepTrackOfXRolls;
 
-            this.LastFewRolls.TimeoutForReads = Seconds.Thirty;
-            this.LastFewRolls.TimeoutForWrites = Seconds.Thirty;
+            this._keepTrackOfRecentRolls = keepTrackOfRecentRolls;
 
-            this.RollTheDice();
+            this.LastFewRolls = new ParallelList<UInt16> {
+                TimeoutForReads = Seconds.Thirty,
+                TimeoutForWrites = Seconds.Thirty
+            };
+
+            this.Roll();
         }
 
         public UInt16 GetCurrentSideFaceUp {
@@ -75,29 +71,21 @@ namespace Librainian.Gaming {
         }
 
         /// <summary>
-        ///     Loads the module into the kernel.
-        /// </summary>
-        public override void Load() {
-            this.Roll();
-        }
-
-        /// <summary>
-        ///     <para>Rolls the dice to determine which side lands face-up.</para>
+        /// <para>Rolls the dice to determine which side lands face-up.</para>
         /// </summary>
         /// <returns>The side which landed face-up</returns>
         public UInt16 Roll() {
-            this.RollTheDice();
-            this.LastFewRolls.Add( this.GetCurrentSideFaceUp, this.Cleanup );
+            this.GetCurrentSideFaceUp = ( UInt16 )( Randem.Next( this.NumberOfSides ) + 1 );
+            this.GetCurrentSideFaceUp.Should().BeInRange( 1, this.NumberOfSides );
+            this.LastFewRolls.Add( this.GetCurrentSideFaceUp, this.Trim );
             return this.GetCurrentSideFaceUp;
         }
 
-        public void RollTheDice() {
-            this.GetCurrentSideFaceUp = ( UInt16 )( Randem.Next( this.NumberOfSides ) + 1 );
-            this.GetCurrentSideFaceUp.Should().BeInRange( 1, this.NumberOfSides );
-        }
-
-        private void Cleanup() {
-            while ( this.GetLastFewRolls().Count() > this._keepTrackOfXRolls ) {
+        /// <summary>
+        /// <para></para>
+        /// </summary>
+        public void Trim() {
+            while ( this.GetLastFewRolls().Count() > this._keepTrackOfRecentRolls ) {
                 this.LastFewRolls.RemoveAt( 0 );
             }
         }

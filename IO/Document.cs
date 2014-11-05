@@ -36,7 +36,6 @@ namespace Librainian.IO {
     using Annotations;
     using Collections;
     using Extensions;
-    using Magic;
     using Maths;
     using Parsing;
     using Security;
@@ -264,22 +263,25 @@ namespace Librainian.IO {
         /// <param name="onCompleted"></param>
         /// <returns></returns>
         public Boolean CopyFileWithProgress( String destination, Action<Percentage> onProgress, Action onCompleted ) {
-            var webClient = Ioc.Container.TryGet<WebClient>();
+            var webClient = new WebClient();
 
-            if ( webClient == null ) {
-                return false;
-            }
+            //if ( webClient == null ) {
+            //    return false;
+            //}
+
             webClient.DownloadProgressChanged += ( sender, args ) => {
                 var percentage = new Percentage( ( BigInteger )args.BytesReceived, args.TotalBytesToReceive );
                 if ( onProgress != null ) {
                     onProgress( percentage );
                 }
             };
+
             webClient.DownloadFileCompleted += ( sender, args ) => {
                 if ( onCompleted != null ) {
                     onCompleted();
                 }
             };
+
             webClient.DownloadFileAsync( new Uri( this.FullPathWithFileName ), destination );
 
             return true;

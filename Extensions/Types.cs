@@ -218,15 +218,22 @@ namespace Librainian.Extensions {
         }
 */
 
-        /// <summary>
-        /// <para>Returns the name of the instance (variable/property).</para>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public static string Name<T>( this T item ) where T : class {
-            return item == null ? string.Empty : typeof( T ).GetProperties()[ 0 ].Name;
-        }
+        ///// <summary>
+        ///// <para>Returns the name of the instance (variable/property).</para>
+        ///// Doesn't seem to work
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="item"></param>
+        ///// <returns></returns>
+        //public static string Name<T>( this T item ) where T : class {
+        //    if ( item == null ) {
+        //        return string.Empty;
+        //    }
+        //    else {
+        //        var props = typeof ( T ).GetProperties().ToList();
+        //        return props[ 0 ].Name;
+        //    }
+        //}
 
         public static String Name<T>( [ NotNull ] this Expression<Func<T>> propertyExpression ) {
             if ( propertyExpression == null ) {

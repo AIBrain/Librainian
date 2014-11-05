@@ -23,14 +23,13 @@
 
 namespace Librainian.Magic {
     using Annotations;
-    using Ninject;
 
     public interface IIocContainer {
 
-        [ NotNull ]
-        IKernel Kernel {
-            get;
-        }
+        //[ NotNull ]
+        //IKernel Kernel {
+        //    get;
+        //}
 
         //[CanBeNull]
         //IContainer BuildedContainer { get; set; }

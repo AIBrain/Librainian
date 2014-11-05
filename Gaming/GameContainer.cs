@@ -71,7 +71,7 @@ namespace Librainian.Gaming {
             if ( !this.TryTake( out gameItem ) ) {
                 return false;
             }
-            var dice = gameItem as IDice;
+            var dice = gameItem as Dice;
             if ( dice != null ) {
                 dice.Roll();
             }

@@ -81,9 +81,6 @@
     <Reference Include="MongoDB.Bson">
       <HintPath>..\FlockingAvoidance\packages\mongocsharpdriver.1.9.2\lib\net35\MongoDB.Bson.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject">
-      <HintPath>..\FlockingAvoidance\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\FlockingAvoidance\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -249,7 +246,6 @@
     <Compile Include="Extensions\Utility.cs" />
     <Compile Include="Extensions\XMLExtensions.cs" />
     <Compile Include="Gaming\DiceCup.cs" />
-    <Compile Include="Gaming\IDice.cs" />
     <Compile Include="Gaming\IDiceCup.cs" />
     <Compile Include="Gaming\IGameContainer.cs" />
     <Compile Include="Gaming\IGameItem.cs" />
@@ -305,7 +301,6 @@
     <Compile Include="IO\Streams\ProgressStream.cs" />
     <Compile Include="IO\SearchStyle.cs" />
     <Compile Include="IO\WindowsAPI.cs" />
-    <Compile Include="Knowledge\IFactDatabase.cs" />
     <Compile Include="Linguistics\Author.cs" />
     <Compile Include="Linguistics\UDC.cs" />
     <Compile Include="Magic\Abodit\IId.cs" />
