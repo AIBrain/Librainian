@@ -4,7 +4,6 @@ namespace Librainian.Persistence {
     using System.Runtime.Serialization;
     using Annotations;
     using IO;
-    using Microsoft.Isam.Esent.Collections.Generic;
 
     public interface IPersistTable< TKey, TValue> :  IDictionary<TKey,TValue>, IDisposable
         where TKey : IComparable

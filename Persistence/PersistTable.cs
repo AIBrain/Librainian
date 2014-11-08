@@ -92,8 +92,11 @@ namespace Librainian.Persistence {
                 this.Dictionary = new PersistentDictionary<TKey, String>( directory );
 
                 if ( testForReadWriteAccess ) {
-                    this.TestForReadWriteAccess();    
+                    this.TestForReadWriteAccess();
                 }
+            }
+            catch ( Exception exception ) {
+                exception.Error();
             }
             finally {
                 Report.Exit();
