@@ -25,6 +25,7 @@ namespace Librainian.Internet.Servers {
 
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Web;
 
     public class Cookies {
@@ -112,10 +113,7 @@ namespace Librainian.Internet.Servers {
         ///     no leading or trailing "\r\n".
         /// </returns>
         public override String ToString() {
-            var cookiesStr = new List<String>();
-            foreach ( var cookie in this._cookieCollection.Values ) {
-                cookiesStr.Add( String.Format( "Set-Cookie: {0}={1}{2}; Path=/", cookie.name, cookie.value, ( cookie.expire == TimeSpan.Zero ? "" : "; Max-Age=" + ( long )cookie.expire.TotalSeconds ) ) );
-            }
+            var cookiesStr = this._cookieCollection.Values.Select( cookie => String.Format( "Set-Cookie: {0}={1}{2}; Path=/", cookie.name, cookie.value, ( cookie.expire == TimeSpan.Zero ? "" : "; Max-Age=" + ( long ) cookie.expire.TotalSeconds ) ) );
             return String.Join( "\r\n", cookiesStr );
         }
     }

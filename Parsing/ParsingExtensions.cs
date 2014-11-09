@@ -89,7 +89,7 @@ namespace Librainian.Parsing {
 
         [ NotNull ] public static readonly String AllUppercaseLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() );
 
-        [ NotNull ] public static readonly String Alphabet = new String( value: Randem.NextString( 676, lowers: true, uppers: false, numbers: false, symbols: false ).Where( Char.IsLetter ).Distinct().OrderBy( c => c ).Aggregate( String.Empty, ( s, c1 ) => s + ' ' + c1 ).ToArray() ).Trim();
+        [ NotNull ] public static readonly String Alphabet = new String( value: Randem.NextString( 676, lowers: true ).Where( Char.IsLetter ).Distinct().OrderBy( c => c ).Aggregate( String.Empty, ( s, c1 ) => s + ' ' + c1 ).ToArray() ).Trim();
 
         [ NotNull ] public static readonly Lazy< PluralizationService > LazyPluralizationService = new Lazy< PluralizationService >( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );
 
@@ -722,7 +722,7 @@ namespace Librainian.Parsing {
         [ Pure ]
         [ CanBeNull ]
         public static String NullIfBlank( [ CanBeNull ] this String theString ) {
-            if ( null == theString || String.IsNullOrWhiteSpace( theString ) ) {
+            if ( String.IsNullOrWhiteSpace( theString ) ) {
                 return null;
             }
             theString = theString.Trim();
@@ -1114,9 +1114,9 @@ namespace Librainian.Parsing {
             #region do any chars in compare also show in source
             tempcounter = 0;
             foreach ( var c in compare ) {
-                votes.ForB( 1 );
+                votes.ForB();
                 if ( source.Contains( c ) ) {
-                    votes.ForA( 1 );
+                    votes.ForA();
                     tempcounter++;
                 }
             }

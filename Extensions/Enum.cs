@@ -36,7 +36,7 @@ namespace Librainian.Extensions {
     public static class Enum< T > where T : struct {
         private static readonly IEnumerable< T > all = Enum.GetValues( typeof ( T ) ).Cast< T >();
 
-// ReSharper disable once PossibleNullReferenceException
+        // ReSharper disable once PossibleNullReferenceException
         private static readonly Dictionary< String, T > insensitiveNames = all.ToDictionary( k => Enum.GetName( typeof ( T ), k ).ToUpperInvariant() );
 
         private static readonly Dictionary< T, String > names = all.ToDictionary( k => k, v => v.ToString() );

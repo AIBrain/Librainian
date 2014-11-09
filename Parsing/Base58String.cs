@@ -29,11 +29,7 @@ namespace Librainian.Parsing {
         public static Byte[] ToByteArray( String s ) {
             BigInteger bi = 0;
             // Decode base58
-            foreach ( var c in s ) {
-                var charVal = Base58Chars.IndexOf( c );
-                if ( charVal == -1 ) {
-                    continue;
-                }
+            foreach ( var charVal in s.Select( c => Base58Chars.IndexOf( c ) ).Where( charVal => charVal != -1 ) ) {
                 bi *= 58;
                 bi += charVal;
             }
@@ -43,8 +39,8 @@ namespace Librainian.Parsing {
                 b = b.Take( b.Length - 1 ).ToArray();
             }
             // Add leading 0x00 bytes
-            var num0s = s.IndexOf( s.First( c => c != '1' ) );
-            return b.Concat( new Byte[num0s] ).Reverse().ToArray();
+            var num0S = s.IndexOf( s.First( c => c != '1' ) );
+            return b.Concat( new Byte[num0S] ).Reverse().ToArray();
         }
 
         public static String FromByteArray( Byte[] b ) {

@@ -1,6 +1,7 @@
 ﻿
 namespace Librainian.Threading {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using NUnit.Framework;
 
@@ -61,13 +62,7 @@ namespace Librainian.Threading {
         /// <param name="actor"></param>
         public static async Task<Actor> Act( this Actor actor ) {
             //var cancel = new CancellationToken( false );
-            foreach ( var player1 in actor.Actions.GetConsumingEnumerable() ) {
-                if ( null == player1 ) {
-                    continue;
-                }
-
-                var player = player1;
-
+            foreach ( var player in actor.Actions.GetConsumingEnumerable().Where( player1 => null != player1 ) ) {
                 if ( null == player.TheAct ) {
                     throw new ActorException( because: "the player.TheAct is null" );
                 }
@@ -80,19 +75,16 @@ namespace Librainian.Threading {
                     Console.WriteLine();
                 }
 
+                var player1 = player;
+                if ( player1.TheAct != null ) {
+                    var task = Task.Run( () => player1.TheAct() );
+                    var runner = Task.Delay( player.ActingTimeout.Value );
 
-                var task = Task.Run( () => player.TheAct() );
-                var runner = Task.Delay( player.ActingTimeout.Value );
-
-                var result = await Task.WhenAny( task, runner );
-
-
-
+                    var result = await Task.WhenAny( task, runner );
+                }
             }
 
             return actor;
         }
-
-
     }
 }

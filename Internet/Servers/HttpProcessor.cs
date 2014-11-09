@@ -757,9 +757,9 @@ namespace Librainian.Internet.Servers {
                 hash = queryString.Substring( idx + 1 );
                 queryString = queryString.Remove( idx );
             }
-            var parts = queryString.Split( new[] { '&' } );
-            for ( var i = 0 ; i < parts.Length ; i++ ) {
-                var argument = parts[ i ].Split( new[] { '=' } );
+            var parts = queryString.Split( '&' );
+            foreach ( string t in parts ) {
+                var argument = t.Split( '=' );
                 if ( argument.Length == 2 ) {
                     var key = HttpUtility.UrlDecode( argument[ 0 ] );
                     if ( !preserveKeyCharacterCase ) {

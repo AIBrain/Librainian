@@ -223,12 +223,12 @@ namespace Librainian.Magic.Abodit {
         ///     Set a property (e.g. person1.Name = "Smith")
         /// </summary>
         public override bool TrySetMember( SetMemberBinder binder, object value ) {
-            if ( binder.Name == "_id" ) {
-                this.ID = ( ObjectId )value;
-                return true;
-            } // you shouldn't need to use this
-            if ( binder.Name == InterfacesField ) {
-                throw new AccessViolationException( "You cannot set the interfaces directly, use AddLike() instead" );
+            switch ( binder.Name ) {
+                case "_id":
+                    this.ID = ( ObjectId )value;
+                    return true;
+                case InterfacesField:
+                    throw new AccessViolationException( "You cannot set the interfaces directly, use AddLike() instead" );
             }
             if ( !this.GetTypeMap().ContainsKey( binder.Name ) ) {
                 throw new ArgumentException( String.Format( "Property '{0}' not found.  You need to call AddLike to specify the interfaces you want to support.", binder.Name ) );

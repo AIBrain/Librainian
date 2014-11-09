@@ -24,21 +24,22 @@ namespace Librainian.Graphics.DD {
     public static class GeometryEx {
         
         public static Intersection IntersectionOf( Line line, Polygon polygon ) {
-            if ( polygon.Length == 0 ) {
-                return Intersection.None;
-            }
-            if ( polygon.Length == 1 ) {
-                return IntersectionOf( polygon[ 0 ], line );
+            switch ( polygon.Length ) {
+                case 0:
+                    return Intersection.None;
+                case 1:
+                    return IntersectionOf( polygon[ 0 ], line );
             }
             var tangent = false;
             for ( var index = 0; index < polygon.Length; index++ ) {
                 var index2 = ( index + 1 )%polygon.Length;
                 var intersection = IntersectionOf( line, new Line( polygon[ index ], polygon[ index2 ] ) );
-                if ( intersection == Intersection.Intersection ) {
-                    return intersection;
-                }
-                if ( intersection == Intersection.Tangent ) {
-                    tangent = true;
+                switch ( intersection ) {
+                    case Intersection.Intersection:
+                        return intersection;
+                    case Intersection.Tangent:
+                        tangent = true;
+                        break;
                 }
             }
             return tangent ? Intersection.Tangent : IntersectionOf( line.P1, polygon );

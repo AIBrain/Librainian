@@ -168,10 +168,11 @@ namespace AIBrain
                     }
                     return false;
                 }
-                if ( this._compilerResults.Errors.HasWarnings ) {
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
+                if ( !this._compilerResults.Errors.HasWarnings ) {
+                    return true;
+                }
+                if ( Debugger.IsAttached ) {
+                    Debugger.Break();
                 }
                 return true;
             }

@@ -54,8 +54,8 @@ namespace Librainian.Maths {
         private static readonly BigInteger SBnDecimalMaxValue = ( BigInteger )new Decimal( -1, -1, -1, false, 0 );
         private static readonly BigInteger SBnDecimalMinValue = ( BigInteger )new Decimal( -1, -1, -1, true, 0 );
         private static readonly BigInteger SBnDecimalPrecision = BigInteger.Pow( 10, DecimalMaxScale );
-        private static readonly BigInteger SBnDoubleMaxValue = ( BigInteger )Double.MaxValue;
-        private static readonly BigInteger SBnDoubleMinValue = ( BigInteger )Double.MinValue;
+        private static readonly BigInteger SBnDoubleMaxValue = new BigInteger( Double.MaxValue );
+        private static readonly BigInteger SBnDoubleMinValue = new BigInteger( Double.MinValue );
         private static readonly BigInteger SBnDoublePrecision = BigInteger.Pow( 10, DoubleMaxScale );
 
         static BiggerRational() {
@@ -198,7 +198,7 @@ namespace Librainian.Maths {
             return me.Numerator * other.Denominator == me.Denominator * other.Numerator;
         }
 
-         
+
         public static explicit operator ulong( BiggerRational value ) {
             return ( ulong )BigInteger.Divide( value.Numerator, value.Denominator );
         }
@@ -211,7 +211,7 @@ namespace Librainian.Maths {
             return BigInteger.Divide( value.Numerator, value.Denominator );
         }
 
-         
+
         public static explicit operator uint( BiggerRational value ) {
             return ( uint )BigInteger.Divide( value.Numerator, value.Denominator );
         }
@@ -220,7 +220,7 @@ namespace Librainian.Maths {
             return ( float )( Double )value;
         }
 
-         
+
         public static explicit operator UInt16( BiggerRational value ) {
             return ( UInt16 )BigInteger.Divide( value.Numerator, value.Denominator );
         }
@@ -248,22 +248,22 @@ namespace Librainian.Maths {
             throw new OverflowException( "Value was either too large or too small for a System.Decimal." );
         }
 
-         
+
         public static implicit operator BiggerRational( sbyte value ) {
             return new BiggerRational( ( BigInteger )value );
         }
 
-         
+
         public static implicit operator BiggerRational( UInt16 value ) {
             return new BiggerRational( ( BigInteger )value );
         }
 
-         
+
         public static implicit operator BiggerRational( uint value ) {
             return new BiggerRational( ( BigInteger )value );
         }
 
-         
+
         public static implicit operator BiggerRational( ulong value ) {
             return new BiggerRational( ( BigInteger )value );
         }
@@ -520,7 +520,7 @@ namespace Librainian.Maths {
             }
         }
 
-         
+
         public static explicit operator sbyte( BiggerRational value ) {
             return ( sbyte )BigInteger.Divide( value.Numerator, value.Denominator );
         }

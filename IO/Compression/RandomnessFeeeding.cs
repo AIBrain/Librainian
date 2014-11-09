@@ -48,7 +48,7 @@ namespace Librainian.IO.Compression {
         }
 
         public void Report() {
-            Debug.WriteLine( String.Format( "Current compression is now {0:P4}", this.GetCurrentCompressionRatio() ) );
+            Debug.WriteLine( "Current compression is now {0:P4}", this.GetCurrentCompressionRatio() );
         }
 
         public void Reset() {

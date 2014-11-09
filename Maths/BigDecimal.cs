@@ -96,7 +96,7 @@ namespace Librainian.Maths {
 
             //BUG is this correct?
 
-            while ( /*exponent > 0 &&*/ this.Significand % 10 == 0 ) {
+            while ( exponent > 0 && this.Significand % 10 == 0 ) {
                 if ( this.Significand == 0 ) {
                     break;
                 }
@@ -649,12 +649,7 @@ namespace Librainian.Maths {
                 }
                 else {
                     var at = result.Length + this.Exponent;
-                    if ( at == 0 ) {
-                        result = result.Insert( at, "0." );
-                    }
-                    else {
-                        result = result.Insert( at, "." );
-                    }
+                    result = result.Insert( at, at == 0 ? "0." : "." );
                 }
             }
             else if ( this.Exponent == 0 ) {

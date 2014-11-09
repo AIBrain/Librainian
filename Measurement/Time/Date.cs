@@ -88,21 +88,12 @@ namespace Librainian.Measurement.Time {
         //    : this( year: ( BigInteger )years.Value, month: ( BigInteger )months.Value, day: ( BigInteger )days.Value ) {
         //}
 
-        internal Date( Span span ) {
+        public Date( Span span ) {
             this.Year = new Year( span.GetWholeYears() );
-            if ( span.Months.Value < Month.MinimumValue ) {
-                this.Month = new Month( Month.MinimumValue );    
-            }
-            else {
-                this.Month = new Month( ( byte )span.Months.Value );    
-            }
 
-            if ( span.Days.Value  < Day.MinimumValue ) {
-                this.Day = new Day( Day.MinimumValue );
-            }
-            else {
-                this.Day = new Day( ( byte )span.Days.Value );    
-            }
+            this.Month = span.Months.Value < Month.MinimumValue ? new Month( Month.MinimumValue ) : new Month( ( byte )span.Months.Value );
+
+            this.Day = span.Days.Value  < Day.MinimumValue ? new Day( Day.MinimumValue ) : new Day( ( byte )span.Days.Value );
             
         }
 
