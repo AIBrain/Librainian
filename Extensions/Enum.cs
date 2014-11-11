@@ -1,4 +1,4 @@
-﻿#region License & Information
+﻿
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
@@ -15,7 +15,6 @@
 // I am not responsible for Anything You Do.
 // 
 // "Librainian/Enum.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
-#endregion
 
 namespace Librainian.Extensions {
     using System;
@@ -36,7 +35,6 @@ namespace Librainian.Extensions {
     public static class Enum< T > where T : struct {
         private static readonly IEnumerable< T > all = Enum.GetValues( typeof ( T ) ).Cast< T >();
 
-        // ReSharper disable once PossibleNullReferenceException
         private static readonly Dictionary< String, T > insensitiveNames = all.ToDictionary( k => Enum.GetName( typeof ( T ), k ).ToUpperInvariant() );
 
         private static readonly Dictionary< T, String > names = all.ToDictionary( k => k, v => v.ToString() );

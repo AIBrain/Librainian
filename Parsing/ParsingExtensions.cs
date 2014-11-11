@@ -49,9 +49,7 @@ namespace Librainian.Parsing {
 
     public static class ParsingExtensions {
         public const String Doublespace = Singlespace + Singlespace;
-        /*
-                public const String LotsOfSpacesString = "                                                                                          ";
-        */
+
 
         /// <summary>
         ///     abcdefghijklmnopqrstuvwxyz
@@ -1299,6 +1297,10 @@ namespace Librainian.Parsing {
             var n = Math.Abs( number );
             var lt = n % 100;
             return number + OrdinalSuffixes[ ( lt >= 11 && lt <= 13 ) ? 0 : n % 10 ];
+        }
+
+        public static String RemoveNullChars( this String text ) {
+            return text.Replace( "\0", String.Empty );
         }
 
         /// <summary>

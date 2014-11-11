@@ -88,7 +88,7 @@ namespace Librainian.AmazedSaint {
             }
 
             if ( elastic.InternalContent is String ) {
-                exp.Add( new XText( elastic.InternalContent as String ) );
+                exp.Add( new XText( ( String ) elastic.InternalContent ) );
             }
 
             foreach ( var child in elastic.Elements.Select( XElementFromElastic ) ) {

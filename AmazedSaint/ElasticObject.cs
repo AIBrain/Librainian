@@ -170,7 +170,7 @@ namespace Librainian.AmazedSaint {
             switch ( binder.Operation ) {
                 case ExpressionType.LeftShift:
                     if ( arg is String ) {
-                        var exp = new ElasticObject( arg as String ) {
+                        var exp = new ElasticObject( ( String ) arg ) {
                             _nodeType = NodeType.Element
                         };
                         this.AddElement( exp );
@@ -178,7 +178,7 @@ namespace Librainian.AmazedSaint {
                         return true;
                     }
                     if ( arg is ElasticObject ) {
-                        var eobj = arg as ElasticObject;
+                        var eobj = ( ElasticObject ) arg;
                         if ( !this.Elements.Contains( eobj ) ) {
                             this.AddElement( eobj );
                         }
@@ -198,13 +198,13 @@ namespace Librainian.AmazedSaint {
                             }
                             throw new InvalidOperationException( String.Format( "An attribute with name {0} already exists", memberName ) );
                         }
-                        if ( arg is ElasticObject ) {
-                            var eobj = arg as ElasticObject;
-                            this.AddAttribute( memberName, eobj );
-                            result = eobj;
-                            return true;
-                        }
+                    if ( arg is ElasticObject ) {
+                        var eobj = ( ElasticObject ) arg;
+                        this.AddAttribute( memberName, eobj );
+                        result = eobj;
+                        return true;
                     }
+                }
                     break;
 
                 case ExpressionType.GreaterThan:
