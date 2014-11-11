@@ -22,12 +22,55 @@ namespace Librainian.Database {
     using System.Collections.Generic;
     using System.Data;
     using System.Diagnostics;
+    using System.Dynamic;
+    using System.Linq.Expressions;
     using System.Media;
     using System.Net.NetworkInformation;
+    using System.Reflection;
     using System.Threading;
     using Measurement.Time;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
-    public static class SQLDatabaseExtensions {
+    public static class DatabaseExtensions {
+
+        public static T2 ToDto<T1, T2>( this T1 obj, params Expression<Func<T1, dynamic>>[] items ) where T1 : class {
+            var eo = new ExpandoObject();
+            var props = eo as IDictionary<String, object>;
+
+            foreach ( var item in items ) {
+                var member = item.Body as MemberExpression;
+                var unary = item.Body as UnaryExpression;
+                var body = member ?? ( unary != null ? unary.Operand as MemberExpression : null );
+
+                if ( member != null && body.Member is PropertyInfo ) {
+                    var property = body.Member as PropertyInfo;
+                    if ( property != null )
+                        props[ property.Name ] = obj.GetType().GetProperty( property.Name ).GetValue( obj, null );
+                }
+                else if ( unary != null ) {
+                    var ubody = ( UnaryExpression )item.Body;
+                    var property = ubody.Operand as MemberExpression;
+                    if ( property != null ) {
+                        props[ property.Member.Name ] = obj.GetType()
+                            .GetProperty( property.Member.Name )
+                            .GetValue( obj, null );
+                    }
+                    else // full expression with number funcs
+                    {
+                        var compiled = item.Compile();
+                        var result = ( KeyValuePair<string, object> )compiled.Invoke( obj );
+                        props[ result.Key ] = result.Value;
+                    }
+                }
+            }
+
+            var json = JsonConvert.SerializeObject( eo );
+            var anon = JsonConvert.DeserializeAnonymousType<object>( json, Activator.CreateInstance<T2>() );
+            return ( ( JObject )anon ).ToObject<T2>();
+        }
+
+
         /// <summary>
         ///     Returns the total time taken for a simple query. (connect + execute + fetch...)
         /// </summary>

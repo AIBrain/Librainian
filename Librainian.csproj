@@ -92,6 +92,9 @@
     <Reference Include="MongoDB.Bson">
       <HintPath>..\FlockingAvoidance\packages\mongocsharpdriver.1.9.2\lib\net35\MongoDB.Bson.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\CexBot\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\Universal\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
     </Reference>
@@ -228,7 +231,7 @@
     <Compile Include="Database\MMF\MemMapCache.cs" />
     <Compile Include="Database\MMF\SerializerException.cs" />
     <Compile Include="Database\MMF\ValueTypeCheck.cs" />
-    <Compile Include="Database\SQLDatabaseExtensions.cs" />
+    <Compile Include="Database\DatabaseExtensions.cs" />
     <Compile Include="Database\SQLQuery.cs" />
     <Compile Include="Diagnostical.cs" />
     <Compile Include="Extensions\BigNullStream.cs" />

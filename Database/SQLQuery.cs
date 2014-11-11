@@ -278,7 +278,7 @@ namespace Librainian.Database {
                 return true;
             }
             catch ( SqlException exception ) {
-                if ( !SQLDatabaseExtensions.IsNetworkConnected() ) {
+                if ( !DatabaseExtensions.IsNetworkConnected() ) {
                     Task.Delay( Seconds.One ).Wait();
                     goto TryAgain;
                 }
