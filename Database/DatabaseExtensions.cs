@@ -34,6 +34,59 @@ namespace Librainian.Database {
 
     public static class DatabaseExtensions {
 
+        /// <summary>
+        /// Convert our IList to a DataTable
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns>DataTable</returns>
+        /// <copyright>Based from http://codereview.stackexchange.com/q/40891 </copyright>
+        public static DataTable ToDataTable<T>( this IEnumerable<T> list ) {
+            var elementType = typeof( T );
+
+            using ( var t = new DataTable() ) {
+
+                var properties = elementType.GetProperties();
+
+                foreach ( var propInfo in properties ) {
+                    var propertyType = propInfo.PropertyType;
+                    var colType = Nullable.GetUnderlyingType( propertyType ) ?? propertyType;
+                    t.Columns.Add( propInfo.Name, colType );
+                }
+
+                foreach ( var item in list ) {
+                    var row = t.NewRow();
+                    foreach ( var propInfo in properties ) {
+                        row[ propInfo.Name ] = propInfo.GetValue( item, null ) ?? DBNull.Value;
+                    }
+                    t.Rows.Add( row );
+                }
+                return t;
+            }
+        }
+
+        /// <summary>
+        /// Convert our IList to a DataSet
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns>DataSet</returns>
+        /// <copyright>Based from http://codereview.stackexchange.com/q/40891 </copyright>
+        public static DataSet ToDataSet<T>( this IEnumerable<T> list ) {
+            var ds = new DataSet();
+            ds.Tables.Add( list.ToDataTable() );
+            return ds;
+        }
+
+        /// <summary>
+        /// <para>"Attempting below to get a fluent Object to DTO builder - which fails when a property is missed."</para>
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <param name="obj"></param>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        /// <copyright>Based from http://codereview.stackexchange.com/q/69359 </copyright>
         public static T2 ToDto<T1, T2>( this T1 obj, params Expression<Func<T1, dynamic>>[] items ) where T1 : class {
             var eo = new ExpandoObject();
             var props = eo as IDictionary<String, object>;
@@ -45,8 +98,7 @@ namespace Librainian.Database {
 
                 if ( member != null && body.Member is PropertyInfo ) {
                     var property = body.Member as PropertyInfo;
-                    if ( property != null )
-                        props[ property.Name ] = obj.GetType().GetProperty( property.Name ).GetValue( obj, null );
+                    props[ property.Name ] = obj.GetType().GetProperty( property.Name ).GetValue( obj, null );
                 }
                 else if ( unary != null ) {
                     var ubody = ( UnaryExpression )item.Body;
@@ -79,12 +131,12 @@ namespace Librainian.Database {
         public static TimeSpan EasyPing( SQLQuery db ) {
             var stopwatch = Stopwatch.StartNew();
             try {
-                var stack = new Stack< Object >();
+                var stack = new Stack<Object>();
                 db.Params.AddWithValue( "@when", DateTime.Now ).DbType = DbType.DateTime;
                 using ( var reader = db.Query( "[dbo].[HalloWrold]" ) ) {
                     while ( reader.Read() ) {
-                        for ( var i = 0; i < reader.FieldCount; i++ ) {
-                            stack.Push( reader.GetFieldValue< Object >( i ) );
+                        for ( var i = 0 ; i < reader.FieldCount ; i++ ) {
+                            stack.Push( reader.GetFieldValue<Object>( i ) );
                         }
 
                         //DateTime wesaid;
