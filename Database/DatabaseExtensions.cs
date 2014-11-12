@@ -56,17 +56,17 @@ namespace Librainian.Database {
 
                 foreach ( var item in list ) {
 
-                    //foreach ( var propInfo in properties ) {
-                    //    var newRow = t.NewRow();
-                    //    try {
-                    //        var ival = propInfo.GetValue( item );
-                    //        newRow[ propInfo.Name ] = ival ?? DBNull.Value;
-                    //    }
-                    //    catch ( Exception exception) {
-                    //        Debug.WriteLine( exception.Message );
-                    //    }
-                    //    t.Rows.Add( newRow );
-                    //}
+                    foreach ( var propInfo in properties ) {
+                        var newRow = t.NewRow();
+                        //    try {
+                        //        var ival = propInfo.GetValue( item );
+                        newRow[ propInfo.Name ] = DBNull.Value; //ival ?? 
+                        //    }
+                        //    catch ( Exception exception) {
+                        //        Debug.WriteLine( exception.Message );
+                        //    }
+                        t.Rows.Add( newRow );
+                    }
 
                 }
                 return t;
@@ -81,10 +81,9 @@ namespace Librainian.Database {
         /// <returns>DataSet</returns>
         /// <copyright>Based from http://codereview.stackexchange.com/q/40891 </copyright>
         public static DataSet ToDataSet<T>( this IEnumerable<T> list ) {
-            using ( var ds = new DataSet() ) {
+            var ds = new DataSet();
                 ds.Tables.Add( list.ToDataTable() );
                 return ds;
-            }
         }
 
         /// <summary>

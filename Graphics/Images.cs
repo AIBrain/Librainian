@@ -25,6 +25,7 @@ namespace Librainian.Graphics {
 
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Drawing.Imaging;
@@ -134,7 +135,11 @@ namespace Librainian.Graphics {
 
                 var list = new List< String >();
                 list.AddRange(new[] { "a", "b", "c" });
-                var bob = list.ToDataSet();
+                DataSet bob = list.ToDataSet();
+                bob.Dispose();
+
+                GC.Collect();
+                GC.Collect();
 
                 list.AddRange( new[] { "d", "e", "f" } );
                 var jane = bob.Copy();
