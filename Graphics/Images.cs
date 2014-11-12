@@ -24,6 +24,7 @@
 namespace Librainian.Graphics {
 
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Drawing.Imaging;
@@ -36,6 +37,7 @@ namespace Librainian.Graphics {
     using System.Threading;
     using System.Windows.Media.Imaging;
     using Annotations;
+    using Database;
     using IO;
     using Measurement.Time;
     using Parsing;
@@ -77,6 +79,21 @@ namespace Librainian.Graphics {
             return ImageCreationBestGuess( new FileInfo( document.FullPathWithFileName ) );
         }
 
+        /// <summary>
+        /// Returns true if the date is 'recent' enough.
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static Boolean IsDateRecentEnough( this DateTime? dateTime ) {
+            if ( !dateTime.HasValue ) {
+                return false;
+            }
+            if ( dateTime.Value.Year > 1825 ) {
+                return true;
+            }
+            return false;
+        }
+
         [CanBeNull]
         public static DateTime? ImageCreationBestGuess( [CanBeNull] this FileSystemInfo info ) {
             if ( info == null ) {
@@ -84,62 +101,94 @@ namespace Librainian.Graphics {
             }
 
             try {
+                //if the image file contains a 'valid' date, use that.
+
                 using ( var image = Image.FromFile( filename: info.FullName, useEmbeddedColorManagement: false ) ) {
                     if ( image.PropertyIdList.Contains( PropertyList.DateTimeDigitized ) ) {
-                        //
                         var asDateTime = image.GetPropertyItem( PropertyList.DateTimeDigitized ).GetProperteryAsDateTime();
-                        if ( asDateTime.HasValue  ) {
+                        if ( asDateTime.HasValue && IsDateRecentEnough( asDateTime ) ) {
                             return asDateTime.Value;
                         }
                     }
 
                     if ( image.PropertyIdList.Contains( PropertyList.DateTimeOriginal ) ) {
                         var asDateTime = image.GetPropertyItem( PropertyList.DateTimeOriginal ).GetProperteryAsDateTime();
-                        if ( asDateTime.HasValue  ) {
+                        if ( asDateTime.HasValue && IsDateRecentEnough( asDateTime ) ) {
                             return asDateTime.Value;
                         }
                     }
 
                     if ( image.PropertyIdList.Contains( PropertyList.PropertyTagDateTime ) ) {
                         var asDateTime = image.GetPropertyItem( PropertyList.PropertyTagDateTime ).GetProperteryAsDateTime();
-                        if ( asDateTime.HasValue  ) {
+                        if ( asDateTime.HasValue && IsDateRecentEnough( asDateTime ) ) {
                             return asDateTime.Value;
                         }
                     }
                 }
             }
-            catch ( Exception ) {/*swallow*/}
-
-            DateTime bestGuess;
+            catch ( Exception ) {/*swallow*/
+            }
 
             try {
                 //try a variety of parsing the dates and times from the file's name.
+
+                var list = new List< String >();
+                list.AddRange(new[] { "a", "b", "c" });
+                var bob = list.ToDataSet();
 
                 //example 1, "blahblahblah_20040823_173454" == "August 23th, 2004 at 5:34pm"
                 var justName = Path.GetFileNameWithoutExtension( info.FullName );
 
                 var mostlyDigits = String.Empty;
                 foreach ( var c in justName ) {
-                    if ( Char.IsDigit( c ) ) {
+                    if ( Char.IsDigit( c ) /*|| c == '\\' || c == '-' || c == '/'*/ ) {
                         mostlyDigits += c;
                     }
                     else {
                         mostlyDigits += ParsingExtensions.Singlespace;
                     }
                 }
-                mostlyDigits = mostlyDigits.Trim();    //digits == "20040823 173454" == "August 23th, 2004 at 5:34pm"
+                mostlyDigits = mostlyDigits.Trim();
 
-                if ( DateTime.TryParseExact( mostlyDigits, "yyyyMMdd HHmmss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
-                    return bestGuess;
+                #region Year, Month, Day formats as in digits == "20040823 173454" == "August 23th, 2004 at 5:34pm"
+
+                var patternsYMD = new[] { "yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyyMMdd", "yyyy MM dd" }.OrderByDescending( s => s.Length );
+
+                foreach ( var pattern in patternsYMD ) {
+                    DateTime bestGuess;
+                    if ( !DateTime.TryParseExact( mostlyDigits.Substring( 0, pattern.Length ), pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
+                        continue;
+                    }
+                    if ( IsDateRecentEnough( bestGuess ) ) {
+                        return bestGuess;
+                    }
                 }
 
-                if ( DateTime.TryParseExact( mostlyDigits, "yyyy MM dd HH mm ss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
-                    return bestGuess;
+                #region Day, Month, Year formats as in digits == "23082004 173454" == "August 23th, 2004 at 5:34pm"
+
+                var patternsDMY = new[] { "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "yyyyMMdd", "dd MM yyyy" }.OrderByDescending( s => s.Length );
+
+                foreach ( var pattern in patternsDMY ) {
+                    DateTime bestGuess;
+                    if ( !DateTime.TryParseExact( mostlyDigits.Substring( 0, pattern.Length ), pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
+                        continue;
+                    }
+                    if ( IsDateRecentEnough( bestGuess ) ) {
+                        return bestGuess;
+                    }
+                }
+                #endregion
+
+              
+
+              
+
+                if ( DateTime.TryParseExact( mostlyDigits.Substring( 0, pattern.Length ), "ddMMyyyy", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
+                    if ( IsDateRecentEnough( bestGuess ) ) {
+                        return bestGuess;
+                    }
                 }
 
-                if ( DateTime.TryParseExact( mostlyDigits, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
-                    return bestGuess;
-                }
 
                 // per http://stackoverflow.com/q/51224/956364
                 var pattern1 = @"^((((0[13578])|([13578])|(1[02]))[\/](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[\/](([1-9])|([0-2][0-9])|(30)))|((2|02)[\/](([1-9])|([0-2][0-9]))))[\/]\d{4}$|^\d{4}$";
