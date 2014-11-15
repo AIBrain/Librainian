@@ -35,6 +35,7 @@ namespace Librainian.Database {
     public static class DatabaseExtensions {
 
         /// <summary>
+        /// <para>Warning: Untested and buggy.</para>
         /// Convert our IList to a DataTable
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -44,33 +45,33 @@ namespace Librainian.Database {
         public static DataTable ToDataTable<T>( this IEnumerable<T> list ) {
             var elementType = typeof( T );
 
-            using ( var t = new DataTable() ) {
+            var t = new DataTable();
 
-                var properties = elementType.GetProperties();
+            var properties = elementType.GetProperties();
+
+            foreach ( var propInfo in properties ) {
+                var propertyType = propInfo.PropertyType;
+                var colType = Nullable.GetUnderlyingType( propertyType ) ?? propertyType;
+                t.Columns.Add( propInfo.Name, colType );
+            }
+
+            foreach ( var item in list ) {
 
                 foreach ( var propInfo in properties ) {
-                    var propertyType = propInfo.PropertyType;
-                    var colType = Nullable.GetUnderlyingType( propertyType ) ?? propertyType;
-                    t.Columns.Add( propInfo.Name, colType );
+                    var newRow = t.NewRow();
+                    //    try {
+                    //        var ival = propInfo.GetValue( item );
+                    newRow[ propInfo.Name ] = DBNull.Value; //ival ?? 
+                    //    }
+                    //    catch ( Exception exception) {
+                    //        Debug.WriteLine( exception.Message );
+                    //    }
+                    t.Rows.Add( newRow );
                 }
 
-                foreach ( var item in list ) {
-
-                    foreach ( var propInfo in properties ) {
-                        var newRow = t.NewRow();
-                        //    try {
-                        //        var ival = propInfo.GetValue( item );
-                        newRow[ propInfo.Name ] = DBNull.Value; //ival ?? 
-                        //    }
-                        //    catch ( Exception exception) {
-                        //        Debug.WriteLine( exception.Message );
-                        //    }
-                        t.Rows.Add( newRow );
-                    }
-
-                }
-                return t;
             }
+            return t;
+
         }
 
         /// <summary>
@@ -82,8 +83,8 @@ namespace Librainian.Database {
         /// <copyright>Based from http://codereview.stackexchange.com/q/40891 </copyright>
         public static DataSet ToDataSet<T>( this IEnumerable<T> list ) {
             var ds = new DataSet();
-                ds.Tables.Add( list.ToDataTable() );
-                return ds;
+            ds.Tables.Add( list.ToDataTable() );
+            return ds;
         }
 
         /// <summary>

@@ -134,10 +134,8 @@ namespace Librainian.Collections {
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
         public void IntersectWith( IEnumerable< T > other ) {
             var enumerable = other as IList< T > ?? other.ToArray();
-            foreach ( var item in this ) {
-                if ( !enumerable.Contains( item ) ) {
-                    this.TryRemove( item );
-                }
+            foreach ( var item in this.Where( item => !enumerable.Contains( item ) ) ) {
+                this.TryRemove( item );
             }
         }
 

@@ -109,7 +109,7 @@ namespace Librainian {
             var after = GC.GetTotalMemory( forceFullCollection: false );
 
             if ( after < before ) {
-                String.Format( "{0} bytes freed by the GC.", before - after ).TimeDebug();
+                Report.Info( String.Format( "{0} bytes freed by the GC.", before - after ));
             }
         }
 

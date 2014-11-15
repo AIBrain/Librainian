@@ -40,6 +40,7 @@ namespace Librainian.Parsing {
     using System.Xml;
     using Annotations;
     using Collections;
+    using CsQuery.StringScanner.ExtensionMethods;
     using Extensions;
     using IO;
     using Linguistics;
@@ -960,11 +961,25 @@ namespace Librainian.Parsing {
 
         public static String Right( this String s, int count ) {
             var newString = String.Empty;
-            if ( !String.IsNullOrEmpty( s ) && count > 0 ) {
-                var startIndex = s.Length - count;
-                newString = startIndex > 0 ? s.Substring( startIndex, count ) : s;
+            
+            if ( String.IsNullOrEmpty( s ) || count <= 0 ) {
+                return newString;
             }
+
+            var startIndex = s.Length - count;
+            newString = startIndex > 0 ? s.Substring( startIndex, count ) : s;
             return newString;
+        }
+
+        /// <summary>
+        /// Just <see cref="string.Substring(int)"/> with a length check.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public static String Sub( this String s, int count ) {
+            var length = Math.Min( count, s.Length );
+            return s.Substring( 0, length );
         }
 
         /// <summary>

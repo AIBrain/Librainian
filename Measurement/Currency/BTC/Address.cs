@@ -90,10 +90,7 @@ namespace Librainian.Measurement.Currency.BTC {
                 if ( this._pubKeyHash != null ) {
                     return this._pubKeyHash;
                 }
-                if ( this._scriptHash != null ) {
-                    return this._scriptHash;
-                }
-                return null;
+                return this._scriptHash;
             }
         }
 

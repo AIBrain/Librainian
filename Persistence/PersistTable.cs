@@ -18,7 +18,6 @@
 // "Librainian/PersistTable.cs" was last cleaned by Rick on 2014/11/04 at 3:44 PM
 
 namespace Librainian.Persistence {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -28,7 +27,6 @@ namespace Librainian.Persistence {
     using System.Linq;
     using System.Runtime.Serialization;
     using Annotations;
-    using Extensions;
     using FluentAssertions;
     using IO;
     using Microsoft.Isam.Esent.Collections.Generic;
@@ -112,7 +110,7 @@ namespace Librainian.Persistence {
         /// </summary>
         private PersistTable() {
             throw new NotImplementedException();
-            var name = Types.Name( () => this );
+            //var name = Types.Name( () => this );
 
             //TODO Use the programdata\thisapp.exe type of path.
         }

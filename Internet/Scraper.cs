@@ -97,9 +97,7 @@ namespace Librainian.Internet {
             else {
                 try {
                     MAccess.EnterWriteLock();
-                    MWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => {
-                        r.RequestCount++;
-                    } );
+                    MWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => r.RequestCount++ );
                 }
                 finally {
                     MAccess.ExitWriteLock();

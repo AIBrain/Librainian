@@ -46,9 +46,7 @@ namespace Librainian.Controls {
         public static void BusyCursor( [CanBeNull] this Control control ) {
             ThreadingExtensions.Wrap( () => {
                 if ( control != null ) {
-                    control.InvokeIfRequired( () => {
-                        control.Cursor = Cursors.WaitCursor;
-                    } );
+                    control.InvokeIfRequired( () => control.Cursor = Cursors.WaitCursor );
                 }
             } );
         }

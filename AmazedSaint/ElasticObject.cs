@@ -200,7 +200,9 @@ namespace Librainian.AmazedSaint {
                         }
                     if ( arg is ElasticObject ) {
                         var eobj = ( ElasticObject ) arg;
-                        this.AddAttribute( memberName, eobj );
+                        //TODO
+                        //HACK
+                        //this.AddAttribute( memberName, eobj );
                         result = eobj;
                         return true;
                     }

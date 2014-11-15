@@ -40,9 +40,7 @@ namespace Librainian.Measurement.Time {
                 using ( var systemTimer = new System.Timers.Timer( ( Double )Milliseconds.One ) {
                     AutoReset = true
                 } ) {
-                    systemTimer.Elapsed += ( sender, args ) => {
-                        counter++;
-                    };
+                    systemTimer.Elapsed += ( sender, args ) => counter++;
 
                     systemTimer.Start();
                     var stopwatch = Stopwatch.StartNew();
