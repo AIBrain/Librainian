@@ -306,7 +306,7 @@
     <Compile Include="Internet\InternetExtensions.cs" />
     <Compile Include="Internet\PingExtensions.cs" />
     <Compile Include="Internet\NetworkBrowser.cs" />
-    <Compile Include="IO\Compression\Class1.cs" />
+    <Compile Include="IO\Compression\CompressExtensions.cs" />
     <Compile Include="IO\WMIOperation.cs" />
     <Compile Include="IO\NetworkAdapter.cs" />
     <Compile Include="IO\Compression\RandomnessFeeeding.cs" />
