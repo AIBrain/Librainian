@@ -16,7 +16,7 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/ParsingExtensions.cs" was last cleaned by Rick on 2014/09/06 at 7:29 AM
+// "Librainian/ParsingExtensions.cs" was last cleaned by Rick on 2014/11/16 at 5:25 AM
 #endregion
 
 namespace Librainian.Parsing {
@@ -40,7 +40,6 @@ namespace Librainian.Parsing {
     using System.Xml;
     using Annotations;
     using Collections;
-    using CsQuery.StringScanner.ExtensionMethods;
     using Extensions;
     using IO;
     using Linguistics;
@@ -50,7 +49,6 @@ namespace Librainian.Parsing {
 
     public static class ParsingExtensions {
         public const String Doublespace = Singlespace + Singlespace;
-
 
         /// <summary>
         ///     abcdefghijklmnopqrstuvwxyz
@@ -83,15 +81,10 @@ namespace Librainian.Parsing {
         public const String Uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         public static readonly String AllLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Distinct().Where( Char.IsLetter ).OrderBy( c => c ).ToArray() );
-
         [ NotNull ] public static readonly String AllLowercaseLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Distinct().Where( Char.IsLetter ).Where( Char.IsLower ).OrderBy( c => c ).ToArray() );
-
         [ NotNull ] public static readonly String AllUppercaseLetters = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() );
-
         [ NotNull ] public static readonly String Alphabet = new String( value: Randem.NextString( 676, lowers: true ).Where( Char.IsLetter ).Distinct().OrderBy( c => c ).Aggregate( String.Empty, ( s, c1 ) => s + ' ' + c1 ).ToArray() ).Trim();
-
         [ NotNull ] public static readonly Lazy< PluralizationService > LazyPluralizationService = new Lazy< PluralizationService >( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );
-
         public static readonly String[] OrdinalSuffixes = { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
 
         /// <summary>
@@ -100,12 +93,8 @@ namespace Librainian.Parsing {
         public static readonly Regex RegexBySentenceNotworking = new Regex( pattern: @"(?<=['""A-Za-z0-9][\.\!\?])\s+(?=[A-Z])", options: RegexOptions.Compiled | RegexOptions.Multiline );
 
         public static readonly Regex RegexBySentenceStackoverflow = new Regex( "(?<Sentence>\\S.+?(?<Terminator>[.!?]|\\Z))(?=\\s+|\\Z)", RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled );
-
         public static readonly Regex RegexByWordBreak = new Regex( pattern: @"(?=\S*(?<=\w))\b", options: RegexOptions.Compiled | RegexOptions.Singleline );
-
         public static readonly Regex RegexJustDigits = new Regex( @"\D+", RegexOptions.Compiled );
-
-        public static readonly char[] SpaceSplitBy = { Singlespace[ 0 ] };
 
         /// <summary>
         ///     The set of characters that are unreserved in RFC 2396 but are NOT unreserved in RFC 3986.
@@ -818,7 +807,7 @@ namespace Librainian.Parsing {
 
             return LazyPluralizationService.Value.Pluralize( word );
         }
-        
+
         /// <summary>
         ///     Crude attempt at pluralizing a <paramref name="number" />.
         /// </summary>
@@ -961,7 +950,7 @@ namespace Librainian.Parsing {
 
         public static String Right( this String s, int count ) {
             var newString = String.Empty;
-            
+
             if ( String.IsNullOrEmpty( s ) || count <= 0 ) {
                 return newString;
             }
@@ -972,7 +961,7 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        /// Just <see cref="string.Substring(int)"/> with a length check.
+        ///     Just <see cref="string.Substring(int)" /> with a length check.
         /// </summary>
         /// <param name="s"></param>
         /// <param name="count"></param>
@@ -1186,7 +1175,7 @@ namespace Librainian.Parsing {
                 throw new ArgumentNullException( "s" );
             }
             var res = Enumerable.Range( 0, s.Length ).Select( index => new {
-                                                                               index = index,
+                                                                               index,
                                                                                ch = s[ index ]
                                                                            } ).GroupBy( f => f.index / chunks ).Select( g => String.Join( "", g.Select( z => z.ch ) ) );
 
@@ -1576,8 +1565,10 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        private static async Task<String> GetStringAsync(this String s ) {
+        private static async Task< String > GetStringAsync( this String s ) {
             return await Task.Run( () => s );
         }
+
+        public static readonly char[] SpaceSplitBy = { Singlespace[ 0 ] };
     }
 }

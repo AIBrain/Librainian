@@ -667,6 +667,8 @@ namespace Librainian.IO {
 
         TryAgain:
 
+            //TODO we have the document, see if we can just chop off down to a nonexisting filename.. just get rid of (3) or (2) or (1)
+
             var splitIntoWords = bestGuess.Split(new [] {' '}, StringSplitOptions.RemoveEmptyEntries).ToList();
 
             if ( splitIntoWords.Count() >= 2 ) {
@@ -676,7 +678,7 @@ namespace Librainian.IO {
                 var lastWord = test.TakeLast();
                 var nextlastWord = test.TakeLast();
                 if ( lastWord.Like( nextlastWord ) ) {
-                    bestGuess = test.ToStrings( " " ) + lastWord;
+                    bestGuess = test.ToStrings( " " ) + " " + lastWord;
                     bestGuess = bestGuess.Trim();
                     goto TryAgain;
                 }
