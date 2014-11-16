@@ -667,7 +667,7 @@ namespace Librainian.IO {
 
         TryAgain:
 
-            var splitIntoWords = bestGuess.ToWords().ToList();
+            var splitIntoWords = bestGuess.Split(new [] {' '}, StringSplitOptions.RemoveEmptyEntries).ToList();
 
             if ( splitIntoWords.Count() >= 2 ) {
 
