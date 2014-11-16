@@ -23,6 +23,7 @@
 
 namespace Librainian.Graphics {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Drawing;
     using System.Drawing.Drawing2D;
@@ -42,6 +43,68 @@ namespace Librainian.Graphics {
     using Parsing;
 
     public static class Images {
+
+        public static Matrix3X2 ComputeForwardTransform( IList<Point> baselineLocations, IList<Point> registerLocations ) {
+            if ( baselineLocations.Count < 3 || registerLocations.Count < 3 ) {
+                throw new Exception( "Unable to compute the forward transform. A minimum of 3 control point pairs are required." );
+            }
+
+            if ( baselineLocations.Count != registerLocations.Count ) {
+                throw new Exception( "Unable to compute the forward transform. The number of control point pairs in baseline and registration results must be equal." );
+            }
+
+            // To compute 
+            //    Transform = ((X^T * X)^-1 * X^T)U = (X^T * X)^-1 (X^T * U)
+
+            //    X^T * X =
+            //    [ Sum(x_i^2)   Sum(x_i*y_i) Sum(x_i) ]
+            //    [ Sum(x_i*y_i) Sum(y_i^2)   Sum(y_i) ]
+            //    [ Sum(x_i)     Sum(y_i)     Sum(1)=n ]
+
+            //    X^T * U =
+            //    [ Sum(x_i*u_i) Sum(x_i*v_i) ]
+            //    [ Sum(y_i*u_i) Sum(y_i*v_i) ]
+            //    [ Sum(u_i)     Sum(v_i) ]
+
+            IList<Point> xy = baselineLocations;
+            IList<Point> uv = registerLocations;
+
+            double a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, n = xy.Count;
+            double p = 0, q = 0, r = 0, s = 0, t = 0, u = 0;
+
+            for ( int i = 0 ; i < n ; i++ ) {
+                // Compute sum of squares for X^T * X
+                a += xy[ i ].X * xy[ i ].X;
+                b += xy[ i ].X * xy[ i ].Y;
+                c += xy[ i ].X;
+                d += xy[ i ].X * xy[ i ].Y;
+                e += xy[ i ].Y * xy[ i ].Y;
+                f += xy[ i ].Y;
+                g += xy[ i ].X;
+                h += xy[ i ].Y;
+
+                // Compute sum of squares for X^T * U
+                p += xy[ i ].X * uv[ i ].X;
+                q += xy[ i ].X * uv[ i ].Y;
+                r += xy[ i ].Y * uv[ i ].X;
+                s += xy[ i ].Y * uv[ i ].Y;
+                t += uv[ i ].X;
+                u += uv[ i ].Y;
+            }
+
+            // Create matrices from the coefficients
+            Matrix3X2 uMat = new Matrix3X2( p, q, r, s, t, u );
+            Matrix3X3 xMat = new Matrix3X3( a, b, c, d, e, f, g, h, n );
+
+            // Invert X
+            Matrix3X3 xInv = xMat.Inverse;
+
+            // Perform the multiplication to get the transform
+            uMat.Multiply( xInv );
+
+            // Matrix uMat now holds the image registration transform to go from the current result to baseline
+            return uMat;
+        }
 
         [CanBeNull]
         public static DateTime? GetProperteryAsDateTime( [CanBeNull] this PropertyItem item ) {
@@ -123,7 +186,7 @@ namespace Librainian.Graphics {
 
                 #region Year, Month, Day formats as in digits == "20040823 173454" == "August 23th, 2004 at 5:34pm"
 
-                var patternsYMD = new[] { "yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyyMMdd", "yyyy MM dd", "yyyy dd MM", "MMddyy HHmmss" };
+                var patternsYMD = new[] { "yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyy dd MM", "MMddyy HHmmss", "yyyyMMdd", "yyyy MM dd" };
 
                 foreach ( var pattern in patternsYMD ) {
                     DateTime bestGuess;
@@ -141,7 +204,7 @@ namespace Librainian.Graphics {
 
                 #region Day, Month, Year formats as in digits == "23082004 173454" == "August 23th, 2004 at 5:34pm"
 
-                var patternsDMY = new[] { "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "yyyyMMdd", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy" };
+                var patternsDMY = new[] { "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy" };
 
                 foreach ( var pattern in patternsDMY ) {
                     DateTime bestGuess;
