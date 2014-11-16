@@ -19,106 +19,11 @@
 // "Librainian/Class2.cs" was last cleaned by Rick on 2014/11/16 at 2:43 PM
 #endregion
 
-namespace Librainian.Graphics {
+namespace Librainian.Graphics.Imaging {
     using System;
     using System.Collections.Concurrent;
     using System.Drawing;
-    using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
-
-    [DataContract]
-    [Serializable]
-    [StructLayout( LayoutKind.Explicit )]
-    public struct Pixel {
-
-        [DataMember]
-        [FieldOffset( 0 )]
-        public readonly Byte Alpha;
-
-        [DataMember]
-        [FieldOffset( 1 )]
-        public readonly Byte Red;
-
-        [DataMember]
-        [FieldOffset( 2 )]
-        public readonly Byte Green;
-
-        [DataMember]
-        [FieldOffset( 3 )]
-        public readonly Byte Blue;
-
-        private Pixel( Byte alpha, Byte red, Byte green, Byte blue ) {
-            this.Alpha = alpha;
-            this.Red = red;
-            this.Green = green;
-            this.Blue = blue;
-        }
-
-        public static explicit operator Pixel( Color pixel ) {
-            return new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
-        }
-
-        public static implicit operator Color( Pixel pixel ) {
-            return Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
-        }
-    }
-
-    /// <summary>
-    /// A horizontal line of <see cref="Pixel"/>.
-    /// </summary>
-    [DataContract]
-    [Serializable]
-    [StructLayout( LayoutKind.Explicit )]
-    public class LineOfPixels {
-
-        /// <summary>
-        /// Checksum of the pixels (guard against corruption).
-        /// </summary>
-        [DataMember]
-        [FieldOffset( 0 )]
-        public UInt64 Checksum;
-
-        /// <summary>
-        /// How many pixels should be in this line?
-        /// </summary>
-        [DataMember]
-        [FieldOffset( sizeof( UInt64 ) )]
-        public UInt64 Count;
-
-        /// <summary>
-        /// List of pixels
-        /// </summary>
-        [DataMember]
-        [FieldOffset( sizeof( UInt64 ) * 2 )]
-        public Pixel[] Pixels;
-    }
-
-    [DataContract]
-    [Serializable]
-    [StructLayout( LayoutKind.Explicit )]
-    public class PageOfLines {
-
-        /// <summary>
-        /// Checksum of the page (guard against corruption).
-        /// </summary>
-        [DataMember]
-        [FieldOffset( 0 )]
-        public UInt64 Checksum;
-
-        /// <summary>
-        /// How many lines should be in this page?
-        /// </summary>
-        [DataMember]
-        [FieldOffset( sizeof( UInt64 ) )]
-        public UInt64 Count;
-
-        /// <summary>
-        /// List of pixels
-        /// </summary>
-        [DataMember]
-        [FieldOffset( sizeof( UInt64 ) * 2 )]
-        public LineOfPixels[] Lines;
-    }
 
     /// <summary>
     ///     Experimental and Fun Graphic
@@ -151,23 +56,20 @@ namespace Librainian.Graphics {
         /// <summary>
         /// Checksum of all pages
         /// </summary>
-        [DataMember]
-        public UInt64 Checksum {
-            get;
-            set;
-        }
+        [ DataMember ]
+        public UInt64 Checksum { get; set; }
 
         /// <summary>
         /// EXIF metadatas
         /// </summary>
-        [DataMember( IsRequired = true )]
-        public ConcurrentDictionary<String, String> Exifs {
-            get;
-            set;
-        }
+        [DataMember]
+        public ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
+        
+        [DataMember]
+        public ConcurrentDictionary<UInt64, Page> Pages = new ConcurrentDictionary<UInt64, Page>();
 
         public EFG() {
-            this.Checksum = 0;
+            this.Checksum = UInt64.MaxValue;    //an unlikely hash
         }
 
     }
