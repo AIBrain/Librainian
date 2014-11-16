@@ -33,6 +33,7 @@ namespace Librainian.IO {
     using System.Numerics;
     using System.Runtime.Serialization;
     using System.Security;
+    using System.Security.Permissions;
     using Annotations;
     using Collections;
     using Extensions;
@@ -465,6 +466,20 @@ namespace Librainian.IO {
         public void Refresh() {
             this.Folder.Refresh();
             this.FileInfo.Refresh();
+        }
+
+        public Boolean DemandPermission( FileIOPermissionAccess access  ) {
+            try {
+                var bob = new FileIOPermission( access: access, path: this.FullPathWithFileName );
+                bob.Demand();
+                return true;
+            }
+            catch ( ArgumentException exception ) {
+                exception.Error();
+            }
+            catch ( SecurityException ) {
+            }
+            return false;
         }
 
     }

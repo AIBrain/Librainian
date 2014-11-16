@@ -89,6 +89,9 @@
     <Reference Include="ImpromptuInterface">
       <HintPath>..\Universal\packages\ImpromptuInterface.6.2.2\lib\net40\ImpromptuInterface.dll</HintPath>
     </Reference>
+    <Reference Include="Lz4Net">
+      <HintPath>..\Universal\packages\Lz4.Net.1.0.98\lib\net45\Lz4Net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -277,6 +280,7 @@
     <Compile Include="Gaming\PlayerTable.cs" />
     <Compile Include="Gaming\PlayingCards\FaceValues.cs" />
     <Compile Include="Gaming\PlayingCards\Suites.cs" />
+    <Compile Include="Graphics\EFG.cs" />
     <Compile Include="Graphics\Matrix3X3.cs" />
     <Compile Include="Graphics\Matrix3X2.cs" />
     <Compile Include="Graphics\DD\GeometryEx.cs" />
@@ -642,6 +646,12 @@
     <Content Include="Misc\JavaScript1.js" />
     <Content Include="Misc\Readability.js" />
     <Content Include="Misc\traits.js" />
+    <Content Include="x64\lz4X64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\lz4X86.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -652,6 +662,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Gaming\Directional\" />
+    <Folder Include="Graphics\Imaging\" />
     <Folder Include="Graphics\Line\" />
     <Folder Include="PatternRecognition\" />
   </ItemGroup>

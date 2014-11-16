@@ -38,7 +38,6 @@ namespace Librainian.Maths {
         private readonly int _hashCode;
 
         private readonly UInt64 _part1; // parts are big-endian
-
         private readonly UInt64 _part2; // parts are big-endian
         private readonly UInt64 _part3; // parts are big-endian
         private readonly UInt64 _part4; // parts are big-endian
