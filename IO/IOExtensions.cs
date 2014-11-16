@@ -41,6 +41,7 @@ namespace Librainian.IO {
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using Annotations;
+    using Collections;
     using Controls;
     using Extensions;
     using FluentAssertions;
@@ -502,7 +503,7 @@ namespace Librainian.IO {
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
-        public static void FindFiles( this DirectoryInfo startingFolder, IEnumerable< string > fileSearchPatterns, CancellationToken cancellationToken, Action< FileInfo > onFindFile = null, Action< DirectoryInfo > onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+        public static void FindFiles( this DirectoryInfo startingFolder, IEnumerable<string> fileSearchPatterns, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( "fileSearchPatterns" );
             }
@@ -589,7 +590,7 @@ namespace Librainian.IO {
                             }
 
                             folder.FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
-                            
+
                         } );
                     }
                     catch ( UnauthorizedAccessException ) {
@@ -602,10 +603,18 @@ namespace Librainian.IO {
                     }
                     catch ( AggregateException exception ) {
                         exception.Handle( ex => {
-                            if ( ex is UnauthorizedAccessException ) {return true;}
-                            if ( ex is DirectoryNotFoundException ) {return true;}
-                            if ( ex is IOException ) {return true;}
-                            if ( ex is SecurityException ) {return true;}
+                            if ( ex is UnauthorizedAccessException ) {
+                                return true;
+                            }
+                            if ( ex is DirectoryNotFoundException ) {
+                                return true;
+                            }
+                            if ( ex is IOException ) {
+                                return true;
+                            }
+                            if ( ex is SecurityException ) {
+                                return true;
+                            }
                             ex.Error();
                             return false;
                         } );
@@ -644,8 +653,36 @@ namespace Librainian.IO {
             return DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).FirstOrDefault( driveInfo => driveInfo.AvailableFreeSpace >= DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).Max( info => info.AvailableFreeSpace ) );
         }
 
-        public static uint? GetFileSizeOnDisk( Document document ) {
+        public static uint? GetFileSizeOnDisk( this Document document ) {
             return GetFileSizeOnDisk( new FileInfo( document.FullPathWithFileName ) );
+        }
+
+        [CanBeNull]
+        public static String SimplifyFileName( [NotNull] this Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( "document" );
+            }
+
+            var bestGuess = Path.GetFileNameWithoutExtension( document.FileName );
+
+        TryAgain:
+
+            var splitIntoWords = bestGuess.ToWords().ToList();
+
+            if ( splitIntoWords.Count() >= 2 ) {
+
+                //check for duplicate "(1) (1)" at the string's ending.
+                var test = splitIntoWords.ToList();
+                var lastWord = test.TakeLast();
+                var nextlastWord = test.TakeLast();
+                if ( lastWord.Like( nextlastWord ) ) {
+                    bestGuess = test.ToStrings( " " ) + lastWord;
+                    bestGuess = bestGuess.Trim();
+                    goto TryAgain;
+                }
+            }
+
+            return bestGuess;
         }
 
         /// <summary>

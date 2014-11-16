@@ -89,6 +89,7 @@ namespace Librainian.IO {
         [NotNull]
         public readonly String FullPathWithFileName;
 
+        [NotNull]
         public readonly String OriginalPathWithFileName;
 
         [NotNull]
@@ -98,7 +99,8 @@ namespace Librainian.IO {
             InvalidPathChars.Fix();
         }
 
-        public Document( [NotNull] String fullPath, String filename ) : this( Path.Combine( fullPath, filename ) ) {
+        public Document( [NotNull] String fullPath, String filename )
+            : this( Path.Combine( fullPath, filename ) ) {
         }
 
         /// <summary>
@@ -126,7 +128,11 @@ namespace Librainian.IO {
 
             this.FileInfo = new FileInfo( fullPathWithFilename );
 
-            this.Folder = new Folder( Path.GetDirectoryName( fullPathWithFilename ) );
+            var directoryName = Path.GetDirectoryName( fullPathWithFilename );
+            if ( String.IsNullOrWhiteSpace( directoryName ) ) {
+                throw new ArgumentNullException( "directoryName" );
+            }
+            this.Folder = new Folder( directoryName );
 
             this.FileName = Path.GetFileName( fullPathWithFilename );
             this.Extension = Path.GetExtension( fullPathWithFilename );

@@ -131,10 +131,8 @@ namespace Librainian.Graphics {
                     if ( IsDateRecentEnough( bestGuess ) ) {
                         return bestGuess;
                     }
-                    else {
-                        if ( Debugger.IsAttached ) {
-                            Debugger.Break();
-                        }
+                    if ( Debugger.IsAttached ) {
+                        Debugger.Break();
                     }
                 }
                 #endregion
@@ -151,10 +149,8 @@ namespace Librainian.Graphics {
                     if ( IsDateRecentEnough( bestGuess ) ) {
                         return bestGuess;
                     }
-                    else {
-                        if ( Debugger.IsAttached ) {
-                            Debugger.Break();
-                        }
+                    if ( Debugger.IsAttached ) {
+                        Debugger.Break();
                     }
                 }
                 #endregion
@@ -164,15 +160,14 @@ namespace Librainian.Graphics {
                 var regs1 = Regex.Matches( justName, pattern1, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five );
                 foreach ( var reg in regs1 ) {
                     DateTime bestGuess;
-                    if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
-                        if ( IsDateRecentEnough( bestGuess ) ) {
-                            return bestGuess;
-                        }
-                        else {
-                            if ( Debugger.IsAttached ) {
-                                Debugger.Break();
-                            }
-                        }
+                    if ( !DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
+                        continue;
+                    }
+                    if ( IsDateRecentEnough( bestGuess ) ) {
+                        return bestGuess;
+                    }
+                    if ( Debugger.IsAttached ) {
+                        Debugger.Break();
                     }
                 }
 
@@ -181,15 +176,14 @@ namespace Librainian.Graphics {
                 var regs2 = Regex.Matches( justName, pattern2, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five );
                 foreach ( var reg in regs2 ) {
                     DateTime bestGuess;
-                    if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
-                        if ( IsDateRecentEnough( bestGuess ) ) {
-                            return bestGuess;
-                        }
-                        else {
-                            if ( Debugger.IsAttached ) {
-                                Debugger.Break();
-                            }
-                        }
+                    if ( !DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
+                        continue;
+                    }
+                    if ( IsDateRecentEnough( bestGuess ) ) {
+                        return bestGuess;
+                    }
+                    if ( Debugger.IsAttached ) {
+                        Debugger.Break();
                     }
                 }
             }
@@ -206,6 +200,9 @@ namespace Librainian.Graphics {
                 return creationTime;
             }
 
+            if ( Debugger.IsAttached ) {
+                Debugger.Break();
+            }
 
             return null;
         }
