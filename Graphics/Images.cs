@@ -288,9 +288,19 @@ namespace Librainian.Graphics {
                 var imageA = await Task.Run( () => Image.FromFile( fileA.FullPathWithFileName ) );
                 var imageB = await Task.Run( () => Image.FromFile( fileB.FullPathWithFileName ) );
 
+
+                if ( imageA.Width < imageB.Width && imageA.Height < imageB.Height ) {
+                    imageA = ResizeImage( imageA, imageB.Size ); //resize because B is larger
+                }
+                else if ( imageA.Width > imageB.Width && imageA.Height > imageB.Height ) {
+                    imageB = ResizeImage( imageB, imageA.Size ); //resize because A is larger
+                }
+
                 return ImageComparer.Compare( imageA, imageB );
             }
             catch ( OutOfMemoryException ) {
+            }
+            catch ( InvalidOperationException ) {
             }
 
             return false;

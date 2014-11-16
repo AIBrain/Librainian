@@ -521,7 +521,7 @@ namespace Librainian.IO {
                     }
                     try {
                         var folders = startingFolder.EnumerateDirectories( "*", SearchOption.TopDirectoryOnly );
-                        folders.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( async folder => {
+                        folders.AsParallel().ForAll( async folder => {
 #if DEEPDEBUG
                             String.Format( "Found folder {0}.", folder ).TimeDebug();
 #endif
@@ -542,8 +542,8 @@ namespace Librainian.IO {
 
                             try {
                                 foreach ( var file in folder.EnumerateFiles( searchPattern, SearchOption.TopDirectoryOnly ) ) {
-                                    var localFile = file;
-                                    await Task.Run( () => InternalSearchFoundFile( cancellationToken, onFindFile, localFile ), cancellationToken );
+                                    var info = file;
+                                    await Task.Run( () => info.InternalSearchFoundFile( onFindFile, cancellationToken ), cancellationToken );
                                 }
 
 #if DEEPDEBUG
@@ -637,7 +637,7 @@ namespace Librainian.IO {
             }
         }
 
-        private static FileInfo InternalSearchFoundFile( CancellationToken cancellationToken, Action<FileInfo> onFindFile, FileInfo info ) {
+        private static FileInfo InternalSearchFoundFile( this FileInfo info, Action< FileInfo > onFindFile, CancellationToken cancellationToken ) {
             try {
                 if ( !cancellationToken.IsCancellationRequested && onFindFile != null ) {
                     onFindFile( info );

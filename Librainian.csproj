@@ -277,6 +277,8 @@
     <Compile Include="Gaming\PlayerTable.cs" />
     <Compile Include="Gaming\PlayingCards\FaceValues.cs" />
     <Compile Include="Gaming\PlayingCards\Suites.cs" />
+    <Compile Include="Graphics\Matrix3X3.cs" />
+    <Compile Include="Graphics\Matrix3X2.cs" />
     <Compile Include="Graphics\DD\GeometryEx.cs" />
     <Compile Include="Graphics\DD\Intersection.cs" />
     <Compile Include="Graphics\DD\Line.cs" />
