@@ -280,7 +280,7 @@
     <Compile Include="Gaming\PlayerTable.cs" />
     <Compile Include="Gaming\PlayingCards\FaceValues.cs" />
     <Compile Include="Gaming\PlayingCards\Suites.cs" />
-    <Compile Include="Graphics\EFG.cs" />
+    <Compile Include="Graphics\Imaging\EFG.cs" />
     <Compile Include="Graphics\Matrix3X3.cs" />
     <Compile Include="Graphics\Matrix3X2.cs" />
     <Compile Include="Graphics\DD\GeometryEx.cs" />
@@ -662,7 +662,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Gaming\Directional\" />
-    <Folder Include="Graphics\Imaging\" />
     <Folder Include="Graphics\Line\" />
     <Folder Include="PatternRecognition\" />
   </ItemGroup>
