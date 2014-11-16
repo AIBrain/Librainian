@@ -47,6 +47,20 @@ namespace Librainian.Graphics {
         [FieldOffset( 3 )]
         public readonly Byte Blue;
 
+        private Pixel( Byte alpha, Byte red, Byte green, Byte blue ) {
+            this.Alpha = alpha;
+            this.Red = red;
+            this.Green = green;
+            this.Blue = blue;
+        }
+
+        public static explicit operator Pixel( Color pixel ) {
+            return new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
+        }
+
+        public static implicit operator Color( Pixel pixel ) {
+            return Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
+        }
     }
 
     /// <summary>
