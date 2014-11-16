@@ -521,9 +521,8 @@ namespace Librainian.IO {
                     }
                     try {
                         var folders = startingFolder.EnumerateDirectories( "*", SearchOption.TopDirectoryOnly );
-                        folders.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( folder => {
+                        folders.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( async folder => {
 #if DEEPDEBUG
-
                             String.Format( "Found folder {0}.", folder ).TimeDebug();
 #endif
                             if ( cancellationToken.IsCancellationRequested ) {
@@ -542,22 +541,11 @@ namespace Librainian.IO {
                             }
 
                             try {
-                                var files = folder.EnumerateFiles( searchPattern, SearchOption.TopDirectoryOnly );
-                                files.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( file => {
+                                foreach ( var file in folder.EnumerateFiles( searchPattern, SearchOption.TopDirectoryOnly ) ) {
+                                    var localFile = file;
+                                    await Task.Run( () => InternalSearchFoundFile( cancellationToken, onFindFile, localFile ), cancellationToken );
+                                }
 
-                                    //String.Format( "Found file {0}.", file ).TimeDebug();
-                                    if ( cancellationToken.IsCancellationRequested ) {
-                                        return;
-                                    }
-                                    try {
-                                        if ( onFindFile != null ) {
-                                            onFindFile( file );
-                                        }
-                                    }
-                                    catch ( Exception exception ) {
-                                        exception.Error();
-                                    }
-                                } );
 #if DEEPDEBUG
                                 String.Format( "Done searching {0} for {1}.", folder.Name, searchPattern ).TimeDebug();
 #endif
@@ -649,6 +637,18 @@ namespace Librainian.IO {
             }
         }
 
+        private static FileInfo InternalSearchFoundFile( CancellationToken cancellationToken, Action<FileInfo> onFindFile, FileInfo info ) {
+            try {
+                if ( !cancellationToken.IsCancellationRequested && onFindFile != null ) {
+                    onFindFile( info );
+                }
+            }
+            catch ( Exception exception ) {
+                exception.Error();
+            }
+            return info;
+        }
+
         public static DriveInfo GetDriveWithLargestAvailableFreeSpace() {
             return DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).FirstOrDefault( driveInfo => driveInfo.AvailableFreeSpace >= DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).Max( info => info.AvailableFreeSpace ) );
         }
@@ -667,18 +667,39 @@ namespace Librainian.IO {
 
         TryAgain:
 
+            //check for a double extension (image.jpg.tif), remove the 'fake' (.jpg) extension
+            if ( !Path.GetExtension( bestGuess ).IsNullOrEmpty() ) {
+                bestGuess = Path.GetFileNameWithoutExtension( bestGuess );
+                goto TryAgain;
+            }
+
             //TODO we have the document, see if we can just chop off down to a nonexisting filename.. just get rid of (3) or (2) or (1)
 
-            var splitIntoWords = bestGuess.Split(new [] {' '}, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var splitIntoWords = bestGuess.Split( new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries ).ToList();
 
             if ( splitIntoWords.Count() >= 2 ) {
 
-                //check for duplicate "(1) (1)" at the string's ending.
-                var test = splitIntoWords.ToList();
-                var lastWord = test.TakeLast();
-                var nextlastWord = test.TakeLast();
+                var list = splitIntoWords.ToList();
+                var lastWord = list.TakeLast();
+
+                //check for a copy indicator
+                if ( lastWord.Like( "Copy" ) ) {
+                    bestGuess = list.ToStrings( " " );
+                    bestGuess = bestGuess.Trim();
+                    goto TryAgain;
+                }
+
+                //check for a trailing "-" or "_"
+                if ( lastWord.Like( "-" ) || lastWord.Like( "_" ) ) {
+                    bestGuess = list.ToStrings( " " );
+                    bestGuess = bestGuess.Trim();
+                    goto TryAgain;
+                }
+
+                //check for duplicate "word word" at the string's ending.
+                var nextlastWord = list.TakeLast();
                 if ( lastWord.Like( nextlastWord ) ) {
-                    bestGuess = test.ToStrings( " " ) + " " + lastWord;
+                    bestGuess = list.ToStrings( " " ) + " " + lastWord;
                     bestGuess = bestGuess.Trim();
                     goto TryAgain;
                 }

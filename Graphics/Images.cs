@@ -33,10 +33,12 @@ namespace Librainian.Graphics {
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
     using System.Windows.Media.Imaging;
     using Annotations;
     using IO;
     using Measurement.Time;
+    using Microsoft.VisualStudio.TestTools.UITesting;
     using Parsing;
 
     public static class Images {
@@ -191,7 +193,7 @@ namespace Librainian.Graphics {
             }
 
             var lastWriteTime = File.GetLastWriteTime( info.FullName );
-            if ( lastWriteTime <= DateTime.UtcNow && IsDateRecentEnough(lastWriteTime) ) {
+            if ( lastWriteTime <= DateTime.UtcNow && IsDateRecentEnough( lastWriteTime ) ) {
                 return lastWriteTime;
             }
 
@@ -271,6 +273,27 @@ namespace Librainian.Graphics {
                 throw new ArgumentNullException( "document" );
             }
             return IsaValidImage( new FileInfo( document.FullPathWithFileName ) );
+        }
+
+        public static async Task<Boolean> IsSameImage( [CanBeNull] this Document fileA, [CanBeNull]  Document fileB ) {
+            if ( null == fileA || null == fileB ) {
+                return false;
+            }
+
+            if ( !fileA.Exists() || !fileB.Exists() ) {
+                return false;
+            }
+
+            try {
+                var imageA = await Task.Run( () => Image.FromFile( fileA.FullPathWithFileName ) );
+                var imageB = await Task.Run( () => Image.FromFile( fileB.FullPathWithFileName ) );
+
+                return ImageComparer.Compare( imageA, imageB );
+            }
+            catch ( OutOfMemoryException ) {
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -365,8 +388,9 @@ namespace Librainian.Graphics {
         public static class FileNameExtension {
 
             /// <summary>
-            ///     <see cref="http://wikipedia.org/wiki/TIFF" />
+            ///     <para>.tif</para>
             /// </summary>
+            /// <seealso cref="http://wikipedia.org/wiki/TIFF"/>
             public static String Tiff {
                 get {
                     return ".tif";
