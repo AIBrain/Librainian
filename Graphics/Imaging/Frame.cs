@@ -41,14 +41,14 @@ namespace Librainian.Graphics.Imaging {
         public UInt64 Checksum;
 
         /// <summary>
-        ///     How many lines should be in this page?
+        ///     How many lines should be in this frame?
         /// </summary>
         [DataMember]
         [FieldOffset( sizeof( UInt64 ) )]
         public UInt64 Count;
 
         /// <summary>
-        ///     How many milliseconds to display this page?
+        ///     How many milliseconds to display this frame?
         /// </summary>
         [DataMember]
         [FieldOffset( sizeof( UInt64 ) * 2 )]

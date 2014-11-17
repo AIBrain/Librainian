@@ -76,15 +76,16 @@ namespace Librainian.Graphics.Imaging {
         public ConcurrentDictionary<UInt64, Frame> Frames = new ConcurrentDictionary<UInt64, Frame>();
 
         public EFG() {
-            this.Checksum = UInt64.MaxValue.GetHashMerge;    //an unlikely hash
+            this.Checksum = UInt64.MaxValue;    //an unlikely hash
         }
 
-        public async Task< Boolean > Save( CancellationToken token ) {
-            return await Task.Run( () => { return false; }, token );
+        public async Task<Boolean> TryAdd( UInt64 index, Frame frame, CancellationToken token ) {
+            return await Task.Run( () => {
+                //TODO add frame
+                return false;
+            }, token );
         }
 
-        public Boolean TryAdd( UInt64 index, Frame frame ) { 
-        }
 
     }
 }

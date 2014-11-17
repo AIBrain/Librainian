@@ -54,6 +54,7 @@ namespace Librainian.Graphics.Imaging {
         /// <summary>
         ///     An array of pixels
         /// </summary>
+        /// <remarks>I'd prefer a list instead of an array.</remarks>
         [DataMember]
         [FieldOffset( sizeof( UInt64 ) * 2 )]
         [CanBeNull]
@@ -64,15 +65,21 @@ namespace Librainian.Graphics.Imaging {
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public Pixel? GetPixel( UInt64 index ) {
-            var pixels = this.Pixels;
-            return index <= this.Count ? ( pixels != null ? ( Pixel? ) pixels[ index ] : null ) : null;
-        }
-
-        public Boolean SetPixel( UInt64 index, Pixel pixel ) {
-            if ( index > Count ) {
-                return false;
+        public Pixel? this[ UInt64 index ] {
+            get {
+                var pixels = this.Pixels;
+                if ( index <= this.Count && pixels != null ) {
+                    return pixels[ index ];
+                }
+                return null;
+            }
+            set {
+                var pixels = this.Pixels;
+                if ( value.HasValue && pixels != null && index <= Count ) {
+                    pixels[ index ] = value.Value;
+                }
             }
         }
+
     }
 }

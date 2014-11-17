@@ -291,6 +291,7 @@
     <Compile Include="Gaming\PlayingCards\FaceValues.cs" />
     <Compile Include="Gaming\PlayingCards\Suites.cs" />
     <Compile Include="Graphics\Imaging\EFG.cs" />
+    <Compile Include="Graphics\Imaging\EFGExtensions.cs" />
     <Compile Include="Graphics\Imaging\Line.cs" />
     <Compile Include="Graphics\Imaging\Frame.cs" />
     <Compile Include="Graphics\Imaging\Pixel.cs" />
