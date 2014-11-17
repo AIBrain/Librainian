@@ -292,7 +292,7 @@
     <Compile Include="Gaming\PlayingCards\Suites.cs" />
     <Compile Include="Graphics\Imaging\EFG.cs" />
     <Compile Include="Graphics\Imaging\Line.cs" />
-    <Compile Include="Graphics\Imaging\Page.cs" />
+    <Compile Include="Graphics\Imaging\Frame.cs" />
     <Compile Include="Graphics\Imaging\Pixel.cs" />
     <Compile Include="Graphics\Matrix3X3.cs" />
     <Compile Include="Graphics\Matrix3X2.cs" />

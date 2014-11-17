@@ -26,6 +26,7 @@ namespace Librainian.Graphics.Imaging {
     using System;
     using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
+    using Annotations;
 
     /// <summary>
     ///     A horizontal line of <see cref="Pixel" />.
@@ -55,6 +56,23 @@ namespace Librainian.Graphics.Imaging {
         /// </summary>
         [DataMember]
         [FieldOffset( sizeof( UInt64 ) * 2 )]
+        [CanBeNull]
         public Pixel[] Pixels;
+
+        /// <summary>
+        /// Returns the zero-based <see cref="Pixel"/> or null if not found.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public Pixel? GetPixel( UInt64 index ) {
+            var pixels = this.Pixels;
+            return index <= this.Count ? ( pixels != null ? ( Pixel? ) pixels[ index ] : null ) : null;
+        }
+
+        public Boolean SetPixel( UInt64 index, Pixel pixel ) {
+            if ( index > Count ) {
+                return false;
+            }
+        }
     }
 }

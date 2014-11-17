@@ -17,7 +17,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Page.cs" was last cleaned by Rick on 2014/11/16 at 3:49 PM
+// "Librainian/Frame.cs" was last cleaned by Rick on 2014/11/17 at 3:34 PM
 
 #endregion License & Information
 
@@ -30,12 +30,12 @@ namespace Librainian.Graphics.Imaging {
     [DataContract]
     [Serializable]
     [StructLayout( LayoutKind.Explicit )]
-    public class Page {
+    public class Frame {
 
         /// <summary>
         ///     Checksum of the page (guard against corruption).
         /// </summary>
-        /// <remarks>Should include the <see cref="Count" /> and <see cref="Delay"/> to prevent buffer overflows and timeouts.</remarks>
+        /// <remarks>Should include the <see cref="Count" /> and <see cref="Delay" /> to prevent buffer overflows and timeouts.</remarks>
         [DataMember]
         [FieldOffset( 0 )]
         public UInt64 Checksum;

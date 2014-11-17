@@ -29,9 +29,10 @@ namespace Librainian.Graphics.Imaging {
     using Maths;
 
     /// <summary>
-    ///     Experimental and Fun Graphic
+    ///     Experimental Framed Graphics
     /// </summary>
     /// <remarks>
+    /// Just for fun & learning.
     /// Prefer compression over speed (assuming local cpu will be 'faster' than network transfer speed).
     /// Compressions must be lossless.
     /// Allow 'pages' of animation, each with their own delay. Default should be page 0 = 0 delay.
@@ -72,17 +73,18 @@ namespace Librainian.Graphics.Imaging {
         public ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
 
         [DataMember]
-        public ConcurrentDictionary<UInt64, Page> Pages = new ConcurrentDictionary<UInt64, Page>();
+        public ConcurrentDictionary<UInt64, Frame> Frames = new ConcurrentDictionary<UInt64, Frame>();
 
         public EFG() {
             this.Checksum = UInt64.MaxValue.GetHashMerge;    //an unlikely hash
         }
 
         public async Task< Boolean > Save( CancellationToken token ) {
-            return await Task.Run( () => false, token );
+            return await Task.Run( () => { return false; }, token );
         }
 
-        public Boolean TryAddPage( UInt64 index, )
+        public Boolean TryAdd( UInt64 index, Frame frame ) { 
+        }
 
     }
 }
