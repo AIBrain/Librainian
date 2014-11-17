@@ -103,12 +103,12 @@ namespace Librainian.Maths {
 
         public static Boolean IsEven( this int value ) {
             return 0 == value % 2;
-        } 
-        
+        }
+
         public static Boolean IsOdd( this long value ) {
             return 0 != value % 2;
         }
-        
+
         public static Boolean IsEven( this long value ) {
             return 0 == value % 2;
         }
@@ -350,7 +350,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static IEnumerable< int > Fib( int max ) {
+        public static IEnumerable<int> Fib( int max ) {
             var a = 0;
             var b = 1;
             yield return 1;
@@ -525,7 +525,7 @@ namespace Librainian.Maths {
         /// <param name="items"></param>
         /// <returns></returns>
         /// <seealso cref="http://wikipedia.org/wiki/Geometric_mean" />
-        public static Double GeometricMean( this IEnumerable< double > data, int items ) {
+        public static Double GeometricMean( this IEnumerable<double> data, int items ) {
             var aggregate = data.Aggregate( 1.0, ( current, d ) => current * d );
             return Math.Pow( aggregate, ( 1.0 / items ) );
         }
@@ -542,7 +542,7 @@ namespace Librainian.Maths {
         /// <param name="items"></param>
         /// <returns></returns>
         /// <seealso cref="http://wikipedia.org/wiki/Geometric_mean" />
-        public static Decimal GeometricMean( this IEnumerable< decimal > data, int items ) {
+        public static Decimal GeometricMean( this IEnumerable<decimal> data, int items ) {
             var aggregate = data.Aggregate( 1.0m, ( current, d ) => current * d );
             return ( Decimal )Math.Pow( ( Double )aggregate, ( Double )( 1.0m / items ) ); //BUG possible conversion errors here
         }
@@ -559,7 +559,7 @@ namespace Librainian.Maths {
         /// <param name="items"></param>
         /// <returns></returns>
         /// <seealso cref="http://wikipedia.org/wiki/Geometric_mean" />
-        public static BigDecimal GeometricMean( this IEnumerable< BigDecimal > data, int items ) {
+        public static BigDecimal GeometricMean( this IEnumerable<BigDecimal> data, int items ) {
             var aggregate = data.Aggregate( BigDecimal.One, ( current, d ) => current * d );
             return BigDecimal.Pow( ( Double )aggregate, 1.0 / items ); //BUG possible conversion errors here
         }
@@ -625,6 +625,28 @@ namespace Librainian.Maths {
                 var hashB = objectB.GetHashCode();
                 var combined = ( ( hashA << 5 ) + hashA ) ^ hashB;
                 return combined;
+            }
+        }
+
+        /// <summary>
+        ///     Returns a combined <see cref="object.GetHashCode" /> based on <paramref name="objectA" /> and
+        ///     <paramref name="objectB" />.
+        /// </summary>
+        /// <typeparam name="TLhs"></typeparam>
+        /// <typeparam name="TRhs"></typeparam>
+        /// <param name="objectA"></param>
+        /// <param name="objectB"></param>
+        /// <returns></returns>
+        public static UInt64 GetBigHash<TLhs, TRhs>( this TLhs objectA, TRhs objectB ) {
+            if ( Equals( objectA, default( TLhs ) ) ) {
+                return 0;
+            }
+            if ( Equals( objectB, default( TRhs ) ) ) {
+                return 0;
+            }
+            unchecked {
+                var bob = new TwoToOne(objectA.GetHashCode(), objectB.GetHashCode() );
+                return bob.UnsignedValue;
             }
         }
 
@@ -722,7 +744,7 @@ namespace Librainian.Maths {
             return number < BigDecimal.Zero ? BigDecimal.Zero : number;
         }
 
-        public static Double Intercept( [NotNull] this List< TimeProgression > data ) {
+        public static Double Intercept( [NotNull] this List<TimeProgression> data ) {
             if ( data == null ) {
                 throw new ArgumentNullException( "data" );
             }
@@ -997,7 +1019,7 @@ namespace Librainian.Maths {
             return taxed;
         }
 
-        public static T Max<T>( T value, params T[] values ) where T : IComparable< T > {
+        public static T Max<T>( T value, params T[] values ) where T : IComparable<T> {
             var max = value;
             foreach ( var other in values ) {
                 if ( 0 > max.CompareTo( other ) ) {
@@ -1047,9 +1069,9 @@ namespace Librainian.Maths {
             return a;
         }
 
-        public static IEnumerable< int > Primes( int max ) {
+        public static IEnumerable<int> Primes( int max ) {
             yield return 2;
-            var found = new List< int > {
+            var found = new List<int> {
                                             3
                                         };
             var candidate = 3;
@@ -1177,7 +1199,7 @@ namespace Librainian.Maths {
             return 1.0D - ( 2.0D / ( 1.0D + Math.Exp( value ) ) );
         }
 
-        public static Double Slope( [NotNull] this List< TimeProgression > data ) {
+        public static Double Slope( [NotNull] this List<TimeProgression> data ) {
             if ( data == null ) {
                 throw new ArgumentNullException( "data" );
             }
@@ -1192,9 +1214,9 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Tuple< decimal, decimal > Split( this Decimal value ) {
+        public static Tuple<decimal, decimal> Split( this Decimal value ) {
             var parts = value.ToString( "R" ).Split( '.' );
-            var result = new Tuple< decimal, decimal >( Decimal.Parse( parts[ 0 ] ), Decimal.Parse( "0." + parts[ 1 ] ) );
+            var result = new Tuple<decimal, decimal>( Decimal.Parse( parts[ 0 ] ), Decimal.Parse( "0." + parts[ 1 ] ) );
             return result;
         }
 
@@ -1203,9 +1225,9 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Tuple< double, double > Split( this Double value ) {
+        public static Tuple<double, double> Split( this Double value ) {
             var parts = value.ToString( "R" ).Split( '.' );
-            return new Tuple< double, double >( Double.Parse( parts[ 0 ] ), Double.Parse( "0." + parts[ 1 ] ) );
+            return new Tuple<double, double>( Double.Parse( parts[ 0 ] ), Double.Parse( "0." + parts[ 1 ] ) );
         }
 
         /// <summary>
@@ -1232,8 +1254,8 @@ namespace Librainian.Maths {
             return number * number;
         }
 
-        public static Double SquareRootOfProducts( this IEnumerable< double > data ) {
-            var sorted = new List< double >( data.Where( d => Math.Abs( d ) >= Double.Epsilon ).OrderBy( d => d ) );
+        public static Double SquareRootOfProducts( this IEnumerable<double> data ) {
+            var sorted = new List<double>( data.Where( d => Math.Abs( d ) >= Double.Epsilon ).OrderBy( d => d ) );
 
             var aggregate = BigDecimal.One;
 
@@ -1264,12 +1286,12 @@ namespace Librainian.Maths {
             return Math.Sqrt( ( Double )aggregate );
         }
 
-        public static Decimal SquareRootOfProducts( this IEnumerable< decimal > data ) {
+        public static Decimal SquareRootOfProducts( this IEnumerable<decimal> data ) {
             var aggregate = data.Aggregate( 1.0m, ( current, d ) => current * d );
             return ( Decimal )Math.Sqrt( ( Double )aggregate );
         }
 
-        public static Double StandardDeviation( [NotNull] this IEnumerable< double > values ) {
+        public static Double StandardDeviation( [NotNull] this IEnumerable<double> values ) {
             if ( values == null ) {
                 throw new ArgumentNullException( "values" );
             }
@@ -1278,7 +1300,7 @@ namespace Librainian.Maths {
             return Math.Sqrt( doubles.Average( v => Math.Pow( v - avg, 2 ) ) );
         }
 
-        public static Decimal StandardDeviation( [NotNull] this IEnumerable< decimal > values ) {
+        public static Decimal StandardDeviation( [NotNull] this IEnumerable<decimal> values ) {
             if ( values == null ) {
                 throw new ArgumentNullException( "values" );
             }
@@ -1307,7 +1329,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="bigIntegers"></param>
         /// <returns></returns>
-        public static BigInteger Sum( [NotNull] this IEnumerable< BigInteger > bigIntegers ) {
+        public static BigInteger Sum( [NotNull] this IEnumerable<BigInteger> bigIntegers ) {
             return bigIntegers.Aggregate( BigInteger.Zero, ( current, bigInteger ) => current + bigInteger );
         }
 
@@ -1328,7 +1350,7 @@ namespace Librainian.Maths {
             return ( 3.0d * x ) / 4.0d;
         }
 
-        public static IEnumerable< int > Through( this int startValue, int end ) {
+        public static IEnumerable<int> Through( this int startValue, int end ) {
             int offset;
             if ( startValue < end ) {
                 offset = 1;
@@ -1349,7 +1371,7 @@ namespace Librainian.Maths {
         /// <param name="end"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public static IEnumerable< byte > To( this Byte start, Byte end, Byte step = 1 ) {
+        public static IEnumerable<byte> To( this Byte start, Byte end, Byte step = 1 ) {
             if ( step <= 1 ) {
                 step = 1;
             }
@@ -1379,7 +1401,7 @@ namespace Librainian.Maths {
         /// <param name="end"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public static IEnumerable< ulong > To( this int start, UInt64 end, UInt64 step = 1 ) {
+        public static IEnumerable<ulong> To( this int start, UInt64 end, UInt64 step = 1 ) {
             if ( start < 0 ) {
                 throw new ArgumentOutOfRangeException( "start", "'low' must be equal to or greater than zero." );
             }
@@ -1415,7 +1437,7 @@ namespace Librainian.Maths {
         /// <param name="end">inclusive</param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public static IEnumerable< int > To( this int start, int end, int step = 1 ) {
+        public static IEnumerable<int> To( this int start, int end, int step = 1 ) {
             if ( start < 0 ) {
                 throw new ArgumentOutOfRangeException( "start", "'low' must be equal to or greater than zero." );
             }
@@ -1451,7 +1473,7 @@ namespace Librainian.Maths {
         /// <param name="end"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public static IEnumerable< ulong > To( this UInt64 from, UInt64 end, UInt64 step = 1 ) {
+        public static IEnumerable<ulong> To( this UInt64 from, UInt64 end, UInt64 step = 1 ) {
             if ( step == 0UL ) {
                 step = 1UL;
             }
@@ -1478,7 +1500,7 @@ namespace Librainian.Maths {
         /// <param name="fromInclusive">The lower bound, inclusive.</param>
         /// <param name="toExclusive">The upper bound, exclusive.</param>
         /// <returns>The enumerable of the range.</returns>
-        public static IEnumerable< BigInteger > To( this BigInteger fromInclusive, BigInteger toExclusive ) {
+        public static IEnumerable<BigInteger> To( this BigInteger fromInclusive, BigInteger toExclusive ) {
             for ( var i = fromInclusive ; i < toExclusive ; i++ ) {
                 yield return i;
             }
@@ -1491,7 +1513,7 @@ namespace Librainian.Maths {
         /// <param name="to"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public static IEnumerable< BigInteger > To( this BigInteger from, BigInteger to, UInt64 step = 1 ) {
+        public static IEnumerable<BigInteger> To( this BigInteger from, BigInteger to, UInt64 step = 1 ) {
             if ( step == 0UL ) {
                 step = 1UL;
             }
@@ -1515,7 +1537,7 @@ namespace Librainian.Maths {
         /// <param name="to"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public static IEnumerable< BigInteger > To( this long from, BigInteger to, UInt64 step = 1 ) {
+        public static IEnumerable<BigInteger> To( this long from, BigInteger to, UInt64 step = 1 ) {
             if ( step == 0UL ) {
                 step = 1UL;
             }
@@ -1541,7 +1563,7 @@ namespace Librainian.Maths {
         /// <param name="to"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public static IEnumerable< BigDecimal > To( this int start, BigDecimal to, BigDecimal step ) {
+        public static IEnumerable<BigDecimal> To( this int start, BigDecimal to, BigDecimal step ) {
             if ( step < 0 ) {
                 step = 1;
             }
@@ -1586,7 +1608,7 @@ namespace Librainian.Maths {
         ///     var minutes = now.To( then, TimeSpan.FromMinutes( 1 ) );
         ///     foreach ( var dateTime in minutes ) { Console.WriteLine( dateTime ); }
         /// </example>
-        public static IEnumerable< DateTime > To( this DateTime @from, DateTime @to, TimeSpan? step = null ) {
+        public static IEnumerable<DateTime> To( this DateTime @from, DateTime @to, TimeSpan? step = null ) {
             if ( !step.HasValue ) {
 
                 var diff = @from > to ? @from - @from : to - @from;
@@ -1621,7 +1643,7 @@ namespace Librainian.Maths {
         }
 
         //    BigInteger reFrom = start;
-        public static IEnumerable< double > To( this Double start, Double end ) {
+        public static IEnumerable<double> To( this Double start, Double end ) {
             var count = end - start + 1;
             for ( var i = 0 ; i < count ; i++ ) {
                 yield return start + i;
@@ -1640,7 +1662,7 @@ namespace Librainian.Maths {
         //    if ( step == 0UL ) {
         //        step = 1UL;
         //    }
-        public static IEnumerable< decimal > To( this Decimal start, Decimal end ) {
+        public static IEnumerable<decimal> To( this Decimal start, Decimal end ) {
             var count = end - start + 1;
             for ( var i = 0 ; i < count ; i++ ) {
                 yield return start + i;
@@ -1698,7 +1720,7 @@ namespace Librainian.Maths {
             return scaledValue;
         }
 
-        public static String ToHex( this IEnumerable< byte > input ) {
+        public static String ToHex( this IEnumerable<byte> input ) {
             if ( input == null ) {
                 throw new ArgumentNullException( "input" );
             }
@@ -1749,7 +1771,7 @@ namespace Librainian.Maths {
             if ( top.IsNullOrWhiteSpace() ) {
                 return false;
             }
-// ReSharper disable once PossibleNullReferenceException
+            // ReSharper disable once PossibleNullReferenceException
             top = top.Trim();
 
             var bottom = parts.TakeLast();
@@ -1819,7 +1841,7 @@ namespace Librainian.Maths {
         /// <param name="number"></param>
         /// <param name="decimalPlaces"></param>
         /// <returns></returns>
-        public static Decimal Sanitize( this Decimal number, UInt16 decimalPlaces = 8  ) {
+        public static Decimal Sanitize( this Decimal number, UInt16 decimalPlaces = 8 ) {
             number *= ( Decimal )Math.Pow( 10, decimalPlaces );
 
             number = ( UInt64 )number;  //Truncate, don't round. Just chop it off.
@@ -1860,7 +1882,7 @@ namespace Librainian.Maths {
             yield return second;
         }
 
-        public static string ToHexNumberString( this IEnumerable< byte > value ) {
+        public static string ToHexNumberString( this IEnumerable<byte> value ) {
             return Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
         }
 
@@ -1869,5 +1891,4 @@ namespace Librainian.Maths {
         }
 
     }
-
 }

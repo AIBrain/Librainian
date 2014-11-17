@@ -24,6 +24,9 @@ namespace Librainian.Graphics.Imaging {
     using System.Collections.Concurrent;
     using System.Drawing;
     using System.Runtime.Serialization;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Maths;
 
     /// <summary>
     ///     Experimental and Fun Graphic
@@ -56,21 +59,30 @@ namespace Librainian.Graphics.Imaging {
         /// <summary>
         /// Checksum of all pages
         /// </summary>
-        [ DataMember ]
-        public UInt64 Checksum { get; set; }
+        [DataMember]
+        public UInt64 Checksum {
+            get;
+            set;
+        }
 
         /// <summary>
         /// EXIF metadatas
         /// </summary>
         [DataMember]
         public ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
-        
+
         [DataMember]
         public ConcurrentDictionary<UInt64, Page> Pages = new ConcurrentDictionary<UInt64, Page>();
 
         public EFG() {
-            this.Checksum = UInt64.MaxValue;    //an unlikely hash
+            this.Checksum = UInt64.MaxValue.GetHashMerge;    //an unlikely hash
         }
+
+        public async Task< Boolean > Save( CancellationToken token ) {
+            return await Task.Run( () => false, token );
+        }
+
+        public Boolean TryAddPage( UInt64 index, )
 
     }
 }
