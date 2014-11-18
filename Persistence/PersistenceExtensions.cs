@@ -978,9 +978,8 @@ namespace Librainian.Persistence {
                 Report.Enter();
                 var stopwatch = Stopwatch.StartNew();
                 Report.Info( String.Format( "Serializing dictionary to {0}...", folder ) );
-                using ( var persistentDictionary = new PersistentDictionary<TKey, TValue>( dictionary, folder.FullName ) ) {
-                    persistentDictionary.Flush();
-                }
+                //using ( var persistentDictionary = new PersistentDictionary<TKey, TValue>( dictionary, folder.FullName ) ) { persistentDictionary.Flush(); }
+                dictionary.Saver
                 stopwatch.Stop();
                 Report.Info( String.Format( "Serialized dictionary in {0}.", stopwatch.Elapsed.Simpler() ) );
                 Report.Exit();
@@ -993,6 +992,6 @@ namespace Librainian.Persistence {
             return true;
         }
 
-       
+
     }
 }
