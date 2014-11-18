@@ -635,12 +635,12 @@ namespace Librainian.Collections {
         /// <param name="list"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static TType TakeFirst<TType>( this IList< TType > list ) where TType : class {
+        public static TType TakeFirst<TType>( this IList< TType > list )  {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
             }
             if ( list.Count <= 0 ) {
-                return null;
+                return default(TType);
             }
             var item = list[ 0 ];
             list.RemoveAt( 0 );

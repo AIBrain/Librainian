@@ -26,7 +26,6 @@ namespace Librainian.Graphics.Imaging {
     using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
-    using Maths;
 
     /// <summary>
     ///     Experimental Framed Graphics
@@ -81,8 +80,8 @@ namespace Librainian.Graphics.Imaging {
 
         public async Task<Boolean> TryAdd( UInt64 index, Frame frame, CancellationToken token ) {
             return await Task.Run( () => {
-                //TODO add frame
-                return false;
+                // ReSharper disable once ConvertToLambdaExpression
+                return false;   //TODO add frame
             }, token );
         }
 

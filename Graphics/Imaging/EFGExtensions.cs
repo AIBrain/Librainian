@@ -33,6 +33,7 @@ namespace Librainian.Graphics.Imaging {
             return await Task.Run( () => {
                 //TODO recalc the checksums
                 //write out to file
+                                       // ReSharper disable once ConvertToLambdaExpression
                 return false;
             }, token );
         }
@@ -41,6 +42,7 @@ namespace Librainian.Graphics.Imaging {
             return await Task.Run( () => {
                 //TODO recalc the checksums
                 //load file, checking checksums along the way.. (skip frames/lines with bad checksums?)
+                                       // ReSharper disable once ConvertToLambdaExpression
                 return new EFG();
             }, token );
         }
