@@ -979,16 +979,19 @@ namespace Librainian.Persistence {
                 var stopwatch = Stopwatch.StartNew();
                 Report.Info( String.Format( "Serializing dictionary to {0}...", folder ) );
                 //using ( var persistentDictionary = new PersistentDictionary<TKey, TValue>( dictionary, folder.FullName ) ) { persistentDictionary.Flush(); }
-                dictionary.Saver
+                //dictionary.Saver
+                //TODO
                 stopwatch.Stop();
                 Report.Info( String.Format( "Serialized dictionary in {0}.", stopwatch.Elapsed.Simpler() ) );
                 Report.Exit();
+                throw new NotImplementedException();
             }
             catch ( Exception exception ) {
                 exception.Error();
                 return false;
             }
 
+            // ReSharper disable once HeuristicUnreachableCode
             return true;
         }
 
