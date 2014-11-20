@@ -36,9 +36,9 @@ namespace Librainian.Collections {
     ///     Just a simple thread safe collection.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <value>Version 1.6</value>
+    /// <value>Version 1.7</value>
     /// <remarks>TODO replace locks with AsyncLocks</remarks>
-    [DataContract( IsReference = true )]
+    [CollectionDataContract]
     [DebuggerDisplay( "Count={Count}" )]
     public sealed class ThreadSafeList<T> : IList<T> {
 
@@ -205,18 +205,23 @@ namespace Librainian.Collections {
                 var clones = this.Clone( asParallel: asParallel );
                 if ( asParallel ) {
                     clones.AsParallel().ForAll( wrapper );
-                } else if ( inParallel ) {
+                }
+                else if ( inParallel ) {
                     Parallel.ForEach( clones, wrapper );
-                } else {
+                }
+                else {
                     clones.ForEach( wrapper );
                 }
-            } else {
+            }
+            else {
                 lock ( this._items ) {
                     if ( asParallel ) {
                         this._items.AsParallel().ForAll( wrapper );
-                    } else if ( inParallel ) {
+                    }
+                    else if ( inParallel ) {
                         Parallel.ForEach( this._items, wrapper );
-                    } else {
+                    }
+                    else {
                         this._items.ForEach( wrapper );
                     }
                 }
@@ -264,18 +269,23 @@ namespace Librainian.Collections {
                 var clones = this.Clone( asParallel: asParallel );
                 if ( asParallel ) {
                     clones.AsParallel().ForAll( wrapper );
-                } else if ( inParallel ) {
+                }
+                else if ( inParallel ) {
                     Parallel.ForEach( clones, wrapper );
-                } else {
+                }
+                else {
                     clones.ForEach( wrapper );
                 }
-            } else {
+            }
+            else {
                 lock ( this._items ) {
                     if ( asParallel ) {
                         this._items.AsParallel().ForAll( wrapper );
-                    } else if ( inParallel ) {
+                    }
+                    else if ( inParallel ) {
                         Parallel.ForEach( this._items, wrapper );
-                    } else {
+                    }
+                    else {
                         this._items.ForEach( wrapper );
                     }
                 }

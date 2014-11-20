@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.IO {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -31,7 +30,6 @@ namespace Librainian.IO {
     using System.Linq;
     using System.Net;
     using System.Numerics;
-    using System.Reflection;
     using System.Runtime.Serialization;
     using System.Security;
     using System.Security.Permissions;
@@ -132,7 +130,7 @@ namespace Librainian.IO {
 
             var directoryName = Path.GetDirectoryName( fullPathWithFilename );
             if ( String.IsNullOrWhiteSpace( directoryName ) ) {
-                throw new ArgumentNullException( "directoryName" );
+                throw new ArgumentNullException( "fullPathWithFilename" );
             }
             this.Folder = new Folder( directoryName );
 

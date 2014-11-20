@@ -33,7 +33,7 @@ namespace Librainian.Graphics.DDD {
     /// <remarks>
     ///     Coded towards speed.
     /// </remarks>
-    [DataContract( IsReference = true )]
+    [DataContract]
     public struct Coordinate64 : IEquatable<Coordinate64>, IComparable<Coordinate64> {
 
         public static readonly Coordinate64 AtMaxValues = new Coordinate64( x: Int64.MaxValue, y: Int64.MaxValue, z: Int64.MaxValue );

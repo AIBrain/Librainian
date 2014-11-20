@@ -17,7 +17,7 @@
     /// <typeparam name="TType"></typeparam>
     /// <remarks>This class was created on a spur of the moment idea, and is thoroughly untested.</remarks>
     /// <copyright>Rick@AIBrain.org 2014</copyright>
-    [DataContract( IsReference = true )]
+    [CollectionDataContract]
     [DebuggerDisplay( "Count={Count}" )]
     public sealed class ConcurrentList<TType> : IList<TType> {
 

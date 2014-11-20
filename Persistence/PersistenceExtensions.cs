@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Persistence {
-
     using System;
     using System.Collections.Concurrent;
     using System.ComponentModel;
@@ -47,13 +46,10 @@ namespace Librainian.Persistence {
     using IO;
     using IO.Streams;
     using Measurement.Time;
-    using Microsoft.Isam.Esent.Collections.Generic;
     using Parsing;
     using Threading;
 
     public static class PersistenceExtensions {
-
-        //TODO
 
         ///// <summary>
         /////   Attempts to Add() the specified filename into the collection.
@@ -966,7 +962,7 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        /// <para>Persist the <paramref name="dictionary"/> into a <see cref="PersistentDictionary{TKey,TValue}"/>.</para>
+        /// <para>Persist the <paramref name="dictionary"/> into <paramref name="folder"/>.</para>
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TValue"></typeparam>
@@ -974,10 +970,21 @@ namespace Librainian.Persistence {
         /// <param name="folder"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public static Boolean SerializeDictionary<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dictionary, Folder folder, IProgress<Single> progress = null )
+        public static Boolean SerializeDictionary<TKey, TValue>( [ CanBeNull ] this ConcurrentDictionary<TKey, TValue> dictionary, [ CanBeNull ] Folder folder, [ CanBeNull ] IProgress<Single> progress = null )
             where TKey : IComparable<TKey> {
 
+            if ( null == dictionary ) {
+                return false;
+            }
+            if ( null == folder ) {
+                return false;
+            }
+            if ( !dictionary.Any() ) {
+                return false;
+            }
+
             try {
+
                 Report.Enter();
                 var stopwatch = Stopwatch.StartNew();
 
@@ -1024,6 +1031,7 @@ namespace Librainian.Persistence {
                         }
                         fileName = String.Format( "{0}.xml", hereNow );     //let the file name change over time so we don't have bigHuge monolithic files.
                         writer = File.AppendText( fileName );
+                        backThen = DateTime.UtcNow.ToGuid();
                     }
 
                     writer.WriteLine( data );

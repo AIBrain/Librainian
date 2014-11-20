@@ -1,25 +1,28 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
+//
 // "Librainian/Class1.cs" was last cleaned by Rick on 2014/09/20 at 5:40 AM
-#endregion
+
+#endregion License & Information
 
 namespace Librainian.Collections {
+
     using System;
     using System.Collections;
     using System.Collections.Concurrent;
@@ -30,25 +33,38 @@ namespace Librainian.Collections {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <seealso cref="http://stackoverflow.com/questions/4306936/how-to-implement-concurrenthashset-in-net" />
-    public class ConcurrentSet< T > : ISet< T > {
-        private readonly ConcurrentDictionary< T, object > _dictionary = new ConcurrentDictionary< T, object >();
+    public class ConcurrentSet<T> : ISet<T> {
 
-        public ConcurrentSet() { }
+        /// <summary>
+        /// 
+        /// </summary>
+        private readonly ConcurrentDictionary<T, object> _dictionary = new ConcurrentDictionary<T, object>();
+
+        public ConcurrentSet() {
+        }
 
         public ConcurrentSet( params T[] items ) {
             this.UnionWith( items );
         }
 
-        public ConcurrentSet( IEnumerable< T > items ) {
+        public ConcurrentSet( IEnumerable<T> items ) {
             this.UnionWith( items );
         }
 
         /// <summary>
         ///     Gets a value that indicates if the set is empty.
         /// </summary>
-        public bool IsEmpty { get { return this._dictionary.IsEmpty; } }
+        public bool IsEmpty {
+            get {
+                return this._dictionary.IsEmpty;
+            }
+        }
 
-        public ICollection< T > Values { get { return this._dictionary.Keys; } }
+        public ICollection<T> Values {
+            get {
+                return this._dictionary.Keys;
+            }
+        }
 
         /// <summary>
         ///     Returns an enumerator that iterates through the collection.
@@ -56,7 +72,7 @@ namespace Librainian.Collections {
         /// <returns>
         ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
         /// </returns>
-        public IEnumerator< T > GetEnumerator() {
+        public IEnumerator<T> GetEnumerator() {
             return this._dictionary.Keys.GetEnumerator();
         }
 
@@ -91,7 +107,11 @@ namespace Librainian.Collections {
         /// <summary>
         ///     Gets the number of elements in the set.
         /// </summary>
-        public int Count { get { return this._dictionary.Count; } }
+        public int Count {
+            get {
+                return this._dictionary.Count;
+            }
+        }
 
         /// <summary>
         ///     Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
@@ -99,7 +119,11 @@ namespace Librainian.Collections {
         /// <returns>
         ///     true if the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only; otherwise, false.
         /// </returns>
-        public bool IsReadOnly { get { return false; } }
+        public bool IsReadOnly {
+            get {
+                return false;
+            }
+        }
 
         /// <summary>
         ///     Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.
@@ -109,7 +133,7 @@ namespace Librainian.Collections {
         ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
         ///     read-only.
         /// </exception>
-        void ICollection< T >.Add( T item ) {
+        void ICollection<T>.Add( T item ) {
             if ( !this.Add( item ) ) {
                 throw new ArgumentException( "Item already exists in set." );
             }
@@ -121,7 +145,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="other">The collection to compare to the current set.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-        public void UnionWith( IEnumerable< T > other ) {
+        public void UnionWith( IEnumerable<T> other ) {
             foreach ( var item in other ) {
                 this.TryAdd( item );
             }
@@ -132,8 +156,8 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="other">The collection to compare to the current set.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-        public void IntersectWith( IEnumerable< T > other ) {
-            var enumerable = other as IList< T > ?? other.ToArray();
+        public void IntersectWith( IEnumerable<T> other ) {
+            var enumerable = other as IList<T> ?? other.ToArray();
             foreach ( var item in this.Where( item => !enumerable.Contains( item ) ) ) {
                 this.TryRemove( item );
             }
@@ -144,7 +168,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="other">The collection of items to remove from the set.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-        public void ExceptWith( IEnumerable< T > other ) {
+        public void ExceptWith( IEnumerable<T> other ) {
             foreach ( var item in other ) {
                 this.TryRemove( item );
             }
@@ -156,7 +180,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="other">The collection to compare to the current set.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-        public void SymmetricExceptWith( IEnumerable< T > other ) {
+        public void SymmetricExceptWith( IEnumerable<T> other ) {
             throw new NotImplementedException();
         }
 
@@ -168,8 +192,8 @@ namespace Librainian.Collections {
         /// </returns>
         /// <param name="other">The collection to compare to the current set.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-        public bool IsSubsetOf( IEnumerable< T > other ) {
-            var enumerable = other as IList< T > ?? other.ToArray();
+        public bool IsSubsetOf( IEnumerable<T> other ) {
+            var enumerable = other as IList<T> ?? other.ToArray();
             return this.AsParallel().All( enumerable.Contains );
         }
 
@@ -181,7 +205,7 @@ namespace Librainian.Collections {
         /// </returns>
         /// <param name="other">The collection to compare to the current set.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-        public bool IsSupersetOf( IEnumerable< T > other ) {
+        public bool IsSupersetOf( IEnumerable<T> other ) {
             return other.AsParallel().All( this.Contains );
         }
 
@@ -194,8 +218,8 @@ namespace Librainian.Collections {
         /// </returns>
         /// <param name="other">The collection to compare to the current set. </param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-        public bool IsProperSupersetOf( IEnumerable< T > other ) {
-            var enumerable = other as IList< T > ?? other.ToArray();
+        public bool IsProperSupersetOf( IEnumerable<T> other ) {
+            var enumerable = other as IList<T> ?? other.ToArray();
             return this.Count != enumerable.Count && this.IsSupersetOf( enumerable );
         }
 
@@ -207,8 +231,8 @@ namespace Librainian.Collections {
         /// </returns>
         /// <param name="other">The collection to compare to the current set.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-        public bool IsProperSubsetOf( IEnumerable< T > other ) {
-            var enumerable = other as IList< T > ?? other.ToArray();
+        public bool IsProperSubsetOf( IEnumerable<T> other ) {
+            var enumerable = other as IList<T> ?? other.ToArray();
             return this.Count != enumerable.Count && this.IsSubsetOf( enumerable );
         }
 
@@ -220,7 +244,7 @@ namespace Librainian.Collections {
         /// </returns>
         /// <param name="other">The collection to compare to the current set.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-        public bool Overlaps( IEnumerable< T > other ) {
+        public bool Overlaps( IEnumerable<T> other ) {
             return other.AsParallel().Any( this.Contains );
         }
 
@@ -232,8 +256,8 @@ namespace Librainian.Collections {
         /// </returns>
         /// <param name="other">The collection to compare to the current set.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-        public bool SetEquals( IEnumerable< T > other ) {
-            var enumerable = other as IList< T > ?? other.ToArray();
+        public bool SetEquals( IEnumerable<T> other ) {
+            var enumerable = other as IList<T> ?? other.ToArray();
             return this.Count == enumerable.Count && enumerable.AsParallel().All( this.Contains );
         }
 
