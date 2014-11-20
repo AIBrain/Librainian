@@ -31,6 +31,7 @@ namespace Librainian.IO {
     using System.Linq;
     using System.Net;
     using System.Numerics;
+    using System.Reflection;
     using System.Runtime.Serialization;
     using System.Security;
     using System.Security.Permissions;
@@ -373,7 +374,9 @@ namespace Librainian.IO {
         /// <returns></returns>
         public Boolean Delete() {
             try {
-                this.FileInfo.Delete();
+                if ( this.Exists() ) {
+                    this.FileInfo.Delete();
+                }
                 return !this.Exists();
             }
             catch ( IOException ) {

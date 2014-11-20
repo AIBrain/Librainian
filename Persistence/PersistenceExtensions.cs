@@ -43,6 +43,7 @@ namespace Librainian.Persistence {
     using Annotations;
     using CodeFluent.Runtime.BinaryServices;
     using Collections;
+    using Extensions;
     using IO;
     using IO.Streams;
     using Measurement.Time;
@@ -78,6 +79,7 @@ namespace Librainian.Persistence {
         //    return false;
         //}
 
+        [NotNull]
         internal static readonly ThreadLocal<NetDataContractSerializer> Serializers = new ThreadLocal<NetDataContractSerializer>( () => new NetDataContractSerializer( context: StreamingContexts.Value, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false, assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null ) );
 
         ///// <summary>
@@ -977,22 +979,41 @@ namespace Librainian.Persistence {
             try {
                 Report.Enter();
                 var stopwatch = Stopwatch.StartNew();
-                Report.Info( String.Format( "Serializing dictionary to {0}...", folder ) );
+
+                if ( !folder.Exists() ) {
+                    folder.Create();
+                }
+
+                if ( !folder.Exists() ) {
+                    throw new DirectoryNotFoundException( folder.FullName );
+                }
+
                 //using ( var persistentDictionary = new PersistentDictionary<TKey, TValue>( dictionary, folder.FullName ) ) { persistentDictionary.Flush(); }
-                //dictionary.Saver
-                //TODO
+
+                var fileName = String.Format( "{0}.xml", DateTime.Now.ToGuid() );
+
+                var document = new Document( folder, fileName );
+
+                document.Delete();
+
+                Report.Info( String.Format( "Serializing dictionary ({1} kvp) to {0}...", document.FileName, dictionary.Count ) );
+                var data = dictionary.Serialize();
+
+                document.AppendText( data );
+
                 stopwatch.Stop();
-                Report.Info( String.Format( "Serialized dictionary in {0}.", stopwatch.Elapsed.Simpler() ) );
-                Report.Exit();
-                throw new NotImplementedException();
+                Report.Info( String.Format( "Serialized dictionary ({1} kvp) in {0}.", stopwatch.Elapsed.Simpler(), dictionary.Count ) );
+                
+
+                return true;
             }
             catch ( Exception exception ) {
                 exception.Error();
-                return false;
             }
-
-            // ReSharper disable once HeuristicUnreachableCode
-            return true;
+            finally {
+                Report.Exit();
+            }
+            return false;
         }
 
 
