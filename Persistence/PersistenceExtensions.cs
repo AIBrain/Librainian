@@ -972,8 +972,9 @@ namespace Librainian.Persistence {
         /// <typeparam name="TValue"></typeparam>
         /// <param name="dictionary"></param>
         /// <param name="folder"></param>
+        /// <param name="progress"></param>
         /// <returns></returns>
-        public static Boolean SerializeDictionary<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dictionary, Folder folder )
+        public static Boolean SerializeDictionary<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dictionary, Folder folder, IProgress<Single> progress = null )
             where TKey : IComparable<TKey> {
 
             try {
@@ -988,22 +989,53 @@ namespace Librainian.Persistence {
                     throw new DirectoryNotFoundException( folder.FullName );
                 }
 
-                //using ( var persistentDictionary = new PersistentDictionary<TKey, TValue>( dictionary, folder.FullName ) ) { persistentDictionary.Flush(); }
+                var itemCount = ( UInt64 )dictionary.LongCount();
 
-                var fileName = String.Format( "{0}.xml", DateTime.Now.ToGuid() );
+                Report.Info( String.Format( "Serializing {1} items to {0} ...", folder.FullName, itemCount ) );
 
-                var document = new Document( folder, fileName );
+                var currentLine = 0f;
 
-                document.Delete();
+                var backThen = DateTime.UtcNow.ToGuid();
 
-                Report.Info( String.Format( "Serializing dictionary ({1} kvp) to {0}...", document.FileName, dictionary.Count ) );
-                var data = dictionary.Serialize();
+                var fileName = String.Format( "{0}.xml", backThen );     //let the time change the file name over time
 
-                document.AppendText( data );
+                var writer = File.AppendText( fileName );
+
+                foreach ( var pair in dictionary ) {
+
+                    currentLine++;
+
+                    var tuple = new Tuple<TKey, TValue>( pair.Key, pair.Value );  //convert the struct to a class
+
+                    var data = tuple.Serialize();
+
+                    var hereNow = DateTime.UtcNow.ToGuid();
+
+                    if ( backThen != hereNow ) {
+
+                        if ( progress != null ) {
+                            var soFar = currentLine / itemCount;
+                            progress.Report( soFar );
+                        }
+
+                        using ( writer ) {
+                            writer.Flush();
+                            writer.Close();
+                        }
+                        fileName = String.Format( "{0}.xml", hereNow );     //let the file name change over time so we don't have bigHuge monolithic files.
+                        writer = File.AppendText( fileName );
+                    }
+
+                    writer.WriteLine( data );
+                }
+
+                using ( writer ) {
+                    writer.Flush();
+                    writer.Close();
+                }
 
                 stopwatch.Stop();
-                Report.Info( String.Format( "Serialized dictionary ({1} kvp) in {0}.", stopwatch.Elapsed.Simpler(), dictionary.Count ) );
-                
+                Report.Info( String.Format( "Serialized {1} items in {0}.", stopwatch.Elapsed.Simpler(), itemCount ) );
 
                 return true;
             }
