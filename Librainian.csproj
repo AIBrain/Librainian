@@ -256,6 +256,7 @@
     <Compile Include="Diagnostical.cs" />
     <Compile Include="Extensions\BigNullStream.cs" />
     <Compile Include="Extensions\BooleanPredicateBuilder.cs" />
+    <Compile Include="Extensions\DisposableBase.cs" />
     <Compile Include="Extensions\ReflectionHelper.cs" />
     <Compile Include="Extensions\CoordinatesEx.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
