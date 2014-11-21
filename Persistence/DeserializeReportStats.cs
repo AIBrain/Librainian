@@ -21,6 +21,7 @@ namespace Librainian.Persistence {
     using System;
     using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
     using Measurement.Time;
     using Threading;
 
@@ -68,9 +69,9 @@ namespace Librainian.Persistence {
             return this._losses.Values.Sum( arg => arg );
         }
 
-        public void StartReporting() {
+        public async Task StartReporting() {
             this.Enabled = true;
-            this.Timing.Then( job: this.Report );
+            await this.Timing.Then( job: this.Report );
         }
 
         public void StopReporting() {
@@ -80,7 +81,7 @@ namespace Librainian.Persistence {
         /// <summary>
         ///     Perform a Report.
         /// </summary>
-        private void Report() {
+        private async void Report() {
             if ( !this.Enabled ) {
                 return;
             }
@@ -88,13 +89,11 @@ namespace Librainian.Persistence {
             if ( handler == null ) {
                 return;
             }
-            try {
-                handler( this );
-            }
-            finally {
-                if ( this.Enabled ) {
-                    this.Timing.Then( job: this.Report );
-                }
+
+            handler( this );
+
+            if ( this.Enabled ) {
+                await this.Timing.Then( job: this.Report ); //TODO is this correct?
             }
         }
     }

@@ -63,21 +63,27 @@ namespace Librainian.Threading {
         //private static long spawnCounter;
 
         /// <summary>
-        ///     <para>Cancel has been requested. Don't queue or start any more spawns.</para>
+        ///     <para>Cancel has been requested. Don't queue or start any more spawns. If we're in a method, try to check the token.</para>
         /// </summary>
-        public static readonly CancellationToken CancelAllJobsToken = new CancellationToken( false );
+        public static readonly CancellationTokenSource CancelJobsTokenSource = new CancellationTokenSource(  );
 
+/*
         public static readonly PriorityBlock JobPriorityBlock = new PriorityBlock( CancelAllJobsToken );
+*/
 
+/*
         /// <summary>
         ///     <para>Cancel has been requested. Don't queue any more spawns.</para>
         /// </summary>
         public static readonly CancellationToken CancelNewJobsToken = new CancellationToken( false );
+*/
 
         //public static UInt64 GetSpawnsWaiting() {
         //    return ( UInt64 )Interlocked.Read( ref spawnCounter );
         //}
 
+/*
+        [Obsolete( "use Task.Run()" )]
         public static void Spawn( this Action job, Single priority = 0.50f, Span? delay = null ) {
             if ( CancelNewJobsToken.IsCancellationRequested ) {
                 return;
@@ -90,6 +96,7 @@ namespace Librainian.Threading {
                 delay.Value.Create( () => job.Spawn( priority ) ).AndStart();
             }
         }
+*/
 
         /// <summary>
         /// </summary>
@@ -158,11 +165,14 @@ namespace Librainian.Threading {
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
         /// <returns> </returns>
-        public static void Then( this TimeSpan delay, [NotNull] Action job ) {
+        public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            Spawn( job, 0.5f, ( Span )delay );
+
+            await Task.Delay( delay );
+
+            await Task.Run( job );
         }
 
         /// <summary>
@@ -171,11 +181,13 @@ namespace Librainian.Threading {
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
         /// <returns> </returns>
-        public static void Then( this Span delay, [NotNull] Action job ) {
+        public static async Task Then( this Span delay, [NotNull] Action job ) {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            Spawn( job, 0.5f, delay );
+            await Task.Delay( delay );
+
+            await Task.Run( job );
         }
 
         /// <summary>
@@ -184,11 +196,13 @@ namespace Librainian.Threading {
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
         /// <returns> </returns>
-        public static void Then( this Milliseconds delay, [NotNull] Action job ) {
+        public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            job.Spawn( delay: delay );
+            await Task.Delay( delay );
+
+            await Task.Run( job );
         }
 
         /// <summary>
@@ -197,11 +211,13 @@ namespace Librainian.Threading {
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
         /// <returns> </returns>
-        public static void Then( this Seconds delay, [NotNull] Action job ) {
+        public static async Task Then( this Seconds delay, [NotNull] Action job ) {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            job.Spawn( delay: delay );
+            await Task.Delay( delay );
+
+            await Task.Run( job );
         }
 
         /// <summary>
@@ -210,11 +226,13 @@ namespace Librainian.Threading {
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
         /// <returns> </returns>
-        public static void Then( this Minutes delay, [NotNull] Action job ) {
+        public static async void Then( this Minutes delay, [NotNull] Action job ) {
             if ( job == null ) {
                 throw new ArgumentNullException( "job" );
             }
-            job.Spawn( delay: delay );
+            await Task.Delay( delay );
+
+            await Task.Run( job );
         }
 
         /// <summary>
@@ -505,5 +523,5 @@ namespace Librainian.Threading {
             }
         }
     }
-    
+
 }

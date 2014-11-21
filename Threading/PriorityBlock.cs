@@ -61,7 +61,7 @@ namespace Librainian.Threading {
 
                 OneJob item;
                 if ( !this.Input.TryReceive( null, out item ) ) {
-                    continue;   //Hello? Hello? Hmm. No one is there. Go back to waiting. Lock yor doors too.
+                    continue;   //Hello? Hello? Hmm. No one is there. Go back to waiting.
                 }
 
                 var highest = this._jobs.OrderByDescending( job => job.Priority ).FirstOrDefault();

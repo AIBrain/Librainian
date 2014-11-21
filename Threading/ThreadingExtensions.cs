@@ -609,8 +609,9 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
+/*
         /// <summary>
-        ///     Just a fire-and-forget wrapper for an <see cref="Action" />.
+        ///     a fire-and-forget wrapper for an <see cref="Action" />.
         /// </summary>
         /// <param name="action"></param>
         /// <param name="next"></param>
@@ -619,9 +620,10 @@ namespace Librainian.Threading {
             if ( action == null ) {
                 throw new ArgumentNullException( "action" );
             }
-            action.Spawn();
+            action.Spawn(); //does this even make sense?
             next.Spawn();
         }
+*/
 
         /// <summary>
         ///     var result = await Wrap( () => OldNonAsyncFunction( ) );

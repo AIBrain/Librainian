@@ -18,44 +18,49 @@
 // "Librainian/FactDatabase.cs" was last cleaned by Rick on 2014/10/21 at 5:01 AM
 
 namespace Librainian.Knowledge {
-
     using System;
     using System.Collections.Concurrent;
-    using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
+    using Annotations;
     using IO;
     using Linguistics;
     using Measurement.Time;
     using Parsing;
     using Threading;
 
-    public class FactDatabase  {
-        public readonly ConcurrentBag<FileInfo> KNBFiles = new ConcurrentBag<FileInfo>();
+    public class FactDatabase {
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [NotNull]
+        public readonly ConcurrentBag<Document> KNBFiles = new ConcurrentBag<Document>();
 
         public int FilesFound {
             get;
-            set;
+            private set;
         }
 
-        public int AddFile( FileInfo dataFile, ProgressChangedEventHandler feedback = null ) {
+        public int AddFile( Document dataFile, ProgressChangedEventHandler feedback = null ) {
             if ( dataFile == null ) {
                 throw new ArgumentNullException( "dataFile" );
             }
-            var ext = Path.GetExtension( dataFile.FullName );
-            if ( ext.Like( ".knb" ) ) {
+
+            if ( dataFile.Extension.Like( ".knb" ) ) {
                 ++this.FilesFound;
                 if ( feedback != null ) {
-                    feedback( this, new ProgressChangedEventArgs( this.FilesFound, String.Format( "Found data file {0}", dataFile.Name ) ) );
+                    feedback( this, new ProgressChangedEventArgs( this.FilesFound, String.Format( "Found data file {0}", dataFile.FileName ) ) );
                 }
 
-                //if ( !this.KNBFiles.Contains( dataFile ) ) {
-                this.KNBFiles.Add( dataFile );
+                if ( !this.KNBFiles.Contains( dataFile ) ) {
+                    this.KNBFiles.Add( dataFile );
 
-                //}
+                }
             }
 
             //TODO text, xml, csv, html, etc...
@@ -63,9 +68,15 @@ namespace Librainian.Knowledge {
             return 0;
         }
 
-        public void DoRandomEntry( ActionBlock<Sentence> action ) {
-            Tasks.Spawn( ( () => {
-                if ( null == action ) {
+        public async Task DoRandomEntryAsync( ActionBlock<Sentence> action, CancellationToken cancellationToken ) {
+
+            if ( null == action ) {
+                return;
+            }
+
+            await Task.Run( () => {
+
+                if ( cancellationToken.IsCancellationRequested ) {
                     return;
                 }
 
@@ -75,32 +86,39 @@ namespace Librainian.Knowledge {
                     return;
                 }
 
-                //pick random line
-                var line = File.ReadLines( file.FullName ).Where( s => !String.IsNullOrWhiteSpace( s ) ).Where( s => Char.IsLetter( s[ 0 ] ) ).OrderBy( o => Randem.Next() ).FirstOrDefault();
-
-                //TODO new ActionBlock<Action>( action: action => {
-                //Threads.AIBrain().Input( line );
-                if ( !String.IsNullOrEmpty( line ) ) {
-                    action.TryPost( new Sentence( line ) );
+                if ( cancellationToken.IsCancellationRequested ) {
+                    return;
                 }
-            } ) );
+
+                try {
+                    //pick random line
+                    var line = File.ReadLines( file.FullPathWithFileName ).Where( s => !String.IsNullOrWhiteSpace( s ) ).Where( s => Char.IsLetter( s[ 0 ] ) ).OrderBy( o => Randem.Next() ).FirstOrDefault();
+
+                    //TODO new ActionBlock<Action>( action: action => {
+                    //Threads.AIBrain().Input( line );
+                    if ( !String.IsNullOrEmpty( line ) ) {
+                        action.TryPost( new Sentence( line ) );
+                    }
+                }
+                catch ( Exception exception ) {
+                    exception.Error();
+                }
+            }, cancellationToken );
         }
 
-        public void Initialize() {
-            Seconds.One.Then( () => {
+        public async Task Initialize() {
+            await Seconds.One.Then( () => {
                 Report.Enter();
                 var cancellationToken = new CancellationToken();
 
-                IEnumerable<String> fileSearchPatterns = new[] { "*.knb" };
-                Action<FileInfo> onFindFile = file => this.AddFile( dataFile: file );
-                new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.CommonDocuments ) ).FindFiles( fileSearchPatterns: fileSearchPatterns, cancellationToken: cancellationToken, onFindFile: onFindFile, onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+                new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.CommonDocuments ) )
+                .FindFiles( fileSearchPatterns: new[] { "*.knb" }, cancellationToken: cancellationToken, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
 
-                IEnumerable<String> fileSearchPatterns1 = new[] { "*.knb" };
-                Action<FileInfo> onFindFile1 = file => this.AddFile( dataFile: file );
-                new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ) ).FindFiles( fileSearchPatterns: fileSearchPatterns1, cancellationToken: cancellationToken, onFindFile: onFindFile1, onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+                new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ) )
+                .FindFiles( fileSearchPatterns: new[] { "*.knb" }, cancellationToken: cancellationToken, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
 
                 if ( !this.KNBFiles.Any() ) {
-                    IOExtensions.SearchAllDrives( fileSearchPatterns: new[] { "*.knb" }, onFindFile: file => this.AddFile( dataFile: file ), cancellationToken: new CancellationToken() );
+                    IOExtensions.SearchAllDrives( fileSearchPatterns: new[] { "*.knb" }, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), cancellationToken: new CancellationToken() );
                 }
                 Report.Exit();
             } );

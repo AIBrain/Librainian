@@ -65,7 +65,7 @@ namespace Librainian.IO {
         public static readonly List<char> InvalidPathChars = new List<char>( Path.GetInvalidPathChars() );
 
         /// <summary>
-        ///     <para>The extension of the <see cref="FileName" />, including the ".".</para>
+        ///     <para>The extension of the <see cref="FileName" />, including the prefix ".".</para>
         /// </summary>
         [NotNull]
         public readonly String Extension;
@@ -76,6 +76,17 @@ namespace Librainian.IO {
         /// <seealso cref="Path.GetFileNameWithoutExtension" />
         [NotNull]
         public readonly String FileName;
+
+        /// <summary>
+        ///     <para>Just the file's name, including the extension.</para>
+        /// </summary>
+        /// <seealso cref="Path.GetFileNameWithoutExtension" />
+        [NotNull]
+        public String Name {
+            get {
+                return this.FileName;
+            }
+        }
 
         /// <summary>
         ///     <para>The <see cref="Folder" /> this <see cref="Document" /> is stored.</para>
@@ -93,7 +104,7 @@ namespace Librainian.IO {
         public readonly String OriginalPathWithFileName;
 
         [NotNull]
-        protected readonly FileInfo FileInfo;
+        public readonly FileInfo FileInfo;
 
         static Document() {
             InvalidPathChars.Fix();
@@ -134,8 +145,8 @@ namespace Librainian.IO {
             }
             this.Folder = new Folder( directoryName );
 
-            this.FileName = Path.GetFileName( fullPathWithFilename );
-            this.Extension = Path.GetExtension( fullPathWithFilename );
+            this.FileName = Path.GetFileName( fullPathWithFilename ).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
+            this.Extension = Path.GetExtension( fullPathWithFilename ).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
 
             this.FullPathWithFileName = Path.Combine( this.Folder.FullName, this.FileName );
         }
@@ -469,7 +480,7 @@ namespace Librainian.IO {
             this.FileInfo.Refresh();
         }
 
-        public Boolean DemandPermission( FileIOPermissionAccess access  ) {
+        public Boolean DemandPermission( FileIOPermissionAccess access ) {
             try {
                 var bob = new FileIOPermission( access: access, path: this.FullPathWithFileName );
                 bob.Demand();
