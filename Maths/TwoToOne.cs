@@ -24,7 +24,7 @@ namespace Librainian.Maths {
     using System.Runtime.InteropServices;
 
     /// <summary>
-    ///     Method for combining two <see cref="int" /> into a <see cref="ulong" /> as easily as possible.
+    ///     Method for combining two <see cref="Int32" /> into a <see cref="UInt64" /> as easily as possible.
     /// </summary>
     [StructLayout( LayoutKind.Explicit )]
     public struct TwoToOne {

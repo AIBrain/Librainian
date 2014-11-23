@@ -17,15 +17,20 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Line.cs" was last cleaned by Rick on 2014/11/16 at 3:45 PM
+// "Librainian/Line.cs" was last cleaned by Rick on 2014/11/22 at 8:19 PM
 
 #endregion License & Information
 
 namespace Librainian.Graphics.Imaging {
 
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
+    using System.Threading.Tasks;
     using Annotations;
 
     /// <summary>
@@ -34,7 +39,32 @@ namespace Librainian.Graphics.Imaging {
     [DataContract]
     [Serializable]
     [StructLayout( LayoutKind.Explicit )]
-    public class Line {
+    public class Line : IEquatable<Line>, IEnumerable<Pixel>, IEqualityComparer<Line> {
+
+        /// <summary>
+        /// Construct a <see cref="Line"/> from an array of <see cref="Pixel"/>.
+        /// </summary>
+        /// <param name="pixels"></param>
+        public Line( [NotNull] Pixel[] pixels ) {
+            if ( pixels == null ) {
+                throw new ArgumentNullException( "pixels" );
+            }
+            this.Pixels = pixels.ToArray();
+            this.Count = ( UInt64 )this.Pixels.LongLength;
+            this.Checksum = CalculateChecksumAsync( Pixels ).Result;
+        }
+
+        public static async Task<UInt64> CalculateChecksumAsync( IEnumerable<Pixel> pixels ) {
+            return await Task.Run( () => {
+                var checksum = UInt64.MinValue;
+                foreach ( var pixel in pixels ) {
+                    unchecked {
+                        checksum = ( checksum + ( UInt64 )pixel.GetHashCode() ) / 2;
+                    }
+                }
+                return checksum;
+            } );
+        }
 
         /// <summary>
         ///     Checksum of the pixels (to guard against corruption).
@@ -57,29 +87,110 @@ namespace Librainian.Graphics.Imaging {
         /// <remarks>I'd prefer a list instead of an array.</remarks>
         [DataMember]
         [FieldOffset( sizeof( UInt64 ) * 2 )]
-        [CanBeNull]
+        [NotNull]
         public Pixel[] Pixels;
 
         /// <summary>
-        /// Returns the zero-based <see cref="Pixel"/> or null if not found.
+        ///     Returns the zero-based <see cref="Pixel" /> or null if not found.
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
         public Pixel? this[ UInt64 index ] {
             get {
                 var pixels = this.Pixels;
-                if ( index <= this.Count && pixels != null ) {
+                if ( index <= this.Count ) {
                     return pixels[ index ];
                 }
                 return null;
             }
             set {
                 var pixels = this.Pixels;
-                if ( value.HasValue && pixels != null && index <= Count ) {
+                if ( value.HasValue && index <= Count ) {
                     pixels[ index ] = value.Value;
                 }
             }
         }
 
+        /// <summary>
+        ///     Static comparison type.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equal( [CanBeNull] Line left, [CanBeNull] Line right ) {
+            if ( left == null || right == null ) {
+                return false;
+            }
+
+            if ( left.Checksum != right.Checksum ) {
+                return false;
+            }
+            if ( left.Count != right.Count ) {
+                return false;
+            }
+            return left.Pixels.SequenceEqual( right.Pixels );
+        }
+
+        /// <summary>
+        ///     Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <returns>
+        ///     true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public bool Equals( Line other ) {
+            return Equal( this, other );
+        }
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
+        /// </returns>
+        public IEnumerator<Pixel> GetEnumerator() {
+            //return ((IEnumerable<MyType>)myArray).GetEnumerator()
+            return this.Pixels.AsEnumerable().GetEnumerator();
+            //foreach ( var pixel in this.Pixels ) {
+            //    yield return pixel;
+            //}
+        }
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
+        /// </returns>
+        IEnumerator IEnumerable.GetEnumerator() {
+            return GetEnumerator();
+        }
+
+        /// <summary>
+        ///     Determines whether the specified objects are equal.
+        /// </summary>
+        /// <returns>
+        ///     true if the specified objects are equal; otherwise, false.
+        /// </returns>
+        /// <param name="x">The first object of type <paramref name="T" /> to compare.</param>
+        /// <param name="y">The second object of type <paramref name="T" /> to compare.</param>
+        public bool Equals( Line x, Line y ) {
+            return Equal( x, y );
+        }
+
+        /// <summary>
+        ///     Returns a hash code for the specified object.
+        /// </summary>
+        /// <returns>
+        ///     A hash code for the specified object.
+        /// </returns>
+        /// <param name="obj">The <see cref="T:System.Object" /> for which a hash code is to be returned.</param>
+        /// <exception cref="T:System.ArgumentNullException">
+        ///     The type of <paramref name="obj" /> is a reference type and
+        ///     <paramref name="obj" /> is null.
+        /// </exception>
+        public int GetHashCode( Line obj ) {
+            return this.Pixels.GetHashCode(); //HACK todo, this needs testing!
+        }
     }
 }

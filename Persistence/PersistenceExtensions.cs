@@ -1006,7 +1006,11 @@ namespace Librainian.Persistence {
 
                 var fileName = String.Format( "{0}.xml", backThen );     //let the time change the file name over time
 
-                var writer = File.AppendText( fileName );
+                var document = new Document( folder, fileName );
+
+                var writer = File.AppendText( document.FullPathWithFileName );
+
+                var fileCount = UInt64.MinValue + 1;
 
                 foreach ( var pair in dictionary ) {
 
@@ -1030,7 +1034,9 @@ namespace Librainian.Persistence {
                             writer.Close();
                         }
                         fileName = String.Format( "{0}.xml", hereNow );     //let the file name change over time so we don't have bigHuge monolithic files.
-                        writer = File.AppendText( fileName );
+                        document = new Document( folder, fileName );
+                        writer = File.AppendText( document.FullPathWithFileName );
+                        fileCount++;
                         backThen = DateTime.UtcNow.ToGuid();
                     }
 
@@ -1043,7 +1049,7 @@ namespace Librainian.Persistence {
                 }
 
                 stopwatch.Stop();
-                Report.Info( String.Format( "Serialized {1} items in {0}.", stopwatch.Elapsed.Simpler(), itemCount ) );
+                Report.Info( String.Format( "Serialized {1} items in {0} into {2} files.", stopwatch.Elapsed.Simpler(), itemCount, fileCount ) );
 
                 return true;
             }

@@ -613,6 +613,7 @@ namespace Librainian.Maths {
         /// <param name="objectA"></param>
         /// <param name="objectB"></param>
         /// <returns></returns>
+        [Pure]
         public static Int32 GetHashMerge<TLhs, TRhs>( this TLhs objectA, TRhs objectB ) {
             if ( Equals( objectA, default( TLhs ) ) ) {
                 return 0;

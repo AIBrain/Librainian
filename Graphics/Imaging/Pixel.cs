@@ -27,6 +27,7 @@ namespace Librainian.Graphics.Imaging {
     using System.Drawing;
     using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
+    using Maths;
 
     /// <summary>
     ///     A simple pixel with <see cref="Red" />, <see cref="Green" />, and <see cref="Blue" /> values.
@@ -34,7 +35,7 @@ namespace Librainian.Graphics.Imaging {
     [DataContract]
     [Serializable]
     [StructLayout( LayoutKind.Explicit )]
-    public struct Pixel {
+    public struct Pixel : IEquatable<Pixel> {
 
         [DataMember]
         [FieldOffset( 0 )]
@@ -65,6 +66,44 @@ namespace Librainian.Graphics.Imaging {
 
         public static implicit operator Color( Pixel pixel ) {
             return Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
+        }
+
+        public static explicit operator Byte[]( Pixel pixel ) {
+            return new[] { pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue };
+        }
+
+        /// <summary>
+        /// Static comparison type.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equal( Pixel left, Pixel right ) {
+            return left.Alpha == right.Alpha
+                && left.Red == right.Red
+                && left.Green == right.Green
+                && left.Blue == right.Blue;
+        }
+
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <returns>
+        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public bool Equals( Pixel other ) {
+            return Equal( this, other );
+        }
+
+        /// <summary>
+        /// Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A 32-bit signed integer that is the hash code for this instance.
+        /// </returns>
+        public override int GetHashCode() {
+            return this.Green.GetHashMerge( this.Blue.GetHashMerge( this.Red.GetHashMerge( this.Alpha ) ) );
         }
     }
 }
