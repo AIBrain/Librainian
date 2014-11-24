@@ -164,6 +164,11 @@ namespace Librainian.Threading {
             return work;
         }
 
+        /// <summary>
+        /// memoize?
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static String[] GetNames<T>() {
             var key = typeof( T );
             String[] values;
