@@ -17,7 +17,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Line.cs" was last cleaned by Rick on 2014/11/22 at 8:19 PM
+// "Librainian/Line.cs" was last cleaned by Rick on 2014/11/22 at 8:55 PM
 
 #endregion License & Information
 
@@ -26,7 +26,6 @@ namespace Librainian.Graphics.Imaging {
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Drawing;
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
@@ -42,7 +41,7 @@ namespace Librainian.Graphics.Imaging {
     public class Line : IEquatable<Line>, IEnumerable<Pixel>, IEqualityComparer<Line> {
 
         /// <summary>
-        /// Construct a <see cref="Line"/> from an array of <see cref="Pixel"/>.
+        ///     Construct a <see cref="Line" /> from an array of <see cref="Pixel" />.
         /// </summary>
         /// <param name="pixels"></param>
         public Line( [NotNull] Pixel[] pixels ) {
@@ -78,7 +77,7 @@ namespace Librainian.Graphics.Imaging {
         ///     How many pixels should be in this line?
         /// </summary>
         [DataMember]
-        [FieldOffset( sizeof( UInt64 ) )]
+        [FieldOffset( sizeof( UInt64 ) * 1 )]
         public UInt64 Count;
 
         /// <summary>

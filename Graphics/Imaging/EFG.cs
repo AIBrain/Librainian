@@ -22,7 +22,6 @@
 namespace Librainian.Graphics.Imaging {
     using System;
     using System.Collections.Concurrent;
-    using System.Drawing;
     using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
@@ -32,13 +31,14 @@ namespace Librainian.Graphics.Imaging {
     /// </summary>
     /// <remarks>
     /// Just for fun & learning.
-    /// Prefer compression over speed (assuming local cpu will be 'faster' than network transfer speed).
+    /// Prefer compression over [decoding/display] speed (assuming local cpu will be 'faster' than network transfer speed).
     /// Compressions must be lossless.
     /// Allow 'pages' of animation, each with their own delay. Default should be page 0 = 0 delay.
     /// Checksums are used on each line of each page to guard against (detect but not fix) corruption.
     /// </remarks>
     [DataContract]
     [Serializable]
+    //[StructLayout( LayoutKind.Explicit )]
     public class EFG {
 
         /// <summary>
@@ -47,6 +47,7 @@ namespace Librainian.Graphics.Imaging {
         public static readonly String Header = "EFG1";
         public static readonly String Extension = ".efg";
 
+/*
         /// <summary>
         /// only here for reference
         /// </summary>
@@ -55,6 +56,7 @@ namespace Librainian.Graphics.Imaging {
             get;
             set;
         }
+*/
 
         /// <summary>
         /// Checksum of all pages
