@@ -673,6 +673,11 @@ namespace Librainian.Maths {
             return TimeSpan.FromTicks( timeSpan.Ticks.Twice() );
         }
 
+        [Pure]
+        public static TimeSpan Thrice( this TimeSpan timeSpan ) {
+            return TimeSpan.FromTicks( timeSpan.Ticks.Thrice() );
+        }
+
 
         public static Int32 Half( this Int32 number ) {
             return ( Int32 )( number / 2.0f );
@@ -1834,6 +1839,10 @@ namespace Librainian.Maths {
 
         public static long Twice( this long number ) {
             return number * 2L;
+        }
+
+        public static long Thrice( this long number ) {
+            return number * 3L;
         }
 
         /// <summary>

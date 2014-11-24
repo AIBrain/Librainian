@@ -272,6 +272,17 @@ namespace Librainian.Collections {
             return this.TryAdd( item );
         }
 
+       // public T this[ int index ] {
+       //     get { return this._dictionary.ElementAt( index ).Key; }
+       //     set {
+       //         var key = this._dictionary.ElementAt( index ).Key;
+       //         T result;
+       //         this._dictionary.TryGetValue( key, out result );
+       //         return true;
+       //     }
+       //}
+
+
         public void Clear() {
             this._dictionary.Clear();
         }
