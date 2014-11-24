@@ -186,6 +186,9 @@ namespace Librainian.IO {
         /// <seealso cref="Delete"></seealso>
         public Boolean Create() {
             try {
+                if ( this.Exists() ) {
+                    return true;
+                }
                 this.DirectoryInfo.Create();
                 return this.Exists();
             }

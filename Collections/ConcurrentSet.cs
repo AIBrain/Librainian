@@ -17,7 +17,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Class1.cs" was last cleaned by Rick on 2014/09/20 at 5:40 AM
+// "Librainian/ConcurrentSet.cs" was last cleaned by Rick on 2014/11/24 at 11:53 AM
 
 #endregion License & Information
 
@@ -28,16 +28,18 @@ namespace Librainian.Collections {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.Serialization;
 
     /// <summary>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <seealso cref="http://stackoverflow.com/questions/4306936/how-to-implement-concurrenthashset-in-net" />
+    [CollectionDataContract]
     public class ConcurrentSet<T> : ISet<T> {
 
         /// <summary>
-        /// 
         /// </summary>
+        [DataMember]
         private readonly ConcurrentDictionary<T, object> _dictionary = new ConcurrentDictionary<T, object>();
 
         public ConcurrentSet() {
@@ -272,16 +274,15 @@ namespace Librainian.Collections {
             return this.TryAdd( item );
         }
 
-       // public T this[ int index ] {
-       //     get { return this._dictionary.ElementAt( index ).Key; }
-       //     set {
-       //         var key = this._dictionary.ElementAt( index ).Key;
-       //         T result;
-       //         this._dictionary.TryGetValue( key, out result );
-       //         return true;
-       //     }
-       //}
-
+        // public T this[ int index ] {
+        //     get { return this._dictionary.ElementAt( index ).Key; }
+        //     set {
+        //         var key = this._dictionary.ElementAt( index ).Key;
+        //         T result;
+        //         this._dictionary.TryGetValue( key, out result );
+        //         return true;
+        //     }
+        //}
 
         public void Clear() {
             this._dictionary.Clear();

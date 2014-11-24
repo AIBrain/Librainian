@@ -256,6 +256,10 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="text"></param>
         public void AppendText( String text ) {
+            if ( !this.Folder.Create() ) {
+                throw new DirectoryNotFoundException( this.FullPathWithFileName );
+            }
+
             if ( this.Exists() ) {
                 using ( var writer = File.AppendText( this.FullPathWithFileName ) ) {
                     writer.WriteLine( text );
