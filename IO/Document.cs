@@ -33,6 +33,7 @@ namespace Librainian.IO {
     using System.Runtime.Serialization;
     using System.Security;
     using System.Security.Permissions;
+    using System.Threading.Tasks;
     using Annotations;
     using Collections;
     using Extensions;
@@ -179,6 +180,14 @@ namespace Librainian.IO {
             get {
                 return this.FullPathWithFileName;
             }
+        }
+
+        /// <summary>
+        /// Reads the entire file into a <see cref="String"/>.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<String> ReadTextAsync() {
+            return await Task.Run( () => Exists() ? File.ReadAllText( this.FullPathWithFileName ) : String.Empty );
         }
 
         /// <summary>

@@ -31,10 +31,6 @@ namespace Librainian.Persistence {
     using Properties;
     using Threading;
 
-
-    /// <summary>
-    ///     atm, I love this class.
-    /// </summary>
     public class PersistableSettings  {
         public void Initialize() {
             Report.Enter();
@@ -124,7 +120,7 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     ask user for folder/network path where to store AIBrain
+        ///     ask user for folder/network path where to store
         /// </summary>
         [UsedImplicitly]
         public void AskUserForStorageFolder() {

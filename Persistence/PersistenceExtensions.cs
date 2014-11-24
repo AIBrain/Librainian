@@ -961,6 +961,66 @@ namespace Librainian.Persistence {
             return !FileCanBeRead( isf: isf, fileName: fileName );
         }
 
+        public static Boolean DeserializeDictionary<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> toDictionary, Folder folder, [CanBeNull] IProgress<Single> progress = null, String extension = ".xml" )
+        where TKey : IComparable<TKey> {
+
+            try {
+                Report.Enter();
+                var stopwatch = Stopwatch.StartNew();
+
+                if ( null == toDictionary ) {
+                    return false;
+                }
+                if ( null == folder ) {
+                    return false;
+                }
+                if ( !folder.Exists() ) {
+                    return false;
+                }
+
+                var fileCount = UInt64.MinValue ;
+                var before = toDictionary.LongCount();
+
+                //enumerate all the files with the wildcard *.extension
+                var documents = folder.GetDocuments( String.Format( "*{0}", extension ), SearchOption.TopDirectoryOnly );
+
+                foreach ( var document in documents ) {
+                    try {
+                        fileCount ++;
+                        var lines = File.ReadLines( document.FullPathWithFileName ).AsParallel();
+                        lines.ForAll( line => {
+                            try {
+                                var tuple = line.Deserialize<Tuple<TKey, TValue>>();
+                                if ( tuple != null ) {
+                                    toDictionary[ tuple.Item1 ] = tuple.Item2;
+                                }
+                            }
+                            catch ( Exception lineexception ) {
+                                lineexception.Error();
+                            }
+                        } );
+                    }
+                    catch ( Exception exception ) {
+                        exception.Error();
+                    }
+                }
+
+                var after = toDictionary.LongCount();
+
+                stopwatch.Stop();
+                Report.Info( String.Format( "Deserialized {0} items from {1} files in {2}.", after - before, fileCount, stopwatch.Elapsed.Simpler() ) );
+
+                return true;
+            }
+            catch ( Exception exception ) {
+                exception.Error();
+            }
+            finally {
+                Report.Exit();
+            }
+            return false;
+        }
+
         /// <summary>
         /// <para>Persist the <paramref name="dictionary"/> into <paramref name="folder"/>.</para>
         /// </summary>
@@ -969,9 +1029,10 @@ namespace Librainian.Persistence {
         /// <param name="dictionary"></param>
         /// <param name="folder"></param>
         /// <param name="progress"></param>
+        /// <param name="extension"></param>
         /// <returns></returns>
-        public static Boolean SerializeDictionary<TKey, TValue>( [ CanBeNull ] this ConcurrentDictionary<TKey, TValue> dictionary, [ CanBeNull ] Folder folder, [ CanBeNull ] IProgress<Single> progress = null )
-            where TKey : IComparable<TKey> {
+        public static Boolean SerializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> dictionary, [CanBeNull] Folder folder, [CanBeNull] IProgress<Single> progress = null, String extension = ".xml" )
+       where TKey : IComparable<TKey> {
 
             if ( null == dictionary ) {
                 return false;
@@ -1004,7 +1065,7 @@ namespace Librainian.Persistence {
 
                 var backThen = DateTime.UtcNow.ToGuid();
 
-                var fileName = String.Format( "{0}.xml", backThen );     //let the time change the file name over time
+                var fileName = String.Format( "{0}{1}", backThen, extension );     //let the time change the file name over time
 
                 var document = new Document( folder, fileName );
 
