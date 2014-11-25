@@ -63,8 +63,7 @@ namespace Librainian.IO {
         [NotNull]
         public readonly Uri Uri;
 
-        [NotNull]
-        protected readonly DirectoryInfo DirectoryInfo;
+        [NotNull] public readonly DirectoryInfo DirectoryInfo;
 
         /// <summary>
         /// </summary>

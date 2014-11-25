@@ -961,11 +961,11 @@ namespace Librainian.Persistence {
             return !FileCanBeRead( isf: isf, fileName: fileName );
         }
 
-        public static Boolean DeserializeDictionary<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> toDictionary, Folder folder, [CanBeNull] IProgress<Single> progress = null, String extension = ".xml" )
+        public static Boolean DeserializeDictionary<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> toDictionary, Folder folder, String calledWhat, [CanBeNull] IProgress<Single> progress = null, String extension = ".xml" )
         where TKey : IComparable<TKey> {
 
             try {
-                Report.Enter();
+                //Report.Enter();
                 var stopwatch = Stopwatch.StartNew();
 
                 if ( null == toDictionary ) {
@@ -978,15 +978,22 @@ namespace Librainian.Persistence {
                     return false;
                 }
 
-                var fileCount = UInt64.MinValue ;
+                var fileCount = UInt64.MinValue;
                 var before = toDictionary.LongCount();
 
                 //enumerate all the files with the wildcard *.extension
                 var documents = folder.GetDocuments( String.Format( "*{0}", extension ), SearchOption.TopDirectoryOnly );
 
                 foreach ( var document in documents ) {
+
+                    var length = document.GetLength();
+                    if ( length != null && length.Value < 1 ) {
+                        document.Delete();
+                        continue;
+                    }
+
                     try {
-                        fileCount ++;
+                        fileCount++;
                         var lines = File.ReadLines( document.FullPathWithFileName ).AsParallel();
                         lines.ForAll( line => {
                             try {
@@ -1008,16 +1015,16 @@ namespace Librainian.Persistence {
                 var after = toDictionary.LongCount();
 
                 stopwatch.Stop();
-                Report.Info( String.Format( "Deserialized {0} items from {1} files in {2}.", after - before, fileCount, stopwatch.Elapsed.Simpler() ) );
+                Report.Info( String.Format( "Deserialized {0} {3} from {1} files in {2}.", after - before, fileCount, stopwatch.Elapsed.Simpler(), calledWhat ) );
 
                 return true;
             }
             catch ( Exception exception ) {
                 exception.Error();
             }
-            finally {
-                Report.Exit();
-            }
+            //finally {
+            //    //Report.Exit();
+            //}
             return false;
         }
 
@@ -1028,10 +1035,11 @@ namespace Librainian.Persistence {
         /// <typeparam name="TValue"></typeparam>
         /// <param name="dictionary"></param>
         /// <param name="folder"></param>
+        /// <param name="calledWhat"></param>
         /// <param name="progress"></param>
         /// <param name="extension"></param>
         /// <returns></returns>
-        public static Boolean SerializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> dictionary, [CanBeNull] Folder folder, [CanBeNull] IProgress<Single> progress = null, String extension = ".xml" )
+        public static Boolean SerializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> dictionary, [CanBeNull] Folder folder, String calledWhat, [CanBeNull] IProgress<Single> progress = null, String extension = ".xml" )
        where TKey : IComparable<TKey> {
 
             if ( null == dictionary ) {
@@ -1046,7 +1054,7 @@ namespace Librainian.Persistence {
 
             try {
 
-                Report.Enter();
+                //Report.Enter();
                 var stopwatch = Stopwatch.StartNew();
 
                 if ( !folder.Exists() ) {
@@ -1059,7 +1067,7 @@ namespace Librainian.Persistence {
 
                 var itemCount = ( UInt64 )dictionary.LongCount();
 
-                Report.Info( String.Format( "Serializing {1} items to {0} ...", folder.FullName, itemCount ) );
+                Report.Info( String.Format( "Serializing {1} {2} to {0} ...", folder.FullName, itemCount, calledWhat ) );
 
                 var currentLine = 0f;
 
@@ -1110,16 +1118,16 @@ namespace Librainian.Persistence {
                 }
 
                 stopwatch.Stop();
-                Report.Info( String.Format( "Serialized {1} items in {0} into {2} files.", stopwatch.Elapsed.Simpler(), itemCount, fileCount ) );
+                Report.Info( String.Format( "Serialized {1} {3} in {0} into {2} files.", stopwatch.Elapsed.Simpler(), itemCount, fileCount, calledWhat ) );
 
                 return true;
             }
             catch ( Exception exception ) {
                 exception.Error();
             }
-            finally {
-                Report.Exit();
-            }
+            //finally {
+            //    //Report.Exit();
+            //}
             return false;
         }
 

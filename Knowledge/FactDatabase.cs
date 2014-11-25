@@ -106,22 +106,22 @@ namespace Librainian.Knowledge {
             }, cancellationToken );
         }
 
-        public async Task Initialize() {
-            await Seconds.One.Then( () => {
-                Report.Enter();
-                var cancellationToken = new CancellationToken();
+        public void SearchForFactFiles( CancellationToken cancellationToken ) {
+            Report.Enter();
 
-                new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.CommonDocuments ) )
-                .FindFiles( fileSearchPatterns: new[] { "*.knb" }, cancellationToken: cancellationToken, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+            var searchPatterns = new[] { "*.knb" };
 
-                new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ) )
-                .FindFiles( fileSearchPatterns: new[] { "*.knb" }, cancellationToken: cancellationToken, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+            var folder = new Folder( Environment.SpecialFolder.CommonDocuments );
 
-                if ( !this.KNBFiles.Any() ) {
-                    IOExtensions.SearchAllDrives( fileSearchPatterns: new[] { "*.knb" }, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), cancellationToken: new CancellationToken() );
-                }
-                Report.Exit();
-            } );
+            folder.DirectoryInfo.FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+
+            folder = new Folder( Environment.SpecialFolder.MyDocuments );
+            folder.DirectoryInfo.FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+
+            if ( !this.KNBFiles.Any() ) {
+                searchPatterns.SearchAllDrives( onFindFile: file => this.AddFile( dataFile: new Document( file ) ), cancellationToken: new CancellationToken() );
+            }
+            Report.Exit();
         }
 
     }

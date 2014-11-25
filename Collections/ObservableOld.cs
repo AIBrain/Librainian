@@ -28,15 +28,15 @@ namespace Librainian.Collections {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <seealso cref="http://stackoverflow.com/a/3700580/956364"></seealso>
-    public class Observable<T> : IObservable<T>, INotifyPropertyChanged {
+    public class ObservableOld<T> : IObservable<T>, INotifyPropertyChanged {
         private readonly BehaviorSubject<T> _values;
 
         private PropertyChangedEventHandler _propertyChanged;
 
-        public Observable() : this( default( T ) ) {
+        public ObservableOld() : this( default( T ) ) {
         }
 
-        public Observable( T initalValue ) {
+        public ObservableOld( T initalValue ) {
             this._values = new BehaviorSubject<T>( initalValue );
 
             this._values.DistinctUntilChanged().Subscribe( this.FirePropertyChanged );
@@ -61,7 +61,7 @@ namespace Librainian.Collections {
             }
         }
 
-        public static implicit operator T( Observable<T> input ) {
+        public static implicit operator T( ObservableOld<T> input ) {
             return input.Value;
         }
 

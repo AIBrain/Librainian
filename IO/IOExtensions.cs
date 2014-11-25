@@ -1017,7 +1017,7 @@ namespace Librainian.IO {
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
-        public static void SearchAllDrives( [NotNull] IEnumerable<String> fileSearchPatterns, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+        public static void SearchAllDrives( [NotNull] this IEnumerable<String> fileSearchPatterns, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( "fileSearchPatterns" );
             }
