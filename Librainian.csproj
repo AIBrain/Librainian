@@ -70,6 +70,12 @@
     <Reference Include="CsQuery">
       <HintPath>..\Universal\packages\CsQuery.1.3.4\lib\net40\CsQuery.dll</HintPath>
     </Reference>
+    <Reference Include="Dapper">
+      <HintPath>..\AIBrain\packages\Dapper.1.38\lib\net45\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Dapper.Fluent">
+      <HintPath>..\AIBrain\packages\Dapper.Fluent.1.0.0.0\lib\net40\Dapper.Fluent.dll</HintPath>
+    </Reference>
     <Reference Include="Esent.Collections, Version=1.9.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\CexBot\packages\Microsoft.Database.Collections.Generic.1.9.2.0\lib\net40\Esent.Collections.dll</HintPath>

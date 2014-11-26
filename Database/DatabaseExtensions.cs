@@ -21,14 +21,10 @@ namespace Librainian.Database {
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Diagnostics;
     using System.Dynamic;
     using System.Linq.Expressions;
     using System.Media;
-    using System.Net.NetworkInformation;
     using System.Reflection;
-    using System.Threading;
-    using Measurement.Time;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
@@ -61,7 +57,7 @@ namespace Librainian.Database {
                     var newRow = t.NewRow();
                     //    try {
                     //        var ival = propInfo.GetValue( item );
-                    newRow[ propInfo.Name ] = DBNull.Value; //ival ?? 
+                    newRow[ propInfo.Name ] = item; // DBNull.Value; //ival ?? 
                     //    }
                     //    catch ( Exception exception) {
                     //        Debug.WriteLine( exception.Message );
@@ -132,6 +128,7 @@ namespace Librainian.Database {
         }
 
 
+/*
         /// <summary>
         ///     Returns the total time taken for a simple query. (connect + execute + fetch...)
         /// </summary>
@@ -164,6 +161,7 @@ namespace Librainian.Database {
             //Generic.Report( String.Format( "Database ping actual: {0}.", stopwatch.Elapsed.Simple() ) );
             return stopwatch.Elapsed;
         }
+*/
 
         public static void TryPlayFile( this String fileName ) {
             try {
