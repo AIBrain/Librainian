@@ -14,64 +14,60 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/SQLQuery.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/SQLQuery.cs" was last cleaned by Rick on 2014/11/26 at 1:08 PM
 #endregion
 
 namespace Librainian.Database {
     using System;
-    using System.Collections.Concurrent;
     using System.Data;
     using System.Data.SqlClient;
     using System.Diagnostics;
-    using System.Linq;
+    using System.Net.NetworkInformation;
+    using System.Threading;
     using System.Threading.Tasks;
-    using System.Web.Caching;
     using Annotations;
-    using FluentAssertions;
     using Measurement.Time;
     using Threading;
 
-    [Obsolete( "No access to a local server atm." )]
     public sealed class SQLQuery : IDisposable {
-        //[Obsolete( "No access to a local server atm." )]
-        //private static readonly String SQLConnectionString = new SqlConnectionStringBuilder {
-        //    ApplicationIntent = ApplicationIntent.ReadWrite,
-        //    ApplicationName = Parameters.EngineName,
-        //    AsynchronousProcessing = true,
-        //    ConnectTimeout = ( int )Parameters.Databases.Timeout.TotalSeconds,
-        //    DataSource = Parameters.Databases.MainServer.Server,
-        //    Pooling = true,
-        //    MaxPoolSize = 1024,
-        //    MinPoolSize = 10,
-        //    InitialCatalog = Parameters.EngineName,
-        //    MultipleActiveResultSets = true,
-        //    NetworkLibrary = Parameters.Databases.MainServer.Library,
-        //    UserID = Parameters.Databases.MainServer.UserName,
-        //    Password = Parameters.Databases.MainServer.Password
-        //}.ConnectionString;
-
-        public static readonly ConcurrentDictionary< String, TimeSpan > QueryAverages = new ConcurrentDictionary< String, TimeSpan >();
-
-        public readonly Cache Cache = new Cache(); //TODO
-
-        public readonly SqlCommand Command = new SqlCommand();
-
-        public readonly SqlConnection Connection = new SqlConnection();
-
-        internal readonly String Server;
-        internal String Library;
-
-        internal String Password;
-
+        public static ThreadLocal<SQLQuery> Queries = new ThreadLocal<SQLQuery>( () => new SQLQuery( "dbmssocn", "127.0.0.1", "Anonymous", "Anonymous" ) );
         internal Stopwatch SinceOpened = Stopwatch.StartNew();
+        /*
+                private static readonly String SQLConnectionString = new SqlConnectionStringBuilder {
+                    ApplicationIntent = ApplicationIntent.ReadWrite,
+                    ApplicationName = Application.ProductName,
+                    AsynchronousProcessing = true,
+                    ConnectTimeout = ( int )Parameters.Databases.Timeout.TotalSeconds,
+                    DataSource = Parameters.Databases.MainServer.Server,
+                    Pooling = true,
+                    MaxPoolSize = 1024,
+                    MinPoolSize = 10,
+                    InitialCatalog = Parameters.EngineName,
+                    MultipleActiveResultSets = true,
+                    NetworkLibrary = Parameters.Databases.MainServer.Library,
+                    UserID = Parameters.Databases.MainServer.UserName,
+                    Password = Parameters.Databases.MainServer.Password
+                }.ConnectionString;
+        */
 
-        internal String UserName;
+        //public static readonly ConcurrentDictionary< String, TimeSpan > QueryAverages = new ConcurrentDictionary< String, TimeSpan >();
+
+        //public readonly Cache Cache = new Cache(); //TODO
+
+        //public readonly SqlCommand Command = new SqlCommand();
+
+        public SqlConnection Connection = new SqlConnection();
+        internal readonly String Library;
+        internal readonly String Password;
+        internal readonly String Server;
+        internal readonly String UserName;
 
         /// <summary>
         ///     Create a database object to MainServer
         /// </summary>
-        [Obsolete( "No access to a local server atm." )]
-        public SQLQuery( [NotNull] String library, [NotNull] String server, [NotNull] String username, [NotNull] String password, [NotNull] String sproc ) {
+        public SQLQuery( [NotNull] String library, [NotNull] String server, [NotNull] String username, [NotNull] String password ) {
             if ( library == null ) {
                 throw new ArgumentNullException( "library" );
             }
@@ -84,43 +80,26 @@ namespace Librainian.Database {
             if ( password == null ) {
                 throw new ArgumentNullException( "password" );
             }
-            if ( sproc == null ) {
-                throw new ArgumentNullException( "sproc" );
-            }
             this.Library = library;
             this.Server = server;
             this.UserName = username;
             this.Password = password;
-            this.Command.CommandType = CommandType.StoredProcedure;
-
-            //this.Command.CommandTimeout = (Minute.One).;
-
-            //Utilities.IO.ExtensionMethods.
-
-            this.Cache.Should().NotBeNull();
+            //this.Command.CommandType = CommandType.StoredProcedure;
+            //this.Command.CommandTimeout = ( int ) Seconds.Thirty.Value;
         }
 
-        /// <summary>
-        ///     The parameter collection for this database connection
-        /// </summary>
-        public SqlParameterCollection Params {
-            get {
-                this.Command.Should().NotBeNull();
-                return this.Command.Parameters;
-            }
-        }
-
-        [ CanBeNull ]
-        private Task ExecuteNonQueryAsyncTask { get; set; }
+        ///// <summary>
+        /////     The parameter collection for this database connection
+        ///// </summary>
+        //public SqlParameterCollection Params {
+        //    get {
+        //        this.Command.Should().NotBeNull();
+        //        return this.Command.Parameters;
+        //    }
+        //}
 
         public void Dispose() {
-            if ( null != this.ExecuteNonQueryAsyncTask ) {
-                return;
-            }
             try {
-                if ( null != this.Command ) {
-                    this.Command.Dispose();
-                }
             }
             catch ( InvalidOperationException exception ) {
                 exception.Error();
@@ -128,73 +107,67 @@ namespace Librainian.Database {
 
             try {
                 if ( null != this.Connection ) {
-                    this.Connection.Dispose();
+                    using ( Connection ) {
+                        if ( Connection.State != ConnectionState.Closed ) {
+                            Connection.Close();
+                        }
+                    }
                 }
             }
             catch ( InvalidOperationException exception ) {
                 exception.Error();
             }
+            this.Connection = null;
         }
 
-        public void NonQuery( String sproc ) {
-            TryAgain:
-            try {
-                var stopwatch = Stopwatch.StartNew();
-                if ( this.Open() ) {
-                    this.Command.CommandText = sproc;
-                    this.Command.ExecuteNonQuery();
-                }
-                QueryAverages.AddOrUpdate( key: sproc, addValue: stopwatch.Elapsed, updateValueFactory: ( s, span ) => new Milliseconds( (Decimal ) ( QueryAverages[ sproc ].Add( stopwatch.Elapsed ).TotalMilliseconds/2.0 ) ) );
-                foreach ( var pair in QueryAverages.Where( pair => pair.Value >= Seconds.One ) ) {
-                    String.Format( "[{0}] average time is {1}", pair.Key, pair.Value.Simpler() ).TimeDebug();
-                    TimeSpan value;
-                    QueryAverages.TryRemove( pair.Key, out value );
-                }
+        /*
+                public void NonQuery( String cmdText ) {
+                TryAgain:
+                    try {
+                        //var stopwatch = Stopwatch.StartNew();
+                        if ( this.GetConnection() ) {
+                            var command = new SqlCommand( cmdText );
+                            command.ExecuteNonQuery();
+                        }
+                        //QueryAverages.AddOrUpdate( key: sproc, addValue: stopwatch.Elapsed, updateValueFactory: ( s, span ) => new Milliseconds( (Decimal ) ( QueryAverages[ sproc ].Add( stopwatch.Elapsed ).TotalMilliseconds/2.0 ) ) );
+                        //foreach ( var pair in QueryAverages.Where( pair => pair.Value >= Seconds.One ) ) {
+                        //    String.Format( "[{0}] average time is {1}", pair.Key, pair.Value.Simpler() ).TimeDebug();
+                        //    TimeSpan value;
+                        //    QueryAverages.TryRemove( pair.Key, out value );
+                        //}
 
-                //if ( sproc.Contains( "Blink" ) ) { Generic.Report( String.Format( "Blink time average is {0}", QueryAverages[sproc].Simple() ) ); }
-            }
-            catch ( Exception exception ) {
-                var lower = exception.Message.ToLower();
-
-                if ( lower.Contains( "deadlocked" ) ) {
-                    "deadlock.wav".TryPlayFile();
-                    goto TryAgain;
-                }
-                if ( lower.Contains( "transport-level error" ) ) {
-                    "lostconnection.wav".TryPlayFile();
-                    goto TryAgain;
-                }
-                if ( lower.Contains( "timeout" ) ) {
-                    "timeout.wav".TryPlayFile();
-                    goto TryAgain;
-                }
-                throw;
-            }
-        }
-
-        public async Task NonQueryAsync( String sproc ) {
-            TryAgain:
-            try {
-                if ( this.Open() ) {
-                    if ( null != this.ExecuteNonQueryAsyncTask ) {
-                        await this.ExecuteNonQueryAsyncTask;
-                        this.ExecuteNonQueryAsyncTask = null;
+                        //if ( sproc.Contains( "Blink" ) ) { Generic.Report( String.Format( "Blink time average is {0}", QueryAverages[sproc].Simple() ) ); }
                     }
+                    catch ( Exception exception ) {
+                        var lower = exception.Message.ToLower();
 
-                    this.Command.CommandText = sproc;
-                    this.ExecuteNonQueryAsyncTask = this.Command.ExecuteNonQueryAsync();
-
-                    //this.ExecuteNonQueryAsyncTask.ContinueWith( task => {
-                    //    var command = this.Command;
-                    //    if ( command != null ) {
-                    //        command.Dispose();
-                    //    }
-                    //    var connection = this.Connection;
-                    //    if ( connection != null ) {
-                    //        connection.Dispose();
-                    //    }
-                    //}, TaskContinuationOptions.ExecuteSynchronously );
+                        if ( lower.Contains( "deadlocked" ) ) {
+                            "deadlock.wav".TryPlayFile();
+                            goto TryAgain;
+                        }
+                        if ( lower.Contains( "transport-level error" ) ) {
+                            "lostconnection.wav".TryPlayFile();
+                            goto TryAgain;
+                        }
+                        if ( lower.Contains( "timeout" ) ) {
+                            "timeout.wav".TryPlayFile();
+                            goto TryAgain;
+                        }
+                        throw;
+                    }
                 }
+        */
+
+        public async Task QueryWithNoResultAsync( String query, CommandType commandType ,params SqlParameter[] parameters ) {
+        TryAgain:
+            try {
+                var command = new SqlCommand( query, GetConnection() ) {
+                                                                           CommandType = commandType
+                                                                       };
+                if ( null != parameters ) {
+                    command.Parameters.AddRange( parameters );
+                }
+                await command.ExecuteNonQueryAsync();
             }
             catch ( Exception exception ) {
                 var lower = exception.Message.ToLower();
@@ -215,14 +188,87 @@ namespace Librainian.Database {
             }
         }
 
-        [ CanBeNull ]
+        public static DataTable Convert( SqlDataReader dataReader ) {
+            var table = new DataTable();
+            table.BeginLoadData();
+            table.Load( dataReader, LoadOption.OverwriteChanges );
+            table.EndLoadData();
+            return table;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public async Task<SqlDataReader> QueryWithResultAsync( String query, CommandType commandType, params SqlParameter[] parameters ) {
+        TryAgain:
+            try {
+                var command = new SqlCommand( query, GetConnection() ) {
+                    CommandType = commandType
+                };
+                if ( null != parameters ) {
+                    command.Parameters.AddRange( parameters );
+                }
+                return await command.ExecuteReaderAsync();
+            }
+            catch ( Exception exception ) {
+                var lower = exception.Message.ToLower();
+
+                if ( lower.Contains( "deadlocked" ) ) {
+                    "deadlock.wav".TryPlayFile();
+                    goto TryAgain;
+                }
+                if ( lower.Contains( "transport-level error" ) ) {
+                    "lostconnection.wav".TryPlayFile();
+                    goto TryAgain;
+                }
+                if ( lower.Contains( "timeout" ) ) {
+                    "timeout.wav".TryPlayFile();
+                    goto TryAgain;
+                }
+                throw;
+            }
+        }
+
+        public async Task<Object> QueryFunctionAsync( String query, CommandType commandType, params SqlParameter[] parameters ) {
+        TryAgain:
+            try {
+                var command = new SqlCommand( query, GetConnection() ) {
+                    CommandType = commandType
+                };
+                if ( null != parameters ) {
+                    command.Parameters.AddRange( parameters );
+                }
+                return await command.ExecuteScalarAsync();
+            }
+            catch ( Exception exception ) {
+                var lower = exception.Message.ToLower();
+
+                if ( lower.Contains( "deadlocked" ) ) {
+                    "deadlock.wav".TryPlayFile();
+                    goto TryAgain;
+                }
+                if ( lower.Contains( "transport-level error" ) ) {
+                    "lostconnection.wav".TryPlayFile();
+                    goto TryAgain;
+                }
+                if ( lower.Contains( "timeout" ) ) {
+                    "timeout.wav".TryPlayFile();
+                    goto TryAgain;
+                }
+                throw;
+            }
+        }
+
+        [CanBeNull]
         public DataTableReader Query( String sproc ) {
-            TryAgain:
+        TryAgain:
             try {
                 var stopwatch = Stopwatch.StartNew();
 
-                if ( this.Open() ) {
-                    this.Command.CommandType = System.Data.coma
+                if ( this.GetConnection() ) {
                     this.Command.CommandText = sproc;
 
                     var table = new DataTable();
@@ -232,7 +278,7 @@ namespace Librainian.Database {
                     }
                     table.EndLoadData();
 
-                    QueryAverages.AddOrUpdate( key: sproc, addValue: stopwatch.Elapsed, updateValueFactory: ( s, span ) => new Milliseconds( (Decimal ) ( QueryAverages[ sproc ].Add( stopwatch.Elapsed ).TotalMilliseconds/2.0 ) ) );
+                    QueryAverages.AddOrUpdate( key: sproc, addValue: stopwatch.Elapsed, updateValueFactory: ( s, span ) => new Milliseconds( ( Decimal )( QueryAverages[ sproc ].Add( stopwatch.Elapsed ).TotalMilliseconds / 2.0 ) ) );
 
                     return table.CreateDataReader();
                 }
@@ -257,31 +303,56 @@ namespace Librainian.Database {
             return null;
         }
 
-        internal Boolean Open( TimeSpan? timeout = null ) {
-            TryAgain:
+        [CanBeNull]
+        public SqlConnection GetConnection() {
+            var retries = 10;
+        TryAgain:
             try {
                 if ( String.IsNullOrWhiteSpace( this.Connection.ConnectionString ) ) {
                     //this.Connection.ConnectionString = SQLConnectionString;
                     this.Connection.InfoMessage += ( sender, sqlInfoMessageEventArgs ) => String.Format( "[{0}] {1}", this.Server, sqlInfoMessageEventArgs.Message ).TimeDebug();
                 }
 
-                if ( this.SinceOpened.Elapsed > timeout ) {
-                    if ( this.Connection.State == ConnectionState.Open ) {
-                        this.Connection.Close();
-                    }
+                //if ( this.SinceOpened.Elapsed > timeout && this.Connection.State == ConnectionState.Open ) {
+                //    this.Connection.Close();
+                //}
+
+                switch ( this.Connection.State ) {
+                    case ConnectionState.Open:
+                        break;
+                    case ConnectionState.Executing:
+                        break;
+                    case ConnectionState.Fetching:
+                        break;
+                    case ConnectionState.Closed:
+                        this.Connection.Open();
+                        this.SinceOpened = Stopwatch.StartNew();
+                        --retries;
+                        if ( retries > 0 ) {
+                            goto TryAgain;
+                        }
+                        break;
+                    case ConnectionState.Connecting:
+                        while ( this.Connection.State == ConnectionState.Connecting ) {
+                            Task.Delay( Milliseconds.TwoHundredEleven ).Wait();
+                        }
+                        return GetConnection();
+                    case ConnectionState.Broken:
+                        this.Connection.Open();
+                        this.SinceOpened = Stopwatch.StartNew();
+                        --retries;
+                        if ( retries > 0 ) {
+                            goto TryAgain;
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
 
-                if ( this.Connection.State == ConnectionState.Closed ) {
-                    this.Connection.Open();
-                    this.SinceOpened = Stopwatch.StartNew();
-                }
-                if ( null == this.Command.Connection ) {
-                    this.Command.Connection = this.Connection;
-                }
-                return true;
+                return this.Connection;
             }
             catch ( SqlException exception ) {
-                if ( !DatabaseExtensions.IsNetworkConnected() ) {
+                if ( !IsNetworkConnected() ) {
                     Task.Delay( Seconds.One ).Wait();
                     goto TryAgain;
                 }
@@ -290,78 +361,17 @@ namespace Librainian.Database {
             catch ( InvalidOperationException exception ) {
                 exception.Error();
             }
-            return false;
+            return null;
         }
 
-        //public async Task<SqlDataReader> QueryAsync( String sproc ) {
-        //TryAgain:
-        //    try {
-        //        if ( null != SqlDataReadTask ) {
-        //            await SqlDataReadTask;
-        //        }
-
-        //        if ( this.Open() ) {
-        //            this.Command.CommandText = sproc;
-        //            this.SqlDataReadTask = this.Command.ExecuteReaderAsync();
-        //            return await this.SqlDataReadTask;
-        //        }
-        //    }
-        //    catch ( Exception exception ) {
-        //        var lower = exception.Message.ToLower();
-        //        if ( lower.Contains( "deadlocked" ) ) {
-        //            SQLDatabaseExtensions.PlayFile( "deadlock.wav" );
-        //            goto TryAgain;
-        //        }
-        //        if ( lower.Contains( "transport-level error" ) ) {
-        //            SQLDatabaseExtensions.PlayFile( "lostconnection.wav" );
-        //            goto TryAgain;
-        //        }
-        //        if ( lower.Contains( "timeout" ) ) {
-        //            SQLDatabaseExtensions.PlayFile( "timeout.wav" );
-        //            goto TryAgain;
-        //        }
-        //        exception.Error();
-        //        throw;
-        //    }
-        //    return null;
-        //}
-
-        //protected Task< SqlDataReader > SqlDataReadTask { get; set; }
-        /*
-                [Obsolete]
-                public void PushNonQuery( String sproc ) {
-                    TryAgain:
-                    try {
-                        if ( this.Open() ) {
-
-                            //Generic.Report( String.Format( "{0}", Thread.CurrentThread.ManagedThreadId ) );
-                            this.Command.CommandText = sproc;
-                            this.Command.BeginExecuteNonQuery( ar => {
-
-                                                                   //Generic.Report( String.Format( "{0}", Thread.CurrentThread.ManagedThreadId ) );
-                                                                   this.Command.EndExecuteNonQuery( ar );
-                                                               },
-                                                               null );
-                        }
-                    }
-                    catch ( Exception exception ) {
-                        var lower = exception.Message.ToLower();
-
-                        if ( lower.Contains( "deadlocked" ) ) {
-                            SQLDatabaseExtensions.PlayFile( "deadlock.wav" );
-                            goto TryAgain;
-                        }
-                        if ( lower.Contains( "transport-level error" ) ) {
-                            SQLDatabaseExtensions.PlayFile( "lostconnection.wav" );
-                            goto TryAgain;
-                        }
-                        if ( lower.Contains( "timeout" ) ) {
-                            SQLDatabaseExtensions.PlayFile( "timeout.wav" );
-                            goto TryAgain;
-                        }
-                        throw;
-                    }
-                }
-        */
+        public static Boolean IsNetworkConnected( int retries = 3 ) {
+            var counter = retries;
+            while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
+                --counter;
+                String.Format( "Network disconnected. Waiting {0}. {1} retries...", Seconds.One, counter ).TimeDebug();
+                Thread.Sleep( 1000 );
+            }
+            return NetworkInterface.GetIsNetworkAvailable();
+        }
     }
 }

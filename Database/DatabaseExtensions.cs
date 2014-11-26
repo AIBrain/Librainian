@@ -165,16 +165,6 @@ namespace Librainian.Database {
             return stopwatch.Elapsed;
         }
 
-        public static Boolean IsNetworkConnected( int retries = 3 ) {
-            var counter = retries;
-            while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
-                --counter;
-                Debug.WriteLine( "Network disconnected. Waiting {0}. {1} retries...", Seconds.One, counter );
-                Thread.Sleep( 1000 );
-            }
-            return NetworkInterface.GetIsNetworkAvailable();
-        }
-
         public static void TryPlayFile( this String fileName ) {
             try {
                 using ( var player = new SoundPlayer() ) {
