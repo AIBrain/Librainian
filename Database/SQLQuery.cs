@@ -52,7 +52,7 @@ namespace Librainian.Database {
 
         public static readonly ConcurrentDictionary< String, TimeSpan > QueryAverages = new ConcurrentDictionary< String, TimeSpan >();
 
-        public readonly Cache Cash = new Cache(); //TODO
+        public readonly Cache Cache = new Cache(); //TODO
 
         public readonly SqlCommand Command = new SqlCommand();
 
@@ -97,7 +97,7 @@ namespace Librainian.Database {
 
             //Utilities.IO.ExtensionMethods.
 
-            this.Cash.Should().NotBeNull();
+            this.Cache.Should().NotBeNull();
         }
 
         /// <summary>
@@ -110,6 +110,7 @@ namespace Librainian.Database {
             }
         }
 
+        [ CanBeNull ]
         private Task ExecuteNonQueryAsyncTask { get; set; }
 
         public void Dispose() {
@@ -171,13 +172,13 @@ namespace Librainian.Database {
             }
         }
 
-        [Obsolete]
-        public async void NonQueryAsync( String sproc ) {
+        public async Task NonQueryAsync( String sproc ) {
             TryAgain:
             try {
                 if ( this.Open() ) {
                     if ( null != this.ExecuteNonQueryAsyncTask ) {
                         await this.ExecuteNonQueryAsyncTask;
+                        this.ExecuteNonQueryAsyncTask = null;
                     }
 
                     this.Command.CommandText = sproc;
@@ -214,12 +215,14 @@ namespace Librainian.Database {
             }
         }
 
+        [ CanBeNull ]
         public DataTableReader Query( String sproc ) {
             TryAgain:
             try {
                 var stopwatch = Stopwatch.StartNew();
 
                 if ( this.Open() ) {
+                    this.Command.CommandType = System.Data.coma
                     this.Command.CommandText = sproc;
 
                     var table = new DataTable();

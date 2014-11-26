@@ -74,7 +74,7 @@ namespace Librainian.Database {
         public static readonly ConcurrentDictionary<String, Document> LogPointers = new ConcurrentDictionary<String, Document>();
 
         static LocalDB() {
-            var name = "Properties";
+            const string name = "Properties";
             var instance = GetInstance( name );
 
             var mdf = new Document( Path.Combine( PersistenceExtensions.DataFolder.Value.FullName, String.Format( "{0}.mdf", name ) ) );
