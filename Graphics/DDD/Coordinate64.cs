@@ -21,6 +21,7 @@
 
 namespace Librainian.Graphics.DDD {
     using System;
+    using System.Data.Linq.Mapping;
     using System.Drawing;
     using System.Runtime.Serialization;
     using Annotations;
@@ -42,31 +43,25 @@ namespace Librainian.Graphics.DDD {
 
         public static readonly Coordinate64 Center = new Coordinate64( x: 0, y: 0, z: 0 );
 
-        public static Coordinate64 Random() {
-            return new Coordinate64( x: Randem.NextInt64(), y: Randem.NextInt64(), z: Randem.NextInt64() );
-        }
-
+        [Column]
         [DataMember]
         [OptionalField]
         public readonly Int64 Length;
 
+        [Column]
         [DataMember]
         [OptionalField]
         public readonly Int64 X;
 
+        [Column]
         [DataMember]
         [OptionalField]
         public readonly Int64 Y;
 
+        [Column]
         [DataMember]
         [OptionalField]
         public readonly Int64 Z;
-
-        ///// <summary>
-        /////   Initialize with a random point.
-        ///// </summary>
-        //public Coordinate() : this( x: Randem.NextInt64(), y: Randem.NextInt64(), z: Randem.NextInt64() ) { }
-
 
         /// <summary>
         /// </summary>
@@ -80,6 +75,71 @@ namespace Librainian.Graphics.DDD {
             this.Length = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
         }
 
+        /// <summary>
+        ///     Calculates the distance between two <see cref="Coordinate64" />.
+        /// </summary>
+        public static UInt64 Distance( Coordinate64 lhs, Coordinate64 rhs ) {
+            if ( lhs == null ) {
+                throw new ArgumentNullException( "lhs" );
+            }
+            if ( rhs == null ) {
+                throw new ArgumentNullException( "rhs" );
+            }
+            var num1 = lhs.X - rhs.X;
+            var num2 = lhs.Y - rhs.Y;
+            var num3 = lhs.Z - rhs.Z;
+            return ( UInt64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
+        }
+
+        /// <summary>
+        ///     static comparison.
+        /// </summary>
+        /// <param name="lhs"> </param>
+        /// <param name="rhs"> </param>
+        /// <returns> </returns>
+        public static Boolean Equals( Coordinate64 lhs, Coordinate64 rhs ) {
+            return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
+        }
+
+        public static implicit operator Point( Coordinate64 coordinate ) {
+            return new Point( x: ( int )coordinate.X, y: ( int )coordinate.Y );
+        }
+
+        public static implicit operator PointF( Coordinate64 coordinate ) {
+            return new PointF( coordinate.X, coordinate.Y );
+        }
+
+        /// <summary>
+        ///     <para>Returns a new Coordinate as a unit <see cref="Coordinate64" />.</para>
+        ///     <para>The result is a Coordinate one unit in length pointing in the same direction as the original Coordinate.</para>
+        /// </summary>
+        public static Coordinate64 Normalize( Coordinate64 coordinate ) {
+            if ( coordinate == null ) {
+                throw new ArgumentNullException( "coordinate" );
+            }
+            var num = 1.0D / coordinate.Length;
+            return new Coordinate64( ( Int64 )( coordinate.X * num ), ( Int64 )( coordinate.Y * num ), ( Int64 )( coordinate.Z * num ) );
+        }
+
+        public static Coordinate64 operator -( Coordinate64 v1, Coordinate64 v2 ) {
+            return new Coordinate64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
+        }
+
+        public static Boolean operator !=( Coordinate64 lhs, Coordinate64 rhs ) {
+            return !Equals( lhs: lhs, rhs: rhs );
+        }
+
+        public static Boolean operator ==( Coordinate64 lhs, Coordinate64 rhs ) {
+            return Equals( lhs: lhs, rhs: rhs );
+        }
+
+        public static Coordinate64 Random() {
+            return new Coordinate64( x: Randem.NextInt64(), y: Randem.NextInt64(), z: Randem.NextInt64() );
+        }
+        ///// <summary>
+        /////   Initialize with a random point.
+        ///// </summary>
+        //public Coordinate() : this( x: Randem.NextInt64(), y: Randem.NextInt64(), z: Randem.NextInt64() ) { }
         /// <summary>
         ///     Compares the current <see cref="Coordinate64" /> with another <see cref="Coordinate64" />.
         /// </summary>
@@ -104,6 +164,19 @@ namespace Librainian.Graphics.DDD {
         }
 
         /// <summary>
+        ///     Calculates the distance between this <see cref="Coordinate64" /> and another <see cref="Coordinate64" />.
+        /// </summary>
+        public UInt64 Distance( Coordinate64 rhs ) {
+            if ( rhs == null ) {
+                throw new ArgumentNullException( "rhs" );
+            }
+            var num1 = this.X - rhs.X;
+            var num2 = this.Y - rhs.Y;
+            var num3 = this.Z - rhs.Z;
+            return ( UInt64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
+        }
+
+        /// <summary>
         ///     Calls the static comparison.
         /// </summary>
         /// <param name="other"></param>
@@ -111,43 +184,11 @@ namespace Librainian.Graphics.DDD {
         public Boolean Equals( Coordinate64 other ) {
             return Equals( this, other );
         }
-
-        /// <summary>
-        ///     static comparison.
-        /// </summary>
-        /// <param name="lhs"> </param>
-        /// <param name="rhs"> </param>
-        /// <returns> </returns>
-        public static Boolean Equals( Coordinate64 lhs, Coordinate64 rhs ) {
-            return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
-        }
-
-        /// <summary>
-        ///     <para>Returns a new Coordinate as a unit <see cref="Coordinate64" />.</para>
-        ///     <para>The result is a Coordinate one unit in length pointing in the same direction as the original Coordinate.</para>
-        /// </summary>
-        public static Coordinate64 Normalize( Coordinate64 coordinate ) {
-            if ( coordinate == null ) {
-                throw new ArgumentNullException( "coordinate" );
+        public override Boolean Equals( object obj ) {
+            if ( ReferenceEquals( null, obj ) ) {
+                return false;
             }
-            var num = 1.0D / coordinate.Length;
-            return new Coordinate64( ( Int64 )( coordinate.X * num ), ( Int64 )( coordinate.Y * num ), ( Int64 )( coordinate.Z * num ) );
-        }
-
-        /// <summary>
-        ///     Calculates the distance between two <see cref="Coordinate64" />.
-        /// </summary>
-        public static UInt64 Distance( Coordinate64 lhs, Coordinate64 rhs ) {
-            if ( lhs == null ) {
-                throw new ArgumentNullException( "lhs" );
-            }
-            if ( rhs == null ) {
-                throw new ArgumentNullException( "rhs" );
-            }
-            var num1 = lhs.X - rhs.X;
-            var num2 = lhs.Y - rhs.Y;
-            var num3 = lhs.Z - rhs.Z;
-            return ( UInt64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
+            return obj is Coordinate64 && Equals( this, ( Coordinate64 )obj );
         }
 
         /// <summary>
@@ -161,46 +202,5 @@ namespace Librainian.Graphics.DDD {
         public override String ToString() {
             return String.Format( "{0}, {1}, {2}", this.X, this.Y, this.Z );
         }
-
-        /// <summary>
-        ///     Calculates the distance between this <see cref="Coordinate64" /> and another <see cref="Coordinate64" />.
-        /// </summary>
-        public UInt64 Distance( Coordinate64 rhs ) {
-            if ( rhs == null ) {
-                throw new ArgumentNullException( "rhs" );
-            }
-            var num1 = this.X - rhs.X;
-            var num2 = this.Y - rhs.Y;
-            var num3 = this.Z - rhs.Z;
-            return ( UInt64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
-        }
-
-        public override Boolean Equals( object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
-                return false;
-            }
-            return obj is Coordinate64 && Equals( this, ( Coordinate64 )obj );
-        }
-
-        public static implicit operator Point( Coordinate64 coordinate ) {
-            return new Point( x: ( int )coordinate.X, y: ( int )coordinate.Y );
-        }
-
-        public static implicit operator PointF( Coordinate64 coordinate ) {
-            return new PointF( coordinate.X, coordinate.Y );
-        }
-
-        public static Coordinate64 operator -( Coordinate64 v1, Coordinate64 v2 ) {
-            return new Coordinate64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
-        }
-
-        public static Boolean operator !=( Coordinate64 lhs, Coordinate64 rhs ) {
-            return !Equals( lhs: lhs, rhs: rhs );
-        }
-
-        public static Boolean operator ==( Coordinate64 lhs, Coordinate64 rhs ) {
-            return Equals( lhs: lhs, rhs: rhs );
-        }
-
     }
 }
