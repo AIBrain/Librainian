@@ -111,7 +111,7 @@ namespace Librainian.Knowledge {
 
             var searchPatterns = new[] { "*.knb" };
 
-            var folder = new Folder( Path.Combine( Path.GetDirectoryName( Application.ExecutablePath), "Library" ));
+            var folder = new Folder( Path.Combine( Path.GetDirectoryName( Application.ExecutablePath) ));
 
             folder.DirectoryInfo.FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
 
