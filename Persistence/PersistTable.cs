@@ -44,7 +44,7 @@ namespace Librainian.Persistence {
     [Serializable]
     public class PersistTable<TKey, TValue> : IPersistTable<TKey, TValue>
         where TKey : IComparable<TKey>, IComparable
-        where TValue : class {
+        {
 
         /// <summary>
         /// </summary>
@@ -204,7 +204,7 @@ namespace Librainian.Persistence {
             get {
                 String storedValue;
                 if ( !this.Dictionary.TryGetValue( key, out storedValue ) ) {
-                    return null;
+                    return default(TValue);
                 }
                 var deSerialized = Value( storedValue );
                 return deSerialized;

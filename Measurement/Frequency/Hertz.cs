@@ -39,7 +39,7 @@ namespace Librainian.Measurement.Frequency {
     public class Hertz {
 
         /// <summary>
-        ///     Ten <see cref="Hertz" />s.
+        ///     Fifteen <see cref="Hertz" />s.
         /// </summary>
         public static readonly Hertz Fifteen = new Hertz( 15 );
 
@@ -165,6 +165,10 @@ namespace Librainian.Measurement.Frequency {
 
         public static implicit operator TimeSpan( Hertz hertz ) {
             return TimeSpan.FromSeconds( ( Double )( 1.0m / hertz.Value ) );
+        }
+
+        public static implicit operator Span( Hertz hertz ) {
+            return new Seconds( 1.0m / hertz.Value );
         }
 
         public static Boolean operator <( Hertz lhs, Hertz rhs ) {

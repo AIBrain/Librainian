@@ -114,21 +114,21 @@ namespace Librainian.Persistence {
         /// <exception cref="FormatException"></exception>
         /// <exception cref="XmlException"></exception>
         [CanBeNull]
-        public static TType Deserialize<TType>( this String storedAsString ) where TType : class {
+        public static TType Deserialize<TType>( this String storedAsString )  {
             try {
                 var byteArray = Encoding.UTF8.GetBytes( storedAsString ); //we can .Base64Encode() if we need.
 
                 using ( var ms = new MemoryStream( byteArray ) ) {
                     ms.Position = 0;
                     var serializer = Serializers.Value;
-                    var deSerialized = serializer.ReadObject( ms ) as TType;
+                    var deSerialized = (TType)serializer.ReadObject( ms );
                     return deSerialized;
                 }
             }
             catch ( SerializationException exception ) {
                 exception.Error();
             }
-            return null;
+            return default(TType);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Librainian.Persistence {
         /// <param name="obj"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static String Serialize<TType>( this TType obj ) where TType : class {
+        public static String Serialize<TType>( this TType obj )  {
             try {
                 using ( var stream = new MemoryStream() ) {
                     var serializer = Serializers.Value;

@@ -7,7 +7,7 @@ namespace Librainian.Persistence {
 
     public interface IPersistTable< TKey, TValue> :  IDictionary<TKey,TValue>, IDisposable
         where TKey : IComparable
-        where TValue : class {
+         {
 
         [NotNull]
         Folder Folder {

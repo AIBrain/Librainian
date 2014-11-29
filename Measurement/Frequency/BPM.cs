@@ -23,11 +23,15 @@ namespace Librainian.Measurement.Frequency {
     using FluentAssertions;
     using Time;
 
+
     /// <summary>
     ///     BPM. Beats Per Minute
     /// </summary>
     [DataContract( IsReference = true )]
     public struct BPM : IComparable< BPM > {
+
+        //TODO BPM and WPM
+
         /// <summary>
         ///     Ten <see cref="BPM" />s.
         /// </summary>
@@ -49,7 +53,7 @@ namespace Librainian.Measurement.Frequency {
         public static readonly BPM Hertz111 = new BPM( 9 );
 
         /// <summary>
-        ///     About 584.9 million years.
+        ///     
         /// </summary>
         public static readonly BPM MaxValue = new BPM( UInt64.MaxValue );
 
