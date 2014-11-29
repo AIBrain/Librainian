@@ -514,7 +514,6 @@
     <Compile Include="Parsing\Base58CheckString.cs" />
     <Compile Include="Parsing\Base58String.cs" />
     <Compile Include="Persistence\DynamicContext.cs" />
-    <Compile Include="Persistence\IPersistTable.cs" />
     <Compile Include="Persistence\PersistableSettings.cs" />
     <Compile Include="Persistence\PersistTable.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

@@ -42,7 +42,7 @@ namespace Librainian.Persistence {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
-    public class PersistTable<TKey, TValue> : IPersistTable<TKey, TValue>
+    public class PersistTable<TKey, TValue> : IDictionary<TKey, TValue>, IDisposable
         where TKey : IComparable<TKey>, IComparable
         {
 
@@ -324,8 +324,13 @@ namespace Librainian.Persistence {
         /// unmanaged resources.
         /// </summary>
         public void Dispose() {
-            this.Dictionary.Dispose();
+            using ( Dictionary ) {
+                this.Dictionary.Dispose();
+            }
+            this.IsDisposed = true;
         }
+
+        public Boolean IsDisposed { get; private set; }
 
         public void Flush() {
             this.Dictionary.Flush();
