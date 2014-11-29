@@ -101,7 +101,12 @@ namespace Librainian.Measurement.Frequency {
         /// <summary>
         ///     Two <see cref="Hertz" />s.
         /// </summary>
-        public static readonly Hertz Two = new Hertz( 2 );
+        public static readonly Hertz Two = new Hertz( 2 ); 
+        
+        /// <summary>
+        ///     Two.Five <see cref="Hertz" />s.
+        /// </summary>
+        public static readonly Hertz TwoPointFive = new Hertz( 2.5 );
 
         /// <summary>
         ///     Two Hundred <see cref="Hertz" />.
