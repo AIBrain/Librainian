@@ -512,7 +512,7 @@ namespace Librainian.IO {
             }
             try {
                 var searchPatterns = fileSearchPatterns as IList<String> ?? fileSearchPatterns.ToList();
-                searchPatterns.AsParallel().WithDegreeOfParallelism( 1 ).ForAll( searchPattern => {
+                searchPatterns.AsParallel().ForAll( searchPattern => {
 #if DEEPDEBUG
                     String.Format( "Searching folder {0} for {1}.", startingFolder.FullName, searchPattern ).TimeDebug();
 #endif
