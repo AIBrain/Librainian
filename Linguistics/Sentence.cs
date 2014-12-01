@@ -74,6 +74,8 @@ namespace Librainian.Linguistics {
             return sentence._tokens.ToStrings( " " );
         }
 
+        public static readonly Sentence EndOfLine = new Sentence( "\0" );
+
         public Boolean Equals( [NotNull] Sentence other ) {
             if ( other == null ) {
                 throw new ArgumentNullException( "other" );

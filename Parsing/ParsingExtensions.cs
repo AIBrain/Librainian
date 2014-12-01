@@ -87,6 +87,8 @@ namespace Librainian.Parsing {
         [ NotNull ] public static readonly Lazy< PluralizationService > LazyPluralizationService = new Lazy< PluralizationService >( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );
         public static readonly String[] OrdinalSuffixes = { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
 
+        public static readonly String ARareString = Alphabet.Base64Encode();
+
         /// <summary>
         ///     this doesn't handle apostrophe well
         /// </summary>
