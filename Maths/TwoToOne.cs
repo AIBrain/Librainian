@@ -58,5 +58,10 @@ namespace Librainian.Maths {
             : this() {
             this.UnsignedValue = unsignedValue;
         }
+
+        public TwoToOne( Int64 signedValue )
+            : this() {
+            this.SignedValue = signedValue;
+        }
     }
 }

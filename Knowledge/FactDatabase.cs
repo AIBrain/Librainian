@@ -106,14 +106,14 @@ namespace Librainian.Knowledge {
             }, cancellationToken );
         }
 
-        public void SearchForFactFiles( CancellationToken cancellationToken ) {
+        public void SearchForFactFiles( SimpleCancel cancellation ) {
             Report.Enter();
 
             var searchPatterns = new[] { "*.knb" };
 
             var folder = new Folder( Path.Combine( Path.GetDirectoryName( Application.ExecutablePath) ));
 
-            folder.DirectoryInfo.FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
+            folder.DirectoryInfo.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
 
 
             //folder = new Folder( Environment.SpecialFolder.CommonDocuments );

@@ -499,11 +499,11 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="startingFolder">The folder to start the search.</param>
         /// <param name="fileSearchPatterns">List of patterns to search for.</param>
-        /// <param name="cancellationToken"></param>
+        /// <param name="cancellation"></param>
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
-        public static void FindFiles( this DirectoryInfo startingFolder, IEnumerable<string> fileSearchPatterns, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+        public static void FindFiles( this DirectoryInfo startingFolder, IEnumerable<string> fileSearchPatterns, SimpleCancel cancellation, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( "fileSearchPatterns" );
             }
@@ -516,7 +516,7 @@ namespace Librainian.IO {
 #if DEEPDEBUG
                     String.Format( "Searching folder {0} for {1}.", startingFolder.FullName, searchPattern ).TimeDebug();
 #endif
-                    if ( cancellationToken.IsCancellationRequested ) {
+                    if ( cancellation.IsCancellationRequested ) {
                         return;
                     }
                     try {
@@ -525,7 +525,7 @@ namespace Librainian.IO {
 #if DEEPDEBUG
                             String.Format( "Found folder {0}.", folder ).TimeDebug();
 #endif
-                            if ( cancellationToken.IsCancellationRequested ) {
+                            if ( cancellation.IsCancellationRequested ) {
                                 return;
                             }
                             try {
@@ -537,13 +537,13 @@ namespace Librainian.IO {
                                 exception.Error();
                             }
                             if ( searchStyle == SearchStyle.FoldersFirst ) {
-                                folder.FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
+                                folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
                             }
 
                             try {
                                 foreach ( var file in folder.EnumerateFiles( searchPattern, SearchOption.TopDirectoryOnly ) ) {
                                     var info = file;
-                                    await Task.Run( () => info.InternalSearchFoundFile( onFindFile, cancellationToken ), cancellationToken );
+                                    await Task.Run( () => info.InternalSearchFoundFile( onFindFile, cancellation ) );
                                 }
 
 #if DEEPDEBUG
@@ -577,7 +577,7 @@ namespace Librainian.IO {
                                 } );
                             }
 
-                            folder.FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
+                            folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
 
                         } );
                     }
@@ -637,9 +637,9 @@ namespace Librainian.IO {
             }
         }
 
-        private static FileInfo InternalSearchFoundFile( this FileInfo info, Action< FileInfo > onFindFile, CancellationToken cancellationToken ) {
+        private static FileInfo InternalSearchFoundFile( this FileInfo info, Action< FileInfo > onFindFile, [ CanBeNull ] SimpleCancel cancellation ) {
             try {
-                if ( !cancellationToken.IsCancellationRequested && onFindFile != null ) {
+                if ( cancellation != null &&  !cancellation.IsCancellationRequested && onFindFile != null  ) {
                     onFindFile( info );
                 }
             }
@@ -1017,7 +1017,7 @@ namespace Librainian.IO {
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
-        public static void SearchAllDrives( [NotNull] this IEnumerable<String> fileSearchPatterns, CancellationToken cancellationToken, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+        public static void SearchAllDrives( [NotNull] this IEnumerable<String> fileSearchPatterns, SimpleCancel cancellation, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( "fileSearchPatterns" );
             }
@@ -1027,7 +1027,7 @@ namespace Librainian.IO {
                         return;
                     }
                     String.Format( "Scanning [{0}]", drive.VolumeLabel ).TimeDebug();
-                    drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellationToken: cancellationToken, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
+                    drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
                 } );
             }
             catch ( UnauthorizedAccessException ) {

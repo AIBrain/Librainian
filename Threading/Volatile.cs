@@ -9,7 +9,7 @@
     ///<summary>
     /// A small toolkit of classes that support lock-free thread-safe programming on single variables and arrays
     ///</summary>
-    /// <seealso cref="http://github.com/disruptor-net/Disruptor-net/blob/master/Atomic/Volatile.cs"/>
+    /// <seealso cref="http://github.com/disruptor-net/Disruptor-net/blob/master/Atomic/Volatile.cs" date="Dec 30, 2011" />
     public static class Volatile {
         ///<summary>
         /// Size of a cache line in bytes
