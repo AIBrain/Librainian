@@ -424,6 +424,7 @@
     <Compile Include="Maths\BigIntegerRange.cs" />
     <Compile Include="Maths\BiggerRational.cs" />
     <Compile Include="Maths\Int64Range.cs" />
+    <Compile Include="Maths\Translate32.cs" />
     <Compile Include="Maths\Translate64.cs" />
     <Compile Include="Maths\UInt256.cs" />
     <Compile Include="Maths\Bits.cs" />
