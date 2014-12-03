@@ -646,7 +646,7 @@ namespace Librainian.Maths {
                 return 0;
             }
             unchecked {
-                var bob = new TwoToOne(objectA.GetHashCode(), objectB.GetHashCode() );
+                var bob = new Translate64(objectA.GetHashCode(), objectB.GetHashCode() );
                 return bob.UnsignedValue;
             }
         }

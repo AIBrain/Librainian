@@ -23,7 +23,6 @@ namespace Librainian.Knowledge {
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
     using System.Windows.Forms;
@@ -68,7 +67,7 @@ namespace Librainian.Knowledge {
             return 0;
         }
 
-        public async Task DoRandomEntryAsync( ActionBlock<Sentence> action, CancellationToken cancellationToken ) {
+        public async Task DoRandomEntryAsync( ActionBlock<Sentence> action, SimpleCancel cancellation ) {
 
             if ( null == action ) {
                 return;
@@ -76,7 +75,7 @@ namespace Librainian.Knowledge {
 
             await Task.Run( () => {
 
-                if ( cancellationToken.IsCancellationRequested ) {
+                if ( cancellation.IsCancellationRequested ) {
                     return;
                 }
 
@@ -86,7 +85,7 @@ namespace Librainian.Knowledge {
                     return;
                 }
 
-                if ( cancellationToken.IsCancellationRequested ) {
+                if ( cancellation.IsCancellationRequested ) {
                     return;
                 }
 
@@ -96,14 +95,14 @@ namespace Librainian.Knowledge {
 
                     //TODO new ActionBlock<Action>( action: action => {
                     //Threads.AIBrain().Input( line );
-                    if ( !String.IsNullOrEmpty( line ) ) {
+                    if ( !String.IsNullOrEmpty( line ) && !cancellation.IsCancellationRequested ) {
                         action.TryPost( new Sentence( line ) );
                     }
                 }
                 catch ( Exception exception ) {
                     exception.Error();
                 }
-            }, cancellationToken );
+            } );
         }
 
         public void SearchForFactFiles( SimpleCancel cancellation ) {

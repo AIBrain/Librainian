@@ -27,39 +27,39 @@ namespace Librainian.Maths {
     ///     Method for combining two <see cref="Int32" /> into a <see cref="UInt64" /> as easily as possible.
     /// </summary>
     [StructLayout( LayoutKind.Explicit )]
-    public struct TwoToOne {
+    public struct Translate64 {
 
         [FieldOffset( 0 )]
-        public UInt64 UnsignedValue;
+        public readonly UInt64 UnsignedValue;
 
         [FieldOffset( 0 )]
-        public Int64 SignedValue;
+        public readonly Int64 SignedValue;
 
         [FieldOffset( 0 )]
-        public Int32 SignedLow;
+        public readonly Int32 SignedLow;
 
         [FieldOffset( 0 )]
-        public UInt32 UnsignedLow;
+        public readonly UInt32 UnsignedLow;
 
         [FieldOffset( sizeof( UInt32 ) )]
-        public UInt32 UnsignedHigh;
+        public readonly UInt32 UnsignedHigh;
 
         [FieldOffset( sizeof( Int32 ) )]
-        public Int32 SignedHigh;
+        public readonly Int32 SignedHigh;
 
-        public TwoToOne( Int32 signedHigh, Int32 signedLow )
+        public Translate64( Int32 signedHigh, Int32 signedLow )
             : this() {
             UnsignedValue = UInt64.MaxValue;
             SignedHigh = signedHigh;
             SignedLow = signedLow;
         }
 
-        public TwoToOne( UInt64 unsignedValue )
+        public Translate64( UInt64 unsignedValue )
             : this() {
             this.UnsignedValue = unsignedValue;
         }
 
-        public TwoToOne( Int64 signedValue )
+        public Translate64( Int64 signedValue )
             : this() {
             this.SignedValue = signedValue;
         }

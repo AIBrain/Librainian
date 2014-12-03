@@ -86,8 +86,8 @@ namespace Librainian.Threading {
         /// </summary>
         /// <returns></returns>
         public DateTime GetOldestCancelRequest() {
-            var twoToOne = new TwoToOne( this._dateOfFirstCancelRequest, this._timeOfFirstCancelRequest );
-            var firstCancelRequest = new DateTime( twoToOne.SignedValue );
+            var translate = new Translate64( this._dateOfFirstCancelRequest, this._timeOfFirstCancelRequest );
+            var firstCancelRequest = new DateTime( translate.SignedValue );
             return firstCancelRequest;
         }
 
@@ -96,8 +96,8 @@ namespace Librainian.Threading {
         /// </summary>
         /// <returns></returns>
         public DateTime GetYoungestCancelRequest() {
-            var twoToOne = new TwoToOne( this._dateOfRecentCancelRequest, this._timeOfRecentCancelRequest );
-            var firstCancelRequest = new DateTime( twoToOne.SignedValue );
+            var translate = new Translate64( this._dateOfRecentCancelRequest, this._timeOfRecentCancelRequest );
+            var firstCancelRequest = new DateTime( translate.SignedValue );
             return firstCancelRequest;
         }
 
@@ -116,7 +116,7 @@ namespace Librainian.Threading {
             ++this._cancelRequestCounter;
 
             var now = DateTime.UtcNow;
-            var twoToOne = new TwoToOne( now.Ticks );
+            var twoToOne = new Translate64( now.Ticks );
 
             if ( this._dateOfFirstCancelRequest < 0 ) {
                 this._dateOfFirstCancelRequest = twoToOne.SignedHigh;
