@@ -100,7 +100,7 @@ namespace Librainian.Maths {
         public BiggerRational( Decimal value ) {
             var bits = Decimal.GetBits( value );
             if ( bits == null || bits.Length != 4 || ( ( bits[ 3 ] & 2130771967 ) != 0 || ( bits[ 3 ] & DecimalScaleMask ) > 1835008 ) ) {
-                throw new ArgumentException( "invalid  System.Decimal", "value" );
+                throw new ArgumentException( "invalid System.Decimal", "value" );
             }
             if ( value == new Decimal( 0 ) ) {
                 this = Zero;

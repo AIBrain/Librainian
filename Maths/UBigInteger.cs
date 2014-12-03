@@ -72,10 +72,10 @@ namespace Librainian.Maths {
             if ( bytes == null ) {
                 throw new ArgumentNullException( "bytes" );
             }
-            var bytesWith00attheendnd = new byte[ bytes.Length + 1 ];
-            bytes.CopyTo( bytesWith00attheendnd, 0 );
-            bytesWith00attheendnd[ bytes.Length ] = 0;
-            this._internalValue = new BigInteger( bytesWith00attheendnd );
+            var bytesWith00Attheendnd = new byte[ bytes.Length + 1 ];
+            bytes.CopyTo( bytesWith00Attheendnd, 0 );
+            bytesWith00Attheendnd[ bytes.Length ] = 0;
+            this._internalValue = new BigInteger( bytesWith00Attheendnd );
 
             this._internalValue.Should().BeGreaterOrEqualTo( 0 );
             if ( this._internalValue < 0 ) {
