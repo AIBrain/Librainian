@@ -24,7 +24,8 @@ namespace Librainian.Threading {
     /// <summary>
     ///     A simple atomic gate
     /// </summary>
-    // TODO unfinished
+    // TODO 2013, unfinished
+    // TODO 2014, what was this class for? lol.
     public sealed class Gate {
         private int _value;
 
