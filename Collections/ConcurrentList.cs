@@ -422,7 +422,10 @@
             }
             catch ( ObjectDisposedException ) {
             }
-            catch ( AggregateException ) {
+            catch ( AggregateException aggregateException) {
+                foreach ( var innerException in aggregateException.InnerExceptions ) {
+                    //TODO what?
+                }
             }
             return false;
         }
@@ -540,7 +543,7 @@
                         return false;
                     }
                     catch ( AggregateException ) {
-                        return false;
+                        return false;   //BUG Is this correct?
                     }
                     return true;
                 }

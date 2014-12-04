@@ -83,8 +83,9 @@ namespace Librainian.Threading {
             //    }
             //}
 
-            String.Format( "Performing {0} timeslice calibration.", Environment.ProcessorCount ).TimeDebug();
-            SliceAverageCache = new Milliseconds( 0.To( Environment.ProcessorCount * Environment.ProcessorCount ).Select( i => GetSlice() ).Average( span => span.TotalMilliseconds ) ) ;
+            var times = ( UInt64 ) Math.Pow( Environment.ProcessorCount, Environment.ProcessorCount );
+            String.Format( "Performing {0} timeslice calibrations.", times).TimeDebug();
+            SliceAverageCache = new Milliseconds( 0.To( times ).Select( i => GetSlice() ).Average( span => span.TotalMilliseconds ) ) ;
             if ( SliceAverageCache < Milliseconds.One ) {
                 SliceAverageCache = Milliseconds.One;
             }
