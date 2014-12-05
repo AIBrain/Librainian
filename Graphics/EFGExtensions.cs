@@ -21,10 +21,10 @@
 
 #endregion License & Information
 
-namespace Librainian.Graphics.Imaging {
-
+namespace Librainian.Graphics {
     using System.Threading;
     using System.Threading.Tasks;
+    using Imaging;
     using IO;
 
     public static class EFGExtensions {

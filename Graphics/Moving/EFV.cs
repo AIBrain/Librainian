@@ -6,25 +6,24 @@
     using System.Threading.Tasks;
 
     /// <summary>
-    ///     Experimental Framed Graphics
+    ///     Experimental Full Video
     /// </summary>
     /// <remarks>
     /// Just for fun & learning.
     /// Prefer compression over [decoding/display] speed (assuming local cpu will be 'faster' than network transfer speed).
     /// Compressions must be lossless.
     /// Allow 'pages' of animation, each with their own delay. Default should be page 0 = 0 delay.
-    /// Checksums are used on each line of each page to guard against (detect but not fix) corruption.
+    /// Checksums are used on each <see cref="Pixelyx"/> to guard against (detect but not fix) corruption.
     /// </remarks>
     [DataContract]
     [Serializable]
-    //[StructLayout( LayoutKind.Explicit )]
-    public class EFG2 {
+    public class EFV {
 
         /// <summary>
         /// Human readable file header.
         /// </summary>
-        public static readonly String Header = "EFG1";      //TODO
-        public static readonly String Extension = ".efg";   //TODO
+        public static readonly String Header = "EFV1";      //TODO
+        public static readonly String Extension = ".efv";   //TODO
 
         /// <summary>
         /// Checksum of all pages
@@ -35,16 +34,11 @@
             set;
         }
 
-        /// <summary>
-        /// EXIF metadatas
-        /// </summary>
+        
         [DataMember]
-        public ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
+        public ConcurrentDictionary<UInt64, Pixelyx> Pixels = new ConcurrentDictionary<UInt64, Pixelyx>();
 
-        [DataMember]
-        public ConcurrentDictionary<UInt64, Frame> Frames = new ConcurrentDictionary<UInt64, Frame>();
-
-        public EFG2() {
+        public EFV() {
             this.Checksum = UInt64.MaxValue;    //an unlikely hash
         }
 
