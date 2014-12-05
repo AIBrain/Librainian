@@ -1,6 +1,5 @@
-namespace Librainian.Graphics.Imaging {
+namespace Librainian.Graphics.Moving {
     using System;
-    using System.Drawing;
     using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
     using Maths;
@@ -13,7 +12,7 @@ namespace Librainian.Graphics.Imaging {
     [DataContract]
     [Serializable]
     [StructLayout( LayoutKind.Sequential )]
-    public struct Pixelyx : IEquatable<Pixelyx> {
+    public class Pixelyx : IEquatable<Pixelyx> {
 
         [DataMember]
         public readonly Int32 Checksum;
@@ -63,7 +62,8 @@ namespace Librainian.Graphics.Imaging {
         //}
 
         /// <summary>
-        /// Static comparison type.
+        /// <para>Static comparison type.</para>
+        /// <para>Compares: Alpha, Red, Green, Blue, X, and Y</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>

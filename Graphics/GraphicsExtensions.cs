@@ -22,12 +22,30 @@
 #endregion License & Information
 
 namespace Librainian.Graphics {
+    using System.IO;
+    using System.Runtime.Serialization.Formatters.Binary;
     using System.Threading;
     using System.Threading.Tasks;
     using Imaging;
     using IO;
+    using Moving;
 
-    public static class EFGExtensions {
+    public static class GraphicsExtensions {
+
+        public static Stream EFVToStream() {
+            var ms = new MemoryStream( );
+        }
+
+        public static async Task<bool> TrySave( this EFV efv, Document document, CancellationToken token ) {
+            return await Task.Run( () => {
+                //TODO recalc the checksums
+                //write out to file
+                // ReSharper disable once ConvertToLambdaExpression
+                                       var bob = new BinaryFormatter();
+                bob.Serialize(
+                return false;
+            }, token );
+        }
 
         public static async Task<bool> TrySave( this EFG efg, Document document, CancellationToken token ) {
             return await Task.Run( () => {
