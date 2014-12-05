@@ -47,8 +47,55 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accord.Controls.Imaging">
+      <HintPath>..\Universal\packages\Accord.Controls.Imaging.2.13.1\lib\net40\Accord.Controls.Imaging.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Controls.Vision">
+      <HintPath>..\Universal\packages\Accord.Controls.Vision.2.13.1\lib\net40\Accord.Controls.Vision.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Imaging">
+      <HintPath>..\Universal\packages\Accord.Imaging.2.13.1\lib\net40\Accord.Imaging.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.IO">
+      <HintPath>..\Universal\packages\Accord.IO.2.13.1\lib\net40\Accord.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.MachineLearning">
+      <HintPath>..\Universal\packages\Accord.MachineLearning.2.13.1\lib\net40\Accord.MachineLearning.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Accord.Math">
+      <HintPath>..\Universal\packages\Accord.Math.2.13.1\lib\net40\Accord.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Neuro">
+      <HintPath>..\Universal\packages\Accord.Neuro.2.13.1\lib\net40\Accord.Neuro.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Statistics">
+      <HintPath>..\Universal\packages\Accord.Statistics.2.13.1\lib\net40\Accord.Statistics.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Vision">
+      <HintPath>..\Universal\packages\Accord.Vision.2.13.1\lib\net40\Accord.Vision.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Controls">
+      <HintPath>..\Universal\packages\AForge.Controls.2.2.5\lib\AForge.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Genetic">
+      <HintPath>..\Universal\packages\AForge.Genetic.2.2.5\lib\AForge.Genetic.dll</HintPath>
+    </Reference>
     <Reference Include="AForge.Math">
       <HintPath>..\UberScraper\packages\AForge.Math.2.2.5\lib\AForge.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Neuro">
+      <HintPath>..\Universal\packages\AForge.Neuro.2.2.5\lib\AForge.Neuro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AForge.Video">
+      <HintPath>..\Universal\packages\AForge.Video.2.2.5\lib\AForge.Video.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video.DirectShow">
+      <HintPath>..\Universal\packages\AForge.Video.DirectShow.2.2.5\lib\AForge.Video.DirectShow.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Vision">
+      <HintPath>..\Universal\packages\AForge.Vision.2.2.5\lib\AForge.Vision.dll</HintPath>
     </Reference>
     <Reference Include="Awesomium.Core, Version=1.7.4.2, Culture=neutral, PublicKeyToken=e1a0d7c8071a5214, processorArchitecture=x86" />
     <Reference Include="Awesomium.Windows.Controls, Version=1.7.4.2, Culture=neutral, PublicKeyToken=7a34e179b8b61c39, processorArchitecture=x86">
