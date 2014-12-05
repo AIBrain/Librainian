@@ -302,10 +302,12 @@
     <Compile Include="Gaming\PlayingCards\FaceValues.cs" />
     <Compile Include="Gaming\PlayingCards\Suites.cs" />
     <Compile Include="Graphics\Imaging\EFG.cs" />
+    <Compile Include="Graphics\Imaging\EFG2.cs" />
     <Compile Include="Graphics\Imaging\EFGExtensions.cs" />
     <Compile Include="Graphics\Imaging\Line.cs" />
     <Compile Include="Graphics\Imaging\Frame.cs" />
     <Compile Include="Graphics\Imaging\Pixel.cs" />
+    <Compile Include="Graphics\Imaging\Pixelyx.cs" />
     <Compile Include="Graphics\Matrix3X3.cs" />
     <Compile Include="Graphics\Matrix3X2.cs" />
     <Compile Include="Graphics\DD\GeometryEx.cs" />
@@ -328,9 +330,10 @@
     <Compile Include="Internet\CaptchaSite.cs" />
     <Compile Include="Internet\CaptchaStatus.cs" />
     <Compile Include="Internet\HTMLExtensions.cs" />
+    <Compile Include="Internet\Servers\WebServer.cs" />
     <Compile Include="Internet\Servers\ILogger.cs" />
     <Compile Include="Internet\Servers\Extensions.cs" />
-    <Compile Include="Internet\Servers\WebServer.cs" />
+    <Compile Include="Internet\Servers\SimpleWebServer.cs" />
     <Compile Include="Internet\Servers\Cookie.cs" />
     <Compile Include="Internet\Servers\Cookies.cs" />
     <Compile Include="Internet\Servers\HttpProcessor.cs" />
