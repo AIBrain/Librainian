@@ -6,7 +6,7 @@ namespace Librainian.Graphics.Imaging {
     using Maths;
 
     /// <summary>
-    /// <para>A pixel (12 bytes!) with <see cref="Red" />, <see cref="Green" />, and <see cref="Blue" /> values, and X/Y coordinates.</para>
+    /// <para>A pixel (14 bytes!) with <see cref="Red" />, <see cref="Green" />, and <see cref="Blue" /> values, and X/Y coordinates.</para>
     /// <para>At one screencap of 1920*1080, that's about ~24883200 (23MB) bytes of data for just one frame.</para>
     /// <para>At 60 fps, that is ~1492992000 bytes of data for motion (1423MB/s)</para>
     /// </summary>
@@ -16,10 +16,10 @@ namespace Librainian.Graphics.Imaging {
     public struct Pixelyx : IEquatable<Pixelyx> {
 
         [DataMember]
-        public readonly UInt32 Checksum;
+        public readonly Int32 Checksum;
 
         [DataMember]
-        public readonly UInt32 Timestamp;
+        public readonly UInt64 Timestamp;
 
         [DataMember]
         public readonly Byte Alpha;
@@ -39,26 +39,28 @@ namespace Librainian.Graphics.Imaging {
         [DataMember]
         public readonly UInt16 Y;
 
-        private Pixelyx( Byte alpha, Byte red, Byte green, Byte blue, UInt16 x, UInt16 y ) {
+        private Pixelyx( Byte alpha, Byte red, Byte green, Byte blue, UInt16 x, UInt16 y, UInt64 timestamp ) {
             this.Alpha = alpha;
             this.Red = red;
             this.Green = green;
             this.Blue = blue;
             this.X = x;
             this.Y = y;
+            this.Timestamp = timestamp;
+            this.Checksum = this.Green.GetHashMerge( this.Blue.GetHashMerge( this.Red.GetHashMerge( this.Alpha.GetHashMerge( this.Timestamp.GetHashMerge( this.X.GetHashMerge( this.Y ) ) ) ) ) );
         }
 
-        public static explicit operator Pixelyx( Color pixel ) {
-            return new Pixelyx( pixel.A, pixel.R, pixel.G, pixel.B, 0, 0 );
-        }
+        //public static explicit operator Pixelyx( Color pixel ) {
+        //    return new Pixelyx( pixel.A, pixel.R, pixel.G, pixel.B, 0, 0, 0 );
+        //}
 
-        public static implicit operator Color( Pixelyx pixel ) {
-            return Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
-        }
+        //public static implicit operator Color( Pixelyx pixel ) {
+        //    return Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
+        //}
 
-        public static explicit operator UInt16[]( Pixelyx pixel ) {
-            return new[] { pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue, pixel.X, pixel.Y };
-        }
+        //public static explicit operator UInt16[]( Pixelyx pixel ) {
+        //    return new[] { pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue, pixel.X, pixel.Y };
+        //}
 
         /// <summary>
         /// Static comparison type.
@@ -94,7 +96,7 @@ namespace Librainian.Graphics.Imaging {
         /// A 32-bit signed integer that is the hash code for this instance.
         /// </returns>
         public override int GetHashCode() {
-            return this.Green.GetHashMerge( this.Blue.GetHashMerge( this.Red.GetHashMerge( this.Alpha.GetHashMerge( this.GetHashMerge( this.X.GetHashMerge( this.Y ) ) ) ) ) );
+            return this.Checksum;
         }
     }
 }
