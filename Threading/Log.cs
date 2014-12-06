@@ -17,11 +17,12 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Report.cs" was last cleaned by Rick on 2014/12/06 at 8:43 AM
+// "Librainian/Log.cs" was last cleaned by Rick on 2014/12/06 at 10:45 AM
 
 #endregion License & Information
 
 namespace Librainian.Threading {
+
     using System;
     using System.Diagnostics;
     using System.Diagnostics.Contracts;
@@ -32,14 +33,18 @@ namespace Librainian.Threading {
     using Parsing;
 
     /// <summary>
-    /// A class to help with exception handling and plain ol' simple time+logging to the Console.
+    ///     A class to help with exception handling and plain ol' simple time+logging to the Console.
     /// </summary>
     public static class Log {
-
         private static readonly ConsoleListenerWithTimePrefix ConsoleListener;
 
         static Log() {
             ConsoleListener = new ConsoleListenerWithTimePrefix();
+        }
+
+        public static Boolean HasConsoleBeenAllocated {
+            get;
+            private set;
         }
 
         public static Boolean Startup() {
@@ -56,7 +61,6 @@ namespace Librainian.Threading {
             return true;
         }
 
-
         public static void Shutdown() {
             if ( HasConsoleBeenAllocated ) {
                 NativeWin32.FreeConsole();
@@ -69,7 +73,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// <para>Write the <paramref name="message"/> out to the console.</para>
+        ///     <para>Write the <paramref name="message" /> out to the console.</para>
         /// </summary>
         /// <param name="message"></param>
         /// <param name="method"></param>
@@ -133,11 +137,6 @@ namespace Librainian.Threading {
             message.AppendFormat( " [Source: {0}]\r\n", sourceFilePath );
             message.AppendFormat( " [Line: {0}]\r\n", sourceLineNumber );
             ConsoleListener.Fail( method, message.ToString() );
-        }
-
-        public static Boolean HasConsoleBeenAllocated {
-            get;
-            private set;
         }
 
         [DebuggerStepThrough]

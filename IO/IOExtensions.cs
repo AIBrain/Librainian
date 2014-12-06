@@ -513,9 +513,9 @@ namespace Librainian.IO {
             try {
                 var searchPatterns = fileSearchPatterns as IList<String> ?? fileSearchPatterns.ToList();
                 searchPatterns.AsParallel().ForAll( searchPattern => {
-#if DEEPDEBUG
-                                                        String.Format( "Searching folder {0} for {1}.", startingFolder.FullName, searchPattern ).WriteLine();
-#endif
+//#if DEEPDEBUG
+                    String.Format( "Searching folder {0} for {1}.", startingFolder.FullName, searchPattern ).WriteLine();
+//#endif
                     if ( cancellation.IsCancellationRequested ) {
                         return;
                     }
@@ -523,7 +523,7 @@ namespace Librainian.IO {
                         var folders = startingFolder.EnumerateDirectories( "*", SearchOption.TopDirectoryOnly );
                         folders.AsParallel().ForAll( async folder => {
 #if DEEPDEBUG
-                                                               String.Format( "Found folder {0}.", folder ).WriteLine();
+                            String.Format( "Found folder {0}.", folder ).WriteLine();
 #endif
                             if ( cancellation.IsCancellationRequested ) {
                                 return;
@@ -637,9 +637,9 @@ namespace Librainian.IO {
             }
         }
 
-        private static FileInfo InternalSearchFoundFile( this FileInfo info, Action< FileInfo > onFindFile, [ CanBeNull ] SimpleCancel cancellation ) {
+        private static FileInfo InternalSearchFoundFile( this FileInfo info, Action<FileInfo> onFindFile, [CanBeNull] SimpleCancel cancellation ) {
             try {
-                if ( cancellation != null &&  !cancellation.IsCancellationRequested && onFindFile != null  ) {
+                if ( cancellation != null && !cancellation.IsCancellationRequested && onFindFile != null ) {
                     onFindFile( info );
                 }
             }
@@ -1013,7 +1013,7 @@ namespace Librainian.IO {
         ///     .
         /// </summary>
         /// <param name="fileSearchPatterns">List of patterns to search for.</param>
-        /// <param name="cancellationToken"></param>
+        /// <param name="cancellation"></param>
         /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
@@ -1026,8 +1026,8 @@ namespace Librainian.IO {
                     if ( !drive.IsReady || drive.DriveType == DriveType.NoRootDirectory || !drive.RootDirectory.Exists ) {
                         return;
                     }
-                                                                                                                                                         String.Format( "Scanning [{0}]", drive.VolumeLabel ).WriteLine();
-                                                                                                                                                         drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
+                    String.Format( "Scanning [{0}]", drive.VolumeLabel ).WriteLine();
+                    drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
                 } );
             }
             catch ( UnauthorizedAccessException ) {
