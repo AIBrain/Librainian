@@ -5,9 +5,9 @@ namespace Librainian.Graphics.Moving {
     using Maths;
 
     /// <summary>
-    /// <para>A pixel (14 bytes!) with <see cref="Red" />, <see cref="Green" />, and <see cref="Blue" /> values, and X/Y coordinates.</para>
+    /// <para>A pixel (14 bytes?) with <see cref="Red" />, <see cref="Green" />, and <see cref="Blue" /> values, and X/Y coordinates.</para>
     /// <para>At one screencap of 1920*1080, that's about ~24883200 (23MB) bytes of data for just one frame.</para>
-    /// <para>At 60 fps, that is ~1492992000 bytes of data for motion (1423MB/s)</para>
+    /// <para>At 60 fps, that is ~1492992000 bytes of data (1423MB/s)</para>
     /// </summary>
     [DataContract]
     [Serializable]

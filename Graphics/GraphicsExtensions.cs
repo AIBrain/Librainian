@@ -34,6 +34,8 @@ namespace Librainian.Graphics {
 
         public static Stream EFVToStream() {
             var ms = new MemoryStream( );
+            //TODO
+            return ms;
         }
 
         public static async Task<bool> TrySave( this EFV efv, Document document, CancellationToken token ) {
@@ -42,7 +44,7 @@ namespace Librainian.Graphics {
                 //write out to file
                 // ReSharper disable once ConvertToLambdaExpression
                                        var bob = new BinaryFormatter();
-                bob.Serialize(
+                //bob.Serialize(
                 return false;
             }, token );
         }
