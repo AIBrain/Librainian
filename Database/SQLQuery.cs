@@ -194,9 +194,7 @@ namespace Librainian.Database {
                 if ( String.IsNullOrWhiteSpace( this.Connection.ConnectionString ) ) {
 
                     //this.Connection.ConnectionString = SQLConnectionString;
-                    this.Connection.InfoMessage += ( sender, sqlInfoMessageEventArgs ) => {
-                                                       String.Format( "[{0}] {1}", this.Server, sqlInfoMessageEventArgs.Message ).WriteLine();
-                                                   };
+                    this.Connection.InfoMessage += ( sender, sqlInfoMessageEventArgs ) => String.Format( "[{0}] {1}", this.Server, sqlInfoMessageEventArgs.Message ).WriteLine();
                 }
 
                 //if ( this.SinceOpened.Elapsed > timeout && this.Connection.State == ConnectionState.Open ) {
