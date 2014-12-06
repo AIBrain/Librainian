@@ -73,7 +73,7 @@ namespace Librainian.Persistence {
         /// <exception cref="FileNotFoundException"></exception>
         public PersistTable( [CanBeNull] Folder folder, Boolean testForReadWriteAccess = false ) {
             try {
-                Report.Enter();
+                Log.Enter();
 
                 if ( folder == null ) {
                     throw new ArgumentNullException( "folder" );
@@ -97,7 +97,7 @@ namespace Librainian.Persistence {
                 exception.Error();
             }
             finally {
-                Report.Exit();
+                Log.Exit();
             }
         }
 
@@ -359,12 +359,12 @@ namespace Librainian.Persistence {
         }
 
         public void Initialize() {
-            Report.Enter();
+            Log.Enter();
             this.Dictionary.Database.Should().NotBeNullOrWhiteSpace();
             if ( this.Dictionary.Database.IsNullOrWhiteSpace() ) {
                 throw new DirectoryNotFoundException( String.Format( "Unable to find or create the folder `{0}`.", this.Folder.FullName ) );
             }
-            Report.Exit();
+            Log.Exit();
         }
 
         /// <summary>

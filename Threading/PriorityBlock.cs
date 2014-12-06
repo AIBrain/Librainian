@@ -55,7 +55,7 @@ namespace Librainian.Threading {
         private readonly ConcurrentQueue<OneJob> _jobs = new ConcurrentQueue<OneJob>();
 
         private async Task Triage() {
-            Report.Enter( );
+            Log.Enter( );
             while ( !this.CancellationToken.IsCancellationRequested ) {
                 await Task.WhenAny( this.Input.OutputAvailableAsync( this.CancellationToken ) );
 
@@ -76,7 +76,7 @@ namespace Librainian.Threading {
 
                 await this.Output.SendAsync( highest.Action, this.CancellationToken );
             }
-            Report.Exit();
+            Log.Exit();
         }
 
         public Task TheDoctorsTask { get; private set; }

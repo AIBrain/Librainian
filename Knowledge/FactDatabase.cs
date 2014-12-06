@@ -106,7 +106,7 @@ namespace Librainian.Knowledge {
         }
 
         public void SearchForFactFiles( SimpleCancel cancellation ) {
-            Report.Enter();
+            Log.Enter();
 
             var searchPatterns = new[] { "*.knb" };
 
@@ -125,7 +125,7 @@ namespace Librainian.Knowledge {
             //if ( !this.KNBFiles.Any() ) {
             //    searchPatterns.SearchAllDrives( onFindFile: file => this.AddFile( dataFile: new Document( file ) ), cancellationToken: new CancellationToken() );
             //}
-            Report.Exit();
+            Log.Exit();
         }
 
     }

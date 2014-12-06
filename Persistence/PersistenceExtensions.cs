@@ -1015,7 +1015,7 @@ namespace Librainian.Persistence {
                 var after = toDictionary.LongCount();
 
                 stopwatch.Stop();
-                Report.Info( String.Format( "Deserialized {0} {3} from {1} files in {2}.", after - before, fileCount, stopwatch.Elapsed.Simpler(), calledWhat ) );
+                Log.Info( String.Format( "Deserialized {0} {3} from {1} files in {2}.", after - before, fileCount, stopwatch.Elapsed.Simpler(), calledWhat ) );
 
                 return true;
             }
@@ -1067,7 +1067,7 @@ namespace Librainian.Persistence {
 
                 var itemCount = ( UInt64 )dictionary.LongCount();
 
-                Report.Info( String.Format( "Serializing {1} {2} to {0} ...", folder.FullName, itemCount, calledWhat ) );
+                Log.Info( String.Format( "Serializing {1} {2} to {0} ...", folder.FullName, itemCount, calledWhat ) );
 
                 var currentLine = 0f;
 
@@ -1118,7 +1118,7 @@ namespace Librainian.Persistence {
                 }
 
                 stopwatch.Stop();
-                Report.Info( String.Format( "Serialized {1} {3} in {0} into {2} files.", stopwatch.Elapsed.Simpler(), itemCount, fileCount, calledWhat ) );
+                Log.Info( String.Format( "Serialized {1} {3} in {0} into {2} files.", stopwatch.Elapsed.Simpler(), itemCount, fileCount, calledWhat ) );
 
                 return true;
             }

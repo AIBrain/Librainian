@@ -130,7 +130,7 @@ namespace Librainian.Internet.Servers {
         /// <seealso cref="Stop"/>
         public Task Run( CancellationToken cancellationToken ) {
             return Task.Run( async () => {
-                Report.Info( "Webserver running..." );
+                Log.Info( "Webserver running..." );
                 try {
                     while ( this._httpListener.IsListening ) {
                         Debug.WriteLine( "Webserver listening.." );

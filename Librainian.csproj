@@ -652,6 +652,7 @@
     <Compile Include="Threading\AbandonableTask.cs" />
     <Compile Include="Security\MersenneTwister.cs" />
     <Compile Include="Threading\ActorExtensions.cs" />
+    <Compile Include="Threading\ConsoleListenerWithTimePrefix.cs" />
     <Compile Include="Threading\SimpleCancel.cs" />
     <Compile Include="Threading\RandomOrg\Quota.cs" />
     <Compile Include="Threading\RandomOrg\IntegerGenerator.cs" />

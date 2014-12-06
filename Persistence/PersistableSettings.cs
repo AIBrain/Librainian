@@ -33,9 +33,9 @@ namespace Librainian.Persistence {
 
     public class PersistableSettings  {
         public void Initialize() {
-            Report.Enter();
+            Log.Enter();
             this.ValidateStorageFolder();
-            Report.Exit();
+            Log.Exit();
         }
 
         /// <summary>
