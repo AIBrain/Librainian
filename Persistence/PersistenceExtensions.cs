@@ -234,7 +234,7 @@ namespace Librainian.Persistence {
                     if ( dir.Exists ) {
                         var result = dir.SetCompression( true );
                         if ( result ) {
-                            String.Format( "Enabled compression in IsolatedStorage @ {0}", path ).TimeDebug();
+                            String.Format( "Enabled compression in IsolatedStorage @ {0}", path ).WriteLine();
                         }
 
                         return result;

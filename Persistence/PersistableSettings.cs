@@ -103,7 +103,7 @@ namespace Librainian.Persistence {
                 }
             }
             finally {
-                String.Format( "Using storage folder `{0}`.", this.MainStoragePath ).TimeDebug();
+                String.Format( "Using storage folder `{0}`.", this.MainStoragePath ).WriteLine();
             }
         }
 

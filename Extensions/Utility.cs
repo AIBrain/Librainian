@@ -182,7 +182,7 @@ namespace Librainian.Extensions {
         public static void Write( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black, params object[] parms ) {
             lock ( ConsoleOutputSynch ) {
                 if ( null == parms || !parms.Any() ) {
-                    text.TimeDebug();
+                    Log.WriteLine( text );
                     var oldFore = Console.ForegroundColor;
                     var oldBack = Console.BackgroundColor;
                     Console.ForegroundColor = foreColor; //TODO d.r.y.
@@ -192,7 +192,7 @@ namespace Librainian.Extensions {
                     Console.ForegroundColor = oldFore;
                 }
                 else {
-                    String.Format( text, parms ).TimeDebug();
+                    Log.WriteLine( String.Format( text, parms ) );
                     var oldFore = Console.ForegroundColor;
                     var oldBack = Console.BackgroundColor;
                     Console.ForegroundColor = foreColor;
@@ -207,7 +207,7 @@ namespace Librainian.Extensions {
         public static void WriteLine( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black, params object[] parms ) {
             lock ( ConsoleOutputSynch ) {
                 if ( Equals( parms, null ) || !parms.Any() ) {
-                    text.TimeDebug();
+                    Log.WriteLine( text );
                     var oldFore = Console.ForegroundColor;
                     var oldBack = Console.BackgroundColor;
                     Console.ForegroundColor = foreColor;
@@ -217,7 +217,7 @@ namespace Librainian.Extensions {
                     Console.ForegroundColor = oldFore;
                 }
                 else {
-                    String.Format( text, parms ).TimeDebug();
+                    Log.WriteLine( String.Format( text, parms ) );
                     var oldFore = Console.ForegroundColor;
                     var oldBack = Console.BackgroundColor;
                     Console.ForegroundColor = foreColor;

@@ -105,8 +105,7 @@ namespace Librainian.Magic {
             Report.Before( "Ninject is loading assemblies..." );
             this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
             Report.After( String.Format( "loaded {0} assemblies.", this.Kernel.GetModules().Count() ) );
-            String.Format( "{0}", this.Kernel.GetModules().ToStrings() ).TimeDebug();
-
+            String.Format( "{0}", this.Kernel.GetModules().ToStrings() ).WriteLine();
         }
     }
 }

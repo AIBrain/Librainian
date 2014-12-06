@@ -36,6 +36,15 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
+        /// Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer"/>.
+        /// </summary>
+        /// <param name="message">A message to write. </param><PermissionSet><IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/></PermissionSet>
+        public override void Write( string message ) {
+            base.Write( message );
+            Flush();
+        }
+
+        /// <summary>
         /// Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer"/> followed by a line terminator. The default line terminator is a carriage return followed by a line feed (\r\n).
         /// </summary>
         /// <param name="message">A message to write. </param><filterpriority>1</filterpriority><PermissionSet><IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/></PermissionSet>
@@ -49,18 +58,19 @@ namespace Librainian.Threading {
     public static class Log {
         private static readonly ConsoleListenerWithTimePrefix ConsoleListener;
 
+        [DebuggerStepThrough]
         public static void Write( this String message ) {
             ConsoleListener.Write( message );
         }
 
+        [DebuggerStepThrough]
         public static void WriteLine( this String message, [CallerMemberName] String method = "" ) {
             ConsoleListener.WriteLine( String.Format( "({0}) {1}", method, message ) );
         }
 
-
-
         static Log() {
             ConsoleListener = new ConsoleListenerWithTimePrefix();
+            "ConsoleListener.Listener started".WriteLine();
         }
     }
 
@@ -74,7 +84,7 @@ namespace Librainian.Threading {
         [DebuggerStepThrough]
         public static void Enter( [CallerMemberName] String method = "", [Custom] String fullMethodPath = "" ) {
             Debug.Indent();
-            String.Format( "{0} {1} {2}", "enter", method ?? String.Empty, fullMethodPath ?? String.Empty ).TimeDebug();
+            String.Format( "{0} {1} {2}", "enter", method ?? String.Empty, fullMethodPath ?? String.Empty ).WriteLine();
         }
 
         /// <summary>
@@ -83,7 +93,7 @@ namespace Librainian.Threading {
         /// <param name="method"></param>
         [DebuggerStepThrough]
         public static void Exit( [CallerMemberName] String method = "" ) {
-            String.Format( "{0} {1}", "exit", method ?? String.Empty ).TimeDebug();
+            String.Format( "{0} {1}", "exit", method ?? String.Empty ).WriteLine();
             Debug.Unindent();
         }
 
@@ -110,43 +120,17 @@ namespace Librainian.Threading {
 
         [DebuggerStepThrough]
         public static void Message( String message, [CallerMemberName] String method = "" ) {
-            String.Format( "{0}: {1}", method.NullIfEmpty() ?? "?", message ).TimeDebug();
+            String.Format( "{0}: {1}", method.NullIfEmpty() ?? "?", message ).WriteLine();
         }
 
         [DebuggerStepThrough]
         public static void Info( String message ) {
-            String.Format( "{0}:{1}", Thread.CurrentThread.ManagedThreadId, message ).TimeDebug();
+            String.Format( "{0}:{1}", Thread.CurrentThread.ManagedThreadId, message ).WriteLine();
         }
-
-        //[DebuggerStepThrough]
-        public static void TimeDebug( [CanBeNull] this String message, Boolean newline = true ) {
-            if ( message == null ) {
-                return;
-            }
-            message.WriteLine();
-
-#if DEBUG
-            if ( newline ) {
-                message = String.Format( "[{0:yyyy-MM-dd HH:mm:ss}] ({1}): {2}", DateTime.Now, Thread.CurrentThread.ManagedThreadId, message );
-                Debug.WriteLine( message );
-            }
-            else {
-                Debug.Write( String.Format( " [{0}]", message ) );
-            }
-#else
-            if ( newline ) {
-                message = String.Format( "[{0:yyyy-MM-dd HH:mm:ss}] ({1}): {2}", DateTime.Now, Thread.CurrentThread.ManagedThreadId, message );
-                Trace.WriteLine( message );
-            }
-            else {
-                Trace.Write( String.Format( "[] {0}", message ) );
-            }
-#endif
-        }
-
+        
         [DebuggerStepThrough]
         public static void Finalized( [CallerMemberName] String method = "" ) {
-            String.Format( "{0}: {1}", "Finalized", method ?? String.Empty ).TimeDebug();
+            String.Format( "{0}: {1}", "Finalized", method ?? String.Empty ).WriteLine();
         }
     }
 }

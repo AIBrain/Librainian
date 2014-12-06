@@ -24,7 +24,7 @@ namespace Librainian.Parsing {
 
     [Obsolete]
     public class WordGuid {
-        private readonly Action< String > Info = obj => obj.TimeDebug();
+        private readonly Action< String > Info = obj => obj.WriteLine();
 
         private readonly WordToGuidAndGuidToWord WGGW;
 
@@ -75,7 +75,7 @@ namespace Librainian.Parsing {
 
                 if ( !this.WGGW.Contains( word ) ) {
                     this.WGGW[ word ] = Guid.NewGuid();
-                    String.Format( "Word {0} has guid {1}.", word, this.WGGW[ word ] ).TimeDebug();
+                    String.Format( "Word {0} has guid {1}.", word, this.WGGW[ word ] ).WriteLine();
                 }
 
                 return this.WGGW[ word ];

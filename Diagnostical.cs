@@ -170,7 +170,7 @@ namespace Librainian {
         public static void TestSimilarities() {
             var reasons = new ConcurrentQueue< String >();
             var test1 = "hi".Similarity( "hello", ref reasons );
-            String.Format( "test1 was {0}", test1 ).TimeDebug();
+            String.Format( "test1 was {0}", test1 ).WriteLine();
         }
 
         [Test]
@@ -186,7 +186,7 @@ namespace Librainian {
             if ( !ints.Duplicates().Any() ) {
                 return;
             }
-            String.Format( "WARNING: Duplicate Randem.Next() found in static test!" ).TimeDebug();
+            String.Format( "WARNING: Duplicate Randem.Next() found in static test!" ).WriteLine();
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
             }
@@ -200,11 +200,11 @@ namespace Librainian {
             short d = 3999;
             short e = 4000;
 
-            String.Format( "{0} {1}", a, a.ToRoman().Should() ).TimeDebug();
-            String.Format( "{0} {1}", b, b.ToRoman() ).TimeDebug();
-            String.Format( "{0} {1}", c, c.ToRoman() ).TimeDebug();
-            String.Format( "{0} {1}", d, d.ToRoman() ).TimeDebug();
-            String.Format( "{0} {1}", e, e.ToRoman() ).TimeDebug();
+            String.Format( "{0} {1}", a, a.ToRoman().Should() ).WriteLine();
+            String.Format( "{0} {1}", b, b.ToRoman() ).WriteLine();
+            String.Format( "{0} {1}", c, c.ToRoman() ).WriteLine();
+            String.Format( "{0} {1}", d, d.ToRoman() ).WriteLine();
+            String.Format( "{0} {1}", e, e.ToRoman() ).WriteLine();
 
             return true;
         }

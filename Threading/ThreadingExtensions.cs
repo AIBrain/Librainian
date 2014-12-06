@@ -672,7 +672,7 @@ namespace Librainian.Threading {
                         var stopwatch = Stopwatch.StartNew();
                         action();
                         if ( stopwatch.Elapsed > andTookLongerThan.Value ) {
-                            String.Format( "{0} took {1}.", callerMemberName, stopwatch.Elapsed.Simpler() ).TimeDebug();
+                            String.Format( "{0} took {1}.", callerMemberName, stopwatch.Elapsed.Simpler() ).WriteLine();
                         }
                     }
                     else {

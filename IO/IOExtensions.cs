@@ -514,7 +514,7 @@ namespace Librainian.IO {
                 var searchPatterns = fileSearchPatterns as IList<String> ?? fileSearchPatterns.ToList();
                 searchPatterns.AsParallel().ForAll( searchPattern => {
 #if DEEPDEBUG
-                    String.Format( "Searching folder {0} for {1}.", startingFolder.FullName, searchPattern ).TimeDebug();
+                                                        String.Format( "Searching folder {0} for {1}.", startingFolder.FullName, searchPattern ).WriteLine();
 #endif
                     if ( cancellation.IsCancellationRequested ) {
                         return;
@@ -523,7 +523,7 @@ namespace Librainian.IO {
                         var folders = startingFolder.EnumerateDirectories( "*", SearchOption.TopDirectoryOnly );
                         folders.AsParallel().ForAll( async folder => {
 #if DEEPDEBUG
-                            String.Format( "Found folder {0}.", folder ).TimeDebug();
+                                                               String.Format( "Found folder {0}.", folder ).WriteLine();
 #endif
                             if ( cancellation.IsCancellationRequested ) {
                                 return;
@@ -547,7 +547,7 @@ namespace Librainian.IO {
                                 }
 
 #if DEEPDEBUG
-                                String.Format( "Done searching {0} for {1}.", folder.Name, searchPattern ).TimeDebug();
+                                String.Format( "Done searching {0} for {1}.", folder.Name, searchPattern ).WriteLine();
 #endif
                             }
                             catch ( UnauthorizedAccessException ) {
@@ -1026,8 +1026,8 @@ namespace Librainian.IO {
                     if ( !drive.IsReady || drive.DriveType == DriveType.NoRootDirectory || !drive.RootDirectory.Exists ) {
                         return;
                     }
-                    String.Format( "Scanning [{0}]", drive.VolumeLabel ).TimeDebug();
-                    drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
+                                                                                                                                                         String.Format( "Scanning [{0}]", drive.VolumeLabel ).WriteLine();
+                                                                                                                                                         drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
                 } );
             }
             catch ( UnauthorizedAccessException ) {

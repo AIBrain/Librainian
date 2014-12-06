@@ -118,7 +118,7 @@ namespace Librainian.Database {
             var counter = retries;
             while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
                 --counter;
-                String.Format( "Network disconnected. Waiting {0}. {1} retries...", Seconds.One, counter ).TimeDebug();
+                String.Format( "Network disconnected. Waiting {0}. {1} retries...", Seconds.One, counter ).WriteLine();
                 Thread.Sleep( 1000 );
             }
             return NetworkInterface.GetIsNetworkAvailable();
@@ -194,7 +194,9 @@ namespace Librainian.Database {
                 if ( String.IsNullOrWhiteSpace( this.Connection.ConnectionString ) ) {
 
                     //this.Connection.ConnectionString = SQLConnectionString;
-                    this.Connection.InfoMessage += ( sender, sqlInfoMessageEventArgs ) => String.Format( "[{0}] {1}", this.Server, sqlInfoMessageEventArgs.Message ).TimeDebug();
+                    this.Connection.InfoMessage += ( sender, sqlInfoMessageEventArgs ) => {
+                                                       String.Format( "[{0}] {1}", this.Server, sqlInfoMessageEventArgs.Message ).WriteLine();
+                                                   };
                 }
 
                 //if ( this.SinceOpened.Elapsed > timeout && this.Connection.State == ConnectionState.Open ) {

@@ -114,7 +114,7 @@ namespace Librainian.Internet {
                 return this.Surf( address: uri );
             }
             catch ( UriFormatException ) {
-                String.Format( format: "Surf(): Unable to parse address {0}", arg0: address ).TimeDebug();
+                String.Format( format: "Surf(): Unable to parse address {0}", arg0: address ).WriteLine();
                 return false;
             }
         }
@@ -152,7 +152,7 @@ namespace Librainian.Internet {
                                        }
 
                                        this.DownloadInProgress = true;
-                                       String.Format( "Surf(): Starting download: {0}", address.AbsoluteUri ).TimeDebug();
+                                       String.Format( "Surf(): Starting download: {0}", address.AbsoluteUri ).WriteLine();
                                        this.webclient.DownloadStringAsync( address: address, userToken: address );
                                    } ).ContinueWith( t => {
                                                          if ( this.Urls.Any() ) {
@@ -163,7 +163,7 @@ namespace Librainian.Internet {
 
         internal void webclient_DownloadStringCompleted( object sender, DownloadStringCompletedEventArgs e ) {
             if ( e.UserState is Uri ) {
-                String.Format( format: "Surf(): Download completed on {0}", arg0: e.UserState as Uri ).TimeDebug();
+                String.Format( format: "Surf(): Download completed on {0}", arg0: e.UserState as Uri ).WriteLine();
                 this.PastUrls.Add( e.UserState as Uri );
                 this.DownloadInProgress = false;
             }
