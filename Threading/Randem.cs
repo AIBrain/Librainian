@@ -356,7 +356,7 @@ namespace Librainian.Threading {
                     return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( byte )Next( 0, 9 ) );
                 }
                 catch ( ArgumentOutOfRangeException exception ) {
-                    exception.Debug();
+                    exception.More();
                 }
             } while ( true );
         }
@@ -372,7 +372,7 @@ namespace Librainian.Threading {
                     //return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( byte ) Next( 0, 9 ) );
                 }
                 catch ( ArgumentOutOfRangeException exception ) {
-                    exception.Debug();
+                    exception.More();
                 }
             } while ( true );
         }
@@ -561,7 +561,7 @@ namespace Librainian.Threading {
                 return span;
             }
             catch ( ArgumentOutOfRangeException exception ) {
-                exception.Debug();
+                exception.More();
                 return min;
             } //return TimeSpan.FromTicks( value: min.Ticks + Instance.Next( minValue: minTicks, maxValue: maxTicks ) );
         }

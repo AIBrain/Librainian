@@ -71,7 +71,7 @@ namespace Librainian.Extensions {
                 return result;
             }
             catch ( ArgumentException exception ) {
-                exception.Debug();
+                exception.More();
             }
 
             return Guid.Empty;
@@ -131,7 +131,7 @@ namespace Librainian.Extensions {
                 return result;
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
                 return DateTime.MinValue;
             }
         }

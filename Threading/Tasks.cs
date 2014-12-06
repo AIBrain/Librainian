@@ -491,7 +491,7 @@ namespace Librainian.Threading {
                 return delay.Create( () => target.TryPost( item ) ).AndStart();
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
                 throw;
             }
         }
@@ -518,7 +518,7 @@ namespace Librainian.Threading {
                 } ).Once().AndStart();
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
                 return null;
             }
         }

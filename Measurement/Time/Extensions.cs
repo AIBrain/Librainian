@@ -53,7 +53,7 @@ namespace Librainian.Measurement.Time {
                 //Assert.That( Time.Minutes.One > Time.Seconds.One );
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
             }
         }
 
@@ -486,7 +486,7 @@ namespace Librainian.Measurement.Time {
                 }
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
             }
             return new Span( one.Elapsed );
         }

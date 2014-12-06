@@ -502,7 +502,7 @@ namespace Librainian.Collections {
                 }
             }
             catch ( IndexOutOfRangeException exception ) {
-                exception.Debug();
+                exception.More();
             }
         }
 

@@ -6,6 +6,10 @@ namespace Librainian.Threading {
     public class ConsoleListenerWithTimePrefix : ConsoleTraceListener {
         //TODO  http://msdn.microsoft.com/en-us/library/system.diagnostics.consoletracelistener(v=vs.110).aspx
 
+        public ConsoleListenerWithTimePrefix() : base( true ) {
+            
+        }
+
         private static String HeaderTimeThread() {
             return String.Format( "[{0:yyyy-MM-dd HH:mm:ss} ({1})] ", DateTime.Now, Thread.CurrentThread.ManagedThreadId );
         }

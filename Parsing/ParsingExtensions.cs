@@ -401,7 +401,7 @@ namespace Librainian.Parsing {
                 return sb.ToString().Trim();
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
                 return s;
             }
         }
@@ -629,7 +629,7 @@ namespace Librainian.Parsing {
                 return sb.ToString();
             }
             catch ( Exception error ) {
-                error.Debug();
+                error.More();
                 return s;
             }
         }
@@ -690,13 +690,13 @@ namespace Librainian.Parsing {
                 }
             }
             catch ( InvalidDataContractException exception ) {
-                exception.Debug();
+                exception.More();
             }
             catch ( SerializationException exception ) {
-                exception.Debug();
+                exception.More();
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
             }
             return 0;
         }

@@ -682,14 +682,14 @@ namespace Librainian.Threading {
                 }
             }
             catch ( OutOfMemoryException lowMemory ) {
-                lowMemory.Debug();
+                lowMemory.More();
                 Log.Garbage();
             }
             catch ( Exception exception ) {
                 if ( null != onException ) {
                     return onException.Wrap();
                 }
-                exception.Debug();
+                exception.More();
             }
             return false;
         }

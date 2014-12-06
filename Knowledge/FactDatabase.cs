@@ -100,7 +100,7 @@ namespace Librainian.Knowledge {
                     }
                 }
                 catch ( Exception exception ) {
-                    exception.Debug();
+                    exception.More();
                 }
             } );
         }

@@ -94,7 +94,7 @@ namespace Librainian.Persistence {
                 }
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
             }
             finally {
                 Log.Exit();

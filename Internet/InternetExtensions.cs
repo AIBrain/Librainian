@@ -48,7 +48,7 @@
                 }
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
             }
             return null;
         }
@@ -68,7 +68,7 @@
                 }
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
             }
             return new Uri( "about:blank" );
         }
@@ -86,7 +86,7 @@
                 }
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
             }
             return null;
         }

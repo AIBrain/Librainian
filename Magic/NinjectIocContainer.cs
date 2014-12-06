@@ -50,6 +50,7 @@ namespace Librainian.Magic {
                 throw new ArgumentNullException( "modules" );
             }
             this.Kernel.Should().BeNull();
+            ( "Loading magic kernel..." ).WriteLine();
             this.Kernel = new StandardKernel( modules );
             this.Kernel.Should().NotBeNull();
             if ( null == this.Kernel ) {

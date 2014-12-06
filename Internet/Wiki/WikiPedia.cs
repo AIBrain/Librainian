@@ -120,7 +120,7 @@ namespace Librainian.Internet.Wiki {
                 }
             }
             catch ( Exception Exception ) {
-                Exception.Debug();
+                Exception.More();
                 return null;
             }
         }
@@ -151,7 +151,7 @@ namespace Librainian.Internet.Wiki {
                 }
             }
             catch ( Exception Exception ) {
-                Exception.Debug();
+                Exception.More();
                 return null;
             }
         }

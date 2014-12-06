@@ -173,7 +173,7 @@ namespace Librainian.Database {
                 }
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
             }
         }
 

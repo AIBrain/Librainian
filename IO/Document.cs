@@ -471,10 +471,10 @@ namespace Librainian.IO {
                 }
             }
             catch ( FileNotFoundException exception ) {
-                exception.Debug();
+                exception.More();
             }
             catch ( IOException exception ) {
-                exception.Debug();
+                exception.More();
             }
             return null;
         }
@@ -501,7 +501,7 @@ namespace Librainian.IO {
                 return true;
             }
             catch ( ArgumentException exception ) {
-                exception.Debug();
+                exception.More();
             }
             catch ( SecurityException ) {
             }

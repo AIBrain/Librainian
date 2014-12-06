@@ -427,7 +427,7 @@ namespace Librainian.Graphics {
             catch ( OutOfMemoryException ) {
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
             }
             return false;
         }

@@ -86,10 +86,10 @@ namespace Librainian.Security {
                 decryptedValue = Encoding.UTF8.GetString( plainTextValue );
             }
             catch ( CryptographicException exception ) {
-                exception.Debug();
+                exception.More();
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
             }
 
             return decryptedValue;
@@ -134,10 +134,10 @@ namespace Librainian.Security {
                 encryptedValue = Convert.ToBase64String( bytesEncrypted );
             }
             catch ( CryptographicException exception ) {
-                exception.Debug();
+                exception.More();
             }
             catch ( Exception exception ) {
-                exception.Debug();
+                exception.More();
             }
 
             return encryptedValue;

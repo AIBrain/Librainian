@@ -28,23 +28,39 @@ namespace Librainian.Threading {
     using System.Runtime.CompilerServices;
     using System.Text;
     using Annotations;
+    using Extensions;
     using Parsing;
 
     /// <summary>
     /// A class to help with exception handling and plain ol' simple time+logging to the Console.
     /// </summary>
     public static class Log {
+
         private static readonly ConsoleListenerWithTimePrefix ConsoleListener;
 
         static Log() {
             ConsoleListener = new ConsoleListenerWithTimePrefix();
-            "ConsoleListener.Listener started.".WriteLine();
+        }
+
+        public static Boolean Startup() {
+            HasConsoleBeenAllocated = NativeWin32.AllocConsole();
+
+            Debug.Listeners.Add( ConsoleListener );
 
             Contract.ContractFailed += ( sender, e ) => {
-                var message = String.Format( "Caught Uncaught Contract Failure\r\n{0}\r\n{1}\r\n{2}\r\n{3}", e.Condition, e.FailureKind, e.Handled, e.Message );
+                var message = String.Format( "Caught Uncaught Contract Failure:\r\nCondition:{0}\r\nFailureKind:{1}\r\nHandled:{2}\r\nMessage:{3}", e.Condition, e.FailureKind, e.Handled, e.Message );
                 Debugger.IsAttached.BreakIfTrue( message );
-                e.OriginalException.Debug();
+                e.OriginalException.More();
             };
+
+            return true;
+        }
+
+
+        public static void Shutdown() {
+            if ( HasConsoleBeenAllocated ) {
+                NativeWin32.FreeConsole();
+            }
         }
 
         [DebuggerStepThrough]
@@ -106,7 +122,7 @@ namespace Librainian.Threading {
         /// <param name="sourceFilePath"></param>
         /// <param name="sourceLineNumber"></param>
         [DebuggerStepThrough]
-        public static void Debug( [NotNull] this Exception exception, [CanBeNull] [CallerMemberName] String method = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
+        public static void More( [NotNull] this Exception exception, [CanBeNull] [CallerMemberName] String method = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
             }
@@ -121,7 +137,7 @@ namespace Librainian.Threading {
 
         public static Boolean HasConsoleBeenAllocated {
             get;
-            set;
+            private set;
         }
 
         [DebuggerStepThrough]
@@ -130,7 +146,7 @@ namespace Librainian.Threading {
                 return;
             }
             if ( !String.IsNullOrEmpty( message ) ) {
-                System.Diagnostics.Debug.WriteLine( message );
+                Debug.WriteLine( message );
             }
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
@@ -143,7 +159,7 @@ namespace Librainian.Threading {
                 return;
             }
             if ( !String.IsNullOrEmpty( message ) ) {
-                System.Diagnostics.Debug.WriteLine( message );
+                Debug.WriteLine( message );
             }
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
@@ -155,6 +171,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="obj"> </param>
         /// <returns> </returns>
+        // ReSharper disable once UnusedParameter.Global
         public static int FrameCount( this Object obj ) {
             return ( new StackTrace( false ) ).FrameCount;
         }

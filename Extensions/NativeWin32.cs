@@ -1,31 +1,80 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/NativeWin32.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/NativeWin32.cs" was last cleaned by Rick on 2014/12/06 at 9:56 AM
+
+#endregion License & Information
 
 namespace Librainian.Extensions {
+
     using System;
     using System.IO;
     using System.Runtime.InteropServices;
     using Microsoft.Win32.SafeHandles;
 
     public static class NativeWin32 {
-        public const int MaxPath = 260;
 
+        public enum PLATFORM_ID {
+            PLATFORM_ID_DOS = 300,
+            PLATFORM_ID_OS2 = 400,
+            PLATFORM_ID_NT = 500,
+            PLATFORM_ID_OSF = 600,
+            PLATFORM_ID_VMS = 700
+        }
+
+        public enum SV_101_TYPES : uint {
+            SV_TYPE_WORKSTATION = 0x00000001,
+            SV_TYPE_SERVER = 0x00000002,
+            SV_TYPE_SQLSERVER = 0x00000004,
+            SV_TYPE_DOMAIN_CTRL = 0x00000008,
+            SV_TYPE_DOMAIN_BAKCTRL = 0x00000010,
+            SV_TYPE_TIME_SOURCE = 0x00000020,
+            SV_TYPE_AFP = 0x00000040,
+            SV_TYPE_NOVELL = 0x00000080,
+            SV_TYPE_DOMAIN_MEMBER = 0x00000100,
+            SV_TYPE_PRINTQ_SERVER = 0x00000200,
+            SV_TYPE_DIALIN_SERVER = 0x00000400,
+            SV_TYPE_XENIX_SERVER = 0x00000800,
+            SV_TYPE_SERVER_UNIX = 0x00000800,
+            SV_TYPE_NT = 0x00001000,
+            SV_TYPE_WFW = 0x00002000,
+            SV_TYPE_SERVER_MFPN = 0x00004000,
+            SV_TYPE_SERVER_NT = 0x00008000,
+            SV_TYPE_POTENTIAL_BROWSER = 0x00010000,
+            SV_TYPE_BACKUP_BROWSER = 0x00020000,
+            SV_TYPE_MASTER_BROWSER = 0x00040000,
+            SV_TYPE_DOMAIN_MASTER = 0x00080000,
+            SV_TYPE_SERVER_OSF = 0x00100000,
+            SV_TYPE_SERVER_VMS = 0x00200000,
+            SV_TYPE_WINDOWS = 0x00400000,
+            SV_TYPE_DFS = 0x00800000,
+            SV_TYPE_CLUSTER_NT = 0x01000000,
+            SV_TYPE_TERMINALSERVER = 0x02000000,
+            SV_TYPE_CLUSTER_VS_NT = 0x04000000,
+            SV_TYPE_DCE = 0x10000000,
+            SV_TYPE_ALTERNATE_XPORT = 0x20000000,
+            SV_TYPE_LOCAL_LIST_ONLY = 0x40000000,
+            SV_TYPE_DOMAIN_ENUM = 0x80000000,
+            SV_TYPE_ALL = 0xFFFFFFFF
+        };
+
+        public const int MaxPath = 260;
         public const uint ERROR_SUCCESS = 0;
         public const uint ERROR_MORE_DATA = 234;
 
@@ -36,14 +85,14 @@ namespace Librainian.Extensions {
         internal static extern IntPtr GetDesktopWindow();
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
-        /// <seealso cref="http://www.facepunch.com/showthread.php?t=1312991"/>
+        /// <seealso cref="http://www.facepunch.com/showthread.php?t=1312991" />
         public static IntPtr GetDesktopHandle() {
             var desktop = GetDesktopWindow();
             var progMan = FindWindowEx( desktop, IntPtr.Zero, "Progman", "Program Manager" );
             var defView = FindWindowEx( progMan, IntPtr.Zero, "SHELLDLL_DefView", String.Empty );
+
             //var listView = FindWindowEx( defView, IntPtr.Zero, "SysListView32", "FolderView" );
 
             return defView;
@@ -107,6 +156,30 @@ namespace Librainian.Extensions {
         public static extern Boolean FindNextFile( SafeSearchHandle hFindFile, out Win32FindData lpFindData );
 
         /// <summary>
+        ///     The NetServerEnum function lists all servers of the specified type that are visible in a domain.
+        /// </summary>
+        /// <param name="servername"></param>
+        /// <param name="level"></param>
+        /// <param name="bufptr"></param>
+        /// <param name="prefmaxlen"></param>
+        /// <param name="entriesread"></param>
+        /// <param name="totalentries"></param>
+        /// <param name="servertype"></param>
+        /// <param name="domain"></param>
+        /// <param name="resume_handle"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum" />
+        [DllImport( "netapi32.dll", EntryPoint = "NetServerEnum" )]
+        public static extern int NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )] String servername, int level, out IntPtr bufptr, int prefmaxlen, ref int entriesread, ref int totalentries, SV_101_TYPES servertype, [MarshalAs( UnmanagedType.LPWStr )] String domain, IntPtr resume_handle );
+
+        /// <summary>
+        ///     Netapi32.dll : The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates.
+        ///     Call NetApiBufferFree to free the memory that other network management functions return.
+        /// </summary>
+        [DllImport( "netapi32.dll", EntryPoint = "NetApiBufferFree" )]
+        public static extern int NetApiBufferFree( IntPtr buffer );
+
+        /// <summary>
         ///     Win32 FILETIME structure.  The win32 documentation says this:
         ///     "Contains a 64-bit value representing the number of 100-nanosecond intervals since January 1, 1601 (UTC)."
         /// </summary>
@@ -123,8 +196,8 @@ namespace Librainian.Extensions {
         ///     like this ensures that the handle is properly cleaned up with FindClose.
         /// </summary>
         public class SafeSearchHandle : SafeHandleZeroOrMinusOneIsInvalid {
-            public SafeSearchHandle()
-                : base( true ) {
+
+            public SafeSearchHandle() : base( true ) {
             }
 
             protected override Boolean ReleaseHandle() {
@@ -163,89 +236,26 @@ namespace Librainian.Extensions {
             public String cAlternateFileName;
         }
 
-
-        /// <summary>
-        /// The NetServerEnum function lists all servers of the specified type that are visible in a domain.
-        /// </summary>
-        /// <param name="servername"></param>
-        /// <param name="level"></param>
-        /// <param name="bufptr"></param>
-        /// <param name="prefmaxlen"></param>
-        /// <param name="entriesread"></param>
-        /// <param name="totalentries"></param>
-        /// <param name="servertype"></param>
-        /// <param name="domain"></param>
-        /// <param name="resume_handle"></param>
-        /// <returns></returns>
-        /// <seealso cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum"/>
-        [DllImport( "netapi32.dll", EntryPoint = "NetServerEnum" )]
-        public static extern int NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )]String servername, int level, out IntPtr bufptr, int prefmaxlen, ref int entriesread, ref int totalentries, SV_101_TYPES servertype, [MarshalAs( UnmanagedType.LPWStr )]String domain, IntPtr resume_handle );
-
-        /// <summary>
-        ///     Netapi32.dll : The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates. Call NetApiBufferFree to free the memory that other network management functions return.
-        /// </summary>
-        [DllImport( "netapi32.dll", EntryPoint = "NetApiBufferFree" )]
-        public static extern int NetApiBufferFree( IntPtr buffer );
-
         [StructLayout( LayoutKind.Sequential )]
         public struct SERVER_INFO_101 {
+
             [MarshalAs( UnmanagedType.U4 )]
             public readonly UInt32 sv101_platform_id;
+
             [MarshalAs( UnmanagedType.LPWStr )]
             public readonly String sv101_name;
 
             [MarshalAs( UnmanagedType.U4 )]
             public readonly UInt32 sv101_version_major;
+
             [MarshalAs( UnmanagedType.U4 )]
             public readonly UInt32 sv101_version_minor;
+
             [MarshalAs( UnmanagedType.U4 )]
             public readonly UInt32 sv101_type;
+
             [MarshalAs( UnmanagedType.LPWStr )]
             public readonly String sv101_comment;
-        };
-
-        public enum PLATFORM_ID {
-            PLATFORM_ID_DOS = 300,
-            PLATFORM_ID_OS2 = 400,
-            PLATFORM_ID_NT = 500,
-            PLATFORM_ID_OSF = 600,
-            PLATFORM_ID_VMS = 700
-        }
-
-        public enum SV_101_TYPES : uint {
-            SV_TYPE_WORKSTATION = 0x00000001,
-            SV_TYPE_SERVER = 0x00000002,
-            SV_TYPE_SQLSERVER = 0x00000004,
-            SV_TYPE_DOMAIN_CTRL = 0x00000008,
-            SV_TYPE_DOMAIN_BAKCTRL = 0x00000010,
-            SV_TYPE_TIME_SOURCE = 0x00000020,
-            SV_TYPE_AFP = 0x00000040,
-            SV_TYPE_NOVELL = 0x00000080,
-            SV_TYPE_DOMAIN_MEMBER = 0x00000100,
-            SV_TYPE_PRINTQ_SERVER = 0x00000200,
-            SV_TYPE_DIALIN_SERVER = 0x00000400,
-            SV_TYPE_XENIX_SERVER = 0x00000800,
-            SV_TYPE_SERVER_UNIX = 0x00000800,
-            SV_TYPE_NT = 0x00001000,
-            SV_TYPE_WFW = 0x00002000,
-            SV_TYPE_SERVER_MFPN = 0x00004000,
-            SV_TYPE_SERVER_NT = 0x00008000,
-            SV_TYPE_POTENTIAL_BROWSER = 0x00010000,
-            SV_TYPE_BACKUP_BROWSER = 0x00020000,
-            SV_TYPE_MASTER_BROWSER = 0x00040000,
-            SV_TYPE_DOMAIN_MASTER = 0x00080000,
-            SV_TYPE_SERVER_OSF = 0x00100000,
-            SV_TYPE_SERVER_VMS = 0x00200000,
-            SV_TYPE_WINDOWS = 0x00400000,
-            SV_TYPE_DFS = 0x00800000,
-            SV_TYPE_CLUSTER_NT = 0x01000000,
-            SV_TYPE_TERMINALSERVER = 0x02000000,
-            SV_TYPE_CLUSTER_VS_NT = 0x04000000,
-            SV_TYPE_DCE = 0x10000000,
-            SV_TYPE_ALTERNATE_XPORT = 0x20000000,
-            SV_TYPE_LOCAL_LIST_ONLY = 0x40000000,
-            SV_TYPE_DOMAIN_ENUM = 0x80000000,
-            SV_TYPE_ALL = 0xFFFFFFFF
         };
     }
 }

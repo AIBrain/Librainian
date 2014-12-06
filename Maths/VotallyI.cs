@@ -72,7 +72,7 @@ namespace Librainian.Maths {
                 }
             }
             catch ( DivideByZeroException exception ) {
-                exception.Debug();
+                exception.More();
             }
             return 0;
         }
@@ -87,7 +87,7 @@ namespace Librainian.Maths {
                 return ( Double ) chance;
             }
             catch ( DivideByZeroException exception ) {
-                exception.Debug();
+                exception.More();
                 return 0;
             }
         }

@@ -128,7 +128,7 @@ namespace Librainian.Database {
             try {
             }
             catch ( InvalidOperationException exception ) {
-                exception.Debug();
+                exception.More();
             }
 
             try {
@@ -141,7 +141,7 @@ namespace Librainian.Database {
                 }
             }
             catch ( InvalidOperationException exception ) {
-                exception.Debug();
+                exception.More();
             }
             this.Connection = null;
         }
@@ -246,10 +246,10 @@ namespace Librainian.Database {
                     Task.Delay( Seconds.One ).Wait();
                     goto TryAgain;
                 }
-                exception.Debug();
+                exception.More();
             }
             catch ( InvalidOperationException exception ) {
-                exception.Debug();
+                exception.More();
             }
             return null;
         }

@@ -60,13 +60,13 @@ namespace Librainian.Extensions {
                     Console.CursorVisible = true;
                 }
                 catch ( ArgumentOutOfRangeException exception ) {
-                    exception.Debug();
+                    exception.More();
                 }
                 catch ( IOException exception ) {
-                    exception.Debug();
+                    exception.More();
                 }
                 catch ( SecurityException exception ) {
-                    exception.Debug();
+                    exception.More();
                 }
                 finally {
                     ConsoleOutputSynch.ExitWriteLock();
