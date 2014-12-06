@@ -29,6 +29,7 @@ namespace Librainian.Maths {
     using System.Threading;
     using Annotations;
     using Numerics;
+    using Threading;
 
     /// <summary>
     /// <para>Keep count of Yes or No votes.</para>
@@ -71,7 +72,7 @@ namespace Librainian.Maths {
                 }
             }
             catch ( DivideByZeroException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return 0;
         }
@@ -86,7 +87,7 @@ namespace Librainian.Maths {
                 return ( Double ) chance;
             }
             catch ( DivideByZeroException exception ) {
-                exception.Error();
+                exception.Debug();
                 return 0;
             }
         }

@@ -5,6 +5,7 @@
     using Annotations;
     using Awesomium.Windows.Forms;
     using CsQuery;
+    using Threading;
 
     public static class InternetExtensions {
 
@@ -47,7 +48,7 @@
                 }
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return null;
         }
@@ -67,7 +68,7 @@
                 }
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return new Uri( "about:blank" );
         }
@@ -85,7 +86,7 @@
                 }
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return null;
         }

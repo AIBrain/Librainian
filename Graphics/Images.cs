@@ -41,6 +41,7 @@ namespace Librainian.Graphics {
     using Measurement.Time;
     using Microsoft.VisualStudio.TestTools.UITesting;
     using Parsing;
+    using Threading;
 
     public static class Images {
 
@@ -426,7 +427,7 @@ namespace Librainian.Graphics {
             catch ( OutOfMemoryException ) {
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return false;
         }

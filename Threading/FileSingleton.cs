@@ -143,31 +143,31 @@ namespace Librainian.Threading {
                 }
             }
             catch ( ObjectDisposedException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( AbandonedMutexException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( InvalidOperationException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( ArgumentOutOfRangeException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( ArgumentException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( IOException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( UnauthorizedAccessException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( WaitHandleCannotBeOpenedException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
         }
     }

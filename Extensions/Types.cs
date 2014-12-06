@@ -28,6 +28,7 @@ namespace Librainian.Extensions {
     using System.Linq.Expressions;
     using System.Reflection;
     using Annotations;
+    using Threading;
 
     public static class Types {
         public static void CopyField<TSource>( this TSource source, TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
@@ -44,16 +45,16 @@ namespace Librainian.Extensions {
                 field.SetValue( destination, sourceValue );
             }
             catch ( TargetException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( NotSupportedException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( FieldAccessException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( ArgumentException exception ) {
-                exception.Error();
+                exception.Debug();
             }
         }
 
@@ -70,7 +71,7 @@ namespace Librainian.Extensions {
                     destAsDictionary[ key ] = sourceValue[ key ];
                 }
                 catch ( Exception exception ) {
-                    exception.Error();
+                    exception.Debug();
                 }
             }
             return false;
@@ -131,19 +132,19 @@ namespace Librainian.Extensions {
                 prop.SetValue( destination, sourceValue, null );
             }
             catch ( TargetParameterCountException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( TargetException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( NotSupportedException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( FieldAccessException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( ArgumentException exception ) {
-                exception.Error();
+                exception.Debug();
             }
         }
 

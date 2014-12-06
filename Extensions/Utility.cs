@@ -19,8 +19,6 @@
 
 namespace Librainian.Extensions {
     using System;
-    using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using System.IO;
     using System.Linq;
     using System.Security;
@@ -32,13 +30,6 @@ namespace Librainian.Extensions {
 
         private static readonly ReaderWriterLockSlim ConsoleOutputSynch = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-        static Utility() {
-            Contract.ContractFailed += ( sender, e ) => {
-                                           var message = String.Format( "Caught Uncaught Contract Failure\r\n{0}\r\n{1}\r\n{2}\r\n{3}", e.Condition, e.FailureKind, e.Handled, e.Message );
-                                           Debugger.IsAttached.BreakIfTrue( message );
-                                           e.OriginalException.Error( message: message );
-                                       };
-        }
 
         /// <summary>
         ///     Output the <paramref name="text" /> at the end of the current <seealso cref="Console" /> line.
@@ -69,13 +60,13 @@ namespace Librainian.Extensions {
                     Console.CursorVisible = true;
                 }
                 catch ( ArgumentOutOfRangeException exception ) {
-                    exception.Error();
+                    exception.Debug();
                 }
                 catch ( IOException exception ) {
-                    exception.Error();
+                    exception.Debug();
                 }
                 catch ( SecurityException exception ) {
-                    exception.Error();
+                    exception.Debug();
                 }
                 finally {
                     ConsoleOutputSynch.ExitWriteLock();

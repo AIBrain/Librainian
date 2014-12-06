@@ -34,6 +34,7 @@ namespace Librainian.Measurement.Time {
     using FluentAssertions;
     using Maths;
     using Parsing;
+    using Threading;
 
     public static class Extensions {
 
@@ -52,7 +53,7 @@ namespace Librainian.Measurement.Time {
                 //Assert.That( Time.Minutes.One > Time.Seconds.One );
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
         }
 
@@ -485,7 +486,7 @@ namespace Librainian.Measurement.Time {
                 }
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return new Span( one.Elapsed );
         }

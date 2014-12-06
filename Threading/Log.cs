@@ -22,19 +22,29 @@
 #endregion License & Information
 
 namespace Librainian.Threading {
-
     using System;
     using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Runtime.CompilerServices;
-    using System.Threading;
+    using System.Text;
+    using Annotations;
     using Parsing;
 
+    /// <summary>
+    /// A class to help with exception handling and plain ol' simple time+logging to the Console.
+    /// </summary>
     public static class Log {
         private static readonly ConsoleListenerWithTimePrefix ConsoleListener;
 
         static Log() {
             ConsoleListener = new ConsoleListenerWithTimePrefix();
-            "ConsoleListener.Listener started".WriteLine();
+            "ConsoleListener.Listener started.".WriteLine();
+
+            Contract.ContractFailed += ( sender, e ) => {
+                var message = String.Format( "Caught Uncaught Contract Failure\r\n{0}\r\n{1}\r\n{2}\r\n{3}", e.Condition, e.FailureKind, e.Handled, e.Message );
+                Debugger.IsAttached.BreakIfTrue( message );
+                e.OriginalException.Debug();
+            };
         }
 
         [DebuggerStepThrough]
@@ -42,17 +52,14 @@ namespace Librainian.Threading {
             ConsoleListener.Write( message );
         }
 
+        /// <summary>
+        /// <para>Write the <paramref name="message"/> out to the console.</para>
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="method"></param>
         [DebuggerStepThrough]
         public static void WriteLine( this String message, [CallerMemberName] String method = "" ) {
             ConsoleListener.WriteLine( String.Format( "({0}) {1}", method, message ) );
-        }
-
-        [DebuggerStepThrough]
-        public static void Catch( this Exception exception, [CallerMemberName] String method = "" ) {
-            ConsoleListener.Fail( method, exception.Message );
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
         }
 
         [DebuggerStepThrough]
@@ -64,12 +71,12 @@ namespace Librainian.Threading {
         [DebuggerStepThrough]
         public static void Before( [CallerMemberName] String method = "" ) {
             ConsoleListener.IndentLevel++;
-            String.Format( "Before {0}", method ?? String.Empty ).WriteLine();
+            String.Format( "Before - {0}", method ?? String.Empty ).WriteLine();
         }
 
         [DebuggerStepThrough]
         public static void After( [CallerMemberName] String method = "" ) {
-            String.Format( "After {0}", method ?? String.Empty ).WriteLine();
+            String.Format( "After - {0}", method ?? String.Empty ).WriteLine();
             ConsoleListener.IndentLevel--;
         }
 
@@ -86,12 +93,83 @@ namespace Librainian.Threading {
 
         [DebuggerStepThrough]
         public static void Info( String message ) {
-            String.Format( "{0}:{1}", Thread.CurrentThread.ManagedThreadId, message ).WriteLine();
+            String.Format( "{0}", message ).WriteLine();
         }
 
         [DebuggerStepThrough]
         public static void Finalized( [CallerMemberName] String method = "" ) {
             String.Format( "{0}: {1}", "Finalized", method ?? String.Empty ).WriteLine();
+        }
+
+        /// <param name="exception"></param>
+        /// <param name="method"></param>
+        /// <param name="sourceFilePath"></param>
+        /// <param name="sourceLineNumber"></param>
+        [DebuggerStepThrough]
+        public static void Debug( [NotNull] this Exception exception, [CanBeNull] [CallerMemberName] String method = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
+            if ( Debugger.IsAttached ) {
+                Debugger.Break();
+            }
+            var message = new StringBuilder();
+            message.AppendFormat( " [Exception: {0}]\r\n", exception.Message );
+            message.AppendFormat( " [In: {0}]\r\n", exception.Source );
+            message.AppendFormat( " [Msg: {0}]\r\n", exception.Message );
+            message.AppendFormat( " [Source: {0}]\r\n", sourceFilePath );
+            message.AppendFormat( " [Line: {0}]\r\n", sourceLineNumber );
+            ConsoleListener.Fail( method, message.ToString() );
+        }
+
+        public static Boolean HasConsoleBeenAllocated {
+            get;
+            set;
+        }
+
+        [DebuggerStepThrough]
+        public static void BreakIfFalse( this Boolean condition, String message = "" ) {
+            if ( condition ) {
+                return;
+            }
+            if ( !String.IsNullOrEmpty( message ) ) {
+                System.Diagnostics.Debug.WriteLine( message );
+            }
+            if ( Debugger.IsAttached ) {
+                Debugger.Break();
+            }
+        }
+
+        [DebuggerStepThrough]
+        public static void BreakIfTrue( this Boolean condition, String message = "" ) {
+            if ( !condition ) {
+                return;
+            }
+            if ( !String.IsNullOrEmpty( message ) ) {
+                System.Diagnostics.Debug.WriteLine( message );
+            }
+            if ( Debugger.IsAttached ) {
+                Debugger.Break();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the number of frames in the <see cref="StackTrace" />
+        /// </summary>
+        /// <param name="obj"> </param>
+        /// <returns> </returns>
+        public static int FrameCount( this Object obj ) {
+            return ( new StackTrace( false ) ).FrameCount;
+        }
+
+        /// <summary>
+        ///     Force a memory garbage collection on generation0 and generation1 objects.
+        /// </summary>
+        public static void Garbage() {
+            var before = GC.GetTotalMemory( forceFullCollection: false );
+            GC.Collect( generation: 1, mode: GCCollectionMode.Optimized, blocking: false );
+            var after = GC.GetTotalMemory( forceFullCollection: false );
+
+            if ( after < before ) {
+                Info( String.Format( "{0} bytes freed by the GC.", before - after ) );
+            }
         }
     }
 }

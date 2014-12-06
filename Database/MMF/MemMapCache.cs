@@ -25,6 +25,7 @@ namespace Librainian.Database.MMF {
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Text;
+    using Threading;
 
     public class MemMapCache< T > {
         private const String DELIM = "[!@#]";
@@ -152,11 +153,11 @@ namespace Librainian.Database.MMF {
             }
             catch ( NotSupportedException exception ) {
                 //Console.WriteLine( "{0} is too small for {1}.", size, key );
-                exception.Error();
+                exception.Debug();
             }
             catch ( Exception exception ) {
                 //Console.WriteLine( "MemMapCache: Set Failed.\n\t" + ex.Message );
-                exception.Error();
+                exception.Debug();
             }
         }
 

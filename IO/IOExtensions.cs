@@ -108,22 +108,22 @@ namespace Librainian.IO {
                 }
             }
             catch ( UnauthorizedAccessException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( ArgumentNullException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( DirectoryNotFoundException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( PathTooLongException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( SecurityException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( IOException exception ) {
-                exception.Error();
+                exception.Debug();
             }
         }
 
@@ -451,7 +451,7 @@ namespace Librainian.IO {
                 Assert.True( directoryInfo.Exists );
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
                 return null;
             }
             return directoryInfo;
@@ -534,7 +534,7 @@ namespace Librainian.IO {
                                 }
                             }
                             catch ( Exception exception ) {
-                                exception.Error();
+                                exception.Debug();
                             }
                             if ( searchStyle == SearchStyle.FoldersFirst ) {
                                 folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
@@ -572,7 +572,7 @@ namespace Librainian.IO {
                                     if ( ex is SecurityException ) {
                                         return true;
                                     }
-                                    ex.Error();
+                                    ex.Debug();
                                     return false;
                                 } );
                             }
@@ -603,7 +603,7 @@ namespace Librainian.IO {
                             if ( ex is SecurityException ) {
                                 return true;
                             }
-                            ex.Error();
+                            ex.Debug();
                             return false;
                         } );
                     }
@@ -631,7 +631,7 @@ namespace Librainian.IO {
                     if ( ex is SecurityException ) {
                         return true;
                     }
-                    ex.Error();
+                    ex.Debug();
                     return false;
                 } );
             }
@@ -644,7 +644,7 @@ namespace Librainian.IO {
                 }
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return info;
         }
@@ -907,7 +907,7 @@ namespace Librainian.IO {
                     }
                 }
                 catch ( FileNotFoundException exception ) {
-                    exception.Error();
+                    exception.Debug();
                 }
             }
             return String.Empty;
@@ -1052,7 +1052,7 @@ namespace Librainian.IO {
                     if ( ex is SecurityException ) {
                         return true;
                     }
-                    ex.Error();
+                    ex.Debug();
                     return false;
                 } );
             }
@@ -1072,7 +1072,7 @@ namespace Librainian.IO {
                 }
             }
             catch ( ManagementException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return false;
         }
@@ -1087,7 +1087,7 @@ namespace Librainian.IO {
                 return dirInfo.SetCompression( compressed );
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return false;
         }

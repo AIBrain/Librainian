@@ -485,7 +485,7 @@ namespace Librainian.Controls {
                 return true;
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return false;
         }
@@ -1168,7 +1168,7 @@ namespace Librainian.Controls {
                 }
             }
             catch ( ObjectDisposedException exception ) {
-                exception.Error();
+                exception.Debug();
             }
         }
 

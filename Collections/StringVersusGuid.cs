@@ -23,6 +23,7 @@ namespace Librainian.Collections {
     using System.Collections.Generic;
     using System.Runtime.Serialization;
     using Parsing;
+    using Threading;
 
     /// <summary>
     ///     Contains Words and their guids. Persisted to and from storage? Thread-safe?

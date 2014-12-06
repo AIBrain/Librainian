@@ -25,7 +25,7 @@ namespace Librainian.Speech {
     using System.Threading;
     using System.Windows.Forms;
     using Annotations;
-
+    using Threading;
 
     /// <summary>
     ///     Use whatever TTS engine is available...
@@ -98,7 +98,7 @@ namespace Librainian.Speech {
                 this.SpeechSynthesizer.Speak( message );
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
         }
 
@@ -131,7 +131,7 @@ namespace Librainian.Speech {
                 speechSynthesizer.StateChanged += ( sender, e ) => speechFeedbackEvent( e );
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
         }
     }

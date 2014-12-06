@@ -26,6 +26,7 @@ namespace Librainian.Misc {
     using Microsoft.CSharp;
     using NUnit.Framework;
     using Persistence;
+    using Threading;
 
     public class CodeEngine {
         public static readonly CSharpCodeProvider CSharpCodeProvider = new CSharpCodeProvider();
@@ -177,7 +178,7 @@ namespace AIBrain
                 return true;
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
                 return false;
             }
         }
@@ -217,7 +218,7 @@ namespace AIBrain
                     return loResult;
                 }
                 catch ( Exception exception ) {
-                    exception.Error();
+                    exception.Debug();
                     return null;
                 }
             }
@@ -231,7 +232,7 @@ namespace AIBrain
                 return true;
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
                 return false;
             }
         }

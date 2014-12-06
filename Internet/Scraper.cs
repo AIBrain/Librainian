@@ -31,6 +31,7 @@ namespace Librainian.Internet {
     using System.Threading;
     using Collections;
     using Parsing;
+    using Threading;
 
     [DataContract]
     [Obsolete]
@@ -70,7 +71,7 @@ namespace Librainian.Internet {
                 }
             }
             catch ( Exception Exception ) {
-                Exception.Error();
+                Exception.Debug();
             }
         }
 
@@ -154,7 +155,7 @@ namespace Librainian.Internet {
                 }
             }
             catch ( Exception Exception ) {
-                Exception.Error();
+                Exception.Debug();
             }
         }
 
@@ -198,7 +199,7 @@ namespace Librainian.Internet {
             catch ( WebException ) {
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
         }
 

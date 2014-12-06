@@ -28,6 +28,7 @@ namespace Librainian.Security {
     using System.Text;
     using System.Threading;
     using Annotations;
+    using Threading;
 
     public static class SecurityExtensions {
         public static readonly ThreadLocal< MD5 > Md5S = new ThreadLocal< MD5 >( MD5.Create );
@@ -85,10 +86,10 @@ namespace Librainian.Security {
                 decryptedValue = Encoding.UTF8.GetString( plainTextValue );
             }
             catch ( CryptographicException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
 
             return decryptedValue;
@@ -133,10 +134,10 @@ namespace Librainian.Security {
                 encryptedValue = Convert.ToBase64String( bytesEncrypted );
             }
             catch ( CryptographicException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
 
             return encryptedValue;

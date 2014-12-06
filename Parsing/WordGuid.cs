@@ -58,7 +58,7 @@ namespace Librainian.Parsing {
                 this.Info( "All words in the word guid database have been erased." );
             }
             catch ( Exception exception ) {
-                exception.Error( message: "Unable to erase the word guid database." );
+                exception.Debug( );
             }
         }
 
@@ -81,7 +81,7 @@ namespace Librainian.Parsing {
                 return this.WGGW[ word ];
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return Guid.Empty;
         }
@@ -99,7 +99,7 @@ namespace Librainian.Parsing {
                 return !this.WGGW.Contains( guid ) ? String.Empty : this.WGGW[ guid ];
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return String.Empty;
         }

@@ -40,6 +40,7 @@ namespace Librainian.IO {
     using Maths;
     using Parsing;
     using Security;
+    using Threading;
 
     public interface IDocument : IEquatable<Document>, IEnumerable<Byte> {
     }
@@ -470,10 +471,10 @@ namespace Librainian.IO {
                 }
             }
             catch ( FileNotFoundException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( IOException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return null;
         }
@@ -500,7 +501,7 @@ namespace Librainian.IO {
                 return true;
             }
             catch ( ArgumentException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             catch ( SecurityException ) {
             }

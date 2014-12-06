@@ -26,6 +26,7 @@ namespace Librainian.Maths {
     using System;
     using System.Runtime.Serialization;
     using Annotations;
+    using Threading;
 
     /// <summary>
     ///     <para>Ups: Probability between 0.0 and 100.0%</para>
@@ -133,7 +134,7 @@ namespace Librainian.Maths {
                 }
             }
             catch ( DivideByZeroException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return 0;
         }
@@ -146,7 +147,7 @@ namespace Librainian.Maths {
                 }
             }
             catch ( DivideByZeroException exception ) {
-                exception.Error();
+                exception.Debug();
             }
             return 0;
         }

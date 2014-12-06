@@ -27,6 +27,7 @@ namespace Librainian.Database {
     using System.Reflection;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
+    using Threading;
 
     public static class DatabaseExtensions {
 
@@ -172,7 +173,7 @@ namespace Librainian.Database {
                 }
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
             }
         }
 

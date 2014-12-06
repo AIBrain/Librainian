@@ -27,6 +27,7 @@ namespace Librainian.Extensions {
     using IO;
     using Maths;
     using Security;
+    using Threading;
     using Assert = NUnit.Framework.Assert;
 
     public static class GuidExtensions {
@@ -70,7 +71,7 @@ namespace Librainian.Extensions {
                 return result;
             }
             catch ( ArgumentException exception ) {
-                exception.Error();
+                exception.Debug();
             }
 
             return Guid.Empty;
@@ -130,7 +131,7 @@ namespace Librainian.Extensions {
                 return result;
             }
             catch ( Exception exception ) {
-                exception.Error();
+                exception.Debug();
                 return DateTime.MinValue;
             }
         }
