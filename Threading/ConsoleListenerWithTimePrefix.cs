@@ -40,7 +40,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="message">A message to write. </param><PermissionSet><IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/></PermissionSet>
         public override void Write( string message ) {
-            base.Write( message );
+            Console.Write( message );
             Flush();
         }
 
@@ -50,7 +50,7 @@ namespace Librainian.Threading {
         /// <param name="message">A message to write. </param><filterpriority>1</filterpriority><PermissionSet><IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/></PermissionSet>
         public override void WriteLine( String message ) {
             Write( HeaderTimeThread() );
-            base.WriteLine( message );
+            Console.WriteLine( message );
             Flush();
         }
     }

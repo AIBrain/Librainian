@@ -26,8 +26,11 @@ namespace Librainian.Threading {
     using System;
     using System.Diagnostics;
     using System.Diagnostics.Contracts;
+    using System.Runtime;
     using System.Runtime.CompilerServices;
     using System.Text;
+    using System.Threading;
+    using System.Windows.Forms;
     using Annotations;
     using Extensions;
     using Parsing;
@@ -38,8 +41,14 @@ namespace Librainian.Threading {
     public static class Log {
         private static readonly ConsoleListenerWithTimePrefix ConsoleListener;
 
+        /// <summary>
+        /// Assumes the first <see cref="SynchronizationContext"/> will be the same as the UI thread.
+        /// </summary>
+        public static readonly SynchronizationContext UIContext;
+
         static Log() {
             ConsoleListener = new ConsoleListenerWithTimePrefix();
+            UIContext = SynchronizationContext.Current; //assumption.
         }
 
         public static Boolean HasConsoleBeenAllocated {
@@ -57,6 +66,9 @@ namespace Librainian.Threading {
                 Debugger.IsAttached.BreakIfTrue( message );
                 e.OriginalException.More();
             };
+
+            ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
+            ProfileOptimization.StartProfile( Application.ExecutablePath );
 
             return true;
         }
