@@ -131,29 +131,17 @@ namespace Librainian.Collections {
         /// <summary>
         ///     <para>Returns the count of items waiting to be added to this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeAdded {
-            get {
-                return this._waitingToBeAddedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+        public int CountOfItemsWaitingToBeAdded => this._waitingToBeAddedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
 
         /// <summary>
         ///     <para>Returns the count of items waiting to be changed in this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeChanged {
-            get {
-                return this._waitingToBeChangedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+        public int CountOfItemsWaitingToBeChanged => this._waitingToBeChangedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
 
         /// <summary>
         ///     <para>Returns the count of items waiting to be inserted to this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeInserted {
-            get {
-                return this._waitingToBeInsertedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+        public int CountOfItemsWaitingToBeInserted => this._waitingToBeInsertedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
 
         public Span TimeoutForReads {
             get;
@@ -168,11 +156,7 @@ namespace Librainian.Collections {
         /// <summary>
         ///     <para>Count of items currently in this <see cref="ParallelList{TType}" />.</para>
         /// </summary>
-        public int Count {
-            get {
-                return this._itemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+        public int Count => this._itemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
 
         /// <summary>
         /// </summary>
@@ -278,9 +262,7 @@ namespace Librainian.Collections {
         ///         in time.
         ///     </para>
         /// </summary>
-        public Boolean Contains( TType item ) {
-            return this.Read( () => this._list.Contains( item ) );
-        }
+        public Boolean Contains( TType item ) => this.Read( () => this._list.Contains( item ) );
 
         /// <summary>
         ///     Copies the entire <see cref="ParallelList{TType}" /> to the <paramref name="array" />, starting at the specified
@@ -316,9 +298,7 @@ namespace Librainian.Collections {
         ///     </para>
         /// </summary>
         /// <param name="item">The object to locate in this <see cref="ParallelList{TType}" />.</param>
-        public int IndexOf( TType item ) {
-            return this.Read( () => this._list.IndexOf( item ) );
-        }
+        public int IndexOf( TType item ) => this.Read( () => this._list.IndexOf( item ) );
 
         /// <summary>
         ///     <para>
@@ -441,11 +421,9 @@ namespace Librainian.Collections {
             return false;
         }
 
-        public Task AddAsync( TType item, Action afterAdd = null ) {
-            return Task.Run( () => {
-                this.TryAdd( item: item, afterAdd: afterAdd );
-            } );
-        }
+        public Task AddAsync( TType item, Action afterAdd = null ) => Task.Run( () => {
+                                                                                    this.TryAdd( item: item, afterAdd: afterAdd );
+                                                                                } );
 
         /// <summary>
         ///     Add a collection of items.
@@ -481,13 +459,11 @@ namespace Librainian.Collections {
             }
         }
 
-        public Task AddRangeAsync( [CanBeNull] IEnumerable<TType> items ) {
-            return Task.Run( () => {
-                if ( items != null ) {
-                    this.AddRange( items );
-                }
-            } );
-        }
+        public Task AddRangeAsync( [CanBeNull] IEnumerable<TType> items ) => Task.Run( () => {
+                                                                                           if ( items != null ) {
+                                                                                               this.AddRange( items );
+                                                                                           }
+                                                                                       } );
 
         /// <summary>
         ///     <para>
@@ -495,12 +471,10 @@ namespace Librainian.Collections {
         ///     </para>
         /// </summary>
         /// <returns></returns>
-        public List<TType> Clone() {
-            return this.Write( func: () => {
-                var copy = this._list.ToList();
-                return copy;
-            }, ignoreAllowModificationsCheck: true );
-        }
+        public List<TType> Clone() => this.Write( func: () => {
+                                                            var copy = this._list.ToList();
+                                                            return copy;
+                                                        }, ignoreAllowModificationsCheck: true );
 
         /// <summary>
         ///     Signal that this <see cref="ParallelList{TType}" /> will not be modified any more.
@@ -621,13 +595,9 @@ namespace Librainian.Collections {
             this._itemCounter.Value++;
         }
 
-        private void AnItemHasBeenChanged() {
-            this._waitingToBeChangedCounter.Value--;
-        }
+        private void AnItemHasBeenChanged() => this._waitingToBeChangedCounter.Value--;
 
-        private void AnItemHasBeenInserted() {
-            this._waitingToBeInsertedCounter.Value--;
-        }
+        private void AnItemHasBeenInserted() => this._waitingToBeInsertedCounter.Value--;
 
         private void AnItemHasBeenRemoved( [CanBeNull] Action action = null ) {
             this._waitingToBeRemovedCounter.Value--;
@@ -663,21 +633,13 @@ namespace Librainian.Collections {
             return default( TFuncResult );
         }
 
-        private void RequestToAddAnItem() {
-            this._waitingToBeAddedCounter.Value++;
-        }
+        private void RequestToAddAnItem() => this._waitingToBeAddedCounter.Value++;
 
-        private void RequestToChangeAnItem() {
-            this._waitingToBeChangedCounter.Value++;
-        }
+        private void RequestToChangeAnItem() => this._waitingToBeChangedCounter.Value++;
 
-        private void RequestToInsertAnItem() {
-            this._waitingToBeInsertedCounter.Value++;
-        }
+        private void RequestToInsertAnItem() => this._waitingToBeInsertedCounter.Value++;
 
-        private void RequestToRemoveAnItem() {
-            this._waitingToBeRemovedCounter.Value++;
-        }
+        private void RequestToRemoveAnItem() => this._waitingToBeRemovedCounter.Value++;
 
         /// <summary>
         ///     <para>Filter write requests through a <see cref="ReaderWriterLockSlim" />.</para>

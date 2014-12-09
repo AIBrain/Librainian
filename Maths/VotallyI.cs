@@ -159,29 +159,21 @@ namespace Librainian.Maths {
         /// <summary>
         /// <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void VoteNo( UInt64 votes = 1 ) {
-            this.No += votes;
-        }
+        public void VoteNo( UInt64 votes = 1 ) => this.No += votes;
 
         /// <summary>
         /// <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void VoteYes( UInt64 votes = 1 ) {
-            this.Yes += votes;
-        }
+        public void VoteYes( UInt64 votes = 1 ) => this.Yes += votes;
 
         /// <summary>
         /// <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void WithdrawNoVote( UInt64 votes = 1 ) {
-            this.No -= votes;
-        }
+        public void WithdrawNoVote( UInt64 votes = 1 ) => this.No -= votes;
 
         /// <summary>
         /// <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void WithdrawYesVote( UInt64 votes = 1 ) {
-            this.Yes -= votes;
-        }
+        public void WithdrawYesVote( UInt64 votes = 1 ) => this.Yes -= votes;
     }
 }

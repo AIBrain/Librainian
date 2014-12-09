@@ -62,9 +62,7 @@ namespace Librainian.Extensions {
             return newPosition;
         }
 
-        public override void SetLength( long value ) {
-            this._length = value;
-        }
+        public override void SetLength( long value ) => this._length = value;
 
         public override void Write( byte[] buffer, int offset, int count ) => this.Seek( count, SeekOrigin.Current );
     }

@@ -47,9 +47,7 @@ namespace Librainian.Database.MMF {
             return attribute.SizeConst > 0;
         }
 
-        private Boolean FieldSizesAreDefined() {
-            return this._type.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic ).Where( fieldInfo => !fieldInfo.FieldType.IsPrimitive ).All( HasMarshalDefinedSize );
-        }
+        private Boolean FieldSizesAreDefined() => this._type.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic ).Where( fieldInfo => !fieldInfo.FieldType.IsPrimitive ).All( HasMarshalDefinedSize );
 
         private Boolean PropertySizesAreDefined() {
             foreach ( var propertyInfo in

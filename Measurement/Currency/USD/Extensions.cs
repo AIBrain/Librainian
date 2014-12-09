@@ -51,15 +51,13 @@ namespace Librainian.Measurement.Currency.USD {
         /// <param name="source"></param>
         /// <param name="target"></param>
         [NotNull]
-        public static Task< ConcurrentDictionary< IDenomination, ulong > > StartTransfer( [CanBeNull] this Wallet source, [CanBeNull] Wallet target ) {
-            return Task.Run( () => {
-                                 if ( null == source || null == target ) {
-                                     return new ConcurrentDictionary< IDenomination, ulong >();
-                                 }
+        public static Task< ConcurrentDictionary< IDenomination, ulong > > StartTransfer( [CanBeNull] this Wallet source, [CanBeNull] Wallet target ) => Task.Run( () => {
+                                                                                                                                                                       if ( null == source || null == target ) {
+                                                                                                                                                                           return new ConcurrentDictionary< IDenomination, ulong >();
+                                                                                                                                                                       }
 
-                                 return new ConcurrentDictionary< IDenomination, ulong >( Transfer( source, target ) );
-                             } );
-        }
+                                                                                                                                                                       return new ConcurrentDictionary< IDenomination, ulong >( Transfer( source, target ) );
+                                                                                                                                                                   } );
 
         public static IEnumerable< KeyValuePair< IDenomination, ulong > > Transfer( [NotNull] this Wallet source, [NotNull] Wallet target ) {
             if ( source == null ) {

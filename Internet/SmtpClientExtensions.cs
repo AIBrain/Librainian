@@ -14,9 +14,7 @@ namespace Librainian.Internet {
         /// <param name="message">A MailMessage that contains the message to send.</param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A Task that represents the asynchronous send.</returns>
-        public static Task SendTask( this SmtpClient smtpClient, MailMessage message, object userToken ) {
-            return SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( message, tcs ) );
-        }
+        public static Task SendTask( this SmtpClient smtpClient, MailMessage message, object userToken ) => SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( message, tcs ) );
 
         /// <summary>Sends an e-mail message asynchronously.</summary>
         /// <param name="smtpClient">The client.</param>
@@ -26,9 +24,7 @@ namespace Librainian.Internet {
         /// <param name="body">A String that contains the message body.</param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A Task that represents the asynchronous send.</returns>
-        public static Task SendTask( this SmtpClient smtpClient, String from, String recipients, String subject, String body, object userToken ) {
-            return SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( from, recipients, subject, body, tcs ) );
-        }
+        public static Task SendTask( this SmtpClient smtpClient, String from, String recipients, String subject, String body, object userToken ) => SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( @from, recipients, subject, body, tcs ) );
 
         /// <summary>The core implementation of SendTask.</summary>
         /// <param name="smtpClient">The client.</param>

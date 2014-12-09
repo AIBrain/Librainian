@@ -96,17 +96,9 @@ namespace Librainian.Maths {
             return new Weight( Double.Parse( value ) );
         }
 
-        public void AdjustTowardsMax() {
-            this.Value = ( this.Value + MaxValue ) / 2D;
+        public void AdjustTowardsMax() => this.Value = ( this.Value + MaxValue ) / 2D;
 
-            //return this;
-        }
-
-        public void AdjustTowardsMin() {
-            this.Value = ( this.Value + MinValue ) / 2D;
-
-            //return this;
-        }
+        public void AdjustTowardsMin() => this.Value = ( this.Value + MinValue ) / 2D;
 
         public Boolean IsAgainst() => this.Value < ( 0.0D - Double.Epsilon );
 

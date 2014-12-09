@@ -77,13 +77,9 @@ namespace Librainian.IO {
 
         public static UInt32 Compute( UInt32 polynomial, UInt32 seed, byte[] buffer ) => ~CalculateHash( InitializeTable( polynomial ), seed, buffer, 0, buffer.Length );
 
-        public override void Initialize() {
-            this._hash = this._seed;
-        }
+        public override void Initialize() => this._hash = this._seed;
 
-        protected override void HashCore( byte[] buffer, int start, int length ) {
-            this._hash = CalculateHash( this._table, this._hash, buffer, start, length );
-        }
+        protected override void HashCore( byte[] buffer, int start, int length ) => this._hash = CalculateHash( this._table, this._hash, buffer, start, length );
 
         protected override byte[] HashFinal() {
             var hashBuffer = UInt32ToBigEndianBytes( ~this._hash );

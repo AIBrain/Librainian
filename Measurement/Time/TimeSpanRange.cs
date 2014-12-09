@@ -75,25 +75,15 @@ namespace Librainian.Measurement.Time {
             this.Length = δ;
         }
 
-        public IEnumerable<Days> AllDays() {
-            return this.Min.TotalDays.To( this.Max.TotalDays ).Select( second => Days.One );
-        }
+        public IEnumerable<Days> AllDays() => this.Min.TotalDays.To( this.Max.TotalDays ).Select( second => Days.One );
 
-        public IEnumerable<Hours> AllHours() {
-            return this.Min.TotalHours.To( this.Max.TotalHours ).Select( second => Hours.One );
-        }
+        public IEnumerable<Hours> AllHours() => this.Min.TotalHours.To( this.Max.TotalHours ).Select( second => Hours.One );
 
-        public IEnumerable<Milliseconds> AllMilliseconds() {
-            return this.Min.TotalMilliseconds.To( this.Max.TotalMilliseconds ).Select( millsecond => Milliseconds.One );
-        }
+        public IEnumerable<Milliseconds> AllMilliseconds() => this.Min.TotalMilliseconds.To( this.Max.TotalMilliseconds ).Select( millsecond => Milliseconds.One );
 
-        public IEnumerable<Minutes> AllMinutes() {
-            return this.Min.TotalMinutes.To( this.Max.TotalMinutes ).Select( minutes => Minutes.One );
-        }
+        public IEnumerable<Minutes> AllMinutes() => this.Min.TotalMinutes.To( this.Max.TotalMinutes ).Select( minutes => Minutes.One );
 
-        public IEnumerable<Seconds> AllSeconds() {
-            return this.Min.TotalSeconds.To( this.Max.TotalSeconds ).Select( second => Seconds.One );
-        }
+        public IEnumerable<Seconds> AllSeconds() => this.Min.TotalSeconds.To( this.Max.TotalSeconds ).Select( second => Seconds.One );
 
         /// <summary>
         ///     Check if the specified range is inside this range

@@ -126,7 +126,7 @@ namespace Librainian.Measurement.Currency.USD {
         /// <summary>
         ///     Return each <see cref="IBankNote" /> in this <see cref="Wallet" />.
         /// </summary>
-        public IEnumerable< IBankNote > Notes { get { return this._bankNotes.SelectMany( pair => 1.To( pair.Value ), ( pair, valuePair ) => pair.Key ); } }
+        public IEnumerable< IBankNote > Notes => this._bankNotes.SelectMany( pair => 1.To( pair.Value ), ( pair, valuePair ) => pair.Key );
 
         /// <summary>
         ///     Return the total amount of money contained in this <see cref="Wallet" />.

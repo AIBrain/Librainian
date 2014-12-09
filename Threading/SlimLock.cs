@@ -531,21 +531,13 @@ namespace Librainian.Threading {
             return waitSuccessful;
         }
 
-        private void SetWritersWaiting() {
-            this._owners |= WaitingWriters;
-        }
+        private void SetWritersWaiting() => this._owners |= WaitingWriters;
 
-        private void SetUpgraderWaiting() {
-            this._owners |= WaitingUpgrader;
-        }
+        private void SetUpgraderWaiting() => this._owners |= WaitingUpgrader;
 
-        private void ClearWritersWaiting() {
-            this._owners &= ~WaitingWriters;
-        }
+        private void ClearWritersWaiting() => this._owners &= ~WaitingWriters;
 
-        private void ClearUpgraderWaiting() {
-            this._owners &= ~WaitingUpgrader;
-        }
+        private void ClearUpgraderWaiting() => this._owners &= ~WaitingUpgrader;
 
         public void EnterWriteLock() => this.TryEnterWriteLock( -1 );
 
@@ -719,9 +711,7 @@ namespace Librainian.Threading {
 
         private Boolean IsWriterAcquired() => ( this._owners & ~WaitingWriters ) == 0;
 
-        private void SetWriterAcquired() {
-            this._owners |= WriterHeld; // indicate we have a writer.
-        }
+        private void SetWriterAcquired() => this._owners |= WriterHeld;
 
         public void EnterUpgradeableReadLock() => this.TryEnterUpgradeableReadLock( -1 );
 
@@ -1006,9 +996,7 @@ namespace Librainian.Threading {
             Thread.EndCriticalRegion();
         }
 
-        private void ClearWriterAcquired() {
-            this._owners &= ~WriterHeld;
-        }
+        private void ClearWriterAcquired() => this._owners &= ~WriterHeld;
 
         public void ExitUpgradeableReadLock() {
             var id = Thread.CurrentThread.ManagedThreadId;

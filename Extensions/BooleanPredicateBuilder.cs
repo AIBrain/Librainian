@@ -22,13 +22,9 @@ namespace Librainian.Extensions {
     using System.Linq.Expressions;
 
     public static class BooleanPredicateBuilder {
-        public static Expression< Func< TTT, bool > > True< TTT >() {
-            return f => true;
-        }
+        public static Expression< Func< TTT, bool > > True< TTT >() => f => true;
 
-        public static Expression< Func< TTT, Boolean > > False< TTT >() {
-            return f => false;
-        }
+        public static Expression< Func< TTT, Boolean > > False< TTT >() => f => false;
 
         public static Expression< Func< TTT, Boolean > > Or< TTT >( this Expression< Func< TTT, Boolean > > expr1, Expression< Func< TTT, Boolean > > expr2 ) => Expression.Lambda< Func< TTT, Boolean > >( Expression.OrElse( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
 

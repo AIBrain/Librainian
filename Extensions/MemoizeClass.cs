@@ -22,9 +22,7 @@ namespace Librainian.Extensions {
     using System.Collections.Concurrent;
 
     public static class MemoizeClass {
-        public static Func< TA, TB, TR > Detuplify< TA, TB, TR >( this Func< Tuple< TA, TB >, TR > func ) {
-            return ( a, b ) => func( Tuple.Create( a, b ) );
-        }
+        public static Func< TA, TB, TR > Detuplify< TA, TB, TR >( this Func< Tuple< TA, TB >, TR > func ) => ( a, b ) => func( Tuple.Create( a, b ) );
 
         public static Func< TKey, TResult > Memoize< TKey, TResult >( this Func< TKey, TResult > f ) {
             var d = new ConcurrentDictionary< TKey, TResult >();
@@ -44,9 +42,7 @@ namespace Librainian.Extensions {
         //    return ( a, b ) => memoized( Tuple.Create( a, b ) );
         //}
 
-        public static Func< Tuple< TA, TB >, TR > Tuplify< TA, TB, TR >( this Func< TA, TB, TR > func ) {
-            return t => func( t.Item1, t.Item2 );
-        }
+        public static Func< Tuple< TA, TB >, TR > Tuplify< TA, TB, TR >( this Func< TA, TB, TR > func ) => t => func( t.Item1, t.Item2 );
 
         //static Func<A, B, R> Memoize( this Func<A, B, R> f ) {
         //    return f.Tuplify().Memoize().Detuplify();

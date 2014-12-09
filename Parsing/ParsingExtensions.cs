@@ -253,9 +253,7 @@ namespace Librainian.Parsing {
             return dict;
         }
 
-        public static UInt64 Count( this String text, Char character ) {
-            return ( UInt64 ) text.Where( c => c == character ).LongCount();
-        }
+        public static UInt64 Count( this String text, Char character ) => ( UInt64 ) text.Where( c => c == character ).LongCount();
 
         /// <summary>
         ///     Computes the Damerau-Levenshtein Distance between two strings, represented as arrays of
@@ -1504,9 +1502,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        private static async Task< String > GetStringAsync( this String s ) {
-            return await Task.Run( () => s );
-        }
+        private static async Task< String > GetStringAsync( this String s ) => await Task.Run( () => s );
 
         public static readonly char[] SpaceSplitBy = { Singlespace[ 0 ] };
     }

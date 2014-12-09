@@ -43,13 +43,11 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
-        public static void BusyCursor( [CanBeNull] this Control control ) {
-            ThreadingExtensions.Wrap( () => {
-                if ( control != null ) {
-                    control.InvokeIfRequired( () => control.Cursor = Cursors.WaitCursor );
-                }
-            } );
-        }
+        public static void BusyCursor( [CanBeNull] this Control control ) => ThreadingExtensions.Wrap( () => {
+                                                                                                           if ( control != null ) {
+                                                                                                               control.InvokeIfRequired( () => control.Cursor = Cursors.WaitCursor );
+                                                                                                           }
+                                                                                                       } );
 
         /// <summary>
         ///    <para>Perform an <see cref="Action" /> on the control's thread and then <see cref="Control.Refresh" />.</para>

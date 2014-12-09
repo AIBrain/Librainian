@@ -1202,9 +1202,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="bigIntegers"></param>
         /// <returns></returns>
-        public static BigInteger Sum( [NotNull] this IEnumerable<BigInteger> bigIntegers ) {
-            return bigIntegers.Aggregate( BigInteger.Zero, ( current, bigInteger ) => current + bigInteger );
-        }
+        public static BigInteger Sum( [NotNull] this IEnumerable<BigInteger> bigIntegers ) => bigIntegers.Aggregate( BigInteger.Zero, ( current, bigInteger ) => current + bigInteger );
 
         public static int ThreeFourths( this int x ) {
             var result = ( 3.0 * x ) / 4.0;
@@ -1594,13 +1592,9 @@ namespace Librainian.Maths {
             return input.Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
         }
 
-        public static String ToHex( this uint value ) {
-            return BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
-        }
+        public static String ToHex( this uint value ) => BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
 
-        public static String ToHex( this ulong value ) {
-            return BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
-        }
+        public static String ToHex( this ulong value ) => BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
 
         [CanBeNull]
         public static String ToScientificString( BigDecimal value ) {
@@ -1712,15 +1706,11 @@ namespace Librainian.Maths {
             return number;
         }
 
-        public static Decimal CalcAVG( this IEnumerable<Decimal> values ) {
-            return values.DefaultIfEmpty()
-                         .Average( arg => arg );
-        }
+        public static Decimal CalcAVG( this IEnumerable<Decimal> values ) => values.DefaultIfEmpty()
+                                                                                   .Average( arg => arg );
 
-        public static Decimal CalcEMA( this IEnumerable<Decimal> values, Decimal alpha ) {
-            return values.DefaultIfEmpty()
-                         .Aggregate( ( ema, nextQuote ) => alpha * nextQuote + ( 1 - alpha ) * ema );
-        }
+        public static Decimal CalcEMA( this IEnumerable<Decimal> values, Decimal alpha ) => values.DefaultIfEmpty()
+                                                                                                  .Aggregate( ( ema, nextQuote ) => alpha * nextQuote + ( 1 - alpha ) * ema );
 
         public static byte[] Concat( this byte[] first, byte[] second ) {
             var buffer = new byte[ first.Length + second.Length ];

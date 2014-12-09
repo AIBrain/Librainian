@@ -167,9 +167,7 @@ namespace Librainian {
                 }
         */
 
-        public static IEnumerable< string > GetVersions() {
-            return AppDomain.CurrentDomain.GetAssemblies().Select( assembly => String.Format( "Assembly: {0}, {1}", assembly.GetName().Name, assembly.GetName().Version ) );
-        }
+        public static IEnumerable< string > GetVersions() => AppDomain.CurrentDomain.GetAssemblies().Select( assembly => String.Format( "Assembly: {0}, {1}", assembly.GetName().Name, assembly.GetName().Version ) );
 
         public static Boolean CanAllocateMemory( this BigInteger bytes ) {
             try {
@@ -218,8 +216,6 @@ namespace Librainian {
             }
         }
 
-        private static int GetFreeProcessors() {
-            return utilizationCounters.Count( pc => pc.NextValue() < 0.80f );
-        }
+        private static int GetFreeProcessors() => utilizationCounters.Count( pc => pc.NextValue() < 0.80f );
     }
 }

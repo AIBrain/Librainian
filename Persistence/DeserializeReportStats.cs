@@ -53,30 +53,20 @@ namespace Librainian.Persistence {
 
         private Action< DeserializeReportStats > Handler { get; set; }
 
-        public void AddSuccess( long amount = 1 ) {
-            this._gains.Value += amount;
-        }
+        public void AddSuccess( long amount = 1 ) => this._gains.Value += amount;
 
-        public long GetGains() {
-            return this._gains.Values.Sum( arg => arg );
-        }
+        public long GetGains() => this._gains.Values.Sum( arg => arg );
 
-        public void AddFailed( long amount = 1 ) {
-            this._losses.Value += amount;
-        }
+        public void AddFailed( long amount = 1 ) => this._losses.Value += amount;
 
-        public long GetLoss() {
-            return this._losses.Values.Sum( arg => arg );
-        }
+        public long GetLoss() => this._losses.Values.Sum( arg => arg );
 
         public async Task StartReporting() {
             this.Enabled = true;
             await this.Timing.Then( job: this.Report );
         }
 
-        public void StopReporting() {
-            this.Enabled = false;
-        }
+        public void StopReporting() => this.Enabled = false;
 
         /// <summary>
         ///     Perform a Report.

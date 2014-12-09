@@ -98,19 +98,13 @@ namespace Librainian.Maths {
 
         public static PotentialF Parse( String value ) => new PotentialF( Single.Parse( value ) );
 
-        public void Add( Single amount ) {
-            this.Value += amount;
-        }
+        public void Add( Single amount ) => this.Value += amount;
 
-        public void Divide( Single amount ) {
-            this.Value /= amount;
-        }
+        public void Divide( Single amount ) => this.Value /= amount;
 
         public override int GetHashCode() => this.Value.GetHashCode();
 
-        public void Multiply( Single amount ) {
-            this.Value *= amount;
-        }
+        public void Multiply( Single amount ) => this.Value *= amount;
 
         public override String ToString() => String.Format( "{0:P3}", this.Value );
 

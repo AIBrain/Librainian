@@ -589,9 +589,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="charPool"></param>
         /// <returns></returns>
-        public static String Randomize( [CanBeNull] this String charPool ) {
-            return null == charPool ? String.Empty : charPool.OrderBy( r => Next() ).Aggregate( String.Empty, ( current, c ) => current + c );
-        }
+        public static String Randomize( [CanBeNull] this String charPool ) => null == charPool ? String.Empty : charPool.OrderBy( r => Next() ).Aggregate( String.Empty, ( current, c ) => current + c );
 
         /// <summary>
         /// <para>A list containing <see cref="Boolean.True" /> or <see cref="Boolean.False" />.</para>

@@ -80,13 +80,9 @@ namespace Librainian.Graphics.Imaging {
             this.Checksum = UInt64.MaxValue;    //an unlikely hash
         }
 
-        public async Task<Boolean> TryAdd( UInt64 index, Frame frame, CancellationToken token ) {
-            return await Task.Run( () => {
-                // ReSharper disable once ConvertToLambdaExpression
-                return false;   //TODO add frame
-            }, token );
-        }
-
-
+        public async Task<Boolean> TryAdd( UInt64 index, Frame frame, CancellationToken token ) => await Task.Run( () => {
+                                                                                                                       // ReSharper disable once ConvertToLambdaExpression
+                                                                                                                       return false;   //TODO add frame
+                                                                                                                   }, token );
     }
 }

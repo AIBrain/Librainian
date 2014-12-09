@@ -128,47 +128,45 @@ namespace Librainian.Internet.Servers {
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <seealso cref="Stop"/>
-        public Task Run( CancellationToken cancellationToken ) {
-            return Task.Run( async () => {
-                Log.Info( "Webserver running..." );
-                try {
-                    while ( this._httpListener.IsListening ) {
-                        Debug.WriteLine( "Webserver listening.." );
-                        await Task.Run( async () => {
-                            var listenerContext = await this._httpListener.GetContextAsync();  // Waits for an incoming request as an asynchronous operation.
-                            if ( listenerContext == null ) {
-                                return;
-                            }
-                            var responderMethod = this._responderMethod;
-                            if ( responderMethod == null ) {        //no responderMethod?!?
-                                return;
-                            }
-                            try {
-                                var response = responderMethod( listenerContext.Request );
-                                var buf = Encoding.UTF8.GetBytes( response );
-                                listenerContext.Response.ContentLength64 = buf.Length;
-                                listenerContext.Response.OutputStream.Write( buf, 0, buf.Length );
-                            }
+        public Task Run( CancellationToken cancellationToken ) => Task.Run( async () => {
+                                                                                      Log.Info( "Webserver running..." );
+                                                                                      try {
+                                                                                          while ( this._httpListener.IsListening ) {
+                                                                                              Debug.WriteLine( "Webserver listening.." );
+                                                                                              await Task.Run( async () => {
+                                                                                                                        var listenerContext = await this._httpListener.GetContextAsync();  // Waits for an incoming request as an asynchronous operation.
+                                                                                                                        if ( listenerContext == null ) {
+                                                                                                                            return;
+                                                                                                                        }
+                                                                                                                        var responderMethod = this._responderMethod;
+                                                                                                                        if ( responderMethod == null ) {        //no responderMethod?!?
+                                                                                                                            return;
+                                                                                                                        }
+                                                                                                                        try {
+                                                                                                                            var response = responderMethod( listenerContext.Request );
+                                                                                                                            var buf = Encoding.UTF8.GetBytes( response );
+                                                                                                                            listenerContext.Response.ContentLength64 = buf.Length;
+                                                                                                                            listenerContext.Response.OutputStream.Write( buf, 0, buf.Length );
+                                                                                                                        }
 
-                            // ReSharper disable once EmptyGeneralCatchClause
-                            catch {
+                                                                                                                            // ReSharper disable once EmptyGeneralCatchClause
+                                                                                                                        catch {
 
-                                // suppress any exceptions
-                            }
-                            finally {
-                                listenerContext.Response.OutputStream.Close();  // always close the stream
-                            }
-                        }, cancellationToken );
-                    }
-                }
+                                                                                                                            // suppress any exceptions
+                                                                                                                        }
+                                                                                                                        finally {
+                                                                                                                            listenerContext.Response.OutputStream.Close();  // always close the stream
+                                                                                                                        }
+                                                                                                                    }, cancellationToken );
+                                                                                          }
+                                                                                      }
 
-                // ReSharper disable once EmptyGeneralCatchClause
-                catch {
+                                                                                          // ReSharper disable once EmptyGeneralCatchClause
+                                                                                      catch {
 
-                    // suppress any exceptions
-                }
-            }, cancellationToken );
-        }
+                                                                                          // suppress any exceptions
+                                                                                      }
+                                                                                  }, cancellationToken );
 
         public void Stop() {
             using ( this._httpListener ) {

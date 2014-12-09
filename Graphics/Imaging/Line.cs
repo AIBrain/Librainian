@@ -53,17 +53,15 @@ namespace Librainian.Graphics.Imaging {
             this.Checksum = CalculateChecksumAsync( Pixels ).Result;
         }
 
-        public static async Task<UInt64> CalculateChecksumAsync( IEnumerable<Pixel> pixels ) {
-            return await Task.Run( () => {
-                var checksum = UInt64.MinValue;
-                foreach ( var pixel in pixels ) {
-                    unchecked {
-                        checksum = ( checksum + ( UInt64 )pixel.GetHashCode() ) / 2;
-                    }
-                }
-                return checksum;
-            } );
-        }
+        public static async Task<UInt64> CalculateChecksumAsync( IEnumerable<Pixel> pixels ) => await Task.Run( () => {
+                                                                                                                    var checksum = UInt64.MinValue;
+                                                                                                                    foreach ( var pixel in pixels ) {
+                                                                                                                        unchecked {
+                                                                                                                            checksum = ( checksum + ( UInt64 )pixel.GetHashCode() ) / 2;
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                    return checksum;
+                                                                                                                } );
 
         /// <summary>
         ///     Checksum of the pixels (to guard against corruption).

@@ -78,11 +78,7 @@ namespace Librainian.Magic.Abodit {
         ///     A text version of all interfaces - mostly for debugging purposes, stored in alphabetical order
         /// </summary>
         [BsonIgnore]
-        public String InterfacesAsText {
-            get {
-                return String.Join( ",", this.Int.OrderBy( s => s ) );
-            }
-        }
+        public String InterfacesAsText => String.Join( ",", this.Int.OrderBy( s => s ) );
 
         /// <summary>
         ///     An indexer for use by serialization code

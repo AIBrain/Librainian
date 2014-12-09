@@ -109,19 +109,11 @@ namespace Librainian.Maths {
             return new Fuzzy( Double.Parse( value ) );
         }
 
-        public void AdjustTowardsMax() {
-            this.Value = ( this.Value + MaxValue ) / 2D;
-
-            //return this;
-        }
+        public void AdjustTowardsMax() => this.Value = ( this.Value + MaxValue ) / 2D;
 
         //public Boolean IsUndecided( Fuzzy anotherFuzzy ) { return !IsTruer( anotherFuzzy ) && !IsFalser( anotherFuzzy ); }
         [UsedImplicitly]
-        public void AdjustTowardsMin() {
-            this.Value = ( this.Value + MinValue ) / 2D;
-
-            //return this;
-        }
+        public void AdjustTowardsMin() => this.Value = ( this.Value + MinValue ) / 2D;
 
         public Boolean IsFalseish() => this.Value < Undecided.Low;
 

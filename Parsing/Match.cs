@@ -54,19 +54,13 @@ namespace Librainian.Parsing {
                 this._matches = baseContext._matches.ConcatSingle( newExpr ).ToList().AsReadOnly();
             }
 
-            public Func< T, TResult > Compile() {
-                return value => this._matches.First( expr => expr.Matches( value ) ).Evaluate( value );
-            }
+            public Func< T, TResult > Compile() => value => this._matches.First( expr => expr.Matches( value ) ).Evaluate( value );
 
             public override OpenMatchContext< T, TResult > Guard( Func< T, Boolean > failWhen, Func< T, TResult > failWith ) => new ContextImpl( this, new MatchExpression( failWhen, failWith ) );
 
-            public override ClosedMatchContext Return( TResult result ) {
-                return new ContextImpl( this, new MatchExpression( t => true, t => result ) );
-            }
+            public override ClosedMatchContext Return( TResult result ) => new ContextImpl( this, new MatchExpression( t => true, t => result ) );
 
-            public override ClosedMatchContext Return( Func< T, TResult > resultProjection ) {
-                return new ContextImpl( this, new MatchExpression( t => true, resultProjection ) );
-            }
+            public override ClosedMatchContext Return( Func< T, TResult > resultProjection ) => new ContextImpl( this, new MatchExpression( t => true, resultProjection ) );
 
             public override IntermediateMatchResultContext< T, TResult > When( Func< T, Boolean > condition ) => new IntermediateContextImpl( this, condition );
         }
@@ -81,9 +75,7 @@ namespace Librainian.Parsing {
                 this._condition = condition;
             }
 
-            public override MatchContext< T, TResult > Return( TResult result ) {
-                return new ContextImpl( this._baseContext, new MatchExpression( this._condition, t => result ) );
-            }
+            public override MatchContext< T, TResult > Return( TResult result ) => new ContextImpl( this._baseContext, new MatchExpression( this._condition, t => result ) );
 
             public override MatchContext< T, TResult > Return( Func< T, TResult > resultProjection ) => new ContextImpl( this._baseContext, new MatchExpression( this._condition, resultProjection ) );
         }

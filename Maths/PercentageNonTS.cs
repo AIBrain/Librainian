@@ -77,21 +77,13 @@ namespace Librainian.Maths {
 
         public static PercentageNonTS Parse( String value ) => new PercentageNonTS( Double.Parse( value ) );
 
-        public void DropByAbsolute( PercentageNonTS percentage ) {
-            this.Value -= percentage.Value;
-        }
+        public void DropByAbsolute( PercentageNonTS percentage ) => this.Value -= percentage.Value;
 
-        public void DropByRelative( PercentageNonTS percentage ) {
-            this.Value -= percentage.Value * this.Value;
-        }
+        public void DropByRelative( PercentageNonTS percentage ) => this.Value -= percentage.Value * this.Value;
 
-        public void RaiseByAbsolute( PercentageNonTS percentage ) {
-            this.Value += percentage.Value;
-        }
+        public void RaiseByAbsolute( PercentageNonTS percentage ) => this.Value += percentage.Value;
 
-        public void RaiseByRelative( PercentageNonTS percentage ) {
-            this.Value += percentage.Value * this.Value;
-        }
+        public void RaiseByRelative( PercentageNonTS percentage ) => this.Value += percentage.Value * this.Value;
 
         public override String ToString() => String.Format( "{0:P1}", this.Value );
 

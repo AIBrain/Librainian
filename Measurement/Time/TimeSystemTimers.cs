@@ -89,8 +89,6 @@ namespace Librainian.Measurement.Time {
             return _threadingCounter;
         }
 
-        private static void Callback( object state ) {
-            _threadingCounter++;
-        }
+        private static void Callback( object state ) => _threadingCounter++;
     }
 }

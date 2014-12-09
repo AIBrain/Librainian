@@ -381,14 +381,12 @@ namespace Librainian.IO {
         /// <param name="progress"></param>
         /// <param name="eta"></param>
         /// <returns></returns>
-        public static Task Copy( Document source, Document destination, Action<Double> progress, Action<TimeSpan> eta ) {
-            return Task.Run( () => {
-                var computer = new Computer();
+        public static Task Copy( Document source, Document destination, Action<Double> progress, Action<TimeSpan> eta ) => Task.Run( () => {
+                                                                                                                                         var computer = new Computer();
 
-                //TODO file monitor/watcher?
-                computer.FileSystem.CopyFile( source.FullPathWithFileName, destination.FullPathWithFileName, UIOption.AllDialogs, UICancelOption.DoNothing );
-            } );
-        }
+                                                                                                                                         //TODO file monitor/watcher?
+                                                                                                                                         computer.FileSystem.CopyFile( source.FullPathWithFileName, destination.FullPathWithFileName, UIOption.AllDialogs, UICancelOption.DoNothing );
+                                                                                                                                     } );
 
         /// <summary>
         /// Before: @"c:\hello\world".
@@ -638,9 +636,7 @@ namespace Librainian.IO {
             return info;
         }
 
-        public static DriveInfo GetDriveWithLargestAvailableFreeSpace() {
-            return DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).FirstOrDefault( driveInfo => driveInfo.AvailableFreeSpace >= DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).Max( info => info.AvailableFreeSpace ) );
-        }
+        public static DriveInfo GetDriveWithLargestAvailableFreeSpace() => DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).FirstOrDefault( driveInfo => driveInfo.AvailableFreeSpace >= DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).Max( info => info.AvailableFreeSpace ) );
 
         public static uint? GetFileSizeOnDisk( this Document document ) => GetFileSizeOnDisk( new FileInfo( document.FullPathWithFileName ) );
 

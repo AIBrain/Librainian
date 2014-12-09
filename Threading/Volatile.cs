@@ -86,17 +86,13 @@
             /// </summary>
             /// <param name="newValue">The new value</param>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( int newValue ) {
-                this._value = newValue;
-            }
+            public void WriteCompilerOnlyFence( int newValue ) => this._value = newValue;
 
             /// <summary>
             /// Write without applying any fence
             /// </summary>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( int newValue ) {
-                this._value = newValue;
-            }
+            public void WriteUnfenced( int newValue ) => this._value = newValue;
 
             /// <summary>
             /// Atomically set the value to the given updated value if the current value equals the comparand
@@ -211,17 +207,13 @@
             /// </summary>
             /// <param name="newValue">The new value</param>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( long newValue ) {
-                this._value = newValue;
-            }
+            public void WriteCompilerOnlyFence( long newValue ) => this._value = newValue;
 
             /// <summary>
             /// Write without applying any fence
             /// </summary>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( long newValue ) {
-                this._value = newValue;
-            }
+            public void WriteUnfenced( long newValue ) => this._value = newValue;
 
             /// <summary>
             /// Atomically set the value to the given updated value if the current value equals the comparand
@@ -342,17 +334,13 @@
             /// </summary>
             /// <param name="newValue">The new value</param>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( bool newValue ) {
-                this._value = ToInt( newValue );
-            }
+            public void WriteCompilerOnlyFence( bool newValue ) => this._value = ToInt( newValue );
 
             /// <summary>
             /// Write without applying any fence
             /// </summary>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( bool newValue ) {
-                this._value = ToInt( newValue );
-            }
+            public void WriteUnfenced( bool newValue ) => this._value = ToInt( newValue );
 
             /// <summary>
             /// Atomically set the value to the given updated value if the current value equals the comparand
@@ -469,17 +457,13 @@
             /// <param name="newValue">The new value</param>
 
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( T newValue ) {
-                this._value = newValue;
-            }
+            public void WriteCompilerOnlyFence( T newValue ) => this._value = newValue;
 
             /// <summary>
             /// Write without applying any fence
             /// </summary>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( T newValue ) {
-                this._value = newValue;
-            }
+            public void WriteUnfenced( T newValue ) => this._value = newValue;
 
             /// <summary>
             /// Atomically set the value to the given updated value if the current value equals the comparand
@@ -607,18 +591,14 @@
             /// <param name="index">The element index</param>
             /// <param name="newValue">The new value</param>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( int index, int newValue ) {
-                this._array[ index ] = newValue;
-            }
+            public void WriteCompilerOnlyFence( int index, int newValue ) => this._array[ index ] = newValue;
 
             /// <summary>
             /// Write without applying any fence
             /// </summary>
             /// <param name="index">The index.</param>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( int index, int newValue ) {
-                this._array[ index ] = newValue;
-            }
+            public void WriteUnfenced( int index, int newValue ) => this._array[ index ] = newValue;
 
             /// <summary>
             /// Atomically set the value to the given updated value if the current value equals the comparand
@@ -761,18 +741,14 @@
             /// <param name="index">The element index</param>
             /// <param name="newValue">The new value</param>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( int index, long newValue ) {
-                this._array[ index ] = newValue;
-            }
+            public void WriteCompilerOnlyFence( int index, long newValue ) => this._array[ index ] = newValue;
 
             /// <summary>
             /// Write without applying any fence
             /// </summary>
             /// <param name="index">The index.</param>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( int index, long newValue ) {
-                this._array[ index ] = newValue;
-            }
+            public void WriteUnfenced( int index, long newValue ) => this._array[ index ] = newValue;
 
             /// <summary>
             /// Atomically set the value to the given updated value if the current value equals the comparand
@@ -916,18 +892,14 @@
             /// <param name="index">The element index</param>
             /// <param name="newValue">The new value</param>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( int index, bool newValue ) {
-                this._array[ index ] = ToInt( newValue );
-            }
+            public void WriteCompilerOnlyFence( int index, bool newValue ) => this._array[ index ] = ToInt( newValue );
 
             /// <summary>
             /// Write without applying any fence
             /// </summary>
             /// <param name="index">The index.</param>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( int index, bool newValue ) {
-                this._array[ index ] = ToInt( newValue );
-            }
+            public void WriteUnfenced( int index, bool newValue ) => this._array[ index ] = ToInt( newValue );
 
             /// <summary>
             /// Atomically set the value to the given updated value if the current value equals the comparand
@@ -1064,18 +1036,14 @@
             /// <param name="index">The element index</param>
             /// <param name="newValue">The new value</param>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( int index, T newValue ) {
-                this._array[ index ] = newValue;
-            }
+            public void WriteCompilerOnlyFence( int index, T newValue ) => this._array[ index ] = newValue;
 
             /// <summary>
             /// Write without applying any fence
             /// </summary>
             /// <param name="index">The index.</param>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( int index, T newValue ) {
-                this._array[ index ] = newValue;
-            }
+            public void WriteUnfenced( int index, T newValue ) => this._array[ index ] = newValue;
 
             /// <summary>
             /// Atomically set the value to the given updated value if the current value equals the comparand
@@ -1170,17 +1138,13 @@
             /// </summary>
             /// <param name="newValue">The new value</param>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( int newValue ) {
-                this._value = newValue;
-            }
+            public void WriteCompilerOnlyFence( int newValue ) => this._value = newValue;
 
             /// <summary>
             /// Write without applying any fence
             /// </summary>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( int newValue ) {
-                this._value = newValue;
-            }
+            public void WriteUnfenced( int newValue ) => this._value = newValue;
 
             /// <summary>
             /// Atomically set the value to the given updated value if the current value equals the comparand
@@ -1297,17 +1261,13 @@
             /// </summary>
             /// <param name="newValue">The new value</param>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( long newValue ) {
-                this._value = newValue;
-            }
+            public void WriteCompilerOnlyFence( long newValue ) => this._value = newValue;
 
             /// <summary>
             /// Write without applying any fence
             /// </summary>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( long newValue ) {
-                this._value = newValue;
-            }
+            public void WriteUnfenced( long newValue ) => this._value = newValue;
 
             /// <summary>
             /// Atomically set the value to the given updated value if the current value equals the comparand
@@ -1431,17 +1391,13 @@
             /// </summary>
             /// <param name="newValue">The new value</param>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( bool newValue ) {
-                this._value = ToInt( newValue );
-            }
+            public void WriteCompilerOnlyFence( bool newValue ) => this._value = ToInt( newValue );
 
             /// <summary>
             /// Write without applying any fence
             /// </summary>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( bool newValue ) {
-                this._value = ToInt( newValue );
-            }
+            public void WriteUnfenced( bool newValue ) => this._value = ToInt( newValue );
 
             /// <summary>
             /// Atomically set the value to the given updated value if the current value equals the comparand

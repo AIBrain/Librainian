@@ -178,9 +178,7 @@ namespace Librainian.Collections {
         }
 
         [OnSerializing]
-        private void OnSerializing( StreamingContext context ) {
-            this._serializationArray = this.ToArray();
-        }
+        private void OnSerializing( StreamingContext context ) => this._serializationArray = this.ToArray();
 
         private List< T > ToList() {
             Segment head;

@@ -124,15 +124,13 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="source"></param>
         /// <param name="target"></param>
         [NotNull]
-        public static Task<ConcurrentDictionary<ICoin, ulong>> StartTransfer( [CanBeNull] this CoinWallet source, [CanBeNull] CoinWallet target ) {
-            return Task.Run( () => {
-                if ( null == source || null == target ) {
-                    return new ConcurrentDictionary<ICoin, ulong>();
-                }
+        public static Task<ConcurrentDictionary<ICoin, ulong>> StartTransfer( [CanBeNull] this CoinWallet source, [CanBeNull] CoinWallet target ) => Task.Run( () => {
+                                                                                                                                                                   if ( null == source || null == target ) {
+                                                                                                                                                                       return new ConcurrentDictionary<ICoin, ulong>();
+                                                                                                                                                                   }
 
-                return new ConcurrentDictionary<ICoin, ulong>( Transfer( source, target ) );
-            } );
-        }
+                                                                                                                                                                   return new ConcurrentDictionary<ICoin, ulong>( Transfer( source, target ) );
+                                                                                                                                                               } );
 
         public static IEnumerable<KeyValuePair<ICoin, ulong>> Transfer( [NotNull] this CoinWallet source, [NotNull] CoinWallet target ) {
             if ( source == null ) {

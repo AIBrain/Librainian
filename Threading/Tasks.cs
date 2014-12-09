@@ -242,19 +242,17 @@ namespace Librainian.Threading {
         /// <param name="pre"></param>
         /// <param name="post"></param>
         /// <returns></returns>
-        public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) {
-            return () => {
-                if ( pre != null ) {
-                    pre();
-                }
-                if ( action != null ) {
-                    action();
-                }
-                if ( post != null ) {
-                    post();
-                }
-            };
-        }
+        public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) => () => {
+                                                                                                                            if ( pre != null ) {
+                                                                                                                                pre();
+                                                                                                                            }
+                                                                                                                            if ( action != null ) {
+                                                                                                                                action();
+                                                                                                                            }
+                                                                                                                            if ( post != null ) {
+                                                                                                                                post();
+                                                                                                                            }
+                                                                                                                        };
 
         ///// <summary>
         /////   This is untested.

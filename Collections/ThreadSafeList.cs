@@ -140,11 +140,9 @@ namespace Librainian.Collections {
             }
         }
 
-        public Task AddAsync( T item ) {
-            return Task.Run( () => {
-                this.TryAdd( item );
-            } );
-        }
+        public Task AddAsync( T item ) => Task.Run( () => {
+                                                        this.TryAdd( item );
+                                                    } );
 
         /// <summary>
         ///     Add in an enumerable of items.

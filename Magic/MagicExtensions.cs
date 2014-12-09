@@ -37,18 +37,14 @@ namespace Librainian.Magic {
         /// <param name="observable"></param>
         /// <returns></returns>
         /// <seealso cref="http://haacked.com/archive/2012/10/08/writing-a-continueafter-method-for-rx.aspx/"/>
-        public static IObservable< Unit > AsCompletion< T >( this IObservable< T > observable ) {
-            return Observable.Create< Unit >( observer => {
-                                                  Action onCompleted = () => {
-                                                                           observer.OnNext( Unit.Default );
-                                                                           observer.OnCompleted();
-                                                                       };
-                                                  return observable.Subscribe( _ => { }, observer.OnError, onCompleted );
-                                              } );
-        }
+        public static IObservable< Unit > AsCompletion< T >( this IObservable< T > observable ) => Observable.Create< Unit >( observer => {
+                                                                                                                                  Action onCompleted = () => {
+                                                                                                                                                           observer.OnNext( Unit.Default );
+                                                                                                                                                           observer.OnCompleted();
+                                                                                                                                                       };
+                                                                                                                                  return observable.Subscribe( _ => { }, observer.OnError, onCompleted );
+                                                                                                                              } );
 
-        public static IObservable< TRet > ContinueAfter< T, TRet >( this IObservable< T > observable, Func< IObservable< TRet > > selector ) {
-            return observable.AsCompletion().SelectMany( _ => selector() );
-        }
+        public static IObservable< TRet > ContinueAfter< T, TRet >( this IObservable< T > observable, Func< IObservable< TRet > > selector ) => observable.AsCompletion().SelectMany( _ => selector() );
     }
 }

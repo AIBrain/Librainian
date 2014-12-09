@@ -140,26 +140,24 @@ namespace Librainian.Internet {
             }
         }
 
-        private void StartNextDownload() {
-            Task.Factory.StartNew( () => {
-                                       Thread.Yield();
-                                       if ( this.DownloadInProgress ) {
-                                           return;
-                                       }
-                                       Uri address;
-                                       if ( !this.Urls.TryDequeue( result: out address ) ) {
-                                           return;
-                                       }
+        private void StartNextDownload() => Task.Factory.StartNew( () => {
+                                                                       Thread.Yield();
+                                                                       if ( this.DownloadInProgress ) {
+                                                                           return;
+                                                                       }
+                                                                       Uri address;
+                                                                       if ( !this.Urls.TryDequeue( result: out address ) ) {
+                                                                           return;
+                                                                       }
 
-                                       this.DownloadInProgress = true;
-                                       String.Format( "Surf(): Starting download: {0}", address.AbsoluteUri ).WriteLine();
-                                       this.webclient.DownloadStringAsync( address: address, userToken: address );
-                                   } ).ContinueWith( t => {
-                                                         if ( this.Urls.Any() ) {
-                                                             this.StartNextDownload();
-                                                         }
-                                                     } );
-        }
+                                                                       this.DownloadInProgress = true;
+                                                                       String.Format( "Surf(): Starting download: {0}", address.AbsoluteUri ).WriteLine();
+                                                                       this.webclient.DownloadStringAsync( address: address, userToken: address );
+                                                                   } ).ContinueWith( t => {
+                                                                                         if ( this.Urls.Any() ) {
+                                                                                             this.StartNextDownload();
+                                                                                         }
+                                                                                     } );
 
         internal void webclient_DownloadStringCompleted( object sender, DownloadStringCompletedEventArgs e ) {
             if ( e.UserState is Uri ) {

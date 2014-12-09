@@ -25,14 +25,10 @@ namespace Librainian.Extensions {
     public static class FuzzyPredicateBuilder {
         public static Expression< Func< TTT, Boolean > > And< TTT >( this Expression< Func< TTT, Single > > expr1, Expression< Func< TTT, Single > > expr2 ) => Expression.Lambda< Func< TTT, Boolean > >( Expression.AndAlso( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
 
-        public static Expression< Func< TTT, Boolean > > False< TTT >() {
-            return f => false;
-        }
+        public static Expression< Func< TTT, Boolean > > False< TTT >() => f => false;
 
         public static Expression< Func< TTT, Boolean > > Or< TTT >( this Expression< Func< TTT, Single > > expr1, Expression< Func< TTT, Single > > expr2 ) => Expression.Lambda< Func< TTT, Boolean > >( body: Expression.GreaterThanOrEqual( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), parameters: expr1.Parameters );
 
-        public static Expression< Func< TTT, Boolean > > True< TTT >() {
-            return f => true;
-        }
+        public static Expression< Func< TTT, Boolean > > True< TTT >() => f => true;
     }
 }

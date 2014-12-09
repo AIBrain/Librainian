@@ -37,9 +37,7 @@ namespace Librainian.Internet {
         /// <param name="address">An IPAddress that identifies the computer that is the destination for the ICMP echo message.</param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task< PingReply > SendTask( this Ping ping, IPAddress address, object userToken ) {
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, tcs ) );
-        }
+        public static Task< PingReply > SendTask( this Ping ping, IPAddress address, object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, tcs ) );
 
         /// <summary>
         ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
@@ -51,9 +49,7 @@ namespace Librainian.Internet {
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task< PingReply > SendTask( this Ping ping, String hostNameOrAddress, object userToken ) {
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, tcs ) );
-        }
+        public static Task< PingReply > SendTask( this Ping ping, String hostNameOrAddress, object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, tcs ) );
 
         /// <summary>
         ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
@@ -66,9 +62,7 @@ namespace Librainian.Internet {
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task< PingReply > SendTask( this Ping ping, IPAddress address, int timeout, object userToken ) {
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, tcs ) );
-        }
+        public static Task< PingReply > SendTask( this Ping ping, IPAddress address, int timeout, object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, tcs ) );
 
         /// <summary>
         ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
@@ -84,9 +78,7 @@ namespace Librainian.Internet {
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task< PingReply > SendTask( this Ping ping, String hostNameOrAddress, int timeout, object userToken ) {
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, tcs ) );
-        }
+        public static Task< PingReply > SendTask( this Ping ping, String hostNameOrAddress, int timeout, object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, tcs ) );
 
         /// <summary>
         ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
@@ -103,9 +95,7 @@ namespace Librainian.Internet {
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task< PingReply > SendTask( this Ping ping, IPAddress address, int timeout, byte[] buffer, object userToken ) {
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, tcs ) );
-        }
+        public static Task< PingReply > SendTask( this Ping ping, IPAddress address, int timeout, byte[] buffer, object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, tcs ) );
 
         /// <summary>
         ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
@@ -125,9 +115,7 @@ namespace Librainian.Internet {
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task< PingReply > SendTask( this Ping ping, String hostNameOrAddress, int timeout, byte[] buffer, object userToken ) {
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, tcs ) );
-        }
+        public static Task< PingReply > SendTask( this Ping ping, String hostNameOrAddress, int timeout, byte[] buffer, object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, tcs ) );
 
         /// <summary>
         ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
@@ -148,9 +136,7 @@ namespace Librainian.Internet {
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task< PingReply > SendTask( this Ping ping, IPAddress address, int timeout, byte[] buffer, PingOptions options, object userToken ) {
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, options, tcs ) );
-        }
+        public static Task< PingReply > SendTask( this Ping ping, IPAddress address, int timeout, byte[] buffer, PingOptions options, object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, options, tcs ) );
 
         /// <summary>
         ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
@@ -174,9 +160,7 @@ namespace Librainian.Internet {
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task< PingReply > SendTask( this Ping ping, String hostNameOrAddress, int timeout, byte[] buffer, PingOptions options, object userToken ) {
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, options, tcs ) );
-        }
+        public static Task< PingReply > SendTask( this Ping ping, String hostNameOrAddress, int timeout, byte[] buffer, PingOptions options, object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, options, tcs ) );
 
         /// <summary>The core implementation of SendTask.</summary>
         /// <param name="ping">The Ping.</param>

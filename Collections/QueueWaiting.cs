@@ -90,9 +90,7 @@ namespace Librainian.Collections {
         ///     Does a Dequeue for each item in the <see cref="Queue" /> ?or null?
         /// </summary>
         /// <returns></returns>
-        public IEnumerable< T > NextAll() {
-            return this.Queue.Select( o => this.Next() ).Where( o => default( T ) != o );
-        }
+        public IEnumerable< T > NextAll() => this.Queue.Select( o => this.Next() ).Where( o => default( T ) != o );
 
         /// <summary>
         ///     Wait until:

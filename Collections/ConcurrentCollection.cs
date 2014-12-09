@@ -90,9 +90,7 @@ namespace Librainian.Collections {
 
         public T[] ToArray() => this.ToList().ToArray();
 
-        public void Clear() {
-            this.m_head = null;
-        }
+        public void Clear() => this.m_head = null;
 
         public void Push( T item ) {
             var node = new Node( item ) {
@@ -235,9 +233,7 @@ namespace Librainian.Collections {
         }
 
         [OnSerializing]
-        private void OnSerializing( StreamingContext context ) {
-            this.m_serializationArray = this.ToArray();
-        }
+        private void OnSerializing( StreamingContext context ) => this.m_serializationArray = this.ToArray();
 
         private void PushCore( Node head, Node tail ) {
             var spinWait = new SpinWait();

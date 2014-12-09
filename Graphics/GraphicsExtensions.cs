@@ -38,33 +38,27 @@ namespace Librainian.Graphics {
             return ms;
         }
 
-        public static async Task<bool> TrySave( this EFV efv, Document document, CancellationToken token ) {
-            return await Task.Run( () => {
-                //TODO recalc the checksums
-                //write out to file
-                // ReSharper disable once ConvertToLambdaExpression
-                                       var bob = new BinaryFormatter();
-                //bob.Serialize(
-                return false;
-            }, token );
-        }
+        public static async Task<bool> TrySave( this EFV efv, Document document, CancellationToken token ) => await Task.Run( () => {
+                                                                                                                                  //TODO recalc the checksums
+                                                                                                                                  //write out to file
+                                                                                                                                  // ReSharper disable once ConvertToLambdaExpression
+                                                                                                                                  var bob = new BinaryFormatter();
+                                                                                                                                  //bob.Serialize(
+                                                                                                                                  return false;
+                                                                                                                              }, token );
 
-        public static async Task<bool> TrySave( this EFG efg, Document document, CancellationToken token ) {
-            return await Task.Run( () => {
-                //TODO recalc the checksums
-                //write out to file
-                                       // ReSharper disable once ConvertToLambdaExpression
-                return false;
-            }, token );
-        }
+        public static async Task<bool> TrySave( this EFG efg, Document document, CancellationToken token ) => await Task.Run( () => {
+                                                                                                                                  //TODO recalc the checksums
+                                                                                                                                  //write out to file
+                                                                                                                                  // ReSharper disable once ConvertToLambdaExpression
+                                                                                                                                  return false;
+                                                                                                                              }, token );
 
-        public static async Task<EFG> TryLoad( this Document document, CancellationToken token ) {
-            return await Task.Run( () => {
-                //TODO recalc the checksums
-                //load file, checking checksums along the way.. (skip frames/lines with bad checksums?)
-                                       // ReSharper disable once ConvertToLambdaExpression
-                return new EFG();
-            }, token );
-        }
+        public static async Task<EFG> TryLoad( this Document document, CancellationToken token ) => await Task.Run( () => {
+                                                                                                                        //TODO recalc the checksums
+                                                                                                                        //load file, checking checksums along the way.. (skip frames/lines with bad checksums?)
+                                                                                                                        // ReSharper disable once ConvertToLambdaExpression
+                                                                                                                        return new EFG();
+                                                                                                                    }, token );
     }
 }

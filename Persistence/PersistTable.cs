@@ -230,9 +230,7 @@ namespace Librainian.Persistence {
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.IDictionary`2" /> is read-only.
         /// </exception>
-        public void Add( TKey key, TValue value ) {
-            this[ key ] = value;
-        }
+        public void Add( TKey key, TValue value ) => this[ key ] = value;
 
         /// <summary>
         /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" /> .
@@ -243,9 +241,7 @@ namespace Librainian.Persistence {
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
         /// </exception>
-        public void Add( KeyValuePair<TKey, TValue> item ) {
-            this[ item.Key ] = item.Value;
-        }
+        public void Add( KeyValuePair<TKey, TValue> item ) => this[ item.Key ] = item.Value;
 
         /// <summary>
         /// Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1" /> .
@@ -361,9 +357,7 @@ namespace Librainian.Persistence {
         /// All <see cref="KeyValuePair{TKey,TValue }" /> , with the <see cref="TValue" /> deserialized.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<TKey, TValue>> Items() {
-            return this.Dictionary.Select( pair => new KeyValuePair<TKey, TValue>( pair.Key, Value( pair.Value ) ) );
-        }
+        public IEnumerable<KeyValuePair<TKey, TValue>> Items() => this.Dictionary.Select( pair => new KeyValuePair<TKey, TValue>( pair.Key, Value( pair.Value ) ) );
 
         /// <summary>
         /// Removes the element with the specified key from the

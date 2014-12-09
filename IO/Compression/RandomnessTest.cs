@@ -35,9 +35,7 @@ namespace Librainian.IO.Compression {
 
         [TestFixtureSetUp]
         [UsedImplicitly]
-        public static void Init() {
-            RandomnessFeeeding = new RandomnessFeeeding();
-        }
+        public static void Init() => RandomnessFeeeding = new RandomnessFeeeding();
 
         [Test]
         [UsedImplicitly]

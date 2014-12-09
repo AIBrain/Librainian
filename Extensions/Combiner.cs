@@ -59,9 +59,7 @@ namespace Librainian.Extensions {
             return input.Aggregate( result, ( current, item ) => current.Combine( item.Combinations() ) );
         }
 
-        public static IEnumerable< IEnumerable< T > > Combinations< T >( this IEnumerable< T > input ) {
-            return input.Select( item => new[] { item } );
-        }
+        public static IEnumerable< IEnumerable< T > > Combinations< T >( this IEnumerable< T > input ) => input.Select( item => new[] { item } );
 
         public static IEnumerable< IEnumerable< T > > Combine< T >( this IEnumerable< IEnumerable< T > > groupAs, IEnumerable< IEnumerable< T > > groupBs ) {
             var found = false;

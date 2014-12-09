@@ -113,12 +113,10 @@ namespace Librainian.Measurement.Time {
         ///     Get the internal data points we have so far.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<TimeProgression> GetDataPoints() {
-            return this._datapoints.OrderBy( pair => pair.Key ).Select( pair => new TimeProgression {
-                MillisecondsPassed = pair.Key.TotalMilliseconds,
-                Progress = pair.Value
-            } );
-        }
+        public IEnumerable<TimeProgression> GetDataPoints() => this._datapoints.OrderBy( pair => pair.Key ).Select( pair => new TimeProgression {
+                                                                                                                                                    MillisecondsPassed = pair.Key.TotalMilliseconds,
+                                                                                                                                                    Progress = pair.Value
+                                                                                                                                                } );
 
         public void Reset( TimeSpan samplingPeriod ) {
             this._timer.Close();

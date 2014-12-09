@@ -90,17 +90,11 @@ namespace Librainian.Maths {
 
         public static FuzzyNonTS Parse( String value ) => new FuzzyNonTS( Double.Parse( value ) );
 
-        public void LessLikely() {
-            this.Value = ( this.Value + MinValue ) / 2D;
-        }
+        public void LessLikely() => this.Value = ( this.Value + MinValue ) / 2D;
 
-        public void MoreLikely( FuzzyNonTS towards = null ) {
-            this.Value = ( this.Value + ( towards ?? MaxValue ) ) / 2D;
-        }
+        public void MoreLikely( FuzzyNonTS towards = null ) => this.Value = ( this.Value + ( towards ?? MaxValue ) ) / 2D;
 
-        public void MoreLikely( Double towards ) {
-            this.Value = ( this.Value + ( towards >= MinValue ? towards : MaxValue ) ) / 2D;
-        }
+        public void MoreLikely( Double towards ) => this.Value = ( this.Value + ( towards >= MinValue ? towards : MaxValue ) ) / 2D;
 
         /// <summary>
         ///     Initializes a random number between 0 and 1 within a range, defaulting to Middle

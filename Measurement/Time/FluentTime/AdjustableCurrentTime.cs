@@ -18,12 +18,8 @@ namespace Librainian.Measurement.Time.FluentTime {
             }
         }
 
-        internal static void Reset() {
-            _overrideNow = null;
-        }
+        internal static void Reset() => _overrideNow = null;
 
-        internal static void SetNow( DateTime now ) {
-            _overrideNow = now;
-        }
+        internal static void SetNow( DateTime now ) => _overrideNow = now;
     }
 }

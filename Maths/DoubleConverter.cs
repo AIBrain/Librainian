@@ -223,9 +223,7 @@ namespace Librainian.Maths {
             ///      System.Decimal place) and a positive value makes the  System.Decimal
             ///     expansion smaller.
             /// </summary>
-            internal void Shift( int amount ) {
-                this.decimalPoint += amount;
-            }
+            internal void Shift( int amount ) => this.decimalPoint += amount;
         }
     }
 }

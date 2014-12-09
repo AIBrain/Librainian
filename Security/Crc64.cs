@@ -46,13 +46,9 @@ namespace Librainian.Security {
 
         public override int HashSize { get { return 64; } }
 
-        public override void Initialize() {
-            this._hash = this._seed;
-        }
+        public override void Initialize() => this._hash = this._seed;
 
-        protected override void HashCore( byte[] buffer, int start, int length ) {
-            this._hash = CalculateHash( this._hash, this._table, buffer, start, length );
-        }
+        protected override void HashCore( byte[] buffer, int start, int length ) => this._hash = CalculateHash( this._hash, this._table, buffer, start, length );
 
         protected override byte[] HashFinal() {
             var hashBuffer = UInt64ToBigEndianBytes( this._hash );

@@ -23,18 +23,10 @@ namespace Librainian.Collections {
         protected readonly ConcurrentDictionary<TKey, BigInteger> Container = new ConcurrentDictionary<TKey, BigInteger>();
 
         [NotNull]
-        public String FriendlyName {
-            get {
-                return Types.Name( () => this );
-            }
-        }
+        public String FriendlyName => Types.Name( () => this );
 
         [UsedImplicitly]
-        protected String DebuggerDisplay {
-            get {
-                return String.Format( "{0}({1}) ", this.FriendlyName, this.Container.Select( pair => pair.Key.ToString() ).ToStrings() );
-            }
-        }
+        protected String DebuggerDisplay => String.Format( "{0}({1}) ", this.FriendlyName, this.Container.Select( pair => pair.Key.ToString() ).ToStrings() );
 
         public void Add( TKey key ) {
             if ( Equals( key, default( TKey ) ) ) {
@@ -64,13 +56,9 @@ namespace Librainian.Collections {
             return value > BigInteger.Zero;
         }
 
-        public BigInteger Count() {
-            return this.Container.Aggregate( BigInteger.Zero, ( current, kvp ) => current + kvp.Value );
-        }
+        public BigInteger Count() => this.Container.Aggregate( BigInteger.Zero, ( current, kvp ) => current + kvp.Value );
 
-        public BigInteger Count<TParticle>() {
-            return this.Container.Where( pair => pair.Key is TParticle ).Aggregate( BigInteger.Zero, ( current, kvp ) => current + kvp.Value );   //BUG is this right?
-        }
+        public BigInteger Count<TParticle>() => this.Container.Where( pair => pair.Key is TParticle ).Aggregate( BigInteger.Zero, ( current, kvp ) => current + kvp.Value );
 
         /// <summary>
         /// Get all particles
