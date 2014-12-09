@@ -41,7 +41,7 @@ namespace Librainian.Speech {
 
         public IEnumerable< InstalledVoice > GetVoices() {
             var speechSynthesizer = this.SpeechSynthesizer;
-            return speechSynthesizer == null ? Enumerable.Empty< InstalledVoice >() : speechSynthesizer.GetInstalledVoices();
+            return speechSynthesizer?.GetInstalledVoices() ?? Enumerable.Empty< InstalledVoice >();
         }
 
         /// <summary>

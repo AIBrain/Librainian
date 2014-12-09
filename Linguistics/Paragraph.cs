@@ -66,9 +66,7 @@ namespace Librainian.Linguistics {
             this._tokens.Fix();
         }
 
-        public static implicit operator String( Paragraph paragraph ) {
-            return paragraph.ToString();
-        }
+        public static implicit operator String( Paragraph paragraph ) => paragraph.ToString();
 
         public Boolean Equals( [CanBeNull] Paragraph other ) {
             if ( ReferenceEquals( other, null ) ) {
@@ -77,13 +75,9 @@ namespace Librainian.Linguistics {
             return ReferenceEquals( this, other ) || this._tokens.SequenceEqual( other._tokens );
         }
 
-        public IEnumerator<Sentence> GetEnumerator() {
-            return this._tokens.GetEnumerator();
-        }
+        public IEnumerator<Sentence> GetEnumerator() => this._tokens.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /*
                 public IEnumerable<Tuple<UInt64, String>> Possibles() {

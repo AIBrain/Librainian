@@ -14,11 +14,14 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/FileSizeFormatProviderExtensions.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/FileSizeFormatProviderExtensions.cs" was last cleaned by Rick on 2014/12/09 at 5:05 AM
 #endregion
 
 namespace Librainian.Extensions {
     using System;
+    using IO;
 
     public static class FileSizeFormatProviderExtensions {
         private static readonly FileSizeFormatProvider FormatProvider = new FileSizeFormatProvider();

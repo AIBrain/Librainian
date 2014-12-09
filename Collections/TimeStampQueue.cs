@@ -30,7 +30,7 @@ namespace Librainian.Collections {
     public class TimeStampQueue< T > : IEnumerable< WithTime< T > > where T : class {
         [DataMember] [OptionalField] public readonly ConcurrentQueue< WithTime< T > > Queue = new ConcurrentQueue< WithTime< T > >();
 
-        public IEnumerable< T > Items { get { return this.Queue.Select( item => item.Item ); } }
+        public IEnumerable< T > Items => this.Queue.Select( item => item.Item );
 
         public IEnumerator< WithTime< T > > GetEnumerator() {
             return this.Queue.GetEnumerator();
@@ -67,9 +67,7 @@ namespace Librainian.Collections {
 
         //TODO maybe use BlockingCollection?
         //public readonly BlockingCollection<ObjectWithTimeStamp<T>> Queue = new ConcurrentQueue<ObjectWithTimeStamp<T>>();
-        public Boolean Contains( T value ) {
-            return this.Queue.Any( q => Equals( q.Item, value ) );
-        }
+        public Boolean Contains( T value ) => this.Queue.Any( q => Equals( q.Item, value ) );
 
         /// <summary>
         ///     Returns the next <see cref="T" /> in the <see cref="Queue" /> or null.
@@ -77,16 +75,14 @@ namespace Librainian.Collections {
         /// <returns></returns>
         public T Next() {
             var temp = this.Pull();
-            return null == temp ? default( T ) : temp.Item;
+            return temp?.Item;
         }
 
         /// <summary>
         ///     Does a Dequeue for each item in the <see cref="Queue" /> ?or null?
         /// </summary>
         /// <returns></returns>
-        public IEnumerable< T > NextAll() {
-            return this.Queue.Select( o => this.Next() );
-        }
+        public IEnumerable< T > NextAll() => this.Queue.Select( o => this.Next() );
 
         /// <summary>
         ///     Returns the next Object in the <see cref="Queue" /> or null.

@@ -66,9 +66,7 @@ namespace Librainian.Parsing.Markov {
             return newCorpus.ToString();
         }
 
-        public Boolean Load() {
-            return this.Name.Loader< MkModel >( source => source.DeepClone( destination: this ) );
-        }
+        public Boolean Load() => this.Name.Loader< MkModel >( source => source.DeepClone( destination: this ) );
 
         /// <summary>
         ///     Return the list of strings found after this <paramref name="word" />.
@@ -83,9 +81,7 @@ namespace Librainian.Parsing.Markov {
             return this._markovChains.ContainsKey( key: word ) ? this._markovChains[ key: word ] : CollectionExtensions.EmptyList;
         }
 
-        public Boolean Save() {
-            return this.Saver( this.Name );
-        }
+        public Boolean Save() => this.Saver( this.Name );
 
         public void Train( String corpus, int level = 3 ) {
             //return Task.Run( () => {

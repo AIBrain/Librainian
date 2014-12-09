@@ -25,9 +25,9 @@ namespace Librainian.Threading {
     using System.Runtime.CompilerServices;
 
     public class CustomAttribute : Attribute {
-        public static readonly List< MethodInfo > MethodsList = new List< MethodInfo >();
+        public static List< MethodInfo > MethodsList { get; }
 
-        public String FullMethodPath;
+        public string FullMethodPath { get; }
 
         static CustomAttribute() {
             MethodsList = new List< MethodInfo >( Assembly.GetExecutingAssembly().GetTypes().SelectMany( t => t.GetMethods() ).Where( m => m.GetCustomAttributes( typeof ( CustomAttribute ), false ).Length > 0 ) );
@@ -41,7 +41,7 @@ namespace Librainian.Threading {
 
         public CustomAttribute( [CallerMemberName] String membername = "" ) {
             var method = MethodsList.FirstOrDefault( m => m.Name == membername );
-            if ( method == null || method.DeclaringType == null ) {
+            if ( method?.DeclaringType == null ) {
                 return; //Not suppose to happen, but safety comes first
             }
             this.FullMethodPath = method.DeclaringType.Name + membername; //Work it around any way you want it

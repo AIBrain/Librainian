@@ -51,7 +51,7 @@ namespace Librainian.Collections {
             this._count = length;
         }
 
-        internal int Count { get { return this._collection == null ? this._count : this._collection.Count; } }
+        internal int Count => this._collection?.Count ?? this._count;
 
         /// <summary>
         ///     Caller to guarantee items.Length &gt; index &gt;= 0

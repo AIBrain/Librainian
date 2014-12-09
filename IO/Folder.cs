@@ -74,7 +74,7 @@ namespace Librainian.IO {
         /// <exception cref="FileNotFoundException"></exception>
         public Folder( [NotNull] String fullPath ) {
             if ( String.IsNullOrWhiteSpace( fullPath ) ) {
-                throw new ArgumentNullException( "path" );
+                throw new ArgumentNullException( "fullPath" );
             }
 
             this.OriginalFullPath = fullPath;
@@ -146,17 +146,9 @@ namespace Librainian.IO {
         }
 
         [NotNull]
-        public String FullName {
-            get {
-                return this.DirectoryInfo.FullName;
-            }
-        }
+        public String FullName => this.DirectoryInfo.FullName;
 
-        private String DebuggerDisplay {
-            get {
-                return this.FullName;
-            }
-        }
+        private String DebuggerDisplay => this.FullName;
 
         /// <summary>
         /// <para>Static comparison of the file names (case insensitive) and file sizes for equality.</para>
@@ -240,21 +232,13 @@ namespace Librainian.IO {
             return this.DirectoryInfo.EnumerateFiles().Select( fileInfo => new Document( fileInfo.FullName ) );
         }
 
-        public IEnumerable<Document> GetDocuments( String searchPattern ) {
-            return this.DirectoryInfo.EnumerateFiles( searchPattern ).Select( fileInfo => new Document( fileInfo.FullName ) );
-        }
+        public IEnumerable<Document> GetDocuments( String searchPattern ) => this.DirectoryInfo.EnumerateFiles( searchPattern ).Select( fileInfo => new Document( fileInfo.FullName ) );
 
-        public IEnumerable<Document> GetDocuments( IEnumerable<String> searchPatterns ) {
-            return searchPatterns.SelectMany( this.GetDocuments );
-        }
+        public IEnumerable<Document> GetDocuments( IEnumerable<String> searchPatterns ) => searchPatterns.SelectMany( this.GetDocuments );
 
-        public IEnumerable<Document> GetDocuments( IEnumerable<String> searchPatterns, SearchOption searchOption ) {
-            return searchPatterns.SelectMany( searchPattern => this.GetDocuments( searchPattern, searchOption ) );
-        }
+        public IEnumerable<Document> GetDocuments( IEnumerable<String> searchPatterns, SearchOption searchOption ) => searchPatterns.SelectMany( searchPattern => this.GetDocuments( searchPattern, searchOption ) );
 
-        public IEnumerable<Document> GetDocuments( String searchPattern, SearchOption searchOption ) {
-            return this.DirectoryInfo.EnumerateFiles( searchPattern, searchOption ).Select( fileInfo => new Document( fileInfo.FullName ) );
-        }
+        public IEnumerable<Document> GetDocuments( String searchPattern, SearchOption searchOption ) => this.DirectoryInfo.EnumerateFiles( searchPattern, searchOption ).Select( fileInfo => new Document( fileInfo.FullName ) );
 
         public IEnumerable<Folder> GetFolders() {
             if ( !this.DirectoryInfo.Exists ) {
@@ -284,9 +268,7 @@ namespace Librainian.IO {
             }
         }
 
-        public override int GetHashCode() {
-            return this.FullName.GetHashCode();
-        }
+        public override int GetHashCode() => this.FullName.GetHashCode();
 
         /// <summary>
         /// <para>
@@ -295,13 +277,9 @@ namespace Librainian.IO {
         /// </para>
         /// </summary>
         /// <returns></returns>
-        public Boolean IsEmpty() {
-            return !this.GetFolders( "*.*" ).Any() && !this.GetDocuments( "*.*" ).Any();
-        }
+        public Boolean IsEmpty() => !this.GetFolders( "*.*" ).Any() && !this.GetDocuments( "*.*" ).Any();
 
-        public void Refresh() {
-            this.DirectoryInfo.Refresh();
-        }
+        public void Refresh() => this.DirectoryInfo.Refresh();
 
         /// <summary>
         /// <para>Shorten the full path with "..."</para>
@@ -317,9 +295,7 @@ namespace Librainian.IO {
         /// Returns a String that represents the current object.
         /// </summary>
         /// <returns>A String that represents the current object.</returns>
-        public override String ToString() {
-            return DebuggerDisplay;
-        }
+        public override String ToString() => DebuggerDisplay;
 
         //TODO
         //public Task FindFilesAsync(

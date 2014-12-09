@@ -26,7 +26,6 @@ namespace Librainian.Collections {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class TreeNode< T > : IDisposable {
-        private TreeTraversalType _disposeTraversal = TreeTraversalType.BottomUp;
         private TreeNode< T > _parent;
         private T _value;
 
@@ -47,7 +46,7 @@ namespace Librainian.Collections {
 
         public TreeNodeList< T > Children { get; private set; }
 
-        public TreeTraversalType DisposeTraversal { get { return this._disposeTraversal; } set { this._disposeTraversal = value; } }
+        public TreeTraversalType DisposeTraversal { get; } = TreeTraversalType.BottomUp;
 
         public Boolean IsDisposed { get; private set; }
 

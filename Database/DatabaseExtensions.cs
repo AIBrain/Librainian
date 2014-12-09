@@ -100,7 +100,7 @@ namespace Librainian.Database {
             foreach ( var item in items ) {
                 var member = item.Body as MemberExpression;
                 var unary = item.Body as UnaryExpression;
-                var body = member ?? ( unary != null ? unary.Operand as MemberExpression : null );
+                var body = member ?? unary?.Operand as MemberExpression;
 
                 if ( member != null && body.Member is PropertyInfo ) {
                     var property = body.Member as PropertyInfo;

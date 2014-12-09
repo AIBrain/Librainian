@@ -330,7 +330,6 @@
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\DummyXMLResolver.cs" />
     <Compile Include="Extensions\EventArgs.cs" />
-    <Compile Include="Extensions\FileSizeFormatProvider.cs" />
     <Compile Include="Extensions\FileSizeFormatProviderExtensions.cs" />
     <Compile Include="Extensions\FuzzyPredicateBuilder.cs" />
     <Compile Include="Extensions\HashSetLinqAccess.cs" />
@@ -405,6 +404,7 @@
     <Compile Include="Internet\PingExtensions.cs" />
     <Compile Include="Internet\NetworkBrowser.cs" />
     <Compile Include="IO\Compression\CompressExtensions.cs" />
+    <Compile Include="IO\FileSizeFormatProvider.cs" />
     <Compile Include="IO\WMIOperation.cs" />
     <Compile Include="IO\NetworkAdapter.cs" />
     <Compile Include="IO\Compression\RandomnessFeeeding.cs" />

@@ -111,27 +111,21 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="pascalCasedWord">String to convert</param>
         /// <returns>String</returns>
-        public static String AddDashes( this String pascalCasedWord ) {
-            return Regex.Replace( Regex.Replace( Regex.Replace( pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1-$2" ), @"([a-z\d])([A-Z])", "$1-$2" ), @"[\s]", "-" );
-        }
+        public static String AddDashes( this String pascalCasedWord ) => Regex.Replace( Regex.Replace( Regex.Replace( pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1-$2" ), @"([a-z\d])([A-Z])", "$1-$2" ), @"[\s]", "-" );
 
         /// <summary>
         ///     Add an undescore prefix to a pascasl-cased String
         /// </summary>
         /// <param name="pascalCasedWord"></param>
         /// <returns></returns>
-        public static String AddUnderscorePrefix( this String pascalCasedWord ) {
-            return String.Format( "_{0}", pascalCasedWord );
-        }
+        public static String AddUnderscorePrefix( this String pascalCasedWord ) => String.Format( "_{0}", pascalCasedWord );
 
         /// <summary>
         ///     Add underscores to a pascal-cased String
         /// </summary>
         /// <param name="pascalCasedWord">String to convert</param>
         /// <returns>String</returns>
-        public static String AddUnderscores( this String pascalCasedWord ) {
-            return Regex.Replace( Regex.Replace( Regex.Replace( pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1_$2" ), @"([a-z\d])([A-Z])", "$1_$2" ), @"[-\s]", "_" );
-        }
+        public static String AddUnderscores( this String pascalCasedWord ) => Regex.Replace( Regex.Replace( Regex.Replace( pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1_$2" ), @"([a-z\d])([A-Z])", "$1_$2" ), @"[-\s]", "_" );
 
         public static String After( [ NotNull ] this String s, [ NotNull ] String splitter ) {
             if ( s == null ) {
@@ -143,18 +137,14 @@ namespace Librainian.Parsing {
             return s.Substring( s.IndexOf( splitter, StringComparison.InvariantCulture ) + 1 ).TrimStart();
         }
 
-        public static String Append( [ CanBeNull ] this String result, [ CanBeNull ] String appendThis ) {
-            return String.Format( "{0}{1}", result ?? String.Empty, appendThis ?? String.Empty );
-        }
+        public static String Append( [ CanBeNull ] this String result, [ CanBeNull ] String appendThis ) => String.Format( "{0}{1}", result ?? String.Empty, appendThis ?? String.Empty );
 
         /// <summary>
         ///     Return the <see cref="tuple" /> formatted with the index.
         /// </summary>
         /// <param name="tuple"></param>
         /// <returns></returns>
-        public static String AsIndexed( this Tuple< string, int > tuple ) {
-            return String.Format( "{0}.[{1}]", tuple.Item1, tuple.Item2 );
-        }
+        public static String AsIndexed( this Tuple< string, int > tuple ) => String.Format( "{0}.[{1}]", tuple.Item1, tuple.Item2 );
 
         /// <summary>
         ///     Return the <see cref="word" /> formatted with the <see cref="index" />.
@@ -387,10 +377,7 @@ namespace Librainian.Parsing {
         /// <param name="source"></param>
         /// <param name="compare"></param>
         /// <returns></returns>
-        public static Boolean EndsLike( this String source, String compare ) {
-            return source.EndsWith( compare, StringComparison.InvariantCultureIgnoreCase );
-            //( source ?? String.Empty ).Equals( compare ?? String.Empty,  );
-        }
+        public static Boolean EndsLike( this String source, String compare ) => source.EndsWith( compare, StringComparison.InvariantCultureIgnoreCase );
 
         public static IEnumerable< char > EnglishOnly( this String s ) {
             try {
@@ -454,13 +441,9 @@ namespace Librainian.Parsing {
             return source.SequenceEqual( compare );
         }
 
-        public static String FirstSentence( this String paragraph ) {
-            return paragraph.ToSentences().FirstOrDefault();
-        }
+        public static String FirstSentence( this String paragraph ) => paragraph.ToSentences().FirstOrDefault();
 
-        public static String FirstWord( this String sentence ) {
-            return sentence.ToWords().FirstOrDefault() ?? String.Empty;
-        }
+        public static String FirstWord( this String sentence ) => sentence.ToWords().FirstOrDefault() ?? String.Empty;
 
         /// <summary>
         /// </summary>
@@ -561,9 +544,7 @@ namespace Librainian.Parsing {
             yield return input.ToCamelCase( culture ).AddUnderscorePrefix();
         }
 
-        public static String InOutputFormat( this String indexed ) {
-            return String.Format( "{0}-|", indexed );
-        }
+        public static String InOutputFormat( this String indexed ) => String.Format( "{0}-|", indexed );
 
         public static Boolean IsJustNumbers( [ CanBeNull ] this String text ) {
             if ( null == text ) {
@@ -576,26 +557,18 @@ namespace Librainian.Parsing {
             return Double.TryParse( text, out test );
         }
 
-        public static Boolean IsJustNumbers( [ CanBeNull ] this String text, out Decimal result ) {
-            return Decimal.TryParse( text ?? String.Empty, out result );
-        }
+        public static Boolean IsJustNumbers( [ CanBeNull ] this String text, out Decimal result ) => Decimal.TryParse( text ?? String.Empty, out result );
 
-        public static Boolean IsNullOrEmpty( [ CanBeNull ] this String value ) {
-            return String.IsNullOrEmpty( value );
-        }
+        public static Boolean IsNullOrEmpty( [ CanBeNull ] this String value ) => String.IsNullOrEmpty( value );
 
-        public static Boolean IsNullOrWhiteSpace( [ CanBeNull ] this String value ) {
-            return String.IsNullOrWhiteSpace( value );
-        }
+        public static Boolean IsNullOrWhiteSpace( [ CanBeNull ] this String value ) => String.IsNullOrWhiteSpace( value );
 
         /// <summary>
         ///     Checks to see if a String is all uppper case
         /// </summary>
         /// <param name="inputString">String to check</param>
         /// <returns>bool</returns>
-        public static bool IsUpperCase( this String inputString ) {
-            return Regex.IsMatch( inputString, @"^[A-Z]+$" );
-        }
+        public static bool IsUpperCase( this String inputString ) => Regex.IsMatch( inputString, @"^[A-Z]+$" );
 
         /// <summary>
         ///     <para>String sentence = "10 cats, 20 dogs, 40 fish and 1 programmer.";</para>
@@ -611,9 +584,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="sentence"></param>
         /// <returns></returns>
-        public static IEnumerable< string > JustDigits( this String sentence ) {
-            return RegexJustDigits.Split( sentence );
-        }
+        public static IEnumerable< string > JustDigits( this String sentence ) => RegexJustDigits.Split( sentence );
 
         /// <summary>
         ///     Example: String s = "123-123-1234".JustNumbers();
@@ -655,18 +626,14 @@ namespace Librainian.Parsing {
         /// <param name="source"></param>
         /// <param name="compare"></param>
         /// <returns></returns>
-        public static Boolean Like( this String source, String compare ) {
-            return ( source ?? String.Empty ).Equals( compare ?? String.Empty, StringComparison.InvariantCultureIgnoreCase );
-        }
+        public static Boolean Like( this String source, String compare ) => ( source ?? String.Empty ).Equals( compare ?? String.Empty, StringComparison.InvariantCultureIgnoreCase );
 
         /// <summary>
         ///     Convert the first letter of a String to lower case
         /// </summary>
         /// <param name="word">String to convert</param>
         /// <returns>String</returns>
-        public static String MakeInitialLowerCase( this String word ) {
-            return String.Concat( word.Substring( 0, 1 ).ToLower(), word.Substring( 1 ) );
-        }
+        public static String MakeInitialLowerCase( this String word ) => String.Concat( word.Substring( 0, 1 ).ToLower(), word.Substring( 1 ) );
 
         /// <summary>
         ///     Gets a <b>horrible</b> ROUGH guesstimate of the memory consumed by an object by using
@@ -719,22 +686,13 @@ namespace Librainian.Parsing {
             return String.IsNullOrWhiteSpace( theString ) ? null : theString;
         }
 
-        public static String NullIfEmpty( [ CanBeNull ] this String value ) {
-            return String.IsNullOrEmpty( value ) ? null : value;
-        }
+        public static String NullIfEmpty( [ CanBeNull ] this String value ) => String.IsNullOrEmpty( value ) ? null : value;
 
-        public static String NullIfEmptyOrWhiteSpace( [ CanBeNull ] this String value ) {
-            return String.IsNullOrWhiteSpace( value ) ? null : value;
-        }
+        public static String NullIfEmptyOrWhiteSpace( [ CanBeNull ] this String value ) => String.IsNullOrWhiteSpace( value ) ? null : value;
 
-        public static String NullIfJustNumbers( [ CanBeNull ] this String value ) {
-            return value.IsJustNumbers() ? null : value;
-        }
+        public static String NullIfJustNumbers( [ CanBeNull ] this String value ) => value.IsJustNumbers() ? null : value;
 
-        public static Int32 NumberOfDigits( this BigInteger number ) {
-            // do not count the sign
-            return ( number * number.Sign ).ToString().Length;
-        }
+        public static Int32 NumberOfDigits( this BigInteger number ) => ( number * number.Sign ).ToString().Length;
 
         public static String PadMiddle( int totalLength, String partA, String partB, char paddingChar ) {
             var result = partA + partB;
@@ -888,9 +846,7 @@ namespace Librainian.Parsing {
             return LazyPluralizationService.Value.Pluralize( word );
         }
 
-        public static String Prepend( [ CanBeNull ] this String result, [ CanBeNull ] String prependThis ) {
-            return String.Format( "{0}{1}", prependThis ?? String.Empty, result ?? String.Empty );
-        }
+        public static String Prepend( [ CanBeNull ] this String result, [ CanBeNull ] String prependThis ) => String.Format( "{0}{1}", prependThis ?? String.Empty, result ?? String.Empty );
 
         public static String ReadToEnd( [ NotNull ] this MemoryStream ms ) {
             if ( ms == null ) {
@@ -935,9 +891,7 @@ namespace Librainian.Parsing {
             return haystack.Substring( 0, pos ) + replacement + haystack.Substring( pos + needle.Length );
         }
 
-        public static String ReplaceHTML( this String s, String withwhat ) {
-            return Regex.Replace( s, @"<(.|\n)*?>", withwhat );
-        }
+        public static String ReplaceHTML( this String s, String withwhat ) => Regex.Replace( s, @"<(.|\n)*?>", withwhat );
 
         /// <summary>
         ///     Reverse a String
@@ -980,9 +934,7 @@ namespace Librainian.Parsing {
         /// <param name="source"></param>
         /// <param name="compare"></param>
         /// <returns></returns>
-        public static Boolean Same( this String source, String compare ) {
-            return ( source ?? String.Empty ).Equals( compare ?? String.Empty, StringComparison.InvariantCulture );
-        }
+        public static Boolean Same( this String source, String compare ) => ( source ?? String.Empty ).Equals( compare ?? String.Empty, StringComparison.InvariantCulture );
 
         /// <summary>
         ///     Compute a Similarity between two strings.<br />
@@ -1185,32 +1137,23 @@ namespace Librainian.Parsing {
         }
 
         public static String StringFromResponse( [ CanBeNull ] this WebResponse response ) {
-            if ( null == response ) {
-                return String.Empty;
-            }
-            var restream = response.GetResponseStream();
+            var restream = response?.GetResponseStream();
             if ( restream != null ) {
                 return new StreamReader( restream ).ReadToEnd();
             }
             return String.Empty;
         }
 
-        public static Byte[] StringToUTF32ByteArray( this String pXmlString ) {
-            return new UTF32Encoding().GetBytes( pXmlString );
-        }
+        public static Byte[] StringToUTF32ByteArray( this String pXmlString ) => new UTF32Encoding().GetBytes( pXmlString );
 
         /// <summary>
         ///     Converts the String to UTF8 Byte array and is used in De serialization
         /// </summary>
         /// <param name="pXmlString"></param>
         /// <returns></returns>
-        public static Byte[] StringToUTF8ByteArray( this String pXmlString ) {
-            return new UTF8Encoding().GetBytes( pXmlString );
-        }
+        public static Byte[] StringToUTF8ByteArray( this String pXmlString ) => new UTF8Encoding().GetBytes( pXmlString );
 
-        public static String StripHTML( this String s ) {
-            return Regex.Replace( s, @"<(.|\n)*?>", String.Empty ).Replace( "&nbsp;", " " );
-        }
+        public static String StripHTML( this String s ) => Regex.Replace( s, @"<(.|\n)*?>", String.Empty ).Replace( "&nbsp;", " " );
 
         public static String StripTags( String input, String[] allowedTags ) {
             var StripHTMLExp = new Regex( @"(<\/?[^>]+>)" );
@@ -1290,9 +1233,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="lowercaseAndUnderscoredWord">String to convert</param>
         /// <returns>String</returns>
-        public static String ToCamelCase( this String lowercaseAndUnderscoredWord, CultureInfo culture ) {
-            return MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord, culture ) );
-        }
+        public static String ToCamelCase( this String lowercaseAndUnderscoredWord, CultureInfo culture ) => MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord, culture ) );
 
         /// <summary>
         ///     Same as <see cref="AsOrdinal" />, but might be slightly faster performance-wise.
@@ -1305,9 +1246,7 @@ namespace Librainian.Parsing {
             return number + OrdinalSuffixes[ ( lt >= 11 && lt <= 13 ) ? 0 : n % 10 ];
         }
 
-        public static String RemoveNullChars( this String text ) {
-            return text.Replace( "\0", String.Empty );
-        }
+        public static String RemoveNullChars( this String text ) => text.Replace( "\0", String.Empty );
 
         /// <summary>
         ///     Converts a String to pascal case with the option to remove underscores
@@ -1506,9 +1445,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="characters">Unicode Byte Array to be converted to String</param>
         /// <returns>String converted from Unicode Byte Array</returns>
-        public static String UTF8ByteArrayToString( this Byte[] characters ) {
-            return new UTF8Encoding().GetString( characters );
-        }
+        public static String UTF8ByteArrayToString( this Byte[] characters ) => new UTF8Encoding().GetString( characters );
 
         /// <summary>
         ///     <para>Remove duplicate words ONLY if the previous word was the same word.</para>

@@ -17,7 +17,7 @@
 // "Librainian/FileSizeFormatProvider.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 #endregion
 
-namespace Librainian.Extensions {
+namespace Librainian.IO {
     using System;
     using Maths;
 
@@ -71,7 +71,7 @@ namespace Librainian.Extensions {
 
         private static String DefaultFormat( String format, object arg, IFormatProvider formatProvider ) {
             var formattableArg = arg as IFormattable;
-            return formattableArg != null ? formattableArg.ToString( format, formatProvider ) : arg.ToString();
+            return formattableArg?.ToString( format, formatProvider ) ?? arg.ToString();
         }
     }
 }

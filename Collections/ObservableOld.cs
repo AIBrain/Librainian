@@ -70,7 +70,7 @@ namespace Librainian.Collections {
         }
 
         public override string ToString() {
-            return this._values != null ? this._values.ToString() : "Observable<" + typeof( T ).Name + "> with null value.";
+            return this._values?.ToString() ?? "Observable<" + typeof( T ).Name + "> with null value.";
         }
 
         private void FirePropertyChanged( T value ) {

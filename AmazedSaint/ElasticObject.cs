@@ -125,33 +125,19 @@ namespace Librainian.AmazedSaint {
             this._elasticProvider.AddElement( element );
         }
 
-        public ElasticObject Attribute( String name ) {
-            return this._elasticProvider.Attribute( name );
-        }
+        public ElasticObject Attribute( String name ) => this._elasticProvider.Attribute( name );
 
-        public ElasticObject Element( String name ) {
-            return this._elasticProvider.Element( name );
-        }
+        public ElasticObject Element( String name ) => this._elasticProvider.Element( name );
 
-        public object GetAttributeValue( String name ) {
-            return this._elasticProvider.GetAttributeValue( name );
-        }
+        public object GetAttributeValue( String name ) => this._elasticProvider.GetAttributeValue( name );
 
-        public Boolean HasAttribute( String name ) {
-            return this._elasticProvider.HasAttribute( name );
-        }
+        public Boolean HasAttribute( String name ) => this._elasticProvider.HasAttribute( name );
 
-        public void RemoveAttribute( String key ) {
-            this._elasticProvider.RemoveAttribute( key );
-        }
+        public void RemoveAttribute( String key ) => this._elasticProvider.RemoveAttribute( key );
 
-        public void RemoveElement( ElasticObject element ) {
-            this._elasticProvider.RemoveElement( element );
-        }
+        public void RemoveElement( ElasticObject element ) => this._elasticProvider.RemoveElement( element );
 
-        public void SetAttributeValue( String name, object obj ) {
-            this._elasticProvider.SetAttributeValue( name, obj );
-        }
+        public void SetAttributeValue( String name, object obj ) => this._elasticProvider.SetAttributeValue( name, obj );
 
         /// <summary>
         /// Interpret the invocation of a binary operation

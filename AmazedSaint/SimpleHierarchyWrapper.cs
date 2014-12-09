@@ -26,16 +26,16 @@ namespace Librainian.AmazedSaint {
     ///     A concrete hierarchy wrapper
     /// </summary>
     public class SimpleHierarchyWrapper : IElasticHierarchyWrapper {
-        private readonly Dictionary< String, ElasticObject > attributes = new Dictionary< String, ElasticObject >();
+        private readonly Dictionary< String, ElasticObject > _attributes = new Dictionary< String, ElasticObject >();
 
-        private readonly Dictionary< String, List< ElasticObject > > elements = new Dictionary< String, List< ElasticObject > >();
+        private readonly Dictionary< String, List< ElasticObject > > _elements = new Dictionary< String, List< ElasticObject > >();
 
         #region IElasticHierarchyWrapper Members
-        public IEnumerable< KeyValuePair< String, ElasticObject > > Attributes { get { return this.attributes; } }
+        public IEnumerable< KeyValuePair< String, ElasticObject > > Attributes { get { return this._attributes; } }
 
         public IEnumerable< ElasticObject > Elements {
             get {
-                var result = this.elements.SelectMany( list => list.Value );
+                var result = this._elements.SelectMany( list => list.Value );
                 return result;
             }
         }
@@ -48,49 +48,35 @@ namespace Librainian.AmazedSaint {
 
         public object InternalValue { get; set; }
 
-        public void AddAttribute( String key, ElasticObject value ) {
-            this.attributes.Add( key, value );
-        }
+        public void AddAttribute( String key, ElasticObject value ) => this._attributes.Add( key, value );
 
         public void AddElement( ElasticObject element ) {
-            if ( !this.elements.ContainsKey( element.InternalName ) ) {
-                this.elements[ element.InternalName ] = new List< ElasticObject >();
+            if ( !this._elements.ContainsKey( element.InternalName ) ) {
+                this._elements[ element.InternalName ] = new List< ElasticObject >();
             }
-            this.elements[ element.InternalName ].Add( element );
+            this._elements[ element.InternalName ].Add( element );
         }
 
-        public ElasticObject Attribute( String name ) {
-            return this.HasAttribute( name ) ? this.attributes[ name ] : null;
-        }
+        public ElasticObject Attribute( String name ) => this.HasAttribute( name ) ? this._attributes[ name ] : null;
 
-        public ElasticObject Element( String name ) {
-            return this.Elements.FirstOrDefault( item => item.InternalName == name );
-        }
+        public ElasticObject Element( String name ) => this.Elements.FirstOrDefault( item => item.InternalName == name );
 
-        public object GetAttributeValue( String name ) {
-            return this.attributes[ name ].InternalValue;
-        }
+        public object GetAttributeValue( String name ) => this._attributes[ name ].InternalValue;
 
-        public Boolean HasAttribute( String name ) {
-            return this.attributes.ContainsKey( name );
-        }
+        public Boolean HasAttribute( String name ) => this._attributes.ContainsKey( name );
 
-        public void RemoveAttribute( String key ) {
-            this.attributes.Remove( key );
-        }
+        public void RemoveAttribute( String key ) => this._attributes.Remove( key );
 
         public void RemoveElement( ElasticObject element ) {
-            if ( !this.elements.ContainsKey( element.InternalName ) ) {
+            if ( !this._elements.ContainsKey( element.InternalName ) ) {
                 return;
             }
-            if ( this.elements[ element.InternalName ].Contains( element ) ) {
-                this.elements[ element.InternalName ].Remove( element );
+            if ( this._elements[ element.InternalName ].Contains( element ) ) {
+                this._elements[ element.InternalName ].Remove( element );
             }
         }
 
-        public void SetAttributeValue( String name, object obj ) {
-            this.attributes[ name ].InternalValue = obj;
-        }
+        public void SetAttributeValue( String name, object obj ) => this._attributes[ name ].InternalValue = obj;
         #endregion IElasticHierarchyWrapper Members
     }
 }
