@@ -61,7 +61,7 @@ namespace Librainian.Measurement.Length {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay { get { return String.Format( "{0}", this.Value ); } }
+        private String DebuggerDisplay => String.Format( "{0}", this.Value );
 
         //public static implicit operator Span( PlanckUnits milliseconds ) {
         //    return Span.FromMilliseconds( milliseconds: milliseconds.Value );

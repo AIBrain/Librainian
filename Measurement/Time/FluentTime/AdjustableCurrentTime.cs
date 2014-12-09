@@ -6,17 +6,9 @@ namespace Librainian.Measurement.Time.FluentTime {
     internal static class AdjustableCurrentTime {
         private static DateTime? _overrideNow;
 
-        public static DateTime Now {
-            get {
-                return _overrideNow ?? DateTime.Now;
-            }
-        }
+        public static DateTime Now => _overrideNow ?? DateTime.Now;
 
-        public static DateTime Today {
-            get {
-                return _overrideNow.HasValue ? _overrideNow.Value.Date : DateTime.Today;
-            }
-        }
+        public static DateTime Today => _overrideNow?.Date ?? DateTime.Today;
 
         internal static void Reset() => _overrideNow = null;
 

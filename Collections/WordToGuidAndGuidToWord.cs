@@ -63,23 +63,11 @@ namespace Librainian.Collections {
             }
         }
 
-        public int Count {
-            get {
-                return Math.Min( this._words.Count, this._guids.Count );
-            }
-        }
+        public int Count => Math.Min( this._words.Count, this._guids.Count );
 
-        public IEnumerable<Guid> EachGuid {
-            get {
-                return this._guids.Keys;
-            }
-        }
+        public IEnumerable<Guid> EachGuid => this._guids.Keys;
 
-        public IEnumerable<String> EachWord {
-            get {
-                return this._words.Keys;
-            }
-        }
+        public IEnumerable<String> EachWord => this._words.Keys;
 
         /// <summary>
         ///     Get or set the guid for this word.

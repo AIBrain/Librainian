@@ -47,12 +47,12 @@ namespace Librainian.Threading {
         /// <summary>
         ///     Returns true if the gate is closed
         /// </summary>
-        public Boolean IsClosed { get { return 0 == Interlocked.Add( ref this._value, 0 ); } }
+        public Boolean IsClosed => 0 == Interlocked.Add( ref this._value, 0 );
 
         /// <summary>
         ///     Returns true if the gate is open
         /// </summary>
-        public Boolean IsOpened { get { return OpenOrClosed.Opened == ( OpenOrClosed ) Interlocked.Add( ref this._value, 0 ); } }
+        public Boolean IsOpened => OpenOrClosed.Opened == ( OpenOrClosed ) Interlocked.Add( ref this._value, 0 );
 
         /// <summary>
         ///     Closes the gate. The gate must be in the open state.

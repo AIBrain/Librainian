@@ -31,7 +31,7 @@ namespace Librainian.AmazedSaint {
         private readonly Dictionary< String, List< ElasticObject > > _elements = new Dictionary< String, List< ElasticObject > >();
 
         #region IElasticHierarchyWrapper Members
-        public IEnumerable< KeyValuePair< String, ElasticObject > > Attributes { get { return this._attributes; } }
+        public IEnumerable< KeyValuePair< String, ElasticObject > > Attributes => this._attributes;
 
         public IEnumerable< ElasticObject > Elements {
             get {

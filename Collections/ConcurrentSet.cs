@@ -56,17 +56,9 @@ namespace Librainian.Collections {
         /// <summary>
         ///     Gets a value that indicates if the set is empty.
         /// </summary>
-        public bool IsEmpty {
-            get {
-                return this._dictionary.IsEmpty;
-            }
-        }
+        public bool IsEmpty => this._dictionary.IsEmpty;
 
-        public ICollection<T> Values {
-            get {
-                return this._dictionary.Keys;
-            }
-        }
+        public ICollection<T> Values => this._dictionary.Keys;
 
         /// <summary>
         ///     Returns an enumerator that iterates through the collection.
@@ -103,11 +95,7 @@ namespace Librainian.Collections {
         /// <summary>
         ///     Gets the number of elements in the set.
         /// </summary>
-        public int Count {
-            get {
-                return this._dictionary.Count;
-            }
-        }
+        public int Count => this._dictionary.Count;
 
         /// <summary>
         ///     Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
@@ -115,11 +103,7 @@ namespace Librainian.Collections {
         /// <returns>
         ///     true if the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only; otherwise, false.
         /// </returns>
-        public bool IsReadOnly {
-            get {
-                return false;
-            }
-        }
+        public bool IsReadOnly => false;
 
         /// <summary>
         ///     Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.

@@ -67,11 +67,7 @@ namespace Librainian.Maths {
         /// returning true, however such values are not subject to the intended smoothing effect of
         /// the moving average's window size.
         /// </summary>
-        public bool IsMature {
-            get {
-                return this._valuesIn == this._windowSize;
-            }
-        }
+        public bool IsMature => this._valuesIn == this._windowSize;
 
         /// <summary>
         /// Updates the moving average with its next value, and returns the updated average value.

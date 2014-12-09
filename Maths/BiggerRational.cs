@@ -161,11 +161,7 @@ namespace Librainian.Maths {
             this.Denominator = ( BigInteger )info.GetValue( "Denominator", typeof( BigInteger ) );
         }
 
-        public int Sign {
-            get {
-                return this.Numerator.Sign;
-            }
-        }
+        public int Sign => this.Numerator.Sign;
 
         public static BiggerRational Abs( BiggerRational r ) => r.Numerator.Sign >= 0 ? r : new BiggerRational( BigInteger.Abs( r.Numerator ), r.Denominator );
 

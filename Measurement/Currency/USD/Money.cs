@@ -36,7 +36,7 @@ namespace Librainian.Measurement.Currency.USD {
         /// <summary>
         ///     Example new Money(123.4567).Dollars == 123.0000
         /// </summary>
-        public  Decimal Dollars { get { return Math.Truncate( this.Wallet.Total ); } }
+        public  Decimal Dollars => Math.Truncate( this.Wallet.Total );
 
         /// <summary>
         ///     Example new Money(123.4567).Cents == 0.4567

@@ -50,7 +50,7 @@ namespace Librainian.Parsing {
         }
         #endregion ISavable Members
 
-        public int Count { get { return this.WGGW.Count; } }
+        public int Count => this.WGGW.Count;
 
         public void Erase() {
             try {

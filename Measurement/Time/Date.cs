@@ -97,17 +97,9 @@ namespace Librainian.Measurement.Time {
             
         }
 
-        public static Date Now {
-            get {
-                return new Date( DateTime.Now );
-            }
-        }
+        public static Date Now => new Date( DateTime.Now );
 
-        public static Date UtcNow {
-            get {
-                return new Date( DateTime.UtcNow );
-            }
-        }
+        public static Date UtcNow => new Date( DateTime.UtcNow );
 
         public static implicit operator DateTime?( Date date ) {
             DateTime? dateTime;

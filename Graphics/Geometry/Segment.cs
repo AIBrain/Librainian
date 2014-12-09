@@ -33,34 +33,16 @@ namespace Librainian.Graphics.Geometry {
             this.P2 = p2;
         }
 
-        public Single X1 {
-            get { return this.P1.X; }
-            //set { this.P1.X = value; }
-        }
+        public Single X1 => this.P1.X;
 
-        public Single Y1 {
-            get { return this.P1.Y; }
-            //set { this.P1.Y = value; }
-        }
+        public Single Y1 => this.P1.Y;
 
-        public Single Z1 {
-            get { return this.P1.Z; }
-            //set { this.P1.Z = value; }
-        }
+        public Single Z1 => this.P1.Z;
 
-        public Single X2 {
-            get { return this.P2.X; }
-            //set { this.P2.X = value; }
-        }
+        public Single X2 => this.P2.X;
 
-        public Single Y2 {
-            get { return this.P2.Y; }
-            //set { this.P2.Y = value; }
-        }
+        public Single Y2 => this.P2.Y;
 
-        public Single Z2 {
-            get { return this.P2.Z; }
-            //set { this.P2.Z = value; }
-        }
+        public Single Z2 => this.P2.Z;
     }
 }

@@ -219,11 +219,7 @@ namespace Librainian.Collections {
         /// 
         /// </summary>
         /// <seealso cref="CatchUp"/>
-        public bool AnyWritesPending {
-            get {
-                return 0 == this.CountOfItemsWaitingToBeAdded && 0 == this.CountOfItemsWaitingToBeChanged && 0 == this.CountOfItemsWaitingToBeInserted;
-            }
-        }
+        public bool AnyWritesPending => 0 == this.CountOfItemsWaitingToBeAdded && 0 == this.CountOfItemsWaitingToBeChanged && 0 == this.CountOfItemsWaitingToBeInserted;
 
         /// <summary>
         /// <para>Blocks until the list has no write operations pending, until the <paramref name="timeout"/>, or the <paramref name="cancellationToken"/> is set.</para>

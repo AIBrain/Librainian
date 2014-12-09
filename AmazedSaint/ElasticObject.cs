@@ -44,17 +44,9 @@ namespace Librainian.AmazedSaint {
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public IEnumerable<KeyValuePair<String, ElasticObject>> Attributes {
-            get {
-                return this._elasticProvider.Attributes;
-            }
-        }
+        public IEnumerable<KeyValuePair<String, ElasticObject>> Attributes => this._elasticProvider.Attributes;
 
-        public IEnumerable<ElasticObject> Elements {
-            get {
-                return this._elasticProvider.Elements;
-            }
-        }
+        public IEnumerable<ElasticObject> Elements => this._elasticProvider.Elements;
 
         public object InternalContent {
             get {

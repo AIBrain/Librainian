@@ -155,11 +155,7 @@ namespace Librainian.Measurement.Time {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
-        }
+        private String DebuggerDisplay => this.ToString();
 
         public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) => new PlanckTimes( left.Value + right.Value );
 

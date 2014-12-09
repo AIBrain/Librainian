@@ -29,11 +29,7 @@ namespace Librainian.Linguistics.PoS {
         public Noun( String word ) : base( word ) {
         }
 
-        public PartsOfSpeech PartOfSpeech {
-            get {
-                return PartsOfSpeech.Noun;
-            }
-        }
+        public PartsOfSpeech PartOfSpeech => PartsOfSpeech.Noun;
 
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.

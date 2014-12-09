@@ -25,7 +25,7 @@ namespace Librainian.Threading {
     public class Singleton< T > where T : class, new() {
         private Singleton() { }
 
-        public static T Instance { get { return SingletonCreator.instance; } }
+        public static T Instance => SingletonCreator.instance;
 
         public class SingletonCreator {
             internal static readonly T instance = new T();

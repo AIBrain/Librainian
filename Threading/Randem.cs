@@ -71,11 +71,7 @@ namespace Librainian.Threading {
         /// A thread-local (threadsafe) <see cref="Random" />.
         /// </summary>
         [NotNull]
-        public static Random Instance {
-            get {
-                return ThreadSafeRandom.Value;
-            }
-        }
+        public static Random Instance => ThreadSafeRandom.Value;
 
         /// <summary>
         /// <para>More cryptographically strong than <see cref="Random"/>.</para>

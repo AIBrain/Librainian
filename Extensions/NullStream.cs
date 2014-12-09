@@ -26,13 +26,13 @@ namespace Librainian.Extensions {
 
         private long _position;
 
-        public override Boolean CanRead { get { return false; } }
+        public override Boolean CanRead => false;
 
-        public override Boolean CanSeek { get { return true; } }
+        public override Boolean CanSeek => true;
 
-        public override Boolean CanWrite { get { return true; } }
+        public override Boolean CanWrite => true;
 
-        public override long Length { get { return this._length; } }
+        public override long Length => this._length;
 
         public override long Position {
             get { return this._position; }

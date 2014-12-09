@@ -27,7 +27,7 @@ namespace Librainian.Internet.Wiki {
     using Threading;
 
     public class WikiPedia {
-        private static XmlDocument BaseResponse { get { return "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc(); } }
+        private static XmlDocument BaseResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
 
         //public static Boolean doesWikiRespond {
         //    get {

@@ -29,7 +29,7 @@ namespace Librainian.Graphics.DD {
 
         public PointF[] Points { get; set; }
 
-        public int Length { get { return this.Points.Length; } }
+        public int Length => this.Points.Length;
 
         public PointF this[ int index ] { get { return this.Points[ index ]; } set { this.Points[ index ] = value; } }
 

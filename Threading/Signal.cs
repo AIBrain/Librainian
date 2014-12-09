@@ -37,7 +37,7 @@ namespace Librainian.Threading {
             this.Reset();
         }
 
-        public Boolean IsSignaled { get { return Interlocked.Read( ref this._signalcount ) > 0; } }
+        public Boolean IsSignaled => Interlocked.Read( ref this._signalcount ) > 0;
 
         public void Dispose() {
             var resetEvent = this.Event;

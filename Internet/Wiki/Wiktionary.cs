@@ -48,12 +48,12 @@ namespace Librainian.Internet.Wiki {
             }
         }
 
-        private static XmlDocument BaseXMLResponse { get { return "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc(); } }
+        private static XmlDocument BaseXMLResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
 
         /// <summary>
         ///     Use String.Format to enter the search parameter.
         /// </summary>
-        private static String BaseQuery { get { return @"http://en.wiktionary.org/wiki/Special:Search?search={0}&go=Go"; } }
+        private static String BaseQuery => @"http://en.wiktionary.org/wiki/Special:Search?search={0}&go=Go";
 
         /// <summary>
         ///     Pull the HTML for the Wiktionary entry on the base word.

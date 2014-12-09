@@ -90,7 +90,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay { get { return this.Display(); } }
+        private String DebuggerDisplay => this.Display();
 
         public int CompareTo( ElectronVolts other ) => this.Value.CompareTo( other.ToKiloElectronVolts().Value );
 

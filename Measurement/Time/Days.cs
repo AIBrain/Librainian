@@ -88,11 +88,7 @@ namespace Librainian.Measurement.Time {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
-        }
+        private String DebuggerDisplay => this.ToString();
 
         public const Byte InOneMonth = 31;
 

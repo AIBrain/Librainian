@@ -242,11 +242,7 @@
         /// <value>
         ///     <c>true</c> if this instance is singular; otherwise, <c>false</c>.
         /// </value>
-        public bool IsSingular {
-            get {
-                return Determinant.Near( 0 );
-            }
-        }
+        public bool IsSingular => Determinant.Near( 0 );
 
         /// <summary>
         /// Gets the inverse of this matrix. If the matrix is singular, this method will throw an exception
@@ -318,12 +314,7 @@
         /// (M13, M23, M33) is 0 0 1
         /// </summary>
         /// <value><c>true</c> if this instance is affine; otherwise, <c>false</c>.</value>
-        public bool IsAffine {
-            get {
-                return ( _coeffs[ _M13 ].Near( 0 ) && _coeffs[ _M23 ].Near( 0 ) && _coeffs[ _M33 ].Near( 1 ) );
-            }
-        }
-
+        public bool IsAffine => ( _coeffs[ _M13 ].Near( 0 ) && _coeffs[ _M23 ].Near( 0 ) && _coeffs[ _M33 ].Near( 1 ) );
         #endregion
 
         #region Public Methods

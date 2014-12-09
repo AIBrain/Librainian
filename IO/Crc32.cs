@@ -52,7 +52,7 @@ namespace Librainian.IO {
             this._seed = this._hash = seed;
         }
 
-        public override int HashSize { get { return 32; } }
+        public override int HashSize => 32;
 
         /// <summary>
         /// </summary>

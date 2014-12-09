@@ -68,11 +68,7 @@ namespace Librainian.Collections {
             }
         }
 
-        public Boolean IsReadOnly {
-            get {
-                return false;
-            }
-        }
+        public Boolean IsReadOnly => false;
 
         public T this[ int index ] {
             get {

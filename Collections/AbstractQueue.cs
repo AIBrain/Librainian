@@ -49,7 +49,7 @@ namespace Librainian.Collections {
         ///     Returns <see langword="true" /> if there are no elements in the
         ///     <see cref="IQueue{T}" />, <see langword="false" /> otherwise.
         /// </summary>
-        public virtual Boolean IsEmpty { get { return this.Count == 0; } }
+        public virtual Boolean IsEmpty => this.Count == 0;
 
         /// <summary>
         ///     Gets a value indicating whether the <see cref="ICollection{T}" /> is read-only.
@@ -60,7 +60,7 @@ namespace Librainian.Collections {
         ///     This implementation always return false as typically a queue should not
         ///     be read only.
         /// </returns>
-        public override Boolean IsReadOnly { get { return false; } }
+        public override Boolean IsReadOnly => false;
 
         /// <summary>
         ///     Returns the remaining capacity of this queue.

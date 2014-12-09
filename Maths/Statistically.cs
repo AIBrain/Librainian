@@ -48,23 +48,11 @@ namespace Librainian.Maths {
             private set;
         }
 
-        public Boolean IsDowner {
-            get {
-                return this.Downs > this.Ups;
-            }
-        }
+        public Boolean IsDowner => this.Downs > this.Ups;
 
-        public Boolean IsProtiguous {
-            get {
-                return this.IsUpper && !this.Downs.Near( 0 ) && !this.Ups.Near( 0 );
-            }
-        }
+        public Boolean IsProtiguous => this.IsUpper && !this.Downs.Near( 0 ) && !this.Ups.Near( 0 );
 
-        public Boolean IsUpper {
-            get {
-                return this.Ups > this.Downs;
-            }
-        }
+        public Boolean IsUpper => this.Ups > this.Downs;
 
         [DataMember]
         public Double Total {

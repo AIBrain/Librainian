@@ -96,11 +96,7 @@ namespace Librainian.Measurement.Time {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
-        }
+        private String DebuggerDisplay => this.ToString();
 
         public static Minutes Combine( Minutes left, Minutes right ) => Combine( left, right.Value );
 

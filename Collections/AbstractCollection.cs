@@ -56,7 +56,7 @@ namespace Librainian.Collections {
         ///     otherwise, false.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        protected virtual Boolean IsSynchronized { get { return false; } }
+        protected virtual Boolean IsSynchronized => false;
 
         /// <summary>
         ///     Gets an object that can be used to synchronize access to the
@@ -72,7 +72,7 @@ namespace Librainian.Collections {
         ///     .
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        protected virtual object SyncRoot { get { return null; } }
+        protected virtual object SyncRoot => null;
 
         /// <summary>
         ///     Gets a value indicating whether access to the
@@ -85,7 +85,7 @@ namespace Librainian.Collections {
         ///     (thread safe); otherwise, false.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        Boolean ICollection.IsSynchronized { get { return this.IsSynchronized; } }
+        Boolean ICollection.IsSynchronized => this.IsSynchronized;
 
         /// <summary>
         ///     Gets an object that can be used to synchronize access to the
@@ -100,7 +100,7 @@ namespace Librainian.Collections {
         ///     .
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        object ICollection.SyncRoot { get { return this.SyncRoot; } }
+        object ICollection.SyncRoot => this.SyncRoot;
 
         /// <summary>
         ///     Copies the elements of the <see cref="T:System.Collections.ICollection" /> to an
@@ -157,7 +157,7 @@ namespace Librainian.Collections {
         ///     method.
         /// </summary>
         /// <returns>The number of elements contained in the <see cref="ICollection{T}" />.</returns>
-        public virtual int Count { get { return this.Count(); } }
+        public virtual int Count => this.Count();
 
         /// <summary>
         ///     Gets a value indicating whether the <see cref="ICollection{T}" /> is read-only. This
@@ -167,7 +167,7 @@ namespace Librainian.Collections {
         ///     true if the <see cref="ICollection{T}" /> is read-only; otherwise, false. This
         ///     implementation always return true;
         /// </returns>
-        public virtual Boolean IsReadOnly { get { return true; } }
+        public virtual Boolean IsReadOnly => true;
 
         /// <summary>
         ///     Adds an item to the <see cref="ICollection{T}" />. This implementation always throw

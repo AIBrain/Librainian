@@ -142,52 +142,24 @@ namespace Librainian.Maths {
             this.Exponent = number.Exponent;
         }
 
-        public Boolean IsEven {
-            get {
-                return this.Significand.IsEven;
-            }
-        }
+        public Boolean IsEven => this.Significand.IsEven;
 
-        public Boolean IsOne {
-            get {
-                return this.Significand.IsOne;
-            }
-        }
+        public Boolean IsOne => this.Significand.IsOne;
 
-        public Boolean IsPowerOfTwo {
-            get {
-                return this.Significand.IsPowerOfTwo;
-            }
-        }
+        public Boolean IsPowerOfTwo => this.Significand.IsPowerOfTwo;
 
-        public Boolean IsZero {
-            get {
-                return this.Significand.IsZero;
-            }
-        }
+        public Boolean IsZero => this.Significand.IsZero;
 
         /// <summary>
         ///     The significand (aka mantissa) is part of a number consisting of its significant digits.
         /// </summary>
         /// <seealso cref="Significand" />
-        public BigInteger Mantissa {
-            get {
-                return this.Significand;
-            }
-        }
+        public BigInteger Mantissa => this.Significand;
 
-        public Int32 Sign {
-            get {
-                return this.Significand.Sign;
-            }
-        }
+        public Int32 Sign => this.Significand.Sign;
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
-        }
+        private String DebuggerDisplay => this.ToString();
 
         ///// <summary>
         ///// </summary>

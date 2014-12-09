@@ -43,7 +43,7 @@ namespace Librainian.Collections {
             this.InitializeFromCollection( collection );
         }
 
-        public Boolean IsEmpty { get { return this.m_head == null; } }
+        public Boolean IsEmpty => this.m_head == null;
 
         public int Count {
             get {
@@ -55,7 +55,7 @@ namespace Librainian.Collections {
             }
         }
 
-        Boolean ICollection.IsSynchronized { get { return false; } }
+        Boolean ICollection.IsSynchronized => false;
 
         object ICollection.SyncRoot { get { throw new NotSupportedException( "ConcurrentCollection_SyncRoot_NotSupported" ); } }
 

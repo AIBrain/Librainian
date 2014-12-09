@@ -45,17 +45,9 @@ namespace Librainian.Collections {
         [OptionalField]
         public readonly ConcurrentDictionary<String, Guid> Words = new ConcurrentDictionary<String, Guid>();
 
-        public IEnumerable<Guid> EachGuid {
-            get {
-                return this.Guids.Keys;
-            }
-        }
+        public IEnumerable<Guid> EachGuid => this.Guids.Keys;
 
-        public IEnumerable<String> EachWord {
-            get {
-                return this.Words.Keys;
-            }
-        }
+        public IEnumerable<String> EachWord => this.Words.Keys;
 
         /// <summary>
         ///     Get or set the guid for this word.

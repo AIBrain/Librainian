@@ -123,11 +123,7 @@ namespace Librainian.Persistence {
         /// The number of elements contained in the
         /// <see cref="T:System.Collections.Generic.ICollection`1" /> .
         /// </returns>
-        public int Count {
-            get {
-                return this.Dictionary.Count;
-            }
-        }
+        public int Count => this.Dictionary.Count;
 
         [NotNull]
         public Folder Folder {
@@ -143,11 +139,7 @@ namespace Librainian.Persistence {
         /// true if the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only;
         /// otherwise, false.
         /// </returns>
-        public bool IsReadOnly {
-            get {
-                return this.Dictionary.IsReadOnly;
-            }
-        }
+        public bool IsReadOnly => this.Dictionary.IsReadOnly;
 
         /// <summary>
         /// Gets an <see cref="T:System.Collections.Generic.ICollection`1" /> containing the keys of
@@ -157,11 +149,7 @@ namespace Librainian.Persistence {
         /// An <see cref="T:System.Collections.Generic.ICollection`1" /> containing the keys of the
         /// object that implements <see cref="T:System.Collections.Generic.IDictionary`2" /> .
         /// </returns>
-        public ICollection<TKey> Keys {
-            get {
-                return this.Dictionary.Keys;
-            }
-        }
+        public ICollection<TKey> Keys => this.Dictionary.Keys;
 
         /// <summary>
         /// Gets an <see cref="T:System.Collections.Generic.ICollection`1" /> containing the values
@@ -171,18 +159,10 @@ namespace Librainian.Persistence {
         /// An <see cref="T:System.Collections.Generic.ICollection`1" /> containing the values in
         /// the object that implements <see cref="T:System.Collections.Generic.IDictionary`2" /> .
         /// </returns>
-        public ICollection<TValue> Values {
-            get {
-                return this.Dictionary.Values.Select( Value ) as ICollection<TValue> ?? new Collection<TValue>();
-            }
-        }
+        public ICollection<TValue> Values => this.Dictionary.Values.Select( Value ) as ICollection<TValue> ?? new Collection<TValue>();
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.Dictionary.ToString();
-            }
-        }
+        private String DebuggerDisplay => this.Dictionary.ToString();
 
         [NotNull]
         private PersistentDictionary<TKey, String> Dictionary {

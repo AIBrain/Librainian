@@ -41,15 +41,15 @@ namespace Librainian.Collections {
             this._count = count;
         }
 
-        int ICollection.Count { get { return this._count; } }
+        int ICollection.Count => this._count;
 
-        Boolean ICollection.IsSynchronized { get { return false; } }
+        Boolean ICollection.IsSynchronized => false;
 
-        object ICollection.SyncRoot { get { return this; } }
+        object ICollection.SyncRoot => this;
 
-        Boolean IList.IsFixedSize { get { return true; } }
+        Boolean IList.IsFixedSize => true;
 
-        Boolean IList.IsReadOnly { get { return true; } }
+        Boolean IList.IsReadOnly => true;
 
         object IList.this[ int index ] { get { return this._getValueForIndex( index ); } set { throw new NotSupportedException(); } }
 
@@ -85,9 +85,9 @@ namespace Librainian.Collections {
             throw new NotSupportedException();
         }
 
-        int ICollection< T >.Count { get { return this._count; } }
+        int ICollection< T >.Count => this._count;
 
-        Boolean ICollection< T >.IsReadOnly { get { return true; } }
+        Boolean ICollection< T >.IsReadOnly => true;
         T IList< T >.this[ int index ] { get { return this._getValueForIndex( index ); } set { throw new NotSupportedException(); } }
 
         void ICollection< T >.Add( T item ) {

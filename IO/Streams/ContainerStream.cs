@@ -32,13 +32,13 @@ namespace Librainian.IO.Streams {
             this.Stream = stream;
         }
 
-        public override Boolean CanRead { get { return this.Stream.CanRead; } }
+        public override Boolean CanRead => this.Stream.CanRead;
 
-        public override Boolean CanSeek { get { return this.Stream.CanSeek; } }
+        public override Boolean CanSeek => this.Stream.CanSeek;
 
-        public override Boolean CanWrite { get { return this.Stream.CanWrite; } }
+        public override Boolean CanWrite => this.Stream.CanWrite;
 
-        public override long Length { get { return this.Stream.Length; } }
+        public override long Length => this.Stream.Length;
 
         public override long Position {
             get {
@@ -50,7 +50,7 @@ namespace Librainian.IO.Streams {
             set { this.Stream.Position = value; }
         }
 
-        protected Stream ContainedStream { get { return this.Stream; } }
+        protected Stream ContainedStream => this.Stream;
 
         public override void Flush() => this.Stream.Flush();
 

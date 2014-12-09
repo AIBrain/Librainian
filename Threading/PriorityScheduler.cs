@@ -28,11 +28,7 @@ namespace Librainian.Threading {
             this._priority = priority;
         }
 
-        public override int MaximumConcurrencyLevel {
-            get {
-                return this._maximumConcurrencyLevel;
-            }
-        }
+        public override int MaximumConcurrencyLevel => this._maximumConcurrencyLevel;
 
         protected override IEnumerable<Task> GetScheduledTasks() => this._tasks;
 

@@ -44,7 +44,7 @@ namespace Librainian.Security {
             this._seed = this._hash = seed;
         }
 
-        public override int HashSize { get { return 64; } }
+        public override int HashSize => 64;
 
         public override void Initialize() => this._hash = this._seed;
 

@@ -117,11 +117,7 @@ namespace Librainian.Measurement.Length {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
-        }
+        private String DebuggerDisplay => this.ToString();
 
         public static Feet Combine( Feet left, BigDecimal feet ) => new Feet( left.Value + feet );
 

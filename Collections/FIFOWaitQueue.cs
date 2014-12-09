@@ -39,7 +39,7 @@ namespace Librainian.Collections {
 
         [NonSerialized] protected WaitNode Tail;
 
-        public Boolean HasNodes { get { return this.Head != null; } }
+        public Boolean HasNodes => this.Head != null;
 
         public int Length {
             get {

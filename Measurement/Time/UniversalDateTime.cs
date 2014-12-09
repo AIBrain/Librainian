@@ -85,11 +85,7 @@ namespace Librainian.Measurement.Time {
             //this.Time = new Time();
         }
 
-        public static UniversalDateTime Now {
-            get {
-                return new UniversalDateTime( DateTime.UtcNow );
-            }
-        }
+        public static UniversalDateTime Now => new UniversalDateTime( DateTime.UtcNow );
 
         /// <summary>
         ///     Given a <see cref="DateTime" />, calculate the <see cref="Span" />.

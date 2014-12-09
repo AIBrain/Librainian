@@ -71,13 +71,13 @@ namespace Librainian.Collections {
         /// <summary>
         ///     Retrieves the immutable count of the list.
         /// </summary>
-        public int Count { get { return this._mArray.Length; } }
+        public int Count => this._mArray.Length;
 
         /// <summary>
         ///     Whether the list is read only: because the list is immutable, this
         ///     is always true.
         /// </summary>
-        public Boolean IsReadOnly { get { return true; } }
+        public Boolean IsReadOnly => true;
 
         /// <summary>
         ///     Accesses the element at the specified index.  Because the list is

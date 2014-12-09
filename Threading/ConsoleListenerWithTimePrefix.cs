@@ -27,11 +27,7 @@ namespace Librainian.Threading {
         /// <returns>
         /// true if the trace listener is thread safe; otherwise, false. The default is false.
         /// </returns>
-        public override bool IsThreadSafe {
-            get {
-                return true;
-            }
-        }
+        public override bool IsThreadSafe => true;
 
         /// <summary>
         /// Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer"/>.

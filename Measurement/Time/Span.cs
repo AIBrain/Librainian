@@ -462,18 +462,10 @@ namespace Librainian.Measurement.Time {
 
         /// <summary>
         /// </summary>
-        public BigInteger TotalPlanckTimes {
-            get {
-                return this._lazyTotal.Value;
-            }
-        }
+        public BigInteger TotalPlanckTimes => this._lazyTotal.Value;
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
-        }
+        private String DebuggerDisplay => this.ToString();
 
         /// <summary>
         ///     <para>Given the <paramref name="left" /> <see cref="Span" />,</para>

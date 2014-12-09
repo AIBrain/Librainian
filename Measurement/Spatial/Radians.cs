@@ -71,11 +71,7 @@ namespace Librainian.Measurement.Spatial {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
-        }
+        private String DebuggerDisplay => this.ToString();
 
         public int CompareTo( Radians other ) => this.Value.CompareTo( other.Value );
 

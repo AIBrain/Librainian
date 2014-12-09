@@ -127,11 +127,7 @@ namespace Librainian.Measurement.Currency.BTC {
             }
         }
 
-        public String Formatted {
-            get {
-                return this.ToString();
-            }
-        }
+        public String Formatted => this.ToString();
 
         public Label LabelToFlashOnChanges {
             get;

@@ -30,8 +30,8 @@ namespace Librainian.Internet.Wiki {
             }
         }
 
-        private static XmlDocument BaseResponse { get { return "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc(); } }
+        private static XmlDocument BaseResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
 
-        private static String BaseQuery { get { return @"http://en.wiktionary.org/w/api.php?action=query&format=xml&prop=info&search="; } }
+        private static String BaseQuery => @"http://en.wiktionary.org/w/api.php?action=query&format=xml&prop=info&search=";
     }
 }

@@ -50,7 +50,7 @@ namespace Librainian.Threading {
             this.Reset();
         }
 
-        public Boolean IsCancellationRequested { get { return this.HasCancelBeenRequested(); } }
+        public Boolean IsCancellationRequested => this.HasCancelBeenRequested();
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

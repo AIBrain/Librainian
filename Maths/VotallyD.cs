@@ -108,42 +108,18 @@ namespace Librainian.Maths {
             }
         }
 
-        public Boolean IsAWinning {
-            get {
-                return this.A > this.B;
-            }
-        }
+        public Boolean IsAWinning => this.A > this.B;
 
-        public Boolean IsBWinning {
-            get {
-                return this.B > this.A;
-            }
-        }
+        public Boolean IsBWinning => this.B > this.A;
 
-        public Boolean IsLandslideA {
-            get {
-                return this.IsAWinning && this.A > this.HalfOfVotes();
-            }
-        }
+        public Boolean IsLandslideA => this.IsAWinning && this.A > this.HalfOfVotes();
 
-        public Boolean IsProtiguous {
-            get {
-                return this.IsTied() && this.Votes > 1;
-            }
-        }
+        public Boolean IsProtiguous => this.IsTied() && this.Votes > 1;
 
-        public Double Votes {
-            get {
-                return this.A + this.B;
-            }
-        }
+        public Double Votes => this.A + this.B;
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
-        }
+        private String DebuggerDisplay => this.ToString();
 
         public static VotallyD Combine( [NotNull] VotallyD left, [NotNull] VotallyD right ) {
             if ( left == null ) {

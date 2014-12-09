@@ -50,7 +50,7 @@ namespace Librainian.Database.MMF {
             this._keyExpirations = new Dictionary< String, DateTime >();
         }
 
-        public static int MaxKeyLength { get { return 4096 - 32; } }
+        public static int MaxKeyLength => 4096 - 32;
 
         public Boolean CacheHitAlwaysMiss { get; set; }
 
@@ -58,7 +58,7 @@ namespace Librainian.Database.MMF {
 
         public Encoding Encoding { get; set; }
 
-        public Boolean IsConnected { get { return this._tcpClient.Connected; } }
+        public Boolean IsConnected => this._tcpClient.Connected;
 
         public int Port { get; set; }
 

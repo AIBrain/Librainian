@@ -51,7 +51,7 @@ namespace Librainian.Collections {
         /// <summary>
         ///     Gets the number of elements contained in the queue.
         /// </summary>
-        public int Count { get { return Thread.VolatileRead( ref this._count ); } }
+        public int Count => Thread.VolatileRead( ref this._count );
 
         /// <summary>
         ///     Returns an enumerator that iterates through the queue.

@@ -84,7 +84,7 @@ namespace Librainian.Collections {
             }
         }
 
-        Boolean ICollection.IsSynchronized { get { return false; } }
+        Boolean ICollection.IsSynchronized => false;
 
         object ICollection.SyncRoot { get { throw new NotSupportedException(); } }
 
@@ -213,11 +213,11 @@ namespace Librainian.Collections {
                 this._index = index;
             }
 
-            public int High { get { return Math.Min( this._high, 31 ); } }
+            public int High => Math.Min( this._high, 31 );
 
-            public Boolean IsEmpty { get { return this.Low > this.High; } }
+            public Boolean IsEmpty => this.Low > this.High;
 
-            public int Low { get { return Math.Min( this._low, 32 ); } }
+            public int Low => Math.Min( this._low, 32 );
 
             public List< T > ToList( int start, int end ) {
                 var list = new List< T >();

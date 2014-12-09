@@ -39,9 +39,9 @@ namespace Librainian.Threading {
             this._owner = Thread.CurrentThread;
         }
 
-        internal virtual Thread Owner { get { return this._owner; } }
+        internal virtual Thread Owner => this._owner;
 
-        internal virtual Boolean IsWaiting { get { return this._waiting; } }
+        internal virtual Boolean IsWaiting => this._waiting;
 
         internal virtual WaitNode NextWaitNode { get { return this._nextWaitNode; } set { this._nextWaitNode = value; } }
 

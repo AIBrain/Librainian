@@ -137,11 +137,7 @@ namespace Librainian.Measurement.Time {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
-        }
+        private String DebuggerDisplay => this.ToString();
 
         public static Microseconds Combine( Microseconds left, Microseconds right ) => Combine( left, right.Value );
 

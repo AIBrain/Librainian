@@ -95,11 +95,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.Display();
-            }
-        }
+        private String DebuggerDisplay => this.Display();
 
         public static AtomicMassUnits operator -( AtomicMassUnits electronVolts ) => new AtomicMassUnits( -electronVolts.Value );
 

@@ -48,11 +48,7 @@ namespace Librainian {
         /// </summary>
         // TODO how slow is this class?
         [NotNull]
-        public static ComputerInfo Info {
-            get {
-                return new ComputerInfo();
-            }
-        }
+        public static ComputerInfo Info => new ComputerInfo();
 
         /// <summary>
         ///     //TODO description. Bytes?

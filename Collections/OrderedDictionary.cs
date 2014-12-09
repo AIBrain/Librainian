@@ -165,7 +165,7 @@ namespace Librainian.Collections {
         ///     <see cref="OrderedDictionary{TKey,TValue}">OrderedDictionary&lt;TKey,TValue&gt;</see>
         /// </value>
         /// <remarks>Accessing this property will create the dictionary object if necessary</remarks>
-        private Dictionary<TKey, TValue> Dictionary { get { return this._dictionary ?? ( this._dictionary = new Dictionary<TKey, TValue>( this._initialCapacity, this._comparer ) ); } }
+        private Dictionary<TKey, TValue> Dictionary => this._dictionary ?? ( this._dictionary = new Dictionary<TKey, TValue>( this._initialCapacity, this._comparer ) );
 
         /// <summary>
         ///     Gets the list object that stores the key/value pairs.
@@ -175,7 +175,7 @@ namespace Librainian.Collections {
         ///     <see cref="OrderedDictionary{TKey,TValue}">OrderedDictionary&lt;TKey,TValue&gt;</see>
         /// </value>
         /// <remarks>Accessing this property will create the list object if necessary.</remarks>
-        private List<KeyValuePair<TKey, TValue>> List { get { return this._list ?? ( this._list = new List<KeyValuePair<TKey, TValue>>( this._initialCapacity ) ); } }
+        private List<KeyValuePair<TKey, TValue>> List => this._list ?? ( this._list = new List<KeyValuePair<TKey, TValue>>( this._initialCapacity ) );
 
         #region IOrderedDictionary<TKey,TValue> Members
         /// <summary>
@@ -194,7 +194,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     collection.
         /// </value>
-        public int Count { get { return this.List.Count; } }
+        public int Count => this.List.Count;
 
         /// <summary>
         ///     Gets a value indicating whether access to the
@@ -206,7 +206,7 @@ namespace Librainian.Collections {
         ///     is synchronized (thread-safe).
         /// </summary>
         /// <value>This method always returns false.</value>
-        Boolean ICollection.IsSynchronized { get { return false; } }
+        Boolean ICollection.IsSynchronized => false;
 
         /// <summary>
         ///     Gets an object that can be used to synchronize access to the
@@ -251,7 +251,7 @@ namespace Librainian.Collections {
         ///     has a
         ///     fixed size; otherwise, <see langword="false" /> . The default is <see langword="false" />.
         /// </value>
-        Boolean IDictionary.IsFixedSize { get { return false; } }
+        Boolean IDictionary.IsFixedSize => false;
 
         /// <summary>
         ///     Gets an <see cref="ICollection" /> object containing the keys in the
@@ -275,7 +275,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     continue to be reflected in the key collection.
         /// </remarks>
-        ICollection IDictionary.Keys { get { return ( ICollection )this.Keys; } }
+        ICollection IDictionary.Keys => ( ICollection )this.Keys;
 
         /// <summary>
         ///     Gets an <see cref="ICollection" /> object containing the values in the
@@ -311,7 +311,7 @@ namespace Librainian.Collections {
         ///         cref="ICollection" />
         ///     .
         /// </remarks>
-        ICollection IDictionary.Values { get { return ( ICollection )this.Values; } }
+        ICollection IDictionary.Values => ( ICollection )this.Values;
 
         /// <summary>
         ///     Gets a value indicating whether the
@@ -340,7 +340,7 @@ namespace Librainian.Collections {
         ///         reflects those changes.
         ///     </para>
         /// </remarks>
-        public Boolean IsReadOnly { get { return false; } }
+        public Boolean IsReadOnly => false;
 
         /// <summary>
         ///     Gets an <see cref="T:ICollection{TKey}">ICollection&lt;TKey&gt;</see> object containing
@@ -372,7 +372,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     continue to be reflected in the key collection.
         /// </remarks>
-        public ICollection<TKey> Keys { get { return this.Dictionary.Keys; } }
+        public ICollection<TKey> Keys => this.Dictionary.Keys;
 
         /// <summary>
         ///     Gets an <see cref="T:ICollection{TValue}">ICollection&lt;TValue&gt;</see> object
@@ -400,7 +400,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     continue to be reflected in the value collection.
         /// </remarks>
-        public ICollection<TValue> Values { get { return this.Dictionary.Values; } }
+        public ICollection<TValue> Values => this.Dictionary.Values;
 
         /// <summary>
         ///     Gets or sets the value with the specified key.

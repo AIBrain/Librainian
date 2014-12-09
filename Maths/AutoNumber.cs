@@ -45,11 +45,7 @@ namespace Librainian.Maths {
         /// <summary>
         ///     The current value of the AutoNumber
         /// </summary>
-        public UInt64 Identity {
-            get {
-                return ( UInt64 )Interlocked.Read( ref this._identity );
-            }
-        }
+        public UInt64 Identity => ( UInt64 )Interlocked.Read( ref this._identity );
 
         public void Ensure( UInt64 atLeast ) {
             if ( this.Identity < atLeast ) {    //TODO make this an atomic operation

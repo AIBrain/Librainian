@@ -522,11 +522,7 @@
             /// <summary>
             /// Length of the array
             /// </summary>
-            public int Length {
-                get {
-                    return this._array.Length;
-                }
-            }
+            public int Length => this._array.Length;
 
             /// <summary>
             /// Read the value without applying any fence
@@ -672,11 +668,7 @@
             /// <summary>
             /// Length of the array
             /// </summary>
-            public int Length {
-                get {
-                    return this._array.Length;
-                }
-            }
+            public int Length => this._array.Length;
 
             /// <summary>
             /// Read the value without applying any fence
@@ -823,11 +815,7 @@
             /// <summary>
             /// Length of the array
             /// </summary>
-            public int Length {
-                get {
-                    return this._array.Length;
-                }
-            }
+            public int Length => this._array.Length;
 
             /// <summary>
             /// Read the value without applying any fence
@@ -967,11 +955,7 @@
             /// <summary>
             /// Length of the array
             /// </summary>
-            public int Length {
-                get {
-                    return this._array.Length;
-                }
-            }
+            public int Length => this._array.Length;
 
             /// <summary>
             /// Read the value without applying any fence

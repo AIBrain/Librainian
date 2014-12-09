@@ -112,11 +112,7 @@ namespace Librainian.Maths {
             }
         }
 
-        public UInt64 Votes {
-            get {
-                return this.Yes + this.No;
-            }
-        }
+        public UInt64 Votes => this.Yes + this.No;
 
         public UInt64 Yes {
             get {
@@ -129,11 +125,7 @@ namespace Librainian.Maths {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
-        }
+        private String DebuggerDisplay => this.ToString();
 
         public static VotallyI Combine( [NotNull] VotallyI left, [NotNull] VotallyI right ) {
             if ( left == null ) {

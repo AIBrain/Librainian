@@ -465,11 +465,7 @@ namespace Librainian.Graphics {
             ///     <para>.tif</para>
             /// </summary>
             /// <seealso cref="http://wikipedia.org/wiki/TIFF"/>
-            public static String Tiff {
-                get {
-                    return ".tif";
-                }
-            }
+            public static String Tiff => ".tif";
         }
 
         public static class PropertyList {

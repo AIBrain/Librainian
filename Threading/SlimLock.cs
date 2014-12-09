@@ -106,7 +106,7 @@ namespace Librainian.Threading {
 
         private Boolean _fDisposed;
 
-        public LockRecursionPolicy RecursionPolicy { get { return this._fIsReentrant ? LockRecursionPolicy.SupportsRecursion : LockRecursionPolicy.NoRecursion; } }
+        public LockRecursionPolicy RecursionPolicy => this._fIsReentrant ? LockRecursionPolicy.SupportsRecursion : LockRecursionPolicy.NoRecursion;
 
         public int CurrentReadCount {
             get {
@@ -116,11 +116,11 @@ namespace Librainian.Threading {
             }
         }
 
-        public Boolean IsReadLockHeld { get { return this.RecursiveReadCount > 0; } }
+        public Boolean IsReadLockHeld => this.RecursiveReadCount > 0;
 
-        public Boolean IsUpgradeableReadLockHeld { get { return this.RecursiveUpgradeCount > 0; } }
+        public Boolean IsUpgradeableReadLockHeld => this.RecursiveUpgradeCount > 0;
 
-        public Boolean IsWriteLockHeld { get { return this.RecursiveWriteCount > 0; } }
+        public Boolean IsWriteLockHeld => this.RecursiveWriteCount > 0;
 
         public int RecursiveReadCount {
             get {
@@ -183,13 +183,13 @@ namespace Librainian.Threading {
             }
         }
 
-        public int WaitingReadCount { get { return ( int ) this._numReadWaiters; } }
+        public int WaitingReadCount => ( int ) this._numReadWaiters;
 
-        public int WaitingUpgradeCount { get { return ( int ) this._numUpgradeWaiters; } }
+        public int WaitingUpgradeCount => ( int ) this._numUpgradeWaiters;
 
-        public int WaitingWriteCount { get { return ( int ) this._numWriteWaiters; } }
+        public int WaitingWriteCount => ( int ) this._numWriteWaiters;
 
-        private Boolean MyLockHeld { get { return this._myLock != 0; } }
+        private Boolean MyLockHeld => this._myLock != 0;
 
         public SlimLock() : this( LockRecursionPolicy.NoRecursion ) { }
 

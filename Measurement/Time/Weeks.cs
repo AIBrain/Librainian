@@ -89,11 +89,7 @@ namespace Librainian.Measurement.Time {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
-        }
+        private String DebuggerDisplay => this.ToString();
 
         public static Weeks Combine( Weeks left, Weeks right ) => new Weeks( left.Value + right.Value );
 

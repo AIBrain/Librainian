@@ -39,7 +39,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>
         /// </summary>
-        public Span Elapsed { get { return new Span( milliseconds: GetElapsedDateTimeTicks() / TicksPerMillisecond ); } }
+        public Span Elapsed => new Span( milliseconds: GetElapsedDateTimeTicks() / TicksPerMillisecond );
 
         /// <summary>
         /// </summary>
