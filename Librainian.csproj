@@ -33,7 +33,7 @@
     <DefineConstants>DEBUG;DEEPDEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <WarningsAsErrors>4014,1998,618</WarningsAsErrors>
+    <WarningsAsErrors>4014,1998,618,8073</WarningsAsErrors>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>

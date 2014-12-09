@@ -41,7 +41,7 @@ namespace Librainian.Graphics.DDD {
 
         public static readonly Coordinate64 AtMinValues = new Coordinate64( x: Int64.MinValue, y: Int64.MinValue, z: Int64.MinValue );
 
-        public static readonly Coordinate64 Center = new Coordinate64( x: 0, y: 0, z: 0 );
+        public static readonly Coordinate64 Zeroth = new Coordinate64( x: 0, y: 0, z: 0 );
 
         [Column]
         [DataMember]
@@ -79,12 +79,6 @@ namespace Librainian.Graphics.DDD {
         ///     Calculates the distance between two <see cref="Coordinate64" />.
         /// </summary>
         public static UInt64 Distance( Coordinate64 lhs, Coordinate64 rhs ) {
-            if ( lhs == null ) {
-                throw new ArgumentNullException( "lhs" );
-            }
-            if ( rhs == null ) {
-                throw new ArgumentNullException( "rhs" );
-            }
             var num1 = lhs.X - rhs.X;
             var num2 = lhs.Y - rhs.Y;
             var num3 = lhs.Z - rhs.Z;
@@ -108,9 +102,6 @@ namespace Librainian.Graphics.DDD {
         ///     <para>The result is a Coordinate one unit in length pointing in the same direction as the original Coordinate.</para>
         /// </summary>
         public static Coordinate64 Normalize( Coordinate64 coordinate ) {
-            if ( coordinate == null ) {
-                throw new ArgumentNullException( "coordinate" );
-            }
             var num = 1.0D / coordinate.Length;
             return new Coordinate64( ( Int64 )( coordinate.X * num ), ( Int64 )( coordinate.Y * num ), ( Int64 )( coordinate.Z * num ) );
         }
@@ -143,20 +134,12 @@ namespace Librainian.Graphics.DDD {
         /// </returns>
         /// <param name="other"> An object to compare with this object. </param>
         [Pure]
-        public int CompareTo( Coordinate64 other ) {
-            if ( other == null ) {
-                throw new ArgumentNullException( "other" );
-            }
-            return this.Length.CompareTo( other.Length );
-        }
+        public int CompareTo( Coordinate64 other ) => this.Length.CompareTo( other.Length );
 
         /// <summary>
         ///     Calculates the distance between this <see cref="Coordinate64" /> and another <see cref="Coordinate64" />.
         /// </summary>
         public UInt64 Distance( Coordinate64 rhs ) {
-            if ( rhs == null ) {
-                throw new ArgumentNullException( "rhs" );
-            }
             var num1 = this.X - rhs.X;
             var num2 = this.Y - rhs.Y;
             var num3 = this.Z - rhs.Z;
