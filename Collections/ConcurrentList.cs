@@ -1,4 +1,5 @@
 ﻿namespace Librainian.Collections {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -18,14 +19,15 @@
     /// <remarks>This class was created on a spur of the moment idea, and is thoroughly untested.</remarks>
     /// <copyright>Rick@AIBrain.org 2014</copyright>
     [CollectionDataContract]
-    [DebuggerDisplay( "Count={Count}" )]
+    [DebuggerDisplay("Count={Count}")]
     public sealed class ConcurrentList<TType> : IList<TType> {
 
         /// <summary>
         ///     <para>Provide a dataflow block to process messages in a serial fashion.</para>
         /// </summary>
         [NotNull]
-        private readonly ActionBlock<Action> _actionBlock = new ActionBlock<Action>( action => action(), new ExecutionDataflowBlockOptions {
+        private readonly ActionBlock<Action> _actionBlock = new ActionBlock<Action>( action => action(), new ExecutionDataflowBlockOptions
+        {
             SingleProducerConstrained = false,
             MaxDegreeOfParallelism = 1
         } );
@@ -107,29 +109,17 @@
         /// <summary>
         ///     <para>Returns the count of items waiting to be added to this <see cref="ConcurrentList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeAdded {
-            get {
-                return this._waitingToBeAddedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+        public int CountOfItemsWaitingToBeAdded => this._waitingToBeAddedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
 
         /// <summary>
         ///     <para>Returns the count of items waiting to be changed in this <see cref="ConcurrentList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeChanged {
-            get {
-                return this._waitingToBeChangedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+        public int CountOfItemsWaitingToBeChanged => this._waitingToBeChangedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
 
         /// <summary>
         ///     <para>Returns the count of items waiting to be inserted to this <see cref="ConcurrentList{TType}" />.</para>
         /// </summary>
-        public int CountOfItemsWaitingToBeInserted {
-            get {
-                return this._waitingToBeInsertedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+        public int CountOfItemsWaitingToBeInserted => this._waitingToBeInsertedCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
 
         public Span TimeoutForReads {
             get;
@@ -144,11 +134,7 @@
         /// <summary>
         ///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
         /// </summary>
-        public int Count {
-            get {
-                return this._itemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+        public int Count => this._itemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
 
         /// <summary>
         /// </summary>
@@ -191,9 +177,7 @@
         ///     </para>
         /// </summary>
         /// <param name="item"></param>
-        public void Add( TType item ) {
-            this.Add( item: item, afterAdd: null );
-        }
+        public void Add( TType item ) => this.Add( item: item, afterAdd: null );
 
         /// <summary>
         ///     Mark this <see cref="ConcurrentList{TType}" /> to be cleared.
@@ -210,14 +194,10 @@
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <seealso cref="CatchUp"/>
-        public bool AnyWritesPending {
-            get {
-                return 0 == this.CountOfItemsWaitingToBeAdded && 0 == this.CountOfItemsWaitingToBeChanged && 0 == this.CountOfItemsWaitingToBeInserted;
-            }
-        }
+        public bool AnyWritesPending => 0 == this.CountOfItemsWaitingToBeAdded && 0 == this.CountOfItemsWaitingToBeChanged && 0 == this.CountOfItemsWaitingToBeInserted;
 
         /// <summary>
         /// <para>Blocks until the list has no write operations pending, until the <paramref name="timeout"/>, or the <paramref name="cancellationToken"/> is set.</para>
@@ -225,8 +205,8 @@
         /// <param name="timeout"></param>
         /// <param name="cancellationToken"></param>
         /// <returns>Returns true if list is caught up. (No write operations pending)</returns>
-        public Boolean CatchUp( Span timeout = default (Span), CancellationToken cancellationToken = default( CancellationToken ) ) {
-            if ( timeout == default( Span ) ) {
+        public Boolean CatchUp( Span timeout = default(Span), CancellationToken cancellationToken = default(CancellationToken) ) {
+            if ( timeout == default(Span) ) {
                 timeout = this.TimeoutForWrites;
             }
             var interval = Milliseconds.Hertz111;
@@ -248,9 +228,7 @@
         /// </summary>
         /// <param name="timeout"></param>
         /// <param name="cancellationToken"></param>
-        public void Wait( Span timeout = default (Span), CancellationToken cancellationToken = default( CancellationToken ) ) {
-            this.CatchUp( timeout, cancellationToken );
-        }
+        public void Wait( Span timeout = default(Span), CancellationToken cancellationToken = default(CancellationToken) ) => this.CatchUp( timeout, cancellationToken );
 
         /// <summary>
         ///     <para>
@@ -258,9 +236,7 @@
         ///         in time.
         ///     </para>
         /// </summary>
-        public Boolean Contains( TType item ) {
-            return this.Read( () => this._list.Contains( item ) );
-        }
+        public Boolean Contains( TType item ) => this.Read( () => this._list.Contains( item ) );
 
         /// <summary>
         ///     Copies the entire <see cref="ConcurrentList{TType}" /> to the <paramref name="array" />, starting at the specified
@@ -285,13 +261,9 @@
         ///     </para>
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<TType> GetEnumerator() {
-            return this.Clone().GetEnumerator(); //BUG is this correct?
-        }
+        public IEnumerator<TType> GetEnumerator() => this.Clone().GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
         ///     <para>
@@ -300,9 +272,7 @@
         ///     </para>
         /// </summary>
         /// <param name="item">The object to locate in this <see cref="ConcurrentList{TType}" />.</param>
-        public int IndexOf( TType item ) {
-            return this.Read( () => this._list.IndexOf( item ) );
-        }
+        public int IndexOf( TType item ) => this.Read( () => this._list.IndexOf( item ) );
 
         /// <summary>
         ///     <para>
@@ -324,7 +294,7 @@
                     this._list.Insert( index: index, item: item );
                     return true;
                 }
-                catch ( ArgumentOutOfRangeException ) {
+                catch ( ArgumentOutOfRangeException) {
                     return false;
                 }
                 finally {
@@ -338,9 +308,7 @@
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Boolean Remove( TType item ) {
-            return this.Remove( item, null );
-        }
+        public Boolean Remove( TType item ) => this.Remove( item, null );
 
         public void RemoveAt( int index ) {
             if ( index < 0 ) {
@@ -359,7 +327,7 @@
                         this._list.RemoveAt( index );
                     }
                 }
-                catch ( ArgumentOutOfRangeException ) {
+                catch ( ArgumentOutOfRangeException) {
                     return false;
                 }
                 finally {
@@ -393,48 +361,46 @@
                 }
                 finally {
                     this.AnItemHasBeenAdded();
-                    if ( afterAdd != null ) {
-                        afterAdd();
-                    }
+                    afterAdd?.Invoke();
                 }
             } ) );
         }
 
-        public Boolean AddAndWait( TType item, CancellationToken cancellationToken = default( CancellationToken ), TimeSpan timeout = default( TimeSpan ) ) {
+        public Boolean AddAndWait( TType item, CancellationToken cancellationToken = default(CancellationToken), TimeSpan timeout = default(TimeSpan) ) {
+
             //var slim = new ManualResetEventSlim( initialState: false );
             this._slims.Value.Reset();
 
             this.Add( item: item, afterAdd: () => this._slims.Value.Set() );
 
             try {
-                if ( default( TimeSpan ) != timeout && default( CancellationToken ) != cancellationToken ) {
+                if ( default(TimeSpan) != timeout && default(CancellationToken) != cancellationToken ) {
                     return this._slims.Value.Wait( timeout, cancellationToken );
                 }
-                if ( default( TimeSpan ) != timeout ) {
+                if ( default(TimeSpan) != timeout ) {
                     return this._actionBlock.Completion.Wait( timeout: timeout );
                 }
                 this._slims.Value.Wait( cancellationToken );
                 return true;
             }
-            catch ( OperationCanceledException ) {
+            catch ( OperationCanceledException) {
             }
-            catch ( ArgumentOutOfRangeException ) {
+            catch ( ArgumentOutOfRangeException) {
             }
-            catch ( ObjectDisposedException ) {
+            catch ( ObjectDisposedException) {
             }
-            catch ( AggregateException aggregateException) {
+            catch ( AggregateException aggregateException ) {
                 foreach ( var innerException in aggregateException.InnerExceptions ) {
+
                     //TODO what?
                 }
             }
             return false;
         }
 
-        public Task AddAsync( TType item, Action afterAdd = null ) {
-            return Task.Run( () => {
-                this.TryAdd( item: item, afterAdd: afterAdd );
-            } );
-        }
+        public Task AddAsync( TType item, Action afterAdd = null ) => Task.Run( () => {
+            this.TryAdd( item: item, afterAdd: afterAdd );
+        } );
 
         /// <summary>
         ///     Add a collection of items.
@@ -464,19 +430,15 @@
                 }
             }
             finally {
-                if ( afterRangeAdded != null ) {
-                    afterRangeAdded();
-                }
+                afterRangeAdded?.Invoke();
             }
         }
 
-        public Task AddRangeAsync( [CanBeNull] IEnumerable<TType> items ) {
-            return Task.Run( () => {
-                if ( items != null ) {
-                    this.AddRange( items );
-                }
-            } );
-        }
+        public Task AddRangeAsync( [CanBeNull] IEnumerable<TType> items ) => Task.Run( () => {
+            if ( items != null ) {
+                this.AddRange( items );
+            }
+        } );
 
         /// <summary>
         ///     <para>
@@ -484,12 +446,10 @@
         ///     </para>
         /// </summary>
         /// <returns></returns>
-        public List<TType> Clone() {
-            return this.Write( func: () => {
-                var copy = this._list.ToList();
-                return copy;
-            }, ignoreAllowModificationsCheck: true );
-        }
+        public List<TType> Clone() => this.Write( func: () => {
+            var copy = this._list.ToList();
+            return copy;
+        }, ignoreAllowModificationsCheck: true );
 
         /// <summary>
         ///     Signal that this <see cref="ConcurrentList{TType}" /> will not be modified any more.
@@ -522,27 +482,27 @@
         ///     Returns <see cref="Boolean.True" /> if the Task completed execution within the allotted time or has already
         ///     waited.
         /// </returns>
-        public Boolean CompleteAndWait( CancellationToken cancellationToken = default( CancellationToken ), TimeSpan timeout = default( TimeSpan ) ) {
+        public Boolean CompleteAndWait( CancellationToken cancellationToken = default(CancellationToken), TimeSpan timeout = default(TimeSpan) ) {
             try {
                 this.Complete();
 
-                if ( default( TimeSpan ) != timeout && default( CancellationToken ) != cancellationToken ) {
+                if ( default(TimeSpan) != timeout && default(CancellationToken) != cancellationToken ) {
                     return this._actionBlock.Completion.Wait( millisecondsTimeout: ( int )timeout.TotalMilliseconds, cancellationToken: cancellationToken );
                 }
-                if ( default( TimeSpan ) != timeout ) {
+                if ( default(TimeSpan) != timeout ) {
                     return this._actionBlock.Completion.Wait( timeout: timeout );
                 }
-                if ( default( CancellationToken ) != cancellationToken ) {
+                if ( default(CancellationToken) != cancellationToken ) {
                     try {
                         this._actionBlock.Completion.Wait( cancellationToken: cancellationToken );
                     }
-                    catch ( OperationCanceledException ) {
+                    catch ( OperationCanceledException) {
                         return false; //BUG Is this correct?
                     }
-                    catch ( ObjectDisposedException ) {
+                    catch ( ObjectDisposedException) {
                         return false;
                     }
-                    catch ( AggregateException ) {
+                    catch ( AggregateException) {
                         return false;   //BUG Is this correct?
                     }
                     return true;
@@ -581,9 +541,7 @@
             } ) );
         }
 
-        public Boolean TryAdd( TType item, [CanBeNull] Action afterAdd = null ) {
-            return this.Add( item: item, afterAdd: afterAdd );
-        }
+        public Boolean TryAdd( TType item, [CanBeNull] Action afterAdd = null ) => this.Add( item: item, afterAdd: afterAdd );
 
         /// <summary>
         ///     <para>Try to get an item in this <see cref="ConcurrentList{TType}" /> by index.</para>
@@ -600,9 +558,7 @@
                     return false;
                 }
                 var result = this._list[ index ];
-                if ( afterGet != null ) {
-                    afterGet( result );
-                }
+                afterGet?.Invoke( result );
                 return true;
             } ) );
         }
@@ -612,20 +568,14 @@
             this._itemCounter.Value++;
         }
 
-        private void AnItemHasBeenChanged() {
-            this._waitingToBeChangedCounter.Value--;
-        }
+        private void AnItemHasBeenChanged() => this._waitingToBeChangedCounter.Value--;
 
-        private void AnItemHasBeenInserted() {
-            this._waitingToBeInsertedCounter.Value--;
-        }
+        private void AnItemHasBeenInserted() => this._waitingToBeInsertedCounter.Value--;
 
         private void AnItemHasBeenRemoved( [CanBeNull] Action action = null ) {
             this._waitingToBeRemovedCounter.Value--;
             this._itemCounter.Value--;
-            if ( action != null ) {
-                action();
-            }
+            action?.Invoke();
         }
 
         /// <summary>
@@ -640,7 +590,7 @@
             }
 
             if ( !this._readerWriter.TryEnterUpgradeableReadLock( this.TimeoutForReads ) ) {
-                return default( TFuncResult );
+                return default(TFuncResult);
             }
             try {
                 if ( func != null ) {
@@ -651,24 +601,16 @@
                 this._readerWriter.ExitUpgradeableReadLock();
             }
 
-            return default( TFuncResult );
+            return default(TFuncResult);
         }
 
-        private void RequestToAddAnItem() {
-            this._waitingToBeAddedCounter.Value++;
-        }
+        private void RequestToAddAnItem() => this._waitingToBeAddedCounter.Value++;
 
-        private void RequestToChangeAnItem() {
-            this._waitingToBeChangedCounter.Value++;
-        }
+        private void RequestToChangeAnItem() => this._waitingToBeChangedCounter.Value++;
 
-        private void RequestToInsertAnItem() {
-            this._waitingToBeInsertedCounter.Value++;
-        }
+        private void RequestToInsertAnItem() => this._waitingToBeInsertedCounter.Value++;
 
-        private void RequestToRemoveAnItem() {
-            this._waitingToBeRemovedCounter.Value++;
-        }
+        private void RequestToRemoveAnItem() => this._waitingToBeRemovedCounter.Value++;
 
         /// <summary>
         ///     <para>Filter write requests through a <see cref="ReaderWriterLockSlim" />.</para>
@@ -682,14 +624,14 @@
 
             if ( !ignoreAllowModificationsCheck ) {
                 if ( !this.AllowModifications && func != null ) {
-                    return default( TFuncResult );
+                    return default(TFuncResult);
                 }
             }
 
             //BUG what if we want a clone of the list, but it has been marked as !this.AllowModifications
 
             if ( !this._readerWriter.TryEnterWriteLock( this.TimeoutForWrites ) ) {
-                return default( TFuncResult );
+                return default(TFuncResult);
             }
             try {
                 if ( func != null ) {
@@ -699,7 +641,7 @@
             finally {
                 this._readerWriter.ExitWriteLock();
             }
-            return default( TFuncResult );
+            return default(TFuncResult);
         }
     }
 }

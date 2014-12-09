@@ -34,7 +34,7 @@ namespace Librainian.Linguistics {
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Sentence_(linguistics)"></seealso>
     /// <seealso cref="Paragraph"></seealso>
-    [DataContract( IsReference = true )]
+    [DataContract(IsReference = true)]
     public sealed class Sentence : IEquatable<Sentence>, IEnumerable<Word> {
 
         /// <summary>

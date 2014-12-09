@@ -35,7 +35,7 @@ namespace Librainian.Linguistics {
     /// <para>A <see cref="Paragraph" /> is a sequence of <see cref="Sentence" /> .</para>
     /// </summary>
     /// <seealso cref="Page"></seealso>
-    [DataContract( IsReference = true )]
+    [DataContract(IsReference = true)]
     [Immutable]
     public sealed class Paragraph : IEquatable<Paragraph>, IEnumerable<Sentence> {
         public const UInt64 Level = Sentence.Level << 1;

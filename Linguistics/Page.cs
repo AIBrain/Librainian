@@ -33,7 +33,7 @@ namespace Librainian.Linguistics {
     /// </summary>
     /// <seealso cref="Book"></seealso>
     [Immutable]
-    [DataContract( IsReference = true )]
+    [DataContract(IsReference = true)]
     public sealed class Page : IEquatable<Page>, IEnumerable<Paragraph> {
         public const UInt64 Level = Paragraph.Level << 1;
 

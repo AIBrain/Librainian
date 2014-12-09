@@ -1,23 +1,23 @@
 ﻿#region License & Information
 
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/IOExtensions.cs" was last cleaned by Rick on 2014/09/06 at 7:28 AM
+// 
+// "Librainian/IOExtensions.cs" was last cleaned by Rick on 2014/12/09 at 5:56 AM
 
 #endregion License & Information
 
@@ -27,6 +27,7 @@ namespace Librainian.IO {
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
+    using System.Environment;
     using System.Globalization;
     using System.IO;
     using System.IO.Compression;
@@ -44,6 +45,7 @@ namespace Librainian.IO {
     using Collections;
     using Controls;
     using Extensions;
+    using Extensions.NativeWin32;
     using FluentAssertions;
     using Maths;
     using Measurement.Time;
@@ -59,27 +61,27 @@ namespace Librainian.IO {
         public static readonly HashSet<DirectoryInfo> SystemFolders = new HashSet<DirectoryInfo>();
 
         static IOExtensions() {
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.System ) ) );
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.SystemX86 ) ) );
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.AdminTools ) ) );
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.CDBurning ) ) );
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.Windows ) ) );
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.Cookies ) ) );
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.History ) ) );
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.InternetCache ) ) );
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.PrinterShortcuts ) ) );
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) ) );
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFilesX86 ) ) );
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.Programs ) ) );
-            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.SendTo ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.System ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.SystemX86 ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.AdminTools ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.CDBurning ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.Windows ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.Cookies ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.History ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.InternetCache ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.PrinterShortcuts ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.ProgramFiles ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.ProgramFilesX86 ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.Programs ) ) );
+            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.SendTo ) ) );
             SystemFolders.Add( new DirectoryInfo( Path.GetTempPath() ) );
 
             //TODO foreach on Environment.SpecialFolder
         }
 
         /// <summary>
-        ///     Example: WriteTextAsync( fullPath: fullPath, text: message ).Wait();
-        ///     Example: await WriteTextAsync( fullPath: fullPath, text: message );
+        /// Example: WriteTextAsync( fullPath: fullPath, text: message ).Wait();
+        /// Example: await WriteTextAsync( fullPath: fullPath, text: message );
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <param name="text"></param>
@@ -102,7 +104,7 @@ namespace Librainian.IO {
                 //    bob.WriteAsync
                 //}
 
-                using ( var sourceStream = new FileStream( path: fileInfo.FullName, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length, useAsync: true ) ) {
+                using (var sourceStream = new FileStream( path: fileInfo.FullName, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length, useAsync: true )) {
                     await sourceStream.WriteAsync( buffer: encodedText, offset: 0, count: length );
                     await sourceStream.FlushAsync();
                 }
@@ -128,7 +130,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.
+        /// Enumerates a <see cref="FileInfo"/> as a sequence of <see cref="Byte"/>.
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
@@ -143,12 +145,12 @@ namespace Librainian.IO {
                 }
             }
 
-            using ( var stream = new FileStream( fileInfo.FullName, FileMode.Open ) ) {
+            using (var stream = new FileStream( fileInfo.FullName, FileMode.Open )) {
                 if ( !stream.CanRead ) {
                     throw new NotSupportedException( String.Format( "Cannot read from file {0}", fileInfo.FullName ) );
                 }
 
-                using ( var buffered = new BufferedStream( stream ) ) {
+                using (var buffered = new BufferedStream( stream )) {
                     var b = buffered.ReadByte();
                     if ( b == -1 ) {
                         yield break;
@@ -159,14 +161,15 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     ask user for folder/network path where to store dictionary
+        /// ask user for folder/network path where to store dictionary
         /// </summary>
         [CanBeNull]
         public static Folder AskUserForStorageFolder( String hint ) {
-            var folderBrowserDialog = new FolderBrowserDialog {
+            var folderBrowserDialog = new FolderBrowserDialog
+            {
                 ShowNewFolderButton = true,
                 Description = String.Format( "Please direct me to a storage folder for {0}.", hint ),
-                RootFolder = Environment.SpecialFolder.MyComputer
+                RootFolder = SpecialFolder.MyComputer
             };
 
             var owner = WindowWrapper.CreateWindowWrapper( Process.GetCurrentProcess().MainWindowHandle );
@@ -180,7 +183,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.
+        /// Enumerates a <see cref="FileInfo"/> as a sequence of <see cref="Byte"/>.
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
@@ -196,12 +199,12 @@ namespace Librainian.IO {
                 }
             }
 
-            using ( var stream = new FileStream( fileInfo.FullName, FileMode.Open ) ) {
+            using (var stream = new FileStream( fileInfo.FullName, FileMode.Open )) {
                 if ( !stream.CanRead ) {
                     throw new NotSupportedException( String.Format( "Cannot read from file {0}", fileInfo.FullName ) );
                 }
 
-                using ( var buffered = new BufferedStream( stream ) ) {
+                using (var buffered = new BufferedStream( stream )) {
                     var low = buffered.ReadByte();
                     if ( low == -1 ) {
                         yield break;
@@ -219,8 +222,8 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     No guarantee of return order. Also, because of the way the operating system works
-        ///     (random-access), a directory may be created or deleted even after a search.
+        /// No guarantee of return order. Also, because of the way the operating system works
+        /// (random-access), a directory may be created or deleted even after a search.
         /// </summary>
         /// <param name="target"></param>
         /// <param name="searchPattern"></param>
@@ -230,8 +233,8 @@ namespace Librainian.IO {
                 yield break;
             }
             var searchPath = Path.Combine( target.FullName, searchPattern );
-            NativeWin32.Win32FindData findData;
-            using ( var hFindFile = NativeWin32.FindFirstFile( searchPath, out findData ) ) {
+            Win32FindData findData;
+            using (var hFindFile = FindFirstFile( searchPath, out findData )) {
                 do {
                     if ( hFindFile.IsInvalid ) {
                         break;
@@ -271,7 +274,7 @@ namespace Librainian.IO {
                     foreach ( var info in subInfo.BetterEnumerateDirectories( searchPattern ) ) {
                         yield return info;
                     }
-                } while ( NativeWin32.FindNextFile( hFindFile, out findData ) );
+                } while ( FindNextFile( hFindFile, out findData ) );
             }
         }
 
@@ -287,8 +290,8 @@ namespace Librainian.IO {
             //    yield break;
             //}
             var searchPath = Path.Combine( target.FullName, searchPattern );
-            NativeWin32.Win32FindData findData;
-            using ( var hFindFile = NativeWin32.FindFirstFile( searchPath, out findData ) ) {
+            Win32FindData findData;
+            using (var hFindFile = FindFirstFile( searchPath, out findData )) {
                 do {
 
                     //Application.DoEvents();
@@ -310,12 +313,12 @@ namespace Librainian.IO {
 
                     var newfName = Path.Combine( target.FullName, findData.cFileName );
                     yield return new FileInfo( newfName );
-                } while ( NativeWin32.FindNextFile( hFindFile, out findData ) );
+                } while ( FindNextFile( hFindFile, out findData ) );
             }
         }
 
         /// <summary>
-        ///     poor mans crc
+        /// poor mans crc
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
@@ -328,7 +331,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     poor mans crc
+        /// poor mans crc
         /// </summary>
         /// <param name="document"></param>
         /// <returns></returns>
@@ -346,12 +349,13 @@ namespace Librainian.IO {
         }
 
         [CanBeNull]
-        public static DirectoryInfo ChooseDirectoryDialog( this Environment.SpecialFolder startFolder, String path, String description = "Please select a folder." ) {
-            using ( var folderDialog = new FolderBrowserDialog {
+        public static DirectoryInfo ChooseDirectoryDialog( this SpecialFolder startFolder, String path, String description = "Please select a folder." ) {
+            using (var folderDialog = new FolderBrowserDialog
+            {
                 Description = description,
-                RootFolder = Environment.SpecialFolder.MyComputer,
+                RootFolder = SpecialFolder.MyComputer,
                 ShowNewFolderButton = false
-            } ) {
+            }) {
                 if ( folderDialog.ShowDialog() == DialogResult.OK ) {
                     return new DirectoryInfo( folderDialog.SelectedPath );
                 }
@@ -363,8 +367,8 @@ namespace Librainian.IO {
             if ( data == null ) {
                 throw new ArgumentNullException( "data" );
             }
-            using ( var output = new MemoryStream() ) {
-                using ( var compress = new GZipStream( output, CompressionMode.Compress ) ) {
+            using (var output = new MemoryStream()) {
+                using (var compress = new GZipStream( output, CompressionMode.Compress )) {
                     compress.Write( data, 0, data.Length );
                 }
                 return output.ToArray();
@@ -372,7 +376,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Starts a task to copy a file
+        /// Starts a task to copy a file
         /// </summary>
         /// <param name="source"></param>
         /// <param name="destination"></param>
@@ -389,8 +393,8 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Before: @"c:\hello\world".
-        ///     After: @"c:\hello\world\23468923475634836.extension"
+        /// Before: @"c:\hello\world".
+        /// After: @"c:\hello\world\23468923475634836.extension"
         /// </summary>
         /// <param name="info"></param>
         /// <param name="withExtension"></param>
@@ -407,15 +411,15 @@ namespace Librainian.IO {
             return new FileInfo( path );
         }
 
-        [DllImport( "kernel32.dll" )]
+        [DllImport("kernel32.dll")]
         public static extern int DeviceIoControl( IntPtr hDevice, int dwIoControlCode, ref short lpInBuffer, int nInBufferSize, IntPtr lpOutBuffer, int nOutBufferSize, ref int lpBytesReturned, IntPtr lpOverlapped );
 
         /// <summary>
-        ///     If the <paramref name="directoryInfo" /> does not exist, attempt to create it.
+        /// If the <paramref name="directoryInfo"/> does not exist, attempt to create it.
         /// </summary>
         /// <param name="directoryInfo"></param>
         /// <param name="changeCompressionTo">
-        ///     Suggest if folder comperssion be Enabled or Disabled. Defaults to null.
+        /// Suggest if folder comperssion be Enabled or Disabled. Defaults to null.
         /// </param>
         /// <param name="requestReadAccess"></param>
         /// <param name="requestWriteAccess"></param>
@@ -492,16 +496,14 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Search the <paramref name="startingFolder" /> for any files matching the
-        ///     <paramref
-        ///         name="fileSearchPatterns" />
-        ///     .
+        /// Search the <paramref name="startingFolder"/> for any files matching the
+        /// <paramref name="fileSearchPatterns"/> .
         /// </summary>
         /// <param name="startingFolder">The folder to start the search.</param>
         /// <param name="fileSearchPatterns">List of patterns to search for.</param>
         /// <param name="cancellation"></param>
-        /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
-        /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
+        /// <param name="onFindFile"><see cref="Action"/> to perform when a file is found.</param>
+        /// <param name="onEachDirectory"><see cref="Action"/> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
         public static void FindFiles( this DirectoryInfo startingFolder, IEnumerable<string> fileSearchPatterns, SimpleCancel cancellation, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
@@ -513,9 +515,11 @@ namespace Librainian.IO {
             try {
                 var searchPatterns = fileSearchPatterns as IList<String> ?? fileSearchPatterns.ToList();
                 searchPatterns.AsParallel().ForAll( searchPattern => {
-//#if DEEPDEBUG
+
+                    //#if DEEPDEBUG
                     String.Format( "Searching folder {0} for {1}.", startingFolder.FullName, searchPattern ).WriteLine();
-//#endif
+
+                    //#endif
                     if ( cancellation.IsCancellationRequested ) {
                         return;
                     }
@@ -550,14 +554,10 @@ namespace Librainian.IO {
                                 String.Format( "Done searching {0} for {1}.", folder.Name, searchPattern ).WriteLine();
 #endif
                             }
-                            catch ( UnauthorizedAccessException ) {
-                            }
-                            catch ( DirectoryNotFoundException ) {
-                            }
-                            catch ( IOException ) {
-                            }
-                            catch ( SecurityException ) {
-                            }
+                            catch ( UnauthorizedAccessException) { }
+                            catch ( DirectoryNotFoundException) { }
+                            catch ( IOException) { }
+                            catch ( SecurityException) { }
                             catch ( AggregateException exception ) {
                                 exception.Handle( ex => {
                                     if ( ex is UnauthorizedAccessException ) {
@@ -578,17 +578,12 @@ namespace Librainian.IO {
                             }
 
                             folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
-
                         } );
                     }
-                    catch ( UnauthorizedAccessException ) {
-                    }
-                    catch ( DirectoryNotFoundException ) {
-                    }
-                    catch ( IOException ) {
-                    }
-                    catch ( SecurityException ) {
-                    }
+                    catch ( UnauthorizedAccessException) { }
+                    catch ( DirectoryNotFoundException) { }
+                    catch ( IOException) { }
+                    catch ( SecurityException) { }
                     catch ( AggregateException exception ) {
                         exception.Handle( ex => {
                             if ( ex is UnauthorizedAccessException ) {
@@ -609,14 +604,10 @@ namespace Librainian.IO {
                     }
                 } );
             }
-            catch ( UnauthorizedAccessException ) {
-            }
-            catch ( DirectoryNotFoundException ) {
-            }
-            catch ( IOException ) {
-            }
-            catch ( SecurityException ) {
-            }
+            catch ( UnauthorizedAccessException) { }
+            catch ( DirectoryNotFoundException) { }
+            catch ( IOException) { }
+            catch ( SecurityException) { }
             catch ( AggregateException exception ) {
                 exception.Handle( ex => {
                     if ( ex is UnauthorizedAccessException ) {
@@ -665,7 +656,7 @@ namespace Librainian.IO {
 
             var bestGuess = Path.GetFileNameWithoutExtension( document.FileName );
 
-        TryAgain:
+            TryAgain:
 
             //check for a double extension (image.jpg.tif), remove the 'fake' (.jpg) extension
             if ( !Path.GetExtension( bestGuess ).IsNullOrEmpty() ) {
@@ -675,10 +666,9 @@ namespace Librainian.IO {
 
             //TODO we have the document, see if we can just chop off down to a nonexisting filename.. just get rid of (3) or (2) or (1)
 
-            var splitIntoWords = bestGuess.Split( new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries ).ToList();
+            var splitIntoWords = bestGuess.Split( new[ ] { ' ' }, StringSplitOptions.RemoveEmptyEntries ).ToList();
 
             if ( splitIntoWords.Count() >= 2 ) {
-
                 var list = splitIntoWords.ToList();
                 var lastWord = list.TakeLast();
 
@@ -716,7 +706,7 @@ namespace Librainian.IO {
             uint clusterSize = 1;
             if ( info.Directory != null ) {
                 var driveLetter = info.Directory.Root.FullName.TrimEnd( '\\' );
-                using ( var searcher = new ManagementObjectSearcher( String.Format( "select BlockSize,NumberOfBlocks from Win32_Volume WHERE DriveLetter = '{0}'", driveLetter ) ) ) {
+                using (var searcher = new ManagementObjectSearcher( String.Format( "select BlockSize,NumberOfBlocks from Win32_Volume WHERE DriveLetter = '{0}'", driveLetter ) )) {
                     var bob = searcher.Get().Cast<ManagementObject>().First();
                     clusterSize = ( uint )bob[ "BlockSize" ];
                 }
@@ -728,14 +718,15 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>
-        ///         The code above does not work properly on Windows Server 2008 or 2008 R2 or Windows 7 and Vista based systems
-        ///         as cluster size is always zero (GetDiskFreeSpaceW and GetDiskFreeSpace return -1 even with UAC disabled.)
-        ///     </para>
+        /// <para>
+        /// The code above does not work properly on Windows Server 2008 or 2008 R2 or Windows 7 and
+        /// Vista based systems as cluster size is always zero (GetDiskFreeSpaceW and
+        /// GetDiskFreeSpace return -1 even with UAC disabled.)
+        /// </para>
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        /// <seealso cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
+        /// <seealso cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk"/>
         public static uint? GetFileSizeOnDiskAlt( this FileInfo info ) {
             uint sectorsPerCluster = 1;
             uint bytesPerSector = 0;
@@ -754,8 +745,8 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Given the <paramref name="path" /> and <paramref name="searchPattern" /> pick any one
-        ///     file and return the <see cref="FileSystemInfo.FullName" /> .
+        /// Given the <paramref name="path"/> and <paramref name="searchPattern"/> pick any one file
+        /// and return the <see cref="FileSystemInfo.FullName"/> .
         /// </summary>
         /// <param name="path"></param>
         /// <param name="searchPattern"></param>
@@ -777,19 +768,19 @@ namespace Librainian.IO {
             return String.Empty;
         }
 
-        public static Boolean IsDirectory( this NativeWin32.Win32FindData data ) {
+        public static Boolean IsDirectory( this Win32FindData data ) {
             return ( data.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory;
         }
 
-        public static Boolean IsFile( this NativeWin32.Win32FindData data ) {
+        public static Boolean IsFile( this Win32FindData data ) {
             return !IsDirectory( data );
         }
 
-        public static Boolean IsIgnoreFolder( this NativeWin32.Win32FindData data ) {
+        public static Boolean IsIgnoreFolder( this Win32FindData data ) {
             return data.cFileName.EndsLike( "$RECYCLE.BIN" ) || data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" ) || SystemFolders.Contains( new DirectoryInfo( data.cFileName ) );
         }
 
-        public static Boolean IsParentOrCurrent( this NativeWin32.Win32FindData data ) {
+        public static Boolean IsParentOrCurrent( this Win32FindData data ) {
             return data.cFileName == "." || data.cFileName == "..";
         }
 
@@ -804,7 +795,7 @@ namespace Librainian.IO {
             if ( !ds.AreAccessRulesProtected ) {
                 return false;
             }
-            using ( var wi = WindowsIdentity.GetCurrent() ) {
+            using (var wi = WindowsIdentity.GetCurrent()) {
                 if ( wi == null ) {
                     return false;
                 }
@@ -815,12 +806,12 @@ namespace Librainian.IO {
         }
 
         [Pure]
-        public static Boolean IsReparsePoint( this NativeWin32.Win32FindData data ) {
+        public static Boolean IsReparsePoint( this Win32FindData data ) {
             return ( data.dwFileAttributes & FileAttributes.ReparsePoint ) == FileAttributes.ReparsePoint;
         }
 
         /// <summary>
-        ///     Opens a folder with Explorer.exe
+        /// Opens a folder with Explorer.exe
         /// </summary>
         public static void OpenDirectoryWithExplorer( [CanBeNull] this DirectoryInfo folder ) {
             folder.Should().NotBeNull();
@@ -834,7 +825,7 @@ namespace Librainian.IO {
                 }
             }
 
-            var windowsFolder = Environment.GetEnvironmentVariable( "SystemRoot" );
+            var windowsFolder = GetEnvironmentVariable( "SystemRoot" );
             windowsFolder.Should().NotBeNullOrWhiteSpace();
             if ( String.IsNullOrWhiteSpace( windowsFolder ) ) {
                 return;
@@ -845,8 +836,8 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Before: "hello.txt".
-        ///     After: "hello 345680969061906730476346.txt"
+        /// Before: "hello.txt".
+        /// After: "hello 345680969061906730476346.txt"
         /// </summary>
         /// <param name="info"></param>
         /// <param name="newExtension"></param>
@@ -865,7 +856,8 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     untested. is this written correctly? would it read from a *slow* media but not block the calling function?
+        /// untested. is this written correctly? would it read from a *slow* media but not block the
+        /// calling function?
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="bufferSize"></param>
@@ -894,7 +886,7 @@ namespace Librainian.IO {
 
             if ( File.Exists( filePath ) ) {
                 try {
-                    using ( var sourceStream = new FileStream( path: filePath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: bufferSize.Value, useAsync: true ) ) {
+                    using (var sourceStream = new FileStream( path: filePath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: bufferSize.Value, useAsync: true )) {
                         var sb = new StringBuilder( bufferSize.Value );
                         var buffer = new byte[ bufferSize.Value ];
                         int numRead;
@@ -914,7 +906,9 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>Performs a byte by byte file comparison, but ignores the <see cref="Document" /> file names.</para>
+        /// <para>
+        /// Performs a byte by byte file comparison, but ignores the <see cref="Document"/> file names.
+        /// </para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -938,7 +932,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>performs a byte by byte file comparison</para>
+        /// <para>performs a byte by byte file comparison</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -961,7 +955,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>performs a byte by byte file comparison</para>
+        /// <para>performs a byte by byte file comparison</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -984,7 +978,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>performs a byte by byte file comparison</para>
+        /// <para>performs a byte by byte file comparison</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -1007,15 +1001,13 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Search all possible drives for any files matching the
-        ///     <paramref
-        ///         name="fileSearchPatterns" />
-        ///     .
+        /// Search all possible drives for any files matching the
+        /// <paramref name="fileSearchPatterns"/> .
         /// </summary>
         /// <param name="fileSearchPatterns">List of patterns to search for.</param>
         /// <param name="cancellation"></param>
-        /// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
-        /// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
+        /// <param name="onFindFile"><see cref="Action"/> to perform when a file is found.</param>
+        /// <param name="onEachDirectory"><see cref="Action"/> to perform on each folder found.</param>
         /// <param name="searchStyle"></param>
         public static void SearchAllDrives( [NotNull] this IEnumerable<String> fileSearchPatterns, SimpleCancel cancellation, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
@@ -1030,14 +1022,10 @@ namespace Librainian.IO {
                     drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
                 } );
             }
-            catch ( UnauthorizedAccessException ) {
-            }
-            catch ( DirectoryNotFoundException ) {
-            }
-            catch ( IOException ) {
-            }
-            catch ( SecurityException ) {
-            }
+            catch ( UnauthorizedAccessException) { }
+            catch ( DirectoryNotFoundException) { }
+            catch ( IOException) { }
+            catch ( SecurityException) { }
             catch ( AggregateException exception ) {
                 exception.Handle( ex => {
                     if ( ex is UnauthorizedAccessException ) {
@@ -1061,7 +1049,7 @@ namespace Librainian.IO {
         public static Boolean SetCompression( this DirectoryInfo directoryInfo, Boolean compressed = true ) {
             try {
                 if ( directoryInfo.Exists ) {
-                    using ( var dir = new ManagementObject( directoryInfo.ToManagementPath() ) ) {
+                    using (var dir = new ManagementObject( directoryInfo.ToManagementPath() )) {
                         var outParams = dir.InvokeMethod( compressed ? "Compress" : "Uncompress", null, null );
                         if ( null == outParams ) {
                             return false;
@@ -1111,12 +1099,12 @@ namespace Librainian.IO {
 
         public static MemoryStream TryCopyStream( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
 
-        //TODO
-        TryAgain:
+            //TODO
+            TryAgain:
             var memoryStream = new MemoryStream();
             try {
                 if ( File.Exists( filePath ) ) {
-                    using ( var fileStream = File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare ) ) {
+                    using (var fileStream = File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare )) {
                         var length = ( int )fileStream.Length;
                         if ( length > 0 ) {
                             fileStream.CopyTo( memoryStream, length ); //int-long possible issue.
@@ -1125,7 +1113,7 @@ namespace Librainian.IO {
                     }
                 }
             }
-            catch ( IOException ) {
+            catch ( IOException) {
 
                 // IOExcception is thrown if the file is in use by another process.
                 if ( bePatient ) {
@@ -1139,15 +1127,15 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>Returns true if the <see cref="Document" /> no longer seems to exist.</para>
-        ///     <para>Returns null if existance cannot be determined.</para>
+        /// <para>Returns true if the <see cref="Document"/> no longer seems to exist.</para>
+        /// <para>Returns null if existance cannot be determined.</para>
         /// </summary>
         /// <param name="document"></param>
-        /// <param name="bePatient">The delete will retry for a default of <see cref="Seconds.Five" />.</param>
+        /// <param name="bePatient">The delete will retry for a default of <see cref="Seconds.Five"/>.</param>
         /// <returns></returns>
         public static Boolean? TryDeleting( this Document document, Boolean bePatient = true ) {
             var stopwatch = Stopwatch.StartNew();
-        TryAgain:
+            TryAgain:
             try {
                 if ( !document.Exists() ) {
                     return true;
@@ -1155,11 +1143,9 @@ namespace Librainian.IO {
                 File.Delete( path: document.FullPathWithFileName );
                 return !File.Exists( document.FullPathWithFileName );
             }
-            catch ( DirectoryNotFoundException ) {
-            }
-            catch ( PathTooLongException ) {
-            }
-            catch ( IOException ) {
+            catch ( DirectoryNotFoundException) { }
+            catch ( PathTooLongException) { }
+            catch ( IOException) {
 
                 // IOExcception is thrown if the file is in use by another process.
                 if ( bePatient && stopwatch.Elapsed <= Seconds.Five ) {
@@ -1169,10 +1155,8 @@ namespace Librainian.IO {
                     goto TryAgain;
                 }
             }
-            catch ( UnauthorizedAccessException ) {
-            }
-            catch ( ArgumentNullException ) {
-            }
+            catch ( UnauthorizedAccessException) { }
+            catch ( ArgumentNullException) { }
             finally {
                 stopwatch.Stop();
             }
@@ -1195,19 +1179,15 @@ namespace Librainian.IO {
                     return true;
                 }
             }
-            catch ( UriFormatException ) {
-            }
-            catch ( SecurityException ) {
-            }
-            catch ( PathTooLongException ) {
-            }
-            catch ( InvalidOperationException ) {
-            }
+            catch ( UriFormatException) { }
+            catch ( SecurityException) { }
+            catch ( PathTooLongException) { }
+            catch ( InvalidOperationException) { }
             return false;
         }
 
         /// <summary>
-        ///     Returns a temporary <see cref="Document" /> (but does not create the file in the file system).
+        /// Returns a temporary <see cref="Document"/> (but does not create the file in the file system).
         /// </summary>
         /// <param name="folder"></param>
         /// <param name="document"></param>
@@ -1232,32 +1212,27 @@ namespace Librainian.IO {
                 document = new Document( randomFileName );
                 return true;
             }
-            catch ( DirectoryNotFoundException ) {
-            }
-            catch ( PathTooLongException ) {
-            }
-            catch ( IOException ) {
-            }
-            catch ( NotSupportedException ) {
-            }
-            catch ( UnauthorizedAccessException ) {
-            }
+            catch ( DirectoryNotFoundException) { }
+            catch ( PathTooLongException) { }
+            catch ( IOException) { }
+            catch ( NotSupportedException) { }
+            catch ( UnauthorizedAccessException) { }
 
             // ReSharper disable once AssignNullToNotNullAttribute
-            document = default( Document );
+            document = default(Document);
             return false;
         }
 
         /// <summary>
-        ///     Tries to open a file, with a user defined number of attempt and Sleep delay between attempts.
+        /// Tries to open a file, with a user defined number of attempt and Sleep delay between attempts.
         /// </summary>
         /// <param name="filePath">The full file path to be opened</param>
         /// <param name="fileMode">Required file mode enum value(see MSDN documentation)</param>
         /// <param name="fileAccess">Required file access enum value(see MSDN documentation)</param>
         /// <param name="fileShare">Required file share enum value(see MSDN documentation)</param>
         /// <returns>
-        ///     A valid FileStream object for the opened file, or null if the File could not be opened after the required
-        ///     attempts
+        /// A valid FileStream object for the opened file, or null if the File could not be opened
+        /// after the required attempts
         /// </returns>
         public static FileStream TryOpen( String filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
 
@@ -1265,7 +1240,7 @@ namespace Librainian.IO {
             try {
                 return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
             }
-            catch ( IOException ) {
+            catch ( IOException) {
 
                 // IOExcception is thrown if the file is in use by another process.
             }
@@ -1274,14 +1249,14 @@ namespace Librainian.IO {
 
         public static FileStream TryOpenForReading( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
 
-        //TODO
-        TryAgain:
+            //TODO
+            TryAgain:
             try {
                 if ( File.Exists( filePath ) ) {
                     return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
                 }
             }
-            catch ( IOException ) {
+            catch ( IOException) {
 
                 // IOExcception is thrown if the file is in use by another process.
                 if ( bePatient ) {
@@ -1300,7 +1275,7 @@ namespace Librainian.IO {
             try {
                 return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
             }
-            catch ( IOException ) {
+            catch ( IOException) {
 
                 // IOExcception is thrown if the file is in use by another process.
             }
@@ -1321,14 +1296,14 @@ namespace Librainian.IO {
             var lpBytesReturned = 0;
             short compressionFormatDefault = 1;
 
-            using ( var fileStream = File.Open( path: info.FullName, mode: FileMode.Open, access: FileAccess.ReadWrite, share: FileShare.None ) ) {
+            using (var fileStream = File.Open( path: info.FullName, mode: FileMode.Open, access: FileAccess.ReadWrite, share: FileShare.None )) {
                 var success = false;
 
                 try {
                     if ( fileStream.SafeFileHandle != null ) {
                         fileStream.SafeFileHandle.DangerousAddRef( success: ref success );
 
-                        var result = DeviceIoControl( hDevice: fileStream.SafeFileHandle.DangerousGetHandle(), dwIoControlCode: FSCTL_SET_COMPRESSION, lpInBuffer: ref compressionFormatDefault, nInBufferSize: sizeof( short ), lpOutBuffer: IntPtr.Zero, nOutBufferSize: 0, lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
+                        var result = DeviceIoControl( hDevice: fileStream.SafeFileHandle.DangerousGetHandle(), dwIoControlCode: FSCTL_SET_COMPRESSION, lpInBuffer: ref compressionFormatDefault, nInBufferSize: sizeof(short), lpOutBuffer: IntPtr.Zero, nOutBufferSize: 0, lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
                     }
                 }
                 finally {
@@ -1370,7 +1345,7 @@ namespace Librainian.IO {
         */
 
         /// <summary>
-        ///     (does not create path)
+        /// (does not create path)
         /// </summary>
         /// <param name="basePath"></param>
         /// <param name="d"></param>

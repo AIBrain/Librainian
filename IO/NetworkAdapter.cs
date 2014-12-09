@@ -1,25 +1,21 @@
-﻿#region License & Information
-
-// This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+﻿// This notice must be kept visible in the source.
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/NetworkAdapter.cs" was last cleaned by Rick on 2014/09/07 at 3:23 AM
-
-#endregion License & Information
+// 
+// "Librainian/NetworkAdapter.cs" was last cleaned by Rick on 2014/12/09 at 5:56 AM
 
 namespace Librainian.IO {
 
@@ -30,9 +26,8 @@ namespace Librainian.IO {
     using System.Threading;
 
     /// <summary>
-    ///     Module Name: NetworkAdapter.cs
-    ///     Project: CSWMIEnableDisableNetworkAdapter
-    ///     Copyright (c) Microsoft Corporation.
+    /// Module Name: NetworkAdapter.cs
+    /// Project: CSWMIEnableDisableNetworkAdapter Copyright (c) Microsoft Corporation.
     /// </summary>
     public class NetworkAdapter {
 
@@ -66,7 +61,7 @@ namespace Librainian.IO {
 
                 this.NetConnectionStatus = Convert.ToInt32( crtNetworkAdapter[ "NetConnectionStatus" ].ToString() );
             }
-            catch ( NullReferenceException ) {
+            catch ( NullReferenceException) {
 
                 // If there is no a network adapter which deviceid equates to the argument
                 // "deviceId" just to construct a none exists network adapter
@@ -78,7 +73,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Enum the Operation result of Enable and Disable  Network Adapter
+        /// Enum the Operation result of Enable and Disable Network Adapter
         /// </summary>
         private enum EnumEnableDisableResult {
             Fail = -1,
@@ -115,64 +110,50 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     The DeviceID of the NetworkAdapter
+        /// The DeviceID of the NetworkAdapter
         /// </summary>
-        public int DeviceId {
-            get;
-            private set;
-        }
+        public int DeviceId { get; }
 
         /// <summary>
-        ///     The ProductName of the NetworkAdapter
+        /// The ProductName of the NetworkAdapter
         /// </summary>
-        public String Name {
-            get;
-            private set;
-        }
+        public String Name { get; private set; }
 
         /// <summary>
-        ///     The Net Connection Status Value
+        /// The Net Connection Status Value
         /// </summary>
-        public int NetConnectionStatus {
-            get;
-            private set;
-        }
+        public int NetConnectionStatus { get; private set; }
 
         /// <summary>
-        ///     The NetEnabled status of the NetworkAdapter
+        /// The NetEnabled status of the NetworkAdapter
         /// </summary>
-        public int NetEnabled {
-            get;
-            private set;
-        }
+        public int NetEnabled { get; private set; }
 
         /// <summary>
-        ///     List all the NetworkAdapters
+        /// List all the NetworkAdapters
         /// </summary>
         /// <returns>The list of all NetworkAdapter of the machine</returns>
         public static IEnumerable<NetworkAdapter> GetAllNetworkAdapters() {
+
             //var allNetworkAdapter = new List<NetworkAdapter>();
 
-            // Manufacturer <> 'Microsoft'to get all nonvirtual devices.
-            // Because the AdapterType property will be null if the NetworkAdapter is
-            // disabled, so we do not use NetworkAdapter = 'Ethernet 802.3' or
-            // NetworkAdapter = 'Wireless’
+            // Manufacturer <> 'Microsoft'to get all nonvirtual devices. Because the AdapterType
+            // property will be null if the NetworkAdapter is disabled, so we do not use
+            // NetworkAdapter = 'Ethernet 802.3' or NetworkAdapter = 'Wireless’
 
             var networkAdapters = WMIOperation.WMIQuery( "SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE Manufacturer <> \'Microsoft\'" );
             return from ManagementBaseObject o in networkAdapters
                    select o as ManagementObject
                    into moNetworkAdapter
-                   select new NetworkAdapter( Convert.ToInt32( moNetworkAdapter[ "DeviceID" ].ToString() ), moNetworkAdapter[ "ProductName" ].ToString(), ( Convert.ToBoolean( moNetworkAdapter[ "NetEnabled" ].ToString() ) ) ? ( int ) EnumNetEnabledStatus.Enabled : ( int ) EnumNetEnabledStatus.Disabled, Convert.ToInt32( moNetworkAdapter[ "NetConnectionStatus" ].ToString() ) );
+                   select new NetworkAdapter( Convert.ToInt32( moNetworkAdapter[ "DeviceID" ].ToString() ), moNetworkAdapter[ "ProductName" ].ToString(), ( Convert.ToBoolean( moNetworkAdapter[ "NetEnabled" ].ToString() ) ) ? ( int )EnumNetEnabledStatus.Enabled : ( int )EnumNetEnabledStatus.Disabled, Convert.ToInt32( moNetworkAdapter[ "NetConnectionStatus" ].ToString() ) );
 
             //return allNetworkAdapter;
         }
 
         /// <summary>
-        ///     Enable Or Disable The NetworkAdapter
+        /// Enable Or Disable The NetworkAdapter
         /// </summary>
-        /// <returns>
-        ///     Whether the NetworkAdapter was enabled or disabled successfully
-        /// </returns>
+        /// <returns>Whether the NetworkAdapter was enabled or disabled successfully</returns>
         public int EnableOrDisableNetworkAdapter( String strOperation ) {
             strOperation = strOperation.Trim();
 
@@ -197,10 +178,10 @@ namespace Librainian.IO {
 
                 resultEnableDisableNetworkAdapter = ( int )EnumEnableDisableResult.Success;
             }
-            catch ( NullReferenceException ) {
+            catch ( NullReferenceException) {
 
-                // If there is a NullReferenceException, the result of the enable or
-                // disable network adapter operation will be fail
+                // If there is a NullReferenceException, the result of the enable or disable network
+                // adapter operation will be fail
                 resultEnableDisableNetworkAdapter = ( int )EnumEnableDisableResult.Fail;
             }
 
@@ -212,7 +193,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Get the NetworkAdapter NetEnabled Property
+        /// Get the NetworkAdapter NetEnabled Property
         /// </summary>
         /// <returns>Whether the NetworkAdapter is enabled</returns>
         public int GetNetEnabled() {
@@ -228,8 +209,7 @@ namespace Librainian.IO {
                     }
                 }
             }
-            catch ( NullReferenceException ) {
-            }
+            catch ( NullReferenceException) { }
             return netEnabled;
         }
     }

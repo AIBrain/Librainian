@@ -30,7 +30,7 @@ namespace Librainian.Linguistics {
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Character_(computing)#char"></seealso>
     /// <seealso cref="Word"></seealso>
-    [DataContract( IsReference = true )]
+    [DataContract(IsReference = true)]
     [Immutable]
     public sealed class Character : IEquatable<Character>, IEquatable<Char> {
         public const UInt64 Level = 1;
@@ -49,7 +49,7 @@ namespace Librainian.Linguistics {
             this.Token = character;
         }
 
-        public static implicit operator char( Character character ) => character.Token;
+        public static implicit operator char ( Character character ) => character.Token;
 
         public Boolean Equals( Char other ) => Equals( this.Token, other );
 

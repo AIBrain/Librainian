@@ -33,7 +33,7 @@ namespace Librainian.Linguistics {
     /// A <see cref="Word" /> is a sequence of <see cref="Character" /> . <seealso cref="http://wikipedia.org/wiki/Truthbearer" />
     /// </summary>
     /// <seealso cref="Sentence"></seealso>
-    [DataContract( IsReference = true )]
+    [DataContract(IsReference = true)]
     [Immutable]
     public class Word : IEquatable<Word>, IEnumerable<Character> {
         public const UInt64 Level = Character.Level << 1;

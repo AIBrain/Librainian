@@ -1,27 +1,24 @@
-﻿#region License & Information
-
-// This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+﻿// This notice must be kept visible in the source.
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/Document.cs" was last cleaned by Rick on 2014/09/08 at 11:50 AM
-
-#endregion License & Information
+// 
+// "Librainian/Document.cs" was last cleaned by Rick on 2014/12/09 at 5:56 AM
 
 namespace Librainian.IO {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -46,13 +43,16 @@ namespace Librainian.IO {
     }
 
     /// <summary>
-    ///     <para>A wrapper for a file, the extension, the [parent] folder, and the file's size all from a given full path.</para>
-    ///     <para>Also contains static String versions from <see cref="Path" /></para>
+    /// <para>
+    /// A wrapper for a file, the extension, the [parent] folder, and the file's size all from a
+    /// given full path.
+    /// </para>
+    /// <para>Also contains static String versions from <see cref="Path"/></para>
     /// </summary>
-    /// <seealso cref="IOExtensions.SameContent(Document,Document)" />
-    [DataContract( IsReference = true )]
+    /// <seealso cref="IOExtensions.SameContent(Document,Document)"/>
+    [DataContract(IsReference = true)]
     [Immutable]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [Serializable]
     public class Document : IDocument {
 
@@ -61,43 +61,35 @@ namespace Librainian.IO {
         public static readonly IDocument Empty = new Document();
 
         /// <summary>
-        ///     "/"
+        /// "/"
         /// </summary>
         [NotNull]
         public static readonly List<char> InvalidPathChars = new List<char>( Path.GetInvalidPathChars() );
 
         /// <summary>
-        ///     <para>The extension of the <see cref="FileName" />, including the prefix ".".</para>
+        /// <para>The extension of the <see cref="FileName"/>, including the prefix ".".</para>
         /// </summary>
         [NotNull]
         public readonly String Extension;
 
+        [NotNull]
+        public readonly FileInfo FileInfo;
+
         /// <summary>
-        ///     <para>Just the file's name, including the extension.</para>
+        /// <para>Just the file's name, including the extension.</para>
         /// </summary>
-        /// <seealso cref="Path.GetFileNameWithoutExtension" />
+        /// <seealso cref="Path.GetFileNameWithoutExtension"/>
         [NotNull]
         public readonly String FileName;
 
         /// <summary>
-        ///     <para>Just the file's name, including the extension.</para>
-        /// </summary>
-        /// <seealso cref="Path.GetFileNameWithoutExtension" />
-        [NotNull]
-        public String Name {
-            get {
-                return this.FileName;
-            }
-        }
-
-        /// <summary>
-        ///     <para>The <see cref="Folder" /> this <see cref="Document" /> is stored.</para>
+        /// <para>The <see cref="Folder"/> this <see cref="Document"/> is stored.</para>
         /// </summary>
         [NotNull]
         public readonly Folder Folder;
 
         /// <summary>
-        ///     <para>The <see cref="Folder" /> combined with the <see cref="FileName" />.</para>
+        /// <para>The <see cref="Folder"/> combined with the <see cref="FileName"/>.</para>
         /// </summary>
         [NotNull]
         public readonly String FullPathWithFileName;
@@ -105,15 +97,11 @@ namespace Librainian.IO {
         [NotNull]
         public readonly String OriginalPathWithFileName;
 
-        [NotNull]
-        public readonly FileInfo FileInfo;
-
         static Document() {
             InvalidPathChars.Fix();
         }
 
-        public Document( [NotNull] String fullPath, String filename )
-            : this( Path.Combine( fullPath, filename ) ) {
+        public Document( [NotNull] String fullPath, String filename ) : this( Path.Combine( fullPath, filename ) ) {
         }
 
         /// <summary>
@@ -153,16 +141,14 @@ namespace Librainian.IO {
             this.FullPathWithFileName = Path.Combine( this.Folder.FullName, this.FileName );
         }
 
-        public Document( FileSystemInfo info )
-            : this( info.FullName ) {
+        public Document( FileSystemInfo info ) : this( info.FullName ) {
         }
 
-        public Document( Folder folder, String filename )
-            : this( folder.FullName, filename ) {
+        public Document( Folder folder, String filename ) : this( folder.FullName, filename ) {
         }
 
         /// <summary>
-        ///     Empty?
+        /// Empty?
         /// </summary>
         /// <exception cref="UnauthorizedAccessException"></exception>
         /// <exception cref="NotSupportedException"></exception>
@@ -177,46 +163,25 @@ namespace Librainian.IO {
         }
 
         [UsedImplicitly]
-        public String DebuggerDisplay {
-            get {
-                return this.FullPathWithFileName;
-            }
-        }
+        public String DebuggerDisplay { get { return this.FullPathWithFileName; } }
 
         /// <summary>
-        /// Reads the entire file into a <see cref="String"/>.
+        /// <para>Just the file's name, including the extension.</para>
         /// </summary>
-        /// <returns></returns>
-        public async Task<String> ReadTextAsync() {
-            return await Task.Run( () => Exists() ? File.ReadAllText( this.FullPathWithFileName ) : String.Empty );
-        }
+        /// <seealso cref="Path.GetFileNameWithoutExtension"/>
+        [NotNull]
+        public String Name { get { return this.FileName; } }
 
         /// <summary>
-        ///     <para>Gets the current size of the <see cref="Document" />.</para>
+        /// <para>Gets the current size of the <see cref="Document"/>.</para>
         /// </summary>
-        /// <seealso cref="GetLength" />
+        /// <seealso cref="GetLength"/>
         [CanBeNull]
-        public UInt64? Size {
-            get {
-                return this.GetLength();
-            }
-        }
-
-        /*
-
-                /// <summary>
-                ///     Returns true if the <see cref="Document.Folder" /> currently exists.
-                /// </summary>
-                /// <exception cref="IOException"></exception>
-                public Boolean FolderExists { get { return this.Folder.Exists; } }
-        */
+        public UInt64? Size { get { return this.GetLength(); } }
 
         /// <summary>
-        ///     <para>Static case insensitive comparison of the file names and file sizes for equality.</para>
-        ///     <para>
-        ///         To compare the contents of two <see cref="Document" /> use
-        ///         <see cref="IOExtensions.SameContent(Document,Document)" />.
-        ///     </para>
+        /// <para>Static case insensitive comparison of the file names and file sizes for equality.</para>
+        /// <para>To compare the contents of two <see cref="Document"/> use <see cref="IOExtensions.SameContent(Document,Document)"/>.</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -232,7 +197,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>Compares the file names (case insensitive) and file sizes for inequality.</para>
+        /// <para>Compares the file names (case insensitive) and file sizes for inequality.</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -242,7 +207,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
+        /// <para>Compares the file names (case insensitive) and file sizes for equality.</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -252,8 +217,8 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>If the file does not exist, it is created.</para>
-        ///     <para>Then the <paramref name="text" /> is appended to the file.</para>
+        /// <para>If the file does not exist, it is created.</para>
+        /// <para>Then the <paramref name="text"/> is appended to the file.</para>
         /// </summary>
         /// <param name="text"></param>
         public void AppendText( String text ) {
@@ -262,14 +227,14 @@ namespace Librainian.IO {
             }
 
             if ( this.Exists() ) {
-                using ( var writer = File.AppendText( this.FullPathWithFileName ) ) {
+                using (var writer = File.AppendText( this.FullPathWithFileName )) {
                     writer.WriteLine( text );
                     writer.Flush();
                     writer.Close();
                 }
             }
             else {
-                using ( var writer = File.CreateText( this.FullPathWithFileName ) ) {
+                using (var writer = File.CreateText( this.FullPathWithFileName )) {
                     writer.WriteLine( text );
                     writer.Flush();
                     writer.Close();
@@ -278,7 +243,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Enumerates a <see cref="Document" /> as a sequence of <see cref="Byte" />.
+        /// Enumerates a <see cref="Document"/> as a sequence of <see cref="Byte"/>.
         /// </summary>
         /// <returns></returns>
         public IEnumerable<byte> AsByteArray() {
@@ -287,7 +252,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Returns true if a file copy was started.
+        /// Returns true if a file copy was started.
         /// </summary>
         /// <param name="destination">can this be a folder or a file?!?!</param>
         /// <param name="onProgress"></param>
@@ -335,22 +300,17 @@ namespace Librainian.IO {
                 var crc32 = new Crc32( ( uint )size.Value, ( uint )size.Value ); //HACK why not use size?
 
                 var hash = String.Empty;
-                using ( var fileStream = File.Open( this.FullPathWithFileName, FileMode.Open, FileAccess.Read, FileShare.Read ) ) {
+                using (var fileStream = File.Open( this.FullPathWithFileName, FileMode.Open, FileAccess.Read, FileShare.Read )) {
                     hash = crc32.ComputeHash( fileStream ).Aggregate( hash, ( current, b ) => current + b.ToString( "x2" ).ToLower() );
                     fileStream.Close();
                 }
                 return hash;
             }
-            catch ( FileNotFoundException ) {
-            }
-            catch ( DirectoryNotFoundException ) {
-            }
-            catch ( PathTooLongException ) {
-            }
-            catch ( IOException ) {
-            }
-            catch ( UnauthorizedAccessException ) {
-            }
+            catch ( FileNotFoundException) { }
+            catch ( DirectoryNotFoundException) { }
+            catch ( PathTooLongException) { }
+            catch ( IOException) { }
+            catch ( UnauthorizedAccessException) { }
             return String.Empty;
         }
 
@@ -371,22 +331,17 @@ namespace Librainian.IO {
                 var crc64 = new Crc64( polynomial: size.Value, seed: size.Value ); //HACK why not use size?
 
                 var hash = String.Empty;
-                using ( var fileStream = File.Open( this.FullPathWithFileName, FileMode.Open, FileAccess.Read, FileShare.Read ) ) {
+                using (var fileStream = File.Open( this.FullPathWithFileName, FileMode.Open, FileAccess.Read, FileShare.Read )) {
                     hash = crc64.ComputeHash( fileStream ).Aggregate( hash, ( current, b ) => current + b.ToString( "x2" ).ToLower() );
                     fileStream.Close();
                 }
                 return hash;
             }
-            catch ( FileNotFoundException ) {
-            }
-            catch ( DirectoryNotFoundException ) {
-            }
-            catch ( PathTooLongException ) {
-            }
-            catch ( IOException ) {
-            }
-            catch ( UnauthorizedAccessException ) {
-            }
+            catch ( FileNotFoundException) { }
+            catch ( DirectoryNotFoundException) { }
+            catch ( PathTooLongException) { }
+            catch ( IOException) { }
+            catch ( UnauthorizedAccessException) { }
             return String.Empty;
         }
 
@@ -402,17 +357,26 @@ namespace Librainian.IO {
                 }
                 return !this.Exists();
             }
-            catch ( IOException ) {
+            catch ( IOException) { }
+            return false;
+        }
+
+        public Boolean DemandPermission( FileIOPermissionAccess access ) {
+            try {
+                var bob = new FileIOPermission( access: access, path: this.FullPathWithFileName );
+                bob.Demand();
+                return true;
             }
+            catch ( ArgumentException exception ) {
+                exception.More();
+            }
+            catch ( SecurityException) { }
             return false;
         }
 
         /// <summary>
-        ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
-        ///     <para>
-        ///         To compare the contents of two <see cref="Document" /> use
-        ///         <see cref="IOExtensions.SameContent(Document,Document)" />.
-        ///     </para>
+        /// <para>Compares the file names (case insensitive) and file sizes for equality.</para>
+        /// <para>To compare the contents of two <see cref="Document"/> use <see cref="IOExtensions.SameContent(Document,Document)"/>.</para>
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
@@ -421,10 +385,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>
-        ///         To compare the contents of two <see cref="Document" /> use
-        ///         <see cref="IOExtensions.SameContent(Document,Document)" />.
-        ///     </para>
+        /// <para>To compare the contents of two <see cref="Document"/> use <see cref="IOExtensions.SameContent(Document,Document)"/>.</para>
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -433,7 +394,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Returns true if the <see cref="Document" /> currently exists.
+        /// Returns true if the <see cref="Document"/> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
         public bool Exists() {
@@ -442,17 +403,18 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
+        /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>
-        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
+        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate
+        /// through the collection.
         /// </returns>
         public IEnumerator<byte> GetEnumerator() {
             return this.AsByteArray().GetEnumerator();
         }
 
         /// <summary>
-        ///     (file name, not contents)
+        /// (file name, not contents)
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode() {
@@ -460,7 +422,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>Gets the current size of the <see cref="Document" />.</para>
+        /// <para>Gets the current size of the <see cref="Document"/>.</para>
         /// </summary>
         [CanBeNull]
         public UInt64? GetLength() {
@@ -480,13 +442,11 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
+        /// Reads the entire file into a <see cref="String"/>.
         /// </summary>
-        /// <returns>
-        ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
-        /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
+        /// <returns></returns>
+        public async Task<String> ReadTextAsync() {
+            return await Task.Run( () => Exists() ? File.ReadAllText( this.FullPathWithFileName ) : String.Empty );
         }
 
         public void Refresh() {
@@ -494,19 +454,24 @@ namespace Librainian.IO {
             this.FileInfo.Refresh();
         }
 
-        public Boolean DemandPermission( FileIOPermissionAccess access ) {
-            try {
-                var bob = new FileIOPermission( access: access, path: this.FullPathWithFileName );
-                bob.Demand();
-                return true;
-            }
-            catch ( ArgumentException exception ) {
-                exception.More();
-            }
-            catch ( SecurityException ) {
-            }
-            return false;
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate
+        /// through the collection.
+        /// </returns>
+        IEnumerator IEnumerable.GetEnumerator() {
+            return this.GetEnumerator();
         }
 
+        /*
+
+                /// <summary>
+                /// Returns true if the <see cref="Document.Folder"/> currently exists.
+                /// </summary>
+                /// <exception cref="IOException"></exception>
+                public Boolean FolderExists { get { return this.Folder.Exists; } }
+        */
     }
 }
