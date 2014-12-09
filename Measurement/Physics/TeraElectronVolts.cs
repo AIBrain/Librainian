@@ -81,72 +81,38 @@ namespace Librainian.Measurement.Physics {
         [UsedImplicitly]
         private String DebuggerDisplay { get { return this.Display(); } }
 
-        public int CompareTo( ElectronVolts other ) {
-            return this.Value.CompareTo( other.ToTeraElectronVolts().Value );
-        }
+        public int CompareTo( ElectronVolts other ) => this.Value.CompareTo( other.ToTeraElectronVolts().Value );
 
-        public int CompareTo( MegaElectronVolts other ) {
-            return this.Value.CompareTo( other.ToTeraElectronVolts().Value );
-        }
+        public int CompareTo( MegaElectronVolts other ) => this.Value.CompareTo( other.ToTeraElectronVolts().Value );
 
-        public int CompareTo( MilliElectronVolts other ) {
-            return this.Value.CompareTo( other.ToTeraElectronVolts().Value );
-        }
+        public int CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other.ToTeraElectronVolts().Value );
 
-        public int CompareTo( TeraElectronVolts other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( TeraElectronVolts other ) => this.Value.CompareTo( other.Value );
 
-        public static TeraElectronVolts operator *( TeraElectronVolts left,Decimal right ) {
-            return new TeraElectronVolts( left.Value*right );
-        }
+        public static TeraElectronVolts operator *( TeraElectronVolts left,Decimal right ) => new TeraElectronVolts( left.Value*right );
 
-        public static TeraElectronVolts operator *(Decimal left, TeraElectronVolts right ) {
-            return new TeraElectronVolts( left*right.Value );
-        }
+        public static TeraElectronVolts operator *(Decimal left, TeraElectronVolts right ) => new TeraElectronVolts( left*right.Value );
 
-        public static TeraElectronVolts operator +( GigaElectronVolts left, TeraElectronVolts right ) {
-            return new TeraElectronVolts( left.ToTeraElectronVolts().Value + right.Value );
-        }
+        public static TeraElectronVolts operator +( GigaElectronVolts left, TeraElectronVolts right ) => new TeraElectronVolts( left.ToTeraElectronVolts().Value + right.Value );
 
-        public static TeraElectronVolts operator +( TeraElectronVolts left, TeraElectronVolts right ) {
-            return new TeraElectronVolts( left.Value + right.Value );
-        }
+        public static TeraElectronVolts operator +( TeraElectronVolts left, TeraElectronVolts right ) => new TeraElectronVolts( left.Value + right.Value );
 
-        public static Boolean operator <( TeraElectronVolts left, TeraElectronVolts right ) {
-            return left.Value.CompareTo( right.Value ) < 0;
-        }
+        public static Boolean operator <( TeraElectronVolts left, TeraElectronVolts right ) => left.Value.CompareTo( right.Value ) < 0;
 
-        public static Boolean operator >( TeraElectronVolts left, TeraElectronVolts right ) {
-            return left.Value.CompareTo( right.Value ) > 0;
-        }
+        public static Boolean operator >( TeraElectronVolts left, TeraElectronVolts right ) => left.Value.CompareTo( right.Value ) > 0;
 
-        public String Display() {
-            return String.Format( "{0} TeV", this.Value );
-        }
+        public String Display() => String.Format( "{0} TeV", this.Value );
 
-        public ElectronVolts ToElectronVolts() {
-            return new ElectronVolts( this.Value*InOneElectronVolt );
-        }
+        public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value*InOneElectronVolt );
 
-        public GigaElectronVolts ToGigaElectronVolts() {
-            return new GigaElectronVolts( this.Value*InOneGigaElectronVolt );
-        }
+        public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value*InOneGigaElectronVolt );
 
-        public KiloElectronVolts ToKiloElectronVolts() {
-            return new KiloElectronVolts( this.Value*InOneKiloElectronVolt );
-        }
+        public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value*InOneKiloElectronVolt );
 
-        public MegaElectronVolts ToMegaElectronVolts() {
-            return new MegaElectronVolts( this.Value*InOneMegaElectronVolt );
-        }
+        public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value*InOneMegaElectronVolt );
 
-        public MilliElectronVolts ToMilliElectronVolts() {
-            return new MilliElectronVolts( this.Value*InOneMilliElectronVolt );
-        }
+        public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value*InOneMilliElectronVolt );
 
-        public TeraElectronVolts ToTeraElectronVolts() {
-            return new TeraElectronVolts( this.Value*InOneTeraElectronVolt );
-        }
+        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value*InOneTeraElectronVolt );
     }
 }

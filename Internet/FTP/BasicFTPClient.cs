@@ -73,9 +73,7 @@ namespace Librainian.Internet.FTP {
             return request.DownloadData( this.BuildServerUri( path ) );
         }
 
-        private Uri BuildServerUri( String Path ) {
-            return new Uri( String.Format( "ftp://{0}:{1}/{2}", this.Host, this.Port, Path ) );
-        }
+        private Uri BuildServerUri( String Path ) => new Uri( String.Format( "ftp://{0}:{1}/{2}", this.Host, this.Port, Path ) );
 
         /// <summary>
         ///     Load a file from disk and upload it to the FTP server

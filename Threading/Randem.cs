@@ -188,17 +188,11 @@ namespace Librainian.Threading {
         /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static int Next( int minValue, int maxValue ) {
-            return Instance.Next( minValue: minValue, maxValue: maxValue );
-        }
+        public static int Next( int minValue, int maxValue ) => Instance.Next( minValue: minValue, maxValue: maxValue );
 
-        public static Guid NextGuid() {
-            return Guid.NewGuid();
-        }
+        public static Guid NextGuid() => Guid.NewGuid();
 
-        public static Guid NextGuid( Decimal minValue ) {
-            return Guid.NewGuid();
-        }
+        public static Guid NextGuid( Decimal minValue ) => Guid.NewGuid();
 
         /// <summary>
         /// <para>Returns a nonnegative random number less than <paramref name="maxValue" />.</para>
@@ -206,9 +200,7 @@ namespace Librainian.Threading {
         /// <param name="maxValue"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static int Next( int maxValue ) {
-            return Instance.Next( maxValue );
-        }
+        public static int Next( int maxValue ) => Instance.Next( maxValue );
 
         /// <summary>
         /// <para>Returns a nonnegative random number less than <paramref name="maxValue" />.</para>
@@ -216,9 +208,7 @@ namespace Librainian.Threading {
         /// <param name="maxValue"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static UInt16 Next( UInt16 maxValue ) {
-            return ( UInt16 )( Instance.Next( maxValue: maxValue ) );
-        }
+        public static UInt16 Next( UInt16 maxValue ) => ( UInt16 )( Instance.Next( maxValue: maxValue ) );
 
         /// <summary>
         /// Generate a random number between <paramref name="range.Min" /> and <paramref
@@ -227,17 +217,13 @@ namespace Librainian.Threading {
         /// <param name="range"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static int Next( this Int32Range range ) {
-            return Instance.Next( minValue: range.Min, maxValue: range.Max );
-        }
+        public static int Next( this Int32Range range ) => Instance.Next( minValue: range.Min, maxValue: range.Max );
 
         /// <summary>
         /// Returns a nonnegative random number.
         /// </summary>
         /// <returns></returns>
-        public static UInt32 Next() {
-            return ( UInt32 )( Instance.NextDouble() * UInt32.MaxValue );
-        }
+        public static UInt32 Next() => ( UInt32 )( Instance.NextDouble() * UInt32.MaxValue );
 
         /// <summary>
         /// Generate a random number between <paramref name="minValue" /> and <paramref
@@ -313,17 +299,13 @@ namespace Librainian.Threading {
         /// <para>Generate a random <see cref="Boolean.True" /> or <see cref="Boolean.False" />.</para>
         /// </summary>
         /// <returns></returns>
-        public static Boolean NextBoolean() {
-            return Instance.NextDouble() > 0.5D;
-        }
+        public static Boolean NextBoolean() => Instance.NextDouble() > 0.5D;
 
         /// <summary>
         /// <para>Generate a random <see cref="Boolean.True" /> or <see cref="Boolean.False" />.</para>
         /// </summary>
         /// <returns></returns>
-        public static Boolean NextBooleanFast() {
-            return Instance.Next(2) == 0;
-        }
+        public static Boolean NextBooleanFast() => Instance.Next(2) == 0;
 
         /// <summary>
         /// <para>Returns a random <see cref="Byte" />.</para>
@@ -343,9 +325,7 @@ namespace Librainian.Threading {
         /// <param name="lowEnd"></param>
         /// <param name="highEnd"></param>
         /// <returns></returns>
-        public static Color NextColor( Byte alpha = 255, Byte lowEnd = 0, Byte highEnd = 255 ) {
-            return Color.FromArgb( alpha: alpha, red: Next( lowEnd, highEnd ), green: Next( lowEnd, highEnd ), blue: Next( lowEnd, highEnd ) );
-        }
+        public static Color NextColor( Byte alpha = 255, Byte lowEnd = 0, Byte highEnd = 255 ) => Color.FromArgb( alpha: alpha, red: Next( lowEnd, highEnd ), green: Next( lowEnd, highEnd ), blue: Next( lowEnd, highEnd ) );
 
         /// <summary>
         /// </summary>
@@ -396,14 +376,10 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static Double NextDouble( this DoubleRange range ) {
-            return range.Min + ( Instance.NextDouble() * range.Length );
-        }
+        public static Double NextDouble( this DoubleRange range ) => range.Min + ( Instance.NextDouble() * range.Length );
 
         [UsedImplicitly]
-        public static Double NextDouble( PairOfDoubles variance ) {
-            return NextDouble( min: variance.Low, max: variance.High );
-        }
+        public static Double NextDouble( PairOfDoubles variance ) => NextDouble( min: variance.Low, max: variance.High );
 
         private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<byte[]>( () => new byte[ sizeof( Double ) ], false );
 
@@ -451,9 +427,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <returns></returns>
         [Pure]
-        public static Double NextDouble() {
-            return Instance.NextDouble();
-        }
+        public static Double NextDouble() => Instance.NextDouble();
 
         /// <summary>
         /// Returns a random <see cref="Single" /> between <paramref name="range.Min" /> and
@@ -461,9 +435,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static Single NextFloat( this SingleRange range ) {
-            return ( Single )( range.Min + ( Instance.NextDouble() * range.Length ) );
-        }
+        public static Single NextFloat( this SingleRange range ) => ( Single )( range.Min + ( Instance.NextDouble() * range.Length ) );
 
         /// <summary>
         /// Returns a random float between <paramref name="min" /> and <paramref name="max" />.
@@ -471,9 +443,7 @@ namespace Librainian.Threading {
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static float NextFloat( float min = 0, float max = 1 ) {
-            return ( float )( min + ( Instance.NextDouble() * ( max - min ) ) );
-        }
+        public static float NextFloat( float min = 0, float max = 1 ) => ( float )( min + ( Instance.NextDouble() * ( max - min ) ) );
 
         /// <summary>
         /// Return a random number somewhere in the full range of <see cref="Int32"/>.
@@ -498,9 +468,7 @@ namespace Librainian.Threading {
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static Single NextSingle( Single min = 0, Single max = 1 ) {
-            return ( Single )( min + ( Instance.NextDouble() * ( max - min ) ) );
-        }
+        public static Single NextSingle( Single min = 0, Single max = 1 ) => ( Single )( min + ( Instance.NextDouble() * ( max - min ) ) );
 
         /// <summary>
         /// Generate a random String.
@@ -573,18 +541,14 @@ namespace Librainian.Threading {
         /// <param name="minMilliseconds"></param>
         /// <param name="maxMilliseconds"></param>
         /// <returns></returns>
-        public static TimeSpan NextTimeSpan( int minMilliseconds, int maxMilliseconds ) {
-            return TimeSpan.FromMilliseconds( minMilliseconds > maxMilliseconds ? Instance.Next( maxMilliseconds, minMilliseconds ) : Instance.Next( minMilliseconds, maxMilliseconds ) );
-        }
+        public static TimeSpan NextTimeSpan( int minMilliseconds, int maxMilliseconds ) => TimeSpan.FromMilliseconds( minMilliseconds > maxMilliseconds ? Instance.Next( maxMilliseconds, minMilliseconds ) : Instance.Next( minMilliseconds, maxMilliseconds ) );
 
         public static UInt64 NextUInt64() {
             Instance.NextBytes( LocalUInt64Buffers.Value );
             return BitConverter.ToUInt64( value: LocalUInt64Buffers.Value, startIndex: 0 );
         }
 
-        public static DateTime RandomDateTime( this DateTime value, TimeSpan timeSpan ) {
-            return value + new Milliseconds( timeSpan.TotalMilliseconds * Instance.NextDouble() );
-        }
+        public static DateTime RandomDateTime( this DateTime value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds * Instance.NextDouble() );
 
         public static DateTime RandomDateTime( this DateTime earlier, DateTime later ) {
             if ( earlier > later ) {
@@ -594,9 +558,7 @@ namespace Librainian.Threading {
             return earlier + new Milliseconds( range.TotalMilliseconds );
         }
 
-        public static DateTimeOffset RandomDateTimeOffset( this DateTimeOffset value, TimeSpan timeSpan ) {
-            return value + new Milliseconds( timeSpan.TotalMilliseconds * Instance.NextDouble() );
-        }
+        public static DateTimeOffset RandomDateTimeOffset( this DateTimeOffset value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds * Instance.NextDouble() );
 
         /*
                 public static Date RandomDate( this Date oldest, Date youngest ) {

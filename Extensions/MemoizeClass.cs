@@ -52,9 +52,7 @@ namespace Librainian.Extensions {
         //    return f.Tuplify().Memoize().Detuplify();
         //}
 
-        private static Func< T, TR > CastByExample< T, TR >( Func< T, TR > f, T t ) {
-            return f;
-        }
+        private static Func< T, TR > CastByExample< T, TR >( Func< T, TR > f, T t ) => f;
 
         private static Func< TA, TB, TR > Memoize< TA, TB, TR >( this Func< TA, TB, TR > f ) {
             var example = new {

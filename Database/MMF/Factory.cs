@@ -193,11 +193,9 @@ namespace Librainian.Database.MMF {
             return result;
         }
 
-        public ISerializeDeserialize<T> GetSerializer( String name ) {
-            return ( from pair in DictionaryCache
-                     where pair.Value.GetType().AssemblyQualifiedName == name
-                     select pair.Value ).FirstOrDefault();
-        }
+        public ISerializeDeserialize<T> GetSerializer( String name ) => ( from pair in DictionaryCache
+                                                                          where pair.Value.GetType().AssemblyQualifiedName == name
+                                                                          select pair.Value ).FirstOrDefault();
 
         public List<ISerializeDeserialize<T>> GetValidSerializers() {
             CompileAndRegisterUnsafeSerializer();

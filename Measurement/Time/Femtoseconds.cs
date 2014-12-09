@@ -146,13 +146,9 @@ namespace Librainian.Measurement.Time {
             }
         }
 
-        public static Femtoseconds Combine( Femtoseconds left, Femtoseconds right ) {
-            return Combine( left, right.Value );
-        }
+        public static Femtoseconds Combine( Femtoseconds left, Femtoseconds right ) => Combine( left, right.Value );
 
-        public static Femtoseconds Combine( Femtoseconds left, Decimal femtoseconds ) {
-            return new Femtoseconds( left.Value + femtoseconds );
-        }
+        public static Femtoseconds Combine( Femtoseconds left, Decimal femtoseconds ) => new Femtoseconds( left.Value + femtoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -160,66 +156,38 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Femtoseconds left, Femtoseconds right ) {
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Femtoseconds left, Femtoseconds right ) => left.Value == right.Value;
 
-        public static implicit operator Attoseconds( Femtoseconds femtoseconds ) {
-            return femtoseconds.ToAttoseconds();
-        }
+        public static implicit operator Attoseconds( Femtoseconds femtoseconds ) => femtoseconds.ToAttoseconds();
 
-        public static implicit operator Picoseconds( Femtoseconds femtoseconds ) {
-            return femtoseconds.ToPicoseconds();
-        }
+        public static implicit operator Picoseconds( Femtoseconds femtoseconds ) => femtoseconds.ToPicoseconds();
 
         public static implicit operator Span( Femtoseconds femtoseconds ) {
             var plancks = femtoseconds.ToPlanckTimes();
             return new Span( plancks );
         }
 
-        public static Femtoseconds operator -( Femtoseconds femtoseconds ) {
-            return new Femtoseconds( femtoseconds.Value * -1 );
-        }
+        public static Femtoseconds operator -( Femtoseconds femtoseconds ) => new Femtoseconds( femtoseconds.Value * -1 );
 
-        public static Femtoseconds operator -( Femtoseconds left, Femtoseconds right ) {
-            return Combine( left, -right );
-        }
+        public static Femtoseconds operator -( Femtoseconds left, Femtoseconds right ) => Combine( left, -right );
 
-        public static Femtoseconds operator -( Femtoseconds left, Decimal femtoseconds ) {
-            return Combine( left, -femtoseconds );
-        }
+        public static Femtoseconds operator -( Femtoseconds left, Decimal femtoseconds ) => Combine( left, -femtoseconds );
 
-        public static Boolean operator !=( Femtoseconds left, Femtoseconds right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Femtoseconds left, Femtoseconds right ) => !Equals( left, right );
 
-        public static Femtoseconds operator +( Femtoseconds left, Femtoseconds right ) {
-            return Combine( left, right );
-        }
+        public static Femtoseconds operator +( Femtoseconds left, Femtoseconds right ) => Combine( left, right );
 
-        public static Femtoseconds operator +( Femtoseconds left, Decimal femtoseconds ) {
-            return Combine( left, femtoseconds );
-        }
+        public static Femtoseconds operator +( Femtoseconds left, Decimal femtoseconds ) => Combine( left, femtoseconds );
 
-        public static Boolean operator <( Femtoseconds left, Femtoseconds right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Femtoseconds left, Femtoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Femtoseconds left, Femtoseconds right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Femtoseconds left, Femtoseconds right ) => Equals( left, right );
 
-        public static Boolean operator >( Femtoseconds left, Femtoseconds right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Femtoseconds left, Femtoseconds right ) => left.Value > right.Value;
 
-        public int CompareTo( Femtoseconds other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( Femtoseconds other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Femtoseconds other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Femtoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( [CanBeNull] object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
@@ -228,35 +196,25 @@ namespace Librainian.Measurement.Time {
             return obj is Femtoseconds && this.Equals( ( Femtoseconds )obj );
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
 
         /// <summary>
         ///     Convert to a smaller unit.
         /// </summary>
         /// <returns></returns>
-        public Attoseconds ToAttoseconds() {
-            return new Attoseconds( this.Value * Attoseconds.InOneFemtosecond );
-        }
+        public Attoseconds ToAttoseconds() => new Attoseconds( this.Value * Attoseconds.InOneFemtosecond );
 
         /// <summary>
         ///     Convert to a larger unit.
         /// </summary>
         /// <returns></returns>
         [Pure]
-        public Picoseconds ToPicoseconds() {
-            return new Picoseconds( this.Value / InOnePicosecond );
-        }
+        public Picoseconds ToPicoseconds() => new Picoseconds( this.Value / InOnePicosecond );
 
         [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneFemtosecond, new BigInteger( this.Value ) );
-        }
+        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneFemtosecond, new BigInteger( this.Value ) );
 
         [Pure]
-        public override String ToString() {
-            return String.Format( "{0} fs", this.Value );
-        }
+        public override String ToString() => String.Format( "{0} fs", this.Value );
     }
 }

@@ -98,13 +98,9 @@ namespace Librainian.Maths {
             }
         }
 
-        public object Clone() {
-            return new Fuzzy( this.Value );
-        }
+        public object Clone() => new Fuzzy( this.Value );
 
-        public static Double Combine( Double value1, Double value2 ) {
-            return ( value1 + value2 ) / 2.0D;
-        }
+        public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2.0D;
 
         public static Fuzzy Parse( [CanBeNull] String value ) {
             if ( String.IsNullOrWhiteSpace( value ) ) {
@@ -127,17 +123,11 @@ namespace Librainian.Maths {
             //return this;
         }
 
-        public Boolean IsFalseish() {
-            return this.Value < Undecided.Low;
-        }
+        public Boolean IsFalseish() => this.Value < Undecided.Low;
 
-        public Boolean IsTrueish() {
-            return this.Value > Undecided.High;
-        }
+        public Boolean IsTrueish() => this.Value > Undecided.High;
 
-        public Boolean IsUndecided() {
-            return !this.IsTrueish() && !this.IsFalseish();
-        }
+        public Boolean IsUndecided() => !this.IsTrueish() && !this.IsFalseish();
 
         /// <summary>
         ///     Initializes a random number between 0 and 1 within a range, defaulting to Middle range (~0.50)
@@ -184,9 +174,7 @@ namespace Librainian.Maths {
         //public static Fuzzy Combine( Fuzzy value1, Double value2 ) { return new Fuzzy( ( value1 + value2 ) / 2D ); }
 
         //public static Fuzzy Combine( Double value1, Fuzzy value2 ) { return new Fuzzy( ( value1 + value2 ) / 2D ); }
-        public override String ToString() {
-            return String.Format( "{0:R}", this.Value );
-        }
+        public override String ToString() => String.Format( "{0:R}", this.Value );
 
         ///// <summary>
         ///// Returns true if this Fuzzy has a higher probability than the fuzzy being compared.

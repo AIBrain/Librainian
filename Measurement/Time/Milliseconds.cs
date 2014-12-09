@@ -154,13 +154,9 @@ namespace Librainian.Measurement.Time {
             }
         }
 
-        public static Milliseconds Combine( Milliseconds left, Decimal milliseconds ) {
-            return new Milliseconds( left.Value + milliseconds );
-        }
+        public static Milliseconds Combine( Milliseconds left, Decimal milliseconds ) => new Milliseconds( left.Value + milliseconds );
 
-        public static Milliseconds Combine( Milliseconds left, BigInteger milliseconds ) {
-            return new Milliseconds( ( BigInteger )left.Value + milliseconds );
-        }
+        public static Milliseconds Combine( Milliseconds left, BigInteger milliseconds ) => new Milliseconds( ( BigInteger )left.Value + milliseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -168,95 +164,55 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Milliseconds left, Milliseconds right ) {
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Milliseconds left, Milliseconds right ) => left.Value == right.Value;
 
         /// <summary>
         ///     I don't prefer implicits to Double.. oh well.
         /// </summary>
         /// <param name="milliseconds"></param>
         /// <returns></returns>
-        public static explicit operator Double( Milliseconds milliseconds ) {
-            return ( Double )milliseconds.Value;
-        }
+        public static explicit operator Double( Milliseconds milliseconds ) => ( Double )milliseconds.Value;
 
-        public static implicit operator Decimal( Milliseconds milliseconds ) {
-            return milliseconds.Value;
-        }
+        public static implicit operator Decimal( Milliseconds milliseconds ) => milliseconds.Value;
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="milliseconds" /> to <see cref="Microseconds" />.
         /// </summary>
         /// <param name="milliseconds"></param>
         /// <returns></returns>
-        public static implicit operator Microseconds( Milliseconds milliseconds ) {
-            return milliseconds.ToMicroseconds();
-        }
+        public static implicit operator Microseconds( Milliseconds milliseconds ) => milliseconds.ToMicroseconds();
 
-        public static implicit operator Seconds( Milliseconds milliseconds ) {
-            return milliseconds.ToSeconds();
-        }
+        public static implicit operator Seconds( Milliseconds milliseconds ) => milliseconds.ToSeconds();
 
-        public static implicit operator Span( Milliseconds milliseconds ) {
-            return new Span( milliseconds: milliseconds );
-        }
+        public static implicit operator Span( Milliseconds milliseconds ) => new Span( milliseconds: milliseconds );
 
-        public static Milliseconds operator -( Milliseconds milliseconds ) {
-            return new Milliseconds( milliseconds.Value * -1 );
-        }
+        public static Milliseconds operator -( Milliseconds milliseconds ) => new Milliseconds( milliseconds.Value * -1 );
 
-        public static Milliseconds operator -( Milliseconds left, Milliseconds right ) {
-            return Combine( left, -right.Value );
-        }
+        public static Milliseconds operator -( Milliseconds left, Milliseconds right ) => Combine( left, -right.Value );
 
-        public static Milliseconds operator -( Milliseconds left, Decimal milliseconds ) {
-            return Combine( left, -milliseconds );
-        }
+        public static Milliseconds operator -( Milliseconds left, Decimal milliseconds ) => Combine( left, -milliseconds );
 
-        public static Boolean operator !=( Milliseconds left, Milliseconds right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Milliseconds left, Milliseconds right ) => !Equals( left, right );
 
-        public static Milliseconds operator +( Milliseconds left, Milliseconds right ) {
-            return Combine( left, right.Value );
-        }
+        public static Milliseconds operator +( Milliseconds left, Milliseconds right ) => Combine( left, right.Value );
 
-        public static Milliseconds operator +( Milliseconds left, Decimal milliseconds ) {
-            return Combine( left, milliseconds );
-        }
+        public static Milliseconds operator +( Milliseconds left, Decimal milliseconds ) => Combine( left, milliseconds );
 
-        public static Milliseconds operator +( Milliseconds left, BigInteger milliseconds ) {
-            return Combine( left, milliseconds );
-        }
+        public static Milliseconds operator +( Milliseconds left, BigInteger milliseconds ) => Combine( left, milliseconds );
 
-        public static Boolean operator <( Milliseconds left, Milliseconds right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Milliseconds left, Milliseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Milliseconds left, Seconds right ) {
-            return ( Seconds )left < right;
-        }
+        public static Boolean operator <( Milliseconds left, Seconds right ) => ( Seconds )left < right;
 
-        public static Boolean operator ==( Milliseconds left, Milliseconds right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Milliseconds left, Milliseconds right ) => Equals( left, right );
 
-        public static Boolean operator >( Milliseconds left, Milliseconds right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Milliseconds left, Milliseconds right ) => left.Value > right.Value;
 
-        public static Boolean operator >( Milliseconds left, Seconds right ) {
-            return ( Seconds )left > right;
-        }
+        public static Boolean operator >( Milliseconds left, Seconds right ) => ( Seconds )left > right;
 
-        public int CompareTo( Milliseconds other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( Milliseconds other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Milliseconds other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Milliseconds other ) => Equals( this, other );
 
         public override Boolean Equals( object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
@@ -265,31 +221,19 @@ namespace Librainian.Measurement.Time {
             return obj is Milliseconds && this.Equals( ( Milliseconds )obj );
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
 
-        public Microseconds ToMicroseconds() {
-            return new Microseconds( this.Value * Microseconds.InOneMillisecond );
-        }
+        public Microseconds ToMicroseconds() => new Microseconds( this.Value * Microseconds.InOneMillisecond );
 
         [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneMillisecond, new BigInteger( this.Value ) );
-        }
+        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneMillisecond, new BigInteger( this.Value ) );
 
         [Pure]
-        public Seconds ToSeconds() {
-            return new Seconds( this.Value / InOneSecond );
-        }
+        public Seconds ToSeconds() => new Seconds( this.Value / InOneSecond );
 
         [Pure]
-        public override String ToString() {
-            return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "millisecond" ) );
-        }
+        public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "millisecond" ) );
 
-        public static implicit operator TimeSpan( Milliseconds milliseconds ) {
-            return TimeSpan.FromMilliseconds( value: ( Double )milliseconds.Value );
-        }
+        public static implicit operator TimeSpan( Milliseconds milliseconds ) => TimeSpan.FromMilliseconds( value: ( Double )milliseconds.Value );
     }
 }

@@ -147,18 +147,12 @@ namespace Librainian.Measurement.Currency {
         ///     Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.
         /// </summary>
         /// <param name="other">Annother to compare with this wallet.</param>
-        public bool Equals( SimpleWallet other ) {
-            return Equals( this, other );
-        }
+        public bool Equals( SimpleWallet other ) => Equals( this, other );
 
         [Pure]
-        public override int GetHashCode() {
-            return this._hashcode;
-        }
+        public override int GetHashCode() => this._hashcode;
 
-        public override String ToString() {
-            return String.Format( "{0}", this.Balance.ToString( "F8" ) );
-        }
+        public override String ToString() => String.Format( "{0}", this.Balance.ToString( "F8" ) );
 
         /// <summary>
         ///     Add any (+-)amount directly to the balance.
@@ -290,9 +284,7 @@ namespace Librainian.Measurement.Currency {
             }
         }
 
-        public void TryUpdateBalance( SimpleWallet simpleWallet ) {
-            this.TryUpdateBalance( simpleWallet.Balance );
-        }
+        public void TryUpdateBalance( SimpleWallet simpleWallet ) => this.TryUpdateBalance( simpleWallet.Balance );
 
         /// <summary>
         ///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>

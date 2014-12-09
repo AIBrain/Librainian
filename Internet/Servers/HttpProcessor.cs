@@ -574,36 +574,28 @@ namespace Librainian.Internet.Servers {
         ///     interprets a value of "1" or "true" (case insensitive) as being true.  Any other parameter value is interpreted as
         ///     false.
         /// </returns>
-        public bool GetBoolParam( String key ) {
-            return this.GetQSBoolParam( key );
-        }
+        public bool GetBoolParam( String key ) => this.GetQSBoolParam( key );
 
         /// <summary>
         ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>The value of the key, or [defaultValue] if the key does not exist or has no suitable value.</returns>
-        public Double GetDoubleParam( String key, int defaultValue = 0 ) {
-            return this.GetQSDoubleParam( key, defaultValue );
-        }
+        public Double GetDoubleParam( String key, int defaultValue = 0 ) => this.GetQSDoubleParam( key, defaultValue );
 
         /// <summary>
         ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>The value of the key, or [defaultValue] if the key does not exist or has no suitable value.</returns>
-        public int GetIntParam( String key, int defaultValue = 0 ) {
-            return this.GetQSIntParam( key, defaultValue );
-        }
+        public int GetIntParam( String key, int defaultValue = 0 ) => this.GetQSIntParam( key, defaultValue );
 
         /// <summary>
         ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>The value of the key, or empty String if the key does not exist or has no value.</returns>
-        public String GetParam( String key ) {
-            return this.GetQSParam( key );
-        }
+        public String GetParam( String key ) => this.GetQSParam( key );
 
         /// <summary>
         ///     Returns the value of a parameter sent via POST with MIME type "application/x-www-form-urlencoded".

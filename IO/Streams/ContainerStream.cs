@@ -52,16 +52,10 @@ namespace Librainian.IO.Streams {
 
         protected Stream ContainedStream { get { return this.Stream; } }
 
-        public override void Flush() {
-            this.Stream.Flush();
-        }
+        public override void Flush() => this.Stream.Flush();
 
-        public override int Read( byte[] buffer, int offset, int count ) {
-            return this.Stream.Read( buffer, offset, count );
-        }
+        public override int Read( byte[] buffer, int offset, int count ) => this.Stream.Read( buffer, offset, count );
 
-        public override void Write( byte[] buffer, int offset, int count ) {
-            this.Stream.Write( buffer, offset, count );
-        }
+        public override void Write( byte[] buffer, int offset, int count ) => this.Stream.Write( buffer, offset, count );
     }
 }

@@ -32,13 +32,9 @@ namespace Librainian.Collections {
 
         public IEnumerable< T > Items => this.Queue.Select( item => item.Item );
 
-        public IEnumerator< WithTime< T > > GetEnumerator() {
-            return this.Queue.GetEnumerator();
-        }
+        public IEnumerator< WithTime< T > > GetEnumerator() => this.Queue.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
         ///     Adds the data to the queue.

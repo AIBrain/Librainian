@@ -53,9 +53,7 @@ namespace Librainian.Internet.Servers {
         /// <summary>
         ///     Unregisters the currently registered logger (if any) by calling RegisterLogger(null);
         /// </summary>
-        public static void UnregisterLogger() {
-            RegisterLogger( null );
-        }
+        public static void UnregisterLogger() => RegisterLogger( null );
 
         internal static void Log( Exception ex, String additionalInformation = "" ) {
             try {

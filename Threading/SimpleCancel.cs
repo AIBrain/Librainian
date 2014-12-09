@@ -55,9 +55,7 @@ namespace Librainian.Threading {
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose() {
-            this.RequestCancel( throwIfAlreadyRequested: false );
-        }
+        public void Dispose() => this.RequestCancel( throwIfAlreadyRequested: false );
 
         /// <summary>
         ///     Returns true if the cancel request was approved.
@@ -66,13 +64,9 @@ namespace Librainian.Threading {
         /// <param name="throwMessage"></param>
         /// <returns></returns>
         /// <exception cref="TaskCanceledException">Thrown if a cancellation has already been requested.</exception>
-        public Boolean Cancel( Boolean throwIfAlreadyRequested = false, String throwMessage = "" ) {
-            return RequestCancel( throwIfAlreadyRequested, throwMessage );
-        }
+        public Boolean Cancel( Boolean throwIfAlreadyRequested = false, String throwMessage = "" ) => RequestCancel( throwIfAlreadyRequested, throwMessage );
 
-        public UInt32 GetCancelsRequestedCounter() {
-            return this._cancelRequestCounter;
-        }
+        public UInt32 GetCancelsRequestedCounter() => this._cancelRequestCounter;
 
         /// <summary>
         ///     Returns the <see cref="DateTime" /> of the oldest cancel request.
@@ -94,9 +88,7 @@ namespace Librainian.Threading {
             return firstCancelRequest;
         }
 
-        public Boolean HasCancelBeenRequested() {
-            return GetCancelsRequestedCounter() > 0;
-        }
+        public Boolean HasCancelBeenRequested() => GetCancelsRequestedCounter() > 0;
 
         /// <summary>
         ///     Returns true if the cancel request was approved.
@@ -149,9 +141,7 @@ namespace Librainian.Threading {
             _timeOfRecentCancelRequest = -1;
         }
 
-        private RequestState GetState() {
-            return ( RequestState ) this._state;
-        }
+        private RequestState GetState() => ( RequestState ) this._state;
 
         private Boolean SetState( RequestState state ) {
             switch ( state ) {

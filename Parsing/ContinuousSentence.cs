@@ -86,9 +86,7 @@ namespace Librainian.Parsing {
             return this;
         }
 
-        public String PeekNextChar() {
-            return new String( new[] { this.CurrentSentence.FirstOrDefault() } );
-        }
+        public String PeekNextChar() => new String( new[] { this.CurrentSentence.FirstOrDefault() } );
 
         /// <summary>
         ///     for now, find the next .?!

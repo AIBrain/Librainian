@@ -28,9 +28,7 @@
         public static readonly Vector3D ZAxis = new Vector3D( 0, 0, 1 );
         public static readonly Matrix3D ZeroMatrix = new Matrix3D( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
 
-        public static double AngleBetweenVectors( Vector3D a, Vector3D b ) {
-            return TranslateRadianToAngle( RadiansBetweenVectors( a, b ) );
-        }
+        public static double AngleBetweenVectors( Vector3D a, Vector3D b ) => TranslateRadianToAngle( RadiansBetweenVectors( a, b ) );
 
         //===========================================================================================================
         public static Point3D Convert2DPoint( Point pointToConvert, Visual3D sphere, TranslateTransform3D cameraPosition )        // transform world matrix
@@ -82,22 +80,16 @@
             return p2d;
         }
 
-        public static double DegreesToRadians( double degrees ) {
-            return degrees * ( Math.PI / 180.0 );
-        }
+        public static double DegreesToRadians( double degrees ) => degrees * ( Math.PI / 180.0 );
 
-        public static double GetAspectRatio( Size size ) {
-            return size.Width / size.Height;
-        }
+        public static double GetAspectRatio( Size size ) => size.Width / size.Height;
 
         /// <summary>
         /// Computes the center of 'box'
         /// </summary>
         /// <param name="box">The Rect3D we want the center of</param>
         /// <returns>The center point</returns>
-        public static Point3D GetCenter( Rect3D box ) {
-            return new Point3D( box.X + box.SizeX / 2, box.Y + box.SizeY / 2, box.Z + box.SizeZ / 2 );
-        }
+        public static Point3D GetCenter( Rect3D box ) => new Point3D( box.X + box.SizeX / 2, box.Y + box.SizeY / 2, box.Z + box.SizeZ / 2 );
 
         public static Point3D GetCirclePoint( double angle, double radius, Point3D orientation = new Point3D() ) {
             var x = radius * Math.Cos( TranslateAngleToRadian( angle ) );
@@ -189,9 +181,7 @@
             throw new ArgumentException( String.Format( "Unsupported camera type '{0}'.", camera.GetType().FullName ), "camera" );
         }
 
-        public static Point3D MultiplyPoints( Point3D point1, Point3D point2 ) {
-            return new Point3D( point1.X * point2.X, point1.Y * point2.Y, point1.Z * point2.Z );
-        }
+        public static Point3D MultiplyPoints( Point3D point1, Point3D point2 ) => new Point3D( point1.X * point2.X, point1.Y * point2.Y, point1.Z * point2.Z );
 
         /// <summary>
         /// Takes a 3D point and returns the corresponding 2D point (X,Y) within the viewport.
@@ -221,9 +211,7 @@
             return new Point();
         }
 
-        public static double RadiansBetweenVectors( Vector3D a, Vector3D b ) {
-            return Math.Acos( VectorMultiplication( a, b ) / ( VectorLength( a ) * VectorLength( b ) ) );
-        }
+        public static double RadiansBetweenVectors( Vector3D a, Vector3D b ) => Math.Acos( VectorMultiplication( a, b ) / ( VectorLength( a ) * VectorLength( b ) ) );
 
         public static Point3D RotatePoint3D( double angle, Point3D point, Point3D center = new Point3D() ) {
             var radians = TranslateAngleToRadian( angle );
@@ -279,13 +267,9 @@
             return new Rect3D( x1, y1, z1, x2 - x1, y2 - y1, z2 - z1 );
         }
 
-        public static double TranslateAngleToRadian( double angle ) {
-            return angle * Math.PI / 180;
-        }
+        public static double TranslateAngleToRadian( double angle ) => angle * Math.PI / 180;
 
-        public static double TranslateRadianToAngle( double radian ) {
-            return radian * ( 180 / Math.PI );
-        }
+        public static double TranslateRadianToAngle( double radian ) => radian * ( 180 / Math.PI );
 
         /// <summary>
         ///     Normalizes v if |v| > 0.
@@ -419,25 +403,15 @@
             return result;
         }
 
-        public static double VectorLength( Vector3D a ) {
-            return Math.Sqrt( a.X * a.X + a.Y * a.Y + a.Z * a.Z );
-        }
+        public static double VectorLength( Vector3D a ) => Math.Sqrt( a.X * a.X + a.Y * a.Y + a.Z * a.Z );
 
-        public static double VectorLength( Vector a ) {
-            return Math.Sqrt( a.X * a.X + a.Y * a.Y );
-        }
+        public static double VectorLength( Vector a ) => Math.Sqrt( a.X * a.X + a.Y * a.Y );
 
-        public static double VectorMultiplication( Vector3D a, Vector3D b ) {
-            return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
-        }
+        public static double VectorMultiplication( Vector3D a, Vector3D b ) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
 
-        public static Vector VectorOnPlaneXOYrojection( Vector3D a ) {
-            return new Vector( a.X, a.Y );
-        }
+        public static Vector VectorOnPlaneXOYrojection( Vector3D a ) => new Vector( a.X, a.Y );
 
-        public static Vector VectorOnPlaneYOZProjection( Vector3D a ) {
-            return new Vector( a.Y, a.Z );
-        }
+        public static Vector VectorOnPlaneYOZProjection( Vector3D a ) => new Vector( a.Y, a.Z );
 
         public static Vector VectorProjectionOnPlane( Vector3D a, Vector3D plane ) {
             if ( plane.X.Near(0) )
@@ -450,9 +424,7 @@
             return new Vector();
         }
 
-        public static double VectorProjectionOnVector( Vector3D a, Vector3D b ) {
-            return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
-        }
+        public static double VectorProjectionOnVector( Vector3D a, Vector3D b ) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
 
         private static Matrix3D GetHomogeneousToViewportTransform( Rect viewport ) {
             var scaleX = viewport.Width / 2;

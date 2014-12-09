@@ -84,9 +84,7 @@ namespace Librainian.Extensions {
             return this._allKeys.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
         #endregion IEnumerable<RegistryKey> Members
 
         #region IEqualityComparer<RegistryKey> Members
@@ -98,18 +96,14 @@ namespace Librainian.Extensions {
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public Boolean Equals( RegistryKey x, RegistryKey y ) {
-            return x.Name != null && y.Name != null && x.Name == y.Name;
-        }
+        public Boolean Equals( RegistryKey x, RegistryKey y ) => x.Name != null && y.Name != null && x.Name == y.Name;
 
         /// <summary>
         ///     For null names here we will calculate a funky random number as null != null
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public int GetHashCode( RegistryKey obj ) {
-            return obj.Name != null ? obj.Name.GetHashCode() : RuntimeHelpers.GetHashCode( new object() );
-        }
+        public int GetHashCode( RegistryKey obj ) => obj.Name != null ? obj.Name.GetHashCode() : RuntimeHelpers.GetHashCode( new object() );
         #endregion IEqualityComparer<RegistryKey> Members
 
         #region IInitializable Members
@@ -135,9 +129,7 @@ namespace Librainian.Extensions {
             // ReSharper restore DelegateSubtraction
         }
 
-        public static void Initialize() {
-            Initialize( Registry.LocalMachine );
-        }
+        public static void Initialize() => Initialize( Registry.LocalMachine );
 
         private static IEnumerable< RegistryKey > GetAllSubkeys( RegistryKey startkeyIn, String nodeKey ) {
             Instance.InvokePopulateProgress();

@@ -143,17 +143,11 @@ namespace Librainian.Measurement.Time {
             }
         }
 
-        public static Nanoseconds Combine( Nanoseconds left, Nanoseconds right ) {
-            return Combine( left, right.Value );
-        }
+        public static Nanoseconds Combine( Nanoseconds left, Nanoseconds right ) => Combine( left, right.Value );
 
-        public static Nanoseconds Combine( Nanoseconds left, Decimal nanoseconds ) {
-            return new Nanoseconds( left.Value + nanoseconds );
-        }
+        public static Nanoseconds Combine( Nanoseconds left, Decimal nanoseconds ) => new Nanoseconds( left.Value + nanoseconds );
 
-        public static Nanoseconds Combine( Nanoseconds left, BigInteger nanoseconds ) {
-            return new Nanoseconds( ( BigInteger )left.Value + nanoseconds );
-        }
+        public static Nanoseconds Combine( Nanoseconds left, BigInteger nanoseconds ) => new Nanoseconds( ( BigInteger )left.Value + nanoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -161,73 +155,39 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Nanoseconds left, Nanoseconds right ) {
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Nanoseconds left, Nanoseconds right ) => left.Value == right.Value;
 
-        public static implicit operator Microseconds( Nanoseconds nanoseconds ) {
-            return new Microseconds( nanoseconds.Value / InOneMicrosecond );
-        }
+        public static implicit operator Microseconds( Nanoseconds nanoseconds ) => new Microseconds( nanoseconds.Value / InOneMicrosecond );
 
-        public static implicit operator Picoseconds( Nanoseconds nanoseconds ) {
-            return nanoseconds.ToPicoseconds();
-        }
+        public static implicit operator Picoseconds( Nanoseconds nanoseconds ) => nanoseconds.ToPicoseconds();
 
-        public static Nanoseconds operator -( Nanoseconds nanoseconds ) {
-            return new Nanoseconds( nanoseconds.Value * -1 );
-        }
+        public static Nanoseconds operator -( Nanoseconds nanoseconds ) => new Nanoseconds( nanoseconds.Value * -1 );
 
-        public static Nanoseconds operator -( Nanoseconds left, Nanoseconds right ) {
-            return Combine( left, -right );
-        }
+        public static Nanoseconds operator -( Nanoseconds left, Nanoseconds right ) => Combine( left, -right );
 
-        public static Nanoseconds operator -( Nanoseconds left, Decimal nanoseconds ) {
-            return Combine( left, -nanoseconds );
-        }
+        public static Nanoseconds operator -( Nanoseconds left, Decimal nanoseconds ) => Combine( left, -nanoseconds );
 
-        public static Boolean operator !=( Nanoseconds left, Nanoseconds right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Nanoseconds left, Nanoseconds right ) => !Equals( left, right );
 
-        public static Nanoseconds operator +( Nanoseconds left, Nanoseconds right ) {
-            return Combine( left, right );
-        }
+        public static Nanoseconds operator +( Nanoseconds left, Nanoseconds right ) => Combine( left, right );
 
-        public static Nanoseconds operator +( Nanoseconds left, Decimal nanoseconds ) {
-            return Combine( left, nanoseconds );
-        }
+        public static Nanoseconds operator +( Nanoseconds left, Decimal nanoseconds ) => Combine( left, nanoseconds );
 
-        public static Nanoseconds operator +( Nanoseconds left, BigInteger nanoseconds ) {
-            return Combine( left, nanoseconds );
-        }
+        public static Nanoseconds operator +( Nanoseconds left, BigInteger nanoseconds ) => Combine( left, nanoseconds );
 
-        public static Boolean operator <( Nanoseconds left, Nanoseconds right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Nanoseconds left, Nanoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Nanoseconds left, Microseconds right ) {
-            return ( Microseconds )left < right;
-        }
+        public static Boolean operator <( Nanoseconds left, Microseconds right ) => ( Microseconds )left < right;
 
-        public static Boolean operator ==( Nanoseconds left, Nanoseconds right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Nanoseconds left, Nanoseconds right ) => Equals( left, right );
 
-        public static Boolean operator >( Nanoseconds left, Nanoseconds right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Nanoseconds left, Nanoseconds right ) => left.Value > right.Value;
 
-        public static Boolean operator >( Nanoseconds left, Microseconds right ) {
-            return ( Microseconds )left > right;
-        }
+        public static Boolean operator >( Nanoseconds left, Microseconds right ) => ( Microseconds )left > right;
 
-        public int CompareTo( Nanoseconds other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( Nanoseconds other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Nanoseconds other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Nanoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
@@ -236,27 +196,17 @@ namespace Librainian.Measurement.Time {
             return obj is Nanoseconds && this.Equals( ( Nanoseconds )obj );
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
 
         [Pure]
-        public Microseconds ToMicroseconds() {
-            return new Microseconds( this.Value / InOneMicrosecond );
-        }
+        public Microseconds ToMicroseconds() => new Microseconds( this.Value / InOneMicrosecond );
 
-        public Picoseconds ToPicoseconds() {
-            return new Picoseconds( this.Value * Picoseconds.InOneNanosecond );
-        }
+        public Picoseconds ToPicoseconds() => new Picoseconds( this.Value * Picoseconds.InOneNanosecond );
 
         [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneNanosecond, new BigInteger( this.Value ) );
-        }
+        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneNanosecond, new BigInteger( this.Value ) );
 
         [Pure]
-        public override String ToString() {
-            return String.Format( "{0} ns", this.Value );
-        }
+        public override String ToString() => String.Format( "{0} ns", this.Value );
     }
 }

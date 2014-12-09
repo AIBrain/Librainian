@@ -80,9 +80,7 @@ namespace Librainian.Threading {
         }
 
         [DebuggerStepThrough]
-        public static void Write( this String message ) {
-            ConsoleListener.Write( message );
-        }
+        public static void Write( this String message ) => ConsoleListener.Write( message );
 
         /// <summary>
         ///     <para>Write the <paramref name="message" /> out to the console.</para>
@@ -90,9 +88,7 @@ namespace Librainian.Threading {
         /// <param name="message"></param>
         /// <param name="method"></param>
         [DebuggerStepThrough]
-        public static void WriteLine( this String message, [CallerMemberName] String method = "" ) {
-            ConsoleListener.WriteLine( String.Format( "({0}) {1}", method, message ) );
-        }
+        public static void WriteLine( this String message, [CallerMemberName] String method = "" ) => ConsoleListener.WriteLine( String.Format( "({0}) {1}", method, message ) );
 
         [DebuggerStepThrough]
         public static void Enter( [CallerMemberName] String method = "" ) {
@@ -119,19 +115,13 @@ namespace Librainian.Threading {
         }
 
         [DebuggerStepThrough]
-        public static void Message( String message, [CallerMemberName] String method = "" ) {
-            String.Format( "{0}: {1}", method.NullIfEmpty() ?? "?", message ).WriteLine();
-        }
+        public static void Message( String message, [CallerMemberName] String method = "" ) => String.Format( "{0}: {1}", method.NullIfEmpty() ?? "?", message ).WriteLine();
 
         [DebuggerStepThrough]
-        public static void Info( String message ) {
-            String.Format( "{0}", message ).WriteLine();
-        }
+        public static void Info( String message ) => String.Format( "{0}", message ).WriteLine();
 
         [DebuggerStepThrough]
-        public static void Finalized( [CallerMemberName] String method = "" ) {
-            String.Format( "{0}: {1}", "Finalized", method ?? String.Empty ).WriteLine();
-        }
+        public static void Finalized( [CallerMemberName] String method = "" ) => String.Format( "{0}: {1}", "Finalized", method ?? String.Empty ).WriteLine();
 
         /// <param name="exception"></param>
         /// <param name="method"></param>
@@ -183,9 +173,7 @@ namespace Librainian.Threading {
         /// <param name="obj"> </param>
         /// <returns> </returns>
         // ReSharper disable once UnusedParameter.Global
-        public static int FrameCount( this Object obj ) {
-            return ( new StackTrace( false ) ).FrameCount;
-        }
+        public static int FrameCount( this Object obj ) => ( new StackTrace( false ) ).FrameCount;
 
         /// <summary>
         ///     Force a memory garbage collection on generation0 and generation1 objects.

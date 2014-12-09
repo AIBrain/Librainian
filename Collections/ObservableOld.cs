@@ -61,17 +61,11 @@ namespace Librainian.Collections {
             }
         }
 
-        public static implicit operator T( ObservableOld<T> input ) {
-            return input.Value;
-        }
+        public static implicit operator T( ObservableOld<T> input ) => input.Value;
 
-        public IDisposable Subscribe( IObserver<T> observer ) {
-            return this._values.Subscribe( observer );
-        }
+        public IDisposable Subscribe( IObserver<T> observer ) => this._values.Subscribe( observer );
 
-        public override string ToString() {
-            return this._values?.ToString() ?? "Observable<" + typeof( T ).Name + "> with null value.";
-        }
+        public override string ToString() => this._values?.ToString() ?? "Observable<" + typeof( T ).Name + "> with null value.";
 
         private void FirePropertyChanged( T value ) {
             var handler = this._propertyChanged;

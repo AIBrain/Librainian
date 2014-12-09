@@ -34,9 +34,7 @@ namespace Librainian.Collections {
             this.bob.Reset();
         }
 
-        public TrainingQueueItem Dequeue() {
-            return this.Items.Remove();
-        }
+        public TrainingQueueItem Dequeue() => this.Items.Remove();
 
         public void Enqueue( TrainingQueueItem train ) {
             this.Items.Add( train );
@@ -67,9 +65,7 @@ namespace Librainian.Collections {
 
             public object Question { get; set; }
 
-            public override String ToString() {
-                return String.Format( "{0} -> {1}", this.Question, this.Answer );
-            }
+            public override String ToString() => String.Format( "{0} -> {1}", this.Question, this.Answer );
         }
     }
 }

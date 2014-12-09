@@ -104,17 +104,13 @@ namespace Librainian.Security {
         ///     Get a new random System.Double value
         /// </summary>
         /// <returns>The random Double</returns>
-        protected override Double Sample() {
-            return this.NextDouble();
-        }
+        protected override Double Sample() => this.NextDouble();
 
         /// <summary>
         ///     Get a new random System.Double value
         /// </summary>
         /// <returns>The random Double</returns>
-        public override Double NextDouble() {
-            return this.Cmwc()/4294967296.0;
-        }
+        public override Double NextDouble() => this.Cmwc()/4294967296.0;
 
         private uint Cmwc() {
             const ulong a = 487198574UL;
@@ -137,9 +133,7 @@ namespace Librainian.Security {
         ///     Get a new random System.Int32 value
         /// </summary>
         /// <returns>The random int</returns>
-        public override int Next() {
-            return ( int ) this.Cmwc();
-        }
+        public override int Next() => ( int ) this.Cmwc();
 
         /// <summary>
         ///     Get a random integer between two given bounds

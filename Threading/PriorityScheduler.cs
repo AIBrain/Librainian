@@ -34,9 +34,7 @@ namespace Librainian.Threading {
             }
         }
 
-        protected override IEnumerable<Task> GetScheduledTasks() {
-            return this._tasks;
-        }
+        protected override IEnumerable<Task> GetScheduledTasks() => this._tasks;
 
         protected override void QueueTask( Task task ) {
             this._tasks.Add( task );
@@ -58,8 +56,6 @@ namespace Librainian.Threading {
             }
         }
 
-        protected override bool TryExecuteTaskInline( Task task, bool taskWasPreviouslyQueued ) {
-            return false; // we might not want to execute task that should schedule as high or low priority inline
-        }
+        protected override bool TryExecuteTaskInline( Task task, bool taskWasPreviouslyQueued ) => false;
     }
 }

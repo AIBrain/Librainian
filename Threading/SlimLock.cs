@@ -200,9 +200,7 @@ namespace Librainian.Threading {
             this.InitializeThreadCounts();
         }
 
-        private uint GetNumReaders() {
-            return this._owners & READER_MASK;
-        }
+        private uint GetNumReaders() => this._owners & READER_MASK;
 
         private void EnterMyLock() {
             if ( Interlocked.CompareExchange( ref this._myLock, 1, 0 ) != 0 ) {
@@ -301,9 +299,7 @@ namespace Librainian.Threading {
             return firstfound;
         }
 
-        private static Boolean IsRWEntryEmpty( ReaderWriterCount rwc ) {
-            return rwc.Threadid == -1 || ( rwc.Readercount == 0 && rwc.RecursiveCounts == null || rwc.Readercount == 0 && rwc.RecursiveCounts.writercount == 0 && rwc.RecursiveCounts.upgradecount == 0 );
-        }
+        private static Boolean IsRWEntryEmpty( ReaderWriterCount rwc ) => rwc.Threadid == -1 || ( rwc.Readercount == 0 && rwc.RecursiveCounts == null || rwc.Readercount == 0 && rwc.RecursiveCounts.writercount == 0 && rwc.RecursiveCounts.upgradecount == 0 );
 
         private void ExitMyLock() {
             Assert.That( this._myLock != 0, "Exiting spin lock that is not held" );
@@ -316,9 +312,7 @@ namespace Librainian.Threading {
             this._writeLockOwnerId = -1;
         }
 
-        public void EnterReadLock() {
-            this.TryEnterReadLock( -1 );
-        }
+        public void EnterReadLock() => this.TryEnterReadLock( -1 );
 
         public Boolean TryEnterReadLock( int millisecondsTimeout ) {
             Thread.BeginCriticalRegion();
@@ -464,9 +458,7 @@ namespace Librainian.Threading {
             }
         }
 
-        private static Boolean IsRwHashEntryChanged( ReaderWriterCount lrwc, int id ) {
-            return lrwc.Threadid != id;
-        }
+        private static Boolean IsRwHashEntryChanged( ReaderWriterCount lrwc, int id ) => lrwc.Threadid != id;
 
         /// <summary>
         ///     A routine for lazily creating a event outside the lock (so if errors
@@ -555,9 +547,7 @@ namespace Librainian.Threading {
             this._owners &= ~WaitingUpgrader;
         }
 
-        public void EnterWriteLock() {
-            this.TryEnterWriteLock( -1 );
-        }
+        public void EnterWriteLock() => this.TryEnterWriteLock( -1 );
 
         public Boolean TryEnterWriteLock( int millisecondsTimeout ) {
             Thread.BeginCriticalRegion();
@@ -727,17 +717,13 @@ namespace Librainian.Threading {
             return true;
         }
 
-        private Boolean IsWriterAcquired() {
-            return ( this._owners & ~WaitingWriters ) == 0;
-        }
+        private Boolean IsWriterAcquired() => ( this._owners & ~WaitingWriters ) == 0;
 
         private void SetWriterAcquired() {
             this._owners |= WriterHeld; // indicate we have a writer.
         }
 
-        public void EnterUpgradeableReadLock() {
-            this.TryEnterUpgradeableReadLock( -1 );
-        }
+        public void EnterUpgradeableReadLock() => this.TryEnterUpgradeableReadLock( -1 );
 
         public Boolean TryEnterUpgradeableReadLock( int millisecondsTimeout ) {
             Thread.BeginCriticalRegion();
@@ -1068,9 +1054,7 @@ namespace Librainian.Threading {
             Thread.EndCriticalRegion();
         }
 
-        public void Dispose() {
-            this.Dispose( true );
-        }
+        public void Dispose() => this.Dispose( true );
 
         private void Dispose( Boolean disposing ) {
             if ( !disposing ) {

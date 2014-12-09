@@ -66,9 +66,7 @@ namespace Librainian.IO {
             return String.Format( "{0:N0} {1}", size, suffix );
         }
 
-        public object GetFormat( Type formatType ) {
-            return formatType == typeof(ICustomFormatter) ? this : null;
-        }
+        public object GetFormat( Type formatType ) => formatType == typeof(ICustomFormatter) ? this : null;
 
         private static String DefaultFormat( String format, object arg, IFormatProvider formatProvider ) {
             var formattableArg = arg as IFormattable;

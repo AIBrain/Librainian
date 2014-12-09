@@ -69,16 +69,10 @@ namespace Librainian.Linguistics {
         }
 
         //TODO public static Boolean Equals
-        public IEnumerable<Author> GetAuthors() {
-            return this._authors;
-        }
+        public IEnumerable<Author> GetAuthors() => this._authors;
 
-        public IEnumerator<Page> GetEnumerator() {
-            return this._tokens.GetEnumerator();
-        }
+        public IEnumerator<Page> GetEnumerator() => this._tokens.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

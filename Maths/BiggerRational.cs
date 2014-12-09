@@ -167,21 +167,13 @@ namespace Librainian.Maths {
             }
         }
 
-        public static BiggerRational Abs( BiggerRational r ) {
-            return r.Numerator.Sign >= 0 ? r : new BiggerRational( BigInteger.Abs( r.Numerator ), r.Denominator );
-        }
+        public static BiggerRational Abs( BiggerRational r ) => r.Numerator.Sign >= 0 ? r : new BiggerRational( BigInteger.Abs( r.Numerator ), r.Denominator );
 
-        public static BiggerRational Add( BiggerRational r1, BiggerRational r2 ) {
-            return new BiggerRational( r1.Numerator * r2.Denominator + r1.Denominator * r2.Numerator, r1.Denominator * r2.Denominator );
-        }
+        public static BiggerRational Add( BiggerRational r1, BiggerRational r2 ) => new BiggerRational( r1.Numerator * r2.Denominator + r1.Denominator * r2.Numerator, r1.Denominator * r2.Denominator );
 
-        public static int Compare( BiggerRational r1, BiggerRational r2 ) {
-            return BigInteger.Compare( r1.Numerator * r2.Denominator, r2.Numerator * r1.Denominator );
-        }
+        public static int Compare( BiggerRational r1, BiggerRational r2 ) => BigInteger.Compare( r1.Numerator * r2.Denominator, r2.Numerator * r1.Denominator );
 
-        public static BiggerRational Divide( BiggerRational dividend, BiggerRational divisor ) {
-            return new BiggerRational( dividend.Numerator * divisor.Denominator, dividend.Denominator * divisor.Numerator );
-        }
+        public static BiggerRational Divide( BiggerRational dividend, BiggerRational divisor ) => new BiggerRational( dividend.Numerator * divisor.Denominator, dividend.Denominator * divisor.Numerator );
 
         public static BiggerRational DivRem( BiggerRational dividend, BiggerRational divisor, out BiggerRational remainder ) {
             var numerator = dividend.Numerator * divisor.Denominator;
@@ -199,31 +191,17 @@ namespace Librainian.Maths {
         }
 
 
-        public static explicit operator ulong( BiggerRational value ) {
-            return ( ulong )BigInteger.Divide( value.Numerator, value.Denominator );
-        }
+        public static explicit operator ulong( BiggerRational value ) => ( ulong )BigInteger.Divide( value.Numerator, value.Denominator );
 
-        public static explicit operator int( BiggerRational value ) {
-            return ( int )BigInteger.Divide( value.Numerator, value.Denominator );
-        }
+        public static explicit operator int( BiggerRational value ) => ( int )BigInteger.Divide( value.Numerator, value.Denominator );
 
-        public static explicit operator BigInteger( BiggerRational value ) {
-            return BigInteger.Divide( value.Numerator, value.Denominator );
-        }
+        public static explicit operator BigInteger( BiggerRational value ) => BigInteger.Divide( value.Numerator, value.Denominator );
 
+        public static explicit operator uint( BiggerRational value ) => ( uint )BigInteger.Divide( value.Numerator, value.Denominator );
 
-        public static explicit operator uint( BiggerRational value ) {
-            return ( uint )BigInteger.Divide( value.Numerator, value.Denominator );
-        }
+        public static explicit operator float( BiggerRational value ) => ( float )( Double )value;
 
-        public static explicit operator float( BiggerRational value ) {
-            return ( float )( Double )value;
-        }
-
-
-        public static explicit operator UInt16( BiggerRational value ) {
-            return ( UInt16 )BigInteger.Divide( value.Numerator, value.Denominator );
-        }
+        public static explicit operator UInt16( BiggerRational value ) => ( UInt16 )BigInteger.Divide( value.Numerator, value.Denominator );
 
         public static explicit operator Decimal( BiggerRational value ) {
             if ( SafeCastToDecimal( value.Numerator ) && SafeCastToDecimal( value.Denominator ) ) {
@@ -249,133 +227,68 @@ namespace Librainian.Maths {
         }
 
 
-        public static implicit operator BiggerRational( sbyte value ) {
-            return new BiggerRational( ( BigInteger )value );
-        }
+        public static implicit operator BiggerRational( sbyte value ) => new BiggerRational( ( BigInteger )value );
 
+        public static implicit operator BiggerRational( UInt16 value ) => new BiggerRational( ( BigInteger )value );
 
-        public static implicit operator BiggerRational( UInt16 value ) {
-            return new BiggerRational( ( BigInteger )value );
-        }
+        public static implicit operator BiggerRational( uint value ) => new BiggerRational( ( BigInteger )value );
 
+        public static implicit operator BiggerRational( ulong value ) => new BiggerRational( ( BigInteger )value );
 
-        public static implicit operator BiggerRational( uint value ) {
-            return new BiggerRational( ( BigInteger )value );
-        }
+        public static implicit operator BiggerRational( byte value ) => new BiggerRational( ( BigInteger )value );
 
+        public static implicit operator BiggerRational( short value ) => new BiggerRational( ( BigInteger )value );
 
-        public static implicit operator BiggerRational( ulong value ) {
-            return new BiggerRational( ( BigInteger )value );
-        }
+        public static implicit operator BiggerRational( int value ) => new BiggerRational( ( BigInteger )value );
 
-        public static implicit operator BiggerRational( byte value ) {
-            return new BiggerRational( ( BigInteger )value );
-        }
+        public static implicit operator BiggerRational( long value ) => new BiggerRational( ( BigInteger )value );
 
-        public static implicit operator BiggerRational( short value ) {
-            return new BiggerRational( ( BigInteger )value );
-        }
+        public static implicit operator BiggerRational( BigInteger value ) => new BiggerRational( value );
 
-        public static implicit operator BiggerRational( int value ) {
-            return new BiggerRational( ( BigInteger )value );
-        }
+        public static implicit operator BiggerRational( float value ) => new BiggerRational( value );
 
-        public static implicit operator BiggerRational( long value ) {
-            return new BiggerRational( ( BigInteger )value );
-        }
+        public static implicit operator BiggerRational( Double value ) => new BiggerRational( value );
 
-        public static implicit operator BiggerRational( BigInteger value ) {
-            return new BiggerRational( value );
-        }
+        public static implicit operator BiggerRational( Decimal value ) => new BiggerRational( value );
 
-        public static implicit operator BiggerRational( float value ) {
-            return new BiggerRational( value );
-        }
-
-        public static implicit operator BiggerRational( Double value ) {
-            return new BiggerRational( value );
-        }
-
-        public static implicit operator BiggerRational( Decimal value ) {
-            return new BiggerRational( value );
-        }
-
-        public static BiggerRational Invert( BiggerRational r ) {
-            return new BiggerRational( r.Denominator, r.Numerator );
-        }
+        public static BiggerRational Invert( BiggerRational r ) => new BiggerRational( r.Denominator, r.Numerator );
 
         [UsedImplicitly]
-        public static BigInteger LeastCommonDenominator( BiggerRational r1, BiggerRational r2 ) {
-            return r1.Denominator * r2.Denominator / BigInteger.GreatestCommonDivisor( r1.Denominator, r2.Denominator );
-        }
+        public static BigInteger LeastCommonDenominator( BiggerRational r1, BiggerRational r2 ) => r1.Denominator * r2.Denominator / BigInteger.GreatestCommonDivisor( r1.Denominator, r2.Denominator );
 
-        public static BiggerRational Multiply( BiggerRational r1, BiggerRational r2 ) {
-            return new BiggerRational( r1.Numerator * r2.Numerator, r1.Denominator * r2.Denominator );
-        }
+        public static BiggerRational Multiply( BiggerRational r1, BiggerRational r2 ) => new BiggerRational( r1.Numerator * r2.Numerator, r1.Denominator * r2.Denominator );
 
-        public static BiggerRational Negate( BiggerRational r ) {
-            return new BiggerRational( BigInteger.Negate( r.Numerator ), r.Denominator );
-        }
+        public static BiggerRational Negate( BiggerRational r ) => new BiggerRational( BigInteger.Negate( r.Numerator ), r.Denominator );
 
-        public static BiggerRational operator -( BiggerRational r ) {
-            return new BiggerRational( -r.Numerator, r.Denominator );
-        }
+        public static BiggerRational operator -( BiggerRational r ) => new BiggerRational( -r.Numerator, r.Denominator );
 
-        public static BiggerRational operator -( BiggerRational r1, BiggerRational r2 ) {
-            return Subtract( r1, r2 );
-        }
+        public static BiggerRational operator -( BiggerRational r1, BiggerRational r2 ) => Subtract( r1, r2 );
 
-        public static BiggerRational operator --( BiggerRational r ) {
-            return r - One;
-        }
+        public static BiggerRational operator --( BiggerRational r ) => r - One;
 
-        public static bool operator !=( BiggerRational x, BiggerRational y ) {
-            return Compare( x, y ) != 0;
-        }
+        public static bool operator !=( BiggerRational x, BiggerRational y ) => Compare( x, y ) != 0;
 
-        public static BiggerRational operator %( BiggerRational r1, BiggerRational r2 ) {
-            return new BiggerRational( r1.Numerator * r2.Denominator % r1.Denominator * r2.Numerator, r1.Denominator * r2.Denominator );
-        }
+        public static BiggerRational operator %( BiggerRational r1, BiggerRational r2 ) => new BiggerRational( r1.Numerator * r2.Denominator % r1.Denominator * r2.Numerator, r1.Denominator * r2.Denominator );
 
-        public static BiggerRational operator *( BiggerRational r1, BiggerRational r2 ) {
-            return Multiply( r1, r2 );
-        }
+        public static BiggerRational operator *( BiggerRational r1, BiggerRational r2 ) => Multiply( r1, r2 );
 
-        public static BiggerRational operator /( BiggerRational dividend, BiggerRational divisor ) {
-            return Divide( dividend, divisor );
-        }
+        public static BiggerRational operator /( BiggerRational dividend, BiggerRational divisor ) => Divide( dividend, divisor );
 
-        public static BiggerRational operator +( BiggerRational r ) {
-            return r;
-        }
+        public static BiggerRational operator +( BiggerRational r ) => r;
 
-        public static BiggerRational operator +( BiggerRational r1, BiggerRational r2 ) {
-            return Add( r1, r2 );
-        }
+        public static BiggerRational operator +( BiggerRational r1, BiggerRational r2 ) => Add( r1, r2 );
 
-        public static BiggerRational operator ++( BiggerRational r ) {
-            return r + One;
-        }
+        public static BiggerRational operator ++( BiggerRational r ) => r + One;
 
-        public static bool operator <( BiggerRational x, BiggerRational y ) {
-            return Compare( x, y ) < 0;
-        }
+        public static bool operator <( BiggerRational x, BiggerRational y ) => Compare( x, y ) < 0;
 
-        public static bool operator <=( BiggerRational x, BiggerRational y ) {
-            return Compare( x, y ) <= 0;
-        }
+        public static bool operator <=( BiggerRational x, BiggerRational y ) => Compare( x, y ) <= 0;
 
-        public static bool operator ==( BiggerRational x, BiggerRational y ) {
-            return Compare( x, y ) == 0;
-        }
+        public static bool operator ==( BiggerRational x, BiggerRational y ) => Compare( x, y ) == 0;
 
-        public static bool operator >( BiggerRational x, BiggerRational y ) {
-            return Compare( x, y ) > 0;
-        }
+        public static bool operator >( BiggerRational x, BiggerRational y ) => Compare( x, y ) > 0;
 
-        public static bool operator >=( BiggerRational x, BiggerRational y ) {
-            return Compare( x, y ) >= 0;
-        }
+        public static bool operator >=( BiggerRational x, BiggerRational y ) => Compare( x, y ) >= 0;
 
         public static BiggerRational Pow( BiggerRational baseValue, BigInteger exponent ) {
             if ( exponent.Sign == 0 ) {
@@ -396,9 +309,7 @@ namespace Librainian.Maths {
             return bigRational;
         }
 
-        public static BiggerRational Remainder( BiggerRational dividend, BiggerRational divisor ) {
-            return dividend % divisor;
-        }
+        public static BiggerRational Remainder( BiggerRational dividend, BiggerRational divisor ) => dividend % divisor;
 
         public static bool SafeCastToDecimal( BigInteger value ) {
             if ( SBnDecimalMinValue <= value ) {
@@ -443,25 +354,15 @@ namespace Librainian.Maths {
             }
         }
 
-        public static BiggerRational Subtract( BiggerRational r1, BiggerRational r2 ) {
-            return new BiggerRational( r1.Numerator * r2.Denominator - r1.Denominator * r2.Numerator, r1.Denominator * r2.Denominator );
-        }
+        public static BiggerRational Subtract( BiggerRational r1, BiggerRational r2 ) => new BiggerRational( r1.Numerator * r2.Denominator - r1.Denominator * r2.Numerator, r1.Denominator * r2.Denominator );
 
-        public int CompareTo( BiggerRational other ) {
-            return Compare( this, other );
-        }
+        public int CompareTo( BiggerRational other ) => Compare( this, other );
 
-        public bool Equals( BiggerRational other ) {
-            return Equals( this, other );
-        }
+        public bool Equals( BiggerRational other ) => Equals( this, other );
 
-        public override bool Equals( object obj ) {
-            return obj is BiggerRational && Equals( this, ( BiggerRational )obj );
-        }
+        public override bool Equals( object obj ) => obj is BiggerRational && Equals( this, ( BiggerRational )obj );
 
-        public BiggerRational GetFractionPart() {
-            return new BiggerRational( BigInteger.Remainder( this.Numerator, this.Denominator ), this.Denominator );
-        }
+        public BiggerRational GetFractionPart() => new BiggerRational( BigInteger.Remainder( this.Numerator, this.Denominator ), this.Denominator );
 
         public override int GetHashCode() {
 
@@ -473,9 +374,7 @@ namespace Librainian.Maths {
             return numerator.GetHashMerge( denominator );
         }
 
-        public BigInteger GetWholePart() {
-            return BigInteger.Divide( this.Numerator, this.Denominator );
-        }
+        public BigInteger GetWholePart() => BigInteger.Divide( this.Numerator, this.Denominator );
 
         int IComparable.CompareTo( object obj ) {
             if ( obj == null ) {
@@ -521,21 +420,13 @@ namespace Librainian.Maths {
         }
 
 
-        public static explicit operator sbyte( BiggerRational value ) {
-            return ( sbyte )BigInteger.Divide( value.Numerator, value.Denominator );
-        }
+        public static explicit operator sbyte( BiggerRational value ) => ( sbyte )BigInteger.Divide( value.Numerator, value.Denominator );
 
-        public static explicit operator byte( BiggerRational value ) {
-            return ( byte )BigInteger.Divide( value.Numerator, value.Denominator );
-        }
+        public static explicit operator byte( BiggerRational value ) => ( byte )BigInteger.Divide( value.Numerator, value.Denominator );
 
-        public static explicit operator short( BiggerRational value ) {
-            return ( short )BigInteger.Divide( value.Numerator, value.Denominator );
-        }
+        public static explicit operator short( BiggerRational value ) => ( short )BigInteger.Divide( value.Numerator, value.Denominator );
 
-        public static explicit operator long( BiggerRational value ) {
-            return ( long )BigInteger.Divide( value.Numerator, value.Denominator );
-        }
+        public static explicit operator long( BiggerRational value ) => ( long )BigInteger.Divide( value.Numerator, value.Denominator );
 
         public static explicit operator Double( BiggerRational value ) {
             if ( SafeCastToDouble( value.Numerator ) && SafeCastToDouble( value.Denominator ) ) {

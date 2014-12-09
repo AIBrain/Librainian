@@ -45,17 +45,11 @@ namespace Librainian.Measurement.Time.Clocks {
             private set;
         }
 
-        public static implicit operator BigInteger( Year value ) {
-            return value.Value;
-        }
+        public static implicit operator BigInteger( Year value ) => value.Value;
 
-        public static Boolean operator <( Year left, Year right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Year left, Year right ) => left.Value < right.Value;
 
-        public static Boolean operator >( Year left, Year right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Year left, Year right ) => left.Value > right.Value;
 
         /// <summary>
         ///     Decrease the current year.

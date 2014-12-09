@@ -35,17 +35,11 @@ namespace Librainian {
     public static class Computer {
 
         public static class Beep {
-            public static void Low() {
-                At( 440, Threads.GetSlicingAverage() );
-            }
+            public static void Low() => At( 440, Threads.GetSlicingAverage() );
 
-            public static void At( int frequency, TimeSpan duration ) {
-                Console.Beep( frequency: frequency, duration: ( int )duration.TotalMilliseconds );
-            }
+            public static void At( int frequency, TimeSpan duration ) => Console.Beep( frequency: frequency, duration: ( int )duration.TotalMilliseconds );
 
-            public static void High() {
-                At( 14917, Threads.GetSlicingAverage() );
-            }
+            public static void High() => At( 14917, Threads.GetSlicingAverage() );
         }
 
         /// <summary>
@@ -204,23 +198,15 @@ namespace Librainian {
             }
         }
 
-        public static Boolean CanAllocateMemory( this UInt64 bytes ) {
-            return ( ( BigInteger )bytes ).CanAllocateMemory();
-        }
+        public static Boolean CanAllocateMemory( this UInt64 bytes ) => ( ( BigInteger )bytes ).CanAllocateMemory();
 
-        public static Boolean CanAllocateMemory( this Int64 bytes ) {
-            return ( ( BigInteger )bytes ).CanAllocateMemory();
-        }
+        public static Boolean CanAllocateMemory( this Int64 bytes ) => ( ( BigInteger )bytes ).CanAllocateMemory();
 
-        public static Boolean CanAllocateMemory( this Int32 bytes ) {
-            return ( ( BigInteger )bytes ).CanAllocateMemory();
-        }
+        public static Boolean CanAllocateMemory( this Int32 bytes ) => ( ( BigInteger )bytes ).CanAllocateMemory();
 
-        public static IEnumerable< string > GetWorkingMACAddresses() {
-            return from nic in NetworkInterface.GetAllNetworkInterfaces()
-                   where nic.OperationalStatus == OperationalStatus.Up
-                   select nic.GetPhysicalAddress().ToString();
-        }
+        public static IEnumerable< string > GetWorkingMACAddresses() => from nic in NetworkInterface.GetAllNetworkInterfaces()
+                                                                        where nic.OperationalStatus == OperationalStatus.Up
+                                                                        select nic.GetPhysicalAddress().ToString();
 
         private static List< PerformanceCounter > utilizationCounters;
 

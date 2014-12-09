@@ -124,10 +124,7 @@ namespace Librainian.Threading {
             return sizeInBytes;
         }
 
-        public static IEnumerable<T> GetEnums<T>( this T hmm ) {
-            return Enum.GetValues( typeof( T ) ).Cast<T>();
-            //also: return ( T[] )Enum.GetValues( typeof( T ) );    //prob faster
-        }
+        public static IEnumerable<T> GetEnums<T>( this T hmm ) => Enum.GetValues( typeof( T ) ).Cast<T>();
 
         public static int GetSizeOfPrimitives<T>( this T type ) {
             var total = 0;
@@ -212,9 +209,7 @@ namespace Librainian.Threading {
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         [DebuggerStepThrough]
-        public static int MarshalSizeOf<T>() where T : struct {
-            return Marshal.SizeOf( typeof( T ) );
-        }
+        public static int MarshalSizeOf<T>() where T : struct => Marshal.SizeOf( typeof( T ) );
 
         /// <summary>
         ///     boxed returns Marshal.SizeOf( obj )
@@ -233,9 +228,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static int MarshalSizeOf<T>( this T obj ) {
-            return Marshal.SizeOf( obj );
-        }
+        public static int MarshalSizeOf<T>( this T obj ) => Marshal.SizeOf( obj );
 
         /// <summary>
         ///     Only allow a delegate to run X times.

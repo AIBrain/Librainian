@@ -115,9 +115,7 @@ namespace Librainian.Maths {
         /// <param name="a">The first Point3D instance to compare.</param>
         /// <param name="b">The second Point3D instance to compare.</param>
         /// <returns>True if the Point3D instances are unequal; false otherwise.</returns>
-        public static Boolean operator !=( Point3DI a, Point3DI b ) {
-            return !a.Equals( b );
-        }
+        public static Boolean operator !=( Point3DI a, Point3DI b ) => !a.Equals( b );
 
         /// <summary>
         ///     Determines whether the specified Point3D instances are equal.
@@ -125,9 +123,7 @@ namespace Librainian.Maths {
         /// <param name="a">The first Point3D instance to compare.</param>
         /// <param name="b">The second Point3D instance to compare.</param>
         /// <returns>True if the Point3D instances are equal; false otherwise.</returns>
-        public static Boolean operator ==( Point3DI a, Point3DI b ) {
-            return a.Equals( b );
-        }
+        public static Boolean operator ==( Point3DI a, Point3DI b ) => a.Equals( b );
 
         /// <summary>
         ///     Determines whether this instance is very nearly equal to a specified Point3D structure.
@@ -144,10 +140,7 @@ namespace Librainian.Maths {
         /// </remarks>
         /// <param name="other">A Point3D structure to compare to this instance.</param>
         /// <returns>True if the X,Y,Z components are approximately equal; false otherwise.</returns>
-        public Boolean ApproximatelyEquals( Point3DI other ) {
-            return ( ( Math.Abs( this.X - other.X ) < Tolerance ) && ( Math.Abs( this.Y - other.Y ) < Tolerance ) && ( Math.Abs( this.Z - other.Z ) < Tolerance ) );
-        }
-
+        public Boolean ApproximatelyEquals( Point3DI other ) => ( ( Math.Abs( this.X - other.X ) < Tolerance ) && ( Math.Abs( this.Y - other.Y ) < Tolerance ) && ( Math.Abs( this.Z - other.Z ) < Tolerance ) );
         # endregion
 
         # region Overridden Methods
@@ -157,9 +150,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="obj">An object to compare with this instance. </param>
         /// <returns>True if the object equals this instance; false otherwise.</returns>
-        public override Boolean Equals( object obj ) {
-            return obj is Point3DI && this.Equals( ( Point3DI )obj );
-        }
+        public override Boolean Equals( object obj ) => obj is Point3DI && this.Equals( ( Point3DI )obj );
 
         /// <summary>
         ///     Returns the hash code for this instance.
@@ -173,18 +164,13 @@ namespace Librainian.Maths {
         ///     operating on them because we want our shift operations to use unsigned semantics.)
         /// </remarks>
         /// <returns>A 32-bit signed integer hash code.</returns>
-        public override int GetHashCode() {
-            return this.X.GetHashMerge( this.Y.GetHashMerge( this.Z ) );
-        }
+        public override int GetHashCode() => this.X.GetHashMerge( this.Y.GetHashMerge( this.Z ) );
 
         /// <summary>
         ///     Returns a String representation of the point in [X,Y,Z] format.
         /// </summary>
         /// <returns>A String representing the point's XYZ coordinates.</returns>
-        public override String ToString() {
-            return String.Format( "[{0}, {1}, {2}]", this.X, this.Y, this.Z );
-        }
-
+        public override String ToString() => String.Format( "[{0}, {1}, {2}]", this.X, this.Y, this.Z );
         # endregion
 
         # region Overloaded Operators
@@ -197,10 +183,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="other">A Point3D structure to compare to this instance.</param>
         /// <returns>True if the X,Y,Z components are the same; false otherwise.</returns>
-        public Boolean Equals( Point3DI other ) {
-            return ( this.X == other.X && this.Y == other.Y && this.Z == other.Z );
-        }
-
+        public Boolean Equals( Point3DI other ) => ( this.X == other.X && this.Y == other.Y && this.Z == other.Z );
         #endregion IEquatable<Point3DI> Members
     }
 }

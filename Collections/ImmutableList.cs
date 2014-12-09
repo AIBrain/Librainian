@@ -96,40 +96,30 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="item">The item to search for.</param>
         /// <returns>True if the item is found, false otherwise.</returns>
-        public Boolean Contains( T item ) {
-            return Array.IndexOf( this._mArray, item ) != -1;
-        }
+        public Boolean Contains( T item ) => Array.IndexOf( this._mArray, item ) != -1;
 
         /// <summary>
         ///     Copies the contents of this list to a destination array.
         /// </summary>
         /// <param name="array">The array to copy elements to.</param>
         /// <param name="index">The index at which copying begins.</param>
-        public void CopyTo( T[] array, int index ) {
-            this._mArray.CopyTo( array, index );
-        }
+        public void CopyTo( T[] array, int index ) => this._mArray.CopyTo( array, index );
 
         /// <summary>
         ///     Retrieves an enumerator for the list’s collections.
         /// </summary>
         /// <returns>An enumerator.</returns>
-        public IEnumerator< T > GetEnumerator() {
-            return ( ( IEnumerable< T > ) this._mArray ).GetEnumerator();
-        }
+        public IEnumerator< T > GetEnumerator() => ( ( IEnumerable< T > ) this._mArray ).GetEnumerator();
 
         /// <summary>
         ///     This method is unsupported on this type, because it is immutable.
         /// </summary>
-        void ICollection< T >.Add( T item ) {
-            ThrowMutableException( "CopyAndAdd" );
-        }
+        void ICollection< T >.Add( T item ) => ThrowMutableException( "CopyAndAdd" );
 
         /// <summary>
         ///     This method is unsupported on this type, because it is immutable.
         /// </summary>
-        void ICollection< T >.Clear() {
-            ThrowMutableException( "CopyAndClear" );
-        }
+        void ICollection< T >.Clear() => ThrowMutableException( "CopyAndClear" );
 
         /// <summary>
         ///     This method is unsupported on this type, because it is immutable.
@@ -143,32 +133,24 @@ namespace Librainian.Collections {
         ///     Retrieves an enumerator for the list’s collections.
         /// </summary>
         /// <returns>An enumerator.</returns>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
         ///     This method is unsupported on this type, because it is immutable.
         /// </summary>
-        void IList< T >.Insert( int index, T item ) {
-            ThrowMutableException( "CopyAndInsert" );
-        }
+        void IList< T >.Insert( int index, T item ) => ThrowMutableException( "CopyAndInsert" );
 
         /// <summary>
         ///     This method is unsupported on this type, because it is immutable.
         /// </summary>
-        void IList< T >.RemoveAt( int index ) {
-            ThrowMutableException( "CopyAndRemoveAt" );
-        }
+        void IList< T >.RemoveAt( int index ) => ThrowMutableException( "CopyAndRemoveAt" );
 
         /// <summary>
         ///     Finds the index of the specified element.
         /// </summary>
         /// <param name="item">An item to search for.</param>
         /// <returns>The index of the item, or -1 if it was not found.</returns>
-        public int IndexOf( T item ) {
-            return Array.IndexOf( this._mArray, item );
-        }
+        public int IndexOf( T item ) => Array.IndexOf( this._mArray, item );
 
         /// <summary>
         ///     Copies the list and adds a new value at the end.
@@ -186,9 +168,7 @@ namespace Librainian.Collections {
         ///     Returns a new, cleared (empty) immutable list.
         /// </summary>
         /// <returns>A modified copy of this list.</returns>
-        public ImmutableList< T > CopyAndClear() {
-            return new ImmutableList< T >( new T[0] );
-        }
+        public ImmutableList< T > CopyAndClear() => new ImmutableList< T >( new T[0] );
 
         /// <summary>
         ///     Copies the list adn inserts a particular element.

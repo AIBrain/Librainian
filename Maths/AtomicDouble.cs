@@ -56,21 +56,13 @@ namespace Librainian.Maths {
             }
         }
 
-        public static implicit operator Double( AtomicDouble special ) {
-            return special.Value;
-        }
+        public static implicit operator Double( AtomicDouble special ) => special.Value;
 
-        public static AtomicDouble operator -( AtomicDouble a1, AtomicDouble a2 ) {
-            return new AtomicDouble( a1.Value - a2.Value );
-        }
+        public static AtomicDouble operator -( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value - a2.Value );
 
-        public static AtomicDouble operator *( AtomicDouble a1, AtomicDouble a2 ) {
-            return new AtomicDouble( a1.Value * a2.Value );
-        }
+        public static AtomicDouble operator *( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value * a2.Value );
 
-        public static AtomicDouble operator +( AtomicDouble a1, AtomicDouble a2 ) {
-            return new AtomicDouble( a1.Value + a2.Value );
-        }
+        public static AtomicDouble operator +( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value + a2.Value );
 
         public static AtomicDouble operator ++( AtomicDouble a1 ) {
             a1.Value++;
@@ -93,8 +85,6 @@ namespace Librainian.Maths {
             }
         }
 
-        public override String ToString() {
-            return String.Format( "{0:R}", this.Value );
-        }
+        public override String ToString() => String.Format( "{0:R}", this.Value );
     }
 }

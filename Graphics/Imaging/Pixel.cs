@@ -60,17 +60,11 @@ namespace Librainian.Graphics.Imaging {
             this.Blue = blue;
         }
 
-        public static explicit operator Pixel( Color pixel ) {
-            return new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
-        }
+        public static explicit operator Pixel( Color pixel ) => new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
 
-        public static implicit operator Color( Pixel pixel ) {
-            return Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
-        }
+        public static implicit operator Color( Pixel pixel ) => Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
 
-        public static explicit operator Byte[]( Pixel pixel ) {
-            return new[] { pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue };
-        }
+        public static explicit operator Byte[]( Pixel pixel ) => new[] { pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue };
 
         /// <summary>
         /// Static comparison type.
@@ -78,12 +72,10 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equal( Pixel left, Pixel right ) {
-            return left.Alpha == right.Alpha
-                && left.Red == right.Red
-                && left.Green == right.Green
-                && left.Blue == right.Blue;
-        }
+        public static Boolean Equal( Pixel left, Pixel right ) => left.Alpha == right.Alpha
+                                                                  && left.Red == right.Red
+                                                                  && left.Green == right.Green
+                                                                  && left.Blue == right.Blue;
 
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
@@ -92,9 +84,7 @@ namespace Librainian.Graphics.Imaging {
         /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public bool Equals( Pixel other ) {
-            return Equal( this, other );
-        }
+        public bool Equals( Pixel other ) => Equal( this, other );
 
         /// <summary>
         /// Returns the hash code for this instance.
@@ -102,8 +92,6 @@ namespace Librainian.Graphics.Imaging {
         /// <returns>
         /// A 32-bit signed integer that is the hash code for this instance.
         /// </returns>
-        public override int GetHashCode() {
-            return this.Green.GetHashMerge( this.Blue.GetHashMerge( this.Red.GetHashMerge( this.Alpha ) ) );
-        }
+        public override int GetHashCode() => this.Green.GetHashMerge( this.Blue.GetHashMerge( this.Red.GetHashMerge( this.Alpha ) ) );
     }
 }

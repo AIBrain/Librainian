@@ -90,17 +90,11 @@ namespace Librainian.Measurement.Time {
             }
         }
 
-        public static Months Combine( Months left, Months right ) {
-            return Combine( left, right.Value );
-        }
+        public static Months Combine( Months left, Months right ) => Combine( left, right.Value );
 
-        public static Months Combine( Months left, Decimal months ) {
-            return new Months( left.Value + months );
-        }
+        public static Months Combine( Months left, Decimal months ) => new Months( left.Value + months );
 
-        public static Months Combine( Months left, BigInteger months ) {
-            return new Months( ( BigInteger )left.Value + months );
-        }
+        public static Months Combine( Months left, BigInteger months ) => new Months( ( BigInteger )left.Value + months );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -108,61 +102,33 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Months left, Months right ) {
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Months left, Months right ) => left.Value == right.Value;
 
-        public static implicit operator Span( Months months ) {
-            return new Span( months: months.Value );
-        }
+        public static implicit operator Span( Months months ) => new Span( months: months.Value );
 
-        public static implicit operator Weeks( Months months ) {
-            return months.ToWeeks();
-        }
+        public static implicit operator Weeks( Months months ) => months.ToWeeks();
 
-        public static Months operator -( Months days ) {
-            return new Months( days.Value * -1 );
-        }
+        public static Months operator -( Months days ) => new Months( days.Value * -1 );
 
-        public static Months operator -( Months left, Months right ) {
-            return Combine( left: left, right: -right );
-        }
+        public static Months operator -( Months left, Months right ) => Combine( left: left, right: -right );
 
-        public static Months operator -( Months left, Decimal months ) {
-            return Combine( left, -months );
-        }
+        public static Months operator -( Months left, Decimal months ) => Combine( left, -months );
 
-        public static Boolean operator !=( Months left, Months right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Months left, Months right ) => !Equals( left, right );
 
-        public static Months operator +( Months left, Months right ) {
-            return Combine( left, right );
-        }
+        public static Months operator +( Months left, Months right ) => Combine( left, right );
 
-        public static Months operator +( Months left, BigInteger months ) {
-            return Combine( left, months );
-        }
+        public static Months operator +( Months left, BigInteger months ) => Combine( left, months );
 
-        public static Boolean operator <( Months left, Months right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Months left, Months right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Months left, Months right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Months left, Months right ) => Equals( left, right );
 
-        public static Boolean operator >( Months left, Months right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Months left, Months right ) => left.Value > right.Value;
 
-        public int CompareTo( Months other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( Months other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Months other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Months other ) => Equals( this, other );
 
         public override Boolean Equals( object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
@@ -171,32 +137,20 @@ namespace Librainian.Measurement.Time {
             return obj is Months && this.Equals( ( Months )obj );
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
 
         [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneMonth, new BigInteger( this.Value ) );
-        }
+        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneMonth, new BigInteger( this.Value ) );
 
         [Pure]
-        public override String ToString() {
-            return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "month" ) );
-        }
+        public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "month" ) );
 
-        public static implicit operator Years( Months months ) {
-            return months.ToYears();
-        }
+        public static implicit operator Years( Months months ) => months.ToYears();
 
         [Pure]
-        public Weeks ToWeeks() {
-            return new Weeks( this.Value * Weeks.InOneMonth );
-        }
+        public Weeks ToWeeks() => new Weeks( this.Value * Weeks.InOneMonth );
 
         [Pure]
-        public Years ToYears() {
-            return new Years( this.Value / InOneCommonYear );
-        }
+        public Years ToYears() => new Years( this.Value / InOneCommonYear );
     }
 }

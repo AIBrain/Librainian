@@ -78,9 +78,7 @@ namespace Librainian.Maths {
             private set;
         }
 
-        public static Statistically Combine( Statistically value1, Statistically value2 ) {
-            return new Statistically( ups: value1.Ups + value2.Ups, downs: value1.Downs + value2.Downs );
-        }
+        public static Statistically Combine( Statistically value1, Statistically value2 ) => new Statistically( ups: value1.Ups + value2.Ups, downs: value1.Downs + value2.Downs );
 
         public static void Reset( Statistically statistically, Double newUps = 0.0, Double newDowns = 0.0 ) {
             statistically.Ups = 0d;
@@ -96,9 +94,7 @@ namespace Librainian.Maths {
         }
 
         [UsedImplicitly]
-        public Statistically Clone() {
-            return new Statistically( ups: this.Ups, downs: this.Downs );
-        }
+        public Statistically Clone() => new Statistically( ups: this.Ups, downs: this.Downs );
 
         public void DecrementDowns( Double byAmount = 1d ) {
             this.Downs -= byAmount;
@@ -170,9 +166,7 @@ namespace Librainian.Maths {
             this.Total += byAmount;
         }
 
-        public override String ToString() {
-            return String.Format( "U:{0:f1} vs D:{1:f1} out of {2:f1}", this.Ups, this.Downs, this.Total );
-        }
+        public override String ToString() => String.Format( "U:{0:f1} vs D:{1:f1} out of {2:f1}", this.Ups, this.Downs, this.Total );
 
         //public static Double Combine( Double value1, Double value2 ) { return ( value1 + value2 ) / 2D; }
 

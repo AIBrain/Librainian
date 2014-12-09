@@ -31,9 +31,7 @@ namespace Librainian.Extensions {
         /// <example>
         ///     ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }
         /// </example>
-        public static IDisposable Read( this ReaderWriterLockSlim obj ) {
-            return new ReadLockToken( obj );
-        }
+        public static IDisposable Read( this ReaderWriterLockSlim obj ) => new ReadLockToken( obj );
 
         /// <summary>
         ///     put an upgradeable ( will-read / may-write ) lock on the access object.
@@ -43,9 +41,7 @@ namespace Librainian.Extensions {
         /// <example>
         ///     ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }
         /// </example>
-        public static IDisposable Upgrade( this ReaderWriterLockSlim obj ) {
-            return new UpgradeLockToken( obj );
-        }
+        public static IDisposable Upgrade( this ReaderWriterLockSlim obj ) => new UpgradeLockToken( obj );
 
         /// <summary>
         ///     put a Write ( will-write ) lock on the access object.
@@ -55,9 +51,7 @@ namespace Librainian.Extensions {
         /// <example>
         ///     ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }
         /// </example>
-        public static IDisposable Write( this ReaderWriterLockSlim obj ) {
-            return new WriteLockToken( obj );
-        }
+        public static IDisposable Write( this ReaderWriterLockSlim obj ) => new WriteLockToken( obj );
 
         public sealed class Manager : IDisposable {
             private readonly ReaderWriterLockSlim _slimLock;

@@ -69,13 +69,9 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
 
-        public static explicit operator SByte( Day value ) {
-            return ( SByte )value.Value;
-        }
+        public static explicit operator SByte( Day value ) => ( SByte )value.Value;
 
-        public static implicit operator Byte( Day value ) {
-            return value.Value;
-        }
+        public static implicit operator Byte( Day value ) => value.Value;
 
         /// <summary>
         ///     Provide the next <see cref="Day"/>.

@@ -71,16 +71,10 @@ namespace Librainian.Measurement.Time.Clocks {
             private set;
         }
 
-        public Time GetTime() {
-            return new Time( hour: this.Hour, minute: this.Minute, second: this.Second );
-        }
+        public Time GetTime() => new Time( hour: this.Hour, minute: this.Minute, second: this.Second );
 
-        public Boolean IsAM() {
-            return !this.IsPM();
-        }
+        public Boolean IsAM() => !this.IsPM();
 
-        public Boolean IsPM() {
-            return this.Hour >= 12;
-        }
+        public Boolean IsPM() => this.Hour >= 12;
     }
 }

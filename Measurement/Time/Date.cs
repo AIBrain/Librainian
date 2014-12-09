@@ -114,21 +114,13 @@ namespace Librainian.Measurement.Time {
             return Extensions.TryConvertToDateTime( date, out dateTime ) ? dateTime : default( DateTime );
         }
 
-        public static Boolean operator <( Date left, Date right ) {
-            return left.ToSpan().TotalPlanckTimes < right.ToSpan().TotalPlanckTimes;
-        }
+        public static Boolean operator <( Date left, Date right ) => left.ToSpan().TotalPlanckTimes < right.ToSpan().TotalPlanckTimes;
 
-        public static Boolean operator <=( Date left, Date right ) {
-            return left.ToSpan().TotalPlanckTimes <= right.ToSpan().TotalPlanckTimes;
-        }
+        public static Boolean operator <=( Date left, Date right ) => left.ToSpan().TotalPlanckTimes <= right.ToSpan().TotalPlanckTimes;
 
-        public static Boolean operator >( Date left, Date right ) {
-            return left.ToSpan().TotalPlanckTimes > right.ToSpan().TotalPlanckTimes;
-        }
+        public static Boolean operator >( Date left, Date right ) => left.ToSpan().TotalPlanckTimes > right.ToSpan().TotalPlanckTimes;
 
-        public static Boolean operator >=( Date left, Date right ) {
-            return left.ToSpan().TotalPlanckTimes >= right.ToSpan().TotalPlanckTimes;
-        }
+        public static Boolean operator >=( Date left, Date right ) => left.ToSpan().TotalPlanckTimes >= right.ToSpan().TotalPlanckTimes;
 
         //public static Date operator +( Date left, Date right ) {
         //    //what does it mean to add two dates ?
@@ -138,8 +130,6 @@ namespace Librainian.Measurement.Time {
         //}
 
         [Pure]
-        public Boolean TryConvertToDateTime( out DateTime? dateTime ) {
-            return Extensions.TryConvertToDateTime( this, out dateTime );
-        }
+        public Boolean TryConvertToDateTime( out DateTime? dateTime ) => Extensions.TryConvertToDateTime( this, out dateTime );
     }
 }

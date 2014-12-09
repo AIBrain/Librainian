@@ -33,9 +33,7 @@ namespace Librainian.Database.MMF {
             this._type = objectType;
         }
 
-        internal Boolean OnlyValueTypes() {
-            return this._type.IsPrimitive || this.PropertySizesAreDefined() && this.FieldSizesAreDefined();
-        }
+        internal Boolean OnlyValueTypes() => this._type.IsPrimitive || this.PropertySizesAreDefined() && this.FieldSizesAreDefined();
 
         private static Boolean HasMarshalDefinedSize( MemberInfo info ) {
             var customAttributes = info.GetCustomAttributes( typeof ( MarshalAsAttribute ), true );

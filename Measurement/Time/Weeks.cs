@@ -95,17 +95,11 @@ namespace Librainian.Measurement.Time {
             }
         }
 
-        public static Weeks Combine( Weeks left, Weeks right ) {
-            return new Weeks( left.Value + right.Value );
-        }
+        public static Weeks Combine( Weeks left, Weeks right ) => new Weeks( left.Value + right.Value );
 
-        public static Weeks Combine( Weeks left, Decimal weeks ) {
-            return new Weeks( left.Value + weeks );
-        }
+        public static Weeks Combine( Weeks left, Decimal weeks ) => new Weeks( left.Value + weeks );
 
-        public static Weeks Combine( Weeks left, BigInteger weeks ) {
-            return new Weeks( ( BigInteger )left.Value + weeks );
-        }
+        public static Weeks Combine( Weeks left, BigInteger weeks ) => new Weeks( ( BigInteger )left.Value + weeks );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -113,86 +107,48 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Weeks left, Weeks right ) {
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Weeks left, Weeks right ) => left.Value == right.Value;
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="weeks" /> to <see cref="Days" />.
         /// </summary>
         /// <param name="weeks"></param>
         /// <returns></returns>
-        public static implicit operator Days( Weeks weeks ) {
-            return weeks.ToDays();
-        }
+        public static implicit operator Days( Weeks weeks ) => weeks.ToDays();
 
-        public static implicit operator Months( Weeks weeks ) {
-            return weeks.ToMonths();
-        }
+        public static implicit operator Months( Weeks weeks ) => weeks.ToMonths();
 
-        public static implicit operator Span( Weeks weeks ) {
-            return new Span( weeks: weeks.Value );
-        }
+        public static implicit operator Span( Weeks weeks ) => new Span( weeks: weeks.Value );
 
-        public static Weeks operator -( Weeks days ) {
-            return new Weeks( days.Value * -1 );
-        }
+        public static Weeks operator -( Weeks days ) => new Weeks( days.Value * -1 );
 
-        public static Weeks operator -( Weeks left, Weeks right ) {
-            return Combine( left: left, right: -right );
-        }
+        public static Weeks operator -( Weeks left, Weeks right ) => Combine( left: left, right: -right );
 
-        public static Boolean operator !=( Weeks left, Weeks right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Weeks left, Weeks right ) => !Equals( left, right );
 
-        public static Weeks operator +( Weeks left, Weeks right ) {
-            return Combine( left, right );
-        }
+        public static Weeks operator +( Weeks left, Weeks right ) => Combine( left, right );
 
-        public static Weeks operator +( Weeks left, Decimal weeks ) {
-            return Combine( left, weeks );
-        }
+        public static Weeks operator +( Weeks left, Decimal weeks ) => Combine( left, weeks );
 
-        public static Weeks operator +( Weeks left, BigInteger weeks ) {
-            return Combine( left, weeks );
-        }
+        public static Weeks operator +( Weeks left, BigInteger weeks ) => Combine( left, weeks );
 
-        public static Boolean operator <( Weeks left, Weeks right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Weeks left, Weeks right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Weeks left, Days right ) {
-            return left < ( Weeks )right;
-        }
+        public static Boolean operator <( Weeks left, Days right ) => left < ( Weeks )right;
 
-        public static Boolean operator <( Weeks left, Months right ) {
-            return ( Months )left < right;
-        }
+        public static Boolean operator <( Weeks left, Months right ) => ( Months )left < right;
 
-        public static Boolean operator ==( Weeks left, Weeks right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Weeks left, Weeks right ) => Equals( left, right );
 
-        public static bool operator >( Weeks left, Months right ) {
-            return ( Months )left > right;
-        }
+        public static bool operator >( Weeks left, Months right ) => ( Months )left > right;
 
-        public static Boolean operator >( Weeks left, Days right ) {
-            return left > ( Weeks )right;
-        }
+        public static Boolean operator >( Weeks left, Days right ) => left > ( Weeks )right;
 
-        public static Boolean operator >( Weeks left, Weeks right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Weeks left, Weeks right ) => left.Value > right.Value;
 
-        public int CompareTo( Weeks other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( Weeks other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Weeks other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Weeks other ) => Equals( this, other );
 
         public override Boolean Equals( object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
@@ -202,28 +158,18 @@ namespace Librainian.Measurement.Time {
         }
 
         [Pure]
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
 
         [Pure]
-        public Days ToDays() {
-            return new Days( this.Value * Days.InOneWeek );
-        }
+        public Days ToDays() => new Days( this.Value * Days.InOneWeek );
 
         [Pure]
-        public Months ToMonths() {
-            return new Months( this.Value / InOneMonth );
-        }
+        public Months ToMonths() => new Months( this.Value / InOneMonth );
 
         [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneWeek, new BigInteger( this.Value ) );
-        }
+        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneWeek, new BigInteger( this.Value ) );
 
         [Pure]
-        public override String ToString() {
-            return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "week" ) );
-        }
+        public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "week" ) );
     }
 }

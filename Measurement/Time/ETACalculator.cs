@@ -73,16 +73,12 @@ namespace Librainian.Measurement.Time {
         ///     <para>Returns True when there is enough data to calculate the ETA.</para>
         ///     <para>Returns False if the ETA is still calculating.</para>
         /// </summary>
-        public Boolean DoWeHaveAnETA() {
-            return this._datapoints.Any();
-        }
+        public Boolean DoWeHaveAnETA() => this._datapoints.Any();
 
         /// <summary>
         ///     <para>Calculates the Estimated Time of Completion</para>
         /// </summary>
-        public DateTime ETA() {
-            return DateTime.Now + this.ETR();
-        }
+        public DateTime ETA() => DateTime.Now + this.ETR();
 
         /// <summary>
         ///     <para>Calculates the Estimated Time Remaining</para>

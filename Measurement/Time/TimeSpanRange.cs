@@ -102,9 +102,7 @@ namespace Librainian.Measurement.Time {
         /// <returns>
         ///     <b>True</b> if the specified range is inside this range or <b>false</b> otherwise.
         /// </returns>
-        public Boolean IsInside( TimeSpanRange range ) {
-            return this.IsInside( range.Min ) && this.IsInside( range.Max );
-        }
+        public Boolean IsInside( TimeSpanRange range ) => this.IsInside( range.Min ) && this.IsInside( range.Max );
 
         /// <summary>
         ///     Check if the specified value is inside this range
@@ -113,9 +111,7 @@ namespace Librainian.Measurement.Time {
         /// <returns>
         ///     <b>True</b> if the specified value is inside this range or <b>false</b> otherwise.
         /// </returns>
-        public Boolean IsInside( TimeSpan x ) {
-            return this.Min <= x && x <= this.Max;
-        }
+        public Boolean IsInside( TimeSpan x ) => this.Min <= x && x <= this.Max;
 
         /// <summary>
         ///     Check if the specified range overlaps with this range
@@ -124,12 +120,8 @@ namespace Librainian.Measurement.Time {
         /// <returns>
         ///     <b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.
         /// </returns>
-        public Boolean IsOverlapping( TimeSpanRange range ) {
-            return this.IsInside( range.Min ) || this.IsInside( range.Max );
-        }
+        public Boolean IsOverlapping( TimeSpanRange range ) => this.IsInside( range.Min ) || this.IsInside( range.Max );
 
-        public TimeSpan Random() {
-            return Randem.NextTimeSpan( this.Min, this.Max );
-        }
+        public TimeSpan Random() => Randem.NextTimeSpan( this.Min, this.Max );
     }
 }

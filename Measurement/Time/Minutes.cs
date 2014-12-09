@@ -102,17 +102,11 @@ namespace Librainian.Measurement.Time {
             }
         }
 
-        public static Minutes Combine( Minutes left, Minutes right ) {
-            return Combine( left, right.Value );
-        }
+        public static Minutes Combine( Minutes left, Minutes right ) => Combine( left, right.Value );
 
-        public static Minutes Combine( Minutes left, Decimal minutes ) {
-            return new Minutes( left.Value + minutes );
-        }
+        public static Minutes Combine( Minutes left, Decimal minutes ) => new Minutes( left.Value + minutes );
 
-        public static Minutes Combine( Minutes left, BigInteger minutes ) {
-            return new Minutes( ( BigInteger )left.Value + minutes );
-        }
+        public static Minutes Combine( Minutes left, BigInteger minutes ) => new Minutes( ( BigInteger )left.Value + minutes );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -120,104 +114,62 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Minutes left, Minutes right ) {
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Minutes left, Minutes right ) => left.Value == right.Value;
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="minutes" /> to <see cref="Hours" />.
         /// </summary>
         /// <param name="minutes"></param>
         /// <returns></returns>
-        public static implicit operator Hours( Minutes minutes ) {
-            return minutes.ToHours();
-        }
+        public static implicit operator Hours( Minutes minutes ) => minutes.ToHours();
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="minutes" /> to <see cref="Seconds" />.
         /// </summary>
         /// <param name="minutes"></param>
         /// <returns></returns>
-        public static implicit operator Seconds( Minutes minutes ) {
-            return minutes.ToSeconds();
-        }
+        public static implicit operator Seconds( Minutes minutes ) => minutes.ToSeconds();
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="minutes" /> to a <see cref="Span" />.
         /// </summary>
         /// <param name="minutes"></param>
         /// <returns></returns>
-        public static implicit operator Span( Minutes minutes ) {
-            return new Span( minutes );
-        }
+        public static implicit operator Span( Minutes minutes ) => new Span( minutes );
 
-        public static implicit operator TimeSpan( Minutes minutes ) {
-            return TimeSpan.FromMinutes( ( Double )minutes.Value );
-        }
+        public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double )minutes.Value );
 
-        public static Minutes operator -( Minutes minutes ) {
-            return new Minutes( minutes.Value * -1 );
-        }
+        public static Minutes operator -( Minutes minutes ) => new Minutes( minutes.Value * -1 );
 
-        public static Minutes operator -( Minutes left, Minutes right ) {
-            return Combine( left: left, right: -right );
-        }
+        public static Minutes operator -( Minutes left, Minutes right ) => Combine( left: left, right: -right );
 
-        public static Minutes operator -( Minutes left, Decimal minutes ) {
-            return Combine( left, -minutes );
-        }
+        public static Minutes operator -( Minutes left, Decimal minutes ) => Combine( left, -minutes );
 
-        public static Boolean operator !=( Minutes left, Minutes right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Minutes left, Minutes right ) => !Equals( left, right );
 
-        public static Minutes operator +( Minutes left, Minutes right ) {
-            return Combine( left, right );
-        }
+        public static Minutes operator +( Minutes left, Minutes right ) => Combine( left, right );
 
-        public static Minutes operator +( Minutes left, Decimal minutes ) {
-            return Combine( left, minutes );
-        }
+        public static Minutes operator +( Minutes left, Decimal minutes ) => Combine( left, minutes );
 
-        public static Minutes operator +( Minutes left, BigInteger minutes ) {
-            return Combine( left, minutes );
-        }
+        public static Minutes operator +( Minutes left, BigInteger minutes ) => Combine( left, minutes );
 
-        public static Boolean operator <( Minutes left, Minutes right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Minutes left, Minutes right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Minutes left, Hours right ) {
-            return ( Hours )left < right;
-        }
+        public static Boolean operator <( Minutes left, Hours right ) => ( Hours )left < right;
 
-        public static Boolean operator <( Minutes left, Seconds right ) {
-            return left < ( Minutes )right;
-        }
+        public static Boolean operator <( Minutes left, Seconds right ) => left < ( Minutes )right;
 
-        public static Boolean operator ==( Minutes left, Minutes right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Minutes left, Minutes right ) => Equals( left, right );
 
-        public static Boolean operator >( Minutes left, Hours right ) {
-            return ( Hours )left > right;
-        }
+        public static Boolean operator >( Minutes left, Hours right ) => ( Hours )left > right;
 
-        public static Boolean operator >( Minutes left, Minutes right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Minutes left, Minutes right ) => left.Value > right.Value;
 
-        public static Boolean operator >( Minutes left, Seconds right ) {
-            return left > ( Minutes )right;
-        }
+        public static Boolean operator >( Minutes left, Seconds right ) => left > ( Minutes )right;
 
-        public int CompareTo( Minutes other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( Minutes other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Minutes other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Minutes other ) => Equals( this, other );
 
         public override Boolean Equals( object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
@@ -226,27 +178,17 @@ namespace Librainian.Measurement.Time {
             return obj is Minutes && this.Equals( ( Minutes )obj );
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
 
-        public Hours ToHours() {
-            return new Hours( this.Value / InOneHour );
-        }
+        public Hours ToHours() => new Hours( this.Value / InOneHour );
 
         [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneMinute, new BigInteger( this.Value ) );
-        }
+        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneMinute, new BigInteger( this.Value ) );
 
         [Pure]
-        public Seconds ToSeconds() {
-            return new Seconds( this.Value * Seconds.InOneMinute );
-        }
+        public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMinute );
 
         [Pure]
-        public override String ToString() {
-            return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "minute" ) );
-        }
+        public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "minute" ) );
     }
 }

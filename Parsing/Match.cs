@@ -58,9 +58,7 @@ namespace Librainian.Parsing {
                 return value => this._matches.First( expr => expr.Matches( value ) ).Evaluate( value );
             }
 
-            public override OpenMatchContext< T, TResult > Guard( Func< T, Boolean > failWhen, Func< T, TResult > failWith ) {
-                return new ContextImpl( this, new MatchExpression( failWhen, failWith ) );
-            }
+            public override OpenMatchContext< T, TResult > Guard( Func< T, Boolean > failWhen, Func< T, TResult > failWith ) => new ContextImpl( this, new MatchExpression( failWhen, failWith ) );
 
             public override ClosedMatchContext Return( TResult result ) {
                 return new ContextImpl( this, new MatchExpression( t => true, t => result ) );
@@ -70,9 +68,7 @@ namespace Librainian.Parsing {
                 return new ContextImpl( this, new MatchExpression( t => true, resultProjection ) );
             }
 
-            public override IntermediateMatchResultContext< T, TResult > When( Func< T, Boolean > condition ) {
-                return new IntermediateContextImpl( this, condition );
-            }
+            public override IntermediateMatchResultContext< T, TResult > When( Func< T, Boolean > condition ) => new IntermediateContextImpl( this, condition );
         }
 
         private sealed class IntermediateContextImpl : IntermediateMatchResultContext< T, TResult > {
@@ -89,9 +85,7 @@ namespace Librainian.Parsing {
                 return new ContextImpl( this._baseContext, new MatchExpression( this._condition, t => result ) );
             }
 
-            public override MatchContext< T, TResult > Return( Func< T, TResult > resultProjection ) {
-                return new ContextImpl( this._baseContext, new MatchExpression( this._condition, resultProjection ) );
-            }
+            public override MatchContext< T, TResult > Return( Func< T, TResult > resultProjection ) => new ContextImpl( this._baseContext, new MatchExpression( this._condition, resultProjection ) );
         }
 
         private sealed class MatchExpression {
@@ -104,13 +98,9 @@ namespace Librainian.Parsing {
                 this._getResult = getResult;
             }
 
-            public TResult Evaluate( T value ) {
-                return this._getResult( value );
-            }
+            public TResult Evaluate( T value ) => this._getResult( value );
 
-            public Boolean Matches( T value ) {
-                return this._isMatch( value );
-            }
+            public Boolean Matches( T value ) => this._isMatch( value );
         }
     }
 }

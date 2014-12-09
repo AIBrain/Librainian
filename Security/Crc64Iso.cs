@@ -35,9 +35,7 @@ namespace Librainian.Security {
 
         public Crc64Iso( UInt64 seed ) : base( Iso3309Polynomial, seed ) { }
 
-        public static UInt64 Compute( byte[] buffer ) {
-            return Compute( DefaultSeed, buffer );
-        }
+        public static UInt64 Compute( byte[] buffer ) => Compute( DefaultSeed, buffer );
 
         public static UInt64 Compute( UInt64 seed, byte[] buffer ) {
             if ( Table == null ) {

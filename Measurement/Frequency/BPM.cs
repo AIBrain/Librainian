@@ -118,16 +118,10 @@ namespace Librainian.Measurement.Frequency {
             this.Value = bpm;
         }
 
-        public int CompareTo( BPM other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( BPM other ) => this.Value.CompareTo( other.Value );
 
-        public static implicit operator TimeSpan( BPM bpm ) {
-            return TimeSpan.FromMilliseconds( ( Double ) bpm.Value/Seconds.InOneMinute ); //BUG is this correct?
-        }
+        public static implicit operator TimeSpan( BPM bpm ) => TimeSpan.FromMilliseconds( ( Double ) bpm.Value/Seconds.InOneMinute );
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
     }
 }

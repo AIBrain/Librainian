@@ -6,8 +6,6 @@
 
         public String Text;
 
-        public override String ToString() {
-            return String.Format( "{0}->{1}", this.Href, this.Text );
-        }
+        public override String ToString() => String.Format( "{0}->{1}", this.Href, this.Text );
     }
 }

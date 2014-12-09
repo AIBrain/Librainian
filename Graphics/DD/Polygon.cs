@@ -33,20 +33,12 @@ namespace Librainian.Graphics.DD {
 
         public PointF this[ int index ] { get { return this.Points[ index ]; } set { this.Points[ index ] = value; } }
 
-        IEnumerator< PointF > IEnumerable< PointF >.GetEnumerator() {
-            return ( IEnumerator< PointF > ) this.Points.GetEnumerator();
-        }
+        IEnumerator< PointF > IEnumerable< PointF >.GetEnumerator() => ( IEnumerator< PointF > ) this.Points.GetEnumerator();
 
-        public IEnumerator GetEnumerator() {
-            return this.Points.GetEnumerator();
-        }
+        public IEnumerator GetEnumerator() => this.Points.GetEnumerator();
 
-        public static implicit operator PointF[]( Polygon polygon ) {
-            return polygon.Points;
-        }
+        public static implicit operator PointF[]( Polygon polygon ) => polygon.Points;
 
-        public static implicit operator Polygon( PointF[] points ) {
-            return new Polygon( points );
-        }
+        public static implicit operator Polygon( PointF[] points ) => new Polygon( points );
     }
 }

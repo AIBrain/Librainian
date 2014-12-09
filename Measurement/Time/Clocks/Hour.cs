@@ -72,13 +72,9 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static explicit operator SByte( Hour value ) {
-            return ( SByte )value.Value;
-        }
+        public static explicit operator SByte( Hour value ) => ( SByte )value.Value;
 
-        public static implicit operator Byte( Hour value ) {
-            return value.Value;
-        }
+        public static implicit operator Byte( Hour value ) => value.Value;
 
         /// <summary>
         ///     Provide the next <see cref="Hour"/>.

@@ -497,9 +497,7 @@ namespace Librainian.Controls {
         /// <param name="delay"></param>
         /// <returns></returns>
         /// <seealso cref="Push"/>
-        public static void PerformClickThreadSafe( [CanBeNull] this Button control, TimeSpan? delay = null ) {
-            control.Push( delay );
-        }
+        public static void PerformClickThreadSafe( [CanBeNull] this Button control, TimeSpan? delay = null ) => control.Push( delay );
 
         /// <summary>
         ///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
@@ -863,9 +861,7 @@ namespace Librainian.Controls {
         /// <param name="value"></param>
         /// <param name="maximum"></param>
         /// <seealso cref="Values"/>
-        public static void Set( [CanBeNull] this ProgressBar control, int minimum, int value, int maximum ) {
-            control.Values( minimum: minimum, value: value, maximum: maximum );
-        }
+        public static void Set( [CanBeNull] this ProgressBar control, int minimum, int value, int maximum ) => control.Values( minimum: minimum, value: value, maximum: maximum );
 
         /// <summary>
         ///     Safely set the <see cref="ProgressBar.Minimum" /> of the <see cref="ProgressBar" /> across threads.

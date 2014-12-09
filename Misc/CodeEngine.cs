@@ -74,15 +74,9 @@ namespace Librainian.Misc {
 
         public Guid ID { get; private set; }
 
-        public Boolean Load() {
-            //TODO
-            //this.SourceCode = Storage.Load< String >( this.SourcePath ).ToString();
-            return String.IsNullOrEmpty( this.SourceCode );
-        }
+        public Boolean Load() => String.IsNullOrEmpty( this.SourceCode );
 
-        public Boolean Save() {
-            return this.SourceCode.Saver( this.SourcePath );
-        }
+        public Boolean Save() => this.SourceCode.Saver( this.SourcePath );
 
         //private CodeCompileUnit codeCompileUnit;
         //private CodeNamespace codeNamespace;
@@ -104,38 +98,7 @@ namespace Librainian.Misc {
         //    this.codeCompileUnit.ReferencedAssemblies.Add( dllname );
         //}
 
-        private static String DefaultCode() {
-            //var theClassDefinition = new CodeTypeDeclaration( "CodeEngine" );
-            //theClassDefinition.Attributes = MemberAttributes.Public;
-
-            //var methodInsideClass = new CodeMemberMethod() {
-            //    Name = "Method",
-            //    Attributes = MemberAttributes.Public
-            //};
-
-            //theClassDefinition.Members.Add( methodInsideClass );
-
-            //var invokeExpr = new CodeMethodInvokeExpression(
-            //    new CodeTypeReferenceExpression( typeof( Console ) ), "WriteLine", new CodePrimitiveExpression( "Hello " ) );
-            //methodInsideClass.Statements.Add( new CodeExpressionStatement( invokeExpr ) );
-
-            //this.codeNamespace.Types.Add( theClassDefinition );
-
-            //using ( MemoryStream ms = new MemoryStream() ) {
-            //    using ( StreamWriter sw = new StreamWriter( ms ) ) {
-            //        cSharpCodeProvider.GenerateCodeFromCompileUnit( this.codeCompileUnit, sw,
-            //            new CodeGeneratorOptions() {
-            //                BlankLinesBetweenMembers = true,
-            //                BracingStyle = "C" /*"BLOCK"*/,
-            //                ElseOnClosing = true,
-            //                IndentString = "\t",
-            //                VerbatimOrder = false
-            //            } );
-            //        sw.Flush();
-            //        this.SourceCode = ms.ReadToEnd();
-            //    }
-            //}
-            return @"
+        private static String DefaultCode() => @"
 using System;
 using AIBrain;
 
@@ -152,7 +115,6 @@ namespace AIBrain
         }
     }
 }";
-        }
 
         /// <summary>
         ///     Prepare the assembly for Run()

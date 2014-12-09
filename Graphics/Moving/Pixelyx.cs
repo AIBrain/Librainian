@@ -68,15 +68,12 @@ namespace Librainian.Graphics.Moving {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equal( Pixelyx left, Pixelyx right ) {
-            return left.Alpha == right.Alpha
-                   && left.Red == right.Red
-                   && left.Green == right.Green
-                   && left.Blue == right.Blue
-                   && left.X == right.X
-                   && left.Y == right.Y
-                   ;
-        }
+        public static Boolean Equal( Pixelyx left, Pixelyx right ) => left.Alpha == right.Alpha
+                                                                      && left.Red == right.Red
+                                                                      && left.Green == right.Green
+                                                                      && left.Blue == right.Blue
+                                                                      && left.X == right.X
+                                                                      && left.Y == right.Y;
 
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
@@ -85,9 +82,7 @@ namespace Librainian.Graphics.Moving {
         /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public bool Equals( Pixelyx other ) {
-            return Equal( this, other );
-        }
+        public bool Equals( Pixelyx other ) => Equal( this, other );
 
         /// <summary>
         /// Returns the hash code for this instance.
@@ -95,8 +90,6 @@ namespace Librainian.Graphics.Moving {
         /// <returns>
         /// A 32-bit signed integer that is the hash code for this instance.
         /// </returns>
-        public override int GetHashCode() {
-            return this.Checksum;
-        }
+        public override int GetHashCode() => this.Checksum;
     }
 }

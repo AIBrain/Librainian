@@ -957,9 +957,7 @@ namespace Librainian.Persistence {
             return false;
         }
 
-        public static Boolean FileCannotBeRead( this IsolatedStorageFile isf, String fileName ) {
-            return !FileCanBeRead( isf: isf, fileName: fileName );
-        }
+        public static Boolean FileCannotBeRead( this IsolatedStorageFile isf, String fileName ) => !FileCanBeRead( isf: isf, fileName: fileName );
 
         public static Boolean DeserializeDictionary<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> toDictionary, Folder folder, String calledWhat, [CanBeNull] IProgress<Single> progress = null, String extension = ".xml" )
         where TKey : IComparable<TKey> {

@@ -150,13 +150,9 @@ namespace Librainian.Measurement.Time.Clocks {
             }
         }
 
-        public Boolean IsAM() {
-            return !this.IsPM();
-        }
+        public Boolean IsAM() => !this.IsPM();
 
-        public Boolean IsPM() {
-            return this.Hour.Value >= 12;
-        }
+        public Boolean IsPM() => this.Hour.Value >= 12;
 
         public void ResetTimer( Granularity granularity ) {
             if ( null != this._timer ) {

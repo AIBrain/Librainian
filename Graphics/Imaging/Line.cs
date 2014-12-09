@@ -137,9 +137,7 @@ namespace Librainian.Graphics.Imaging {
         ///     true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public bool Equals( Line other ) {
-            return Equal( this, other );
-        }
+        public bool Equals( Line other ) => Equal( this, other );
 
         /// <summary>
         ///     Returns an enumerator that iterates through the collection.
@@ -147,13 +145,7 @@ namespace Librainian.Graphics.Imaging {
         /// <returns>
         ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
         /// </returns>
-        public IEnumerator<Pixel> GetEnumerator() {
-            //return ((IEnumerable<MyType>)myArray).GetEnumerator()
-            return this.Pixels.AsEnumerable().GetEnumerator();
-            //foreach ( var pixel in this.Pixels ) {
-            //    yield return pixel;
-            //}
-        }
+        public IEnumerator<Pixel> GetEnumerator() => this.Pixels.AsEnumerable().GetEnumerator();
 
         /// <summary>
         ///     Returns an enumerator that iterates through a collection.
@@ -161,9 +153,7 @@ namespace Librainian.Graphics.Imaging {
         /// <returns>
         ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
         ///     Determines whether the specified objects are equal.
@@ -173,9 +163,7 @@ namespace Librainian.Graphics.Imaging {
         /// </returns>
         /// <param name="x">The first object of type <paramref name="T" /> to compare.</param>
         /// <param name="y">The second object of type <paramref name="T" /> to compare.</param>
-        public bool Equals( Line x, Line y ) {
-            return Equal( x, y );
-        }
+        public bool Equals( Line x, Line y ) => Equal( x, y );
 
         /// <summary>
         ///     Returns a hash code for the specified object.
@@ -188,8 +176,6 @@ namespace Librainian.Graphics.Imaging {
         ///     The type of <paramref name="obj" /> is a reference type and
         ///     <paramref name="obj" /> is null.
         /// </exception>
-        public int GetHashCode( Line obj ) {
-            return this.Pixels.GetHashCode(); //HACK todo, this needs testing!
-        }
+        public int GetHashCode( Line obj ) => this.Pixels.GetHashCode();
     }
 }

@@ -114,9 +114,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        private static Boolean IsMarkedImmutable( Type type ) {
-            return ReflectionHelper.TypeHasAttribute<ImmutableAttribute>( type );
-        }
+        private static Boolean IsMarkedImmutable( Type type ) => ReflectionHelper.TypeHasAttribute<ImmutableAttribute>( type );
 
         private static Boolean IsWhiteListed( Type type ) {
             // Boolean, int, etc.
@@ -169,9 +167,7 @@ namespace Librainian.Extensions {
             protected MutableBaseException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
             [SuppressMessage( "Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object)" )]
-            private static String FormatMessage( Type type ) {
-                return String.Format( "'{0}' is mutable because its base type ('[{1}]') is mutable.", type, type.BaseType );
-            }
+            private static String FormatMessage( Type type ) => String.Format( "'{0}' is mutable because its base type ('[{1}]') is mutable.", type, type.BaseType );
         }
 
         private class MutableFieldException : ImmutableFailureException {
@@ -180,9 +176,7 @@ namespace Librainian.Extensions {
             protected MutableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
             [SuppressMessage( "Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object,System.Object)" )]
-            private static String FormatMessage( FieldInfo fieldInfo ) {
-                return String.Format( "'{0}' is mutable because '{1}' of type '{2}' is mutable.", fieldInfo.DeclaringType, fieldInfo.Name, fieldInfo.FieldType );
-            }
+            private static String FormatMessage( FieldInfo fieldInfo ) => String.Format( "'{0}' is mutable because '{1}' of type '{2}' is mutable.", fieldInfo.DeclaringType, fieldInfo.Name, fieldInfo.FieldType );
         }
 
         private class WritableFieldException : ImmutableFailureException {
@@ -191,9 +185,7 @@ namespace Librainian.Extensions {
             protected WritableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
             [SuppressMessage( "Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object)" )]
-            private static String FormatMessage( FieldInfo fieldInfo ) {
-                return String.Format( "'{0}' is mutable because field '{1}' is not marked 'readonly'.", fieldInfo.DeclaringType, fieldInfo.Name );
-            }
+            private static String FormatMessage( FieldInfo fieldInfo ) => String.Format( "'{0}' is mutable because field '{1}' is not marked 'readonly'.", fieldInfo.DeclaringType, fieldInfo.Name );
         }
     }
 }

@@ -16,18 +16,13 @@
         private const uint TemperingMaskB = 0x9d2c5680;
         private const uint TemperingMaskC = 0xefc60000;
 
-        private static uint TEMPERING_SHIFT_U( uint y ) {
-            return ( y >> 11 );
-        }
-        private static uint TEMPERING_SHIFT_S( uint y ) {
-            return ( y << 7 );
-        }
-        private static uint TEMPERING_SHIFT_T( uint y ) {
-            return ( y << 15 );
-        }
-        private static uint TEMPERING_SHIFT_L( uint y ) {
-            return ( y >> 18 );
-        }
+        private static uint TEMPERING_SHIFT_U( uint y ) => ( y >> 11 );
+
+        private static uint TEMPERING_SHIFT_S( uint y ) => ( y << 7 );
+
+        private static uint TEMPERING_SHIFT_T( uint y ) => ( y << 15 );
+
+        private static uint TEMPERING_SHIFT_L( uint y ) => ( y >> 18 );
 
         private readonly uint[] _mt = new uint[ N ]; /* the array for the state vector  */
 
@@ -86,13 +81,9 @@
             return y;
         }
 
-        public virtual uint NextUInt() {
-            return this.GenerateUInt();
-        }
+        public virtual uint NextUInt() => this.GenerateUInt();
 
-        public virtual uint NextUInt( uint maxValue ) {
-            return ( uint )( this.GenerateUInt() / ( ( Double )uint.MaxValue / maxValue ) );
-        }
+        public virtual uint NextUInt( uint maxValue ) => ( uint )( this.GenerateUInt() / ( ( Double )uint.MaxValue / maxValue ) );
 
         public virtual uint NextUInt( uint minValue, uint maxValue ) /* throws ArgumentOutOfRangeException */
         {
@@ -103,9 +94,7 @@
             return ( uint )( this.GenerateUInt() / ( ( Double )uint.MaxValue / ( maxValue - minValue ) ) + minValue );
         }
 
-        public override int Next() {
-            return this.Next( int.MaxValue );
-        }
+        public override int Next() => this.Next( int.MaxValue );
 
         public override int Next( int maxValue ) /* throws ArgumentOutOfRangeException */
         {
@@ -147,8 +136,6 @@
             }
         }
 
-        public override Double NextDouble() {
-            return ( Double )this.GenerateUInt() / ( ( ulong )uint.MaxValue + 1 );
-        }
+        public override Double NextDouble() => ( Double )this.GenerateUInt() / ( ( ulong )uint.MaxValue + 1 );
     }
 }

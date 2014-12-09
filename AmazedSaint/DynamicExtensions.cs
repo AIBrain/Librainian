@@ -62,18 +62,14 @@ namespace Librainian.AmazedSaint {
         /// </summary>
         /// <param name="e"></param>
         /// <returns></returns>
-        public static dynamic ToElastic( this XElement e ) {
-            return ElasticFromXElement( e );
-        }
+        public static dynamic ToElastic( this XElement e ) => ElasticFromXElement( e );
 
         /// <summary>
         ///     Converts an expando to XElement
         /// </summary>
         /// <param name="e"></param>
         /// <returns></returns>
-        public static XElement ToXElement( this ElasticObject e ) {
-            return XElementFromElastic( e );
-        }
+        public static XElement ToXElement( this ElasticObject e ) => XElementFromElastic( e );
 
         /// <summary>
         ///     Returns an XElement from an ElasticObject

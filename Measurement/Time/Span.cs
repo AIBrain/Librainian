@@ -540,18 +540,14 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="span"></param>
         /// <returns></returns>
-        public static explicit operator Span( TimeSpan span ) {
-            return new Span( span );
-        }
+        public static explicit operator Span( TimeSpan span ) => new Span( span );
 
         /// <summary>
         ///     Allow an automatic cast to <see cref="TimeSpan" />.
         /// </summary>
         /// <param name="span"></param>
         /// <returns></returns>
-        public static implicit operator TimeSpan( Span span ) {
-            return new TimeSpan( ( int )span.Days.Value, ( int )span.Hours.Value, ( int )span.Minutes.Value, ( int )span.Seconds.Value, ( int )span.Milliseconds.Value );
-        }
+        public static implicit operator TimeSpan( Span span ) => new TimeSpan( ( int )span.Days.Value, ( int )span.Hours.Value, ( int )span.Minutes.Value, ( int )span.Seconds.Value, ( int )span.Milliseconds.Value );
 
         /// <summary>
         ///     <para>Given the <paramref name="left" /> <see cref="Span" />,</para>
@@ -572,9 +568,7 @@ namespace Librainian.Measurement.Time {
         //public Span( When min, When max ) {
         //    var difference = max - min; // difference.Value now has the total number of planckTimes since the big bang (difference.Value is a BigInteger).
         //    var bo = 5.850227064E+53;
-        public static Boolean operator !=( Span t1, Span t2 ) {
-            return !Equals( t1, t2 );
-        }
+        public static Boolean operator !=( Span t1, Span t2 ) => !Equals( t1, t2 );
 
         //    //BigInteger.DivRem
         //    //var  = difference % Attoseconds.One.Value;
@@ -586,29 +580,17 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Span operator +( Span left, Span right ) {
-            return Combine( left, right );
-        }
+        public static Span operator +( Span left, Span right ) => Combine( left, right );
 
-        public static Boolean operator <( Span left, Span right ) {
-            return left.TotalPlanckTimes < right.TotalPlanckTimes;
-        }
+        public static Boolean operator <( Span left, Span right ) => left.TotalPlanckTimes < right.TotalPlanckTimes;
 
-        public static Boolean operator <=( Span left, Span right ) {
-            return left.TotalPlanckTimes <= right.TotalPlanckTimes;
-        }
+        public static Boolean operator <=( Span left, Span right ) => left.TotalPlanckTimes <= right.TotalPlanckTimes;
 
-        public static Boolean operator ==( Span left, Span right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Span left, Span right ) => Equals( left, right );
 
-        public static Boolean operator >( Span left, Span right ) {
-            return left.TotalPlanckTimes > right.TotalPlanckTimes;
-        }
+        public static Boolean operator >( Span left, Span right ) => left.TotalPlanckTimes > right.TotalPlanckTimes;
 
-        public static Boolean operator >=( Span left, Span right ) {
-            return left.TotalPlanckTimes >= right.TotalPlanckTimes;
-        }
+        public static Boolean operator >=( Span left, Span right ) => left.TotalPlanckTimes >= right.TotalPlanckTimes;
 
         ///// <summary>
         ///// Allow a known cast to <see cref="TimeSpan"/>.
@@ -767,17 +749,11 @@ namespace Librainian.Measurement.Time {
             return String.Format( "{0} seconds", asSeconds );
         }
 
-        public int CompareTo( Span other ) {
-            return CompareTo( this, other );
-        }
+        public int CompareTo( Span other ) => CompareTo( this, other );
 
-        public int CompareTo( TimeSpan other ) {
-            return CompareTo( this, new Span( other ) );
-        }
+        public int CompareTo( TimeSpan other ) => CompareTo( this, new Span( other ) );
 
-        public Boolean Equals( Span obj ) {
-            return Equals( this, obj );
-        }
+        public Boolean Equals( Span obj ) => Equals( this, obj );
 
         /// <summary>
         ///     Indicates whether this instance and a specified object are equal.
@@ -821,9 +797,7 @@ namespace Librainian.Measurement.Time {
         ///     A 32-bit signed integer that is the hash code for this instance.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public override int GetHashCode() {
-            return this.PlanckTimes.GetHashMerge( this.Yoctoseconds.GetHashMerge( this.Zeptoseconds.GetHashMerge( this.Attoseconds.GetHashMerge( this.Femtoseconds.GetHashMerge( this.Picoseconds.GetHashMerge( this.Nanoseconds.GetHashMerge( this.Microseconds.GetHashMerge( this.Milliseconds.GetHashMerge( this.Seconds.GetHashMerge( this.Minutes.GetHashMerge( this.Hours.GetHashMerge( this.Days.GetHashMerge( this.Weeks.GetHashMerge( this.Months.GetHashMerge( this.Years ) ) ) ) ) ) ) ) ) ) ) ) ) ) );
-        }
+        public override int GetHashCode() => this.PlanckTimes.GetHashMerge( this.Yoctoseconds.GetHashMerge( this.Zeptoseconds.GetHashMerge( this.Attoseconds.GetHashMerge( this.Femtoseconds.GetHashMerge( this.Picoseconds.GetHashMerge( this.Nanoseconds.GetHashMerge( this.Microseconds.GetHashMerge( this.Milliseconds.GetHashMerge( this.Seconds.GetHashMerge( this.Minutes.GetHashMerge( this.Hours.GetHashMerge( this.Days.GetHashMerge( this.Weeks.GetHashMerge( this.Months.GetHashMerge( this.Years ) ) ) ) ) ) ) ) ) ) ) ) ) ) );
 
         /// <summary>
         ///     <para>Returns a <see cref="BigInteger" /> of all the whole (integer) years in this <see cref="Span" />.</para>
@@ -833,9 +807,7 @@ namespace Librainian.Measurement.Time {
             return ( BigInteger ) span.Years.Value;
         }
 
-        Boolean IEquatable<Span>.Equals( Span other ) {
-            return this.Equals( obj: other );
-        }
+        Boolean IEquatable<Span>.Equals( Span other ) => this.Equals( obj: other );
 
         [Pure]
         public override String ToString() {

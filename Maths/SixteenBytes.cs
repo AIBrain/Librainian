@@ -1,4 +1,4 @@
-#region License & Information
+
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
@@ -14,24 +14,27 @@
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/WithTime.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
-#endregion
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/SixteenBytes.cs" was last cleaned by Rick on 2014/12/09 at 9:37 AM
 
-namespace Librainian.Collections {
-    using System;
-    using System.Runtime.Serialization;
-
-    [DataContract( IsReference = true )]
-    public class WithTime< T > {
-        [DataMember] [OptionalField] public readonly T Item;
-
-        [DataMember] [OptionalField] public readonly DateTime TimeStamp;
-
-        public WithTime( T item ) {
-            this.TimeStamp = DateTime.UtcNow;
-            this.Item = item;
-        }
-
-        public override String ToString() => String.Format( "{0} @ {1:s}", this.Item, this.TimeStamp );
+namespace Librainian.Maths {
+    public struct SixteenBytes {
+        public byte A;
+        public byte B;
+        public byte C;
+        public byte D;
+        public byte E;
+        public byte F;
+        public byte G;
+        public byte H;
+        public byte I;
+        public byte J;
+        public byte K;
+        public byte L;
+        public byte M;
+        public byte N;
+        public byte O;
+        public byte P;
     }
 }

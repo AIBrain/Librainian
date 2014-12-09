@@ -94,13 +94,9 @@ namespace Librainian.Maths {
             }
         }
 
-        public static implicit operator Single( PotentialF special ) {
-            return special.Value;
-        }
+        public static implicit operator Single( PotentialF special ) => special.Value;
 
-        public static PotentialF Parse( String value ) {
-            return new PotentialF( Single.Parse( value ) );
-        }
+        public static PotentialF Parse( String value ) => new PotentialF( Single.Parse( value ) );
 
         public void Add( Single amount ) {
             this.Value += amount;
@@ -110,17 +106,13 @@ namespace Librainian.Maths {
             this.Value /= amount;
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
 
         public void Multiply( Single amount ) {
             this.Value *= amount;
         }
 
-        public override String ToString() {
-            return String.Format( "{0:P3}", this.Value );
-        }
+        public override String ToString() => String.Format( "{0:P3}", this.Value );
 
         //public void DropByRelative( PotentialF percentage ) {
         //    this.Value -= percentage.Value * this.Value;

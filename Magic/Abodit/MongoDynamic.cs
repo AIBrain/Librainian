@@ -197,9 +197,7 @@ namespace Librainian.Magic.Abodit {
         ///     Because the returned object supports ALL of the interfaces that have ever been added to this object
         ///     you can cast it to any of them.  This enables a type of polymorphism.
         /// </remarks>
-        public object ActLikeAllInterfacesPresent() {
-            return Impromptu.DynamicActLike( this, this.GetAllInterfaces() );
-        }
+        public object ActLikeAllInterfacesPresent() => Impromptu.DynamicActLike( this, this.GetAllInterfaces() );
 
         /// <summary>
         ///     Fetch a property by name
@@ -237,8 +235,6 @@ namespace Librainian.Magic.Abodit {
             return true;
         }
 
-        public override IEnumerable<String> GetDynamicMemberNames() {
-            return new[] { "_id", InterfacesField }.Concat( this._children.Keys );
-        }
+        public override IEnumerable<String> GetDynamicMemberNames() => new[] { "_id", InterfacesField }.Concat( this._children.Keys );
     }
 }

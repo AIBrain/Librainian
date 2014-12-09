@@ -33,13 +33,9 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public Byte this[ int i ] { get { return this.HashBytes[ i ]; } set { this.HashBytes[ i ] = value; } }
 
-        public static implicit operator Byte[]( Hash h ) {
-            return h.HashBytes;
-        }
+        public static implicit operator Byte[]( Hash h ) => h.HashBytes;
 
-        public static implicit operator Hash( Byte[] b ) {
-            return new Hash( b );
-        }
+        public static implicit operator Hash( Byte[] b ) => new Hash( b );
 
         public override Boolean Equals( Object h ) {
             var hash1 = h as Hash;

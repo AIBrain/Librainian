@@ -123,9 +123,7 @@ namespace Librainian.Collections {
         ///     If the specified action is <see langword="null" />.
         /// </exception>
         /// <seealso cref="IQueue{T}.Drain(Action{T}, int)" />
-        public virtual int Drain( Action< T > action ) {
-            return this.Drain( action, null );
-        }
+        public virtual int Drain( Action< T > action ) => this.Drain( action, null );
 
         /// <summary>
         ///     Removes all elements that pass the given <paramref name="criteria" />
@@ -187,9 +185,7 @@ namespace Librainian.Collections {
         ///     If the specified action is <see langword="null" />.
         /// </exception>
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
-        public virtual int Drain( Action< T > action, int maxElements ) {
-            return this.Drain( action, maxElements, null );
-        }
+        public virtual int Drain( Action< T > action, int maxElements ) => this.Drain( action, maxElements, null );
 
         /// <summary>
         ///     Removes at most the given number of elements that pass the given
@@ -318,9 +314,7 @@ namespace Librainian.Collections {
         ///     Does the real work for the <see cref="AbstractQueue{T}.Drain(System.Action{T})" />
         ///     and <see cref="AbstractQueue{T}.Drain(System.Action{T},Predicate{T})" />.
         /// </summary>
-        protected internal virtual int DoDrain( Action< T > action, Predicate< T > criteria ) {
-            return this.DoDrain( action, int.MaxValue, criteria );
-        }
+        protected internal virtual int DoDrain( Action< T > action, Predicate< T > criteria ) => this.DoDrain( action, int.MaxValue, criteria );
 
         /// <summary>
         ///     Does the real work for all drain methods. Caller must

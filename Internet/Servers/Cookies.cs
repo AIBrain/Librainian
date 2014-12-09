@@ -63,9 +63,7 @@ namespace Librainian.Internet.Servers {
         /// </summary>
         /// <param name="name">The cookie's name.</param>
         /// <param name="value">The cookie's value.</param>
-        public void Add( String name, String value ) {
-            this.Add( name, value, TimeSpan.Zero );
-        }
+        public void Add( String name, String value ) => this.Add( name, value, TimeSpan.Zero );
 
         /// <summary>
         ///     Adds a cookie with the specified name, value, and lifespan.

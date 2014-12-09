@@ -61,20 +61,14 @@ namespace Librainian.Maths {
         ///     Returns the incremented Identity
         /// </summary>
         /// <returns> </returns>
-        public UInt64 Next() {
-            return ( UInt64 )Interlocked.Increment( ref this._identity );
-        }
+        public UInt64 Next() => ( UInt64 )Interlocked.Increment( ref this._identity );
 
         /// <summary>
         ///     Resets the Identity to the specified seed value
         /// </summary>
         /// <param name="newIdentity"> </param>
-        public void Reseed( UInt64 newIdentity ) {
-            Interlocked.Exchange( ref this._identity, ( long )newIdentity );
-        }
+        public void Reseed( UInt64 newIdentity ) => Interlocked.Exchange( ref this._identity, ( long )newIdentity );
 
-        public override String ToString() {
-            return String.Format( "{0}", this.Identity );
-        }
+        public override String ToString() => String.Format( "{0}", this.Identity );
     }
 }

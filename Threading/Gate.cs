@@ -82,16 +82,12 @@ namespace Librainian.Threading {
         ///     Attempts to close the gate
         /// </summary>
         /// <returns>true if the operation was successful</returns>
-        public Boolean TryClose() {
-            return 1 == Interlocked.CompareExchange( ref this._value, 0, 1 );
-        }
+        public Boolean TryClose() => 1 == Interlocked.CompareExchange( ref this._value, 0, 1 );
 
         /// <summary>
         ///     Attempts to open the gate
         /// </summary>
         /// <returns>true if the operation was successful</returns>
-        public Boolean TryOpen() {
-            return 0 == Interlocked.CompareExchange( ref this._value, 1, 0 );
-        }
+        public Boolean TryOpen() => 0 == Interlocked.CompareExchange( ref this._value, 1, 0 );
     }
 }

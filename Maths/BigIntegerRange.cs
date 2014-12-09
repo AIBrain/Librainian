@@ -91,9 +91,7 @@ namespace Librainian.Maths {
         /// <returns>
         ///     <b>True</b> if the specified value is inside this range or <b>false</b> otherwise.
         /// </returns>
-        public Boolean IsInside( BigInteger x ) {
-            return this.Min <= x && x <= this.Max;
-        }
+        public Boolean IsInside( BigInteger x ) => this.Min <= x && x <= this.Max;
 
         /// <summary>
         ///     Check if the specified range overlaps with this range
@@ -102,8 +100,6 @@ namespace Librainian.Maths {
         /// <returns>
         ///     <b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.
         /// </returns>
-        public Boolean IsOverlapping( BigIntegerRange range ) {
-            return this.IsInside( range.Min ) || this.IsInside( range.Max );
-        }
+        public Boolean IsOverlapping( BigIntegerRange range ) => this.IsInside( range.Min ) || this.IsInside( range.Max );
     }
 }

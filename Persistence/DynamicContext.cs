@@ -13,9 +13,7 @@ namespace Librainian.Persistence {
     public class DynamicContext : DynamicObject, ISerializable {
         private readonly Dictionary<string, object> _dynamicContext = new Dictionary<string, object>();
 
-        public override bool TryGetMember( GetMemberBinder binder, out object result ) {
-            return ( this._dynamicContext.TryGetValue( binder.Name, out result ) );
-        }
+        public override bool TryGetMember( GetMemberBinder binder, out object result ) => ( this._dynamicContext.TryGetValue( binder.Name, out result ) );
 
         public override bool TrySetMember( SetMemberBinder binder, object value ) {
             this._dynamicContext.Add( binder.Name, value );

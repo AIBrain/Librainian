@@ -9,8 +9,6 @@
         /// </summary>
         /// <param name="time"></param>
         /// <returns></returns>
-        public static String ToCookieTime( this DateTime time ) {
-            return time.ToString( "dd MMM yyyy hh:mm:ss GMT" );
-        }
+        public static String ToCookieTime( this DateTime time ) => time.ToString( "dd MMM yyyy hh:mm:ss GMT" );
     }
 }

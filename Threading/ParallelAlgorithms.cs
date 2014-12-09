@@ -36,10 +36,7 @@ namespace Librainian.Threading {
         /// <param name="source">The input elements to be processed.</param>
         /// <param name="body">The function to execute for each element.</param>
         /// <returns>The result computed.</returns>
-        public static TResult SpeculativeForEach< TSource, TResult >( this IEnumerable< TSource > source, Func< TSource, TResult > body ) {
-            // Run with default options
-            return source.SpeculativeForEach( ThreadingExtensions.Parallelism, body );
-        }
+        public static TResult SpeculativeForEach< TSource, TResult >( this IEnumerable< TSource > source, Func< TSource, TResult > body ) => source.SpeculativeForEach( ThreadingExtensions.Parallelism, body );
 
         /// <summary>Executes a function for each element in a source, returning the first result achieved and ceasing execution.</summary>
         /// <typeparam name="TSource">The type of the data in the source.</typeparam>
@@ -77,9 +74,7 @@ namespace Librainian.Threading {
         /// <param name="options">The options to use for processing the loop.</param>
         /// <param name="body">The function to execute for each element.</param>
         /// <returns>The result computed.</returns>
-        public static TResult SpeculativeFor< TResult >( this int fromInclusive, int toExclusive, Func< int, TResult > body ) {
-            return fromInclusive.SpeculativeFor( toExclusive, ThreadingExtensions.Parallelism, body );
-        }
+        public static TResult SpeculativeFor< TResult >( this int fromInclusive, int toExclusive, Func< int, TResult > body ) => fromInclusive.SpeculativeFor( toExclusive, ThreadingExtensions.Parallelism, body );
 
         /// <summary>Executes a function for each value in a range, returning the first result achieved and ceasing execution.</summary>
         /// <typeparam name="TResult">The type of the data returned.</typeparam>
@@ -224,10 +219,7 @@ namespace Librainian.Threading {
         /// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
         /// <param name="functions">The functions to be executed.</param>
         /// <returns>A result from executing one of the functions.</returns>
-        public static T SpeculativeInvoke< T >( params Func< T >[] functions ) {
-            // Run with default options
-            return ThreadingExtensions.Parallelism.SpeculativeInvoke( functions );
-        }
+        public static T SpeculativeInvoke< T >( params Func< T >[] functions ) => ThreadingExtensions.Parallelism.SpeculativeInvoke( functions );
 
         /// <summary>
         ///     Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE

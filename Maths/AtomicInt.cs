@@ -66,30 +66,20 @@ namespace Librainian.Maths {
         //    return Interlocked.Add( ref this._value, -byAmount );
         //}
 
-        public static implicit operator int( AtomicInt special ) {
-            return special.Value;
-        }
+        public static implicit operator int( AtomicInt special ) => special.Value;
 
-        public static AtomicInt operator -( AtomicInt a1, AtomicInt a2 ) {
-            return new AtomicInt( a1.Value - a2.Value );
-        }
+        public static AtomicInt operator -( AtomicInt a1, AtomicInt a2 ) => new AtomicInt( a1.Value - a2.Value );
 
-        public static AtomicInt operator *( AtomicInt a1, AtomicInt a2 ) {
-            return new AtomicInt( a1.Value * a2.Value );
-        }
+        public static AtomicInt operator *( AtomicInt a1, AtomicInt a2 ) => new AtomicInt( a1.Value * a2.Value );
 
-        public static AtomicInt operator +( AtomicInt a1, AtomicInt a2 ) {
-            return new AtomicInt( a1.Value + a2.Value );
-        }
+        public static AtomicInt operator +( AtomicInt a1, AtomicInt a2 ) => new AtomicInt( a1.Value + a2.Value );
 
         public static AtomicInt operator ++( AtomicInt a1 ) {
             a1.Value++;
             return a1;
         }
 
-        public static AtomicInt Parse( String value ) {
-            return new AtomicInt( int.Parse( value ) );
-        }
+        public static AtomicInt Parse( String value ) => new AtomicInt( int.Parse( value ) );
 
         /// <summary>
         ///     Resets the value to zero if less than zero at this moment in time;
@@ -100,8 +90,6 @@ namespace Librainian.Maths {
             }
         }
 
-        public override String ToString() {
-            return String.Format( "{0}", this.Value );
-        }
+        public override String ToString() => String.Format( "{0}", this.Value );
     }
 }

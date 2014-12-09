@@ -74,9 +74,7 @@ namespace Librainian.Collections {
         /// <returns>
         ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
         /// </returns>
-        public IEnumerator<T> GetEnumerator() {
-            return this._dictionary.Keys.GetEnumerator();
-        }
+        public IEnumerator<T> GetEnumerator() => this._dictionary.Keys.GetEnumerator();
 
         /// <summary>
         ///     Returns an enumerator that iterates through a collection.
@@ -84,9 +82,7 @@ namespace Librainian.Collections {
         /// <returns>
         ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
         ///     Removes the first occurrence of a specific object from the
@@ -102,9 +98,7 @@ namespace Librainian.Collections {
         ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
         ///     read-only.
         /// </exception>
-        public bool Remove( T item ) {
-            return this.TryRemove( item );
-        }
+        public bool Remove( T item ) => this.TryRemove( item );
 
         /// <summary>
         ///     Gets the number of elements in the set.
@@ -207,9 +201,7 @@ namespace Librainian.Collections {
         /// </returns>
         /// <param name="other">The collection to compare to the current set.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-        public bool IsSupersetOf( IEnumerable<T> other ) {
-            return other.AsParallel().All( this.Contains );
-        }
+        public bool IsSupersetOf( IEnumerable<T> other ) => other.AsParallel().All( this.Contains );
 
         /// <summary>
         ///     Determines whether the current set is a correct superset of a specified collection.
@@ -246,9 +238,7 @@ namespace Librainian.Collections {
         /// </returns>
         /// <param name="other">The collection to compare to the current set.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-        public bool Overlaps( IEnumerable<T> other ) {
-            return other.AsParallel().Any( this.Contains );
-        }
+        public bool Overlaps( IEnumerable<T> other ) => other.AsParallel().Any( this.Contains );
 
         /// <summary>
         ///     Determines whether the current set and the specified collection contain the same elements.
@@ -270,9 +260,7 @@ namespace Librainian.Collections {
         ///     true if the element is added to the set; false if the element is already in the set.
         /// </returns>
         /// <param name="item">The element to add to the set.</param>
-        public bool Add( T item ) {
-            return this.TryAdd( item );
-        }
+        public bool Add( T item ) => this.TryAdd( item );
 
         // public T this[ int index ] {
         //     get { return this._dictionary.ElementAt( index ).Key; }
@@ -284,13 +272,9 @@ namespace Librainian.Collections {
         //     }
         //}
 
-        public void Clear() {
-            this._dictionary.Clear();
-        }
+        public void Clear() => this._dictionary.Clear();
 
-        public bool Contains( T item ) {
-            return this._dictionary.ContainsKey( item );
-        }
+        public bool Contains( T item ) => this._dictionary.ContainsKey( item );
 
         /// <summary>
         ///     Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to an
@@ -310,17 +294,11 @@ namespace Librainian.Collections {
         ///     <paramref name="arrayIndex" /> to the end of the destination <paramref name="array" />.-or-Type
         ///     <paramref name="T" /> cannot be cast automatically to the type of the destination <paramref name="array" />.
         /// </exception>
-        public void CopyTo( T[] array, int arrayIndex ) {
-            this.Values.CopyTo( array, arrayIndex );
-        }
+        public void CopyTo( T[] array, int arrayIndex ) => this.Values.CopyTo( array, arrayIndex );
 
-        public T[] ToArray() {
-            return this._dictionary.Keys.ToArray();
-        }
+        public T[] ToArray() => this._dictionary.Keys.ToArray();
 
-        public bool TryAdd( T item ) {
-            return this._dictionary.TryAdd( item, null );
-        }
+        public bool TryAdd( T item ) => this._dictionary.TryAdd( item, null );
 
         public bool TryRemove( T item ) {
             object donotcare;

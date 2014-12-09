@@ -215,9 +215,7 @@ namespace Librainian.Collections {
         ///     </para>
         /// </summary>
         /// <param name="item"></param>
-        public void Add( TType item ) {
-            this.Add( item: item, afterAdd: null );
-        }
+        public void Add( TType item ) => this.Add( item: item, afterAdd: null );
 
         /// <summary>
         ///     Mark this <see cref="ParallelList{TType}" /> to be cleared.
@@ -272,9 +270,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="timeout"></param>
         /// <param name="cancellationToken"></param>
-        public void Wait( Span timeout = default (Span), CancellationToken cancellationToken = default( CancellationToken ) ) {
-            this.CatchUp( timeout, cancellationToken );
-        }
+        public void Wait( Span timeout = default (Span), CancellationToken cancellationToken = default( CancellationToken ) ) => this.CatchUp( timeout, cancellationToken );
 
         /// <summary>
         ///     <para>
@@ -309,13 +305,9 @@ namespace Librainian.Collections {
         ///     </para>
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<TType> GetEnumerator() {
-            return this.Clone().GetEnumerator(); //BUG is this correct?
-        }
+        public IEnumerator<TType> GetEnumerator() => this.Clone().GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
         ///     <para>
@@ -362,9 +354,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Boolean Remove( TType item ) {
-            return this.Remove( item, null );
-        }
+        public Boolean Remove( TType item ) => this.Remove( item, null );
 
         public void RemoveAt( int index ) {
             if ( index < 0 ) {
@@ -602,9 +592,7 @@ namespace Librainian.Collections {
             } ) );
         }
 
-        public Boolean TryAdd( TType item, [CanBeNull] Action afterAdd = null ) {
-            return this.Add( item: item, afterAdd: afterAdd );
-        }
+        public Boolean TryAdd( TType item, [CanBeNull] Action afterAdd = null ) => this.Add( item: item, afterAdd: afterAdd );
 
         /// <summary>
         ///     <para>Try to get an item in this <see cref="ParallelList{TType}" /> by index.</para>

@@ -158,9 +158,7 @@ namespace Librainian.Maths {
             return result;
         }
 
-        public VotallyD Clone() {
-            return new VotallyD( votesForA: this.A, votesForB: this.B );
-        }
+        public VotallyD Clone() => new VotallyD( votesForA: this.A, votesForB: this.B );
 
         /// <summary>
         ///     <para>Increments the votes for candidate <see cref="A" /> by <paramref name="votes" />.</para>
@@ -182,17 +180,11 @@ namespace Librainian.Maths {
             }
         }
 
-        public Double HalfOfVotes() {
-            return this.Votes / 2;
-        }
+        public Double HalfOfVotes() => this.Votes / 2;
 
-        public Boolean IsTied() {
-            return this.A.Near( this.B );
-        }
+        public Boolean IsTied() => this.A.Near( this.B );
 
-        public override String ToString() {
-            return String.Format( "A has {0:P1} and B has {1:P1} of {2:F1} votes.", this.ChanceA(), this.ChanceB, this.Votes );
-        }
+        public override String ToString() => String.Format( "A has {0:P1} and B has {1:P1} of {2:F1} votes.", this.ChanceA(), this.ChanceB, this.Votes );
 
         /// <summary>
         ///     <para>Increments the votes for candidate <see cref="A" /> by <paramref name="votes" />.</para>

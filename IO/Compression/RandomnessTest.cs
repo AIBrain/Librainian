@@ -31,9 +31,7 @@ namespace Librainian.IO.Compression {
         public static RandomnessFeeeding RandomnessFeeeding;
 
         [TestFixtureTearDown]
-        public static void Done() {
-            RandomnessFeeeding.Dispose();
-        }
+        public static void Done() => RandomnessFeeeding.Dispose();
 
         [TestFixtureSetUp]
         [UsedImplicitly]

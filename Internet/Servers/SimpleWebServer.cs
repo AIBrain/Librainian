@@ -190,8 +190,6 @@ namespace Librainian.Internet.Servers {
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose() {
-            this.Stop();
-        }
+        public void Dispose() => this.Stop();
     }
 }

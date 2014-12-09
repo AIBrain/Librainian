@@ -72,41 +72,23 @@ namespace Librainian.Maths {
             }
         }
 
-        public static FuzzyNonTS Combine( FuzzyNonTS value1, FuzzyNonTS value2 ) {
-            return new FuzzyNonTS( ( value1 + value2 ) / 2D );
-        }
+        public static FuzzyNonTS Combine( FuzzyNonTS value1, FuzzyNonTS value2 ) => new FuzzyNonTS( ( value1 + value2 ) / 2D );
 
-        public static FuzzyNonTS Combine( FuzzyNonTS value1, Double value2 ) {
-            return new FuzzyNonTS( ( value1 + value2 ) / 2D );
-        }
+        public static FuzzyNonTS Combine( FuzzyNonTS value1, Double value2 ) => new FuzzyNonTS( ( value1 + value2 ) / 2D );
 
-        public static FuzzyNonTS Combine( Double value1, FuzzyNonTS value2 ) {
-            return new FuzzyNonTS( ( value1 + value2 ) / 2D );
-        }
+        public static FuzzyNonTS Combine( Double value1, FuzzyNonTS value2 ) => new FuzzyNonTS( ( value1 + value2 ) / 2D );
 
-        public static Double Combine( Double value1, Double value2 ) {
-            return ( value1 + value2 ) / 2D;
-        }
+        public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
 
-        public static implicit operator Double( FuzzyNonTS special ) {
-            return special.Value;
-        }
+        public static implicit operator Double( FuzzyNonTS special ) => special.Value;
 
-        public static Boolean IsFalser( FuzzyNonTS special ) {
-            return null != special && special.Value <= Falser.Value;
-        }
+        public static Boolean IsFalser( FuzzyNonTS special ) => null != special && special.Value <= Falser.Value;
 
-        public static Boolean IsTruer( FuzzyNonTS special ) {
-            return null != special && special.Value >= Truer.Value;
-        }
+        public static Boolean IsTruer( FuzzyNonTS special ) => null != special && special.Value >= Truer.Value;
 
-        public static Boolean IsUndecided( FuzzyNonTS special ) {
-            return !IsTruer( special ) && !IsFalser( special );
-        }
+        public static Boolean IsUndecided( FuzzyNonTS special ) => !IsTruer( special ) && !IsFalser( special );
 
-        public static FuzzyNonTS Parse( String value ) {
-            return new FuzzyNonTS( Double.Parse( value ) );
-        }
+        public static FuzzyNonTS Parse( String value ) => new FuzzyNonTS( Double.Parse( value ) );
 
         public void LessLikely() {
             this.Value = ( this.Value + MinValue ) / 2D;
@@ -143,9 +125,7 @@ namespace Librainian.Maths {
             }
         }
 
-        public override String ToString() {
-            return String.Format( "{0:R}", this.Value );
-        }
+        public override String ToString() => String.Format( "{0:R}", this.Value );
 
         //public override Boolean Equals( object obj ) {
         //    var other = obj as FuzzyNonTS;

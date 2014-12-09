@@ -71,9 +71,7 @@ namespace Librainian.IO.Streams {
         /// Methods were called after the stream was closed.
         /// </exception>
         /// <filterpriority>1</filterpriority>
-        public override long Seek( long offset, SeekOrigin origin ) {
-            return this.Stream.Seek( offset: offset, origin: origin );
-        }
+        public override long Seek( long offset, SeekOrigin origin ) => this.Stream.Seek( offset: offset, origin: origin );
 
         /// <summary>
         /// When overridden in a derived class, sets the length of the current stream.
@@ -88,9 +86,7 @@ namespace Librainian.IO.Streams {
         /// Methods were called after the stream was closed.
         /// </exception>
         /// <filterpriority>2</filterpriority>
-        public override void SetLength( long value ) {
-            this.Stream.SetLength( value: value );
-        }
+        public override void SetLength( long value ) => this.Stream.SetLength( value: value );
 
         /// <summary>
         /// When overridden in a derived class, writes a sequence of bytes to the current stream and
@@ -121,8 +117,6 @@ namespace Librainian.IO.Streams {
         /// Methods were called after the stream was closed.
         /// </exception>
         /// <filterpriority>1</filterpriority>
-        public override void Write( byte[] buffer, int offset, int count ) {
-            this.Stream.Write( buffer: buffer, offset: offset, count: count );
-        }
+        public override void Write( byte[] buffer, int offset, int count ) => this.Stream.Write( buffer: buffer, offset: offset, count: count );
     }
 }

@@ -39,13 +39,9 @@ namespace Librainian.Extensions {
             return String.IsNullOrEmpty( res ) ? defaultValue : Regex.Replace( res, @"[^\w]", "_", RegexOptions.Singleline ).Substring( 0, 50 );
         }
 
-        public static Boolean IsNameOnlyQueryString( this String res ) {
-            return !String.IsNullOrEmpty( res ) && res[ 0 ] == '?';
-        }
+        public static Boolean IsNameOnlyQueryString( this String res ) => !String.IsNullOrEmpty( res ) && res[ 0 ] == '?';
 
-        public static String UrlDecode( this String input ) {
-            return HttpUtility.UrlDecode( input );
-        }
+        public static String UrlDecode( this String input ) => HttpUtility.UrlDecode( input );
 
         /// <summary>
         ///     Uses Uri.EscapeDataString() based on recommendations on MSDN
@@ -74,25 +70,17 @@ namespace Librainian.Extensions {
             return sb.ToString();
         }
 
-        public static String HtmlDecode( this String input ) {
-            return HttpUtility.HtmlDecode( input );
-        }
+        public static String HtmlDecode( this String input ) => HttpUtility.HtmlDecode( input );
 
-        public static String HtmlEncode( this String input ) {
-            return HttpUtility.HtmlEncode( input );
-        }
+        public static String HtmlEncode( this String input ) => HttpUtility.HtmlEncode( input );
 
-        public static String HtmlAttributeEncode( this String input ) {
-            return HttpUtility.HtmlAttributeEncode( input );
-        }
+        public static String HtmlAttributeEncode( this String input ) => HttpUtility.HtmlAttributeEncode( input );
 
         /// <summary>
         /// Check that a String is not null or empty
         /// </summary>
         /// <param name="input">String to check</param>
         /// <returns>bool</returns>
-        public static bool HasValue( this String input ) {
-            return !String.IsNullOrEmpty( input );
-        }
+        public static bool HasValue( this String input ) => !String.IsNullOrEmpty( input );
     }
 }

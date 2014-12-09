@@ -15,9 +15,7 @@ namespace Librainian.Internet {
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI from which to download data.</param>
         /// <returns>A Task that contains the downloaded data.</returns>
-        public static Task<byte[]> DownloadDataTask( this WebClient webClient, String address ) {
-            return DownloadDataTask( webClient, new Uri( address ) );
-        }
+        public static Task<byte[]> DownloadDataTask( this WebClient webClient, String address ) => DownloadDataTask( webClient, new Uri( address ) );
 
         /// <summary>Downloads the resource with the specified URI as a byte array, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
@@ -52,9 +50,7 @@ namespace Librainian.Internet {
         /// <param name="address">The URI from which to download data.</param>
         /// <param name="fileName">The name of the local file that is to receive the data.</param>
         /// <returns>A Task that contains the downloaded data.</returns>
-        public static Task DownloadFileTask( this WebClient webClient, String address, String fileName ) {
-            return DownloadFileTask( webClient, new Uri( address ), fileName );
-        }
+        public static Task DownloadFileTask( this WebClient webClient, String address, String fileName ) => DownloadFileTask( webClient, new Uri( address ), fileName );
 
         /// <summary>Downloads the resource with the specified URI to a local file, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
@@ -89,9 +85,7 @@ namespace Librainian.Internet {
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI from which to download data.</param>
         /// <returns>A Task that contains the downloaded String.</returns>
-        public static Task<String> DownloadStringTask( this WebClient webClient, String address ) {
-            return DownloadStringTask( webClient, new Uri( address ) );
-        }
+        public static Task<String> DownloadStringTask( this WebClient webClient, String address ) => DownloadStringTask( webClient, new Uri( address ) );
 
         /// <summary>Downloads the resource with the specified URI as a String, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
@@ -125,9 +119,7 @@ namespace Librainian.Internet {
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI for which the stream should be opened.</param>
         /// <returns>A Task that contains the opened stream.</returns>
-        public static Task<Stream> OpenReadTask( this WebClient webClient, String address ) {
-            return OpenReadTask( webClient, new Uri( address ) );
-        }
+        public static Task<Stream> OpenReadTask( this WebClient webClient, String address ) => OpenReadTask( webClient, new Uri( address ) );
 
         /// <summary>Opens a readable stream for the data downloaded from a resource, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
@@ -162,9 +154,7 @@ namespace Librainian.Internet {
         /// <param name="address">The URI for which the stream should be opened.</param>
         /// <param name="method">The HTTP method that should be used to open the stream.</param>
         /// <returns>A Task that contains the opened stream.</returns>
-        public static Task<Stream> OpenWriteTask( this WebClient webClient, String address, String method ) {
-            return OpenWriteTask( webClient, new Uri( address ), method );
-        }
+        public static Task<Stream> OpenWriteTask( this WebClient webClient, String address, String method ) => OpenWriteTask( webClient, new Uri( address ), method );
 
         /// <summary>Opens a writeable stream for uploading data to a resource, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
@@ -201,9 +191,7 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the data.</param>
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<byte[]> UploadDataTask( this WebClient webClient, String address, String method, byte[] data ) {
-            return UploadDataTask( webClient, new Uri( address ), method, data );
-        }
+        public static Task<byte[]> UploadDataTask( this WebClient webClient, String address, String method, byte[] data ) => UploadDataTask( webClient, new Uri( address ), method, data );
 
         /// <summary>Uploads data to the specified resource, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
@@ -241,9 +229,7 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the file.</param>
         /// <param name="fileName">A path to the file to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<byte[]> UploadFileTask( this WebClient webClient, String address, String method, String fileName ) {
-            return UploadFileTask( webClient, new Uri( address ), method, fileName );
-        }
+        public static Task<byte[]> UploadFileTask( this WebClient webClient, String address, String method, String fileName ) => UploadFileTask( webClient, new Uri( address ), method, fileName );
 
         /// <summary>Uploads a file to the specified resource, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
@@ -281,9 +267,7 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the data.</param>
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<String> UploadStringTask( this WebClient webClient, String address, String method, String data ) {
-            return UploadStringTask( webClient, new Uri( address ), method, data );
-        }
+        public static Task<String> UploadStringTask( this WebClient webClient, String address, String method, String data ) => UploadStringTask( webClient, new Uri( address ), method, data );
 
         /// <summary>Uploads data in a String to the specified resource, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>

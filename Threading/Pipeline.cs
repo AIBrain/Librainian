@@ -75,10 +75,7 @@ namespace Librainian.Threading {
            return Task.Run( () => { Parallel.ForEach( this._valueQueue.GetConsumingEnumerable(), wrapper => wrapper.Callback( wrapper.Value, this._pipelineFunction( wrapper.Value ) ) ); } );
         }
 
-        public void StopProcessing() {
-            // signal to the collection that no further values will be added
-            this._valueQueue.CompleteAdding();
-        }
+        public void StopProcessing() => this._valueQueue.CompleteAdding();
 
         private sealed class ValueCallBackWrapper {
             public Action< TInput, TOutput > Callback;

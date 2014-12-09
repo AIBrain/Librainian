@@ -112,13 +112,9 @@ namespace Librainian.Collections {
             }
         }
 
-        public IEnumerator<T> GetEnumerator() {
-            return this.Clone().GetEnumerator();
-        }
+        public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public int IndexOf( T item ) {
             lock ( this._items ) {

@@ -140,9 +140,7 @@ namespace Librainian.Maths {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Percentage Combine( Percentage left, Percentage right ) {
-            return new Percentage( ( left.Quotient + right.Quotient ) / 2.0 );
-        }
+        public static Percentage Combine( Percentage left, Percentage right ) => new Percentage( ( left.Quotient + right.Quotient ) / 2.0 );
 
         /// <summary>
         ///     static comparison
@@ -160,24 +158,16 @@ namespace Librainian.Maths {
             return left.Quotient == right.Quotient;
         }
 
-        public static implicit operator Double( Percentage special ) {
-            return ( Double )special.Quotient;
-        }
+        public static implicit operator Double( Percentage special ) => ( Double )special.Quotient;
 
-        public static implicit operator Percentage( Single value ) {
-            return new Percentage( value );
-        }
+        public static implicit operator Percentage( Single value ) => new Percentage( value );
 
         //public static implicit operator  System.Decimal( Percentage special ) {
         //    return (  System.Decimal )special.Value;
         //}
-        public static implicit operator Percentage( Double value ) {
-            return new Percentage( value );
-        }
+        public static implicit operator Percentage( Double value ) => new Percentage( value );
 
-        public static Percentage operator +( Percentage left, Percentage right ) {
-            return Combine( left, right );
-        }
+        public static Percentage operator +( Percentage left, Percentage right ) => Combine( left, right );
 
         public static Percentage Parse( [NotNull] String value ) {
             if ( value == null ) {
@@ -199,9 +189,7 @@ namespace Librainian.Maths {
         }
 
         [Pure]
-        public int CompareTo( Double other ) {
-            return ( ( Double )this.Quotient ).CompareTo( other );
-        }
+        public int CompareTo( Double other ) => ( ( Double )this.Quotient ).CompareTo( other );
 
         [Pure]
         public int CompareTo( [NotNull] Percentage other ) {
@@ -218,8 +206,6 @@ namespace Librainian.Maths {
             return Equals( this, other );
         }
 
-        public override String ToString() {
-            return String.Format( "{0}", this.Quotient );
-        }
+        public override String ToString() => String.Format( "{0}", this.Quotient );
     }
 }

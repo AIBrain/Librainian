@@ -123,13 +123,9 @@ namespace Librainian.Measurement.Length {
             }
         }
 
-        public static Feet Combine( Feet left, BigDecimal feet ) {
-            return new Feet( left.Value + feet );
-        }
+        public static Feet Combine( Feet left, BigDecimal feet ) => new Feet( left.Value + feet );
 
-        public static Feet Combine( Feet left, BigInteger seconds ) {
-            return new Feet( ( BigInteger )left.Value + seconds );
-        }
+        public static Feet Combine( Feet left, BigInteger seconds ) => new Feet( ( BigInteger )left.Value + seconds );
 
         //public static Feet Combine( Feet left, Feet right ) {
         //    return Combine( ( Feet ) left, right.Value );
@@ -140,57 +136,31 @@ namespace Librainian.Measurement.Length {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Feet left, Feet right ) {
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Feet left, Feet right ) => left.Value == right.Value;
 
-        public static Feet operator -( Feet feet ) {
-            return new Feet( feet.Value * -1 );
-        }
+        public static Feet operator -( Feet feet ) => new Feet( feet.Value * -1 );
 
-        public static Feet operator -( Feet left, Feet right ) {
-            return Combine( left, -right.Value );
-        }
+        public static Feet operator -( Feet left, Feet right ) => Combine( left, -right.Value );
 
-        public static Feet operator -( Feet left, Decimal seconds ) {
-            return Combine( left, -seconds );
-        }
+        public static Feet operator -( Feet left, Decimal seconds ) => Combine( left, -seconds );
 
-        public static Boolean operator !=( Feet left, Feet right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Feet left, Feet right ) => !Equals( left, right );
 
-        public static Feet operator +( Feet left, Feet right ) {
-            return Combine( left, right.Value );
-        }
+        public static Feet operator +( Feet left, Feet right ) => Combine( left, right.Value );
 
-        public static Feet operator +( Feet left, Decimal seconds ) {
-            return Combine( left, seconds );
-        }
+        public static Feet operator +( Feet left, Decimal seconds ) => Combine( left, seconds );
 
-        public static Feet operator +( Feet left, BigInteger seconds ) {
-            return Combine( left, seconds );
-        }
+        public static Feet operator +( Feet left, BigInteger seconds ) => Combine( left, seconds );
 
-        public static Boolean operator <( Feet left, Feet right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Feet left, Feet right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Feet left, Feet right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Feet left, Feet right ) => Equals( left, right );
 
-        public static Boolean operator >( Feet left, Feet right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Feet left, Feet right ) => left.Value > right.Value;
 
-        public int CompareTo( Feet other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( Feet other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Feet other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Feet other ) => Equals( this, other );
 
         public override Boolean Equals( object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
@@ -200,17 +170,13 @@ namespace Librainian.Measurement.Length {
         }
 
         [Pure]
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
 
         public BigDecimal ToMeters() {
             throw new NotImplementedException();
         }
 
-        public override String ToString() {
-            return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "second" ) );
-        }
+        public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "second" ) );
 
         //[Pure]
         //public Millimeters ToMillimeters() {

@@ -200,9 +200,7 @@ namespace Librainian.Extensions {
             public SafeSearchHandle() : base( true ) {
             }
 
-            protected override Boolean ReleaseHandle() {
-                return FindClose( this.handle );
-            }
+            protected override Boolean ReleaseHandle() => FindClose( this.handle );
         }
 
         /// <summary>

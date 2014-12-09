@@ -85,13 +85,9 @@ namespace Librainian.Maths {
 
         //public object Clone() { return new Weight( this ); }
 
-        public static Double Combine( Double value1, Double value2 ) {
-            return ( value1 + value2 ) / 2D;
-        }
+        public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
 
-        public static implicit operator Double( Weight special ) {
-            return special.Value;
-        }
+        public static implicit operator Double( Weight special ) => special.Value;
 
         public static Weight Parse( [NotNull] String value ) {
             if ( value == null ) {
@@ -112,20 +108,12 @@ namespace Librainian.Maths {
             //return this;
         }
 
-        public Boolean IsAgainst() {
-            return this.Value < ( 0.0D - Double.Epsilon );
-        }
+        public Boolean IsAgainst() => this.Value < ( 0.0D - Double.Epsilon );
 
-        public Boolean IsFor() {
-            return this.Value > ( 0.0D + Double.Epsilon );
-        }
+        public Boolean IsFor() => this.Value > ( 0.0D + Double.Epsilon );
 
-        public Boolean IsNeither() {
-            return !this.IsFor() && !this.IsAgainst();
-        }
+        public Boolean IsNeither() => !this.IsFor() && !this.IsAgainst();
 
-        public override String ToString() {
-            return String.Format( "{0:R}", this.Value );
-        }
+        public override String ToString() => String.Format( "{0:R}", this.Value );
     }
 }

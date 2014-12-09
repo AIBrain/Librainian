@@ -71,17 +71,11 @@ namespace Librainian.IO {
             return crc;
         }
 
-        public static UInt32 Compute( byte[] buffer ) {
-            return Compute( DefaultSeed, buffer );
-        }
+        public static UInt32 Compute( byte[] buffer ) => Compute( DefaultSeed, buffer );
 
-        public static UInt32 Compute( UInt32 seed, byte[] buffer ) {
-            return Compute( DefaultPolynomial, seed, buffer );
-        }
+        public static UInt32 Compute( UInt32 seed, byte[] buffer ) => Compute( DefaultPolynomial, seed, buffer );
 
-        public static UInt32 Compute( UInt32 polynomial, UInt32 seed, byte[] buffer ) {
-            return ~CalculateHash( InitializeTable( polynomial ), seed, buffer, 0, buffer.Length );
-        }
+        public static UInt32 Compute( UInt32 polynomial, UInt32 seed, byte[] buffer ) => ~CalculateHash( InitializeTable( polynomial ), seed, buffer, 0, buffer.Length );
 
         public override void Initialize() {
             this._hash = this._seed;

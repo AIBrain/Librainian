@@ -61,25 +61,15 @@ namespace Librainian.Extensions {
             return name;
         }
 
-        public static String[] GetNames() {
-            return names.Values.ToArray();
-        }
+        public static String[] GetNames() => names.Values.ToArray();
 
-        public static IEnumerable< T > GetValues() {
-            return all;
-        }
+        public static IEnumerable< T > GetValues() => all;
 
-        public static Boolean IsDefined( T value ) {
-            return names.Keys.Contains( value );
-        }
+        public static Boolean IsDefined( T value ) => names.Keys.Contains( value );
 
-        public static Boolean IsDefined( String value ) {
-            return sensitiveNames.Keys.Contains( value );
-        }
+        public static Boolean IsDefined( String value ) => sensitiveNames.Keys.Contains( value );
 
-        public static Boolean IsDefined( int value ) {
-            return values.Keys.Contains( value );
-        }
+        public static Boolean IsDefined( int value ) => values.Keys.Contains( value );
 
         public static T Parse( String value ) {
             T parsed;
@@ -138,12 +128,8 @@ namespace Librainian.Extensions {
             return values.TryGetValue( combined, out result ) ? result : default( T );
         }
 
-        public static Boolean TryParse( String value, out T returnValue ) {
-            return sensitiveNames.TryGetValue( value, out returnValue );
-        }
+        public static Boolean TryParse( String value, out T returnValue ) => sensitiveNames.TryGetValue( value, out returnValue );
 
-        public static Boolean TryParse( String value, Boolean ignoreCase, out T returnValue ) {
-            return ignoreCase ? insensitiveNames.TryGetValue( value.ToUpperInvariant(), out returnValue ) : TryParse( value, out returnValue );
-        }
+        public static Boolean TryParse( String value, Boolean ignoreCase, out T returnValue ) => ignoreCase ? insensitiveNames.TryGetValue( value.ToUpperInvariant(), out returnValue ) : TryParse( value, out returnValue );
     }
 }

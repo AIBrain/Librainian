@@ -65,12 +65,8 @@ namespace Librainian.Linguistics {
             return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
 
-        public IEnumerator<Book> GetEnumerator() {
-            return this._tokens.Values.GetEnumerator(); //TODO
-        }
+        public IEnumerator<Book> GetEnumerator() => this._tokens.Values.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

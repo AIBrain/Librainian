@@ -383,9 +383,7 @@ namespace Librainian.Controls {
         }
 
         #region -  Functions  -
-        private static Boolean InDesignMode() {
-            return ( LicenseManager.UsageMode == LicenseUsageMode.Designtime );
-        }
+        private static Boolean InDesignMode() => ( LicenseManager.UsageMode == LicenseUsageMode.Designtime );
 
         private static GraphicsPath RoundRect( RectangleF r, float r1, float r2, float r3, float r4 ) {
             float x = r.X, y = r.Y, w = r.Width, h = r.Height;

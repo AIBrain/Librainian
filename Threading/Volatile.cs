@@ -34,9 +34,7 @@
             /// Read the value without applying any fence
             /// </summary>
             /// <returns>The current value</returns>
-            public int ReadUnfenced() {
-                return this._value;
-            }
+            public int ReadUnfenced() => this._value;
 
             /// <summary>
             /// Read the value applying acquire fence semantic
@@ -63,9 +61,7 @@
             /// </summary>
             /// <returns>The current value</returns>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public int ReadCompilerOnlyFence() {
-                return this._value;
-            }
+            public int ReadCompilerOnlyFence() => this._value;
 
             /// <summary>
             /// Write the value applying release fence semantic
@@ -108,43 +104,33 @@
             /// <param name="newValue">The new value</param>
             /// <param name="comparand">The comparand (expected value)</param>
             /// <returns></returns>
-            public bool AtomicCompareExchange( int newValue, int comparand ) {
-                return Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
-            }
+            public bool AtomicCompareExchange( int newValue, int comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
 
             /// <summary>
             /// Atomically set the value to the given updated value
             /// </summary>
             /// <param name="newValue">The new value</param>
             /// <returns>The original value</returns>
-            public int AtomicExchange( int newValue ) {
-                return Interlocked.Exchange( ref this._value, newValue );
-            }
+            public int AtomicExchange( int newValue ) => Interlocked.Exchange( ref this._value, newValue );
 
             /// <summary>
             /// Atomically add the given value to the current value and return the sum
             /// </summary>
             /// <param name="delta">The value to be added</param>
             /// <returns>The sum of the current value and the given value</returns>
-            public int AtomicAddAndGet( int delta ) {
-                return Interlocked.Add( ref this._value, delta );
-            }
+            public int AtomicAddAndGet( int delta ) => Interlocked.Add( ref this._value, delta );
 
             /// <summary>
             /// Atomically increment the current value and return the new value
             /// </summary>
             /// <returns>The incremented value.</returns>
-            public int AtomicIncrementAndGet() {
-                return Interlocked.Increment( ref this._value );
-            }
+            public int AtomicIncrementAndGet() => Interlocked.Increment( ref this._value );
 
             /// <summary>
             /// Atomically increment the current value and return the new value
             /// </summary>
             /// <returns>The decremented value.</returns>
-            public int AtomicDecrementAndGet() {
-                return Interlocked.Decrement( ref this._value );
-            }
+            public int AtomicDecrementAndGet() => Interlocked.Decrement( ref this._value );
 
             /// <summary>
             /// Returns the String representation of the current value.
@@ -174,9 +160,7 @@
             /// Read the value without applying any fence
             /// </summary>
             /// <returns>The current value</returns>
-            public long ReadUnfenced() {
-                return this._value;
-            }
+            public long ReadUnfenced() => this._value;
 
             /// <summary>
             /// Read the value applying acquire fence semantic
@@ -202,9 +186,7 @@
             /// </summary>
             /// <returns>The current value</returns>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public long ReadCompilerOnlyFence() {
-                return this._value;
-            }
+            public long ReadCompilerOnlyFence() => this._value;
 
             /// <summary>
             /// Write the value applying release fence semantic
@@ -247,43 +229,33 @@
             /// <param name="newValue">The new value</param>
             /// <param name="comparand">The comparand (expected value)</param>
             /// <returns></returns>
-            public bool AtomicCompareExchange( long newValue, long comparand ) {
-                return Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
-            }
+            public bool AtomicCompareExchange( long newValue, long comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
 
             /// <summary>
             /// Atomically set the value to the given updated value
             /// </summary>
             /// <param name="newValue">The new value</param>
             /// <returns>The original value</returns>
-            public long AtomicExchange( long newValue ) {
-                return Interlocked.Exchange( ref this._value, newValue );
-            }
+            public long AtomicExchange( long newValue ) => Interlocked.Exchange( ref this._value, newValue );
 
             /// <summary>
             /// Atomically add the given value to the current value and return the sum
             /// </summary>
             /// <param name="delta">The value to be added</param>
             /// <returns>The sum of the current value and the given value</returns>
-            public long AtomicAddAndGet( long delta ) {
-                return Interlocked.Add( ref this._value, delta );
-            }
+            public long AtomicAddAndGet( long delta ) => Interlocked.Add( ref this._value, delta );
 
             /// <summary>
             /// Atomically increment the current value and return the new value
             /// </summary>
             /// <returns>The incremented value.</returns>
-            public long AtomicIncrementAndGet() {
-                return Interlocked.Increment( ref this._value );
-            }
+            public long AtomicIncrementAndGet() => Interlocked.Increment( ref this._value );
 
             /// <summary>
             /// Atomically increment the current value and return the new value
             /// </summary>
             /// <returns>The decremented value.</returns>
-            public long AtomicDecrementAndGet() {
-                return Interlocked.Decrement( ref this._value );
-            }
+            public long AtomicDecrementAndGet() => Interlocked.Decrement( ref this._value );
 
             /// <summary>
             /// Returns the String representation of the current value.
@@ -316,9 +288,7 @@
             /// Read the value without applying any fence
             /// </summary>
             /// <returns>The current value</returns>
-            public bool ReadUnfenced() {
-                return ToBool( this._value );
-            }
+            public bool ReadUnfenced() => ToBool( this._value );
 
             /// <summary>
             /// Read the value applying acquire fence semantic
@@ -345,9 +315,7 @@
             /// </summary>
             /// <returns>The current value</returns>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public bool ReadCompilerOnlyFence() {
-                return ToBool( this._value );
-            }
+            public bool ReadCompilerOnlyFence() => ToBool( this._value );
 
             /// <summary>
             /// Write the value applying release fence semantic
@@ -427,9 +395,7 @@
                 return value == True;
             }
 
-            private static int ToInt( bool value ) {
-                return value ? True : False;
-            }
+            private static int ToInt( bool value ) => value ? True : False;
         }
 
         /// <summary>
@@ -450,9 +416,7 @@
             /// Read the value without applying any fence
             /// </summary>
             /// <returns>The current value</returns>
-            public T ReadUnfenced() {
-                return this._value;
-            }
+            public T ReadUnfenced() => this._value;
 
             /// <summary>
             /// Read the value applying acquire fence semantic
@@ -479,9 +443,7 @@
             /// </summary>
             /// <returns>The current value</returns>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public T ReadCompilerOnlyFence() {
-                return this._value;
-            }
+            public T ReadCompilerOnlyFence() => this._value;
 
             /// <summary>
             /// Write the value applying release fence semantic
@@ -525,18 +487,14 @@
             /// <param name="newValue">The new value</param>
             /// <param name="comparand">The comparand (expected value)</param>
             /// <returns></returns>
-            public bool AtomicCompareExchange( T newValue, T comparand ) {
-                return Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
-            }
+            public bool AtomicCompareExchange( T newValue, T comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
 
             /// <summary>
             /// Atomically set the value to the given updated value
             /// </summary>
             /// <param name="newValue">The new value</param>
             /// <returns>The original value</returns>
-            public T AtomicExchange( T newValue ) {
-                return Interlocked.Exchange( ref this._value, newValue );
-            }
+            public T AtomicExchange( T newValue ) => Interlocked.Exchange( ref this._value, newValue );
 
             /// <summary>
             /// Returns the String representation of the current value.
@@ -591,9 +549,7 @@
             /// </summary>
             /// <param name="index">The index of the element.</param>
             /// <returns>The current value.</returns>
-            public int ReadUnfenced( int index ) {
-                return this._array[ index ];
-            }
+            public int ReadUnfenced( int index ) => this._array[ index ];
 
             /// <summary>
             /// Read the value applying acquire fence semantic
@@ -623,9 +579,7 @@
             /// <param name="index">The element index</param>
             /// <returns>The current value</returns>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public int ReadCompilerOnlyFence( int index ) {
-                return this._array[ index ];
-            }
+            public int ReadCompilerOnlyFence( int index ) => this._array[ index ];
 
             /// <summary>
             /// Write the value applying release fence semantic
@@ -673,9 +627,7 @@
             /// <param name="comparand">The comparand (expected value)</param>
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
-            public bool AtomicCompareExchange( int index, int newValue, int comparand ) {
-                return Interlocked.CompareExchange( ref this._array[ index ], newValue, comparand ) == comparand;
-            }
+            public bool AtomicCompareExchange( int index, int newValue, int comparand ) => Interlocked.CompareExchange( ref this._array[ index ], newValue, comparand ) == comparand;
 
             /// <summary>
             /// Atomically set the value to the given updated value
@@ -683,9 +635,7 @@
             /// <param name="newValue">The new value</param>
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
-            public int AtomicExchange( int index, int newValue ) {
-                return Interlocked.Exchange( ref this._array[ index ], newValue );
-            }
+            public int AtomicExchange( int index, int newValue ) => Interlocked.Exchange( ref this._array[ index ], newValue );
 
             /// <summary>
             /// Atomically add the given value to the current value and return the sum
@@ -693,27 +643,21 @@
             /// <param name="delta">The value to be added</param>
             /// <param name="index">The index.</param>
             /// <returns>The sum of the current value and the given value</returns>
-            public int AtomicAddAndGet( int index, int delta ) {
-                return Interlocked.Add( ref this._array[ index ], delta );
-            }
+            public int AtomicAddAndGet( int index, int delta ) => Interlocked.Add( ref this._array[ index ], delta );
 
             /// <summary>
             /// Atomically increment the current value and return the new value
             /// </summary>
             /// <param name="index">The index.</param>
             /// <returns>The incremented value.</returns>
-            public int AtomicIncrementAndGet( int index ) {
-                return Interlocked.Increment( ref this._array[ index ] );
-            }
+            public int AtomicIncrementAndGet( int index ) => Interlocked.Increment( ref this._array[ index ] );
 
             /// <summary>
             /// Atomically increment the current value and return the new value
             /// </summary>
             /// <param name="index">The index.</param>
             /// <returns>The decremented value.</returns>
-            public int AtomicDecrementAndGet( int index ) {
-                return Interlocked.Decrement( ref this._array[ index ] );
-            }
+            public int AtomicDecrementAndGet( int index ) => Interlocked.Decrement( ref this._array[ index ] );
         }
 
         /// <summary>
@@ -759,9 +703,7 @@
             /// </summary>
             /// <param name="index">The index of the element.</param>
             /// <returns>The current value.</returns>
-            public long ReadUnfenced( int index ) {
-                return this._array[ index ];
-            }
+            public long ReadUnfenced( int index ) => this._array[ index ];
 
             /// <summary>
             /// Read the value applying acquire fence semantic
@@ -791,9 +733,7 @@
             /// <param name="index">The element index</param>
             /// <returns>The current value</returns>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public long ReadCompilerOnlyFence( int index ) {
-                return this._array[ index ];
-            }
+            public long ReadCompilerOnlyFence( int index ) => this._array[ index ];
 
             /// <summary>
             /// Write the value applying release fence semantic
@@ -841,9 +781,7 @@
             /// <param name="comparand">The comparand (expected value)</param>
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
-            public bool AtomicCompareExchange( int index, long newValue, long comparand ) {
-                return Interlocked.CompareExchange( ref this._array[ index ], newValue, comparand ) == comparand;
-            }
+            public bool AtomicCompareExchange( int index, long newValue, long comparand ) => Interlocked.CompareExchange( ref this._array[ index ], newValue, comparand ) == comparand;
 
             /// <summary>
             /// Atomically set the value to the given updated value
@@ -851,9 +789,7 @@
             /// <param name="newValue">The new value</param>
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
-            public long AtomicExchange( int index, long newValue ) {
-                return Interlocked.Exchange( ref this._array[ index ], newValue );
-            }
+            public long AtomicExchange( int index, long newValue ) => Interlocked.Exchange( ref this._array[ index ], newValue );
 
             /// <summary>
             /// Atomically add the given value to the current value and return the sum
@@ -861,27 +797,21 @@
             /// <param name="delta">The value to be added</param>
             /// <param name="index">The index.</param>
             /// <returns>The sum of the current value and the given value</returns>
-            public long AtomicAddAndGet( int index, long delta ) {
-                return Interlocked.Add( ref this._array[ index ], delta );
-            }
+            public long AtomicAddAndGet( int index, long delta ) => Interlocked.Add( ref this._array[ index ], delta );
 
             /// <summary>
             /// Atomically increment the current value and return the new value
             /// </summary>
             /// <param name="index">The index.</param>
             /// <returns>The incremented value.</returns>
-            public long AtomicIncrementAndGet( int index ) {
-                return Interlocked.Increment( ref this._array[ index ] );
-            }
+            public long AtomicIncrementAndGet( int index ) => Interlocked.Increment( ref this._array[ index ] );
 
             /// <summary>
             /// Atomically increment the current value and return the new value
             /// </summary>
             /// <param name="index">The index.</param>
             /// <returns>The decremented value.</returns>
-            public long AtomicDecrementAndGet( int index ) {
-                return Interlocked.Decrement( ref this._array[ index ] );
-            }
+            public long AtomicDecrementAndGet( int index ) => Interlocked.Decrement( ref this._array[ index ] );
         }
 
         /// <summary>
@@ -928,9 +858,7 @@
             /// </summary>
             /// <param name="index">The index of the element.</param>
             /// <returns>The current value.</returns>
-            public bool ReadUnfenced( int index ) {
-                return ToBool( this._array[ index ] );
-            }
+            public bool ReadUnfenced( int index ) => ToBool( this._array[ index ] );
 
             /// <summary>
             /// Read the value applying acquire fence semantic
@@ -960,9 +888,7 @@
             /// <param name="index">The element index</param>
             /// <returns>The current value</returns>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public bool ReadCompilerOnlyFence( int index ) {
-                return ToBool( this._array[ index ] );
-            }
+            public bool ReadCompilerOnlyFence( int index ) => ToBool( this._array[ index ] );
 
             /// <summary>
             /// Write the value applying release fence semantic
@@ -1035,9 +961,7 @@
                 return value == True;
             }
 
-            private static int ToInt( bool value ) {
-                return value ? True : False;
-            }
+            private static int ToInt( bool value ) => value ? True : False;
         }
 
         /// <summary>
@@ -1082,9 +1006,7 @@
             /// </summary>
             /// <param name="index">The index of the element.</param>
             /// <returns>The current value.</returns>
-            public T ReadUnfenced( int index ) {
-                return this._array[ index ];
-            }
+            public T ReadUnfenced( int index ) => this._array[ index ];
 
             /// <summary>
             /// Read the value applying acquire fence semantic
@@ -1114,9 +1036,7 @@
             /// <param name="index">The element index</param>
             /// <returns>The current value</returns>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public T ReadCompilerOnlyFence( int index ) {
-                return this._array[ index ];
-            }
+            public T ReadCompilerOnlyFence( int index ) => this._array[ index ];
 
             /// <summary>
             /// Write the value applying release fence semantic
@@ -1164,9 +1084,7 @@
             /// <param name="comparand">The comparand (expected value)</param>
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
-            public bool AtomicCompareExchange( int index, T newValue, T comparand ) {
-                return Interlocked.CompareExchange( ref this._array[ index ], newValue, comparand ) == comparand;
-            }
+            public bool AtomicCompareExchange( int index, T newValue, T comparand ) => Interlocked.CompareExchange( ref this._array[ index ], newValue, comparand ) == comparand;
 
             /// <summary>
             /// Atomically set the value to the given updated value
@@ -1200,9 +1118,7 @@
             /// Read the value without applying any fence
             /// </summary>
             /// <returns>The current value</returns>
-            public int ReadUnfenced() {
-                return this._value;
-            }
+            public int ReadUnfenced() => this._value;
 
             /// <summary>
             /// Read the value applying acquire fence semantic
@@ -1229,9 +1145,7 @@
             /// </summary>
             /// <returns>The current value</returns>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public int ReadCompilerOnlyFence() {
-                return this._value;
-            }
+            public int ReadCompilerOnlyFence() => this._value;
 
             /// <summary>
             /// Write the value applying release fence semantic
@@ -1274,43 +1188,33 @@
             /// <param name="newValue">The new value</param>
             /// <param name="comparand">The comparand (expected value)</param>
             /// <returns></returns>
-            public bool AtomicCompareExchange( int newValue, int comparand ) {
-                return Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
-            }
+            public bool AtomicCompareExchange( int newValue, int comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
 
             /// <summary>
             /// Atomically set the value to the given updated value
             /// </summary>
             /// <param name="newValue">The new value</param>
             /// <returns>The original value</returns>
-            public int AtomicExchange( int newValue ) {
-                return Interlocked.Exchange( ref this._value, newValue );
-            }
+            public int AtomicExchange( int newValue ) => Interlocked.Exchange( ref this._value, newValue );
 
             /// <summary>
             /// Atomically add the given value to the current value and return the sum
             /// </summary>
             /// <param name="delta">The value to be added</param>
             /// <returns>The sum of the current value and the given value</returns>
-            public int AtomicAddAndGet( int delta ) {
-                return Interlocked.Add( ref this._value, delta );
-            }
+            public int AtomicAddAndGet( int delta ) => Interlocked.Add( ref this._value, delta );
 
             /// <summary>
             /// Atomically increment the current value and return the new value
             /// </summary>
             /// <returns>The incremented value.</returns>
-            public int AtomicIncrementAndGet() {
-                return Interlocked.Increment( ref this._value );
-            }
+            public int AtomicIncrementAndGet() => Interlocked.Increment( ref this._value );
 
             /// <summary>
             /// Atomically increment the current value and return the new value
             /// </summary>
             /// <returns>The decremented value.</returns>
-            public int AtomicDecrementAndGet() {
-                return Interlocked.Decrement( ref this._value );
-            }
+            public int AtomicDecrementAndGet() => Interlocked.Decrement( ref this._value );
 
             /// <summary>
             /// Returns the String representation of the current value.
@@ -1342,9 +1246,7 @@
             /// Read the value without applying any fence
             /// </summary>
             /// <returns>The current value</returns>
-            public long ReadUnfenced() {
-                return this._value;
-            }
+            public long ReadUnfenced() => this._value;
 
             /// <summary>
             /// Read the value applying acquire fence semantic
@@ -1370,9 +1272,7 @@
             /// </summary>
             /// <returns>The current value</returns>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public long ReadCompilerOnlyFence() {
-                return this._value;
-            }
+            public long ReadCompilerOnlyFence() => this._value;
 
             /// <summary>
             /// Write the value applying release fence semantic
@@ -1415,43 +1315,33 @@
             /// <param name="newValue">The new value</param>
             /// <param name="comparand">The comparand (expected value)</param>
             /// <returns></returns>
-            public bool AtomicCompareExchange( long newValue, long comparand ) {
-                return Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
-            }
+            public bool AtomicCompareExchange( long newValue, long comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
 
             /// <summary>
             /// Atomically set the value to the given updated value
             /// </summary>
             /// <param name="newValue">The new value</param>
             /// <returns>The original value</returns>
-            public long AtomicExchange( long newValue ) {
-                return Interlocked.Exchange( ref this._value, newValue );
-            }
+            public long AtomicExchange( long newValue ) => Interlocked.Exchange( ref this._value, newValue );
 
             /// <summary>
             /// Atomically add the given value to the current value and return the sum
             /// </summary>
             /// <param name="delta">The value to be added</param>
             /// <returns>The sum of the current value and the given value</returns>
-            public long AtomicAddAndGet( long delta ) {
-                return Interlocked.Add( ref this._value, delta );
-            }
+            public long AtomicAddAndGet( long delta ) => Interlocked.Add( ref this._value, delta );
 
             /// <summary>
             /// Atomically increment the current value and return the new value
             /// </summary>
             /// <returns>The incremented value.</returns>
-            public long AtomicIncrementAndGet() {
-                return Interlocked.Increment( ref this._value );
-            }
+            public long AtomicIncrementAndGet() => Interlocked.Increment( ref this._value );
 
             /// <summary>
             /// Atomically increment the current value and return the new value
             /// </summary>
             /// <returns>The decremented value.</returns>
-            public long AtomicDecrementAndGet() {
-                return Interlocked.Decrement( ref this._value );
-            }
+            public long AtomicDecrementAndGet() => Interlocked.Decrement( ref this._value );
 
             /// <summary>
             /// Returns the String representation of the current value.
@@ -1487,9 +1377,7 @@
             /// Read the value without applying any fence
             /// </summary>
             /// <returns>The current value</returns>
-            public bool ReadUnfenced() {
-                return ToBool( this._value );
-            }
+            public bool ReadUnfenced() => ToBool( this._value );
 
             /// <summary>
             /// Read the value applying acquire fence semantic
@@ -1516,9 +1404,7 @@
             /// </summary>
             /// <returns>The current value</returns>
             [MethodImpl( MethodImplOptions.NoOptimization )]
-            public bool ReadCompilerOnlyFence() {
-                return ToBool( this._value );
-            }
+            public bool ReadCompilerOnlyFence() => ToBool( this._value );
 
             /// <summary>
             /// Write the value applying release fence semantic
@@ -1598,9 +1484,7 @@
                 return value == True;
             }
 
-            private static int ToInt( bool value ) {
-                return value ? True : False;
-            }
+            private static int ToInt( bool value ) => value ? True : False;
         }
     }
 }

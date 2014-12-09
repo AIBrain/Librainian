@@ -91,13 +91,9 @@ namespace Librainian.Measurement.Length {
         //    return lhs.Comparison( rhs ) > 0;
         //}
 
-        public int CompareTo( PlanckLengths other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( PlanckLengths other ) => this.Value.CompareTo( other.Value );
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
 
         //public static implicit operator TimeSpan( PlanckUnits planckUnits ) {
         //    return TimeSpan.FromMilliseconds( value: planckUnits );

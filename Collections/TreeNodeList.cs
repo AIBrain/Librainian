@@ -36,9 +36,7 @@ namespace Librainian.Collections {
             this.Parent = parent;
         }
 
-        public TreeNode< T > Add( T value ) {
-            return this.Add( new TreeNode< T >( value ) );
-        }
+        public TreeNode< T > Add( T value ) => this.Add( new TreeNode< T >( value ) );
 
         public new TreeNode< T > Add( [NotNull] TreeNode< T > node ) {
             if ( node == null ) {
@@ -49,8 +47,6 @@ namespace Librainian.Collections {
             return node;
         }
 
-        public override String ToString() {
-            return String.Format( "Count={0}", this.Count );
-        }
+        public override String ToString() => String.Format( "Count={0}", this.Count );
     }
 }

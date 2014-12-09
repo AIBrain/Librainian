@@ -279,9 +279,7 @@ namespace Librainian.Maths {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( BigDecimal left, BigDecimal right ) {
-            return left.Mantissa.Equals( right.Mantissa ) && left.Exponent.Equals( right.Exponent );
-        }
+        public static Boolean Equals( BigDecimal left, BigDecimal right ) => left.Mantissa.Equals( right.Mantissa ) && left.Exponent.Equals( right.Exponent );
 
         public static BigDecimal Exp( Double exponent ) {
             var tmp = One;
@@ -293,25 +291,16 @@ namespace Librainian.Maths {
             return tmp * Math.Exp( d: exponent );
         }
 
-        public static explicit operator Double( BigDecimal value ) {
-            return ( Double )value.Mantissa * Math.Pow( 10, value.Exponent );
-        }
+        public static explicit operator Double( BigDecimal value ) => ( Double )value.Mantissa * Math.Pow( 10, value.Exponent );
 
         /// <summary>
         ///     TODO this needs unit tested.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static explicit operator BigInteger( BigDecimal value ) {
+        public static explicit operator BigInteger( BigDecimal value ) => value.ToBigInteger();
 
-            //var scaleDivisor = BigInteger.Pow( 10, value.Exponent );
-            //var scaledValue = BigInteger.Divide( value.Mantissa, scaleDivisor );
-            return value.ToBigInteger();
-        }
-
-        public static implicit operator BigDecimal( Int64 number ) {
-            return new BigDecimal( number, 0 );
-        }
+        public static implicit operator BigDecimal( Int64 number ) => new BigDecimal( number, 0 );
 
         /// <summary>
         ///     Do not know if casting and math here is correct (bug free and overflow free)
@@ -348,31 +337,17 @@ namespace Librainian.Maths {
         }
 
         [Pure]
-        public static BigDecimal Multiply( BigDecimal left, BigDecimal right ) {
-            return new BigDecimal( left.Mantissa * right.Mantissa, left.Exponent + right.Exponent );
-        }
+        public static BigDecimal Multiply( BigDecimal left, BigDecimal right ) => new BigDecimal( left.Mantissa * right.Mantissa, left.Exponent + right.Exponent );
 
-        public static BigDecimal operator -( BigDecimal number ) {
+        public static BigDecimal operator -( BigDecimal number ) => new BigDecimal( number.Mantissa * -1, number.Exponent );
 
-            //value.Mantissa *= -1;
-            return new BigDecimal( number.Mantissa * -1, number.Exponent ); //BUG is this correct?
-        }
+        public static BigDecimal operator -( BigDecimal left, BigDecimal right ) => Add( left: left, right: -right );
 
-        public static BigDecimal operator -( BigDecimal left, BigDecimal right ) {
-            return Add( left: left, right: -right );
-        }
+        public static BigDecimal operator --( BigDecimal number ) => number - 1;
 
-        public static BigDecimal operator --( BigDecimal number ) {
-            return number - 1;
-        }
+        public static Boolean operator !=( BigDecimal left, BigDecimal right ) => !Equals( left, right );
 
-        public static Boolean operator !=( BigDecimal left, BigDecimal right ) {
-            return !Equals( left, right );
-        }
-
-        public static BigDecimal operator *( BigDecimal left, BigDecimal right ) {
-            return Multiply( left, right );
-        }
+        public static BigDecimal operator *( BigDecimal left, BigDecimal right ) => Multiply( left, right );
 
         public static BigDecimal operator /( BigDecimal dividend, BigDecimal divisor ) {
 
@@ -398,37 +373,21 @@ namespace Librainian.Maths {
             return result;
         }
 
-        public static BigDecimal operator +( BigDecimal number ) {
-            return number;
-        }
+        public static BigDecimal operator +( BigDecimal number ) => number;
 
-        public static BigDecimal operator +( BigDecimal left, BigDecimal right ) {
-            return Add( left, right );
-        }
+        public static BigDecimal operator +( BigDecimal left, BigDecimal right ) => Add( left, right );
 
-        public static BigDecimal operator ++( BigDecimal number ) {
-            return Add( number, 1 );
-        }
+        public static BigDecimal operator ++( BigDecimal number ) => Add( number, 1 );
 
-        public static Boolean operator <( BigDecimal left, BigDecimal right ) {
-            return left.Exponent > right.Exponent ? AlignExponent( left, right ) < right.Mantissa : left.Mantissa < AlignExponent( right, left );
-        }
+        public static Boolean operator <( BigDecimal left, BigDecimal right ) => left.Exponent > right.Exponent ? AlignExponent( left, right ) < right.Mantissa : left.Mantissa < AlignExponent( right, left );
 
-        public static Boolean operator <=( BigDecimal left, BigDecimal right ) {
-            return left.Exponent > right.Exponent ? AlignExponent( left, right ) <= right.Mantissa : left.Mantissa <= AlignExponent( right, left );
-        }
+        public static Boolean operator <=( BigDecimal left, BigDecimal right ) => left.Exponent > right.Exponent ? AlignExponent( left, right ) <= right.Mantissa : left.Mantissa <= AlignExponent( right, left );
 
-        public static Boolean operator ==( BigDecimal left, BigDecimal right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( BigDecimal left, BigDecimal right ) => Equals( left, right );
 
-        public static Boolean operator >( BigDecimal left, BigDecimal right ) {
-            return left.Exponent > right.Exponent ? AlignExponent( left, right ) > right.Mantissa : left.Mantissa > AlignExponent( right, left );
-        }
+        public static Boolean operator >( BigDecimal left, BigDecimal right ) => left.Exponent > right.Exponent ? AlignExponent( left, right ) > right.Mantissa : left.Mantissa > AlignExponent( right, left );
 
-        public static Boolean operator >=( BigDecimal left, BigDecimal right ) {
-            return left.Exponent > right.Exponent ? AlignExponent( left, right ) >= right.Mantissa : left.Mantissa >= AlignExponent( right, left );
-        }
+        public static Boolean operator >=( BigDecimal left, BigDecimal right ) => left.Exponent > right.Exponent ? AlignExponent( left, right ) >= right.Mantissa : left.Mantissa >= AlignExponent( right, left );
 
         //public static explicit operator uint( BigDecimal value ) {
         //    return ( uint )( value.Mantissa * BigInteger.Pow( 10, value.Exponent ) );
@@ -494,9 +453,7 @@ namespace Librainian.Maths {
             return this > other ? 1 : 0;
         }
 
-        public Boolean Equals( BigDecimal other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( BigDecimal other ) => Equals( this, other );
 
         [Pure]
         public override Boolean Equals( [CanBeNull] object obj ) {
@@ -524,21 +481,13 @@ namespace Librainian.Maths {
         //    return shortened;
         //}
         [Pure]
-        public override Int32 GetHashCode() {
-            return this.Mantissa.GetHashMerge( this.Exponent );
-        }
+        public override Int32 GetHashCode() => this.Mantissa.GetHashMerge( this.Exponent );
 
-        TypeCode IConvertible.GetTypeCode() {
-            return TypeCode.Object;
-        }
+        TypeCode IConvertible.GetTypeCode() => TypeCode.Object;
 
-        Boolean IConvertible.ToBoolean( IFormatProvider provider ) {
-            return Convert.ToBoolean( this );
-        }
+        Boolean IConvertible.ToBoolean( IFormatProvider provider ) => Convert.ToBoolean( this );
 
-        Byte IConvertible.ToByte( IFormatProvider provider ) {
-            return Convert.ToByte( this );
-        }
+        Byte IConvertible.ToByte( IFormatProvider provider ) => Convert.ToByte( this );
 
         char IConvertible.ToChar( IFormatProvider provider ) {
             throw new InvalidCastException( "Cannot cast BigDecimal to Char" );
@@ -550,37 +499,21 @@ namespace Librainian.Maths {
             throw new InvalidCastException( "Cannot cast BigDecimal to DateTime" );
         }
 
-        Decimal IConvertible.ToDecimal( IFormatProvider provider ) {
-            return Convert.ToDecimal( this );
-        }
+        Decimal IConvertible.ToDecimal( IFormatProvider provider ) => Convert.ToDecimal( this );
 
-        Double IConvertible.ToDouble( IFormatProvider provider ) {
-            return Convert.ToDouble( this );
-        }
+        Double IConvertible.ToDouble( IFormatProvider provider ) => Convert.ToDouble( this );
 
-        short IConvertible.ToInt16( IFormatProvider provider ) {
-            return Convert.ToInt16( this );
-        }
+        short IConvertible.ToInt16( IFormatProvider provider ) => Convert.ToInt16( this );
 
-        Int32 IConvertible.ToInt32( IFormatProvider provider ) {
-            return Convert.ToInt32( this );
-        }
+        Int32 IConvertible.ToInt32( IFormatProvider provider ) => Convert.ToInt32( this );
 
-        Int64 IConvertible.ToInt64( IFormatProvider provider ) {
-            return Convert.ToInt64( this );
-        }
+        Int64 IConvertible.ToInt64( IFormatProvider provider ) => Convert.ToInt64( this );
 
-        sbyte IConvertible.ToSByte( IFormatProvider provider ) {
-            return Convert.ToSByte( this );
-        }
+        sbyte IConvertible.ToSByte( IFormatProvider provider ) => Convert.ToSByte( this );
 
-        float IConvertible.ToSingle( IFormatProvider provider ) {
-            return Convert.ToSingle( this );
-        }
+        float IConvertible.ToSingle( IFormatProvider provider ) => Convert.ToSingle( this );
 
-        String IConvertible.ToString( IFormatProvider provider ) {
-            return Convert.ToString( this );
-        }
+        String IConvertible.ToString( IFormatProvider provider ) => Convert.ToString( this );
 
         object IConvertible.ToType( Type conversionType, IFormatProvider provider ) {
             var scaleDivisor = BigInteger.Pow( new BigInteger( 10 ), this.Exponent );
@@ -598,17 +531,11 @@ namespace Librainian.Maths {
             return Convert.ChangeType( value, conversionType );
         }
 
-        UInt16 IConvertible.ToUInt16( IFormatProvider provider ) {
-            return Convert.ToUInt16( this );
-        }
+        UInt16 IConvertible.ToUInt16( IFormatProvider provider ) => Convert.ToUInt16( this );
 
-        UInt32 IConvertible.ToUInt32( IFormatProvider provider ) {
-            return Convert.ToUInt32( this );
-        }
+        UInt32 IConvertible.ToUInt32( IFormatProvider provider ) => Convert.ToUInt32( this );
 
-        UInt64 IConvertible.ToUInt64( IFormatProvider provider ) {
-            return Convert.ToUInt64( this );
-        }
+        UInt64 IConvertible.ToUInt64( IFormatProvider provider ) => Convert.ToUInt64( this );
 
         [Pure]
         public Byte[] ToByteArray() {
@@ -628,9 +555,7 @@ namespace Librainian.Maths {
 
         //    return ( Decimal )value.Mantissa * ( Decimal )Math.Pow( 10, value.Exponent );
         //}
-        public String ToScientificString() {
-            return MathExtensions.ToScientificString( this );
-        }
+        public String ToScientificString() => MathExtensions.ToScientificString( this );
 
         public String ToString( String format, IFormatProvider formatProvider ) {
             throw new NotImplementedException();
@@ -686,17 +611,11 @@ namespace Librainian.Maths {
             //}
         }
 
-        public String ToStringWithE() {
-
-            //TODO what is the proper name for this format? "123E45"?
-            return String.Concat( this.Mantissa.ToString(), "E", this.Exponent );
-        }
+        public String ToStringWithE() => String.Concat( this.Mantissa.ToString(), "E", this.Exponent );
 
         //    return true; //whew.
         //}
-        public T ToType<T>() where T : struct {
-            return ( T )( ( IConvertible )this ).ToType( typeof( T ), null );
-        }
+        public T ToType<T>() where T : struct => ( T )( ( IConvertible )this ).ToType( typeof( T ), null );
 
         private static BigDecimal Add( BigDecimal left, BigDecimal right ) {
             if ( left.Exponent > right.Exponent ) {
@@ -705,13 +624,9 @@ namespace Librainian.Maths {
             return new BigDecimal( AlignExponent( right, left ) + left.Mantissa, exponent: left.Exponent );
         }
 
-        public static explicit operator float( BigDecimal value ) {
-            return Convert.ToSingle( ( Double )value );
-        }
+        public static explicit operator float( BigDecimal value ) => Convert.ToSingle( ( Double )value );
 
-        public static explicit operator Decimal( BigDecimal value ) {
-            return ( Decimal )value.Mantissa * ( Decimal )Math.Pow( 10, value.Exponent );
-        }
+        public static explicit operator Decimal( BigDecimal value ) => ( Decimal )value.Mantissa * ( Decimal )Math.Pow( 10, value.Exponent );
 
         //public static explicit operator BigInteger( BigDecimal value ) {
         //    var man = (BigDecimal)value.Mantissa;
@@ -1013,74 +928,39 @@ namespace Librainian.Maths {
 
         #region Explicity and Implicit Casts
 
-        public static explicit operator Byte( BigDecimal value ) {
-            return value.ToType<Byte>();
-        }
+        public static explicit operator Byte( BigDecimal value ) => value.ToType<Byte>();
 
-        public static explicit operator Int64( BigDecimal value ) {
-            return value.ToType<Int64>();
-        }
+        public static explicit operator Int64( BigDecimal value ) => value.ToType<Int64>();
 
-        public static explicit operator Int32( BigDecimal value ) {
-            return value.ToType<Int32>();
-        }
+        public static explicit operator Int32( BigDecimal value ) => value.ToType<Int32>();
 
-        public static explicit operator sbyte( BigDecimal value ) {
-            return value.ToType<sbyte>();
-        }
+        public static explicit operator sbyte( BigDecimal value ) => value.ToType<sbyte>();
 
-        public static explicit operator short( BigDecimal value ) {
-            return value.ToType<short>();
-        }
+        public static explicit operator short( BigDecimal value ) => value.ToType<short>();
 
-        public static explicit operator UInt64( BigDecimal value ) {
-            return value.ToType<UInt64>();
-        }
+        public static explicit operator UInt64( BigDecimal value ) => value.ToType<UInt64>();
 
-        public static explicit operator UInt32( BigDecimal value ) {
-            return value.ToType<UInt32>();
-        }
+        public static explicit operator UInt32( BigDecimal value ) => value.ToType<UInt32>();
 
-        public static explicit operator UInt16( BigDecimal value ) {
-            return value.ToType<UInt16>();
-        }
+        public static explicit operator UInt16( BigDecimal value ) => value.ToType<UInt16>();
 
-        public static implicit operator BigDecimal( Byte value ) {
-            return new BigDecimal( value );
-        }
+        public static implicit operator BigDecimal( Byte value ) => new BigDecimal( value );
 
-        public static implicit operator BigDecimal( sbyte value ) {
-            return new BigDecimal( value );
-        }
+        public static implicit operator BigDecimal( sbyte value ) => new BigDecimal( value );
 
-        public static implicit operator BigDecimal( short value ) {
-            return new BigDecimal( value );
-        }
+        public static implicit operator BigDecimal( short value ) => new BigDecimal( value );
 
-        public static implicit operator BigDecimal( Int32 value ) {
-            return new BigDecimal( value );
-        }
+        public static implicit operator BigDecimal( Int32 value ) => new BigDecimal( value );
 
-        public static implicit operator BigDecimal( UInt16 value ) {
-            return new BigDecimal( value );
-        }
+        public static implicit operator BigDecimal( UInt16 value ) => new BigDecimal( value );
 
-        public static implicit operator BigDecimal( UInt32 value ) {
-            return new BigDecimal( value );
-        }
+        public static implicit operator BigDecimal( UInt32 value ) => new BigDecimal( value );
 
-        public static implicit operator BigDecimal( UInt64 value ) {
-            return new BigDecimal( value );
-        }
+        public static implicit operator BigDecimal( UInt64 value ) => new BigDecimal( value );
 
-        public static implicit operator BigDecimal( float value ) {
-            return new BigDecimal( value );
-        }
+        public static implicit operator BigDecimal( float value ) => new BigDecimal( value );
 
-        public static implicit operator BigDecimal( BigInteger value ) {
-            return new BigDecimal( value, 0 );
-        }
-
+        public static implicit operator BigDecimal( BigInteger value ) => new BigDecimal( value, 0 );
         #endregion Explicity and Implicit Casts
     }
 }

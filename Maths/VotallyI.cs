@@ -92,25 +92,15 @@ namespace Librainian.Maths {
             }
         }
 
-        public bool IsLandslideNo() {
-            return this.IsNoWinning() && this.No > this.HalfOfVotes();
-        }
+        public bool IsLandslideNo() => this.IsNoWinning() && this.No > this.HalfOfVotes();
 
-        public bool IsLandslideYes() {
-            return this.IsYesWinning() && this.Yes > this.HalfOfVotes();
-        }
+        public bool IsLandslideYes() => this.IsYesWinning() && this.Yes > this.HalfOfVotes();
 
-        public bool IsNoWinning() {
-            return this.No > this.Yes && this.Yes > 1 && this.No > 1;
-        }
+        public bool IsNoWinning() => this.No > this.Yes && this.Yes > 1 && this.No > 1;
 
-        public bool IsProtiguous() {
-            return this.IsTied() && this.Votes >= 2;
-        }
+        public bool IsProtiguous() => this.IsTied() && this.Votes >= 2;
 
-        public bool IsYesWinning() {
-            return this.Yes > this.No && this.Yes > 1 && this.No > 1;
-        }
+        public bool IsYesWinning() => this.Yes > this.No && this.Yes > 1 && this.No > 1;
 
         public UInt64 No {
             get {
@@ -158,21 +148,13 @@ namespace Librainian.Maths {
             return result;
         }
 
-        public VotallyI Clone() {
-            return new VotallyI( votesYes: this.Yes, votesNo: this.No );
-        }
+        public VotallyI Clone() => new VotallyI( votesYes: this.Yes, votesNo: this.No );
 
-        public UInt64 HalfOfVotes() {
-            return this.Votes / 2;
-        }
+        public UInt64 HalfOfVotes() => this.Votes / 2;
 
-        public Boolean IsTied() {
-            return this.Yes == this.No;
-        }
+        public Boolean IsTied() => this.Yes == this.No;
 
-        public override String ToString() {
-            return String.Format( "{0:P1} yes vs {1:p1} no of {2} votes.", this.ChanceYes(), this.ChanceNo(), this.Votes );
-        }
+        public override String ToString() => String.Format( "{0:P1} yes vs {1:p1} no of {2} votes.", this.ChanceYes(), this.ChanceNo(), this.Votes );
 
         /// <summary>
         /// <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>

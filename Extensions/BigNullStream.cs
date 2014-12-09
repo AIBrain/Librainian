@@ -66,8 +66,6 @@ namespace Librainian.Extensions {
             this._length = value;
         }
 
-        public override void Write( byte[] buffer, int offset, int count ) {
-            this.Seek( count, SeekOrigin.Current );
-        }
+        public override void Write( byte[] buffer, int offset, int count ) => this.Seek( count, SeekOrigin.Current );
     }
 }

@@ -143,9 +143,7 @@ namespace Librainian.Measurement.Currency.BTC {
             return this.EitherHash.HashBytes.SequenceEqual( ( ( Address ) obj ).EitherHash.HashBytes );
         }
 
-        public override int GetHashCode() {
-            return this.EitherHash.GetHashCode(); //TODO possible bug here.
-        }
+        public override int GetHashCode() => this.EitherHash.GetHashCode();
 
         public override String ToString() {
             if ( this._address == null ) {

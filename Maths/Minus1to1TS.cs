@@ -76,22 +76,13 @@ namespace Librainian.Maths {
 
         #region ICloneable Members
 
-        public object Clone() {
-            return new Minus1to1TS( this.Value );
-        }
-
+        public object Clone() => new Minus1to1TS( this.Value );
         #endregion ICloneable Members
 
-        public static implicit operator Double( Minus1to1TS special ) {
-            return special.Value;
-        }
+        public static implicit operator Double( Minus1to1TS special ) => special.Value;
 
-        public static implicit operator Minus1to1TS( Double value ) {
-            return new Minus1to1TS( value );
-        }
+        public static implicit operator Minus1to1TS( Double value ) => new Minus1to1TS( value );
 
-        public override String ToString() {
-            return String.Format( "{0:R}", this.Value );
-        }
+        public override String ToString() => String.Format( "{0:R}", this.Value );
     }
 }

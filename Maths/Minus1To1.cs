@@ -85,24 +85,14 @@ namespace Librainian.Maths {
         ///         name="value2" />
         ///     .
         /// </returns>
-        public static Minus1To1 Combine( Minus1To1 value1, Minus1To1 value2 ) {
-            return new Minus1To1( ( value1 + value2 ) / 2D );
-        }
+        public static Minus1To1 Combine( Minus1To1 value1, Minus1To1 value2 ) => new Minus1To1( ( value1 + value2 ) / 2D );
 
-        public static implicit operator Double( Minus1To1 special ) {
-            return special.Value;
-        }
+        public static implicit operator Double( Minus1To1 special ) => special.Value;
 
-        public static implicit operator Minus1To1( Double value ) {
-            return new Minus1To1( value );
-        }
+        public static implicit operator Minus1To1( Double value ) => new Minus1To1( value );
 
-        public static Minus1To1 Parse( String value ) {
-            return new Minus1To1( Double.Parse( value ) );
-        }
+        public static Minus1To1 Parse( String value ) => new Minus1To1( Double.Parse( value ) );
 
-        public override String ToString() {
-            return String.Format( "{0:P}", this.Value );
-        }
+        public override String ToString() => String.Format( "{0:P}", this.Value );
     }
 }

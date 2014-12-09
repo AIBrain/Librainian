@@ -107,8 +107,6 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static implicit operator DateTime( Time date ) {
-            return new DateTime( year: DateTime.MinValue.Year, month: DateTime.MinValue.Month, day: DateTime.MinValue.Day, hour: date.Hour.Value, minute: date.Minute.Value, second: date.Second.Value, millisecond: date.Millisecond.Value );
-        }
+        public static implicit operator DateTime( Time date ) => new DateTime( year: DateTime.MinValue.Year, month: DateTime.MinValue.Month, day: DateTime.MinValue.Day, hour: date.Hour.Value, minute: date.Minute.Value, second: date.Second.Value, millisecond: date.Millisecond.Value );
     }
 }

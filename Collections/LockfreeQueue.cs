@@ -72,9 +72,7 @@ namespace Librainian.Collections {
         ///     Returns an enumerator that iterates through the queue.
         /// </summary>
         /// <returns>an enumerator for the queue</returns>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
         ///     Clears the queue.

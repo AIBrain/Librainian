@@ -103,33 +103,19 @@ namespace Librainian.Measurement.Time {
             return span;
         }
 
-        public static UniversalDateTime operator -( UniversalDateTime left, UniversalDateTime right ) {
-            return Combine( left, -right );
-        }
+        public static UniversalDateTime operator -( UniversalDateTime left, UniversalDateTime right ) => Combine( left, -right );
 
-        public static UniversalDateTime operator -( UniversalDateTime universalDateTime ) {
-            return new UniversalDateTime( universalDateTime.Value * -1 );
-        }
+        public static UniversalDateTime operator -( UniversalDateTime universalDateTime ) => new UniversalDateTime( universalDateTime.Value * -1 );
 
-        public static Boolean operator <( UniversalDateTime left, UniversalDateTime right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( UniversalDateTime left, UniversalDateTime right ) => left.Value < right.Value;
 
-        public static Boolean operator >( UniversalDateTime left, UniversalDateTime right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( UniversalDateTime left, UniversalDateTime right ) => left.Value > right.Value;
 
         [Pure]
-        public int CompareTo( UniversalDateTime other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( UniversalDateTime other ) => this.Value.CompareTo( other.Value );
 
-        private static UniversalDateTime Combine( UniversalDateTime left, BigInteger value ) {
-            return new UniversalDateTime( left.Value + value );
-        }
+        private static UniversalDateTime Combine( UniversalDateTime left, BigInteger value ) => new UniversalDateTime( left.Value + value );
 
-        private static UniversalDateTime Combine( UniversalDateTime left, UniversalDateTime right ) {
-            return Combine( left, right.Value );
-        }
+        private static UniversalDateTime Combine( UniversalDateTime left, UniversalDateTime right ) => Combine( left, right.Value );
     }
 }

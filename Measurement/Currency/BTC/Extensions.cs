@@ -97,38 +97,24 @@ namespace Librainian.Measurement.Currency.BTC {
             return sanitized;
         }
 
-        public static long ToSatoshi( this Decimal btc ) {
-            return ( long )( btc * SimpleBitcoinWallet.SatoshiInOneBTC );
-        }
+        public static long ToSatoshi( this Decimal btc ) => ( long )( btc * SimpleBitcoinWallet.SatoshiInOneBTC );
 
-        public static Decimal ToBTC( this Int16 satoshi ) {
-            return satoshi / ( decimal ) SimpleBitcoinWallet.SatoshiInOneBTC;
-        }
+        public static Decimal ToBTC( this Int16 satoshi ) => satoshi / ( decimal ) SimpleBitcoinWallet.SatoshiInOneBTC;
 
-        public static Decimal ToBTC( this Int32 satoshi ) {
-            return satoshi / ( decimal ) SimpleBitcoinWallet.SatoshiInOneBTC;
-        }
+        public static Decimal ToBTC( this Int32 satoshi ) => satoshi / ( decimal ) SimpleBitcoinWallet.SatoshiInOneBTC;
 
-        public static Decimal ToBTC( this Int64 satoshi ) {
-            return satoshi / ( decimal ) SimpleBitcoinWallet.SatoshiInOneBTC;
-        }
+        public static Decimal ToBTC( this Int64 satoshi ) => satoshi / ( decimal ) SimpleBitcoinWallet.SatoshiInOneBTC;
 
-        public static Decimal TomBTC( this Decimal btc ) {
-            return btc * SimpleBitcoinWallet.mBTCInOneBTC;
-        }
+        public static Decimal TomBTC( this Decimal btc ) => btc * SimpleBitcoinWallet.mBTCInOneBTC;
 
-        public static Decimal ToμBTC( this Decimal btc ) {
-            return btc * SimpleBitcoinWallet.μBTCInOneBTC;
-        }
+        public static Decimal ToμBTC( this Decimal btc ) => btc * SimpleBitcoinWallet.μBTCInOneBTC;
 
         /// <summary>
         ///     Return the <paramref name="wallet" /> in Satoshi.
         /// </summary>
         /// <param name="wallet"></param>
         /// <returns></returns>
-        public static long ToSatoshi( this SimpleBitcoinWallet wallet ) {
-            return wallet.Balance.ToSatoshi();
-        }
+        public static long ToSatoshi( this SimpleBitcoinWallet wallet ) => wallet.Balance.ToSatoshi();
 
         /// <summary>
         ///     Transfer everything FROM the <paramref name="source" /> <see cref="CoinWallet" /> into this

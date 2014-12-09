@@ -50,18 +50,11 @@ namespace Librainian.Collections {
             this.Container.AddOrUpdate( key: key, addValue: count, updateValueFactory: ( particles, integer ) => integer + count );
         }
 
-        public void Add( KeyValuePair<TKey, BigInteger> keyValuePair ) {
-            this.Add( keyValuePair.Key, keyValuePair.Value );
-        }
+        public void Add( KeyValuePair<TKey, BigInteger> keyValuePair ) => this.Add( keyValuePair.Key, keyValuePair.Value );
 
-        public void Add( Tuple<TKey, BigInteger> keyValuePair ) {
-            this.Add( keyValuePair.Item1, keyValuePair.Item2 );
-        }
+        public void Add( Tuple<TKey, BigInteger> keyValuePair ) => this.Add( keyValuePair.Item1, keyValuePair.Item2 );
 
-
-        public void Clear() {
-            this.Container.Clear();
-        }
+        public void Clear() => this.Container.Clear();
 
         public Boolean Contains( TKey key ) {
             BigInteger value;
@@ -83,9 +76,7 @@ namespace Librainian.Collections {
         /// Get all particles
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<TKey, BigInteger>> Get() {
-            return this.Container;
-        }
+        public IEnumerable<KeyValuePair<TKey, BigInteger>> Get() => this.Container;
 
         /// <summary>
         /// Get all particles of type(<see cref="TParticle"/>).
@@ -116,9 +107,7 @@ namespace Librainian.Collections {
         /// <returns>
         /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
         /// </returns>
-        public IEnumerator<KeyValuePair<TKey, BigInteger>> GetEnumerator() {
-            return this.Container.GetEnumerator();
-        }
+        public IEnumerator<KeyValuePair<TKey, BigInteger>> GetEnumerator() => this.Container.GetEnumerator();
 
         /// <summary>
         /// Returns an enumerator that iterates through a collection.
@@ -126,9 +115,7 @@ namespace Librainian.Collections {
         /// <returns>
         /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public Boolean Remove( TKey key, BigInteger count ) {
             var before = this.Count();

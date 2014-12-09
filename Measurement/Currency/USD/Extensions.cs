@@ -42,9 +42,7 @@ namespace Librainian.Measurement.Currency.USD {
         }
 
         [NotNull]
-        public static Wallet CreateWallet() {
-            return Wallet.Create();
-        }
+        public static Wallet CreateWallet() => Wallet.Create();
 
         /// <summary>
         ///     Transfer everything FROM the <paramref name="source" /> <see cref="Wallet" /> into this <paramref name="target" />

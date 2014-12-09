@@ -41,9 +41,7 @@ namespace Librainian.Measurement.Length {
         /// </summary>
         public const  Decimal CentimetersinSingleMeter = 100m;
 
-        public static int Comparison( this Millimeters lhs, Millimeters rhs ) {
-            return lhs.Value.CompareTo( rhs.Value );
-        }
+        public static int Comparison( this Millimeters lhs, Millimeters rhs ) => lhs.Value.CompareTo( rhs.Value );
 
         public static int Comparison( this Millimeters millimeters, Centimeters centimeters ) {
             var lhs = new Centimeters( millimeters: millimeters ).Value; //upconvert. less likely to overflow.

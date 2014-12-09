@@ -110,9 +110,7 @@ namespace Librainian.Collections {
             throw new NotSupportedException();
         }
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return ( ( IEnumerable< T > ) this ).GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable< T > ) this ).GetEnumerator();
 
         IEnumerator< T > IEnumerable< T >.GetEnumerator() {
             for ( var i = 0; i < this._count; i++ ) {

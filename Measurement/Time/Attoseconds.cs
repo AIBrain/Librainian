@@ -186,13 +186,9 @@ namespace Librainian.Measurement.Time {
             }
         }
 
-        public static Attoseconds Combine( Attoseconds left, Attoseconds right ) {
-            return new Attoseconds( left.Value + right.Value );
-        }
+        public static Attoseconds Combine( Attoseconds left, Attoseconds right ) => new Attoseconds( left.Value + right.Value );
 
-        public static Attoseconds Combine( Attoseconds left, Decimal attoseconds ) {
-            return new Attoseconds( left.Value + attoseconds );
-        }
+        public static Attoseconds Combine( Attoseconds left, Decimal attoseconds ) => new Attoseconds( left.Value + attoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -200,53 +196,29 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Attoseconds left, Attoseconds right ) {
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Attoseconds left, Attoseconds right ) => left.Value == right.Value;
 
-        public static implicit operator Femtoseconds( Attoseconds attoseconds ) {
-            return attoseconds.ToFemtoseconds();
-        }
+        public static implicit operator Femtoseconds( Attoseconds attoseconds ) => attoseconds.ToFemtoseconds();
 
-        public static implicit operator Zeptoseconds( Attoseconds attoseconds ) {
-            return attoseconds.ToZeptoseconds();
-        }
+        public static implicit operator Zeptoseconds( Attoseconds attoseconds ) => attoseconds.ToZeptoseconds();
 
-        public static Attoseconds operator -( Attoseconds left, Decimal attoseconds ) {
-            return Combine( left, -attoseconds );
-        }
+        public static Attoseconds operator -( Attoseconds left, Decimal attoseconds ) => Combine( left, -attoseconds );
 
-        public static Boolean operator !=( Attoseconds left, Attoseconds right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Attoseconds left, Attoseconds right ) => !Equals( left, right );
 
-        public static Attoseconds operator +( Attoseconds left, Attoseconds right ) {
-            return Combine( left, right );
-        }
+        public static Attoseconds operator +( Attoseconds left, Attoseconds right ) => Combine( left, right );
 
-        public static Attoseconds operator +( Attoseconds left, Decimal attoseconds ) {
-            return Combine( left, attoseconds );
-        }
+        public static Attoseconds operator +( Attoseconds left, Decimal attoseconds ) => Combine( left, attoseconds );
 
-        public static Boolean operator <( Attoseconds left, Attoseconds right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Attoseconds left, Attoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Attoseconds left, Attoseconds right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Attoseconds left, Attoseconds right ) => Equals( left, right );
 
-        public static Boolean operator >( Attoseconds left, Attoseconds right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Attoseconds left, Attoseconds right ) => left.Value > right.Value;
 
-        public int CompareTo( Attoseconds other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( Attoseconds other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Attoseconds other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Attoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( [CanBeNull] object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
@@ -255,35 +227,25 @@ namespace Librainian.Measurement.Time {
             return obj is Attoseconds && this.Equals( ( Attoseconds )obj );
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
 
         /// <summary>
         ///     Convert to a larger unit.
         /// </summary>
         /// <returns></returns>
         [Pure]
-        public Femtoseconds ToFemtoseconds() {
-            return new Femtoseconds( this.Value / InOneFemtosecond );
-        }
+        public Femtoseconds ToFemtoseconds() => new Femtoseconds( this.Value / InOneFemtosecond );
 
         [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneAttosecond, new BigInteger( this.Value ) );
-        }
+        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneAttosecond, new BigInteger( this.Value ) );
 
         [Pure]
-        public override String ToString() {
-            return String.Format( "{0} as", this.Value );
-        }
+        public override String ToString() => String.Format( "{0} as", this.Value );
 
         /// <summary>
         ///     Convert to a smaller unit.
         /// </summary>
         /// <returns></returns>
-        public Zeptoseconds ToZeptoseconds() {
-            return new Zeptoseconds( this.Value * Zeptoseconds.InOneAttosecond );
-        }
+        public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( this.Value * Zeptoseconds.InOneAttosecond );
     }
 }

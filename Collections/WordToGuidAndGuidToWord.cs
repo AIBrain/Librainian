@@ -168,9 +168,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="daguid"></param>
         /// <returns></returns>
-        public Boolean Contains( Guid daguid ) {
-            return this._words.Values.Contains( daguid ) && this._guids.Keys.Contains( daguid );
-        }
+        public Boolean Contains( Guid daguid ) => this._words.Values.Contains( daguid ) && this._guids.Keys.Contains( daguid );
 
         public Boolean Load() {
             if ( this._baseCollectionName == null ) {

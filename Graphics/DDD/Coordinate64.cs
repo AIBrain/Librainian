@@ -97,17 +97,11 @@ namespace Librainian.Graphics.DDD {
         /// <param name="lhs"> </param>
         /// <param name="rhs"> </param>
         /// <returns> </returns>
-        public static Boolean Equals( Coordinate64 lhs, Coordinate64 rhs ) {
-            return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
-        }
+        public static Boolean Equals( Coordinate64 lhs, Coordinate64 rhs ) => lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
 
-        public static implicit operator Point( Coordinate64 coordinate ) {
-            return new Point( x: ( int )coordinate.X, y: ( int )coordinate.Y );
-        }
+        public static implicit operator Point( Coordinate64 coordinate ) => new Point( x: ( int )coordinate.X, y: ( int )coordinate.Y );
 
-        public static implicit operator PointF( Coordinate64 coordinate ) {
-            return new PointF( coordinate.X, coordinate.Y );
-        }
+        public static implicit operator PointF( Coordinate64 coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
         /// <summary>
         ///     <para>Returns a new Coordinate as a unit <see cref="Coordinate64" />.</para>
@@ -121,21 +115,14 @@ namespace Librainian.Graphics.DDD {
             return new Coordinate64( ( Int64 )( coordinate.X * num ), ( Int64 )( coordinate.Y * num ), ( Int64 )( coordinate.Z * num ) );
         }
 
-        public static Coordinate64 operator -( Coordinate64 v1, Coordinate64 v2 ) {
-            return new Coordinate64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
-        }
+        public static Coordinate64 operator -( Coordinate64 v1, Coordinate64 v2 ) => new Coordinate64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-        public static Boolean operator !=( Coordinate64 lhs, Coordinate64 rhs ) {
-            return !Equals( lhs: lhs, rhs: rhs );
-        }
+        public static Boolean operator !=( Coordinate64 lhs, Coordinate64 rhs ) => !Equals( lhs: lhs, rhs: rhs );
 
-        public static Boolean operator ==( Coordinate64 lhs, Coordinate64 rhs ) {
-            return Equals( lhs: lhs, rhs: rhs );
-        }
+        public static Boolean operator ==( Coordinate64 lhs, Coordinate64 rhs ) => Equals( lhs: lhs, rhs: rhs );
 
-        public static Coordinate64 Random() {
-            return new Coordinate64( x: Randem.NextInt64(), y: Randem.NextInt64(), z: Randem.NextInt64() );
-        }
+        public static Coordinate64 Random() => new Coordinate64( x: Randem.NextInt64(), y: Randem.NextInt64(), z: Randem.NextInt64() );
+
         ///// <summary>
         /////   Initialize with a random point.
         ///// </summary>
@@ -181,9 +168,8 @@ namespace Librainian.Graphics.DDD {
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Boolean Equals( Coordinate64 other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Coordinate64 other ) => Equals( this, other );
+
         public override Boolean Equals( object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
@@ -195,12 +181,8 @@ namespace Librainian.Graphics.DDD {
         ///     hash of <see cref="X" />, <see cref="Y" />, and <see cref="Z" />.
         /// //TODO is GetHashCode is only called once for immutable objects..?
         /// </summary>
-        public override int GetHashCode() {
-            return this.X.GetHashMerge( this.Y.GetHashMerge( this.Z ) );
-        }
+        public override int GetHashCode() => this.X.GetHashMerge( this.Y.GetHashMerge( this.Z ) );
 
-        public override String ToString() {
-            return String.Format( "{0}, {1}, {2}", this.X, this.Y, this.Z );
-        }
+        public override String ToString() => String.Format( "{0}, {1}, {2}", this.X, this.Y, this.Z );
     }
 }

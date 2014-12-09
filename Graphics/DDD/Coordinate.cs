@@ -98,13 +98,9 @@ namespace Librainian.Graphics.DDD {
             return !( lhs.Z > rhs.Z );
         }
 
-        public static implicit operator Point( Coordinate coordinate ) {
-            return new Point( ( int )coordinate.X, ( int )coordinate.Y );
-        }
+        public static implicit operator Point( Coordinate coordinate ) => new Point( ( int )coordinate.X, ( int )coordinate.Y );
 
-        public static implicit operator PointF( Coordinate coordinate ) {
-            return new PointF( coordinate.X, coordinate.Y );
-        }
+        public static implicit operator PointF( Coordinate coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
         /// <summary>
         /// Returns a new Coordinate as a unit Coordinate. The result is a Coordinate one unit in
@@ -115,17 +111,11 @@ namespace Librainian.Graphics.DDD {
             return new Coordinate( coordinate.X * num, coordinate.Y * num, coordinate.Z * num );
         }
 
-        public static Coordinate operator -( Coordinate v1, Coordinate v2 ) {
-            return new Coordinate( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
-        }
+        public static Coordinate operator -( Coordinate v1, Coordinate v2 ) => new Coordinate( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-        public static Boolean operator !=( Coordinate lhs, Coordinate rhs ) {
-            return !Equals( lhs: lhs, rhs: rhs );
-        }
+        public static Boolean operator !=( Coordinate lhs, Coordinate rhs ) => !Equals( lhs: lhs, rhs: rhs );
 
-        public static Boolean operator ==( Coordinate lhs, Coordinate rhs ) {
-            return Equals( lhs: lhs, rhs: rhs );
-        }
+        public static Boolean operator ==( Coordinate lhs, Coordinate rhs ) => Equals( lhs: lhs, rhs: rhs );
 
         /// <summary>
         /// Compares the current object with another object of the same type.
@@ -138,13 +128,9 @@ namespace Librainian.Graphics.DDD {
         /// <paramref name="other" /> .
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public int CompareTo( Coordinate other ) {
-            return this.SquareLength.CompareTo( other.SquareLength );
-        }
+        public int CompareTo( Coordinate other ) => this.SquareLength.CompareTo( other.SquareLength );
 
-        public Boolean Equals( Coordinate other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Coordinate other ) => Equals( this, other );
 
         public override Boolean Equals( object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
@@ -154,12 +140,8 @@ namespace Librainian.Graphics.DDD {
         }
 
 
-        public override int GetHashCode() {
-            return this.X.GetHashMerge( this.Y ).GetHashMerge( this.Z );
-        }
+        public override int GetHashCode() => this.X.GetHashMerge( this.Y ).GetHashMerge( this.Z );
 
-        public override String ToString() {
-            return String.Format( "{0}, {1}, {2}", this.X, this.Y, this.Z );
-        }
+        public override String ToString() => String.Format( "{0}, {1}, {2}", this.X, this.Y, this.Z );
     }
 }

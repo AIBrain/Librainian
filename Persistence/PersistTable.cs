@@ -253,9 +253,7 @@ namespace Librainian.Persistence {
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
         /// </exception>
-        public void Clear() {
-            this.Dictionary.Clear();
-        }
+        public void Clear() => this.Dictionary.Clear();
 
         /// <summary>
         /// Determines whether the <see cref="T:System.Collections.Generic.ICollection`1" />
@@ -285,9 +283,7 @@ namespace Librainian.Persistence {
         /// The key to locate in the <see cref="T:System.Collections.Generic.IDictionary`2" /> .
         /// </param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> is null.</exception>
-        public bool ContainsKey( TKey key ) {
-            return this.Dictionary.ContainsKey( key );
-        }
+        public bool ContainsKey( TKey key ) => this.Dictionary.ContainsKey( key );
 
         /// <summary>
         /// Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to
@@ -332,9 +328,7 @@ namespace Librainian.Persistence {
 
         public Boolean IsDisposed { get; private set; }
 
-        public void Flush() {
-            this.Dictionary.Flush();
-        }
+        public void Flush() => this.Dictionary.Flush();
 
         /// <summary>
         /// Returns an enumerator that iterates through the deserialized collection.
@@ -343,9 +337,7 @@ namespace Librainian.Persistence {
         /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate
         /// through the collection.
         /// </returns>
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
-            return this.Items().GetEnumerator();
-        }
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => this.Items().GetEnumerator();
 
         /// <summary>
         /// Returns an enumerator that iterates through a collection.
@@ -354,9 +346,7 @@ namespace Librainian.Persistence {
         /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate
         /// through the collection.
         /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public void Initialize() {
             Log.Enter();
@@ -389,9 +379,7 @@ namespace Librainian.Persistence {
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.IDictionary`2" /> is read-only.
         /// </exception>
-        public bool Remove( TKey key ) {
-            return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
-        }
+        public bool Remove( TKey key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
 
         /// <summary>
         /// Removes the first occurrence of a specific object from the
@@ -447,9 +435,7 @@ namespace Librainian.Persistence {
             return true;
         }
 
-        public bool TryRemove( TKey key ) {
-            return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
-        }
+        public bool TryRemove( TKey key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
 
         /*
                 private dynamic ToExpando( IEnumerable<KeyValuePair<TKey, TValue>> dictionary ) {
@@ -524,9 +510,7 @@ namespace Librainian.Persistence {
         */
 
         [NotNull]
-        private static String Value( TValue value ) {
-            return value.Serialize() ?? String.Empty;
-        }
+        private static String Value( TValue value ) => value.Serialize() ?? String.Empty;
 
         private static TValue Value( [NotNull] String value ) {
             var deserialize = value.Deserialize<TValue>();

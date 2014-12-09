@@ -32,9 +32,7 @@ namespace Librainian.Graphics {
             }
         }
 
-        public static Matrix3 I() {
-            return new Matrix3( new[ , ] { { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } } );
-        }
+        public static Matrix3 I() => new Matrix3( new[ , ] { { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } } );
 
         public static Vector3D operator *( Matrix3 matrix3, Vector3D v ) {
             var m = matrix3.matrix;
@@ -57,9 +55,7 @@ namespace Librainian.Graphics {
             return new Matrix3( m3 );
         }
 
-        public static Matrix3 operator *( Matrix3 m, Single scalar ) {
-            return new Matrix3( Multiply( m, scalar ) );
-        }
+        public static Matrix3 operator *( Matrix3 m, Single scalar ) => new Matrix3( Multiply( m, scalar ) );
     }
 }
 

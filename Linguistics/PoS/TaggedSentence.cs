@@ -40,9 +40,7 @@ namespace Librainian.Linguistics.PoS {
         }
 
         [Pure]
-        public static implicit operator String( TaggedSentence sentence ) {
-            return sentence.Tokens.ToStrings( " " );
-        }
+        public static implicit operator String( TaggedSentence sentence ) => sentence.Tokens.ToStrings( " " );
 
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
@@ -68,9 +66,7 @@ namespace Librainian.Linguistics.PoS {
         /// through the collection.
         /// </returns>
         /// <filterpriority>1</filterpriority>
-        public IEnumerator<ITaggedWord> GetEnumerator() {
-            return this.Tokens.GetEnumerator();
-        }
+        public IEnumerator<ITaggedWord> GetEnumerator() => this.Tokens.GetEnumerator();
 
         /// <summary>
         /// Returns an enumerator that iterates through a collection.
@@ -80,13 +76,9 @@ namespace Librainian.Linguistics.PoS {
         /// through the collection.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         [Pure]
-        public override String ToString() {
-            return this.Tokens.ToStrings( " " );
-        }
+        public override String ToString() => this.Tokens.ToStrings( " " );
     }
 }

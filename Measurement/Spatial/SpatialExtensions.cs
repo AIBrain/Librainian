@@ -11,13 +11,9 @@
 
         public const Single TwoPI = ( Single )( Math.PI * 2 );
 
-        public static T Clamp<T>( this T val, T min, T max ) where T : IComparable<T> {
-            return val.CompareTo( min ) < 0 ? min : ( val.CompareTo( max ) > 0 ? max : val );
-        }
+        public static T Clamp<T>( this T val, T min, T max ) where T : IComparable<T> => val.CompareTo( min ) < 0 ? min : ( val.CompareTo( max ) > 0 ? max : val );
 
-        public static Double Clamp01( this Double value ) {
-            return Clamp( value, 0.0f, 1.0f );
-        }
+        public static Double Clamp01( this Double value ) => Clamp( value, 0.0f, 1.0f );
 
         /// <summary>
         /// Lerp function for compass angles
@@ -37,9 +33,7 @@
             return To360Angle( @from + dif );
         }
 
-        public static Double DegreesToRadians( Double degrees ) {
-            return degrees * Degrees.DegreesToRadiansFactor;
-        }
+        public static Double DegreesToRadians( Double degrees ) => degrees * Degrees.DegreesToRadiansFactor;
 
         public static Double FindAngle( this Point here, Point there ) {
 
@@ -88,9 +82,7 @@
             return To360Angle( angle );
         }
 
-        public static Double RadiansToDegrees( Double radians ) {
-            return radians * Radians.RadiansToDegreesFactor;
-        }
+        public static Double RadiansToDegrees( Double radians ) => radians * Radians.RadiansToDegreesFactor;
 
         /// <summary>
         /// Clockwise from a top-down view.
@@ -193,13 +185,9 @@
             return angles;
         }
 
-        public static Degrees TurnLeft( this Degrees degrees, Single angle ) {
-            return new Degrees( degrees.Value += DegreesToRadians( angle ) );
-        }
+        public static Degrees TurnLeft( this Degrees degrees, Single angle ) => new Degrees( degrees.Value += DegreesToRadians( angle ) );
 
-        public static Degrees TurnRight( this Degrees degrees, Single angle ) {
-            return new Degrees( degrees.Value -= DegreesToRadians( angle ) );
-        }
+        public static Degrees TurnRight( this Degrees degrees, Single angle ) => new Degrees( degrees.Value -= DegreesToRadians( angle ) );
 
 /*
         /// <summary>
@@ -213,9 +201,7 @@
         /// <summary>
         /// Calculates the angle that an object should face, given its position, its target's position, its current angle, and its maximum turning speed.
         /// </summary>
-        public static float TurnToFace( this Point3D position, Point3D faceThis, float currentAngle, float turnSpeed ) {
-            return TurnToFace( new Vector( position.X,position.Y), new Vector( faceThis.X, faceThis.Y), currentAngle, turnSpeed );
-        }
+        public static float TurnToFace( this Point3D position, Point3D faceThis, float currentAngle, float turnSpeed ) => TurnToFace( new Vector( position.X,position.Y), new Vector( faceThis.X, faceThis.Y), currentAngle, turnSpeed );
 
         /// <summary>
         /// Calculates the angle that an object should face, given its position, its target's position, its current angle, and its maximum turning speed.

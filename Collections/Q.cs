@@ -96,9 +96,7 @@ namespace Librainian.Collections {
         }
 
         // ReSharper restore RemoveToList.1
-        public IEnumerator< T > GetEnumerator() {
-            return this.ToList().GetEnumerator();
-        }
+        public IEnumerator< T > GetEnumerator() => this.ToList().GetEnumerator();
 
         void ICollection.CopyTo( Array array, int index ) {
             if ( array == null ) {
@@ -107,9 +105,7 @@ namespace Librainian.Collections {
             this.ToArray().CopyTo( array, index );
         }
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         Boolean IProducerConsumerCollection< T >.TryAdd( T item ) {
             this.Enqueue( item );
@@ -117,13 +113,9 @@ namespace Librainian.Collections {
         }
 
         // ReSharper disable RemoveToList.1
-        public T[] ToArray() {
-            return this.ToList().ToArray();
-        }
+        public T[] ToArray() => this.ToList().ToArray();
 
-        public Boolean TryTake( out T item ) {
-            return this.TryDequeue( out item );
-        }
+        public Boolean TryTake( out T item ) => this.TryDequeue( out item );
 
         public void Enqueue( T item ) {
             while ( !this._tail.TryAppend( item, ref this._tail ) ) {

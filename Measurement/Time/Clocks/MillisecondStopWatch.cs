@@ -55,9 +55,7 @@ namespace Librainian.Measurement.Time.Clocks {
             return elapsed;
         }
 
-        private static UInt64 GetTimestamp() {
-            return ( UInt64 ) DateTime.UtcNow.Ticks;
-        }
+        private static UInt64 GetTimestamp() => ( UInt64 ) DateTime.UtcNow.Ticks;
 
         public void Reset() {
             _elapsed = 0;

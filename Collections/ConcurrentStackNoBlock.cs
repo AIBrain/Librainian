@@ -38,21 +38,13 @@ namespace Librainian.Collections {
 
         public int Count { get; private set; }
 
-        public void Add( T item ) {
-            this.Push( item );
-        }
+        public void Add( T item ) => this.Push( item );
 
-        public void Add( IEnumerable< T > items ) {
-            Parallel.ForEach( items, ThreadingExtensions.Parallelism, this.Push );
-        }
+        public void Add( IEnumerable< T > items ) => Parallel.ForEach( items, ThreadingExtensions.Parallelism, this.Push );
 
-        public void Add( ParallelQuery< T > items ) {
-            items.ForAll( this.Push );
-        }
+        public void Add( ParallelQuery< T > items ) => items.ForAll( this.Push );
 
-        public long LongCount() {
-            return this.Count;
-        }
+        public long LongCount() => this.Count;
 
         public void Push( T item ) {
             if ( Equals( default( T ), item ) ) {

@@ -56,9 +56,7 @@ namespace Librainian.Collections {
             }
         }
 
-        public void Add( K primaryKey, V val ) {
-            this.TryAdd( primaryKey, val );
-        }
+        public void Add( K primaryKey, V val ) => this.TryAdd( primaryKey, val );
 
         public void Add( K primaryKey, L subKey, V val ) {
             this.TryAdd( primaryKey, val );
@@ -81,17 +79,11 @@ namespace Librainian.Collections {
             }
         }
 
-        public K[] ClonePrimaryKeys() {
-            return this.Keys.ToArray();
-        }
+        public K[] ClonePrimaryKeys() => this.Keys.ToArray();
 
-        public L[] CloneSubKeys() {
-            return this.subDictionary.Keys.ToArray();
-        }
+        public L[] CloneSubKeys() => this.subDictionary.Keys.ToArray();
 
-        public V[] CloneValues() {
-            return this.Values.ToArray();
-        }
+        public V[] CloneValues() => this.Values.ToArray();
 
         public Boolean ContainsKey( L subKey ) {
             V val;
@@ -132,8 +124,6 @@ namespace Librainian.Collections {
             return this.subDictionary.TryGetValue( subKey, out ep ) && this.TryGetValue( ep, out val );
         }
 
-        public new Boolean TryGetValue( K primaryKey, out V val ) {
-            return base.TryGetValue( primaryKey, out val );
-        }
+        public new Boolean TryGetValue( K primaryKey, out V val ) => base.TryGetValue( primaryKey, out val );
     }
 }

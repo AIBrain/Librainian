@@ -45,9 +45,7 @@ namespace Librainian.Collections {
         ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
         /// </returns>
         /// <filterpriority>1</filterpriority>
-        public IEnumerator< T > GetEnumerator() {
-            return this.Queue.GetEnumerator();
-        }
+        public IEnumerator< T > GetEnumerator() => this.Queue.GetEnumerator();
 
         /// <summary>
         ///     Returns an enumerator that iterates through a collection.
@@ -56,9 +54,7 @@ namespace Librainian.Collections {
         ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
         #endregion IEnumerable<T> Members
 
         /// <summary>

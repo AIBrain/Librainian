@@ -153,13 +153,9 @@ namespace Librainian.Measurement.Currency.BTC {
             return this._coins.TryGetValue( coin, out result ) ? result : UInt64.MinValue;
         }
 
-        public IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator() {
-            return this._coins.GetEnumerator();
-        }
+        public IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator() => this._coins.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public ulong Deposit( [CanBeNull] ICoin coin, UInt64 quantity, Boolean updateStatistics = true ) {
             if ( null == coin ) {

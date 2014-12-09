@@ -90,12 +90,8 @@ namespace Librainian.Graphics {
             return m3;
         }
 
-        public static Matrix operator *( Matrix m, Single scalar ) {
-            return new Matrix( Multiply( m, scalar ) );
-        }
+        public static Matrix operator *( Matrix m, Single scalar ) => new Matrix( Multiply( m, scalar ) );
 
-        public static Matrix operator *( Matrix m1, Matrix m2 ) {
-            return new Matrix( Multiply( m1, m2 ) );
-        }
+        public static Matrix operator *( Matrix m1, Matrix m2 ) => new Matrix( Multiply( m1, m2 ) );
     }
 }

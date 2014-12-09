@@ -77,13 +77,9 @@ namespace Librainian.Measurement.Spatial {
             }
         }
 
-        public int CompareTo( Degrees other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( Degrees other ) => this.Value.CompareTo( other.Value );
 
-        public static Degrees Combine( Degrees left, Double degrees ) {
-            return new Degrees( left.Value + degrees );
-        }
+        public static Degrees Combine( Degrees left, Double degrees ) => new Degrees( left.Value + degrees );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -91,77 +87,41 @@ namespace Librainian.Measurement.Spatial {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Degrees left, Degrees right ) {
-            return Math.Abs( left.Value - right.Value ) < Double.Epsilon;
-        }
+        public static Boolean Equals( Degrees left, Degrees right ) => Math.Abs( left.Value - right.Value ) < Double.Epsilon;
 
-        public static implicit operator Single( Degrees degrees ) {
-            return ( float ) degrees.Value;
-        }
+        public static implicit operator Single( Degrees degrees ) => ( float ) degrees.Value;
 
-        public static implicit operator Double( Degrees degrees ) {
-            return degrees.Value;
-        }
+        public static implicit operator Double( Degrees degrees ) => degrees.Value;
 
-        public static implicit operator Radians( Degrees degrees ) {
-            return ToRadians( degrees );
-        }
+        public static implicit operator Radians( Degrees degrees ) => ToRadians( degrees );
 
-        public Radians ToRadians() {
-            return ToRadians( this );
-        }
+        public Radians ToRadians() => ToRadians( this );
 
-        public static Radians ToRadians( Degrees degrees ) {
-            return new Radians( degrees.Value * DegreesToRadiansFactor );
-        }
+        public static Radians ToRadians( Degrees degrees ) => new Radians( degrees.Value * DegreesToRadiansFactor );
 
-        public static Radians ToRadians( Double degrees ) {
-            return new Radians( degrees * DegreesToRadiansFactor );
-        }
+        public static Radians ToRadians( Double degrees ) => new Radians( degrees * DegreesToRadiansFactor );
 
-        public static implicit operator Decimal( Degrees degrees ) {
-            return ( Decimal )degrees.Value;
-        }
+        public static implicit operator Decimal( Degrees degrees ) => ( Decimal )degrees.Value;
 
-        public static Degrees operator -( Degrees degrees ) {
-            return new Degrees( degrees.Value * -1f );
-        }
+        public static Degrees operator -( Degrees degrees ) => new Degrees( degrees.Value * -1f );
 
-        public static Degrees operator -( Degrees left, Degrees right ) {
-            return Combine( left, -right.Value );
-        }
+        public static Degrees operator -( Degrees left, Degrees right ) => Combine( left, -right.Value );
 
-        public static Degrees operator -( Degrees left, Double degrees ) {
-            return Combine( left, -degrees );
-        }
+        public static Degrees operator -( Degrees left, Double degrees ) => Combine( left, -degrees );
 
-        public static Boolean operator !=( Degrees left, Degrees right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Degrees left, Degrees right ) => !Equals( left, right );
 
-        public static Degrees operator +( Degrees left, Degrees right ) {
-            return Combine( left, right.Value );
-        }
+        public static Degrees operator +( Degrees left, Degrees right ) => Combine( left, right.Value );
 
-        public static Degrees operator +( Degrees left, Double degrees ) {
-            return Combine( left, degrees );
-        }
+        public static Degrees operator +( Degrees left, Double degrees ) => Combine( left, degrees );
 
-        public static Boolean operator <( Degrees left, Degrees right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Degrees left, Degrees right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Degrees left, Degrees right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Degrees left, Degrees right ) => Equals( left, right );
 
-        public static Boolean operator >( Degrees left, Degrees right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Degrees left, Degrees right ) => left.Value > right.Value;
 
-        public Boolean Equals( Degrees other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Degrees other ) => Equals( this, other );
 
         public override Boolean Equals( object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
@@ -170,14 +130,10 @@ namespace Librainian.Measurement.Spatial {
             return obj is Degrees && Equals( this, ( Degrees )obj );
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
 
         [Pure]
-        public override String ToString() {
-            return String.Format( "{0} °", this.Value );
-        }
+        public override String ToString() => String.Format( "{0} °", this.Value );
 
         /// <summary>
         /// Math.PI / 180

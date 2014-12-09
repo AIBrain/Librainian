@@ -58,8 +58,6 @@ namespace Librainian.Extensions {
             return new HashSet< T >( fromEnumerable, comparer );
         }
 
-        public static HashSet< T > ToHashSet< T >( this IEnumerable< T > fromEnumerable ) {
-            return ToHashSet( fromEnumerable, EqualityComparer< T >.Default );
-        }
+        public static HashSet< T > ToHashSet< T >( this IEnumerable< T > fromEnumerable ) => ToHashSet( fromEnumerable, EqualityComparer< T >.Default );
     }
 }

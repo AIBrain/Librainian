@@ -6,9 +6,6 @@
         /// <summary>
         /// Loads the module into the kernel.
         /// </summary>
-        public void Load() {
-            BsonSerializer.RegisterSerializationProvider( new MongoDynamicSerializationProvider() );
-
-        }
+        public void Load() => BsonSerializer.RegisterSerializationProvider( new MongoDynamicSerializationProvider() );
     }
 }

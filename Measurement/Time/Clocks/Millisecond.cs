@@ -79,13 +79,9 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static explicit operator Int16( Millisecond value ) {
-            return ( Int16 )value.Value;
-        }
+        public static explicit operator Int16( Millisecond value ) => ( Int16 )value.Value;
 
-        public static implicit operator UInt16( Millisecond value ) {
-            return value.Value;
-        }
+        public static implicit operator UInt16( Millisecond value ) => value.Value;
 
         /// <summary>
         ///     Provide the next <see cref="Millisecond"/>.

@@ -125,11 +125,7 @@ namespace Librainian.Database {
 
         //private static Lazy<ISqlLocalDbInstance> instanceLazy = new Lazy<ISqlLocalDbInstance>( () => Instance );
 
-        public static Boolean TryPut<TData>( String genericThingHere ) {
-            //send data to localdb?
-            //how?
-            return false;
-        }
+        public static Boolean TryPut<TData>( String genericThingHere ) => false;
 
         public static Boolean TryGet<TData>( String genericThingHere, out TData result ) {
             //get data from localdb?
@@ -173,13 +169,9 @@ namespace Librainian.Database {
             private set;
         }
 
-        public void Dispose() {
-            this.DetachDatabase();
-        }
+        public void Dispose() => this.DetachDatabase();
 
-        public IDbConnection OpenConnection() {
-            return new SqlConnection( this.ConnectionStringName );
-        }
+        public IDbConnection OpenConnection() => new SqlConnection( this.ConnectionStringName );
 
         private void CreateDatabase() {
             this.OutputFolder = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), DatabaseDirectory );

@@ -50,9 +50,7 @@ namespace Librainian.Maths {
         /// <returns>
         ///     <b>True</b> if the specified range is inside this range or <b>false</b> otherwise.
         /// </returns>
-        public Boolean IsInside( Int64Range range ) {
-            return this.IsInside( range.Min ) && this.IsInside( range.Max );
-        }
+        public Boolean IsInside( Int64Range range ) => this.IsInside( range.Min ) && this.IsInside( range.Max );
 
         /// <summary>
         ///     Check if the specified value is inside this range
@@ -61,9 +59,7 @@ namespace Librainian.Maths {
         /// <returns>
         ///     <b>True</b> if the specified value is inside this range or <b>false</b> otherwise.
         /// </returns>
-        public Boolean IsInside( Int64 x ) {
-            return this.Min <= x && x <= this.Max;
-        }
+        public Boolean IsInside( Int64 x ) => this.Min <= x && x <= this.Max;
 
         /// <summary>
         ///     Check if the specified range overlaps with this range
@@ -72,8 +68,6 @@ namespace Librainian.Maths {
         /// <returns>
         ///     <b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.
         /// </returns>
-        public Boolean IsOverlapping( Int64Range range ) {
-            return this.IsInside( range.Min ) || this.IsInside( range.Max );
-        }
+        public Boolean IsOverlapping( Int64Range range ) => this.IsInside( range.Min ) || this.IsInside( range.Max );
     }
 }

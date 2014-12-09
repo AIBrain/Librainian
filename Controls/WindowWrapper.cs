@@ -28,8 +28,6 @@ namespace Librainian.Controls {
 
         public IntPtr Handle { get; private set; }
 
-        public static WindowWrapper CreateWindowWrapper( IntPtr handle ) {
-            return new WindowWrapper( handle );
-        }
+        public static WindowWrapper CreateWindowWrapper( IntPtr handle ) => new WindowWrapper( handle );
     }
 }

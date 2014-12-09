@@ -28,41 +28,31 @@ namespace Librainian.Extensions {
         /// <summary>
         ///     All types across multiple assemblies
         /// </summary>
-        public static IEnumerable< Type > GetTypes( this IEnumerable< Assembly > assemblies ) {
-            return from assembly in assemblies
-                   from type in assembly.GetTypes()
-                   select type;
-        }
+        public static IEnumerable< Type > GetTypes( this IEnumerable< Assembly > assemblies ) => from assembly in assemblies
+                                                                                                 from type in assembly.GetTypes()
+                                                                                                 select type;
 
         /// <summary>
         ///     Find all types in 'assembly' that derive from 'baseType'
         /// </summary>
         /// <owner>jayBaz</owner>
-        internal static IEnumerable< Type > FindAllTypesThatDeriveFrom< TBase >( Assembly assembly ) {
-            return from type in assembly.GetTypes()
-                   where type.IsSubclassOf( typeof ( TBase ) )
-                   select type;
-        }
+        internal static IEnumerable< Type > FindAllTypesThatDeriveFrom< TBase >( Assembly assembly ) => from type in assembly.GetTypes()
+                                                                                                        where type.IsSubclassOf( typeof ( TBase ) )
+                                                                                                        select type;
 
         // I find that the default GetFields behavior is not suitable to my needs
-        internal static IEnumerable< FieldInfo > GetAllDeclaredInstanceFields( Type type ) {
-            return type.GetFields( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly );
-        }
+        internal static IEnumerable< FieldInfo > GetAllDeclaredInstanceFields( Type type ) => type.GetFields( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly );
 
         /// <summary>
         ///     A typesafe wrapper for Attribute.GetCustomAttribute
         /// </summary>
         /// <remarks> TODO:add overloads for Assembly, Module, and ParameterInfo</remarks>
-        internal static TAttribute GetCustomAttribute< TAttribute >( MemberInfo element ) where TAttribute : Attribute {
-            return ( TAttribute ) Attribute.GetCustomAttribute( element, typeof ( TAttribute ) );
-        }
+        internal static TAttribute GetCustomAttribute< TAttribute >( MemberInfo element ) where TAttribute : Attribute => ( TAttribute ) Attribute.GetCustomAttribute( element, typeof ( TAttribute ) );
 
         /// <summary>
         ///     Check if the given type has the given attribute on it. Don't look at base classes.
         /// </summary>
         /// <owner>jayBaz</owner>
-        internal static Boolean TypeHasAttribute< TAttribute >( Type type ) where TAttribute : Attribute {
-            return Attribute.IsDefined( type, typeof ( TAttribute ) );
-        }
+        internal static Boolean TypeHasAttribute< TAttribute >( Type type ) where TAttribute : Attribute => Attribute.IsDefined( type, typeof ( TAttribute ) );
     }
 }

@@ -35,9 +35,7 @@ namespace Librainian.Security {
             this.ImpersonateValidUser( userName, domainName, password );
         }
 
-        public void Dispose() {
-            this.UndoImpersonation();
-        }
+        public void Dispose() => this.UndoImpersonation();
 
         [DllImport( "kernel32.dll", CharSet = CharSet.Auto )]
         private static extern Boolean CloseHandle( IntPtr handle );

@@ -576,9 +576,7 @@ namespace Librainian.Collections {
         ///     collection contains an element with the specified key; otherwise, <see langword="false" /> .
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="key" /> is <null /></exception>
-        public Boolean ContainsKey( TKey key ) {
-            return this.Dictionary.ContainsKey( key );
-        }
+        public Boolean ContainsKey( TKey key ) => this.Dictionary.ContainsKey( key );
 
         /// <summary>
         ///     Copies the elements of the
@@ -610,9 +608,7 @@ namespace Librainian.Collections {
         ///         OrderedDictionary&lt;TKey,TValue&gt;
         ///     </see>
         /// </remarks>
-        void ICollection.CopyTo( Array array, int index ) {
-            ( ( ICollection )this.List ).CopyTo( array, index );
-        }
+        void ICollection.CopyTo( Array array, int index ) => ( ( ICollection )this.List ).CopyTo( array, index );
 
         /// <summary>
         ///     Adds the specified value to the
@@ -632,9 +628,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     .
         /// </param>
-        void ICollection<KeyValuePair<TKey, TValue>>.Add( KeyValuePair<TKey, TValue> item ) {
-            this.Add( item.Key, item.Value );
-        }
+        void ICollection<KeyValuePair<TKey, TValue>>.Add( KeyValuePair<TKey, TValue> item ) => this.Add( item.Key, item.Value );
 
         /// <summary>
         ///     Determines whether the
@@ -661,9 +655,7 @@ namespace Librainian.Collections {
         ///     ;
         ///     otherwise, <see langword="false" />.
         /// </returns>
-        Boolean ICollection<KeyValuePair<TKey, TValue>>.Contains( KeyValuePair<TKey, TValue> item ) {
-            return ( ( ICollection<KeyValuePair<TKey, TValue>> )this.Dictionary ).Contains( item );
-        }
+        Boolean ICollection<KeyValuePair<TKey, TValue>>.Contains( KeyValuePair<TKey, TValue> item ) => ( ( ICollection<KeyValuePair<TKey, TValue>> )this.Dictionary ).Contains( item );
 
         /// <summary>
         ///     Copies the elements of the
@@ -696,9 +688,7 @@ namespace Librainian.Collections {
         /// <param name="arrayIndex">
         ///     The zero-based index in <paramref name="array" /> at which copying begins.
         /// </param>
-        void ICollection<KeyValuePair<TKey, TValue>>.CopyTo( KeyValuePair<TKey, TValue>[] array, int arrayIndex ) {
-            ( ( ICollection<KeyValuePair<TKey, TValue>> )this.Dictionary ).CopyTo( array, arrayIndex );
-        }
+        void ICollection<KeyValuePair<TKey, TValue>>.CopyTo( KeyValuePair<TKey, TValue>[] array, int arrayIndex ) => ( ( ICollection<KeyValuePair<TKey, TValue>> )this.Dictionary ).CopyTo( array, arrayIndex );
 
         /// <summary>
         ///     Removes a key and value from the dictionary.
@@ -728,9 +718,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     .
         /// </returns>
-        Boolean ICollection<KeyValuePair<TKey, TValue>>.Remove( KeyValuePair<TKey, TValue> item ) {
-            return this.Remove( item.Key );
-        }
+        Boolean ICollection<KeyValuePair<TKey, TValue>>.Remove( KeyValuePair<TKey, TValue> item ) => this.Remove( item.Key );
 
         /// <summary>
         ///     Adds an entry with the specified key and value into the
@@ -768,9 +756,7 @@ namespace Librainian.Collections {
         ///     is
         ///     not in the inheritance hierarchy of <paramref name="value" /> .
         /// </exception>
-        void IDictionary.Add( object key, object value ) {
-            this.Add( ConvertToKeyType( key ), ConvertToValueType( value ) );
-        }
+        void IDictionary.Add( object key, object value ) => this.Add( ConvertToKeyType( key ), ConvertToValueType( value ) );
 
         /// <summary>
         ///     Determines whether the
@@ -806,13 +792,9 @@ namespace Librainian.Collections {
         ///     is not
         ///     in the inheritance hierarchy of <paramref name="key" /> .
         /// </exception>
-        Boolean IDictionary.Contains( object key ) {
-            return this.ContainsKey( ConvertToKeyType( key ) );
-        }
+        Boolean IDictionary.Contains( object key ) => this.ContainsKey( ConvertToKeyType( key ) );
 
-        IDictionaryEnumerator IDictionary.GetEnumerator() {
-            return this.Dictionary.GetEnumerator();
-        }
+        IDictionaryEnumerator IDictionary.GetEnumerator() => this.Dictionary.GetEnumerator();
 
         /// <summary>
         ///     Removes the entry with the specified key from the
@@ -823,9 +805,7 @@ namespace Librainian.Collections {
         ///     collection.
         /// </summary>
         /// <param name="key">The key of the entry to remove</param>
-        void IDictionary.Remove( object key ) {
-            this.Remove( ConvertToKeyType( key ) );
-        }
+        void IDictionary.Remove( object key ) => this.Remove( ConvertToKeyType( key ) );
 
         /// <summary>
         ///     Adds an entry with the specified key and value into the
@@ -868,17 +848,11 @@ namespace Librainian.Collections {
         ///         OrderedDictionary&lt;TKey,TValue&gt;
         ///     </see>
         /// </exception>
-        void IDictionary<TKey, TValue>.Add( TKey key, TValue value ) {
-            this.Add( key, value );
-        }
+        void IDictionary<TKey, TValue>.Add( TKey key, TValue value ) => this.Add( key, value );
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.List.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.List.GetEnumerator();
 
-        IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() {
-            return this.List.GetEnumerator();
-        }
+        IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() => this.List.GetEnumerator();
 
         /// <summary>
         ///     Inserts a new entry into the
@@ -916,9 +890,7 @@ namespace Librainian.Collections {
             this.List.Insert( index, new KeyValuePair<TKey, TValue>( key, value ) );
         }
 
-        IDictionaryEnumerator IOrderedDictionary.GetEnumerator() {
-            return this.Dictionary.GetEnumerator();
-        }
+        IDictionaryEnumerator IOrderedDictionary.GetEnumerator() => this.Dictionary.GetEnumerator();
 
         /// <summary>
         ///     Inserts a new entry into the
@@ -966,9 +938,7 @@ namespace Librainian.Collections {
         ///     - or-<br /> An element with the same key already exists in the
         ///     <see cref="OrderedDictionary{TKey,TValue}">OrderedDictionary&lt;TKey,TValue&gt;</see>.
         /// </exception>
-        void IOrderedDictionary.Insert( int index, object key, object value ) {
-            this.Insert( index, ConvertToKeyType( key ), ConvertToValueType( value ) );
-        }
+        void IOrderedDictionary.Insert( int index, object key, object value ) => this.Insert( index, ConvertToKeyType( key ), ConvertToValueType( value ) );
 
         /// <summary>
         ///     Removes the entry with the specified key from the
@@ -1039,9 +1009,7 @@ namespace Librainian.Collections {
         ///     </see>
         ///     contains an element with the specified key; otherwise, <see langword="false" /> .
         /// </returns>
-        public Boolean TryGetValue( TKey key, out TValue value ) {
-            return this.Dictionary.TryGetValue( key, out value );
-        }
+        public Boolean TryGetValue( TKey key, out TValue value ) => this.Dictionary.TryGetValue( key, out value );
         #endregion IOrderedDictionary<TKey,TValue> Members
 
         /// <summary>

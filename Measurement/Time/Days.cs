@@ -96,17 +96,11 @@ namespace Librainian.Measurement.Time {
 
         public const Byte InOneMonth = 31;
 
-        public static Days Combine( Days left, Days right ) {
-            return Combine( left, right.Value );
-        }
+        public static Days Combine( Days left, Days right ) => Combine( left, right.Value );
 
-        public static Days Combine( Days left, Decimal days ) {
-            return new Days( left.Value + days );
-        }
+        public static Days Combine( Days left, Decimal days ) => new Days( left.Value + days );
 
-        public static Days Combine( Days left, BigInteger days ) {
-            return new Days( ( BigInteger )left.Value + days );
-        }
+        public static Days Combine( Days left, BigInteger days ) => new Days( ( BigInteger )left.Value + days );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -114,91 +108,53 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Days left, Days right ) {
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Days left, Days right ) => left.Value == right.Value;
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="days" /> to <see cref="Hours" />.
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
-        public static implicit operator Hours( Days days ) {
-            return days.ToHours();
-        }
+        public static implicit operator Hours( Days days ) => days.ToHours();
 
-        public static implicit operator Span( Days days ) {
-            return new Span( days: days.Value );
-        }
+        public static implicit operator Span( Days days ) => new Span( days: days.Value );
 
-        public static implicit operator TimeSpan( Days days ) {
-            return TimeSpan.FromDays( ( Double )days.Value );
-        }
+        public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double )days.Value );
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
-        public static implicit operator Weeks( Days days ) {
-            return days.ToWeeks();
-        }
+        public static implicit operator Weeks( Days days ) => days.ToWeeks();
 
-        public static Days operator -( Days days ) {
-            return new Days( days.Value * -1 );
-        }
+        public static Days operator -( Days days ) => new Days( days.Value * -1 );
 
-        public static Days operator -( Days left, Days right ) {
-            return Combine( left: left, right: -right );
-        }
+        public static Days operator -( Days left, Days right ) => Combine( left: left, right: -right );
 
-        public static Days operator -( Days left, Decimal days ) {
-            return Combine( left, -days );
-        }
+        public static Days operator -( Days left, Decimal days ) => Combine( left, -days );
 
-        public static Boolean operator !=( Days left, Days right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Days left, Days right ) => !Equals( left, right );
 
-        public static Days operator +( Days left, Days right ) {
-            return Combine( left, right );
-        }
+        public static Days operator +( Days left, Days right ) => Combine( left, right );
 
-        public static Days operator +( Days left, Decimal days ) {
-            return Combine( left, days );
-        }
+        public static Days operator +( Days left, Decimal days ) => Combine( left, days );
 
-        public static Days operator +( Days left, BigInteger days ) {
-            return Combine( left, days );
-        }
+        public static Days operator +( Days left, BigInteger days ) => Combine( left, days );
 
-        public static Boolean operator <( Days left, Days right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Days left, Days right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Days left, Hours right ) {
-            return left < ( Days )right;
-        }
+        public static Boolean operator <( Days left, Hours right ) => left < ( Days )right;
 
-        public static Boolean operator ==( Days left, Days right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Days left, Days right ) => Equals( left, right );
 
-        public static Boolean operator >( Days left, Hours right ) {
-            return left > ( Days )right;
-        }
+        public static Boolean operator >( Days left, Hours right ) => left > ( Days )right;
 
-        public static Boolean operator >( Days left, Days right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Days left, Days right ) => left.Value > right.Value;
 
-        public int CompareTo( Days other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public int CompareTo( Days other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Days other ) {
-            return Equals( this.Value, other.Value );
-        }
+        public Boolean Equals( Days other ) => Equals( this.Value, other.Value );
 
         public override Boolean Equals( object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
@@ -208,28 +164,18 @@ namespace Librainian.Measurement.Time {
         }
 
         [Pure]
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override int GetHashCode() => this.Value.GetHashCode();
 
         [Pure]
-        public Hours ToHours() {
-            return new Hours( this.Value * Hours.InOneDay );
-        }
+        public Hours ToHours() => new Hours( this.Value * Hours.InOneDay );
 
         [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneDay, new BigInteger( this.Value ) );
-        }
+        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneDay, new BigInteger( this.Value ) );
 
         [Pure]
-        public override String ToString() {
-            return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "day" ) );
-        }
+        public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "day" ) );
 
         [Pure]
-        public Weeks ToWeeks() {
-            return new Weeks( this.Value / InOneWeek );
-        }
+        public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
     }
 }

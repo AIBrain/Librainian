@@ -184,9 +184,7 @@ namespace Librainian.Misc {
             return a._k == b._k;
         }
 
-        public static Boolean operator !=( Bitten a, Bitten b ) {
-            return !( a == b );
-        }
+        public static Boolean operator !=( Bitten a, Bitten b ) => !( a == b );
 
         private static char HexToChar( int a ) {
             a = a & 0xf;

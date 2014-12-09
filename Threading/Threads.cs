@@ -97,9 +97,6 @@ namespace Librainian.Threading {
         ///     Accurate to within how many nanoseconds?
         /// </summary>
         /// <returns></returns>
-        public static long GetTimerAccuracy() {
-            return 1000000000L / Stopwatch.Frequency;
-        }
-
+        public static long GetTimerAccuracy() => 1000000000L / Stopwatch.Frequency;
     }
 }

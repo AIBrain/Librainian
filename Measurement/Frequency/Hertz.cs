@@ -168,20 +168,12 @@ namespace Librainian.Measurement.Frequency {
             }
         }
 
-        public static implicit operator TimeSpan( Hertz hertz ) {
-            return TimeSpan.FromSeconds( ( Double )( 1.0m / hertz.Value ) );
-        }
+        public static implicit operator TimeSpan( Hertz hertz ) => TimeSpan.FromSeconds( ( Double )( 1.0m / hertz.Value ) );
 
-        public static implicit operator Span( Hertz hertz ) {
-            return new Seconds( 1.0m / hertz.Value );
-        }
+        public static implicit operator Span( Hertz hertz ) => new Seconds( 1.0m / hertz.Value );
 
-        public static Boolean operator <( Hertz lhs, Hertz rhs ) {
-            return lhs.Value.CompareTo( rhs.Value ) < 0;
-        }
+        public static Boolean operator <( Hertz lhs, Hertz rhs ) => lhs.Value.CompareTo( rhs.Value ) < 0;
 
-        public static Boolean operator >( Hertz lhs, Hertz rhs ) {
-            return lhs.Value.CompareTo( rhs.Value ) > 0;
-        }
+        public static Boolean operator >( Hertz lhs, Hertz rhs ) => lhs.Value.CompareTo( rhs.Value ) > 0;
     }
 }

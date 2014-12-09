@@ -111,10 +111,6 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        public static Actor Do( Action action ) {
-            return new Actor( action );
-        }
-
-
+        public static Actor Do( Action action ) => new Actor( action );
     }
 }

@@ -94,9 +94,7 @@ namespace Librainian.Internet {
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static String Peek( String url ) {
-            return Peek( new Uri( url ) );
-        }
+        public static String Peek( String url ) => Peek( new Uri( url ) );
 
         public static String Peek( Uri uri ) {
             if ( !uri.IsWellFormedOriginalString() ) {
@@ -109,9 +107,7 @@ namespace Librainian.Internet {
             return Document;
         }
 
-        public static IAsyncResult GetAsynch( String url ) {
-            return GetAsynch( new Uri( url ) );
-        }
+        public static IAsyncResult GetAsynch( String url ) => GetAsynch( new Uri( url ) );
 
         public static IAsyncResult GetAsynch( Uri uri ) {
             uri.IsWellFormedOriginalString().BreakIfFalse();
@@ -206,9 +202,7 @@ namespace Librainian.Internet {
         ///     Pump messages while waiting forever for a response to be populated for this url.
         /// </summary>
         /// <param name="url"></param>
-        public static void Wait( String url ) {
-            Wait( new Uri( url ) );
-        }
+        public static void Wait( String url ) => Wait( new Uri( url ) );
 
         /// <summary>
         ///     Pump messages while waiting forever for a response to be populated for this uri.
@@ -226,9 +220,7 @@ namespace Librainian.Internet {
             }
         }
 
-        public static String Get( String url ) {
-            return Get( new Uri( url ) );
-        }
+        public static String Get( String url ) => Get( new Uri( url ) );
 
         public static String Get( Uri uri ) {
             uri.IsWellFormedOriginalString().BreakIfFalse();

@@ -38,31 +38,37 @@ namespace Librainian.Maths {
 
     public static class MathExtensions {
 
-        public struct SixteenBytes {
-            public byte A;
-            public byte B;
-            public byte C;
-            public byte D;
-            public byte E;
-            public byte F;
-            public byte G;
-            public byte H;
-            public byte I;
-            public byte J;
-            public byte K;
-            public byte L;
-            public byte M;
-            public byte N;
-            public byte O;
-            public byte P;
-        }
-
         [StructLayout( LayoutKind.Explicit )]
         public struct DecimalReverser {
             [FieldOffset( 0 )]
             public Decimal Decimal;
             [FieldOffset( 0 )]
             public SixteenBytes Bytes;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="baseValue"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://stackoverflow.com/a/18363540/956364"/>
+        public static Decimal NthRoot( this Decimal baseValue, int n ) {
+            if ( n == 1 )
+                return baseValue;
+            Decimal deltaX;
+            var x = 0.1M;
+            do {
+                deltaX = ( baseValue / x.Pow( n - 1 ) - x ) / n;
+                x += deltaX;
+            } while ( Math.Abs( deltaX ) > 0 );
+            return x;
+        }
+
+        public static Decimal Pow( this Decimal baseValue, int n ) {
+            for ( var i = 0 ; i < n - 1 ; i++ )
+                baseValue *= baseValue;
+            return baseValue;
         }
 
         /// <summary>
@@ -97,21 +103,13 @@ namespace Librainian.Maths {
             return reverser.Decimal;
         }
 
-        public static Boolean IsOdd( this int value ) {
-            return 0 != value % 2;
-        }
+        public static Boolean IsOdd( this int value ) => 0 != value % 2;
 
-        public static Boolean IsEven( this int value ) {
-            return 0 == value % 2;
-        }
+        public static Boolean IsEven( this int value ) => 0 == value % 2;
 
-        public static Boolean IsOdd( this long value ) {
-            return 0 != value % 2;
-        }
+        public static Boolean IsOdd( this long value ) => 0 != value % 2;
 
-        public static Boolean IsEven( this long value ) {
-            return 0 == value % 2;
-        }
+        public static Boolean IsEven( this long value ) => 0 == value % 2;
 
         public delegate int FibonacciCalculator( int n );
 
@@ -130,9 +128,7 @@ namespace Librainian.Maths {
         /// <param name="number"></param>
         /// <returns></returns>
         [Pure]
-        public static Decimal Epsilon( this Decimal number ) {
-            return EpsilonDecimal;
-        }
+        public static Decimal Epsilon( this Decimal number ) => EpsilonDecimal;
 
         public const Boolean No = !Yes;
 
@@ -232,9 +228,7 @@ namespace Librainian.Maths {
         /// <param name="high"></param>
         /// <param name="low"></param>
         /// <returns></returns>
-        public static UInt64 Combine( this UInt32 high, UInt32 low ) {
-            return ( UInt64 )high << 32 | low;
-        }
+        public static UInt64 Combine( this UInt32 high, UInt32 low ) => ( UInt64 )high << 32 | low;
 
         /// <summary>
         ///     Combine two bytes into one <see cref="UInt16" />.
@@ -242,9 +236,7 @@ namespace Librainian.Maths {
         /// <param name="low"></param>
         /// <param name="high"></param>
         /// <returns></returns>
-        public static UInt16 CombineBytes( this Byte low, Byte high ) {
-            return BitConverter.ToUInt16( BitConverter.IsLittleEndian ? new[] { high, low } : new[] { low, high }, 0 );
-        }
+        public static UInt16 CombineBytes( this Byte low, Byte high ) => BitConverter.ToUInt16( BitConverter.IsLittleEndian ? new[] { high, low } : new[] { low, high }, 0 );
 
         /// <summary>
         ///     Combine two bytes into one <see cref="UInt16" /> with little endianess.
@@ -253,9 +245,7 @@ namespace Librainian.Maths {
         /// <param name="high"></param>
         /// <returns></returns>
         /// <seealso cref="CombineTwoBytesLittleEndianess" />
-        public static UInt16 CombineTwoBytesHighEndianess( this Byte low, Byte high ) {
-            return ( UInt16 )( high + ( low << 8 ) ); //BUG is this backwards?
-        }
+        public static UInt16 CombineTwoBytesHighEndianess( this Byte low, Byte high ) => ( UInt16 )( high + ( low << 8 ) );
 
         /// <summary>
         ///     Combine two bytes into one <see cref="UInt16" /> with little endianess.
@@ -264,9 +254,7 @@ namespace Librainian.Maths {
         /// <param name="high"></param>
         /// <returns></returns>
         /// <seealso cref="CombineTwoBytesHighEndianess" />
-        public static UInt16 CombineTwoBytesLittleEndianess( this Byte low, Byte high ) {
-            return ( UInt16 )( low + ( high << 8 ) ); //BUG is this backwards?
-        }
+        public static UInt16 CombineTwoBytesLittleEndianess( this Byte low, Byte high ) => ( UInt16 )( low + ( high << 8 ) );
 
         /// <summary>
         ///     ConvertBigIntToBcd
@@ -304,25 +292,15 @@ namespace Librainian.Maths {
             return convertedNumber;
         }
 
-        public static Double Crop( this Double x ) {
-            return Math.Truncate( x * 100.0D ) / 100.0D;
-        }
+        public static Double Crop( this Double x ) => Math.Truncate( x * 100.0D ) / 100.0D;
 
-        public static Single Crop( this Single x ) {
-            return ( Single )( Math.Truncate( x * 100.0f ) / 100.0f );
-        }
+        public static Single Crop( this Single x ) => ( Single )( Math.Truncate( x * 100.0f ) / 100.0f );
 
-        public static Single Cubed( this Single number ) {
-            return number * number * number;
-        }
+        public static Single Cubed( this Single number ) => number * number * number;
 
-        public static Double Cubed( this Double number ) {
-            return number * number * number;
-        }
+        public static Double Cubed( this Double number ) => number * number * number;
 
-        public static Decimal Cubed( this Decimal number ) {
-            return number * number * number;
-        }
+        public static Decimal Cubed( this Decimal number ) => number * number * number;
 
         public static Double Erf( this Double x ) {
             // constants
@@ -379,17 +357,11 @@ namespace Librainian.Maths {
             return result < 1.0 ? 1 : ( int )result;
         }
 
-        public static Double FractionOf( this Double x, Double top, Double bottom ) {
-            return ( top * x ) / bottom;
-        }
+        public static Double FractionOf( this Double x, Double top, Double bottom ) => ( top * x ) / bottom;
 
-        public static Single FractionOf( this Single x, Single top, Single bottom ) {
-            return ( top * x ) / bottom;
-        }
+        public static Single FractionOf( this Single x, Single top, Single bottom ) => ( top * x ) / bottom;
 
-        public static UInt64 FractionOf( this UInt64 x, UInt64 top, UInt64 bottom ) {
-            return ( top * x ) / bottom;
-        }
+        public static UInt64 FractionOf( this UInt64 x, UInt64 top, UInt64 bottom ) => ( top * x ) / bottom;
 
         /// <summary>
         ///     Greatest Common Divisor for int
@@ -651,65 +623,36 @@ namespace Librainian.Maths {
             }
         }
 
-        public static Single Half( this Single number ) {
-            return number / 2.0f;
-        }
+        public static Single Half( this Single number ) => number / 2.0f;
 
-        public static Double Half( this Double number ) {
-            return number / 2.0d;
-        }
+        public static Double Half( this Double number ) => number / 2.0d;
 
-        public static Byte Half( this Byte number ) {
-            return ( Byte )( number / 2 );
-        }
+        public static Byte Half( this Byte number ) => ( Byte )( number / 2 );
 
         [Pure]
-        public static TimeSpan Half( this TimeSpan timeSpan ) {
-            return TimeSpan.FromTicks( timeSpan.Ticks.Half() );
-        }
+        public static TimeSpan Half( this TimeSpan timeSpan ) => TimeSpan.FromTicks( timeSpan.Ticks.Half() );
 
         [Pure]
-        public static TimeSpan Twice( this TimeSpan timeSpan ) {
-            return TimeSpan.FromTicks( timeSpan.Ticks.Twice() );
-        }
+        public static TimeSpan Twice( this TimeSpan timeSpan ) => TimeSpan.FromTicks( timeSpan.Ticks.Twice() );
 
         [Pure]
-        public static TimeSpan Thrice( this TimeSpan timeSpan ) {
-            return TimeSpan.FromTicks( timeSpan.Ticks.Thrice() );
-        }
+        public static TimeSpan Thrice( this TimeSpan timeSpan ) => TimeSpan.FromTicks( timeSpan.Ticks.Thrice() );
 
+        public static Int32 Half( this Int32 number ) => ( Int32 )( number / 2.0f );
 
-        public static Int32 Half( this Int32 number ) {
-            return ( Int32 )( number / 2.0f );
-        }
+        public static Int16 Half( this Int16 number ) => ( Int16 )( number / 2.0f );
 
-        public static Int16 Half( this Int16 number ) {
-            return ( Int16 )( number / 2.0f );
-        }
+        public static UInt16 Half( this UInt16 number ) => ( UInt16 )( number / 2.0f );
 
-        public static UInt16 Half( this UInt16 number ) {
-            return ( UInt16 )( number / 2.0f );
-        }
+        public static UInt32 Half( this UInt32 number ) => ( UInt32 )( number / 2.0f );
 
-        public static UInt32 Half( this UInt32 number ) {
-            return ( UInt32 )( number / 2.0f );
-        }
+        public static UInt64 Half( this UInt64 number ) => ( UInt64 )( number / 2.0d );
 
-        public static UInt64 Half( this UInt64 number ) {
-            return ( UInt64 )( number / 2.0d );
-        }
+        public static Int64 Half( this Int64 number ) => ( Int64 )( number / 2.0d );
 
-        public static Int64 Half( this Int64 number ) {
-            return ( Int64 )( number / 2.0d );
-        }
+        public static Decimal Half( this Decimal number ) => number / 2.0m;
 
-        public static Decimal Half( this Decimal number ) {
-            return number / 2.0m;
-        }
-
-        public static Decimal Quarter( this Decimal number ) {
-            return number / 4.0m;
-        }
+        public static Decimal Quarter( this Decimal number ) => number / 4.0m;
 
         /// <summary>
         ///     <para>
@@ -720,9 +663,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public static Decimal IfLessThanZeroThenZero( this Decimal number ) {
-            return number < Decimal.Zero ? Decimal.Zero : number;
-        }
+        public static Decimal IfLessThanZeroThenZero( this Decimal number ) => number < Decimal.Zero ? Decimal.Zero : number;
 
         /// <summary>
         ///     <para>
@@ -733,9 +674,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public static BigInteger IfLessThanZeroThenZero( this BigInteger number ) {
-            return number < BigInteger.Zero ? BigInteger.Zero : number;
-        }
+        public static BigInteger IfLessThanZeroThenZero( this BigInteger number ) => number < BigInteger.Zero ? BigInteger.Zero : number;
 
         /// <summary>
         ///     <para>
@@ -746,9 +685,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public static BigDecimal IfLessThanZeroThenZero( this BigDecimal number ) {
-            return number < BigDecimal.Zero ? BigDecimal.Zero : number;
-        }
+        public static BigDecimal IfLessThanZeroThenZero( this BigDecimal number ) => number < BigDecimal.Zero ? BigDecimal.Zero : number;
 
         public static Double Intercept( [NotNull] this List<TimeProgression> data ) {
             if ( data == null ) {
@@ -796,17 +733,11 @@ namespace Librainian.Maths {
             return s;
         }
 
-        public static Boolean IsNegative( this Single value ) {
-            return value < 0.0f;
-        }
+        public static Boolean IsNegative( this Single value ) => value < 0.0f;
 
-        public static Boolean IsPositive( this Single value ) {
-            return value > 0.0f;
-        }
+        public static Boolean IsPositive( this Single value ) => value > 0.0f;
 
-        public static Boolean IsPowerOfTwo( this int number ) {
-            return ( number & -number ) == number;
-        }
+        public static Boolean IsPowerOfTwo( this int number ) => ( number & -number ) == number;
 
         /// <summary>
         ///     Linearly interpolates between two values.
@@ -814,9 +745,7 @@ namespace Librainian.Maths {
         /// <param name="source"> Source value. </param>
         /// <param name="target"> Target value. </param>
         /// <param name="amount"> Value between 0 and 1 indicating the weight of value2. </param>
-        public static Single Lerp( this Single source, Single target, Single amount ) {
-            return source + ( target - source ) * amount;
-        }
+        public static Single Lerp( this Single source, Single target, Single amount ) => source + ( target - source ) * amount;
 
         /// <summary>
         ///     Linearly interpolates between two values.
@@ -824,9 +753,7 @@ namespace Librainian.Maths {
         /// <param name="source"> Source value. </param>
         /// <param name="target"> Target value. </param>
         /// <param name="amount"> Value between 0 and 1 indicating the weight of value2. </param>
-        public static Double Lerp( this Double source, Double target, Single amount ) {
-            return source + ( target - source ) * amount;
-        }
+        public static Double Lerp( this Double source, Double target, Single amount ) => source + ( target - source ) * amount;
 
         /// <summary>
         ///     Linearly interpolates between two values.
@@ -834,9 +761,7 @@ namespace Librainian.Maths {
         /// <param name="source"> Source value. </param>
         /// <param name="target"> Target value. </param>
         /// <param name="amount"> Value between 0 and 1 indicating the weight of value2. </param>
-        public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) {
-            return ( UInt64 )( source + ( ( target - source ) * amount ) );
-        }
+        public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 )( source + ( ( target - source ) * amount ) );
 
         /// <summary>
         ///     Linearly interpolates between two values.
@@ -844,9 +769,7 @@ namespace Librainian.Maths {
         /// <param name="source"> Source value. </param>
         /// <param name="target"> Target value. </param>
         /// <param name="amount"> Value between 0 and 1 indicating the weight of value2. </param>
-        public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) {
-            return ( UInt32 )( source + ( ( target - source ) * amount ) );
-        }
+        public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 )( source + ( ( target - source ) * amount ) );
 
         public static Double LogFactorial( this int n ) {
             if ( n < 0 ) {
@@ -879,29 +802,19 @@ namespace Librainian.Maths {
             return ( -0.5 * x + 1.0 ) * x;
         }
 
-        public static Boolean Near( this Double number, Double target ) {
-            return Math.Abs( number - target ) <= Double.Epsilon;
-        }
+        public static Boolean Near( this Double number, Double target ) => Math.Abs( number - target ) <= Double.Epsilon;
 
-        public static Boolean Near( this Single number, Single target ) {
-            return Math.Abs( number - target ) <= Single.Epsilon;
-        }
+        public static Boolean Near( this Single number, Single target ) => Math.Abs( number - target ) <= Single.Epsilon;
 
-        public static Boolean Near( this Point here, Point there ) {
-            return here.X.Near( there.X ) && here.Y.Near( there.Y );
-        }
+        public static Boolean Near( this Point here, Point there ) => here.X.Near( there.X ) && here.Y.Near( there.Y );
 
-        public static Boolean Near( this Point3D here, Point3D there ) {
-            return here.X.Near( there.X ) && here.Y.Near( there.Y ) && here.Z.Near( there.Z );
-        }
+        public static Boolean Near( this Point3D here, Point3D there ) => here.X.Near( there.X ) && here.Y.Near( there.Y ) && here.Z.Near( there.Z );
 
         //public static Boolean Near( this PointF here, PointF there ) {
         //    return here.X.Near( there.X ) && here.Y.Near( there.Y );
         //}
 
-        public static Boolean Near( this Decimal number, Decimal target ) {
-            return Math.Abs( number - target ) <= EpsilonDecimal;
-        }
+        public static Boolean Near( this Decimal number, Decimal target ) => Math.Abs( number - target ) <= EpsilonDecimal;
 
         public static Boolean Near( this BigRational number, BigRational target ) {
             var difference = number - target;
@@ -916,70 +829,38 @@ namespace Librainian.Maths {
             return BigInteger.Zero == difference;
         }
 
-        public static Boolean Near( this UInt64 number, UInt64 target ) {
-            return number - target <= UInt64.MinValue;
-        }
+        public static Boolean Near( this UInt64 number, UInt64 target ) => number - target <= UInt64.MinValue;
 
-        public static Boolean Near( this Int64 number, Int64 target ) {
-            return number - target <= Int64.MinValue;
-        }
+        public static Boolean Near( this Int64 number, Int64 target ) => number - target <= Int64.MinValue;
 
-        public static Boolean Near( this UBigInteger number, UBigInteger target ) {
-            return number - target <= UBigInteger.Epsilon;
-        }
+        public static Boolean Near( this UBigInteger number, UBigInteger target ) => number - target <= UBigInteger.Epsilon;
 
-        public static Double Nested( this Double x ) {
-            return Math.Sqrt( x * 100.0 ) / 100.0d;
-        }
+        public static Double Nested( this Double x ) => Math.Sqrt( x * 100.0 ) / 100.0d;
 
-        public static Single Nested( this Single x ) {
-            return ( Single )( Math.Sqrt( x * 100.0 ) / 100.0f );
-        }
+        public static Single Nested( this Single x ) => ( Single )( Math.Sqrt( x * 100.0 ) / 100.0f );
 
         [Obsolete]
-        public static int Nested( this int x ) {
-            return ( int )Math.Sqrt( x );
-        }
+        public static int Nested( this int x ) => ( int )Math.Sqrt( x );
 
-        public static UInt64 OneHundreth( this UInt64 x ) {
-            return x / 100;
-        }
+        public static UInt64 OneHundreth( this UInt64 x ) => x / 100;
 
-        public static UInt64 OneQuarter( this UInt64 x ) {
-            return x / 4;
-        }
+        public static UInt64 OneQuarter( this UInt64 x ) => x / 4;
 
-        public static Single OneQuarter( this Single x ) {
-            return x / 4.0f;
-        }
+        public static Single OneQuarter( this Single x ) => x / 4.0f;
 
-        public static UInt64 OneTenth( this UInt64 x ) {
-            return x / 10;
-        }
+        public static UInt64 OneTenth( this UInt64 x ) => x / 10;
 
-        public static Single OneThird( this Single x ) {
-            return x / 3.0f;
-        }
+        public static Single OneThird( this Single x ) => x / 3.0f;
 
-        public static int Percent( this int x, Single percent ) {
-            return ( int )( ( x * percent ) / 100.0f );
-        }
+        public static int Percent( this int x, Single percent ) => ( int )( ( x * percent ) / 100.0f );
 
-        public static Single Percent( this Single x, Single percent ) {
-            return ( x * percent ) / 100.0f;
-        }
+        public static Single Percent( this Single x, Single percent ) => ( x * percent ) / 100.0f;
 
-        public static Double Percent( this Double x, Double percent ) {
-            return ( x * percent ) / 100.0;
-        }
+        public static Double Percent( this Double x, Double percent ) => ( x * percent ) / 100.0;
 
-        public static Decimal Percent( this Decimal x, Decimal percent ) {
-            return ( x * percent ) / 100.0m;
-        }
+        public static Decimal Percent( this Decimal x, Decimal percent ) => ( x * percent ) / 100.0m;
 
-        public static UInt64 Percent( this UInt64 x, Single percent ) {
-            return ( UInt64 )( ( x * percent ) / 100.0f );
-        }
+        public static UInt64 Percent( this UInt64 x, Single percent ) => ( UInt64 )( ( x * percent ) / 100.0f );
 
         /// <summary>
         /// <para>Add <paramref name="percentTax"/> of <paramref name="number"/> to <paramref name="number"/>.</para>
@@ -1178,22 +1059,16 @@ namespace Librainian.Maths {
             // a chance of 0.90 will return false
         }
 
-        public static Double Root( this Double x, Double root ) {
-            return Math.Pow( x, 1.0 / root );
-        }
+        public static Double Root( this Double x, Double root ) => Math.Pow( x, 1.0 / root );
 
-        public static Double Root( this Decimal x, Decimal root ) {
-            return Math.Pow( ( Double )x, ( Double )( 1.0m / root ) ); //BUG possible conversion errors here
-        }
+        public static Double Root( this Decimal x, Decimal root ) => Math.Pow( ( Double )x, ( Double )( 1.0m / root ) );
 
         /// <summary>
         ///     Smooths a value to between 0 and 1.
         /// </summary>
         /// <param name="value"> </param>
         /// <returns> </returns>
-        public static Double Sigmoid0To1( this Double value ) {
-            return 1.0D / ( 1.0D + Math.Exp( -value ) );
-        }
+        public static Double Sigmoid0To1( this Double value ) => 1.0D / ( 1.0D + Math.Exp( -value ) );
 
         /// <summary>
         ///     Smooths a value to between -1 and 1.
@@ -1201,9 +1076,7 @@ namespace Librainian.Maths {
         /// <param name="value"> </param>
         /// <returns> </returns>
         /// <seealso cref="http://www.wolframalpha.com/input/?i=1+-+%28+2+%2F+%281+%2B+Exp%28+v+%29+%29+%29%2C+v+from+-10+to+10" />
-        public static Double SigmoidNeg1To1( this Double value ) {
-            return 1.0D - ( 2.0D / ( 1.0D + Math.Exp( value ) ) );
-        }
+        public static Double SigmoidNeg1To1( this Double value ) => 1.0D - ( 2.0D / ( 1.0D + Math.Exp( value ) ) );
 
         public static Double Slope( [NotNull] this List<TimeProgression> data ) {
             if ( data == null ) {
@@ -1248,17 +1121,11 @@ namespace Librainian.Maths {
             low = ( UInt32 )( value & UInt32.MaxValue );
         }
 
-        public static Single Squared( this Single number ) {
-            return number * number;
-        }
+        public static Single Squared( this Single number ) => number * number;
 
-        public static Double Squared( this Double number ) {
-            return number * number;
-        }
+        public static Double Squared( this Double number ) => number * number;
 
-        public static Decimal Squared( this Decimal number ) {
-            return number * number;
-        }
+        public static Decimal Squared( this Decimal number ) => number * number;
 
         public static Double SquareRootOfProducts( this IEnumerable<double> data ) {
             var sorted = new List<double>( data.Where( d => Math.Abs( d ) >= Double.Epsilon ).OrderBy( d => d ) );
@@ -1344,17 +1211,11 @@ namespace Librainian.Maths {
             return result < 1.0 ? 1 : ( int )result;
         }
 
-        public static UInt64 ThreeQuarters( this UInt64 x ) {
-            return ( 3 * x ) / 4;
-        }
+        public static UInt64 ThreeQuarters( this UInt64 x ) => ( 3 * x ) / 4;
 
-        public static Single ThreeQuarters( this Single x ) {
-            return ( 3.0f * x ) / 4.0f;
-        }
+        public static Single ThreeQuarters( this Single x ) => ( 3.0f * x ) / 4.0f;
 
-        public static Double ThreeQuarters( this Double x ) {
-            return ( 3.0d * x ) / 4.0d;
-        }
+        public static Double ThreeQuarters( this Double x ) => ( 3.0d * x ) / 4.0d;
 
         public static IEnumerable<int> Through( this int startValue, int end ) {
             int offset;
@@ -1825,25 +1686,15 @@ namespace Librainian.Maths {
             return BigInteger.TryParse( split[ 0 ], out beforeDecimalPoint ) && BigInteger.TryParse( split[ 1 ], out afterDecimalPoint );
         }
 
-        public static Single Twice( this Single x ) {
-            return x * 2.0f;
-        }
+        public static Single Twice( this Single x ) => x * 2.0f;
 
-        public static Double Twice( this Double number ) {
-            return number * 2d;
-        }
+        public static Double Twice( this Double number ) => number * 2d;
 
-        public static Decimal Twice( this Decimal number ) {
-            return number * 2m;
-        }
+        public static Decimal Twice( this Decimal number ) => number * 2m;
 
-        public static long Twice( this long number ) {
-            return number * 2L;
-        }
+        public static long Twice( this long number ) => number * 2L;
 
-        public static long Thrice( this long number ) {
-            return number * 3L;
-        }
+        public static long Thrice( this long number ) => number * 3L;
 
         /// <summary>
         /// Truncate, don't round. Just chop it off.
@@ -1892,13 +1743,8 @@ namespace Librainian.Maths {
             yield return second;
         }
 
-        public static string ToHexNumberString( this IEnumerable<byte> value ) {
-            return Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
-        }
+        public static string ToHexNumberString( this IEnumerable<byte> value ) => Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
 
-        public static string ToHexNumberString( this UInt256 value ) {
-            return ToHexNumberString( value.ToByteArray() );
-        }
-
+        public static string ToHexNumberString( this UInt256 value ) => ToHexNumberString( value.ToByteArray() );
     }
 }

@@ -23,9 +23,9 @@ namespace Librainian.Graphics.DDD {
         ///     The largest value a <see cref="CoordinateU64" /> will hold.
         /// </summary>
         /// <remarks>
-        ///     the squareroot of <see cref="ulong.MaxValue" /> split into x,y,z.
+        ///     the cuberoot of <see cref="UInt64.MaxValue" /> split into x*y*z.
         /// </remarks>
-        public static readonly UInt64 Maximum = ( UInt64 )( Math.Sqrt( UInt64.MaxValue ) / 3.0f );
+        public static readonly UInt64 Maximum = ( UInt64 ) Math.Pow( UInt64.MaxValue, 1.0 / 3.0 );
 
         public static readonly CoordinateU64 Empty = default( CoordinateU64 );
 
@@ -93,21 +93,14 @@ namespace Librainian.Graphics.DDD {
         /// </returns>
         /// <param name="other"> An object to compare with this object. </param>
         [Pure]
-        public int CompareTo( CoordinateU64 other ) {
-            if ( other == null ) {
-                throw new ArgumentNullException( "other" );
-            }
-            return this.SquareLength.CompareTo( other.SquareLength );
-        }
+        public int CompareTo( CoordinateU64 other ) => this.SquareLength.CompareTo( other.SquareLength );
 
         /// <summary>
         ///     Calls the static comparison.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Boolean Equals( CoordinateU64 other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( CoordinateU64 other ) => Equals( this, other );
 
         /// <summary>
         ///     static comparison.
@@ -115,18 +108,13 @@ namespace Librainian.Graphics.DDD {
         /// <param name="lhs"> </param>
         /// <param name="rhs"> </param>
         /// <returns> </returns>
-        public static Boolean Equals( CoordinateU64 lhs, CoordinateU64 rhs ) {
-            return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
-        }
+        public static Boolean Equals( CoordinateU64 lhs, CoordinateU64 rhs ) => lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
 
         /// <summary>
         ///     <para>Returns a new Coordinate as a unit <see cref="CoordinateU64" />.</para>
         ///     <para>The result is a Coordinate one unit in length pointing in the same direction as the original Coordinate.</para>
         /// </summary>
         public static CoordinateU64 Normalize( CoordinateU64 coordinate ) {
-            if ( coordinate == null ) {
-                throw new ArgumentNullException( "coordinate" );
-            }
             var num = 1.0D / coordinate.SquareLength;
             return new CoordinateU64( ( UInt64 )( coordinate.X * num ), ( UInt64 )( coordinate.Y * num ), ( UInt64 )( coordinate.Z * num ) );
         }
@@ -135,12 +123,6 @@ namespace Librainian.Graphics.DDD {
         ///     Calculates the distance between two <see cref="CoordinateU64" />.
         /// </summary>
         public static UInt64 Distance( CoordinateU64 lhs, CoordinateU64 rhs ) {
-            if ( lhs == null ) {
-                throw new ArgumentNullException( "lhs" );
-            }
-            if ( rhs == null ) {
-                throw new ArgumentNullException( "rhs" );
-            }
             var num1 = lhs.X - rhs.X;
             var num2 = lhs.Y - rhs.Y;
             var num3 = lhs.Z - rhs.Z;
@@ -151,21 +133,14 @@ namespace Librainian.Graphics.DDD {
         ///     preCalc hash of <see cref="X" />, <see cref="Y" />, and <see cref="Z" />. (I have no clue if GetHashCode is called
         ///     once for immutable objects..?)
         /// </summary>
-        public override int GetHashCode() {
-            return this.X.GetHashMerge( this.Y.GetHashMerge( this.Z ) );
-        }
+        public override int GetHashCode() => this.X.GetHashMerge( this.Y.GetHashMerge( this.Z ) );
 
-        public override String ToString() {
-            return String.Format( "{0}, {1}, {2}", this.X, this.Y, this.Z );
-        }
+        public override String ToString() => String.Format( "{0}, {1}, {2}", this.X, this.Y, this.Z );
 
         /// <summary>
         ///     Calculates the distance between this <see cref="CoordinateU64" /> and another <see cref="CoordinateU64" />.
         /// </summary>
         public UInt64 Distance( CoordinateU64 rhs ) {
-            if ( rhs == null ) {
-                throw new ArgumentNullException( "rhs" );
-            }
             var num1 = this.X - rhs.X;
             var num2 = this.Y - rhs.Y;
             var num3 = this.Z - rhs.Z;
@@ -179,25 +154,15 @@ namespace Librainian.Graphics.DDD {
             return obj is CoordinateU64 && Equals( this, ( CoordinateU64 )obj );
         }
 
-        public static implicit operator Point( CoordinateU64 coordinate ) {
-            return new Point( x: ( int )coordinate.X, y: ( int )coordinate.Y );
-        }
+        public static implicit operator Point( CoordinateU64 coordinate ) => new Point( x: ( int )coordinate.X, y: ( int )coordinate.Y );
 
-        public static implicit operator PointF( CoordinateU64 coordinate ) {
-            return new PointF( coordinate.X, coordinate.Y );
-        }
+        public static implicit operator PointF( CoordinateU64 coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
-        public static CoordinateU64 operator -( CoordinateU64 v1, CoordinateU64 v2 ) {
-            return new CoordinateU64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
-        }
+        public static CoordinateU64 operator -( CoordinateU64 v1, CoordinateU64 v2 ) => new CoordinateU64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-        public static Boolean operator !=( CoordinateU64 lhs, CoordinateU64 rhs ) {
-            return !Equals( lhs: lhs, rhs: rhs );
-        }
+        public static Boolean operator !=( CoordinateU64 lhs, CoordinateU64 rhs ) => !Equals( lhs: lhs, rhs: rhs );
 
-        public static Boolean operator ==( CoordinateU64 lhs, CoordinateU64 rhs ) {
-            return Equals( lhs: lhs, rhs: rhs );
-        }
+        public static Boolean operator ==( CoordinateU64 lhs, CoordinateU64 rhs ) => Equals( lhs: lhs, rhs: rhs );
 
         ///// <summary>
         /////   Calculates the distance between this <see cref="Coordinate64"/> and another <see cref="Tidbit"/>.

@@ -45,8 +45,6 @@ namespace Librainian.Threading {
         ///     <paramref name="other" />.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public int CompareTo( OneJob other ) {
-            return this.Priority.CompareTo( other.Priority );
-        }
+        public int CompareTo( OneJob other ) => this.Priority.CompareTo( other.Priority );
     }
 }

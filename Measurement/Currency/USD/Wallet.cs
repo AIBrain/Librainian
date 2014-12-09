@@ -71,13 +71,9 @@ namespace Librainian.Measurement.Currency.USD {
 
         private ActionBlock< TransactionMessage > Actor { get; set; }
 
-        public IEnumerator< KeyValuePair< IDenomination, UInt64 > > GetEnumerator() {
-            return this.Groups.GetEnumerator();
-        }
+        public IEnumerator< KeyValuePair< IDenomination, UInt64 > > GetEnumerator() => this.Groups.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public IEnumerable< KeyValuePair< ICoin, UInt64 > > CoinsGrouped {
             [NotNull]
@@ -279,9 +275,7 @@ namespace Librainian.Measurement.Currency.USD {
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        public static Wallet Create() {
-            return new Wallet( id: Guid.NewGuid() );
-        }
+        public static Wallet Create() => new Wallet( id: Guid.NewGuid() );
 
         /// <summary>
         ///     Create an empty wallet with the given <paramref name="id" />.
@@ -289,9 +283,7 @@ namespace Librainian.Measurement.Currency.USD {
         /// <param name="id"></param>
         /// <returns></returns>
         [NotNull]
-        public static Wallet Create( Guid id ) {
-            return new Wallet( id: id );
-        }
+        public static Wallet Create( Guid id ) => new Wallet( id: id );
 
         private ulong Deposit( ICoin asCoin, UInt64 quantity ) {
             if ( null == asCoin ) {

@@ -232,8 +232,6 @@ namespace Librainian.Extensions {
             //return guid.ToString( "D" ).Substring( 0, 4 ).Aggregate( String.Empty, ( current, ch ) => current + ( ch + "/" ) );
         }
 
-        public static Folder ToFolder( this Guid guid, Boolean reversed = false ) {
-            return new Folder( guid.ToPath( reversed ).FullName );
-        }
+        public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new Folder( guid.ToPath( reversed ).FullName );
     }
 }

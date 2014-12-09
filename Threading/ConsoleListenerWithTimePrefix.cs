@@ -10,9 +10,7 @@ namespace Librainian.Threading {
             
         }
 
-        private static String HeaderTimeThread() {
-            return String.Format( "[{0:yyyy-MM-dd HH:mm:ss} ({1})] ", DateTime.Now, Thread.CurrentThread.ManagedThreadId );
-        }
+        private static String HeaderTimeThread() => String.Format( "[{0:yyyy-MM-dd HH:mm:ss} ({1})] ", DateTime.Now, Thread.CurrentThread.ManagedThreadId );
 
         /// <summary>
         /// Emits an error message and a detailed error message to the listener you create when you implement the <see cref="T:System.Diagnostics.TraceListener"/> class.

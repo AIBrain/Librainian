@@ -102,8 +102,6 @@ namespace Librainian.Graphics.Imaging {
         /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public bool Equals( Frame other ) {
-            return Equal( this, other );
-        }
+        public bool Equals( Frame other ) => Equal( this, other );
     }
 }

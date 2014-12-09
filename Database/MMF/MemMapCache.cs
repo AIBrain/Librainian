@@ -113,9 +113,7 @@ namespace Librainian.Database.MMF {
             }
         }
 
-        public void Set( String key, T obj ) {
-            this.Set( key, obj, this.ChunkSize, DateTime.MaxValue );
-        }
+        public void Set( String key, T obj ) => this.Set( key, obj, this.ChunkSize, DateTime.MaxValue );
 
         public void Set( String key, T obj, long size, DateTime expire ) {
             try {
@@ -161,22 +159,16 @@ namespace Librainian.Database.MMF {
             }
         }
 
-        public void Set( String key, T obj, DateTime expire ) {
-            this.Set( key, obj, this.ChunkSize, expire );
-        }
+        public void Set( String key, T obj, DateTime expire ) => this.Set( key, obj, this.ChunkSize, expire );
 
         public void Set( String key, T obj, TimeSpan expire ) {
             var expireDT = DateTime.Now.Add( expire );
             this.Set( key, obj, this.ChunkSize, expireDT );
         }
 
-        public void Set( String key, T obj, long size ) {
-            this.Set( key, obj, size, DateTime.MaxValue );
-        }
+        public void Set( String key, T obj, long size ) => this.Set( key, obj, size, DateTime.MaxValue );
 
-        public T TryGetThenSet( String key, Func< T > cacheMiss ) {
-            return this.TryGetThenSet( key, DateTime.MaxValue, cacheMiss );
-        }
+        public T TryGetThenSet( String key, Func< T > cacheMiss ) => this.TryGetThenSet( key, DateTime.MaxValue, cacheMiss );
 
         public T TryGetThenSet( String key, DateTime expire, Func< T > cacheMiss ) {
             var obj = this.Get( key );

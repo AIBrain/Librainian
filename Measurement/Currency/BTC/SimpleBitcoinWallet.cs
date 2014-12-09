@@ -195,17 +195,11 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <paramref name="other" /> wallet.
         /// </summary>
         /// <param name="other">Annother to compare with this wallet.</param>
-        public bool Equals( SimpleBitcoinWallet other ) {
-            return Equals( this, other );
-        }
+        public bool Equals( SimpleBitcoinWallet other ) => Equals( this, other );
 
-        public override int GetHashCode() {
-            return this._hashcode;
-        }
+        public override int GetHashCode() => this._hashcode;
 
-        public override String ToString() {
-            return String.Format( "฿ {0:f8}", this.Balance );
-        }
+        public override String ToString() => String.Format( "฿ {0:f8}", this.Balance );
 
         /// <summary>
         /// Add any (+-)amount directly to the balance.
@@ -337,9 +331,7 @@ namespace Librainian.Measurement.Currency.BTC {
             }
         }
 
-        public void TryUpdateBalance( SimpleBitcoinWallet simpleBitcoinWallet ) {
-            this.TryUpdateBalance( simpleBitcoinWallet.Balance );
-        }
+        public void TryUpdateBalance( SimpleBitcoinWallet simpleBitcoinWallet ) => this.TryUpdateBalance( simpleBitcoinWallet.Balance );
 
         /// <summary>
         /// <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>

@@ -71,17 +71,11 @@ namespace Librainian.Maths {
             }
         }
 
-        public static implicit operator Double( PercentageNonTS special ) {
-            return special.Value;
-        }
+        public static implicit operator Double( PercentageNonTS special ) => special.Value;
 
-        public static implicit operator PercentageNonTS( Double value ) {
-            return new PercentageNonTS( value );
-        }
+        public static implicit operator PercentageNonTS( Double value ) => new PercentageNonTS( value );
 
-        public static PercentageNonTS Parse( String value ) {
-            return new PercentageNonTS( Double.Parse( value ) );
-        }
+        public static PercentageNonTS Parse( String value ) => new PercentageNonTS( Double.Parse( value ) );
 
         public void DropByAbsolute( PercentageNonTS percentage ) {
             this.Value -= percentage.Value;
@@ -99,9 +93,7 @@ namespace Librainian.Maths {
             this.Value += percentage.Value * this.Value;
         }
 
-        public override String ToString() {
-            return String.Format( "{0:P1}", this.Value );
-        }
+        public override String ToString() => String.Format( "{0:P1}", this.Value );
 
         //public override int GetHashCode() { return this.HashCode; }
     }

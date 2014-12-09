@@ -140,9 +140,7 @@ namespace Librainian.Internet.Reddit {
         /// <remarks>
         ///     e.g. (String)me["modhash"] would be the user's modhash as a String
         /// </remarks>
-        public Hashtable GetMeCache() {
-            return this.me;
-        }
+        public Hashtable GetMeCache() => this.me;
 
         /// <summary>
         ///     Checks if the user has mail based on a fresh polling of me.json
@@ -255,9 +253,7 @@ namespace Librainian.Internet.Reddit {
         /// <param name="link"> Text of the self post </param>
         /// <param name="title"> Title of submission </param>
         /// <param name="sr"> Subreddit to post to </param>
-        public void PostSelf( String link, String title, String sr ) {
-            this.Post( "self", link, sr, title );
-        }
+        public void PostSelf( String link, String title, String sr ) => this.Post( "self", link, sr, title );
 
         /// <summary>
         ///     Posts a link/self post
@@ -279,8 +275,6 @@ namespace Librainian.Internet.Reddit {
         /// <param name="link"> URI of post </param>
         /// <param name="title"> Title of submission </param>
         /// <param name="sr"> Subreddit to post to </param>
-        public void PostLink( String link, String title, String sr ) {
-            this.Post( "self", link, sr, title );
-        }
+        public void PostLink( String link, String title, String sr ) => this.Post( "self", link, sr, title );
     }
 }

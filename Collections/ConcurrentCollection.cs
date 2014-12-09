@@ -66,9 +66,7 @@ namespace Librainian.Collections {
             this.ToList().CopyTo( array, index );
         }
 
-        public IEnumerator< T > GetEnumerator() {
-            return GetEnumerator( this.m_head );
-        }
+        public IEnumerator< T > GetEnumerator() => GetEnumerator( this.m_head );
 
         void ICollection.CopyTo( Array array, int index ) {
             if ( array == null ) {
@@ -81,22 +79,16 @@ namespace Librainian.Collections {
         }
 
         // ReSharper restore RemoveToList.1
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         Boolean IProducerConsumerCollection< T >.TryAdd( T item ) {
             this.Push( item );
             return true;
         }
 
-        Boolean IProducerConsumerCollection< T >.TryTake( out T item ) {
-            return this.TryPop( out item );
-        }
+        Boolean IProducerConsumerCollection< T >.TryTake( out T item ) => this.TryPop( out item );
 
-        public T[] ToArray() {
-            return this.ToList().ToArray();
-        }
+        public T[] ToArray() => this.ToList().ToArray();
 
         public void Clear() {
             this.m_head = null;

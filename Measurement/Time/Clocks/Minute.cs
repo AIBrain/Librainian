@@ -72,18 +72,14 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static explicit operator SByte( Minute value ) {
-            return ( SByte )value.Value;
-        }
+        public static explicit operator SByte( Minute value ) => ( SByte )value.Value;
 
         /// <summary>
         ///     Allow this class to be read as a <see cref="Byte" />.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static implicit operator Byte( Minute value ) {
-            return value.Value;
-        }
+        public static implicit operator Byte( Minute value ) => value.Value;
 
         /// <summary>
         ///     Provide the next minute.

@@ -203,9 +203,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <returns>true if item is found in the <see cref="ICollection{T}" />; otherwise, false.</returns>
         /// <param name="item">The object to locate in the <see cref="ICollection{T}" />.</param>
-        public virtual Boolean Contains( T item ) {
-            return Enumerable.Contains( this, item );
-        }
+        public virtual Boolean Contains( T item ) => Enumerable.Contains( this, item );
 
         /// <summary>
         ///     Copies the elements of the <see cref="ICollection{T}" /> to an <see cref="Array" />,
@@ -264,9 +262,7 @@ namespace Librainian.Collections {
         ///     through the collection.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
         ///     Removes the first occurrence of a specific object from the <see cref="ICollection{T}" />. This implementation
@@ -347,9 +343,7 @@ namespace Librainian.Collections {
         ///     </para>
         /// </remarks>
         /// <returns>An array containing all of the elements in this collection.</returns>
-        public virtual T[] ToArray() {
-            return this.DoCopyTo( null, 0, true );
-        }
+        public virtual T[] ToArray() => this.DoCopyTo( null, 0, true );
 
         /// <summary>
         ///     Returns a <see cref="String" /> that represents the current <see cref="object" />.

@@ -81,9 +81,7 @@ namespace Librainian.Magic {
         //    return result;
         //}
 
-        public void Inject( object item ) {
-            this.Kernel.Inject( item );
-        }
+        public void Inject( object item ) => this.Kernel.Inject( item );
 
         [DebuggerStepThrough]
         public T TryGet<T>() {
