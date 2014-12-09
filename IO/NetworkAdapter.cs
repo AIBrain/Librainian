@@ -162,14 +162,12 @@ namespace Librainian.IO {
 
             try {
                 var networkAdapters = WMIOperation.WMIQuery( String.Format( "SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE DeviceID = {0}", this.DeviceId ) );
-                foreach ( var o in networkAdapters ) {
-                    var networkAdapter = o as ManagementObject;
+                foreach ( var networkAdapter in from ManagementBaseObject o in networkAdapters
+                                                select o as ManagementObject ) {
                     crtNetworkAdapter = networkAdapter;
                 }
 
-                if ( crtNetworkAdapter != null ) {
-                    crtNetworkAdapter.InvokeMethod( strOperation, null );
-                }
+                crtNetworkAdapter?.InvokeMethod( strOperation, null );
 
                 Thread.Sleep( 100 );
                 while ( this.GetNetEnabled() != ( strOperation.Equals( "Enable", StringComparison.OrdinalIgnoreCase ) ? ( int )EnumNetEnabledStatus.Enabled : ( int )EnumNetEnabledStatus.Disabled ) ) {
@@ -185,9 +183,7 @@ namespace Librainian.IO {
                 resultEnableDisableNetworkAdapter = ( int )EnumEnableDisableResult.Fail;
             }
 
-            if ( crtNetworkAdapter != null ) {
-                crtNetworkAdapter.Dispose();
-            }
+            crtNetworkAdapter?.Dispose();
 
             return resultEnableDisableNetworkAdapter;
         }

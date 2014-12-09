@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.IO {
-
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -44,7 +43,6 @@ namespace Librainian.IO {
     using Annotations;
     using Collections;
     using Controls;
-    using Extensions;
     using Extensions.NativeWin32;
     using FluentAssertions;
     using Maths;
@@ -644,9 +642,7 @@ namespace Librainian.IO {
             return DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).FirstOrDefault( driveInfo => driveInfo.AvailableFreeSpace >= DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).Max( info => info.AvailableFreeSpace ) );
         }
 
-        public static uint? GetFileSizeOnDisk( this Document document ) {
-            return GetFileSizeOnDisk( new FileInfo( document.FullPathWithFileName ) );
-        }
+        public static uint? GetFileSizeOnDisk( this Document document ) => GetFileSizeOnDisk( new FileInfo( document.FullPathWithFileName ) );
 
         [CanBeNull]
         public static String SimplifyFileName( [NotNull] this Document document ) {
@@ -768,21 +764,13 @@ namespace Librainian.IO {
             return String.Empty;
         }
 
-        public static Boolean IsDirectory( this Win32FindData data ) {
-            return ( data.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory;
-        }
+        public static Boolean IsDirectory( this Win32FindData data ) => ( data.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory;
 
-        public static Boolean IsFile( this Win32FindData data ) {
-            return !IsDirectory( data );
-        }
+        public static Boolean IsFile( this Win32FindData data ) => !IsDirectory( data );
 
-        public static Boolean IsIgnoreFolder( this Win32FindData data ) {
-            return data.cFileName.EndsLike( "$RECYCLE.BIN" ) || data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" ) || SystemFolders.Contains( new DirectoryInfo( data.cFileName ) );
-        }
+        public static Boolean IsIgnoreFolder( this Win32FindData data ) => data.cFileName.EndsLike( "$RECYCLE.BIN" ) || data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" ) || SystemFolders.Contains( new DirectoryInfo( data.cFileName ) );
 
-        public static Boolean IsParentOrCurrent( this Win32FindData data ) {
-            return data.cFileName == "." || data.cFileName == "..";
-        }
+        public static Boolean IsParentOrCurrent( this Win32FindData data ) => data.cFileName == "." || data.cFileName == "..";
 
         public static Boolean IsProtected( [NotNull] this FileSystemInfo fileSystemInfo ) {
             if ( fileSystemInfo == null ) {
@@ -806,9 +794,7 @@ namespace Librainian.IO {
         }
 
         [Pure]
-        public static Boolean IsReparsePoint( this Win32FindData data ) {
-            return ( data.dwFileAttributes & FileAttributes.ReparsePoint ) == FileAttributes.ReparsePoint;
-        }
+        public static Boolean IsReparsePoint( this Win32FindData data ) => ( data.dwFileAttributes & FileAttributes.ReparsePoint ) == FileAttributes.ReparsePoint;
 
         /// <summary>
         /// Opens a folder with Explorer.exe
@@ -1259,12 +1245,13 @@ namespace Librainian.IO {
             catch ( IOException) {
 
                 // IOExcception is thrown if the file is in use by another process.
-                if ( bePatient ) {
-                    if ( !Thread.Yield() ) {
-                        Thread.Sleep( 0 );
-                    }
-                    goto TryAgain;
+                if ( !bePatient ) {
+                    return null;
                 }
+                if ( !Thread.Yield() ) {
+                    Thread.Sleep( 0 );
+                }
+                goto TryAgain;
             }
             return null;
         }
@@ -1307,9 +1294,7 @@ namespace Librainian.IO {
                     }
                 }
                 finally {
-                    if ( fileStream.SafeFileHandle != null ) {
-                        fileStream.SafeFileHandle.DangerousRelease();
-                    }
+                    fileStream.SafeFileHandle?.DangerousRelease();
                 }
 
                 return lpBytesReturned;

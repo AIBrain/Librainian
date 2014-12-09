@@ -26,6 +26,7 @@ namespace Librainian.IO {
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization;
+    using System.Security;
     using System.Text;
     using System.Windows.Forms;
     using Annotations;

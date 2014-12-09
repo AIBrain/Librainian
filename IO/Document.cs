@@ -163,21 +163,21 @@ namespace Librainian.IO {
         }
 
         [UsedImplicitly]
-        public String DebuggerDisplay { get { return this.FullPathWithFileName; } }
+        public String DebuggerDisplay => this.FullPathWithFileName;
 
         /// <summary>
         /// <para>Just the file's name, including the extension.</para>
         /// </summary>
         /// <seealso cref="Path.GetFileNameWithoutExtension"/>
         [NotNull]
-        public String Name { get { return this.FileName; } }
+        public String Name => this.FileName;
 
         /// <summary>
         /// <para>Gets the current size of the <see cref="Document"/>.</para>
         /// </summary>
         /// <seealso cref="GetLength"/>
         [CanBeNull]
-        public UInt64? Size { get { return this.GetLength(); } }
+        public UInt64? Size => this.GetLength();
 
         /// <summary>
         /// <para>Static case insensitive comparison of the file names and file sizes for equality.</para>
@@ -202,9 +202,7 @@ namespace Librainian.IO {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator !=( Document left, Document right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Document left, Document right ) => !Equals( left, right );
 
         /// <summary>
         /// <para>Compares the file names (case insensitive) and file sizes for equality.</para>
@@ -212,9 +210,7 @@ namespace Librainian.IO {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator ==( Document left, Document right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Document left, Document right ) => Equals( left, right );
 
         /// <summary>
         /// <para>If the file does not exist, it is created.</para>
@@ -267,16 +263,10 @@ namespace Librainian.IO {
 
             webClient.DownloadProgressChanged += ( sender, args ) => {
                 var percentage = new Percentage( ( BigInteger )args.BytesReceived, args.TotalBytesToReceive );
-                if ( onProgress != null ) {
-                    onProgress( percentage );
-                }
-            };
+                                                     onProgress?.Invoke( percentage );
+                                                 };
 
-            webClient.DownloadFileCompleted += ( sender, args ) => {
-                if ( onCompleted != null ) {
-                    onCompleted();
-                }
-            };
+            webClient.DownloadFileCompleted += ( sender, args ) => onCompleted?.Invoke();
 
             webClient.DownloadFileAsync( new Uri( this.FullPathWithFileName ), destination );
 
@@ -380,18 +370,14 @@ namespace Librainian.IO {
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Boolean Equals( [CanBeNull] Document other ) {
-            return !ReferenceEquals( null, other ) && Equals( this, other );
-        }
+        public Boolean Equals( [CanBeNull] Document other ) => !ReferenceEquals( null, other ) && Equals( this, other );
 
         /// <summary>
         /// <para>To compare the contents of two <see cref="Document"/> use <see cref="IOExtensions.SameContent(Document,Document)"/>.</para>
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override Boolean Equals( [CanBeNull] object obj ) {
-            return obj is Document && Equals( this, ( Document )obj );
-        }
+        public override Boolean Equals( [CanBeNull] object obj ) => obj is Document && Equals( this, ( Document )obj );
 
         /// <summary>
         /// Returns true if the <see cref="Document"/> currently exists.
@@ -409,17 +395,13 @@ namespace Librainian.IO {
         /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate
         /// through the collection.
         /// </returns>
-        public IEnumerator<byte> GetEnumerator() {
-            return this.AsByteArray().GetEnumerator();
-        }
+        public IEnumerator<byte> GetEnumerator() => this.AsByteArray().GetEnumerator();
 
         /// <summary>
         /// (file name, not contents)
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode() {
-            return this.FullPathWithFileName.GetHashCode();
-        }
+        public override int GetHashCode() => this.FullPathWithFileName.GetHashCode();
 
         /// <summary>
         /// <para>Gets the current size of the <see cref="Document"/>.</para>
@@ -445,9 +427,7 @@ namespace Librainian.IO {
         /// Reads the entire file into a <see cref="String"/>.
         /// </summary>
         /// <returns></returns>
-        public async Task<String> ReadTextAsync() {
-            return await Task.Run( () => Exists() ? File.ReadAllText( this.FullPathWithFileName ) : String.Empty );
-        }
+        public async Task<String> ReadTextAsync() => await Task.Run( () => Exists() ? File.ReadAllText( this.FullPathWithFileName ) : String.Empty );
 
         public void Refresh() {
             this.Folder.Refresh();
@@ -461,9 +441,7 @@ namespace Librainian.IO {
         /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate
         /// through the collection.
         /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /*
 
