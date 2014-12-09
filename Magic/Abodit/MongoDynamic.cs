@@ -98,7 +98,7 @@ namespace Librainian.Magic.Abodit {
             set {
                 switch ( key ) {
                     case "_id":
-                        this.ID = value is BsonObjectId ? ( ( BsonObjectId )value ).Value : ( ObjectId )value;
+                        this.ID = ( value as BsonObjectId )?.Value ?? ( ObjectId )value;
                         break;
                     case InterfacesField:
                         this.Int = new HashSet<String>( ( IEnumerable<String> )value );

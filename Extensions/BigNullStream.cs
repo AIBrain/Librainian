@@ -1,4 +1,5 @@
 namespace Librainian.Extensions {
+
     using System;
     using System.IO;
 
@@ -33,7 +34,8 @@ namespace Librainian.Extensions {
             throw new NotImplementedException( "This stream doesn't support reading." );
         }
 
-        public override void Flush() { }
+        public override void Flush() {
+        }
 
         public override int Read( byte[] buffer, int offset, int count ) {
             throw new NotImplementedException( "This stream doesn't support reading." );

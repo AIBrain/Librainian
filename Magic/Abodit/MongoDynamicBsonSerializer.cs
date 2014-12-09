@@ -13,9 +13,7 @@ namespace Librainian.Magic.Abodit {
     using MongoDB.Bson.Serialization.Serializers;
 
     public class MongoDynamicBsonSerializer : BsonBaseSerializer {
-        private static readonly MongoDynamicBsonSerializer instance = new MongoDynamicBsonSerializer();
-
-        public static MongoDynamicBsonSerializer Instance => instance;
+        public static MongoDynamicBsonSerializer Instance { get; } = new MongoDynamicBsonSerializer();
 
         public override object Deserialize( BsonReader bsonReader, Type nominalType, IBsonSerializationOptions options ) {
             var bsonType = bsonReader.CurrentBsonType;

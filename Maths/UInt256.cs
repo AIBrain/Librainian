@@ -33,8 +33,6 @@ namespace Librainian.Maths {
     ///     <para>Pulled from the BitcoinSharp project.</para>
     /// </summary>
     public struct UInt256 : IComparable<UInt256> {
-        private static readonly UInt256 _zero = new UInt256( new byte[ 0 ] );
-
         private readonly int _hashCode;
 
         private readonly UInt64 _part1; // parts are big-endian
@@ -98,7 +96,7 @@ namespace Librainian.Maths {
             this._hashCode = this._part1.GetHashMerge( this._part2.GetHashMerge( this._part3.GetHashMerge( this._part4 ) ) );
         }
 
-        public static UInt256 Zero => _zero;
+        public static UInt256 Zero { get; } = new UInt256( new byte[ 0 ] );
 
         public static UInt256 DivRem( UInt256 dividend, UInt256 divisor, out UInt256 remainder ) {
             BigInteger remainderBigInt;

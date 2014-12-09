@@ -1,23 +1,22 @@
-﻿#region License & Information
-// This notice must be kept visible in the source.
+﻿// This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
 // "Librainian/GuidExtensions.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
-#endregion
 
 namespace Librainian.Extensions {
+
     using System;
     using System.IO;
     using System.Linq;
@@ -31,28 +30,6 @@ namespace Librainian.Extensions {
     using Assert = NUnit.Framework.Assert;
 
     public static class GuidExtensions {
-
-        [StructLayout( LayoutKind.Explicit )]
-        public struct DecimalGuidConverter {
-            [FieldOffset( 0 )]
-            public Decimal Decimal;
-            [FieldOffset( 0 )]
-            public Guid Guid;
-        }
-
-        public static Guid ToGuid( this Decimal number ) {
-            DecimalGuidConverter converter;
-            converter.Guid = Guid.Empty;
-            converter.Decimal = number;
-            return converter.Guid;
-        }
-
-        public static Decimal ToDecimal( this Guid guid ) {
-            DecimalGuidConverter converter;
-            converter.Decimal = Decimal.Zero;
-            converter.Guid = guid;
-            return converter.Decimal;
-        }
 
         public static Guid FromPath( this DirectoryInfo path ) {
             var s = path.ToPaths().ToList();
@@ -78,7 +55,7 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        ///     merge two guids
+        /// merge two guids
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -108,7 +85,7 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        ///     (Kinda) converts a guid to a datetime. Returns DateTime.MinValue if any error occurs.
+        /// (Kinda) converts a guid to a datetime. Returns DateTime.MinValue if any error occurs.
         /// </summary>
         /// <param name="g"></param>
         /// <returns></returns>
@@ -136,19 +113,36 @@ namespace Librainian.Extensions {
             }
         }
 
+        public static Decimal ToDecimal( this Guid guid ) {
+            DecimalGuidConverter converter;
+            converter.Decimal = Decimal.Zero;
+            converter.Guid = guid;
+            return converter.Decimal;
+        }
+
+        public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new Folder( guid.ToPath( reversed ).FullName );
+
+        public static Guid ToGuid( this Decimal number ) {
+            DecimalGuidConverter converter;
+            converter.Guid = Guid.Empty;
+            converter.Decimal = number;
+            return converter.Guid;
+        }
+
         public static Guid ToGuid( this String word ) {
             var stringbytes = Encoding.UTF8.GetBytes( word );
             var hashedBytes = SecurityExtensions.CryptoProvider.ComputeHash( stringbytes, 0, 16 );
+
             //Array.Resize( ref hashedBytes, 16 );
             return new Guid( hashedBytes );
         }
 
         /// <summary>
-        ///     Converts a datetime to a guid. Returns Guid.Empty if any error occurs.
+        /// Converts a datetime to a guid. Returns Guid.Empty if any error occurs.
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
-        /// <seealso cref="ToDateTime" />
+        /// <seealso cref="ToDateTime"/>
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
@@ -167,23 +161,69 @@ namespace Librainian.Extensions {
                     return guid;
                 }
             }
-            catch ( Exception ) {
+            catch ( Exception) {
                 return Guid.Empty;
             }
         }
 
-        [StructLayout( LayoutKind.Explicit )]
+        /// <summary>
+        /// <para>
+        /// A GUID is a 128-bit integer (16 bytes) that can be used across all computers and
+        /// networks wherever a unique identifier is required.
+        /// </para>
+        /// <para>A GUID has a very low probability of being duplicated.</para>
+        /// </summary>
+        /// <param name="mostImportantbits"></param>
+        /// <param name="somewhatImportantbits"></param>
+        /// <param name="leastImportantbits"></param>
+        /// <returns></returns>
+        public static Guid ToGuid( this UInt64 mostImportantbits, UInt64 somewhatImportantbits, UInt64 leastImportantbits ) {
+            var guidMerger = new GuidMergerUInt64( mostImportantbits, somewhatImportantbits, leastImportantbits );
+            return guidMerger.guid;
+        }
+
+        public static Guid ToGuid( this Tuple<UInt64, UInt64, UInt64> tuple ) {
+            var guidMerger = new GuidMergerUInt64( tuple.Item1, tuple.Item2, tuple.Item3 );
+            return guidMerger.guid;
+        }
+
+        /// <summary>
+        /// Return the characters of the guid as a path structure.
+        /// </summary>
+        /// <example>1/a/b/2/c/d/e/f/</example>
+        /// <param name="guid"></param>
+        /// <param name="reversed">Return the reversed order of the <see cref="Guid"/>.</param>
+        /// <returns></returns>
+        public static DirectoryInfo ToPath( this Guid guid, Boolean reversed = false ) {
+            var a = guid.ToByteArray();
+            return new DirectoryInfo( reversed ? Path.Combine( a[ 15 ].ToString(), a[ 14 ].ToString(), a[ 13 ].ToString(), a[ 12 ].ToString(), a[ 11 ].ToString(), a[ 10 ].ToString(), a[ 9 ].ToString(), a[ 8 ].ToString(), a[ 7 ].ToString(), a[ 6 ].ToString(), a[ 5 ].ToString(), a[ 4 ].ToString(), a[ 3 ].ToString(), a[ 2 ].ToString(), a[ 1 ].ToString(), a[ 0 ].ToString() ) : Path.Combine( a[ 0 ].ToString(), a[ 1 ].ToString(), a[ 2 ].ToString(), a[ 3 ].ToString(), a[ 4 ].ToString(), a[ 5 ].ToString(), a[ 6 ].ToString(), a[ 7 ].ToString(), a[ 8 ].ToString(), a[ 9 ].ToString(), a[ 10 ].ToString(), a[ 11 ].ToString(), a[ 12 ].ToString(), a[ 13 ].ToString(), a[ 14 ].ToString(), a[ 15 ].ToString() ) );
+
+            //return guid.ToString( "D" ).Substring( 0, 4 ).Aggregate( String.Empty, ( current, ch ) => current + ( ch + "/" ) );
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        public struct DecimalGuidConverter {
+
+            [FieldOffset(0)]
+            public Decimal Decimal;
+
+            [FieldOffset(0)]
+            public Guid Guid;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
         public struct GuidMergerUInt64 {
-            [FieldOffset( 0 )]  // bytes 0..15 == 16 bytes
+
+            [FieldOffset(0)]  // bytes 0..15 == 16 bytes
             public Guid guid;
 
-            [FieldOffset( 0 )]
+            [FieldOffset(0)]
             public readonly UInt64 lowest;
 
-            [FieldOffset( 4 )]
+            [FieldOffset(4)]
             public readonly UInt64 center;
 
-            [FieldOffset( 8 )]  //8+8=16 == sizeof(Guid)
+            [FieldOffset(8)]  //8+8=16 == sizeof(Guid)
             public readonly UInt64 highest;
 
             public GuidMergerUInt64( UInt64 most, UInt64 middle, UInt64 least ) {
@@ -196,42 +236,5 @@ namespace Librainian.Extensions {
                 }
             }
         }
-
-        /// <summary>
-        /// <para>A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique identifier is required.</para>
-        /// <para>A GUID has a very low probability of being duplicated.</para>
-        /// </summary>
-        /// <param name="mostImportantbits"></param>
-        /// <param name="somewhatImportantbits"></param>
-        /// <param name="leastImportantbits"></param>
-        /// <returns></returns>
-        public static Guid ToGuid( this UInt64 mostImportantbits, UInt64 somewhatImportantbits, UInt64 leastImportantbits ) {
-            var guidMerger = new GuidMergerUInt64( mostImportantbits, somewhatImportantbits, leastImportantbits );
-            return guidMerger.guid;
-        }
-
-        public static Guid ToGuid( this Tuple<UInt64,UInt64, UInt64> tuple ) {
-            var guidMerger = new GuidMergerUInt64( tuple.Item1, tuple.Item2, tuple.Item3 );
-            return guidMerger.guid;
-        }
-
-        /// <summary>
-        ///     Return the characters of the guid as a path structure.
-        /// </summary>
-        /// <example>
-        ///     1/a/b/2/c/d/e/f/
-        /// </example>
-        /// <param name="guid"></param>
-        /// <param name="reversed">
-        ///     Return the reversed order of the <see cref="Guid" />.
-        /// </param>
-        /// <returns></returns>
-        public static DirectoryInfo ToPath( this Guid guid, Boolean reversed = false ) {
-            var a = guid.ToByteArray();
-            return new DirectoryInfo( reversed ? Path.Combine( a[ 15 ].ToString(), a[ 14 ].ToString(), a[ 13 ].ToString(), a[ 12 ].ToString(), a[ 11 ].ToString(), a[ 10 ].ToString(), a[ 9 ].ToString(), a[ 8 ].ToString(), a[ 7 ].ToString(), a[ 6 ].ToString(), a[ 5 ].ToString(), a[ 4 ].ToString(), a[ 3 ].ToString(), a[ 2 ].ToString(), a[ 1 ].ToString(), a[ 0 ].ToString() ) : Path.Combine( a[ 0 ].ToString(), a[ 1 ].ToString(), a[ 2 ].ToString(), a[ 3 ].ToString(), a[ 4 ].ToString(), a[ 5 ].ToString(), a[ 6 ].ToString(), a[ 7 ].ToString(), a[ 8 ].ToString(), a[ 9 ].ToString(), a[ 10 ].ToString(), a[ 11 ].ToString(), a[ 12 ].ToString(), a[ 13 ].ToString(), a[ 14 ].ToString(), a[ 15 ].ToString() ) );
-            //return guid.ToString( "D" ).Substring( 0, 4 ).Aggregate( String.Empty, ( current, ch ) => current + ( ch + "/" ) );
-        }
-
-        public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new Folder( guid.ToPath( reversed ).FullName );
     }
 }
