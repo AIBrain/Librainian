@@ -332,10 +332,6 @@ namespace Librainian.AmazedSaint {
             return this.Attribute( memberName );
         }
 
-        private void OnPropertyChanged( String prop ) {
-            if ( this.PropertyChanged != null ) {
-                this.PropertyChanged( this, new PropertyChangedEventArgs( prop ) );
-            }
-        }
+        private void OnPropertyChanged( String prop ) => this.PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( prop ) );
     }
 }

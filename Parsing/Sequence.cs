@@ -26,14 +26,6 @@ namespace Librainian.Parsing {
     public class Sequence< TType > {
         [DataMember] public readonly List< TType > Tokens = new List< TType >();
 
-        public void Enqueue( [NotNull] TType token ) {
-            //if ( token == null ) {
-            //    throw new ArgumentNullException( "token" );
-            //}
-            //if ( String.IsNullOrEmpty( token ) ) {
-            //    token = String.Empty;
-            //}
-            this.Tokens.Add( token );
-        }
+        public void Enqueue( [NotNull] TType token ) => this.Tokens.Add( token );
     }
 }

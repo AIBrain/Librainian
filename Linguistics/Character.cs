@@ -49,13 +49,9 @@ namespace Librainian.Linguistics {
             this.Token = character;
         }
 
-        public static implicit operator char( Character character ) {
-            return character.Token;
-        }
+        public static implicit operator char( Character character ) => character.Token;
 
-        public Boolean Equals( Char other ) {
-            return Equals( this.Token, other );
-        }
+        public Boolean Equals( Char other ) => Equals( this.Token, other );
 
         public Boolean Equals( [CanBeNull] Character other ) {
             if ( ReferenceEquals( other, null ) ) {
@@ -64,8 +60,6 @@ namespace Librainian.Linguistics {
             return ReferenceEquals( this, other ) || Equals( this.Token, other.Token );
         }
 
-        public override String ToString() {
-            return String.Format( "{0}", this.Token );
-        }
+        public override string ToString() => string.Format( "{0}", this.Token );
     }
 }

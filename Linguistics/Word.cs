@@ -54,9 +54,7 @@ namespace Librainian.Linguistics {
             this._tokens.Fix();
         }
 
-        public static implicit operator String( Word word ) {
-            return word._tokens.ToStrings( "" );
-        }
+        public static implicit operator string ( Word word ) => word._tokens.ToStrings( "" );
 
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
@@ -81,9 +79,7 @@ namespace Librainian.Linguistics {
         /// through the collection.
         /// </returns>
         /// <filterpriority>1</filterpriority>
-        public IEnumerator<Character> GetEnumerator() {
-            return this._tokens.GetEnumerator();
-        }
+        public IEnumerator<Character> GetEnumerator() => this._tokens.GetEnumerator();
 
         /// <summary>
         /// Returns an enumerator that iterates through a collection.
@@ -93,9 +89,7 @@ namespace Librainian.Linguistics {
         /// through the collection.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public IEnumerable<Tuple<UInt64, String>> Possibles() {
             if ( !this._tokens.Any() ) {
@@ -107,8 +101,6 @@ namespace Librainian.Linguistics {
             }
         }
 
-        public override String ToString() {
-            return this._tokens.ToStrings( "" );
-        }
+        public override String ToString() => this._tokens.ToStrings( "" );
     }
 }

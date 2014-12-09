@@ -70,9 +70,7 @@ namespace Librainian.Linguistics {
             this._tokens.Fix();
         }
 
-        public static implicit operator String( Sentence sentence ) {
-            return sentence._tokens.ToStrings( " " );
-        }
+        public static implicit operator String( Sentence sentence ) => sentence._tokens.ToStrings( " " );
 
         public static readonly Sentence EndOfLine = new Sentence( "\0" );
 
@@ -83,13 +81,9 @@ namespace Librainian.Linguistics {
             return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
 
-        public IEnumerator<Word> GetEnumerator() {
-            return this._tokens.GetEnumerator();
-        }
+        public IEnumerator<Word> GetEnumerator() => this._tokens.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /*
                 public IEnumerable<Tuple<UInt64, String>> Possibles() {
@@ -122,8 +116,6 @@ namespace Librainian.Linguistics {
             }
         }
 
-        public override String ToString() {
-            return this._tokens.ToStrings( " " );
-        }
+        public override String ToString() => this._tokens.ToStrings( " " );
     }
 }
