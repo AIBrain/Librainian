@@ -85,7 +85,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     <para>Write the <paramref name="message" /> out to the console.</para>
+        ///     <para>Write the debug/trace <paramref name="message" /> out to the console.</para>
         /// </summary>
         /// <param name="message"></param>
         /// <param name="method"></param>

@@ -74,6 +74,11 @@ namespace Librainian.Measurement.Time {
         ///     <see cref="One" /> <see cref="Seconds" />.
         /// </summary>
         public static readonly Seconds One = new Seconds( 1 );
+        
+        /// <summary>
+        ///     <see cref="Half" /> <see cref="Seconds" />.
+        /// </summary>
+        public static readonly Seconds Half = new Seconds( 0.5m );
 
         /// <summary>
         ///     <see cref="Seven" /> <see cref="Seconds" />.
