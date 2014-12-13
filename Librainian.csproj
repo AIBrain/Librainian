@@ -47,33 +47,44 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accord">
+      <HintPath>..\CexBot\packages\Accord.2.14.0\lib\net40\Accord.dll</HintPath>
+    </Reference>
     <Reference Include="Accord.Controls.Imaging">
-      <HintPath>..\Universal\packages\Accord.Controls.Imaging.2.13.1\lib\net40\Accord.Controls.Imaging.dll</HintPath>
+      <HintPath>..\CexBot\packages\Accord.Controls.Imaging.2.14.0\lib\net40\Accord.Controls.Imaging.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Accord.Controls.Vision">
-      <HintPath>..\Universal\packages\Accord.Controls.Vision.2.13.1\lib\net40\Accord.Controls.Vision.dll</HintPath>
+    <Reference Include="Accord.Controls.Vision, Version=2.14.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CexBot\packages\Accord.Controls.Vision.2.14.0\lib\net40\Accord.Controls.Vision.dll</HintPath>
     </Reference>
-    <Reference Include="Accord.Imaging">
-      <HintPath>..\Universal\packages\Accord.Imaging.2.13.1\lib\net40\Accord.Imaging.dll</HintPath>
+    <Reference Include="Accord.Imaging, Version=2.14.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CexBot\packages\Accord.Imaging.2.14.0\lib\net40\Accord.Imaging.dll</HintPath>
     </Reference>
-    <Reference Include="Accord.IO">
-      <HintPath>..\Universal\packages\Accord.IO.2.13.1\lib\net40\Accord.IO.dll</HintPath>
+    <Reference Include="Accord.IO, Version=2.14.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CexBot\packages\Accord.IO.2.14.0\lib\net40\Accord.IO.dll</HintPath>
     </Reference>
     <Reference Include="Accord.MachineLearning">
-      <HintPath>..\Universal\packages\Accord.MachineLearning.2.13.1\lib\net40\Accord.MachineLearning.dll</HintPath>
+      <HintPath>..\CexBot\packages\Accord.MachineLearning.2.14.0\lib\net40\Accord.MachineLearning.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Accord.Math">
-      <HintPath>..\Universal\packages\Accord.Math.2.13.1\lib\net40\Accord.Math.dll</HintPath>
+      <HintPath>..\CexBot\packages\Accord.Math.2.14.0\lib\net40\Accord.Math.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Accord.Neuro">
-      <HintPath>..\Universal\packages\Accord.Neuro.2.13.1\lib\net40\Accord.Neuro.dll</HintPath>
+    <Reference Include="Accord.Neuro, Version=2.14.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CexBot\packages\Accord.Neuro.2.14.0\lib\net40\Accord.Neuro.dll</HintPath>
     </Reference>
     <Reference Include="Accord.Statistics">
-      <HintPath>..\Universal\packages\Accord.Statistics.2.13.1\lib\net40\Accord.Statistics.dll</HintPath>
+      <HintPath>..\CexBot\packages\Accord.Statistics.2.14.0\lib\net40\Accord.Statistics.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Accord.Vision">
-      <HintPath>..\Universal\packages\Accord.Vision.2.13.1\lib\net40\Accord.Vision.dll</HintPath>
+    <Reference Include="Accord.Vision, Version=2.14.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CexBot\packages\Accord.Vision.2.14.0\lib\net40\Accord.Vision.dll</HintPath>
     </Reference>
     <Reference Include="AForge.Controls">
       <HintPath>..\Universal\packages\AForge.Controls.2.2.5\lib\AForge.Controls.dll</HintPath>
@@ -131,13 +142,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\CexBot\packages\ManagedEsent.1.9.2.0\lib\net40\Esent.Interop.dll</HintPath>
     </Reference>
-    <Reference Include="FluentAssertions, Version=3.2.1.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+    <Reference Include="FluentAssertions, Version=3.2.2.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Testing\ConsoleApplication2\packages\FluentAssertions.3.2.1\lib\net45\FluentAssertions.dll</HintPath>
+      <HintPath>..\CexBot\packages\FluentAssertions.3.2.2\lib\net45\FluentAssertions.dll</HintPath>
     </Reference>
-    <Reference Include="FluentAssertions.Core, Version=3.2.1.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+    <Reference Include="FluentAssertions.Core, Version=3.2.2.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Testing\ConsoleApplication2\packages\FluentAssertions.3.2.1\lib\net45\FluentAssertions.Core.dll</HintPath>
+      <HintPath>..\CexBot\packages\FluentAssertions.3.2.2\lib\net45\FluentAssertions.Core.dll</HintPath>
     </Reference>
     <Reference Include="ImpromptuInterface">
       <HintPath>..\Universal\packages\ImpromptuInterface.6.2.2\lib\net40\ImpromptuInterface.dll</HintPath>
@@ -206,9 +217,9 @@
     <Reference Include="System.Speech" />
     <Reference Include="System.Threading" />
     <Reference Include="System.Threading.Tasks" />
-    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.23.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Multifarious\packages\Microsoft.Tpl.Dataflow.4.5.23\lib\portable-net45+win8+wpa81\System.Threading.Tasks.Dataflow.dll</HintPath>
+      <HintPath>..\CexBot\packages\Microsoft.Tpl.Dataflow.4.5.24\lib\portable-net45+win8+wpa81\System.Threading.Tasks.Dataflow.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Windows" />
