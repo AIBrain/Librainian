@@ -37,11 +37,11 @@ namespace Librainian.Collections {
         private readonly String _baseCollectionNameExt = String.Empty;
 
         [DataMember]
-        [OptionalField]
+        
         private readonly ConcurrentDictionary<Guid, String> _guids = new ConcurrentDictionary<Guid, String>();
 
         [DataMember]
-        [OptionalField]
+        
         private readonly ConcurrentDictionary<String, Guid> _words = new ConcurrentDictionary<String, Guid>();
 
         public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) {

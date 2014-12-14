@@ -32,20 +32,20 @@ namespace Librainian.Graphics.DDD {
         public static readonly Coordinate One = new Coordinate( x: 1, y: 1, z: 1 );
         public static readonly Coordinate Zero = new Coordinate( x: 0, y: 0, z: 0 );
 
-        [DataMember]
-        [OptionalField]
-        public readonly Single X;
+        [ DataMember ]
+        
+        public float X { get; }
 
         [DataMember]
-        [OptionalField]
+        
         public readonly Single Y;
 
         [DataMember]
-        [OptionalField]
+        
         public readonly Single Z;
 
         [DataMember]
-        [OptionalField]
+        
         public Single SquareLength;
 
         ///// <summary>

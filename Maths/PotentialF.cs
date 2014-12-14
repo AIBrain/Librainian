@@ -50,7 +50,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <remarks>ONLY used in the getter and setter.</remarks>
         [DataMember]
-        [OptionalField]
+        
         private Single _value = MinValue;
 
         /// <summary>

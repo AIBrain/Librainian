@@ -37,21 +37,21 @@ namespace Librainian.Measurement.Time {
         ///     Length of the range (difference between maximum and minimum values).
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         public readonly Span Length;
 
         /// <summary>
         ///     Maximum value
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         public readonly Span Max;
 
         /// <summary>
         ///     Minimum value
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         public readonly Span Min;
 
         /// <summary>

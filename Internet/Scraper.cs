@@ -37,18 +37,18 @@ namespace Librainian.Internet {
     [Obsolete]
     public static class Scraper {
         [DataMember]
-        [OptionalField]
+        
         private static readonly ReaderWriterLockSlim MAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
         /// <summary>
         ///     TODO: concurrentbag
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         private static readonly List<WebSite> MWebsites = new List<WebSite>();
 
         [DataMember]
-        [OptionalField]
+        
         private static readonly CookieContainer Cookies = new CookieContainer();
 
         public static List<WebSite> ScrapedSites {

@@ -35,14 +35,14 @@ namespace Librainian.Collections {
         /// </summary>
         /// <remarks>Two dictionaries for speed, one class to rule them all.</remarks>
         [DataMember]
-        [OptionalField]
+        
         public readonly ConcurrentDictionary<Guid, String> Guids = new ConcurrentDictionary<Guid, String>();
 
         /// <summary>
         /// </summary>
         /// <remarks>Two dictionaries for speed, one class to rule them all.</remarks>
         [DataMember]
-        [OptionalField]
+        
         public readonly ConcurrentDictionary<String, Guid> Words = new ConcurrentDictionary<String, Guid>();
 
         public IEnumerable<Guid> EachGuid => this.Guids.Keys;

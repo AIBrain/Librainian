@@ -34,39 +34,39 @@ namespace Librainian.Collections {
     [DataContract( IsReference = true )]
     public class OrderedDictionary<TKey, TValue> : IOrderedDictionary<TKey, TValue> where TKey : class {
         [DataMember]
-        [OptionalField]
+        
         private const int DefaultInitialCapacity = 0;
 
         [DataMember]
-        [OptionalField]
+        
         private static readonly String _keyTypeName = typeof( TKey ).FullName;
 
         [DataMember]
-        [OptionalField]
+        
         private static readonly Boolean _valueTypeIsReferenceType = !typeof( ValueType ).IsAssignableFrom( typeof( TValue ) );
 
         [DataMember]
-        [OptionalField]
+        
         private static readonly String _valueTypeName = typeof( TValue ).FullName;
 
         [DataMember]
-        [OptionalField]
+        
         private readonly IEqualityComparer<TKey> _comparer;
 
         [DataMember]
-        [OptionalField]
+        
         private Dictionary<TKey, TValue> _dictionary;
 
         [DataMember]
-        [OptionalField]
+        
         private readonly int _initialCapacity;
 
         [DataMember]
-        [OptionalField]
+        
         private List<KeyValuePair<TKey, TValue>> _list;
 
         [DataMember]
-        [OptionalField]
+        
         private object _syncRoot;
 
         /// <summary>

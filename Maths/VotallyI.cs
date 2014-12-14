@@ -48,14 +48,14 @@ namespace Librainian.Maths {
         /// ONLY used in the getter and setter.
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         private UInt64 _votesNo;
 
         /// <summary>
         /// ONLY used in the getter and setter.
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         private UInt64 _votesYes;
 
         public VotallyI( UInt64 votesYes = 0, UInt64 votesNo = 0 ) {

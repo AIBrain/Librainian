@@ -23,7 +23,7 @@ namespace Librainian.Extensions {
     [DataContract]
     public class EventArgs<T> : EventArgs {
 
-        [OptionalField]
+        
         public T Value;
 
         public EventArgs( T value ) {

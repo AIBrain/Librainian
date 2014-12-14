@@ -39,19 +39,19 @@ namespace Librainian.Graphics.DDD {
         public static readonly UInt64 Range = Maximum - Minimum;
 
         [DataMember]
-        [OptionalField]
+        
         public readonly UInt64 SquareLength;
 
         [DataMember]
-        [OptionalField]
+        
         public readonly UInt64 X;
 
         [DataMember]
-        [OptionalField]
+        
         public readonly UInt64 Y;
 
         [DataMember]
-        [OptionalField]
+        
         public readonly UInt64 Z;
 
         ///// <summary>

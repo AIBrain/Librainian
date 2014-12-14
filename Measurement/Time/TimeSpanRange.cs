@@ -40,21 +40,21 @@ namespace Librainian.Measurement.Time {
         ///     Length of the range (difference between maximum and minimum values).
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         public readonly TimeSpan Length;
 
         /// <summary>
         ///     Maximum value
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         public readonly TimeSpan Max;
 
         /// <summary>
         ///     Minimum value
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         public readonly TimeSpan Min;
 
         /// <summary>

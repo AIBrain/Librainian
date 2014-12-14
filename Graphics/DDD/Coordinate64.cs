@@ -43,25 +43,21 @@ namespace Librainian.Graphics.DDD {
 
         public static readonly Coordinate64 Zeroth = new Coordinate64( x: 0, y: 0, z: 0 );
 
-        [Column]
-        [DataMember]
-        [OptionalField]
-        public readonly Int64 Length;
+        [ Column ]
+        [ DataMember ]
+        public long Length { get; }
 
-        [Column]
-        [DataMember]
-        [OptionalField]
-        public readonly Int64 X;
+        [ Column ]
+        [ DataMember ]
+        public long X { get; }
 
-        [Column]
-        [DataMember]
-        [OptionalField]
-        public readonly Int64 Y;
+        [ Column ]
+        [ DataMember ]
+        public long Y { get; }
 
-        [Column]
-        [DataMember]
-        [OptionalField]
-        public readonly Int64 Z;
+        [ Column ]
+        [ DataMember ]
+        public long Z { get; }
 
         /// <summary>
         /// </summary>

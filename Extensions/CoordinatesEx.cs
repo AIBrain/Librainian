@@ -33,7 +33,7 @@ namespace Librainian.Extensions {
             if ( to == default(Coordinate) ) {
                 return 0;
             }
-            var dx = from.X - to.X;
+            var dx = @from.X - to.X;
             var dy = @from.Y - to.Y;
             var dz = @from.Z - to.Z;
             return Math.Sqrt( dx * dx + dy * dy + dz * dz );

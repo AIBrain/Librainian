@@ -40,21 +40,21 @@ namespace Librainian.Maths {
         ///     Length of the range (difference between maximum and minimum values)
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         public readonly UInt64 Length;
 
         /// <summary>
         ///     Maximum value
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         public readonly UInt64 Max;
 
         /// <summary>
         ///     Minimum value
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         public readonly UInt64 Min;
 
         /// <summary>

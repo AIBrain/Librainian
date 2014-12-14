@@ -28,7 +28,7 @@ namespace Librainian.Collections {
 
     [DataContract( IsReference = true )]
     public class TimeStampQueue< T > : IEnumerable< WithTime< T > > where T : class {
-        [DataMember] [OptionalField] public readonly ConcurrentQueue< WithTime< T > > Queue = new ConcurrentQueue< WithTime< T > >();
+        [DataMember]  public readonly ConcurrentQueue< WithTime< T > > Queue = new ConcurrentQueue< WithTime< T > >();
 
         public IEnumerable< T > Items => this.Queue.Select( item => item.Item );
 

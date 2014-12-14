@@ -45,14 +45,14 @@ namespace Librainian.Maths {
         ///     ONLY used in the getter and setter.
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         private Double _aVotes;
 
         /// <summary>
         ///     ONLY used in the getter and setter.
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         private Double _bVotes;
 
         public VotallyD( Double votesForA = 0, Double votesForB = 0 ) {

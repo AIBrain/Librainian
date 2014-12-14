@@ -35,7 +35,7 @@ namespace Librainian.Maths {
         ///     ONLY always somtimes used in the getter and setter.
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         private long _value;
 
         public AtomicInt( int value = 0 ) {

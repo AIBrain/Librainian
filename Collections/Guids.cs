@@ -32,7 +32,7 @@ namespace Librainian.Collections {
         ///     no guarantee on the add/remove order with a ConcurrentBag, is there? If there is (so
         ///     Add/Remove would cycle through all items) and if ConcurrentBag is faster.. then use ConcurrentBag.
         /// </remarks>
-        [DataMember] [OptionalField] [NotNull] public readonly ConcurrentQueue< Guid > Collection = new ConcurrentQueue< Guid >();
+        [DataMember]  [NotNull] public readonly ConcurrentQueue< Guid > Collection = new ConcurrentQueue< Guid >();
 
         public void Add( Guid guid ) {
             if ( !this.Collection.Contains( guid ) ) {

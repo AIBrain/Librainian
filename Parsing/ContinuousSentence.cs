@@ -33,11 +33,11 @@ namespace Librainian.Parsing {
     /// </summary>
     [DataContract( IsReference = true )]
     public class ContinuousSentence {
-        public static readonly String[] _EndOfSentences_English_US = { ".", "?", "!", "lol", ":)", ";)", ":P" };
+        public static IEnumerable< string > EndOfSentencesEnglishUS { get; } = new[] { ".", "?", "!", "lol", ":)", ";)", ":P" };
 
-        [DataMember] [OptionalField] private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+        [DataMember]  private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-        [DataMember] [OptionalField] private String _currentSentence = String.Empty;
+        [DataMember]  private String _currentSentence = String.Empty;
 
         public ContinuousSentence( [NotNull] String paragraph = "" ) {
             if ( paragraph == null ) {
@@ -105,7 +105,7 @@ namespace Librainian.Parsing {
                     }
                 }
                 else {
-                    if ( _EndOfSentences_English_US.Any( sentence.EndsWith ) || this._currentSentence.WordCount() >= noMoreThanXWords ) {
+                    if ( EndOfSentencesEnglishUS.Any( sentence.EndsWith ) || this._currentSentence.WordCount() >= noMoreThanXWords ) {
                         return sentence;
                     }
                 }

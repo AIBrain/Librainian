@@ -38,7 +38,7 @@ namespace Librainian.Maths {
         ///     ONLY used in the getter and setter.
         /// </summary>
         [DataMember]
-        [OptionalField]
+        
         private Double _value;
 
         public AtomicDouble( Double value )

@@ -23,9 +23,9 @@ namespace Librainian.Collections {
 
     [DataContract( IsReference = true )]
     public class WithTime< T > {
-        [DataMember] [OptionalField] public readonly T Item;
+        [DataMember]  public readonly T Item;
 
-        [DataMember] [OptionalField] public readonly DateTime TimeStamp;
+        [DataMember]  public readonly DateTime TimeStamp;
 
         public WithTime( T item ) {
             this.TimeStamp = DateTime.UtcNow;
