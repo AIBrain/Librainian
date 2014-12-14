@@ -715,7 +715,6 @@
     <Compile Include="Threading\OpenOrClosed.cs" />
     <Compile Include="Threading\Pipeline.cs" />
     <Compile Include="Threading\PolicyOnLockRecursion.cs" />
-    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Threading\PriorityBlock.cs" />
     <Compile Include="Threading\PriorityScheduler.cs" />
     <Compile Include="Threading\Randem.cs" />
