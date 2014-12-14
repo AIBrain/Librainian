@@ -1,4 +1,3 @@
-#region License & Information
 
 // This notice must be kept visible in the source.
 //
@@ -16,8 +15,6 @@
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // "Librainian/Randem.cs" was last cleaned by Rick on 2014/08/11 at 2:14 PM
-
-#endregion License & Information
 
 namespace Librainian.Threading {
 
@@ -45,15 +42,6 @@ namespace Librainian.Threading {
     using Parsing;
 
     public static class Randem {
-
-        /// <summary>
-        /// </summary>
-        [NotNull]
-        public static readonly ConcurrentDictionary<Type, String[]> EnumDictionary = new ConcurrentDictionary<Type, String[]>();
-
-        [NotNull]
-        public static readonly ThreadLocal<byte[]> LocalUInt64Buffers = new ThreadLocal<byte[]>( valueFactory: () => new byte[ sizeof( UInt64 ) ], trackAllValues: false );
-
         /// <summary>
         /// Provide to each thread its own <see cref="Random" /> with a random seed.
         /// </summary>
@@ -64,94 +52,43 @@ namespace Librainian.Threading {
             return new Random( seed.GetHashMerge( Thread.CurrentThread.ManagedThreadId ) );
         }, trackAllValues: false );
 
+        private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<byte[]>( () => new byte[ sizeof(Double) ], false );
+
+        /// <summary>
+        /// </summary>
         [NotNull]
-        private static readonly ThreadLocal<byte[]> LocalInt64Buffers = new ThreadLocal<byte[]>( valueFactory: () => new byte[ sizeof( Int64 ) ], trackAllValues: false );
+        public static ConcurrentDictionary<Type, string[]> EnumDictionary { get; }
+        = new ConcurrentDictionary<Type, String[]>();
 
         /// <summary>
         /// A thread-local (threadsafe) <see cref="Random" />.
         /// </summary>
         [NotNull]
-        public static Random Instance => ThreadSafeRandom.Value;
+        public static Random Instance { get; }
+        = ThreadSafeRandom.Value;
 
+        [NotNull]
+        public static ThreadLocal<byte[]> LocalUInt64Buffers { get; }
+        = new ThreadLocal<byte[]>( valueFactory: () => new byte[ sizeof(UInt64) ], trackAllValues: false );
         /// <summary>
         /// <para>More cryptographically strong than <see cref="Random"/>.</para>
         /// </summary>
         [NotNull]
-        public static readonly ThreadLocal<RandomNumberGenerator> RNG = new ThreadLocal<RandomNumberGenerator>( () => new RNGCryptoServiceProvider() );
+        public static ThreadLocal<RandomNumberGenerator> RNG { get; }
+        = new ThreadLocal<RandomNumberGenerator>( () => new RNGCryptoServiceProvider() );
 
+        [NotNull]
+        private static ThreadLocal<byte[]> LocalInt64Buffers { get; }
+        = new ThreadLocal<byte[]>( valueFactory: () => new byte[ sizeof(Int64) ], trackAllValues: false );
 
-        [Pure]
-        public static Int16 GetInt16( this RandomNumberGenerator rng ) {
-            var data = new byte[ sizeof( Int16 ) ];
-            rng.GetNonZeroBytes( data );
-            return BitConverter.ToInt16( data, 0 );
-        }
-
-        [Pure]
-        public static Int32 GetInt32( this RandomNumberGenerator rng ) {
-            var data = new byte[ sizeof( Int32 ) ];
-            rng.GetNonZeroBytes( data );
-            return BitConverter.ToInt32( data, 0 );
-        }
-
-        [Pure]
-        public static Int64 GetInt64( this RandomNumberGenerator rng ) {
-            var data = new byte[ sizeof( Int64 ) ];
-            rng.GetNonZeroBytes( data );
-            return BitConverter.ToInt64( data, 0 );
-        }
-
-
-        [Pure]
-        public static UInt16 GetUInt16( this RandomNumberGenerator rng ) {
-            var data = new byte[ sizeof( UInt16 ) ];
-            rng.GetNonZeroBytes( data );
-            return BitConverter.ToUInt16( data, 0 );
-        }
-
-        [Pure]
-        public static UInt32 GetUInt32( this RandomNumberGenerator rng ) {
-            var data = new byte[ sizeof( UInt32 ) ];
-            rng.GetNonZeroBytes( data );
-            return BitConverter.ToUInt32( data, 0 );
-        }
-
-        [Pure]
-        public static UInt64 GetUInt64( this RandomNumberGenerator rng ) {
-            var data = new byte[ sizeof( UInt64 ) ];
-            rng.GetNonZeroBytes( data );
-            return BitConverter.ToUInt64( data, 0 );
-        }
-
-        [Pure]
-        public static Char GetChar( this RandomNumberGenerator rng ) {
-            var data = new byte[ sizeof( Char ) ];
-            rng.GetNonZeroBytes( data );
-            return BitConverter.ToChar( data, 0 );
-        }
-
-        [Pure]
-        public static Single GetSingle( this RandomNumberGenerator rng ) {
-            var data = new byte[ sizeof( Single ) ];
-            rng.GetNonZeroBytes( data );
-            return BitConverter.ToSingle( data, 0 );
-        }
-
-        [Pure]
-        public static Double GetDouble( this RandomNumberGenerator rng ) {
-            var data = new byte[ sizeof( Double ) ];
-            rng.GetNonZeroBytes( data );
-            return BitConverter.ToDouble( data, 0 );
-        }
-
-        public static void AddToList( [NotNull] ConcurrentBag<int> list ) {
+        internal static void AddToList( [NotNull] ConcurrentBag<int> list ) {
             if ( list == null ) {
                 throw new ArgumentNullException( "list" );
             }
             Parallel.ForEach( 1.To( 128 ), ThreadingExtensions.Parallelism, i => list.Add( Next( minValue: Int32.MinValue, maxValue: Int32.MaxValue ) ) );
         }
 
-        [MethodImpl( MethodImplOptions.NoInlining )]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static Double DoBusyWork( this UInt64 iterations ) {
             Double work = 0;
             for ( var i = 0ul ; i < iterations ; i++ ) {
@@ -160,13 +97,49 @@ namespace Librainian.Threading {
             return work;
         }
 
+        [Pure]
+        public static Char GetChar( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof(Char) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToChar( data, 0 );
+        }
+
+        [Pure]
+        public static Double GetDouble( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof(Double) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToDouble( data, 0 );
+        }
+
+        [Pure]
+        public static Int16 GetInt16( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof(Int16) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToInt16( data, 0 );
+        }
+
+        [Pure]
+        public static Int32 GetInt32( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof(Int32) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToInt32( data, 0 );
+        }
+
+        [Pure]
+        public static Int64 GetInt64( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof(Int64) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToInt64( data, 0 );
+        }
+
+
         /// <summary>
         /// memoize?
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         public static String[] GetNames<T>() {
-            var key = typeof( T );
+            var key = typeof(T);
             String[] values;
             if ( EnumDictionary.TryGetValue( key, out values ) ) {
                 return values;
@@ -176,6 +149,45 @@ namespace Librainian.Threading {
             return values;
         }
 
+        public static Percentage GetRandomness( this Action<byte[]> randomFunc, UInt16 bytesToTest ) {
+
+            var buffer = new byte[ bytesToTest ];
+            randomFunc( buffer );
+
+            var compressed = buffer.Compress();
+
+            var result = new Percentage( ( BigInteger )compressed.LongLength, buffer.LongLength );
+
+            return result;
+        }
+
+        [Pure]
+        public static Single GetSingle( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof(Single) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToSingle( data, 0 );
+        }
+
+        [Pure]
+        public static UInt16 GetUInt16( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof(UInt16) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToUInt16( data, 0 );
+        }
+
+        [Pure]
+        public static UInt32 GetUInt32( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof(UInt32) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToUInt32( data, 0 );
+        }
+
+        [Pure]
+        public static UInt64 GetUInt64( this RandomNumberGenerator rng ) {
+            var data = new byte[ sizeof(UInt64) ];
+            rng.GetNonZeroBytes( data );
+            return BitConverter.ToUInt64( data, 0 );
+        }
         /// <summary>
         /// Generate a random number between <paramref name="minValue" /> and <paramref
         /// name="maxValue" />.
@@ -185,10 +197,6 @@ namespace Librainian.Threading {
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static int Next( int minValue, int maxValue ) => Instance.Next( minValue: minValue, maxValue: maxValue );
-
-        public static Guid NextGuid() => Guid.NewGuid();
-
-        public static Guid NextGuid( Decimal minValue ) => Guid.NewGuid();
 
         /// <summary>
         /// <para>Returns a nonnegative random number less than <paramref name="maxValue" />.</para>
@@ -301,7 +309,7 @@ namespace Librainian.Threading {
         /// <para>Generate a random <see cref="Boolean.True" /> or <see cref="Boolean.False" />.</para>
         /// </summary>
         /// <returns></returns>
-        public static Boolean NextBooleanFast() => Instance.Next(2) == 0;
+        public static Boolean NextBooleanFast() => Instance.Next( 2 ) == 0;
 
         /// <summary>
         /// <para>Returns a random <see cref="Byte" />.</para>
@@ -322,20 +330,6 @@ namespace Librainian.Threading {
         /// <param name="highEnd"></param>
         /// <returns></returns>
         public static Color NextColor( Byte alpha = 255, Byte lowEnd = 0, Byte highEnd = 255 ) => Color.FromArgb( alpha: alpha, red: Next( lowEnd, highEnd ), green: Next( lowEnd, highEnd ), blue: Next( lowEnd, highEnd ) );
-
-        /// <summary>
-        /// </summary>
-        /// <returns></returns>
-        public static Decimal NextDecimalFullRange() {
-            do {
-                try {
-                    return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( byte )Next( 0, 9 ) );
-                }
-                catch ( ArgumentOutOfRangeException exception ) {
-                    exception.More();
-                }
-            } while ( true );
-        }
 
         /// <summary>
         /// Between 0 and 1.
@@ -368,6 +362,20 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        public static Decimal NextDecimalFullRange() {
+            do {
+                try {
+                    return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( byte )Next( 0, 9 ) );
+                }
+                catch ( ArgumentOutOfRangeException exception ) {
+                    exception.More();
+                }
+            } while ( true );
+        }
+
+        /// <summary>
         /// <para>Returns a random Double between <paramref name="range.Min" /> and <paramref name="range.Max" />.</para>
         /// </summary>
         /// <param name="range"></param>
@@ -376,8 +384,6 @@ namespace Librainian.Threading {
 
         [UsedImplicitly]
         public static Double NextDouble( PairOfDoubles variance ) => NextDouble( min: variance.Low, max: variance.High );
-
-        private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<byte[]>( () => new byte[ sizeof( Double ) ], false );
 
         /// <summary>
         /// Returns a random Double between <paramref name="min" /> and <paramref name="max" />.
@@ -408,16 +414,6 @@ namespace Librainian.Threading {
             return result;
         }
 
-        [StructLayout( LayoutKind.Explicit ), UsedImplicitly]
-        internal class UInt64VsDouble {
-            [FieldOffset( 0 )]
-            public readonly Double value;
-            [FieldOffset( 0 )]
-            public readonly ulong valueulong;
-        }
-
-
-
         /// <summary>
         /// Returns a random Double beetween 0 and 1
         /// </summary>
@@ -441,6 +437,9 @@ namespace Librainian.Threading {
         /// <returns></returns>
         public static float NextFloat( float min = 0, float max = 1 ) => ( float )( min + ( Instance.NextDouble() * ( max - min ) ) );
 
+        public static Guid NextGuid() => Guid.NewGuid();
+
+        public static Guid NextGuid( Decimal minValue ) => Guid.NewGuid();
         /// <summary>
         /// Return a random number somewhere in the full range of <see cref="Int32"/>.
         /// </summary>
@@ -556,28 +555,18 @@ namespace Librainian.Threading {
 
         public static DateTimeOffset RandomDateTimeOffset( this DateTimeOffset value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds * Instance.NextDouble() );
 
-        /*
-                public static Date RandomDate( this Date oldest, Date youngest ) {
-                    if ( youngest > oldest ) {
-                        Utility.Swap( ref youngest, ref oldest ); //make 'youngest' the more recent value
-                    }
-                    var range = later - earlier;
-                    return earlier + new Milliseconds( range.TotalMilliseconds );
-                }
-        */
-
         /// <summary>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         public static T RandomEnum<T>() where T : struct {
-            if ( !typeof( T ).IsEnum ) {
-                return default( T );
+            if ( !typeof(T).IsEnum ) {
+                return default(T);
             }
             var vals = GetNames<T>();
             var rand = Instance.Next( 0, vals.Length );
             var picked = vals[ rand ];
-            return ( T )Enum.Parse( typeof( T ), picked );
+            return ( T )Enum.Parse( typeof(T), picked );
         }
 
         /// <summary>
@@ -596,6 +585,22 @@ namespace Librainian.Threading {
             } while ( true );
 
             // ReSharper disable once FunctionNeverReturns
+        }
+
+        public static Sentence RandomSentence( int avgWords = 8 ) {
+            var list = new List<Word>();
+
+            if ( NextBoolean() ) {
+                ++avgWords;
+            }
+            else if ( NextBoolean() ) {
+                --avgWords;
+            }
+
+            for ( var i = 0 ; i < avgWords ; i++ ) {
+                list.Add( RandomWord() );
+            }
+            return new Sentence( list );
         }
 
         /// <summary>
@@ -620,22 +625,6 @@ namespace Librainian.Threading {
             return new Word( word );
         }
 
-        public static Sentence RandomSentence( int avgWords = 8 ) {
-            var list = new List<Word>();
-
-            if ( NextBoolean() ) {
-                ++avgWords;
-            }
-            else if ( NextBoolean() ) {
-                --avgWords;
-            }
-
-            for ( var i = 0 ; i < avgWords ; i++ ) {
-                list.Add( RandomWord() );
-            }
-            return new Sentence( list );
-        }
-
         /// <summary>
         /// Generate two random numbers about halfway of <param name="goal"></param> .
         /// </summary>
@@ -655,8 +644,8 @@ namespace Librainian.Threading {
             }
             highResult.Should().BeGreaterThan( lowResult );
             ( lowResult + highResult ).Should().Be( goal );
-        } 
-        
+        }
+
         /// <summary>
         /// <para>Generate two random numbers about halfway of <paramref name="goal"/>.</para>
         /// <para>Also, return a random number between <paramref name="lowResult"/> and <paramref name="highResult"/></para>
@@ -677,19 +666,24 @@ namespace Librainian.Threading {
             }
             highResult.Should().BeGreaterThan( lowResult );
             ( lowResult + highResult ).Should().Be( goal );
-            return NextDecimal(lowResult, highResult);
+            return NextDecimal( lowResult, highResult );
         }
 
-        public static Percentage GetRandomness( this Action<byte[]> randomFunc, UInt16 bytesToTest ) {
-
-            var buffer = new byte[ bytesToTest ];
-            randomFunc( buffer );
-
-            var compressed = buffer.Compress();
-
-            var result = new Percentage( ( BigInteger )compressed.LongLength, buffer.LongLength );
-
-            return result;
+        [StructLayout(LayoutKind.Explicit), UsedImplicitly]
+        internal class UInt64VsDouble {
+            [FieldOffset(0)]
+            public readonly Double value;
+            [FieldOffset(0)]
+            public readonly ulong valueulong;
         }
+        /*
+                public static Date RandomDate( this Date oldest, Date youngest ) {
+                    if ( youngest > oldest ) {
+                        Utility.Swap( ref youngest, ref oldest ); //make 'youngest' the more recent value
+                    }
+                    var range = later - earlier;
+                    return earlier + new Milliseconds( range.TotalMilliseconds );
+                }
+        */
     }
 }
