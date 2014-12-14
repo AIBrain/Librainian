@@ -30,10 +30,9 @@ namespace Librainian.Internet {
 
     [DataContract( IsReference = true )]
     public class Captcha {
-
-        [NotNull]
-        [DataMember]
-        public readonly ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory = new ConcurrentDictionary<DateTime, CaptchaStatus>();
+        [ NotNull ]
+        [ DataMember ]
+        public ConcurrentDictionary< DateTime, CaptchaStatus > StatusHistory { get; } = new ConcurrentDictionary< DateTime, CaptchaStatus >();
 
         [DataMember]
         private CaptchaStatus _status;
