@@ -26,7 +26,6 @@ namespace Librainian.Internet {
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
-    using Extensions;
     using Extensions.NativeWin32;
 
     /// <summary>
