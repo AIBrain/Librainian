@@ -22,8 +22,7 @@
 #endregion License & Information
 
 namespace Librainian.Magic {
-
-    using Annotations;
+    using JetBrains.Annotations;
 
     public static class Ioc {
         ///// <summary>

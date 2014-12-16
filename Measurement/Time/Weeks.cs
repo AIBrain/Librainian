@@ -22,13 +22,12 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
-
     using System;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.Serialization;
-    using Annotations;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Parsing;
 
     [DataContract( IsReference = true )]

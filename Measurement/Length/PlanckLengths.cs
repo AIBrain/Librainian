@@ -22,7 +22,7 @@ namespace Librainian.Measurement.Length {
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.Serialization;
-    using Annotations;
+    using JetBrains.Annotations;
     using NUnit.Framework;
 
     /// <summary>

@@ -22,11 +22,10 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
-
     using System;
     using System.Diagnostics;
-    using System.Threading;
-    using Annotations;
+    using System.Timers;
+    using JetBrains.Annotations;
     using NUnit.Framework;
     using Threading;
 
@@ -37,7 +36,7 @@ namespace Librainian.Measurement.Time {
         public static ulong RunSystemTimerTest( Span howLong ) {
             var counter = 0UL;
             try {
-                using ( var systemTimer = new System.Timers.Timer( ( Double )Milliseconds.One ) {
+                using ( var systemTimer = new Timer( ( Double )Milliseconds.One ) {
                     AutoReset = true
                 } ) {
                     systemTimer.Elapsed += ( sender, args ) => counter++;
@@ -72,7 +71,7 @@ namespace Librainian.Measurement.Time {
             _threadingCounter = 0;
             try {
                 var state = new Object();
-                using ( var threadingTimer = new Timer( callback: Callback, state: state, dueTime: ( int )Milliseconds.One.Value, period: ( int )Milliseconds.One.Value ) ) {
+                using ( var threadingTimer = new System.Threading.Timer( callback: Callback, state: state, dueTime: ( int )Milliseconds.One.Value, period: ( int )Milliseconds.One.Value ) ) {
                     var stopwatch = Stopwatch.StartNew();
                     while ( stopwatch.Elapsed < howLong ) {
                         ThreadingExtensions.DoNothing();

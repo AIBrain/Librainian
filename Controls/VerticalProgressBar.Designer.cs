@@ -1,11 +1,12 @@
 ﻿namespace Librainian.Controls {
     using System;
+    using System.ComponentModel;
 
     partial class VerticalProgressBar {
         /// <summary> 
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary> 
         /// Clean up any resources being used.

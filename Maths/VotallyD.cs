@@ -20,12 +20,11 @@
 #endregion License & Information
 
 namespace Librainian.Maths {
-
     using System;
     using System.Diagnostics;
     using System.Runtime.Serialization;
     using System.Threading;
-    using Annotations;
+    using JetBrains.Annotations;
     using Threading;
 
     /// <summary>

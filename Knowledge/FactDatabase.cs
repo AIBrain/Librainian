@@ -26,8 +26,8 @@ namespace Librainian.Knowledge {
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
     using System.Windows.Forms;
-    using Annotations;
     using IO;
+    using JetBrains.Annotations;
     using Linguistics;
     using Parsing;
     using Threading;

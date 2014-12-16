@@ -22,11 +22,10 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time.Clocks {
-
     using System;
     using System.Runtime.Serialization;
     using System.Timers;
-    using Annotations;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     <para>Starts a forward-ticking clock at the given time with settable events.</para>

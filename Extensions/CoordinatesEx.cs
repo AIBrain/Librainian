@@ -20,7 +20,6 @@
 #endregion License & Information
 
 namespace Librainian.Extensions {
-
     using System;
     using Graphics.DDD;
 

@@ -18,7 +18,6 @@
 // "Librainian/UDC.cs" was last cleaned by Rick on 2014/10/21 at 5:02 AM
 
 namespace Librainian.Linguistics {
-
     using System;
 
     /// <summary>

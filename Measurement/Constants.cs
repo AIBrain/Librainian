@@ -20,7 +20,7 @@
 namespace Librainian.Measurement {
     using System;
     using System.Numerics;
-    using Annotations;
+    using JetBrains.Annotations;
     using Numerics;
 
     public static class Constants {

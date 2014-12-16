@@ -1,6 +1,6 @@
 //namespace Librainian.Magic {
 //    using System;
-//    using Annotations;
+//    using JetBrains.Annotations;
 //    using Autofac;
 //    using FluentAssertions;
 //    using Ninject;

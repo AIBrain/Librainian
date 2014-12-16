@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Internet {
-
     using System;
     using System.IO;
     using System.Net;

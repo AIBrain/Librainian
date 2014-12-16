@@ -36,8 +36,8 @@ namespace Librainian.Graphics {
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Windows.Media.Imaging;
-    using Annotations;
     using IO;
+    using JetBrains.Annotations;
     using Measurement.Time;
     using Microsoft.VisualStudio.TestTools.UITesting;
     using Parsing;

@@ -18,14 +18,13 @@
 // "Librainian/SimpleBitcoinWallet.cs" was last cleaned by Rick on 2014/10/16 at 2:32 AM
 
 namespace Librainian.Measurement.Currency.BTC {
-
     using System;
     using System.Diagnostics;
     using System.Runtime.Serialization;
     using System.Threading;
     using System.Windows.Forms;
-    using Annotations;
     using Controls;
+    using JetBrains.Annotations;
     using Threading;
     using Time;
 

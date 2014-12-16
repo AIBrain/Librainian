@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Collections {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -32,7 +31,7 @@ namespace Librainian.Collections {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
-    using Annotations;
+    using JetBrains.Annotations;
     using Measurement.Time;
 
     /// <summary>

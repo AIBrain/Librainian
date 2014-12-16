@@ -22,13 +22,12 @@
 #endregion License & Information
 
 namespace Librainian.Magic {
-
     using System;
     using System.Diagnostics;
     using System.Linq;
-    using Annotations;
     using Collections;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Ninject;
     using Ninject.Activation.Caching;
     using Ninject.Modules;

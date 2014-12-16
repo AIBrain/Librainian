@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Graphics.Imaging {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -30,7 +29,7 @@ namespace Librainian.Graphics.Imaging {
     using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
     using System.Threading.Tasks;
-    using Annotations;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     A horizontal line of <see cref="Pixel" />.

@@ -22,9 +22,8 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Length {
-
     using System;
-    using Annotations;
+    using JetBrains.Annotations;
     using Maths;
 
     public interface IQuantityOfDistance {

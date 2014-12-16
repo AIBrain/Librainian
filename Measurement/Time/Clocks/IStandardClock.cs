@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time.Clocks {
-
     using System;
 
     public interface IStandardClock {

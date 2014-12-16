@@ -20,7 +20,7 @@
 namespace Librainian.Measurement.Currency.USD {
     using System;
     using System.Collections.Generic;
-    using Annotations;
+    using JetBrains.Annotations;
 
     public interface IWallet {
         IEnumerable< KeyValuePair< ICoin, UInt64 > > CoinsGrouped { [NotNull] get; }

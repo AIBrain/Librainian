@@ -20,11 +20,10 @@
 #endregion License & Information
 
 namespace Librainian.Maths {
-
     using System;
     using System.Runtime.Serialization;
-    using Annotations;
     using Collections;
+    using JetBrains.Annotations;
     using Threading;
 
     public enum LowMiddleHigh {

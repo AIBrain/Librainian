@@ -18,15 +18,14 @@
 // "Librainian/RandomnessFeeeding.cs" was last cleaned by Rick on 2014/12/09 at 5:55 AM
 
 namespace Librainian.IO.Compression {
-
     using System;
     using System.Diagnostics;
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
     using System.Numerics;
-    using Annotations;
     using Extensions;
+    using JetBrains.Annotations;
     using Numerics;
 
     public class RandomnessFeeeding : IDisposable {

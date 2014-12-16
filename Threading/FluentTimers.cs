@@ -2,8 +2,8 @@
     using System;
     using System.Collections.Concurrent;
     using System.Timers;
-    using Annotations;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Measurement.Frequency;
     using Measurement.Time;
 

@@ -16,9 +16,8 @@
 // "Librainian/LargeSizeFormatProvider.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 
 namespace Librainian.Extensions {
-
     using System;
-    using Annotations;
+    using JetBrains.Annotations;
     using Maths;
 
     public class LargeSizeFormatProvider : IFormatProvider, ICustomFormatter {

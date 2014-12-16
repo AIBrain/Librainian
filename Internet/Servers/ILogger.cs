@@ -8,7 +8,6 @@
 // http://www.jmarshall.com/easy/http/
 
 namespace Librainian.Internet.Servers {
-
     using System;
 
     /// <summary>

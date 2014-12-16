@@ -20,7 +20,7 @@
 namespace Librainian.Threading {
     using System;
     using System.Threading;
-    using Annotations;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     The wait node used by implementations of <see cref="Collections.IWaitQueue" />.

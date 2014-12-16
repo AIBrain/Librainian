@@ -18,10 +18,9 @@
 // "Librainian/Deck.cs" was last cleaned by Rick on 2014/12/09 at 6:06 AM
 
 namespace Librainian.Gaming.PlayingCards {
-
     using System;
-    using Annotations;
     using Collections;
+    using JetBrains.Annotations;
 
     public class Deck {
 

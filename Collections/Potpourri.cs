@@ -1,5 +1,4 @@
 namespace Librainian.Collections {
-
     using System;
     using System.Collections;
     using System.Collections.Concurrent;
@@ -8,9 +7,9 @@ namespace Librainian.Collections {
     using System.Linq;
     using System.Numerics;
     using System.Runtime.Serialization;
-    using Annotations;
     using Extensions;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Magic;
 
     [DataContract( IsReference = true )]

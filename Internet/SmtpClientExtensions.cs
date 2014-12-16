@@ -1,7 +1,7 @@
 ﻿
 namespace Librainian.Internet {
-    using System.Net.Mail;
     using System;
+    using System.Net.Mail;
     using System.Threading.Tasks;
 
     /// <summary>

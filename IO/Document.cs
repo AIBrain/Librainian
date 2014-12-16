@@ -18,7 +18,6 @@
 // "Librainian/Document.cs" was last cleaned by Rick on 2014/12/09 at 5:56 AM
 
 namespace Librainian.IO {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -31,9 +30,9 @@ namespace Librainian.IO {
     using System.Security;
     using System.Security.Permissions;
     using System.Threading.Tasks;
-    using Annotations;
     using Collections;
     using Extensions;
+    using JetBrains.Annotations;
     using Maths;
     using Parsing;
     using Security;

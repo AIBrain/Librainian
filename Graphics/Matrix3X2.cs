@@ -1,7 +1,6 @@
 ﻿namespace Librainian.Graphics {
     using System;
 
-
     /// <summary>
     /// 
     /// </summary>

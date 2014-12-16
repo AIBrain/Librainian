@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Database {
-
     using System;
     using System.Collections.Concurrent;
     using System.Data;
@@ -32,9 +31,9 @@ namespace Librainian.Database {
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using Annotations;
     using Collections;
     using IO;
+    using JetBrains.Annotations;
     using Persistence;
 
     [Obsolete("work in progress. reiventing the same damn wheel.")]

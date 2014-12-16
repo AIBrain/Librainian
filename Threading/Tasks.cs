@@ -22,14 +22,13 @@
 #endregion License & Information
 
 namespace Librainian.Threading {
-
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
-    using Annotations;
+    using JetBrains.Annotations;
     using Measurement.Time;
 
     /// <summary>

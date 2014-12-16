@@ -20,11 +20,10 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Currency {
-
     using System;
     using System.Runtime.Serialization;
     using System.Threading;
-    using Annotations;
+    using JetBrains.Annotations;
 
     [DataContract]
     [Serializable]

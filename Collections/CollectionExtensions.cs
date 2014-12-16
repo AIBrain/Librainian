@@ -28,8 +28,8 @@ namespace Librainian.Collections {
     using System.Linq;
     using System.Numerics;
     using System.Threading.Tasks;
-    using Annotations;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Maths;
     using Threading;
 

@@ -22,12 +22,11 @@
 #endregion License & Information
 
 namespace Librainian.Maths {
-
     using System;
     using System.Globalization;
     using System.Net;
     using System.Numerics;
-    using Annotations;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     <para>Pulled from the BitcoinSharp project.</para>

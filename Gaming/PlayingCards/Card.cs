@@ -18,7 +18,6 @@
 // "Librainian/Card.cs" was last cleaned by Rick on 2014/12/09 at 6:06 AM
 
 namespace Librainian.Gaming.PlayingCards {
-
     using Extensions;
 
     [Immutable]

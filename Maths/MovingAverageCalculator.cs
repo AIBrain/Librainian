@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Maths {
-
     using System;
 
     /// <summary>

@@ -18,14 +18,13 @@
 // "Librainian/TaggedSentence.cs" was last cleaned by Rick on 2014/10/21 at 5:02 AM
 
 namespace Librainian.Linguistics.PoS {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
-    using Annotations;
     using Collections;
+    using JetBrains.Annotations;
 
     [DataContract( IsReference = true )]
     public sealed class TaggedSentence : IEquatable<TaggedSentence>, IEnumerable<ITaggedWord> {

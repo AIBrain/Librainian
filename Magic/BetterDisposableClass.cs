@@ -1,6 +1,5 @@
-﻿using System;
-
-namespace Librainian.Magic {
+﻿namespace Librainian.Magic {
+    using System;
 
     /// <summary>
     /// 

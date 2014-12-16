@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Threading {
-
     using System;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;

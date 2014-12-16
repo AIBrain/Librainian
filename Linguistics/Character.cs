@@ -18,12 +18,11 @@
 // "Librainian/Character.cs" was last cleaned by Rick on 2014/10/21 at 5:02 AM
 
 namespace Librainian.Linguistics {
-
     using System;
     using System.Runtime.Serialization;
-    using Annotations;
     using Extensions;
     using FluentAssertions;
+    using JetBrains.Annotations;
 
     /// <summary>
     /// <para>A <see cref="Character" /> is a typographic character.</para>

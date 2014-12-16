@@ -1,5 +1,4 @@
 namespace Librainian.Extensions {
-
     using System;
     using System.IO;
 

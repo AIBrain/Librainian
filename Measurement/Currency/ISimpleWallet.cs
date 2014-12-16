@@ -24,7 +24,7 @@
 namespace Librainian.Measurement.Currency {
     using System;
     using System.Windows.Forms;
-    using Annotations;
+    using JetBrains.Annotations;
 
     public interface ISimpleWallet {
 

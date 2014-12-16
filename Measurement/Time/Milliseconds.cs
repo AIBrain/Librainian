@@ -22,12 +22,11 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
-
     using System;
     using System.Diagnostics;
+    using System.Diagnostics.Contracts;
     using System.Numerics;
     using System.Runtime.Serialization;
-    using Annotations;
     using FluentAssertions;
     using Librainian.Extensions;
     using Parsing;
@@ -147,7 +146,6 @@ namespace Librainian.Measurement.Time {
             this.Value = ( Decimal )value;
         }
 
-        [UsedImplicitly]
         private String DebuggerDisplay => this.ToString();
 
         public static Milliseconds Combine( Milliseconds left, Decimal milliseconds ) => new Milliseconds( left.Value + milliseconds );

@@ -20,7 +20,6 @@
 #endregion License & Information
 
 namespace Librainian.Threading {
-
     using System;
     using System.Threading;
     using System.Threading.Tasks;

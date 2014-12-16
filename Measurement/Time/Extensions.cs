@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
-
     using System;
     using System.Diagnostics;
     using System.Globalization;
@@ -30,8 +29,8 @@ namespace Librainian.Measurement.Time {
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
-    using Annotations;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Maths;
     using Parsing;
     using Threading;

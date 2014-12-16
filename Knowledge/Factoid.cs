@@ -18,10 +18,9 @@
 // "Librainian/Factoid.cs" was last cleaned by Rick on 2014/10/21 at 5:01 AM
 
 namespace Librainian.Knowledge {
-
     using System;
     using System.Runtime.Serialization;
-    using Annotations;
+    using JetBrains.Annotations;
     using Maths;
 
     [DataContract( IsReference = true )]

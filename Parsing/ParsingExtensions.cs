@@ -38,10 +38,10 @@ namespace Librainian.Parsing {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Xml;
-    using Annotations;
     using Collections;
     using Extensions;
     using IO;
+    using JetBrains.Annotations;
     using Linguistics;
     using Maths;
     using Numerics;

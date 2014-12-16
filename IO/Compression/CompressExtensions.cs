@@ -18,7 +18,6 @@
 // "Librainian/CompressExtensions.cs" was last cleaned by Rick on 2014/12/09 at 5:55 AM
 
 namespace Librainian.IO.Compression {
-
     using System;
     using System.IO;
     using System.IO.Compression;

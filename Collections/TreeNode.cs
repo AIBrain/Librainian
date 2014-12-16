@@ -19,7 +19,7 @@
 
 namespace Librainian.Collections {
     using System;
-    using Annotations;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     http: //dvanderboom.wordpress.com/2008/03/15/treet-implementing-a-non-binary-tree-in-c/

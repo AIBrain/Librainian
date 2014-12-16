@@ -16,7 +16,6 @@
 // "Librainian/XMLExtensions.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
 
 namespace Librainian.Extensions {
-
     using System;
     using System.Collections.Generic;
     using System.Xml;

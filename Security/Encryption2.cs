@@ -22,7 +22,7 @@ namespace Librainian.Security {
     using System.Collections;
     using System.Security.Cryptography;
     using System.Text;
-    using Annotations;
+    using JetBrains.Annotations;
 
     public static class Encryption2 {
         public static String EncryptString( [NotNull] this String inputString, int dwKeySize, [NotNull] String xmlString ) {

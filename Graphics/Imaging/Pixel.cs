@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Graphics.Imaging {
-
     using System;
     using System.Drawing;
     using System.Runtime.InteropServices;

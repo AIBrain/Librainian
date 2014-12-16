@@ -22,12 +22,11 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Spatial {
-
     using System;
     using System.Diagnostics;
     using System.Runtime.Serialization;
-    using Annotations;
     using Extensions;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     A degree is a measurement of plane angle, representing 1⁄360 of a full rotation.

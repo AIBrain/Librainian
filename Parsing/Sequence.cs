@@ -20,7 +20,7 @@
 namespace Librainian.Parsing {
     using System.Collections.Generic;
     using System.Runtime.Serialization;
-    using Annotations;
+    using JetBrains.Annotations;
 
     [DataContract]
     public class Sequence< TType > {

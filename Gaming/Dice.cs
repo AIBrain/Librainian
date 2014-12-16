@@ -18,7 +18,6 @@
 // "Librainian/Dice.cs" was last cleaned by Rick on 2014/12/09 at 6:06 AM
 
 namespace Librainian.Gaming {
-
     using System;
     using System.Collections.Generic;
     using System.Linq;

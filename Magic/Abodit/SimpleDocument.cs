@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Magic.Abodit {
-
     using System;
     using System.Collections.Generic;
     using System.Dynamic;

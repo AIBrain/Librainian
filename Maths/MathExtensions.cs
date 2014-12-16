@@ -28,9 +28,9 @@ namespace Librainian.Maths {
     using System.Runtime.InteropServices;
     using System.Windows;
     using System.Windows.Media.Media3D;
-    using Annotations;
     using Collections;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Measurement.Time;
     using Numerics;
     using Parsing;

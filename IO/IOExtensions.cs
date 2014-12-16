@@ -40,11 +40,11 @@ namespace Librainian.IO {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    using Annotations;
     using Collections;
     using Controls;
     using Extensions.NativeWin32;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Maths;
     using Measurement.Time;
     using Microsoft.VisualBasic.Devices;
@@ -53,6 +53,7 @@ namespace Librainian.IO {
     using Parsing;
     using Threading;
     using SearchOption = System.IO.SearchOption;
+    using StringSplitOptions = Parsing.StringSplitOptions;
 
     public static class IOExtensions {
         public const int FSCTL_SET_COMPRESSION = 0x9C040;

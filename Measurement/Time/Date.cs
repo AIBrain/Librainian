@@ -22,11 +22,10 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
-
     using System;
     using System.Numerics;
-    using Annotations;
     using Clocks;
+    using JetBrains.Annotations;
     using Librainian.Extensions;
 
     /// <summary>

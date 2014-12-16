@@ -3,8 +3,8 @@ namespace Librainian.Threading {
     using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Threading;
-    using Annotations;
     using FluentAssertions;
+    using JetBrains.Annotations;
 
     /// <summary>
     /// Fluent Actor test class.

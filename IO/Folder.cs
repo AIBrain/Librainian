@@ -18,7 +18,6 @@
 // "Librainian/Folder.cs" was last cleaned by Rick on 2014/12/09 at 5:56 AM
 
 namespace Librainian.IO {
-
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -29,8 +28,8 @@ namespace Librainian.IO {
     using System.Security;
     using System.Text;
     using System.Windows.Forms;
-    using Annotations;
     using Extensions;
+    using JetBrains.Annotations;
     using Parsing;
 
     /// <summary>

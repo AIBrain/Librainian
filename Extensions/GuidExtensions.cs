@@ -16,7 +16,6 @@
 // "Librainian/GuidExtensions.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 
 namespace Librainian.Extensions {
-
     using System;
     using System.IO;
     using System.Linq;
@@ -25,9 +24,9 @@ namespace Librainian.Extensions {
     using FluentAssertions;
     using IO;
     using Maths;
+    using NUnit.Framework;
     using Security;
     using Threading;
-    using Assert = NUnit.Framework.Assert;
 
     public static class GuidExtensions {
 

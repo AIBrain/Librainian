@@ -18,7 +18,6 @@
 // "Librainian/PopulateProgressEventArgs.cs" was last cleaned by Rick on 2014/12/09 at 5:52 AM
 
 namespace Librainian.Extensions {
-
     using System;
 
     /// <summary>

@@ -27,7 +27,7 @@ namespace Librainian {
     using System.Net.NetworkInformation;
     using System.Numerics;
     using System.Runtime;
-    using Annotations;
+    using JetBrains.Annotations;
     using Maths;
     using Microsoft.VisualBasic.Devices;
     using Threading;

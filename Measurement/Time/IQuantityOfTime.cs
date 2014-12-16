@@ -22,10 +22,9 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
-
     using System;
     using System.Numerics;
-    using Annotations;
+    using JetBrains.Annotations;
 
     public interface IQuantityOfTime {
 

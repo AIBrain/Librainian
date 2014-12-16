@@ -24,8 +24,8 @@ namespace Librainian.Parsing {
     using System.Linq;
     using System.Runtime.Serialization;
     using System.Threading;
-    using Annotations;
     using Collections;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     A thread-safe object to contain a moving target of sentences.

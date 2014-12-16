@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Threading {
-
     using System;
     using System.Diagnostics;
     using System.Diagnostics.Contracts;
@@ -31,8 +30,8 @@ namespace Librainian.Threading {
     using System.Text;
     using System.Threading;
     using System.Windows.Forms;
-    using Annotations;
     using Extensions;
+    using JetBrains.Annotations;
     using Parsing;
 
     /// <summary>

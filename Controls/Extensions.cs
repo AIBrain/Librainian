@@ -20,7 +20,6 @@
 #endregion License & Information
 
 namespace Librainian.Controls {
-
     using System;
     using System.Collections.Concurrent;
     using System.ComponentModel;
@@ -30,8 +29,8 @@ namespace Librainian.Controls {
     using System.Runtime.InteropServices;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    using Annotations;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Measurement.Time;
     using Threading;
     using Timer = System.Timers.Timer;

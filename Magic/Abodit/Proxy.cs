@@ -1,5 +1,4 @@
 ﻿namespace Librainian.Magic.Abodit {
-
     using System.Dynamic;
     using MongoDB.Bson;
 

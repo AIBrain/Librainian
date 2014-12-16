@@ -18,11 +18,10 @@
 // "Librainian/IGameContainer.cs" was last cleaned by Rick on 2014/12/09 at 6:06 AM
 
 namespace Librainian.Gaming {
-
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using Annotations;
+    using JetBrains.Annotations;
 
     public interface IGameContainer {
 

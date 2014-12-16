@@ -20,7 +20,7 @@
 namespace Librainian.Security {
     using System;
     using System.Threading;
-    using Annotations;
+    using JetBrains.Annotations;
 
     /*
         Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft

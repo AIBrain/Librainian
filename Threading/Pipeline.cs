@@ -21,7 +21,7 @@ namespace Librainian.Threading {
     using System;
     using System.Collections.Concurrent;
     using System.Threading.Tasks;
-    using Annotations;
+    using JetBrains.Annotations;
 
     public class Pipeline< TInput, TOutput > {
         /// <summary>

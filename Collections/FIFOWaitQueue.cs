@@ -21,7 +21,7 @@ namespace Librainian.Collections {
     using System;
     using System.Collections.Generic;
     using System.Threading;
-    using Annotations;
+    using JetBrains.Annotations;
     using Threading;
 
     /// <summary>

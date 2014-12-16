@@ -19,7 +19,7 @@
 
 namespace Librainian.Measurement.Currency.BTC {
     using System;
-    using Annotations;
+    using JetBrains.Annotations;
 
     public interface IDenomination {
         [UsedImplicitly]

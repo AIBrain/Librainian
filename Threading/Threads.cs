@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Threading {
-
     using System;
     using System.Diagnostics;
     using System.Linq;

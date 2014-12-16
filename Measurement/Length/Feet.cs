@@ -22,13 +22,12 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Length {
-
     using System;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.Serialization;
-    using Annotations;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Maths;
     using Parsing;
 

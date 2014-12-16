@@ -18,7 +18,6 @@
 // "Librainian/Class1.cs" was last cleaned by Rick on 2014/10/13 at 11:56 AM
 
 namespace Librainian.Collections {
-
     using System;
     using System.ComponentModel;
     using System.Reactive.Linq;

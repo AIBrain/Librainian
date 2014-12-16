@@ -22,12 +22,11 @@
 #endregion License & Information
 
 namespace Librainian.Maths {
-
     using System;
     using System.Numerics;
     using System.Runtime.Serialization;
-    using Annotations;
     using Extensions;
+    using JetBrains.Annotations;
     using Numerics;
 
     /// <summary>

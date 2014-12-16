@@ -16,11 +16,10 @@
 // "Librainian/DictionaryExtensions.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 
 namespace Librainian.Extensions {
-
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Annotations;
+    using JetBrains.Annotations;
 
     public static class DictionaryExtensions {
 

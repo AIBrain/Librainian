@@ -22,7 +22,7 @@ namespace Librainian.Collections {
     using System.Collections.Concurrent;
     using System.Linq;
     using System.Runtime.Serialization;
-    using Annotations;
+    using JetBrains.Annotations;
 
     [DataContract( IsReference = true )]
     public class Guids {

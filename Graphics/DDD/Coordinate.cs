@@ -23,7 +23,7 @@ namespace Librainian.Graphics.DDD {
     using Threading;
 
     /// <summary>
-    /// <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="Single"/>).</para>
+    /// <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="float"/>).</para>
     /// </summary>
     /// <remarks>Coded towards speed.</remarks>
     [DataContract( IsReference = true )]

@@ -243,6 +243,9 @@
     <Compile Include="AmazedSaint\IHierarchyWrapperProvider.cs" />
     <Compile Include="AmazedSaint\NodeType.cs" />
     <Compile Include="AmazedSaint\SimpleHierarchyWrapper.cs" />
+    <Compile Include="Parsing\Class1.cs" />
+    <Compile Include="Parsing\Strand.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Collections\AbstractBlockingQueue.cs" />
     <Compile Include="Collections\AbstractCollection.cs" />
     <Compile Include="Collections\AbstractQueue.cs" />

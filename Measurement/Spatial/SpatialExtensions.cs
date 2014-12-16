@@ -1,5 +1,4 @@
 ﻿namespace Librainian.Measurement.Spatial {
-
     using System;
     using System.Windows;
     using System.Windows.Media.Media3D;

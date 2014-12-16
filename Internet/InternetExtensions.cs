@@ -2,9 +2,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Annotations;
     using Awesomium.Windows.Forms;
     using CsQuery;
+    using JetBrains.Annotations;
     using Threading;
 
     public static class InternetExtensions {

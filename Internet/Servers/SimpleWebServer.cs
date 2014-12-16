@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Internet.Servers {
-
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -31,8 +30,8 @@ namespace Librainian.Internet.Servers {
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Annotations;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Threading;
 
     /// <summary>

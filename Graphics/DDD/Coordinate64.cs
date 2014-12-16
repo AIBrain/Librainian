@@ -24,7 +24,7 @@ namespace Librainian.Graphics.DDD {
     using System.Data.Linq.Mapping;
     using System.Drawing;
     using System.Runtime.Serialization;
-    using Annotations;
+    using JetBrains.Annotations;
     using Maths;
     using Threading;
 

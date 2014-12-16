@@ -18,10 +18,9 @@
 // "Librainian/RandomnessTest.cs" was last cleaned by Rick on 2014/12/09 at 5:56 AM
 
 namespace Librainian.IO.Compression {
-
     using System;
     using System.Diagnostics;
-    using Annotations;
+    using JetBrains.Annotations;
     using Maths;
     using NUnit.Framework;
     using Threading;

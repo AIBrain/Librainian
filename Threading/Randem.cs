@@ -17,7 +17,6 @@
 // "Librainian/Randem.cs" was last cleaned by Rick on 2014/08/11 at 2:14 PM
 
 namespace Librainian.Threading {
-
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -30,11 +29,11 @@ namespace Librainian.Threading {
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Annotations;
     using Collections;
     using Extensions;
     using FluentAssertions;
     using IO;
+    using JetBrains.Annotations;
     using Linguistics;
     using Maths;
     using Measurement.Time;
@@ -45,7 +44,6 @@ namespace Librainian.Threading {
         /// <summary>
         /// Provide to each thread its own <see cref="Random" /> with a random seed.
         /// </summary>
-        [NotNull]
         public static readonly ThreadLocal<Random> ThreadSafeRandom = new ThreadLocal<Random>( valueFactory: () => {
             var hash = ThreadingExtensions.ThreadLocalSHA256Managed.Value.ComputeHash( Guid.NewGuid().ToByteArray() );
             var seed = BitConverter.ToInt32( value: hash, startIndex: 0 );
@@ -97,35 +95,38 @@ namespace Librainian.Threading {
             return work;
         }
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public static Char GetChar( this RandomNumberGenerator rng ) {
+            if ( rng == null ) {
+                throw new ArgumentNullException( "rng" );
+            }
             var data = new byte[ sizeof(Char) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToChar( data, 0 );
         }
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public static Double GetDouble( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof(Double) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToDouble( data, 0 );
         }
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public static Int16 GetInt16( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof(Int16) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToInt16( data, 0 );
         }
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public static Int32 GetInt32( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof(Int32) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToInt32( data, 0 );
         }
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public static Int64 GetInt64( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof(Int64) ];
             rng.GetNonZeroBytes( data );
@@ -161,28 +162,28 @@ namespace Librainian.Threading {
             return result;
         }
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public static Single GetSingle( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof(Single) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToSingle( data, 0 );
         }
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public static UInt16 GetUInt16( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof(UInt16) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToUInt16( data, 0 );
         }
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public static UInt32 GetUInt32( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof(UInt32) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToUInt32( data, 0 );
         }
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public static UInt64 GetUInt64( this RandomNumberGenerator rng ) {
             var data = new byte[ sizeof(UInt64) ];
             rng.GetNonZeroBytes( data );
@@ -418,7 +419,7 @@ namespace Librainian.Threading {
         /// Returns a random Double beetween 0 and 1
         /// </summary>
         /// <returns></returns>
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public static Double NextDouble() => Instance.NextDouble();
 
         /// <summary>

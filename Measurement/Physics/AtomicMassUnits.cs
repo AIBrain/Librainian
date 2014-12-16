@@ -22,11 +22,10 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Physics {
-
     using System;
     using System.Diagnostics;
     using System.Numerics;
-    using Annotations;
+    using JetBrains.Annotations;
     using Librainian.Extensions;
     using Maths;
     using Numerics;

@@ -22,14 +22,13 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
-
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Threading;
-    using Annotations;
+    using JetBrains.Annotations;
     using Maths;
     using Timer = System.Timers.Timer;
 

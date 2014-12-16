@@ -24,7 +24,7 @@ namespace Librainian.Speech {
     using System.Speech.Synthesis;
     using System.Threading;
     using System.Windows.Forms;
-    using Annotations;
+    using JetBrains.Annotations;
     using Threading;
 
     /// <summary>

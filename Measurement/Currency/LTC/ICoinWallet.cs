@@ -18,11 +18,10 @@
 // "Librainian/ICoinWallet.cs" was last cleaned by Rick on 2014/12/09 at 10:23 AM
 
 namespace Librainian.Measurement.Currency.LTC {
-
     using System;
     using System.Collections.Generic;
-    using Annotations;
     using BTC;
+    using JetBrains.Annotations;
 
     public interface ICoinWallet {
 

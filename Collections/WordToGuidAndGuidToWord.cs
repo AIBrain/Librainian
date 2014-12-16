@@ -23,7 +23,7 @@ namespace Librainian.Collections {
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.Serialization;
-    using Annotations;
+    using JetBrains.Annotations;
     using Persistence;
     using Threading;
 

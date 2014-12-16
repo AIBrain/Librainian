@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Collections {
-
     using System;
     using System.Collections;
     using System.Collections.Concurrent;

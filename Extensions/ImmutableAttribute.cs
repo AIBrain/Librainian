@@ -16,14 +16,13 @@
 // "Librainian/ImmutableAttribute.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
 
 namespace Librainian.Extensions {
-
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
     using System.Runtime.Serialization;
-    using Annotations;
+    using JetBrains.Annotations;
 
     /// <summary>
     /// Without further ado, here's the ImmutableAttribute itself.

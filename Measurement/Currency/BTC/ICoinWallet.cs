@@ -20,7 +20,7 @@
 namespace Librainian.Measurement.Currency.BTC {
     using System;
     using System.Collections.Generic;
-    using Annotations;
+    using JetBrains.Annotations;
 
     public interface ICoinWallet {
         IEnumerable< KeyValuePair< ICoin, ulong > > CoinsGrouped { [NotNull] get; }

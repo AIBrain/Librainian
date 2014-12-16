@@ -20,7 +20,7 @@
 namespace Librainian.Measurement.Physics {
     using System;
     using System.Diagnostics;
-    using Annotations;
+    using JetBrains.Annotations;
     using Librainian.Extensions;
 
     /// <summary>

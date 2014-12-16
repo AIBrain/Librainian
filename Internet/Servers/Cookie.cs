@@ -1,5 +1,4 @@
 ﻿namespace Librainian.Internet.Servers {
-
     using System;
 
     public class Cookie {

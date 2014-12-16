@@ -22,8 +22,8 @@ namespace Librainian.Collections {
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using Annotations;
     using Extensions;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     A list that has been written to be observationally immutable.  A mutable array

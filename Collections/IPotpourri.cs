@@ -25,7 +25,7 @@ namespace Librainian.Collections {
     using System;
     using System.Collections.Generic;
     using System.Numerics;
-    using Annotations;
+    using JetBrains.Annotations;
 
     public interface IPotpourri<TKey> : IEnumerable<KeyValuePair<TKey, BigInteger>> {
 

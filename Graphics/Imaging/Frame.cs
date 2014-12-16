@@ -26,7 +26,7 @@ namespace Librainian.Graphics.Imaging {
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
-    using Annotations;
+    using JetBrains.Annotations;
 
     [DataContract]
     [Serializable]

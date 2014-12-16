@@ -1,8 +1,7 @@
 ﻿namespace Librainian.Internet {
-
     using System;
     using System.Runtime.Serialization;
-    using Annotations;
+    using JetBrains.Annotations;
 
     [DataContract( IsReference = true )]
     public class CaptchaSite {

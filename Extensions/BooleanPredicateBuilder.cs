@@ -16,7 +16,6 @@
 // "Librainian/BooleanPredicateBuilder.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
 
 namespace Librainian.Extensions {
-
     using System;
     using System.Linq.Expressions;
 

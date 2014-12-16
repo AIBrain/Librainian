@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Internet.Servers {
-
     using System;
 
     /// <summary>

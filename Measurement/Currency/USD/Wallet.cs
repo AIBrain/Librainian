@@ -26,10 +26,10 @@ namespace Librainian.Measurement.Currency.USD {
     using System.Linq;
     using System.Runtime.Serialization;
     using System.Threading.Tasks.Dataflow;
-    using Annotations;
+    using JetBrains.Annotations;
     using Maths;
     using NUnit.Framework;
-    using Threading;
+    using Threading.Blocks;
 
     /// <summary>
     ///     My first go at a thread-safe Wallet class for US dollars and coins.
@@ -66,7 +66,7 @@ namespace Librainian.Measurement.Currency.USD {
                                                                         default:
                                                                             throw new ArgumentOutOfRangeException();
                                                                     }
-                                                                }, Blocks.ManyProducers.ConsumeSerial );
+                                                                }, ManyProducers.ConsumeSerial );
         }
 
         private ActionBlock< TransactionMessage > Actor { get; set; }

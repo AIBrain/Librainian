@@ -23,7 +23,6 @@ namespace Librainian.Measurement.Frequency {
     using FluentAssertions;
     using Time;
 
-
     /// <summary>
     ///     BPM. Beats Per Minute
     /// </summary>

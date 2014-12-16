@@ -18,16 +18,15 @@
 // "Librainian/Book.cs" was last cleaned by Rick on 2014/10/21 at 5:02 AM
 
 namespace Librainian.Linguistics {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
-    using Annotations;
     using Collections;
     using Extensions;
     using FluentAssertions;
+    using JetBrains.Annotations;
 
     /// <summary>
     /// <para>A <see cref="Book" /> is a sequence of <see cref="Page" /> .</para>

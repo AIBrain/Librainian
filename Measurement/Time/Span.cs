@@ -22,15 +22,14 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
-
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.Serialization;
-    using Annotations;
     using Collections;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Librainian.Extensions;
     using Maths;
     using Parsing;

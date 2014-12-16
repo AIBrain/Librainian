@@ -18,7 +18,6 @@
 // "Librainian/ProgressStream.cs" was last cleaned by Rick on 2014/12/09 at 5:56 AM
 
 namespace Librainian.IO.Streams {
-
     using System;
     using System.ComponentModel;
     using System.Diagnostics;

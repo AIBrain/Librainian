@@ -1,7 +1,6 @@
-﻿using System;
-using System.Net;
-
-namespace Librainian.Internet.Servers {
+﻿namespace Librainian.Internet.Servers {
+    using System;
+    using System.Net;
     using System.Threading;
 
     public class WebServer {

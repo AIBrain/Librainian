@@ -20,12 +20,11 @@
 #endregion License & Information
 
 namespace Librainian.Maths {
-
     using System;
     using System.ComponentModel;
     using System.Runtime.Serialization;
     using System.Threading;
-    using Annotations;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     A Double number thread-safe by <see cref="Interlocked" />.

@@ -20,7 +20,6 @@
 #endregion License & Information
 
 namespace Librainian.Maths {
-
     using System;
     using System.Runtime.Serialization;
 

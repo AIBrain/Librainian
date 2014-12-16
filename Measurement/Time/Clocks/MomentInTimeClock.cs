@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time.Clocks {
-
     using System;
     using System.Runtime.Serialization;
     using Librainian.Extensions;

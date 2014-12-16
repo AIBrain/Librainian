@@ -18,7 +18,6 @@
 // "Librainian/Axiom.cs" was last cleaned by Rick on 2014/10/21 at 5:00 AM
 
 namespace Librainian.Knowledge.Logic {
-
     using System;
     using System.Runtime.Serialization;
 

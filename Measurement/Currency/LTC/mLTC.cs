@@ -18,10 +18,9 @@
 // "Librainian/mLTC.cs" was last cleaned by Rick on 2014/12/09 at 10:23 AM
 
 namespace Librainian.Measurement.Currency.LTC {
-
     using System;
     using System.Diagnostics;
-    using Annotations;
+    using JetBrains.Annotations;
 
     [DebuggerDisplay("{Formatted,nq}")]
     [UsedImplicitly]

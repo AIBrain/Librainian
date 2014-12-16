@@ -18,7 +18,6 @@
 // "Librainian/DisposableBase.cs" was last cleaned by Rick on 2014/11/21 at 7:16 AM
 
 namespace Librainian.Extensions {
-
     using System;
     using System.Diagnostics;
 

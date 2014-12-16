@@ -23,12 +23,13 @@ namespace Librainian.Persistence {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
+    using System.Environment;
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization;
-    using Annotations;
     using FluentAssertions;
     using IO;
+    using JetBrains.Annotations;
     using Microsoft.Isam.Esent.Collections.Generic;
     using Parsing;
     using Threading;
@@ -54,7 +55,7 @@ namespace Librainian.Persistence {
         /// <exception cref="PathTooLongException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
-        public PersistTable( Environment.SpecialFolder specialFolder, String tableName )
+        public PersistTable( SpecialFolder specialFolder, String tableName )
             : this( new Folder( specialFolder, null, null, tableName ) ) {
         }
 

@@ -22,7 +22,7 @@
 #endregion License & Information
 
 namespace Librainian.Magic {
-    using Annotations;
+    using JetBrains.Annotations;
     using Ninject;
 
     public interface IIocContainer {

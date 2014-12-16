@@ -18,14 +18,13 @@
 // "Librainian/Types.cs" was last cleaned by Rick on 2014/08/15 at 2:22 PM
 
 namespace Librainian.Extensions {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
-    using Annotations;
+    using JetBrains.Annotations;
     using Threading;
 
     public static class Types {

@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Maths {
-
     using System;
     using System.Globalization;
     using System.Numerics;
@@ -30,7 +29,7 @@ namespace Librainian.Maths {
     using System.Runtime.Serialization;
     using System.Security.Permissions;
     using System.Text;
-    using Annotations;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     <para>Decompiled from BigRationalLibrary. Where BigRationalLibrary came from, I don't know. But thanks!</para>

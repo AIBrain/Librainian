@@ -18,7 +18,6 @@
 // "Librainian/Premise.cs" was last cleaned by Rick on 2014/10/21 at 5:01 AM
 
 namespace Librainian.Knowledge.Logic {
-
     using System;
 
     /// <summary>

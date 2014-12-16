@@ -22,7 +22,7 @@ namespace Librainian.Measurement.Physics {
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using Annotations;
+    using JetBrains.Annotations;
     using Librainian.Extensions;
 
     /// <summary>

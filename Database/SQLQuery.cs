@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Database {
-
     using System;
     using System.Data;
     using System.Data.SqlClient;
@@ -30,7 +29,7 @@ namespace Librainian.Database {
     using System.Net.NetworkInformation;
     using System.Threading;
     using System.Threading.Tasks;
-    using Annotations;
+    using JetBrains.Annotations;
     using Measurement.Time;
     using Threading;
 

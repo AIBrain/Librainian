@@ -1,5 +1,4 @@
 namespace Librainian.Threading {
-
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -7,8 +6,9 @@ namespace Librainian.Threading {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
-    using Annotations;
+    using Blocks;
     using Collections;
+    using JetBrains.Annotations;
 
     public class PriorityBlock {
 
@@ -27,7 +27,7 @@ namespace Librainian.Threading {
                 if ( action != null ) {
                     action();
                 }
-            }, Blocks.SingleProducer.ConsumeSensible );
+            }, SingleProducer.ConsumeSensible );
             this.TheDoctorsTask = Task.Run( () => this.Triage() );
         }
 

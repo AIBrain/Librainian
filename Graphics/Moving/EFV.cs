@@ -25,7 +25,7 @@ namespace Librainian.Graphics.Moving {
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
-    using Annotations;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     Experimental Full Video

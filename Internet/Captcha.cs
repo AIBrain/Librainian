@@ -22,11 +22,10 @@
 #endregion License & Information
 
 namespace Librainian.Internet {
-
     using System;
     using System.Collections.Concurrent;
     using System.Runtime.Serialization;
-    using Annotations;
+    using JetBrains.Annotations;
 
     [DataContract( IsReference = true )]
     public class Captcha {

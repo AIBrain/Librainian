@@ -22,11 +22,10 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Frequency {
-
     using System;
     using System.Diagnostics;
     using System.Runtime.Serialization;
-    using Annotations;
+    using JetBrains.Annotations;
     using Maths;
     using NUnit.Framework;
     using Time;

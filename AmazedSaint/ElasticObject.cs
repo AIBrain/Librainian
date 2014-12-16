@@ -16,7 +16,6 @@
 // "Librainian/ElasticObject.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
 
 namespace Librainian.AmazedSaint {
-
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;

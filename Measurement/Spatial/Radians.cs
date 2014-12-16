@@ -22,12 +22,11 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Spatial {
-
     using System;
     using System.Diagnostics;
     using System.Runtime.Serialization;
-    using Annotations;
     using Extensions;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     The radian is the standard unit of angular measure.

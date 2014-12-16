@@ -22,7 +22,6 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
-
     using System;
     using Clocks;
 

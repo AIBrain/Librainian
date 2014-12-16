@@ -22,12 +22,11 @@
 #endregion License & Information
 
 namespace Librainian.Security {
-
     using System;
     using System.Security.Cryptography;
     using System.Text;
     using System.Threading;
-    using Annotations;
+    using JetBrains.Annotations;
     using Threading;
 
     public static class SecurityExtensions {
