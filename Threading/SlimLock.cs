@@ -100,7 +100,7 @@ namespace Librainian.Threading {
         //make the value of the uint much larger than the max num of readers 
         //allowed, thus causing the check for max_readers to fail.
 
-        //The max readers is actually one less then it's theoretical max.
+        //The max readers is actually one less than it's theoretical max.
         //This is done in order to prevent reader count overflows. If the reader 
         //count reaches max, other readers will wait. 
 
@@ -239,14 +239,14 @@ namespace Librainian.Threading {
         ///     entry for this thread, but doesn't want to add one if an existing one
         ///     could not be found.
         /// </summary>
-        private ReaderWriterCount GetThreadRWCount( int id, Boolean DontAllocate ) {
+        private ReaderWriterCount GetThreadRWCount( int id, Boolean dontAllocate ) {
             var hash = id & hashTableSize;
             ReaderWriterCount firstfound = null;
 
             Assert.That( this.MyLockHeld );
 
             if ( null == this._rwc[ hash ] ) {
-                if ( DontAllocate ) {
+                if ( dontAllocate ) {
                     return null;
                 }
                 this._rwc[ hash ] = new ReaderWriterCount( this._fIsReentrant );
@@ -256,7 +256,7 @@ namespace Librainian.Threading {
                 return this._rwc[ hash ];
             }
 
-            if ( IsRWEntryEmpty( this._rwc[ hash ] ) && !DontAllocate ) {
+            if ( IsRWEntryEmpty( this._rwc[ hash ] ) && !dontAllocate ) {
                 //No more entries in chain, so no more searching required. 
                 if ( this._rwc[ hash ].Next == null ) {
                     this._rwc[ hash ].Threadid = id;
@@ -283,7 +283,7 @@ namespace Librainian.Threading {
                 temp = temp.Next;
             }
 
-            if ( DontAllocate ) {
+            if ( dontAllocate ) {
                 return null;
             }
 
@@ -1010,7 +1010,7 @@ namespace Librainian.Threading {
             }
             else {
                 this.EnterMyLock();
-                var lrwc = this.GetThreadRWCount( id: id, DontAllocate: true );
+                var lrwc = this.GetThreadRWCount( id: id, dontAllocate: true );
 
                 if ( lrwc == null ) {
                     this.ExitMyLock();
