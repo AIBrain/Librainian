@@ -34,6 +34,7 @@ namespace Librainian.Parsing {
     using System.Text;
     using System.Threading;
 
+/*
     /// <summary>
     ///     This class is just a reference copy of <see cref="string" /> to be used for study.
     /// </summary>
@@ -3515,4 +3516,5 @@ namespace Librainian.Parsing {
             }
         }
     }
+*/
 }

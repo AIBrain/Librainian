@@ -52,7 +52,6 @@ namespace Librainian.IO {
     using Parsing;
     using Threading;
     using SearchOption = System.IO.SearchOption;
-    using StringSplitOptions = Parsing.StringSplitOptions;
 
     public static class IOExtensions {
         public const int FSCTL_SET_COMPRESSION = 0x9C040;
@@ -658,7 +657,7 @@ namespace Librainian.IO {
 
             //TODO we have the document, see if we can just chop off down to a nonexisting filename.. just get rid of (3) or (2) or (1)
 
-            var splitIntoWords = bestGuess.Split( new[ ] { ' ' }, StringSplitOptions.RemoveEmptyEntries ).ToList();
+            var splitIntoWords = bestGuess.Split( new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries ).ToList();
 
             if ( splitIntoWords.Count() >= 2 ) {
                 var list = splitIntoWords.ToList();
