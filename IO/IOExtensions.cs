@@ -40,6 +40,7 @@ namespace Librainian.IO {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using Collections;
     using Controls;
     using Extensions.NativeWin32;
     using FluentAssertions;

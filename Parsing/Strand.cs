@@ -19,21 +19,8 @@
 // "Librainian/Strand.cs" was last cleaned by Rick on 2014/12/14 at 7:07 AM
 #endregion
 
+// ReSharper disable once EmptyNamespace
 namespace Librainian.Parsing {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
-    using System.Globalization;
-    using System.Runtime;
-    using System.Runtime.CompilerServices;
-    using System.Runtime.ConstrainedExecution;
-    using System.Runtime.InteropServices;
-    using System.Runtime.Versioning;
-    using System.Security;
-    using System.Text;
-    using System.Threading;
-
 /*
     /// <summary>
     ///     This class is just a reference copy of <see cref="string" /> to be used for study.
