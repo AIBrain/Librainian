@@ -50,16 +50,16 @@ namespace Librainian.Knowledge {
                 throw new ArgumentNullException( "dataFile" );
             }
 
-            if ( dataFile.Extension.Like( ".knb" ) ) {
-                ++this.FilesFound;
-                if ( feedback != null ) {
-                    feedback( this, new ProgressChangedEventArgs( this.FilesFound, String.Format( "Found data file {0}", dataFile.FileName ) ) );
-                }
+            if ( !dataFile.Extension.Like( ".knb" ) ) {
+                return 0;
+            }
 
-                if ( !this.KNBFiles.Contains( dataFile ) ) {
-                    this.KNBFiles.Add( dataFile );
+            ++this.FilesFound;
+            feedback?.Invoke( this, new ProgressChangedEventArgs( this.FilesFound, String.Format( "Found data file {0}", dataFile.FileName ) ) );
 
-                }
+            if ( !this.KNBFiles.Contains( dataFile ) ) {
+                this.KNBFiles.Add( dataFile );
+
             }
 
             //TODO text, xml, csv, html, etc...
