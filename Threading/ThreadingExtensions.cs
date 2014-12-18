@@ -715,11 +715,26 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="task"></param>
         /// <param name="timeout"></param>
+        /// <param name="onComplete"></param>
+        /// <param name="onTimeout"></param>
         /// <returns></returns>
-        public static async Task<Boolean> TryRun( this Task task, TimeSpan timeout ) {
-            var delay = Task.Delay( timeout );
-            var finished = await Task.WhenAny( task, delay );
-            return finished == task;
+        public static async Task< Boolean > TryRun( this Task task, TimeSpan timeout, Task onComplete = null, Task onTimeout = null ) {
+            while ( true ) {
+                var delay = Task.Delay( timeout );
+                var finished = await Task.WhenAny( task, delay );
+                var result = finished == task;
+                if ( result && null != onComplete ) {
+                    task = onComplete;
+                    onComplete = null;
+                    onTimeout = null;
+                    continue;
+                }
+                if ( result || null == onTimeout ) {
+                    return result;
+                }
+                await TryRun( onTimeout, timeout );
+                return false;
+            }
         }
 
         /// <summary>
@@ -727,11 +742,21 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="task"></param>
         /// <param name="timeout"></param>
+        /// <param name="onComplete"></param>
+        /// <param name="onTimeout"></param>
         /// <returns></returns>
-        public static async Task<Boolean> TryRun( this TimeSpan timeout, Task task ) {
+        public static async Task<Boolean> TryRun( this TimeSpan timeout, Task task, Task onComplete = null, Task onTimeout = null ) {
             var delay = Task.Delay( timeout );
             var finished = await Task.WhenAny( task, delay );
-            return finished == task;
+            var result = finished == task;
+            if ( result && null != onComplete ) {
+                return await TryRun( onComplete, timeout );
+            }
+            if ( result || null == onTimeout ) {
+                return result;
+            }
+            await TryRun( onTimeout, timeout );
+            return false;
         }
     }
 }
