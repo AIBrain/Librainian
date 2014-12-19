@@ -1012,13 +1012,13 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        /// Subtract <paramref name="decimalTax"/> of <paramref name="total"/> from <paramref name="total"/>.
+        /// Subtract <paramref name="tax"/> of <paramref name="total"/> from <paramref name="total"/>.
         /// <para>If the tax was 6% on $53, then you would call this function like this:</para>
         /// <para> var withTax = SubtractTax( 53.00, 0.06 );</para>
         /// <para> Assert( withTax == 50.00 );</para>
         /// </summary>
         /// <param name="total"></param>
-        /// <param name="decimalTax"></param>
+        /// <param name="tax"></param>
         /// <returns></returns>
         public static Decimal SubtractTax( this Decimal total, Decimal tax ) {
             var taxed = total / ( 1.0m + tax );
