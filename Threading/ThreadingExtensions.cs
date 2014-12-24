@@ -26,12 +26,13 @@ namespace Librainian.Threading {
         /// <para>n cores to n</para>
         /// </summary>
         [NotNull]
-        public static readonly ParallelOptions Parallelism = new ParallelOptions {
+        public static readonly ParallelOptions Parallelism = new ParallelOptions
+        {
             MaxDegreeOfParallelism = Environment.ProcessorCount
         };
 
         [NotNull]
-        public static readonly ThreadLocal< SHA256Managed > ThreadLocalSHA256Managed = new ThreadLocal< SHA256Managed >( valueFactory: () => new SHA256Managed(), trackAllValues: false );
+        public static readonly ThreadLocal<SHA256Managed> ThreadLocalSHA256Managed = new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
 
         public static int GetMaximumActiveWorkerThreads() {
             int maxWorkerThreads, maxPortThreads;
@@ -42,30 +43,30 @@ namespace Librainian.Threading {
         /// <summary>
         /// Has attributes <see cref="MethodImplOptions.NoInlining"/> and <see cref="MethodImplOptions.NoOptimization"/>.
         /// </summary>
-        [MethodImpl( MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization )]
+        [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
         public static void DoNothing() {
         }
 
 
-/*
-        /// <summary>Creates a new Task that mirrors the supplied task but that will be canceled after the specified timeout.</summary>
-        /// <typeparam name="TResult">Specifies the type of data contained in the task.</typeparam>
-        /// <param name="task">The task.</param>
-        /// <param name="timeout">The timeout.</param>
-        /// <returns>The new Task that may time out.</returns>
-        /// <seealso cref="http://stackoverflow.com/a/20639723/956364"/>
-        public static Task<TResult> WithTimeout<TResult>( this Task<TResult> task, TimeSpan timeout ) {
-            var result = new TaskCompletionSource<TResult>( task.AsyncState );
-            var timer = new Timer( state =>
-                            ( ( TaskCompletionSource<TResult> )state ).TrySetCanceled(),
-                            result, timeout, TimeSpan.FromMilliseconds( -1 ) );
-            task.ContinueWith( t => {
-                timer.Dispose();
-                result.TrySetFromTask( t );
-            }, TaskContinuationOptions.ExecuteSynchronously );
-            return result.Task;
-        }
-*/
+        /*
+                /// <summary>Creates a new Task that mirrors the supplied task but that will be canceled after the specified timeout.</summary>
+                /// <typeparam name="TResult">Specifies the type of data contained in the task.</typeparam>
+                /// <param name="task">The task.</param>
+                /// <param name="timeout">The timeout.</param>
+                /// <returns>The new Task that may time out.</returns>
+                /// <seealso cref="http://stackoverflow.com/a/20639723/956364"/>
+                public static Task<TResult> WithTimeout<TResult>( this Task<TResult> task, TimeSpan timeout ) {
+                    var result = new TaskCompletionSource<TResult>( task.AsyncState );
+                    var timer = new Timer( state =>
+                                    ( ( TaskCompletionSource<TResult> )state ).TrySetCanceled(),
+                                    result, timeout, TimeSpan.FromMilliseconds( -1 ) );
+                    task.ContinueWith( t => {
+                        timer.Dispose();
+                        result.TrySetFromTask( t );
+                    }, TaskContinuationOptions.ExecuteSynchronously );
+                    return result.Task;
+                }
+        */
 
         /// <summary>
         ///     About X bytes by polling just and ONLY fields.
@@ -74,11 +75,11 @@ namespace Librainian.Threading {
         /// <param name="obj"></param>
         /// <returns></returns>
         public static int CalcSizeInBytes<T>( this T obj ) {
-            if ( Equals( obj, default( T ) ) ) {
+            if ( Equals( obj, default(T) ) ) {
                 return 0;
             }
 
-            var type = typeof( T );
+            var type = typeof(T);
             var sizeInBytes = GetSizeOfPrimitives( type );
             var fields = type.GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
 
@@ -87,27 +88,27 @@ namespace Librainian.Threading {
 
                 var fv = field.GetValue( obj );
 
-                if ( Equals( obj, default( T ) ) ) {
+                if ( Equals( obj, default(T) ) ) {
                     continue;
                 }
-                if ( field.FieldType == typeof( String ) ) {
+                if ( field.FieldType == typeof(String) ) {
                     var s = fv as String ?? String.Empty;
                     sizeInBytes += Encoding.Unicode.GetByteCount( s );
                 }
-                else if ( field.FieldType.IsSubclassOf( typeof( IList ) ) ) {
+                else if ( field.FieldType.IsSubclassOf( typeof(IList) ) ) {
                     var list = fv as IList;
                     if ( list != null ) {
                         var count = list.Count;
                         sizeInBytes += count * list[ 0 ].CalcSizeInBytes();
                     }
                 }
-                else if ( field.FieldType.IsSubclassOf( typeof( IDictionary ) ) ) {
+                else if ( field.FieldType.IsSubclassOf( typeof(IDictionary) ) ) {
                     var dictionary = fv as IDictionary;
                     if ( dictionary != null ) {
                         sizeInBytes = dictionary.Keys.Cast<object>().Aggregate<object, int>( sizeInBytes, ( current, key ) => current + dictionary[ key ].CalcSizeInBytes() );
                     }
                 }
-                else if ( field.FieldType.IsSubclassOf( typeof( IEnumerable ) ) ) {
+                else if ( field.FieldType.IsSubclassOf( typeof(IEnumerable) ) ) {
                     var enumerable = fv as IEnumerable;
                     if ( enumerable != null ) {
                         sizeInBytes = enumerable.Cast<object>().Aggregate<object, int>( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
@@ -124,49 +125,49 @@ namespace Librainian.Threading {
             return sizeInBytes;
         }
 
-        public static IEnumerable< T > GetEnums<T>( this T hmm ) => Enum.GetValues( typeof( T ) ).Cast<T>();
+        public static IEnumerable<T> GetEnums<T>( this T hmm ) => Enum.GetValues( typeof(T) ).Cast<T>();
 
         public static int GetSizeOfPrimitives<T>( this T type ) {
             var total = 0;
             if ( type is UInt64 ) {
-                total += sizeof( UInt64 );
+                total += sizeof(UInt64);
             }
             if ( type is Int64 ) {
-                total += sizeof( Int64 );
+                total += sizeof(Int64);
             }
             if ( type is Decimal ) {
-                total += sizeof( Decimal );
+                total += sizeof(Decimal);
             }
             if ( type is Double ) {
-                total += sizeof( Double );
+                total += sizeof(Double);
             }
 
             if ( type is UInt32 ) {
-                total += sizeof( UInt32 );
+                total += sizeof(UInt32);
             }
 
             if ( type is UInt16 ) {
-                total += sizeof( UInt16 );
+                total += sizeof(UInt16);
             }
             if ( type is Byte ) {
-                total += sizeof( Byte );
+                total += sizeof(Byte);
             }
 
             if ( type is SByte ) {
-                total += sizeof( SByte );
+                total += sizeof(SByte);
             }
             if ( type is Int16 ) {
-                total += sizeof( Int16 );
+                total += sizeof(Int16);
             }
             if ( type is Int32 ) {
-                total += sizeof( Int32 );
+                total += sizeof(Int32);
             }
 
             if ( type is Single ) {
-                total += sizeof( Single );
+                total += sizeof(Single);
             }
             if ( type is Boolean ) {
-                total += sizeof( Boolean );
+                total += sizeof(Boolean);
             }
 
             var s = type as String;
@@ -209,7 +210,7 @@ namespace Librainian.Threading {
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         [DebuggerStepThrough]
-        public static int MarshalSizeOf<T>() where T : struct => Marshal.SizeOf( typeof( T ) );
+        public static int MarshalSizeOf<T>() where T : struct => Marshal.SizeOf( typeof(T) );
 
         /// <summary>
         ///     boxed returns Marshal.SizeOf( obj )
@@ -258,7 +259,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         /// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier( action: Bar, remainingCallsAllowed: 2 );</example>
         /// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
-        public static Action ActionBarrier<T1>( [CanBeNull] this Action< T1 > action, T1 parameter, long? callsAllowed = null ) {
+        public static Action ActionBarrier<T1>( [CanBeNull] this Action<T1> action, T1 parameter, long? callsAllowed = null ) {
             var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
             return () => {
                 if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 && action != null ) {
@@ -305,7 +306,7 @@ namespace Librainian.Threading {
         /// <param name="description"> </param>
         /// <param name="inParallel"> </param>
         /// <returns> </returns>
-        public static Boolean Run( this IEnumerable< Action > tasks, Action< string > output = null, String description = null, Boolean inParallel = true ) {
+        public static Boolean Run( this IEnumerable<Action> tasks, Action<string> output = null, String description = null, Boolean inParallel = true ) {
             if ( Equals( tasks, null ) ) {
                 return false;
             }
@@ -334,14 +335,14 @@ namespace Librainian.Threading {
         /// <param name="description"> </param>
         /// <param name="inParallel"> </param>
         /// <returns> </returns>
-        public static Boolean Run( this IEnumerable< Func< bool > > tasks, Action< string > output = null, String description = null, Boolean inParallel = true ) {
+        public static Boolean Run( this IEnumerable<Func<bool>> tasks, Action<string> output = null, String description = null, Boolean inParallel = true ) {
             if ( Equals( tasks, null ) ) {
                 return false;
             }
             if ( !Equals( output, null ) && !String.IsNullOrWhiteSpace( description ) ) {
                 output( description );
             }
-            var notnull = tasks.Where( task => !Equals( task, default( Action ) ) );
+            var notnull = tasks.Where( task => !Equals( task, default(Action) ) );
             if ( inParallel ) {
                 var result = Parallel.ForEach( notnull, task => task() );
                 return result.IsCompleted;
@@ -363,7 +364,7 @@ namespace Librainian.Threading {
             if ( next == null ) {
                 throw new ArgumentNullException( "next" );
             }
-            var tcs = new TaskCompletionSource< object >(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
 
             first.ContinueWith( task => {
                 if ( first.IsFaulted ) {
@@ -388,8 +389,8 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-        [Obsolete( "use continuewith", true )]
-        public static Task< T2 > Then<T2>( this Task first, Func< Task< T2 > > next ) {
+        [Obsolete("use continuewith", true)]
+        public static Task<T2> Then<T2>( this Task first, Func<Task<T2>> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
             }
@@ -397,7 +398,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "next" );
             }
 
-            var tcs = new TaskCompletionSource< T2 >(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( obj => {
                 if ( first.IsFaulted ) {
                     if ( first.Exception != null ) {
@@ -437,8 +438,8 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-        [Obsolete( "use continuewith", true )]
-        public static Task Then<T1>( this Task< T1 > first, Action< T1 > next ) {
+        [Obsolete("use continuewith", true)]
+        public static Task Then<T1>( this Task<T1> first, Action<T1> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
             }
@@ -446,7 +447,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "next" );
             }
 
-            var tcs = new TaskCompletionSource< object >(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
 
             first.ContinueWith( task => {
                 if ( first.IsFaulted ) {
@@ -471,8 +472,8 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-        [Obsolete( "use continuewith", true )]
-        public static Task Then<T1>( this Task< T1 > first, Func< T1, Task > next ) {
+        [Obsolete("use continuewith", true)]
+        public static Task Then<T1>( this Task<T1> first, Func<T1, Task> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
             }
@@ -480,7 +481,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "next" );
             }
 
-            var tcs = new TaskCompletionSource< object >(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
                 if ( first.IsFaulted ) {
                     if ( first.Exception != null ) {
@@ -521,8 +522,8 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-        [Obsolete( "use continuewith", true )]
-        public static Task< T2 > Then<T1, T2>( this Task< T1 > first, Func< T1, T2 > next ) {
+        [Obsolete("use continuewith", true)]
+        public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, T2> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
             }
@@ -530,7 +531,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "next" );
             }
 
-            var tcs = new TaskCompletionSource< T2 >(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
                 if ( first.IsFaulted ) {
                     if ( first.Exception != null ) {
@@ -553,8 +554,8 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-        [Obsolete( "use continuewith", true )]
-        public static Task< T2 > Then<T1, T2>( this Task< T1 > first, Func< T1, Task< T2 > > next ) {
+        [Obsolete("use continuewith", true)]
+        public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, Task<T2>> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
             }
@@ -562,7 +563,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( "next" );
             }
 
-            var tcs = new TaskCompletionSource< T2 >(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
                 if ( first.IsFaulted ) {
                     if ( first.Exception != null ) {
@@ -602,21 +603,21 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-/*
-        /// <summary>
-        ///     a fire-and-forget wrapper for an <see cref="Action" />.
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="next"></param>
-        /// <returns></returns>
-        public static void Then( this Action action, Action next ) {
-            if ( action == null ) {
-                throw new ArgumentNullException( "action" );
-            }
-            action.Spawn(); //does this even make sense?
-            next.Spawn();
-        }
-*/
+        /*
+                /// <summary>
+                ///     a fire-and-forget wrapper for an <see cref="Action" />.
+                /// </summary>
+                /// <param name="action"></param>
+                /// <param name="next"></param>
+                /// <returns></returns>
+                public static void Then( this Action action, Action next ) {
+                    if ( action == null ) {
+                        throw new ArgumentNullException( "action" );
+                    }
+                    action.Spawn(); //does this even make sense?
+                    next.Spawn();
+                }
+        */
 
         /// <summary>
         ///     var result = await Wrap( () => OldNonAsyncFunction( ) );
@@ -624,7 +625,7 @@ namespace Librainian.Threading {
         /// <typeparam name="T"></typeparam>
         /// <param name="selector"></param>
         /// <returns></returns>
-        public static Task< T > Wrap<T>( [NotNull] this Func< T > selector ) {
+        public static Task<T> Wrap<T>( [NotNull] this Func<T> selector ) {
             if ( selector == null ) {
                 throw new ArgumentNullException( "selector" );
             }
@@ -639,7 +640,7 @@ namespace Librainian.Threading {
         /// <param name="selector"></param>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static Task< TOut > Wrap<TIn, TOut>( [NotNull] this Func< TIn, TOut > selector, TIn input ) {
+        public static Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, TIn input ) {
             if ( selector == null ) {
                 throw new ArgumentNullException( "selector" );
             }
@@ -687,7 +688,7 @@ namespace Librainian.Threading {
             return false;
         }
 
-        [DllImport( "kernel32.dll" )]
+        [DllImport("kernel32.dll")]
         public static extern IntPtr GetCurrentThread();
 
         /// <summary>
@@ -696,7 +697,7 @@ namespace Librainian.Threading {
         /// <param name="dwThreadAffinityMask"></param>
         /// <returns></returns>
         /// <example>SetThreadAffinityMask( GetCurrentThread(), new IntPtr( 1 &lt;&lt; processor ) );</example>
-        [DllImport( "kernel32.dll" )]
+        [DllImport("kernel32.dll")]
         public static extern IntPtr SetThreadAffinityMask( IntPtr hThread, IntPtr dwThreadAffinityMask );
 
         public sealed class ContextCallOnlyXTimes {
@@ -711,30 +712,21 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Returns true if the task finished before the <paramref name="timeout"/>.
+        /// <para>Returns true if the task finished before the <paramref name="timeout"/>.</para>
+        /// <para>Use this function if the Task does not have a built-in timeout.</para>
         /// </summary>
         /// <param name="task"></param>
         /// <param name="timeout"></param>
-        /// <param name="onComplete"></param>
-        /// <param name="onTimeout"></param>
         /// <returns></returns>
-        public static async Task< Boolean > TryRun( this Task task, TimeSpan timeout, Task onComplete = null, Task onTimeout = null ) {
-            while ( true ) {
-                var delay = Task.Delay( timeout );
-                var finished = await Task.WhenAny( task, delay );
-                var result = finished == task;
-                if ( result && null != onComplete ) {
-                    task = onComplete;
-                    onComplete = null;
-                    onTimeout = null;
-                    continue;
-                }
-                if ( result || null == onTimeout ) {
-                    return result;
-                }
-                await TryRun( onTimeout, timeout );
-                return false;
-            }
+        public static async Task<Boolean> Until( this Task task, TimeSpan timeout ) {
+
+            var delay = Task.Delay( timeout );
+
+            var whichTaskFinished = await Task.WhenAny( task, delay );
+
+            var didOurTaskFinish = whichTaskFinished == task;
+
+            return didOurTaskFinish;
         }
 
         /// <summary>
@@ -742,21 +734,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="task"></param>
         /// <param name="timeout"></param>
-        /// <param name="onComplete"></param>
-        /// <param name="onTimeout"></param>
         /// <returns></returns>
-        public static async Task<Boolean> TryRun( this TimeSpan timeout, Task task, Task onComplete = null, Task onTimeout = null ) {
-            var delay = Task.Delay( timeout );
-            var finished = await Task.WhenAny( task, delay );
-            var result = finished == task;
-            if ( result && null != onComplete ) {
-                return await TryRun( onComplete, timeout );
-            }
-            if ( result || null == onTimeout ) {
-                return result;
-            }
-            await TryRun( onTimeout, timeout );
-            return false;
-        }
+        public static async Task<Boolean> Until( this TimeSpan timeout, Task task ) => await Until( task, timeout );
     }
 }
