@@ -62,10 +62,12 @@ namespace Librainian.Threading {
 
         //private static long spawnCounter;
 
+/*
         /// <summary>
         ///     <para>Cancel has been requested. Don't queue or start any more spawns. If we're in a method, try to check the token.</para>
         /// </summary>
         public static readonly CancellationTokenSource CancelJobsTokenSource = new CancellationTokenSource(  );
+*/
 
 /*
         public static readonly PriorityBlock JobPriorityBlock = new PriorityBlock( CancelAllJobsToken );
