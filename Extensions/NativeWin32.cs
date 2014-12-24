@@ -15,16 +15,18 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/NativeWin32.cs" was last cleaned by Rick on 2014/12/06 at 9:56 AM
+// "Librainian/NativeWin32.cs" was last cleaned by Rick on 2014/12/24 at 4:29 AM
 
 namespace Librainian.Extensions {
+
     using System;
     using System.IO;
     using System.Runtime.InteropServices;
-    using Microsoft.Win32.SafeHandles;
+    using System.Text;
+    using IO;
+    using JunctionPoint;
 
     public static class NativeWin32 {
-
         public const uint ERROR_MORE_DATA = 234;
 
         public const uint ERROR_SUCCESS = 0;
@@ -77,6 +79,27 @@ namespace Librainian.Extensions {
 
         [DllImport("kernel32.dll")]
         public static extern bool AllocConsole();
+
+        [DllImport("kernel32", SetLastError = true)]
+        public static extern Boolean CloseHandle( IntPtr handle );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr CreateFile( String lpFileName, EFileAccess dwDesiredAccess, EFileShare dwShareMode, IntPtr lpSecurityAttributes, ECreationDisposition dwCreationDisposition, EFileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
+
+        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr CreateFile( String lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile );
+
+        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr CreateFileMapping( IntPtr hFile, IntPtr lpAttributes, int flProtect, int dwMaximumSizeLow, int dwMaximumSizeHigh, String lpName );
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern Boolean DeviceIoControl( IntPtr hDevice, uint dwIoControlCode, IntPtr InBuffer, int nInBufferSize, IntPtr OutBuffer, int nOutBufferSize, out int pBytesReturned, IntPtr lpOverlapped );
+
+        [DllImport("kernel32.dll")]
+        public static extern int DeviceIoControl( IntPtr hDevice, int dwIoControlCode, ref short lpInBuffer, int nInBufferSize, IntPtr lpOutBuffer, int nOutBufferSize, ref int lpBytesReturned, IntPtr lpOverlapped );
+
+        [DllImport("user32.dll")]
+        public static extern int EnableMenuItem( this IntPtr tMenu, int targetItem, int targetStatus );
 
         /// <summary>
         /// Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, or
@@ -134,8 +157,38 @@ namespace Librainian.Extensions {
         [DllImport("kernel32", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false)]
         public static extern Boolean FindNextFile( SafeSearchHandle hFindFile, out Win32FindData lpFindData );
 
+        [DllImport("user32.dll")]
+        public static extern IntPtr FindWindowEx( IntPtr hwndParent, IntPtr hwndChildAfter, String lpszClass, String lpszWindow );
+
+        [DllImport("kernel32", SetLastError = true)]
+        public static extern Boolean FlushViewOfFile( IntPtr lpBaseAddress, IntPtr dwNumBytesToFlush );
+
         [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
         public static extern bool FreeConsole();
+
+        /// <summary>
+        /// <para>
+        /// Retrieves the actual number of bytes of disk storage used to store a specified file as a
+        /// transacted operation.
+        /// </para>
+        /// <para>
+        /// If the file is located on a volume that supports compression and the file is compressed,
+        /// the value obtained is the compressed size of the specified file.
+        /// </para>
+        /// <para>
+        /// If the file is located on a volume that supports sparse files and the file is a sparse
+        /// file, the value obtained is the sparse size of the specified file.
+        /// </para>
+        /// </summary>
+        /// <param name="lpFileName"></param>
+        /// <param name="lpFileSizeHigh"></param>
+        /// <returns></returns>
+        /// <seealso cref="http://msdn.microsoft.com/en-us/library/windows/desktop/aa364930(v=vs.85).aspx"/>
+        [DllImport("kernel32.dll")]
+        public static extern uint GetCompressedFileSizeW( [In] [MarshalAs(UnmanagedType.LPWStr)] String lpFileName, [Out] [MarshalAs(UnmanagedType.U4)] out uint lpFileSizeHigh );
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetCurrentThread();
 
         /// <summary>
         /// </summary>
@@ -150,6 +203,21 @@ namespace Librainian.Extensions {
 
             return defView;
         }
+
+        [DllImport("user32.dll", EntryPoint = "GetDesktopWindow")]
+        public static extern IntPtr GetDesktopWindow();
+
+        [DllImport("kernel32.dll", SetLastError = true, PreserveSig = true)]
+        public static extern uint GetDiskFreeSpaceW( [In] [MarshalAs(UnmanagedType.LPWStr)] String lpRootPathName, out uint lpSectorsPerCluster, out uint lpBytesPerSector, out uint lpNumberOfFreeClusters, out uint lpTotalNumberOfClusters );
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetSystemMenu( IntPtr hwndValue, Boolean isRevert );
+
+        [DllImport("kernel32", SetLastError = true)]
+        public static extern IntPtr MapViewOfFile( IntPtr hFileMappingObject, int dwDesiredAccess, int dwFileOffsetHigh, int dwFileOffsetLow, IntPtr dwNumBytesToMap );
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern bool MoveFileWithProgress( String lpExistingFileName, String lpNewFileName, CopyProgressRoutine lpProgressRoutine, IntPtr lpData, MoveFileFlags dwFlags );
 
         /// <summary>
         /// Netapi32.dll : The NetApiBufferFree function frees the memory that the
@@ -176,11 +244,25 @@ namespace Librainian.Extensions {
         [DllImport("netapi32.dll", EntryPoint = "NetServerEnum")]
         public static extern int NetServerEnum( [MarshalAs(UnmanagedType.LPWStr)] String servername, int level, out IntPtr bufptr, int prefmaxlen, ref int entriesread, ref int totalentries, SV_101_TYPES servertype, [MarshalAs(UnmanagedType.LPWStr)] String domain, IntPtr resume_handle );
 
-        [DllImport("user32.dll")]
-        internal static extern IntPtr FindWindowEx( IntPtr hwndParent, IntPtr hwndChildAfter, String lpszClass, String lpszWindow );
+        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr OpenFileMapping( int dwDesiredAccess, Boolean bInheritHandle, String lpName );
 
-        [DllImport("user32.dll", EntryPoint = "GetDesktopWindow")]
-        internal static extern IntPtr GetDesktopWindow();
+        [DllImport("shlwapi.dll", CharSet = CharSet.Auto)]
+        public static extern bool PathCompactPathEx( [Out] StringBuilder pszOut, string szPath, int cchMax, int dwFlags );
+
+        /// <summary>
+        /// </summary>
+        /// <param name="hThread"></param>
+        /// <param name="dwThreadAffinityMask"></param>
+        /// <returns></returns>
+        /// <example>
+        /// SetThreadAffinityMask( GetCurrentThread(), new IntPtr( 1 &lt;&lt; processor ) );
+        /// </example>
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr SetThreadAffinityMask( IntPtr hThread, IntPtr dwThreadAffinityMask );
+
+        [DllImport("kernel32", SetLastError = true)]
+        public static extern Boolean UnmapViewOfFile( IntPtr lpBaseAddress );
 
         /// <summary>
         /// Win32 FILETIME structure. The win32 documentation says this: "Contains a 64-bit value
@@ -244,18 +326,6 @@ namespace Librainian.Extensions {
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
             public String cAlternateFileName;
-        }
-
-        /// <summary>
-        /// Class to encapsulate a seach handle returned from FindFirstFile. Using a wrapper like
-        /// this ensures that the handle is properly cleaned up with FindClose.
-        /// </summary>
-        public class SafeSearchHandle : SafeHandleZeroOrMinusOneIsInvalid {
-
-            public SafeSearchHandle() : base( true ) {
-            }
-
-            protected override Boolean ReleaseHandle() => FindClose( this.handle );
         }
     }
 }

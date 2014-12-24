@@ -79,7 +79,7 @@ namespace Librainian.Extensions {
         /// </summary>
         private const String NonInterpretedPathPrefix = @"\??\";
 
-        private enum ECreationDisposition : uint {
+        public enum ECreationDisposition : uint {
             New = 1,
             CreateAlways = 2,
             OpenExisting = 3,
@@ -88,7 +88,7 @@ namespace Librainian.Extensions {
         }
 
         [Flags]
-        private enum EFileAccess : uint {
+        public enum EFileAccess : uint {
             GenericRead = 0x80000000,
             GenericWrite = 0x40000000,
             GenericExecute = 0x20000000,
@@ -96,7 +96,7 @@ namespace Librainian.Extensions {
         }
 
         [Flags]
-        private enum EFileAttributes : uint {
+        public enum EFileAttributes : uint {
             Readonly = 0x00000001,
             Hidden = 0x00000002,
             System = 0x00000004,
@@ -125,7 +125,7 @@ namespace Librainian.Extensions {
         }
 
         [Flags]
-        private enum EFileShare : uint {
+        public enum EFileShare : uint {
             None = 0x00000000,
             Read = 0x00000001,
             Write = 0x00000002,
@@ -182,7 +182,7 @@ namespace Librainian.Extensions {
                     Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
 
                     int bytesReturned;
-                    var result = DeviceIoControl( handle.DangerousGetHandle(), FSCTL_SET_REPARSE_POINT, inBuffer, targetDirBytes.Length + 20, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero );
+                    var result = NativeWin32.DeviceIoControl( handle.DangerousGetHandle(), FSCTL_SET_REPARSE_POINT, inBuffer, targetDirBytes.Length + 20, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero );
 
                     if ( !result ) {
                         ThrowLastWin32Error( "Unable to create junction point." );
@@ -223,7 +223,7 @@ namespace Librainian.Extensions {
                     Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
 
                     int bytesReturned;
-                    var result = DeviceIoControl( handle.DangerousGetHandle(), FSCTL_DELETE_REPARSE_POINT, inBuffer, 8, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero );
+                    var result = NativeWin32.DeviceIoControl( handle.DangerousGetHandle(), FSCTL_DELETE_REPARSE_POINT, inBuffer, 8, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero );
 
                     if ( !result ) {
                         ThrowLastWin32Error( "Unable to delete junction point." );
@@ -282,19 +282,13 @@ namespace Librainian.Extensions {
             }
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern IntPtr CreateFile( String lpFileName, EFileAccess dwDesiredAccess, EFileShare dwShareMode, IntPtr lpSecurityAttributes, ECreationDisposition dwCreationDisposition, EFileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern Boolean DeviceIoControl( IntPtr hDevice, uint dwIoControlCode, IntPtr InBuffer, int nInBufferSize, IntPtr OutBuffer, int nOutBufferSize, out int pBytesReturned, IntPtr lpOverlapped );
-
         private static String InternalGetTarget( SafeHandle handle ) {
             var outBufferSize = Marshal.SizeOf( typeof(REPARSE_DATA_BUFFER) );
             var outBuffer = Marshal.AllocHGlobal( outBufferSize );
 
             try {
                 int bytesReturned;
-                var result = DeviceIoControl( handle.DangerousGetHandle(), FSCTL_GET_REPARSE_POINT, IntPtr.Zero, 0, outBuffer, outBufferSize, out bytesReturned, IntPtr.Zero );
+                var result = NativeWin32.DeviceIoControl( handle.DangerousGetHandle(), FSCTL_GET_REPARSE_POINT, IntPtr.Zero, 0, outBuffer, outBufferSize, out bytesReturned, IntPtr.Zero );
 
                 if ( !result ) {
                     var error = Marshal.GetLastWin32Error();
@@ -325,7 +319,7 @@ namespace Librainian.Extensions {
         }
 
         private static SafeFileHandle OpenReparsePoint( String reparsePoint, EFileAccess accessMode ) {
-            var reparsePointHandle = new SafeFileHandle( CreateFile( reparsePoint, accessMode, EFileShare.Read | EFileShare.Write | EFileShare.Delete, IntPtr.Zero, ECreationDisposition.OpenExisting, EFileAttributes.BackupSemantics | EFileAttributes.OpenReparsePoint, IntPtr.Zero ), true );
+            var reparsePointHandle = new SafeFileHandle( NativeWin32.CreateFile( reparsePoint, accessMode, EFileShare.Read | EFileShare.Write | EFileShare.Delete, IntPtr.Zero, ECreationDisposition.OpenExisting, EFileAttributes.BackupSemantics | EFileAttributes.OpenReparsePoint, IntPtr.Zero ), true );
 
             if ( Marshal.GetLastWin32Error() != 0 ) {
                 ThrowLastWin32Error( "Unable to open reparse point." );

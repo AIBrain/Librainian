@@ -688,18 +688,6 @@ namespace Librainian.Threading {
             return false;
         }
 
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr GetCurrentThread();
-
-        /// <summary>
-        /// </summary>
-        /// <param name="hThread"></param>
-        /// <param name="dwThreadAffinityMask"></param>
-        /// <returns></returns>
-        /// <example>SetThreadAffinityMask( GetCurrentThread(), new IntPtr( 1 &lt;&lt; processor ) );</example>
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr SetThreadAffinityMask( IntPtr hThread, IntPtr dwThreadAffinityMask );
-
         public sealed class ContextCallOnlyXTimes {
             public long CallsAllowed;
 

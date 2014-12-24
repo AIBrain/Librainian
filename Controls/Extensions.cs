@@ -361,9 +361,6 @@ namespace Librainian.Controls {
             }
         }
 
-        [DllImport( "user32.dll" )]
-        public static extern IntPtr GetSystemMenu( this IntPtr hwndValue, Boolean isRevert );
-
         /// <summary>
         ///     Safely set the <see cref="Control.Text" /> of a control across threads.
         /// </summary>
@@ -733,9 +730,6 @@ namespace Librainian.Controls {
                 control.Refresh();
             }
         }
-
-        [DllImport( "user32.dll" )]
-        public static extern int EnableMenuItem( this IntPtr tMenu, int targetItem, int targetStatus );
 
         public static async void Marquee( [CanBeNull] this Control control, TimeSpan timeSpan, [CanBeNull] String message ) {
             control.Text( message );

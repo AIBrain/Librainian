@@ -21,7 +21,7 @@ namespace Librainian.IO {
     using System;
 
     [Flags]
-    internal enum MoveFileFlags {
+    public enum MoveFileFlags {
         MovefileReplaceExisting = 0x00000001,
         MovefileCopyAllowed = 0x00000002,
         MovefileDelayUntilReboot = 0x00000004,

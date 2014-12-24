@@ -407,9 +407,6 @@ namespace Librainian.IO {
             return new FileInfo( path );
         }
 
-        [DllImport("kernel32.dll")]
-        public static extern int DeviceIoControl( IntPtr hDevice, int dwIoControlCode, ref short lpInBuffer, int nInBufferSize, IntPtr lpOutBuffer, int nOutBufferSize, ref int lpBytesReturned, IntPtr lpOverlapped );
-
         /// <summary>
         /// If the <paramref name="directoryInfo"/> does not exist, attempt to create it.
         /// </summary>
@@ -704,7 +701,7 @@ namespace Librainian.IO {
                 }
             }
             uint hosize;
-            var losize = WindowsAPI.GetCompressedFileSizeW( info.FullName, out hosize );
+            var losize = GetCompressedFileSizeW( info.FullName, out hosize );
             var size = hosize << 32 | losize;
             return ( ( size + clusterSize - 1 ) / clusterSize ) * clusterSize;
         }
@@ -724,14 +721,14 @@ namespace Librainian.IO {
             uint bytesPerSector = 0;
             if ( info.Directory != null ) {
                 uint dummy;
-                var result = WindowsAPI.GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
+                var result = GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
                 if ( result == 0 ) {
                     throw new Win32Exception();
                 }
             }
             var clusterSize = sectorsPerCluster * bytesPerSector;
             uint sizeHigh;
-            var losize = WindowsAPI.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out sizeHigh );
+            var losize = GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out sizeHigh );
             var size = sizeHigh << 32 | losize;
             return ( ( size + clusterSize - 1 ) / clusterSize ) * clusterSize;
         }

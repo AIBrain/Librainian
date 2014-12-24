@@ -82,10 +82,6 @@ namespace Librainian.Security {
             }
         }
 
-        private void UndoImpersonation() {
-            if ( this._impersonationContext != null ) {
-                this._impersonationContext.Undo();
-            }
-        }
+        private void UndoImpersonation() => this._impersonationContext?.Undo();
     }
 }

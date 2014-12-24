@@ -243,7 +243,8 @@
     <Compile Include="AmazedSaint\IHierarchyWrapperProvider.cs" />
     <Compile Include="AmazedSaint\NodeType.cs" />
     <Compile Include="AmazedSaint\SimpleHierarchyWrapper.cs" />
-    <Compile Include="Graphics\Imaging\FastBitmap.cs" />
+    <Compile Include="Extensions\CopyProgressRoutine.cs" />
+    <Compile Include="Extensions\SafeSearchHandle.cs" />
     <Compile Include="Internet\Browser\AwesomiumWrapper.cs" />
     <Compile Include="Parsing\Strand.cs" />
     <Compile Include="Properties\Annotations.cs" />
@@ -421,7 +422,6 @@
     <Compile Include="IO\MoveFileFlags.cs" />
     <Compile Include="IO\Streams\ProgressStream.cs" />
     <Compile Include="IO\SearchStyle.cs" />
-    <Compile Include="IO\WindowsAPI.cs" />
     <Compile Include="Linguistics\Author.cs" />
     <Compile Include="Linguistics\UDC.cs" />
     <Compile Include="Magic\Abodit\IId.cs" />
