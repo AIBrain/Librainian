@@ -50,11 +50,13 @@ namespace Librainian.Internet.Browser {
             return null;
         }
 
-        public async Task< bool > Value( String id, String text ) {
+        public async Task< bool > Value( String id, String text, TimeSpan timeout ) {
             try {
-                await WaitAsync();
-                this.WebControl.Invoke( new Action( () => this.WebControl.ExecuteJavascript( String.Format( "document.getElementById( {0} ).value=\"{1}\";", id, text ) ) ) );
-                return true;
+                var doWeHaveAccess = await WaitAsync( timeout );
+                if ( doWeHaveAccess ) {
+                    this.WebControl.Invoke( new Action( () => this.WebControl.ExecuteJavascript( String.Format( "document.getElementById( {0} ).value=\"{1}\";", id, text ) ) ) );
+                    return true;
+                }
             }
             catch ( Exception exception ) {
                 exception.More();
