@@ -243,11 +243,9 @@ namespace Librainian.Threading {
             var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
             return () => {
                 if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
-                    if ( action != null ) {
-                        action();
-                    }
+                    action?.Invoke();
                 }
-            };
+                   };
         }
 
         /// <summary>

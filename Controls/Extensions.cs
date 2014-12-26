@@ -26,7 +26,6 @@ namespace Librainian.Controls {
     using System.Diagnostics;
     using System.Drawing;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using FluentAssertions;
@@ -43,9 +42,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <returns></returns>
         public static void BusyCursor( [CanBeNull] this Control control ) => ThreadingExtensions.Wrap( () => {
-                                                                                                           if ( control != null ) {
-                                                                                                               control.InvokeIfRequired( () => control.Cursor = Cursors.WaitCursor );
-                                                                                                           }
+                                                                                                           control?.InvokeIfRequired( () => control.Cursor = Cursors.WaitCursor );
                                                                                                        } );
 
         /// <summary>
@@ -145,12 +142,7 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
-        public static void Redraw( [CanBeNull] this Control control ) {
-            if ( null == control ) {
-                return;
-            }
-            control.InvokeIfRequired( control.Refresh );
-        }
+        public static void Redraw( [CanBeNull] this Control control ) => control?.InvokeIfRequired( control.Refresh );
 
         /// <summary>
         ///     Just changes the cursor to the <see cref="Cursors.Default" />.
