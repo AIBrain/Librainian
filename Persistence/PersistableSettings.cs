@@ -23,7 +23,6 @@ namespace Librainian.Persistence {
     using System.Environment;
     using System.IO;
     using System.Windows.Forms;
-    using CodeFluent.Runtime.BinaryServices;
     using Controls;
     using Extensions;
     using IO;
@@ -108,12 +107,14 @@ namespace Librainian.Persistence {
             }
         }
 
+        [Obsolete]
         private void TestForReadWriteAccess() {
             var randomFileName = Path.GetRandomFileName();
             try {
                 var temp = Path.Combine( this.MainStoragePath.FullName, String.Format( "{0}", randomFileName ) );
-                NtfsAlternateStream.WriteAllText( temp, text: Randem.NextString( 144, true, true, true, true ) );
-                NtfsAlternateStream.Delete( temp );
+                //TODO
+                //NtfsAlternateStream.WriteAllText( temp, text: Randem.NextString( 144, true, true, true, true ) );
+                //NtfsAlternateStream.Delete( temp );
             }
             finally {
                 File.Delete( randomFileName );
