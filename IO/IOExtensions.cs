@@ -1061,7 +1061,7 @@ namespace Librainian.IO {
 
         public static ManagementPath ToManagementPath( this DirectoryInfo systemPath ) {
             var fullPath = systemPath.FullName;
-            while ( fullPath.EndsWith( "\\" ) ) {
+            while ( fullPath.EndsWith(@"\", StringComparison.Ordinal) ) {
                 fullPath = fullPath.Substring( 0, fullPath.Length - 1 );
             }
             fullPath = String.Format( "Win32_Directory.Name=\"{0}\"", fullPath.Replace( "\\", "\\\\" ) );
