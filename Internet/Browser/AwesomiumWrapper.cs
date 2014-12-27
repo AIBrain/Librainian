@@ -74,7 +74,14 @@ namespace Librainian.Internet.Browser {
             return false;
         }
 
-        public async Task<Boolean> ExecuteJavascriptMethod( String id, String function, TimeSpan timeout ) {
+        /// <summary>
+        /// Run a function in javascript
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="function"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        public async Task<Boolean> ExecuteJavascript( String id, String function, TimeSpan timeout ) {
             var javascript = String.Format( "document.getElementById( {0} ).{1}();", id, function );
             var result = await this.ExecuteJavascript( javascript, timeout );
             return result;
@@ -105,8 +112,18 @@ namespace Librainian.Internet.Browser {
             return default(TResult);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         [CanBeNull]
-        public async Task<String> GetValue( String id, TimeSpan timeout ) {
+        public async Task<String> GetValue( [ NotNull ] String id, TimeSpan timeout ) {
+            if ( String.IsNullOrWhiteSpace( id ) ) {
+                throw new ArgumentNullException( "id" );
+            }
             var javascript = String.Format( "document.getElementById( {0} ).value", id );
             var result = await this.ExecuteJavascriptWithResult<String>( javascript, timeout );
             return result;
