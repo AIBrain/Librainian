@@ -16,7 +16,7 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian 2015/SimpleCancel.cs" was last cleaned by Rick on 2014/12/29 at 8:15 AM
+// "Librainian 2015/SimpleCancel.cs" was last cleaned by Rick on 2014/12/29 at 8:18 AM
 #endregion
 
 namespace Librainian.Threading {
@@ -29,12 +29,19 @@ namespace Librainian.Threading {
     ///     <see cref="CancellationTokenSource.Cancel()" /> is called.
     /// </summary>
     public class SimpleCancel : IDisposable {
+        /// <summary>
+        /// </summary>
         public enum RequestState : byte {
             Unrequested = 0,
             CancelRequested = 1
         }
 
+        /// <summary>
+        /// </summary>
         private long _cancelRequestCounter;
+
+        /// <summary>
+        /// </summary>
         private volatile Byte _state;
 
         public SimpleCancel() {
@@ -116,11 +123,8 @@ namespace Librainian.Threading {
         private Boolean SetState( RequestState state ) {
             switch ( state ) {
                 case RequestState.CancelRequested:
-                    this._state = ( Byte ) RequestState.CancelRequested;
-                    return true;
-
                 case RequestState.Unrequested:
-                    this._state = ( Byte ) RequestState.Unrequested;
+                    this._state = ( Byte ) state;
                     return true;
             }
             return false;

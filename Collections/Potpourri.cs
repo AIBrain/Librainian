@@ -47,7 +47,16 @@ namespace Librainian.Collections {
 
         public void Clear() => this.Container.Clear();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public Boolean Contains( TKey key ) {
+            if ( key == null ) {
+                throw new ArgumentNullException( "key" );
+            }
             BigInteger value;
             if ( !this.Container.TryGetValue( key, out value ) ) {
                 return false;
