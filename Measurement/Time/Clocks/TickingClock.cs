@@ -133,7 +133,7 @@ namespace Librainian.Measurement.Time.Clocks {
             private set;
         }
 
-        public Time GetTime() {
+        public Time Time() {
             try {
                 var timer = this._timer;
                 if ( timer != null ) {

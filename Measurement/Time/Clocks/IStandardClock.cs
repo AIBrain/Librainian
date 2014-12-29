@@ -44,7 +44,7 @@ namespace Librainian.Measurement.Time.Clocks {
             get;
         }
 
-        Time GetTime();
+        Time Time();
 
         Boolean IsAM();
 
