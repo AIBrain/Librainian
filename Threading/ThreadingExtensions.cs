@@ -700,6 +700,7 @@ namespace Librainian.Threading {
         /// <summary>
         /// <para>Returns true if the task finished before the <paramref name="timeout"/>.</para>
         /// <para>Use this function if the Task does not have a built-in timeout.</para>
+        /// <para>This function does not end the given <paramref name="task"/> if it times out.</para>
         /// </summary>
         /// <param name="task"></param>
         /// <param name="timeout"></param>

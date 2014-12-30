@@ -71,8 +71,6 @@ namespace Librainian.Measurement.Time {
             //TODO
             this.Date = new Date( span );
             this.Time = new Time( span );
-            //this.Date = new Date();
-            //this.Time = new Time();
         }
 
         public UniversalDateTime( DateTime dateTime ) {
