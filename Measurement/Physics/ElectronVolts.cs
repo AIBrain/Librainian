@@ -71,7 +71,7 @@ namespace Librainian.Measurement.Physics {
         public static readonly ElectronVolts Zero = new ElectronVolts( 0 );
 
         /// <summary>
-        /// More than nothing.
+        /// More than nothing (unknown but not massless).
         /// </summary>
         public static readonly ElectronVolts NonZero = new ElectronVolts( MathExtensions.EpsilonDecimal );
 
