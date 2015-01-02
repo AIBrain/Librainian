@@ -21,6 +21,7 @@ namespace Librainian.Extensions {
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -194,8 +195,22 @@ namespace Librainian.Extensions {
             if ( baseType == null ) {
                 throw new ArgumentNullException( "baseType" );
             }
-            return AppDomain.CurrentDomain.GetAssemblies().SelectMany( assembly => assembly.GetTypes(), ( assembly, type ) => type ).Where( arg => baseType.IsAssignableFrom( arg ) && arg.IsClass && !arg.IsAbstract );
+            return LazyCurrentDomainGetAssemblies.Value.SelectMany( assembly => assembly.GetTypes(), ( assembly, type ) => type ).Where( arg => baseType.IsAssignableFrom( arg ) && arg.IsClass && !arg.IsAbstract );
         }
+
+        /// <summary>
+        /// Get all <see cref="GetSealedClassesDerivedFrom"/> <paramref name="baseType"/>.
+        /// </summary>
+        /// <param name="baseType"></param>
+        /// <returns></returns>
+        public static IEnumerable<Type> GetSealedClassesDerivedFrom( [CanBeNull] this Type baseType ) {
+            if ( baseType == null ) {
+                throw new ArgumentNullException( "baseType" );
+            }
+            return baseType.Assembly.GetTypes().Where( type => type.IsAssignableFrom( baseType ) && type.IsSealed );
+        }
+
+        private static readonly Lazy< Assembly[] > LazyCurrentDomainGetAssemblies = new Lazy< Assembly[] >( () => AppDomain.CurrentDomain.GetAssemblies() );
 
         /// <summary>
         /// <para>Checks a type to see if it derives from a raw generic (e.g. List[[]])</para>

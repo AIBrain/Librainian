@@ -32,6 +32,8 @@ namespace Librainian.Measurement.Physics {
 
         public static readonly  Decimal MetersPerSecond = 299792458M;
 
+        public static readonly  Decimal MetersPerSecondSquared = 299792458M * 299792458M;
+
         /// <summary>
         ///     http://www.wolframalpha.com/input/?i=299%2C792%2C458+metres+per+second
         /// </summary>

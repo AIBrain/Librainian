@@ -59,6 +59,7 @@ namespace Librainian.Measurement.Physics {
 
         public static readonly ElectronVolts NegativeOne = new ElectronVolts( -1 );
 
+
         /// <summary>
         /// </summary>
         public static readonly ElectronVolts NegativeZero = new ElectronVolts( -Decimal.Zero );
@@ -68,6 +69,13 @@ namespace Librainian.Measurement.Physics {
         public static readonly ElectronVolts One = new ElectronVolts( 1 );
 
         public static readonly ElectronVolts Zero = new ElectronVolts( 0 );
+
+        /// <summary>
+        /// More than nothing.
+        /// </summary>
+        public static readonly ElectronVolts NonZero = new ElectronVolts( MathExtensions.EpsilonDecimal );
+
+
         public readonly  Decimal Value;
 
         static ElectronVolts() {
@@ -95,6 +103,7 @@ namespace Librainian.Measurement.Physics {
 
         [UsedImplicitly]
         private String DebuggerDisplay => this.Display();
+
 
         public int CompareTo( ElectronVolts other ) => this.Value.CompareTo( other.Value );
 
@@ -141,6 +150,10 @@ namespace Librainian.Measurement.Physics {
         public static Boolean operator <( ElectronVolts left, ElectronVolts right ) => left.Value < right.Value;
 
         public static Boolean operator >( ElectronVolts left, ElectronVolts right ) => left.Value > right.Value;
+
+        public static Boolean operator <=( ElectronVolts left, ElectronVolts right ) => left.Value <= right.Value;
+
+        public static Boolean operator >=( ElectronVolts left, ElectronVolts right ) => left.Value >= right.Value;
 
         public String Display() => String.Format( "{0} eV", this.Value );
 

@@ -114,7 +114,7 @@ namespace Librainian.Maths {
         public delegate int FibonacciCalculator( int n );
 
         /// <summary>
-        ///     <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="decimal" />.</para>
+        ///     <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="Decimal" />.</para>
         /// </summary>
         [UsedImplicitly]
         public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
@@ -122,7 +122,7 @@ namespace Librainian.Maths {
 
 
         /// <summary>
-        /// <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="decimal" />.</para>
+        /// <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="Decimal" />.</para>
         /// <para>1E-28</para>
         /// </summary>
         /// <param name="number"></param>
