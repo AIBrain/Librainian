@@ -194,7 +194,6 @@
     <Compile Include="Collections\IWaitQueue.cs" />
     <Compile Include="Collections\LockfreeQueue.cs" />
     <Compile Include="Collections\MultiKeyDictionary.cs" />
-    <Compile Include="Collections\OrderedDictionary.cs" />
     <Compile Include="Collections\PairOfDoubles.cs" />
     <Compile Include="Collections\ParallelList.cs" />
     <Compile Include="Collections\Q.cs" />
