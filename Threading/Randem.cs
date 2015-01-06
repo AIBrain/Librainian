@@ -339,8 +339,7 @@ namespace Librainian.Threading {
         public static Decimal NextDecimal() {
             do {
                 try {
-                    return ( Decimal )NextDouble();    //TODO meh. fake it for now.
-                    //return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( byte ) Next( 0, 9 ) );
+                    return ( Decimal )Instance.NextDouble();    //TODO meh. fake it for now.
                 }
                 catch ( ArgumentOutOfRangeException exception ) {
                     exception.More();
@@ -349,8 +348,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// <para>Returns a random Double between <paramref name="minValue" /> and <paramref
-        /// name="maxValue" />.</para><para>Defaults to a number between 0 and 1.</para>
+        /// <para>Returns a random Double between <paramref name="minValue" /> and <paramref name="maxValue" />.</para>
         /// </summary>
         /// <param name="minValue"></param>
         /// <param name="maxValue"></param>
@@ -419,7 +417,7 @@ namespace Librainian.Threading {
         /// Returns a random Double beetween 0 and 1
         /// </summary>
         /// <returns></returns>
-        [System.Diagnostics.Contracts.Pure]
+        [Pure]
         public static Double NextDouble() => Instance.NextDouble();
 
         /// <summary>
@@ -465,6 +463,8 @@ namespace Librainian.Threading {
         /// <param name="max"></param>
         /// <returns></returns>
         public static Single NextSingle( Single min = 0, Single max = 1 ) => ( Single )( min + ( Instance.NextDouble() * ( max - min ) ) );
+
+        public static Decimal NextDecay( Decimal min = MathExtensions.EpsilonDecimal, Decimal max = 1 ) => min + ( NextDecimal() * ( max - min ) );
 
         /// <summary>
         /// Generate a random String.

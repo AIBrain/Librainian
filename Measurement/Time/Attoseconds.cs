@@ -197,6 +197,13 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Zeptoseconds( Attoseconds attoseconds ) => attoseconds.ToZeptoseconds();
 
+
+        public static implicit operator Span( Attoseconds attoseconds ) {
+            var plancks = attoseconds.ToPlanckTimes();
+            return new Span( plancks );
+        }
+
+
         public static Attoseconds operator -( Attoseconds left, Decimal attoseconds ) => Combine( left, -attoseconds );
 
         public static Boolean operator !=( Attoseconds left, Attoseconds right ) => !Equals( left, right );

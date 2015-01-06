@@ -156,6 +156,12 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Picoseconds( Nanoseconds nanoseconds ) => nanoseconds.ToPicoseconds();
 
+        public static implicit operator Span( Nanoseconds nanoseconds ) {
+            var plancks = nanoseconds.ToPlanckTimes();
+            return new Span( planckTimes: plancks );
+        }
+
+
         public static Nanoseconds operator -( Nanoseconds nanoseconds ) => new Nanoseconds( nanoseconds.Value * -1 );
 
         public static Nanoseconds operator -( Nanoseconds left, Nanoseconds right ) => Combine( left, -right );

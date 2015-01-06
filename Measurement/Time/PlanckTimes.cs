@@ -77,8 +77,8 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     <para>Possible numbers are:</para>
         ///     <para>18548608483392000000</para>
-        ///     //where did I get this number??? It's so.. specific?
-        ///     <para>18550948324478400000</para>
+        ///     
+        ///     <para>18550948324478400000 (where did I get this number??? It's so.. specific?)</para>
         ///     <para>18550000000000000000</para>
         ///     <para>18548608483392000000m</para>
         /// </summary>

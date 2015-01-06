@@ -52,6 +52,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         /// 
         /// </summary>
+        // TODO get a real answer here.
         public static readonly Span Forever = new Span( yoctoseconds: Decimal.MaxValue, zeptoseconds: Decimal.MaxValue, attoseconds: Decimal.MaxValue, femtoseconds: Decimal.MaxValue, picoseconds: Decimal.MaxValue, nanoseconds: Decimal.MaxValue, microseconds: Decimal.MaxValue, milliseconds: Decimal.MaxValue, seconds: Decimal.MaxValue, minutes: Decimal.MaxValue, hours: Decimal.MaxValue, days: Decimal.MaxValue, weeks: Decimal.MaxValue, months: Decimal.MaxValue, years: Decimal.MaxValue.Half() );
 
         public static readonly Span Infinity = Forever;
@@ -435,7 +436,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="seconds"></param>
         public Span( Decimal seconds )
             : this() {
-            var span = new Span( new Seconds( seconds ).ToPlanckTimes() );
+            var span = new Span( planckTimes: new Seconds( seconds ).ToPlanckTimes() );
 
             this.PlanckTimes = span.PlanckTimes;
             this.Attoseconds = span.Attoseconds;
