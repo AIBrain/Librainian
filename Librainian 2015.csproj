@@ -283,7 +283,7 @@
     <Compile Include="Gaming\PlayerTable.cs" />
     <Compile Include="Gaming\PlayingCards\FaceValues.cs" />
     <Compile Include="Gaming\PlayingCards\Suites.cs" />
-    <Compile Include="Graphics\Imaging\EFG.cs" />
+    <Compile Include="Graphics\Imaging\ERG.cs" />
     <Compile Include="Graphics\Moving\EFV.cs" />
     <Compile Include="Graphics\GraphicsExtensions.cs" />
     <Compile Include="Graphics\Imaging\Line.cs" />
