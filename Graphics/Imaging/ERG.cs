@@ -58,8 +58,8 @@ namespace Librainian.Graphics.Imaging {
         [DataMember]
         public readonly ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
 
-        [DataMember]
-        public readonly ConcurrentSet<Pixel> Pixels = new ConcurrentSet<Pixel>();
+        [ DataMember ]
+        public ConcurrentSet< Pixel > Pixels { get; } = new ConcurrentSet< Pixel >();
 
         public ERG() {
             this.Checksum = UInt64.MaxValue; //an unlikely hash
@@ -86,8 +86,8 @@ namespace Librainian.Graphics.Imaging {
                     this.Pixels.TryAdd( pixel  );
                 }
             }
-            
-            //bitmap.GetPixel()
+
+            bitmap.UnlockBits( data );
 
             //TODO animated gif RE: image.FrameDimensionsList;
         }
