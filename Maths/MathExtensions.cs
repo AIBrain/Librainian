@@ -575,6 +575,38 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
+        /// Returns a combined <see cref="object.GetHashCode"/>
+        /// </summary>
+        /// <param name="objects"></param>
+        /// <returns></returns>
+        [Pure]
+        public static Int64 GetBigHash( params Object[] objects ) {
+
+            if ( null == objects ) {
+                return 0;
+            }
+
+            var combined = (Int64)objects.GetHashCode();
+
+            unchecked {
+                if ( !objects.Any() ) {
+                    return combined;
+                }
+
+                var objectA = objects[ 0 ];
+                var hashA = objectA.GetHashCode();
+                combined = hashA;
+
+                foreach ( var objectB in objects.Skip( 1 ) ) {
+                    var hashB = objectB.GetHashCode();
+                    combined = ( ( combined << 5 ) + combined ) ^ hashB;
+                }
+
+                return combined;
+            }
+        }
+
+        /// <summary>
         /// Returns a combined <see cref="object.GetHashCode"/> based on <paramref name="objectA"/>
         /// and <paramref name="objectB"/>.
         /// </summary>

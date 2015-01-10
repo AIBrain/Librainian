@@ -45,7 +45,7 @@ namespace Librainian.Graphics.Imaging {
         /// <summary>
         ///     Checksum of the page (guard against corruption).
         /// </summary>
-        /// <remarks>Should include the <see cref="Count" /> and <see cref="Delay" /> to prevent buffer overflows and timeouts.</remarks>
+        /// <remarks>Should include the <see cref="LineCount" /> and <see cref="Delay" /> to prevent buffer overflows and timeouts.</remarks>
         [DataMember]
         [FieldOffset( sizeof( UInt64 ) * 1 )]
         public UInt64 Checksum;
@@ -78,7 +78,7 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="right"></param>
         /// <returns></returns>
         [Pure]
-        public Boolean Equal( Frame left, Frame right ) {
+        public static Boolean Equal( Frame left, Frame right ) {
             if ( left == null || right == null ) {
                 return false;
             }

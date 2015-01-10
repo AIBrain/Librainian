@@ -36,7 +36,7 @@ namespace Librainian.Graphics.Imaging {
     /// </summary>
     [DataContract]
     [Serializable]
-    [StructLayout( LayoutKind.Explicit )]
+    [StructLayout(LayoutKind.Explicit)]
     public class Line : IEquatable<Line>, IEnumerable<Pixel>, IEqualityComparer<Line> {
 
         /// <summary>
@@ -53,28 +53,28 @@ namespace Librainian.Graphics.Imaging {
         }
 
         public static async Task<UInt64> CalculateChecksumAsync( IEnumerable<Pixel> pixels ) => await Task.Run( () => {
-                                                                                                                    var checksum = UInt64.MinValue;
-                                                                                                                    foreach ( var pixel in pixels ) {
-                                                                                                                        unchecked {
-                                                                                                                            checksum = ( checksum + ( UInt64 )pixel.GetHashCode() ) / 2;
-                                                                                                                        }
-                                                                                                                    }
-                                                                                                                    return checksum;
-                                                                                                                } );
+            var checksum = UInt64.MinValue;
+            foreach ( var pixel in pixels ) {
+                unchecked {
+                    checksum = ( checksum + ( UInt64 )pixel.GetHashCode() ) / 2;
+                }
+            }
+            return checksum;
+        } );
 
         /// <summary>
         ///     Checksum of the pixels (to guard against corruption).
         /// </summary>
         /// <remarks>Should include the <see cref="Count" /> to prevent buffer overflows.</remarks>
         [DataMember]
-        [FieldOffset( 0 )]
+        [FieldOffset(0)]
         public UInt64 Checksum;
 
         /// <summary>
         ///     How many pixels should be in this line?
         /// </summary>
         [DataMember]
-        [FieldOffset( sizeof( UInt64 ) * 1 )]
+        [FieldOffset(sizeof(UInt64) * 1)]
         public UInt64 Count;
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Librainian.Graphics.Imaging {
         /// </summary>
         /// <remarks>I'd prefer a list instead of an array.</remarks>
         [DataMember]
-        [FieldOffset( sizeof( UInt64 ) * 2 )]
+        [FieldOffset(sizeof(UInt64) * 2)]
         [NotNull]
         public Pixel[] Pixels;
 

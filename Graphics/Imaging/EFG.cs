@@ -22,12 +22,14 @@
 namespace Librainian.Graphics.Imaging {
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
+    using Maths;
 
     /// <summary>
-    ///     Experimental Framed Graphics
+    ///     Experimental Flexible Graphics
     /// </summary>
     /// <remarks>
     /// Just for fun & learning.
@@ -35,6 +37,11 @@ namespace Librainian.Graphics.Imaging {
     /// Compressions must be lossless.
     /// Allow 'pages' of animation, each with their own delay. Default should be page 0 = 0 delay.
     /// Checksums are used on each line of each page to guard against (detect but not fix) corruption.
+    /// </remarks>
+    /// <remarks>
+    /// 60 frames per second allows 16.67 milliseconds per frame.
+    /// 1920x1080 pixels = 2,052,000 possible pixels
+    /// ...so about 8 nanoseconds per pixel?
     /// </remarks>
     [DataContract]
     [Serializable]
@@ -47,16 +54,16 @@ namespace Librainian.Graphics.Imaging {
         public static readonly String Header = "EFG1";
         public static readonly String Extension = ".efg";
 
-/*
-        /// <summary>
-        /// only here for reference
-        /// </summary>
-        [Obsolete]
-        private Bitmap Bitmap {
-            get;
-            set;
-        }
-*/
+        /*
+                /// <summary>
+                /// only here for reference
+                /// </summary>
+                [Obsolete]
+                private Bitmap Bitmap {
+                    get;
+                    set;
+                }
+        */
 
         /// <summary>
         /// Checksum of all pages
@@ -71,18 +78,25 @@ namespace Librainian.Graphics.Imaging {
         /// EXIF metadatas
         /// </summary>
         [DataMember]
-        public ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
+        public readonly ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
 
         [DataMember]
-        public ConcurrentDictionary<UInt64, Frame> Frames = new ConcurrentDictionary<UInt64, Frame>();
+        public readonly ConcurrentQueue<Pixel> Pixels = new ConcurrentQueue<Pixel>();
+
+
+        public async Task<UInt64> CalculateChecksumAsync() => ( ulong )await Task.Run( () => {
+            unchecked {
+                return MathExtensions.GetBigHash( this.Pixels.ToArray() );
+            }
+        } );
 
         public EFG() {
             this.Checksum = UInt64.MaxValue;    //an unlikely hash
         }
 
         public async Task<Boolean> TryAdd( UInt64 index, Frame frame, CancellationToken token ) => await Task.Run( () => {
-                                                                                                                       // ReSharper disable once ConvertToLambdaExpression
-                                                                                                                       return false;   //TODO add frame
-                                                                                                                   }, token );
+            // ReSharper disable once ConvertToLambdaExpression
+            return false;   //TODO add frame
+        }, token );
     }
 }
