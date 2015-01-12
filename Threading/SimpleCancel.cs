@@ -25,7 +25,7 @@ namespace Librainian.Threading {
     using System.Threading.Tasks;
 
     /// <summary>
-    ///     I don't like the <see cref="CancellationTokenSource" /> throwing exceptions after
+    ///     Don't like the <see cref="CancellationTokenSource" /> throwing exceptions after
     ///     <see cref="CancellationTokenSource.Cancel()" /> is called.
     /// </summary>
     public class SimpleCancel : IDisposable {

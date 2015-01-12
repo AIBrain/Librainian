@@ -575,12 +575,12 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        /// Returns a combined <see cref="object.GetHashCode"/>
+        /// Returns the combined <see cref="object.GetHashCode"/> of all <paramref name="objects"/>.
         /// </summary>
         /// <param name="objects"></param>
         /// <returns></returns>
         [Pure]
-        public static Int64 GetBigHash( params Object[] objects ) {
+        public static Int64 GetHashCodes( params Object[] objects ) {
 
             if ( null == objects ) {
                 return 0;
@@ -595,14 +595,8 @@ namespace Librainian.Maths {
 
                 var objectA = objects[ 0 ];
                 var hashA = objectA.GetHashCode();
-                combined = hashA;
 
-                foreach ( var objectB in objects.Skip( 1 ) ) {
-                    var hashB = objectB.GetHashCode();
-                    combined = ( ( combined << 5 ) + combined ) ^ hashB;
-                }
-
-                return combined;
+                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate< int, long >( hashA, ( current, hashB ) => ( ( current << 5 ) + current ) ^ hashB );
             }
         }
 
@@ -615,7 +609,7 @@ namespace Librainian.Maths {
         /// <param name="objectA"></param>
         /// <param name="objectB"></param>
         /// <returns></returns>
-        public static UInt64 GetBigHash<TLhs, TRhs>( this TLhs objectA, TRhs objectB ) {
+        public static UInt64 GetHashCodes<TLhs, TRhs>( this TLhs objectA, TRhs objectB ) {
             if ( Equals( objectA, default(TLhs) ) ) {
                 return 0;
             }

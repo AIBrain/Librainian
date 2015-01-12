@@ -22,15 +22,11 @@
 
 namespace Librainian.Graphics.Imaging {
     using System;
-    using System.Collections.Generic;
     using System.Drawing;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
-    using System.ServiceModel.Configuration;
     using System.Threading.Tasks;
-    using System.Windows.Media.Effects;
-    using CsQuery.ExtensionMethods.Internal;
     using Extensions;
     using JetBrains.Annotations;
     using Maths;
@@ -78,7 +74,7 @@ namespace Librainian.Graphics.Imaging {
             this.Blue = blue;
             this.X = x;
             this.Y = y;
-            this.Checksum = ( Byte )MathExtensions.GetBigHash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
+            this.Checksum = ( Byte )MathExtensions.GetHashCodes( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
         }
 
         public Pixel( Color color, UInt32 x, UInt32 y ) {
@@ -88,7 +84,7 @@ namespace Librainian.Graphics.Imaging {
             this.Blue = color.B;
             this.X = x;
             this.Y = y;
-            this.Checksum = ( Byte )MathExtensions.GetBigHash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
+            this.Checksum = ( Byte )MathExtensions.GetHashCodes( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
         }
 
         //public static explicit operator Pixel( Color pixel ) => new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
@@ -98,7 +94,7 @@ namespace Librainian.Graphics.Imaging {
         public static explicit operator Byte[] ( Pixel pixel ) => new[ ] { pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue };
 
         /// <summary>
-        /// Static comparison type.
+        /// Static comparison.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -137,15 +133,15 @@ namespace Librainian.Graphics.Imaging {
         }
 
         [CanBeNull]
-        public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader streamReader, [NotNull] StreamWriter errors ) {
-            if ( streamReader == null ) {
-                throw new ArgumentNullException( "streamReader" );
+        public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader reader, [NotNull] StreamWriter errors ) {
+            if ( reader == null ) {
+                throw new ArgumentNullException( "reader" );
             }
             if ( errors == null ) {
                 throw new ArgumentNullException( "errors" );
             }
 
-            var line = await streamReader.ReadLineAsync() ?? String.Empty;
+            var line = await reader.ReadLineAsync() ?? String.Empty;
             line = line.Trim();
 
             if ( String.IsNullOrWhiteSpace( line ) ) {

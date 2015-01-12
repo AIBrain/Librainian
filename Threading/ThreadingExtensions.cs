@@ -26,8 +26,7 @@ namespace Librainian.Threading {
         /// <para>n cores to n</para>
         /// </summary>
         [NotNull]
-        public static readonly ParallelOptions Parallelism = new ParallelOptions
-        {
+        public static readonly ParallelOptions Parallelism = new ParallelOptions {
             MaxDegreeOfParallelism = Environment.ProcessorCount
         };
 
@@ -245,7 +244,7 @@ namespace Librainian.Threading {
                 if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
                     action?.Invoke();
                 }
-                   };
+            };
         }
 
         /// <summary>
@@ -260,8 +259,8 @@ namespace Librainian.Threading {
         public static Action ActionBarrier<T1>( [CanBeNull] this Action<T1> action, T1 parameter, long? callsAllowed = null ) {
             var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
             return () => {
-                if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 && action != null ) {
-                    action( parameter );
+                if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
+                    action?.Invoke( parameter );
                 }
             };
         }
@@ -351,6 +350,47 @@ namespace Librainian.Threading {
             return true;
         }
 
+        /// <summary>
+        /// “I have an async operation that’s not cancelable.  How do I cancel it?”
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="task"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <copyright>http://blogs.msdn.com/b/pfxteam/archive/2012/10/05/how-do-i-cancel-non-cancelable-async-operations.aspx</copyright>
+        public static async Task<T> WithCancellation<T>( this Task<T> task, CancellationToken cancellationToken ) {
+            var tcs = new TaskCompletionSource<bool>();
+            using ( cancellationToken.Register( o => ( ( TaskCompletionSource< bool > ) o ).TrySetResult( true ), tcs ) ) {
+                if ( task != await Task.WhenAny( task, tcs.Task ) ) {
+                    throw new OperationCanceledException( cancellationToken );
+                }
+                return await task;
+            }
+        }
+
+        /// <summary>
+        /// "you can even have a timeout using the following simple extension method"
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="task"></param>
+        /// <param name="timeout"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public static async Task<T> WithCancellation<T>( this Task<T> task, TimeSpan timeout, CancellationToken cancellationToken ) {
+
+            var t = await Task.WhenAny( task, Task.Delay( timeout, cancellationToken ) );
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if ( t != task ) {
+
+                throw new OperationCanceledException( "timeout" );
+            }
+
+            return task.Result;
+
+        }
+
         public static Task Then( [NotNull] this Task first, [NotNull] Action next ) {
             //if ( next == null ) {
             //    throw new ArgumentNullException( "next" );
@@ -436,7 +476,7 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-        [Obsolete("use continuewith", true)]
+
         public static Task Then<T1>( this Task<T1> first, Action<T1> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
@@ -470,7 +510,7 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-        [Obsolete("use continuewith", true)]
+
         public static Task Then<T1>( this Task<T1> first, Func<T1, Task> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
@@ -520,7 +560,7 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-        [Obsolete("use continuewith", true)]
+
         public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, T2> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
@@ -552,7 +592,7 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-        [Obsolete("use continuewith", true)]
+
         public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, Task<T2>> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( "first" );
