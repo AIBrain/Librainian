@@ -1,23 +1,22 @@
-#region License & Information
 // This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
 // "Librainian/PersistableSettings.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
-#endregion
 
 namespace Librainian.Persistence {
+
     using System;
     using System.Diagnostics;
     using System.Environment;
@@ -31,7 +30,41 @@ namespace Librainian.Persistence {
     using Properties;
     using Threading;
 
-    public class PersistableSettings  {
+    public class PersistableSettings {
+
+        /// <summary>
+        /// Returns the <see cref="MainStoragePath"/> as a <see cref="DirectoryInfo"/>.
+        /// </summary>
+        public DirectoryInfo MainStoragePath {
+            get {
+                DirectoryInfo value;
+                return Types.Name( () => this.MainStoragePath ).TryGet( out value ) ? value : null;
+            }
+
+            set { value.TrySave( Types.Name( () => this.MainStoragePath ) ); }
+        }
+
+        /// <summary>
+        /// ask user for folder/network path where to store
+        /// </summary>
+        [UsedImplicitly]
+        public void AskUserForStorageFolder() {
+            var folderBrowserDialog = new FolderBrowserDialog {
+                ShowNewFolderButton = true,
+                Description = Resources._Please_direct_me_to_a_folder_,
+                RootFolder = SpecialFolder.MyComputer
+            };
+
+            var owner = WindowWrapper.CreateWindowWrapper( Process.GetCurrentProcess().MainWindowHandle );
+
+            var dialog = folderBrowserDialog.ShowDialog( owner );
+
+            if ( dialog != DialogResult.OK || folderBrowserDialog.SelectedPath.IsNullOrWhiteSpace() ) {
+                return;
+            }
+            this.MainStoragePath = new DirectoryInfo( folderBrowserDialog.SelectedPath );
+        }
+
         public void Initialize() {
             Log.Enter();
             this.ValidateStorageFolder();
@@ -39,26 +72,14 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     Returns the <see cref="MainStoragePath" /> as a <see cref="DirectoryInfo" />.
-        /// </summary>
-        public DirectoryInfo MainStoragePath {
-            get {
-                DirectoryInfo value;
-                return Types.Name( () => this.MainStoragePath ).TryGet( out value ) ? value : null;
-            }
-            set { value.TrySave( Types.Name( () => this.MainStoragePath ) ); }
-        }
-
-        /// <summary>
-        ///     check if we have a storage folder.
-        ///     if we don't, popup a dialog to ask.
-        ///     Settings.
+        /// check if we have a storage folder. if we don't, popup a dialog to ask. Settings.
         /// </summary>
         /// <returns></returns>
         public void ValidateStorageFolder() {
             try {
-                //TODO recheck all this logic some other day
-                Again:
+
+//TODO recheck all this logic some other day
+Again:
                 if ( null == this.MainStoragePath ) {
                     this.AskUserForStorageFolder();
                     if ( null == this.MainStoragePath ) {
@@ -92,7 +113,7 @@ namespace Librainian.Persistence {
                 try {
                     this.TestForReadWriteAccess();
                 }
-                catch ( Exception ) {
+                catch ( Exception) {
                     var dialogResult = MessageBox.Show( String.Format( "Unable to write to storage folder [{0}]. Retry?", this.MainStoragePath ), "No Access", MessageBoxButtons.RetryCancel );
                     switch ( dialogResult ) {
                         case DialogResult.Retry:
@@ -107,11 +128,12 @@ namespace Librainian.Persistence {
             }
         }
 
-        [Obsolete]
+        //[Obsolete]
         private void TestForReadWriteAccess() {
             var randomFileName = Path.GetRandomFileName();
             try {
                 var temp = Path.Combine( this.MainStoragePath.FullName, String.Format( "{0}", randomFileName ) );
+
                 //TODO
                 //NtfsAlternateStream.WriteAllText( temp, text: Randem.NextString( 144, true, true, true, true ) );
                 //NtfsAlternateStream.Delete( temp );
@@ -119,27 +141,6 @@ namespace Librainian.Persistence {
             finally {
                 File.Delete( randomFileName );
             }
-        }
-
-        /// <summary>
-        ///     ask user for folder/network path where to store
-        /// </summary>
-        [UsedImplicitly]
-        public void AskUserForStorageFolder() {
-            var folderBrowserDialog = new FolderBrowserDialog {
-                                                                  ShowNewFolderButton = true,
-                                                                  Description = Resources._Please_direct_me_to_a_folder_,
-                                                                  RootFolder = SpecialFolder.MyComputer
-                                                              };
-
-            var owner = WindowWrapper.CreateWindowWrapper( Process.GetCurrentProcess().MainWindowHandle );
-
-            var dialog = folderBrowserDialog.ShowDialog( owner );
-
-            if ( dialog != DialogResult.OK || folderBrowserDialog.SelectedPath.IsNullOrWhiteSpace() ) {
-                return;
-            }
-            this.MainStoragePath = new DirectoryInfo( folderBrowserDialog.SelectedPath );
         }
     }
 }
