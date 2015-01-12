@@ -49,7 +49,7 @@ namespace Librainian.Measurement.Currency.BTC {
         public const Decimal BTC = 1M;
 
         /// <summary>
-        /// 0. 001
+        /// 0.001
         /// </summary>
         public const Decimal mBTC = 0.001M;
 
@@ -59,7 +59,7 @@ namespace Librainian.Measurement.Currency.BTC {
         public const UInt64 mBTCInOneBTC = ( UInt64 )( BTC / mBTC );
 
         /// <summary>
-        /// 0. 00000001
+        /// 0.00000001
         /// </summary>
         public const Decimal Satoshi = 0.00000001M;
 
@@ -69,12 +69,12 @@ namespace Librainian.Measurement.Currency.BTC {
         public const UInt64 SatoshiInOneBTC = ( UInt64 )( BTC / Satoshi );
 
         /// <summary>
-        /// 0. 0000001
+        /// 0.0000001
         /// </summary>
-        public const Decimal TenSatoshi = 0.0000001M;
+        public const Decimal TenSatoshi = Satoshi * 10.0m;
 
         /// <summary>
-        /// 0. 000001
+        /// 0.000001
         /// </summary>
         public const Decimal μBTC = 0.000001M;
 
