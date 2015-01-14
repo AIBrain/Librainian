@@ -98,7 +98,7 @@ namespace Librainian {
 
         [Test]
         public static Boolean TestRoman() {
-            short a = 0;
+            const short a = 0;
             short b = 1;
             short c = 1234;
             short d = 3999;

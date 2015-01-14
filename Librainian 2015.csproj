@@ -24,7 +24,7 @@
     <AssemblyVersionSettings>YearStamp.MonthStamp.DayStamp.TimeStamp</AssemblyVersionSettings>
     <AssemblyFileVersionSettings>YearStamp.MonthStamp.DayStamp.TimeStamp</AssemblyFileVersionSettings>
     <AssemblyInfoVersionSettings>YearStamp.MonthStamp.DayStamp.TimeStamp</AssemblyInfoVersionSettings>
-    <NuGetPackageImportStamp>3dae4ff3</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>5bba25c6</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -164,6 +164,7 @@
     <Compile Include="AmazedSaint\IHierarchyWrapperProvider.cs" />
     <Compile Include="AmazedSaint\NodeType.cs" />
     <Compile Include="AmazedSaint\SimpleHierarchyWrapper.cs" />
+    <Compile Include="Extensions\AssemblyInformation.cs" />
     <Compile Include="Extensions\CopyProgressRoutine.cs" />
     <Compile Include="Extensions\SafeSearchHandle.cs" />
     <Compile Include="Internet\Browser\AwesomiumWrapper.cs" />
@@ -658,7 +659,6 @@
     <Compile Include="Threading\WaitNode.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="External\Readme.txt" />
     <Content Include="External\x64\CodeFluent.Runtime.Compression.dll" />
     <Content Include="External\x86\CodeFluent.Runtime.Compression.dll" />
     <Content Include="Misc\asingle.js" />

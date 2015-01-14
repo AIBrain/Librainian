@@ -18,6 +18,7 @@
 // "Librainian/Types.cs" was last cleaned by Rick on 2014/08/15 at 2:22 PM
 
 namespace Librainian.Extensions {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -30,6 +31,8 @@ namespace Librainian.Extensions {
 
     public static class Types {
 
+        private static readonly Lazy<Assembly[]> LazyCurrentDomainGetAssemblies = new Lazy<Assembly[]>( () => AppDomain.CurrentDomain.GetAssemblies() );
+
         public static void CopyField<TSource>( this TSource source, TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( field == null ) {
                 throw new ArgumentNullException( "field" );
@@ -37,7 +40,7 @@ namespace Librainian.Extensions {
             try {
                 var sourceValue = field.GetValue( source );
 
-                if ( mergeDictionaries && sourceValue is IDictionary && MergeDictions( sourceValue as IDictionary, field, destination ) ) {
+                if ( mergeDictionaries && sourceValue is IDictionary && ( sourceValue as IDictionary ).MergeDictionaries( field, destination ) ) {
                     return;
                 }
 
@@ -186,6 +189,18 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
+        /// Get all <see cref="GetSealedClassesDerivedFrom"/><paramref name="baseType"/>.
+        /// </summary>
+        /// <param name="baseType"></param>
+        /// <returns></returns>
+        public static IEnumerable<Type> GetSealedClassesDerivedFrom( [CanBeNull] this Type baseType ) {
+            if ( baseType == null ) {
+                throw new ArgumentNullException( "baseType" );
+            }
+            return baseType.Assembly.GetTypes().Where( type => type.IsAssignableFrom( baseType ) && type.IsSealed );
+        }
+
+        /// <summary>
         /// Get all <see cref="Type"/> from <see cref="AppDomain.CurrentDomain"/> that should be
         /// able to be created via <see cref="Activator.CreateInstance(Type,BindingFlags,Binder,object[],CultureInfo) "/>.
         /// </summary>
@@ -199,20 +214,6 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Get all <see cref="GetSealedClassesDerivedFrom"/> <paramref name="baseType"/>.
-        /// </summary>
-        /// <param name="baseType"></param>
-        /// <returns></returns>
-        public static IEnumerable<Type> GetSealedClassesDerivedFrom( [CanBeNull] this Type baseType ) {
-            if ( baseType == null ) {
-                throw new ArgumentNullException( "baseType" );
-            }
-            return baseType.Assembly.GetTypes().Where( type => type.IsAssignableFrom( baseType ) && type.IsSealed );
-        }
-
-        private static readonly Lazy< Assembly[] > LazyCurrentDomainGetAssemblies = new Lazy< Assembly[] >( () => AppDomain.CurrentDomain.GetAssemblies() );
-
-        /// <summary>
         /// <para>Checks a type to see if it derives from a raw generic (e.g. List[[]])</para>
         /// </summary>
         /// <param name="type"></param>
@@ -224,14 +225,12 @@ namespace Librainian.Extensions {
                 if ( generic == cur ) {
                     return true;
                 }
-                if ( type != null ) {
-                    type = type.BaseType;
-                }
+                type = type?.BaseType;
             }
             return false;
         }
 
-        public static Boolean MergeDictions<TSource>( IDictionary sourceValue, FieldInfo field, TSource destination ) {
+        public static Boolean MergeDictionaries<TSource>( this IDictionary sourceValue, FieldInfo field, TSource destination ) {
             if ( null == sourceValue ) {
                 return false;
             }
