@@ -21,12 +21,7 @@ namespace Librainian.Database {
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Dynamic;
-    using System.Linq.Expressions;
     using System.Media;
-    using System.Reflection;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
     using Threading;
 
     public static class DatabaseExtensions {
@@ -84,6 +79,7 @@ namespace Librainian.Database {
             return ds;
         }
 
+/*
         /// <summary>
         /// <para>"Attempting below to get a fluent Object to DTO builder - which fails when a property is missed."</para>
         /// </summary>
@@ -127,6 +123,7 @@ namespace Librainian.Database {
             var anon = JsonConvert.DeserializeAnonymousType<object>( json, Activator.CreateInstance<T2>() );
             return ( ( JObject )anon ).ToObject<T2>();
         }
+*/
 
 
 /*
