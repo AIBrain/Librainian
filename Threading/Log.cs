@@ -85,9 +85,8 @@ namespace Librainian.Threading {
         ///     <para>Write the <paramref name="message" /> out to the console.</para>
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="method"></param>
         [DebuggerStepThrough]
-        public static void WriteLine( this String message, [CallerMemberName] String method = "" ) => ConsoleListener.WriteLine( String.Format( "({0}) {1}", method, message ) );
+        public static void WriteLine( this String message ) => ConsoleListener.WriteLine( message  );
 
         [DebuggerStepThrough]
         public static void Enter( [CallerMemberName] String method = "" ) {

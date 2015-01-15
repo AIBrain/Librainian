@@ -1,32 +1,30 @@
-﻿
-namespace Librainian.Internet.Browser {
+﻿namespace Librainian.Internet.Browser {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Awesomium.Windows.Forms;
     using JetBrains.Annotations;
-    using Measurement.Time;
     using Threading;
 
     /// <summary>
-    /// Semaphore wrapper for the <see cref="Awesomium"/> browser control (<see cref="WebControl"/>).
+    /// Semaphore wrapper for the <see cref="Awesomium"/> browser control ( <see cref="WebControl"/>).
     /// </summary>
     public class AwesomiumWrapper {
-
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim( initialCount: 0, maxCount: 1 );
+        [ NotNull ] private readonly SemaphoreSlim _semaphore = new SemaphoreSlim( initialCount: 0, maxCount: 1 );
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="webControl"></param>
+        /// <param name="timeout"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public AwesomiumWrapper( [NotNull] WebControl webControl ) {
+        public AwesomiumWrapper( [NotNull] WebControl webControl, TimeSpan timeout ) {
             if ( webControl == null ) {
                 throw new ArgumentNullException( "webControl" );
             }
-            WebControl = webControl;
-            WaitAsync( Seconds.One ).Wait();
-            Release();
+            this.WebControl = webControl;
+            this.Timeout = timeout;
+            //this.WaitAsync( timeout: Seconds.One ).Wait();
+            //this.Release();
         }
 
         /// <summary>
@@ -42,20 +40,20 @@ namespace Librainian.Internet.Browser {
         [NotNull]
         public WebControl WebControl { get; }
 
+        public TimeSpan Timeout { get; }
+
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="javascript"></param>
-        /// <param name="timeout"></param>
         /// <param name="retries"></param>
         /// <returns></returns>
-        public async Task<Boolean> ExecuteJavascript( String javascript, TimeSpan timeout, int retries = 1 ) {
+        public async Task<bool> ExecuteJavascript( String javascript, int retries = 1 ) {
             var doWeHaveAccess = false;
             while ( retries > 0 ) {
                 retries--;
                 try {
                     if ( retries > 0 ) {
-                        doWeHaveAccess = await this.WaitAsync( timeout );
+                        doWeHaveAccess = await this.WaitAsync( Timeout );
                         if ( doWeHaveAccess ) {
                             this.WebControl.Invoke( new Action( () => this.WebControl.ExecuteJavascript( javascript ) ) );
                             return true;
@@ -79,21 +77,20 @@ namespace Librainian.Internet.Browser {
         /// </summary>
         /// <param name="id"></param>
         /// <param name="function"></param>
-        /// <param name="timeout"></param>
         /// <returns></returns>
-        public async Task<Boolean> ExecuteJavascript( String id, String function, TimeSpan timeout ) {
+        public async Task<bool> ExecuteJavascript( String id, String function ) {
             var javascript = String.Format( "document.getElementById( {0} ).{1}();", id, function );
-            var result = await this.ExecuteJavascript( javascript, timeout );
+            var result = await this.ExecuteJavascript( javascript );
             return result;
         }
 
-        public async Task<TResult> ExecuteJavascriptWithResult<TResult>( String javascript, TimeSpan timeout, int retries = 1 ) {
+        public async Task<TResult> ExecuteJavascriptWithResult<TResult>( String javascript, int retries = 1 ) {
             var doWeHaveAccess = false;
             while ( retries > 0 ) {
                 retries--;
                 try {
                     if ( retries > 0 ) {
-                        doWeHaveAccess = await this.WaitAsync( timeout );
+                        doWeHaveAccess = await this.WaitAsync( Timeout );
                         if ( doWeHaveAccess ) {
                             var result = this.WebControl.Invoke( new Action( () => this.WebControl.ExecuteJavascriptWithResult( javascript ) ) );
                             return result is TResult ? ( TResult )result : default(TResult);
@@ -112,31 +109,34 @@ namespace Librainian.Internet.Browser {
             return default(TResult);
         }
 
+        public async Task<bool> ClickSubmit( uint index ) {
+            var javascript = String.Format( "document.querySelectorAll(\"button[type='submit']\")[{0}].click();", index );
+            return await this.ExecuteJavascript( javascript );
+        }
+
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="timeout"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         [CanBeNull]
-        public async Task<String> GetValue( [ NotNull ] String id, TimeSpan timeout ) {
+        public async Task<string> GetValue( [NotNull] String id ) {
             if ( String.IsNullOrWhiteSpace( id ) ) {
                 throw new ArgumentNullException( "id" );
             }
             var javascript = String.Format( "document.getElementById( {0} ).value", id );
-            var result = await this.ExecuteJavascriptWithResult<String>( javascript, timeout );
+            var result = await this.ExecuteJavascriptWithResult<String>( javascript );
             return result;
         }
 
-        public async Task<Boolean> SetValue( String id, String text, TimeSpan timeout ) {
+        public async Task<bool> SetValue( String id, String text ) {
             var javascript = String.Format( "document.getElementById( {0} ).value=\"{1}\";", id, text );
-            var result = await this.ExecuteJavascript( javascript, timeout );
+            var result = await this.ExecuteJavascript( javascript );
             return result;
         }
 
         private void Release() => this._semaphore.Release();
 
-        private async Task<Boolean> WaitAsync( TimeSpan timeout ) => await this._semaphore.WaitAsync( timeout );
+        private async Task<bool> WaitAsync( TimeSpan timeout ) => await this._semaphore.WaitAsync( timeout );
     }
 }
