@@ -97,7 +97,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\AIBrain 2015\packages\MathNet.Numerics.3.5.0\lib\net40\MathNet.Numerics.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -348,18 +347,11 @@
     <Compile Include="IO\SearchStyle.cs" />
     <Compile Include="Linguistics\Author.cs" />
     <Compile Include="Linguistics\UDC.cs" />
-    <Compile Include="Magic\Abodit\IId.cs" />
-    <Compile Include="Magic\Abodit\Proxy.cs" />
-    <Compile Include="Magic\Abodit\SimpleDocument.cs" />
     <Compile Include="Magic\AutofacContainer.cs" />
     <Compile Include="Magic\BetterDisposableClass.cs" />
-    <Compile Include="Magic\Abodit\MongoDynamicBsonSerializer.cs" />
-    <Compile Include="Magic\Abodit\MongoDynamic.cs" />
-    <Compile Include="Magic\Abodit\MongoDynamicSerializationProvider.cs" />
     <Compile Include="Magic\IIocContainer.cs" />
     <Compile Include="Magic\Ioc.cs" />
     <Compile Include="Magic\MagicExtensions.cs" />
-    <Compile Include="Magic\Abodit\MagicModule.cs" />
     <Compile Include="Magic\ManagedDisposable.cs" />
     <Compile Include="Magic\NativeDisposable.cs" />
     <Compile Include="Magic\NinjectIocContainer.cs" />
