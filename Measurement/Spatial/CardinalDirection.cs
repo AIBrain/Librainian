@@ -23,7 +23,7 @@
 
 namespace Librainian.Measurement.Spatial {
 
-    public enum CardinalDirections {
+    public enum CardinalDirection {
 
         /// <summary>
         /// 0 (equal to 360)

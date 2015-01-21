@@ -37,7 +37,7 @@ namespace Librainian.Measurement.Spatial {
     [Serializable]
     [Immutable]
     public struct Degrees : IComparable<Degrees> {
-        public const Double MaximumValue = ( double )CardinalDirections.FullNorth;
+        public const Double MaximumValue = ( double )CardinalDirection.FullNorth;
         public const Double MinimumValue = 0.0f;
 
         /// <summary>

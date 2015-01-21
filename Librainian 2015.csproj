@@ -427,7 +427,7 @@
     <Compile Include="Measurement\Physics\TeraElectronVolts.cs" />
     <Compile Include="Measurement\Length\PlanckLengths.cs" />
     <Compile Include="Measurement\Length\Feet.cs" />
-    <Compile Include="Measurement\Spatial\CardinalDirections.cs" />
+    <Compile Include="Measurement\Spatial\CardinalDirection.cs" />
     <Compile Include="Measurement\Spatial\Compass.cs" />
     <Compile Include="Measurement\Spatial\Degrees.cs" />
     <Compile Include="Measurement\Spatial\GeoLocation.cs" />
