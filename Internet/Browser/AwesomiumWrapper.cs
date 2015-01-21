@@ -1,13 +1,16 @@
 ﻿namespace Librainian.Internet.Browser {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows.Forms;
     using Awesomium.Core;
     using Awesomium.Windows.Forms;
     using CsQuery;
     using JetBrains.Annotations;
+    using Measurement.Time;
     using Threading;
 
     /// <summary>
@@ -155,13 +158,13 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        [ NotNull ]
-        public async Task< string > InnerHTML() {
+        [NotNull]
+        public async Task<string> InnerHTML() {
             var doWeHaveAccess = false;
             try {
                 doWeHaveAccess = await this.WaitAsync( this.Timeout );
                 if ( doWeHaveAccess ) {
-                    var result = this.WebControl.Invoke( new Func< string >( () => this.WebControl.ExecuteJavascriptWithResult( "document.getElementsByTagName('html')[0].innerHTML" ) ) );
+                    var result = this.WebControl.Invoke( new Func<string>( () => this.WebControl.ExecuteJavascriptWithResult( "document.getElementsByTagName('html')[0].innerHTML" ) ) );
 
                     if ( result is String ) {
                         return result as String;
@@ -178,19 +181,19 @@
                 }
             }
             return String.Empty;
-        } 
-        
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        [ NotNull ]
-        public async Task< string > InnerText() {
+        [NotNull]
+        public async Task<string> InnerText() {
             var doWeHaveAccess = false;
             try {
                 doWeHaveAccess = await this.WaitAsync( this.Timeout );
                 if ( doWeHaveAccess ) {
-                    var result = this.WebControl.Invoke( new Func< string >( () => this.WebControl.ExecuteJavascriptWithResult( "document.getElementsByTagName('html')[0].innerText" ) ) );
+                    var result = this.WebControl.Invoke( new Func<string>( () => this.WebControl.ExecuteJavascriptWithResult( "document.getElementsByTagName('html')[0].innerText" ) ) );
 
                     if ( result is String ) {
                         return result as String;
@@ -207,6 +210,71 @@
                 }
             }
             return String.Empty;
+        }
+
+        private static async void Throttle( TimeSpan? until = null ) {
+            //TODO look into that semaphore waitgate thing...
+            if ( !until.HasValue ) {
+                until = Seconds.One;
+            }
+            var watch = Stopwatch.StartNew();
+            do {
+                Application.DoEvents();
+                await Task.Delay( Milliseconds.Hertz111 );
+                if ( watch.Elapsed >= until.Value ) {
+                    break;
+                }
+            } while ( watch.Elapsed < until.Value );
+            watch.Stop();
+        }
+
+
+        public async Task<Boolean> Navigate( [NotNull] Uri url, [CanBeNull] SimpleCancel simpleCancel = null ) {
+            if ( url == null ) {
+                throw new ArgumentNullException( "url" );
+            }
+
+            var doWeHaveAccess = false;
+            try {
+                doWeHaveAccess = await this.WaitAsync( this.Timeout );
+                if ( !doWeHaveAccess ) {
+                    return false;
+                }
+
+                var watchdog = Stopwatch.StartNew();
+
+                var result = this.WebControl.Invoke( method: new Action( () => {
+                    Log.Info( String.Format( "Navigating to {0}...", url ) );
+
+                    this.WebControl.Source = url;
+
+                    do {
+                        //WebCore.Update(); //trust in WebCore.Run?
+                        Throttle();
+
+                        if ( simpleCancel != null && simpleCancel.IsCancellationRequested ) {
+                            break;
+                        }
+
+                        if ( watchdog.Elapsed >= this.Timeout ) {
+                            Log.Info( "*navigation^timed->out*" );
+                            break;
+                        }
+                    } while ( this.WebControl.IsLoading || this.WebControl.IsNavigating );
+
+                    Log.Info( "done navigating." );
+                } ) );
+                return WebControl.IsDocumentReady && WebControl.IsResponsive;
+            }
+            catch ( Exception exception ) {
+                Debug.WriteLine( exception.Message );
+            }
+            finally {
+                if ( doWeHaveAccess ) {
+                    this.Release();
+                }
+            }
+            return false;
         }
 
 
