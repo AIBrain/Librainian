@@ -23,9 +23,9 @@ namespace Librainian.Gaming.PlayingCards {
     [Immutable]
     public class Card {
         public readonly FaceValues FaceValue;
-        public readonly Suite Suite;
+        public readonly Suites Suite;
 
-        public Card( Suite suite, FaceValues faceValue ) {
+        public Card( Suites suite, FaceValues faceValue ) {
             this.FaceValue = faceValue;
             this.Suite = suite;
         }
