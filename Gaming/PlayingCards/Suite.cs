@@ -19,7 +19,7 @@
 
 namespace Librainian.Gaming.PlayingCards {
 
-    public enum Suites {
+    public enum Suite {
         Heart,
         Ace,
         Spade,
