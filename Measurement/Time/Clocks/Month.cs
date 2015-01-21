@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Time.Clocks {
     /// </summary>
     [ DataContract ]
     [ Serializable ]
-    public struct Month : IClockPart {
+    public sealed class Month : IClockPart {
         public static readonly Byte[] ValidMonths = Enumerable.Range( 1, Months.InOneCommonYear + 1 ).Select( i => ( Byte ) i ).OrderBy( b => b ).ToArray();
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Librainian.Measurement.Time.Clocks {
             MaximumValue.Should().BeGreaterThan( MinimumValue );
         }
 
-        public Month( Byte value ) : this() {
+        public Month( Byte value ) {
             if ( !ValidMonths.Contains( value ) ) {
                 throw new ArgumentOutOfRangeException( "value", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", value, MinimumValue, MaximumValue ) );
             }

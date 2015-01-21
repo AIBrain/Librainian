@@ -35,7 +35,7 @@ namespace Librainian.Parsing {
         }
 
         //TODO use a concurrentBag()
-        private readonly StringCollection Lookupsinprogress = new StringCollection();
+        private readonly StringCollection _lookupsinprogress = new StringCollection();
 
         /// <summary>
         ///     The language defined in this dictionary.
@@ -65,10 +65,10 @@ namespace Librainian.Parsing {
 
         public long LookupsInProgress {
             get {
-                var syncRoot = this.Lookupsinprogress.SyncRoot;
+                var syncRoot = this._lookupsinprogress.SyncRoot;
                 if ( syncRoot != null ) {
                     lock ( syncRoot ) {
-                        return this.Lookupsinprogress.Count;
+                        return this._lookupsinprogress.Count;
                     }
                 }
                 return 0;
@@ -117,8 +117,8 @@ namespace Librainian.Parsing {
             //lock ( Definitions.Rows.SyncRoot ) { if ( !Definitions.Save() ) { AllGood = false; } }
             //lock ( Synonyms.Rows.SyncRoot ) { if ( !Synonyms.Save() ) { AllGood = false; } }
             //lock ( Antonyms.Rows.SyncRoot ) { if ( !Antonyms.Save() ) { AllGood = false; } }
-            var AllGood = Randem.NextBoolean();
-            return AllGood;
+            var allGood = Randem.NextBoolean();
+            return allGood;
         }
 
         //private static List<String> fileListIndex = DbFileHelper.GetIndexForType( DbPartOfSpeechType.All );

@@ -1,8 +1,12 @@
 ﻿namespace Librainian.Internet.Browser {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Awesomium.Core;
     using Awesomium.Windows.Forms;
+    using CsQuery;
     using JetBrains.Annotations;
     using Threading;
 
@@ -10,12 +14,13 @@
     /// Semaphore wrapper for the <see cref="Awesomium"/> browser control ( <see cref="WebControl"/>).
     /// </summary>
     public class AwesomiumWrapper {
-        [ NotNull ] private readonly SemaphoreSlim _semaphore = new SemaphoreSlim( initialCount: 0, maxCount: 1 );
+        [NotNull]
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim( initialCount: 0, maxCount: 1 );
 
         /// <summary>
         /// </summary>
         /// <param name="webControl"></param>
-        /// <param name="timeout"></param>
+        /// <param name="timeout">How long to retry the commands.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public AwesomiumWrapper( [NotNull] WebControl webControl, TimeSpan timeout ) {
             if ( webControl == null ) {
@@ -23,8 +28,6 @@
             }
             this.WebControl = webControl;
             this.Timeout = timeout;
-            //this.WaitAsync( timeout: Seconds.One ).Wait();
-            //this.Release();
         }
 
         /// <summary>
@@ -43,8 +46,9 @@
         public TimeSpan Timeout { get; }
 
         /// <summary>
+        /// Access is gated by a semaphore.
         /// </summary>
-        /// <param name="javascript"></param>
+        /// <param name="javascript">The javascript to execute</param>
         /// <param name="retries"></param>
         /// <returns></returns>
         public async Task<bool> ExecuteJavascript( String javascript, int retries = 1 ) {
@@ -78,13 +82,19 @@
         /// <param name="id"></param>
         /// <param name="function"></param>
         /// <returns></returns>
-        public async Task<bool> ExecuteJavascript( String id, String function ) {
+        public async Task<Boolean> ExecuteJavascript( String id, String function ) {
             var javascript = String.Format( "document.getElementById( {0} ).{1}();", id, function );
             var result = await this.ExecuteJavascript( javascript );
             return result;
         }
 
-        public async Task<TResult> ExecuteJavascriptWithResult<TResult>( String javascript, int retries = 1 ) {
+        /// <summary>
+        /// Access is gated by a semaphore.
+        /// </summary>
+        /// <param name="javascript"></param>
+        /// <param name="retries"></param>
+        /// <returns></returns>
+        public async Task<JSValue> ExecuteJavascriptWithResult( String javascript, int retries = 1 ) {
             var doWeHaveAccess = false;
             while ( retries > 0 ) {
                 retries--;
@@ -92,8 +102,8 @@
                     if ( retries > 0 ) {
                         doWeHaveAccess = await this.WaitAsync( Timeout );
                         if ( doWeHaveAccess ) {
-                            var result = this.WebControl.Invoke( new Action( () => this.WebControl.ExecuteJavascriptWithResult( javascript ) ) );
-                            return result is TResult ? ( TResult )result : default(TResult);
+                            var result = ( JSValue )this.WebControl.Invoke( new Func<JSValue>( () => this.WebControl.ExecuteJavascriptWithResult( javascript ) ) );
+                            return result;
                         }
                     }
                 }
@@ -106,12 +116,116 @@
                     }
                 }
             }
-            return default(TResult);
+            return default(JSValue);
         }
 
         public async Task<bool> ClickSubmit( uint index ) {
             var javascript = String.Format( "document.querySelectorAll(\"button[type='submit']\")[{0}].click();", index );
             return await this.ExecuteJavascript( javascript );
+        }
+
+        /// <summary>
+        /// <para>Retrieve the <see cref="Uri" /> of the <see cref="WebControl"/>.</para>
+        /// </summary>
+        /// <returns></returns>
+        [NotNull]
+        public async Task<Uri> GetBrowserLocation() {
+            var doWeHaveAccess = false;
+            try {
+                doWeHaveAccess = await this.WaitAsync( this.Timeout );
+                if ( doWeHaveAccess ) {
+                    var result = ( Uri )this.WebControl.Invoke( new Func<Uri>( () => this.WebControl.Source ) );
+                    return result;
+                }
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+            finally {
+                if ( doWeHaveAccess ) {
+                    this.Release();
+                }
+            }
+
+            return new Uri( "about:blank" );
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [ NotNull ]
+        public async Task< string > InnerHTML() {
+            var doWeHaveAccess = false;
+            try {
+                doWeHaveAccess = await this.WaitAsync( this.Timeout );
+                if ( doWeHaveAccess ) {
+                    var result = this.WebControl.Invoke( new Func< string >( () => this.WebControl.ExecuteJavascriptWithResult( "document.getElementsByTagName('html')[0].innerHTML" ) ) );
+
+                    if ( result is String ) {
+                        return result as String;
+                    }
+                    return result.ToString();
+                }
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+            finally {
+                if ( doWeHaveAccess ) {
+                    this.Release();
+                }
+            }
+            return String.Empty;
+        } 
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [ NotNull ]
+        public async Task< string > InnerText() {
+            var doWeHaveAccess = false;
+            try {
+                doWeHaveAccess = await this.WaitAsync( this.Timeout );
+                if ( doWeHaveAccess ) {
+                    var result = this.WebControl.Invoke( new Func< string >( () => this.WebControl.ExecuteJavascriptWithResult( "document.getElementsByTagName('html')[0].innerText" ) ) );
+
+                    if ( result is String ) {
+                        return result as String;
+                    }
+                    return result.ToString();
+                }
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+            finally {
+                if ( doWeHaveAccess ) {
+                    this.Release();
+                }
+            }
+            return String.Empty;
+        }
+
+
+        /// <summary>
+        /// Return all anchers' href.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Uri> GetAllAnchers() {
+            var html = this.InnerHTML().Result;
+
+            var cq = new CQ( html: html, parsingMode: HtmlParsingMode.Auto, parsingOptions: HtmlParsingOptions.AllowSelfClosingTags, docType: DocType.HTML5 );
+
+            var anchors = cq[ "a" ].ToList();
+
+            Uri uri = null;
+
+            return from href in anchors.Select( domObject => domObject[ "href" ] )
+                   where Uri.TryCreate( href, UriKind.Absolute, out uri )
+                   select uri;
         }
 
         /// <summary>
@@ -125,7 +239,7 @@
                 throw new ArgumentNullException( "id" );
             }
             var javascript = String.Format( "document.getElementById( {0} ).value", id );
-            var result = await this.ExecuteJavascriptWithResult<String>( javascript );
+            var result = await this.ExecuteJavascriptWithResult( javascript );
             return result;
         }
 
@@ -134,6 +248,20 @@
             var result = await this.ExecuteJavascript( javascript );
             return result;
         }
+
+        //public Task JsFireEvent( string getElementQuery, string eventName ) {
+        //    var browser = this.WebBrowser1;
+        //    if ( browser != null ) {
+        //        browser.ExecuteJavascript( string.Format( @"
+        //                    function fireEvent(element,event) {{
+        //                        var evt = document.createEvent('HTMLEvents');
+        //                        evt.initEvent(event, true, true ); // event type,bubbling,cancelable
+        //                        element.dispatchEvent(evt);
+        //                    }}
+        //                    {0}", String.Format( "fireEvent({0}, '{1}');", getElementQuery, eventName ) ) );
+        //    }
+        //}
+
 
         private void Release() => this._semaphore.Release();
 
