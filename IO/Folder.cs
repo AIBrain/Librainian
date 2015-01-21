@@ -87,7 +87,7 @@ namespace Librainian.IO {
         public Folder( SpecialFolder specialFolder ) : this( GetFolderPath( specialFolder ) ) {
         }
 
-        public Folder( SpecialFolder specialFolder, String appName, String subFolder ) : this( Path.Combine( GetFolderPath( specialFolder ), appName, subFolder ) ) {
+        public Folder( SpecialFolder specialFolder, String applicationName, String subFolder ) : this( Path.Combine( GetFolderPath( specialFolder ), applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder ) ) {
         }
 
         /// <summary>

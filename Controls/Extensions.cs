@@ -490,15 +490,19 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         /// <param name="delay"></param>
+        /// <param name="afterDelay"></param>
         /// <returns></returns>
-        public static void Push( [CanBeNull] this Button control, TimeSpan? delay = null ) {
+        public static Timer Push( [ NotNull ] this Button control, TimeSpan? delay = null, Action afterDelay = null ) {
             if ( control == null ) {
-                return;
+                throw new ArgumentNullException( "control" );
             }
             if ( !delay.HasValue ) {
                 delay = Milliseconds.One;
             }
-            ( ( Span )delay.Value ).Create( () => control.InvokeIfRequired( control.PerformClick ) ).AndStart();
+            return ( ( Span )delay.Value ).Create( () => control.InvokeIfRequired( () => {
+                                                                                       control.PerformClick();
+                                                                                       afterDelay?.Invoke();
+                                                                                   } ) ).AndStart();
         }
 
         /// <summary>
