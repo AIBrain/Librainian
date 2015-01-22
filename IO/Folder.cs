@@ -15,9 +15,10 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/Folder.cs" was last cleaned by Rick on 2014/12/09 at 5:56 AM
+// "Librainian 2015/Folder.cs" was last cleaned by Rick on 2015/01/22 at 6:16 AM
 
 namespace Librainian.IO {
+
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -25,7 +26,6 @@ namespace Librainian.IO {
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization;
-    using System.Security;
     using System.Text;
     using System.Windows.Forms;
     using Extensions;
@@ -39,7 +39,7 @@ namespace Librainian.IO {
     [Immutable]
     public class Folder {
 
-        //TODO add in long name (unc) support. Like 'ZedLongPaths' ?
+        //TODO add in long name (unc) support. Like 'ZedLongPaths' does
 
         /// <summary>
         /// "/"
