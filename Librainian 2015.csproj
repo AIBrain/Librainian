@@ -157,6 +157,7 @@
     <Compile Include="Extensions\CopyProgressRoutine.cs" />
     <Compile Include="Extensions\SafeSearchHandle.cs" />
     <Compile Include="Internet\Browser\AwesomiumWrapper.cs" />
+    <Compile Include="Measurement\Frequency\FPS.cs" />
     <Compile Include="Parsing\Strand.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Collections\AbstractBlockingQueue.cs" />

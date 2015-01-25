@@ -211,6 +211,8 @@ namespace Librainian.IO {
         /// <returns></returns>
         public static Boolean operator ==( Document left, Document right ) => Equals( left, right );
 
+        public static implicit operator FileInfo( Document document ) => document.FileInfo;
+
         /// <summary>
         /// <para>If the file does not exist, it is created.</para>
         /// <para>Then the <paramref name="text"/> is appended to the file.</para>
