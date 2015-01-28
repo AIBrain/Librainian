@@ -67,8 +67,8 @@ namespace Librainian.IO.Compression {
         /// </summary>
         /// <returns></returns>
         public Double GetCurrentCompressionRatio() {
-            var result = ( Double )new BigRational( this.HowManyBytesAsCompressed, this.HowManyBytesFed );
-            return 1 - result;
+	        var d = ( Double ) new BigRational( this.HowManyBytesAsCompressed, this.HowManyBytesFed );
+            return 1 - d;
         }
 
         public void Report() => Debug.WriteLine( "Current compression is now {0:P4}", this.GetCurrentCompressionRatio() );

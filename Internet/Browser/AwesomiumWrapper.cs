@@ -62,7 +62,8 @@
                     if ( retries > 0 ) {
                         doWeHaveAccess = await this.WaitAsync( Timeout );
                         if ( doWeHaveAccess ) {
-                            this.WebControl.Invoke( new Action( () => this.WebControl.ExecuteJavascript( javascript ) ) );
+							this.WebControl.Invoke( new Action( () => this.WebControl.ExecuteJavascript( javascript ) ) );
+	                        //this.WebControl.ExecuteJavascript( javascript );
                             return true;
                         }
                     }
@@ -106,6 +107,7 @@
                         doWeHaveAccess = await this.WaitAsync( Timeout );
                         if ( doWeHaveAccess ) {
                             var result = ( JSValue )this.WebControl.Invoke( new Func<JSValue>( () => this.WebControl.ExecuteJavascriptWithResult( javascript ) ) );
+                            //var result = this.WebControl.ExecuteJavascriptWithResult( javascript ) ;
                             return result;
                         }
                     }

@@ -43,8 +43,7 @@ namespace Librainian.Persistence {
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
-    public class PersistTable<TKey, TValue> : IDictionary<TKey, TValue>, IDisposable
-        where TKey : IComparable<TKey>, IComparable
+    public class PersistTable<TKey, TValue> : IDictionary<TKey, TValue>, IDisposable where TKey : IComparable<TKey>, IComparable
         {
 
         /// <summary>

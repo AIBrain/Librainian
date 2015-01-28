@@ -20,31 +20,31 @@
 #endregion
 
 namespace Librainian.Magic {
-    using System;
-    using System.Reactive;
-    using System.Reactive.Linq;
+	using System;
+	using System.Reactive;
+	using System.Reactive.Linq;
 
-    /// <summary>
-    ///     <para>Any sufficiently advanced technology is indistinguishable from magic.</para>
-    /// </summary>
-    /// <seealso cref="http://wikipedia.org/wiki/Clarke's_three_laws" />
-    public static class MagicExtensions {
+	/// <summary>
+	///     <para>Any sufficiently advanced technology is indistinguishable from magic.</para>
+	/// </summary>
+	/// <seealso cref="http://wikipedia.org/wiki/Clarke's_three_laws" />
+	public static class MagicExtensions {
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="observable"></param>
-        /// <returns></returns>
-        /// <seealso cref="http://haacked.com/archive/2012/10/08/writing-a-continueafter-method-for-rx.aspx/"/>
-        public static IObservable< Unit > AsCompletion< T >( this IObservable< T > observable ) => Observable.Create< Unit >( observer => {
-                                                                                                                                  Action onCompleted = () => {
-                                                                                                                                                           observer.OnNext( Unit.Default );
-                                                                                                                                                           observer.OnCompleted();
-                                                                                                                                                       };
-                                                                                                                                  return observable.Subscribe( _ => { }, observer.OnError, onCompleted );
-                                                                                                                              } );
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="observable"></param>
+		/// <returns></returns>
+		/// <seealso cref="http://haacked.com/archive/2012/10/08/writing-a-continueafter-method-for-rx.aspx/"/>
+		public static IObservable<Unit> AsCompletion<T>( this IObservable<T> observable ) => Observable.Create<Unit>( observer => {
+			Action onCompleted = () => {
+				observer.OnNext( Unit.Default );
+				observer.OnCompleted();
+			};
+			return observable.Subscribe( _ => { }, observer.OnError, onCompleted );
+		} );
 
-        public static IObservable< TRet > ContinueAfter< T, TRet >( this IObservable< T > observable, Func< IObservable< TRet > > selector ) => observable.AsCompletion().SelectMany( _ => selector() );
-    }
+		public static IObservable<TRet> ContinueAfter<T, TRet>( this IObservable<T> observable, Func<IObservable<TRet>> selector ) => observable.AsCompletion().SelectMany( _ => selector() );
+	}
 }
