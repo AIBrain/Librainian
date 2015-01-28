@@ -27,7 +27,7 @@ namespace Librainian.Measurement.Currency.USD {
     using JetBrains.Annotations;
     using Librainian.Extensions;
     using NUnit.Framework;
-    using Threading.Blocks;
+    using Threading;
 
     public static class Extensions {
         [NotNull] public static readonly HashSet< IDenomination > PossibleDenominations = new HashSet< IDenomination >();
@@ -101,7 +101,7 @@ namespace Librainian.Measurement.Currency.USD {
             if ( wallet == null ) {
                 throw new ArgumentNullException( "wallet" );
             }
-            var bsfasd = new ActionBlock< KeyValuePair< IDenomination, ulong > >( pair => wallet.Deposit( pair.Key, pair.Value ), ManyProducers.ConsumeParallel );
+            var bsfasd = new ActionBlock< KeyValuePair< IDenomination, ulong > >( pair => wallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeParallel );
             bsfasd.Complete();
             return bsfasd.Completion;
         }
@@ -181,7 +181,7 @@ namespace Librainian.Measurement.Currency.USD {
                 throw new ArgumentNullException( "wallet" );
             }
             sourceAmounts = sourceAmounts ?? Enumerable.Empty< KeyValuePair< IDenomination, ulong > >();
-            var actionBlock = new ActionBlock< KeyValuePair< IDenomination, ulong > >( pair => wallet.Deposit( pair.Key, pair.Value ), ManyProducers.ConsumeParallel );
+            var actionBlock = new ActionBlock< KeyValuePair< IDenomination, ulong > >( pair => wallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeParallel );
             Parallel.ForEach( sourceAmounts, pair => actionBlock.Post( pair ) );
             actionBlock.Complete();
             return actionBlock.Completion;

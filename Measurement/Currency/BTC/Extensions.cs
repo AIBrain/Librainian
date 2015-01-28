@@ -28,9 +28,9 @@ namespace Librainian.Measurement.Currency.BTC {
     using JetBrains.Annotations;
     using Librainian.Extensions;
     using NUnit.Framework;
-    using Threading.Blocks;
+    using Threading;
 
-    public static class Extensions {
+	public static class Extensions {
         [NotNull]
         public static readonly HashSet<ICoin> PossibleCoins = new HashSet<ICoin>();
 
@@ -174,7 +174,7 @@ namespace Librainian.Measurement.Currency.BTC {
             if ( coinWallet == null ) {
                 throw new ArgumentNullException( "coinWallet" );
             }
-            var bsfasd = new ActionBlock<KeyValuePair<ICoin, ulong>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), ManyProducers.ConsumeParallel );
+            var bsfasd = new ActionBlock<KeyValuePair<ICoin, ulong>>( pair => coinWallet.Deposit( pair.Key, pair.Value ),Blocks. ManyProducers.ConsumeParallel );
             bsfasd.Complete();
             return bsfasd.Completion;
         }
@@ -207,7 +207,7 @@ namespace Librainian.Measurement.Currency.BTC {
                 throw new ArgumentNullException( "coinWallet" );
             }
             sourceAmounts = sourceAmounts ?? Enumerable.Empty<KeyValuePair<ICoin, ulong>>();
-            var actionBlock = new ActionBlock<KeyValuePair<ICoin, ulong>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), ManyProducers.ConsumeParallel );
+            var actionBlock = new ActionBlock<KeyValuePair<ICoin, ulong>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeParallel );
             Parallel.ForEach( sourceAmounts, pair => actionBlock.Post( pair ) );
             actionBlock.Complete();
             return actionBlock.Completion;

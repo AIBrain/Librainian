@@ -30,6 +30,7 @@ namespace Librainian.IO {
         FoldersFirst,
 
         /// <summary>
+        /// as-is
         /// </summary>
         FirstFound,
     }

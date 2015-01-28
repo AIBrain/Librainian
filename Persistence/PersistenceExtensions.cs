@@ -26,7 +26,6 @@ namespace Librainian.Persistence {
     using System.Collections.Concurrent;
     using System.ComponentModel;
     using System.Diagnostics;
-    using System.Environment;
     using System.IO;
     using System.IO.Compression;
     using System.IO.IsolatedStorage;
@@ -207,7 +206,7 @@ namespace Librainian.Persistence {
             //var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( ( Assembly.GetExecutingAssembly() ?? Assembly.GetEntryAssembly() ).Location );
             //var fullPath = Path.Combine( folderPath, fileNameWithoutExtension );
 
-            var folder = new Folder( SpecialFolder.LocalApplicationData, Application.CompanyName, Application.ProductName );
+            var folder = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.CompanyName, Application.ProductName );
             if ( !folder.Exists() ) {
                 folder.Create();
             }

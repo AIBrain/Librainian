@@ -22,55 +22,56 @@
 #endregion License & Information
 
 namespace Librainian.IO {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Environment;
-    using System.Globalization;
-    using System.IO;
-    using System.IO.Compression;
-    using System.Linq;
-    using System.Management;
-    using System.Security;
-    using System.Security.AccessControl;
-    using System.Security.Principal;
-    using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Windows.Forms;
-    using Collections;
-    using Controls;
-    using Extensions.NativeWin32;
-    using FluentAssertions;
-    using JetBrains.Annotations;
-    using Maths;
-    using Measurement.Time;
-    using Microsoft.VisualBasic.Devices;
-    using Microsoft.VisualBasic.FileIO;
-    using NUnit.Framework;
-    using Parsing;
-    using Threading;
-    using SearchOption = System.IO.SearchOption;
+	using System;
+	using System.Collections.Generic;
+	using System.ComponentModel;
+	using System.Diagnostics;
 
-    public static class IOExtensions {
+	using System.Globalization;
+	using System.IO;
+	using System.IO.Compression;
+	using System.Linq;
+	using System.Management;
+	using System.Security;
+	using System.Security.AccessControl;
+	using System.Security.Principal;
+	using System.Text;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using System.Windows.Forms;
+	using Collections;
+	using Controls;
+	using Extensions;
+	using FluentAssertions;
+	using JetBrains.Annotations;
+	
+	using Maths;
+	using Measurement.Time;
+	using Microsoft.VisualBasic.Devices;
+	using Microsoft.VisualBasic.FileIO;
+	using NUnit.Framework;
+	using Parsing;
+	using Threading;
+	using SearchOption = System.IO.SearchOption;
+
+	public static class IOExtensions {
         public const int FSCTL_SET_COMPRESSION = 0x9C040;
         public static readonly HashSet<DirectoryInfo> SystemFolders = new HashSet<DirectoryInfo>();
 
         static IOExtensions() {
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.System ) ) );
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.SystemX86 ) ) );
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.AdminTools ) ) );
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.CDBurning ) ) );
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.Windows ) ) );
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.Cookies ) ) );
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.History ) ) );
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.InternetCache ) ) );
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.PrinterShortcuts ) ) );
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.ProgramFiles ) ) );
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.ProgramFilesX86 ) ) );
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.Programs ) ) );
-            SystemFolders.Add( new DirectoryInfo( GetFolderPath( SpecialFolder.SendTo ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.System ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.SystemX86 ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.AdminTools ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.CDBurning ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.Windows ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.Cookies ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.History ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.InternetCache ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.PrinterShortcuts ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFilesX86 ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.Programs ) ) );
+            SystemFolders.Add( new DirectoryInfo( Environment.GetFolderPath( Environment.SpecialFolder.SendTo ) ) );
             SystemFolders.Add( new DirectoryInfo( Path.GetTempPath() ) );
 
             //TODO foreach on Environment.SpecialFolder
@@ -166,7 +167,7 @@ namespace Librainian.IO {
             {
                 ShowNewFolderButton = true,
                 Description = String.Format( "Please direct me to a storage folder for {0}.", hint ),
-                RootFolder = SpecialFolder.MyComputer
+                RootFolder = Environment.SpecialFolder.MyComputer
             };
 
             var owner = WindowWrapper.CreateWindowWrapper( Process.GetCurrentProcess().MainWindowHandle );
@@ -230,8 +231,8 @@ namespace Librainian.IO {
                 yield break;
             }
             var searchPath = Path.Combine( target.FullName, searchPattern );
-            Win32FindData findData;
-            using (var hFindFile = FindFirstFile( searchPath, out findData )) {
+			NativeWin32.Win32FindData findData;
+            using (var hFindFile = NativeWin32.FindFirstFile( searchPath, out findData )) {
                 do {
                     if ( hFindFile.IsInvalid ) {
                         break;
@@ -271,7 +272,7 @@ namespace Librainian.IO {
                     foreach ( var info in subInfo.BetterEnumerateDirectories( searchPattern ) ) {
                         yield return info;
                     }
-                } while ( FindNextFile( hFindFile, out findData ) );
+                } while ( NativeWin32.FindNextFile( hFindFile, out findData ) );
             }
         }
 
@@ -287,8 +288,8 @@ namespace Librainian.IO {
             //    yield break;
             //}
             var searchPath = Path.Combine( target.FullName, searchPattern );
-            Win32FindData findData;
-            using (var hFindFile = FindFirstFile( searchPath, out findData )) {
+			NativeWin32.Win32FindData findData;
+            using (var hFindFile = NativeWin32.FindFirstFile( searchPath, out findData )) {
                 do {
 
                     //Application.DoEvents();
@@ -310,7 +311,7 @@ namespace Librainian.IO {
 
                     var newfName = Path.Combine( target.FullName, findData.cFileName );
                     yield return new FileInfo( newfName );
-                } while ( FindNextFile( hFindFile, out findData ) );
+                } while ( NativeWin32.FindNextFile( hFindFile, out findData ) );
             }
         }
 
@@ -346,11 +347,11 @@ namespace Librainian.IO {
         }
 
         [CanBeNull]
-        public static DirectoryInfo ChooseDirectoryDialog( this SpecialFolder startFolder, String path, String description = "Please select a folder." ) {
+        public static DirectoryInfo ChooseDirectoryDialog( this Environment.SpecialFolder startFolder, String path, String description = "Please select a folder." ) {
             using (var folderDialog = new FolderBrowserDialog
             {
                 Description = description,
-                RootFolder = SpecialFolder.MyComputer,
+                RootFolder = Environment.SpecialFolder.MyComputer,
                 ShowNewFolderButton = false
             }) {
                 if ( folderDialog.ShowDialog() == DialogResult.OK ) {
@@ -525,15 +526,13 @@ namespace Librainian.IO {
                                 return;
                             }
                             try {
-                                if ( onEachDirectory != null ) {
-                                    onEachDirectory( folder );
-                                }
+	                            onEachDirectory?.Invoke( folder );
                             }
                             catch ( Exception exception ) {
                                 exception.More();
                             }
                             if ( searchStyle == SearchStyle.FoldersFirst ) {
-                                folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
+                                folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: SearchStyle.FoldersFirst ); //recurse
                             }
 
                             try {
@@ -622,8 +621,8 @@ namespace Librainian.IO {
 
         private static FileInfo InternalSearchFoundFile( this FileInfo info, Action<FileInfo> onFindFile, [CanBeNull] SimpleCancel cancellation ) {
             try {
-                if ( cancellation != null && !cancellation.IsCancellationRequested && onFindFile != null ) {
-                    onFindFile( info );
+                if ( cancellation != null && !cancellation.IsCancellationRequested ) {
+                    onFindFile?.Invoke( info );
                 }
             }
             catch ( Exception exception ) {
@@ -700,7 +699,7 @@ namespace Librainian.IO {
                 }
             }
             uint hosize;
-            var losize = GetCompressedFileSizeW( info.FullName, out hosize );
+            var losize = NativeWin32.GetCompressedFileSizeW( info.FullName, out hosize );
             var size = hosize << 32 | losize;
             return ( ( size + clusterSize - 1 ) / clusterSize ) * clusterSize;
         }
@@ -720,14 +719,14 @@ namespace Librainian.IO {
             uint bytesPerSector = 0;
             if ( info.Directory != null ) {
                 uint dummy;
-                var result = GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
+                var result = NativeWin32.GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
                 if ( result == 0 ) {
                     throw new Win32Exception();
                 }
             }
             var clusterSize = sectorsPerCluster * bytesPerSector;
             uint sizeHigh;
-            var losize = GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out sizeHigh );
+            var losize = NativeWin32.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out sizeHigh );
             var size = sizeHigh << 32 | losize;
             return ( ( size + clusterSize - 1 ) / clusterSize ) * clusterSize;
         }
@@ -756,13 +755,13 @@ namespace Librainian.IO {
             return String.Empty;
         }
 
-        public static Boolean IsDirectory( this Win32FindData data ) => ( data.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory;
+        public static Boolean IsDirectory( this NativeWin32.Win32FindData data ) => ( data.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory;
 
-        public static Boolean IsFile( this Win32FindData data ) => !IsDirectory( data );
+        public static Boolean IsFile( this NativeWin32.Win32FindData data ) => !IsDirectory( data );
 
-        public static Boolean IsIgnoreFolder( this Win32FindData data ) => data.cFileName.EndsLike( "$RECYCLE.BIN" ) || data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" ) || SystemFolders.Contains( new DirectoryInfo( data.cFileName ) );
+        public static Boolean IsIgnoreFolder( this NativeWin32.Win32FindData data ) => data.cFileName.EndsLike( "$RECYCLE.BIN" ) || data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" ) || SystemFolders.Contains( new DirectoryInfo( data.cFileName ) );
 
-        public static Boolean IsParentOrCurrent( this Win32FindData data ) => data.cFileName == "." || data.cFileName == "..";
+        public static Boolean IsParentOrCurrent( this NativeWin32.Win32FindData data ) => data.cFileName == "." || data.cFileName == "..";
 
         public static Boolean IsProtected( [NotNull] this FileSystemInfo fileSystemInfo ) {
             if ( fileSystemInfo == null ) {
@@ -786,7 +785,7 @@ namespace Librainian.IO {
         }
 
         [Pure]
-        public static Boolean IsReparsePoint( this Win32FindData data ) => ( data.dwFileAttributes & FileAttributes.ReparsePoint ) == FileAttributes.ReparsePoint;
+        public static Boolean IsReparsePoint( this NativeWin32.Win32FindData data ) => ( data.dwFileAttributes & FileAttributes.ReparsePoint ) == FileAttributes.ReparsePoint;
 
         /// <summary>
         /// Opens a folder with Explorer.exe
@@ -803,7 +802,7 @@ namespace Librainian.IO {
                 }
             }
 
-            var windowsFolder = GetEnvironmentVariable( "SystemRoot" );
+            var windowsFolder = Environment.GetEnvironmentVariable( "SystemRoot" );
             windowsFolder.Should().NotBeNullOrWhiteSpace();
             if ( String.IsNullOrWhiteSpace( windowsFolder ) ) {
                 return;
@@ -1282,7 +1281,7 @@ namespace Librainian.IO {
                     if ( fileStream.SafeFileHandle != null ) {
                         fileStream.SafeFileHandle.DangerousAddRef( success: ref success );
 
-                        var result = DeviceIoControl( hDevice: fileStream.SafeFileHandle.DangerousGetHandle(), dwIoControlCode: FSCTL_SET_COMPRESSION, lpInBuffer: ref compressionFormatDefault, nInBufferSize: sizeof(short), lpOutBuffer: IntPtr.Zero, nOutBufferSize: 0, lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
+                        var result = NativeWin32.DeviceIoControl( hDevice: fileStream.SafeFileHandle.DangerousGetHandle(), dwIoControlCode: FSCTL_SET_COMPRESSION, lpInBuffer: ref compressionFormatDefault, nInBufferSize: sizeof(short), lpOutBuffer: IntPtr.Zero, nOutBufferSize: 0, lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
                     }
                 }
                 finally {

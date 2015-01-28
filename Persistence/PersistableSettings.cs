@@ -19,7 +19,7 @@ namespace Librainian.Persistence {
 
     using System;
     using System.Diagnostics;
-    using System.Environment;
+    
     using System.IO;
     using System.Windows.Forms;
     using Controls;
@@ -52,7 +52,7 @@ namespace Librainian.Persistence {
             var folderBrowserDialog = new FolderBrowserDialog {
                 ShowNewFolderButton = true,
                 Description = Resources._Please_direct_me_to_a_folder_,
-                RootFolder = SpecialFolder.MyComputer
+                RootFolder = Environment.SpecialFolder.MyComputer
             };
 
             var owner = WindowWrapper.CreateWindowWrapper( Process.GetCurrentProcess().MainWindowHandle );

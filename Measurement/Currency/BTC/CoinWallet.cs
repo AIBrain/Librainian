@@ -30,9 +30,9 @@ namespace Librainian.Measurement.Currency.BTC {
     using JetBrains.Annotations;
     using Maths;
     using NUnit.Framework;
-    using Threading.Blocks;
+    using Threading;
 
-    /// <summary>
+	/// <summary>
     ///     My first go at a thread-safe CoinWallet class for bitcoin coins.
     ///     It's more pseudocode for learning than for production..
     ///     Use at your own risk.
@@ -64,7 +64,7 @@ namespace Librainian.Measurement.Currency.BTC {
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-            }, ManyProducers.ConsumeSerial );
+            }, Blocks.ManyProducers.ConsumeSerial );
         }
 
         private ActionBlock<BitcoinTransactionMessage> Actor { get; set; }

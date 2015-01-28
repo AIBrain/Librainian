@@ -7,10 +7,11 @@
     using NUnit.Framework;
     using Time;
 
-    /// <summary>
-    ///     http://wikipedia.org/wiki/Frequency
-    /// </summary>
-    [DataContract( IsReference = true )]
+	/// <summary>
+	///     
+	/// </summary>
+	/// <seealso cref="http://en.wikipedia.org/wiki/Frame_rate"/>
+	[DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public struct FPS {
 

@@ -6,7 +6,6 @@ namespace Librainian.Threading {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
-    using Blocks;
     using Collections;
     using JetBrains.Annotations;
 
@@ -23,11 +22,7 @@ namespace Librainian.Threading {
         public PriorityBlock( CancellationToken cancellationToken ) {
             this.CancellationToken = cancellationToken;
             this.Input = new BufferBlock<OneJob>();
-            this.Output = new ActionBlock<Action>( action => {
-                if ( action != null ) {
-                    action();
-                }
-            }, SingleProducer.ConsumeSensible );
+            this.Output = new ActionBlock<Action>( action => action?.Invoke(), Blocks.SingleProducer.ConsumeSensible );
             this.TheDoctorsTask = Task.Run( () => this.Triage() );
         }
 

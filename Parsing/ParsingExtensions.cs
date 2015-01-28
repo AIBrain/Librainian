@@ -45,6 +45,7 @@ namespace Librainian.Parsing {
     using Linguistics;
     using Maths;
     using Numerics;
+    using NUnit.Framework;
     using Threading;
 
     public static class ParsingExtensions {
@@ -666,15 +667,8 @@ namespace Librainian.Parsing {
             return 0;
         }
 
-        public static long MinifyXML( this XmlDocument xml ) {
-            //TODO todo.
-            throw new NotImplementedException();
-        }
 
-        //        public const String Lowercase = "abcdefghijklmnopqrstuvwxyz";
-        //    }
-        //}
-        [ Pure ]
+		[ Pure ]
         [ CanBeNull ]
         public static String NullIfBlank( [ CanBeNull ] this String theString ) {
             if ( String.IsNullOrWhiteSpace( theString ) ) {
@@ -709,7 +703,7 @@ namespace Librainian.Parsing {
             return partA + padding + partB + "".PadRight( totalLength - ( partA.Length + padding.Length + partB.Length + partC.Length ), '_' ) + partC;
         }
 
-        public static int ParallelEditDistance( this String s1, String s2 ) {
+        public static int EditDistanceParallel( this String s1, String s2 ) {
             var dist = new int[s1.Length + 1, s2.Length + 1];
             for ( var i = 0; i <= s1.Length; i++ ) {
                 dist[ i, 0 ] = i;
@@ -844,9 +838,11 @@ namespace Librainian.Parsing {
             return LazyPluralizationService.Value.Pluralize( word );
         }
 
-        public static String Prepend( [ CanBeNull ] this String result, [ CanBeNull ] String prependThis ) => String.Format( "{0}{1}", prependThis ?? String.Empty, result ?? String.Empty );
+        public static String Prepend( [ CanBeNull ] this String result, [ CanBeNull ] String prependThis ) {
+	        return String.Format( "{0}{1}", prependThis ?? String.Empty, result ?? String.Empty );
+        }
 
-        public static String ReadToEnd( [ NotNull ] this MemoryStream ms ) {
+	    public static String ReadToEnd( [ NotNull ] this MemoryStream ms ) {
             if ( ms == null ) {
                 throw new ArgumentNullException( "ms" );
             }
@@ -862,7 +858,7 @@ namespace Librainian.Parsing {
         /// <param name="input">String to parse</param>
         /// <returns>String</returns>
         public static String RemoveSurroundingQuotes( this String input ) {
-            if ( input.StartsWith( "\"" ) && input.EndsWith( "\"" ) ) {
+            if ( input.StartsWith("\"", StringComparison.Ordinal) && input.EndsWith("\"", StringComparison.Ordinal) ) {
                 // remove leading/trailing quotes
                 input = input.Substring( 1, input.Length - 2 );
             }
@@ -902,7 +898,40 @@ namespace Librainian.Parsing {
             return new String( charArray );
         }
 
-        public static String Right( this String s, int count ) {
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="myString"></param>
+		/// <returns></returns>
+		/// <seealso cref="http://codereview.stackexchange.com/questions/78065/reverse-a-sentence-quickly-without-pointers"/>
+		public static string ReverseWords( String myString ) {
+			var length = myString.Length;
+			var tokens = new char[ length ];
+			var position = 0;
+			int lastIndex;
+			for ( var i = length - 1 ; i >= 0 ; i-- ) {
+				if ( myString[ i ] != ' ' ) {
+					continue;
+				}
+				lastIndex = length - position;
+				for ( var k = i + 1 ; k < lastIndex ; k++ ) {
+					tokens[ position ] = myString[ k ];
+					position++;
+				}
+				tokens[ position ] = ' ';
+				position++;
+			}
+
+			lastIndex = myString.Length - position;
+			for ( var i = 0 ; i < lastIndex ; i++ ) {
+				tokens[ position ] = myString[ i ];
+				position++;
+			}
+
+			return new string( tokens );
+		}
+
+		public static String Right( this String s, int count ) {
             var newString = String.Empty;
 
             if ( String.IsNullOrEmpty( s ) || count <= 0 ) {
@@ -1153,7 +1182,7 @@ namespace Librainian.Parsing {
 
         public static String StripHTML( this String s ) => Regex.Replace( s, @"<(.|\n)*?>", String.Empty ).Replace( "&nbsp;", " " );
 
-        public static String StripTags( String input, String[] allowedTags ) {
+        public static String StripTags( this String input, String[] allowedTags ) {
             var StripHTMLExp = new Regex( @"(<\/?[^>]+>)" );
             var Output = input;
 
@@ -1193,37 +1222,38 @@ namespace Librainian.Parsing {
             return Output;
         }
 
-        public static String StripTagsAndAttributes( String Input, String[] allowedTags ) {
+        public static String StripTagsAndAttributes( this String Input, String[] allowedTags ) {
             /* Remove all unwanted tags first */
-            var Output = StripTags( Input, allowedTags );
+            var output = Input.StripTags( allowedTags );
 
             /* Lambda functions */
-            MatchEvaluator HrefMatch = m => m.Groups[ 1 ].Value + "href..;,;.." + m.Groups[ 2 ].Value;
-            MatchEvaluator ClassMatch = m => m.Groups[ 1 ].Value + "class..;,;.." + m.Groups[ 2 ].Value;
-            MatchEvaluator UnsafeMatch = m => m.Groups[ 1 ].Value + m.Groups[ 4 ].Value;
+            MatchEvaluator hrefMatch = m => m.Groups[ 1 ].Value + "href..;,;.." + m.Groups[ 2 ].Value;
+            MatchEvaluator classMatch = m => m.Groups[ 1 ].Value + "class..;,;.." + m.Groups[ 2 ].Value;
+            MatchEvaluator unsafeMatch = m => m.Groups[ 1 ].Value + m.Groups[ 4 ].Value;
 
             /* Allow the "href" attribute */
-            Output = new Regex( "(<a.*)href=(.*>)" ).Replace( Output, HrefMatch );
+            output = new Regex( "(<a.*)href=(.*>)" ).Replace( output, hrefMatch );
 
             /* Allow the "class" attribute */
-            Output = new Regex( "(<a.*)class=(.*>)" ).Replace( Output, ClassMatch );
+            output = new Regex( "(<a.*)class=(.*>)" ).Replace( output, classMatch );
 
             /* Remove unsafe attributes in any of the remaining tags */
-            Output = new Regex( @"(<.*) .*=(\'|\""|\w)[\w|.|(|)]*(\'|\""|\w)(.*>)" ).Replace( Output, UnsafeMatch );
+            output = new Regex( @"(<.*) .*=(\'|\""|\w)[\w|.|(|)]*(\'|\""|\w)(.*>)" ).Replace( output, unsafeMatch );
 
             /* Return the allowed tags to their proper form */
-            Output = ReplaceAll( Output, "..;,;..", "=" );
+            output = ReplaceAll( output, "..;,;..", "=" );
 
-            return Output;
+            return output;
         }
 
+		[Test]
         public static void Test() {
-            Console.WriteLine( StripTags( "<p>George</p><b>W</b><i>Bush</i>", new[] { "i", "b" } ) );
-            Console.WriteLine( StripTags( "<p>George <img src='someimage.png' onmouseover='someFunction()'>W <i>Bush</i></p>", new[] { "p" } ) );
-            Console.WriteLine( StripTags( "<a href='http://www.dijksterhuis.org'>Martijn <b>Dijksterhuis</b></a>", new[] { "a" } ) );
+            Console.WriteLine( "<p>George</p><b>W</b><i>Bush</i>".StripTags( new[] { "i", "b" } ) );
+            Console.WriteLine( "<p>George <img src='someimage.png' onmouseover='someFunction()'>W <i>Bush</i></p>".StripTags( new[] { "p" } ) );
+            Console.WriteLine( "<a href='http://www.dijksterhuis.org'>Martijn <b>Dijksterhuis</b></a>".StripTags( new[] { "a" } ) );
 
             const String test4 = "<a class=\"classof69\" onClick='crosssite.boom()' href='http://www.dijksterhuis.org'>Martijn Dijksterhuis</a>";
-            Console.WriteLine( StripTagsAndAttributes( test4, new[] { "a" } ) );
+            Console.WriteLine( test4.StripTagsAndAttributes( new[] { "a" } ) );
         }
 
         /// <summary>

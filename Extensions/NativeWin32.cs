@@ -24,7 +24,7 @@ namespace Librainian.Extensions {
     using System.Runtime.InteropServices;
     using System.Text;
     using IO;
-    using JunctionPoint;
+    
 
     public static class NativeWin32 {
         public const uint ERROR_MORE_DATA = 234;
@@ -84,7 +84,7 @@ namespace Librainian.Extensions {
         public static extern Boolean CloseHandle( IntPtr handle );
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern IntPtr CreateFile( String lpFileName, EFileAccess dwDesiredAccess, EFileShare dwShareMode, IntPtr lpSecurityAttributes, ECreationDisposition dwCreationDisposition, EFileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
+        public static extern IntPtr CreateFile( String lpFileName, JunctionPoint.EFileAccess dwDesiredAccess, EFileShare dwShareMode, IntPtr lpSecurityAttributes, JunctionPoint.ECreationDisposition dwCreationDisposition, JunctionPoint.EFileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
 
         [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern IntPtr CreateFile( String lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile );

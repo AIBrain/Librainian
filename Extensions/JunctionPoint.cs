@@ -124,15 +124,7 @@ namespace Librainian.Extensions {
             FirstPipeInstance = 0x00080000
         }
 
-        [Flags]
-        public enum EFileShare : uint {
-            None = 0x00000000,
-            Read = 0x00000001,
-            Write = 0x00000002,
-            Delete = 0x00000004,
-        }
-
-        /// <summary>
+	    /// <summary>
         /// Creates a junction point from the specified directory to the specified target directory.
         /// </summary>
         /// <remarks>Only works on NTFS.</remarks>
@@ -319,7 +311,8 @@ namespace Librainian.Extensions {
         }
 
         private static SafeFileHandle OpenReparsePoint( String reparsePoint, EFileAccess accessMode ) {
-            var reparsePointHandle = new SafeFileHandle( NativeWin32.CreateFile( reparsePoint, accessMode, EFileShare.Read | EFileShare.Write | EFileShare.Delete, IntPtr.Zero, ECreationDisposition.OpenExisting, EFileAttributes.BackupSemantics | EFileAttributes.OpenReparsePoint, IntPtr.Zero ), true );
+	        var bob = NativeWin32.CreateFile( reparsePoint, accessMode, EFileShare.Read | EFileShare.Write | EFileShare.Delete, IntPtr.Zero, ECreationDisposition.OpenExisting, EFileAttributes.BackupSemantics | EFileAttributes.OpenReparsePoint, IntPtr.Zero );
+            var reparsePointHandle = new SafeFileHandle( bob, true );
 
             if ( Marshal.GetLastWin32Error() != 0 ) {
                 ThrowLastWin32Error( "Unable to open reparse point." );
@@ -382,4 +375,12 @@ namespace Librainian.Extensions {
             public byte[] PathBuffer;
         }
     }
+
+	[Flags]
+	public enum EFileShare : uint {
+		None = 0x00000000,
+		Read = 0x00000001,
+		Write = 0x00000002,
+		Delete = 0x00000004,
+	}
 }

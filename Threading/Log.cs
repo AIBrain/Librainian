@@ -78,14 +78,18 @@ namespace Librainian.Threading {
             }
         }
 
-        [DebuggerStepThrough]
+		/// <summary>
+		///     <para>Write the <paramref name="message" /> out to the <see cref="ConsoleListener"/>.</para>
+		/// </summary>
+		/// <param name="message"></param>
+		[DebuggerStepThrough]
         public static void Write( this String message ) => ConsoleListener.Write( message );
 
-        /// <summary>
-        ///     <para>Write the <paramref name="message" /> out to the console.</para>
-        /// </summary>
-        /// <param name="message"></param>
-        [DebuggerStepThrough]
+		/// <summary>
+		///     <para>Write the <paramref name="message" /> out to the <see cref="ConsoleListener"/>.</para>
+		/// </summary>
+		/// <param name="message"></param>
+		[DebuggerStepThrough]
         public static void WriteLine( this String message ) => ConsoleListener.WriteLine( message  );
 
         [DebuggerStepThrough]

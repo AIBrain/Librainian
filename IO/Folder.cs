@@ -20,23 +20,22 @@
 #endregion
 
 namespace Librainian.IO {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Environment;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization;
-    using System.Security;
-    using System.Text;
-    using System.Windows.Forms;
-    using Extensions;
-    using JetBrains.Annotations;
-    using Parsing;
+	using System;
+	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.IO;
+	using System.Linq;
+	using System.Runtime.Serialization;
+	using System.Security;
+	using System.Text;
+	using System.Windows.Forms;
+	using Extensions;
+	using JetBrains.Annotations;
+	using Parsing;
 
-    /// <summary>
-    /// </summary>
-    [ DebuggerDisplay( "{DebuggerDisplay,nq}" ) ]
+	/// <summary>
+	/// </summary>
+	[ DebuggerDisplay( "{DebuggerDisplay,nq}" ) ]
     [ DataContract( IsReference = true ) ]
     [ Immutable ]
     public class Folder {
@@ -80,11 +79,11 @@ namespace Librainian.IO {
             }
         }
 
-        public Folder( SpecialFolder specialFolder ) : this( GetFolderPath( specialFolder ) ) { }
+        public Folder( Environment.SpecialFolder specialFolder ) : this( Environment.GetFolderPath( specialFolder ) ) { }
 
-        public Folder( SpecialFolder specialFolder, String subFolder ) : this( Path.Combine( GetFolderPath( specialFolder ), subFolder ) ) { }
+        public Folder( Environment.SpecialFolder specialFolder, String subFolder ) : this( Path.Combine( Environment.GetFolderPath( specialFolder ), subFolder ) ) { }
 
-        public Folder( SpecialFolder specialFolder, String applicationName, String subFolder ) : this( Path.Combine( GetFolderPath( specialFolder ), applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder ) ) { }
+        public Folder( Environment.SpecialFolder specialFolder, String applicationName, String subFolder ) : this( Path.Combine( Environment.GetFolderPath( specialFolder ), applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder ) ) { }
 
         /// <summary>
         ///     <para>
@@ -96,7 +95,7 @@ namespace Librainian.IO {
         /// <param name="companyName"></param>
         /// <param name="applicationName"></param>
         /// <param name="subFolder"></param>
-        public Folder( SpecialFolder specialFolder, String companyName, String applicationName, String subFolder ) : this( Path.Combine( GetFolderPath( specialFolder ), companyName ?? Application.CompanyName, applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder ) ) { }
+        public Folder( Environment.SpecialFolder specialFolder, String companyName, String applicationName, String subFolder ) : this( Path.Combine( Environment.GetFolderPath( specialFolder ), companyName ?? Application.CompanyName, applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder ) ) { }
 
         /// <summary>
         ///     <para>
@@ -109,7 +108,7 @@ namespace Librainian.IO {
         /// <param name="applicationName"></param>
         /// <param name="subFolder"></param>
         /// <param name="subSubfolder"></param>
-        public Folder( SpecialFolder specialFolder, String companyName, String applicationName, String subFolder, String subSubfolder ) : this( Path.Combine( GetFolderPath( specialFolder ), companyName ?? Application.CompanyName, applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder, subSubfolder ) ) { }
+        public Folder( Environment.SpecialFolder specialFolder, String companyName, String applicationName, String subFolder, String subSubfolder ) : this( Path.Combine( Environment.GetFolderPath( specialFolder ), companyName ?? Application.CompanyName, applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder, subSubfolder ) ) { }
 
         /// <summary>
         ///     <para>
@@ -123,7 +122,7 @@ namespace Librainian.IO {
         /// <param name="subFolder"></param>
         /// <param name="subSubfolder"></param>
         /// <param name="subSubSubfolder"></param>
-        public Folder( SpecialFolder specialFolder, String companyName, String applicationName, String subFolder, String subSubfolder, String subSubSubfolder ) : this( Path.Combine( GetFolderPath( specialFolder ), companyName ?? Application.CompanyName, applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder, subSubfolder, subSubSubfolder ) ) { }
+        public Folder( Environment.SpecialFolder specialFolder, String companyName, String applicationName, String subFolder, String subSubfolder, String subSubSubfolder ) : this( Path.Combine( Environment.GetFolderPath( specialFolder ), companyName ?? Application.CompanyName, applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder, subSubfolder, subSubSubfolder ) ) { }
 
         public Folder( String fullPath, String subFolder ) : this( Path.Combine( fullPath, subFolder ) ) { }
 

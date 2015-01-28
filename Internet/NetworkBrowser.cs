@@ -26,9 +26,9 @@ namespace Librainian.Internet {
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
-    using Extensions.NativeWin32;
+    using Extensions;
 
-    /// <summary>
+	/// <summary>
     ///     Provides a mechanism for supplying a list of all PC names in the local network.
     ///     This collection of PC names is used in the form
     ///     This class makes use of a DllImport instruction.
@@ -91,24 +91,24 @@ namespace Librainian.Internet {
                      select entry ).Where( entry => !entry.Name.Equals( "Schema", StringComparison.Ordinal ) );
         }
 
-        public static IEnumerable<SERVER_INFO_101> GetServerListAlt( SV_101_TYPES serverType ) {
+        public static IEnumerable<NativeWin32.SERVER_INFO_101> GetServerListAlt( NativeWin32.SV_101_TYPES serverType ) {
             int entriesread = 0, totalentries = 0;
-            var alServers = new List<SERVER_INFO_101>();
+            var alServers = new List<NativeWin32.SERVER_INFO_101>();
 
             do {
                 // Buffer to store the available servers
                 // Filled by the NetServerEnum function
                 IntPtr buf;
 
-                var ret = NetServerEnum( servername: null, level: 101, bufptr: out buf, prefmaxlen: -1, entriesread: ref entriesread, totalentries: ref totalentries, servertype: serverType, domain: null, resume_handle: IntPtr.Zero );
+                var ret = NativeWin32.NetServerEnum( servername: null, level: 101, bufptr: out buf, prefmaxlen: -1, entriesread: ref entriesread, totalentries: ref totalentries, servertype: serverType, domain: null, resume_handle: IntPtr.Zero );
 
                 // if the function returned any data, fill the tree view
-                if ( ret == ERROR_SUCCESS || ret == ERROR_MORE_DATA || entriesread > 0 ) {
+                if ( ret == NativeWin32.ERROR_SUCCESS || ret == NativeWin32.ERROR_MORE_DATA || entriesread > 0 ) {
                     var ptr = buf;
 
                     for ( var i = 0 ; i < entriesread ; i++ ) {
                         // cast pointer to a SERVER_INFO_101 structure
-                        var server = ( SERVER_INFO_101 )Marshal.PtrToStructure( ptr, typeof( SERVER_INFO_101 ) );
+                        var server = ( NativeWin32.SERVER_INFO_101 )Marshal.PtrToStructure( ptr, typeof(NativeWin32.SERVER_INFO_101 ) );
 
                         //Cast the pointer to a ulong so this addition will work on 32-bit or 64-bit systems.
                         ptr = ( IntPtr )( ( ulong )ptr + ( ulong )Marshal.SizeOf( server ) );
@@ -119,8 +119,8 @@ namespace Librainian.Internet {
                     }
                 }
 
-                // free the buffer 
-                NetApiBufferFree( buf );
+				// free the buffer 
+				NativeWin32.NetApiBufferFree( buf );
 
             }
             while ( entriesread < totalentries && entriesread != 0 );
@@ -142,15 +142,15 @@ namespace Librainian.Internet {
         ///     all the SV_TYPE_WORKSTATION and SV_TYPE_SERVER
         ///     PC's in the Domain
         /// </returns>
-        public static IEnumerable<SERVER_INFO_101> GetNetworkComputers() {
+        public static IEnumerable<NativeWin32.SERVER_INFO_101> GetNetworkComputers() {
             //local fields
-            var networkComputers = new List<SERVER_INFO_101>();
+            var networkComputers = new List<NativeWin32.SERVER_INFO_101>();
             const int MAX_PREFERRED_LENGTH = -1;
             //const int SV_TYPE_WORKSTATION = 1;
             //const int SV_TYPE_SERVER = 2;
             var buffer = IntPtr.Zero;
             //var tmpBuffer = IntPtr.Zero;
-            var sizeofINFO = Marshal.SizeOf( typeof( SERVER_INFO_101 ) );
+            var sizeofINFO = Marshal.SizeOf( typeof(NativeWin32.SERVER_INFO_101 ) );
 
             try {
                 //call the DllImport : NetServerEnum 
@@ -161,7 +161,7 @@ namespace Librainian.Internet {
                 var entriesRead = 0;
                 var totalEntries = 0;
                 var resHandle = new IntPtr( 0 );
-                var ret = NetServerEnum( null, 100, out buffer, MAX_PREFERRED_LENGTH, ref entriesRead, ref totalEntries, SV_101_TYPES.SV_TYPE_WORKSTATION | SV_101_TYPES.SV_TYPE_SERVER, null, resHandle );
+                var ret = NativeWin32.NetServerEnum( null, 100, out buffer, MAX_PREFERRED_LENGTH, ref entriesRead, ref totalEntries, NativeWin32.SV_101_TYPES.SV_TYPE_WORKSTATION | NativeWin32.SV_101_TYPES.SV_TYPE_SERVER, null, resHandle );
                 //if the returned with a NERR_Success 
                 //(C++ term), =0 for C#
                 if ( 0 == ret ) {
@@ -182,10 +182,10 @@ namespace Librainian.Internet {
                         //managed object, again using 
                         //STRUCTURE to ensure the correct data
                         //is marshalled 
-                        var svrInfo = Marshal.PtrToStructure( tmpBuffer, typeof( SERVER_INFO_101 ) );
+                        var svrInfo = Marshal.PtrToStructure( tmpBuffer, typeof(NativeWin32.SERVER_INFO_101 ) );
 
                         //add the PC names to the ArrayList
-                        networkComputers.Add( ( SERVER_INFO_101 )svrInfo );
+                        networkComputers.Add( ( NativeWin32.SERVER_INFO_101 )svrInfo );
                     }
                 }
             }
@@ -193,8 +193,8 @@ namespace Librainian.Internet {
                 MessageBox.Show( String.Format( "Problem with acessing network computers in NetworkBrowser().\r\n{0}", ex.Message ), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
             }
             finally {
-                //The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates
-                NetApiBufferFree( buffer );
+				//The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates
+				NativeWin32.NetApiBufferFree( buffer );
             }
             //return entries found
             return networkComputers;
