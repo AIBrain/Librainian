@@ -28,7 +28,7 @@ namespace Librainian.Gaming.PlayingCards {
         /// list of cards contained in this deck.
         /// </summary>
         [NotNull]
-        private readonly ParallelList<Card> _cards = new ParallelList<Card>();
+        private readonly ConcurrentList<Card> _cards = new ConcurrentList<Card>();
 
         public void AddCard( [NotNull] Card card ) {
             if ( card == null ) {

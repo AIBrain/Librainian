@@ -22,11 +22,11 @@ namespace Librainian.Gaming.PlayingCards {
 
     [Immutable]
     public class Card {
-        public readonly FaceValues FaceValue;
+        public readonly FaceName FaceName;
         public readonly Suite Suite;
 
-        public Card( Suite suite, FaceValues faceValue ) {
-            this.FaceValue = faceValue;
+        public Card( Suite suite, FaceName faceName ) {
+            this.FaceName = faceName;
             this.Suite = suite;
         }
     }

@@ -18,65 +18,59 @@
 // "Librainian/Dice.cs" was last cleaned by Rick on 2014/12/09 at 6:06 AM
 
 namespace Librainian.Gaming {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Runtime.Serialization;
-    using Collections;
-    using FluentAssertions;
-    using Measurement.Time;
-    using Threading;
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Runtime.Serialization;
+	using Collections;
+	using FluentAssertions;
+	using Measurement.Time;
+	using Threading;
 
-    [DataContract(IsReference = true)]
-    public class Dice {
+	[DataContract(IsReference = true)]
+	public class Dice : IGameItem {
 
-        /// <summary>
-        /// Keep track of the most recent rolls.
-        /// </summary>
-        private readonly uint _keepTrackOfRecentRolls;
+		/// <summary>
+		/// Keep track of the most recent rolls.
+		/// </summary>
+		private readonly uint _keepTrackOfRecentRolls;
 
-        public Dice( UInt16 numberOfSides = 6, UInt32 keepTrackOfRecentRolls = 10 ) {
-            this.NumberOfSides = numberOfSides;
+		public Dice( UInt16 numberOfSides = 6, UInt32 keepTrackOfRecentRolls = 10 ) {
+			this.NumberOfSides = numberOfSides;
 
-            this._keepTrackOfRecentRolls = keepTrackOfRecentRolls;
+			this._keepTrackOfRecentRolls = keepTrackOfRecentRolls;
 
-            this.LastFewRolls = new ParallelList<UInt16>
-            {
-                TimeoutForReads = Seconds.Thirty,
-                TimeoutForWrites = Seconds.Thirty
-            };
+			this.Roll();
+		}
 
-            this.Roll();
-        }
+		public UInt16 GetCurrentSideFaceUp { get; private set; }
 
-        public UInt16 GetCurrentSideFaceUp { get; private set; }
+		[DataMember]
+		public UInt16 NumberOfSides { get; private set; }
 
-        [DataMember]
-        public UInt16 NumberOfSides { get; private set; }
+		[DataMember]
+		private ConcurrentList<UInt16> LastFewRolls { get; } = new ConcurrentList<UInt16>( readTimeout: Seconds.Thirty, writeTimeout: Seconds.Thirty );
 
-        [DataMember]
-        private ParallelList<UInt16> LastFewRolls { get; set; }
+		public IEnumerable<UInt16> GetLastFewRolls() => this.LastFewRolls;
 
-        public IEnumerable<UInt16> GetLastFewRolls() => this.LastFewRolls;
+		/// <summary>
+		/// <para>Rolls the dice to determine which side lands face-up.</para>
+		/// </summary>
+		/// <returns>The side which landed face-up</returns>
+		public UInt16 Roll() {
+			this.GetCurrentSideFaceUp = ( UInt16 )( Randem.Next( this.NumberOfSides ) + 1 );
+			this.GetCurrentSideFaceUp.Should().BeInRange( 1, this.NumberOfSides );
+			this.LastFewRolls.Add( item: this.GetCurrentSideFaceUp, afterAdd: this.Trim );
+			return this.GetCurrentSideFaceUp;
+		}
 
-        /// <summary>
-        /// <para>Rolls the dice to determine which side lands face-up.</para>
-        /// </summary>
-        /// <returns>The side which landed face-up</returns>
-        public UInt16 Roll() {
-            this.GetCurrentSideFaceUp = ( UInt16 )( Randem.Next( this.NumberOfSides ) + 1 );
-            this.GetCurrentSideFaceUp.Should().BeInRange( 1, this.NumberOfSides );
-            this.LastFewRolls.Add( this.GetCurrentSideFaceUp, this.Trim );
-            return this.GetCurrentSideFaceUp;
-        }
-
-        /// <summary>
-        /// <para></para>
-        /// </summary>
-        public void Trim() {
-            while ( this.GetLastFewRolls().Count() > this._keepTrackOfRecentRolls ) {
-                this.LastFewRolls.RemoveAt( 0 );
-            }
-        }
-    }
+		/// <summary>
+		/// <para></para>
+		/// </summary>
+		public void Trim() {
+			while ( this.GetLastFewRolls().Count() > this._keepTrackOfRecentRolls ) {
+				this.LastFewRolls.RemoveAt( 0 );
+			}
+		}
+	}
 }

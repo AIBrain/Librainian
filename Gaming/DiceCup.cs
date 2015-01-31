@@ -19,7 +19,7 @@
 
 namespace Librainian.Gaming {
 
-    public class DiceCup : GameContainer, IDiceCup {
+    public class DiceCup : Container, IDiceCup {
 
         public void PourDice( IPlayerTable table ) => this.MoveAll( table );
     }

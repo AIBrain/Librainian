@@ -18,17 +18,10 @@
 // "Librainian/IGameContainer.cs" was last cleaned by Rick on 2014/12/09 at 6:06 AM
 
 namespace Librainian.Gaming {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using JetBrains.Annotations;
+	using System;
+	using System.Collections.Generic;
 
-    public interface IGameContainer {
-
-        [NotNull]
-
-        // ReSharper disable once ReturnTypeCanBeEnumerable.Global
-        ConcurrentBag<IGameItem> Contents { get; }
+	public interface IContainer {
 
         /// <summary>
         /// Add one game item
@@ -46,14 +39,14 @@ namespace Librainian.Gaming {
         /// </summary>
         /// <param name="destination"></param>
         /// <returns></returns>
-        Boolean MoveAll( IGameContainer destination );
+        Boolean MoveAll( IContainer destination );
 
         /// <summary>
         /// Take one item and give it to the <see cref="destination"/>.
         /// </summary>
         /// <param name="destination"></param>
         /// <returns></returns>
-        Boolean MoveOne( IGameContainer destination );
+        Boolean MoveOne( IContainer destination );
 
         /// <summary>
         /// Try to take one game item.

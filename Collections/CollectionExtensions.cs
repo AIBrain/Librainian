@@ -499,6 +499,12 @@ namespace Librainian.Collections {
 						}
 						break;
 
+					case ShufflingType.AutoChoice:
+						{
+							ShuffleByHarker( ref list, iterations );
+						}
+						break;
+
 					default:
 						throw new ArgumentOutOfRangeException( "shufflingType" );
 				}
@@ -509,7 +515,7 @@ namespace Librainian.Collections {
 		}
 
 		/// <summary>
-		/// untested for speed. a lot of elements will NOT be shuffled much.
+		/// untested for speed and cpu/threading impact. Also, a lot of elements will NOT be shuffled much.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
@@ -536,12 +542,14 @@ namespace Librainian.Collections {
 		}
 
 		/// <summary>
-		/// Fast shuffle. Not guaranteed or tested to be the fastest, but it should shuffle well.
+		/// Fast shuffle. Not guaranteed or tested to be the fastest, but it should shuffle *well* in reasonable time.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
 		/// <param name="iterations"></param>
-		public static void ShuffleByHarker<T>( ref List<T> list, UInt64 iterations ) {
+		/// <remarks>The while.Any() could be replaced with a for loop.. the count is well known ahead of time.</remarks>
+		/// <remarks>The new List(itemCount) could be streamlined to a lower number, once we know how much List.Add increments its allocations. For large lists hitting an OoM exception.</remarks>
+		public static void ShuffleByHarker<T>( ref List<T> list, UInt64 iterations = 1 ) {
 			var itemCount = list.Count;
 
 			var copy = new List<T>( itemCount );
@@ -568,7 +576,7 @@ namespace Librainian.Collections {
 			list.Count.Should().Be( itemCount );
 		}
 
-		public static void ShuffleByRandomThenByRandom<T>( ref List<T> list, UInt64 iterations ) {
+		public static void ShuffleByRandomThenByRandom<T>( ref List<T> list, UInt64 iterations = 1 ) {
 			while ( iterations > 0 ) {
 				iterations--;
 				var copy = list.AsParallel().OrderBy( o => Randem.NextDouble() ).ThenBy( o => Randem.NextDouble() ).ToList();
@@ -577,7 +585,7 @@ namespace Librainian.Collections {
 			}
 		}
 
-		public static void ShuffleByGuid<T>( ref List<T> list, UInt64 iterations ) {
+		public static void ShuffleByGuid<T>( ref List<T> list, UInt64 iterations = 1 ) {
 			while ( iterations > 0 ) {
 				iterations--;
 				var copy = list.AsParallel().OrderBy( arg => Guid.NewGuid() ).ToList();

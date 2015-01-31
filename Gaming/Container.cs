@@ -24,15 +24,11 @@ namespace Librainian.Gaming {
     using System.Linq;
     using JetBrains.Annotations;
 
-    public class GameContainer : IGameContainer {
+    public class Container : IContainer {
 
-        public GameContainer() {
-            this.Contents = new ConcurrentBag<IGameItem>();
-        }
+	    private ConcurrentBag<IGameItem> Contents { get; } = new ConcurrentBag<IGameItem>();
 
-        public ConcurrentBag<IGameItem> Contents { get; }
-
-        /// <summary>
+	    /// <summary>
         /// Add one game item
         /// </summary>
         /// <param name="item"></param>
@@ -48,33 +44,36 @@ namespace Librainian.Gaming {
         [NotNull]
         public IEnumerable<IGameItem> GetContents() => this.Contents;
 
-        public Boolean MoveAll( IGameContainer destination ) {
-            var diceMoved = 0UL;
-            while ( this.Contents.Any() ) {
+        public Boolean MoveAll( IContainer destination ) {
+            var moved = 0ul;
+
+			while ( this.Contents.Any() ) {
                 if ( this.MoveOne( destination ) ) {
-                    diceMoved++;
+                    moved++;
                 }
             }
 
-            //IGameItem gameItem;
-            //while ( this.Contents.TryTake( out gameItem ) ) {
-            //    var dice = gameItem as Dice;
-            //    if ( dice != null ) {
-            //        dice.Roll();
-            //    }
-            //    destination.Add( gameItem );
-
-            //}
-            return diceMoved > 0;
+            return moved > 0;
         }
 
-        public Boolean MoveOne( IGameContainer destination ) {
-            IGameItem gameItem;
+		/// <summary>
+		/// <para>Move one <see cref="IGameItem"/> from this <see cref="Container"/> to another <see cref="Container"/>(<paramref name="destination"/>).</para>
+		/// <para>If the <see cref="IGameItem"/> is a <see cref="Dice"/>, then the <see cref="Dice"/> will be <see cref="Dice.Roll"/></para>
+		/// </summary>
+		/// <param name="destination"></param>
+		/// <returns></returns>
+		public Boolean MoveOne( [ NotNull ] IContainer destination ) {
+			if ( destination == null ) {
+				throw new ArgumentNullException( "destination" );
+			}
+
+			IGameItem gameItem;
             if ( !this.TryTake( out gameItem ) ) {
                 return false;
             }
-            var dice = gameItem as Dice;
-            dice?.Roll();
+
+			( gameItem as Dice )?.Roll();
+
             destination.Add( gameItem );
             return true;
         }
@@ -85,26 +84,6 @@ namespace Librainian.Gaming {
         /// <param name="item"></param>
         public Boolean TryTake( out IGameItem item ) => this.Contents.TryTake( out item );
 
-        //public void MoveAll<TPieceType>( IGameContainer destination, Action<TPieceType> onEachItem = null ) where TPieceType : class {
-        //    var localDump = new List<IGameItem>();
-        //    while ( Contents.Cast<TPieceType>().Any() ) {
-        //        IGameItem item;
-        //        if ( !this.TryTake( out item ) ) {
-        //            continue;
-        //        }
-        //        if ( item is TPieceType ) {
-        //            destination.Add( item );
-        //            if ( onEachItem != null ) {
-        //                onEachItem(item as TPieceType);
-        //            }
-        //        }
-        //        else {
-        //            localDump.Add( item );
-        //        }
-        //    }
-        //    foreach ( var gameItem in localDump ) {
-        //        Contents.Add( gameItem );
-        //    }
-        //}
-    }
+
+	}
 }

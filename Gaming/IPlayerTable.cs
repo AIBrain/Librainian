@@ -19,6 +19,6 @@
 
 namespace Librainian.Gaming {
 
-    public interface IPlayerTable : IGameContainer {
+    public interface IPlayerTable : IContainer {
     }
 }

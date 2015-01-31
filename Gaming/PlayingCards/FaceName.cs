@@ -19,7 +19,7 @@
 
 namespace Librainian.Gaming.PlayingCards {
 
-    public enum FaceValues {
+    public enum FaceName {
         Ace,
         Two,
         Three,

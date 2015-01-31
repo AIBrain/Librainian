@@ -150,6 +150,7 @@
     <Compile Include="Extensions\AssemblyInformation.cs" />
     <Compile Include="Extensions\CopyProgressRoutine.cs" />
     <Compile Include="Extensions\SafeSearchHandle.cs" />
+    <Compile Include="Gaming\FlippedCoin.cs" />
     <Compile Include="Internet\Browser\AwesomiumWrapper.cs" />
     <Compile Include="Measurement\Frequency\FPS.cs" />
     <Compile Include="Parsing\Strand.cs" />
@@ -261,11 +262,11 @@
     <Compile Include="Extensions\XMLExtensions.cs" />
     <Compile Include="Gaming\DiceCup.cs" />
     <Compile Include="Gaming\IDiceCup.cs" />
-    <Compile Include="Gaming\IGameContainer.cs" />
+    <Compile Include="Gaming\IContainer.cs" />
     <Compile Include="Gaming\IGameItem.cs" />
     <Compile Include="Gaming\IPlayerTable.cs" />
     <Compile Include="Gaming\PlayerTable.cs" />
-    <Compile Include="Gaming\PlayingCards\FaceValues.cs" />
+    <Compile Include="Gaming\PlayingCards\FaceName.cs" />
     <Compile Include="Gaming\PlayingCards\Suite.cs" />
     <Compile Include="Graphics\Imaging\ERG.cs" />
     <Compile Include="Graphics\Moving\EFV.cs" />
@@ -290,7 +291,7 @@
     <Compile Include="Graphics\Images.cs" />
     <Compile Include="Gaming\PlayingCards\Card.cs" />
     <Compile Include="Gaming\PlayingCards\Deck.cs" />
-    <Compile Include="Gaming\GameContainer.cs" />
+    <Compile Include="Gaming\Container.cs" />
     <Compile Include="Gaming\Dice.cs" />
     <Compile Include="Internet\Captcha.cs" />
     <Compile Include="Internet\CaptchaSite.cs" />
