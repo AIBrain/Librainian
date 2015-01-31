@@ -41,24 +41,28 @@ namespace Librainian.IO {
     public class Folder {
         //TODO add in long name (unc) support. Like 'ZedLongPaths' does
 
-        /// <summary>
-        ///     "/"
-        /// </summary>
-        [ NotNull ] public static readonly String FolderAltSeparator = new String( new[] { Path.AltDirectorySeparatorChar } );
+		/// <summary>
+		///     "/"
+		/// </summary>
+		[ NotNull ]
+		public static string FolderAltSeparator { get; } = new String( new[] { Path.AltDirectorySeparatorChar } );
 
-        /// <summary>
-        ///     "\"
-        /// </summary>
-        [ NotNull ] public static readonly String FolderSeparator = new String( new[] { Path.DirectorySeparatorChar } );
+		/// <summary>
+		///     "\"
+		/// </summary>
+		[ NotNull ]
+		public static string FolderSeparator { get; } = new String( new[] { Path.DirectorySeparatorChar } );
 
-        [ NotNull ] public readonly DirectoryInfo DirectoryInfo;
+		[ NotNull ]
+		public DirectoryInfo DirectoryInfo { get; }
 
-        /// <summary>
-        ///     <para>The <see cref="Folder" /> .</para>
-        /// </summary>
-        [ NotNull ] public readonly String OriginalFullPath;
+		/// <summary>
+		///     <para>The <see cref="Folder" /> .</para>
+		/// </summary>
+		[ NotNull ]
+		public string OriginalFullPath { get; }
 
-        [ NotNull ] public readonly Uri Uri;
+		[ NotNull ] public readonly Uri Uri;
 
         /// <summary>
         /// </summary>
@@ -74,9 +78,13 @@ namespace Librainian.IO {
 
             this.OriginalFullPath = fullPath;
 
-            if ( !IOExtensions.TryGetFolderFromPath( fullPath, out this.DirectoryInfo, out this.Uri ) ) {
+	        DirectoryInfo directoryInfo;
+	        if ( !IOExtensions.TryGetFolderFromPath( fullPath, out directoryInfo, out this.Uri ) ) {
                 throw new InvalidOperationException( String.Format( "Unable to parse a valid path from `{0}`", fullPath ) );
             }
+	        if ( directoryInfo != null ) {
+		        this.DirectoryInfo = directoryInfo;
+	        }
         }
 
         public Folder( Environment.SpecialFolder specialFolder ) : this( Environment.GetFolderPath( specialFolder ) ) { }

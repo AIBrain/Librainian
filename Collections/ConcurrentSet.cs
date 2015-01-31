@@ -39,7 +39,7 @@ namespace Librainian.Collections {
         /// <summary>
         /// </summary>
         [DataMember]
-        private readonly ConcurrentDictionary<T, object> _dictionary = new ConcurrentDictionary<T, object>();
+        private readonly ConcurrentDictionary<T, Object> _dictionary = new ConcurrentDictionary<T, Object>();
 
         public ConcurrentSet() {
         }
@@ -55,7 +55,7 @@ namespace Librainian.Collections {
         /// <summary>
         ///     Gets a value that indicates if the set is empty.
         /// </summary>
-        public bool IsEmpty => this._dictionary.IsEmpty;
+        public Boolean IsEmpty => this._dictionary.IsEmpty;
 
         public ICollection<T> Values => this._dictionary.Keys;
 
@@ -104,15 +104,16 @@ namespace Librainian.Collections {
         /// </returns>
         public bool IsReadOnly => false;
 
-        /// <summary>
-        ///     Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.
-        /// </summary>
-        /// <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
-        /// <exception cref="T:System.NotSupportedException">
-        ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
-        ///     read-only.
-        /// </exception>
-        void ICollection<T>.Add( T item ) {
+		/// <summary>
+		///     Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.
+		/// </summary>
+		/// <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
+		/// <exception cref="T:System.NotSupportedException">
+		///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
+		///     read-only.
+		/// </exception>
+		/// <exception cref="ArgumentException"></exception>
+		void ICollection<T>.Add( T item ) {
             if ( !this.Add( item ) ) {
                 throw new ArgumentException( "Item already exists in set." );
             }

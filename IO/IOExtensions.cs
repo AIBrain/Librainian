@@ -635,25 +635,25 @@ namespace Librainian.IO {
 
         public static uint? GetFileSizeOnDisk( this Document document ) => GetFileSizeOnDisk( new FileInfo( document.FullPathWithFileName ) );
 
-        [CanBeNull]
-        public static String SimplifyFileName( [NotNull] this Document document ) {
+		[ NotNull ]
+		public static String SimplifyFileName( [NotNull] this Document document ) {
             if ( document == null ) {
                 throw new ArgumentNullException( "document" );
             }
 
-            var bestGuess = Path.GetFileNameWithoutExtension( document.FileName );
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( document.FileName );
 
             TryAgain:
 
             //check for a double extension (image.jpg.tif), remove the 'fake' (.jpg) extension
-            if ( !Path.GetExtension( bestGuess ).IsNullOrEmpty() ) {
-                bestGuess = Path.GetFileNameWithoutExtension( bestGuess );
+            if ( !Path.GetExtension( fileNameWithoutExtension ).IsNullOrEmpty() ) {
+                fileNameWithoutExtension = Path.GetFileNameWithoutExtension( fileNameWithoutExtension );
                 goto TryAgain;
             }
 
             //TODO we have the document, see if we can just chop off down to a nonexisting filename.. just get rid of (3) or (2) or (1)
 
-            var splitIntoWords = bestGuess.Split( new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries ).ToList();
+            var splitIntoWords = fileNameWithoutExtension.Split( new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries ).ToList();
 
             if ( splitIntoWords.Count() >= 2 ) {
                 var list = splitIntoWords.ToList();
@@ -661,28 +661,28 @@ namespace Librainian.IO {
 
                 //check for a copy indicator
                 if ( lastWord.Like( "Copy" ) ) {
-                    bestGuess = list.ToStrings( " " );
-                    bestGuess = bestGuess.Trim();
+                    fileNameWithoutExtension = list.ToStrings( " " );
+                    fileNameWithoutExtension = fileNameWithoutExtension.Trim();
                     goto TryAgain;
                 }
 
                 //check for a trailing "-" or "_"
                 if ( lastWord.Like( "-" ) || lastWord.Like( "_" ) ) {
-                    bestGuess = list.ToStrings( " " );
-                    bestGuess = bestGuess.Trim();
+                    fileNameWithoutExtension = list.ToStrings( " " );
+                    fileNameWithoutExtension = fileNameWithoutExtension.Trim();
                     goto TryAgain;
                 }
 
                 //check for duplicate "word word" at the string's ending.
                 var nextlastWord = list.TakeLast();
                 if ( lastWord.Like( nextlastWord ) ) {
-                    bestGuess = list.ToStrings( " " ) + " " + lastWord;
-                    bestGuess = bestGuess.Trim();
+                    fileNameWithoutExtension = list.ToStrings( " " ) + " " + lastWord;
+                    fileNameWithoutExtension = fileNameWithoutExtension.Trim();
                     goto TryAgain;
                 }
             }
 
-            return bestGuess;
+            return String.Format( "{0}{1}", fileNameWithoutExtension, document.Extension);
         }
 
         /// <summary>

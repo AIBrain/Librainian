@@ -30,7 +30,6 @@ namespace Librainian.IO {
     using System.Security;
     using System.Security.Permissions;
     using System.Threading.Tasks;
-    using Collections;
     using Extensions;
     using JetBrains.Annotations;
     using Maths;
@@ -43,7 +42,7 @@ namespace Librainian.IO {
 
     /// <summary>
     /// <para>
-    /// A wrapper for a file, the extension, the [parent] folder, and the file's size all from a
+    /// An immutable wrapper for a file, the extension, the [parent] folder, and the file's size all from a
     /// given full path.
     /// </para>
     /// <para>Also contains static String versions from <see cref="Path"/></para>
@@ -54,53 +53,47 @@ namespace Librainian.IO {
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [Serializable]
     public class Document : IDocument {
+	    [ NotNull ]
+	    public static IDocument Empty { get; } = new Document();
 
-        [NotNull]
-        [UsedImplicitly]
-        public static readonly IDocument Empty = new Document();
+	    /// <summary>
+		/// Gets the characters that are not allowed in path names.
+		/// </summary>
+		[NotNull]
+        public static readonly HashSet<Char> InvalidPathChars = new HashSet<Char>( Path.GetInvalidPathChars() );
 
-        /// <summary>
-        /// "/"
-        /// </summary>
-        [NotNull]
-        public static readonly List<char> InvalidPathChars = new List<char>( Path.GetInvalidPathChars() );
+	    /// <summary>
+	    /// <para>Returns the extension of the <see cref="FileName"/>, including the prefix ".".</para>
+	    /// </summary>
+	    [ NotNull ]
+	    public string Extension { get; }
 
-        /// <summary>
-        /// <para>The extension of the <see cref="FileName"/>, including the prefix ".".</para>
-        /// </summary>
-        [NotNull]
-        public readonly String Extension;
+	    [ NotNull ]
+	    public FileInfo Info { get; }
 
-        [NotNull]
-        public readonly FileInfo FileInfo;
+		/// <summary>
+		/// <para>Just the file's name, including the extension.</para>
+		/// </summary>
+		/// <seealso cref="Path.GetFileName"/>
+		[NotNull]
+        public String FileName { get; }
 
-        /// <summary>
-        /// <para>Just the file's name, including the extension.</para>
-        /// </summary>
-        /// <seealso cref="Path.GetFileNameWithoutExtension"/>
-        [NotNull]
-        public readonly String FileName;
+		/// <summary>
+		/// <para>The <see cref="Folder"/> this <see cref="Document"/> is stored.</para>
+		/// </summary>
+		[NotNull]
+        public Folder Folder { get; }
 
-        /// <summary>
-        /// <para>The <see cref="Folder"/> this <see cref="Document"/> is stored.</para>
-        /// </summary>
-        [NotNull]
-        public readonly Folder Folder;
+	    /// <summary>
+	    /// <para>The <see cref="Folder"/> combined with the <see cref="FileName"/>.</para>
+	    /// </summary>
+	    [ NotNull ]
+	    public String FullPathWithFileName { get; }
 
-        /// <summary>
-        /// <para>The <see cref="Folder"/> combined with the <see cref="FileName"/>.</para>
-        /// </summary>
-        [NotNull]
-        public readonly String FullPathWithFileName;
+	    [ NotNull ]
+	    public String OriginalPathWithFileName { get; }
 
-        [NotNull]
-        public readonly String OriginalPathWithFileName;
-
-        static Document() {
-            InvalidPathChars.Fix();
-        }
-
-        public Document( [NotNull] String fullPath, String filename ) : this( Path.Combine( fullPath, filename ) ) {
+	    public Document( [NotNull] String fullPath, String filename ) : this( Path.Combine( fullPath, filename ) ) {
         }
 
         /// <summary>
@@ -116,7 +109,9 @@ namespace Librainian.IO {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         public Document( [NotNull] String fullPathWithFilename ) {
-            if ( String.IsNullOrWhiteSpace( fullPathWithFilename ) ) {
+			this.OriginalPathWithFileName = fullPathWithFilename;
+
+			if ( String.IsNullOrWhiteSpace( fullPathWithFilename ) ) {
                 throw new ArgumentNullException( "fullPathWithFilename" );
             }
 
@@ -124,9 +119,8 @@ namespace Librainian.IO {
             if ( String.IsNullOrWhiteSpace( fullPathWithFilename ) ) {
                 throw new ArgumentNullException( "fullPathWithFilename" );
             }
-            this.OriginalPathWithFileName = fullPathWithFilename;
 
-            this.FileInfo = new FileInfo( fullPathWithFilename );
+            this.Info = new FileInfo( fullPathWithFilename );
 
             var directoryName = Path.GetDirectoryName( fullPathWithFilename );
             if ( String.IsNullOrWhiteSpace( directoryName ) ) {
@@ -140,19 +134,19 @@ namespace Librainian.IO {
             this.FullPathWithFileName = Path.Combine( this.Folder.FullName, this.FileName );
         }
 
-        public Document( FileSystemInfo info ) : this( info.FullName ) {
+        public Document( FileInfo info ) : this( info.FullName ) {
         }
 
         public Document( Folder folder, String filename ) : this( folder.FullName, filename ) {
         }
 
-        /// <summary>
-        /// Empty?
-        /// </summary>
-        /// <exception cref="UnauthorizedAccessException"></exception>
-        /// <exception cref="NotSupportedException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        private Document() {
+		/// <summary>
+		/// Empty? Directory.GetCurrentDirectory()?
+		/// </summary>
+		/// <exception cref="UnauthorizedAccessException"></exception>
+		/// <exception cref="NotSupportedException"></exception>
+		/// <exception cref="InvalidOperationException"></exception>
+		private Document() {
             this.Folder = new Folder( Directory.GetCurrentDirectory() );
             Document document;
             if ( !this.Folder.TryGetTempDocument( out document ) ) {
@@ -161,7 +155,12 @@ namespace Librainian.IO {
             document.DeepClone( this );
         }
 
-        [UsedImplicitly]
+	    public Document( Folder folder, Document document ) : this( Path.Combine( folder.FullName, document.FileName ) ) {
+		    
+
+	    }
+
+	    [UsedImplicitly]
         public String DebuggerDisplay => this.FullPathWithFileName;
 
         /// <summary>
@@ -211,7 +210,7 @@ namespace Librainian.IO {
         /// <returns></returns>
         public static Boolean operator ==( Document left, Document right ) => Equals( left, right );
 
-        public static implicit operator FileInfo( Document document ) => document.FileInfo;
+        public static implicit operator FileInfo( Document document ) => document.Info;
 
         /// <summary>
         /// <para>If the file does not exist, it is created.</para>
@@ -344,7 +343,7 @@ namespace Librainian.IO {
         public Boolean Delete() {
             try {
                 if ( this.Exists() ) {
-                    this.FileInfo.Delete();
+                    this.Info.Delete();
                 }
                 return !this.Exists();
             }
@@ -385,8 +384,8 @@ namespace Librainian.IO {
         /// </summary>
         /// <exception cref="IOException"></exception>
         public bool Exists() {
-            this.FileInfo.Refresh();
-            return this.FileInfo.Exists;
+            this.Info.Refresh();
+            return this.Info.Exists;
         }
 
         /// <summary>
@@ -412,7 +411,7 @@ namespace Librainian.IO {
             this.Refresh();
             try {
                 if ( this.Exists() ) {
-                    return ( UInt64 )this.FileInfo.Length;
+                    return ( UInt64 )this.Info.Length;
                 }
             }
             catch ( FileNotFoundException exception ) {
@@ -432,7 +431,7 @@ namespace Librainian.IO {
 
         public void Refresh() {
             this.Folder.Refresh();
-            this.FileInfo.Refresh();
+            this.Info.Refresh();
         }
 
         /// <summary>

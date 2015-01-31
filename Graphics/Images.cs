@@ -147,17 +147,9 @@ namespace Librainian.Graphics {
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
-        public static Boolean IsDateRecentEnough( this DateTime? dateTime ) {
-            if ( !dateTime.HasValue ) {
-                return false;
-            }
-            if ( dateTime.Value.Year > 1825 ) {
-                return true;
-            }
-            return false;
-        }
+        public static Boolean IsDateRecentEnough( this DateTime? dateTime ) => dateTime?.Year >= 1825;
 
-        [CanBeNull]
+	    [CanBeNull]
         public static DateTime? ImageCreationBestGuess( [CanBeNull] this FileSystemInfo info ) {
             if ( info == null ) {
                 throw new ArgumentNullException( "info" );
