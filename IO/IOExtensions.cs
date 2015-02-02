@@ -506,7 +506,7 @@ namespace Librainian.IO {
 
 			foldersFound.Add( startingFolder );
 
-			var searchPatterns = documentSearchPatterns as IList<string> ?? documentSearchPatterns.ToList();
+			var searchPatterns = documentSearchPatterns as IList<String> ?? documentSearchPatterns.ToList();
 
 			do {
 				if ( cancellation.IsCancellationRequested ) {
