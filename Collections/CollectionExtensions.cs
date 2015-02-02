@@ -372,6 +372,16 @@ namespace Librainian.Collections {
 			return removed;
 		}
 
+		public static void Clear<T>( [NotNull] this ConcurrentBag<T> bag ) {
+			if ( bag == null ) {
+				throw new ArgumentNullException( "bag" );
+			}
+			do {
+				T result;
+				bag.TryTake( out result );
+			} while ( !bag.IsEmpty );
+		}
+
 		public static IEnumerable<T> RemoveEach<T>( [NotNull] this IProducerConsumerCollection<T> collection ) {
 			if ( collection == null ) {
 				throw new ArgumentNullException( "collection" );

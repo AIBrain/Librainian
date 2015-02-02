@@ -115,9 +115,9 @@ namespace Librainian.Maths {
             this.Denominator = denominator;
             this.LeastCommonDenominator = BigRational.LeastCommonDenominator( this.Numerator.Value, this.Denominator.Value );
 
-            this.Quotient = denominator <= 0 ? new BigRational( 0.0 ) : new BigRational( numerator / denominator );
+	        this.Quotient = denominator == BigInteger.Zero ? new BigRational( 0.0 ) : new BigRational( numerator / denominator );
 
-            if ( this.Quotient < Minimum ) {
+	        if ( this.Quotient < Minimum ) {
                 this.Quotient = Minimum;
             }
             else if ( this.Quotient > Maximum ) {
