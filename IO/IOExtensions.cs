@@ -138,13 +138,10 @@ namespace Librainian.IO {
 				throw new ArgumentNullException( "fileInfo" );
 			}
 			if ( !fileInfo.Exists ) {
-				fileInfo.Refresh();	//check one more time
-				if ( !fileInfo.Exists ) {
-					yield break;
-				}
+				yield break;
 			}
 
-			using (var stream = new FileStream( fileInfo.FullName, FileMode.Open )) {
+			using (var stream = new FileStream( path: fileInfo.FullName, mode: FileMode.Open )) {
 				if ( !stream.CanRead ) {
 					throw new NotSupportedException( String.Format( "Cannot read from file {0}", fileInfo.FullName ) );
 				}
@@ -489,7 +486,7 @@ namespace Librainian.IO {
 			return now;
 		}
 
-		public static Boolean GrabEntireDocumentList( [NotNull] this Folder startingFolder, IEnumerable<String> documentSearchPatterns, [NotNull] ConcurrentBag<Document> documentsFound, [NotNull] ConcurrentBag<Folder> foldersFound, SimpleCancel cancellation ) {
+		public static Boolean GrabEntireTree( [NotNull] this Folder startingFolder, IEnumerable<String> documentSearchPatterns, [NotNull] ConcurrentBag<Document> documentsFound, [NotNull] ConcurrentBag<Folder> foldersFound, SimpleCancel cancellation ) {
 			if ( startingFolder == null ) {
 				throw new ArgumentNullException( "startingFolder" );
 			}
@@ -500,6 +497,10 @@ namespace Librainian.IO {
 				throw new ArgumentNullException( "foldersFound" );
 			}
 
+			if ( cancellation.IsCancellationRequested ) {
+				return documentsFound.Any();
+			}
+
 			if ( !startingFolder.Exists() ) {
 				return false;
 			}
@@ -508,26 +509,18 @@ namespace Librainian.IO {
 
 			var searchPatterns = documentSearchPatterns as IList<String> ?? documentSearchPatterns.ToList();
 
-			do {
-				if ( cancellation.IsCancellationRequested ) {
-					return documentsFound.Any();
-				}
+			var list = new List<FileInfo>();
+			foreach ( var files in searchPatterns.Select( searchPattern => startingFolder.DirectoryInfo.EnumerateFiles( searchPattern ).AsParallel() ) ) {
+				list.AddRange( files );
+			}
+			Parallel.ForEach( list.AsParallel(), info => documentsFound.Add( new Document( info ) ) );
 
-				var files = startingFolder.GetDocuments( searchPatterns );
-				Parallel.ForEach( files, ThreadingExtensions.Parallelism, ( document, state, arg3 ) => {
-					if ( cancellation.IsCancellationRequested ) {
-						return;
-					}
-					documentsFound.Add( document );
-				} );
+			if ( cancellation.IsCancellationRequested ) {
+				return documentsFound.Any();
+			}
 
-				if ( cancellation.IsCancellationRequested ) {
-					return documentsFound.Any();
-				}
-
-				var folders = startingFolder.GetFolders();
-				Parallel.ForEach( folders, ThreadingExtensions.Parallelism, ( folder, state ) => GrabEntireDocumentList( folder, searchPatterns, documentsFound, foldersFound, cancellation ) );
-			} while ( !cancellation.IsCancellationRequested );
+			var folders = startingFolder.GetFolders();
+			Parallel.ForEach( folders.AsParallel(), ( folder, state ) => GrabEntireTree( folder, searchPatterns, documentsFound, foldersFound, cancellation ) );
 
 			return documentsFound.Any();
 		}

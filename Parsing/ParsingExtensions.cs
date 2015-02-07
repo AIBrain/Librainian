@@ -1256,12 +1256,13 @@ namespace Librainian.Parsing {
             Console.WriteLine( test4.StripTagsAndAttributes( new[] { "a" } ) );
         }
 
-        /// <summary>
-        ///     Converts a String to camel case
-        /// </summary>
-        /// <param name="lowercaseAndUnderscoredWord">String to convert</param>
-        /// <returns>String</returns>
-        public static String ToCamelCase( this String lowercaseAndUnderscoredWord, CultureInfo culture ) => MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord, culture ) );
+	    /// <summary>
+	    ///     Converts a String to camel case
+	    /// </summary>
+	    /// <param name="lowercaseAndUnderscoredWord">String to convert</param>
+	    /// <param name="culture"></param>
+	    /// <returns>String</returns>
+	    public static String ToCamelCase( this String lowercaseAndUnderscoredWord, CultureInfo culture ) => MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord, culture ) );
 
         /// <summary>
         ///     Same as <see cref="AsOrdinal" />, but might be slightly faster performance-wise.

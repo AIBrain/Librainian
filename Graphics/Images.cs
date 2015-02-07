@@ -24,7 +24,6 @@
 namespace Librainian.Graphics {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Drawing.Imaging;
@@ -189,9 +188,9 @@ namespace Librainian.Graphics {
                     if ( IsDateRecentEnough( bestGuess ) ) {
                         return bestGuess;
                     }
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
+                    //if ( Debugger.IsAttached ) {
+                    //    Debugger.Break();
+                    //}
                 }
                 #endregion
 
@@ -207,9 +206,9 @@ namespace Librainian.Graphics {
                     if ( IsDateRecentEnough( bestGuess ) ) {
                         return bestGuess;
                     }
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
+                    //if ( Debugger.IsAttached ) {
+                    //    Debugger.Break();
+                    //}
                 }
                 #endregion
 
@@ -224,9 +223,9 @@ namespace Librainian.Graphics {
                     if ( IsDateRecentEnough( bestGuess ) ) {
                         return bestGuess;
                     }
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
+                    //if ( Debugger.IsAttached ) {
+                    //    Debugger.Break();
+                    //}
                 }
 
                 //per http://stackoverflow.com/a/669758/956364
@@ -240,9 +239,9 @@ namespace Librainian.Graphics {
                     if ( IsDateRecentEnough( bestGuess ) ) {
                         return bestGuess;
                     }
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
+                    //if ( Debugger.IsAttached ) {
+                    //    Debugger.Break();
+                    //}
                 }
             }
             catch ( Exception ) {
@@ -258,9 +257,9 @@ namespace Librainian.Graphics {
                 return creationTime;
             }
 
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
+            //if ( Debugger.IsAttached ) {
+            //    Debugger.Break();
+            //}
 
             return null;
         }
