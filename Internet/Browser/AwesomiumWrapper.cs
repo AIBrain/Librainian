@@ -14,7 +14,7 @@
     using Threading;
 
     /// <summary>
-    /// Semaphore wrapper for the <see cref="Awesomium"/> browser control ( <see cref="WebControl"/>).
+    /// Semaphore wrapper for a <see cref="Awesomium"/> browser control ( <see cref="WebControl"/>).
     /// </summary>
     public class AwesomiumWrapper {
         [NotNull]
@@ -246,7 +246,7 @@
                 var watchdog = Stopwatch.StartNew();
 
                 var result = this.WebControl.Invoke( method: new Action( () => {
-                    Log.Info( String.Format( "Navigating to {0}...", url ) );
+                    String.Format( "Navigating to {0}...", url ).Info();
 
                     this.WebControl.Source = url;
 
@@ -259,12 +259,12 @@
                         }
 
                         if ( watchdog.Elapsed >= this.Timeout ) {
-                            Log.Info( "*navigation^timed->out*" );
+                            "*navigation^timed->out*".Info();
                             break;
                         }
                     } while ( this.WebControl.IsLoading || this.WebControl.IsNavigating );
 
-                    Log.Info( "done navigating." );
+                    "done navigating.".Info();
                 } ) );
                 return WebControl.IsDocumentReady && WebControl.IsResponsive;
             }

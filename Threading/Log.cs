@@ -120,7 +120,7 @@ namespace Librainian.Threading {
         public static void Message( String message, [CallerMemberName] String method = "" ) => String.Format( "{0}: {1}", method.NullIfEmpty() ?? "?", message ).WriteLine();
 
         [DebuggerStepThrough]
-        public static void Info( String message ) => String.Format( "{0}", message ).WriteLine();
+        public static void Info( this String message ) => String.Format( "{0}", message ).WriteLine();
 
         [DebuggerStepThrough]
         public static void Finalized( [CallerMemberName] String method = "" ) => String.Format( "{0}: {1}", "Finalized", method ?? String.Empty ).WriteLine();
@@ -186,7 +186,7 @@ namespace Librainian.Threading {
             var after = GC.GetTotalMemory( forceFullCollection: false );
 
             if ( after < before ) {
-                Info( String.Format( "{0} bytes freed by the GC.", before - after ) );
+                String.Format( "{0} bytes freed by the GC.", before - after ).Info();
             }
         }
     }

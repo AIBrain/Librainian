@@ -17,86 +17,61 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Captcha.cs" was last cleaned by Rick on 2014/09/13 at 5:48 PM
+// "Librainian 2015/Captcha.cs" was last cleaned by Rick on 2015/02/07 at 6:39 AM
 
 #endregion License & Information
 
 namespace Librainian.Internet {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Runtime.Serialization;
-    using JetBrains.Annotations;
 
-    [DataContract( IsReference = true )]
-    public class Captcha {
-        [ NotNull ]
-        [ DataMember ]
-        public ConcurrentDictionary< DateTime, CaptchaStatus > StatusHistory { get; } = new ConcurrentDictionary< DateTime, CaptchaStatus >();
+	using System;
+	using System.Collections.Concurrent;
+	using System.Runtime.Serialization;
+	using JetBrains.Annotations;
 
-        [DataMember]
-        private CaptchaStatus _status;
+	[DataContract(IsReference = true)]
+	public class Captcha {
 
-        [CanBeNull]
-        [DataMember]
-        public String ChallengeElementID {
-            get;
-            set;
-        }
+		[DataMember]
+		private CaptchaStatus _status;
 
-        //[CanBeNull]
-        //[DataMember]
-        //public Image Image {
-        //    get;
-        //    set;
-        //}
+		[NotNull]
+		[DataMember]
+		public ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory { get; }
+		= new ConcurrentDictionary<DateTime, CaptchaStatus>();
 
-        [CanBeNull]
-        [DataMember]
-        public Uri ImageUri {
-            get;
-            set;
-        }
+		[CanBeNull]
+		[DataMember]
+		public String ChallengeElementID { get; set; }
 
+		[CanBeNull]
+		[DataMember]
+		public Uri ImageUri { get; set; }
 
-        [CanBeNull]
-        [DataMember]
-        public String ResponseElementID {
-            get;
-            set;
-        }
+		[CanBeNull]
+		[DataMember]
+		public String ResponseElementID { get; set; }
 
-        public CaptchaStatus Status {
-            get {
-                return this._status;
-            }
+		public CaptchaStatus Status {
+			get { return this._status; }
 
-            set {
-                if ( !Equals( this._status, value ) ) {
-                    this.StatusHistory.TryAdd( DateTime.Now, value );
-                }
-                this._status = value;
-            }
-        }
+			set {
+				if ( !Equals( this._status, value ) ) {
+					this.StatusHistory.TryAdd( DateTime.Now, value );
+				}
+				this._status = value;
+			}
+		}
 
-        [CanBeNull]
-        [DataMember]
-        public String FormID {
-            get;
-            set;
-        }
+		[CanBeNull]
+		[DataMember]
+		public String FormID { get; set; }
 
-        [CanBeNull]
-        [DataMember]
-        public String SubmitID {
-            get;
-            set;
-        }
+		[CanBeNull]
+		[DataMember]
+		public String SubmitID { get; set; }
 
-        [CanBeNull]
-        [DataMember]
-        public Uri Uri {
-            get;
-            set;
-        }
-    }
+		[CanBeNull]
+		[DataMember]
+		public Uri Uri { get; set; }
+	}
 }
