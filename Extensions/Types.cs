@@ -44,7 +44,9 @@ namespace Librainian.Extensions {
                     return;
                 }
 
-                field.SetValue( destination, sourceValue );
+	            if ( !field.IsLiteral ) {
+					field.SetValue( destination, sourceValue );
+				}
             }
             catch ( TargetException exception ) {
                 exception.More();
