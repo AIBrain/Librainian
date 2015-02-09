@@ -23,6 +23,7 @@ namespace Librainian.Maths {
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.Diagnostics;
 	using System.Linq;
 	using System.Numerics;
 	using System.Runtime.InteropServices;
@@ -659,6 +660,7 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="number"></param>
 		/// <returns></returns>
+		[DebuggerStepThrough]
 		public static Decimal IfLessThanZeroThenZero( this Decimal number ) => number < Decimal.Zero ? Decimal.Zero : number;
 
 		/// <summary>
@@ -670,6 +672,7 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="number"></param>
 		/// <returns></returns>
+		[DebuggerStepThrough]
 		public static BigInteger IfLessThanZeroThenZero( this BigInteger number ) => number < BigInteger.Zero ? BigInteger.Zero : number;
 
 		/// <summary>
@@ -681,7 +684,25 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="number"></param>
 		/// <returns></returns>
+		[DebuggerStepThrough]
 		public static BigDecimal IfLessThanZeroThenZero( this BigDecimal number ) => number < BigDecimal.Zero ? BigDecimal.Zero : number;
+
+		/// <summary>
+		///     <para>
+		///         If the <paramref name="number" /> is less than <see cref="BigDecimal.Zero" />, then return
+		///         <see cref="Decimal.Zero" />.
+		///     </para>
+		///     <para>Otherwise return the <paramref name="number" />.</para>
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
+		[DebuggerStepThrough]
+		public static BigDecimal IfLessThanZeroThenZero( this BigDecimal? number ) {
+			if ( !number.HasValue || number <= BigDecimal.Zero ) {
+				return BigDecimal.Zero;
+			}
+			return number.Value;
+		}
 
 		public static Double Intercept( [NotNull] this List<TimeProgression> data ) {
 			if ( data == null ) {

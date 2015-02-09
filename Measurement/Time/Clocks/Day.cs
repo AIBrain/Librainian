@@ -37,7 +37,7 @@ namespace Librainian.Measurement.Time.Clocks {
     [Immutable]
     public struct Day : IClockPart {
 
-        public static readonly Byte[] ValidDays = 1.To( Days.InOneMonth ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
+        public static readonly Byte[] ValidDays = 1.To( 31 ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
 
 
         /// <summary>

@@ -61,7 +61,7 @@ namespace Librainian.Measurement.Time {
             Zero.Should().BeLessThan( One );
             One.Should().BeGreaterThan( Zero );
             One.Should().Be( One );
-            One.Should().BeGreaterThan( Months.One );
+            //One.Should().BeGreaterThan( Months.One );
         }
 
         public Years( Decimal value ) {
@@ -137,8 +137,8 @@ namespace Librainian.Measurement.Time {
         [Pure]
         public Months ToMonths() => new Months( this.Value * Months.InOneCommonYear );
 
-        [Pure]
-        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneYear, new BigInteger( this.Value ) );
+	    [ Pure ]
+	    public BigInteger ToPlanckTimes() => PlanckTimes.InOneYear * new BigInteger( this.Value );
 
         [Pure]
         public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneCommonYear );

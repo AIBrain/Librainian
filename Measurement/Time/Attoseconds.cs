@@ -152,12 +152,10 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Attoseconds Zero = new Attoseconds( 0 );
 
-        /// <summary>
-        /// </summary>
-        [DataMember]
-        public readonly Decimal Value;
+		[DataMember]
+		public Decimal Value { get; }
 
-        public Attoseconds( Decimal value ) {
+		public Attoseconds( Decimal value ) {
             this.Value = value;
         }
 

@@ -111,10 +111,10 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Nanoseconds Zero = new Nanoseconds( value: 0 );
 
-        [DataMember]
-        public readonly Decimal Value;
+		[DataMember]
+		public Decimal Value { get; }
 
-        static Nanoseconds() {
+		static Nanoseconds() {
             Zero.Should().BeLessThan( One );
             One.Should().BeGreaterThan( Zero );
             One.Should().Be( One );
@@ -152,7 +152,7 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static Boolean Equals( Nanoseconds left, Nanoseconds right ) => left.Value == right.Value;
 
-        public static implicit operator Microseconds( Nanoseconds nanoseconds ) => new Microseconds( nanoseconds.Value / InOneMicrosecond );
+        public static implicit operator Microseconds( Nanoseconds nanoseconds ) => nanoseconds.ToMicroseconds();
 
         public static implicit operator Picoseconds( Nanoseconds nanoseconds ) => nanoseconds.ToPicoseconds();
 
@@ -202,10 +202,10 @@ namespace Librainian.Measurement.Time {
         [Pure]
         public Microseconds ToMicroseconds() => new Microseconds( this.Value / InOneMicrosecond );
 
-        public Picoseconds ToPicoseconds() => new Picoseconds( this.Value * Picoseconds.InOneNanosecond );
+        [Pure]public Picoseconds ToPicoseconds() => new Picoseconds( this.Value * Picoseconds.InOneNanosecond );
 
-        [Pure]
-        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneNanosecond, new BigInteger( this.Value ) );
+	    [ Pure ]
+	    public BigInteger ToPlanckTimes() => PlanckTimes.InOneNanosecond * new BigInteger( this.Value );
 
         [Pure]
         public override String ToString() => String.Format( "{0} ns", this.Value );

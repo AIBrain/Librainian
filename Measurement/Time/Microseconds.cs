@@ -111,10 +111,10 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Microseconds Zero = new Microseconds( 0 );
 
-        [DataMember]
-        public readonly Decimal Value;
+		[DataMember]
+		public Decimal Value { get; }
 
-        static Microseconds() {
+		static Microseconds() {
             Zero.Should().BeLessThan( One );
             One.Should().BeGreaterThan( Zero );
             One.Should().Be( One );
@@ -198,10 +198,11 @@ namespace Librainian.Measurement.Time {
         [Pure]
         public Milliseconds ToMilliseconds() => new Milliseconds( this.Value / InOneMillisecond );
 
+		[Pure]
         public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value * Nanoseconds.InOneMicrosecond );
 
-        [Pure]
-        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneMicrosecond, new BigInteger( this.Value ) );
+	    [ Pure ]
+	    public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMicrosecond * new BigInteger( this.Value ) );
 
         [Pure]
         public override String ToString() => String.Format( "{0} µs", this.Value );

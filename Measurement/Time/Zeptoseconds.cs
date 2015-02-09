@@ -29,6 +29,7 @@ namespace Librainian.Measurement.Time {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Librainian.Extensions;
+    using Maths;
     using NUnit.Framework;
 
     /// <summary>
@@ -88,10 +89,13 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Zeptoseconds Zero = new Zeptoseconds( 0 );
 
-        [DataMember]
-        public readonly Decimal Value;
+	    [ DataMember ]public BigDecimal Value { get; }
 
-        public Zeptoseconds( Decimal value ) {
+	    public Zeptoseconds( Decimal value ) {
+            this.Value = value;
+        }
+
+		public Zeptoseconds( BigDecimal value ) {
             this.Value = value;
         }
 
@@ -100,8 +104,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public Zeptoseconds( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
         [UsedImplicitly]
@@ -109,7 +112,7 @@ namespace Librainian.Measurement.Time {
 
         public static Zeptoseconds Combine( Zeptoseconds left, Zeptoseconds right ) => Combine( left, right.Value );
 
-        public static Zeptoseconds Combine( Zeptoseconds left, Decimal zeptoseconds ) => new Zeptoseconds( left.Value + zeptoseconds );
+        public static Zeptoseconds Combine( Zeptoseconds left, BigDecimal zeptoseconds ) => new Zeptoseconds( left.Value + zeptoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>

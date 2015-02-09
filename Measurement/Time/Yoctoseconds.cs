@@ -29,8 +29,9 @@ namespace Librainian.Measurement.Time {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Librainian.Extensions;
+    using Maths;
 
-    /// <summary>
+	/// <summary>
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Yoctosecond" />
     [DataContract( IsReference = true )]
@@ -87,10 +88,10 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Yoctoseconds Zero = new Yoctoseconds( 0 );
 
-        [DataMember]
-        public readonly Decimal Value;
+	    [ DataMember ]
+	    public BigDecimal Value { get; }
 
-        static Yoctoseconds() {
+	    static Yoctoseconds() {
             Zero.Should().BeLessThan( One );
             One.Should().BeGreaterThan( Zero );
             One.Should().Be( One );
@@ -102,13 +103,16 @@ namespace Librainian.Measurement.Time {
             this.Value = value;
         }
 
+		public Yoctoseconds( BigDecimal value ) {
+            this.Value = value;
+        }
+
         public Yoctoseconds( long value ) {
             this.Value = value;
         }
 
         public Yoctoseconds( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
         [UsedImplicitly]
@@ -116,7 +120,7 @@ namespace Librainian.Measurement.Time {
 
         public static Yoctoseconds Combine( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right.Value );
 
-        public static Yoctoseconds Combine( Yoctoseconds left, Decimal yoctoseconds ) => new Yoctoseconds( left.Value + yoctoseconds );
+        public static Yoctoseconds Combine( Yoctoseconds left, BigDecimal yoctoseconds ) => new Yoctoseconds( left.Value + yoctoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -133,7 +137,7 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static implicit operator PlanckTimes( Yoctoseconds yoctoseconds ) => ToPlanckTimes( yoctoseconds );
 
-        public static implicit operator Span( Yoctoseconds yoctoseconds ) => new Span( yoctoseconds );
+        public static implicit operator Span( Yoctoseconds yoctoseconds ) => new Span( yoctoseconds: yoctoseconds );
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="Zeptoseconds" />.
@@ -160,7 +164,7 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( Yoctoseconds left, Yoctoseconds right ) => left.Value > right.Value;
 
-        public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new PlanckTimes( BigInteger.Multiply( PlanckTimes.InOneYoctosecond, new BigInteger( yoctoseconds.Value ) ) );
+		public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new PlanckTimes( PlanckTimes.InOneYoctosecond * yoctoseconds.Value );
 
         public int CompareTo( Yoctoseconds other ) => this.Value.CompareTo( other.Value );
 
@@ -176,10 +180,14 @@ namespace Librainian.Measurement.Time {
         [Pure]
         public override int GetHashCode() => this.Value.GetHashCode();
 
-        [Pure]
-        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneYoctosecond, new BigInteger( this.Value ) );
+	    [ Pure ]
+	    public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneYoctosecond *  this.Value );
 
-        [Pure]
+		//TODO
+		//[Pure]public Seconds ToSeconds() => new Seconds( this.Value / Seconds. );
+
+
+		[Pure]
         public override String ToString() => String.Format( "{0} ys", this.Value );
 
         [Pure]

@@ -89,7 +89,7 @@ namespace Librainian.Measurement.Time {
         [UsedImplicitly]
         private String DebuggerDisplay => this.ToString();
 
-        public const Byte InOneMonth = 31;
+        //public const Byte InOneMonth = 31;
 
         public static Days Combine( Days left, Days right ) => Combine( left, right.Value );
 

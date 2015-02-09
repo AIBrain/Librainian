@@ -31,8 +31,12 @@ namespace Librainian.Measurement.Time {
         int GetHashCode();
 
         [Pure]
-        BigInteger ToPlanckTimes();
+        PlanckTimes ToPlanckTimes();
 
-        String ToString();
+		//TODO
+	    //[ Pure ]Seconds ToSeconds();
+
+
+		String ToString();
     }
 }

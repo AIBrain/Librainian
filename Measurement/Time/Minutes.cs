@@ -177,8 +177,8 @@ namespace Librainian.Measurement.Time {
 
         public Hours ToHours() => new Hours( this.Value / InOneHour );
 
-        [Pure]
-        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneMinute, new BigInteger( this.Value ) );
+	    [ Pure ]
+	    public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMinute * new BigInteger( this.Value ) );
 
         [Pure]
         public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMinute );

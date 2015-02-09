@@ -173,7 +173,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentOutOfRangeException( "planckTimes", "Must be greater than or equal to 0" );
             }
 
-            //NOTE the order here is mostly important. I think? maybe not. oh well.
+            //NOTE the order here is maybe important..
             this.Years = new Years( PlanckTimes.InOneYear.PullPlancks( ref planckTimes ) );
 
             this.Months = new Months( PlanckTimes.InOneMonth.PullPlancks( ref planckTimes ) );
@@ -236,7 +236,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="timeSpan"></param>
         /// <param name="normalize"></param>
         public Span( TimeSpan timeSpan, Boolean normalize = true )
-            : this( milliseconds: timeSpan.Milliseconds, seconds: timeSpan.Seconds, minutes: timeSpan.Minutes, hours: timeSpan.Hours, days: timeSpan.Days ) {
+            : this ( milliseconds: timeSpan.Ticks / (Decimal)TimeSpan.TicksPerMillisecond /*, milliseconds: timeSpan.Milliseconds, seconds: timeSpan.Seconds, minutes: timeSpan.Minutes, hours: timeSpan.Hours, days: timeSpan.Days*/ ) {
         }
 
         /// <summary>
@@ -285,7 +285,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="weeks"></param>
         /// <param name="months"></param>
         /// <param name="years"></param>
-        public Span( Decimal yoctoseconds = 0, Decimal zeptoseconds = 0, Decimal attoseconds = 0, Decimal femtoseconds = 0, Decimal picoseconds = 0, Decimal nanoseconds = 0, Decimal microseconds = 0, Decimal milliseconds = 0, Decimal seconds = 0, Decimal minutes = 0, Decimal hours = 0, Decimal days = 0, Decimal weeks = 0, Decimal months = 0, Decimal years = 0 )
+        public Span( BigDecimal? yoctoseconds = null, BigDecimal zeptoseconds = 0, BigDecimal attoseconds = 0, BigDecimal femtoseconds = 0, BigDecimal picoseconds = 0, BigDecimal nanoseconds = 0, BigDecimal microseconds = 0, BigDecimal milliseconds = 0, BigDecimal seconds = 0, BigDecimal minutes = 0, BigDecimal hours = 0, BigDecimal days = 0, BigDecimal weeks = 0, BigDecimal months = 0, BigDecimal years = 0 )
             : this() {
 
             //TODO Unit testing needed to verify the math.
@@ -656,6 +656,7 @@ namespace Librainian.Measurement.Time {
             return Zero;
         }
 
+/*
         public String ApproximatelySeconds() {
             BigDecimal bigSeconds = this.Seconds.Value;
             if ( bigSeconds >= MaximumUsefulDecimal ) {
@@ -722,10 +723,10 @@ namespace Librainian.Measurement.Time {
                 goto display;
             }
 
-            bigSeconds += this.Months.ToYears().ToDays().ToHours().ToMinutes().ToSeconds().Value;
-            if ( bigSeconds >= MaximumUsefulDecimal ) {
-                goto display;
-            }
+            //bigSeconds += this.Months.ToYears().ToDays().ToHours().ToMinutes().ToSeconds().Value;
+            //if ( bigSeconds >= MaximumUsefulDecimal ) {
+            //    goto display;
+            //}
 
             bigSeconds += this.Years.ToDays().ToHours().ToMinutes().ToSeconds().Value;
             if ( bigSeconds >= MaximumUsefulDecimal ) {
@@ -740,6 +741,7 @@ namespace Librainian.Measurement.Time {
             var asSeconds = new Seconds( ( Decimal )bigSeconds );
             return String.Format( "{0} seconds", asSeconds );
         }
+*/
 
         public int CompareTo( Span other ) => CompareTo( this, other );
 

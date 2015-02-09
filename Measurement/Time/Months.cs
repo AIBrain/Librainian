@@ -101,7 +101,7 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Span( Months months ) => new Span( months: months.Value );
 
-        public static implicit operator Weeks( Months months ) => months.ToWeeks();
+        //public static implicit operator Weeks( Months months ) => months.ToWeeks();
 
         public static Months operator -( Months days ) => new Months( days.Value * -1 );
 
@@ -135,17 +135,18 @@ namespace Librainian.Measurement.Time {
         public override int GetHashCode() => this.Value.GetHashCode();
 
         [Pure]
-        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneMonth, new BigInteger( this.Value ) );
+        public BigInteger ToPlanckTimes() =>  PlanckTimes.InOneMonth * new BigInteger( this.Value ) ;
 
-        [Pure]
+		[Pure]
+		public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMonth );
+
+		[Pure]
         public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "month" ) );
 
-        public static implicit operator Years( Months months ) => months.ToYears();
+        //public static implicit operator Years( Months months ) => months.ToYears();
 
-        [Pure]
-        public Weeks ToWeeks() => new Weeks( this.Value * Weeks.InOneMonth );
+        //[Pure]public Weeks ToWeeks() => new Weeks( this.Value * Weeks.InOneMonth );
 
-        [Pure]
-        public Years ToYears() => new Years( this.Value / InOneCommonYear );
+        //[Pure]public Years ToYears() => new Years( this.Value / InOneCommonYear );
     }
 }

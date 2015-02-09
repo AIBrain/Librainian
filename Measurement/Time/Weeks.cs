@@ -35,14 +35,14 @@ namespace Librainian.Measurement.Time {
     public struct Weeks : IComparable<Weeks> {
 
         /// <summary>
-        ///     52.4
+        ///     52
         /// </summary>
-        public const Decimal InOneCommonYear = 52.14m;
+        public const Decimal InOneCommonYear = 52m;
 
-        /// <summary>
-        ///     4.345
-        /// </summary>
-        public const Decimal InOneMonth = 4.345m;
+        ///// <summary>
+        /////     4.345
+        ///// </summary>
+        //public const Decimal InOneMonth = 4.345m;
 
         /// <summary>
         ///     One <see cref="Weeks" /> .
@@ -69,7 +69,7 @@ namespace Librainian.Measurement.Time {
             Zero.Should().BeLessThan( One );
             One.Should().BeGreaterThan( Zero );
             One.Should().Be( One );
-            One.Should().BeLessThan( Months.One );
+            //One.Should().BeLessThan( Months.One );
             One.Should().BeGreaterThan( Days.One );
         }
 
@@ -111,7 +111,7 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static implicit operator Days( Weeks weeks ) => weeks.ToDays();
 
-        public static implicit operator Months( Weeks weeks ) => weeks.ToMonths();
+        //public static implicit operator Months( Weeks weeks ) => weeks.ToMonths();
 
         public static implicit operator Span( Weeks weeks ) => new Span( weeks: weeks.Value );
 
@@ -131,11 +131,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator <( Weeks left, Days right ) => left < ( Weeks )right;
 
-        public static Boolean operator <( Weeks left, Months right ) => ( Months )left < right;
+        //public static Boolean operator <( Weeks left, Months right ) => ( Months )left < right;
 
         public static Boolean operator ==( Weeks left, Weeks right ) => Equals( left, right );
 
-        public static bool operator >( Weeks left, Months right ) => ( Months )left > right;
+        //public static bool operator >( Weeks left, Months right ) => ( Months )left > right;
 
         public static Boolean operator >( Weeks left, Days right ) => left > ( Weeks )right;
 
@@ -158,11 +158,10 @@ namespace Librainian.Measurement.Time {
         [Pure]
         public Days ToDays() => new Days( this.Value * Days.InOneWeek );
 
-        [Pure]
-        public Months ToMonths() => new Months( this.Value / InOneMonth );
+        //[Pure]public Months ToMonths() => new Months( this.Value / InOneMonth );
 
-        [Pure]
-        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneWeek, new BigInteger( this.Value ) );
+	    [ Pure ]
+	    public BigInteger ToPlanckTimes() => PlanckTimes.InOneWeek * new BigInteger( this.Value );
 
         [Pure]
         public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "week" ) );
