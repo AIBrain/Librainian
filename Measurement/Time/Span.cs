@@ -285,7 +285,8 @@ namespace Librainian.Measurement.Time {
         /// <param name="weeks"></param>
         /// <param name="months"></param>
         /// <param name="years"></param>
-        public Span( BigDecimal? yoctoseconds = null, BigDecimal zeptoseconds = 0, BigDecimal attoseconds = 0, BigDecimal femtoseconds = 0, BigDecimal picoseconds = 0, BigDecimal nanoseconds = 0, BigDecimal microseconds = 0, BigDecimal milliseconds = 0, BigDecimal seconds = 0, BigDecimal minutes = 0, BigDecimal hours = 0, BigDecimal days = 0, BigDecimal weeks = 0, BigDecimal months = 0, BigDecimal years = 0 )
+        public Span(
+			BigDecimal? yoctoseconds = null, BigDecimal? zeptoseconds = null, BigDecimal? attoseconds = null, BigDecimal? femtoseconds = null, BigDecimal? picoseconds = null, BigDecimal? nanoseconds = null, BigDecimal? microseconds = null, BigDecimal? milliseconds = null, BigDecimal? seconds = null, BigDecimal? minutes = null, BigDecimal? hours = null, BigDecimal? days = null, BigDecimal? weeks = null, BigDecimal? months = null, BigDecimal? years = null )
             : this() {
 
             //TODO Unit testing needed to verify the math.

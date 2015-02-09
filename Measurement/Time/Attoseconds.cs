@@ -28,6 +28,7 @@ namespace Librainian.Measurement.Time {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Librainian.Extensions;
+    using Maths;
     using NUnit.Framework;
 
     [DataContract(IsReference = true)]
@@ -153,7 +154,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Attoseconds Zero = new Attoseconds( 0 );
 
 		[DataMember]
-		public Decimal Value { get; }
+		public BigDecimal Value { get; }
 
 		public Attoseconds( Decimal value ) {
             this.Value = value;
