@@ -330,7 +330,7 @@ namespace Librainian.Graphics {
             return IsaValidImage( new FileInfo( document.FullPathWithFileName ) );
         }
 
-        public static async Task<Boolean> IsSameImage( [CanBeNull] this Document fileA, [CanBeNull]  Document fileB ) {
+        public static async Task<Boolean> IsSameImage( [CanBeNull] this Document fileA, [CanBeNull] Document fileB ) {
             if ( null == fileA || null == fileB ) {
                 return false;
             }

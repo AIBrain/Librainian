@@ -33,11 +33,12 @@ namespace Librainian.Graphics.Imaging {
     using Measurement.Time;
     using Threading;
 
-	/// <summary> Experimental Resilient Graphics </summary> <remarks> Just for fun & learning.
-	/// </remarks> <remarks> Prefer native file system compression over encoding/compression speed
+	/// <summary> Experimental Resilient Graphics </summary>
+	/// <remarks> Just for fun & learning.</remarks>
+	/// <remarks> Prefer native file system compression over encoding/compression speed
 	/// (assuming local cpu will be 'faster' than network transfer speed). Allow 'pages' of
 	/// animation, each with their own delay. Default should be page 0 = 0 delay. Checksums are used
-	/// on each pixel to guard against (detect but not fix) corruption. </remarks>
+	/// on each pixel to guard against (detect but not fix) corruption.</remarks>
 	/// <remarks> 60 frames per second allows 16.67 milliseconds per frame.</remarks>
 	/// <remarks> 1920x1080 pixels = 2,052,000 possible pixels ...so about 8 nanoseconds per pixel? </remarks>
 	[DataContract]
