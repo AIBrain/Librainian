@@ -85,7 +85,7 @@ namespace Librainian.Measurement.Time {
 
 		public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes().Value ) { }
 
-		public PlanckTimes( Years years ) : this( years.ToPlanckTimes() ) { }
+		public PlanckTimes( Years years ) : this( years.ToPlanckTimes().Value ) { }
 
 		[ DataMember ]
 		public BigInteger Value { get; }
@@ -178,5 +178,6 @@ namespace Librainian.Measurement.Time {
 		public static readonly BigDecimal InOneWeek = InOneSecond * Seconds.InOneWeek; //was 1.122E49
 		public static readonly BigDecimal InOneMonth = InOneSecond * Seconds.InOneMonth; //was 4.875E49
 		public static readonly BigDecimal InOneYear = InOneSecond * Seconds.InOneCommonYear; //was 5.85E50
+
 	}
 }

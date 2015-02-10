@@ -149,7 +149,7 @@ namespace Librainian.Measurement.Time {
 
         //public static implicit operator Years( Months months ) => months.ToYears();
 
-        //[Pure]public Weeks ToWeeks() => new Weeks( this.Value * Weeks.InOneMonth );
+        [Pure]public Weeks ToWeeks() => new Weeks( this.Value * Weeks.InOneMonth );
 
         //[Pure]public Years ToYears() => new Years( this.Value / InOneCommonYear );
     }

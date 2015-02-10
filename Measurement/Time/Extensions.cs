@@ -67,7 +67,7 @@ namespace Librainian.Measurement.Time {
         public static PlanckTimes CalcTotalPlanckTimes( this Span span ) {
             var counter = PlanckTimes.Zero;
 
-            // These if are a super minor optimization. The result should still calc the same.
+            // These 'if' are a super minor optimization. The result should still calc the same.
             if ( span.PlanckTimes.Value > 0 ) {
                 counter += span.PlanckTimes.ToPlanckTimes();
             }
@@ -308,6 +308,24 @@ namespace Librainian.Measurement.Time {
             var integer = BigInteger.Divide( planckTimes, constant );
             planckTimes -= BigInteger.Multiply( integer, constant );
             return integer;
+        } 
+		
+		/// <summary>
+        ///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the amount(integer)
+        ///     reduced.
+        /// </summary>
+        /// <param name="constant"></param>
+        /// <param name="planckTimes"></param>
+        /// <returns></returns>
+        public static BigInteger PullPlancks( this BigDecimal constant, ref BigInteger planckTimes ) {
+			//if ( planckTimes < constant ) {
+			//    return BigInteger.Zero;
+			//}
+			//var integer = BigInteger.Divide( planckTimes, ( BigInteger ) constant );
+			BigInteger pullPlancks = ( BigInteger ) ( planckTimes / constant );
+			//planckTimes -= BigInteger.Multiply( pullPlancks, ( BigInteger ) constant );
+			planckTimes = ( BigInteger ) ( planckTimes - ( pullPlancks * constant ) );
+			return pullPlancks;
         }
 
         /// <summary>

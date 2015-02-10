@@ -192,7 +192,7 @@ namespace Librainian.Measurement.Time {
         public Attoseconds ToAttoseconds() => new Attoseconds( this.Value / InOneAttosecond );
 
         [Pure]
-        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneZeptosecond, new BigInteger( this.Value ) );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneZeptosecond * this.Value ) ;
 
         [Pure]
         public override String ToString() => String.Format( "{0} zs", this.Value );

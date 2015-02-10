@@ -22,11 +22,10 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
-    using System;
-    using System.Numerics;
-    using JetBrains.Annotations;
+	using System;
+	using JetBrains.Annotations;
 
-    public interface IQuantityOfTime {
+	public interface IQuantityOfTime {
 
         int GetHashCode();
 

@@ -142,12 +142,12 @@ namespace Librainian.Measurement.Time {
         //not the largest Span possible, but anything larger.. wow. just wow.
         private static readonly BigDecimal MaximumUsefulDecimal = new BigDecimal( Decimal.MaxValue );
 
-        /// <summary>
-        ///     <para>This value is not calculated until needed.</para>
-        /// </summary>
-        private readonly Lazy<BigInteger> _lazyTotal;
+	    /// <summary>
+	    ///     <para>This value is not calculated until needed.</para>
+	    /// </summary>
+	    private Lazy< PlanckTimes > LazyTotal { get; set; }
 
-        static Span() {
+	    static Span() {
             Identity.Years.Value.Should().Be( 1 );
             Identity.Months.Value.Should().Be( 1 );
             Identity.Weeks.Value.Should().Be( 1 );
@@ -220,11 +220,11 @@ namespace Librainian.Measurement.Time {
             this.Yoctoseconds = new Yoctoseconds( PlanckTimes.InOneYoctosecond.PullPlancks( ref planckTimes ) );
             this.Yoctoseconds.Value.Should().BeInRange( 0, Yoctoseconds.InOneZeptosecond );
 
-            planckTimes.ThrowIfOutOfDecimalRange();
+            //planckTimes.ThrowIfOutOfDecimalRange();
             this.PlanckTimes += planckTimes;
 
-            var tmpThis = this;
-            this._lazyTotal = new Lazy<BigInteger>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
+	        var tmpThis = this;
+	        tmpThis.LazyTotal = new Lazy<PlanckTimes>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
         }
 
         /// <summary>
@@ -428,16 +428,16 @@ namespace Librainian.Measurement.Time {
             //}
 
             var tmpThis = this;
-            this._lazyTotal = new Lazy<BigInteger>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
+            this.LazyTotal = new Lazy<PlanckTimes>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
         }
 
         /// <summary>
         ///     TODO untested
         /// </summary>
         /// <param name="seconds"></param>
-        public Span( Decimal seconds )
+        public Span( BigDecimal seconds )
             : this() {
-            var span = new Span( planckTimes: new Seconds( seconds ).ToPlanckTimes() );
+            var span = new Span( planckTimes: new Seconds( seconds ).ToPlanckTimes().Value );
 
             this.PlanckTimes = span.PlanckTimes;
             this.Attoseconds = span.Attoseconds;
@@ -452,18 +452,18 @@ namespace Librainian.Measurement.Time {
             this.Picoseconds = span.Picoseconds;
             this.Seconds = span.Seconds;
 
-            //this.Weeks = span.Weeks;
+            this.Weeks = span.Weeks;
             this.Years = span.Years;
             this.Yoctoseconds = span.Yoctoseconds;
             this.Zeptoseconds = span.Zeptoseconds;
 
             var tmpThis = this;
-            this._lazyTotal = new Lazy<BigInteger>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
+            this.LazyTotal = new Lazy<PlanckTimes>( valueFactory: () => tmpThis.CalcTotalPlanckTimes(), isThreadSafe: true );
         }
 
         /// <summary>
         /// </summary>
-        public BigInteger TotalPlanckTimes => this._lazyTotal.Value;
+        public BigInteger TotalPlanckTimes => this.LazyTotal.Value.Value;
 
         [UsedImplicitly]
         private String DebuggerDisplay => this.ToString();
