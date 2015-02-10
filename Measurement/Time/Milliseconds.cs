@@ -24,10 +24,10 @@
 namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
-	using System.Diagnostics.Contracts;
 	using System.Numerics;
 	using System.Runtime.Serialization;
 	using FluentAssertions;
+	using JetBrains.Annotations;
 	using Librainian.Extensions;
 	using Maths;
 	using Parsing;
@@ -130,23 +130,26 @@ namespace Librainian.Measurement.Time {
 			this.Value = value;
 		}
 
+		public Milliseconds( BigDecimal value ) {
+			this.Value = value;
+		}
+
 		public Milliseconds( long value ) {
 			this.Value = value;
 		}
 
 		public Milliseconds( BigInteger value ) {
-			value.ThrowIfOutOfDecimalRange();
-			this.Value = ( Decimal )value;
+			this.Value = value;
 		}
 
 		public Milliseconds( Double value ) {
-			value.ThrowIfOutOfDecimalRange();
-			this.Value = ( Decimal )value;
+			this.Value = value;
 		}
 
+		[ UsedImplicitly ]
 		private String DebuggerDisplay => this.ToString();
 
-		public static Milliseconds Combine( Milliseconds left, Decimal milliseconds ) => new Milliseconds( left.Value + milliseconds );
+		public static Milliseconds Combine( Milliseconds left, BigDecimal milliseconds ) => new Milliseconds( left.Value + milliseconds );
 
 		public static Milliseconds Combine( Milliseconds left, BigInteger milliseconds ) => new Milliseconds( ( BigInteger )left.Value + milliseconds );
 
@@ -165,7 +168,7 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static explicit operator Double( Milliseconds milliseconds ) => ( Double )milliseconds.Value;
 
-		public static implicit operator Decimal( Milliseconds milliseconds ) => milliseconds.Value;
+		public static implicit operator BigDecimal( Milliseconds milliseconds ) => milliseconds.Value;
 
 		/// <summary>
 		///     Implicitly convert the number of <paramref name="milliseconds" /> to <see cref="Microseconds" />.
@@ -220,15 +223,15 @@ namespace Librainian.Measurement.Time {
 
 		public Microseconds ToMicroseconds() => new Microseconds( this.Value * Microseconds.InOneMillisecond );
 
-		[Pure]
+		[System.Diagnostics.Contracts.Pure]
 		public PlanckTimes ToPlanckTimes() {
-			return new PlanckTimes( PlanckTimes.InOneMillisecond * new BigDecimal( this.Value ) );
+			return new PlanckTimes( PlanckTimes.InOneMillisecond *  this.Value  );
 		}
 
-		[Pure]
+		[System.Diagnostics.Contracts.Pure]
 		public Seconds ToSeconds() => new Seconds( this.Value / InOneSecond );
 
-		[Pure]
+		[System.Diagnostics.Contracts.Pure]
 		public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "millisecond" ) );
 
 		public static implicit operator TimeSpan( Milliseconds milliseconds ) => TimeSpan.FromMilliseconds( value: ( Double )milliseconds.Value );

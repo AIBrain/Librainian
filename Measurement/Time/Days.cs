@@ -28,6 +28,7 @@ namespace Librainian.Measurement.Time {
     using System.Runtime.Serialization;
     using FluentAssertions;
     using JetBrains.Annotations;
+    using Maths;
     using Parsing;
 
     [DataContract( IsReference = true )]
@@ -63,7 +64,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Days Zero = new Days( 0 );
 
         [DataMember]
-        public readonly Decimal Value;
+        public readonly BigDecimal Value;
 
         static Days() {
             Zero.Should().BeLessThan( One );
@@ -77,13 +78,16 @@ namespace Librainian.Measurement.Time {
             this.Value = value;
         }
 
+        public Days( BigDecimal value ) {
+            this.Value = value;
+        }
+
         public Days( long value ) {
             this.Value = value;
         }
 
         public Days( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
         [UsedImplicitly]
@@ -93,7 +97,7 @@ namespace Librainian.Measurement.Time {
 
         public static Days Combine( Days left, Days right ) => Combine( left, right.Value );
 
-        public static Days Combine( Days left, Decimal days ) => new Days( left.Value + days );
+        public static Days Combine( Days left, BigDecimal days ) => new Days( left.Value + days );
 
         public static Days Combine( Days left, BigInteger days ) => new Days( ( BigInteger )left.Value + days );
 
@@ -165,7 +169,7 @@ namespace Librainian.Measurement.Time {
         public Hours ToHours() => new Hours( this.Value * Hours.InOneDay );
 
         [Pure]
-        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneDay, new BigInteger( this.Value ) );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneDay * this.Value ) ;
 
         [Pure]
         public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "day" ) );

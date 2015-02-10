@@ -29,8 +29,9 @@ namespace Librainian.Measurement.Time {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Librainian.Extensions;
+    using Maths;
 
-    [DataContract( IsReference = true )]
+	[DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     [Immutable]
@@ -112,7 +113,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Microseconds Zero = new Microseconds( 0 );
 
 		[DataMember]
-		public Decimal Value { get; }
+		public BigDecimal Value { get; }
 
 		static Microseconds() {
             Zero.Should().BeLessThan( One );
@@ -126,13 +127,16 @@ namespace Librainian.Measurement.Time {
             this.Value = value;
         }
 
+        public Microseconds( BigDecimal value ) {
+            this.Value = value;
+        }
+
         public Microseconds( long value ) {
             this.Value = value;
         }
 
         public Microseconds( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
         [UsedImplicitly]
@@ -140,9 +144,9 @@ namespace Librainian.Measurement.Time {
 
         public static Microseconds Combine( Microseconds left, Microseconds right ) => Combine( left, right.Value );
 
-        public static Microseconds Combine( Microseconds left, Decimal microseconds ) => new Microseconds( left.Value + microseconds );
+        public static Microseconds Combine( Microseconds left, BigDecimal microseconds ) => new Microseconds( left.Value + microseconds );
 
-        public static Microseconds Combine( Microseconds left, BigInteger microseconds ) => new Microseconds( ( BigInteger )left.Value + microseconds );
+        public static Microseconds Combine( Microseconds left, BigInteger microseconds ) => new Microseconds( left.Value + microseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -156,7 +160,7 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Nanoseconds( Microseconds microseconds ) => microseconds.ToNanoseconds();
 
-        public static implicit operator TimeSpan( Microseconds microseconds ) => TimeSpan.FromMilliseconds( value: ( Double )microseconds.Value );
+        public static implicit operator TimeSpan( Microseconds microseconds ) => TimeSpan.FromMilliseconds( value: ( double ) microseconds.Value );
 
         public static Microseconds operator -( Microseconds milliseconds ) => new Microseconds( milliseconds.Value * -1 );
 
@@ -202,7 +206,7 @@ namespace Librainian.Measurement.Time {
         public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value * Nanoseconds.InOneMicrosecond );
 
 	    [ Pure ]
-	    public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMicrosecond * new BigInteger( this.Value ) );
+	    public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMicrosecond *  this.Value  );
 
         [Pure]
         public override String ToString() => String.Format( "{0} µs", this.Value );

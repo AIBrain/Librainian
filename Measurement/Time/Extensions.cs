@@ -64,8 +64,8 @@ namespace Librainian.Measurement.Time {
         public static DateTime BeginningOfDay( this DateTime date ) => new DateTime( year: date.Year, month: date.Month, day: date.Day, hour: 0, minute: 0, second: 0, millisecond: 0, kind: date.Kind );
 
         [Pure]
-        public static BigInteger CalcTotalPlanckTimes( this Span span ) {
-            var counter = BigInteger.Zero;
+        public static PlanckTimes CalcTotalPlanckTimes( this Span span ) {
+            var counter = PlanckTimes.Zero;
 
             // These if are a super minor optimization. The result should still calc the same.
             if ( span.PlanckTimes.Value > 0 ) {
@@ -108,10 +108,11 @@ namespace Librainian.Measurement.Time {
                 counter += span.Days.ToPlanckTimes();
             }
 
-            //if ( span.Weeks.Value > 0 ) {
-            //    counter += span.Weeks.ToPlanckTimes();
-            //}
-            if ( span.Months.Value > 0 ) {
+			if ( span.Weeks.Value > 0 ) {
+				counter += span.Weeks.ToPlanckTimes();
+			}
+
+			if ( span.Months.Value > 0 ) {
                 counter += span.Months.ToPlanckTimes();
             }
             if ( span.Years.Value > 0 ) {
@@ -388,25 +389,25 @@ namespace Librainian.Measurement.Time {
             //return sb.ToString().Trim();
         }
 
-        /// <summary>
-        ///     <para>
-        ///         Throws an <see cref="OverflowException" /> if the <paramref name="value" /> is lower than
-        ///         <see cref="Decimal.MinValue" /> or higher than <see cref="Decimal.MaxValue" />.
-        ///     </para>
-        /// </summary>
-        /// <param name="value"></param>
-        [DebuggerStepThrough]
-        public static void ThrowIfOutOfDecimalRange( this BigInteger value ) {
-            value.Should().BeInRange( Constants.MinimumUsefulDecimal, Constants.MaximumUsefulDecimal );
+        ///// <summary>
+        /////     <para>
+        /////         Throws an <see cref="OverflowException" /> if the <paramref name="value" /> is lower than
+        /////         <see cref="Decimal.MinValue" /> or higher than <see cref="Decimal.MaxValue" />.
+        /////     </para>
+        ///// </summary>
+        ///// <param name="value"></param>
+        //[DebuggerStepThrough]
+        //public static void ThrowIfOutOfDecimalRange( this BigInteger value ) {
+        //    value.Should().BeInRange( Constants.MinimumUsefulDecimal, Constants.MaximumUsefulDecimal );
 
-            if ( value < Constants.MinimumUsefulDecimal ) {
-                throw new OverflowException( Constants.ValueIsTooLow );
-            }
+        //    if ( value < Constants.MinimumUsefulDecimal ) {
+        //        throw new OverflowException( Constants.ValueIsTooLow );
+        //    }
 
-            if ( value > Constants.MaximumUsefulDecimal ) {
-                throw new OverflowException( Constants.ValueIsTooHigh );
-            }
-        }
+        //    if ( value > Constants.MaximumUsefulDecimal ) {
+        //        throw new OverflowException( Constants.ValueIsTooHigh );
+        //    }
+        //}
 
         /// <summary>
         ///     <para>

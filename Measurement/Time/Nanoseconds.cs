@@ -29,8 +29,9 @@ namespace Librainian.Measurement.Time {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Librainian.Extensions;
+    using Maths;
 
-    [DataContract( IsReference = true )]
+	[DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     [Immutable]
@@ -112,7 +113,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Nanoseconds Zero = new Nanoseconds( value: 0 );
 
 		[DataMember]
-		public Decimal Value { get; }
+		public BigDecimal Value { get; }
 
 		static Nanoseconds() {
             Zero.Should().BeLessThan( One );
@@ -126,13 +127,16 @@ namespace Librainian.Measurement.Time {
             this.Value = value;
         }
 
+        public Nanoseconds( BigDecimal value ) {
+            this.Value = value;
+        }
+
         public Nanoseconds( long value ) {
             this.Value = value;
         }
 
         public Nanoseconds( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
         [UsedImplicitly]
@@ -140,9 +144,9 @@ namespace Librainian.Measurement.Time {
 
         public static Nanoseconds Combine( Nanoseconds left, Nanoseconds right ) => Combine( left, right.Value );
 
-        public static Nanoseconds Combine( Nanoseconds left, Decimal nanoseconds ) => new Nanoseconds( left.Value + nanoseconds );
+        public static Nanoseconds Combine( Nanoseconds left, BigDecimal nanoseconds ) => new Nanoseconds( left.Value + nanoseconds );
 
-        public static Nanoseconds Combine( Nanoseconds left, BigInteger nanoseconds ) => new Nanoseconds( ( BigInteger )left.Value + nanoseconds );
+        public static Nanoseconds Combine( Nanoseconds left, BigInteger nanoseconds ) => new Nanoseconds( left.Value + nanoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -156,13 +160,9 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Picoseconds( Nanoseconds nanoseconds ) => nanoseconds.ToPicoseconds();
 
-        public static implicit operator Span( Nanoseconds nanoseconds ) {
-            var plancks = nanoseconds.ToPlanckTimes();
-            return new Span( planckTimes: plancks );
-        }
+        public static implicit operator Span( Nanoseconds nanoseconds ) => new Span( nanoseconds: nanoseconds );
 
-
-        public static Nanoseconds operator -( Nanoseconds nanoseconds ) => new Nanoseconds( nanoseconds.Value * -1 );
+		public static Nanoseconds operator -( Nanoseconds nanoseconds ) => new Nanoseconds( nanoseconds.Value * -1 );
 
         public static Nanoseconds operator -( Nanoseconds left, Nanoseconds right ) => Combine( left, -right );
 
@@ -205,7 +205,7 @@ namespace Librainian.Measurement.Time {
         [Pure]public Picoseconds ToPicoseconds() => new Picoseconds( this.Value * Picoseconds.InOneNanosecond );
 
 	    [ Pure ]
-	    public BigInteger ToPlanckTimes() => PlanckTimes.InOneNanosecond * new BigInteger( this.Value );
+	    public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneNanosecond *  this.Value ) ;
 
         [Pure]
         public override String ToString() => String.Format( "{0} ns", this.Value );

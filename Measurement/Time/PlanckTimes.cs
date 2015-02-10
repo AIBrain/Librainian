@@ -162,7 +162,7 @@ namespace Librainian.Measurement.Time {
 		///     <para>18550000000000000000</para>
 		///     <para>18548608483392000000m</para>
 		/// </summary>
-		public static readonly BigInteger InOneSecond = new BigInteger( 18550948324478E30 ); //base SI unit, was 1.855
+		public static readonly BigDecimal InOneSecond = new BigDecimal( 18550948324478E30 ); //base SI unit, was 1.855E43
 
 		public static readonly BigDecimal InOneMillisecond = InOneSecond / Milliseconds.InOneSecond;
 		public static readonly BigDecimal InOneMicrosecond = InOneMillisecond / Microseconds.InOneMillisecond;

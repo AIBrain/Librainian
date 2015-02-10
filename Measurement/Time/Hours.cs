@@ -29,6 +29,7 @@ namespace Librainian.Measurement.Time {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Librainian.Extensions;
+    using Maths;
     using Parsing;
 
     [DataContract( IsReference = true )]
@@ -71,7 +72,7 @@ namespace Librainian.Measurement.Time {
         public static BigInteger InOneMonth = 730;
 
         [DataMember]
-        public readonly Decimal Value;
+        public readonly BigDecimal Value;
 
         static Hours() {
             Zero.Should().BeLessThan( One );

@@ -29,8 +29,9 @@ namespace Librainian.Measurement.Time {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Librainian.Extensions;
+    using Maths;
 
-    /// <summary>
+	/// <summary>
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Femtosecond" />
     [DataContract( IsReference = true )]
@@ -115,7 +116,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Femtoseconds Zero = new Femtoseconds( value: 0 );
 
 		[DataMember]
-		public Decimal Value { get; }
+		public BigDecimal Value { get; }
 
 		static Femtoseconds() {
             Zero.Should().BeLessThan( One );
@@ -129,13 +130,16 @@ namespace Librainian.Measurement.Time {
             this.Value = value;
         }
 
+        public Femtoseconds( BigDecimal value ) {
+            this.Value = value;
+        }
+
         public Femtoseconds( long value ) {
             this.Value = value;
         }
 
         public Femtoseconds( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
         [UsedImplicitly]
@@ -143,7 +147,7 @@ namespace Librainian.Measurement.Time {
 
         public static Femtoseconds Combine( Femtoseconds left, Femtoseconds right ) => Combine( left, right.Value );
 
-        public static Femtoseconds Combine( Femtoseconds left, Decimal femtoseconds ) => new Femtoseconds( left.Value + femtoseconds );
+        public static Femtoseconds Combine( Femtoseconds left, BigDecimal femtoseconds ) => new Femtoseconds( left.Value + femtoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -157,12 +161,9 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Picoseconds( Femtoseconds femtoseconds ) => femtoseconds.ToPicoseconds();
 
-        public static implicit operator Span( Femtoseconds femtoseconds ) {
-            var plancks = femtoseconds.ToPlanckTimes();
-            return new Span( plancks );
-        }
+        public static implicit operator Span( Femtoseconds femtoseconds ) => new Span( femtoseconds: femtoseconds );
 
-        public static Femtoseconds operator -( Femtoseconds femtoseconds ) => new Femtoseconds( femtoseconds.Value * -1 );
+		public static Femtoseconds operator -( Femtoseconds femtoseconds ) => new Femtoseconds( femtoseconds.Value * -1 );
 
         public static Femtoseconds operator -( Femtoseconds left, Femtoseconds right ) => Combine( left, -right );
 
@@ -207,7 +208,7 @@ namespace Librainian.Measurement.Time {
         public Picoseconds ToPicoseconds() => new Picoseconds( this.Value / InOnePicosecond );
 
 	    [ Pure ]
-	    public BigInteger ToPlanckTimes() => PlanckTimes.InOneFemtosecond * new BigInteger( this.Value );
+	    public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * PlanckTimes.InOneFemtosecond ) ;
 
         [Pure]
         public override String ToString() => String.Format( "{0} fs", this.Value );

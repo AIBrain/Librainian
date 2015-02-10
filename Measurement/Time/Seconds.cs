@@ -146,8 +146,7 @@ namespace Librainian.Measurement.Time {
 		}
 
 		public Seconds( BigInteger value )  {
-			value.ThrowIfOutOfDecimalRange();
-			this.Value = ( Decimal )value;
+			this.Value = value;
 		}
 
 		[UsedImplicitly]
@@ -155,7 +154,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Seconds Combine( Seconds left, Seconds right ) => Combine( left, right.Value );
 
-		public static Seconds Combine( Seconds left, Decimal seconds ) => new Seconds( left.Value + seconds );
+		public static Seconds Combine( Seconds left, BigDecimal seconds ) => new Seconds( left.Value + seconds );
 
 		public static Seconds Combine( Seconds left, BigInteger seconds ) => new Seconds( ( BigInteger )left.Value + seconds );
 

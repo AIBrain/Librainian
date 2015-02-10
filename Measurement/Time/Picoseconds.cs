@@ -29,8 +29,9 @@ namespace Librainian.Measurement.Time {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Librainian.Extensions;
+    using Maths;
 
-    [DataContract( IsReference = true )]
+	[DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     [Immutable]
@@ -112,7 +113,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Picoseconds Zero = new Picoseconds( 0 );
 
 		[DataMember]
-		public Decimal Value { get; }
+		public BigDecimal Value { get; }
 
 		static Picoseconds() {
             Zero.Should().BeLessThan( One );
@@ -126,13 +127,16 @@ namespace Librainian.Measurement.Time {
             this.Value = value;
         }
 
+        public Picoseconds( BigDecimal value ) {
+            this.Value = value;
+        }
+
         public Picoseconds( long value ) {
             this.Value = value;
         }
 
         public Picoseconds( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
         [UsedImplicitly]
@@ -140,7 +144,7 @@ namespace Librainian.Measurement.Time {
 
         public static Picoseconds Combine( Picoseconds left, Picoseconds right ) => Combine( left, right.Value );
 
-        public static Picoseconds Combine( Picoseconds left, Decimal picoseconds ) => new Picoseconds( left.Value + picoseconds );
+        public static Picoseconds Combine( Picoseconds left, BigDecimal picoseconds ) => new Picoseconds( left.Value + picoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -191,7 +195,7 @@ namespace Librainian.Measurement.Time {
         public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value / InOneNanosecond );
 
 	    [ Pure ]
-	    public BigInteger ToPlanckTimes() => PlanckTimes.InOnePicosecond * new BigInteger( this.Value );
+	    public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOnePicosecond * this.Value ) ;
 
         [Pure]
         public override String ToString() => String.Format( "{0} ps", this.Value );

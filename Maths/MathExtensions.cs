@@ -123,12 +123,16 @@ namespace Librainian.Maths {
 			return reverser.Decimal;
 		}
 
+		[Pure]
 		public static Boolean IsOdd( this int value ) => 0 != value % 2;
 
+		[Pure]
 		public static Boolean IsEven( this int value ) => 0 == value % 2;
 
+		[Pure]
 		public static Boolean IsOdd( this long value ) => 0 != value % 2;
 
+		[Pure]
 		public static Boolean IsEven( this long value ) => 0 == value % 2;
 
 		/// <summary>
