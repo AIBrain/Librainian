@@ -71,10 +71,10 @@ namespace Librainian.Measurement.Time {
         /// <see cref="http://www.wolframalpha.com/input/?i=converts+1+month+to+hours" />
         public static BigInteger InOneMonth = 730;
 
-        [DataMember]
-        public readonly BigDecimal Value;
+	    [ DataMember ]
+	    public BigDecimal Value { get; }
 
-        static Hours() {
+	    static Hours() {
             Zero.Should().BeLessThan( One );
             One.Should().BeGreaterThan( Zero );
             One.Should().Be( One );
@@ -86,13 +86,16 @@ namespace Librainian.Measurement.Time {
             this.Value = value;
         }
 
+        public Hours( BigDecimal value ) {
+            this.Value = value;
+        }
+
         public Hours( long value ) {
             this.Value = value;
         }
 
         public Hours( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
         [UsedImplicitly]
@@ -100,7 +103,7 @@ namespace Librainian.Measurement.Time {
 
         public static Hours Combine( Hours left, Hours right ) => Combine( left, right.Value );
 
-        public static Hours Combine( Hours left, Decimal hours ) => new Hours( left.Value + hours );
+        public static Hours Combine( Hours left, BigDecimal hours ) => new Hours( left.Value + hours );
 
         public static Hours Combine( Hours left, BigInteger hours ) => new Hours( ( BigInteger )left.Value + hours );
 
@@ -167,13 +170,14 @@ namespace Librainian.Measurement.Time {
 
         public override int GetHashCode() => this.Value.GetHashCode();
 
+		[Pure]
         public Days ToDays() => new Days( this.Value / InOneDay );
 
         [Pure]
         public Minutes ToMinutes() => new Minutes( this.Value * Minutes.InOneHour );
 
         [Pure]
-        public BigInteger ToPlanckTimes() => BigInteger.Multiply( PlanckTimes.InOneHour, new BigInteger( this.Value ) );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneHour * this.Value )  ;
 
         [Pure]
         public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "hour" ) );

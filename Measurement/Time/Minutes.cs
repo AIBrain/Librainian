@@ -22,16 +22,17 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
-    using System;
-    using System.Diagnostics;
-    using System.Numerics;
-    using System.Runtime.Serialization;
-    using FluentAssertions;
-    using JetBrains.Annotations;
-    using Librainian.Extensions;
-    using Parsing;
+	using System;
+	using System.Diagnostics;
+	using System.Numerics;
+	using System.Runtime.Serialization;
+	using FluentAssertions;
+	using JetBrains.Annotations;
+	using Librainian.Extensions;
+	using Librainian.Maths;
+	using Parsing;
 
-    [DataContract( IsReference = true )]
+	[DataContract( IsReference = true )]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct Minutes : IComparable<Minutes>, IQuantityOfTime {
@@ -70,10 +71,10 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Minutes Zero = new Minutes( value: 0 );
 
-        [DataMember]
-        public readonly Decimal Value;
+	    [ DataMember ]
+	    public BigDecimal Value { get; }
 
-        static Minutes() {
+	    static Minutes() {
             Zero.Should().BeLessThan( One );
             One.Should().BeGreaterThan( Zero );
             One.Should().Be( One );
@@ -85,13 +86,16 @@ namespace Librainian.Measurement.Time {
             this.Value = value;
         }
 
+        public Minutes( BigDecimal value ) {
+            this.Value = value;
+        }
+
         public Minutes( long value ) {
             this.Value = value;
         }
 
         public Minutes( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
         [UsedImplicitly]
@@ -99,7 +103,7 @@ namespace Librainian.Measurement.Time {
 
         public static Minutes Combine( Minutes left, Minutes right ) => Combine( left, right.Value );
 
-        public static Minutes Combine( Minutes left, Decimal minutes ) => new Minutes( left.Value + minutes );
+        public static Minutes Combine( Minutes left, BigDecimal minutes ) => new Minutes( left.Value + minutes );
 
         public static Minutes Combine( Minutes left, BigInteger minutes ) => new Minutes( ( BigInteger )left.Value + minutes );
 
@@ -178,7 +182,7 @@ namespace Librainian.Measurement.Time {
         public Hours ToHours() => new Hours( this.Value / InOneHour );
 
 	    [ Pure ]
-	    public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMinute * new BigInteger( this.Value ) );
+	    public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMinute * this.Value );
 
         [Pure]
         public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMinute );

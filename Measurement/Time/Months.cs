@@ -29,6 +29,7 @@ namespace Librainian.Measurement.Time {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Librainian.Extensions;
+    using Maths;
     using Parsing;
 
     [DataContract( IsReference = true )]
@@ -59,10 +60,10 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Months Zero = new Months( 0 );
 
-        [DataMember]
-        public readonly Decimal Value;
+	    [ DataMember ]
+	    public BigDecimal Value { get; }
 
-        static Months() {
+	    static Months() {
             Zero.Should().BeLessThan( One );
             One.Should().BeGreaterThan( Zero );
             One.Should().Be( One );
@@ -73,9 +74,12 @@ namespace Librainian.Measurement.Time {
             this.Value = value;
         }
 
+        public Months( BigDecimal value ) {
+            this.Value = value;
+        }
+
         public Months( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
         private Months( int value ) {
@@ -87,9 +91,9 @@ namespace Librainian.Measurement.Time {
 
         public static Months Combine( Months left, Months right ) => Combine( left, right.Value );
 
-        public static Months Combine( Months left, Decimal months ) => new Months( left.Value + months );
+        public static Months Combine( Months left, BigDecimal months ) => new Months( left.Value + months );
 
-        public static Months Combine( Months left, BigInteger months ) => new Months( ( BigInteger )left.Value + months );
+        public static Months Combine( Months left, BigInteger months ) => new Months( left.Value + months );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -101,7 +105,7 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Span( Months months ) => new Span( months: months.Value );
 
-        //public static implicit operator Weeks( Months months ) => months.ToWeeks();
+        public static implicit operator Weeks( Months months ) => months.ToWeeks();
 
         public static Months operator -( Months days ) => new Months( days.Value * -1 );
 
@@ -113,7 +117,7 @@ namespace Librainian.Measurement.Time {
 
         public static Months operator +( Months left, Months right ) => Combine( left, right );
 
-        public static Months operator +( Months left, BigInteger months ) => Combine( left, months );
+        public static Months operator +( Months left, BigDecimal months ) => Combine( left, months );
 
         public static Boolean operator <( Months left, Months right ) => left.Value < right.Value;
 
@@ -135,7 +139,7 @@ namespace Librainian.Measurement.Time {
         public override int GetHashCode() => this.Value.GetHashCode();
 
         [Pure]
-        public BigInteger ToPlanckTimes() =>  PlanckTimes.InOneMonth * new BigInteger( this.Value ) ;
+        public PlanckTimes ToPlanckTimes() =>  new PlanckTimes( PlanckTimes.InOneMonth *  this.Value )  ;
 
 		[Pure]
 		public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMonth );

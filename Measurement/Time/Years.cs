@@ -29,6 +29,7 @@ namespace Librainian.Measurement.Time {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Librainian.Extensions;
+    using Maths;
     using Parsing;
 
     [DataContract( IsReference = true )]
@@ -54,10 +55,10 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Years Zero = new Years( 0 );
 
-        [DataMember]
-        public readonly Decimal Value;
+	    [ DataMember ]
+	    public BigDecimal Value { get; }
 
-        static Years() {
+	    static Years() {
             Zero.Should().BeLessThan( One );
             One.Should().BeGreaterThan( Zero );
             One.Should().Be( One );
@@ -68,13 +69,17 @@ namespace Librainian.Measurement.Time {
             this.Value = value;
         }
 
+        public Years( BigDecimal value ) {
+            this.Value = value;
+        }
+
         public Years( long value ) {
             this.Value = value;
         }
 
         public Years( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+           
+            this.Value = value;
         }
 
         [UsedImplicitly]
@@ -84,7 +89,7 @@ namespace Librainian.Measurement.Time {
 
         public static Years Combine( Years left, Decimal years ) => new Years( left.Value + years );
 
-        public static Years Combine( Years left, BigInteger years ) => new Years( ( BigInteger )left.Value + years );
+        public static Years Combine( Years left, BigDecimal years ) => new Years( left.Value + years );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -138,7 +143,7 @@ namespace Librainian.Measurement.Time {
         public Months ToMonths() => new Months( this.Value * Months.InOneCommonYear );
 
 	    [ Pure ]
-	    public BigInteger ToPlanckTimes() => PlanckTimes.InOneYear * new BigInteger( this.Value );
+	    public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneYear * this.Value ) ;
 
         [Pure]
         public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneCommonYear );
