@@ -977,7 +977,7 @@ namespace Librainian.Maths {
 			return a;
 		}
 
-		public static IEnumerable<int> Primes( int max ) {
+		public static IEnumerable<int> Primes( this int max ) {
 			yield return 2;
 			var found = new List<int> {
 											3
@@ -1594,9 +1594,21 @@ namespace Librainian.Maths {
 		/// <param name="value"></param>
 		/// <returns></returns>
 		public static BigInteger ToBigInteger( this BigDecimal value ) {
-			var scaleDivisor = BigInteger.Pow( 10, value.Exponent );
-			var scaledValue = BigInteger.Divide( value.Mantissa, scaleDivisor );
-			return scaledValue;
+
+			var asString = value.ToString();
+			var portion = asString.Split( '.' )[ 0 ];
+            return BigInteger.Parse( portion );
+
+			//if ( value.Exponent < 0 ) {
+			//	var scaleDivisor = BigInteger.Pow( 10, -value.Exponent );
+			//	var scaledValue = BigInteger.Multiply( value.Mantissa, scaleDivisor );
+			//	return scaledValue;
+			//}
+			//else {
+			//	var scaleDivisor = BigInteger.Pow( 10, value.Exponent );
+			//	var scaledValue = BigInteger.Divide( value.Mantissa, scaleDivisor );
+			//	return scaledValue;
+			//}
 		}
 
 		public static String ToHex( this IEnumerable<byte> input ) {

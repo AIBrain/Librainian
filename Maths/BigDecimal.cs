@@ -47,7 +47,7 @@ namespace Librainian.Maths {
     [UsedImplicitly]
     [Immutable]
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    public struct BigDecimal : IComparable, IComparable<BigDecimal>, IConvertible, IFormattable, IEquatable<BigDecimal> {
+    public struct BigDecimal : IComparable, IComparable<BigDecimal>, IConvertible, /*IFormattable,*/ IEquatable<BigDecimal> {
 
         /// <summary>
         ///     -1
@@ -528,9 +528,9 @@ namespace Librainian.Maths {
         //}
         public String ToScientificString() => MathExtensions.ToScientificString( this );
 
-        public String ToString( String format, IFormatProvider formatProvider ) {
-            throw new NotImplementedException();
-        }
+        //public String ToString( String format, IFormatProvider formatProvider ) {
+        //    throw new NotImplementedException();
+        //}
 
         [Pure]
         public override String ToString() {
@@ -584,8 +584,6 @@ namespace Librainian.Maths {
 
         public String ToStringWithE() => String.Concat( this.Mantissa.ToString(), "E", this.Exponent );
 
-        //    return true; //whew.
-        //}
         public T ToType<T>() where T : struct => ( T )( ( IConvertible )this ).ToType( typeof( T ), null );
 
         private static BigDecimal Add( BigDecimal left, BigDecimal right ) {
