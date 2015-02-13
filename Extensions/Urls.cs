@@ -61,7 +61,7 @@ namespace Librainian.Extensions {
         /// </summary>
         public static String UrlEncode( this String input ) {
             if ( input == null ) {
-                throw new ArgumentNullException( "input" );
+                throw new ArgumentNullException( nameof( input ) );
             }
 
             const int maxLength = 32766;

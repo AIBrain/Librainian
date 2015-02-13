@@ -95,7 +95,7 @@ namespace Librainian.Collections {
 
         public Boolean IsWaiting( Thread thread ) {
             if ( thread == null ) {
-                throw new ArgumentNullException( "thread" );
+                throw new ArgumentNullException( nameof( thread ) );
             }
             for ( var node = this.Head; node != null; node = node.NextWaitNode ) {
                 if ( node.IsWaiting && node.Owner == thread ) {

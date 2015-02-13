@@ -151,10 +151,10 @@ namespace Librainian.Maths {
 		/// <param name="right"></param>
 		public static void Add( [NotNull] this VotallyI left, [NotNull] VotallyI right ) {
 			if ( left == null ) {
-				throw new ArgumentNullException( "left" );
+				throw new ArgumentNullException( nameof( left ) );
 			}
 			if ( right == null ) {
-				throw new ArgumentNullException( "right" );
+				throw new ArgumentNullException( nameof( right ) );
 			}
 			left.VoteYes( right.Yes );
 			left.VoteNo( right.No );
@@ -710,7 +710,7 @@ namespace Librainian.Maths {
 
 		public static Double Intercept( [NotNull] this List<TimeProgression> data ) {
 			if ( data == null ) {
-				throw new ArgumentNullException( "data" );
+				throw new ArgumentNullException( nameof( data ) );
 			}
 			var slope = data.Slope();
 			return data.Average( d => d.Progress ) - slope * data.Average( d => d.MillisecondsPassed );
@@ -810,7 +810,7 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		public static Double LogOnePlusX( this Double x ) {
 			if ( x <= -1.0 ) {
-				throw new ArgumentOutOfRangeException( "x", String.Format( "Invalid input argument: {0}", x ) );
+				throw new ArgumentOutOfRangeException( nameof( x ), String.Format( "Invalid input argument: {0}", x ) );
 			}
 
 			if ( Math.Abs( x ) > 1e-4 ) {
@@ -1090,7 +1090,7 @@ namespace Librainian.Maths {
 
 		public static Double Slope( [NotNull] this List<TimeProgression> data ) {
 			if ( data == null ) {
-				throw new ArgumentNullException( "data" );
+				throw new ArgumentNullException( nameof( data ) );
 			}
 			var averageX = data.Average( d => d.MillisecondsPassed );
 			var averageY = data.Average( d => d.Progress );
@@ -1176,7 +1176,7 @@ namespace Librainian.Maths {
 
 		public static Double StandardDeviation( [NotNull] this IEnumerable<double> values ) {
 			if ( values == null ) {
-				throw new ArgumentNullException( "values" );
+				throw new ArgumentNullException( nameof( values ) );
 			}
 			var doubles = values as Double[] ?? values.ToArray();
 			var avg = doubles.Average();
@@ -1185,7 +1185,7 @@ namespace Librainian.Maths {
 
 		public static Decimal StandardDeviation( [NotNull] this IEnumerable<decimal> values ) {
 			if ( values == null ) {
-				throw new ArgumentNullException( "values" );
+				throw new ArgumentNullException( nameof( values ) );
 			}
 			var decimals = values as Decimal[] ?? values.ToArray();
 			var avg = decimals.Average();
@@ -1278,7 +1278,7 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		public static IEnumerable<ulong> To( this int start, UInt64 end, UInt64 step = 1 ) {
 			if ( start < 0 ) {
-				throw new ArgumentOutOfRangeException( "start", "'low' must be equal to or greater than zero." );
+				throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
 			}
 
 			if ( step == 0UL ) {
@@ -1314,7 +1314,7 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		public static IEnumerable<int> To( this int start, int end, int step = 1 ) {
 			if ( start < 0 ) {
-				throw new ArgumentOutOfRangeException( "start", "'low' must be equal to or greater than zero." );
+				throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
 			}
 
 			if ( step == 0 ) {
@@ -1613,7 +1613,7 @@ namespace Librainian.Maths {
 
 		public static String ToHex( this IEnumerable<byte> input ) {
 			if ( input == null ) {
-				throw new ArgumentNullException( "input" );
+				throw new ArgumentNullException( nameof( input ) );
 			}
 			return input.Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
 		}

@@ -69,7 +69,7 @@ namespace Librainian.Maths {
 
             // http: //stackoverflow.com/questions/5649190/byte-to-unsigned-biginteger
             if ( bytes == null ) {
-                throw new ArgumentNullException( "bytes" );
+                throw new ArgumentNullException( nameof( bytes ) );
             }
             var bytesWith00Attheendnd = new byte[ bytes.Length + 1 ];
             bytes.CopyTo( bytesWith00Attheendnd, 0 );
@@ -160,7 +160,7 @@ namespace Librainian.Maths {
 
         public static UBigInteger Parse( [NotNull] String number, NumberStyles style ) {
             if ( number == null ) {
-                throw new ArgumentNullException( "number" );
+                throw new ArgumentNullException( nameof( number ) );
             }
             return new UBigInteger( value: BigInteger.Parse( number, style ) );
         }
@@ -170,7 +170,7 @@ namespace Librainian.Maths {
         [Pure]
         public int CompareTo( [NotNull] object obj ) {
             if ( obj == null ) {
-                throw new ArgumentNullException( "obj" );
+                throw new ArgumentNullException( nameof( obj ) );
             }
             if ( !( obj is UBigInteger ) ) {
                 throw new InvalidCastException();

@@ -49,7 +49,7 @@ namespace Librainian.IO.Compression {
 
         public void FeedItData( [NotNull] Byte[] data ) {
             if ( data == null ) {
-                throw new ArgumentNullException( "data" );
+                throw new ArgumentNullException( nameof( data ) );
             }
             this.HowManyBytesFed += data.LongLength;
             this._gZipStream.Write( data, 0, data.Length );

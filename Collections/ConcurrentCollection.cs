@@ -38,7 +38,7 @@ namespace Librainian.Collections {
 
         public ConcurrentCollection( IEnumerable< T > collection ) {
             if ( collection == null ) {
-                throw new ArgumentNullException( "collection" );
+                throw new ArgumentNullException( nameof( collection ) );
             }
             this.InitializeFromCollection( collection );
         }
@@ -61,7 +61,7 @@ namespace Librainian.Collections {
 
         public void CopyTo( T[] array, int index ) {
             if ( array == null ) {
-                throw new ArgumentNullException( "array" );
+                throw new ArgumentNullException( nameof( array ) );
             }
             this.ToList().CopyTo( array, index );
         }
@@ -70,10 +70,10 @@ namespace Librainian.Collections {
 
         void ICollection.CopyTo( Array array, int index ) {
             if ( array == null ) {
-                throw new ArgumentNullException( "array" );
+                throw new ArgumentNullException( nameof( array ) );
             }
             if ( ( array as T[] ) == null ) {
-                throw new ArgumentNullException( "array" );
+                throw new ArgumentNullException( nameof( array ) );
             }
             this.ToList().CopyTo( ( T[] ) array, index );
         }
@@ -105,7 +105,7 @@ namespace Librainian.Collections {
 
         public void PushRange( T[] items ) {
             if ( items == null ) {
-                throw new ArgumentNullException( "items" );
+                throw new ArgumentNullException( nameof( items ) );
             }
             this.PushRange( items, 0, items.Length );
         }
@@ -159,7 +159,7 @@ namespace Librainian.Collections {
 
         public int TryPopRange( T[] items ) {
             if ( items == null ) {
-                throw new ArgumentNullException( "items" );
+                throw new ArgumentNullException( nameof( items ) );
             }
             return this.TryPopRange( items, 0, items.Length );
         }
@@ -194,14 +194,14 @@ namespace Librainian.Collections {
 
         private static void ValidatePushPopRangeInput( ICollection< T > items, int startIndex, int count ) {
             if ( items == null ) {
-                throw new ArgumentNullException( "items" );
+                throw new ArgumentNullException( nameof( items ) );
             }
             if ( count < 0 ) {
-                throw new ArgumentOutOfRangeException( "count", "ConcurrentStack_PushPopRange_CountOutOfRange" );
+                throw new ArgumentOutOfRangeException( nameof( count ), "ConcurrentStack_PushPopRange_CountOutOfRange" );
             }
             var length = items.Count;
             if ( startIndex >= length || startIndex < 0 ) {
-                throw new ArgumentOutOfRangeException( "startIndex", "ConcurrentStack_PushPopRange_StartOutOfRange" );
+                throw new ArgumentOutOfRangeException( nameof( startIndex ), "ConcurrentStack_PushPopRange_StartOutOfRange" );
             }
             if ( length - count < startIndex ) {
                 throw new ArgumentException( "ConcurrentStack_PushPopRange_InvalidCount" );

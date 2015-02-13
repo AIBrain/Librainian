@@ -47,7 +47,7 @@ namespace Librainian.Knowledge {
 
         public int AddFile( Document dataFile, ProgressChangedEventHandler feedback = null ) {
             if ( dataFile == null ) {
-                throw new ArgumentNullException( "dataFile" );
+                throw new ArgumentNullException( nameof( dataFile ) );
             }
 
             if ( !dataFile.Extension.Like( ".knb" ) ) {

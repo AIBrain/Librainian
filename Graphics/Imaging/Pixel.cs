@@ -127,7 +127,7 @@ namespace Librainian.Graphics.Imaging {
 
         public Task WriteToStreamAsync( [NotNull] StreamWriter streamWriter ) {
             if ( streamWriter == null ) {
-                throw new ArgumentNullException( "streamWriter" );
+                throw new ArgumentNullException( nameof( streamWriter ) );
             }
             return streamWriter.WriteLineAsync( this.ToString() );
         }
@@ -135,10 +135,10 @@ namespace Librainian.Graphics.Imaging {
         [CanBeNull]
         public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader reader, [NotNull] StreamWriter errors ) {
             if ( reader == null ) {
-                throw new ArgumentNullException( "reader" );
+                throw new ArgumentNullException( nameof( reader ) );
             }
             if ( errors == null ) {
-                throw new ArgumentNullException( "errors" );
+                throw new ArgumentNullException( nameof( errors ) );
             }
 
             var line = await reader.ReadLineAsync() ?? String.Empty;

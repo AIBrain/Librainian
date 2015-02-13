@@ -51,7 +51,7 @@ namespace Librainian.Maths {
         /// <exception cref="ArgumentOutOfRangeException">If windowSize less than one.</exception>
         public MovingAverageCalculator( int windowSize ) {
             if ( windowSize < 1 ) {
-                throw new ArgumentOutOfRangeException( "windowSize", windowSize, "Window size must be greater than zero." );
+                throw new ArgumentOutOfRangeException( nameof( windowSize ), windowSize, "Window size must be greater than zero." );
             }
 
             this._windowSize = windowSize;
@@ -78,7 +78,7 @@ namespace Librainian.Maths {
         /// <exception cref="ArgumentOutOfRangeException">If nextValue is equal to float.NaN.</exception>
         public float NextValue( float nextValue ) {
             if ( float.IsNaN( nextValue ) ) {
-                throw new ArgumentOutOfRangeException( "nextValue", "NaN may not be provided as the next value.  It would corrupt the state of the calculation." );
+                throw new ArgumentOutOfRangeException( nameof( nextValue ), "NaN may not be provided as the next value.  It would corrupt the state of the calculation." );
             }
 
             // add new value to the sum

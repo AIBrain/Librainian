@@ -48,7 +48,7 @@ namespace Librainian.Threading {
         public static TResult SpeculativeForEach< TSource, TResult >( this IEnumerable< TSource > source, ParallelOptions options, Func< TSource, TResult > body ) {
             // Validate parameters; the Parallel.ForEach we delegate to will validate the rest
             if ( body == null ) {
-                throw new ArgumentNullException( "body" );
+                throw new ArgumentNullException( nameof( body ) );
             }
 
             // Store one result.  We box it if it's a value type to avoid torn writes and enable
@@ -86,7 +86,7 @@ namespace Librainian.Threading {
         public static TResult SpeculativeFor< TResult >( this int fromInclusive, int toExclusive, ParallelOptions options, Func< int, TResult > body ) {
             // Validate parameters; the Parallel.For we delegate to will validate the rest
             if ( body == null ) {
-                throw new ArgumentNullException( "body" );
+                throw new ArgumentNullException( nameof( body ) );
             }
 
             // Store one result.  We box it if it's a value type to avoid torn writes and enable
@@ -117,16 +117,16 @@ namespace Librainian.Threading {
         public static void Wavefront( this Action< int, int, int, int > processBlock, int numRows, int numColumns, int numBlocksPerRow, int numBlocksPerColumn ) {
             // Validate parameters
             if ( numRows <= 0 ) {
-                throw new ArgumentOutOfRangeException( "numRows" );
+                throw new ArgumentOutOfRangeException( nameof( numRows ) );
             }
             if ( numColumns <= 0 ) {
-                throw new ArgumentOutOfRangeException( "numColumns" );
+                throw new ArgumentOutOfRangeException( nameof( numColumns ) );
             }
             if ( numBlocksPerRow <= 0 || numBlocksPerRow > numRows ) {
-                throw new ArgumentOutOfRangeException( "numBlocksPerRow" );
+                throw new ArgumentOutOfRangeException( nameof( numBlocksPerRow ) );
             }
             if ( numBlocksPerColumn <= 0 || numBlocksPerColumn > numColumns ) {
-                throw new ArgumentOutOfRangeException( "numBlocksPerColumn" );
+                throw new ArgumentOutOfRangeException( nameof( numBlocksPerColumn ) );
             }
             if ( processBlock == null ) {
                 throw new ArgumentNullException( "processRowColumnCell" );
@@ -154,13 +154,13 @@ namespace Librainian.Threading {
         public static void Wavefront( this Action< int, int > processRowColumnCell, int numRows, int numColumns ) {
             // Validate parameters
             if ( numRows <= 0 ) {
-                throw new ArgumentOutOfRangeException( "numRows" );
+                throw new ArgumentOutOfRangeException( nameof( numRows ) );
             }
             if ( numColumns <= 0 ) {
-                throw new ArgumentOutOfRangeException( "numColumns" );
+                throw new ArgumentOutOfRangeException( nameof( numColumns ) );
             }
             if ( processRowColumnCell == null ) {
-                throw new ArgumentNullException( "processRowColumnCell" );
+                throw new ArgumentNullException( nameof( processRowColumnCell ) );
             }
 
             // Store the previous row of tasks as well as the previous task in the current row
@@ -232,10 +232,10 @@ namespace Librainian.Threading {
         public static T SpeculativeInvoke< T >( this ParallelOptions options, params Func< T >[] functions ) {
             // Validate parameters
             if ( options == null ) {
-                throw new ArgumentNullException( "options" );
+                throw new ArgumentNullException( nameof( options ) );
             }
             if ( functions == null ) {
-                throw new ArgumentNullException( "functions" );
+                throw new ArgumentNullException( nameof( functions ) );
             }
 
             // Speculatively invoke each function

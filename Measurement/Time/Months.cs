@@ -33,7 +33,8 @@ namespace Librainian.Measurement.Time {
     using Parsing;
 
     [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct Months : IComparable<Months>, IQuantityOfTime {
 

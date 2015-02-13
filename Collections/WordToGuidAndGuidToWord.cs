@@ -46,10 +46,10 @@ namespace Librainian.Collections {
 
         public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) {
             if ( baseCollectionName == null ) {
-                throw new ArgumentNullException( "baseCollectionName" );
+                throw new ArgumentNullException( nameof( baseCollectionName ) );
             }
             if ( baseCollectionNameExt == null ) {
-                throw new ArgumentNullException( "baseCollectionNameExt" );
+                throw new ArgumentNullException( nameof( baseCollectionNameExt ) );
             }
             this.IsDirty = false;
 
@@ -146,7 +146,7 @@ namespace Librainian.Collections {
         /// <returns></returns>
         public Boolean Contains( [NotNull] String daword ) {
             if ( daword == null ) {
-                throw new ArgumentNullException( "daword" );
+                throw new ArgumentNullException( nameof( daword ) );
             }
             return this._words.Keys.Contains( daword ) && this._guids.Values.Contains( daword );
         }

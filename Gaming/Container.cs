@@ -64,7 +64,7 @@ namespace Librainian.Gaming {
 		/// <returns></returns>
 		public Boolean MoveOne( [ NotNull ] IContainer destination ) {
 			if ( destination == null ) {
-				throw new ArgumentNullException( "destination" );
+				throw new ArgumentNullException( nameof( destination ) );
 			}
 
 			IGameItem gameItem;

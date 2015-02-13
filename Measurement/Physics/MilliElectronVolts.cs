@@ -25,14 +25,15 @@ namespace Librainian.Measurement.Physics {
     using JetBrains.Annotations;
     using Librainian.Extensions;
 
-    /// <summary>
-    ///     Units of mass and energy in Thousandths of <see cref="ElectronVolts" />.
-    /// </summary>
-    /// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
-    /// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
-    /// <seealso cref="http://wikipedia.org/wiki/Milli-" />
-    /// <seealso cref="http://wikipedia.org/wiki/Electronvolt" />
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+	/// <summary>
+	///     Units of mass and energy in Thousandths of <see cref="ElectronVolts" />.
+	/// </summary>
+	/// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
+	/// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
+	/// <seealso cref="http://wikipedia.org/wiki/Milli-" />
+	/// <seealso cref="http://wikipedia.org/wiki/Electronvolt" />
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct MilliElectronVolts : IComparable< MilliElectronVolts >, IComparable< ElectronVolts >, IComparable< MegaElectronVolts >, IComparable< GigaElectronVolts > {
         private const  Decimal InOneElectronVolt = 1E3m;

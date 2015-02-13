@@ -82,7 +82,7 @@
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static Timer AndStart( [NotNull] this Timer timer ) {
             if ( timer == null ) {
-                throw new ArgumentNullException( "timer" );
+                throw new ArgumentNullException( nameof( timer ) );
             }
             timer.Start();
             return timer;
@@ -95,7 +95,7 @@
         /// <returns></returns>
         public static Timer Once( [NotNull] this Timer timer ) {
             if ( timer == null ) {
-                throw new ArgumentNullException( "timer" );
+                throw new ArgumentNullException( nameof( timer ) );
             }
             timer.AutoReset = false;
             return timer;
@@ -108,7 +108,7 @@
         /// <returns></returns>
         public static Timer AutoResetting( [NotNull] this Timer timer ) {
             if ( timer == null ) {
-                throw new ArgumentNullException( "timer" );
+                throw new ArgumentNullException( nameof( timer ) );
             }
             timer.AutoReset = true;
             return timer;

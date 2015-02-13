@@ -67,10 +67,10 @@ namespace Librainian.Maths {
 
         public BiggerRational( Double value ) {
             if ( Double.IsNaN( value ) ) {
-                throw new ArgumentException( "Argument is not a number", "value" );
+                throw new ArgumentException( "Argument is not a number", nameof( value ) );
             }
             if ( Double.IsInfinity( value ) ) {
-                throw new ArgumentException( "Argument is infinity", "value" );
+                throw new ArgumentException( "Argument is infinity", nameof( value ) );
             }
             int sign;
             int exp;
@@ -99,7 +99,7 @@ namespace Librainian.Maths {
         public BiggerRational( Decimal value ) {
             var bits = Decimal.GetBits( value );
             if ( bits == null || bits.Length != 4 || ( ( bits[ 3 ] & 2130771967 ) != 0 || ( bits[ 3 ] & DecimalScaleMask ) > 1835008 ) ) {
-                throw new ArgumentException( "invalid System.Decimal", "value" );
+                throw new ArgumentException( "invalid System.Decimal", nameof( value ) );
             }
             if ( value == new Decimal( 0 ) ) {
                 this = Zero;
@@ -154,7 +154,7 @@ namespace Librainian.Maths {
 
         private BiggerRational( SerializationInfo info, StreamingContext context ) {
             if ( info == null ) {
-                throw new ArgumentNullException( "info" );
+                throw new ArgumentNullException( nameof( info ) );
             }
             this.Numerator = ( BigInteger )info.GetValue( "Numerator", typeof( BigInteger ) );
             this.Denominator = ( BigInteger )info.GetValue( "Denominator", typeof( BigInteger ) );
@@ -291,7 +291,7 @@ namespace Librainian.Maths {
             }
             if ( exponent.Sign < 0 ) {
                 if ( baseValue == Zero ) {
-                    throw new ArgumentException( "cannot raise zero to a negative power", "baseValue" );
+                    throw new ArgumentException( "cannot raise zero to a negative power", nameof( baseValue ) );
                 }
                 baseValue = Invert( baseValue );
                 exponent = BigInteger.Negate( exponent );
@@ -376,7 +376,7 @@ namespace Librainian.Maths {
                 return 1;
             }
             if ( !( obj is BiggerRational ) ) {
-                throw new ArgumentException( "Argument must be of type BiggerRational", "obj" );
+                throw new ArgumentException( "Argument must be of type BiggerRational", nameof( obj ) );
             }
             return Compare( this, ( BiggerRational )obj );
         }
@@ -384,7 +384,7 @@ namespace Librainian.Maths {
         [SecurityPermission( SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter )]
         void ISerializable.GetObjectData( SerializationInfo info, StreamingContext context ) {
             if ( info == null ) {
-                throw new ArgumentNullException( "info" );
+                throw new ArgumentNullException( nameof( info ) );
             }
             info.AddValue( "Numerator", this.Numerator );
             info.AddValue( "Denominator", this.Denominator );

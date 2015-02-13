@@ -2,9 +2,9 @@
     using System;
     using System.Windows;
     using System.Windows.Media.Media3D;
-    using AForge.Math;
+    
 
-    public static class SpatialExtensions {
+	public static class SpatialExtensions {
 
         public const Single TwoPi = ( Single )( Math.PI * 2 );
 
@@ -135,7 +135,7 @@
         /// </summary>
         /// <param name="angles"></param>
         /// <returns></returns>
-        public static Vector3 To180Angle( Vector3 angles ) {
+        public static AForge.Math.Vector3 To180Angle( AForge.Math.Vector3 angles ) {
             angles.X = ( float )To180Angle( angles.X );
             angles.Y = ( float )To180Angle( angles.Y );
             angles.Z = ( float )To180Angle( angles.Z );
@@ -177,7 +177,7 @@
         /// </summary>
         /// <param name="angles"></param>
         /// <returns></returns>
-        public static Vector3 To360Angle( this Vector3 angles ) {
+        public static AForge.Math.Vector3 To360Angle( this AForge.Math.Vector3 angles ) {
             angles.X = To360Angle( angles.X );
             angles.Y = To360Angle( angles.Y );
             angles.Z = To360Angle( angles.Z );

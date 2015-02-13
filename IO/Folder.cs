@@ -35,7 +35,8 @@ namespace Librainian.IO {
 
 	/// <summary>
 	/// </summary>
-	[ DebuggerDisplay( "{DebuggerDisplay,nq}" ) ]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [ DataContract( IsReference = true ) ]
     [ Immutable ]
     public class Folder {
@@ -73,7 +74,7 @@ namespace Librainian.IO {
         /// <exception cref="FileNotFoundException"></exception>
         public Folder( [ NotNull ] String fullPath ) {
             if ( String.IsNullOrWhiteSpace( fullPath ) ) {
-                throw new ArgumentNullException( "fullPath" );
+                throw new ArgumentNullException( nameof( fullPath ) );
             }
 
             this.OriginalFullPath = fullPath;

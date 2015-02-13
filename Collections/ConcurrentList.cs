@@ -42,7 +42,7 @@ namespace Librainian.Collections {
 	/// <remarks>This class was created on a spur of the moment idea, and is thoroughly untested.</remarks>
 	/// <copyright>Rick@AIBrain.org 2014</copyright>
 	[CollectionDataContract]
-	[DebuggerDisplay("Count={Count}")]
+	[DebuggerDisplay("Count={Count)}")]
 	public sealed class ConcurrentList<TType> : IList<TType> {
 
 		/// <summary>
@@ -226,7 +226,7 @@ namespace Librainian.Collections {
 		/// <param name="arrayIndex"></param>
 		public void CopyTo( [NotNull] TType[] array, int arrayIndex ) {
 			if ( array == null ) {
-				throw new ArgumentNullException( "array" );
+				throw new ArgumentNullException( nameof( array ) );
 			}
 			this.Read( () => {
 				this._list.CopyTo( array: array, arrayIndex: arrayIndex );
@@ -419,7 +419,7 @@ namespace Librainian.Collections {
 		/// <exception cref="ArgumentNullException"></exception>
 		public void AddRange( [NotNull] IEnumerable<TType> items, Byte useParallelism = 0, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
 			if ( null == items ) {
-				throw new ArgumentNullException( "items" );
+				throw new ArgumentNullException( nameof( items ) );
 			}
 
 			if ( !this.AllowModifications ) {

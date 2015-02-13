@@ -50,7 +50,8 @@ namespace Librainian.IO {
     /// <seealso cref="IOExtensions.SameContent(Document,Document)"/>
     [DataContract(IsReference = true)]
     [Immutable]
-    [DebuggerDisplay("{DebuggerDisplay,nq}")]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     public class Document : IDocument {
 	    [ NotNull ]
@@ -112,19 +113,19 @@ namespace Librainian.IO {
 			this.OriginalPathWithFileName = fullPathWithFilename;
 
 			if ( String.IsNullOrWhiteSpace( fullPathWithFilename ) ) {
-                throw new ArgumentNullException( "fullPathWithFilename" );
+                throw new ArgumentNullException( nameof( fullPathWithFilename ) );
             }
 
             fullPathWithFilename = fullPathWithFilename.Trim();
             if ( String.IsNullOrWhiteSpace( fullPathWithFilename ) ) {
-                throw new ArgumentNullException( "fullPathWithFilename" );
+                throw new ArgumentNullException( nameof( fullPathWithFilename ) );
             }
 
             this.Info = new FileInfo( fullPathWithFilename );
 
             var directoryName = Path.GetDirectoryName( fullPathWithFilename );
             if ( String.IsNullOrWhiteSpace( directoryName ) ) {
-                throw new ArgumentNullException( "fullPathWithFilename" );
+                throw new ArgumentNullException( nameof( fullPathWithFilename ) );
             }
             this.Folder = new Folder( directoryName );
 

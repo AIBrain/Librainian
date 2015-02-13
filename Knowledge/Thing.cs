@@ -31,10 +31,10 @@ namespace Librainian.Knowledge {
 
         public Thing( [NotNull] String label, [NotNull] Domain domain ) {
             if ( label == null ) {
-                throw new ArgumentNullException( "label" );
+                throw new ArgumentNullException( nameof( label ) );
             }
             if ( domain == null ) {
-                throw new ArgumentNullException( "domain" );
+                throw new ArgumentNullException( nameof( domain ) );
             }
             this.Label = label;
             this.Domain = domain;

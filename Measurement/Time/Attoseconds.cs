@@ -32,7 +32,8 @@ namespace Librainian.Measurement.Time {
 	using NUnit.Framework;
 
 	[DataContract(IsReference = true)]
-	[DebuggerDisplay("{DebuggerDisplay,nq}")]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
 	[Serializable]
 	[Immutable]
 	public struct Attoseconds : IComparable<Attoseconds>, IQuantityOfTime {

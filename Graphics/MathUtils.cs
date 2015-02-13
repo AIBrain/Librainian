@@ -121,7 +121,7 @@
         /// </summary>
         public static Matrix3D GetProjectionMatrix( Camera camera, double aspectRatio ) {
             if ( camera == null ) {
-                throw new ArgumentNullException( "camera" );
+                throw new ArgumentNullException( nameof( camera ) );
             }
 
             var perspectiveCamera = camera as PerspectiveCamera;
@@ -142,7 +142,7 @@
                 return matrixCamera.ProjectionMatrix;
             }
 
-            throw new ArgumentException( String.Format( "Unsupported camera type '{0}'.", camera.GetType().FullName ), "camera" );
+            throw new ArgumentException( String.Format( "Unsupported camera type '{0}'.", camera.GetType().FullName ), nameof( camera ) );
         }
 
         public static Point3D[] GetSectorPoints( int resolution, double startAngle, double endAngle,
@@ -163,7 +163,7 @@
         /// </summary>
         public static Matrix3D GetViewMatrix( Camera camera ) {
             if ( camera == null ) {
-                throw new ArgumentNullException( "camera" );
+                throw new ArgumentNullException( nameof( camera ) );
             }
 
             var projectionCamera = camera as ProjectionCamera;
@@ -178,7 +178,7 @@
                 return matrixCamera.ViewMatrix;
             }
 
-            throw new ArgumentException( String.Format( "Unsupported camera type '{0}'.", camera.GetType().FullName ), "camera" );
+            throw new ArgumentException( String.Format( "Unsupported camera type '{0}'.", camera.GetType().FullName ), nameof( camera ) );
         }
 
         public static Point3D MultiplyPoints( Point3D point1, Point3D point2 ) => new Point3D( point1.X * point2.X, point1.Y * point2.Y, point1.Z * point2.Z );
@@ -524,7 +524,7 @@
             viewport = null;
 
             if ( !( visual is Visual3D ) ) {
-                throw new ArgumentException( "Must be of type Visual3D.", "visual" );
+                throw new ArgumentException( "Must be of type Visual3D.", nameof( visual ) );
             }
 
             while ( visual != null ) {

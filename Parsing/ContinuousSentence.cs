@@ -41,7 +41,7 @@ namespace Librainian.Parsing {
 
         public ContinuousSentence( [NotNull] String paragraph = "" ) {
             if ( paragraph == null ) {
-                throw new ArgumentNullException( "paragraph" );
+                throw new ArgumentNullException( nameof( paragraph ) );
             }
             this.CurrentSentence = paragraph;
         }
@@ -73,7 +73,7 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         public ContinuousSentence Add( [NotNull] String text ) {
             if ( text == null ) {
-                throw new ArgumentNullException( "text" );
+                throw new ArgumentNullException( nameof( text ) );
             }
             var temp = new List< String >();
             if ( !String.IsNullOrEmpty( this.CurrentSentence ) ) {

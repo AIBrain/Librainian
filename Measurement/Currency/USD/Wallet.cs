@@ -38,6 +38,7 @@ namespace Librainian.Measurement.Currency.USD {
     ///     Any tips or ideas? Any dos or dont's? Email me!
     /// </summary>
     [DataContract( IsReference = true )]
+    // ReSharper disable once UseNameofExpression
     [DebuggerDisplay( "{Formatted,nq}" )]
     public class Wallet : IEnumerable< KeyValuePair< IDenomination, ulong > >, IWallet {
         /// <summary>
@@ -173,7 +174,7 @@ namespace Librainian.Measurement.Currency.USD {
         /// <remarks>Locks the wallet.</remarks>
         public Boolean TryWithdraw( [NotNull] ICoin coin, UInt64 quantity ) {
             if ( coin == null ) {
-                throw new ArgumentNullException( "coin" );
+                throw new ArgumentNullException( nameof( coin ) );
             }
             if ( quantity <= 0 ) {
                 return false;
@@ -189,21 +190,21 @@ namespace Librainian.Measurement.Currency.USD {
 
         public Boolean Contains( [NotNull] IBankNote bankNote ) {
             if ( bankNote == null ) {
-                throw new ArgumentNullException( "bankNote" );
+                throw new ArgumentNullException( nameof( bankNote ) );
             }
             return this._bankNotes.ContainsKey( bankNote );
         }
 
         public Boolean Contains( [NotNull] ICoin coin ) {
             if ( coin == null ) {
-                throw new ArgumentNullException( "coin" );
+                throw new ArgumentNullException( nameof( coin ) );
             }
             return this._coins.ContainsKey( coin );
         }
 
         public UInt64 Count( [NotNull] IBankNote bankNote ) {
             if ( bankNote == null ) {
-                throw new ArgumentNullException( "bankNote" );
+                throw new ArgumentNullException( nameof( bankNote ) );
             }
             ulong result;
             return this._bankNotes.TryGetValue( bankNote, out result ) ? result : UInt64.MinValue;
@@ -211,7 +212,7 @@ namespace Librainian.Measurement.Currency.USD {
 
         public UInt64 Count( [NotNull] ICoin coin ) {
             if ( coin == null ) {
-                throw new ArgumentNullException( "coin" );
+                throw new ArgumentNullException( nameof( coin ) );
             }
             ulong result;
             return this._coins.TryGetValue( coin, out result ) ? result : UInt64.MinValue;
@@ -241,7 +242,7 @@ namespace Librainian.Measurement.Currency.USD {
         /// <remarks>Locks the wallet.</remarks>
         public Boolean Deposit( [NotNull] IDenomination denomination, UInt64 quantity, Guid? id = null ) {
             if ( denomination == null ) {
-                throw new ArgumentNullException( "denomination" );
+                throw new ArgumentNullException( nameof( denomination ) );
             }
             if ( quantity <= 0 ) {
                 return false;

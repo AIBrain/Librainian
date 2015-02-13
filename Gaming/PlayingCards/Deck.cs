@@ -32,7 +32,7 @@ namespace Librainian.Gaming.PlayingCards {
 
         public void AddCard( [NotNull] Card card ) {
             if ( card == null ) {
-                throw new ArgumentNullException( "card" );
+                throw new ArgumentNullException( nameof( card ) );
             }
             this._cards.Add( card );
         }

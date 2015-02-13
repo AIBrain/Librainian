@@ -46,7 +46,7 @@ namespace Librainian.Magic {
 
         public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
             if ( modules == null ) {
-                throw new ArgumentNullException( "modules" );
+                throw new ArgumentNullException( nameof( modules ) );
             }
             this.Kernel.Should().BeNull();
             ( "Loading magic kernel..." ).WriteLine();

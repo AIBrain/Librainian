@@ -174,7 +174,7 @@ namespace Librainian.Internet {
             // Validate we're being used with a real smtpClient.  The rest of the arg validation
             // will happen in the call to sendAsync.
             if ( ping == null ) {
-                throw new ArgumentNullException( "ping" );
+                throw new ArgumentNullException( nameof( ping ) );
             }
 
             // Create a TaskCompletionSource to represent the operation

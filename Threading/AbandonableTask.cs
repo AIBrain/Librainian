@@ -35,7 +35,7 @@ namespace Librainian.Threading {
 
         private AbandonableTask( CancellationToken cancellationToken, Action beginWork, Action blockingWork, Action<Task> afterComplete ) {
             if ( blockingWork == null ) {
-                throw new ArgumentNullException( "blockingWork" );
+                throw new ArgumentNullException( nameof( blockingWork ) );
             }
 
             this._cancellationToken = cancellationToken;
@@ -46,7 +46,7 @@ namespace Librainian.Threading {
 
         public static Task Start( CancellationToken cancellationToken, Action blockingWork, Action beginWork = null, Action<Task> afterComplete = null ) {
             if ( blockingWork == null ) {
-                throw new ArgumentNullException( "blockingWork" );
+                throw new ArgumentNullException( nameof( blockingWork ) );
             }
 
             var worker = new AbandonableTask( cancellationToken, beginWork, blockingWork, afterComplete );

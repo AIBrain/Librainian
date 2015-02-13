@@ -133,19 +133,19 @@ namespace Librainian.Collections {
         /// <filterpriority>2</filterpriority>
         void ICollection.CopyTo( Array array, int index ) {
             if ( array == null ) {
-                throw new ArgumentNullException( "array" );
+                throw new ArgumentNullException( nameof( array ) );
             }
             if ( index < array.GetLowerBound( 0 ) ) {
-                throw new ArgumentOutOfRangeException( "index", index, "index must not be less then lower bound of the array" );
+                throw new ArgumentOutOfRangeException( nameof( index ), index, "index must not be less then lower bound of the array" );
             }
             try {
                 this.CopyTo( array, index );
             }
             catch ( RankException re ) {
-                throw new ArgumentException( "array must not be multi-dimensional.", "array", re );
+                throw new ArgumentException( "array must not be multi-dimensional.", nameof( array ), re );
             }
             catch ( IndexOutOfRangeException e ) {
-                throw new ArgumentException( "array is too small to fit the collection.", "array", e );
+                throw new ArgumentException( "array is too small to fit the collection.", nameof( array ), e );
             }
         }
 
@@ -231,16 +231,16 @@ namespace Librainian.Collections {
         /// </exception>
         public void CopyTo( T[] array, int arrayIndex ) {
             if ( array == null ) {
-                throw new ArgumentNullException( "array" );
+                throw new ArgumentNullException( nameof( array ) );
             }
             if ( arrayIndex < array.GetLowerBound( 0 ) ) {
-                throw new ArgumentOutOfRangeException( "arrayIndex", arrayIndex, "arrayIndex must not be less then the lower bound of the array." );
+                throw new ArgumentOutOfRangeException( nameof( arrayIndex ), arrayIndex, "arrayIndex must not be less then the lower bound of the array." );
             }
             try {
                 this.DoCopyTo( array, arrayIndex, false );
             }
             catch ( IndexOutOfRangeException e ) {
-                throw new ArgumentException( "array is too small to fit the collection.", "array", e );
+                throw new ArgumentException( "array is too small to fit the collection.", nameof( array ), e );
             }
         }
 
@@ -323,7 +323,7 @@ namespace Librainian.Collections {
         /// </exception>
         public virtual T[] ToArray( T[] targetArray ) {
             if ( targetArray == null ) {
-                throw new ArgumentNullException( "targetArray" );
+                throw new ArgumentNullException( nameof( targetArray ) );
             }
             return this.DoCopyTo( targetArray, 0, true );
         }
@@ -472,10 +472,10 @@ namespace Librainian.Collections {
         /// <exception cref="System.ArgumentException">If the collection is the current collection.</exception>
         public virtual Boolean AddRange( IEnumerable< T > collection ) {
             if ( collection == null ) {
-                throw new ArgumentNullException( "collection" );
+                throw new ArgumentNullException( nameof( collection ) );
             }
             if ( collection == this ) {
-                throw new ArgumentException( "Cannot add to itself.", "collection" );
+                throw new ArgumentException( "Cannot add to itself.", nameof( collection ) );
             }
             return this.DoAddRange( collection );
         }

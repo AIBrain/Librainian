@@ -45,7 +45,7 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="pixels"></param>
         public Line( [NotNull] Pixel[] pixels ) {
             if ( pixels == null ) {
-                throw new ArgumentNullException( "pixels" );
+                throw new ArgumentNullException( nameof( pixels ) );
             }
             this.Pixels = pixels.ToArray();
             this.Count = ( UInt64 )this.Pixels.LongLength;

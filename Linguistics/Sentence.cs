@@ -65,7 +65,7 @@ namespace Librainian.Linguistics {
         /// <param name="words"></param>
         public Sentence( [NotNull] IEnumerable<Word> words ) {
             if ( words == null ) {
-                throw new ArgumentNullException( "words" );
+                throw new ArgumentNullException( nameof( words ) );
             }
             this._tokens.AddRange( words );
             this._tokens.Fix();
@@ -81,7 +81,7 @@ namespace Librainian.Linguistics {
 
         public Boolean Equals( [NotNull] Sentence other ) {
             if ( other == null ) {
-                throw new ArgumentNullException( "other" );
+                throw new ArgumentNullException( nameof( other ) );
             }
             return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }

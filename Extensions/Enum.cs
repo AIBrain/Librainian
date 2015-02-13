@@ -73,7 +73,7 @@ namespace Librainian.Extensions {
         public static T Parse( String value ) {
             T parsed;
             if ( !sensitiveNames.TryGetValue( value, out parsed ) ) {
-                throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", "value" );
+                throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) );
             }
             return parsed;
         }
@@ -85,7 +85,7 @@ namespace Librainian.Extensions {
 
             T parsed;
             if ( !insensitiveNames.TryGetValue( value.ToUpperInvariant(), out parsed ) ) {
-                throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", "value" );
+                throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) );
             }
             return parsed;
         }

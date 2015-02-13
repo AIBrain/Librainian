@@ -41,9 +41,7 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
-        public static void BusyCursor( [CanBeNull] this Control control ) => ThreadingExtensions.Wrap( () => {
-                                                                                                           control?.InvokeIfRequired( () => control.Cursor = Cursors.WaitCursor );
-                                                                                                       } );
+        public static void BusyCursor( [CanBeNull] this Control control ) => ThreadingExtensions.Wrap( () => control?.InvokeIfRequired( () => control.Cursor = Cursors.WaitCursor ) );
 
         /// <summary>
         ///    <para>Perform an <see cref="Action" /> on the control's thread and then <see cref="Control.Refresh" />.</para>
@@ -76,10 +74,10 @@ namespace Librainian.Controls {
         /// <seealso />
         public static void InvokeIfRequired( [NotNull] this Control control, [NotNull] Action action, Boolean refresh = true ) {
             if ( control == null ) {
-                throw new ArgumentNullException( "control" );
+                throw new ArgumentNullException( nameof( control ) );
             }
             if ( action == null ) {
-                throw new ArgumentNullException( "action" );
+                throw new ArgumentNullException( nameof( action ) );
             }
             if ( control.IsDisposed ) {
                 return;
@@ -151,7 +149,7 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static void ResetCursor( [NotNull] this Control control ) {
             if ( control == null ) {
-                throw new ArgumentNullException( "control" );
+                throw new ArgumentNullException( nameof( control ) );
             }
             ThreadingExtensions.Wrap( () => control.OnThread( () => {
                 control.ResetCursor();
@@ -494,7 +492,7 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static Timer Push( [ NotNull ] this Button control, TimeSpan? delay = null, Action afterDelay = null ) {
             if ( control == null ) {
-                throw new ArgumentNullException( "control" );
+                throw new ArgumentNullException( nameof( control ) );
             }
             if ( !delay.HasValue ) {
                 delay = Milliseconds.One;
@@ -807,10 +805,10 @@ namespace Librainian.Controls {
 
         public static void TextAdd( [NotNull] this RichTextBox textBox, [NotNull] String text, Color color ) {
             if ( textBox == null ) {
-                throw new ArgumentNullException( "textBox" );
+                throw new ArgumentNullException( nameof( textBox ) );
             }
             if ( text == null ) {
-                throw new ArgumentNullException( "text" );
+                throw new ArgumentNullException( nameof( text ) );
             }
             textBox.SelectionStart = textBox.TextLength;
             textBox.SelectionLength = 0;

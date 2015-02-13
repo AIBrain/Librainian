@@ -26,12 +26,13 @@ namespace Librainian.Measurement.Physics {
     using Maths;
     using Numerics;
 
-    /// <summary>
-    ///     Units of mass and energy in ElectronVolts.
-    /// </summary>
-    /// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
-    /// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+	/// <summary>
+	///     Units of mass and energy in ElectronVolts.
+	/// </summary>
+	/// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
+	/// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct KiloElectronVolts : IComparable< MilliElectronVolts >, IComparable< ElectronVolts >, IComparable< KiloElectronVolts >, IComparable< MegaElectronVolts >, IComparable< GigaElectronVolts > {
         private const  Decimal InOneElectronVolt = 1E-3m;

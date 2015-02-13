@@ -218,7 +218,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         public static int MarshalSizeOf( [NotNull] this object obj ) {
             if ( obj == null ) {
-                throw new ArgumentNullException( "obj" );
+                throw new ArgumentNullException( nameof( obj ) );
             }
             return Marshal.SizeOf( obj );
         }
@@ -397,10 +397,10 @@ namespace Librainian.Threading {
             //}
 
             if ( first == null ) {
-                throw new ArgumentNullException( "first" );
+                throw new ArgumentNullException( nameof( first ) );
             }
             if ( next == null ) {
-                throw new ArgumentNullException( "next" );
+                throw new ArgumentNullException( nameof( next ) );
             }
             var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
 
@@ -430,10 +430,10 @@ namespace Librainian.Threading {
         [Obsolete("use continuewith", true)]
         public static Task<T2> Then<T2>( this Task first, Func<Task<T2>> next ) {
             if ( first == null ) {
-                throw new ArgumentNullException( "first" );
+                throw new ArgumentNullException( nameof( first ) );
             }
             if ( next == null ) {
-                throw new ArgumentNullException( "next" );
+                throw new ArgumentNullException( nameof( next ) );
             }
 
             var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
@@ -479,10 +479,10 @@ namespace Librainian.Threading {
 
         public static Task Then<T1>( this Task<T1> first, Action<T1> next ) {
             if ( first == null ) {
-                throw new ArgumentNullException( "first" );
+                throw new ArgumentNullException( nameof( first ) );
             }
             if ( next == null ) {
-                throw new ArgumentNullException( "next" );
+                throw new ArgumentNullException( nameof( next ) );
             }
 
             var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
@@ -513,10 +513,10 @@ namespace Librainian.Threading {
 
         public static Task Then<T1>( this Task<T1> first, Func<T1, Task> next ) {
             if ( first == null ) {
-                throw new ArgumentNullException( "first" );
+                throw new ArgumentNullException( nameof( first ) );
             }
             if ( next == null ) {
-                throw new ArgumentNullException( "next" );
+                throw new ArgumentNullException( nameof( next ) );
             }
 
             var tcs = new TaskCompletionSource<object>(); //Tasks.FactorySooner.CreationOptions
@@ -563,10 +563,10 @@ namespace Librainian.Threading {
 
         public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, T2> next ) {
             if ( first == null ) {
-                throw new ArgumentNullException( "first" );
+                throw new ArgumentNullException( nameof( first ) );
             }
             if ( next == null ) {
-                throw new ArgumentNullException( "next" );
+                throw new ArgumentNullException( nameof( next ) );
             }
 
             var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
@@ -595,10 +595,10 @@ namespace Librainian.Threading {
 
         public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, Task<T2>> next ) {
             if ( first == null ) {
-                throw new ArgumentNullException( "first" );
+                throw new ArgumentNullException( nameof( first ) );
             }
             if ( next == null ) {
-                throw new ArgumentNullException( "next" );
+                throw new ArgumentNullException( nameof( next ) );
             }
 
             var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
@@ -665,7 +665,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         public static Task<T> Wrap<T>( [NotNull] this Func<T> selector ) {
             if ( selector == null ) {
-                throw new ArgumentNullException( "selector" );
+                throw new ArgumentNullException( nameof( selector ) );
             }
             return Task.Run( selector );
         }
@@ -680,7 +680,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         public static Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, TIn input ) {
             if ( selector == null ) {
-                throw new ArgumentNullException( "selector" );
+                throw new ArgumentNullException( nameof( selector ) );
             }
             return Task.Run( () => selector( input ) );
         }

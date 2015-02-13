@@ -29,10 +29,10 @@ namespace Librainian.Extensions {
 
         public static HashSet<T> AddRange<T>( this HashSet<T> hashSet, IEnumerable<T> range ) {
             if ( Equals( hashSet, null ) ) {
-                throw new ArgumentNullException( "hashSet" );
+                throw new ArgumentNullException( nameof( hashSet ) );
             }
             if ( Equals( range, null ) ) {
-                throw new ArgumentNullException( "range" );
+                throw new ArgumentNullException( nameof( range ) );
             }
             foreach ( var item in range ) {
                 hashSet.Add( item: item );
@@ -42,7 +42,7 @@ namespace Librainian.Extensions {
 
         public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable, IEqualityComparer<T> comparer ) {
             if ( null == fromEnumerable ) {
-                throw new ArgumentNullException( "fromEnumerable" );
+                throw new ArgumentNullException( nameof( fromEnumerable ) );
             }
 
             if ( null == comparer ) {

@@ -85,7 +85,7 @@ namespace Librainian.Measurement.Physics {
 
         public static MegaElectronVolts Sum( [NotNull] this IEnumerable<ElectronVolts> volts ) {
             if ( volts == null ) {
-                throw new ArgumentNullException( "volts" );
+                throw new ArgumentNullException( nameof( volts ) );
             }
             var result = volts.Aggregate( MegaElectronVolts.Zero, ( current, electronVolts ) => current + electronVolts.ToMegaElectronVolts() );
 
@@ -94,14 +94,14 @@ namespace Librainian.Measurement.Physics {
 
         public static GigaElectronVolts Sum( [NotNull] this IEnumerable<MegaElectronVolts> volts ) {
             if ( volts == null ) {
-                throw new ArgumentNullException( "volts" );
+                throw new ArgumentNullException( nameof( volts ) );
             }
             return volts.Aggregate( GigaElectronVolts.Zero, ( current, megaElectronVolts ) => current + megaElectronVolts.ToGigaElectronVolts() );
         }
 
         public static TeraElectronVolts Sum( [NotNull] this IEnumerable<GigaElectronVolts> volts ) {
             if ( volts == null ) {
-                throw new ArgumentNullException( "volts" );
+                throw new ArgumentNullException( nameof( volts ) );
             }
             return volts.Aggregate( TeraElectronVolts.Zero, ( current, gigaElectronVolts ) => current + gigaElectronVolts.ToTeraElectronVolts() );
         }

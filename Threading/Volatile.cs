@@ -377,7 +377,7 @@
 
             private static bool ToBool( int value ) {
                 if ( value != False && value != True ) {
-                    throw new ArgumentOutOfRangeException( "value" );
+                    throw new ArgumentOutOfRangeException( nameof( value ) );
                 }
 
                 return value == True;
@@ -502,7 +502,7 @@
             /// <param name="length">Length of the array</param>
             public IntegerArray( int length ) {
                 if ( length <= 0 )
-                    throw new ArgumentOutOfRangeException( "length" );
+                    throw new ArgumentOutOfRangeException( nameof( length ) );
 
                 this._array = new int[ length ];
             }
@@ -513,7 +513,7 @@
             /// <param name="array"></param>
             public IntegerArray( int[] array ) {
                 if ( array == null )
-                    throw new ArgumentNullException( "array" );
+                    throw new ArgumentNullException( nameof( array ) );
 
                 this._array = new int[ array.Length ];
                 array.CopyTo( this._array, 0 );
@@ -648,7 +648,7 @@
             /// <param name="length">Length of the array</param>
             public LongArray( int length ) {
                 if ( length <= 0 )
-                    throw new ArgumentOutOfRangeException( "length" );
+                    throw new ArgumentOutOfRangeException( nameof( length ) );
 
                 this._array = new long[ length ];
             }
@@ -659,7 +659,7 @@
             /// <param name="array"></param>
             public LongArray( long[] array ) {
                 if ( array == null )
-                    throw new ArgumentNullException( "array" );
+                    throw new ArgumentNullException( nameof( array ) );
 
                 this._array = new long[ array.Length ];
                 array.CopyTo( this._array, 0 );
@@ -796,7 +796,7 @@
             /// <param name="length">Length of the array</param>
             public BooleanArray( int length ) {
                 if ( length <= 0 )
-                    throw new ArgumentOutOfRangeException( "length" );
+                    throw new ArgumentOutOfRangeException( nameof( length ) );
 
                 this._array = new int[ length ];
             }
@@ -807,7 +807,7 @@
             /// <param name="array"></param>
             public BooleanArray( IEnumerable< bool > array ) {
                 if ( array == null )
-                    throw new ArgumentNullException( "array" );
+                    throw new ArgumentNullException( nameof( array ) );
 
                 this._array = array.Select( ToInt ).ToArray();
             }
@@ -915,7 +915,7 @@
 
             private static bool ToBool( int value ) {
                 if ( value != False && value != True ) {
-                    throw new ArgumentOutOfRangeException( "value" );
+                    throw new ArgumentOutOfRangeException( nameof( value ) );
                 }
 
                 return value == True;
@@ -936,7 +936,7 @@
             /// <param name="length">Length of the array</param>
             public ReferenceArray( int length ) {
                 if ( length <= 0 )
-                    throw new ArgumentOutOfRangeException( "length" );
+                    throw new ArgumentOutOfRangeException( nameof( length ) );
 
                 this._array = new T[ length ];
             }
@@ -947,7 +947,7 @@
             /// <param name="array"></param>
             public ReferenceArray( IEnumerable< T > array ) {
                 if ( array == null )
-                    throw new ArgumentNullException( "array" );
+                    throw new ArgumentNullException( nameof( array ) );
 
                 this._array = array.ToArray();
             }
@@ -1418,7 +1418,7 @@
 
             private static bool ToBool( int value ) {
                 if ( value != False && value != True ) {
-                    throw new ArgumentOutOfRangeException( "value" );
+                    throw new ArgumentOutOfRangeException( nameof( value ) );
                 }
 
                 return value == True;

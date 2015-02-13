@@ -31,8 +31,9 @@ namespace Librainian.Maths {
     ///     <para>Keep track of votes for candidate A and candidate B.</para>
     /// </summary>
     [DataContract( IsReference = true )]
-    [Serializable]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [Serializable]	  // ReSharper disable once UseNameofExpression
+
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public class VotallyD {
 
         /// <summary>
@@ -122,10 +123,10 @@ namespace Librainian.Maths {
 
         public static VotallyD Combine( [NotNull] VotallyD left, [NotNull] VotallyD right ) {
             if ( left == null ) {
-                throw new ArgumentNullException( "left" );
+                throw new ArgumentNullException( nameof( left ) );
             }
             if ( right == null ) {
-                throw new ArgumentNullException( "right" );
+                throw new ArgumentNullException( nameof( right ) );
             }
             var result = left;
             result.ForA( right.A );

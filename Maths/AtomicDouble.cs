@@ -70,7 +70,7 @@ namespace Librainian.Maths {
 
         public static AtomicDouble Parse( [NotNull] String value ) {
             if ( value == null ) {
-                throw new ArgumentNullException( "value" );
+                throw new ArgumentNullException( nameof( value ) );
             }
             return new AtomicDouble( Double.Parse( value ) );
         }

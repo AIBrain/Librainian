@@ -51,7 +51,7 @@ namespace Librainian.Linguistics {
 
         public Boolean Add( [NotNull] UDC udc, [NotNull] Book book ) {
             if ( book == null ) {
-                throw new ArgumentNullException( "book" );
+                throw new ArgumentNullException( nameof( book ) );
             }
             this._tokens.TryAdd( udc, book );
             return true;

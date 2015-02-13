@@ -28,8 +28,9 @@ namespace Librainian.Measurement.Length {
     /// <summary>
     /// </summary>
     /// <seealso cref="https://en.wikipedia.org/wiki/Plank_length" />
-    [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [DataContract( IsReference = true )]	// ReSharper disable once UseNameofExpression
+
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     public struct PlanckLengths : IComparable< PlanckLengths > {
         /// <summary>

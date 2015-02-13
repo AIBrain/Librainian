@@ -42,7 +42,7 @@ namespace Librainian.Speech {
 
         private static Grammar CreateGrammars( String[] phrases ) {
             if ( phrases == null ) {
-                throw new ArgumentNullException( "phrases" );
+                throw new ArgumentNullException( nameof( phrases ) );
             }
             //if ( phrases == null ) { phrases = new[] { "left", "right", "up", "down" }; }
             var choices = new Choices( phrases );

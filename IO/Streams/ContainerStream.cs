@@ -26,7 +26,7 @@ namespace Librainian.IO.Streams {
 
         protected ContainerStream( Stream stream ) {
             if ( null == stream ) {
-                throw new ArgumentNullException( "stream" );
+                throw new ArgumentNullException( nameof( stream ) );
             }
             this.Stream = stream;
         }

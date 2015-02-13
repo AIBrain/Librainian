@@ -29,7 +29,8 @@ namespace Librainian.Collections {
     using System.Threading;
 
     [ComVisible( false )]
-    [DebuggerDisplay( "Count = {Count}" )]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "Count={Count}" )]
     [Serializable]
     [HostProtection( SecurityAction.LinkDemand, ExternalThreading = true, Synchronization = true )]
     public class Q< T > : IProducerConsumerCollection< T > {
@@ -45,7 +46,7 @@ namespace Librainian.Collections {
 
         public Q( IEnumerable< T > collection ) {
             if ( collection == null ) {
-                throw new ArgumentNullException( "collection" );
+                throw new ArgumentNullException( nameof( collection ) );
             }
             this.InitializeFromCollection( collection );
         }
@@ -90,7 +91,7 @@ namespace Librainian.Collections {
 
         public void CopyTo( T[] array, int index ) {
             if ( array == null ) {
-                throw new ArgumentNullException( "array" );
+                throw new ArgumentNullException( nameof( array ) );
             }
             this.ToList().CopyTo( array, index );
         }
@@ -100,7 +101,7 @@ namespace Librainian.Collections {
 
         void ICollection.CopyTo( Array array, int index ) {
             if ( array == null ) {
-                throw new ArgumentNullException( "array" );
+                throw new ArgumentNullException( nameof( array ) );
             }
             this.ToArray().CopyTo( array, index );
         }

@@ -143,10 +143,10 @@ namespace Librainian.Persistence {
         [Obsolete( "Not in use yet." )]
         public static Boolean SaveCollection<T>( this IProducerConsumerCollection<T> collection, String fileName ) {
             if ( collection == null ) {
-                throw new ArgumentNullException( "collection" );
+                throw new ArgumentNullException( nameof( collection ) );
             }
             if ( String.IsNullOrWhiteSpace( fileName ) ) {
-                throw new ArgumentNullException( "fileName" );
+                throw new ArgumentNullException( nameof( fileName ) );
             }
 
             return collection.Saver( fileName: fileName );
@@ -164,10 +164,10 @@ namespace Librainian.Persistence {
         [Obsolete( "Not in use yet." )]
         public static Boolean SaveCollection<T>( this ThreadSafeList<T> collection, String fileName ) where T : class {
             if ( collection == null ) {
-                throw new ArgumentNullException( "collection" );
+                throw new ArgumentNullException( nameof( collection ) );
             }
             if ( String.IsNullOrWhiteSpace( fileName ) ) {
-                throw new ArgumentNullException( "fileName" );
+                throw new ArgumentNullException( nameof( fileName ) );
             }
 
             return collection.Saver( fileName: fileName );
@@ -410,7 +410,7 @@ namespace Librainian.Persistence {
             }
 
             if ( fileName == null ) {
-                throw new ArgumentNullException( "fileName" );
+                throw new ArgumentNullException( nameof( fileName ) );
             }
 
             try {
@@ -512,7 +512,7 @@ namespace Librainian.Persistence {
         /// <returns>Returns True if the object was saved.</returns>
         public static Boolean SaveValue<TSource>( this TSource obj, [NotNull] String fileName ) where TSource : struct {
             if ( fileName == null ) {
-                throw new ArgumentNullException( "fileName" );
+                throw new ArgumentNullException( nameof( fileName ) );
             }
             try {
                 if ( String.IsNullOrEmpty( fileName ) ) {
@@ -602,7 +602,7 @@ namespace Librainian.Persistence {
         [Obsolete]
         public static Boolean Load<TSource>( out TSource obj, [NotNull] String fileName, ProgressChangedEventHandler feedback = null ) where TSource : class {
             if ( fileName == null ) {
-                throw new ArgumentNullException( "fileName" );
+                throw new ArgumentNullException( nameof( fileName ) );
             }
             obj = default( TSource );
             try {
@@ -698,7 +698,7 @@ namespace Librainian.Persistence {
 
         public static TSource Deserialize<TSource>( Stream stream, ProgressChangedEventHandler feedback = null ) where TSource : class {
             if ( null == stream ) {
-                throw new ArgumentNullException( "stream" );
+                throw new ArgumentNullException( nameof( stream ) );
             }
 
             using ( var cs = new ProgressStream( stream ) ) {
@@ -722,7 +722,7 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public static Boolean Loader<TSource>( [NotNull] this String fullPathAndFileName, [CanBeNull] Action<TSource> onLoad = null, ProgressChangedEventHandler feedback = null ) where TSource : class {
             if ( fullPathAndFileName == null ) {
-                throw new ArgumentNullException( "fullPathAndFileName" );
+                throw new ArgumentNullException( nameof( fullPathAndFileName ) );
             }
             try {
                 if ( IsolatedStorageFile.IsEnabled && !String.IsNullOrWhiteSpace( fullPathAndFileName ) ) {
@@ -827,10 +827,10 @@ namespace Librainian.Persistence {
         [Obsolete]
         public static TSource LoadOrCreate<TSource>( [NotNull] String fileName, ProgressChangedEventHandler feedback = null, [NotNull] params Object[] parameters ) where TSource : class, new() {
             if ( fileName == null ) {
-                throw new ArgumentNullException( "fileName" );
+                throw new ArgumentNullException( nameof( fileName ) );
             }
             if ( parameters == null ) {
-                throw new ArgumentNullException( "parameters" );
+                throw new ArgumentNullException( nameof( parameters ) );
             }
             try {
                 if ( IsolatedStorageFile.IsEnabled && !String.IsNullOrWhiteSpace( fileName ) ) {
@@ -887,7 +887,7 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public static Boolean TryGet<TSource>( this String attribute, out TSource value, String location = null ) {
             if ( attribute == null ) {
-                throw new ArgumentNullException( "attribute" );
+                throw new ArgumentNullException( nameof( attribute ) );
             }
 
             value = default( TSource );
@@ -933,7 +933,7 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public static Boolean TrySave<TSource>( this TSource objectToSerialize, [NotNull] String attribute, String location = null ) {
             if ( attribute == null ) {
-                throw new ArgumentNullException( "attribute" );
+                throw new ArgumentNullException( nameof( attribute ) );
             }
             try {
                 if ( String.IsNullOrWhiteSpace( location ) ) {

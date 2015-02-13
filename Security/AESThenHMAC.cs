@@ -70,7 +70,7 @@ namespace Librainian.Security {
         /// </remarks>
         public static String SimpleEncryptWithPassword( String secretMessage, String password, byte[] nonSecretPayload = null ) {
             if ( String.IsNullOrEmpty( secretMessage ) ) {
-                throw new ArgumentException( "Secret Message Required!", "secretMessage" );
+                throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 
             var plainText = Encoding.UTF8.GetBytes( secretMessage );
@@ -98,11 +98,11 @@ namespace Librainian.Security {
 
             //User Error Checks
             if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
-                throw new ArgumentException( String.Format( "Must have a password of at least {0} characters!", MinPasswordLength ), "password" );
+                throw new ArgumentException( String.Format( "Must have a password of at least {0} characters!", MinPasswordLength ), nameof( password ) );
             }
 
             if ( secretMessage == null || secretMessage.Length == 0 ) {
-                throw new ArgumentException( "Secret Message Required!", "secretMessage" );
+                throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 
             var payload = new byte[( ( SaltBitSize/8 )*2 ) + nonSecretPayload.Length];
@@ -155,15 +155,15 @@ namespace Librainian.Security {
         public static byte[] SimpleEncrypt( byte[] secretMessage, byte[] cryptKey, byte[] authKey, byte[] nonSecretPayload = null ) {
             //User Error Checks
             if ( cryptKey == null || cryptKey.Length != KeyBitSize/8 ) {
-                throw new ArgumentException( String.Format( "Key needs to be {0} bit!", KeyBitSize ), "cryptKey" );
+                throw new ArgumentException( String.Format( "Key needs to be {0} bit!", KeyBitSize ), nameof( cryptKey ) );
             }
 
             if ( authKey == null || authKey.Length != KeyBitSize/8 ) {
-                throw new ArgumentException( String.Format( "Key needs to be {0} bit!", KeyBitSize ), "authKey" );
+                throw new ArgumentException( String.Format( "Key needs to be {0} bit!", KeyBitSize ), nameof( authKey ) );
             }
 
             if ( secretMessage == null || secretMessage.Length < 1 ) {
-                throw new ArgumentException( "Secret Message Required!", "secretMessage" );
+                throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 
             //non-secret payload optional
@@ -234,7 +234,7 @@ namespace Librainian.Security {
         /// </remarks>
         public static String SimpleDecryptWithPassword( String encryptedMessage, String password, int nonSecretPayloadLength = 0 ) {
             if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
-                throw new ArgumentException( "Encrypted Message Required!", "encryptedMessage" );
+                throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
 
             var cipherText = Convert.FromBase64String( encryptedMessage );
@@ -259,11 +259,11 @@ namespace Librainian.Security {
         public static byte[] SimpleDecryptWithPassword( byte[] encryptedMessage, String password, int nonSecretPayloadLength = 0 ) {
             //User Error Checks
             if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
-                throw new ArgumentException( String.Format( "Must have a password of at least {0} characters!", MinPasswordLength ), "password" );
+                throw new ArgumentException( String.Format( "Must have a password of at least {0} characters!", MinPasswordLength ), nameof( password ) );
             }
 
             if ( encryptedMessage == null || encryptedMessage.Length == 0 ) {
-                throw new ArgumentException( "Encrypted Message Required!", "encryptedMessage" );
+                throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
 
             var cryptSalt = new byte[SaltBitSize/8];
@@ -299,15 +299,15 @@ namespace Librainian.Security {
         public static byte[] SimpleDecrypt( byte[] encryptedMessage, byte[] cryptKey, byte[] authKey, int nonSecretPayloadLength = 0 ) {
             //Basic Usage Error Checks
             if ( cryptKey == null || cryptKey.Length != KeyBitSize/8 ) {
-                throw new ArgumentException( String.Format( "CryptKey needs to be {0} bit!", KeyBitSize ), "cryptKey" );
+                throw new ArgumentException( String.Format( "CryptKey needs to be {0} bit!", KeyBitSize ), nameof( cryptKey ) );
             }
 
             if ( authKey == null || authKey.Length != KeyBitSize/8 ) {
-                throw new ArgumentException( String.Format( "AuthKey needs to be {0} bit!", KeyBitSize ), "authKey" );
+                throw new ArgumentException( String.Format( "AuthKey needs to be {0} bit!", KeyBitSize ), nameof( authKey ) );
             }
 
             if ( encryptedMessage == null || encryptedMessage.Length == 0 ) {
-                throw new ArgumentException( "Encrypted Message Required!", "encryptedMessage" );
+                throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
 
             using ( var hmac = new HMACSHA256( authKey ) ) {
@@ -377,7 +377,7 @@ namespace Librainian.Security {
         /// </remarks>
         public static String SimpleEncrypt( String secretMessage, byte[] cryptKey, byte[] authKey, byte[] nonSecretPayload = null ) {
             if ( String.IsNullOrEmpty( secretMessage ) ) {
-                throw new ArgumentException( "Secret Message Required!", "secretMessage" );
+                throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 
             var plainText = Encoding.UTF8.GetBytes( secretMessage );
@@ -398,7 +398,7 @@ namespace Librainian.Security {
         /// <exception cref="System.ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
         public static String SimpleDecrypt( String encryptedMessage, byte[] cryptKey, byte[] authKey, int nonSecretPayloadLength = 0 ) {
             if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
-                throw new ArgumentException( "Encrypted Message Required!", "encryptedMessage" );
+                throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
 
             var cipherText = Convert.FromBase64String( encryptedMessage );

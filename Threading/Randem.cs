@@ -81,7 +81,7 @@ namespace Librainian.Threading {
 
         internal static void AddToList( [NotNull] ConcurrentBag<int> list ) {
             if ( list == null ) {
-                throw new ArgumentNullException( "list" );
+                throw new ArgumentNullException( nameof( list ) );
             }
             Parallel.ForEach( 1.To( 128 ), ThreadingExtensions.Parallelism, i => list.Add( Next( minValue: Int32.MinValue, maxValue: Int32.MaxValue ) ) );
         }
@@ -98,7 +98,7 @@ namespace Librainian.Threading {
         [System.Diagnostics.Contracts.Pure]
         public static Char GetChar( this RandomNumberGenerator rng ) {
             if ( rng == null ) {
-                throw new ArgumentNullException( "rng" );
+                throw new ArgumentNullException( nameof( rng ) );
             }
             var data = new byte[ sizeof(Char) ];
             rng.GetNonZeroBytes( data );
@@ -264,7 +264,7 @@ namespace Librainian.Threading {
         public static BigInteger NextBigInteger( UInt16 numberOfDigits ) {
             numberOfDigits.Should().BeGreaterThan( 0 );
             if ( numberOfDigits <= 0 ) {
-                throw new ArgumentOutOfRangeException( "numberOfDigits" );
+                throw new ArgumentOutOfRangeException( nameof( numberOfDigits ) );
             }
 
             var buffer = new Byte[ numberOfDigits ];
@@ -280,7 +280,7 @@ namespace Librainian.Threading {
         public static BigInteger NextBigIntegerPositive( UInt16 numberOfDigits ) {
             numberOfDigits.Should().BeGreaterThan( 0 );
             if ( numberOfDigits <= 0 ) {
-                throw new ArgumentOutOfRangeException( "numberOfDigits" );
+                throw new ArgumentOutOfRangeException( nameof( numberOfDigits ) );
             }
 
             var buffer = new Byte[ numberOfDigits ];
@@ -292,7 +292,7 @@ namespace Librainian.Threading {
         public static BigInteger NextBigIntegerSecure( UInt16 numberOfDigits ) {
             numberOfDigits.Should().BeGreaterThan( 0 );
             if ( numberOfDigits <= 0 ) {
-                throw new ArgumentOutOfRangeException( "numberOfDigits" );
+                throw new ArgumentOutOfRangeException( nameof( numberOfDigits ) );
             }
 
             var buffer = new Byte[ numberOfDigits ];

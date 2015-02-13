@@ -38,7 +38,8 @@ namespace Librainian.Measurement.Currency.BTC {
 	///     Any tips or ideas? Any dos or dont's? Email me!
 	/// </summary>
 	[DataContract(IsReference = true)]
-	[DebuggerDisplay("{Formatted,nq}")]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{Formatted,nq}" )]
 	public class CoinWallet : IEnumerable<KeyValuePair<ICoin, ulong>>, ICoinWallet {
 		/// <summary>
 		///     Count of each <see cref="ICoin" />.
@@ -106,7 +107,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <remarks>Locks the wallet.</remarks>
 		public Boolean TryWithdraw( [NotNull] ICoin coin, UInt64 quantity ) {
 			if ( coin == null ) {
-				throw new ArgumentNullException( "coin" );
+				throw new ArgumentNullException( nameof( coin ) );
 			}
 			if ( quantity <= 0 ) {
 				return false;
@@ -124,14 +125,14 @@ namespace Librainian.Measurement.Currency.BTC {
 
 		public Boolean Contains( [NotNull] ICoin coin ) {
 			if ( coin == null ) {
-				throw new ArgumentNullException( "coin" );
+				throw new ArgumentNullException( nameof( coin ) );
 			}
 			return this._coins.ContainsKey( coin );
 		}
 
 		public UInt64 Count( [NotNull] ICoin coin ) {
 			if ( coin == null ) {
-				throw new ArgumentNullException( "coin" );
+				throw new ArgumentNullException( nameof( coin ) );
 			}
 			ulong result;
 			return this._coins.TryGetValue( coin, out result ) ? result : UInt64.MinValue;

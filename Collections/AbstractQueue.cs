@@ -158,7 +158,7 @@ namespace Librainian.Collections {
         /// <seealso cref="IQueue{T}.Drain(Action{T}, int)" />
         public virtual int Drain( Action< T > action, Predicate< T > criteria ) {
             if ( action == null ) {
-                throw new ArgumentNullException( "action" );
+                throw new ArgumentNullException( nameof( action ) );
             }
             return this.DoDrain( action, criteria );
         }
@@ -214,7 +214,7 @@ namespace Librainian.Collections {
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
         public virtual int Drain( Action< T > action, int maxElements, Predicate< T > criteria ) {
             if ( action == null ) {
-                throw new ArgumentNullException( "action" );
+                throw new ArgumentNullException( nameof( action ) );
             }
             if ( maxElements <= 0 ) {
                 return 0;

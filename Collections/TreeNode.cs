@@ -37,7 +37,7 @@ namespace Librainian.Collections {
 
         public TreeNode( T value, [NotNull] TreeNode< T > parent ) {
             if ( parent == null ) {
-                throw new ArgumentNullException( "parent" );
+                throw new ArgumentNullException( nameof( parent ) );
             }
             this.Value = value;
             this.Parent = parent;

@@ -38,7 +38,8 @@ namespace Librainian.Collections {
     /// <value>Version 1.7</value>
     /// <remarks>TODO replace locks with AsyncLocks</remarks>
     [CollectionDataContract]
-    [DebuggerDisplay( "Count={Count}" )]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "Count={Count}" )]
     public sealed class ThreadSafeList<T> : IList<T> {
 
         /// <summary>
@@ -180,7 +181,7 @@ namespace Librainian.Collections {
         /// </param>
         public void ForAll( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
             if ( action == null ) {
-                throw new ArgumentNullException( "action" );
+                throw new ArgumentNullException( nameof( action ) );
             }
             var wrapper = new Action<T>( obj => {
                 try {
@@ -244,7 +245,7 @@ namespace Librainian.Collections {
         /// </param>
         public void ForEach( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
             if ( action == null ) {
-                throw new ArgumentNullException( "action" );
+                throw new ArgumentNullException( nameof( action ) );
             }
             var wrapper = new Action<T>( obj => {
                 try {

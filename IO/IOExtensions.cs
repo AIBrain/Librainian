@@ -87,7 +87,7 @@ namespace Librainian.IO {
 		/// <returns></returns>
 		public static async void AppendTextAsync( this FileInfo fileInfo, String text ) {
 			if ( fileInfo == null ) {
-				throw new ArgumentNullException( "fileInfo" );
+				throw new ArgumentNullException( nameof( fileInfo ) );
 			}
 			if ( String.IsNullOrWhiteSpace( fileInfo.FullName ) || String.IsNullOrWhiteSpace( text ) ) {
 				return;
@@ -135,7 +135,7 @@ namespace Librainian.IO {
 		/// <returns></returns>
 		public static IEnumerable<byte> AsByteArray( [NotNull] this FileInfo fileInfo ) {
 			if ( fileInfo == null ) {
-				throw new ArgumentNullException( "fileInfo" );
+				throw new ArgumentNullException( nameof( fileInfo ) );
 			}
 			if ( !fileInfo.Exists ) {
 				yield break;
@@ -187,7 +187,7 @@ namespace Librainian.IO {
 		// TODO this needs a unit test for endianness
 		public static IEnumerable<UInt16> AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
 			if ( fileInfo == null ) {
-				throw new ArgumentNullException( "fileInfo" );
+				throw new ArgumentNullException( nameof( fileInfo ) );
 			}
 			if ( !fileInfo.Exists ) {
 				fileInfo.Refresh();	//check one more time
@@ -277,10 +277,10 @@ namespace Librainian.IO {
 
 		public static IEnumerable<FileInfo> BetterEnumerateFiles( [NotNull] this DirectoryInfo target, [NotNull] String searchPattern = "*" ) {
 			if ( target == null ) {
-				throw new ArgumentNullException( "target" );
+				throw new ArgumentNullException( nameof( target ) );
 			}
 			if ( searchPattern == null ) {
-				throw new ArgumentNullException( "searchPattern" );
+				throw new ArgumentNullException( nameof( searchPattern ) );
 			}
 
 			//if ( null == target ) {
@@ -321,7 +321,7 @@ namespace Librainian.IO {
 		/// <returns></returns>
 		public static int CalcHash( [NotNull] this FileInfo fileInfo ) {
 			if ( fileInfo == null ) {
-				throw new ArgumentNullException( "fileInfo" );
+				throw new ArgumentNullException( nameof( fileInfo ) );
 			}
 
 			return fileInfo.AsByteArray().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
@@ -334,7 +334,7 @@ namespace Librainian.IO {
 		/// <returns></returns>
 		public static int CalcHash( [NotNull] this Document document ) {
 			if ( document == null ) {
-				throw new ArgumentNullException( "document" );
+				throw new ArgumentNullException( nameof( document ) );
 			}
 
 			var fileInfo = new FileInfo( document.FullPathWithFileName );
@@ -361,7 +361,7 @@ namespace Librainian.IO {
 
 		public static byte[] Compress( [NotNull] this byte[] data ) {
 			if ( data == null ) {
-				throw new ArgumentNullException( "data" );
+				throw new ArgumentNullException( nameof( data ) );
 			}
 			using (var output = new MemoryStream()) {
 				using (var compress = new GZipStream( output, CompressionMode.Compress )) {
@@ -396,7 +396,7 @@ namespace Librainian.IO {
 		/// <returns></returns>
 		public static FileInfo DateAndTimeAsFile( this DirectoryInfo info, String withExtension, int toBase = 16 ) {
 			if ( info == null ) {
-				throw new ArgumentNullException( "info" );
+				throw new ArgumentNullException( nameof( info ) );
 			}
 
 			var now = Convert.ToString( value: DateTime.UtcNow.ToBinary(), toBase: toBase );
@@ -418,7 +418,7 @@ namespace Librainian.IO {
 		public static DirectoryInfo Ensure( this DirectoryInfo directoryInfo, Boolean? changeCompressionTo = null, Boolean? requestReadAccess = null, Boolean? requestWriteAccess = null ) {
 			Assert.NotNull( directoryInfo );
 			if ( directoryInfo == null ) {
-				throw new ArgumentNullException( "directoryInfo" );
+				throw new ArgumentNullException( nameof( directoryInfo ) );
 			}
 			try {
 				Assert.False( String.IsNullOrWhiteSpace( directoryInfo.FullName ) );
@@ -454,7 +454,7 @@ namespace Librainian.IO {
 
 		public static DateTime FileNameAsDateAndTime( this FileInfo info, DateTime? defaultValue = null ) {
 			if ( info == null ) {
-				throw new ArgumentNullException( "info" );
+				throw new ArgumentNullException( nameof( info ) );
 			}
 
 			if ( null == defaultValue ) {
@@ -488,13 +488,13 @@ namespace Librainian.IO {
 
 		public static Boolean GrabEntireTree( [NotNull] this Folder startingFolder, IEnumerable<String> documentSearchPatterns, [NotNull] ConcurrentBag<Document> documentsFound, [NotNull] ConcurrentBag<Folder> foldersFound, SimpleCancel cancellation ) {
 			if ( startingFolder == null ) {
-				throw new ArgumentNullException( "startingFolder" );
+				throw new ArgumentNullException( nameof( startingFolder ) );
 			}
 			if ( documentsFound == null ) {
-				throw new ArgumentNullException( "documentsFound" );
+				throw new ArgumentNullException( nameof( documentsFound ) );
 			}
 			if ( foldersFound == null ) {
-				throw new ArgumentNullException( "foldersFound" );
+				throw new ArgumentNullException( nameof( foldersFound ) );
 			}
 
 			if ( cancellation.IsCancellationRequested ) {
@@ -537,10 +537,10 @@ namespace Librainian.IO {
 		/// <param name="searchStyle"></param>
 		public static void FindFiles( this DirectoryInfo startingFolder, IEnumerable<string> fileSearchPatterns, SimpleCancel cancellation, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
 			if ( fileSearchPatterns == null ) {
-				throw new ArgumentNullException( "fileSearchPatterns" );
+				throw new ArgumentNullException( nameof( fileSearchPatterns ) );
 			}
 			if ( startingFolder == null ) {
-				throw new ArgumentNullException( "startingFolder" );
+				throw new ArgumentNullException( nameof( startingFolder ) );
 			}
 			try {
 				var searchPatterns = fileSearchPatterns as IList<String> ?? fileSearchPatterns.ToList();
@@ -675,7 +675,7 @@ namespace Librainian.IO {
 		[NotNull]
 		public static String SimplifyFileName( [NotNull] this Document document ) {
 			if ( document == null ) {
-				throw new ArgumentNullException( "document" );
+				throw new ArgumentNullException( nameof( document ) );
 			}
 
 			var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( document.FileName );
@@ -802,7 +802,7 @@ TryAgain:
 
 		public static Boolean IsProtected( [NotNull] this FileSystemInfo fileSystemInfo ) {
 			if ( fileSystemInfo == null ) {
-				throw new ArgumentNullException( "fileSystemInfo" );
+				throw new ArgumentNullException( nameof( fileSystemInfo ) );
 			}
 			if ( !fileSystemInfo.Exists ) {
 				return false;
@@ -858,7 +858,7 @@ TryAgain:
 		/// <returns></returns>
 		public static FileInfo PlusDateTime( this FileInfo info, String newExtension = null ) {
 			if ( info == null ) {
-				throw new ArgumentNullException( "info" );
+				throw new ArgumentNullException( nameof( info ) );
 			}
 			if ( info.Directory == null ) {
 				throw new NullReferenceException( "info.directory" );
@@ -880,7 +880,7 @@ TryAgain:
 		/// <returns></returns>
 		public static async Task<String> ReadTextAsync( String filePath, int? bufferSize = 4096, int? fileMissingRetries = 10, TimeSpan? retryDelay = null ) {
 			if ( String.IsNullOrWhiteSpace( filePath ) ) {
-				throw new ArgumentNullException( "filePath" );
+				throw new ArgumentNullException( nameof( filePath ) );
 			}
 
 			if ( !bufferSize.HasValue ) {
@@ -1025,7 +1025,7 @@ TryAgain:
 		/// <param name="searchStyle"></param>
 		public static void SearchAllDrives( [NotNull] this IEnumerable<String> fileSearchPatterns, SimpleCancel cancellation, Action<FileInfo> onFindFile = null, Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
 			if ( fileSearchPatterns == null ) {
-				throw new ArgumentNullException( "fileSearchPatterns" );
+				throw new ArgumentNullException( nameof( fileSearchPatterns ) );
 			}
 			try {
 				DriveInfo.GetDrives().AsParallel().WithDegreeOfParallelism( 26 ).WithExecutionMode( ParallelExecutionMode.ForceParallelism ).ForAll( drive => {
@@ -1106,7 +1106,7 @@ TryAgain:
 
 		public static IEnumerable<String> ToPaths( [NotNull] this DirectoryInfo directoryInfo ) {
 			if ( directoryInfo == null ) {
-				throw new ArgumentNullException( "directoryInfo" );
+				throw new ArgumentNullException( nameof( directoryInfo ) );
 			}
 			return directoryInfo.ToString().Split( Path.DirectorySeparatorChar );
 		}
@@ -1210,7 +1210,7 @@ TryAgain:
 		/// <exception cref="ArgumentNullException"></exception>
 		public static Boolean TryGetTempDocument( [NotNull] this Folder folder, [NotNull] out Document document, String extension = null ) {
 			if ( folder == null ) {
-				throw new ArgumentNullException( "folder" );
+				throw new ArgumentNullException( nameof( folder ) );
 			}
 			try {
 				var randomFileName = Guid.NewGuid().ToString();
@@ -1299,7 +1299,7 @@ TryAgain:
 
 		public static int? TurnOnCompression( [NotNull] this FileInfo info ) {
 			if ( info == null ) {
-				throw new ArgumentNullException( "info" );
+				throw new ArgumentNullException( nameof( info ) );
 			}
 			if ( !info.Exists ) {
 				info.Refresh();

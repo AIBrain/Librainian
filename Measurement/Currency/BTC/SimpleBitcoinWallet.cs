@@ -37,6 +37,7 @@ namespace Librainian.Measurement.Currency.BTC {
     /// <remarks>
     /// TODO add in support for automatic persisting TODO add in support for exploring the blockchain
     /// </remarks>
+    // ReSharper disable once UseNameofExpression
     [DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
     [DataContract( IsReference = true )]
@@ -227,7 +228,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public Boolean TryAdd( [NotNull] SimpleBitcoinWallet wallet, Boolean sanitize = true ) {
             if ( wallet == null ) {
-                throw new ArgumentNullException( "wallet" );
+                throw new ArgumentNullException( nameof( wallet ) );
             }
             return this.TryAdd( wallet.Balance, sanitize );
         }
@@ -375,7 +376,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <returns></returns>
         public Boolean TryWithdraw( [NotNull] SimpleBitcoinWallet wallet ) {
             if ( wallet == null ) {
-                throw new ArgumentNullException( "wallet" );
+                throw new ArgumentNullException( nameof( wallet ) );
             }
             return this.TryWithdraw( wallet.Balance );
         }

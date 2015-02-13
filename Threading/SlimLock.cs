@@ -330,7 +330,7 @@ namespace Librainian.Threading {
 
         private Boolean TryEnterReadLockCore( int millisecondsTimeout ) {
             if ( millisecondsTimeout < -1 ) {
-                throw new ArgumentOutOfRangeException( "millisecondsTimeout" );
+                throw new ArgumentOutOfRangeException( nameof( millisecondsTimeout ) );
             }
 
             if ( this._fDisposed ) {
@@ -557,7 +557,7 @@ namespace Librainian.Threading {
 
         private Boolean TryEnterWriteLockCore( int millisecondsTimeout ) {
             if ( millisecondsTimeout < -1 ) {
-                throw new ArgumentOutOfRangeException( "millisecondsTimeout" );
+                throw new ArgumentOutOfRangeException( nameof( millisecondsTimeout ) );
             }
 
             if ( this._fDisposed ) {
@@ -731,7 +731,7 @@ namespace Librainian.Threading {
 
         private Boolean TryEnterUpgradeableReadLockCore( int millisecondsTimeout ) {
             if ( millisecondsTimeout < -1 ) {
-                throw new ArgumentOutOfRangeException( "millisecondsTimeout" );
+                throw new ArgumentOutOfRangeException( nameof( millisecondsTimeout ) );
             }
 
             if ( this._fDisposed ) {
@@ -1086,7 +1086,7 @@ namespace Librainian.Threading {
         public Boolean TryEnterReadLock( TimeSpan timeout ) {
             var ltm = ( long ) timeout.TotalMilliseconds;
             if ( ltm < -1 || ltm > Int32.MaxValue ) {
-                throw new ArgumentOutOfRangeException( "timeout" );
+                throw new ArgumentOutOfRangeException( nameof( timeout ) );
             }
             var tm = ( int ) timeout.TotalMilliseconds;
             return this.TryEnterReadLock( tm );
@@ -1095,7 +1095,7 @@ namespace Librainian.Threading {
         public Boolean TryEnterWriteLock( TimeSpan timeout ) {
             var ltm = ( long ) timeout.TotalMilliseconds;
             if ( ltm < -1 || ltm > Int32.MaxValue ) {
-                throw new ArgumentOutOfRangeException( "timeout" );
+                throw new ArgumentOutOfRangeException( nameof( timeout ) );
             }
 
             var tm = ( int ) timeout.TotalMilliseconds;
@@ -1105,7 +1105,7 @@ namespace Librainian.Threading {
         public Boolean TryEnterUpgradeableReadLock( TimeSpan timeout ) {
             var ltm = ( long ) timeout.TotalMilliseconds;
             if ( ltm < -1 || ltm > Int32.MaxValue ) {
-                throw new ArgumentOutOfRangeException( "timeout" );
+                throw new ArgumentOutOfRangeException( nameof( timeout ) );
             }
 
             var tm = ( int ) timeout.TotalMilliseconds;

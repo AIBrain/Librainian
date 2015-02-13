@@ -50,7 +50,7 @@ namespace Librainian.Linguistics {
 
         public Book( [NotNull] String text, [CanBeNull] IEnumerable<Author> authors = null ) {
             if ( text == null ) {
-                throw new ArgumentNullException( "text" );
+                throw new ArgumentNullException( nameof( text ) );
             }
             this._tokens.Add( new Page( text ) ); //TODO //BUG this needs to add all pages
             this._tokens.Fix();

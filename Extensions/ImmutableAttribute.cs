@@ -51,14 +51,14 @@ namespace Librainian.Extensions {
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable<Type> whiteList ) {
             if ( type == null ) {
-                throw new ArgumentNullException( "type" );
+                throw new ArgumentNullException( nameof( type ) );
             }
             if ( type.BaseType == null ) {
-                throw new ArgumentNullException( "type" );
+                throw new ArgumentNullException( nameof( type ) );
             }
 
             if ( whiteList == null ) {
-                throw new ArgumentNullException( "whiteList" );
+                throw new ArgumentNullException( nameof( whiteList ) );
             }
             var enumerable = whiteList as IList<Type> ?? whiteList.ToList();
 

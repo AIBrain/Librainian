@@ -46,6 +46,7 @@ namespace Librainian.Maths {
     /// <seealso cref="http://gist.github.com/nberardi/2667136" />
     [UsedImplicitly]
     [Immutable]
+    // ReSharper disable once UseNameofExpression
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public struct BigDecimal : IComparable, IComparable<BigDecimal>, IConvertible, /*IFormattable,*/ IEquatable<BigDecimal> {
 
@@ -118,11 +119,11 @@ namespace Librainian.Maths {
 
         public BigDecimal( Byte[] value ) {
             if ( value.Length < 5 ) {
-                throw new ArgumentOutOfRangeException( "value", "Not enough bytes to construct the Significand" );
+                throw new ArgumentOutOfRangeException( nameof( value ), "Not enough bytes to construct the Significand" );
             }
 
             if ( !value.Length.CanAllocateMemory() ) {
-                throw new ArgumentOutOfRangeException( "value", "'value' is too large to allocate" );
+                throw new ArgumentOutOfRangeException( nameof( value ), "'value' is too large to allocate" );
             }
 
             var number = new Byte[ value.Length - 4 ];
@@ -370,7 +371,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         public static BigDecimal Parse( [NotNull] String value ) {
             if ( value == null ) {
-                throw new ArgumentNullException( "value" );
+                throw new ArgumentNullException( nameof( value ) );
             }
             return value.ToBigDecimal();
         }
@@ -492,7 +493,7 @@ namespace Librainian.Maths {
             var scaledValue = BigInteger.Divide( this.Significand, scaleDivisor );
 
             if ( scaledValue > new BigInteger( Decimal.MaxValue ) ) {
-                throw new ArgumentOutOfRangeException( "provider", String.Format( "The value {0} cannot fit into {1}.", this.Significand, conversionType.Name ) );
+                throw new ArgumentOutOfRangeException( nameof( provider ), String.Format( "The value {0} cannot fit into {1}.", this.Significand, conversionType.Name ) );
             }
 
             var leftOfDecimal = ( Decimal )scaledValue;

@@ -73,16 +73,16 @@ namespace Librainian.Database {
         /// </summary>
         public SQLQuery( [NotNull] String library, [NotNull] String server, [NotNull] String username, [NotNull] String password ) {
             if ( library == null ) {
-                throw new ArgumentNullException( "library" );
+                throw new ArgumentNullException( nameof( library ) );
             }
             if ( server == null ) {
-                throw new ArgumentNullException( "server" );
+                throw new ArgumentNullException( nameof( server ) );
             }
             if ( username == null ) {
-                throw new ArgumentNullException( "username" );
+                throw new ArgumentNullException( nameof( username ) );
             }
             if ( password == null ) {
-                throw new ArgumentNullException( "password" );
+                throw new ArgumentNullException( nameof( password ) );
             }
             this.Library = library;
             this.Server = server;

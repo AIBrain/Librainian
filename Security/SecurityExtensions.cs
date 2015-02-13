@@ -51,10 +51,10 @@ namespace Librainian.Security {
 
             // This is the variable that will be returned to the user
             if ( decryptValue == null ) {
-                throw new ArgumentNullException( "decryptValue" );
+                throw new ArgumentNullException( nameof( decryptValue ) );
             }
             if ( privateKey == null ) {
-                throw new ArgumentNullException( "privateKey" );
+                throw new ArgumentNullException( nameof( privateKey ) );
             }
             var decryptedValue = String.Empty;
 
@@ -98,10 +98,10 @@ namespace Librainian.Security {
 
             // This is the variable that will be returned to the user
             if ( stringToEncrypt == null ) {
-                throw new ArgumentNullException( "stringToEncrypt" );
+                throw new ArgumentNullException( nameof( stringToEncrypt ) );
             }
             if ( publicKey == null ) {
-                throw new ArgumentNullException( "publicKey" );
+                throw new ArgumentNullException( nameof( publicKey ) );
             }
             var encryptedValue = String.Empty;
 
@@ -144,7 +144,7 @@ namespace Librainian.Security {
 
         public static byte[] Sha256( this byte[] input ) {
             if ( input == null ) {
-                throw new ArgumentNullException( "input" );
+                throw new ArgumentNullException( nameof( input ) );
             }
             return SHA256Local.Value.ComputeHash( input, 0, input.Length );
         }
@@ -158,7 +158,7 @@ namespace Librainian.Security {
         /// <returns></returns>
         public static byte[] Sha256( this String input, Encoding encoding = null ) {
             if ( input == null ) {
-                throw new ArgumentNullException( "input" );
+                throw new ArgumentNullException( nameof( input ) );
             }
             if ( null == encoding ) {
                 encoding = Encoding.UTF8;
@@ -175,7 +175,7 @@ namespace Librainian.Security {
         /// <returns></returns>
         public static byte[] Sha384( this String input, Encoding encoding = null ) {
             if ( input == null ) {
-                throw new ArgumentNullException( "input" );
+                throw new ArgumentNullException( nameof( input ) );
             }
             if ( null == encoding ) {
                 encoding = Encoding.UTF8;
@@ -185,7 +185,7 @@ namespace Librainian.Security {
 
         public static byte[] Sha384( this byte[] input ) {
             if ( input == null ) {
-                throw new ArgumentNullException( "input" );
+                throw new ArgumentNullException( nameof( input ) );
             }
             return SHA384Local.Value.ComputeHash( input, 0, input.Length );
         }
@@ -199,7 +199,7 @@ namespace Librainian.Security {
         /// <returns></returns>
         public static byte[] Sha512( this String input, Encoding encoding = null ) {
             if ( input == null ) {
-                throw new ArgumentNullException( "input" );
+                throw new ArgumentNullException( nameof( input ) );
             }
             if ( null == encoding ) {
                 encoding = Encoding.UTF8;
@@ -209,7 +209,7 @@ namespace Librainian.Security {
 
         public static byte[] Sha512( this byte[] input ) {
             if ( input == null ) {
-                throw new ArgumentNullException( "input" );
+                throw new ArgumentNullException( nameof( input ) );
             }
             return SHA512Local.Value.ComputeHash( input, 0, input.Length );
         }

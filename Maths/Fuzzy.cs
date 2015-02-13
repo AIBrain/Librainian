@@ -103,7 +103,7 @@ namespace Librainian.Maths {
 
         public static Fuzzy Parse( [CanBeNull] String value ) {
             if ( String.IsNullOrWhiteSpace( value ) ) {
-                throw new ArgumentNullException( "value" );
+                throw new ArgumentNullException( nameof( value ) );
             }
             return new Fuzzy( Double.Parse( value ) );
         }

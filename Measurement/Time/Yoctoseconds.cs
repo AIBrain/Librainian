@@ -35,7 +35,8 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Yoctosecond" />
     [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct Yoctoseconds : IComparable<Yoctoseconds>, IQuantityOfTime {
 

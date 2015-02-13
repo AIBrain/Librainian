@@ -17,6 +17,7 @@
 // "Librainian/IDenomination.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
 #endregion
 
+// ReSharper disable UseNameofExpression
 namespace Librainian.Measurement.Currency.BTC {
     using System;
     using JetBrains.Annotations;

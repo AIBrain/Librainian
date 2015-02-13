@@ -46,14 +46,14 @@ namespace Librainian.Linguistics {
 
         public Page( [NotNull] String text ) {
             if ( text == null ) {
-                throw new ArgumentNullException( "text" );
+                throw new ArgumentNullException( nameof( text ) );
             }
             this.Add( text );
         }
 
         public Boolean Add( [NotNull] String text ) {
             if ( text == null ) {
-                throw new ArgumentNullException( "text" );
+                throw new ArgumentNullException( nameof( text ) );
             }
             this._tokens.Add( new Paragraph( text ) ); //TODO //BUG this needs to add all paragraphs
             return true;

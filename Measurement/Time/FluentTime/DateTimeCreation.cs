@@ -50,7 +50,7 @@ namespace Librainian.Measurement.Time.FluentTime {
 
         private static void Reject24HourTime( DateTime d ) {
             if ( d.Hour > 12 )
-                throw new ArgumentOutOfRangeException( "d", string.Format( "Not a 12-hour time. Hour is {0}.", d.Hour ) );
+                throw new ArgumentOutOfRangeException( nameof( d ), string.Format( "Not a 12-hour time. Hour is {0}.", d.Hour ) );
         }
     }
 }

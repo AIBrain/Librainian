@@ -36,7 +36,7 @@ namespace Librainian.Threading {
 
         public Pipeline( [NotNull] Func< TInput, TOutput > function ) {
             if ( function == null ) {
-                throw new ArgumentNullException( "function" );
+                throw new ArgumentNullException( nameof( function ) );
             }
             this._pipelineFunction = function;
         }
@@ -44,7 +44,7 @@ namespace Librainian.Threading {
         public Pipeline< TInput, TNewOutput > AddFunction< TNewOutput >( [NotNull] Func< TOutput, TNewOutput > newfunction ) {
             // create a composite function
             if ( newfunction == null ) {
-                throw new ArgumentNullException( "newfunction" );
+                throw new ArgumentNullException( nameof( newfunction ) );
             }
             Func< TInput, TNewOutput > compositeFunction = ( inputValue => newfunction( this._pipelineFunction( inputValue ) ) );
 
@@ -55,7 +55,7 @@ namespace Librainian.Threading {
         public void AddValue( TInput value, [NotNull] Action< TInput, TOutput > callback ) {
             // add the value to the queue for processing
             if ( callback == null ) {
-                throw new ArgumentNullException( "callback" );
+                throw new ArgumentNullException( nameof( callback ) );
             }
             this._valueQueue.Add( new ValueCallBackWrapper {
                                                                Value = value,

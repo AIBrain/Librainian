@@ -66,7 +66,7 @@ namespace Librainian.Extensions {
 
         public object GetFormat( [NotNull] Type formatType ) {
             if ( formatType == null ) {
-                throw new ArgumentNullException( "formatType" );
+                throw new ArgumentNullException( nameof( formatType ) );
             }
             return formatType == typeof(ICustomFormatter) ? this : null;
         }

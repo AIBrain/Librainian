@@ -189,7 +189,7 @@ namespace Librainian.Measurement.Time.Clocks {
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException( "granularity" );
+                    throw new ArgumentOutOfRangeException( nameof( granularity ) );
             }
 
             this._timer.Start();

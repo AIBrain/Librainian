@@ -136,7 +136,7 @@ namespace Librainian.Graphics {
         [CanBeNull]
         public static DateTime? ImageCreationBestGuess( [CanBeNull] this Document document ) {
             if ( document == null ) {
-                throw new ArgumentNullException( "document" );
+                throw new ArgumentNullException( nameof( document ) );
             }
             return ImageCreationBestGuess( new FileInfo( document.FullPathWithFileName ) );
         }
@@ -151,7 +151,7 @@ namespace Librainian.Graphics {
 	    [CanBeNull]
         public static DateTime? ImageCreationBestGuess( [CanBeNull] this FileSystemInfo info ) {
             if ( info == null ) {
-                throw new ArgumentNullException( "info" );
+                throw new ArgumentNullException( nameof( info ) );
             }
 
             DateTime? imageCreationBestGuess;
@@ -325,7 +325,7 @@ namespace Librainian.Graphics {
         /// <returns></returns>
         public static Boolean IsaValidImage( [NotNull] this Document document ) {
             if ( document == null ) {
-                throw new ArgumentNullException( "document" );
+                throw new ArgumentNullException( nameof( document ) );
             }
             return IsaValidImage( new FileInfo( document.FullPathWithFileName ) );
         }
@@ -425,7 +425,7 @@ namespace Librainian.Graphics {
 
         public static Image ResizeImage( [NotNull] this Image imgToResize, Size size ) {
             if ( imgToResize == null ) {
-                throw new ArgumentNullException( "imgToResize" );
+                throw new ArgumentNullException( nameof( imgToResize ) );
             }
 
             var sourceWidth = imgToResize.Width;

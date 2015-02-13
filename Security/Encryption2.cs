@@ -28,10 +28,10 @@ namespace Librainian.Security {
         public static String EncryptString( [NotNull] this String inputString, int dwKeySize, [NotNull] String xmlString ) {
             // TODO: Add Proper Exception Handlers
             if ( inputString == null ) {
-                throw new ArgumentNullException( "inputString" );
+                throw new ArgumentNullException( nameof( inputString ) );
             }
             if ( xmlString == null ) {
-                throw new ArgumentNullException( "xmlString" );
+                throw new ArgumentNullException( nameof( xmlString ) );
             }
             var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize );
             rsaCryptoServiceProvider.FromXmlString( xmlString );
@@ -65,10 +65,10 @@ namespace Librainian.Security {
         public static String DecryptString( [NotNull] this String inputString, int dwKeySize, [NotNull] String xmlString ) {
             // TODO: Add Proper Exception Handlers
             if ( inputString == null ) {
-                throw new ArgumentNullException( "inputString" );
+                throw new ArgumentNullException( nameof( inputString ) );
             }
             if ( xmlString == null ) {
-                throw new ArgumentNullException( "xmlString" );
+                throw new ArgumentNullException( nameof( xmlString ) );
             }
             var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize );
             rsaCryptoServiceProvider.FromXmlString( xmlString );

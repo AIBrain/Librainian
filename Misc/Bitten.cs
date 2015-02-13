@@ -105,7 +105,7 @@ namespace Librainian.Misc {
         // 
         public Bitten( String g ) {
             if ( g == null ) {
-                throw new ArgumentNullException( "g" );
+                throw new ArgumentNullException( nameof( g ) );
             }
             this = Parse( g );
         }

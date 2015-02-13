@@ -24,13 +24,14 @@ namespace Librainian.Measurement.Physics {
     using JetBrains.Annotations;
     using Librainian.Extensions;
 
-    /// <summary>
-    /// Units of mass and energy in ElectronVolts.
-    /// </summary>
-    /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass"/>
-    /// <see cref="http://wikipedia.org/wiki/SI_prefix"/>
-    /// <see cref="http://wikipedia.org/wiki/Mega-"/>
-    [DebuggerDisplay("{DebuggerDisplay,nq}")]
+	/// <summary>
+	/// Units of mass and energy in ElectronVolts.
+	/// </summary>
+	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass"/>
+	/// <see cref="http://wikipedia.org/wiki/SI_prefix"/>
+	/// <see cref="http://wikipedia.org/wiki/Mega-"/>
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct MegaElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
 

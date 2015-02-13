@@ -42,7 +42,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
 		public static String SimplerBTC( [NotNull] this SimpleBitcoinWallet wallet ) {
 			if ( wallet == null ) {
-				throw new ArgumentNullException( "wallet" );
+				throw new ArgumentNullException( nameof( wallet ) );
 			}
 			return wallet.Balance.SimplerBTC();
 		}
@@ -61,7 +61,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <returns></returns>
 		public static String SimplerBTC( this Decimal btc, [NotNull] String coinSuffix = "BTC" ) {
 			if ( coinSuffix == null ) {
-				throw new ArgumentNullException( "coinSuffix" );
+				throw new ArgumentNullException( nameof( coinSuffix ) );
 			}
 			btc = btc.Sanitize();
 
@@ -134,10 +134,10 @@ namespace Librainian.Measurement.Currency.BTC {
 
 		public static IEnumerable<KeyValuePair<ICoin, ulong>> Transfer( [NotNull] this CoinWallet source, [NotNull] CoinWallet target ) {
 			if ( source == null ) {
-				throw new ArgumentNullException( "source" );
+				throw new ArgumentNullException( nameof( source ) );
 			}
 			if ( target == null ) {
-				throw new ArgumentNullException( "target" );
+				throw new ArgumentNullException( nameof( target ) );
 			}
 
 			var transferred = new ConcurrentDictionary<ICoin, ulong>();
@@ -156,10 +156,10 @@ namespace Librainian.Measurement.Currency.BTC {
 
 		public static Boolean Transfer( [NotNull] this CoinWallet source, [NotNull] CoinWallet target, KeyValuePair<ICoin, ulong> denominationAndAmount ) {
 			if ( source == null ) {
-				throw new ArgumentNullException( "source" );
+				throw new ArgumentNullException( nameof( source ) );
 			}
 			if ( target == null ) {
-				throw new ArgumentNullException( "target" );
+				throw new ArgumentNullException( nameof( target ) );
 			}
 			return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) && target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value ) > 0;
 		}
@@ -172,7 +172,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <returns></returns>
 		public static Task Transfer( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, ulong>> sourceAmounts ) {
 			if ( coinWallet == null ) {
-				throw new ArgumentNullException( "coinWallet" );
+				throw new ArgumentNullException( nameof( coinWallet ) );
 			}
 			var bsfasd = new ActionBlock<KeyValuePair<ICoin, ulong>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeParallel );
 			bsfasd.Complete();
@@ -181,14 +181,14 @@ namespace Librainian.Measurement.Currency.BTC {
 
 		public static void Fund( [NotNull] CoinWallet coinWallet, [CanBeNull] params KeyValuePair<ICoin, ulong>[] sourceAmounts ) {
 			if ( coinWallet == null ) {
-				throw new ArgumentNullException( "coinWallet" );
+				throw new ArgumentNullException( nameof( coinWallet ) );
 			}
 			Fund( coinWallet, sourceAmounts.AsEnumerable() );
 		}
 
 		public static void Fund( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, ulong>> sourceAmounts ) {
 			if ( coinWallet == null ) {
-				throw new ArgumentNullException( "coinWallet" );
+				throw new ArgumentNullException( nameof( coinWallet ) );
 			}
 			if ( null == sourceAmounts ) {
 				return;
@@ -204,7 +204,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <returns></returns>
 		public static Task StartDeposit( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, ulong>> sourceAmounts ) {
 			if ( coinWallet == null ) {
-				throw new ArgumentNullException( "coinWallet" );
+				throw new ArgumentNullException( nameof( coinWallet ) );
 			}
 			sourceAmounts = sourceAmounts ?? Enumerable.Empty<KeyValuePair<ICoin, ulong>>();
 			var actionBlock = new ActionBlock<KeyValuePair<ICoin, ulong>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeParallel );
@@ -223,7 +223,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <returns></returns>
 		public static Decimal Fund( [NotNull] this CoinWallet coinWallet, Decimal amount, Boolean optimalAmountOfCoin = true ) {
 			if ( coinWallet == null ) {
-				throw new ArgumentNullException( "coinWallet" );
+				throw new ArgumentNullException( nameof( coinWallet ) );
 			}
 			var leftOverFund = Decimal.Zero;
 			coinWallet.Deposit( optimalAmountOfCoin ? amount.Optimal( ref leftOverFund ) : amount.UnOptimal( ref leftOverFund ) );
@@ -238,7 +238,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <param name="coins"></param>
 		public static void Deposit( [NotNull] this CoinWallet coinWallet, IEnumerable<KeyValuePair<ICoin, ulong>> coins = null ) {
 			if ( coinWallet == null ) {
-				throw new ArgumentNullException( "coinWallet" );
+				throw new ArgumentNullException( nameof( coinWallet ) );
 			}
 
 			coins = coins ?? Enumerable.Empty<KeyValuePair<ICoin, ulong>>();

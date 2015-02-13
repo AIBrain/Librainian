@@ -813,7 +813,7 @@ namespace Librainian.Measurement.Time {
                         break;
                     }
                 default: {
-                        throw new ArgumentOutOfRangeException( "rt" );
+                        throw new ArgumentOutOfRangeException( nameof( rt ) );
                     }
             }
 

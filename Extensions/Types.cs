@@ -35,7 +35,7 @@ namespace Librainian.Extensions {
 
         public static void CopyField<TSource>( this TSource source, TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( field == null ) {
-                throw new ArgumentNullException( "field" );
+                throw new ArgumentNullException( nameof( field ) );
             }
             try {
                 var sourceValue = field.GetValue( source );
@@ -110,7 +110,7 @@ namespace Librainian.Extensions {
 
         public static void CopyProperty<TSource>( this TSource source, TSource destination, [NotNull] PropertyInfo prop ) {
             if ( prop == null ) {
-                throw new ArgumentNullException( "prop" );
+                throw new ArgumentNullException( nameof( prop ) );
             }
             try {
                 var sourceValue = prop.GetValue( source, null );
@@ -197,7 +197,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         public static IEnumerable<Type> GetSealedClassesDerivedFrom( [CanBeNull] this Type baseType ) {
             if ( baseType == null ) {
-                throw new ArgumentNullException( "baseType" );
+                throw new ArgumentNullException( nameof( baseType ) );
             }
             return baseType.Assembly.GetTypes().Where( type => type.IsAssignableFrom( baseType ) && type.IsSealed );
         }
@@ -210,7 +210,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         public static IEnumerable<Type> GetTypesDerivedFrom( [CanBeNull] this Type baseType ) {
             if ( baseType == null ) {
-                throw new ArgumentNullException( "baseType" );
+                throw new ArgumentNullException( nameof( baseType ) );
             }
             return LazyCurrentDomainGetAssemblies.Value.SelectMany( assembly => assembly.GetTypes(), ( assembly, type ) => type ).Where( arg => baseType.IsAssignableFrom( arg ) && arg.IsClass && !arg.IsAbstract );
         }
@@ -280,7 +280,7 @@ namespace Librainian.Extensions {
 
         public static String Name<T>( [NotNull] this Expression<Func<T>> propertyExpression ) {
             if ( propertyExpression == null ) {
-                throw new ArgumentNullException( "propertyExpression" );
+                throw new ArgumentNullException( nameof( propertyExpression ) );
             }
             var memberExpression = propertyExpression.Body as MemberExpression;
             return memberExpression?.Member.Name ?? String.Empty;
@@ -305,7 +305,7 @@ namespace Librainian.Extensions {
 
         public static Func<object> NewInstanceByCreate( [NotNull] this Type type ) {
             if ( type == null ) {
-                throw new ArgumentNullException( "type" );
+                throw new ArgumentNullException( nameof( type ) );
             }
             var localType = type; // create a local copy to prevent adverse effects of closure
             Func<object> func = ( () => Activator.CreateInstance( localType ) ); // curry the localType
@@ -314,7 +314,7 @@ namespace Librainian.Extensions {
 
         public static Func<object> NewInstanceByLambda( [NotNull] this Type type ) {
             if ( type == null ) {
-                throw new ArgumentNullException( "type" );
+                throw new ArgumentNullException( nameof( type ) );
             }
             return Expression.Lambda<Func<object>>( Expression.New( type ) ).Compile();
         }

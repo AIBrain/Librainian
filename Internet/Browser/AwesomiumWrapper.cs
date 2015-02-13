@@ -27,7 +27,7 @@
         /// <exception cref="ArgumentNullException"></exception>
         public AwesomiumWrapper( [NotNull] WebControl webControl, TimeSpan timeout ) {
             if ( webControl == null ) {
-                throw new ArgumentNullException( "webControl" );
+                throw new ArgumentNullException( nameof( webControl ) );
             }
             this.WebControl = webControl;
             this.Timeout = timeout;
@@ -233,7 +233,7 @@
 
         public async Task<Boolean> Navigate( [NotNull] Uri url, [CanBeNull] SimpleCancel simpleCancel = null ) {
             if ( url == null ) {
-                throw new ArgumentNullException( "url" );
+                throw new ArgumentNullException( nameof( url ) );
             }
 
             var doWeHaveAccess = false;
@@ -306,7 +306,7 @@
         [CanBeNull]
         public async Task<string> GetValue( [NotNull] String id ) {
             if ( String.IsNullOrWhiteSpace( id ) ) {
-                throw new ArgumentNullException( "id" );
+                throw new ArgumentNullException( nameof( id ) );
             }
             var javascript = String.Format( "document.getElementById( {0} ).value", id );
             var result = await this.ExecuteJavascriptWithResult( javascript );

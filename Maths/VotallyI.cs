@@ -34,8 +34,9 @@ namespace Librainian.Maths {
     /// <para>Keep count of Yes or No votes.</para>
     /// </summary>
     [DataContract( IsReference = true )]
-    [Serializable]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [Serializable]	  // ReSharper disable once UseNameofExpression
+
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public class VotallyI {
 
         /// <summary>
@@ -128,10 +129,10 @@ namespace Librainian.Maths {
 
         public static VotallyI Combine( [NotNull] VotallyI left, [NotNull] VotallyI right ) {
             if ( left == null ) {
-                throw new ArgumentNullException( "left" );
+                throw new ArgumentNullException( nameof( left ) );
             }
             if ( right == null ) {
-                throw new ArgumentNullException( "right" );
+                throw new ArgumentNullException( nameof( right ) );
             }
             var result = left;
             result.VoteYes( right.Yes );

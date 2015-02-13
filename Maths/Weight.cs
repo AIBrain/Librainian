@@ -90,7 +90,7 @@ namespace Librainian.Maths {
 
         public static Weight Parse( [NotNull] String value ) {
             if ( value == null ) {
-                throw new ArgumentNullException( "value" );
+                throw new ArgumentNullException( nameof( value ) );
             }
             return new Weight( Double.Parse( value ) );
         }

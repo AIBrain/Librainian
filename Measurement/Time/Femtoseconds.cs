@@ -35,7 +35,8 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Femtosecond" />
     [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     [Immutable]
     public struct Femtoseconds : IComparable<Femtoseconds>, IQuantityOfTime {

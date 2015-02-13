@@ -40,7 +40,8 @@ namespace Librainian.Measurement.Time {
 	///     </para>
 	/// </summary>
 	[DataContract(IsReference = true)]
-	[DebuggerDisplay("{DebuggerDisplay,nq}")]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
 	[Immutable]
 	public struct Seconds : IComparable<Seconds>, IQuantityOfTime {
 		/// <summary>

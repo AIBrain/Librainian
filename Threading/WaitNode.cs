@@ -47,7 +47,7 @@ namespace Librainian.Threading {
 
         public virtual Boolean Signal( [NotNull] IQueuedSync sync ) {
             if ( sync == null ) {
-                throw new ArgumentNullException( "sync" );
+                throw new ArgumentNullException( nameof( sync ) );
             }
             lock ( this ) {
                 var signalled = this._waiting;
@@ -62,7 +62,7 @@ namespace Librainian.Threading {
 
         public virtual void DoWait( [NotNull] IQueuedSync sync ) {
             if ( sync == null ) {
-                throw new ArgumentNullException( "sync" );
+                throw new ArgumentNullException( nameof( sync ) );
             }
             lock ( this ) {
                 if ( sync.Recheck( this ) ) {

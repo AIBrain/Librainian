@@ -29,9 +29,9 @@ namespace Librainian.Persistence {
     using System.Runtime.Serialization;
     using FluentAssertions;
     using IO;
-    using JetBrains.Annotations;
+	using Parsing;
+	using JetBrains.Annotations;
     using Microsoft.Isam.Esent.Collections.Generic;
-    using Parsing;
     using Threading;
 
     /// <summary>
@@ -41,6 +41,7 @@ namespace Librainian.Persistence {
     /// </para>
     /// </summary>
     [DataContract( IsReference = true )]
+    // ReSharper disable once UseNameofExpression
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     public class PersistTable<TKey, TValue> : IDictionary<TKey, TValue>, IDisposable where TKey : IComparable<TKey>, IComparable
@@ -76,7 +77,7 @@ namespace Librainian.Persistence {
                 Log.Enter();
 
                 if ( folder == null ) {
-                    throw new ArgumentNullException( "folder" );
+                    throw new ArgumentNullException( nameof( folder ) );
                 }
                 this.Folder = folder;
                 var directory = this.Folder.FullName;

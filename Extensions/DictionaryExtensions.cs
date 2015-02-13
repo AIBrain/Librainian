@@ -25,10 +25,10 @@ namespace Librainian.Extensions {
 
         public static void Add<TKey, TValue>( [NotNull] this IDictionary<TKey, TValue> dictionary, [NotNull] IEnumerable<KeyValuePair<TKey, TValue>> otherKVP, Boolean ignoreUpdates = false ) {
             if ( dictionary == null ) {
-                throw new ArgumentNullException( "dictionary" );
+                throw new ArgumentNullException( nameof( dictionary ) );
             }
             if ( otherKVP == null ) {
-                throw new ArgumentNullException( "otherKVP" );
+                throw new ArgumentNullException( nameof( otherKVP ) );
             }
 
             if ( ignoreUpdates ) {

@@ -13,8 +13,9 @@ namespace Librainian.Collections {
     using Magic;
 
     [DataContract( IsReference = true )]
-    [Serializable]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [Serializable]	  // ReSharper disable once UseNameofExpression
+
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public class Potpourri<TKey> : ManagedDisposable, IPotpourri<TKey> where TKey : class {
 
         [DataMember( IsRequired = true )]
@@ -55,7 +56,7 @@ namespace Librainian.Collections {
         /// <exception cref="ArgumentNullException"></exception>
         public Boolean Contains( TKey key ) {
             if ( key == null ) {
-                throw new ArgumentNullException( "key" );
+                throw new ArgumentNullException( nameof( key ) );
             }
             BigInteger value;
             if ( !this.Container.TryGetValue( key, out value ) ) {

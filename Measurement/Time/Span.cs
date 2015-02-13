@@ -39,7 +39,8 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Units_of_time" />
     [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     [Immutable]
     public struct Span : IEquatable<Span>, IComparable<Span>, IComparable<TimeSpan> {
@@ -170,7 +171,7 @@ namespace Librainian.Measurement.Time {
             planckTimes.Should().BeGreaterOrEqualTo( BigInteger.Zero );
 
             if ( planckTimes < BigInteger.Zero ) {
-                throw new ArgumentOutOfRangeException( "planckTimes", "Must be greater than or equal to 0" );
+                throw new ArgumentOutOfRangeException( nameof( planckTimes ), "Must be greater than or equal to 0" );
             }
 
             //NOTE the order here is maybe important..

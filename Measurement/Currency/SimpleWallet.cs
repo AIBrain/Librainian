@@ -33,13 +33,14 @@ namespace Librainian.Measurement.Currency {
     using Threading;
     using Time;
 
-    /// <summary>
-    ///     A very simple, thread-safe,  Decimal-based wallet. 8 points past decimal dot.
-    /// </summary>
-    /// <remarks>
-    ///     TODO add in support for automatic persisting
-    /// </remarks>
-    [DebuggerDisplay( "{Formatted,nq}" )]
+	/// <summary>
+	///     A very simple, thread-safe,  Decimal-based wallet. 8 points past decimal dot.
+	/// </summary>
+	/// <remarks>
+	///     TODO add in support for automatic persisting
+	/// </remarks>
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
     [DataContract( IsReference = true )]
     public class SimpleWallet : ISimpleWallet, IEquatable<SimpleWallet> {
@@ -180,7 +181,7 @@ namespace Librainian.Measurement.Currency {
 
         public Boolean TryAdd( [NotNull] SimpleWallet wallet, Boolean sanitize = true ) {
             if ( wallet == null ) {
-                throw new ArgumentNullException( "wallet" );
+                throw new ArgumentNullException( nameof( wallet ) );
             }
             return this.TryAdd( wallet.Balance, sanitize );
         }
@@ -323,7 +324,7 @@ namespace Librainian.Measurement.Currency {
 
         public Boolean TryWithdraw( [NotNull] SimpleWallet wallet ) {
             if ( wallet == null ) {
-                throw new ArgumentNullException( "wallet" );
+                throw new ArgumentNullException( nameof( wallet ) );
             }
             return this.TryWithdraw( wallet.Balance );
         }

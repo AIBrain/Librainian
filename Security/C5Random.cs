@@ -92,7 +92,7 @@ namespace Librainian.Security {
         /// <param name="q">The start state. Must be a collection of random bits given by an array of exactly 16 uints.</param>
         public C5Random( [NotNull] uint[] q ) {
             if ( q == null ) {
-                throw new ArgumentNullException( "q" );
+                throw new ArgumentNullException( nameof( q ) );
             }
             if ( q.Length > 16 ) {
                 throw new ArgumentException( "Q must have length 16, was " + q.Length );
@@ -170,7 +170,7 @@ namespace Librainian.Security {
         /// <param name="buffer">The array to fill</param>
         public override void NextBytes( [NotNull] byte[] buffer ) {
             if ( buffer == null ) {
-                throw new ArgumentNullException( "buffer" );
+                throw new ArgumentNullException( nameof( buffer ) );
             }
             for ( int i = 0, length = buffer.Length; i < length; i++ ) {
                 buffer[ i ] = ( byte ) this.Cmwc();

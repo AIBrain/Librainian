@@ -37,7 +37,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
         public Second( Byte value ) {
             if ( !ValidSeconds.Contains( value ) ) {
-                throw new ArgumentOutOfRangeException( "value", String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", value, MinimumValue, MaximumValue ) );
+                throw new ArgumentOutOfRangeException( nameof( value ), String.Format( "The specified value ({0}) is out of the valid range of {1} to {2}.", value, MinimumValue, MaximumValue ) );
             }
             this.Value = value;
         }

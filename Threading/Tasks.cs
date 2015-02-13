@@ -118,7 +118,7 @@ namespace Librainian.Threading {
         /// </example>
         public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
             if ( tasks == null ) {
-                throw new ArgumentNullException( "tasks" );
+                throw new ArgumentNullException( nameof( tasks ) );
             }
 
             var inputTasks = tasks.ToList();
@@ -166,7 +166,7 @@ namespace Librainian.Threading {
         /// <returns> </returns>
         public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
             if ( job == null ) {
-                throw new ArgumentNullException( "job" );
+                throw new ArgumentNullException( nameof( job ) );
             }
 
             await Task.Delay( delay );
@@ -182,7 +182,7 @@ namespace Librainian.Threading {
         /// <returns> </returns>
         public static async Task Then( this Span delay, [NotNull] Action job ) {
             if ( job == null ) {
-                throw new ArgumentNullException( "job" );
+                throw new ArgumentNullException( nameof( job ) );
             }
             await Task.Delay( delay );
 
@@ -197,7 +197,7 @@ namespace Librainian.Threading {
         /// <returns> </returns>
         public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
             if ( job == null ) {
-                throw new ArgumentNullException( "job" );
+                throw new ArgumentNullException( nameof( job ) );
             }
             await Task.Delay( delay );
 
@@ -212,7 +212,7 @@ namespace Librainian.Threading {
         /// <returns> </returns>
         public static async Task Then( this Seconds delay, [NotNull] Action job ) {
             if ( job == null ) {
-                throw new ArgumentNullException( "job" );
+                throw new ArgumentNullException( nameof( job ) );
             }
             await Task.Delay( delay );
 
@@ -227,7 +227,7 @@ namespace Librainian.Threading {
         /// <returns> </returns>
         public static async void Then( this Minutes delay, [NotNull] Action job ) {
             if ( job == null ) {
-                throw new ArgumentNullException( "job" );
+                throw new ArgumentNullException( nameof( job ) );
             }
             await Task.Delay( delay );
 
@@ -456,7 +456,7 @@ namespace Librainian.Threading {
         public static void TryPost<T>( this ITargetBlock<T> target, T item ) {
             if ( target == null ) {
 #if DEBUG
-                throw new ArgumentNullException( "target" );
+                throw new ArgumentNullException( nameof( target ) );
 #else
                 return;
 #endif
@@ -478,7 +478,7 @@ namespace Librainian.Threading {
         /// <param name="delay"></param>
         public static System.Timers.Timer TryPost<T>( this ITargetBlock<T> target, T item, Span delay ) {
             if ( target == null ) {
-                throw new ArgumentNullException( "target" );
+                throw new ArgumentNullException( nameof( target ) );
             }
 
             try {
@@ -502,10 +502,10 @@ namespace Librainian.Threading {
         /// <param name="condition"></param>
         public static System.Timers.Timer When( this Span afterDelay, Func<Boolean> condition, Action action ) {
             if ( condition == null ) {
-                throw new ArgumentNullException( "condition" );
+                throw new ArgumentNullException( nameof( condition ) );
             }
             if ( action == null ) {
-                throw new ArgumentNullException( "action" );
+                throw new ArgumentNullException( nameof( action ) );
             }
             try {
                 return afterDelay.Create( () => {

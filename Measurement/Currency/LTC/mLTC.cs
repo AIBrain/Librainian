@@ -22,7 +22,8 @@ namespace Librainian.Measurement.Currency.LTC {
     using System.Diagnostics;
     using JetBrains.Annotations;
 
-    [DebuggerDisplay("{Formatted,nq}")]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{Formatted,nq}" )]
     [UsedImplicitly]
     public struct mLTC : ICoin {
 

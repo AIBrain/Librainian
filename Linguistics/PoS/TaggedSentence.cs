@@ -34,7 +34,7 @@ namespace Librainian.Linguistics.PoS {
 
         public TaggedSentence( [NotNull] IEnumerable<ITaggedWord> words ) {
             if ( words == null ) {
-                throw new ArgumentNullException( "words" );
+                throw new ArgumentNullException( nameof( words ) );
             }
         }
 
@@ -52,7 +52,7 @@ namespace Librainian.Linguistics.PoS {
         [Pure]
         public Boolean Equals( [NotNull] TaggedSentence other ) {
             if ( other == null ) {
-                throw new ArgumentNullException( "other" );
+                throw new ArgumentNullException( nameof( other ) );
             }
             return ReferenceEquals( this, other ) || this.Tokens.SequenceEqual( other.Tokens );
         }

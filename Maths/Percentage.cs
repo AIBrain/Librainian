@@ -84,10 +84,10 @@ namespace Librainian.Maths {
         /// <param name="denominator"></param>
         public Percentage( Double numerator, Double denominator ) {
             if ( Double.IsNaN( numerator ) ) {
-                throw new ArgumentOutOfRangeException( "numerator", "Numerator is not a number." );
+                throw new ArgumentOutOfRangeException( nameof( numerator ), "Numerator is not a number." );
             }
             if ( Double.IsNaN( denominator ) ) {
-                throw new ArgumentOutOfRangeException( "denominator", "Denominator is not a number." );
+                throw new ArgumentOutOfRangeException( nameof( denominator ), "Denominator is not a number." );
             }
 
             this.Numerator = new BigInteger( numerator );
@@ -149,10 +149,10 @@ namespace Librainian.Maths {
         /// <returns></returns>
         public static Boolean Equals( [NotNull] Percentage left, [NotNull] Percentage right ) {
             if ( left == null ) {
-                throw new ArgumentNullException( "left" );
+                throw new ArgumentNullException( nameof( left ) );
             }
             if ( right == null ) {
-                throw new ArgumentNullException( "right" );
+                throw new ArgumentNullException( nameof( right ) );
             }
             return left.Quotient == right.Quotient;
         }
@@ -170,14 +170,14 @@ namespace Librainian.Maths {
 
         public static Percentage Parse( [NotNull] String value ) {
             if ( value == null ) {
-                throw new ArgumentNullException( "value" );
+                throw new ArgumentNullException( nameof( value ) );
             }
             return new Percentage( Double.Parse( value ) );
         }
 
         public static Boolean TryParse( [NotNull] String numberString, out Percentage result ) {
             if ( numberString == null ) {
-                throw new ArgumentNullException( "numberString" );
+                throw new ArgumentNullException( nameof( numberString ) );
             }
             Double value;
             if ( !Double.TryParse( numberString, out value ) ) {
@@ -193,14 +193,14 @@ namespace Librainian.Maths {
         [Pure]
         public int CompareTo( [NotNull] Percentage other ) {
             if ( other == null ) {
-                throw new ArgumentNullException( "other" );
+                throw new ArgumentNullException( nameof( other ) );
             }
             return this.Quotient.CompareTo( other.Quotient );
         }
 
         public Boolean Equals( [NotNull] Percentage other ) {
             if ( other == null ) {
-                throw new ArgumentNullException( "other" );
+                throw new ArgumentNullException( nameof( other ) );
             }
             return Equals( this, other );
         }

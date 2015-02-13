@@ -23,13 +23,14 @@ namespace Librainian.Measurement.Physics {
     using JetBrains.Annotations;
     using Librainian.Extensions;
 
-    /// <summary>
-    ///     Units of mass and energy in <see cref="TeraElectronVolts" />.
-    /// </summary>
-    /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
-    /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
-    /// <see cref="http://wikipedia.org/wiki/Giga-" />
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+	/// <summary>
+	///     Units of mass and energy in <see cref="TeraElectronVolts" />.
+	/// </summary>
+	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
+	/// <see cref="http://wikipedia.org/wiki/SI_prefix" />
+	/// <see cref="http://wikipedia.org/wiki/Giga-" />
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct TeraElectronVolts : IComparable< MilliElectronVolts >, IComparable< ElectronVolts >, IComparable< MegaElectronVolts >, IComparable< TeraElectronVolts > {
         private const  Decimal InOneElectronVolt = 1E-12m;

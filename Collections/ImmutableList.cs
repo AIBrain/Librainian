@@ -48,7 +48,7 @@ namespace Librainian.Collections {
         /// <param name="arrayToCopy">An array whose contents will be copied.</param>
         public ImmutableList( [NotNull] T[] arrayToCopy ) {
             if ( arrayToCopy == null ) {
-                throw new ArgumentNullException( "arrayToCopy" );
+                throw new ArgumentNullException( nameof( arrayToCopy ) );
             }
             this._mArray = new T[arrayToCopy.Length];
             Array.Copy( arrayToCopy, this._mArray, arrayToCopy.Length );
@@ -63,7 +63,7 @@ namespace Librainian.Collections {
         /// </param>
         public ImmutableList( [NotNull] IEnumerable< T > enumerableToCopy ) {
             if ( enumerableToCopy == null ) {
-                throw new ArgumentNullException( "enumerableToCopy" );
+                throw new ArgumentNullException( nameof( enumerableToCopy ) );
             }
             this._mArray = enumerableToCopy.ToArray();
         }

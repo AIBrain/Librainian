@@ -33,8 +33,9 @@ namespace Librainian.Measurement.Frequency {
     /// <summary>
     ///     http://wikipedia.org/wiki/Frequency
     /// </summary>
-    [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [DataContract( IsReference = true )]	// ReSharper disable once UseNameofExpression
+
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public class Hertz {
 
         /// <summary>

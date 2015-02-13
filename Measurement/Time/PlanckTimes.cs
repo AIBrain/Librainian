@@ -44,7 +44,8 @@ namespace Librainian.Measurement.Time {
 	/// </summary>
 	/// <seealso cref="http://wikipedia.org/wiki/Planck_time" />
 	[ DataContract( IsReference = true ) ]
-	[ DebuggerDisplay( "{DebuggerDisplay,nq}" ) ]
+	// ReSharper disable once UseNameofExpression
+	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
 	[ Serializable ]
 	public struct PlanckTimes : IComparable< PlanckTimes >, IQuantityOfTime {
 		/// <summary>
