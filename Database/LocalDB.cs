@@ -36,8 +36,10 @@ namespace Librainian.Database {
     using JetBrains.Annotations;
     using Persistence;
 
-    [Obsolete("work in progress. reiventing the same damn wheel.")]
-    public static class LocalDB {
+	/// <summary>
+	/// work in progress. reiventing the same damn wheel."
+	/// </summary>
+	public static class LocalDB {
 
         public static readonly ISqlLocalDbProvider Provider = new SqlLocalDbProvider();
 
@@ -80,7 +82,7 @@ namespace Librainian.Database {
             var ldf = new Document( Path.Combine( PersistenceExtensions.DataFolder.Value.FullName, String.Format( "{0}.ldf", name ) ) );
 
             var list = new[] { mdf, ldf }.ToList();
-            InstanceFiles[ "Properties" ].AddRange( list);
+            InstanceFiles[ name ].AddRange( list);
 
             //Builders[ "Properties" ].SetPhysicalFileName( mdf );
 
