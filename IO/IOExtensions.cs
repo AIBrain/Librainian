@@ -1196,6 +1196,10 @@ TryAgain:
 					directoryInfo = new DirectoryInfo( uri.LocalPath );
 					return true;
 				}
+
+				directoryInfo = new DirectoryInfo( path );	//try it anyways
+				return true;
+
 			}
 			catch ( UriFormatException) { }
 			catch ( SecurityException) { }

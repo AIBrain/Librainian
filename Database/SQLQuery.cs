@@ -62,10 +62,10 @@ namespace Librainian.Database {
         public static ThreadLocal<SQLQuery> Queries = new ThreadLocal<SQLQuery>( () => new SQLQuery( "dbmssocn", "127.0.0.1", "Anonymous", "Anonymous" ) );
 
         public SqlConnection Connection = new SqlConnection();
-        internal readonly String Library;
-        internal readonly String Password;
-        internal readonly String Server;
-        internal readonly String UserName;
+	    internal string Library { get; }
+	    internal string Password { get; }
+	    internal string Server { get; }
+	    internal readonly String UserName;
         internal Stopwatch SinceOpened = Stopwatch.StartNew();
 
         /// <summary>

@@ -164,7 +164,15 @@ namespace Librainian.IO {
 	    [UsedImplicitly]
         public String DebuggerDisplay => this.FullPathWithFileName;
 
-        /// <summary>
+	    /// <summary>
+	    /// Returns a string that represents the current object.
+	    /// </summary>
+	    /// <returns>
+	    /// A string that represents the current object.
+	    /// </returns>
+	    public override string ToString() => this.DebuggerDisplay;
+
+	    /// <summary>
         /// <para>Just the file's name, including the extension.</para>
         /// </summary>
         /// <seealso cref="Path.GetFileNameWithoutExtension"/>

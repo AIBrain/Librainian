@@ -65,6 +65,9 @@ namespace Librainian.Database {
 			if ( databaseLocation == null ) {
 				throw new ArgumentNullException( nameof( databaseLocation ) );
 			}
+
+			"Building SQL connection string...".Info();
+
 			this.DatabaseName = databaseName;
 
 			this.DatabaseLocation = databaseLocation;
@@ -76,15 +79,23 @@ namespace Librainian.Database {
 			this.ReadTimeout = timeoutForReads;
 			this.WriteTimeout = timeoutForWrites;
 
-			this.ConnectionString = String.Format( @"Data Source=(LocalDB)\v11.0;Initial Catalog={0};AttachDBFileName={1};Integrated Security=True;MultipleActiveResultSets=True;", this.DatabaseName, this.DatabaseMdf );
+			this.ConnectionString = String.Format( @"Data Source=(localdb)\v12.0;Integrated Security=True;MultipleActiveResultSets=True;", this.DatabaseMdf.FullPathWithFileName );	//AttachDBFileName={0};
 			this.Connection = new SqlConnection( this.ConnectionString );
+			this.Connection.InfoMessage += ( sender, args ) => args.Message.Info();
+			this.Connection.StateChange += ( sender, args ) => String.Format( "{0} -> {1}", args.OriginalState, args.CurrentState ).Info();
+			this.Connection.Disposed += ( sender, args ) => String.Format( "Disposing SQL connection {0}", args ).Info();
+
+			String.Format( "Attempting connection to {0}...", this.DatabaseMdf ).Info();
+
+			this.Connection.Open();
+			this.Connection.ServerVersion.Info();
 		}
 
 		public void Dispose() => this.DetachDatabaseAsync().Wait( ReadTimeout + WriteTimeout );
 
 		public async Task DetachDatabaseAsync() {
 			try {
-				await this.Connection.OpenAsync( );
+				await this.Connection.OpenAsync();
 
 				using (var cmd = this.Connection.CreateCommand()) {
 					cmd.CommandText = String.Format( "ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; exec sp_detach_db '{0}'", this.DatabaseName );
