@@ -168,7 +168,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        ///     <para>Returns True if the folder now exists.</para>
+        ///     <para>Returns True if the folder exists.</para>
         /// </summary>
         /// <returns></returns>
         /// <seealso cref="Delete"></seealso>

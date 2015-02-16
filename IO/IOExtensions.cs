@@ -668,7 +668,11 @@ namespace Librainian.IO {
 			return info;
 		}
 
-		public static DriveInfo GetDriveWithLargestAvailableFreeSpace() => DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).FirstOrDefault( driveInfo => driveInfo.AvailableFreeSpace >= DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).Max( info => info.AvailableFreeSpace ) );
+		//public static DriveInfo GetDriveWithLargestAvailableFreeSpace() {
+		//	return DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).FirstOrDefault( driveInfo => driveInfo.AvailableFreeSpace >= DriveInfo.GetDrives().AsParallel().Max( info => info.AvailableFreeSpace ) );
+		//}
+
+		public static DriveInfo GetLargestEmptiestDrive() => DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).OrderByDescending( info => info.AvailableFreeSpace ).FirstOrDefault();
 
 		public static uint? GetFileSizeOnDisk( this Document document ) => GetFileSizeOnDisk( new FileInfo( document.FullPathWithFileName ) );
 
