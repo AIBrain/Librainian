@@ -21,6 +21,7 @@ namespace Librainian.Database {
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Data.SqlClient;
     using System.Media;
     using Threading;
 
@@ -34,7 +35,7 @@ namespace Librainian.Database {
         /// <param name="list"></param>
         /// <returns>DataTable</returns>
         /// <copyright>Based from http://codereview.stackexchange.com/q/40891 </copyright>
-        public static DataTable ToDataTable<T>( this IEnumerable<T> list ) {
+        public static DataTable ToDataTable<T>( this IEnumerable< T > list ) {
             var elementType = typeof( T );
 
             var t = new DataTable();
@@ -73,7 +74,7 @@ namespace Librainian.Database {
         /// <param name="list"></param>
         /// <returns>DataSet</returns>
         /// <copyright>Based from http://codereview.stackexchange.com/q/40891 </copyright>
-        public static DataSet ToDataSet<T>( this IEnumerable<T> list ) {
+        public static DataSet ToDataSet<T>( this IEnumerable< T > list ) {
             var ds = new DataSet();
             ds.Tables.Add( list.ToDataTable() );
             return ds;
@@ -223,5 +224,15 @@ namespace Librainian.Database {
                     return TimeSpan.FromMilliseconds( average );
                 }
         */
+
+	    public static DataTable ToDataTable( this SqlDataReader dataReader ) {
+		    var table = new DataTable();
+		    table.BeginLoadData();
+		    if ( dataReader != null ) {
+			    table.Load( dataReader, LoadOption.OverwriteChanges );
+		    }
+		    table.EndLoadData();
+		    return table;
+	    }
     }
 }

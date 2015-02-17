@@ -79,7 +79,7 @@ namespace Librainian.Database {
 			this.ReadTimeout = timeoutForReads;
 			this.WriteTimeout = timeoutForWrites;
 
-			this.ConnectionString = String.Format( @"Data Source=(localdb)\v12.0;Integrated Security=True;MultipleActiveResultSets=True;", this.DatabaseMdf.FullPathWithFileName );	//AttachDBFileName={0};
+			this.ConnectionString = String.Format( @"Data Source=(localdb)\v12.0;Integrated Security=True;MultipleActiveResultSets=True;" );	//AttachDBFileName={0};	, this.DatabaseMdf.FullPathWithFileName
 			this.Connection = new SqlConnection( this.ConnectionString );
 			this.Connection.InfoMessage += ( sender, args ) => args.Message.Info();
 			this.Connection.StateChange += ( sender, args ) => String.Format( "{0} -> {1}", args.OriginalState, args.CurrentState ).Info();

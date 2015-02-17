@@ -230,7 +230,7 @@
     <Compile Include="Database\MMF\SerializerException.cs" />
     <Compile Include="Database\MMF\ValueTypeCheck.cs" />
     <Compile Include="Database\DatabaseExtensions.cs" />
-    <Compile Include="Database\SQLQuery.cs" />
+    <Compile Include="Database\Database.cs" />
     <Compile Include="Diagnostical.cs" />
     <Compile Include="Extensions\BigNullStream.cs" />
     <Compile Include="Extensions\BooleanPredicateBuilder.cs" />
