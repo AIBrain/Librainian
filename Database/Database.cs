@@ -22,11 +22,8 @@
 #endregion License & Information
 
 namespace Librainian.Database {
-
 	using System;
 	using System.Data;
-	using System.Data.Common;
-	using System.Data.Linq;
 	using System.Data.SqlClient;
 	using System.Diagnostics;
 	using System.Net.NetworkInformation;
@@ -79,7 +76,7 @@ namespace Librainian.Database {
 				ConnectRetryCount = 10,
 				ConnectTimeout = ( int )timeout.Value,
 				DataSource = this.Server,
-				//InitialCatalog = "master",
+				InitialCatalog = this.Catalog,
 				Password = this.Password,
 				Pooling = true,
 				MultipleActiveResultSets = true,
@@ -93,15 +90,6 @@ namespace Librainian.Database {
 			this.Connection.StateChange += ( sender, args ) => String.Format( "sql state changed from {0} to {1}", args.OriginalState, args.CurrentState ).Info();
 #endif
 			this.Connect().Wait();
-
-			DbConnection bob = new SqlConnection( scsb.ConnectionString );
-			//bob.ChangeDatabase
-
-			//DataContext bob = new DataContext( this.Connection.ConnectionString );
-			//if ( !bob.DatabaseExists() ) {
-			//	bob.CreateDatabase();
-			//}
-
 		}
 
 		public Task Connect() {
@@ -207,7 +195,7 @@ namespace Librainian.Database {
         */
 
 		[CanBeNull]
-		public SqlConnection GetConnection() {
+		public SqlConnection OpenConnection() {
 			var retries = 10;
 TryAgain:
 			try {
@@ -233,7 +221,7 @@ TryAgain:
 						while ( this.Connection.State == ConnectionState.Connecting ) {
 							Task.Delay( Milliseconds.TwoHundredEleven ).Wait();
 						}
-						return GetConnection();
+						return this.OpenConnection();
 
 					case ConnectionState.Broken:
 						this.Connect().Wait();
@@ -314,7 +302,7 @@ TryAgain:
 		public async Task<TResult> QueryScalarAsync<TResult>( String query, CommandType commandType, params SqlParameter[] parameters ) {
 			//TryAgain:
 			try {
-				var command = new SqlCommand( query, GetConnection() ) {
+				var command = new SqlCommand( query, this.OpenConnection() ) {
 					CommandType = commandType
 				};
 				if ( null != parameters ) {
@@ -348,7 +336,7 @@ TryAgain:
 		public async Task QueryWithNoResultAsync( String query, CommandType commandType, params SqlParameter[] parameters ) {
 			//TryAgain:
 			try {
-				var command = new SqlCommand( query, GetConnection() ) {
+				var command = new SqlCommand( query, this.OpenConnection() ) {
 					CommandType = commandType
 				};
 				if ( null != parameters ) {
@@ -386,7 +374,7 @@ TryAgain:
 		public async Task<SqlDataReader> QueryWithResultAsync( String query, CommandType commandType, params SqlParameter[] parameters ) {
 			//TryAgain:
 			try {
-				var command = new SqlCommand( query, GetConnection() ) {
+				var command = new SqlCommand( query, this.OpenConnection() ) {
 					CommandType = commandType
 				};
 				if ( null != parameters ) {
