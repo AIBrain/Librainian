@@ -17,6 +17,14 @@
         public static Timer Create( Hertz frequency, Action onElapsed ) => Create( new Span( frequency ), onElapsed );
 
         /// <summary>
+        /// <see cref="TimeSpan"/> overload for <see cref="Create(Span,Action)"/>.
+        /// </summary>
+        /// <param name="interval"></param>
+        /// <param name="onElapsed"></param>
+        /// <returns></returns>
+        public static Timer Create( this TimeSpan interval, [CanBeNull] Action onElapsed ) => Create( ( Span )interval, onElapsed );
+
+        /// <summary>
         /// <para>Creates, but does not start, the <see cref="Timer"/>.</para>
         /// <para>Defaults to a one-time <see cref="Timer.Elapsed"/></para>
         /// </summary>
@@ -52,8 +60,7 @@
                 finally {
                     if ( timer.AutoReset ) {
                         timer.Start();
-                    }
-                    else {
+                    } else {
                         timer.DoneWith();
                     }
                 }
@@ -69,7 +76,7 @@
             }
             DateTime value;
             Timers.TryRemove( timer, out value );
-            using ( timer ) {
+            using (timer) {
                 timer.Stop();
             }
         }
