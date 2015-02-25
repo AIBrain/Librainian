@@ -23,12 +23,24 @@ namespace Librainian.Magic {
 	using System;
 	using System.Reactive;
 	using System.Reactive.Linq;
+	using JetBrains.Annotations;
 
-	/// <summary>
+    /// <summary>
 	///     <para>Any sufficiently advanced technology is indistinguishable from magic.</para>
 	/// </summary>
 	/// <seealso cref="http://wikipedia.org/wiki/Clarke's_three_laws" />
 	public static class MagicExtensions {
+
+        /// <summary>
+        /// If <paramref name="b"/> is <see cref="bool.True"/> then perform the <paramref name="action"/>.
+        /// </summary>
+        /// <param name="b"></param>
+        /// <param name="action"></param>
+	    public static void Then( this Boolean b, Action action ) {
+	        if ( b ) {
+	            action?.Invoke();
+	        }
+	    }
 
 		/// <summary>
 		/// 
@@ -37,7 +49,7 @@ namespace Librainian.Magic {
 		/// <param name="observable"></param>
 		/// <returns></returns>
 		/// <seealso cref="http://haacked.com/archive/2012/10/08/writing-a-continueafter-method-for-rx.aspx/"/>
-		public static IObservable<Unit> AsCompletion<T>( this IObservable<T> observable ) => Observable.Create<Unit>( observer => {
+		public static IObservable< Unit > AsCompletion<T>( this IObservable< T > observable ) => Observable.Create<Unit>( observer => {
 			Action onCompleted = () => {
 				observer.OnNext( Unit.Default );
 				observer.OnCompleted();
@@ -45,6 +57,18 @@ namespace Librainian.Magic {
 			return observable.Subscribe( _ => { }, observer.OnError, onCompleted );
 		} );
 
-		public static IObservable<TRet> ContinueAfter<T, TRet>( this IObservable<T> observable, Func<IObservable<TRet>> selector ) => observable.AsCompletion().SelectMany( _ => selector() );
+		public static IObservable< TRet > ContinueAfter<T, TRet>( this IObservable< T > observable, Func< IObservable< TRet > > selector ) => observable.AsCompletion().SelectMany( _ => selector() );
+
+	    /// <summary>
+	    /// 
+	    /// </summary>
+	    /// <typeparam name="TKey"></typeparam>
+	    /// <param name="obj"></param>
+	    // ReSharper disable once UnusedParameter.Local
+	    public static void ThrowIfNull<TKey>( [ CanBeNull ] this TKey obj ) {
+	        if ( null == obj ) {
+	            throw new ArgumentNullException();
+	        }
+	    }
 	}
 }

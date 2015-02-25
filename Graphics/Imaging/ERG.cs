@@ -118,7 +118,7 @@ namespace Librainian.Graphics.Imaging {
                     if ( stopwatch.Elapsed > timeout ) {
                         return;
                     }
-                    if ( simpleCancel.IsCancellationRequested ) {
+                    if ( simpleCancel.HaveAnyCancellationsBeenRequested() ) {
                         return;
                     }
                     for ( UInt32 x = 0 ; x < bitmap.Width ; x++ ) {

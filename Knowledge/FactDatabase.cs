@@ -75,7 +75,7 @@ namespace Librainian.Knowledge {
 
             await Task.Run( () => {
 
-                if ( cancellation.IsCancellationRequested ) {
+                if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
                     return;
                 }
 
@@ -85,7 +85,7 @@ namespace Librainian.Knowledge {
                     return;
                 }
 
-                if ( cancellation.IsCancellationRequested ) {
+                if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
                     return;
                 }
 
@@ -95,7 +95,7 @@ namespace Librainian.Knowledge {
 
                     //TODO new ActionBlock<Action>( action: action => {
                     //Threads.AIBrain().Input( line );
-                    if ( !String.IsNullOrEmpty( line ) && !cancellation.IsCancellationRequested ) {
+                    if ( !String.IsNullOrEmpty( line ) && !cancellation.HaveAnyCancellationsBeenRequested() ) {
                         action.TryPost( new Sentence( line ) );
                     }
                 }

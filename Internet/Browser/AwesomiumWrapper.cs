@@ -1,4 +1,28 @@
-﻿namespace Librainian.Internet.Browser {
+﻿#region License & Information
+
+// This notice must be kept visible in the source.
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations and Royalties can be paid via
+// PayPal: paypal@aibrain.org
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian 2015/AwesomiumWrapper.cs" was last cleaned by RICK on 2015/02/25 at 3:37 PM
+
+#endregion License & Information
+
+namespace Librainian.Internet.Browser {
+
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -10,15 +34,14 @@
     using Awesomium.Windows.Forms;
     using CsQuery;
     using JetBrains.Annotations;
+    using Magic;
     using Measurement.Time;
     using Threading;
 
     /// <summary>
-    /// Semaphore wrapper for a <see cref="Awesomium"/> browser control ( <see cref="WebControl"/>).
+    ///     Semaphore wrapper for a <see cref="Awesomium" /> browser control ( <see cref="WebControl" />).
     /// </summary>
     public class AwesomiumWrapper {
-        [NotNull]
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim( initialCount: 0, maxCount: 1 );
 
         /// <summary>
         /// </summary>
@@ -34,14 +57,17 @@
         }
 
         /// <summary>
-        /// Private ctor to prevent the wrapper from being used without a <see cref="WebControl"/>.
+        ///     Private ctor to prevent the wrapper from being used without a <see cref="WebControl" />.
         /// </summary>
         // ReSharper disable once NotNullMemberIsNotInitialized
         private AwesomiumWrapper() {
         }
 
+        [NotNull]
+        private SemaphoreSlim Semaphore { get; } = new SemaphoreSlim( initialCount: 1, maxCount: 1 );
+
         /// <summary>
-        /// The control we want to control access to.
+        ///     The control we want to control access to.
         /// </summary>
         [NotNull]
         public WebControl WebControl { get; }
@@ -49,21 +75,22 @@
         public TimeSpan Timeout { get; }
 
         /// <summary>
-        /// Access is gated by a semaphore.
+        ///     Access is gated by a semaphore.
         /// </summary>
         /// <param name="javascript">The javascript to execute</param>
         /// <param name="retries"></param>
         /// <returns></returns>
         public async Task<bool> ExecuteJavascript( String javascript, int retries = 1 ) {
-            var doWeHaveAccess = false;
+            var ifWeHaveAccess = false;
             while ( retries > 0 ) {
                 retries--;
                 try {
                     if ( retries > 0 ) {
-                        doWeHaveAccess = await this.WaitAsync( Timeout );
-                        if ( doWeHaveAccess ) {
-							this.WebControl.Invoke( new Action( () => this.WebControl.ExecuteJavascript( javascript ) ) );
-	                        //this.WebControl.ExecuteJavascript( javascript );
+                        ifWeHaveAccess = await this.WaitAsync( Timeout );
+                        if ( ifWeHaveAccess ) {
+                            this.WebControl.Invoke( new Action( () => this.WebControl.ExecuteJavascript( javascript ) ) );
+
+                            //this.WebControl.ExecuteJavascript( javascript );
                             return true;
                         }
                     }
@@ -72,16 +99,14 @@
                     exception.More();
                 }
                 finally {
-                    if ( doWeHaveAccess ) {
-                        this.Release();
-                    }
+                    ifWeHaveAccess.Then( this.Release );
                 }
             }
             return false;
         }
 
         /// <summary>
-        /// Run a function in javascript
+        ///     Run a function in javascript
         /// </summary>
         /// <param name="id"></param>
         /// <param name="function"></param>
@@ -93,20 +118,21 @@
         }
 
         /// <summary>
-        /// Access is gated by a semaphore.
+        ///     Access is gated by a semaphore.
         /// </summary>
         /// <param name="javascript"></param>
         /// <param name="retries"></param>
         /// <returns></returns>
         public async Task<JSValue> ExecuteJavascriptWithResult( String javascript, int retries = 1 ) {
-            var doWeHaveAccess = false;
+            var ifWeHaveAccess = false;
             while ( retries > 0 ) {
                 retries--;
                 try {
                     if ( retries > 0 ) {
-                        doWeHaveAccess = await this.WaitAsync( Timeout );
-                        if ( doWeHaveAccess ) {
+                        ifWeHaveAccess = await this.WaitAsync( Timeout );
+                        if ( ifWeHaveAccess ) {
                             var result = ( JSValue )this.WebControl.Invoke( new Func<JSValue>( () => this.WebControl.ExecuteJavascriptWithResult( javascript ) ) );
+
                             //var result = this.WebControl.ExecuteJavascriptWithResult( javascript ) ;
                             return result;
                         }
@@ -116,9 +142,7 @@
                     exception.More();
                 }
                 finally {
-                    if ( doWeHaveAccess ) {
-                        this.Release();
-                    }
+                    ifWeHaveAccess.Then( this.Release );
                 }
             }
             return default(JSValue);
@@ -130,15 +154,15 @@
         }
 
         /// <summary>
-        /// <para>Retrieve the <see cref="Uri" /> of the <see cref="WebControl"/>.</para>
+        ///     <para>Retrieve the <see cref="Uri" /> of the <see cref="WebControl" />.</para>
         /// </summary>
         /// <returns></returns>
         [NotNull]
         public async Task<Uri> GetBrowserLocation() {
-            var doWeHaveAccess = false;
+            var ifWeHaveAccess = false;
             try {
-                doWeHaveAccess = await this.WaitAsync( this.Timeout );
-                if ( doWeHaveAccess ) {
+                ifWeHaveAccess = await this.WaitAsync( this.Timeout );
+                if ( ifWeHaveAccess ) {
                     var result = ( Uri )this.WebControl.Invoke( new Func<Uri>( () => this.WebControl.Source ) );
                     return result;
                 }
@@ -147,25 +171,21 @@
                 exception.More();
             }
             finally {
-                if ( doWeHaveAccess ) {
-                    this.Release();
-                }
+                ifWeHaveAccess.Then( this.Release );
             }
 
             return new Uri( "about:blank" );
         }
 
-
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         [NotNull]
         public async Task<string> InnerHTML() {
-            var doWeHaveAccess = false;
+            var ifWeHaveAccess = false;
             try {
-                doWeHaveAccess = await this.WaitAsync( this.Timeout );
-                if ( doWeHaveAccess ) {
+                ifWeHaveAccess = await this.WaitAsync( this.Timeout );
+                if ( ifWeHaveAccess ) {
                     var result = this.WebControl.Invoke( new Func<string>( () => this.WebControl.ExecuteJavascriptWithResult( "document.getElementsByTagName('html')[0].innerHTML" ) ) );
 
                     if ( result is String ) {
@@ -178,23 +198,20 @@
                 exception.More();
             }
             finally {
-                if ( doWeHaveAccess ) {
-                    this.Release();
-                }
+                ifWeHaveAccess.Then( this.Release );
             }
             return String.Empty;
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         [NotNull]
         public async Task<string> InnerText() {
-            var doWeHaveAccess = false;
+            var ifWeHaveAccess = false;
             try {
-                doWeHaveAccess = await this.WaitAsync( this.Timeout );
-                if ( doWeHaveAccess ) {
+                ifWeHaveAccess = await this.WaitAsync( this.Timeout );
+                if ( ifWeHaveAccess ) {
                     var result = this.WebControl.Invoke( new Func<string>( () => this.WebControl.ExecuteJavascriptWithResult( "document.getElementsByTagName('html')[0].innerText" ) ) );
 
                     if ( result is String ) {
@@ -207,14 +224,13 @@
                 exception.More();
             }
             finally {
-                if ( doWeHaveAccess ) {
-                    this.Release();
-                }
+                ifWeHaveAccess.Then( this.Release );
             }
             return String.Empty;
         }
 
         private static async void Throttle( TimeSpan? until = null ) {
+
             //TODO look into that semaphore waitgate thing...
             if ( !until.HasValue ) {
                 until = Seconds.One;
@@ -230,16 +246,15 @@
             watch.Stop();
         }
 
-
         public async Task<Boolean> Navigate( [NotNull] Uri url, [CanBeNull] SimpleCancel simpleCancel = null ) {
             if ( url == null ) {
                 throw new ArgumentNullException( nameof( url ) );
             }
 
-            var doWeHaveAccess = false;
+            var ifWeHaveAccess = false;
             try {
-                doWeHaveAccess = await this.WaitAsync( this.Timeout );
-                if ( !doWeHaveAccess ) {
+                ifWeHaveAccess = await this.WaitAsync( this.Timeout );
+                if ( !ifWeHaveAccess ) {
                     return false;
                 }
 
@@ -251,10 +266,11 @@
                     this.WebControl.Source = url;
 
                     do {
+
                         //WebCore.Update(); //trust in WebCore.Run?
                         Throttle();
 
-                        if ( simpleCancel != null && simpleCancel.IsCancellationRequested ) {
+                        if ( simpleCancel != null && simpleCancel.HaveAnyCancellationsBeenRequested() ) {
                             break;
                         }
 
@@ -272,16 +288,13 @@
                 Debug.WriteLine( exception.Message );
             }
             finally {
-                if ( doWeHaveAccess ) {
-                    this.Release();
-                }
+                ifWeHaveAccess.Then( this.Release );
             }
             return false;
         }
 
-
         /// <summary>
-        /// Return all anchers' href.
+        ///     Return all anchers' href.
         /// </summary>
         /// <returns></returns>
         public IEnumerable<Uri> GetAllAnchers() {
@@ -332,9 +345,8 @@
         //    }
         //}
 
+        private void Release() => this.Semaphore.Release();
 
-        private void Release() => this._semaphore.Release();
-
-        private async Task<bool> WaitAsync( TimeSpan timeout ) => await this._semaphore.WaitAsync( timeout );
+        private async Task<bool> WaitAsync( TimeSpan timeout ) => await this.Semaphore.WaitAsync( timeout );
     }
 }

@@ -497,7 +497,7 @@ namespace Librainian.IO {
 				throw new ArgumentNullException( nameof( foldersFound ) );
 			}
 
-			if ( cancellation.IsCancellationRequested ) {
+			if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
 				return documentsFound.Any();
 			}
 
@@ -515,7 +515,7 @@ namespace Librainian.IO {
 			}
 			Parallel.ForEach( list.AsParallel(), info => documentsFound.Add( new Document( info ) ) );
 
-			if ( cancellation.IsCancellationRequested ) {
+			if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
 				return documentsFound.Any();
 			}
 
@@ -550,7 +550,7 @@ namespace Librainian.IO {
 					String.Format( "Searching folder {0} for {1}.", startingFolder.FullName, searchPattern ).WriteLine();
 
 					//#endif
-					if ( cancellation.IsCancellationRequested ) {
+					if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
 						return;
 					}
 					try {
@@ -559,7 +559,7 @@ namespace Librainian.IO {
 #if DEEPDEBUG
 							String.Format( "Found folder {0}.", folder ).WriteLine();
 #endif
-							if ( cancellation.IsCancellationRequested ) {
+							if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
 								return;
 							}
 							try {
@@ -658,7 +658,7 @@ namespace Librainian.IO {
 
 		private static FileInfo InternalSearchFoundFile( this FileInfo info, Action<FileInfo> onFindFile, [CanBeNull] SimpleCancel cancellation ) {
 			try {
-				if ( cancellation != null && !cancellation.IsCancellationRequested ) {
+				if ( cancellation != null && !cancellation.HaveAnyCancellationsBeenRequested() ) {
 					onFindFile?.Invoke( info );
 				}
 			}

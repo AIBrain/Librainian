@@ -1,67 +1,62 @@
 ﻿#region License & Information
+
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian 2015/SimpleCancel.cs" was last cleaned by Rick on 2014/12/29 at 8:18 AM
-#endregion
+//
+// "Librainian 2015/SimpleCancel.cs" was last cleaned by RICK on 2015/02/25 at 4:24 PM
+
+#endregion License & Information
 
 namespace Librainian.Threading {
+
     using System;
+    using System.Collections.Concurrent;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Collections;
 
     /// <summary>
     ///     Don't like the <see cref="CancellationTokenSource" /> throwing exceptions after
     ///     <see cref="CancellationTokenSource.Cancel()" /> is called.
+    ///     I understand why, I just don't like it. Plus, this version has the Dates and Times of the cancel requests.
     /// </summary>
     public class SimpleCancel : IDisposable {
-        /// <summary>
-        /// </summary>
-        public enum RequestState : byte {
-            Unrequested = 0,
-            CancelRequested = 1
-        }
-
-        /// <summary>
-        /// </summary>
-        private long _cancelRequestCounter;
-
-        /// <summary>
-        /// </summary>
-        private volatile Byte _state;
 
         public SimpleCancel() {
             this.Reset();
         }
 
-        /// <summary>
-        /// </summary>
-        public DateTime? FirstCancelRequest { get; private set; }
+        public ConcurrentQueue<DateTime> CancelRequests { get; } = new ConcurrentQueue<DateTime>();
 
         /// <summary>
         /// </summary>
-        public Boolean IsCancellationRequested => this.GetCancelsRequestedCounter() > 0;
+        public DateTime? OldestCancelRequest => this.CancelRequests.OrderBy( dateTime => dateTime ).FirstOrDefault();
 
-        public DateTime? LastCancelRequest { get; private set; }
+        public DateTime? YoungestCancelRequest => this.CancelRequests.OrderBy( dateTime => dateTime ).LastOrDefault();
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose() => this.RequestCancel( throwIfAlreadyRequested: false );
+
+        /// <summary>
+        /// </summary>
+        public bool HaveAnyCancellationsBeenRequested() => this.CancelRequests.Any();
 
         /// <summary>
         ///     Returns true if the cancel request was approved.
@@ -75,7 +70,7 @@ namespace Librainian.Threading {
         /// <summary>
         /// </summary>
         /// <returns></returns>
-        public UInt64 GetCancelsRequestedCounter() => ( UInt64 ) this._cancelRequestCounter;
+        public UInt64 GetCancelsRequestedCounter() => ( UInt64 )this.CancelRequests.LongCount();
 
         /// <summary>
         ///     Returns true if the cancel request was approved.
@@ -85,49 +80,16 @@ namespace Librainian.Threading {
         /// <returns></returns>
         /// <exception cref="TaskCanceledException">Thrown if a cancellation has already been requested.</exception>
         public Boolean RequestCancel( Boolean throwIfAlreadyRequested = false, String throwMessage = "" ) {
-            Interlocked.Increment( ref this._cancelRequestCounter );
-
-            var now = DateTime.UtcNow;
-
-            if ( !this.FirstCancelRequest.HasValue ) {
-                this.FirstCancelRequest = now;
+            if ( throwIfAlreadyRequested && this.HaveAnyCancellationsBeenRequested() ) {
+                throw new TaskCanceledException( throwMessage );
             }
-            this.LastCancelRequest = now;
-
-            switch ( ( RequestState ) this._state ) {
-                case RequestState.Unrequested:
-                    this.SetState( RequestState.CancelRequested );
-                    return true;
-
-                case RequestState.CancelRequested:
-                    this.SetState( RequestState.CancelRequested );
-                    if ( throwIfAlreadyRequested ) {
-                        throw new TaskCanceledException( throwMessage );
-                    }
-                    return true;
-            }
-
-            return false;
+            this.CancelRequests.Enqueue( DateTime.UtcNow );
+            return true;
         }
 
         /// <summary>
-        ///     Resets all values, counters, and requests back to starting values.
+        ///     Resets all requests back to starting values.
         /// </summary>
-        public void Reset() {
-            this._state = ( Byte ) RequestState.Unrequested;
-            this._cancelRequestCounter = 0;
-            this.LastCancelRequest = null;
-            this.FirstCancelRequest = null;
-        }
-
-        private Boolean SetState( RequestState state ) {
-            switch ( state ) {
-                case RequestState.CancelRequested:
-                case RequestState.Unrequested:
-                    this._state = ( Byte ) state;
-                    return true;
-            }
-            return false;
-        }
+        public void Reset() => this.CancelRequests.Clear();
     }
 }
