@@ -124,9 +124,17 @@
             }
         }
 
+        /// <summary>
+        /// Frames per second.
+        /// </summary>
+        /// <param name="fps"></param>
         public FPS( UInt64 fps ) : this( ( Decimal )fps ) {
         }
 
+        /// <summary>
+        /// Frames per second.
+        /// </summary>
+        /// <param name="fps"></param>
         public FPS( Double fps ) : this( ( Decimal )fps ) {
         }
 

@@ -1,21 +1,23 @@
-﻿// This notice must be kept visible in the source.
+﻿#region License & Information
+// This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/Document.cs" was last cleaned by Rick on 2014/12/09 at 5:56 AM
+// "Librainian 2015/Document.cs" was last cleaned by RICK on 2015/03/02 at 2:36 AM
+#endregion
 
 namespace Librainian.IO {
     using System;
@@ -30,72 +32,37 @@ namespace Librainian.IO {
     using System.Security;
     using System.Security.Permissions;
     using System.Threading.Tasks;
+    using System.Windows.Forms;
     using Extensions;
     using JetBrains.Annotations;
     using Maths;
+    using Measurement.Time;
     using Parsing;
     using Security;
     using Threading;
 
-    public interface IDocument : IEquatable<Document>, IEnumerable<Byte> {
-    }
+    public interface IDocument : IEquatable<Document>, IEnumerable<Byte> { }
 
     /// <summary>
-    /// <para>
-    /// An immutable wrapper for a file, the extension, the [parent] folder, and the file's size all from a
-    /// given full path.
-    /// </para>
-    /// <para>Also contains static String versions from <see cref="Path"/></para>
+    ///     <para>
+    ///         An immutable wrapper for a file, the extension, the [parent] folder, and the file's size all from a
+    ///         given full path.
+    ///     </para>
+    ///     <para>Also contains static String versions from <see cref="Path" /></para>
     /// </summary>
-    /// <seealso cref="IOExtensions.SameContent(Document,Document)"/>
     [DataContract(IsReference = true)]
     [Immutable]
-	// ReSharper disable once UseNameofExpression
-	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    // ReSharper disable once UseNameofExpression
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [Serializable]
     public class Document : IDocument {
-	    [ NotNull ]
-	    public static IDocument Empty { get; } = new Document();
-
-	    /// <summary>
-		/// Gets the characters that are not allowed in path names.
-		/// </summary>
-		[NotNull]
+        /// <summary>
+        ///     Gets the characters that are not allowed in path names.
+        /// </summary>
+        [NotNull]
         public static readonly HashSet<Char> InvalidPathChars = new HashSet<Char>( Path.GetInvalidPathChars() );
 
-	    /// <summary>
-	    /// <para>Returns the extension of the <see cref="FileName"/>, including the prefix ".".</para>
-	    /// </summary>
-	    [ NotNull ]
-	    public string Extension { get; }
-
-	    [ NotNull ]
-	    public FileInfo Info { get; }
-
-		/// <summary>
-		/// <para>Just the file's name, including the extension.</para>
-		/// </summary>
-		/// <seealso cref="Path.GetFileName"/>
-		[NotNull]
-        public String FileName { get; }
-
-		/// <summary>
-		/// <para>The <see cref="Folder"/> this <see cref="Document"/> is stored.</para>
-		/// </summary>
-		[NotNull]
-        public Folder Folder { get; }
-
-	    /// <summary>
-	    /// <para>The <see cref="Folder"/> combined with the <see cref="FileName"/>.</para>
-	    /// </summary>
-	    [ NotNull ]
-	    public String FullPathWithFileName { get; }
-
-	    [ NotNull ]
-	    public String OriginalPathWithFileName { get; }
-
-	    public Document( [NotNull] String fullPath, String filename ) : this( Path.Combine( fullPath, filename ) ) {
-        }
+        public Document( [NotNull] String fullPath, String filename ) : this( Path.Combine( fullPath, filename ) ) { }
 
         /// <summary>
         /// </summary>
@@ -110,9 +77,9 @@ namespace Librainian.IO {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         public Document( [NotNull] String fullPathWithFilename ) {
-			this.OriginalPathWithFileName = fullPathWithFilename;
+            this.OriginalPathWithFileName = fullPathWithFilename;
 
-			if ( String.IsNullOrWhiteSpace( fullPathWithFilename ) ) {
+            if ( String.IsNullOrWhiteSpace( fullPathWithFilename ) ) {
                 throw new ArgumentNullException( nameof( fullPathWithFilename ) );
             }
 
@@ -135,19 +102,17 @@ namespace Librainian.IO {
             this.FullPathWithFileName = Path.Combine( this.Folder.FullName, this.FileName );
         }
 
-        public Document( FileInfo info ) : this( info.FullName ) {
-        }
+        public Document( FileInfo info ) : this( info.FullName ) { }
 
-        public Document( Folder folder, String filename ) : this( folder.FullName, filename ) {
-        }
+        public Document( Folder folder, String filename ) : this( folder.FullName, filename ) { }
 
-		/// <summary>
-		/// Empty? Directory.GetCurrentDirectory()?
-		/// </summary>
-		/// <exception cref="UnauthorizedAccessException"></exception>
-		/// <exception cref="NotSupportedException"></exception>
-		/// <exception cref="InvalidOperationException"></exception>
-		private Document() {
+        /// <summary>
+        ///     Empty? Directory.GetCurrentDirectory()?
+        /// </summary>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        /// <exception cref="NotSupportedException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        private Document() {
             this.Folder = new Folder( Directory.GetCurrentDirectory() );
             Document document;
             if ( !this.Folder.TryGetTempDocument( out document ) ) {
@@ -156,39 +121,102 @@ namespace Librainian.IO {
             document.DeepClone( this );
         }
 
-	    public Document( Folder folder, Document document ) : this( Path.Combine( folder.FullName, document.FileName ) ) {
-		    
+        public Document( Folder folder, Document document ) : this( Path.Combine( folder.FullName, document.FileName ) ) { }
 
-	    }
+        [NotNull]
+        public static IDocument Empty { get; } = new Document();
 
-	    [UsedImplicitly]
+        /// <summary>
+        ///     <para>Returns the extension of the <see cref="FileName" />, including the prefix ".".</para>
+        /// </summary>
+        [NotNull]
+        public string Extension { get; }
+
+        [NotNull]
+        public FileInfo Info { get; }
+
+        /// <summary>
+        ///     <para>Just the file's name, including the extension.</para>
+        /// </summary>
+        /// <seealso cref="Path.GetFileName" />
+        [NotNull]
+        public String FileName { get; }
+
+        /// <summary>
+        ///     <para>The <see cref="Folder" /> this <see cref="Document" /> is stored.</para>
+        /// </summary>
+        [NotNull]
+        public Folder Folder { get; }
+
+        /// <summary>
+        ///     <para>The <see cref="Folder" /> combined with the <see cref="FileName" />.</para>
+        /// </summary>
+        [NotNull]
+        public String FullPathWithFileName { get; }
+
+        [NotNull]
+        public String OriginalPathWithFileName { get; }
+
+        [UsedImplicitly]
         public String DebuggerDisplay => this.FullPathWithFileName;
 
-	    /// <summary>
-	    /// Returns a string that represents the current object.
-	    /// </summary>
-	    /// <returns>
-	    /// A string that represents the current object.
-	    /// </returns>
-	    public override string ToString() => this.DebuggerDisplay;
-
-	    /// <summary>
-        /// <para>Just the file's name, including the extension.</para>
+        /// <summary>
+        ///     <para>Just the file's name, including the extension.</para>
         /// </summary>
-        /// <seealso cref="Path.GetFileNameWithoutExtension"/>
+        /// <seealso cref="Path.GetFileNameWithoutExtension" />
         [NotNull]
         public String Name => this.FileName;
 
         /// <summary>
-        /// <para>Gets the current size of the <see cref="Document"/>.</para>
+        ///     <para>Gets the current size of the <see cref="Document" />.</para>
         /// </summary>
-        /// <seealso cref="GetLength"/>
+        /// <seealso cref="GetLength" />
         [CanBeNull]
         public UInt64? Size => this.GetLength();
 
         /// <summary>
-        /// <para>Static case insensitive comparison of the file names and file sizes for equality.</para>
-        /// <para>To compare the contents of two <see cref="Document"/> use <see cref="IOExtensions.SameContent(Document,Document)"/>.</para>
+        ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
+        ///     <para>
+        ///         To compare the contents of two <see cref="Document" /> use
+        ///         <see cref="SameContent(Document)" />.
+        ///     </para>
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public Boolean Equals( [CanBeNull] Document other ) => !ReferenceEquals( null, other ) && Equals( this, other );
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate
+        ///     through the collection.
+        /// </returns>
+        public IEnumerator<byte> GetEnumerator() => this.AsByteArray().GetEnumerator();
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate
+        ///     through the collection.
+        /// </returns>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        /// <summary>
+        ///     Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        ///     A string that represents the current object.
+        /// </returns>
+        public override string ToString() => this.DebuggerDisplay;
+
+        /// <summary>
+        ///     <para>Static case insensitive comparison of the file names and file sizes for equality.</para>
+        ///     <para>
+        ///         To compare the contents of two <see cref="Document" /> use
+        ///         <see cref="SameContent(Document)" />.
+        ///     </para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -204,7 +232,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        /// <para>Compares the file names (case insensitive) and file sizes for inequality.</para>
+        ///     <para>Compares the file names (case insensitive) and file sizes for inequality.</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -212,7 +240,7 @@ namespace Librainian.IO {
         public static Boolean operator !=( Document left, Document right ) => !Equals( left, right );
 
         /// <summary>
-        /// <para>Compares the file names (case insensitive) and file sizes for equality.</para>
+        ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -222,8 +250,8 @@ namespace Librainian.IO {
         public static implicit operator FileInfo( Document document ) => document.Info;
 
         /// <summary>
-        /// <para>If the file does not exist, it is created.</para>
-        /// <para>Then the <paramref name="text"/> is appended to the file.</para>
+        ///     <para>If the file does not exist, it is created.</para>
+        ///     <para>Then the <paramref name="text" /> is appended to the file.</para>
         /// </summary>
         /// <param name="text"></param>
         public void AppendText( String text ) {
@@ -237,8 +265,7 @@ namespace Librainian.IO {
                     writer.Flush();
                     writer.Close();
                 }
-            }
-            else {
+            } else {
                 using (var writer = File.CreateText( this.FullPathWithFileName )) {
                     writer.WriteLine( text );
                     writer.Flush();
@@ -248,38 +275,73 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        /// Enumerates a <see cref="Document"/> as a sequence of <see cref="Byte"/>.
+        /// Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.
         /// </summary>
+        /// <param name="retries"></param>
+        /// <param name="secondsBetweenRetries"></param>
         /// <returns></returns>
-        public IEnumerable<byte> AsByteArray() {
-            var info = new FileInfo( this.FullPathWithFileName );
-            return info.AsByteArray();
+        public IEnumerable<byte> AsByteArray( int retries = 10, Double secondsBetweenRetries = 0.5 ) {
+            if ( !this.Exists() ) {
+                yield break;
+            }
+
+            FileStream stream;
+
+        TryAgain:
+            --retries;
+            try {
+                stream = new FileStream( path: this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read );
+                if ( !stream.CanRead ) {
+                    throw new NotSupportedException( String.Format( "Cannot read from file {0}", this.FullPathWithFileName ) );
+                }
+            }
+            catch ( IOException exception ) {
+                //is this exception caused by explorer.exe making the thumbs.db ????
+                if ( retries > 0 && exception.Message.Contains( "by another process" ) ) {
+                    Task.Delay( new Seconds( secondsBetweenRetries ) ).Wait();
+                    Application.DoEvents();
+                    goto TryAgain;
+                }
+                stream = null;
+            }
+
+            if ( null == stream ) {
+                yield break;
+            }
+
+            using (stream) {
+                using (var buffered = new BufferedStream( stream )) {
+                    var b = buffered.ReadByte();
+                    if ( b == -1 ) {
+                        yield break;
+                    }
+                    yield return ( Byte )b;
+                }
+
+                stream.Close();
+            }
         }
 
         /// <summary>
-        /// Returns true if a file copy was started.
+        ///     Returns true if a file copy was started.
         /// </summary>
         /// <param name="destination">can this be a folder or a file?!?!</param>
         /// <param name="onProgress"></param>
         /// <param name="onCompleted"></param>
         /// <returns></returns>
-        public Boolean CopyFileWithProgress( String destination, Action<Percentage> onProgress, Action onCompleted ) {
+        public WebClient CopyFileWithProgress( Document destination, Action<Percentage> onProgress, Action onCompleted ) {
             var webClient = new WebClient();
-
-            //if ( webClient == null ) {
-            //    return false;
-            //}
 
             webClient.DownloadProgressChanged += ( sender, args ) => {
                 var percentage = new Percentage( ( BigInteger )args.BytesReceived, args.TotalBytesToReceive );
-                                                     onProgress?.Invoke( percentage );
-                                                 };
+                onProgress?.Invoke( percentage );
+            };
 
             webClient.DownloadFileCompleted += ( sender, args ) => onCompleted?.Invoke();
 
-            webClient.DownloadFileAsync( new Uri( this.FullPathWithFileName ), destination );
+            webClient.DownloadFileAsync( new Uri( this.FullPathWithFileName ), destination.FullPathWithFileName );
 
-            return true;
+            return webClient;
         }
 
         public String Crc32() {
@@ -374,22 +436,17 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        /// <para>Compares the file names (case insensitive) and file sizes for equality.</para>
-        /// <para>To compare the contents of two <see cref="Document"/> use <see cref="IOExtensions.SameContent(Document,Document)"/>.</para>
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public Boolean Equals( [CanBeNull] Document other ) => !ReferenceEquals( null, other ) && Equals( this, other );
-
-        /// <summary>
-        /// <para>To compare the contents of two <see cref="Document"/> use <see cref="IOExtensions.SameContent(Document,Document)"/>.</para>
+        ///     <para>
+        ///         To compare the contents of two <see cref="Document" /> use
+        ///         <see cref="IOExtensions.SameContent(Document,Document)" />.
+        ///     </para>
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         public override Boolean Equals( [CanBeNull] object obj ) => obj is Document && Equals( this, ( Document )obj );
 
         /// <summary>
-        /// Returns true if the <see cref="Document"/> currently exists.
+        ///     Returns true if the <see cref="Document" /> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
         public bool Exists() {
@@ -398,26 +455,16 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate
-        /// through the collection.
-        /// </returns>
-        public IEnumerator<byte> GetEnumerator() => this.AsByteArray().GetEnumerator();
-
-        /// <summary>
-        /// (file name, not contents)
+        ///     (file name, not contents)
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode() => this.FullPathWithFileName.GetHashCode();
 
         /// <summary>
-        /// <para>Gets the current size of the <see cref="Document"/>.</para>
+        ///     <para>Gets the current size of the <see cref="Document" />.</para>
         /// </summary>
         [CanBeNull]
         public UInt64? GetLength() {
-            this.Refresh();
             try {
                 if ( this.Exists() ) {
                     return ( UInt64 )this.Info.Length;
@@ -433,7 +480,7 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        /// Reads the entire file into a <see cref="String"/>.
+        ///     Reads the entire file into a <see cref="String" />.
         /// </summary>
         /// <returns></returns>
         public async Task<String> ReadTextAsync() => await Task.Run( () => Exists() ? File.ReadAllText( this.FullPathWithFileName ) : String.Empty );
@@ -443,15 +490,6 @@ namespace Librainian.IO {
             this.Info.Refresh();
         }
 
-        /// <summary>
-        /// Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate
-        /// through the collection.
-        /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
         /*
 
                 /// <summary>
@@ -460,5 +498,47 @@ namespace Librainian.IO {
                 /// <exception cref="IOException"></exception>
                 public Boolean FolderExists { get { return this.Folder.Exists; } }
         */
+
+        /// <summary>
+        ///     <para>
+        ///         Performs a byte by byte file comparison, but ignores the <see cref="Document" /> file names.
+        ///     </para>
+        /// </summary>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="SecurityException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        /// <exception cref="PathTooLongException"></exception>
+        /// <exception cref="NotSupportedException"></exception>
+        /// <exception cref="IOException"></exception>
+        /// <exception cref="DirectoryNotFoundException"></exception>
+        /// <exception cref="FileNotFoundException"></exception>
+        public Boolean SameContent( [CanBeNull] Document right ) {
+            if ( right == null ) {
+                return false;
+            }
+
+            if ( !this.Exists() ) {
+                return false;
+            }
+            if ( !right.Exists() ) {
+                return false;
+            }
+
+            var ll = this.GetLength();
+            var rl = right.GetLength();
+
+            if ( !ll.HasValue || !rl.HasValue ) {
+                return false;
+            }
+
+            if ( ll.Value != rl.Value ) {
+                return false;
+            }
+
+            return this.AsByteArray().SequenceEqual( right.AsByteArray() );
+        }
     }
 }
