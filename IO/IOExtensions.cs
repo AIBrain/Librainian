@@ -197,14 +197,14 @@ namespace Librainian.IO {
                 return ioFunction();
             }
             catch ( IOException ) {
-                if ( retries > 0  ) {
-                    if ( null != cancel && cancel.HaveAnyCancellationsBeenRequested() ) {
-                        return default(TResult);
-                    }
-                    Task.Delay( TimeSpan.FromMilliseconds( waitBetweenRetries ) ).Wait();
-                    goto TryAgain;
+                if ( retries <= 0 ) {
+                    throw;
                 }
-                throw;
+                if ( null != cancel && cancel.HaveAnyCancellationsBeenRequested() ) {
+                    return default(TResult);
+                }
+                Task.Delay( TimeSpan.FromMilliseconds( waitBetweenRetries ) ).Wait();
+                goto TryAgain;
             }
         }
 
