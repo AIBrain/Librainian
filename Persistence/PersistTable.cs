@@ -34,6 +34,7 @@ namespace Librainian.Persistence {
     using FluentAssertions;
     using IO;
     using JetBrains.Annotations;
+    using Measurement.Time;
     using Microsoft.Isam.Esent.Collections.Generic;
     using Parsing;
     using Threading;
@@ -498,7 +499,7 @@ namespace Librainian.Persistence {
                 if ( this.Folder.TryGetTempDocument( out document ) ) {
                     var text = Randem.NextString( length: 64, lowers: true, uppers: true, numbers: true, symbols: true );
                     document.AppendText( text );
-                    document.TryDeleting();
+                    Document.TryDeleting( document, Seconds.Seven );
                     return true;
                 }
             }

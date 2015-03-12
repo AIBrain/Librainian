@@ -137,31 +137,19 @@ namespace Librainian.IO {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( nameof( fileInfo ) );
             }
+
             if ( !fileInfo.Exists ) {
                 yield break;
             }
 
-            FileStream stream = null;
-            var retriesLeft = 30;
-
-        TryAgain:
-            --retriesLeft;  //is this error caused explorer.exe making the thumbs.db ????
-            try {
-                stream = new FileStream( path: fileInfo.FullName, mode: FileMode.Open, access: FileAccess.Read );
-                if ( !stream.CanRead ) {
-                    throw new NotSupportedException( String.Format( "Cannot read from file {0}", fileInfo.FullName ) );
-                }
-            }
-            catch ( IOException) {
-                if ( retriesLeft > 0 ) {
-                    Task.Delay( Seconds.One ).Wait();
-                    Application.DoEvents();
-                    goto TryAgain;
-                }
-            }
+            var stream = Try( () => new FileStream( path: fileInfo.FullName, mode: FileMode.Open, access: FileAccess.Read ), Seconds.Seven );
 
             if ( null == stream ) {
                 yield break;
+            }
+
+            if ( !stream.CanRead ) {
+                throw new NotSupportedException( String.Format( "Cannot read from file {0}", fileInfo.FullName ) );
             }
 
             using (stream) {
@@ -179,34 +167,66 @@ namespace Librainian.IO {
         }
 
         /// <summary>
-        /// 
+        /// Retry the <paramref name="ioFunction"/> if an <see cref="IOException"/> occurs.
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="ioFunction"></param>
-        /// <param name="retries"></param>
-        /// <param name="waitBetweenRetries">Milliseconds to wait between IO attempts.</param>
+        /// <param name="tryFor"></param>
         /// <param name="cancel"></param>
         /// <returns></returns>
-        [ CanBeNull ]
-        public static TResult Retry<TResult>( [NotNull] Func<TResult> ioFunction, uint retries = 7, Double waitBetweenRetries = 500, SimpleCancel cancel = null ) {
+        /// <exception cref="IOException"></exception>
+        [CanBeNull]
+        public static TResult Try<TResult>( [NotNull] this Func<TResult> ioFunction, TimeSpan tryFor, SimpleCancel cancel = null ) {
             if ( ioFunction == null ) {
                 throw new ArgumentNullException( nameof( ioFunction ) );
             }
-        TryAgain:
+            var stopwatch = Stopwatch.StartNew();
+            TryAgain:
             try {
+                Application.DoEvents();
                 return ioFunction();
             }
-            catch ( IOException ) {
-                if ( retries <= 0 ) {
+            catch ( IOException) {
+                if ( stopwatch.Elapsed > tryFor ) {
                     throw;
                 }
                 if ( null != cancel && cancel.HaveAnyCancellationsBeenRequested() ) {
                     return default(TResult);
                 }
-                Task.Delay( TimeSpan.FromMilliseconds( waitBetweenRetries ) ).Wait();
+                Thread.Yield();
                 goto TryAgain;
             }
         }
+
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="ioAction"></param>
+        ///// <param name="tryFor"></param>
+        ///// <param name="cancel"></param>
+        ///// <returns></returns>
+        //[CanBeNull]
+        //public static void Retry( [NotNull] this Action ioAction, TimeSpan tryFor, SimpleCancel cancel = null ) {
+        //    if ( ioAction == null ) {
+        //        throw new ArgumentNullException( nameof( ioAction ) );
+        //    }
+        //    var stopwatch = Stopwatch.StartNew();
+        //TryAgain:
+        //    try {
+        //        Application.DoEvents();
+        //        ioAction();
+        //    }
+        //    catch ( IOException) {
+        //        if ( stopwatch.Elapsed > tryFor ) {
+        //            throw;
+        //        }
+        //        if ( null != cancel && cancel.HaveAnyCancellationsBeenRequested() ) {
+        //            return;
+        //        }
+        //        Thread.Yield();
+        //        goto TryAgain;
+        //    }
+        //}
 
         /// <summary>
         /// ask user for folder/network path where to store dictionary
@@ -1175,43 +1195,6 @@ namespace Librainian.IO {
             return memoryStream;
         }
 
-        /// <summary>
-        /// <para>Returns true if the <see cref="Document"/> no longer seems to exist.</para>
-        /// <para>Returns null if existance cannot be determined.</para>
-        /// </summary>
-        /// <param name="document"></param>
-        /// <param name="bePatient">The delete will retry for a default of <see cref="Seconds.Five"/>.</param>
-        /// <returns></returns>
-        public static Boolean? TryDeleting( this Document document, Boolean bePatient = true ) {
-            var stopwatch = Stopwatch.StartNew();
-        TryAgain:
-            try {
-                if ( !document.Exists() ) {
-                    return true;
-                }
-                File.Delete( path: document.FullPathWithFileName );
-                return !File.Exists( document.FullPathWithFileName );
-            }
-            catch ( DirectoryNotFoundException) { }
-            catch ( PathTooLongException) { }
-            catch ( IOException) {
-
-                // IOExcception is thrown if the file is in use by another process.
-                if ( bePatient && stopwatch.Elapsed <= Seconds.Five ) {
-                    if ( !Thread.Yield() ) {
-                        Thread.Sleep( Milliseconds.ThreeHundredThirtyThree );
-                    }
-                    goto TryAgain;
-                }
-            }
-            catch ( UnauthorizedAccessException) { }
-            catch ( ArgumentNullException) { }
-            finally {
-                stopwatch.Stop();
-            }
-            return null;
-        }
-
         public static Boolean TryGetFolderFromPath( String path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri ) {
             directoryInfo = null;
             uri = null;
@@ -1286,6 +1269,7 @@ namespace Librainian.IO {
         /// A valid FileStream object for the opened file, or null if the File could not be opened
         /// after the required attempts
         /// </returns>
+        [ CanBeNull ]
         public static FileStream TryOpen( String filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
 
             //TODO
@@ -1299,6 +1283,7 @@ namespace Librainian.IO {
             return null;
         }
 
+        [ CanBeNull ]
         public static FileStream TryOpenForReading( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
 
         //TODO
@@ -1322,6 +1307,7 @@ namespace Librainian.IO {
             return null;
         }
 
+        [ CanBeNull ]
         public static FileStream TryOpenForWriting( String filePath, FileMode fileMode = FileMode.Create, FileAccess fileAccess = FileAccess.Write, FileShare fileShare = FileShare.ReadWrite ) {
 
             //TODO

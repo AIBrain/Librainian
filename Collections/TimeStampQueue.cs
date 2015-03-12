@@ -28,7 +28,8 @@ namespace Librainian.Collections {
 
     [DataContract( IsReference = true )]
     public class TimeStampQueue< T > : IEnumerable< WithTime< T > > where T : class {
-        [DataMember]  public readonly ConcurrentQueue< WithTime< T > > Queue = new ConcurrentQueue< WithTime< T > >();
+        [ DataMember ]
+        public ConcurrentQueue< WithTime< T > > Queue { get; } = new ConcurrentQueue< WithTime< T > >();
 
         public IEnumerable< T > Items => this.Queue.Select( item => item.Item );
 
@@ -45,11 +46,10 @@ namespace Librainian.Collections {
             if ( null == item ) {
                 return default( DateTime );
             }
-            var newQI = new WithTime< T >( item: item );
-            this.Queue.Enqueue( newQI );
+            this.Queue.Enqueue( new WithTime< T >( item: item ) );
 
             //this.bob.Set();
-            return newQI.TimeStamp;
+            return new WithTime< T >( item: item ).TimeStamp;
         }
 
         //private readonly ManualResetEventSlim bob = new ManualResetEventSlim( false );
@@ -71,7 +71,7 @@ namespace Librainian.Collections {
         /// <returns></returns>
         public T Next() {
             var temp = this.Pull();
-            return temp?.Item;
+            return temp.Item;
         }
 
         /// <summary>

@@ -29,11 +29,13 @@ namespace Librainian.IO.Compression {
     using Numerics;
 
     public class RandomnessFeeeding : IDisposable {
-        private GZipStream _gZipStream;
-        private NullStream _nullStream;
+        [ NotNull ] private readonly NullStream _nullStream = new NullStream();
+        [ NotNull ] private readonly GZipStream _gZipStream;
 
         public RandomnessFeeeding() {
-            this.Reset();
+            this.HowManyBytesAsCompressed = BigInteger.Zero;
+            this.HowManyBytesFed = BigInteger.Zero;
+            this._gZipStream = new GZipStream( stream: this._nullStream, compressionLevel: CompressionLevel.Optimal );
         }
 
         public BigInteger HowManyBytesAsCompressed { get; private set; }
@@ -41,10 +43,13 @@ namespace Librainian.IO.Compression {
         public BigInteger HowManyBytesFed { get; private set; }
 
         public void Dispose() {
-            this._gZipStream.Close();
-            this._gZipStream = null;
-            this._nullStream.Close();
-            this._nullStream = null;
+            using ( _gZipStream ) {
+                this._gZipStream.Close();
+            }
+
+            using ( _nullStream ) {
+                this._nullStream.Close();
+            }
         }
 
         public void FeedItData( [NotNull] Byte[] data ) {
@@ -72,12 +77,5 @@ namespace Librainian.IO.Compression {
         }
 
         public void Report() => Debug.WriteLine( "Current compression is now {0:P4}", this.GetCurrentCompressionRatio() );
-
-        public void Reset() {
-            this.HowManyBytesAsCompressed = BigInteger.Zero;
-            this.HowManyBytesFed = BigInteger.Zero;
-            this._nullStream = new NullStream();
-            this._gZipStream = new GZipStream( stream: this._nullStream, compressionLevel: CompressionLevel.Optimal );
-        }
     }
 }

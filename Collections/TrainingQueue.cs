@@ -61,9 +61,9 @@ namespace Librainian.Collections {
 
             public Action Action { get; set; }
 
-            public object Answer { get; set; }
+            public object Answer { get; }
 
-            public object Question { get; set; }
+            public object Question { get; }
 
             public override String ToString() => String.Format( "{0} -> {1}", this.Question, this.Answer );
         }

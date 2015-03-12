@@ -31,6 +31,7 @@ namespace Librainian.IO {
     using System.Runtime.Serialization;
     using System.Security;
     using System.Security.Permissions;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using Extensions;
@@ -60,7 +61,7 @@ namespace Librainian.IO {
         ///     Gets the characters that are not allowed in path names.
         /// </summary>
         [NotNull]
-        public static readonly HashSet<Char> InvalidPathChars = new HashSet<Char>( Path.GetInvalidPathChars() );
+        public static readonly HashSet<char> InvalidPathChars = new HashSet<char>( Path.GetInvalidPathChars() );
 
         public Document( [NotNull] String fullPath, String filename ) : this( Path.Combine( fullPath, filename ) ) { }
 
@@ -277,36 +278,20 @@ namespace Librainian.IO {
         /// <summary>
         /// Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.
         /// </summary>
-        /// <param name="retries"></param>
-        /// <param name="secondsBetweenRetries"></param>
         /// <returns></returns>
-        public IEnumerable<byte> AsByteArray( int retries = 10, Double secondsBetweenRetries = 0.5 ) {
+        public IEnumerable<byte> AsByteArray() {
             if ( !this.Exists() ) {
                 yield break;
             }
 
-            FileStream stream;
-
-        TryAgain:
-            --retries;
-            try {
-                stream = new FileStream( path: this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read );
-                if ( !stream.CanRead ) {
-                    throw new NotSupportedException( String.Format( "Cannot read from file {0}", this.FullPathWithFileName ) );
-                }
-            }
-            catch ( IOException exception ) {
-                //is this exception caused by explorer.exe making the thumbs.db ????
-                if ( retries > 0 && exception.Message.Contains( "by another process" ) ) {
-                    Task.Delay( new Seconds( secondsBetweenRetries ) ).Wait();
-                    Application.DoEvents();
-                    goto TryAgain;
-                }
-                stream = null;
-            }
+            var stream = IOExtensions.Try( () => new FileStream( path: this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read ), Seconds.Seven );
 
             if ( null == stream ) {
                 yield break;
+            }
+
+            if ( !stream.CanRead ) {
+                throw new NotSupportedException( String.Format( "Cannot read from file {0}", this.FullPathWithFileName ) );
             }
 
             using (stream) {
@@ -483,7 +468,7 @@ namespace Librainian.IO {
         ///     Reads the entire file into a <see cref="String" />.
         /// </summary>
         /// <returns></returns>
-        public async Task<String> ReadTextAsync() => await Task.Run( () => Exists() ? File.ReadAllText( this.FullPathWithFileName ) : String.Empty );
+        public async Task<string> ReadTextAsync() => await Task.Run( () => this.Exists() ? File.ReadAllText( this.FullPathWithFileName ) : String.Empty );
 
         public void Refresh() {
             this.Folder.Refresh();
@@ -539,6 +524,42 @@ namespace Librainian.IO {
             }
 
             return this.AsByteArray().SequenceEqual( right.AsByteArray() );
+        }
+
+        /// <summary>
+        /// <para>Returns true if the <see cref="Document"/> no longer seems to exist.</para>
+        /// <para>Returns null if existance cannot be determined.</para>
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="tryFor">The delete will retry for a default of <see cref="Seconds.Five"/>.</param>
+        /// <returns></returns>
+        public static Boolean? TryDeleting( Document document, TimeSpan tryFor ) {
+            var stopwatch = Stopwatch.StartNew();
+            TryAgain:
+            try {
+                if ( !document.Exists() ) {
+                    return true;
+                }
+                File.Delete( path: document.FullPathWithFileName );
+                return !File.Exists( document.FullPathWithFileName );
+            }
+            catch ( DirectoryNotFoundException) { }
+            catch ( PathTooLongException) { }
+            catch ( IOException) {
+
+                // IOExcception is thrown when the file is in use by ANY other process.
+                if ( stopwatch.Elapsed <= tryFor ) {
+                    Thread.Yield();
+                    Application.DoEvents();
+                    goto TryAgain;
+                }
+            }
+            catch ( UnauthorizedAccessException) { }
+            catch ( ArgumentNullException) { }
+            finally {
+                stopwatch.Stop();
+            }
+            return null;
         }
     }
 }

@@ -23,12 +23,13 @@ namespace Librainian.Collections {
 
     [DataContract( IsReference = true )]
     public class WithTime< T > {
-        [DataMember]  public readonly T Item;
+        [ DataMember ]
+        public T Item { get; }
 
-        [DataMember]  public readonly DateTime TimeStamp;
+        [ DataMember ]
+        public DateTime TimeStamp { get; } = DateTime.UtcNow;
 
         public WithTime( T item ) {
-            this.TimeStamp = DateTime.UtcNow;
             this.Item = item;
         }
 

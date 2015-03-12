@@ -72,7 +72,7 @@ namespace Librainian.Graphics {
             double a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, n = xy.Count;
             double p = 0, q = 0, r = 0, s = 0, t = 0, u = 0;
 
-            for ( int i = 0 ; i < n ; i++ ) {
+            for ( int i = 0; i < n; i++ ) {
                 // Compute sum of squares for X^T * X
                 a += xy[ i ].X * xy[ i ].X;
                 b += xy[ i ].X * xy[ i ].Y;
@@ -148,7 +148,7 @@ namespace Librainian.Graphics {
         /// <returns></returns>
         public static Boolean IsDateRecentEnough( this DateTime? dateTime ) => dateTime?.Year >= 1825;
 
-	    [CanBeNull]
+        [CanBeNull]
         public static DateTime? ImageCreationBestGuess( [CanBeNull] this FileSystemInfo info ) {
             if ( info == null ) {
                 throw new ArgumentNullException( nameof( info ) );
@@ -169,8 +169,7 @@ namespace Librainian.Graphics {
                 foreach ( var c in justName ) {
                     if ( Char.IsDigit( c ) /*|| c == '\\' || c == '-' || c == '/'*/ ) {
                         mostlyDigits += c;
-                    }
-                    else {
+                    } else {
                         mostlyDigits += ParsingExtensions.Singlespace;
                     }
                 }
@@ -178,7 +177,7 @@ namespace Librainian.Graphics {
 
                 #region Year, Month, Day formats as in digits == "20040823 173454" == "August 23th, 2004 at 5:34pm"
 
-                var patternsYMD = new[] { "yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyy dd MM", "MMddyy HHmmss", "yyyyMMdd", "yyyy MM dd" };
+                var patternsYMD = new[ ] { "yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyy dd MM", "MMddyy HHmmss", "yyyyMMdd", "yyyy MM dd" };
 
                 foreach ( var pattern in patternsYMD ) {
                     DateTime bestGuess;
@@ -196,7 +195,7 @@ namespace Librainian.Graphics {
 
                 #region Day, Month, Year formats as in digits == "23082004 173454" == "August 23th, 2004 at 5:34pm"
 
-                var patternsDMY = new[] { "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy" };
+                var patternsDMY = new[ ] { "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy" };
 
                 foreach ( var pattern in patternsDMY ) {
                     DateTime bestGuess;
@@ -244,7 +243,7 @@ namespace Librainian.Graphics {
                     //}
                 }
             }
-            catch ( Exception ) {
+            catch ( Exception) {
             }
 
             var lastWriteTime = File.GetLastWriteTime( info.FullName );
@@ -273,7 +272,7 @@ namespace Librainian.Graphics {
         private static bool InternalImageGetDateTime( FileSystemInfo info, out DateTime? bestGuess ) {
             bestGuess = null;
             try {
-                using ( var image = Image.FromFile( filename: info.FullName, useEmbeddedColorManagement: false ) ) {
+                using (var image = Image.FromFile( filename: info.FullName, useEmbeddedColorManagement: false )) {
                     if ( image.PropertyIdList.Contains( PropertyList.DateTimeDigitized ) ) {
                         var asDateTime = image.GetPropertyItem( PropertyList.DateTimeDigitized ).GetProperteryAsDateTime();
                         if ( asDateTime.HasValue && IsDateRecentEnough( asDateTime ) ) {
@@ -305,7 +304,7 @@ namespace Librainian.Graphics {
                     }
                 }
             }
-            catch ( Exception ) {
+            catch ( Exception) {
                 /*swallow*/
             }
             return false;
@@ -346,16 +345,15 @@ namespace Librainian.Graphics {
 
                 if ( imageA.Width < imageB.Width && imageA.Height < imageB.Height ) {
                     imageA = ResizeImage( imageA, imageB.Size ); //resize because B is larger
-                }
-                else if ( imageA.Width > imageB.Width && imageA.Height > imageB.Height ) {
+                } else if ( imageA.Width > imageB.Width && imageA.Height > imageB.Height ) {
                     imageB = ResizeImage( imageB, imageA.Size ); //resize because A is larger
                 }
 
                 return ImageComparer.Compare( imageA, imageB );
             }
-            catch ( OutOfMemoryException ) {
+            catch ( OutOfMemoryException) {
             }
-            catch ( InvalidOperationException ) {
+            catch ( InvalidOperationException) {
             }
 
             return false;
@@ -394,8 +392,9 @@ namespace Librainian.Graphics {
                     if ( bitmapImage.Height <= 0 ) {
                         return false;
                     }
+                    bitmapImage.UriSource = null;
                 }
-                catch ( Exception ) {
+                catch ( Exception) {
                     return false;
                 }
 
@@ -403,22 +402,21 @@ namespace Librainian.Graphics {
                     return false;
                 }
 
-                using ( Image.FromFile( file.FullName ) ) {
+                using (var bob = Image.FromFile( file.FullName )) {
+                    bob.Dispose();
                     return true;
                 }
             }
-            catch ( ExternalException ) {
-            }
-            catch ( InvalidOperationException ) {
-            }
-            catch ( FileNotFoundException ) {
-            }
-            catch ( NotSupportedException ) {
-            }
-            catch ( OutOfMemoryException ) {
-            }
+            catch ( ExternalException) { }
+            catch ( InvalidOperationException) { }
+            catch ( FileNotFoundException) { }
+            catch ( NotSupportedException) { }
+            catch ( OutOfMemoryException) { }
             catch ( Exception exception ) {
                 exception.More();
+            }
+            finally {
+                GC.Collect( 0, GCCollectionMode.Forced, true, true );
             }
             return false;
         }
@@ -439,8 +437,8 @@ namespace Librainian.Graphics {
             var destWidth = ( int )( sourceWidth * nPercent );
             var destHeight = ( int )( sourceHeight * nPercent );
 
-            using ( var bitmap = new Bitmap( width: destWidth, height: destHeight ) ) {
-                using ( var g = Graphics.FromImage( image: bitmap ) ) {
+            using (var bitmap = new Bitmap( width: destWidth, height: destHeight )) {
+                using (var g = Graphics.FromImage( image: bitmap )) {
                     g.SmoothingMode = SmoothingMode.HighQuality;
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
