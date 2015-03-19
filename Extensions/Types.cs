@@ -137,8 +137,9 @@ namespace Librainian.Extensions {
         /// <para>
         /// Copy each field in the <paramref name="source"/> to the matching field in the <paramref name="destination"/>.
         /// </para>
+        /// <para>then</para>
         /// <para>
-        /// then Copy each property in the <paramref name="source"/> to the matching property in the <paramref name="destination"/>.
+        /// Copy each property in the <paramref name="source"/> to the matching property in the <paramref name="destination"/>.
         /// </para>
         /// </summary>
         /// <typeparam name="TSource"></typeparam>

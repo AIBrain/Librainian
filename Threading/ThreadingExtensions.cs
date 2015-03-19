@@ -311,11 +311,7 @@ namespace Librainian.Threading {
                 output( description );
             }
             if ( inParallel ) {
-                var result = Parallel.ForEach( tasks, task => {
-                    if ( task != null ) {
-                        task();
-                    }
-                } );
+                var result = Parallel.ForEach( tasks, task => task?.Invoke());
                 return result.IsCompleted;
             }
             foreach ( var task in tasks ) {

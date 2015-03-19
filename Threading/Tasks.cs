@@ -225,7 +225,7 @@ namespace Librainian.Threading {
         /// <param name="delay"> </param>
         /// <param name="job"> </param>
         /// <returns> </returns>
-        public static async void Then( this Minutes delay, [NotNull] Action job ) {
+        public static async Task Then( this Minutes delay, [NotNull] Action job ) {
             if ( job == null ) {
                 throw new ArgumentNullException( nameof( job ) );
             }
@@ -242,16 +242,10 @@ namespace Librainian.Threading {
         /// <param name="post"></param>
         /// <returns></returns>
         public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) => () => {
-                                                                                                                            if ( pre != null ) {
-                                                                                                                                pre();
-                                                                                                                            }
-                                                                                                                            if ( action != null ) {
-                                                                                                                                action();
-                                                                                                                            }
-                                                                                                                            if ( post != null ) {
-                                                                                                                                post();
-                                                                                                                            }
-                                                                                                                        };
+                                                                                                                                  pre?.Invoke();
+                                                                                                                                  action?.Invoke();
+                                                                                                                                  post?.Invoke();
+        };
 
         ///// <summary>
         /////   This is untested.

@@ -39,12 +39,7 @@ namespace Librainian.Threading {
 
         public Boolean IsSignaled => Interlocked.Read( ref this._signalcount ) > 0;
 
-        public void Dispose() {
-            var resetEvent = this.Event;
-            if ( resetEvent != null ) {
-                resetEvent.Dispose();
-            }
-        }
+        public void Dispose() => this.Event?.Dispose();
 
         public void Reset() {
             lock ( this._lockobject ) {
@@ -59,10 +54,7 @@ namespace Librainian.Threading {
         }
 
         ~Signal() {
-            var resetEvent = this.Event;
-            if ( resetEvent != null ) {
-                resetEvent.Dispose();
-            }
+            this.Event?.Dispose();
             this._lockobject = null;
         }
 

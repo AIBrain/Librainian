@@ -113,13 +113,14 @@ namespace Librainian.IO {
         /// <exception cref="UnauthorizedAccessException"></exception>
         /// <exception cref="NotSupportedException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
+        // ReSharper disable once NotNullMemberIsNotInitialized
         private Document() {
             this.Folder = new Folder( Directory.GetCurrentDirectory() );
             Document document;
             if ( !this.Folder.TryGetTempDocument( out document ) ) {
                 throw new DirectoryNotFoundException();
             }
-            document.DeepClone( this );
+            document.DeepClone( destination: this );
         }
 
         public Document( Folder folder, Document document ) : this( Path.Combine( folder.FullName, document.FileName ) ) { }
@@ -519,11 +520,7 @@ namespace Librainian.IO {
                 return false;
             }
 
-            if ( ll.Value != rl.Value ) {
-                return false;
-            }
-
-            return this.AsByteArray().SequenceEqual( right.AsByteArray() );
+            return ll.Value == rl.Value && this.AsByteArray().SequenceEqual( right.AsByteArray() );
         }
 
         /// <summary>
