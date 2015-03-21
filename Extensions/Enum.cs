@@ -32,17 +32,17 @@ namespace Librainian.Extensions {
     /// http: //damieng.com/blog/2010/10/17/enums-better-syntax-improved-performance-and-tryparse-in-net-3-5
     /// </remarks>
     public static class Enum<T> where T : struct {
-        private static readonly IEnumerable<T> all = Enum.GetValues( typeof(T) ).Cast<T>();
+        private static readonly IEnumerable<T> ALL = Enum.GetValues( typeof(T) ).Cast<T>();
 
-        private static readonly Dictionary<String, T> insensitiveNames = all.ToDictionary( k => Enum.GetName( typeof(T), k ).ToUpperInvariant() );
+        private static readonly Dictionary<String, T> InsensitiveNames = ALL.ToDictionary( k => Enum.GetName( typeof(T), k ).ToUpperInvariant() );
 
-        private static readonly Dictionary<T, String> names = all.ToDictionary( k => k, v => v.ToString() );
-        private static readonly Dictionary<String, T> sensitiveNames = all.ToDictionary( k => Enum.GetName( typeof(T), k ) );
-        private static readonly Dictionary<int, T> values = all.ToDictionary( k => Convert.ToInt32( k ) );
+        private static readonly Dictionary<T, String> Names = ALL.ToDictionary( k => k, v => v.ToString() );
+        private static readonly Dictionary<String, T> SensitiveNames = ALL.ToDictionary( k => Enum.GetName( typeof(T), k ) );
+        private static readonly Dictionary<int, T> Values = ALL.ToDictionary( k => Convert.ToInt32( k ) );
 
         public static T? CastOrNull( int value ) {
             T foundValue;
-            if ( values.TryGetValue( value, out foundValue ) ) {
+            if ( Values.TryGetValue( value, out foundValue ) ) {
                 return foundValue;
             }
 
@@ -51,28 +51,28 @@ namespace Librainian.Extensions {
 
         public static IEnumerable<T> GetFlags( T flagEnum ) {
             var flagInt = Convert.ToInt32( flagEnum );
-            return all.Where( e => ( Convert.ToInt32( e ) & flagInt ) != 0 );
+            return ALL.Where( value => ( Convert.ToInt32( value ) & flagInt ) != 0 );
         }
 
         public static String GetName( T value ) {
             String name;
-            names.TryGetValue( value, out name );
+            Names.TryGetValue( value, out name );
             return name;
         }
 
-        public static String[] GetNames() => names.Values.ToArray();
+        public static String[] GetNames() => Names.Values.ToArray();
 
-        public static IEnumerable<T> GetValues() => all;
+        public static IEnumerable<T> GetValues() => ALL;
 
-        public static Boolean IsDefined( T value ) => names.Keys.Contains( value );
+        public static Boolean IsDefined( T value ) => Names.Keys.Contains( value );
 
-        public static Boolean IsDefined( String value ) => sensitiveNames.Keys.Contains( value );
+        public static Boolean IsDefined( String value ) => SensitiveNames.Keys.Contains( value );
 
-        public static Boolean IsDefined( int value ) => values.Keys.Contains( value );
+        public static Boolean IsDefined( int value ) => Values.Keys.Contains( value );
 
         public static T Parse( String value ) {
             T parsed;
-            if ( !sensitiveNames.TryGetValue( value, out parsed ) ) {
+            if ( !SensitiveNames.TryGetValue( value, out parsed ) ) {
                 throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) );
             }
             return parsed;
@@ -84,7 +84,7 @@ namespace Librainian.Extensions {
             }
 
             T parsed;
-            if ( !insensitiveNames.TryGetValue( value.ToUpperInvariant(), out parsed ) ) {
+            if ( !InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out parsed ) ) {
                 throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) );
             }
             return parsed;
@@ -96,7 +96,7 @@ namespace Librainian.Extensions {
             }
 
             T foundValue;
-            if ( sensitiveNames.TryGetValue( value, out foundValue ) ) {
+            if ( SensitiveNames.TryGetValue( value, out foundValue ) ) {
                 return foundValue;
             }
 
@@ -113,7 +113,7 @@ namespace Librainian.Extensions {
             }
 
             T foundValue;
-            if ( insensitiveNames.TryGetValue( value.ToUpperInvariant(), out foundValue ) ) {
+            if ( InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out foundValue ) ) {
                 return foundValue;
             }
 
@@ -124,11 +124,11 @@ namespace Librainian.Extensions {
             var combined = flags.Aggregate( default(int), ( current, flag ) => current | Convert.ToInt32( flag ) );
 
             T result;
-            return values.TryGetValue( combined, out result ) ? result : default(T);
+            return Values.TryGetValue( combined, out result ) ? result : default(T);
         }
 
-        public static Boolean TryParse( String value, out T returnValue ) => sensitiveNames.TryGetValue( value, out returnValue );
+        public static Boolean TryParse( String value, out T returnValue ) => SensitiveNames.TryGetValue( value, out returnValue );
 
-        public static Boolean TryParse( String value, Boolean ignoreCase, out T returnValue ) => ignoreCase ? insensitiveNames.TryGetValue( value.ToUpperInvariant(), out returnValue ) : TryParse( value, out returnValue );
+        public static Boolean TryParse( String value, Boolean ignoreCase, out T returnValue ) => ignoreCase ? InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out returnValue ) : TryParse( value, out returnValue );
     }
 }

@@ -58,9 +58,7 @@ namespace Librainian.Collections {
                     return;
                 }
 
-                if ( this._parent != null ) {
-                    this._parent.Children.Remove( this );
-                }
+                this._parent?.Children.Remove( this );
 
                 if ( value != null && !value.Children.Contains( this ) ) {
                     value.Children.Add( this );
@@ -127,9 +125,7 @@ namespace Librainian.Collections {
         }
 
         protected void OnDisposing() {
-            if ( this.Disposing != null ) {
-                this.Disposing( this, EventArgs.Empty );
-            }
+            this.Disposing?.Invoke( this, EventArgs.Empty );
         }
     }
 }

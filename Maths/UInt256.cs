@@ -106,7 +106,7 @@ namespace Librainian.Maths {
 
         public static explicit operator BigInteger( UInt256 value ) => value.ToBigInteger();
 
-        public static explicit operator double( UInt256 value ) => ( double )value.ToBigInteger();
+        public static explicit operator double ( UInt256 value ) => ( double )value.ToBigInteger();
 
         //TODO properly taken into account host endianness
         public static UInt256 FromByteArrayBE( byte[] buffer ) {

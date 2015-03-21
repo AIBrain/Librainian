@@ -173,39 +173,29 @@ namespace Librainian.Controls {
         ///     Safely perform the <see cref="ProgressBar.PerformStep" />  across threads.
         /// </summary>
         /// <param name="control"></param>
-        public static void Step( [CanBeNull] this ProgressBar control ) {
-            if ( null == control ) {
-                return;
-            }
-            control.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
-                if ( control.Style != ProgressBarStyle.Marquee ) {
-                    control.PerformStep();
-                }
-                control.Refresh();
-            } );
-        }
+        public static void Step( [CanBeNull] this ProgressBar control ) => control?.OnThread( () => {
+                                                                                                  if ( control.IsDisposed ) {
+                                                                                                      return;
+                                                                                                  }
+                                                                                                  if ( control.Style != ProgressBarStyle.Marquee ) {
+                                                                                                      control.PerformStep();
+                                                                                                  }
+                                                                                                  control.Refresh();
+                                                                                              } );
 
         /// <summary>
         ///     Safely perform the <see cref="ProgressBar.PerformStep" />  across threads.
         /// </summary>
         /// <param name="control"></param>
-        public static void Step( [CanBeNull] this ToolStripProgressBar control ) {
-            if ( null == control ) {
-                return;
-            }
-            control.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
-                control.PerformStep();
-                if ( !control.IsDisposed && null != control.ProgressBar ) {
-                    control.ProgressBar.Refresh();
-                }
-            } );
-        }
+        public static void Step( [CanBeNull] this ToolStripProgressBar control ) => control?.OnThread( () => {
+                                                                                                           if ( control.IsDisposed ) {
+                                                                                                               return;
+                                                                                                           }
+                                                                                                           control.PerformStep();
+                                                                                                           if ( !control.IsDisposed ) {
+                                                                                                               control.ProgressBar?.Refresh();
+                                                                                                           }
+                                                                                                       } );
 
         /// <summary>
         ///     Perform an <see cref="Action" /> on a <see cref="ToolStripItem" />'s thread.

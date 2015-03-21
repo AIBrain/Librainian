@@ -180,6 +180,7 @@ namespace Librainian.Threading {
         /// <summary>
         ///     Force a memory garbage collection on generation0 and generation1 objects.
         /// </summary>
+        /// <seealso cref="http://programmers.stackexchange.com/questions/276585/when-is-it-a-good-idea-to-force-garbage-collection"/>
         public static void Garbage() {
             var before = GC.GetTotalMemory( forceFullCollection: false );
             GC.Collect( generation: 1, mode: GCCollectionMode.Optimized, blocking: false );

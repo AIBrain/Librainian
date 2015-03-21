@@ -34,7 +34,6 @@ namespace Librainian.Maths {
         ///     ONLY always somtimes used in the getter and setter.
         /// </summary>
         [DataMember]
-        
         private long _value;
 
         public AtomicInt( int value = 0 ) {
@@ -44,7 +43,7 @@ namespace Librainian.Maths {
         public int Value {
             get {
 
-                // this page says the CompareExchange
+                // this page says to use the CompareExchange
                 // http://msdn.microsoft.com/query/dev10.query?appId=Dev10IDEF1&l=EN-US&k=k(SYSTEM.THREADING.INTERLOCKED.READ);k(TargetFrameworkMoniker-%22.NETFRAMEWORK%2cVERSION%3dV4.0%22);k(DevLang-CSHARP)&rd=true
                 //return Interlocked.CompareExchange( ref this._value, 0, 0);
                 return ( int )Interlocked.Read( ref this._value );
@@ -65,7 +64,7 @@ namespace Librainian.Maths {
         //    return Interlocked.Add( ref this._value, -byAmount );
         //}
 
-        public static implicit operator int( AtomicInt special ) => special.Value;
+        public static implicit operator int ( AtomicInt special ) => special.Value;
 
         public static AtomicInt operator -( AtomicInt a1, AtomicInt a2 ) => new AtomicInt( a1.Value - a2.Value );
 

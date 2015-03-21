@@ -89,7 +89,7 @@ namespace Librainian.Threading {
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static Double DoBusyWork( this UInt64 iterations ) {
             Double work = 0;
-            for ( var i = 0ul ; i < iterations ; i++ ) {
+            for ( var i = 0ul; i < iterations; i++ ) {
                 work += 1001.671;
             }
             return work;
@@ -311,6 +311,34 @@ namespace Librainian.Threading {
         /// </summary>
         /// <returns></returns>
         public static Boolean NextBooleanFast() => Instance.Next( 2 ) == 0;
+
+        /// <summary>
+        /// <para>Returns a random digit between 0 and 9.</para>
+        /// </summary>
+        /// <returns></returns>
+        public static Byte NextDigit() {
+            unchecked {
+                Byte[] buffer = { 0 };
+                Instance.NextBytes( buffer );
+                var result = buffer[ 0 ];
+                result %= 10;   //TODO bug check, is modulo inclusive?
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// <para>Returns a random digit (0,1,2,3,4,5,6,7,8,9) between  and 9.</para>
+        /// </summary>
+        /// <returns></returns>
+        public static Byte NextDigit( Digit min, Digit max ) {
+            unchecked {
+                Byte[] buffer = { 0 };
+                Instance.NextBytes( buffer );
+                var result = buffer[ 0 ];
+                result %= 10;   //TODO bug check, is modulo inclusive?
+                return result;
+            }
+        }
 
         /// <summary>
         /// <para>Returns a random <see cref="Byte" />.</para>
@@ -544,9 +572,9 @@ namespace Librainian.Threading {
             return BitConverter.ToUInt64( value: LocalUInt64Buffers.Value, startIndex: 0 );
         }
 
-        public static DateTime RandomDateTime( this DateTime value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds * Instance.NextDouble() );
+        public static DateTime NextDateTime( this DateTime value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds * Instance.NextDouble() );
 
-        public static DateTime RandomDateTime( this DateTime earlier, DateTime later ) {
+        public static DateTime NextDateTime( this DateTime earlier, DateTime later ) {
             if ( earlier > later ) {
                 Utility.Swap( ref earlier, ref later );
             }
@@ -554,13 +582,13 @@ namespace Librainian.Threading {
             return earlier + new Milliseconds( range.TotalMilliseconds );
         }
 
-        public static DateTimeOffset RandomDateTimeOffset( this DateTimeOffset value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds * Instance.NextDouble() );
+        public static DateTimeOffset NextDateTimeOffset( this DateTimeOffset value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds * Instance.NextDouble() );
 
         /// <summary>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T RandomEnum<T>() where T : struct {
+        public static T NextEnum<T>() where T : struct {
             if ( !typeof(T).IsEnum ) {
                 return default(T);
             }
@@ -588,17 +616,17 @@ namespace Librainian.Threading {
             // ReSharper disable once FunctionNeverReturns
         }
 
-        public static Sentence RandomSentence( int avgWords = 8 ) {
+        public static Sentence RandomSentence( int avgWords = 7 ) {
             var list = new List<Word>();
 
             if ( NextBoolean() ) {
-                ++avgWords;
+                avgWords += Randem.NextByte;
             }
             else if ( NextBoolean() ) {
                 --avgWords;
             }
 
-            for ( var i = 0 ; i < avgWords ; i++ ) {
+            for ( var i = 0; i < avgWords; i++ ) {
                 list.Add( RandomWord() );
             }
             return new Sentence( list );
@@ -622,7 +650,7 @@ namespace Librainian.Threading {
         }
 
         public static Word RandomWord( int avglength = 5, Boolean lowerCase = true, Boolean upperCase = true, Boolean numbers = false, Boolean symbols = false ) {
-            var word = RandomString( Next( avglength - 2, avglength + 2 ), lowerCase, upperCase, numbers, symbols );
+            var word = RandomString( length: Next( avglength - 2, avglength + 2 ), lowerCase: lowerCase, upperCase: upperCase, numbers: numbers, symbols: symbols );
             return new Word( word );
         }
 
@@ -687,4 +715,6 @@ namespace Librainian.Threading {
                 }
         */
     }
+
+    
 }

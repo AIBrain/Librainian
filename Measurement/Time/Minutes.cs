@@ -29,7 +29,7 @@ namespace Librainian.Measurement.Time {
 	using FluentAssertions;
 	using JetBrains.Annotations;
 	using Librainian.Extensions;
-	using Librainian.Maths;
+	using Maths;
 	using Parsing;
 
 	[DataContract( IsReference = true )]

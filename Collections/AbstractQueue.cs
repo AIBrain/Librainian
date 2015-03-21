@@ -216,10 +216,7 @@ namespace Librainian.Collections {
             if ( action == null ) {
                 throw new ArgumentNullException( nameof( action ) );
             }
-            if ( maxElements <= 0 ) {
-                return 0;
-            }
-            return this.DoDrain( action, maxElements, criteria );
+            return maxElements > 0 ? this.DoDrain( action, maxElements, criteria ) : 0;
         }
 
         /// <summary>

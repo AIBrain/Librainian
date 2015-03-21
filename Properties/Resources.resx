@@ -120,4 +120,7 @@
   <data name="_Please_direct_me_to_a_folder_" xml:space="preserve">
     <value>Please direct me to a folder.</value>
   </data>
+  <data name="Out_of_range" xml:space="preserve">
+    <value>Out of range</value>
+  </data>
 </root>

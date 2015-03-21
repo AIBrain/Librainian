@@ -175,6 +175,7 @@
     <Compile Include="Extensions\SafeSearchHandle.cs" />
     <Compile Include="Gaming\FlippedCoin.cs" />
     <Compile Include="Internet\Browser\AwesomiumWrapper.cs" />
+    <Compile Include="Maths\Digit.cs" />
     <Compile Include="Measurement\Frequency\FPS.cs" />
     <Compile Include="Parsing\Strand.cs" />
     <Compile Include="Properties\Annotations.cs" />
@@ -598,7 +599,7 @@
     <Compile Include="Threading\RandomOrg\Quota.cs" />
     <Compile Include="Threading\RandomOrg\IntegerGenerator.cs" />
     <Compile Include="Threading\RandomOrg\WebInterface.cs" />
-    <Compile Include="Threading\Volatile.cs" />
+    <Compile Include="Threading\Volatiles.cs" />
     <Compile Include="Threading\ParallelAlgorithms.cs" />
     <Compile Include="Threading\CustomAttribute.cs" />
     <Compile Include="Extensions\Combiner.cs" />

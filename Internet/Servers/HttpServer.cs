@@ -113,6 +113,7 @@ namespace Librainian.Internet.Servers {
             //    this.thrHttps.Name = "HttpsServer Thread";
             //}
 
+            // ReSharper disable once LoopCanBePartlyConvertedToQuery
             foreach ( var addr in Dns.GetHostEntry( Dns.GetHostName() ).AddressList ) {
                 if ( addr.AddressFamily == AddressFamily.InterNetwork ) {
                     var bytes = addr.GetAddressBytes();

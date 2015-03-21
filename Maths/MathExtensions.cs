@@ -639,7 +639,72 @@ namespace Librainian.Maths {
 		[Pure]
 		public static TimeSpan Thrice( this TimeSpan timeSpan ) => TimeSpan.FromTicks( timeSpan.Ticks.Thrice() );
 
-		public static Int32 Half( this Int32 number ) => ( Int32 )( number / 2.0f );
+
+        /// <summary>
+        /// Returns true if <paramref name="number"/> is greater than or equal to 1.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        [Pure]
+        public static Boolean Any( this Int16 number ) => number >= 1;
+
+        /// <summary>
+        /// Returns true if <paramref name="number"/> is greater than or equal to 1.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        [Pure]
+        public static Boolean Any( this Int32 number ) => number >= 1;
+
+        /// <summary>
+        /// Returns true if <paramref name="number"/> is greater than or equal to 1.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        [Pure]
+        public static Boolean Any( this Int64 number ) => number >= 1;
+
+        /// <summary>
+        /// Returns true if <paramref name="number"/> is greater than or equal to 1.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        [Pure]
+        public static Boolean Any( this UInt16 number ) => number >= 1;
+
+        /// <summary>
+        /// Returns true if <paramref name="number"/> is greater than or equal to 1.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        [Pure]
+        public static Boolean Any( this UInt32 number ) => number >= 1;
+
+        /// <summary>
+        /// Returns true if <paramref name="number"/> is greater than or equal to 1.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        [Pure]
+        public static Boolean Any( this UInt64 number ) => number >= 1;
+
+        /// <summary>
+        /// Returns true if <paramref name="number"/> is greater than or equal to 1.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        [Pure]
+        public static Boolean Any( this Decimal number ) => number >= 1;
+
+        /// <summary>
+        /// Returns true if <paramref name="number"/> is greater than or equal to 1.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        [Pure]
+        public static Boolean Any( this Double number ) => number >= 1;
+
+	    public static Int32 Half( this Int32 number ) => ( Int32 )( number / 2.0f );
 
 		public static Int16 Half( this Int16 number ) => ( Int16 )( number / 2.0f );
 
@@ -927,15 +992,17 @@ namespace Librainian.Maths {
 			return taxed;
 		}
 
+/*
 		public static T Max<T>( T value, params T[] values ) where T : IComparable<T> {
 			var max = value;
 			foreach ( var other in values ) {
-				if ( 0 > max.CompareTo( other ) ) {
+				if ( max.CompareTo( other ) < 0 ) {
 					max = other;
 				}
 			}
 			return max;
 		}
+*/
 
 		public static Double Phi( this Double x ) {
 			// constants

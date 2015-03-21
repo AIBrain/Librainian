@@ -13,6 +13,7 @@ namespace Librainian.Threading {
     using System.Threading;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
+    using Maths;
     using Measurement.Time;
 
     public static class ThreadingExtensions {
@@ -274,7 +275,7 @@ namespace Librainian.Threading {
             if ( null == action ) {
                 return;
             }
-            for ( var i = 0 ; i < Math.Abs( times ) ; i++ ) {
+            for ( var i = 0; i < Math.Abs( times ); i++ ) {
                 action();
             }
         }
@@ -283,7 +284,7 @@ namespace Librainian.Threading {
             if ( null == action ) {
                 return;
             }
-            for ( var i = 0 ; i < Math.Abs( times ) ; i++ ) {
+            for ( var i = 0; i < Math.Abs( times ); i++ ) {
                 action();
             }
         }
@@ -311,7 +312,7 @@ namespace Librainian.Threading {
                 output( description );
             }
             if ( inParallel ) {
-                var result = Parallel.ForEach( tasks, task => task?.Invoke());
+                var result = Parallel.ForEach( tasks, task => task?.Invoke() );
                 return result.IsCompleted;
             }
             foreach ( var task in tasks ) {
@@ -356,7 +357,7 @@ namespace Librainian.Threading {
         /// <copyright>http://blogs.msdn.com/b/pfxteam/archive/2012/10/05/how-do-i-cancel-non-cancelable-async-operations.aspx</copyright>
         public static async Task<T> WithCancellation<T>( this Task<T> task, CancellationToken cancellationToken ) {
             var tcs = new TaskCompletionSource<bool>();
-            using ( cancellationToken.Register( o => ( ( TaskCompletionSource< bool > ) o ).TrySetResult( true ), tcs ) ) {
+            using (cancellationToken.Register( o => ( ( TaskCompletionSource<bool> )o ).TrySetResult( true ), tcs )) {
                 if ( task != await Task.WhenAny( task, tcs.Task ) ) {
                     throw new OperationCanceledException( cancellationToken );
                 }
@@ -691,6 +692,8 @@ namespace Librainian.Threading {
         /// <param name="callerMemberName"></param>
         /// <returns></returns>
         public static Boolean Wrap( this Action action, Boolean timeAction = true, TimeSpan? andTookLongerThan = null, Action onException = null, [CallerMemberName] String callerMemberName = "" ) {
+            var attempts = 2;
+            TryAgain:
             try {
                 if ( null != action ) {
                     if ( timeAction ) {
@@ -712,6 +715,10 @@ namespace Librainian.Threading {
             catch ( OutOfMemoryException lowMemory ) {
                 lowMemory.More();
                 Log.Garbage();
+                attempts--;
+                if ( attempts.Any() ) {
+                    goto TryAgain;
+                }
             }
             catch ( Exception exception ) {
                 if ( null != onException ) {

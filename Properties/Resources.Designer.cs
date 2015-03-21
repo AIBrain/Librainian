@@ -68,5 +68,14 @@ namespace Librainian.Properties {
                 return ResourceManager.GetString("_Please_direct_me_to_a_folder_", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Out of range.
+        /// </summary>
+        internal static string Out_of_range {
+            get {
+                return ResourceManager.GetString("Out_of_range", resourceCulture);
+            }
+        }
     }
 }

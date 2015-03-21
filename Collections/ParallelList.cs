@@ -383,9 +383,7 @@ namespace Librainian.Collections {
                 }
                 finally {
                     this.AnItemHasBeenAdded();
-                    if ( afterAdd != null ) {
-                        afterAdd();
-                    }
+                    afterAdd?.Invoke();
                 }
             } ) );
         }
@@ -449,9 +447,7 @@ namespace Librainian.Collections {
                 }
             }
             finally {
-                if ( afterRangeAdded != null ) {
-                    afterRangeAdded();
-                }
+                afterRangeAdded?.Invoke();
             }
         }
 
@@ -579,10 +575,8 @@ namespace Librainian.Collections {
                     return false;
                 }
                 var result = this._list[ index ];
-                if ( afterGet != null ) {
-                    afterGet( result );
-                }
-                return true;
+                                                                afterGet?.Invoke( result );
+                                                                return true;
             } ) );
         }
 
@@ -598,9 +592,7 @@ namespace Librainian.Collections {
         private void AnItemHasBeenRemoved( [CanBeNull] Action action = null ) {
             this._waitingToBeRemovedCounter.Value--;
             this._itemCounter.Value--;
-            if ( action != null ) {
-                action();
-            }
+            action?.Invoke();
         }
 
         /// <summary>
