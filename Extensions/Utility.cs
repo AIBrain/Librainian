@@ -132,12 +132,6 @@ namespace Librainian.Extensions {
         //    Debug.WriteLine( "[Warning: " + message + "]" );
         //}
 
-        public static void Swap<T>( ref T arg1, ref T arg2 ) {
-            var temp = arg1;
-            arg1 = arg2;
-            arg2 = temp;
-        }
-
         //public static void LogWarning( Exception exception ) {
         //    Debug.WriteLine( "[Warning: " );
         //    Debug.Indent();

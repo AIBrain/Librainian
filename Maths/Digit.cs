@@ -63,7 +63,7 @@ namespace Librainian.Maths {
             }
         }
 
-        public string ToNumber() => this.Value.ToString();
+        public string Number() => this.Value.ToString();
 
         public static bool operator <( Digit left, Digit right ) => left.Value < right.Value;
 
@@ -72,5 +72,38 @@ namespace Librainian.Maths {
         public static bool operator <=( Digit left, Digit right ) => left.Value <= right.Value;
 
         public static bool operator >=( Digit left, Digit right ) => left.Value >= right.Value;
+
+        public static bool operator <( Digit left, SByte right ) => left.Value < right;
+
+        public static bool operator >( Digit left, SByte right ) => left.Value > right;
+
+        public static bool operator <=( Digit left, SByte right ) => left.Value <= right;
+
+        public static bool operator >=( Digit left, SByte right ) => left.Value >= right;
+
+        public static bool operator <( Digit left, Byte right ) => left.Value < right;
+
+        public static bool operator >( Digit left, Byte right ) => left.Value > right;
+
+        public static bool operator <=( Digit left, Byte right ) => left.Value <= right;
+
+        public static bool operator >=( Digit left, Byte right ) => left.Value >= right;
+
+        public static bool operator <( Byte left, Digit right ) => left < right.Value;
+
+        public static bool operator >( Byte left, Digit right ) => left > right.Value;
+
+        public static bool operator <=( Byte left, Digit right ) => left <= right.Value;
+
+        public static bool operator >=( Byte left, Digit right ) => left >= right.Value;
+
+        public static bool operator <( SByte left, Digit right ) => left < right.Value;
+
+        public static bool operator >( SByte left, Digit right ) => left > right.Value;
+
+        public static bool operator <=( SByte left, Digit right ) => left <= right.Value;
+
+        public static bool operator >=( SByte left, Digit right ) => left >= right.Value;
+
     }
 }

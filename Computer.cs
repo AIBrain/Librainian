@@ -171,12 +171,15 @@ namespace Librainian {
                     return true;
                 }
                 var megabytes = bytes / MathExtensions.OneMegaByteBI;
+
                 if ( megabytes <= BigInteger.Zero ) {
                     return true;
                 }
+
                 if ( megabytes > Int32.MaxValue ) {
                     megabytes = Int32.MaxValue;
                 }
+
                 if ( bytes > GetAvailableMemeory() ) {
                     GC.Collect();
                 }
