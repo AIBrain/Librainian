@@ -36,7 +36,7 @@ namespace Librainian.Maths {
     ///         All operations are exact, except for division. Division never determines more digits than the given
     ///         precision.
     ///     </para>
-    ///     <para>Based on http://stackoverflow.com/a/4524254</para>
+    ///     <para>Based on http://stackoverflow.com/a/4524254 spacer </para>
     ///     <para>Author: Jan Christoph Bernack (contact: jc.bernack at googlemail.com)</para>
     ///     <para>Joined with code from nberardi from gist 2667136</para>
     ///     <para>Rewritten into an immutable struct by Rick@aibrain.org in August 2014</para>
@@ -90,14 +90,21 @@ namespace Librainian.Maths {
         public BigDecimal( float value ) : this( bigDecimal: value ) {
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="significand"></param>
+        /// <param name="exponent"></param>
         public BigDecimal( BigInteger significand, Int32 exponent ) {
             this.Significand = significand;
             this.Exponent = exponent;
 
             //BUG is this correct?
+            //TODO
 
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             while ( exponent > 0 && this.Significand % 10 == 0 ) {
-                if ( this.Significand == 0 ) {
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                if ( Significand == 0 ) {
                     break;
                 }
                 this.Significand /= 10;

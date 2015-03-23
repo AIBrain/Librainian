@@ -17,11 +17,9 @@
 // "Librainian/WordGuid.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
 #endregion
 
+// ReSharper disable once EmptyNamespace
 namespace Librainian.Parsing {
-    using System;
-    using Collections;
-    using Threading;
-
+/*
     [Obsolete]
     public class WordGuid {
         private readonly Action< String > Info = obj => obj.WriteLine();
@@ -104,4 +102,5 @@ namespace Librainian.Parsing {
             return String.Empty;
         }
     }
+*/
 }

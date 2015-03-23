@@ -10,6 +10,7 @@ namespace Librainian.Threading {
     /// Fluent Actor test class.
     /// </summary>
     /// <copyright>Rick@AIBrain.org 2014</copyright>
+    /// <remarks>Don't use this class, was just an idea...</remarks>
     public class Actor {
 
         internal class Player {
@@ -31,7 +32,7 @@ namespace Librainian.Threading {
         }
 
         [NotNull]
-        internal Player Current = new Player();
+        internal Player Current;
 
         internal readonly BlockingCollection<Player> Actions = new BlockingCollection<Player>();
 

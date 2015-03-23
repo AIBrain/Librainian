@@ -24,6 +24,8 @@ namespace Librainian.Parsing {
     using Threading;
 
     public class TranslationDictionary {
+
+        //TODO this needs to be changed to a modifiable list
         public enum Languages {
             English,
 
@@ -40,7 +42,7 @@ namespace Librainian.Parsing {
         /// <summary>
         ///     The language defined in this dictionary.
         /// </summary>
-        public Languages Language = Languages.English;
+        public Languages Language;
 
         //public static AIBrain.Persist.PersistedHashTable RawDefinitions;
         //public static Persisted.PersistedPKPKTable Definitions;

@@ -201,14 +201,16 @@ namespace Librainian.Collections {
                         // Bingo !
                         return p - seq.Length + 1;
                     }
-                } else // Mismatch
-                  {
+                }
+                else // Mismatch
+                {
                     // Do we have prospective matches to fall back to ?
                     if ( prospects.Count > 0 ) {
                         // Yes, use the first one
                         var k = prospects[ 0 ];
                         i = p - k + 1;
-                    } else {
+                    }
+                    else {
                         // No, start from beginning of searched sequence
                         i = 0;
                     }
@@ -358,7 +360,7 @@ namespace Librainian.Collections {
             return removed;
         }
 
-        public static int Clear< T >( [ NotNull ] this IProducerConsumerCollection< T > collection ) => collection.RemoveAll();
+        public static int Clear<T>( [NotNull] this IProducerConsumerCollection<T> collection ) => collection.RemoveAll();
 
         public static int RemoveAll<T>( [NotNull] this IProducerConsumerCollection<T> collection ) {
             if ( collection == null ) {
@@ -559,12 +561,20 @@ namespace Librainian.Collections {
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
         /// <param name="iterations"></param>
+        /// <param name="forHowLong"></param>
+        /// <param name="orUntilCancel"></param>
         /// <remarks>The while.Any() could be replaced with a for loop.. the count is well known ahead of time.</remarks>
         /// <remarks>The new List(itemCount) could be streamlined to a lower number, once we know how much List.Add increments its allocations. For large lists hitting an OoM exception.</remarks>
-        public static void ShuffleByHarker<T>( ref List<T> list, UInt64 iterations = 1 ) {
+        public static void ShuffleByHarker<T>( ref List<T> list, UInt64 iterations = 1, TimeSpan? forHowLong = null, SimpleCancel orUntilCancel = null ) {
             var itemCount = list.Count;
 
             var copy = new List<T>( itemCount );
+
+            Stopwatch whenStarted = Stopwatch.StartNew();
+
+            if ( !forHowLong.HasValue ) {
+                forHowLong = TimeSpan.Zero;
+            }
 
             while ( iterations > 0 ) {
                 iterations--;
@@ -584,6 +594,10 @@ namespace Librainian.Collections {
                 }
 
                 copy.Should().BeEmpty();
+
+                if ( whenStarted.Elapsed < forHowLong ) {
+                    iterations++;
+                }
             }
             list.Count.Should().Be( itemCount );
         }
@@ -742,7 +756,8 @@ namespace Librainian.Collections {
 
             if ( String.IsNullOrEmpty( atTheEnd ) || list.Count <= 2 ) {
                 result = String.Join( separator, list );
-            } else {
+            }
+            else {
                 result = String.Join( separator, list.Take( list.Count - 2 ) );
                 while ( list.Count > 2 ) {
                     list.RemoveAt( 0 );

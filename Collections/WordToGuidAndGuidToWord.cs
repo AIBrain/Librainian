@@ -1,23 +1,24 @@
-#region License & Information
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
 // or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
-// "Librainian/WordToGuidAndGuidToWord.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
-#endregion
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian 2015/WordToGuidAndGuidToWord.cs" was last cleaned by aibra_000 on 2015/03/22 at 5:34 PM
 
 namespace Librainian.Collections {
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -30,18 +31,15 @@ namespace Librainian.Collections {
     /// <summary>
     ///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
     /// </summary>
-    [DataContract( IsReference = true )]
+    [DataContract(IsReference = true)]
     public class WordToGuidAndGuidToWord : Dirtyable {
         private readonly String _baseCollectionName = "WordToGuidAndGuidToWord";
-
-        private readonly String _baseCollectionNameExt = String.Empty;
+        private readonly String _baseCollectionNameExt;
 
         [DataMember]
-        
         private readonly ConcurrentDictionary<Guid, String> _guids = new ConcurrentDictionary<Guid, String>();
 
         [DataMember]
-        
         private readonly ConcurrentDictionary<String, Guid> _words = new ConcurrentDictionary<String, Guid>();
 
         public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) {
@@ -52,6 +50,7 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( nameof( baseCollectionNameExt ) );
             }
             this.IsDirty = false;
+            this._baseCollectionNameExt = String.Empty;
 
             if ( !String.IsNullOrEmpty( baseCollectionName ) ) {
                 this._baseCollectionName = baseCollectionName;
@@ -142,21 +141,21 @@ namespace Librainian.Collections {
         /// <summary>
         ///     Returns true if the word is contained in the collections.
         /// </summary>
-        /// <param name="daword"></param>
+        /// <param name="theWord"></param>
         /// <returns></returns>
-        public Boolean Contains( [NotNull] String daword ) {
-            if ( daword == null ) {
-                throw new ArgumentNullException( nameof( daword ) );
+        public Boolean Contains( [NotNull] String theWord ) {
+            if ( theWord == null ) {
+                throw new ArgumentNullException( nameof( theWord ) );
             }
-            return this._words.Keys.Contains( daword ) && this._guids.Values.Contains( daword );
+            return this._words.Keys.Contains( theWord ) && this._guids.Values.Contains( theWord );
         }
 
         /// <summary>
         ///     Returns true if the guid is contained in the collection.
         /// </summary>
-        /// <param name="daguid"></param>
+        /// <param name="theGuid"></param>
         /// <returns></returns>
-        public Boolean Contains( Guid daguid ) => this._words.Values.Contains( daguid ) && this._guids.Keys.Contains( daguid );
+        public Boolean Contains( Guid theGuid ) => this._words.Values.Contains( theGuid ) && this._guids.Keys.Contains( theGuid );
 
         public Boolean Load() {
             if ( this._baseCollectionName == null ) {
