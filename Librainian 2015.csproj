@@ -77,7 +77,7 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="CodeFluent.Runtime.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1bb6d7cccf1045ec, processorArchitecture=MSIL">
-      <HintPath>..\Multifarious 2015\packages\CodeFluentRuntimeClient.1.0.0.803\lib\CodeFluent.Runtime.Client.dll</HintPath>
+      <HintPath>..\AIBrain 2015\packages\CodeFluentRuntimeClient.1.0.0.805\lib\CodeFluent.Runtime.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CsQuery">
@@ -103,8 +103,6 @@
     <Reference Include="FluentAssertions.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <HintPath>..\Multifarious 2015\packages\FluentAssertions.3.3.0\lib\net45\FluentAssertions.Core.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="MathNet.Numerics, Version=3.5.0.0, Culture=neutral, processorArchitecture=MSIL">
     </Reference>
     <Reference Include="Microsoft.Dynamic">
     </Reference>

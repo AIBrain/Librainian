@@ -105,7 +105,11 @@ namespace Librainian.IO {
 
         public Document( FileInfo info ) : this( info.FullName ) { }
 
-        public Document( Folder folder, String filename ) : this( folder.FullName, filename ) { }
+        public Document( [NotNull] Folder folder, String filename ) : this( folder.FullName, filename ) {
+            if ( folder == null ) {
+                throw new ArgumentNullException( nameof( folder ) );
+            }
+        }
 
         /// <summary>
         ///     Empty? Directory.GetCurrentDirectory()?
@@ -125,8 +129,10 @@ namespace Librainian.IO {
 
         public Document( Folder folder, Document document ) : this( Path.Combine( folder.FullName, document.FileName ) ) { }
 
+/*
         [NotNull]
         public static IDocument Empty { get; } = new Document();
+*/
 
         /// <summary>
         ///     <para>Returns the extension of the <see cref="FileName" />, including the prefix ".".</para>
