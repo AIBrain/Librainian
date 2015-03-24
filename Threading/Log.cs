@@ -36,6 +36,7 @@ namespace Librainian.Threading {
 
     /// <summary>
     ///     A class to help with exception handling and plain ol' simple time+logging to the Console.
+    /// I feel like this is a reinvented wheel..
     /// </summary>
     public static class Log {
         private static readonly ConsoleListenerWithTimePrefix ConsoleListener;
@@ -116,11 +117,37 @@ namespace Librainian.Threading {
             ConsoleListener.IndentLevel--;
         }
 
+        /// <summary>
+        /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/> </para>
+        /// <para>See also: <seealso cref="Message"/>, <seealso cref="Info"/>, <seealso cref="Warning"/>, and <seealso cref="Error"/>.</para>
+        /// </summary>
+        /// <param name="message"></param>
         [DebuggerStepThrough]
         public static void Message( String message, [CallerMemberName] String method = "" ) => String.Format( "{0}: {1}", method.NullIfEmpty() ?? "?", message ).WriteLine();
 
+        /// <summary>
+        /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/> </para>
+        /// <para>See also: <seealso cref="Message"/>, <seealso cref="Info"/>, <seealso cref="Warning"/>, and <seealso cref="Error"/>.</para>
+        /// </summary>
+        /// <param name="message"></param>
         [DebuggerStepThrough]
-        public static void Info( this String message ) => String.Format( "{0}", message ).WriteLine();
+        public static void Info( this String message ) => String.Format( "Info: {0}", message ).WriteLine();
+
+        /// <summary>
+        /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/> </para>
+        /// <para>See also: <seealso cref="Message"/>, <seealso cref="Info"/>, <seealso cref="Warning"/>, and <seealso cref="Error"/>.</para>
+        /// </summary>
+        /// <param name="message"></param>
+        [DebuggerStepThrough]
+        public static void Warning( this String message ) => String.Format( "Warning: {0}", message ).WriteLine();
+
+        /// <summary>
+        /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/> </para>
+        /// <para>See also: <seealso cref="Message"/>, <seealso cref="Info"/>, <seealso cref="Warning"/>, and <seealso cref="Error"/>.</para>
+        /// </summary>
+        /// <param name="message"></param>
+        [DebuggerStepThrough]
+        public static void Error( this String message ) => String.Format( "Error: {0}", message ).WriteLine();
 
         [DebuggerStepThrough]
         public static void Finalized( [CallerMemberName] String method = "" ) => String.Format( "{0}: {1}", "Finalized", method ?? String.Empty ).WriteLine();

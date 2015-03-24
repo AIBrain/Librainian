@@ -262,10 +262,11 @@ namespace Librainian.Collections {
                 array = null;
                 count = 0;
             }
-            if ( array != null ) {
-                Array.Resize( ref array, count );
-                yield return new ReadOnlyCollection<T>( array );
+            if ( array == null ) {
+                yield break;
             }
+            Array.Resize( ref array, count );
+            yield return new ReadOnlyCollection<T>( array );
         }
 
         /// <summary>
@@ -562,21 +563,25 @@ namespace Librainian.Collections {
         /// <param name="list"></param>
         /// <param name="iterations"></param>
         /// <param name="forHowLong"></param>
-        /// <param name="orUntilCancel"></param>
+        /// <param name="orUntilCancelled"></param>
         /// <remarks>The while.Any() could be replaced with a for loop.. the count is well known ahead of time.</remarks>
         /// <remarks>The new List(itemCount) could be streamlined to a lower number, once we know how much List.Add increments its allocations. For large lists hitting an OoM exception.</remarks>
-        public static void ShuffleByHarker<T>( ref List<T> list, UInt64 iterations = 1, TimeSpan? forHowLong = null, SimpleCancel orUntilCancel = null ) {
+        public static void ShuffleByHarker<T>( ref List<T> list, UInt64 iterations = 1, TimeSpan? forHowLong = null, SimpleCancel orUntilCancelled = null ) {
             var itemCount = list.Count;
 
             var copy = new List<T>( itemCount );
 
-            Stopwatch whenStarted = Stopwatch.StartNew();
+            var whenStarted = Stopwatch.StartNew();
+
+            if ( iterations < 1 ) {
+                iterations = 1;
+            }
 
             if ( !forHowLong.HasValue ) {
                 forHowLong = TimeSpan.Zero;
             }
 
-            while ( iterations > 0 ) {
+            do {
                 iterations--;
 
                 while ( list.Any() ) {
@@ -598,7 +603,12 @@ namespace Librainian.Collections {
                 if ( whenStarted.Elapsed < forHowLong ) {
                     iterations++;
                 }
-            }
+
+                if ( null != orUntilCancelled && orUntilCancelled.HaveAnyCancellationsBeenRequested() ) {
+                    break;
+                }
+            } while ( iterations > 0 );
+
             list.Count.Should().Be( itemCount );
         }
 
