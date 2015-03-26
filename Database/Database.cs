@@ -80,7 +80,7 @@ namespace Librainian.Database {
 				Password = this.Password,
 				Pooling = true,
 				MultipleActiveResultSets = true,
-				NetworkLibrary = library,
+				//NetworkLibrary = library,
 				UserID = this.UserName, 
 			};
 
@@ -89,19 +89,22 @@ namespace Librainian.Database {
 			this.Connection.InfoMessage += ( sender, args ) => args.Message.Info();
 			this.Connection.StateChange += ( sender, args ) => String.Format( "sql state changed from {0} to {1}", args.OriginalState, args.CurrentState ).Info();
 #endif
-			this.Connect().Wait();
+		    this.Connect();
 		}
 
-		public Task Connect() {
-			try {
-				if ( this.Connection.State == ConnectionState.Open ) {
-					this.Connection.Close();
-				}
-				return this.Connection.OpenAsync();
-			}
-			finally {
-				this.SinceConnected.Restart();
-			}
+		public Boolean Connect() {
+		    try {
+		        if ( this.Connection.State == ConnectionState.Open ) {
+		            this.Connection.Close();
+		        }
+		        this.Connection.Open();
+                this.SinceConnected.Restart();
+		        return true;
+		    }
+		    catch ( Exception exception ) {
+		        exception.More();
+		        return false;
+		    }
 		}
 
 		public SqlConnection Connection { get; }
@@ -210,8 +213,10 @@ TryAgain:
 						return this.Connection;
 
 					case ConnectionState.Closed:
-						this.Connect().Wait();
-						if ( retries > 0 ) {
+				        if ( this.Connect() ) {
+				            return this.Connection;
+				        }
+				        if ( retries > 0 ) {
 							--retries;
 							goto TryAgain;
 						}
@@ -224,14 +229,16 @@ TryAgain:
 						return this.OpenConnection();
 
 					case ConnectionState.Broken:
-						this.Connect().Wait();
-						if ( retries > 0 ) {
-							--retries;
-							goto TryAgain;
-						}
-						break;
+                        if ( this.Connect() ) {
+                            return this.Connection;
+                        }
+                        if ( retries > 0 ) {
+                            --retries;
+                            goto TryAgain;
+                        }
+                        break;
 
-					default:
+                    default:
 						throw new ArgumentOutOfRangeException();
 				}
 
