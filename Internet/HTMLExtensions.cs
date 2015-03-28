@@ -1,7 +1,7 @@
 namespace Librainian.Internet {
     using System;
 
-    public class HTMLExtensions {
+    public static class HTMLExtensions {
         public const String EmptyHTML5 = "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta charset=\"utf-8\" /><title id=\"title1\"></title></head><body><header id=\"header1\"></header><article id=\"article1\"></article><footer id=\"footer1\"></footer></body></html>";
 
         /// <summary>
