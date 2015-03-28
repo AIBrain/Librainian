@@ -47,7 +47,7 @@ namespace Librainian.Database {
 		/// <summary>
 		///     Create a database object to MainServer
 		/// </summary>
-		public Database( [NotNull] String library, [NotNull] String server, [ NotNull ] String catalog ,[NotNull] String username, [NotNull] String password, Seconds timeout ) {
+		public Database( [NotNull] String library, [NotNull] String server, [ NotNull ] String catalog ,[NotNull] String username, [NotNull] String password, Seconds timeout, Boolean tryConnect = true ) {
 			if ( library == null ) {
 				throw new ArgumentNullException( nameof( library ) );
 			}
@@ -89,10 +89,17 @@ namespace Librainian.Database {
 			this.Connection.InfoMessage += ( sender, args ) => args.Message.Info();
 			this.Connection.StateChange += ( sender, args ) => String.Format( "sql state changed from {0} to {1}", args.OriginalState, args.CurrentState ).Info();
 #endif
-		    this.Connect();
+		    if ( tryConnect ) {
+                try {
+                    this.TryConnect();
+                }
+                catch ( Exception exception) {
+                    exception.More();   //don't let a ctor throw an non-fatal exception. right? //seealso http://blogs.msdn.com/b/ericlippert/archive/2008/09/10/vexing-exceptions.aspx
+                }
+            }
 		}
 
-		public Boolean Connect() {
+		public Boolean TryConnect() {
 		    try {
 		        if ( this.Connection.State == ConnectionState.Open ) {
 		            this.Connection.Close();
@@ -101,13 +108,14 @@ namespace Librainian.Database {
                 this.SinceConnected.Restart();
 		        return true;
 		    }
-		    catch ( Exception exception ) {
+		    catch ( SqlException exception ) {
 		        exception.More();
 		        return false;
 		    }
 		}
 
-		public SqlConnection Connection { get; }
+	    [NotNull]
+	    public SqlConnection Connection { get; }
 
 		private string Library { get; }
 
@@ -213,7 +221,7 @@ TryAgain:
 						return this.Connection;
 
 					case ConnectionState.Closed:
-				        if ( this.Connect() ) {
+				        if ( this.TryConnect() ) {
 				            return this.Connection;
 				        }
 				        if ( retries > 0 ) {
@@ -229,7 +237,7 @@ TryAgain:
 						return this.OpenConnection();
 
 					case ConnectionState.Broken:
-                        if ( this.Connect() ) {
+                        if ( this.TryConnect() ) {
                             return this.Connection;
                         }
                         if ( retries > 0 ) {
