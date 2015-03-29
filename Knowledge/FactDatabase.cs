@@ -115,7 +115,8 @@ namespace Librainian.Knowledge {
             folder.DirectoryInfo.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
 
 
-            //folder = new Folder( Environment.SpecialFolder.CommonDocuments );
+            folder = new Folder( Environment.SpecialFolder.CommonDocuments );
+            folder.DirectoryInfo.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
 
             //folder.DirectoryInfo.FindFiles( fileSearchPatterns: searchPatterns, cancellationToken: cancellationToken, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null, searchStyle: SearchStyle.FilesFirst );
 
