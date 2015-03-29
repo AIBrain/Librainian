@@ -173,6 +173,7 @@
     <Compile Include="Extensions\SafeSearchHandle.cs" />
     <Compile Include="Gaming\FlippedCoin.cs" />
     <Compile Include="Internet\Browser\AwesomiumWrapper.cs" />
+    <Compile Include="Internet\TraceExtensions.cs" />
     <Compile Include="Internet\InternetExtensions.cs" />
     <Compile Include="Maths\Digit.cs" />
     <Compile Include="Measurement\Frequency\FPS.cs" />
