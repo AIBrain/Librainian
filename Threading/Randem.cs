@@ -46,18 +46,18 @@ namespace Librainian.Threading {
         /// <summary>
         ///     Provide to each thread its own <see cref="Random" /> with a random seed.
         /// </summary>
-        public static readonly ThreadLocal< Random > ThreadSafeRandom = new ThreadLocal< Random >( valueFactory: () => {
-                                                                                                                     var hash = ThreadingExtensions.ThreadLocalSHA256Managed.Value.ComputeHash( Guid.NewGuid().ToByteArray() );
-                                                                                                                     var seed = BitConverter.ToInt32( value: hash, startIndex: 0 );
-                                                                                                                     return new Random( seed.GetHashMerge( Thread.CurrentThread.ManagedThreadId ) );
-                                                                                                                 }, trackAllValues: false );
+        public static readonly ThreadLocal<Random> ThreadSafeRandom = new ThreadLocal<Random>( valueFactory: () => {
+            var hash = ThreadingExtensions.ThreadLocalSHA256Managed.Value.ComputeHash( Guid.NewGuid().ToByteArray() );
+            var seed = BitConverter.ToInt32( value: hash, startIndex: 0 );
+            return new Random( seed.GetHashMerge( Thread.CurrentThread.ManagedThreadId ) );
+        }, trackAllValues: false );
 
-        private static readonly ThreadLocal< Byte[] > LocalByteBuffer = new ThreadLocal< byte[] >( () => new byte[sizeof ( Double )], false );
+        private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<byte[]>( () => new byte[ sizeof(Double) ], false );
 
         /// <summary>
         /// </summary>
         [NotNull]
-        public static ConcurrentDictionary< Type, string[] > EnumDictionary { get; } = new ConcurrentDictionary< Type, String[] >();
+        public static ConcurrentDictionary<Type, string[]> EnumDictionary { get; } = new ConcurrentDictionary<Type, String[]>();
 
         /// <summary>
         ///     A thread-local (threadsafe) <see cref="Random" />.
@@ -66,25 +66,25 @@ namespace Librainian.Threading {
         public static Random Instance { get; } = ThreadSafeRandom.Value;
 
         [NotNull]
-        public static ThreadLocal< byte[] > LocalUInt64Buffers { get; } = new ThreadLocal< byte[] >( valueFactory: () => new byte[sizeof ( UInt64 )], trackAllValues: false );
+        public static ThreadLocal<byte[]> LocalUInt64Buffers { get; } = new ThreadLocal<byte[]>( valueFactory: () => new byte[ sizeof(UInt64) ], trackAllValues: false );
 
         /// <summary>
         ///     <para>More cryptographically strong than <see cref="Random" />.</para>
         /// </summary>
         [NotNull]
-        public static ThreadLocal< RandomNumberGenerator > RNG { get; } = new ThreadLocal< RandomNumberGenerator >( () => new RNGCryptoServiceProvider() );
+        public static ThreadLocal<RandomNumberGenerator> RNG { get; } = new ThreadLocal<RandomNumberGenerator>( () => new RNGCryptoServiceProvider() );
 
         [NotNull]
-        private static ThreadLocal< byte[] > LocalInt64Buffers { get; } = new ThreadLocal< byte[] >( valueFactory: () => new byte[sizeof ( Int64 )], trackAllValues: false );
+        private static ThreadLocal<byte[]> LocalInt64Buffers { get; } = new ThreadLocal<byte[]>( valueFactory: () => new byte[ sizeof(Int64) ], trackAllValues: false );
 
-        internal static void AddToList( [NotNull] ConcurrentBag< int > list ) {
+        internal static void AddToList( [NotNull] ConcurrentBag<int> list ) {
             if ( list == null ) {
                 throw new ArgumentNullException( nameof( list ) );
             }
             Parallel.ForEach( 1.To( 128 ), ThreadingExtensions.Parallelism, i => list.Add( Next( minValue: Int32.MinValue, maxValue: Int32.MaxValue ) ) );
         }
 
-        [MethodImpl( MethodImplOptions.NoInlining )]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static Double DoBusyWork( this UInt64 iterations ) {
             Double work = 0;
             for ( var i = 0ul; i < iterations; i++ ) {
@@ -98,35 +98,35 @@ namespace Librainian.Threading {
             if ( rng == null ) {
                 throw new ArgumentNullException( nameof( rng ) );
             }
-            var data = new byte[sizeof ( Char )];
+            var data = new byte[ sizeof(Char) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToChar( data, 0 );
         }
 
         [System.Diagnostics.Contracts.Pure]
         public static Double GetDouble( this RandomNumberGenerator rng ) {
-            var data = new byte[sizeof ( Double )];
+            var data = new byte[ sizeof(Double) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToDouble( data, 0 );
         }
 
         [System.Diagnostics.Contracts.Pure]
         public static Int16 GetInt16( this RandomNumberGenerator rng ) {
-            var data = new byte[sizeof ( Int16 )];
+            var data = new byte[ sizeof(Int16) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToInt16( data, 0 );
         }
 
         [System.Diagnostics.Contracts.Pure]
         public static Int32 GetInt32( this RandomNumberGenerator rng ) {
-            var data = new byte[sizeof ( Int32 )];
+            var data = new byte[ sizeof(Int32) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToInt32( data, 0 );
         }
 
         [System.Diagnostics.Contracts.Pure]
         public static Int64 GetInt64( this RandomNumberGenerator rng ) {
-            var data = new byte[sizeof ( Int64 )];
+            var data = new byte[ sizeof(Int64) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToInt64( data, 0 );
         }
@@ -136,8 +136,8 @@ namespace Librainian.Threading {
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static String[] GetNames< T >() {
-            var key = typeof ( T );
+        public static String[] GetNames<T>() {
+            var key = typeof(T);
             String[] values;
             if ( EnumDictionary.TryGetValue( key, out values ) ) {
                 return values;
@@ -147,41 +147,41 @@ namespace Librainian.Threading {
             return values;
         }
 
-        public static Percentage GetRandomness( this Action< byte[] > randomFunc, UInt16 bytesToTest ) {
-            var buffer = new byte[bytesToTest];
+        public static Percentage GetRandomness( this Action<byte[]> randomFunc, UInt16 bytesToTest ) {
+            var buffer = new byte[ bytesToTest ];
             randomFunc( buffer );
 
             var compressed = buffer.Compress();
 
-            var result = new Percentage( numerator: ( BigInteger ) compressed.LongLength, denominator: buffer.LongLength );
+            var result = new Percentage( numerator: ( BigInteger )compressed.LongLength, denominator: buffer.LongLength );
 
             return result;
         }
 
         [System.Diagnostics.Contracts.Pure]
         public static Single GetSingle( this RandomNumberGenerator rng ) {
-            var data = new byte[sizeof ( Single )];
+            var data = new byte[ sizeof(Single) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToSingle( data, 0 );
         }
 
         [System.Diagnostics.Contracts.Pure]
         public static UInt16 GetUInt16( this RandomNumberGenerator rng ) {
-            var data = new byte[sizeof ( UInt16 )];
+            var data = new byte[ sizeof(UInt16) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToUInt16( data, 0 );
         }
 
         [System.Diagnostics.Contracts.Pure]
         public static UInt32 GetUInt32( this RandomNumberGenerator rng ) {
-            var data = new byte[sizeof ( UInt32 )];
+            var data = new byte[ sizeof(UInt32) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToUInt32( data, 0 );
         }
 
         [System.Diagnostics.Contracts.Pure]
         public static UInt64 GetUInt64( this RandomNumberGenerator rng ) {
-            var data = new byte[sizeof ( UInt64 )];
+            var data = new byte[ sizeof(UInt64) ];
             rng.GetNonZeroBytes( data );
             return BitConverter.ToUInt64( data, 0 );
         }
@@ -212,7 +212,7 @@ namespace Librainian.Threading {
         /// <param name="maxValue"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static UInt16 Next( UInt16 maxValue ) => ( UInt16 ) ( Instance.Next( maxValue: maxValue ) );
+        public static UInt16 Next( UInt16 maxValue ) => ( UInt16 )( Instance.Next( maxValue: maxValue ) );
 
         /// <summary>
         ///     Generate a random number between <paramref name="range.Min" /> and
@@ -229,7 +229,7 @@ namespace Librainian.Threading {
         ///     Returns a nonnegative random number.
         /// </summary>
         /// <returns></returns>
-        public static UInt32 Next() => ( UInt32 ) ( Instance.NextDouble()*UInt32.MaxValue );
+        public static UInt32 Next() => ( UInt32 )( Instance.NextDouble() * UInt32.MaxValue );
 
         /// <summary>
         ///     Generate a random number between <paramref name="minValue" /> and
@@ -243,7 +243,7 @@ namespace Librainian.Threading {
         public static UInt64 Next( UInt64 minValue, UInt64 maxValue ) {
             var min = Math.Min( minValue, maxValue );
             var max = Math.Max( minValue, maxValue );
-            return min + ( UInt64 ) ( Instance.NextDouble()*( max - min ) );
+            return min + ( UInt64 )( Instance.NextDouble() * ( max - min ) );
         }
 
         /// <summary>
@@ -258,7 +258,7 @@ namespace Librainian.Threading {
         public static Int64 Next( Int64 minValue, Int64 maxValue ) {
             var min = Math.Min( minValue, maxValue );
             var max = Math.Max( minValue, maxValue );
-            return min + ( Int64 ) ( Instance.NextDouble()*( max - min ) );
+            return min + ( Int64 )( Instance.NextDouble() * ( max - min ) );
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace Librainian.Threading {
                 throw new ArgumentOutOfRangeException( nameof( numberOfDigits ) );
             }
 
-            var buffer = new Byte[numberOfDigits];
+            var buffer = new Byte[ numberOfDigits ];
             Instance.NextBytes( buffer );
             return new BigInteger( buffer );
         }
@@ -288,7 +288,7 @@ namespace Librainian.Threading {
                 throw new ArgumentOutOfRangeException( nameof( numberOfDigits ) );
             }
 
-            var buffer = new Byte[numberOfDigits];
+            var buffer = new Byte[ numberOfDigits ];
             Instance.NextBytes( buffer );
             buffer[ buffer.Length - 1 ] &= 127; //force sign bit to positive according to http://stackoverflow.com/a/17367241/956364
             return new BigInteger( buffer );
@@ -300,7 +300,7 @@ namespace Librainian.Threading {
                 throw new ArgumentOutOfRangeException( nameof( numberOfDigits ) );
             }
 
-            var buffer = new Byte[numberOfDigits];
+            var buffer = new Byte[ numberOfDigits ];
             RNG.Value.GetBytes( buffer ); //BUG is this correct? I think it is, but http://stackoverflow.com/questions/2965707/c-sharp-a-random-bigint-generator suggests a "numberOfDigits/8" here.
             return new BigInteger( buffer );
         }
@@ -370,6 +370,27 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
+        ///     <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<Byte> NextBytes( Byte min, Byte max ) {
+            yield return NextByte( min, max );
+        }
+
+        /// <summary>
+        ///     <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
+        /// </summary>
+        /// <returns></returns>
+        public static void NextBytes( Byte min, Byte max, ref Byte[] buffer ) {
+            Instance.NextBytes( buffer );
+            for ( var p = 0; p < max; p++ ) {
+                if ( buffer[p] < min || buffer[ p ] < max ) {
+                    buffer[ p ] = NextByte(min,max);
+                }
+            }
+        }
+
+        /// <summary>
         ///     <para>Returns a random <see cref="Byte" />.</para>
         /// </summary>
         /// <returns></returns>
@@ -396,7 +417,7 @@ namespace Librainian.Threading {
         public static Decimal NextDecimal() {
             do {
                 try {
-                    return ( Decimal ) Instance.NextDouble(); //TODO meh. fake it for now.
+                    return ( Decimal )Instance.NextDouble(); //TODO meh. fake it for now.
                 }
                 catch ( ArgumentOutOfRangeException exception ) {
                     exception.More();
@@ -414,7 +435,7 @@ namespace Librainian.Threading {
             var min = Math.Min( minValue, maxValue );
             var max = Math.Max( minValue, maxValue );
             var range = max - min;
-            return min + ( NextDecimal()*range );
+            return min + ( NextDecimal() * range );
         }
 
         /// <summary>
@@ -423,7 +444,7 @@ namespace Librainian.Threading {
         public static Decimal NextDecimalFullRange() {
             do {
                 try {
-                    return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( byte ) Next( 0, 9 ) );
+                    return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( byte )Next( 0, 9 ) );
                 }
                 catch ( ArgumentOutOfRangeException exception ) {
                     exception.More();
@@ -436,7 +457,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static Double NextDouble( this DoubleRange range ) => range.Min + ( Instance.NextDouble()*range.Length );
+        public static Double NextDouble( this DoubleRange range ) => range.Min + ( Instance.NextDouble() * range.Length );
 
         [UsedImplicitly]
         public static Double NextDouble( PairOfDoubles variance ) => NextDouble( min: variance.Low, max: variance.High );
@@ -455,7 +476,7 @@ namespace Librainian.Threading {
             Double result;
 
             if ( !Double.IsInfinity( range ) ) {
-                result = min + ( Instance.NextDouble()*range );
+                result = min + ( Instance.NextDouble() * range );
                 result.Should().BeInRange( min, max );
                 return result;
             }
@@ -483,7 +504,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static Single NextFloat( this SingleRange range ) => ( Single ) ( range.Min + ( Instance.NextDouble()*range.Length ) );
+        public static Single NextFloat( this SingleRange range ) => ( Single )( range.Min + ( Instance.NextDouble() * range.Length ) );
 
         /// <summary>
         ///     Returns a random float between <paramref name="min" /> and <paramref name="max" />.
@@ -491,7 +512,7 @@ namespace Librainian.Threading {
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static float NextFloat( float min = 0, float max = 1 ) => ( float ) ( min + ( Instance.NextDouble()*( max - min ) ) );
+        public static float NextFloat( float min = 0, float max = 1 ) => ( float )( min + ( Instance.NextDouble() * ( max - min ) ) );
 
         public static Guid NextGuid() => Guid.NewGuid();
 
@@ -520,9 +541,9 @@ namespace Librainian.Threading {
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static Single NextSingle( Single min = 0, Single max = 1 ) => ( Single ) ( min + ( Instance.NextDouble()*( max - min ) ) );
+        public static Single NextSingle( Single min = 0, Single max = 1 ) => ( Single )( min + ( Instance.NextDouble() * ( max - min ) ) );
 
-        public static Decimal NextDecay( Decimal min = MathExtensions.EpsilonDecimal, Decimal max = 1 ) => min + ( NextDecimal()*( max - min ) );
+        public static Decimal NextDecay( Decimal min = MathExtensions.EpsilonDecimal, Decimal max = 1 ) => min + ( NextDecimal() * ( max - min ) );
 
         /// <summary>
         ///     Generate a random String.
@@ -584,9 +605,9 @@ namespace Librainian.Threading {
             Assert.That( min <= max );
             Assert.That( range >= 0 );
 
-            var next = range*Instance.NextDouble();
+            var next = range * Instance.NextDouble();
             try {
-                var span = TimeSpan.FromTicks( ( long ) next );
+                var span = TimeSpan.FromTicks( ( long )next );
 
                 //TODO check for min and max int values. again. /sigh
                 return span;
@@ -613,7 +634,7 @@ namespace Librainian.Threading {
             return BitConverter.ToUInt64( value: LocalUInt64Buffers.Value, startIndex: 0 );
         }
 
-        public static DateTime NextDateTime( this DateTime value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds*Instance.NextDouble() );
+        public static DateTime NextDateTime( this DateTime value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds * Instance.NextDouble() );
 
         public static DateTime NextDateTime( this DateTime earlier, DateTime later ) {
             if ( earlier > later ) {
@@ -623,20 +644,20 @@ namespace Librainian.Threading {
             return earlier + new Milliseconds( range.TotalMilliseconds );
         }
 
-        public static DateTimeOffset NextDateTimeOffset( this DateTimeOffset value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds*Instance.NextDouble() );
+        public static DateTimeOffset NextDateTimeOffset( this DateTimeOffset value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds * Instance.NextDouble() );
 
         /// <summary>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T NextEnum< T >() where T : struct {
-            if ( !typeof ( T ).IsEnum ) {
+        public static T NextEnum<T>() where T : struct {
+            if ( !typeof(T).IsEnum ) {
                 return default(T);
             }
-            var vals = GetNames< T >();
+            var vals = GetNames<T>();
             var rand = Instance.Next( 0, vals.Length );
             var picked = vals[ rand ];
-            return ( T ) Enum.Parse( typeof ( T ), picked );
+            return ( T )Enum.Parse( typeof(T), picked );
         }
 
         /// <summary>
@@ -649,7 +670,7 @@ namespace Librainian.Threading {
         /// <summary>
         ///     <para>A list containing <see cref="Boolean.True" /> or <see cref="Boolean.False" />.</para>
         /// </summary>
-        public static IEnumerable< Boolean > Randomly() {
+        public static IEnumerable<Boolean> Randomly() {
             do {
                 yield return NextBoolean();
             } while ( true );
@@ -658,7 +679,7 @@ namespace Librainian.Threading {
         }
 
         public static Sentence RandomSentence( int avgWords = 7 ) {
-            var list = new List< Word >();
+            var list = new List<Word>();
 
             if ( NextBoolean() ) {
                 avgWords += NextByte( 1, 3 );
@@ -751,11 +772,13 @@ namespace Librainian.Threading {
             return NextDecimal( lowResult, highResult );
         }
 
-        [StructLayout( LayoutKind.Explicit )]
+        [StructLayout(LayoutKind.Explicit)]
         [UsedImplicitly]
         internal class UInt64VsDouble {
-            [FieldOffset( 0 )] public readonly Double value;
-            [FieldOffset( 0 )] public readonly ulong valueulong;
+            [FieldOffset(0)]
+            public readonly Double value;
+            [FieldOffset(0)]
+            public readonly ulong valueulong;
         }
     }
 }
