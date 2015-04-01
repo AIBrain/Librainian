@@ -70,7 +70,7 @@ namespace Librainian.Threading {
             ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
             ProfileOptimization.StartProfile( Application.ExecutablePath );
 
-            return true;
+            return HasConsoleBeenAllocated;
         }
 
         public static void Shutdown() {

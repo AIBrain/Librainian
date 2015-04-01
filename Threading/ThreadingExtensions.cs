@@ -12,11 +12,21 @@ namespace Librainian.Threading {
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows.Forms;
     using JetBrains.Annotations;
     using Maths;
     using Measurement.Time;
 
     public static class ThreadingExtensions {
+
+        public static void Fraggle( this Thread thread, TimeSpan timeSpan ) {
+            var stopwatch = Stopwatch.StartNew();
+            do {
+                Application.DoEvents();
+                Thread.Yield();
+            } while ( stopwatch.Elapsed < timeSpan );
+        }
+
         /// <summary>
         /// <para> Sets the <see cref="ParallelOptions.MaxDegreeOfParallelism" /> of a <see
         /// cref="ParallelOptions" /> to <see cref="ProcessorCount" />. </para>

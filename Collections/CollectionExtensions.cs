@@ -475,8 +475,9 @@ namespace Librainian.Collections {
         /// <param name="list"> </param>
         /// <param name="iterations"></param>
         /// <param name="shufflingType"></param>
+        /// <param name="forHowLong"></param>
         /// <example>Deck.Shuffle( 7 );</example>
-        public static void Shuffle<T>( [NotNull] this List<T> list, UInt64 iterations = 1, ShufflingType shufflingType = ShufflingType.AutoChoice ) {
+        public static void Shuffle<T>( [NotNull] this List<T> list, UInt64 iterations = 1, ShufflingType shufflingType = ShufflingType.AutoChoice, TimeSpan? forHowLong = null ) {
             if ( list == null ) {
                 throw new ArgumentNullException( nameof( list ) );
             }
@@ -504,7 +505,7 @@ namespace Librainian.Collections {
 
                     case ShufflingType.ByHarker:
                         {
-                            ShuffleByHarker( ref list, iterations );
+                            ShuffleByHarker( ref list, iterations, forHowLong );
                         }
                         break;
 
@@ -516,7 +517,7 @@ namespace Librainian.Collections {
 
                     case ShufflingType.AutoChoice:
                         {
-                            ShuffleByHarker( ref list, iterations );
+                            ShuffleByHarker( ref list, iterations, forHowLong );
                         }
                         break;
 

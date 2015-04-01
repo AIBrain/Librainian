@@ -180,6 +180,7 @@ namespace Librainian.IO {
             if ( ioFunction == null ) {
                 throw new ArgumentNullException( nameof( ioFunction ) );
             }
+            var oneTenth = TimeSpan.FromMilliseconds( tryFor.TotalMilliseconds / 10 );
             var stopwatch = Stopwatch.StartNew();
             TryAgain:
             try {
@@ -193,7 +194,8 @@ namespace Librainian.IO {
                 if ( null != cancel && cancel.HaveAnyCancellationsBeenRequested() ) {
                     return default(TResult);
                 }
-                Thread.Yield();
+                Thread.CurrentThread.Fraggle( oneTenth );
+
                 goto TryAgain;
             }
         }
@@ -754,7 +756,7 @@ namespace Librainian.IO {
 
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( document.FileName );
 
-        TryAgain:
+            TryAgain:
 
             //check for a double extension (image.jpg.tif), remove the 'fake' (.jpg) extension
             if ( !Path.GetExtension( fileNameWithoutExtension ).IsNullOrEmpty() ) {
@@ -1168,8 +1170,8 @@ namespace Librainian.IO {
 
         public static MemoryStream TryCopyStream( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
 
-        //TODO
-        TryAgain:
+            //TODO
+            TryAgain:
             var memoryStream = new MemoryStream();
             try {
                 if ( File.Exists( filePath ) ) {
@@ -1238,7 +1240,8 @@ namespace Librainian.IO {
                 var randomFileName = Guid.NewGuid().ToString();
                 if ( String.IsNullOrWhiteSpace( extension ) ) {
                     randomFileName = Path.Combine( folder.FullName, Path.GetFileName( randomFileName ) );
-                } else {
+                }
+                else {
                     if ( !extension.StartsWith( "." ) ) {
                         extension = String.Format( ".{0}", extension );
                     }
@@ -1269,7 +1272,7 @@ namespace Librainian.IO {
         /// A valid FileStream object for the opened file, or null if the File could not be opened
         /// after the required attempts
         /// </returns>
-        [ CanBeNull ]
+        [CanBeNull]
         public static FileStream TryOpen( String filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
 
             //TODO
@@ -1283,11 +1286,11 @@ namespace Librainian.IO {
             return null;
         }
 
-        [ CanBeNull ]
+        [CanBeNull]
         public static FileStream TryOpenForReading( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
 
-        //TODO
-        TryAgain:
+            //TODO
+            TryAgain:
             try {
                 if ( File.Exists( filePath ) ) {
                     return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
@@ -1307,7 +1310,7 @@ namespace Librainian.IO {
             return null;
         }
 
-        [ CanBeNull ]
+        [CanBeNull]
         public static FileStream TryOpenForWriting( String filePath, FileMode fileMode = FileMode.Create, FileAccess fileAccess = FileAccess.Write, FileShare fileShare = FileShare.ReadWrite ) {
 
             //TODO

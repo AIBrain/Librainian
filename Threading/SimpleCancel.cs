@@ -28,8 +28,7 @@ namespace Librainian.Threading {
     using Collections;
 
     /// <summary>
-    ///     Don't like the <see cref="CancellationTokenSource" /> throwing exceptions after
-    ///     <see cref="CancellationTokenSource.Cancel()" /> is called.
+    ///     Don't like the <see cref="CancellationTokenSource" /> throwing exceptions after <see cref="CancellationTokenSource.Cancel()" /> is called.
     ///     I understand why, I just don't like it. Plus, this version has the Dates and Times of the cancel requests.
     /// </summary>
     public sealed class SimpleCancel : IDisposable {
@@ -52,7 +51,7 @@ namespace Librainian.Threading {
 
         /// <summary>
         /// </summary>
-        public bool HaveAnyCancellationsBeenRequested() => this.CancelRequests.Any();
+        public Boolean HaveAnyCancellationsBeenRequested() => this.CancelRequests.Any();
 
         /// <summary>
         ///     Returns true if the cancel request was approved.

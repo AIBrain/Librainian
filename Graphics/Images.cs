@@ -138,7 +138,7 @@ namespace Librainian.Graphics {
             if ( document == null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
-            return ImageCreationBestGuess( new FileInfo( document.FullPathWithFileName ) );
+            return ImageCreationBestGuess( document.Info );
         }
 
         /// <summary>
@@ -162,14 +162,15 @@ namespace Librainian.Graphics {
             try {
                 //try a variety of parsing the dates and times from the file's name.
 
-                //example 1, "blahblahblah_20040823_173454" == "August 23th, 2004 at 5:34pm"
+                //example 1, "blahblahblah_20040823_173454" == "August 23rd, 2010 at 10:34am"
                 var justName = Path.GetFileNameWithoutExtension( info.FullName );
 
                 var mostlyDigits = String.Empty;
                 foreach ( var c in justName ) {
                     if ( Char.IsDigit( c ) /*|| c == '\\' || c == '-' || c == '/'*/ ) {
                         mostlyDigits += c;
-                    } else {
+                    }
+                    else {
                         mostlyDigits += ParsingExtensions.Singlespace;
                     }
                 }
@@ -193,7 +194,7 @@ namespace Librainian.Graphics {
                 }
                 #endregion
 
-                #region Day, Month, Year formats as in digits == "23082004 173454" == "August 23th, 2004 at 5:34pm"
+                #region Day, Month, Year formats as in digits == "23082004 173454" == "August 23rd, 2004 at 5:34pm"
 
                 var patternsDMY = new[ ] { "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy" };
 
@@ -345,7 +346,8 @@ namespace Librainian.Graphics {
 
                 if ( imageA.Width < imageB.Width && imageA.Height < imageB.Height ) {
                     imageA = ResizeImage( imageA, imageB.Size ); //resize because B is larger
-                } else if ( imageA.Width > imageB.Width && imageA.Height > imageB.Height ) {
+                }
+                else if ( imageA.Width > imageB.Width && imageA.Height > imageB.Height ) {
                     imageB = ResizeImage( imageB, imageA.Size ); //resize because A is larger
                 }
 
