@@ -27,34 +27,64 @@ namespace Librainian.Speech {
     using JetBrains.Annotations;
     using Threading;
 
+    public static class SpeechExtensions {
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="sayAs"></param>
+        /// <param name="emphasis"></param>
+        /// <param name="promptRate"></param>
+        /// <param name="volume"></param>
+        public static void Speak( this String message, SayAs sayAs = SayAs.Text, PromptEmphasis emphasis = PromptEmphasis.None, PromptRate promptRate = PromptRate.Medium, PromptVolume volume = PromptVolume.Soft ) {
+            var promptBuilder = new PromptBuilder( );   //7.5
+
+            var promptStyle = new PromptStyle {
+                Volume = volume,
+                Emphasis = emphasis,
+                Rate = promptRate
+            };
+            promptBuilder.StartStyle( promptStyle );
+            promptBuilder.AppendTextWithHint( message, sayAs );
+            promptBuilder.EndStyle( );
+
+            //using (var speechSynthesizer = new SpeechSynthesizer( )) {
+            var speechSynthesizer = new SpeechSynthesizer( );
+            speechSynthesizer.SpeakAsync( promptBuilder );
+            //}
+        }
+
+    }
+
     /// <summary>
     ///     Use whatever TTS engine is available...
     /// </summary>
-    public sealed class SpeechOutput  {
+    public sealed class SpeechOutput {
         [CanBeNull]
         private SpeechSynthesizer SpeechSynthesizer { get; set; }
 
-        public void Initialize() {
-            this.SpeechSynthesizer = new SpeechSynthesizer();
+        public void Initialize( ) {
+            this.SpeechSynthesizer = new SpeechSynthesizer( );
             this.SpeechSynthesizer.SelectVoiceByHints( VoiceGender.Female, VoiceAge.Teen );
         }
 
-        public IEnumerable< InstalledVoice > GetVoices() {
+        public IEnumerable<InstalledVoice> GetVoices( ) {
             var speechSynthesizer = this.SpeechSynthesizer;
-            return speechSynthesizer?.GetInstalledVoices() ?? Enumerable.Empty< InstalledVoice >();
+            return speechSynthesizer?.GetInstalledVoices( ) ?? Enumerable.Empty<InstalledVoice>( );
         }
 
         /// <summary>
         ///     Pumps message loop while Talking
         /// </summary>
-        public void Wait() {
-            while ( this.IsTalking() ) {
-                Thread.Yield();
-                Application.DoEvents();
+        public void Wait( ) {
+            while ( this.IsTalking( ) ) {
+                Thread.Yield( );
+                Application.DoEvents( );
             }
         }
 
-        public Boolean IsTalking() {
+        public Boolean IsTalking( ) {
             var speechSynthesizer = this.SpeechSynthesizer;
             return speechSynthesizer != null && speechSynthesizer.State == SynthesizerState.Speaking;
         }
@@ -73,8 +103,8 @@ namespace Librainian.Speech {
                 if ( String.IsNullOrEmpty( message ) ) {
                     return;
                 }
-// ReSharper disable once PossibleNullReferenceException
-                message = message.Trim();
+                // ReSharper disable once PossibleNullReferenceException
+                message = message.Trim( );
 
                 if ( String.IsNullOrEmpty( message ) ) {
                     return;
@@ -90,29 +120,29 @@ namespace Librainian.Speech {
                     message = message.Replace( "AIBrain", "A-I-Brain" ); //HACK ugh.
                 }
 
-                message = message.Trim();
+                message = message.Trim( );
 
                 if ( interruptTalking /*&& this.IsTalking()*/ ) {
-                    this.SpeechSynthesizer.SpeakAsyncCancelAll();
+                    this.SpeechSynthesizer.SpeakAsyncCancelAll( );
                 }
                 this.SpeechSynthesizer.Speak( message );
             }
             catch ( Exception exception ) {
-                exception.More();
+                exception.More( );
             }
         }
 
-        public void Start() { }
+        public void Start( ) { }
 
-        public void Stop() {
+        public void Stop( ) {
             var speechSynthesizer = this.SpeechSynthesizer;
             if ( speechSynthesizer != null ) {
-                speechSynthesizer.SpeakAsyncCancelAll();
+                speechSynthesizer.SpeakAsyncCancelAll( );
             }
         }
 
 
-        public void AttachEvents( Action< EventArgs > speechFeedbackEvent = null ) {
+        public void AttachEvents( Action<EventArgs> speechFeedbackEvent = null ) {
             try {
                 if ( null == speechFeedbackEvent ) {
                     return;
@@ -131,7 +161,7 @@ namespace Librainian.Speech {
                 speechSynthesizer.StateChanged += ( sender, e ) => speechFeedbackEvent( e );
             }
             catch ( Exception exception ) {
-                exception.More();
+                exception.More( );
             }
         }
     }
