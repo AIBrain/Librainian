@@ -33,7 +33,7 @@ namespace Librainian.Measurement.Spatial {
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Degree_(angle)" />
     [DataContract( IsReference = true )]
-	// ReSharper disable once UseNameofExpression
+	
 	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]
     [Immutable]

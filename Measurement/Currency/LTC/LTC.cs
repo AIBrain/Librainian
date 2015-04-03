@@ -22,7 +22,7 @@ namespace Librainian.Measurement.Currency.LTC {
     using System.Diagnostics;
     using JetBrains.Annotations;
 
-	// ReSharper disable once UseNameofExpression
+	
 	[DebuggerDisplay("{Formatted,nq}")]
     [UsedImplicitly]
     public struct LTC : ICoin {

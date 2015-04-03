@@ -28,7 +28,7 @@ namespace Librainian.Measurement.Length {
     /// <summary>
     /// </summary>
     /// <seealso cref="https://en.wikipedia.org/wiki/Plank_length" />
-    [DataContract( IsReference = true )]	// ReSharper disable once UseNameofExpression
+    [DataContract( IsReference = true )]	
 
 	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Serializable]

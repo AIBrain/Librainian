@@ -6,30 +6,30 @@ namespace Librainian.Measurement.Time.Clocks {
     using Librainian.Extensions;
 
     /// <summary>
-    ///     A simple struct for a <see cref="Second" />.
+    /// A simple struct for a <see cref="Second" />.
     /// </summary>
-    [DataContract( IsReference = true )]
+    [DataContract(IsReference = true)]
     [Serializable]
     [Immutable]
     public sealed class Second : IClockPart {
-        public static readonly Byte[] ValidSeconds = Enumerable.Range( 0, Seconds.InOneMinute ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
+        public static readonly Byte[] ValidSeconds = Enumerable.Range( 0, Seconds.InOneMinute ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray( );
 
         /// <summary>
-        ///    should be 59
+        /// should be 59
         /// </summary>
-        public static readonly Byte MaximumValue = ValidSeconds.Max();
+        public static readonly Byte MaximumValue = ValidSeconds.Max( );
 
         /// <summary>
-        ///   should be 0
+        /// should be 0
         /// </summary>
-        public static readonly Byte MinimumValue = ValidSeconds.Min();
+        public static readonly Byte MinimumValue = ValidSeconds.Min( );
 
         public static readonly Second Maximum = new Second( MaximumValue );
 
         public static readonly Second Minimum = new Second( MinimumValue );
 
-        static Second() {
-            MaximumValue.Should().BeGreaterThan( MinimumValue );
+        static Second( ) {
+            MaximumValue.Should( ).BeGreaterThan( MinimumValue );
         }
 
         [DataMember]
@@ -42,23 +42,22 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Value = value;
         }
 
-     
         /// <summary>
-        ///     Allow this class to be visibly cast to a <see cref="SByte" />.
+        /// Allow this class to be visibly cast to a <see cref="SByte" />.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
         public static explicit operator SByte( Second value ) => ( SByte )value.Value;
 
         /// <summary>
-        ///     Allow this class to be read as a <see cref="Byte" />.
+        /// Allow this class to be read as a <see cref="Byte" />.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
         public static implicit operator Byte( Second value ) => value.Value;
 
         /// <summary>
-        ///     Provide the next second.
+        /// Provide the next second.
         /// </summary>
         public Second Next( out Boolean ticked ) {
             ticked = false;
@@ -67,11 +66,11 @@ namespace Librainian.Measurement.Time.Clocks {
                 next = MinimumValue;
                 ticked = true;
             }
-            return new Second( ( byte ) next );
+            return new Second( ( byte )next );
         }
 
         /// <summary>
-        ///     Provide the previous second.
+        /// Provide the previous second.
         /// </summary>
         public Second Previous( out Boolean ticked ) {
             ticked = false;
@@ -80,7 +79,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 next = MaximumValue;
                 ticked = true;
             }
-            return new Second( ( byte ) next );
+            return new Second( ( byte )next );
         }
     }
 }

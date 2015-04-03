@@ -43,7 +43,7 @@ namespace Librainian.Measurement.Currency.USD {
     namespace Denominations {
         using System.Diagnostics;
 
-		// ReSharper disable once UseNameofExpression
+		
 		[DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public sealed class Dime : ICoin {
@@ -51,7 +51,7 @@ namespace Librainian.Measurement.Currency.USD {
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		// ReSharper disable once UseNameofExpression
+		
 		[DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public sealed class Fifty : IBankNote {
@@ -59,7 +59,7 @@ namespace Librainian.Measurement.Currency.USD {
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		// ReSharper disable once UseNameofExpression
+		
 		[DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public sealed class Five : IBankNote {
@@ -67,7 +67,7 @@ namespace Librainian.Measurement.Currency.USD {
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		// ReSharper disable once UseNameofExpression
+		
 		[DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public sealed class Hundred : IBankNote {
@@ -75,7 +75,7 @@ namespace Librainian.Measurement.Currency.USD {
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		// ReSharper disable once UseNameofExpression
+		
 		[DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public sealed class Nickel : ICoin {
@@ -83,7 +83,7 @@ namespace Librainian.Measurement.Currency.USD {
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		// ReSharper disable once UseNameofExpression
+		
 		[DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public class One : IBankNote {
@@ -91,7 +91,7 @@ namespace Librainian.Measurement.Currency.USD {
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		// ReSharper disable once UseNameofExpression
+		
 		[DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public sealed class Penny : ICoin {
@@ -99,7 +99,7 @@ namespace Librainian.Measurement.Currency.USD {
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		// ReSharper disable once UseNameofExpression
+		
 		[DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public sealed class Quarter : ICoin {
@@ -107,7 +107,7 @@ namespace Librainian.Measurement.Currency.USD {
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		// ReSharper disable once UseNameofExpression
+		
 		[DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public class Ten : IBankNote {
@@ -115,7 +115,7 @@ namespace Librainian.Measurement.Currency.USD {
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		// ReSharper disable once UseNameofExpression
+		
 		[DebuggerDisplay( "{Formatted,nq}" )]
         [UsedImplicitly]
         public class Twenty : IBankNote {

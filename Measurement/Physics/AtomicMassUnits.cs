@@ -34,7 +34,7 @@ namespace Librainian.Measurement.Physics {
 	/// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
 	/// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
 	/// <seealso cref="http://www.wolframalpha.com/input/?i=1+unified+atomic+mass+units+convert+to+electronvolts" />
-	// ReSharper disable once UseNameofExpression
+	
 	[ DebuggerDisplay( "{DebuggerDisplay,nq}" ) ]
 	[ Immutable ]
 	public struct AtomicMassUnits : IComparable< ElectronVolts >, IComparable< AtomicMassUnits > {

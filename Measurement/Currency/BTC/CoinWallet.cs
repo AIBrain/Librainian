@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Currency.BTC {
 	///     Any tips or ideas? Any dos or dont's? Email me!
 	/// </summary>
 	[DataContract(IsReference = true)]
-	// ReSharper disable once UseNameofExpression
+	
 	[DebuggerDisplay( "{Formatted,nq}" )]
 	public class CoinWallet : IEnumerable<KeyValuePair<ICoin, ulong>>, ICoinWallet {
 		/// <summary>

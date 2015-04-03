@@ -58,7 +58,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="second"></param>
         /// <param name="millisecond"></param>
         /// <param name="microsecond"></param>
-        public Time( Byte hour = 0, Byte minute = 0, Byte second = 0, UInt16 millisecond = 0, UInt16 microsecond = 0 ) : this() {
+        public Time( Byte hour = 0, Byte minute = 0, Byte second = 0, UInt16 millisecond = 0, UInt16 microsecond = 0 ) : this( ) {
 
             //var span = new Span( hours: hour, minutes: minute, seconds: second, milliseconds: millisecond, microseconds: microsecond );
             this.Hour = new Hour( hour );
@@ -81,12 +81,12 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         /// Get the local system's computer time.
         /// </summary>
-        public static Time Now() {
+        public static Time Now( ) {
             var now = DateTime.Now;
             return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( UInt16 )now.Millisecond );
         }
 
-        public static Time UtcNow() {
+        public static Time UtcNow( ) {
             var now = DateTime.UtcNow;
             return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( UInt16 )now.Millisecond );
         }

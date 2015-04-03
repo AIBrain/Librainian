@@ -1,22 +1,22 @@
 #region License & Information
 
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
+// 
 // "Librainian/Years.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
 
 #endregion License & Information
@@ -32,14 +32,13 @@ namespace Librainian.Measurement.Time {
     using Maths;
     using Parsing;
 
-    [DataContract( IsReference = true )]
-	// ReSharper disable once UseNameofExpression
-	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [DataContract(IsReference = true)]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [Immutable]
     public struct Years : IComparable<Years>, IQuantityOfTime {
 
         /// <summary>
-        ///     One <see cref="Years" /> .
+        /// One <see cref="Years" /> .
         /// </summary>
         public static readonly Years One = new Years( 1 );
 
@@ -52,17 +51,18 @@ namespace Librainian.Measurement.Time {
         public static readonly Years Thousand = new Years( 1000 );
 
         /// <summary>
-        ///     Zero <see cref="Years" />
+        /// Zero <see cref="Years" />
         /// </summary>
         public static readonly Years Zero = new Years( 0 );
 
-	    [ DataMember ]
-	    public BigDecimal Value { get; }
+        [DataMember]
+        public BigDecimal Value { get; }
 
-	    static Years() {
-            Zero.Should().BeLessThan( One );
-            One.Should().BeGreaterThan( Zero );
-            One.Should().Be( One );
+        static Years( ) {
+            Zero.Should( ).BeLessThan( One );
+            One.Should( ).BeGreaterThan( Zero );
+            One.Should( ).Be( One );
+
             //One.Should().BeGreaterThan( Months.One );
         }
 
@@ -79,12 +79,11 @@ namespace Librainian.Measurement.Time {
         }
 
         public Years( BigInteger value ) {
-           
             this.Value = value;
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay => this.ToString();
+        private String DebuggerDisplay => this.ToString( );
 
         public static Years Combine( Years left, Years right ) => Combine( left, right.Value );
 
@@ -93,14 +92,14 @@ namespace Librainian.Measurement.Time {
         public static Years Combine( Years left, BigDecimal years ) => new Years( left.Value + years );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Years left, Years right ) => left.Value == right.Value;
 
-        public static implicit operator Months( Years years ) => years.ToMonths();
+        public static implicit operator Months( Years years ) => years.ToMonths( );
 
         public static implicit operator Span( Years years ) => new Span( years: years.Value );
 
@@ -135,24 +134,24 @@ namespace Librainian.Measurement.Time {
             return obj is Years && this.Equals( ( Years )obj );
         }
 
-        public override int GetHashCode() => this.Value.GetHashCode();
+        public override int GetHashCode( ) => this.Value.GetHashCode( );
 
         [Pure]
-        public Days ToDays() => new Days( this.Value * Days.InOneCommonYear );
+        public Days ToDays( ) => new Days( this.Value * Days.InOneCommonYear );
 
         [Pure]
-        public Months ToMonths() => new Months( this.Value * Months.InOneCommonYear );
-
-	    [ Pure ]
-	    public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneYear * this.Value ) ;
+        public Months ToMonths( ) => new Months( this.Value * Months.InOneCommonYear );
 
         [Pure]
-        public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneCommonYear );
+        public PlanckTimes ToPlanckTimes( ) => new PlanckTimes( PlanckTimes.InOneYear * this.Value );
 
         [Pure]
-        public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "year" ) );
+        public Seconds ToSeconds( ) => new Seconds( this.Value * Seconds.InOneCommonYear );
 
         [Pure]
-        public Weeks ToWeeks() => new Weeks( this.Value * Weeks.InOneCommonYear );
+        public override String ToString( ) => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "year" ) );
+
+        [Pure]
+        public Weeks ToWeeks( ) => new Weeks( this.Value * Weeks.InOneCommonYear );
     }
 }

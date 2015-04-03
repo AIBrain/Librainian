@@ -37,7 +37,7 @@ namespace Librainian.Measurement.Currency.BTC {
     /// <remarks>
     /// TODO add in support for automatic persisting TODO add in support for exploring the blockchain
     /// </remarks>
-    // ReSharper disable once UseNameofExpression
+    
     [DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
     [DataContract( IsReference = true )]

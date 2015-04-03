@@ -34,7 +34,7 @@ namespace Librainian.Maths {
     /// <para>Keep count of Yes or No votes.</para>
     /// </summary>
     [DataContract( IsReference = true )]
-    [Serializable]	  // ReSharper disable once UseNameofExpression
+    [Serializable]	  
 
 	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public class VotallyI {

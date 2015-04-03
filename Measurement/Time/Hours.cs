@@ -1,22 +1,22 @@
 #region License & Information
 
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
+// 
 // "Librainian/Hours.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
 
 #endregion License & Information
@@ -32,24 +32,23 @@ namespace Librainian.Measurement.Time {
     using Maths;
     using Parsing;
 
-    [DataContract( IsReference = true )]
-	// ReSharper disable once UseNameofExpression
-	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [DataContract(IsReference = true)]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [Immutable]
     public struct Hours : IComparable<Hours>, IQuantityOfTime {
 
         /// <summary>
-        ///     24
+        /// 24
         /// </summary>
         public const Byte InOneDay = 24;
 
         /// <summary>
-        ///     One <see cref="Hours" /> .
+        /// One <see cref="Hours" /> .
         /// </summary>
         public static readonly Hours One = new Hours( 1 );
 
         /// <summary>
-        ///     Eight <see cref="Hours" /> .
+        /// Eight <see cref="Hours" /> .
         /// </summary>
         public static readonly Hours Eight = new Hours( 8 );
 
@@ -62,25 +61,25 @@ namespace Librainian.Measurement.Time {
         public static readonly Hours Thousand = new Hours( 1000 );
 
         /// <summary>
-        ///     Zero <see cref="Hours" />
+        /// Zero <see cref="Hours" />
         /// </summary>
         public static readonly Hours Zero = new Hours( 0 );
 
         /// <summary>
-        ///     730 <see cref="Hours" /> in one month, according to WolframAlpha.
+        /// 730 <see cref="Hours" /> in one month, according to WolframAlpha.
         /// </summary>
         /// <see cref="http://www.wolframalpha.com/input/?i=converts+1+month+to+hours" />
         public static BigInteger InOneMonth = 730;
 
-	    [ DataMember ]
-	    public BigDecimal Value { get; }
+        [DataMember]
+        public BigDecimal Value { get; }
 
-	    static Hours() {
-            Zero.Should().BeLessThan( One );
-            One.Should().BeGreaterThan( Zero );
-            One.Should().Be( One );
-            One.Should().BeLessThan( Days.One );
-            One.Should().BeGreaterThan( Minutes.One );
+        static Hours( ) {
+            Zero.Should( ).BeLessThan( One );
+            One.Should( ).BeGreaterThan( Zero );
+            One.Should( ).Be( One );
+            One.Should( ).BeLessThan( Days.One );
+            One.Should( ).BeGreaterThan( Minutes.One );
         }
 
         public Hours( Decimal value ) {
@@ -100,7 +99,7 @@ namespace Librainian.Measurement.Time {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay => this.ToString();
+        private String DebuggerDisplay => this.ToString( );
 
         public static Hours Combine( Hours left, Hours right ) => Combine( left, right.Value );
 
@@ -109,7 +108,7 @@ namespace Librainian.Measurement.Time {
         public static Hours Combine( Hours left, BigInteger hours ) => new Hours( ( BigInteger )left.Value + hours );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -117,18 +116,18 @@ namespace Librainian.Measurement.Time {
         public static Boolean Equals( Hours left, Hours right ) => left.Value == right.Value;
 
         /// <summary>
-        ///     Implicitly convert the number of <paramref name="hours" /> to <see cref="Days" />.
+        /// Implicitly convert the number of <paramref name="hours" /> to <see cref="Days" />.
         /// </summary>
         /// <param name="hours"></param>
         /// <returns></returns>
-        public static implicit operator Days( Hours hours ) => hours.ToDays();
+        public static implicit operator Days( Hours hours ) => hours.ToDays( );
 
         /// <summary>
-        ///     Implicitly convert the number of <paramref name="hours" /> to <see cref="Minutes" />.
+        /// Implicitly convert the number of <paramref name="hours" /> to <see cref="Minutes" />.
         /// </summary>
         /// <param name="hours"></param>
         /// <returns></returns>
-        public static implicit operator Minutes( Hours hours ) => hours.ToMinutes();
+        public static implicit operator Minutes( Hours hours ) => hours.ToMinutes( );
 
         public static implicit operator Span( Hours hours ) => new Span( hours );
 
@@ -169,18 +168,18 @@ namespace Librainian.Measurement.Time {
             return obj is Hours && this.Equals( ( Hours )obj );
         }
 
-        public override int GetHashCode() => this.Value.GetHashCode();
-
-		[Pure]
-        public Days ToDays() => new Days( this.Value / InOneDay );
+        public override int GetHashCode( ) => this.Value.GetHashCode( );
 
         [Pure]
-        public Minutes ToMinutes() => new Minutes( this.Value * Minutes.InOneHour );
+        public Days ToDays( ) => new Days( this.Value / InOneDay );
 
         [Pure]
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneHour * this.Value )  ;
+        public Minutes ToMinutes( ) => new Minutes( this.Value * Minutes.InOneHour );
 
         [Pure]
-        public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "hour" ) );
+        public PlanckTimes ToPlanckTimes( ) => new PlanckTimes( PlanckTimes.InOneHour * this.Value );
+
+        [Pure]
+        public override String ToString( ) => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "hour" ) );
     }
 }

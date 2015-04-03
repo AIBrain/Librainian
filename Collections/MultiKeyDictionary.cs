@@ -1,38 +1,41 @@
 #region License & Information
+
 // This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
 // "Librainian/MultiKeyDictionary.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-#endregion
+
+#endregion License & Information
 
 namespace Librainian.Collections {
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
 
     /// <summary>
-    ///     Multi-Key Dictionary Class
+    /// Multi-Key Dictionary Class
     /// </summary>
     /// <typeparam name="K">Primary Key Type</typeparam>
     /// <typeparam name="L">Sub Key Type</typeparam>
     /// <typeparam name="V">Value Type</typeparam>
-    public class MultiKeyDictionary< K, L, V > : ConcurrentDictionary< K, V > {
-        internal readonly ConcurrentDictionary< K, L > primaryToSubkeyMapping = new ConcurrentDictionary< K, L >();
+    public class MultiKeyDictionary<K, L, V> : ConcurrentDictionary<K, V> {
+        internal readonly ConcurrentDictionary<K, L> primaryToSubkeyMapping = new ConcurrentDictionary<K, L>( );
 
-        internal readonly ConcurrentDictionary< L, K > subDictionary = new ConcurrentDictionary< L, K >();
+        internal readonly ConcurrentDictionary<L, K> subDictionary = new ConcurrentDictionary<L, K>( );
 
         public V this[ L subKey ] {
             get {
@@ -79,11 +82,11 @@ namespace Librainian.Collections {
             }
         }
 
-        public K[] ClonePrimaryKeys() => this.Keys.ToArray();
+        public K[] ClonePrimaryKeys( ) => this.Keys.ToArray( );
 
-        public L[] CloneSubKeys() => this.subDictionary.Keys.ToArray();
+        public L[] CloneSubKeys( ) => this.subDictionary.Keys.ToArray( );
 
-        public V[] CloneValues() => this.Values.ToArray();
+        public V[] CloneValues( ) => this.Values.ToArray( );
 
         public Boolean ContainsKey( L subKey ) {
             V val;
@@ -118,7 +121,7 @@ namespace Librainian.Collections {
         }
 
         public Boolean TryGetValue( L subKey, out V val ) {
-            val = default( V );
+            val = default(V);
 
             K ep;
             return this.subDictionary.TryGetValue( subKey, out ep ) && this.TryGetValue( ep, out val );

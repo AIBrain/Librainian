@@ -39,7 +39,7 @@ namespace Librainian.Measurement.Currency {
 	/// <remarks>
 	///     TODO add in support for automatic persisting
 	/// </remarks>
-	// ReSharper disable once UseNameofExpression
+	
 	[DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
     [DataContract( IsReference = true )]

@@ -30,8 +30,8 @@ namespace Librainian.Measurement.Time.Clocks {
     [Immutable]
     public class MomentInTimeClock : IStandardClock {
 
-        public MomentInTimeClock() {
-            var now = Measurement.Time.Time.Now();
+        public MomentInTimeClock( ) {
+            var now = Measurement.Time.Time.Now( );
             this.Hour = new Hour( now.Hour );
             this.Minute = new Minute( now.Minute );
             this.Second = new Second( now.Second );
@@ -58,10 +58,10 @@ namespace Librainian.Measurement.Time.Clocks {
         [DataMember]
         public Second Second { get; private set; }
 
-        public Time Time() => new Time( hour: this.Hour, minute: this.Minute, second: this.Second );
+        public Boolean IsAM( ) => !this.IsPM( );
 
-        public Boolean IsAM() => !this.IsPM();
+        public Boolean IsPM( ) => this.Hour >= 12;
 
-        public Boolean IsPM() => this.Hour >= 12;
+        public Time Time( ) => new Time( hour: this.Hour, minute: this.Minute, second: this.Second );
     }
 }

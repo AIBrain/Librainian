@@ -12,7 +12,7 @@
 	/// </summary>
 	/// <seealso cref="http://en.wikipedia.org/wiki/Frame_rate"/>
 	[DataContract( IsReference = true )]
-	// ReSharper disable once UseNameofExpression
+	
 	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public struct FPS {
 

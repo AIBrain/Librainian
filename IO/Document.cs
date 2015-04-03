@@ -53,7 +53,7 @@ namespace Librainian.IO {
     /// </summary>
     [DataContract(IsReference = true)]
     [Immutable]
-    // ReSharper disable once UseNameofExpression
+    
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [Serializable]
     public class Document : IDocument {

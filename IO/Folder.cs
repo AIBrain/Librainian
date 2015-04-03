@@ -35,7 +35,7 @@ namespace Librainian.IO {
 
 	/// <summary>
 	/// </summary>
-	// ReSharper disable once UseNameofExpression
+	
 	[DebuggerDisplay("{DebuggerDisplay,nq}")]
 	[DataContract(IsReference = true)]
 	[Immutable]

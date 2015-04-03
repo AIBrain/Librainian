@@ -1,4 +1,5 @@
 ﻿namespace Librainian.Measurement.Time.FluentTime {
+
     using System;
 
     public static class Today {

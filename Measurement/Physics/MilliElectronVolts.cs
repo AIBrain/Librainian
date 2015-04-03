@@ -32,7 +32,7 @@ namespace Librainian.Measurement.Physics {
 	/// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
 	/// <seealso cref="http://wikipedia.org/wiki/Milli-" />
 	/// <seealso cref="http://wikipedia.org/wiki/Electronvolt" />
-	// ReSharper disable once UseNameofExpression
+	
 	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct MilliElectronVolts : IComparable< MilliElectronVolts >, IComparable< ElectronVolts >, IComparable< MegaElectronVolts >, IComparable< GigaElectronVolts > {

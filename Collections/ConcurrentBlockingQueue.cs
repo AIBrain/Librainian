@@ -1,4 +1,5 @@
 ﻿namespace Librainian.Collections {
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -9,7 +10,7 @@
     /// </summary>
     /// <typeparam name="T">Specifies the type of elements in the queue.</typeparam>
     public class ConcurrentBlockingQueue<T> : IDisposable {
-        private readonly ConcurrentQueue<T> queue = new ConcurrentQueue<T>();
+        private readonly ConcurrentQueue<T> queue = new ConcurrentQueue<T>( );
         private readonly AutoResetEvent workEvent = new AutoResetEvent( false );
 
         private bool isCompleteAdding;
@@ -18,11 +19,11 @@
         /// <summary>
         /// Release all resources.
         /// </summary>
-        public void Dispose() {
+        public void Dispose( ) {
             if ( this.isDisposed )
                 return;
 
-            this.workEvent.Dispose();
+            this.workEvent.Dispose( );
             this.isDisposed = true;
         }
 
@@ -31,33 +32,34 @@
         /// </summary>
         /// <param name="item">The item to be added.</param>
         public void Add( T item ) {
-            this.CheckDisposed();
+            this.CheckDisposed( );
 
             // queue must not be marked as completed adding
             if ( this.isCompleteAdding )
-                throw new InvalidOperationException();
+                throw new InvalidOperationException( );
 
             // queue the item
             this.queue.Enqueue( item );
 
             // notify the consuming enumerable
-            this.workEvent.Set();
+            this.workEvent.Set( );
         }
 
         /// <summary>
         /// Marks the queue as complete for adding, no additional items may be added.
         /// </summary>
         /// <remarks>
-        /// After adding has been completed, any consuming enumerables will complete once the queue is empty.
+        /// After adding has been completed, any consuming enumerables will complete once the queue
+        /// is empty.
         /// </remarks>
-        public void CompleteAdding() {
-            this.CheckDisposed();
+        public void CompleteAdding( ) {
+            this.CheckDisposed( );
 
             // mark complete
             this.isCompleteAdding = true;
 
             // notify the consuming enumerable
-            this.workEvent.Set();
+            this.workEvent.Set( );
         }
 
         /// <summary>
@@ -69,8 +71,9 @@
         /// return until the queue is complete for adding, and all items have been dequeued.
         /// </remarks>
         /// <returns>The consuming enumerable.</returns>
-        public IEnumerable<T> GetConsumingEnumerable() {
+        public IEnumerable<T> GetConsumingEnumerable( ) {
             do {
+
                 // dequeue and yield as many items as are available
                 T value;
                 while ( this.queue.TryDequeue( out value ) ) {
@@ -79,17 +82,18 @@
 
                 // once the queue is empty, check if adding is completed and return if so
                 if ( this.isCompleteAdding && this.queue.Count == 0 ) {
+
                     // ensure all other consuming enumerables are unblocked when complete
-                    this.workEvent.Set();
+                    this.workEvent.Set( );
                     yield break;
                 }
 
                 // otherwise, wait for additional items to be added and continue
             }
-            while ( this.workEvent.WaitOne() );
+            while ( this.workEvent.WaitOne( ) );
         }
 
-        private void CheckDisposed() {
+        private void CheckDisposed( ) {
             if ( this.isDisposed )
                 throw new ObjectDisposedException( "ConcurrentBlockingQueue" );
         }

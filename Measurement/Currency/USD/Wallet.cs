@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Currency.USD {
     ///     Any tips or ideas? Any dos or dont's? Email me!
     /// </summary>
     [DataContract( IsReference = true )]
-    // ReSharper disable once UseNameofExpression
+    
     [DebuggerDisplay( "{Formatted,nq}" )]
     public class Wallet : IEnumerable< KeyValuePair< IDenomination, ulong > >, IWallet {
         /// <summary>

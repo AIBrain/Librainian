@@ -46,7 +46,7 @@ namespace Librainian.Maths {
     /// <seealso cref="http://gist.github.com/nberardi/2667136" />
     [UsedImplicitly]
     [Immutable]
-    // ReSharper disable once UseNameofExpression
+    
     [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public struct BigDecimal : IComparable, IComparable<BigDecimal>, IConvertible, /*IFormattable,*/ IEquatable<BigDecimal> {
 

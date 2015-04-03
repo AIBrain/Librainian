@@ -1,22 +1,22 @@
 #region License & Information
 
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
+// 
 // "Librainian/Months.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
 
 #endregion License & Information
@@ -32,19 +32,18 @@ namespace Librainian.Measurement.Time {
     using Maths;
     using Parsing;
 
-    [DataContract( IsReference = true )]
-	// ReSharper disable once UseNameofExpression
-	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [DataContract(IsReference = true)]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [Immutable]
     public struct Months : IComparable<Months>, IQuantityOfTime {
 
         /// <summary>
-        ///     12
+        /// 12
         /// </summary>
         public const Byte InOneCommonYear = 12;
 
         /// <summary>
-        ///     One <see cref="Months" /> .
+        /// One <see cref="Months" /> .
         /// </summary>
         public static readonly Months One = new Months( 1 );
 
@@ -57,18 +56,18 @@ namespace Librainian.Measurement.Time {
         public static readonly Months Thousand = new Months( 1000 );
 
         /// <summary>
-        ///     Zero <see cref="Months" />
+        /// Zero <see cref="Months" />
         /// </summary>
         public static readonly Months Zero = new Months( 0 );
 
-	    [ DataMember ]
-	    public BigDecimal Value { get; }
+        [DataMember]
+        public BigDecimal Value { get; }
 
-	    static Months() {
-            Zero.Should().BeLessThan( One );
-            One.Should().BeGreaterThan( Zero );
-            One.Should().Be( One );
-            One.Should().BeLessThan( Years.One );
+        static Months( ) {
+            Zero.Should( ).BeLessThan( One );
+            One.Should( ).BeGreaterThan( Zero );
+            One.Should( ).Be( One );
+            One.Should( ).BeLessThan( Years.One );
         }
 
         public Months( Decimal value ) {
@@ -88,7 +87,7 @@ namespace Librainian.Measurement.Time {
         }
 
         [UsedImplicitly]
-        private String DebuggerDisplay => this.ToString();
+        private String DebuggerDisplay => this.ToString( );
 
         public static Months Combine( Months left, Months right ) => Combine( left, right.Value );
 
@@ -97,7 +96,7 @@ namespace Librainian.Measurement.Time {
         public static Months Combine( Months left, BigInteger months ) => new Months( left.Value + months );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -106,7 +105,7 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Span( Months months ) => new Span( months: months.Value );
 
-        public static implicit operator Weeks( Months months ) => months.ToWeeks();
+        public static implicit operator Weeks( Months months ) => months.ToWeeks( );
 
         public static Months operator -( Months days ) => new Months( days.Value * -1 );
 
@@ -137,20 +136,21 @@ namespace Librainian.Measurement.Time {
             return obj is Months && this.Equals( ( Months )obj );
         }
 
-        public override int GetHashCode() => this.Value.GetHashCode();
+        public override int GetHashCode( ) => this.Value.GetHashCode( );
 
         [Pure]
-        public PlanckTimes ToPlanckTimes() =>  new PlanckTimes( PlanckTimes.InOneMonth *  this.Value )  ;
+        public PlanckTimes ToPlanckTimes( ) => new PlanckTimes( PlanckTimes.InOneMonth * this.Value );
 
-		[Pure]
-		public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMonth );
+        [Pure]
+        public Seconds ToSeconds( ) => new Seconds( this.Value * Seconds.InOneMonth );
 
-		[Pure]
-        public override String ToString() => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "month" ) );
+        [Pure]
+        public override String ToString( ) => String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "month" ) );
 
         //public static implicit operator Years( Months months ) => months.ToYears();
 
-        [Pure]public Weeks ToWeeks() => new Weeks( this.Value * Weeks.InOneMonth );
+        [Pure]
+        public Weeks ToWeeks( ) => new Weeks( this.Value * Weeks.InOneMonth );
 
         //[Pure]public Years ToYears() => new Years( this.Value / InOneCommonYear );
     }

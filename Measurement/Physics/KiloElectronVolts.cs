@@ -31,7 +31,7 @@ namespace Librainian.Measurement.Physics {
 	/// </summary>
 	/// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
 	/// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
-	// ReSharper disable once UseNameofExpression
+	
 	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     [Immutable]
     public struct KiloElectronVolts : IComparable< MilliElectronVolts >, IComparable< ElectronVolts >, IComparable< KiloElectronVolts >, IComparable< MegaElectronVolts >, IComparable< GigaElectronVolts > {

@@ -38,7 +38,7 @@ namespace Librainian.Collections {
     /// <value>Version 1.7</value>
     /// <remarks>TODO replace locks with AsyncLocks</remarks>
     [CollectionDataContract]
-	// ReSharper disable once UseNameofExpression
+	
 	[DebuggerDisplay( "Count={Count}" )]
     public sealed class ThreadSafeList<T> : IList<T> {
 

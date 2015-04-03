@@ -1,22 +1,22 @@
 #region License & Information
 
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
+// 
 // "Librainian/Microsecond.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
 
 #endregion License & Information
@@ -29,40 +29,37 @@ namespace Librainian.Measurement.Time.Clocks {
     using Librainian.Extensions;
 
     /// <summary>
-    ///     A simple struct for a <see cref="Microsecond" />.
+    /// A simple struct for a <see cref="Microsecond" />.
     /// </summary>
-    [DataContract( IsReference = true )]
+    [DataContract(IsReference = true)]
     [Serializable]
     [Immutable]
     public sealed class Microsecond : IClockPart {
-
-        public static readonly UInt16[] ValidMicroseconds = Enumerable.Range( 0, Microseconds.InOneMillisecond ).Select( u => ( UInt16 )u ).OrderBy( u => u ).ToArray();
+        public static readonly UInt16[] ValidMicroseconds = Enumerable.Range( 0, Microseconds.InOneMillisecond ).Select( u => ( UInt16 )u ).OrderBy( u => u ).ToArray( );
 
         /// <summary>
-        ///     999
+        /// 999
         /// </summary>
-        public static readonly UInt16 MaximumValue = ValidMicroseconds.Max();
+        public static readonly UInt16 MaximumValue = ValidMicroseconds.Max( );
 
         /// <summary>
-        ///     0
+        /// 0
         /// </summary>
-        public static readonly UInt16 MinimumValue = ValidMicroseconds.Min();
+        public static readonly UInt16 MinimumValue = ValidMicroseconds.Min( );
 
         /// <summary>
-        ///     
         /// </summary>
         public static readonly Microsecond Maxium = new Microsecond( MaximumValue );
 
         /// <summary>
-        ///     
         /// </summary>
         public static readonly Microsecond Minimum = new Microsecond( MinimumValue );
 
         [DataMember]
         public readonly UInt16 Value;
 
-        static Microsecond() {
-            MaximumValue.Should().BeGreaterThan( MinimumValue );
+        static Microsecond( ) {
+            MaximumValue.Should( ).BeGreaterThan( MinimumValue );
         }
 
         public Microsecond( UInt16 value ) {
@@ -72,9 +69,8 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Value = value;
         }
 
-
         /// <summary>
-        ///     Allow this class to be visibly cast to an <see cref="Int16" />.
+        /// Allow this class to be visibly cast to an <see cref="Int16" />.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -83,13 +79,13 @@ namespace Librainian.Measurement.Time.Clocks {
         public static implicit operator UInt16( Microsecond value ) => value.Value;
 
         /// <summary>
-        ///     Provide the next <see cref="Microsecond"/>.
+        /// Provide the next <see cref="Microsecond" />.
         /// </summary>
         public Microsecond Next( out Boolean ticked ) {
             ticked = false;
             var next = this.Value + 1;
             if ( next <= MaximumValue ) {
-                return new Microsecond( ( UInt16 ) next );
+                return new Microsecond( ( UInt16 )next );
             }
             next = MinimumValue;
             ticked = true;
@@ -97,13 +93,13 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         /// <summary>
-        ///     Provide the previous <see cref="Microsecond"/>.
+        /// Provide the previous <see cref="Microsecond" />.
         /// </summary>
         public Microsecond Previous( out Boolean ticked ) {
             ticked = false;
             var next = this.Value - 1;
             if ( next >= MinimumValue ) {
-                return new Microsecond( ( UInt16 ) next );
+                return new Microsecond( ( UInt16 )next );
             }
             next = MaximumValue;
             ticked = true;

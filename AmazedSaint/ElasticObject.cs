@@ -1,21 +1,22 @@
 // This notice must be kept visible in the source.
-//
+// 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-//
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 // bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
+// 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
+// 
 // "Librainian/ElasticObject.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
 
 namespace Librainian.AmazedSaint {
+
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -27,13 +28,12 @@ namespace Librainian.AmazedSaint {
     /// See http://amazedsaint.blogspot.com/2010/02/introducing-elasticobject-for-net-40.html for details
     /// </summary>
     public class ElasticObject : DynamicObject, IElasticHierarchyWrapper, INotifyPropertyChanged {
-
-        private readonly IElasticHierarchyWrapper _elasticProvider = new SimpleHierarchyWrapper();
+        private readonly IElasticHierarchyWrapper _elasticProvider = new SimpleHierarchyWrapper( );
 
         private NodeType _nodeType = NodeType.Element;
 
-        public ElasticObject()
-            : this( String.Format( "id={0}", Guid.NewGuid() ) ) {
+        public ElasticObject( )
+            : this( String.Format( "id={0}", Guid.NewGuid( ) ) ) {
         }
 
         public ElasticObject( String name, object value = null ) {
@@ -147,7 +147,7 @@ namespace Librainian.AmazedSaint {
             switch ( binder.Operation ) {
                 case ExpressionType.LeftShift:
                     if ( arg is String ) {
-                        var exp = new ElasticObject( ( String ) arg ) {
+                        var exp = new ElasticObject( ( String )arg ) {
                             _nodeType = NodeType.Element
                         };
                         this.AddElement( exp );
@@ -155,7 +155,7 @@ namespace Librainian.AmazedSaint {
                         return true;
                     }
                     if ( arg is ElasticObject ) {
-                        var eobj = ( ElasticObject ) arg;
+                        var eobj = ( ElasticObject )arg;
                         if ( !this.Elements.Contains( eobj ) ) {
                             this.AddElement( eobj );
                         }
@@ -164,7 +164,8 @@ namespace Librainian.AmazedSaint {
                     }
                     break;
 
-                case ExpressionType.LessThan: {
+                case ExpressionType.LessThan:
+                    {
                         var memberName = arg as String;
                         if ( arg is String ) {
                             if ( !this.HasAttribute( memberName ) ) {
@@ -175,20 +176,21 @@ namespace Librainian.AmazedSaint {
                             }
                             throw new InvalidOperationException( String.Format( "An attribute with name {0} already exists", memberName ) );
                         }
-                    if ( arg is ElasticObject ) {
-                        var eobj = ( ElasticObject ) arg;
-                        //TODO
-                        //HACK
-                        //this.AddAttribute( memberName, eobj );
-                        result = eobj;
-                        return true;
+                        if ( arg is ElasticObject ) {
+                            var eobj = ( ElasticObject )arg;
+
+                            //TODO
+                            //HACK
+                            //this.AddAttribute( memberName, eobj );
+                            result = eobj;
+                            return true;
+                        }
                     }
-                }
                     break;
 
                 case ExpressionType.GreaterThan:
                     if ( arg is FormatType ) {
-                        result = this.ToXElement();
+                        result = this.ToXElement( );
                         return true;
                     }
                     break;
@@ -201,7 +203,7 @@ namespace Librainian.AmazedSaint {
         /// </summary>
         public override Boolean TryGetIndex( GetIndexBinder binder, object[] indexes, out object result ) {
             if ( ( indexes.Length == 1 ) && indexes[ 0 ] == null ) {
-                result = this._elasticProvider.Elements.ToList();
+                result = this._elasticProvider.Elements.ToList( );
             }
             else if ( ( indexes.Length == 1 ) && indexes[ 0 ] is int ) {
                 var indx = ( int )indexes[ 0 ];
@@ -210,10 +212,10 @@ namespace Librainian.AmazedSaint {
             }
             else if ( ( indexes.Length == 1 ) && indexes[ 0 ] is Func<object, Boolean> ) {
                 var filter = indexes[ 0 ] as Func<object, Boolean>;
-                result = this.Elements.Where( filter ).ToList();
+                result = this.Elements.Where( filter ).ToList( );
             }
             else {
-                result = this.Elements.Where( c => indexes.Cast<String>().Contains( c.InternalName ) ).ToList();
+                result = this.Elements.Where( c => indexes.Cast<String>( ).Contains( c.InternalName ) ).ToList( );
             }
 
             return true;

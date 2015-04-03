@@ -1,51 +1,52 @@
 ﻿#region License & Information
 
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
+// 
 // "Librainian/UniversalDateTime.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
 
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
+
     using System;
     using System.Numerics;
     using JetBrains.Annotations;
 
     /// <summary>
-    ///     <para>Absolute universal date and time.</para>
-    ///     <para><see cref="PlanckTimes" /> since the big bang of <i>this</i> universe.</para>
+    /// <para>Absolute universal date and time.</para>
+    /// <para><see cref="PlanckTimes" /> since the big bang of <i>this</i> universe.</para>
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Lol" />
     public struct UniversalDateTime : IComparable<UniversalDateTime> {
 
         /// <summary>
-        ///     <para>1 planck times</para>
+        /// <para>1 planck times</para>
         /// </summary>
         public static readonly UniversalDateTime One = new UniversalDateTime( BigInteger.One );
 
         /// <summary>
-        ///     <para>The value of this constant is equivalent to 00:00:00.0000000, January 1, 0001.</para>
-        ///     <para>430,000,000,000,000,000 seconds</para>
+        /// <para>The value of this constant is equivalent to 00:00:00.0000000, January 1, 0001.</para>
+        /// <para>430,000,000,000,000,000 seconds</para>
         /// </summary>
         public static readonly PlanckTimes PlancksUpToMinDateTime = new PlanckTimes( new Seconds( 4.3E17m ) );
 
         /// <summary>
-        ///     <para>0 planck times</para>
+        /// <para>0 planck times</para>
         /// </summary>
         public static readonly UniversalDateTime TheBeginning = new UniversalDateTime( BigInteger.Zero );
 
@@ -60,7 +61,7 @@ namespace Librainian.Measurement.Time {
         public readonly Time Time;
 
         /// <summary>
-        ///     <para><see cref="PlanckTimes" /> since the big bang of <i>this</i> universe.</para>
+        /// <para><see cref="PlanckTimes" /> since the big bang of <i>this</i> universe.</para>
         /// </summary>
         public readonly BigInteger Value;
 
@@ -78,14 +79,15 @@ namespace Librainian.Measurement.Time {
 
             this.Value = span.TotalPlanckTimes;
             this.Date = new Date( span ); //we can use span here because the values have been normalized. Should()Have()Been()?
-            this.Time = new Time( span ); 
+            this.Time = new Time( span );
+
             //this.Time = new Time();
         }
 
         public static UniversalDateTime Now => new UniversalDateTime( DateTime.UtcNow );
 
         /// <summary>
-        ///     Given a <see cref="DateTime" />, calculate the <see cref="Span" />.
+        /// Given a <see cref="DateTime" />, calculate the <see cref="Span" />.
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>

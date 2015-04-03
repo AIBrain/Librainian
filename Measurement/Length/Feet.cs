@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Length {
     ///     <para>The foot is subdivided into 12 inches.</para>
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Foot_(unit)" />
-    [DataContract( IsReference = true )]	// ReSharper disable once UseNameofExpression
+    [DataContract( IsReference = true )]	
 
 	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public struct Feet : IComparable<Feet>, IQuantityOfDistance {

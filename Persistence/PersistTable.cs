@@ -47,7 +47,7 @@ namespace Librainian.Persistence {
     /// </summary>
     [DataContract(IsReference = true)]
 
-    // ReSharper disable once UseNameofExpression
+    
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [Serializable]
     public class PersistTable<TKey, TValue> : IDictionary<TKey, TValue>, IDisposable where TKey : IComparable<TKey>, IComparable {

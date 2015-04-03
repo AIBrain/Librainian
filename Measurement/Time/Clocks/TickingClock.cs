@@ -1,52 +1,45 @@
 ﻿#region License & Information
 
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
+// 
 // "Librainian/TickingClock.cs" was last cleaned by Rick on 2014/09/02 at 11:25 AM
 
 #endregion License & Information
 
 namespace Librainian.Measurement.Time.Clocks {
+
     using System;
     using System.Runtime.Serialization;
     using System.Timers;
     using JetBrains.Annotations;
 
     /// <summary>
-    ///     <para>Starts a forward-ticking clock at the given time with settable events.</para>
-    ///     <para>Should be threadsafe.</para>
-    ///     <para>
-    ///         Settable events are:
-    ///         <para>
-    ///             <see cref="OnHourTick" />
-    ///         </para>
-    ///         <para>
-    ///             <see cref="OnMinuteTick" />
-    ///         </para>
-    ///         <para>
-    ///             <see cref="OnSecondTick" />
-    ///         </para>
-    ///         <para>
-    ///             <see cref="OnMillisecondTick" />
-    ///         </para>
-    ///     </para>
+    /// <para>Starts a forward-ticking clock at the given time with settable events.</para>
+    /// <para>Should be threadsafe.</para>
+    /// <para>
+    /// Settable events are:
+    /// <para><see cref="OnHourTick" /></para>
+    /// <para><see cref="OnMinuteTick" /></para>
+    /// <para><see cref="OnSecondTick" /></para>
+    /// <para><see cref="OnMillisecondTick" /></para>
+    /// </para>
     /// </summary>
-    [DataContract( IsReference = true )]
+    [DataContract(IsReference = true)]
     public class TickingClock : IStandardClock {
 
         /// <summary>
@@ -133,30 +126,14 @@ namespace Librainian.Measurement.Time.Clocks {
             private set;
         }
 
-        public Time Time() {
-            try {
-                var timer = this._timer;
-                if ( timer != null ) {
-                    timer.Stop(); //stop the timer so the seconds don't tick while we get the values.
-                }
-                return new Time( hour: this.Hour.Value, minute: this.Minute.Value, second: this.Second.Value );
-            }
-            finally {
-                var timer = this._timer;
-                if ( timer != null ) {
-                    timer.Start();
-                }
-            }
-        }
+        public Boolean IsAM( ) => !this.IsPM( );
 
-        public Boolean IsAM() => !this.IsPM();
-
-        public Boolean IsPM() => this.Hour.Value >= 12;
+        public Boolean IsPM( ) => this.Hour.Value >= 12;
 
         public void ResetTimer( Granularity granularity ) {
             if ( null != this._timer ) {
-                using ( this._timer ) {
-                    this._timer.Stop();
+                using (this._timer) {
+                    this._timer.Stop( );
                 }
             }
             switch ( granularity ) {
@@ -192,7 +169,23 @@ namespace Librainian.Measurement.Time.Clocks {
                     throw new ArgumentOutOfRangeException( nameof( granularity ) );
             }
 
-            this._timer.Start();
+            this._timer.Start( );
+        }
+
+        public Time Time( ) {
+            try {
+                var timer = this._timer;
+                if ( timer != null ) {
+                    timer.Stop( ); //stop the timer so the seconds don't tick while we get the values.
+                }
+                return new Time( hour: this.Hour.Value, minute: this.Minute.Value, second: this.Second.Value );
+            }
+            finally {
+                var timer = this._timer;
+                if ( timer != null ) {
+                    timer.Start( );
+                }
+            }
         }
 
         private void OnHourElapsed( object sender, ElapsedEventArgs e ) {
@@ -217,7 +210,7 @@ namespace Librainian.Measurement.Time.Clocks {
             }
             var onMillisecondTick = this.OnMillisecondTick;
             if ( onMillisecondTick != null ) {
-                onMillisecondTick();
+                onMillisecondTick( );
             }
 
             this.OnSecondElapsed( sender, e );
@@ -232,7 +225,7 @@ namespace Librainian.Measurement.Time.Clocks {
             }
             var onMinuteTick = this.OnMinuteTick;
             if ( onMinuteTick != null ) {
-                onMinuteTick();
+                onMinuteTick( );
             }
 
             this.OnHourElapsed( sender, e );
@@ -247,7 +240,7 @@ namespace Librainian.Measurement.Time.Clocks {
             }
             var onSecondTick = this.OnSecondTick;
             if ( onSecondTick != null ) {
-                onSecondTick();
+                onSecondTick( );
             }
 
             this.OnMinuteElapsed( sender, e );

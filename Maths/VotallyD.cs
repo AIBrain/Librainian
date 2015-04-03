@@ -31,7 +31,7 @@ namespace Librainian.Maths {
     ///     <para>Keep track of votes for candidate A and candidate B.</para>
     /// </summary>
     [DataContract( IsReference = true )]
-    [Serializable]	  // ReSharper disable once UseNameofExpression
+    [Serializable]	  
 
 	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
     public class VotallyD {
