@@ -35,6 +35,8 @@ namespace Librainian.Measurement.Time.Clocks {
     [Serializable]
     public sealed class Month : IClockPart {
 
+        public static readonly Byte[] ValidMonths = Enumerable.Range( 1, Months.InOneCommonYear + 1 ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray( );
+
         /// <summary>
         /// 12
         /// </summary>
@@ -45,7 +47,6 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         public static readonly Byte MinimumValue = ValidMonths.Min( );
 
-        public static readonly Byte[] ValidMonths = Enumerable.Range( 1, Months.InOneCommonYear + 1 ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray( );
 
         [DataMember]
         public readonly Byte Value;
