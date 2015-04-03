@@ -141,14 +141,49 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public readonly Zeptoseconds Zeptoseconds;
 
-        //not the largest Span possible, but anything larger.. wow. just wow.
-        //not the largest Span possible, but anything larger.. wow. just wow.
-        private static readonly BigDecimal MaximumUsefulDecimal = new BigDecimal( Decimal.MaxValue );
-
         /// <summary>
         /// <para>This value is not calculated until needed.</para>
         /// </summary>
-        private Lazy<PlanckTimes> LazyTotal { get; set; }
+        private Lazy<PlanckTimes> LazyTotal { get; }
+
+        [Pure]
+        public PlanckTimes CalcTotalPlanckTimes( ) {
+            var counter = PlanckTimes.Zero;
+
+            counter += PlanckTimes.ToPlanckTimes( );
+
+            counter += Yoctoseconds.ToPlanckTimes( );
+
+            counter += Zeptoseconds.ToPlanckTimes( );
+
+            counter += Attoseconds.ToPlanckTimes( );
+
+            counter += Femtoseconds.ToPlanckTimes( );
+
+            counter += Picoseconds.ToPlanckTimes( );
+
+            counter += Nanoseconds.ToPlanckTimes( );
+
+            counter += Microseconds.ToPlanckTimes( );
+
+            counter += Milliseconds.ToPlanckTimes( );
+
+            counter += Seconds.ToPlanckTimes( );
+
+            counter += Minutes.ToPlanckTimes( );
+
+            counter += Hours.ToPlanckTimes( );
+
+            counter += Days.ToPlanckTimes( );
+
+            counter += Weeks.ToPlanckTimes( );
+
+            counter += Months.ToPlanckTimes( );
+
+            counter += Years.ToPlanckTimes( );
+
+            return counter;
+        }
 
         static Span( ) {
             Identity.Years.Value.Should( ).Be( 1 );
@@ -227,7 +262,7 @@ namespace Librainian.Measurement.Time {
             this.PlanckTimes += planckTimes;
 
             var tmpThis = this;
-            tmpThis.LazyTotal = new Lazy<PlanckTimes>( valueFactory: ( ) => tmpThis.CalcTotalPlanckTimes( ), isThreadSafe: true );
+            this.LazyTotal = new Lazy<PlanckTimes>( valueFactory: ( ) => tmpThis.CalcTotalPlanckTimes( ), isThreadSafe: true );
         }
 
         /// <summary>
@@ -791,7 +826,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString( ) {
-            var bob = new Queue<String>( 20 );
+            var bob = new Queue<string>( 20 );
 
             if ( this.Years.Value != Decimal.Zero ) {
                 bob.Enqueue( this.Years.ToString( ) );
@@ -844,5 +879,7 @@ namespace Librainian.Measurement.Time {
 
             return bob.ToStrings( ", ", ", and " );
         }
+
+       
     }
 }

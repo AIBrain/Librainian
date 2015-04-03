@@ -66,64 +66,6 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static DateTime BeginningOfDay( this DateTime date ) => new DateTime( year: date.Year, month: date.Month, day: date.Day, hour: 0, minute: 0, second: 0, millisecond: 0, kind: date.Kind );
 
-        [Pure]
-        public static PlanckTimes CalcTotalPlanckTimes( this Span span ) {
-            var counter = PlanckTimes.Zero;
-
-            // These 'if' are a super minor optimization. The result should still calc the same.
-            if ( span.PlanckTimes.Value > 0 ) {
-                counter += span.PlanckTimes.ToPlanckTimes( );
-            }
-            if ( span.Yoctoseconds.Value > 0 ) {
-                counter += span.Yoctoseconds.ToPlanckTimes( );
-            }
-            if ( span.Zeptoseconds.Value > 0 ) {
-                counter += span.Zeptoseconds.ToPlanckTimes( );
-            }
-            if ( span.Attoseconds.Value > 0 ) {
-                counter += span.Attoseconds.ToPlanckTimes( );
-            }
-            if ( span.Femtoseconds.Value > 0 ) {
-                counter += span.Femtoseconds.ToPlanckTimes( );
-            }
-            if ( span.Picoseconds.Value > 0 ) {
-                counter += span.Picoseconds.ToPlanckTimes( );
-            }
-            if ( span.Nanoseconds.Value > 0 ) {
-                counter += span.Nanoseconds.ToPlanckTimes( );
-            }
-            if ( span.Microseconds.Value > 0 ) {
-                counter += span.Microseconds.ToPlanckTimes( );
-            }
-            if ( span.Milliseconds.Value > 0 ) {
-                counter += span.Milliseconds.ToPlanckTimes( );
-            }
-            if ( span.Seconds.Value > 0 ) {
-                counter += span.Seconds.ToPlanckTimes( );
-            }
-            if ( span.Minutes.Value > 0 ) {
-                counter += span.Minutes.ToPlanckTimes( );
-            }
-            if ( span.Hours.Value > 0 ) {
-                counter += span.Hours.ToPlanckTimes( );
-            }
-            if ( span.Days.Value > 0 ) {
-                counter += span.Days.ToPlanckTimes( );
-            }
-
-            if ( span.Weeks.Value > 0 ) {
-                counter += span.Weeks.ToPlanckTimes( );
-            }
-
-            if ( span.Months.Value > 0 ) {
-                counter += span.Months.ToPlanckTimes( );
-            }
-            if ( span.Years.Value > 0 ) {
-                counter += span.Years.ToPlanckTimes( );
-            }
-            return counter;
-        }
-
         /// <summary>
         /// Example: Console.WriteLine( 3.Days().FromNow() );
         /// </summary>
