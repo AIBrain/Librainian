@@ -174,7 +174,7 @@ namespace Librainian.Graphics {
                         mostlyDigits += ParsingExtensions.Singlespace;
                     }
                 }
-                mostlyDigits = mostlyDigits.Trim();
+                mostlyDigits = mostlyDigits.Trim( );
 
                 #region Year, Month, Day formats as in digits == "20040823 173454" == "August 23th, 2004 at 5:34pm"
 
@@ -217,7 +217,7 @@ namespace Librainian.Graphics {
                 var regs1 = Regex.Matches( justName, pattern1, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five );
                 foreach ( var reg in regs1 ) {
                     DateTime bestGuess;
-                    if ( !DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
+                    if ( !DateTime.TryParse( reg.ToString( ), out bestGuess ) ) {
                         continue;
                     }
                     if ( IsDateRecentEnough( bestGuess ) ) {
@@ -233,7 +233,7 @@ namespace Librainian.Graphics {
                 var regs2 = Regex.Matches( justName, pattern2, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five );
                 foreach ( var reg in regs2 ) {
                     DateTime bestGuess;
-                    if ( !DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
+                    if ( !DateTime.TryParse( reg.ToString( ), out bestGuess ) ) {
                         continue;
                     }
                     if ( IsDateRecentEnough( bestGuess ) ) {
@@ -275,7 +275,7 @@ namespace Librainian.Graphics {
             try {
                 using (var image = Image.FromFile( filename: info.FullName, useEmbeddedColorManagement: false )) {
                     if ( image.PropertyIdList.Contains( PropertyList.DateTimeDigitized ) ) {
-                        var asDateTime = image.GetPropertyItem( PropertyList.DateTimeDigitized ).GetProperteryAsDateTime();
+                        var asDateTime = image.GetPropertyItem( PropertyList.DateTimeDigitized ).GetProperteryAsDateTime( );
                         if ( asDateTime.HasValue && IsDateRecentEnough( asDateTime ) ) {
                             {
                                 bestGuess = asDateTime.Value;
@@ -285,7 +285,7 @@ namespace Librainian.Graphics {
                     }
 
                     if ( image.PropertyIdList.Contains( PropertyList.DateTimeOriginal ) ) {
-                        var asDateTime = image.GetPropertyItem( PropertyList.DateTimeOriginal ).GetProperteryAsDateTime();
+                        var asDateTime = image.GetPropertyItem( PropertyList.DateTimeOriginal ).GetProperteryAsDateTime( );
                         if ( asDateTime.HasValue && IsDateRecentEnough( asDateTime ) ) {
                             {
                                 bestGuess = asDateTime.Value;
@@ -295,7 +295,7 @@ namespace Librainian.Graphics {
                     }
 
                     if ( image.PropertyIdList.Contains( PropertyList.PropertyTagDateTime ) ) {
-                        var asDateTime = image.GetPropertyItem( PropertyList.PropertyTagDateTime ).GetProperteryAsDateTime();
+                        var asDateTime = image.GetPropertyItem( PropertyList.PropertyTagDateTime ).GetProperteryAsDateTime( );
                         if ( asDateTime.HasValue && IsDateRecentEnough( asDateTime ) ) {
                             {
                                 bestGuess = asDateTime.Value;
@@ -335,13 +335,13 @@ namespace Librainian.Graphics {
                 return false;
             }
 
-            if ( !fileA.Exists() || !fileB.Exists() ) {
+            if ( !fileA.Exists( ) || !fileB.Exists( ) ) {
                 return false;
             }
 
             try {
-                var imageA = await Task.Run( () => Image.FromFile( fileA.FullPathWithFileName ) );
-                var imageB = await Task.Run( () => Image.FromFile( fileB.FullPathWithFileName ) );
+                var imageA = await Task.Run( ( ) => Image.FromFile( fileA.FullPathWithFileName ) );
+                var imageB = await Task.Run( ( ) => Image.FromFile( fileB.FullPathWithFileName ) );
 
 
                 if ( imageA.Width < imageB.Width && imageA.Height < imageB.Height ) {
@@ -381,13 +381,13 @@ namespace Librainian.Graphics {
                 var isImageGood = true; //HACK safe assumption?
 
                 try {
-                    var bitmapImage = new BitmapImage();
+                    var bitmapImage = new BitmapImage( );
                     bitmapImage.DecodeFailed += ( sender, args ) => isImageGood = false;
                     bitmapImage.DownloadFailed += ( sender, args ) => isImageGood = false;
                     bitmapImage.DownloadCompleted += ( sender, args ) => isImageGood = true;
-                    bitmapImage.BeginInit();
+                    bitmapImage.BeginInit( );
                     bitmapImage.UriSource = new Uri( file.FullName );
-                    bitmapImage.EndInit();
+                    bitmapImage.EndInit( );
                     if ( bitmapImage.Width <= 0 ) {
                         return false;
                     }
@@ -405,7 +405,7 @@ namespace Librainian.Graphics {
                 }
 
                 using (var bob = Image.FromFile( file.FullName )) {
-                    bob.Dispose();
+                    bob.Dispose( );
                     return true;
                 }
             }
@@ -415,7 +415,7 @@ namespace Librainian.Graphics {
             catch ( NotSupportedException) { }
             catch ( OutOfMemoryException) { }
             catch ( Exception exception ) {
-                exception.More();
+                exception.More( );
             }
             finally {
                 GC.Collect( 0, GCCollectionMode.Forced, true, true );

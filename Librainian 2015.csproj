@@ -11,7 +11,8 @@
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <SccProjectName>Svn</SccProjectName>
     <SccLocalPath>Svn</SccLocalPath>
     <SccAuxPath>Svn</SccAuxPath>
@@ -41,6 +42,7 @@
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
     <DocumentationFile>
     </DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,6 +52,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AForge">
@@ -130,14 +133,12 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity.Design" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Management" />
     <Reference Include="System.Net" />
     <Reference Include="System.Numerics" />
@@ -147,13 +148,14 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Speech" />
-    <Reference Include="System.Threading.Tasks" />
+    <Reference Include="System.Threading.Tasks">
+      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6\Facades\System.Threading.Tasks.dll</HintPath>
+    </Reference>
     <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\UberScraper 2015\packages\Microsoft.Tpl.Dataflow.4.5.24\lib\portable-net45+win8+wpa81\System.Threading.Tasks.Dataflow.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
@@ -222,17 +224,17 @@
     <Compile Include="Collections\WordToGuidAndGuidToWord.cs" />
     <Compile Include="Computer.cs" />
     <Compile Include="Controls\AutoLayoutWindow.cs">
-      <SubType>Form</SubType>
+      <SubType>form</SubType>
     </Compile>
     <Compile Include="Controls\AutoLayoutWindow.Designer.cs">
       <DependentUpon>AutoLayoutWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\DoubleBufferPanel.cs">
-      <SubType>Component</SubType>
+      <SubType>component</SubType>
     </Compile>
     <Compile Include="Controls\Extensions.cs" />
     <Compile Include="Controls\KittProgressBar.cs">
-      <SubType>UserControl</SubType>
+      <SubType>usercontrol</SubType>
     </Compile>
     <Compile Include="Controls\VerticalProgressBar.cs">
       <SubType>component</SubType>
