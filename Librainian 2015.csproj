@@ -80,10 +80,6 @@
       <HintPath>..\AIBrain 2015\packages\Clojure.1.6.0.1\lib\net40\Clojure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CodeFluent.Runtime.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1bb6d7cccf1045ec, processorArchitecture=MSIL">
-      <HintPath>..\AIBrain 2015\packages\CodeFluentRuntimeClient.1.0.0.805\lib\CodeFluent.Runtime.Client.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="CsQuery, Version=1.3.3.249, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\AIBrain 2015\packages\CsQuery.1.3.4\lib\net40\CsQuery.dll</HintPath>
       <Private>True</Private>
@@ -687,9 +683,6 @@
     <Compile Include="Threading\WaitNode.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="External\Readme.txt" />
-    <Content Include="External\x64\CodeFluent.Runtime.Compression.dll" />
-    <Content Include="External\x86\CodeFluent.Runtime.Compression.dll" />
     <Content Include="Misc\asingle.js" />
     <Content Include="Misc\brain.js" />
     <Content Include="Misc\JavaScript1.js" />
