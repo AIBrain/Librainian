@@ -46,8 +46,8 @@ namespace Librainian.Threading {
         /// </summary>
         public static readonly SynchronizationContext UIContext;
 
-        static Log() {
-            ConsoleListener = new ConsoleListenerWithTimePrefix();
+        static Log( ) {
+            ConsoleListener = new ConsoleListenerWithTimePrefix( );
             UIContext = SynchronizationContext.Current; //assumption.
         }
 
@@ -56,15 +56,15 @@ namespace Librainian.Threading {
             private set;
         }
 
-        public static Boolean Startup() {
-            HasConsoleBeenAllocated = NativeWin32.AllocConsole();
+        public static Boolean Startup( ) {
+            HasConsoleBeenAllocated = NativeWin32.AllocConsole( );
 
             Debug.Listeners.Add( ConsoleListener );
 
             Contract.ContractFailed += ( sender, e ) => {
                 var message = String.Format( "Caught Uncaught Contract Failure:\r\nCondition:{0}\r\nFailureKind:{1}\r\nHandled:{2}\r\nMessage:{3}", e.Condition, e.FailureKind, e.Handled, e.Message );
                 Debugger.IsAttached.BreakIfTrue( message );
-                e.OriginalException.More();
+                e.OriginalException.More( );
             };
 
             ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
@@ -73,47 +73,47 @@ namespace Librainian.Threading {
             return HasConsoleBeenAllocated;
         }
 
-        public static void Shutdown() {
+        public static void Shutdown( ) {
             if ( HasConsoleBeenAllocated ) {
-                NativeWin32.FreeConsole();
+                NativeWin32.FreeConsole( );
             }
         }
 
-		/// <summary>
-		///     <para>Write the <paramref name="message" /> out to the <see cref="ConsoleListener"/>.</para>
-		/// </summary>
-		/// <param name="message"></param>
-		[DebuggerStepThrough]
+        /// <summary>
+        ///     <para>Write the <paramref name="message" /> out to the <see cref="ConsoleListener"/>.</para>
+        /// </summary>
+        /// <param name="message"></param>
+        [DebuggerStepThrough]
         public static void Write( this String message ) => ConsoleListener.Write( message );
 
-		/// <summary>
-		///     <para>Write the <paramref name="message" /> out to the <see cref="ConsoleListener"/>.</para>
-		/// </summary>
-		/// <param name="message"></param>
-		[DebuggerStepThrough]
-        public static void WriteLine( this String message ) => ConsoleListener.WriteLine( message  );
+        /// <summary>
+        ///     <para>Write the <paramref name="message" /> out to the <see cref="ConsoleListener"/>.</para>
+        /// </summary>
+        /// <param name="message"></param>
+        [DebuggerStepThrough]
+        public static void WriteLine( this String message ) => ConsoleListener.WriteLine( message );
 
         [DebuggerStepThrough]
         public static void Enter( [CallerMemberName] String method = "" ) {
             ConsoleListener.IndentLevel++;
-            String.Format( "Entering {0}", method ?? String.Empty ).WriteLine();
+            String.Format( "Entering {0}", method ?? String.Empty ).WriteLine( );
         }
 
         [DebuggerStepThrough]
         public static void Before( [CallerMemberName] String method = "" ) {
             ConsoleListener.IndentLevel++;
-            String.Format( "Before - {0}", method ?? String.Empty ).WriteLine();
+            String.Format( "Before - {0}", method ?? String.Empty ).WriteLine( );
         }
 
         [DebuggerStepThrough]
         public static void After( [CallerMemberName] String method = "" ) {
-            String.Format( "After - {0}", method ?? String.Empty ).WriteLine();
+            String.Format( "After - {0}", method ?? String.Empty ).WriteLine( );
             ConsoleListener.IndentLevel--;
         }
 
         [DebuggerStepThrough]
         public static void Exit( [CallerMemberName] String method = "" ) {
-            String.Format( "Exited {0}", method ?? String.Empty ).WriteLine();
+            String.Format( "Exited {0}", method ?? String.Empty ).WriteLine( );
             ConsoleListener.IndentLevel--;
         }
 
@@ -123,7 +123,10 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="message"></param>
         [DebuggerStepThrough]
-        public static void Message( String message, [CallerMemberName] String method = "" ) => String.Format( "{0}: {1}", method.NullIfEmpty() ?? "?", message ).WriteLine();
+        public static String Message( [CanBeNull] String message, [CallerMemberName] String method = "" ) {
+            String.Format( "{0}: {1}", method.NullIfEmpty() ?? "?", message ).WriteLine();
+            return message ?? String.Empty;
+        }
 
         /// <summary>
         /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/> </para>
@@ -131,7 +134,10 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="message"></param>
         [DebuggerStepThrough]
-        public static void Info( this String message ) => String.Format( "Info: {0}", message ).WriteLine();
+        public static String Info( [CanBeNull] this String message ) {
+            String.Format( "Info: {0}", message ?? String.Empty ).WriteLine( );
+            return message ?? String.Empty;
+        }
 
         /// <summary>
         /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/> </para>
@@ -139,7 +145,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="message"></param>
         [DebuggerStepThrough]
-        public static void Warning( this String message ) => String.Format( "Warning: {0}", message ).WriteLine();
+        public static void Warning( this String message ) => String.Format( "Warning: {0}", message ).WriteLine( );
 
         /// <summary>
         /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/> </para>
@@ -147,10 +153,10 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="message"></param>
         [DebuggerStepThrough]
-        public static void Error( this String message ) => String.Format( "Error: {0}", message ).WriteLine();
+        public static void Error( this String message ) => String.Format( "Error: {0}", message ).WriteLine( );
 
         [DebuggerStepThrough]
-        public static void Finalized( [CallerMemberName] String method = "" ) => String.Format( "{0}: {1}", "Finalized", method ?? String.Empty ).WriteLine();
+        public static void Finalized( [CallerMemberName] String method = "" ) => String.Format( "{0}: {1}", "Finalized", method ?? String.Empty ).WriteLine( );
 
         /// <param name="exception"></param>
         /// <param name="method"></param>
@@ -159,15 +165,15 @@ namespace Librainian.Threading {
         [DebuggerStepThrough]
         public static void More( [NotNull] this Exception exception, [CanBeNull] [CallerMemberName] String method = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
             if ( Debugger.IsAttached ) {
-                Debugger.Break();
+                Debugger.Break( );
             }
-            var message = new StringBuilder();
+            var message = new StringBuilder( );
             message.AppendFormat( " [Exception: {0}]\r\n", exception.Message );
             message.AppendFormat( " [In: {0}]\r\n", exception.Source );
             message.AppendFormat( " [Msg: {0}]\r\n", exception.Message );
             message.AppendFormat( " [Source: {0}]\r\n", sourceFilePath );
             message.AppendFormat( " [Line: {0}]\r\n", sourceLineNumber );
-            ConsoleListener.Fail( method, message.ToString() );
+            ConsoleListener.Fail( method, message.ToString( ) );
         }
 
         [DebuggerStepThrough]
@@ -179,7 +185,7 @@ namespace Librainian.Threading {
                 Debug.WriteLine( message );
             }
             if ( Debugger.IsAttached ) {
-                Debugger.Break();
+                Debugger.Break( );
             }
         }
 
@@ -192,7 +198,7 @@ namespace Librainian.Threading {
                 Debug.WriteLine( message );
             }
             if ( Debugger.IsAttached ) {
-                Debugger.Break();
+                Debugger.Break( );
             }
         }
 
@@ -208,13 +214,13 @@ namespace Librainian.Threading {
         ///     Force a memory garbage collection on generation0 and generation1 objects.
         /// </summary>
         /// <seealso cref="http://programmers.stackexchange.com/questions/276585/when-is-it-a-good-idea-to-force-garbage-collection"/>
-        public static void Garbage() {
+        public static void Garbage( ) {
             var before = GC.GetTotalMemory( forceFullCollection: false );
             GC.Collect( generation: 1, mode: GCCollectionMode.Optimized, blocking: false );
             var after = GC.GetTotalMemory( forceFullCollection: false );
 
             if ( after < before ) {
-                String.Format( "{0} bytes freed by the GC.", before - after ).Info();
+                String.Format( "{0} bytes freed by the GC.", before - after ).Info( );
             }
         }
     }

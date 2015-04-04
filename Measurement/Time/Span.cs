@@ -33,6 +33,7 @@ namespace Librainian.Measurement.Time {
     using Librainian.Extensions;
     using Maths;
     using Parsing;
+    using Threading;
 
     /// <summary>
     /// <para>
@@ -186,21 +187,26 @@ namespace Librainian.Measurement.Time {
         }
 
         static Span( ) {
-            Identity.Years.Value.Should( ).Be( 1 );
-            Identity.Months.Value.Should( ).Be( 1 );
-            Identity.Weeks.Value.Should( ).Be( 1 );
-            Identity.Days.Value.Should( ).Be( 1 );
-            Identity.Hours.Value.Should( ).Be( 1 );
-            Identity.Minutes.Value.Should( ).Be( 1 );
-            Identity.Seconds.Value.Should( ).Be( 1 );
-            Identity.Milliseconds.Value.Should( ).Be( 1 );
-            Identity.Microseconds.Value.Should( ).Be( 1 );
-            Identity.Nanoseconds.Value.Should( ).Be( 1 );
-            Identity.Picoseconds.Value.Should( ).Be( 1 );
-            Identity.Attoseconds.Value.Should( ).Be( 1 );
-            Identity.Femtoseconds.Value.Should( ).Be( 1 );
-            Identity.Zeptoseconds.Value.Should( ).Be( 1 );
-            Identity.Yoctoseconds.Value.Should( ).Be( 1 );
+            try {
+                Identity.Years.Value.Should( ).Be( 1 );
+                Identity.Months.Value.Should( ).Be( 1 );
+                Identity.Weeks.Value.Should( ).Be( 1 );
+                Identity.Days.Value.Should( ).Be( 1 );
+                Identity.Hours.Value.Should( ).Be( 1 );
+                Identity.Minutes.Value.Should( ).Be( 1 );
+                Identity.Seconds.Value.Should( ).Be( 1 );
+                Identity.Milliseconds.Value.Should( ).Be( 1 );
+                Identity.Microseconds.Value.Should( ).Be( 1 );
+                Identity.Nanoseconds.Value.Should( ).Be( 1 );
+                Identity.Picoseconds.Value.Should( ).Be( 1 );
+                Identity.Attoseconds.Value.Should( ).Be( 1 );
+                Identity.Femtoseconds.Value.Should( ).Be( 1 );
+                Identity.Zeptoseconds.Value.Should( ).Be( 1 );
+                Identity.Yoctoseconds.Value.Should( ).Be( 1 );
+            }
+            catch ( Exception exception) {
+                exception.More();
+            }
         }
 
         public Span( BigInteger planckTimes )
