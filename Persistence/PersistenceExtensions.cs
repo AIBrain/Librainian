@@ -39,7 +39,6 @@ namespace Librainian.Persistence {
     using System.Threading;
     using System.Windows.Forms;
     using System.Xml;
-    using CodeFluent.Runtime.BinaryServices;
     using Collections;
     using Extensions;
     using IO;
@@ -898,14 +897,14 @@ namespace Librainian.Persistence {
                 }
                 var filename = String.Format( "{0}:{1}", location, attribute );
 
-                if ( !NtfsAlternateStream.Exists( filename ) ) {
-                    return false;
-                }
-                using ( var fs = NtfsAlternateStream.Open( path: filename, access: FileAccess.Read, mode: FileMode.Open, share: FileShare.None ) ) {
-                    var serializer = new NetDataContractSerializer();
-                    value = ( TSource )serializer.Deserialize( fs );
-                }
-                return true;
+                //if ( !NtfsAlternateStream.Exists( filename ) ) {
+                //    return false;
+                //}
+                //using ( var fs = NtfsAlternateStream.Open( path: filename, access: FileAccess.Read, mode: FileMode.Open, share: FileShare.None ) ) {
+                //    var serializer = new NetDataContractSerializer();
+                //    value = ( TSource )serializer.Deserialize( fs );
+                //}
+                //return true;
             }
             catch ( InvalidOperationException exception ) {
                 exception.More();
@@ -942,11 +941,11 @@ namespace Librainian.Persistence {
                 var filename = String.Format( "{0}:{1}", location, attribute );
                 var context = new StreamingContext( StreamingContextStates.All );
 
-                using ( var fs = NtfsAlternateStream.Open( path: filename, access: FileAccess.Write, mode: FileMode.Create, share: FileShare.None ) ) {
-                    var serializer = new NetDataContractSerializer( context: context, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false, assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null );
-                    serializer.Serialize( fs, objectToSerialize );
-                }
-                return true;
+                //using ( var fs = NtfsAlternateStream.Open( path: filename, access: FileAccess.Write, mode: FileMode.Create, share: FileShare.None ) ) {
+                //    var serializer = new NetDataContractSerializer( context: context, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false, assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null );
+                //    serializer.Serialize( fs, objectToSerialize );
+                //}
+                //return true;
             }
             catch ( SerializationException exception ) {
                 exception.More();
