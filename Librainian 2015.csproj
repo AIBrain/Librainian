@@ -193,7 +193,6 @@
     <Compile Include="AmazedSaint\NodeType.cs" />
     <Compile Include="AmazedSaint\SimpleHierarchyWrapper.cs" />
     <Compile Include="Extensions\AssemblyInformation.cs" />
-    <Compile Include="Extensions\TickCounter.cs" />
     <Compile Include="Extensions\CopyProgressRoutine.cs" />
     <Compile Include="Extensions\SafeSearchHandle.cs" />
     <Compile Include="Gaming\FlippedCoin.cs" />
@@ -202,7 +201,6 @@
     <Compile Include="Internet\InternetExtensions.cs" />
     <Compile Include="Maths\Digit.cs" />
     <Compile Include="Measurement\Frequency\FPS.cs" />
-    <Compile Include="Measurement\Time\DurationParser.cs" />
     <Compile Include="Parsing\Strand.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Collections\AbstractBlockingQueue.cs" />
@@ -620,7 +618,6 @@
     <Compile Include="Threading\AbandonableTask.cs" />
     <Compile Include="Security\MersenneTwister.cs" />
     <Compile Include="Threading\ActorExtensions.cs" />
-    <Compile Include="Threading\SafeRandom.cs" />
     <Compile Include="Threading\ConsoleListenerWithTimePrefix.cs" />
     <Compile Include="Threading\SimpleCancel.cs" />
     <Compile Include="Threading\RandomOrg\Quota.cs" />
