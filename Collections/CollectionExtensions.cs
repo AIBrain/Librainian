@@ -911,5 +911,44 @@ namespace Librainian.Collections {
             var sources = source as IList<TSource> ?? source.ToList( );
             return sources.Take( ( int )( x * sources.Count( ) ) );
         }
+
+        /// <summary>
+        /// Checks if two IEnumerables contain the exact same elements and same number of elements. Order does not matter.
+        /// </summary>
+        /// <typeparam name="T">The Type of object.</typeparam>
+        /// <param name="a">The first collection.</param>
+        /// <param name="b">The second collection.</param>
+        /// <returns>True if both IEnumerables contain the same items, and same number of items; otherwise, false.</returns>
+        public static bool ContainSameElements<T>( this IEnumerable<T> a, IEnumerable<T> b ) {
+            var aa = a as IList< T > ?? a.ToList();
+
+            var bb = b as IList< T > ?? b.ToList();
+
+            if ( aa.Count() != bb.Count() )
+                return false;
+
+            var listB = bb.ToList();
+
+            if ( aa.Any( item => !listB.Remove( item ) ) ) {
+                return false;
+            }
+
+            Debug.Assert( listB.Count == 0 );
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if an IEnumerable is empty.
+        /// </summary>
+        /// <typeparam name="T">The type of objects to enumerate.</typeparam>
+        /// <param name="source">The IEnumerable to check if empty.</param>
+        /// <returns>True if the <paramref name="source"/> is null or empty; otherwise false.</returns>
+        public static bool IsEmpty<T>( this IEnumerable<T> source ) {
+            if ( source == null )
+                return true;
+
+            return !source.Any();
+        }
     }
 }
