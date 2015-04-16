@@ -28,6 +28,45 @@ namespace Librainian.Collections {
     using System.Threading.Tasks;
     using Threading;
 
+    public class ConcurrentNoBlockStackL<T>{
+        internal sealed class Node {
+            internal T Item;
+            internal Node Next;
+            public Node( ) { }
+            public Node( T item, Node next ) { this.Item = item; this.Next = next; }
+        }
+
+        private volatile Node _head;
+
+        public ConcurrentNoBlockStackL( ) {
+            _head = new Node( default(T), _head );
+        }
+
+        public void Push( T item ) {
+            var nodeNew = new Node {
+                                        Item = item
+                                    };
+
+            Node tmp;
+            do {
+                tmp = _head;
+                nodeNew.Next = tmp;
+            } while ( Interlocked.CompareExchange( ref _head, nodeNew, tmp ) != tmp );
+        }
+
+        public T Pop( ) {
+            Node ret;
+
+            do {
+                ret = _head;
+                if ( ret.Next == null )
+                    throw new IndexOutOfRangeException( "Stack is empty" );
+
+            } while ( Interlocked.CompareExchange( ref _head, ret.Next, ret ) != ret );
+            return ret.Item;
+        }
+    }
+
     /// <summary>
     /// </summary>
     /// <typeparam name="T"></typeparam>
