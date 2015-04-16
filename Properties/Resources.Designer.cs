@@ -77,5 +77,23 @@ namespace Librainian.Properties {
                 return ResourceManager.GetString("Out_of_range", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to maxValue must be &gt;= minValue.
+        /// </summary>
+        internal static string SafeRandom_Next_ {
+            get {
+                return ResourceManager.GetString("SafeRandom_Next_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to maxValue must be greater than or equal to zero..
+        /// </summary>
+        internal static string SafeRandom_Next_maxValue_must_be_greater_than_or_equal_to_zero_ {
+            get {
+                return ResourceManager.GetString("SafeRandom_Next_maxValue_must_be_greater_than_or_equal_to_zero_", resourceCulture);
+            }
+        }
     }
 }

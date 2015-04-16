@@ -123,4 +123,10 @@
   <data name="Out_of_range" xml:space="preserve">
     <value>Out of range</value>
   </data>
+  <data name="SafeRandom_Next_" xml:space="preserve">
+    <value>maxValue must be &gt;= minValue</value>
+  </data>
+  <data name="SafeRandom_Next_maxValue_must_be_greater_than_or_equal_to_zero_" xml:space="preserve">
+    <value>maxValue must be greater than or equal to zero.</value>
+  </data>
 </root>

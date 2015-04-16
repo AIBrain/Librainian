@@ -31,10 +31,10 @@ namespace Librainian.Measurement.Currency.BTC {
 	using Threading;
 
 	public static class Extensions {
-		[NotNull]
-		public static readonly HashSet<ICoin> PossibleCoins = new HashSet<ICoin>();
+	    [NotNull]
+	    public static HashSet< ICoin > PossibleCoins { get; } = new HashSet< ICoin >();
 
-		static Extensions() {
+	    static Extensions() {
 			foreach ( var coin in typeof(ICoin).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<ICoin>() ) {
 				PossibleCoins.Add( coin );
 			}

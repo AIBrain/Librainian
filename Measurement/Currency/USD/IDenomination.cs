@@ -22,7 +22,7 @@ namespace Librainian.Measurement.Currency.USD {
     using JetBrains.Annotations;
 
     public interface IDenomination {
-       Decimal FaceValue { get; }
+        Decimal FaceValue { get; }
 
         [UsedImplicitly]
         String Formatted { get; }
@@ -32,94 +32,96 @@ namespace Librainian.Measurement.Currency.USD {
     /// </summary>
     /// <see cref="http://www.treasury.gov/resource-center/faqs/Currency/Pages/denominations.aspx" />
     /// <see cref="http://wikipedia.org/wiki/Banknote" />
-    public interface IBankNote : IDenomination { }
+    public interface IBankNote : IDenomination {
+    }
 
     /// <summary>
     /// </summary>
     /// <see cref="http://www.treasury.gov/resource-center/faqs/Currency/Pages/denominations.aspx" />
     /// <see cref="http://wikipedia.org/wiki/Coin" />
-    public interface ICoin : IDenomination { }
+    public interface ICoin : IDenomination {
+    }
 
     namespace Denominations {
         using System.Diagnostics;
 
-		
-		[DebuggerDisplay( "{Formatted,nq}" )]
+
+        [DebuggerDisplay("{Formatted,nq}")]
         [UsedImplicitly]
         public sealed class Dime : ICoin {
-            public  Decimal FaceValue => 0.10M;
+            public Decimal FaceValue => 0.10M;
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		
-		[DebuggerDisplay( "{Formatted,nq}" )]
+
+        [DebuggerDisplay("{Formatted,nq}")]
         [UsedImplicitly]
         public sealed class Fifty : IBankNote {
-            public  Decimal FaceValue => 50.00M;
+            public Decimal FaceValue => 50.00M;
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		
-		[DebuggerDisplay( "{Formatted,nq}" )]
+
+        [DebuggerDisplay("{Formatted,nq}")]
         [UsedImplicitly]
         public sealed class Five : IBankNote {
-            public  Decimal FaceValue => 5.00M;
+            public Decimal FaceValue => 5.00M;
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		
-		[DebuggerDisplay( "{Formatted,nq}" )]
+
+        [DebuggerDisplay("{Formatted,nq}")]
         [UsedImplicitly]
         public sealed class Hundred : IBankNote {
-            public  Decimal FaceValue => 100.00M;
+            public Decimal FaceValue => 100.00M;
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		
-		[DebuggerDisplay( "{Formatted,nq}" )]
+
+        [DebuggerDisplay("{Formatted,nq}")]
         [UsedImplicitly]
         public sealed class Nickel : ICoin {
-            public  Decimal FaceValue => 0.05M;
+            public Decimal FaceValue => 0.05M;
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		
-		[DebuggerDisplay( "{Formatted,nq}" )]
+
+        [DebuggerDisplay("{Formatted,nq}")]
         [UsedImplicitly]
-        public class One : IBankNote {
-            public  Decimal FaceValue => 1.00M;
+        public sealed class One : IBankNote {
+            public Decimal FaceValue => 1.00M;
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		
-		[DebuggerDisplay( "{Formatted,nq}" )]
+
+        [DebuggerDisplay("{Formatted,nq}")]
         [UsedImplicitly]
         public sealed class Penny : ICoin {
-            public  Decimal FaceValue => 0.01M;
+            public Decimal FaceValue => 0.01M;
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		
-		[DebuggerDisplay( "{Formatted,nq}" )]
+
+        [DebuggerDisplay("{Formatted,nq}")]
         [UsedImplicitly]
         public sealed class Quarter : ICoin {
-            public  Decimal FaceValue => 0.25M;
+            public Decimal FaceValue => 0.25M;
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		
-		[DebuggerDisplay( "{Formatted,nq}" )]
+
+        [DebuggerDisplay("{Formatted,nq}")]
         [UsedImplicitly]
-        public class Ten : IBankNote {
-            public  Decimal FaceValue => 10.00M;
+        public sealed class Ten : IBankNote {
+            public Decimal FaceValue => 10.00M;
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 
-		
-		[DebuggerDisplay( "{Formatted,nq}" )]
+
+        [DebuggerDisplay("{Formatted,nq}")]
         [UsedImplicitly]
-        public class Twenty : IBankNote {
-            public  Decimal FaceValue => 20.00M;
+        public sealed class Twenty : IBankNote {
+            public Decimal FaceValue => 20.00M;
             public String Formatted => String.Format( "{0:C}", this.FaceValue );
         }
 

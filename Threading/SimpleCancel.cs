@@ -32,26 +32,29 @@ namespace Librainian.Threading {
     ///     I understand why, I just don't like it. Plus, this version has the Dates and Times of the cancel requests.
     /// </summary>
     public sealed class SimpleCancel : IDisposable {
-        public SimpleCancel() {
+        public SimpleCancel( ) {
             this.Reset();
         }
 
-        public ConcurrentQueue< DateTime > CancelRequests { get; } = new ConcurrentQueue< DateTime >();
+        public ConcurrentQueue<DateTime> CancelRequests { get; }
+        = new ConcurrentQueue<DateTime>();
 
         /// <summary>
         /// </summary>
-        public DateTime? OldestCancelRequest => this.CancelRequests.OrderBy( dateTime => dateTime ).FirstOrDefault();
+        public DateTime? OldestCancelRequest { get; private set; }
 
-        public DateTime? YoungestCancelRequest => this.CancelRequests.OrderBy( dateTime => dateTime ).LastOrDefault();
+        //TODO keep track of this by a variable
+
+        public DateTime? YoungestCancelRequest { get; private set; }
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose() => this.RequestCancel( throwIfAlreadyRequested: false );
+        public void Dispose( ) => this.RequestCancel( throwIfAlreadyRequested: false );
 
         /// <summary>
         /// </summary>
-        public Boolean HaveAnyCancellationsBeenRequested() => this.CancelRequests.Any();
+        public Boolean HaveAnyCancellationsBeenRequested( ) => this.CancelRequests.Any();
 
         /// <summary>
         ///     Returns true if the cancel request was approved.
@@ -65,7 +68,7 @@ namespace Librainian.Threading {
         /// <summary>
         /// </summary>
         /// <returns></returns>
-        public UInt64 GetCancelsRequestedCounter() => ( UInt64 ) this.CancelRequests.LongCount();
+        public UInt64 GetCancelsRequestedCounter( ) => ( UInt64 )this.CancelRequests.LongCount();
 
         /// <summary>
         ///     Returns true if the cancel request was approved.
@@ -78,13 +81,20 @@ namespace Librainian.Threading {
             if ( throwIfAlreadyRequested && this.HaveAnyCancellationsBeenRequested() ) {
                 throw new TaskCanceledException( throwMessage );
             }
-            this.CancelRequests.Enqueue( DateTime.UtcNow );
+            var now = DateTime.UtcNow;
+            if ( !this.OldestCancelRequest.HasValue ) {
+                this.OldestCancelRequest = now;
+            }
+            if ( !this.YoungestCancelRequest.HasValue || this.YoungestCancelRequest.Value < now ) {
+                this.YoungestCancelRequest = now;
+            }
+            this.CancelRequests.Enqueue( now );
             return true;
         }
 
         /// <summary>
         ///     Resets all requests back to starting values.
         /// </summary>
-        public void Reset() => this.CancelRequests.Clear();
+        public void Reset( ) => this.CancelRequests.Clear();
     }
 }

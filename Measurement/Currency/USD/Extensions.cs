@@ -30,19 +30,20 @@ namespace Librainian.Measurement.Currency.USD {
     using Threading;
 
     public static class Extensions {
-        [NotNull] public static readonly HashSet< IDenomination > PossibleDenominations = new HashSet< IDenomination >();
+        [NotNull]
+        public static HashSet<IDenomination> PossibleDenominations { get; } = new HashSet<IDenomination>();
 
-        static Extensions() {
-            foreach ( var denomination in typeof ( IBankNote ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType< IDenomination >() ) {
+        static Extensions( ) {
+            foreach ( var denomination in typeof(IBankNote).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) {
                 PossibleDenominations.Add( denomination );
             }
-            foreach ( var denomination in typeof ( ICoin ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType< IDenomination >() ) {
+            foreach ( var denomination in typeof(ICoin).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) {
                 PossibleDenominations.Add( denomination );
             }
         }
 
         [NotNull]
-        public static Wallet CreateWallet() => Wallet.Create();
+        public static Wallet CreateWallet( ) => Wallet.Create();
 
         /// <summary>
         ///     Transfer everything FROM the <paramref name="source" /> <see cref="Wallet" /> into this <paramref name="target" />
@@ -51,15 +52,15 @@ namespace Librainian.Measurement.Currency.USD {
         /// <param name="source"></param>
         /// <param name="target"></param>
         [NotNull]
-        public static Task< ConcurrentDictionary< IDenomination, ulong > > StartTransfer( [CanBeNull] this Wallet source, [CanBeNull] Wallet target ) => Task.Run( () => {
-                                                                                                                                                                       if ( null == source || null == target ) {
-                                                                                                                                                                           return new ConcurrentDictionary< IDenomination, ulong >();
-                                                                                                                                                                       }
+        public static Task<ConcurrentDictionary<IDenomination, ulong>> StartTransfer( [CanBeNull] this Wallet source, [CanBeNull] Wallet target ) => Task.Run( ( ) => {
+            if ( null == source || null == target ) {
+                return new ConcurrentDictionary<IDenomination, ulong>();
+            }
 
-                                                                                                                                                                       return new ConcurrentDictionary< IDenomination, ulong >( Transfer( source, target ) );
-                                                                                                                                                                   } );
+            return new ConcurrentDictionary<IDenomination, ulong>( Transfer( source, target ) );
+        } );
 
-        public static IEnumerable< KeyValuePair< IDenomination, ulong > > Transfer( [NotNull] this Wallet source, [NotNull] Wallet target ) {
+        public static IEnumerable<KeyValuePair<IDenomination, ulong>> Transfer( [NotNull] this Wallet source, [NotNull] Wallet target ) {
             if ( source == null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
@@ -67,7 +68,7 @@ namespace Librainian.Measurement.Currency.USD {
                 throw new ArgumentNullException( nameof( target ) );
             }
 
-            var transferred = new ConcurrentDictionary< IDenomination, ulong >();
+            var transferred = new ConcurrentDictionary<IDenomination, ulong>();
 
             foreach ( var pair in source.Groups ) {
                 if ( !source.Transfer( target, pair ) ) {
@@ -81,7 +82,7 @@ namespace Librainian.Measurement.Currency.USD {
             return transferred;
         }
 
-        public static Boolean Transfer( [NotNull] this Wallet source, [NotNull] Wallet target, KeyValuePair< IDenomination, ulong > denominationAndAmount ) {
+        public static Boolean Transfer( [NotNull] this Wallet source, [NotNull] Wallet target, KeyValuePair<IDenomination, ulong> denominationAndAmount ) {
             if ( source == null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
@@ -97,23 +98,23 @@ namespace Librainian.Measurement.Currency.USD {
         /// <param name="wallet"></param>
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
-        public static Task Transfer( [NotNull] Wallet wallet, [CanBeNull] IEnumerable< KeyValuePair< IDenomination, ulong > > sourceAmounts ) {
+        public static Task Transfer( [NotNull] Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IDenomination, ulong>> sourceAmounts ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
-            var bsfasd = new ActionBlock< KeyValuePair< IDenomination, ulong > >( pair => wallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeParallel );
+            var bsfasd = new ActionBlock<KeyValuePair<IDenomination, ulong>>( pair => wallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeParallel );
             bsfasd.Complete();
             return bsfasd.Completion;
         }
 
-        public static void Fund( [NotNull] Wallet wallet, [CanBeNull] params KeyValuePair< IDenomination, ulong >[] sourceAmounts ) {
+        public static void Fund( [NotNull] Wallet wallet, [CanBeNull] params KeyValuePair<IDenomination, ulong>[] sourceAmounts ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
             Fund( wallet, sourceAmounts.AsEnumerable() );
         }
 
-        public static void Fund( [NotNull] Wallet wallet, [CanBeNull] IEnumerable< KeyValuePair< IDenomination, ulong > > sourceAmounts ) {
+        public static void Fund( [NotNull] Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IDenomination, ulong>> sourceAmounts ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
@@ -130,11 +131,11 @@ namespace Librainian.Measurement.Currency.USD {
         /// <param name="wallet"></param>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public static async Task<Decimal > Fund( [NotNull] Wallet wallet,Decimal amount ) {
+        public static async Task<Decimal> Fund( [NotNull] Wallet wallet, Decimal amount ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
-            var leftOverFund =Decimal.Zero;
+            var leftOverFund = Decimal.Zero;
             var notesAndCoins = amount.Optimal( ref leftOverFund );
             await StartDeposit( wallet, notesAndCoins );
             return leftOverFund;
@@ -146,23 +147,23 @@ namespace Librainian.Measurement.Currency.USD {
         ///     <paramref name="amount" />.
         /// </summary>
         /// <param name="amount"></param>
-        /// <param name="leftOverAmount">Fractions of Pennies not accounted for.</param>
+        /// <param name="leftOverAmount">Fractions of Dollars/Pennies not accounted for. <seealso cref="OfficeSpace"/> and <seealso cref="Superman III"/></param>
         /// <returns></returns>
-        public static Dictionary< IDenomination, ulong > Optimal( this Decimal amount, ref  Decimal leftOverAmount ) {
-            var demonsLeft = new List< IDenomination >( PossibleDenominations );
-            var result = demonsLeft.ToDictionary< IDenomination, IDenomination, UInt64 >( denomination => denomination, denomination => 0 );
+        public static Dictionary<IDenomination, ulong> Optimal( this Decimal amount, ref Decimal leftOverAmount ) {
+            var denominations = new List<IDenomination>( PossibleDenominations );
+            var result = denominations.ToDictionary< IDenomination, IDenomination, ulong >( denomination => denomination, denomination => 0 );
 
             leftOverAmount += amount;
-            while ( leftOverAmount >Decimal.Zero && demonsLeft.Any() ) {
-                var highestBill = demonsLeft.OrderByDescending( denomination => denomination.FaceValue ).First();
+            while ( leftOverAmount > Decimal.Zero && denominations.Any() ) {
+                var highestBill = denominations.OrderByDescending( denomination => denomination.FaceValue ).First();
 
-                var chunks = ( UInt64 ) ( leftOverAmount/highestBill.FaceValue );
+                var chunks = ( UInt64 )( leftOverAmount / highestBill.FaceValue );
 
-                if ( chunks >Decimal.Zero ) {
+                if ( chunks > Decimal.Zero ) {
                     result[ highestBill ] += chunks;
-                    leftOverAmount -= chunks*highestBill.FaceValue;
+                    leftOverAmount -= chunks * highestBill.FaceValue;
                 }
-                demonsLeft.Remove( highestBill );
+                denominations.Remove( highestBill );
             }
 
             Assert.Less( leftOverAmount, PossibleDenominations.OrderBy( denomination => denomination.FaceValue ).First().FaceValue );
@@ -176,12 +177,12 @@ namespace Librainian.Measurement.Currency.USD {
         /// <param name="wallet"></param>
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
-        public static Task StartDeposit( [NotNull] Wallet wallet, [CanBeNull] IEnumerable< KeyValuePair< IDenomination, ulong > > sourceAmounts ) {
+        public static Task StartDeposit( [NotNull] Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IDenomination, ulong>> sourceAmounts ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
-            sourceAmounts = sourceAmounts ?? Enumerable.Empty< KeyValuePair< IDenomination, ulong > >();
-            var actionBlock = new ActionBlock< KeyValuePair< IDenomination, ulong > >( pair => wallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeParallel );
+            sourceAmounts = sourceAmounts ?? Enumerable.Empty<KeyValuePair<IDenomination, ulong>>();
+            var actionBlock = new ActionBlock<KeyValuePair<IDenomination, ulong>>( pair => wallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeParallel );
             Parallel.ForEach( sourceAmounts, pair => actionBlock.Post( pair ) );
             actionBlock.Complete();
             return actionBlock.Completion;
@@ -216,16 +217,16 @@ namespace Librainian.Measurement.Currency.USD {
         /// <param name="wallet"></param>
         /// <param name="bankNotes"></param>
         /// <param name="coins"></param>
-        public static void Deposit( [NotNull] Wallet wallet, [CanBeNull] IEnumerable< KeyValuePair< IBankNote, ulong > > bankNotes = null, IEnumerable< KeyValuePair< ICoin, ulong > > coins = null ) {
+        public static void Deposit( [NotNull] Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IBankNote, ulong>> bankNotes = null, IEnumerable<KeyValuePair<ICoin, ulong>> coins = null ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
-            bankNotes = bankNotes ?? Enumerable.Empty< KeyValuePair< IBankNote, ulong > >();
+            bankNotes = bankNotes ?? Enumerable.Empty<KeyValuePair<IBankNote, ulong>>();
             foreach ( var pair in bankNotes ) {
                 wallet.Deposit( denomination: pair.Key, quantity: pair.Value );
             }
 
-            coins = coins ?? Enumerable.Empty< KeyValuePair< ICoin, ulong > >();
+            coins = coins ?? Enumerable.Empty<KeyValuePair<ICoin, ulong>>();
             foreach ( var pair in coins ) {
                 wallet.Deposit( denomination: pair.Key, quantity: pair.Value );
             }

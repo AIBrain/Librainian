@@ -47,10 +47,10 @@ namespace Librainian.Threading {
         /// <summary>
         ///     Provide to each thread its own <see cref="Random" /> with a random seed.
         /// </summary>
-        public static readonly ThreadLocal<Random> ThreadSafeRandom = new ThreadLocal<Random>( valueFactory: ( ) => {
+        public static readonly ThreadLocal<SafeRandom> ThreadSafeRandom = new ThreadLocal<SafeRandom>( valueFactory: ( ) => {
             var hash = ThreadingExtensions.ThreadLocalSHA256Managed.Value.ComputeHash( Guid.NewGuid().ToByteArray() );
             var seed = BitConverter.ToInt32( value: hash, startIndex: 0 );
-            return new Random( seed.GetHashMerge( Thread.CurrentThread.ManagedThreadId ) );
+            return new SafeRandom( seed.GetHashMerge( Thread.CurrentThread.ManagedThreadId ) );
         }, trackAllValues: false );
 
         private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<byte[]>( ( ) => new byte[ sizeof(Double) ], false );
@@ -77,9 +77,7 @@ namespace Librainian.Threading {
         public static ThreadLocal<RandomNumberGenerator> RNG { get; }
         = new ThreadLocal<RandomNumberGenerator>( ( ) => new RNGCryptoServiceProvider() );
 
-        [NotNull]
-        private static ThreadLocal<byte[]> LocalInt64Buffers { get; }
-        = new ThreadLocal<byte[]>( valueFactory: ( ) => new byte[ sizeof(Int64) ], trackAllValues: false );
+       
 
         internal static void AddToList( [NotNull] ConcurrentBag<int> list ) {
             if ( list == null ) {
@@ -529,7 +527,7 @@ namespace Librainian.Threading {
         ///     Returns a random Double beetween 0 and 1
         /// </summary>
         /// <returns></returns>
-        [JetBrains.Annotations.Pure]
+        [System.Diagnostics.Contracts.Pure]
         public static Double NextDouble( ) => Instance.NextDouble();
 
         /// <summary>
@@ -550,7 +548,7 @@ namespace Librainian.Threading {
 
         public static Guid NextGuid( ) => Guid.NewGuid();
 
-        public static Guid NextGuid( Decimal minValue ) => Guid.NewGuid();
+        public static Guid NextGuid( Decimal minValue ) => Guid.NewGuid();  //TODO
 
         /// <summary>
         ///     Return a random number somewhere in the full range of <see cref="Int32" />.
@@ -565,8 +563,9 @@ namespace Librainian.Threading {
         }
 
         public static Int64 NextInt64( ) {
-            Instance.NextBytes( LocalInt64Buffers.Value );
-            return BitConverter.ToInt64( value: LocalInt64Buffers.Value, startIndex: 0 );
+            var buffer = new byte[sizeof ( Int64 )];
+            Instance.NextBytes( buffer );
+            return BitConverter.ToInt64( value: buffer, startIndex: 0 );
         }
 
         /// <summary>
@@ -842,6 +841,215 @@ namespace Librainian.Threading {
             public readonly Double value;
             [FieldOffset(0)]
             public readonly ulong valueulong;
+        }
+
+        /// <summary>
+        /// Gets a non-negetive random whole number less than the specified <paramref cref="maximum"/>.
+        /// </summary>
+        /// <param name="maximum">The exclusive upper bound the random number to be generated.</param>
+        /// <returns>A non-negetive random whole number less than the specified <paramref cref="maximum"/>.</returns>
+        public static int NextInt( int maximum ) => Instance.Next( maximum );
+
+        /// <summary>
+        /// Gets a random number within a specified range.
+        /// </summary>
+        /// <param name="min">The inclusive lower bound of the random number returned.</param>
+        /// <param name="max">The exclusive upper bound of the random number returned.</param>
+        /// <returns>A random number within a specified range.</returns>
+        public static int NextInt( int min, int max ) => Instance.Next( min, max );
+
+        /// <summary>
+        /// Chooses a random element in the given collection <paramref name="items"/>.
+        /// </summary>
+        /// <typeparam name="T">The Type of element.</typeparam>
+        /// <param name="items">The collection of items to choose a random element from.</param>
+        /// <returns>A randomly chosen element in the given collection <paramref name="items"/>.</returns>
+        public static T Choose<T>( [NotNull] params T[] items ) => items[ NextInt( items.Length ) ];
+
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
+        /// <typeparam name="T">The Type of element.</typeparam>
+        /// <param name="a">The first item.</param>
+        /// <returns>A randomly chosen element in the given set of items.</returns>
+        public static T Choose<T>( T a ) => a;
+
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
+        /// <typeparam name="T">The Type of element.</typeparam>
+        /// <param name="a">The first item.</param>
+        /// <param name="b">The second item.</param>
+        /// <returns>A randomly chosen element in the given set of items.</returns>
+        public static T Choose<T>( T a, T b ) {
+            switch ( NextInt( 2 ) ) {
+                case 0:
+                    return a;
+                default:
+                    return b;
+            }
+        }
+
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
+        /// <typeparam name="T">The Type of element.</typeparam>
+        /// <param name="a">The first item.</param>
+        /// <param name="b">The second item.</param>
+        /// <param name="c">The third item.</param>
+        /// <returns>A randomly chosen element in the given set of items.</returns>
+        public static T Choose<T>( T a, T b, T c ) {
+            switch ( NextInt( 3 ) ) {
+                case 0:
+                    return a;
+                case 1:
+                    return b;
+                default:
+                    return c;
+            }
+        }
+
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
+        /// <typeparam name="T">The Type of element.</typeparam>
+        /// <param name="a">The first item.</param>
+        /// <param name="b">The second item.</param>
+        /// <param name="c">The third item.</param>
+        /// <param name="d">The fourth item.</param>
+        /// <returns>A randomly chosen element in the given set of items.</returns>
+        public static T Choose<T>( T a, T b, T c, T d ) {
+            switch ( NextInt( 4 ) ) {
+                case 0:
+                    return a;
+                case 1:
+                    return b;
+                case 2:
+                    return c;
+                default:
+                    return d;
+            }
+        }
+
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
+        /// <typeparam name="T">The Type of element.</typeparam>
+        /// <param name="a">The first item.</param>
+        /// <param name="b">The second item.</param>
+        /// <param name="c">The third item.</param>
+        /// <param name="d">The fourth item.</param>
+        /// <param name="e">The fifth item.</param>
+        /// <returns>A randomly chosen element in the given set of items.</returns>
+        public static T Choose<T>( T a, T b, T c, T d, T e ) {
+            switch ( NextInt( 5 ) ) {
+                case 0:
+                    return a;
+                case 1:
+                    return b;
+                case 2:
+                    return c;
+                case 3:
+                    return d;
+                default:
+                    return e;
+            }
+        }
+
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
+        /// <typeparam name="T">The Type of element.</typeparam>
+        /// <param name="a">The first item.</param>
+        /// <param name="b">The second item.</param>
+        /// <param name="c">The third item.</param>
+        /// <param name="d">The fourth item.</param>
+        /// <param name="e">The fifth item.</param>
+        /// <param name="f">The sixth item.</param>
+        /// <returns>A randomly chosen element in the given set of items.</returns>
+        public static T Choose<T>( T a, T b, T c, T d, T e, T f ) {
+            var index = NextInt( 6 );
+            switch ( index ) {
+                case 0:
+                    return a;
+                case 1:
+                    return b;
+                case 2:
+                    return c;
+                case 3:
+                    return d;
+                case 4:
+                    return e;
+                default:
+                    return f;
+            }
+        }
+
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
+        /// <typeparam name="T">The Type of element.</typeparam>
+        /// <param name="a">The first item.</param>
+        /// <param name="b">The second item.</param>
+        /// <param name="c">The third item.</param>
+        /// <param name="d">The fourth item.</param>
+        /// <param name="e">The fifth item.</param>
+        /// <param name="f">The sixth item.</param>
+        /// <param name="g">The seventh item.</param>
+        /// <returns>A randomly chosen element in the given set of items.</returns>
+        public static T Choose<T>( T a, T b, T c, T d, T e, T f, T g ) {
+            var index = NextInt( 7 );
+            switch ( index ) {
+                case 0:
+                    return a;
+                case 1:
+                    return b;
+                case 2:
+                    return c;
+                case 3:
+                    return d;
+                case 4:
+                    return e;
+                case 5:
+                    return f;
+                default:
+                    return g;
+            }
+        }
+
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
+        /// <typeparam name="T">The Type of element.</typeparam>
+        /// <param name="a">The first item.</param>
+        /// <param name="b">The second item.</param>
+        /// <param name="c">The third item.</param>
+        /// <param name="d">The fourth item.</param>
+        /// <param name="e">The fifth item.</param>
+        /// <param name="f">The sixth item.</param>
+        /// <param name="g">The seventh item.</param>
+        /// <param name="h">The eigth item.</param>
+        /// <returns>A randomly chosen element in the given set of items.</returns>
+        public static T Choose<T>( T a, T b, T c, T d, T e, T f, T g, T h ) {
+            var index = NextInt( 8 );
+            switch ( index ) {
+                case 0:
+                    return a;
+                case 1:
+                    return b;
+                case 2:
+                    return c;
+                case 3:
+                    return d;
+                case 4:
+                    return e;
+                case 5:
+                    return f;
+                case 6:
+                    return g;
+                default:
+                    return h;
+            }
         }
     }
 }
