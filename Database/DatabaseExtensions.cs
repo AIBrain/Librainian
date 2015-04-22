@@ -27,6 +27,14 @@ namespace Librainian.Database {
 
     public static class DatabaseExtensions {
 
+        public static SqlParameter ToSqlParameter<TValue>( this TValue value, string parameterName ) {
+            return new SqlParameter( parameterName, value ) {
+                                                                Value = value
+                                                            };
+        }
+
+        public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, string parameterName, int size ) => new SqlParameter( parameterName, sqlDbType, size );
+
         /// <summary>
         /// <para>Warning: Untested and buggy.</para>
         /// Convert our IList to a DataTable

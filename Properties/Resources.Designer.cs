@@ -70,6 +70,15 @@ namespace Librainian.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Timeout is less than one..
+        /// </summary>
+        internal static string Database_GetConnection_Timeout_is_less_than_one_ {
+            get {
+                return ResourceManager.GetString("Database_GetConnection_Timeout_is_less_than_one_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Out of range.
         /// </summary>
         internal static string Out_of_range {

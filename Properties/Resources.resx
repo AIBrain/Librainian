@@ -129,4 +129,7 @@
   <data name="SafeRandom_Next_maxValue_must_be_greater_than_or_equal_to_zero_" xml:space="preserve">
     <value>maxValue must be greater than or equal to zero.</value>
   </data>
+  <data name="Database_GetConnection_Timeout_is_less_than_one_" xml:space="preserve">
+    <value>Timeout is less than one.</value>
+  </data>
 </root>
