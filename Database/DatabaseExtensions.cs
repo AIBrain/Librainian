@@ -27,13 +27,29 @@ namespace Librainian.Database {
 
     public static class DatabaseExtensions {
 
-        public static SqlParameter ToSqlParameter<TValue>( this TValue value, string parameterName ) {
-            return new SqlParameter( parameterName, value ) {
-                                                                Value = value
-                                                            };
-        }
+        public static SqlParameter ToSqlParameter<TValue>( this TValue value, string parameterName ) => new SqlParameter( parameterName, value ) {
+                                                                                                                                                     Value = value
+                                                                                                                                                 };
 
         public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, string parameterName, int size ) => new SqlParameter( parameterName, sqlDbType, size );
+
+/*
+        private static List<T> MapList<T>( DataTable dt ) {
+            List<T> list = new List<T>();
+
+            FieldInfo[] fields = typeof( T ).GetFields();
+            T t = Activator.CreateInstance<T>();
+
+            foreach ( DataRow dr in dt.Rows ) {
+                foreach ( FieldInfo fi in fields )
+                    fi.SetValueDirect( __makeref(t), dr[ fi.Name ] );
+
+                list.Add( t );
+            }
+
+            return list;
+        }
+*/
 
         /// <summary>
         /// <para>Warning: Untested and buggy.</para>
