@@ -26,6 +26,7 @@ namespace Librainian.Database {
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
+    using System.Diagnostics;
     using System.Net.NetworkInformation;
     using System.Threading;
     using System.Threading.Tasks;
@@ -307,43 +308,69 @@ namespace Librainian.Database {
             return null;
         }
 
-        //[CanBeNull]
-        //public DataTableReader Query( String sproc ) {
-        //TryAgain:
-        //    try {
-        //        var stopwatch = Stopwatch.StartNew();
+        /// <summary>
+        /// Returns a <see cref="DataTable"/>
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="commandType"></param>
+        /// <param name="useTransaction"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        [NotNull]
+        public DataTable Query( [NotNull] String query, CommandType commandType, Boolean useTransaction = true, params SqlParameter[] parameters ) {
+            if ( query == null ) {
+                throw new ArgumentNullException( nameof( query ) );
+            }
 
-        // if ( this.GetConnection() ) { this.Command.CommandText = sproc;
+            var table = new DataTable();
 
-        // var table = new DataTable(); table.BeginLoadData(); using ( var reader =
-        // this.Command.ExecuteReader() ) { table.Load( reader, LoadOption.OverwriteChanges ); } table.EndLoadData();
+            SqlTransaction transaction = null;
+            try {
+                var command = new SqlCommand( query, this.OpenConnection() ) {
+                    CommandType = commandType
+                };
 
-        // QueryAverages.AddOrUpdate( key: sproc, addValue: stopwatch.Elapsed, updateValueFactory: (
-        // s, span ) => new Milliseconds( ( Decimal )( QueryAverages[ sproc ].Add( stopwatch.Elapsed
-        // ).TotalMilliseconds / 2.0 ) ) );
+                if ( null != parameters ) {
+                    command.Parameters.AddRange( parameters );
+                }
 
-        //            return table.CreateDataReader();
-        //        }
-        //    }
-        //    catch ( Exception exception ) {
-        //        var lower = exception.Message.ToLower();
-        //        if ( lower.Contains( "deadlocked" ) ) {
-        //            "deadlock.wav".TryPlayFile();
-        //            goto TryAgain;
-        //        }
-        //        if ( lower.Contains( "transport-level error" ) ) {
-        //            "lostconnection.wav".TryPlayFile();
-        //            goto TryAgain;
-        //        }
-        //        if ( lower.Contains( "timeout" ) ) {
-        //            "timeout.wav".TryPlayFile();
-        //            goto TryAgain;
-        //        }
-        //        exception.Error();
-        //        throw;
-        //    }
-        //    return null;
-        //}
+                if ( useTransaction ) {
+                    transaction = Connections.Value.BeginTransaction(); // Start a local transaction.
+                    command.Transaction = transaction;
+                }
+
+
+                table.BeginLoadData();
+                try {
+                    using ( var reader = command.ExecuteReader() ) { table.Load( reader, LoadOption.OverwriteChanges ); }
+                }
+                finally {
+                    transaction?.Commit(); // Attempt to commit the transaction.
+                }
+                table.EndLoadData();
+           }
+            catch ( SqlException exception) {
+                exception.More();
+                
+                // Attempt to roll back the transaction.
+                try {
+                    transaction?.Rollback();
+                }
+                catch ( Exception exception2 ) {
+
+                    // This catch block will handle any errors that may have occurred on the server
+                    // that would cause the rollback to fail, such as a closed connection.
+                    exception2.More();
+                }
+            }
+            catch ( DbException exception) {
+                exception.More();
+            }
+            catch ( Exception exception) {
+                exception.More();
+            }
+            return table;
+        }
 
         /// <summary>
         /// <para>Returns the first column of the first row.</para>
@@ -448,6 +475,20 @@ namespace Librainian.Database {
                     exception2.More();
                 }
             }
+            catch ( DbException exception ) {
+                exception.More();
+
+                // Attempt to roll back the transaction.
+                try {
+                    transaction?.Rollback();
+                }
+                catch ( Exception exception2 ) {
+
+                    // This catch block will handle any errors that may have occurred on the server
+                    // that would cause the rollback to fail, such as a closed connection.
+                    exception2.More();
+                }
+            }
             return default(TResult);
         }
 
@@ -500,7 +541,6 @@ namespace Librainian.Database {
             return null;
         }
 
-        [CanBeNull]
         public Boolean QueryWithNoResult( String query, CommandType commandType, Boolean useTransaction = true, params SqlParameter[] parameters ) {
             SqlTransaction transaction = null;
             try {
@@ -574,5 +614,6 @@ namespace Librainian.Database {
             }
             return null;
         }
+
     }
 }

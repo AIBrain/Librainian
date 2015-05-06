@@ -378,31 +378,31 @@ namespace Librainian.Graphics {
                 return false;
             }
             try {
-                var isImageGood = true; //HACK safe assumption?
+                //var isImageGood = true; //HACK safe assumption?
 
-                try {
-                    var bitmapImage = new BitmapImage( );
-                    bitmapImage.DecodeFailed += ( sender, args ) => isImageGood = false;
-                    bitmapImage.DownloadFailed += ( sender, args ) => isImageGood = false;
-                    bitmapImage.DownloadCompleted += ( sender, args ) => isImageGood = true;
-                    bitmapImage.BeginInit( );
-                    bitmapImage.UriSource = new Uri( file.FullName );
-                    bitmapImage.EndInit( );
-                    if ( bitmapImage.Width <= 0 ) {
-                        return false;
-                    }
-                    if ( bitmapImage.Height <= 0 ) {
-                        return false;
-                    }
-                    bitmapImage.UriSource = null;
-                }
-                catch ( Exception) {
-                    return false;
-                }
+                //try {
+                //    var bitmapImage = new BitmapImage( );
+                //    bitmapImage.DecodeFailed += ( sender, args ) => isImageGood = false;
+                //    bitmapImage.DownloadFailed += ( sender, args ) => isImageGood = false;
+                //    bitmapImage.DownloadCompleted += ( sender, args ) => isImageGood = true;
+                //    bitmapImage.BeginInit( );
+                //    bitmapImage.UriSource = new Uri( file.FullName );
+                //    bitmapImage.EndInit( );
+                //    if ( bitmapImage.Width <= 0 ) {
+                //        return false;
+                //    }
+                //    if ( bitmapImage.Height <= 0 ) {
+                //        return false;
+                //    }
+                //    bitmapImage.UriSource = null;
+                //}
+                //catch ( Exception) {
+                //    return false;
+                //}
 
-                if ( !isImageGood ) {
-                    return false;
-                }
+                //if ( !isImageGood ) {
+                //    return false;
+                //}
 
                 using (var bob = Image.FromFile( file.FullName )) {
                     bob.Dispose( );
@@ -418,7 +418,7 @@ namespace Librainian.Graphics {
                 exception.More( );
             }
             finally {
-                GC.Collect( 0, GCCollectionMode.Forced, true, true );
+                GC.Collect( generation: 0, mode: GCCollectionMode.Forced, blocking: true, compacting: true );   //an attempt to prevent the image handle still being 'held' by some process. Most likely real effect: does NOT help performance.
             }
             return false;
         }
