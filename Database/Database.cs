@@ -102,7 +102,7 @@ namespace Librainian.Database {
                     Password = password,
                     Pooling = true,
                     MultipleActiveResultSets = true,
-                    NetworkLibrary = library,
+                    //NetworkLibrary = library,
                     UserID = username
                 };
                 this._connectionStringBuilder.Should().NotBeNull();
@@ -132,7 +132,7 @@ namespace Librainian.Database {
         /// <summary>
         /// <para>Creates a <see cref="SqlConnection"/> if needed from the first available <see cref="_connectionStringBuilder"/>.</para>
         /// </summary>
-        private void CreateConnection( ) {
+        private void CreateConnection() {
             if ( !Connections.IsValueCreated ) {
                 Connections.Value = new SqlConnection( this._connectionStringBuilder.ToString() );
 #if DEBUG
@@ -216,12 +216,12 @@ namespace Librainian.Database {
         */
 
         [CanBeNull]
-        public SqlConnection OpenConnection( ) {
+        public SqlConnection OpenConnection() {
 
             CreateConnection();
 
             var retries = 10;
-            TryAgain:
+        TryAgain:
             try {
                 switch ( Connections.Value.State ) {
                     case ConnectionState.Open:
@@ -350,10 +350,10 @@ namespace Librainian.Database {
                     transaction?.Commit(); // Attempt to commit the transaction.
                 }
                 table.EndLoadData();
-           }
-            catch ( SqlException exception) {
+            }
+            catch ( SqlException exception ) {
                 exception.More();
-                
+
                 // Attempt to roll back the transaction.
                 try {
                     transaction?.Rollback();
@@ -365,10 +365,10 @@ namespace Librainian.Database {
                     exception2.More();
                 }
             }
-            catch ( DbException exception) {
+            catch ( DbException exception ) {
                 exception.More();
             }
-            catch ( Exception exception) {
+            catch ( Exception exception ) {
                 exception.More();
             }
             return table;
@@ -456,8 +456,8 @@ namespace Librainian.Database {
                     command.Transaction = transaction;
                 }
                 try {
-                    var bob = command.ExecuteScalar();
-                    return ( TResult )bob;
+                    var scalar = command.ExecuteScalar();
+                    return Convert.IsDBNull( scalar ) ? default(TResult) : ( scalar is TResult ? ( TResult ) scalar : ( TResult ) Convert.ChangeType( scalar, typeof ( TResult ) ) );
                 }
                 finally {
                     transaction?.Commit(); // Attempt to commit the transaction.
