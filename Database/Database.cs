@@ -26,7 +26,6 @@ namespace Librainian.Database {
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
-    using System.Diagnostics;
     using System.Net.NetworkInformation;
     using System.Threading;
     using System.Threading.Tasks;
@@ -457,7 +456,7 @@ namespace Librainian.Database {
                 }
                 try {
                     var scalar = command.ExecuteScalar();
-                    return Convert.IsDBNull( scalar ) ? default(TResult) : ( scalar is TResult ? ( TResult ) scalar : ( TResult ) Convert.ChangeType( scalar, typeof ( TResult ) ) );
+                    return null == scalar || Convert.IsDBNull( scalar ) ? default(TResult) : ( scalar is TResult ? ( TResult )scalar : ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ) );
                 }
                 finally {
                     transaction?.Commit(); // Attempt to commit the transaction.
