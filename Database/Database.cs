@@ -30,6 +30,7 @@ namespace Librainian.Database {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using Extensions;
     using FluentAssertions;
     using JetBrains.Annotations;
     using Measurement.Frequency;
@@ -456,7 +457,21 @@ namespace Librainian.Database {
                 }
                 try {
                     var scalar = command.ExecuteScalar();
-                    return null == scalar || Convert.IsDBNull( scalar ) ? default(TResult) : ( scalar is TResult ? ( TResult )scalar : ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ) );
+                    if ( null == scalar || Convert.IsDBNull( scalar ) ) {
+                        return default(TResult);
+                    }
+                    else {
+                        if ( scalar is TResult ) {
+                            return ( TResult ) scalar;
+                        }
+                        else {
+                            TResult result;
+                            if ( scalar.TryCast( out result ) ) {
+                                return result;
+                            }
+                            return ( TResult ) Convert.ChangeType( scalar, typeof ( TResult ) );
+                        }
+                    }
                 }
                 finally {
                     transaction?.Commit(); // Attempt to commit the transaction.
@@ -493,7 +508,7 @@ namespace Librainian.Database {
             return default(TResult);
         }
 
-        [CanBeNull]
+        [NotNull]
         public async Task<int?> QueryWithNoResultAsync( String query, CommandType commandType, Boolean useTransaction = true, params SqlParameter[] parameters ) {
             SqlTransaction transaction = null;
             try {
@@ -511,8 +526,7 @@ namespace Librainian.Database {
                 }
 
                 try {
-                    var bob = await command.ExecuteNonQueryAsync();
-                    return bob;
+                    return await command.ExecuteNonQueryAsync();
                 }
                 finally {
                     transaction?.Commit(); // Attempt to commit the transaction.

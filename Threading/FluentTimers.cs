@@ -14,7 +14,7 @@
         [NotNull]
         private static readonly ConcurrentDictionary<Timer, DateTime> Timers = new ConcurrentDictionary<Timer, DateTime>();
 
-        public static Timer Create( Hertz frequency, Action onElapsed ) => Create( new Span( frequency ), onElapsed );
+        public static Timer Create( this Hertz frequency, Action onElapsed ) => Create( new Span( frequency ), onElapsed );
 
         /// <summary>
         /// <see cref="TimeSpan"/> overload for <see cref="Create(Span,Action)"/>.
