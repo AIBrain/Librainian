@@ -73,19 +73,20 @@ namespace Librainian.Database {
 			this.DatabaseLocation = databaseLocation;
 			this.DatabaseLocation.Create();
 
-			this.DatabaseMdf = new Document( this.DatabaseLocation, String.Format( "{0}.mdf", this.DatabaseName ) );
-			this.DatabaseLog = new Document( this.DatabaseLocation, String.Format( "{0}.ldf", this.DatabaseName ) );
+			this.DatabaseMdf = new Document( this.DatabaseLocation, $"{this.DatabaseName}.mdf" );
+			this.DatabaseLog = new Document( this.DatabaseLocation, $"{this.DatabaseName}.ldf" );
 
 			this.ReadTimeout = timeoutForReads;
 			this.WriteTimeout = timeoutForWrites;
 
 			this.ConnectionString = String.Format( @"Data Source=(localdb)\v12.0;Integrated Security=True;MultipleActiveResultSets=True;" );	//AttachDBFileName={0};	, this.DatabaseMdf.FullPathWithFileName
-			this.Connection = new SqlConnection( this.ConnectionString );
-			this.Connection.InfoMessage += ( sender, args ) => args.Message.Info();
-			this.Connection.StateChange += ( sender, args ) => String.Format( "{0} -> {1}", args.OriginalState, args.CurrentState ).Info();
-			this.Connection.Disposed += ( sender, args ) => String.Format( "Disposing SQL connection {0}", args ).Info();
+		    this.Connection = new SqlConnection( this.ConnectionString ) {
+		                                                                     InfoMessage += ( sender, args ) => args.Message.Info(),
+		                                                                     StateChange += ( sender, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info(),
+		                                                                     Disposed += ( sender, args ) => $"Disposing SQL connection {args}".Info()
+		                                                                 };
 
-			String.Format( "Attempting connection to {0}...", this.DatabaseMdf ).Info();
+		    $"Attempting connection to {this.DatabaseMdf}...".Info();
 
 			this.Connection.Open();
 			this.Connection.ServerVersion.Info();

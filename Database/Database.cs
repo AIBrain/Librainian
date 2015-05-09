@@ -134,6 +134,7 @@ namespace Librainian.Database {
         /// </summary>
         private void CreateConnection() {
             if ( !Connections.IsValueCreated ) {
+                // ReSharper disable once UseObjectOrCollectionInitializer
                 Connections.Value = new SqlConnection( this._connectionStringBuilder.ToString() );
 #if DEBUG
                 Connections.Value.InfoMessage += ( sender, args ) => args.Message.Info();

@@ -322,14 +322,15 @@ namespace Librainian.IO {
         /// <param name="onCompleted"></param>
         /// <returns></returns>
         public WebClient CopyFileWithProgress( Document destination, Action<Percentage> onProgress, Action onCompleted ) {
-            var webClient = new WebClient();
+            var webClient = new WebClient {
+                                              DownloadProgressChanged += ( sender, args ) => {
+                                                                             var percentage = new Percentage( ( BigInteger ) args.BytesReceived, args.TotalBytesToReceive );
+                                                                             onProgress?.Invoke( percentage );
+                                                                         },
+                                              DownloadFileCompleted += ( sender, args ) => onCompleted?.Invoke()
+                                          };
 
-            webClient.DownloadProgressChanged += ( sender, args ) => {
-                var percentage = new Percentage( ( BigInteger )args.BytesReceived, args.TotalBytesToReceive );
-                onProgress?.Invoke( percentage );
-            };
 
-            webClient.DownloadFileCompleted += ( sender, args ) => onCompleted?.Invoke();
 
             webClient.DownloadFileAsync( new Uri( this.FullPathWithFileName ), destination.FullPathWithFileName );
 

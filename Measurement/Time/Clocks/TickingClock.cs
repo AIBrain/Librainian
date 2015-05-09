@@ -138,31 +138,31 @@ namespace Librainian.Measurement.Time.Clocks {
             }
             switch ( granularity ) {
                 case Granularity.Milliseconds:
-                    this._timer = new Timer( interval: ( Double )Milliseconds.One ) {
-                        AutoReset = true
-                    };
-                    this._timer.Elapsed += this.OnMillisecondElapsed;
+                    this._timer = new Timer( interval: ( Double ) Milliseconds.One ) {
+                                                                                         AutoReset = true,
+                                                                                         Elapsed += this.OnMillisecondElapsed
+                                                                                     };
                     break;
 
                 case Granularity.Seconds:
-                    this._timer = new Timer( interval: ( Double )Seconds.One.Value ) {
-                        AutoReset = true
-                    };
-                    this._timer.Elapsed += this.OnSecondElapsed;
+                    this._timer = new Timer( interval: ( Double ) Seconds.One.Value ) {
+                                                                                          AutoReset = true,
+                                                                                          Elapsed += this.OnSecondElapsed
+                                                                                      };
                     break;
 
                 case Granularity.Minutes:
-                    this._timer = new Timer( interval: ( Double )Minutes.One.Value ) {
-                        AutoReset = true
-                    };
-                    this._timer.Elapsed += this.OnMinuteElapsed;
+                    this._timer = new Timer( interval: ( Double ) Minutes.One.Value ) {
+                                                                                          AutoReset = true,
+                                                                                          Elapsed += this.OnMinuteElapsed
+                                                                                      };
                     break;
 
                 case Granularity.Hours:
-                    this._timer = new Timer( interval: ( Double )Hours.One.Value ) {
-                        AutoReset = true
-                    };
-                    this._timer.Elapsed += this.OnHourElapsed;
+                    this._timer = new Timer( interval: ( Double ) Hours.One.Value ) {
+                                                                                        AutoReset = true,
+                                                                                        Elapsed += this.OnHourElapsed
+                                                                                    };
                     break;
 
                 default:
@@ -175,16 +175,12 @@ namespace Librainian.Measurement.Time.Clocks {
         public Time Time( ) {
             try {
                 var timer = this._timer;
-                if ( timer != null ) {
-                    timer.Stop( ); //stop the timer so the seconds don't tick while we get the values.
-                }
+                timer?.Stop( ); //stop the timer so the seconds don't tick while we get the values.
                 return new Time( hour: this.Hour.Value, minute: this.Minute.Value, second: this.Second.Value );
             }
             finally {
                 var timer = this._timer;
-                if ( timer != null ) {
-                    timer.Start( );
-                }
+                timer?.Start( );
             }
         }
 
@@ -196,9 +192,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 return;
             }
             var onHourTick = this.OnHourTick;
-            if ( onHourTick != null ) {
-                onHourTick( this.Hour );
-            }
+            onHourTick?.Invoke( this.Hour );
         }
 
         private void OnMillisecondElapsed( object sender, ElapsedEventArgs e ) {
@@ -209,9 +203,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 return;
             }
             var onMillisecondTick = this.OnMillisecondTick;
-            if ( onMillisecondTick != null ) {
-                onMillisecondTick( );
-            }
+            onMillisecondTick?.Invoke( );
 
             this.OnSecondElapsed( sender, e );
         }
@@ -224,9 +216,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 return;
             }
             var onMinuteTick = this.OnMinuteTick;
-            if ( onMinuteTick != null ) {
-                onMinuteTick( );
-            }
+            onMinuteTick?.Invoke( );
 
             this.OnHourElapsed( sender, e );
         }
@@ -239,9 +229,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 return;
             }
             var onSecondTick = this.OnSecondTick;
-            if ( onSecondTick != null ) {
-                onSecondTick( );
-            }
+            onSecondTick?.Invoke( );
 
             this.OnMinuteElapsed( sender, e );
         }

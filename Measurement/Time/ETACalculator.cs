@@ -126,10 +126,10 @@ namespace Librainian.Measurement.Time {
             this._stopwatch.Start( );
             this.Progress = 0;
             this._timer = new Timer {
-                Interval = samplingPeriod.TotalMilliseconds,
-                AutoReset = true
-            };
-            this._timer.Elapsed += ( sender, args ) => this.Update( );
+                                        Interval = samplingPeriod.TotalMilliseconds,
+                                        AutoReset = true,
+                                        Elapsed += ( sender, args ) => this.Update()
+                                    };
             this._timer.Start( );
         }
 
