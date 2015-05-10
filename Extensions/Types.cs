@@ -355,7 +355,7 @@ namespace Librainian.Extensions {
                 result = ( T )Convert.ChangeType( value, underlyingType );
                 return true;
             }
-            catch ( Exception ex ) {
+            catch ( Exception ) {
                 result = default(T);
                 return false;
             }

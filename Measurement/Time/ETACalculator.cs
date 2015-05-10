@@ -22,15 +22,14 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Time {
-
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Threading;
+    using FluentTime;
     using JetBrains.Annotations;
-    using Maths;
     using Timer = System.Timers.Timer;
 
     /// <summary>
@@ -78,36 +77,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         /// <para>Calculates the Estimated Time of Completion</para>
         /// </summary>
-        public DateTime ETA( ) => DateTime.Now + this.ETR( );
-
-        /// <summary>
-        /// <para>Calculates the Estimated Time Remaining</para>
-        /// </summary>
-        public TimeSpan ETR( ) {
-            if ( !this.DoWeHaveAnETA( ) ) {
-                return TimeSpan.MaxValue;
-            }
-
-            var estimateTimeRemaing = TimeSpan.MaxValue; //assume forever
-
-            //var datapoints = this.GetDataPoints().OrderBy( pair => pair.Key ).ToList();
-            //var datapointCount = datapoints.Count;
-
-            //var timeActuallyTakenSoFar = TimeSpan.Zero;
-
-            //foreach ( var dataPoint in datapoints ) {
-            //    var timePassed = dataPoint.Key;
-            //    var progress = dataPoint.Value;
-            //}
-
-            var datapoints = this.GetDataPoints( ).ToList( );
-
-            var intercept = datapoints.Intercept( );
-
-            estimateTimeRemaing += TimeSpan.FromMilliseconds( intercept );
-
-            return estimateTimeRemaing;
-        }
+        public DateTime ETA( ) => DateTime.Now + this.ETR();
 
         /// <summary>
         /// Get the internal data points we have so far.
@@ -125,11 +95,13 @@ namespace Librainian.Measurement.Time {
             this._stopwatch.Reset( );
             this._stopwatch.Start( );
             this.Progress = 0;
+
+            // ReSharper disable once UseObjectOrCollectionInitializer
             this._timer = new Timer {
                                         Interval = samplingPeriod.TotalMilliseconds,
                                         AutoReset = true,
-                                        Elapsed += ( sender, args ) => this.Update()
                                     };
+            this._timer.Elapsed += ( sender, args ) => this.Update();
             this._timer.Start( );
         }
 

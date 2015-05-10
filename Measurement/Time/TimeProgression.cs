@@ -25,7 +25,7 @@ namespace Librainian.Measurement.Time {
 
     using System;
 
-    public class TimeProgression {
+    public sealed class TimeProgression {
         public Double MillisecondsPassed;
         public Double Progress;
     }

@@ -80,11 +80,12 @@ namespace Librainian.Database {
 			this.WriteTimeout = timeoutForWrites;
 
 			this.ConnectionString = String.Format( @"Data Source=(localdb)\v12.0;Integrated Security=True;MultipleActiveResultSets=True;" );	//AttachDBFileName={0};	, this.DatabaseMdf.FullPathWithFileName
-		    this.Connection = new SqlConnection( this.ConnectionString ) {
-		                                                                     InfoMessage += ( sender, args ) => args.Message.Info(),
-		                                                                     StateChange += ( sender, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info(),
-		                                                                     Disposed += ( sender, args ) => $"Disposing SQL connection {args}".Info()
-		                                                                 };
+
+		    // ReSharper disable once UseObjectOrCollectionInitializer
+		    this.Connection = new SqlConnection( this.ConnectionString );
+		    this.Connection.InfoMessage += ( sender, args ) => args.Message.Info();
+		    this.Connection.StateChange += ( sender, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info();
+		    this.Connection.Disposed += ( sender, args ) => $"Disposing SQL connection {args}".Info();
 
 		    $"Attempting connection to {this.DatabaseMdf}...".Info();
 
