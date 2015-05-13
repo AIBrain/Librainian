@@ -459,7 +459,7 @@ namespace Librainian.Threading {
             if ( !target.Post( item ) ) {
                 //var bob = target as IDataflowBlock;
                 //if ( bob.Completion.IsCompleted  )
-                TryPost( target: target, item: item, delay: ( Span )Threads.GetSlicingAverage() ); //retry
+                TryPost( target: target, item: item, delay: ( Span )Threads.GetAverageTimerPrecision() ); //retry
             }
         }
 

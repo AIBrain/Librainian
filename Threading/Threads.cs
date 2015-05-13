@@ -25,6 +25,7 @@ namespace Librainian.Threading {
     using System;
     using System.Diagnostics;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Maths;
     using Measurement.Time;
@@ -34,62 +35,46 @@ namespace Librainian.Threading {
         /// <summary>
         /// The average time a task context switch takes.
         /// </summary>
-        public static TimeSpan? SliceAverageCache;
+        public static TimeSpan? AverageTimerPrecision;
 
-        public static TimeSpan GetSlice( /*Boolean? setProcessorAffinity = null*/ ) {
-            //if ( setProcessorAffinity.HasValue && setProcessorAffinity.Value ) {
-            //    try {
-            //        var currentProcess = Process.GetCurrentProcess();
-            //        var affinityMask = ( long )currentProcess.ProcessorAffinity;
-            //        affinityMask &= 0xFFFF; // use any of the available processors
-            //        currentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
-            //    }
-            //    catch ( Win32Exception ) {
-            //    }
-            //    catch ( NotSupportedException ) {
-            //    }
-            //    catch ( InvalidOperationException ) {
-            //    }
-            //}
+        public static TimeSpan GetTimerPrecision() {
 
+            long now;
+            var then = DateTime.UtcNow.Ticks;
+            while ( true ) {
+                now = DateTime.UtcNow.Ticks;
+                if ( now - then > 0 ) {
+                    break;
+                }
+            }
+
+            return new Milliseconds( now - then );
+        }
+
+        public static TimeSpan TimeAContextSwitch() {
             var stopwatch = Stopwatch.StartNew();
-            Task.Run( () => Task.Delay( 1 ).Wait() ).Wait();
+            Thread.Sleep( 1 );
             return stopwatch.Elapsed;
         }
 
-        public static TimeSpan GetSlicingAverage( Boolean useCache = true/*, Boolean? setProcessorAffinity = null*/ ) {
-            if ( useCache && SliceAverageCache.HasValue ) {
-                return SliceAverageCache.Value;
+        public static TimeSpan TimeATaskWait() {
+            var stopwatch = Stopwatch.StartNew();
+            Task.Run( () => Task.Delay( 0 ).Wait() ).Wait();
+            return stopwatch.Elapsed;
+        }
+
+        public static TimeSpan GetAverageTimerPrecision( Boolean useCache = true ) {
+            if ( useCache && AverageTimerPrecision.HasValue ) {
+                return AverageTimerPrecision.Value;
             }
 
-            //if ( setProcessorAffinity.HasValue && setProcessorAffinity.Value ) {
-            //    try {
-            //        var currentProcess = Process.GetCurrentProcess();
-
-            //        var affinityMask = ( long )currentProcess.ProcessorAffinity;
-            //        affinityMask &= 0xFFFF; // use any of the available processors
-
-            //        currentProcess.ProcessorAffinity = ( IntPtr )affinityMask;
-            //    }
-            //    catch ( Win32Exception ) {
-            //        /*swallow*/
-            //    }
-            //    catch ( NotSupportedException ) {
-            //        /*swallow*/
-            //    }
-            //    catch ( InvalidOperationException ) {
-            //        /*swallow*/
-            //    }
-            //}
-
-            var times = ( UInt64 ) Math.Pow( Environment.ProcessorCount, Environment.ProcessorCount );
-            String.Format( "Performing {0} timeslice calibrations.", times).WriteLine();
-            SliceAverageCache = new Milliseconds( 0.To( times ).Select( i => GetSlice() ).Average( span => span.TotalMilliseconds ) ) ;
-            if ( SliceAverageCache < Milliseconds.One ) {
-                SliceAverageCache = Milliseconds.One;
+            $"Performing {Environment.ProcessorCount} timeslice calibrations.".WriteLine();
+            AverageTimerPrecision = new Milliseconds( 0.To( Environment.ProcessorCount ).Select( i => GetTimerPrecision() ).Average( span => span.TotalMilliseconds ) );
+            if ( AverageTimerPrecision < Milliseconds.One ) {
+                AverageTimerPrecision = Milliseconds.One;
             }
-            String.Format( "Timeslice calibration is {0}.", SliceAverageCache.Value.Simpler() ).WriteLine();
-            return SliceAverageCache.Value;
+            $"Average timer precision is {AverageTimerPrecision.Value.Simpler()}.".WriteLine();
+            return AverageTimerPrecision.Value;
         }
 
         /// <summary>

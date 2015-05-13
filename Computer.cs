@@ -35,11 +35,11 @@ namespace Librainian {
     public static class Computer {
 
         public static class Beep {
-            public static void Low() => At( 440, Threads.GetSlicingAverage() );
+            public static void Low() => At( 440, Threads.GetAverageTimerPrecision() );
 
             public static void At( int frequency, TimeSpan duration ) => Console.Beep( frequency: frequency, duration: ( int )duration.TotalMilliseconds );
 
-            public static void High() => At( 14917, Threads.GetSlicingAverage() );
+            public static void High() => At( 14917, Threads.GetAverageTimerPrecision() );
         }
 
         /// <summary>
