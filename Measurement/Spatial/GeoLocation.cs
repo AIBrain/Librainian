@@ -16,32 +16,21 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/GeoLocation.cs" was last cleaned by Rick on 2014/10/02 at 10:10 AM
+// "Librainian 2015/GeoLocation.cs" was last cleaned by aibra_000 on 2015/05/13 at 4:41 PM
 #endregion
 
 namespace Librainian.Measurement.Spatial {
     using System;
 
     public struct GeoLocation {
-        public Double Latitude {
-            get;
-            set;
-        }
-        public Double Longitude {
-            get;
-            set;
-        }
+        public Double Latitude { get; set; }
+
+        public Double Longitude { get; set; }
     }
 
     public struct GeoLocationF {
-        public Single Latitude {
-            get;
-            set;
-        }
-        public Single Longitude {
-            get;
-            set;
-        }
-    }
+        public Single Latitude { get; set; }
 
+        public Single Longitude { get; set; }
+    }
 }

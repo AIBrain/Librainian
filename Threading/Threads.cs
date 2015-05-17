@@ -51,7 +51,7 @@ namespace Librainian.Threading {
             return new Milliseconds( now - then );
         }
 
-        public static TimeSpan TimeAContextSwitch() {
+        public static TimeSpan TimeAThreadSwitch() {
             var stopwatch = Stopwatch.StartNew();
             Thread.Sleep( 1 );
             return stopwatch.Elapsed;

@@ -31,7 +31,9 @@ namespace Librainian.Threading {
             add {
                 // If there were no registered delegates before, start reporting notifications now
                 if ( _sGCDone == null ) {
+                    // ReSharper disable once ObjectCreationAsStatement
                     new GenObject( 0 );
+                    // ReSharper disable once ObjectCreationAsStatement
                     new GenObject( 2 );
                 }
                 _sGCDone += value;
@@ -62,6 +64,7 @@ namespace Librainian.Threading {
 
                 // For Gen 0, create a new object; for Gen 2, resurrect the object & let the GC call Finalize again the next time Gen 2 is GC'd
                 if ( this._mGeneration == 0 ) {
+                    // ReSharper disable once ObjectCreationAsStatement
                     new GenObject( 0 );
                 }
                 else {

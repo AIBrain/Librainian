@@ -420,8 +420,8 @@
                 return new Vector( a.X * plane.X, a.Z * plane.Z );
             if ( plane.Z.Near(0) )
                 return new Vector( a.X * plane.X, a.Y * plane.Y );
-            new ArgumentException( "The vector 'plane' doesn't contain at least one coordinate equals 0" );
-            return new Vector();
+            throw new ArgumentException( "The vector 'plane' doesn't contain at least one coordinate equals 0" );
+            //return new Vector();
         }
 
         public static double VectorProjectionOnVector( Vector3D a, Vector3D b ) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
