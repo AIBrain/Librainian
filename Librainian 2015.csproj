@@ -286,6 +286,7 @@
     <Compile Include="Financial\Customer.cs" />
     <Compile Include="Financial\IBankAccount.cs" />
     <Compile Include="Financial\ICustomer.cs" />
+    <Compile Include="Financial\IPerson.cs" />
     <Compile Include="Financial\SavingsAccount.cs" />
     <Compile Include="Gaming\FlippedCoin.cs" />
     <Compile Include="Internet\Browser\AwesomiumWrapper.cs" />
