@@ -20,6 +20,7 @@
 namespace Librainian.Measurement.Currency.USD {
     using System;
     using System.Collections.Generic;
+    using Financial;
     using JetBrains.Annotations;
 
     public interface IWallet {

@@ -19,6 +19,7 @@
 
 namespace Librainian.Measurement.Currency.USD {
     using System;
+    using Financial;
     using JetBrains.Annotations;
     using NUnit.Framework;
 

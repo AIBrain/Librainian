@@ -1,3 +1,9 @@
 ﻿namespace Librainian.Financial {
-    public abstract class BankAccount { }
+    using System;
+
+    public abstract class BankAccount  : IBankAccount {
+
+        public abstract Boolean Deposit(   );
+        public abstract Boolean Deposit();
+    }
 }
