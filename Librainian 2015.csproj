@@ -780,6 +780,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Financial\" />
     <Folder Include="Gaming\Directional\" />
     <Folder Include="Graphics\Line\" />
     <Folder Include="PatternRecognition\" />
