@@ -279,14 +279,6 @@
     <Compile Include="Extensions\AssemblyInformation.cs" />
     <Compile Include="Extensions\CopyProgressRoutine.cs" />
     <Compile Include="Extensions\SafeSearchHandle.cs" />
-    <Compile Include="Financial\Bank.cs" />
-    <Compile Include="Financial\BankAccount.cs" />
-    <Compile Include="Financial\Cashier.cs" />
-    <Compile Include="Financial\CheckingAccount.cs" />
-    <Compile Include="Financial\Customer.cs" />
-    <Compile Include="Financial\IBankAccount.cs" />
-    <Compile Include="Financial\ICustomer.cs" />
-    <Compile Include="Financial\SavingsAccount.cs" />
     <Compile Include="Gaming\FlippedCoin.cs" />
     <Compile Include="Internet\Browser\AwesomiumWrapper.cs" />
     <Compile Include="Internet\TraceExtensions.cs" />
