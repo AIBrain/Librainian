@@ -22,6 +22,7 @@
 #endregion License & Information
 
 namespace Librainian.Measurement.Currency {
+
     using System;
     using System.Diagnostics;
     using System.Runtime.Serialization;
@@ -33,14 +34,13 @@ namespace Librainian.Measurement.Currency {
     using Threading;
     using Time;
 
-	/// <summary>
-	///     A very simple, thread-safe,  Decimal-based wallet. 8 points past decimal dot.
-	/// </summary>
-	/// <remarks>
-	///     TODO add in support for automatic persisting
-	/// </remarks>
-	
-	[DebuggerDisplay( "{Formatted,nq}" )]
+    /// <summary>
+    ///     A very simple, thread-safe,  Decimal-based wallet. 8 points past decimal dot.
+    /// </summary>
+    /// <remarks>
+    ///     TODO add in support for automatic persisting
+    /// </remarks>
+    [DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
     [DataContract( IsReference = true )]
     public class SimpleWallet : ISimpleWallet, IEquatable<SimpleWallet> {

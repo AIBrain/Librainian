@@ -812,7 +812,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Gaming\Directional\" />
     <Folder Include="Graphics\Line\" />
     <Folder Include="PatternRecognition\" />
   </ItemGroup>

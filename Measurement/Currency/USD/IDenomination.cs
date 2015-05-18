@@ -50,7 +50,7 @@ namespace Librainian.Measurement.Currency.USD {
         [UsedImplicitly]
         public sealed class Dime : ICoin {
             public Decimal FaceValue => 0.10M;
-            public String Formatted => String.Format( "{0:C}", this.FaceValue );
+            public String Formatted => $"{this.FaceValue:C}";
         }
 
 
@@ -58,7 +58,7 @@ namespace Librainian.Measurement.Currency.USD {
         [UsedImplicitly]
         public sealed class Fifty : IBankNote {
             public Decimal FaceValue => 50.00M;
-            public String Formatted => String.Format( "{0:C}", this.FaceValue );
+            public String Formatted => $"{this.FaceValue:C}";
         }
 
 
@@ -66,7 +66,7 @@ namespace Librainian.Measurement.Currency.USD {
         [UsedImplicitly]
         public sealed class Five : IBankNote {
             public Decimal FaceValue => 5.00M;
-            public String Formatted => String.Format( "{0:C}", this.FaceValue );
+            public String Formatted => $"{this.FaceValue:C}";
         }
 
 
@@ -74,7 +74,7 @@ namespace Librainian.Measurement.Currency.USD {
         [UsedImplicitly]
         public sealed class Hundred : IBankNote {
             public Decimal FaceValue => 100.00M;
-            public String Formatted => String.Format( "{0:C}", this.FaceValue );
+            public String Formatted => $"{this.FaceValue:C}";
         }
 
 
@@ -82,7 +82,7 @@ namespace Librainian.Measurement.Currency.USD {
         [UsedImplicitly]
         public sealed class Nickel : ICoin {
             public Decimal FaceValue => 0.05M;
-            public String Formatted => String.Format( "{0:C}", this.FaceValue );
+            public String Formatted => $"{this.FaceValue:C}";
         }
 
 
@@ -90,7 +90,7 @@ namespace Librainian.Measurement.Currency.USD {
         [UsedImplicitly]
         public sealed class One : IBankNote {
             public Decimal FaceValue => 1.00M;
-            public String Formatted => String.Format( "{0:C}", this.FaceValue );
+            public String Formatted => $"{this.FaceValue:C}";
         }
 
 
@@ -98,7 +98,7 @@ namespace Librainian.Measurement.Currency.USD {
         [UsedImplicitly]
         public sealed class Penny : ICoin {
             public Decimal FaceValue => 0.01M;
-            public String Formatted => String.Format( "{0:C}", this.FaceValue );
+            public String Formatted => $"{this.FaceValue:C}";
         }
 
 
@@ -106,7 +106,7 @@ namespace Librainian.Measurement.Currency.USD {
         [UsedImplicitly]
         public sealed class Quarter : ICoin {
             public Decimal FaceValue => 0.25M;
-            public String Formatted => String.Format( "{0:C}", this.FaceValue );
+            public String Formatted => $"{this.FaceValue:C}";
         }
 
 
@@ -114,7 +114,7 @@ namespace Librainian.Measurement.Currency.USD {
         [UsedImplicitly]
         public sealed class Ten : IBankNote {
             public Decimal FaceValue => 10.00M;
-            public String Formatted => String.Format( "{0:C}", this.FaceValue );
+            public String Formatted => $"{this.FaceValue:C}";
         }
 
 
@@ -122,16 +122,18 @@ namespace Librainian.Measurement.Currency.USD {
         [UsedImplicitly]
         public sealed class Twenty : IBankNote {
             public Decimal FaceValue => 20.00M;
-            public String Formatted => String.Format( "{0:C}", this.FaceValue );
+            public String Formatted => $"{this.FaceValue:C}";
         }
 
-        /* This bill exists, but it is so rarely found and therefore not calculated.
-        [DebuggerDisplay( "{Formatted,nq}" )]
-        [UsedImplicitly]
-        public class Two : IPaperBill {
-            public  System.Decimal FaceValue { get { return 2.00M; } }
-            public String Formatted { get { return String.Format( "{0:C}", this.FaceValue ); } }
-        }
-         * */
+        ///// <summary>
+        ///// This bill exists, but it is rarely found and therefore not calculated.
+        ///// </summary>
+        //[DebuggerDisplay( "{Formatted,nq}" )]
+        //[UsedImplicitly]
+        //public class Two : IBankNote {
+        //    public  Decimal FaceValue => 2.00M;
+        //    public String Formatted => $"{this.FaceValue:C}";
+        //}
+         
     }
 }

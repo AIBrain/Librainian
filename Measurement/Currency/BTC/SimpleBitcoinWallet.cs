@@ -37,7 +37,6 @@ namespace Librainian.Measurement.Currency.BTC {
     /// <remarks>
     /// TODO add in support for automatic persisting TODO add in support for exploring the blockchain
     /// </remarks>
-    
     [DebuggerDisplay( "{Formatted,nq}" )]
     [Serializable]
     [DataContract( IsReference = true )]
@@ -98,7 +97,7 @@ namespace Librainian.Measurement.Currency.BTC {
         public SimpleBitcoinWallet( long satoshi ) : this( satoshi.ToBTC() ) {
         }
 
-        public SimpleBitcoinWallet( ISimpleWallet wallet ) : this( wallet.Balance ) {
+        public SimpleBitcoinWallet( SimpleWallet wallet ) : this( wallet.Balance ) {
         }
 
         /// <summary>
@@ -195,7 +194,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public override int GetHashCode() => this._hashcode;
 
-        public override String ToString() => String.Format( "฿ {0:f8}", this.Balance );
+        public override String ToString() => $"฿ {this.Balance:f8}";
 
         /// <summary>
         /// Add any (+-)amount directly to the balance.
@@ -219,10 +218,7 @@ namespace Librainian.Measurement.Currency.BTC {
                 if ( this._access.IsWriteLockHeld ) {
                     this._access.ExitWriteLock();
                 }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
@@ -288,14 +284,8 @@ namespace Librainian.Measurement.Currency.BTC {
                     intoWallet.TryDeposit( amount: withdrewAmount.Value, sanitize: false );
                 }
 
-                var onWithdraw = this.OnAfterWithdraw;
-                if ( onWithdraw != null ) {
-                    onWithdraw( amount );
-                }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                this.OnAfterWithdraw?.Invoke( amount );
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
@@ -320,10 +310,7 @@ namespace Librainian.Measurement.Currency.BTC {
                 if ( this._access.IsWriteLockHeld ) {
                     this._access.ExitWriteLock();
                 }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
@@ -358,14 +345,8 @@ namespace Librainian.Measurement.Currency.BTC {
                 if ( this._access.IsWriteLockHeld ) {
                     this._access.ExitWriteLock();
                 }
-                var onWithdraw = this.OnAfterWithdraw;
-                if ( onWithdraw != null ) {
-                    onWithdraw( amount );
-                }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                this.OnAfterWithdraw?.Invoke( amount );
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 

@@ -42,6 +42,8 @@ namespace Librainian.Financial {
     ///     Use at your own risk.
     ///     Any tips or ideas? Any dos or dont's? Email me!
     /// </summary>
+    /// <seealso cref="SimpleWallet"/>
+    /// <seealso cref="Measurement.Currency.BTC.SimpleBitcoinWallet"/>
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{Formatted,nq}" )]
     public class Wallet : IEnumerable<KeyValuePair<IDenomination, UInt64>>, IWallet {
