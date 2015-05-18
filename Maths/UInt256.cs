@@ -75,7 +75,7 @@ namespace Librainian.Maths {
             : this( Bits.GetBytes( value ) ) {
         }
 
-        public UInt256( ulong value )
+        public UInt256( UInt64 value )
             : this( Bits.GetBytes( value ) ) {
         }
 
@@ -115,10 +115,10 @@ namespace Librainian.Maths {
                     throw new ArgumentException();
                 }
 
-                var part1 = ( ulong )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 0 ) );
-                var part2 = ( ulong )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 8 ) );
-                var part3 = ( ulong )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 16 ) );
-                var part4 = ( ulong )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 24 ) );
+                var part1 = ( UInt64 )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 0 ) );
+                var part2 = ( UInt64 )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 8 ) );
+                var part3 = ( UInt64 )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 16 ) );
+                var part4 = ( UInt64 )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 24 ) );
 
                 return new UInt256( part1, part2, part3, part4 );
             }
@@ -136,7 +136,7 @@ namespace Librainian.Maths {
 
         public static implicit operator UInt256( uint value ) => new UInt256( value );
 
-        public static implicit operator UInt256( ulong value ) => new UInt256( value );
+        public static implicit operator UInt256( UInt64 value ) => new UInt256( value );
 
         public static implicit operator UInt256( ushort value ) => new UInt256( value );
 

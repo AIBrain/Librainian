@@ -40,7 +40,7 @@ namespace Librainian.Measurement.Currency.BTC {
 	[DataContract(IsReference = true)]
 	
 	[DebuggerDisplay( "{Formatted,nq}" )]
-	public class CoinWallet : IEnumerable<KeyValuePair<ICoin, ulong>>, ICoinWallet {
+	public class CoinWallet : IEnumerable<KeyValuePair<ICoin, UInt64>>, ICoinWallet {
 		/// <summary>
 		///     Count of each <see cref="ICoin" />.
 		/// </summary>
@@ -97,7 +97,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		public Decimal Total => this._coins.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue * pair.Value );
 
 		/// <summary>
-		///     Attempt to <see cref="TryWithdraw(ICoin,ulong)" /> one or more <see cref="ICoin" /> from this
+		///     Attempt to <see cref="TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this
 		///     <see cref="CoinWallet" />
 		///     .
 		/// </summary>
@@ -119,7 +119,7 @@ namespace Librainian.Measurement.Currency.BTC {
 				this._coins[ coin ] -= quantity;
 			}
 			var onWithdraw = this.OnWithdraw;
-			onWithdraw?.Invoke( new KeyValuePair<ICoin, ulong>( coin, quantity ) );
+			onWithdraw?.Invoke( new KeyValuePair<ICoin, UInt64>( coin, quantity ) );
 			return true;
 		}
 
@@ -134,7 +134,7 @@ namespace Librainian.Measurement.Currency.BTC {
 			if ( coin == null ) {
 				throw new ArgumentNullException( nameof( coin ) );
 			}
-			ulong result;
+			UInt64 result;
 			return this._coins.TryGetValue( coin, out result ) ? result : UInt64.MinValue;
 		}
 
@@ -142,7 +142,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-		public ulong Deposit( [CanBeNull] ICoin coin, UInt64 quantity, Boolean updateStatistics = true ) {
+		public UInt64 Deposit( [CanBeNull] ICoin coin, UInt64 quantity, Boolean updateStatistics = true ) {
 			if ( null == coin ) {
 				return 0;
 			}
@@ -165,7 +165,7 @@ namespace Librainian.Measurement.Currency.BTC {
 					this.Statistics.AllTimeDeposited += coin.FaceValue * quantity;
 				}
 				var onDeposit = this.OnDeposit;
-				onDeposit?.Invoke( new KeyValuePair<ICoin, ulong>( coin, quantity ) );
+				onDeposit?.Invoke( new KeyValuePair<ICoin, UInt64>( coin, quantity ) );
 			}
 		}
 

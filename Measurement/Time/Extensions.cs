@@ -468,9 +468,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static ulong ToUNIXTimestamp( this DateTime date ) {
+        public static UInt64 ToUNIXTimestamp( this DateTime date ) {
             var diff = date - Epochs.UNIX;
-            return ( ulong )diff.TotalSeconds;
+            return ( UInt64 )diff.TotalSeconds;
         }
 
         public static Boolean TryConvertToDateTime( this Date date, out DateTime? dateTime ) {

@@ -23,7 +23,7 @@ namespace Librainian.Measurement.Currency.BTC {
     using JetBrains.Annotations;
 
     public interface ICoinWallet {
-        IEnumerable< KeyValuePair< ICoin, ulong > > CoinsGrouped { [NotNull] get; }
+        IEnumerable< KeyValuePair< ICoin, UInt64 > > CoinsGrouped { [NotNull] get; }
 
         Action< KeyValuePair< ICoin, UInt64 > > OnDeposit { get; set; }
         Action< KeyValuePair< ICoin, UInt64 > > OnWithdraw { get; set; }
@@ -44,7 +44,7 @@ namespace Librainian.Measurement.Currency.BTC {
        Decimal Total { get; }
 
         /// <summary>
-        ///     Attempt to <see cref="CoinWallet.TryWithdraw(ICoin,ulong)" /> one or more <see cref="ICoin" /> from this
+        ///     Attempt to <see cref="CoinWallet.TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this
         ///     <see cref="CoinWallet" />
         ///     .
         /// </summary>

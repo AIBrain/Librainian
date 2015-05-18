@@ -1050,7 +1050,7 @@ namespace Librainian.Threading {
         internal class UInt64VsDouble {
             [FieldOffset( 0 )] public readonly Double value;
 
-            [FieldOffset( 0 )] public readonly ulong valueulong;
+            [FieldOffset( 0 )] public readonly UInt64 valueulong;
         }
     }
 }

@@ -73,7 +73,7 @@ namespace Librainian.Linguistics {
 
         /// <summary>
         /// </summary>
-        public const ulong Level = Word.Level << 1;
+        public const UInt64 Level = Word.Level << 1;
 
         public IEnumerator<Word> GetEnumerator() => this._tokens.GetEnumerator();
 

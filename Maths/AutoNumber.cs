@@ -25,7 +25,7 @@ namespace Librainian.Maths {
     using System.Threading;
 
     /// <summary>
-    ///     An automatically incrementing Identity class. ( <see cref="Identity" /> is <see cref="ulong" /> )
+    ///     An automatically incrementing Identity class. ( <see cref="Identity" /> is <see cref="UInt64" /> )
     /// </summary>
     [DataContract( IsReference = true )]
     public sealed class AutoNumber {

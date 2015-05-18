@@ -20,6 +20,7 @@
 #endregion License & Information
 
 namespace Librainian.Financial {
+
     using System;
     using System.Collections;
     using System.Collections.Concurrent;
@@ -43,19 +44,19 @@ namespace Librainian.Financial {
     /// </summary>
     [DataContract( IsReference = true )]
     [DebuggerDisplay( "{Formatted,nq}" )]
-    public class Wallet : IEnumerable<KeyValuePair<IDenomination, ulong>>, IWallet {
+    public class Wallet : IEnumerable<KeyValuePair<IDenomination, UInt64>>, IWallet {
 
         /// <summary>
         ///     Count of each <see cref="IBankNote" />.
         /// </summary>
         [NotNull]
-        private readonly ConcurrentDictionary<IBankNote, ulong> _bankNotes = new ConcurrentDictionary<IBankNote, ulong>();
+        private readonly ConcurrentDictionary<IBankNote, UInt64> _bankNotes = new ConcurrentDictionary<IBankNote, UInt64>();
 
         /// <summary>
         ///     Count of each <see cref="ICoin" />.
         /// </summary>
         [NotNull]
-        private readonly ConcurrentDictionary<ICoin, ulong> _coins = new ConcurrentDictionary<ICoin, ulong>();
+        private readonly ConcurrentDictionary<ICoin, UInt64> _coins = new ConcurrentDictionary<ICoin, UInt64>();
 
         [DataMember]
         public Statistics Statistics;
@@ -83,7 +84,7 @@ namespace Librainian.Financial {
 
         public IEnumerator<KeyValuePair<IDenomination, UInt64>> GetEnumerator() => this.Groups.GetEnumerator();
 
-        private IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped {
             [NotNull]
@@ -128,7 +129,10 @@ namespace Librainian.Financial {
         ///     Return the count of each type of <see cref="Notes" /> and <see cref="Coins" />.
         /// </summary>
         public IEnumerable<KeyValuePair<IDenomination, UInt64>> Groups {
-            [NotNull] get { return this._bankNotes.Cast<KeyValuePair<IDenomination, ulong>>().Concat( this._coins.Cast<KeyValuePair<IDenomination, ulong>>() ); }
+            [NotNull]
+            get {
+                return this._bankNotes.Cast<KeyValuePair<IDenomination, UInt64>>().Concat( this._coins.Cast<KeyValuePair<IDenomination, UInt64>>() );
+            }
         }
 
         public Guid ID { get; }
@@ -150,7 +154,7 @@ namespace Librainian.Financial {
         }
 
         /// <summary>
-        ///     Attempt to <see cref="TryWithdraw(IBankNote,ulong)" /> one or more <see cref="IBankNote" /> from this
+        ///     Attempt to <see cref="TryWithdraw(IBankNote,UInt64)" /> one or more <see cref="IBankNote" /> from this
         ///     <see cref="Wallet" />.
         /// </summary>
         /// <param name="bankNote"></param>
@@ -174,7 +178,7 @@ namespace Librainian.Financial {
         }
 
         /// <summary>
-        ///     Attempt to <see cref="TryWithdraw(ICoin,ulong)" /> one or more <see cref="ICoin" /> from this <see cref="Wallet" />
+        ///     Attempt to <see cref="TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this <see cref="Wallet" />
         ///     .
         /// </summary>
         /// <param name="coin"></param>
@@ -215,7 +219,7 @@ namespace Librainian.Financial {
             if ( bankNote == null ) {
                 throw new ArgumentNullException( nameof( bankNote ) );
             }
-            ulong result;
+            UInt64 result;
             return this._bankNotes.TryGetValue( bankNote, out result ) ? result : UInt64.MinValue;
         }
 
@@ -223,7 +227,7 @@ namespace Librainian.Financial {
             if ( coin == null ) {
                 throw new ArgumentNullException( nameof( coin ) );
             }
-            ulong result;
+            UInt64 result;
             return this._coins.TryGetValue( coin, out result ) ? result : UInt64.MinValue;
         }
 
@@ -295,30 +299,30 @@ namespace Librainian.Financial {
         [NotNull]
         public static Wallet Create( Guid id ) => new Wallet( id: id );
 
-        private ulong Deposit( ICoin asCoin, UInt64 quantity ) {
-            if ( null == asCoin ) {
+        private UInt64 Deposit( ICoin coin, UInt64 quantity ) {
+            if ( null == coin ) {
                 return 0;
             }
             try {
                 lock ( this._coins ) {
                     UInt64 newQuantity = 0;
-                    if ( !this._coins.ContainsKey( asCoin ) ) {
-                        if ( this._coins.TryAdd( asCoin, quantity ) ) {
+                    if ( !this._coins.ContainsKey( coin ) ) {
+                        if ( this._coins.TryAdd( coin, quantity ) ) {
                             newQuantity = quantity;
                         }
                     }
                     else {
-                        newQuantity = this._coins[ asCoin ] += quantity;
+                        newQuantity = this._coins[ coin ] += quantity;
                     }
                     return newQuantity;
                 }
             }
             finally {
-                this.Statistics.AllTimeDeposited += asCoin.FaceValue * quantity;
+                this.Statistics.AllTimeDeposited += coin.FaceValue * quantity;
             }
         }
 
-        private ulong Deposit( IBankNote bankNote, UInt64 quantity ) {
+        private UInt64 Deposit( IBankNote bankNote, UInt64 quantity ) {
             if ( null == bankNote ) {
                 return 0;
             }

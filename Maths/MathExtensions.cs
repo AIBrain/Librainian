@@ -1342,7 +1342,7 @@ namespace Librainian.Maths {
         /// <param name="end"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public static IEnumerable<ulong> To( this int start, UInt64 end, UInt64 step = 1 ) {
+        public static IEnumerable<UInt64> To( this int start, UInt64 end, UInt64 step = 1 ) {
             if ( start < 0 ) {
                 throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
             }
@@ -1414,7 +1414,7 @@ namespace Librainian.Maths {
         /// <param name="end"></param>
         /// <param name="step"></param>
         /// <returns></returns>
-        public static IEnumerable<ulong> To( this UInt64 from, UInt64 end, UInt64 step = 1 ) {
+        public static IEnumerable<UInt64> To( this UInt64 from, UInt64 end, UInt64 step = 1 ) {
             if ( step == 0UL ) {
                 step = 1UL;
             }
@@ -1685,7 +1685,7 @@ namespace Librainian.Maths {
 
         public static String ToHex( this uint value ) => BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
 
-        public static String ToHex( this ulong value ) => BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
+        public static String ToHex( this UInt64 value ) => BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
 
         [CanBeNull]
         public static String ToScientificString( BigDecimal value ) {
@@ -1858,8 +1858,8 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="value">Value to check.</param>
         /// <returns>True for even, False for odd.</returns>
-        public static bool Parity( this ulong value ) {
-            ulong i;
+        public static bool Parity( this UInt64 value ) {
+            UInt64 i;
             for ( i = 0; value != 0; value >>= 1 ) {
                 i += value & 1;
             }
@@ -1936,7 +1936,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="value">Value to check.</param>
         /// <returns>True for even, False for odd.</returns>
-        public static bool Parity( this byte value ) => ( ( ( ( ulong )( value * 0x0101010101010101 ) & 0x8040201008040201 ) % 0x1FF ) & 1 ) != 0;
+        public static bool Parity( this byte value ) => ( ( ( ( UInt64 )( value * 0x0101010101010101 ) & 0x8040201008040201 ) % 0x1FF ) & 1 ) != 0;
 
 
         /// <summary>
@@ -2026,7 +2026,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="value">Value to check.</param>
         /// <returns>Number of set (1) bits.</returns>
-        public static int CountBits( this ulong value ) {
+        public static int CountBits( this UInt64 value ) {
             int i;
             for ( i = 0; value != 0; i++ ) {
                 value &= value - 1;

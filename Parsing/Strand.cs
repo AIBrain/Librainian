@@ -3385,7 +3385,7 @@ namespace Librainian.Parsing {
         }
 
         /// <internalonly />
-        ulong IConvertible.ToUInt64( IFormatProvider provider ) {
+        UInt64 IConvertible.ToUInt64( IFormatProvider provider ) {
             return Convert.ToUInt64( this, provider );
         }
 

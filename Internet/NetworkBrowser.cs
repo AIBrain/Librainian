@@ -110,8 +110,8 @@ namespace Librainian.Internet {
                         // cast pointer to a SERVER_INFO_101 structure
                         var server = ( NativeWin32.SERVER_INFO_101 )Marshal.PtrToStructure( ptr, typeof(NativeWin32.SERVER_INFO_101 ) );
 
-                        //Cast the pointer to a ulong so this addition will work on 32-bit or 64-bit systems.
-                        ptr = ( IntPtr )( ( ulong )ptr + ( ulong )Marshal.SizeOf( server ) );
+                        //Cast the pointer to a UInt64 so this addition will work on 32-bit or 64-bit systems.
+                        ptr = ( IntPtr )( ( UInt64 )ptr + ( UInt64 )Marshal.SizeOf( server ) );
 
                         // add the machine name and comment to the arrayList. 
                         //You could return the entire structure here if desired

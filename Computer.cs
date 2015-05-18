@@ -75,11 +75,11 @@ namespace Librainian {
                     get {
                         try {
                             using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_PhysicalMemory" ) ) {
-                                ulong total = 0;
+                                UInt64 total = 0;
 
                                 var sb = new StringBuilder();
                                 foreach ( var result in searcher.Get() ) {
-                                    var mem = ( ulong )result[ "Capacity" ];
+                                    var mem = ( UInt64 )result[ "Capacity" ];
                                     total += mem;
                                     sb.AppendFormat( "{0}:{1}MB, ", result[ "DeviceLocator" ], mem / 1024 / 1024 );
                                 }
@@ -125,12 +125,12 @@ namespace Librainian {
                 ///     http://msdn.microsoft.com/en-us/library/aa394347(VS.85).aspx
                 /// </remarks>
                 /// <value></value>
-                public static ulong TotalPhysicalMemory {
+                public static UInt64 TotalPhysicalMemory {
                     get {
                         try {
                             return ComputerInfo.TotalPhysicalMemory;
                             //using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_PhysicalMemory" ) ) {
-                            //    var total = searcher.Get().Cast< ManagementBaseObject >().Select( baseObject => ( ulong ) baseObject[ "Capacity" ] ).Aggregate( 0UL, ( current, mem ) => current + mem );
+                            //    var total = searcher.Get().Cast< ManagementBaseObject >().Select( baseObject => ( UInt64 ) baseObject[ "Capacity" ] ).Aggregate( 0UL, ( current, mem ) => current + mem );
                             //    return total;
                             //}
                         }

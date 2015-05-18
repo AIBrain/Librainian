@@ -258,8 +258,8 @@ namespace Librainian.Parsing {
             yield return element;
         }
 
-        public static IDictionary<char, ulong> Count( this String text ) {
-            var dict = new ConcurrentDictionary<char, ulong>();
+        public static IDictionary<char, UInt64> Count( this String text ) {
+            var dict = new ConcurrentDictionary<char, UInt64>();
             text.AsParallel().ForAll( c => dict.AddOrUpdate( c, 1, ( c1, arg2 ) => arg2 + 1 ) );
             return dict;
         }

@@ -24,7 +24,7 @@ namespace Librainian.Maths {
     using System.Runtime.InteropServices;
 
     /// <summary>
-    ///     Struct for combining two <see cref="int" /> (or <see cref="uint"/>) to and from a <see cref="ulong" /> (or <see cref="long"/>) as easily as possible.
+    ///     Struct for combining two <see cref="int" /> (or <see cref="uint"/>) to and from a <see cref="UInt64" /> (or <see cref="long"/>) as easily as possible.
     /// </summary>
     [StructLayout( LayoutKind.Explicit )]
     public struct Translate64 {

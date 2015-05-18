@@ -136,13 +136,13 @@ namespace Librainian.Maths {
 
         public static Boolean operator <( UBigInteger left, UBigInteger right ) => left._internalValue < right._internalValue;
 
-        public static Boolean operator <( UBigInteger left, ulong right ) => left._internalValue < right;
+        public static Boolean operator <( UBigInteger left, UInt64 right ) => left._internalValue < right;
 
-        public static Boolean operator <( ulong left, UBigInteger right ) => left < right._internalValue;
+        public static Boolean operator <( UInt64 left, UBigInteger right ) => left < right._internalValue;
 
         public static UBigInteger operator <<( UBigInteger number, int shift ) => new UBigInteger( number._internalValue << shift );
 
-        public static Boolean operator <=( UBigInteger left, ulong right ) => left._internalValue <= right;
+        public static Boolean operator <=( UBigInteger left, UInt64 right ) => left._internalValue <= right;
 
         public static Boolean operator <=( UBigInteger left, UBigInteger right ) => left._internalValue <= right._internalValue;
 
@@ -187,7 +187,7 @@ namespace Librainian.Maths {
         public int CompareTo( long other ) => this._internalValue.CompareTo( other );
 
         [Pure]
-        public int CompareTo( ulong other ) => this._internalValue.CompareTo( other );
+        public int CompareTo( UInt64 other ) => this._internalValue.CompareTo( other );
 
         [Pure]
         public byte[] ToByteArray() => this._internalValue.ToByteArray();

@@ -113,7 +113,7 @@ namespace Librainian.Security {
         public override Double NextDouble() => this.Cmwc()/4294967296.0;
 
         private uint Cmwc() {
-            const ulong a = 487198574UL;
+            const UInt64 a = 487198574UL;
             const uint r = 0xfffffffe;
 
             this._i.Value = ( this._i.Value + 1 ) & 15;

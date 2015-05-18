@@ -32,9 +32,9 @@ namespace Librainian.Measurement.Time {
 
     [TestFixture]
     public static class TimeSystemTimers {
-        private static ulong _threadingCounter;
+        private static UInt64 _threadingCounter;
 
-        public static ulong RunSystemTimerTest( Span howLong ) {
+        public static UInt64 RunSystemTimerTest( Span howLong ) {
             var counter = 0UL;
             try {
                 using (var systemTimer = new Timer( ( Double )Milliseconds.One ) {
@@ -68,7 +68,7 @@ namespace Librainian.Measurement.Time {
             Console.WriteLine( RunThreadingTimerTest( Milliseconds.OneThousandNine ) );
         }
 
-        public static ulong RunThreadingTimerTest( Span howLong ) {
+        public static UInt64 RunThreadingTimerTest( Span howLong ) {
             _threadingCounter = 0;
             try {
                 var state = new Object( );

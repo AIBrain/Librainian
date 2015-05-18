@@ -59,7 +59,7 @@ namespace Librainian.Measurement.Currency.USD {
        Decimal Total { get; }
 
         /// <summary>
-        ///     Attempt to <see cref="Wallet.TryWithdraw(IBankNote,ulong)" /> one or more <see cref="IBankNote" /> from this
+        ///     Attempt to <see cref="Wallet.TryWithdraw(IBankNote,UInt64)" /> one or more <see cref="IBankNote" /> from this
         ///     <see cref="Wallet" />.
         /// </summary>
         /// <param name="bankNote"></param>
@@ -69,7 +69,7 @@ namespace Librainian.Measurement.Currency.USD {
         Boolean TryWithdraw( [CanBeNull] IBankNote bankNote, UInt64 quantity );
 
         /// <summary>
-        ///     Attempt to <see cref="Wallet.TryWithdraw(ICoin,ulong)" /> one or more <see cref="ICoin" /> from this
+        ///     Attempt to <see cref="Wallet.TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this
         ///     <see cref="Wallet" />
         ///     .
         /// </summary>

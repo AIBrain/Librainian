@@ -54,7 +54,7 @@ namespace Librainian.Measurement.Currency.LTC {
 
         /// <summary>
         /// Attempt to
-        /// <see cref="CoinWallet.TryWithdraw(Librainian.Measurement.Currency.BTC.ICoin,ulong)"/>
+        /// <see cref="CoinWallet.TryWithdraw(Librainian.Measurement.Currency.BTC.ICoin,UInt64)"/>
         /// one or more <see cref="ICoin"/> from this <see cref="CoinWallet"/> .
         /// </summary>
         /// <param name="coin"></param>

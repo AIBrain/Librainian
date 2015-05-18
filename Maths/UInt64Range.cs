@@ -24,7 +24,7 @@ namespace Librainian.Maths {
     using System.Runtime.Serialization;
 
     /// <summary>
-    ///     Represents a <see cref="ulong" /> range with minimum and maximum values.
+    ///     Represents a <see cref="UInt64" /> range with minimum and maximum values.
     /// </summary>
     /// <remarks>
     ///     <para>Modified from the AForge Library</para>

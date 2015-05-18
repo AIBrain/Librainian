@@ -74,7 +74,7 @@ namespace Librainian.Maths {
             }
             int sign;
             int exp;
-            ulong man;
+            UInt64 man;
             bool isFinite;
             SplitDoubleIntoParts( value, out sign, out exp, out man, out isFinite );
             if ( ( long )man == 0L ) {
@@ -105,7 +105,7 @@ namespace Librainian.Maths {
                 this = Zero;
             }
             else {
-                this.Numerator = new BigInteger( ( ulong )( uint )bits[ 2 ] << 32 | ( uint )bits[ 1 ] ) << 32 | ( uint )bits[ 0 ];
+                this.Numerator = new BigInteger( ( UInt64 )( uint )bits[ 2 ] << 32 | ( uint )bits[ 1 ] ) << 32 | ( uint )bits[ 0 ];
                 if ( ( bits[ 3 ] & int.MinValue ) != 0 ) {
                     this.Numerator = BigInteger.Negate( this.Numerator );
                 }
@@ -186,7 +186,7 @@ namespace Librainian.Maths {
         }
 
 
-        public static explicit operator ulong( BiggerRational value ) => ( ulong )BigInteger.Divide( value.Numerator, value.Denominator );
+        public static explicit operator UInt64( BiggerRational value ) => ( UInt64 )BigInteger.Divide( value.Numerator, value.Denominator );
 
         public static explicit operator int( BiggerRational value ) => ( int )BigInteger.Divide( value.Numerator, value.Denominator );
 
@@ -228,7 +228,7 @@ namespace Librainian.Maths {
 
         public static implicit operator BiggerRational( uint value ) => new BiggerRational( ( BigInteger )value );
 
-        public static implicit operator BiggerRational( ulong value ) => new BiggerRational( ( BigInteger )value );
+        public static implicit operator BiggerRational( UInt64 value ) => new BiggerRational( ( BigInteger )value );
 
         public static implicit operator BiggerRational( byte value ) => new BiggerRational( ( BigInteger )value );
 
@@ -320,7 +320,7 @@ namespace Librainian.Maths {
             return false;
         }
 
-        public static void SplitDoubleIntoParts( Double dbl, out int sign, out int exp, out ulong man, out bool isFinite ) {
+        public static void SplitDoubleIntoParts( Double dbl, out int sign, out int exp, out UInt64 man, out bool isFinite ) {
             DoubleVsUlong doubleVsUlong;
             doubleVsUlong.uu = 0UL;
             doubleVsUlong.dbl = dbl;
@@ -459,7 +459,7 @@ namespace Librainian.Maths {
             return stringBuilder.ToString();
         }
 
-        private static int CbitHighZero( ulong uu ) {
+        private static int CbitHighZero( UInt64 uu ) {
             if ( ( ( long )uu & -4294967296L ) == 0L ) {
                 return 32 + CbitHighZero( ( uint )uu );
             }
@@ -493,7 +493,7 @@ namespace Librainian.Maths {
             return num;
         }
 
-        private static Double GetDoubleFromParts( int sign, int exp, ulong man ) {
+        private static Double GetDoubleFromParts( int sign, int exp, UInt64 man ) {
             DoubleVsUlong doubleVsUlong;
             doubleVsUlong.dbl = 0.0;
             if ( ( long )man == 0L ) {
@@ -516,7 +516,7 @@ namespace Librainian.Maths {
                     doubleVsUlong.uu = exp >= -52 ? man >> -exp : 0UL;
                 }
                 else {
-                    doubleVsUlong.uu = ( ulong )( ( long )man & 4503599627370495L | ( long )exp << 52 );
+                    doubleVsUlong.uu = ( UInt64 )( ( long )man & 4503599627370495L | ( long )exp << 52 );
                 }
             }
             if ( sign < 0 ) {
@@ -554,7 +554,7 @@ namespace Librainian.Maths {
             public Double dbl;
 
             [FieldOffset( 0 )]
-            public ulong uu;
+            public UInt64 uu;
         }
     }
 }

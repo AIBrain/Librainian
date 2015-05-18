@@ -136,6 +136,6 @@
             }
         }
 
-        public override Double NextDouble() => ( Double )this.GenerateUInt() / ( ( ulong )uint.MaxValue + 1 );
+        public override Double NextDouble() => ( Double )this.GenerateUInt() / ( ( UInt64 )uint.MaxValue + 1 );
     }
 }

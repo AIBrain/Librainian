@@ -92,7 +92,7 @@ namespace Librainian.Security {
             return createTable;
         }
 
-        protected static ulong[] CreateTable( ulong polynomial ) {
+        protected static UInt64[] CreateTable( UInt64 polynomial ) {
             var createTable = new UInt64[256];
             for ( var i = 0; i < 256; ++i ) {
                 var entry = ( UInt64 ) i;

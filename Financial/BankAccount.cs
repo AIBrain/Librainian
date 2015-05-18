@@ -1,9 +1,10 @@
 ﻿namespace Librainian.Financial {
     using System;
+    using Measurement.Currency.USD;
 
-    public abstract class BankAccount  : IBankAccount {
+    public class BankAccount  : Wallet, IBankAccount {
 
-        public abstract Boolean Deposit(   );
-        public abstract Boolean Deposit();
+        
+
     }
 }
