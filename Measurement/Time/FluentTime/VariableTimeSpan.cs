@@ -59,6 +59,6 @@ namespace Librainian.Measurement.Time.FluentTime {
             return this.Equals( ( VariableTimeSpan )obj );
         }
 
-        public override int GetHashCode( ) => this._months.GetHashCode( ) ^ this._years.GetHashCode( );
+        public override int GetHashCode() => this._months.GetHashCode() ^ this._years.GetHashCode();
     }
 }
