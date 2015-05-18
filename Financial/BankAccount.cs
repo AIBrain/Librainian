@@ -2,9 +2,7 @@
     using System;
     using Measurement.Currency.USD;
 
-    public class BankAccount  : Wallet, IBankAccount {
-
-        
-
+    public abstract class BankAccount  : Wallet, IBankAccount {
+        protected BankAccount( Guid id ) : base( id ) { }
     }
 }

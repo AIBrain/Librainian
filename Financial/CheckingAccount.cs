@@ -1,11 +1,7 @@
 ﻿namespace Librainian.Financial {
-    public class CheckingAccount : BankAccount {
-        public override bool TryDeposit() {
-            throw new System.NotImplementedException();
-        }
+    using System;
 
-        public override bool Deposit() {
-            throw new System.NotImplementedException();
-        }
+    public class CheckingAccount : BankAccount {
+        public CheckingAccount( Guid id ) : base( id ) { }
     }
 }

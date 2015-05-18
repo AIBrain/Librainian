@@ -19,14 +19,22 @@
 
 namespace Librainian.Measurement.Currency.USD {
     using System;
+    using System.Runtime.Serialization;
 
+    [DataContract]
     [Serializable]
     public struct TransactionMessage {
-        public DateTime Date;
-        public IDenomination Denomination;
+        [DataMember]
         public Guid ID;
+        [DataMember]
+        public DateTime Date;
+        [DataMember]
+        public IDenomination Denomination;
+        [DataMember]
         public UInt64 Quantity;
+        [DataMember]
         public Guid ReferenceID;
+        [DataMember]
         public TransactionType TransactionType;
     }
 }

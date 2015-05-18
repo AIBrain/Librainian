@@ -61,9 +61,8 @@ namespace Librainian.Financial {
         [DataMember]
         public Statistics Statistics;
 
-        private Wallet( Guid id ) {
+        public Wallet( Guid id ) {
             this.ID = id;
-            this.Statistics.Reset();
             this.Actor = new ActionBlock<TransactionMessage>( message => {
                 switch ( message.TransactionType ) {
                     case TransactionType.Deposit:
@@ -78,6 +77,8 @@ namespace Librainian.Financial {
                         throw new ArgumentOutOfRangeException();
                 }
             }, Blocks.ManyProducers.ConsumeSerial );
+            this.Statistics.Reset();
+            //TODO LoadAsync
         }
 
         private ActionBlock<TransactionMessage> Actor { get; set; }
