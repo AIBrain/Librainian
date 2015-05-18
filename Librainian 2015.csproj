@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{07C565A2-619B-4570-8A8E-63AAA71EB1C2}</ProjectGuid>
+    <ProjectGuid>{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Librainian</RootNamespace>
@@ -279,6 +279,14 @@
     <Compile Include="Extensions\AssemblyInformation.cs" />
     <Compile Include="Extensions\CopyProgressRoutine.cs" />
     <Compile Include="Extensions\SafeSearchHandle.cs" />
+    <Compile Include="Financial\Bank.cs" />
+    <Compile Include="Financial\BankAccount.cs" />
+    <Compile Include="Financial\Cashier.cs" />
+    <Compile Include="Financial\CheckingAccount.cs" />
+    <Compile Include="Financial\Customer.cs" />
+    <Compile Include="Financial\IBankAccount.cs" />
+    <Compile Include="Financial\ICustomer.cs" />
+    <Compile Include="Financial\SavingsAccount.cs" />
     <Compile Include="Gaming\FlippedCoin.cs" />
     <Compile Include="Internet\Browser\AwesomiumWrapper.cs" />
     <Compile Include="Internet\TraceExtensions.cs" />
@@ -780,7 +788,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Financial\" />
     <Folder Include="Gaming\Directional\" />
     <Folder Include="Graphics\Line\" />
     <Folder Include="PatternRecognition\" />
