@@ -29,15 +29,14 @@ namespace Librainian.Internet {
 	using JetBrains.Annotations;
 
 	[DataContract(IsReference = true)]
-	public class Captcha {
+	public sealed class Captcha {
 
 		[DataMember]
 		private CaptchaStatus _status;
 
 		[NotNull]
 		[DataMember]
-		public ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory { get; }
-		= new ConcurrentDictionary<DateTime, CaptchaStatus>();
+		public ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory { get; } = new ConcurrentDictionary<DateTime, CaptchaStatus>();
 
 		[CanBeNull]
 		[DataMember]
