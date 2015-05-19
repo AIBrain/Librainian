@@ -16,7 +16,7 @@ namespace Librainian.Collections {
     [DataContract(IsReference = true)]
     [Serializable]    
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public class Potpourri<TKey> : ManagedDisposable, IPotpourri<TKey> where TKey : class {
+    public class Potpourri<TKey> : BetterDisposableClass, IPotpourri<TKey> where TKey : class {
 
         [DataMember(IsRequired = true)]
         [NotNull]
@@ -26,7 +26,7 @@ namespace Librainian.Collections {
         public String FriendlyName => Types.Name( ( ) => this );
 
         [UsedImplicitly]
-        protected String DebuggerDisplay => String.Format( "{0}({1}) ", this.FriendlyName, this.Container.Select( pair => pair.Key.ToString( ) ).ToStrings( ) );
+        protected String DebuggerDisplay => $"{this.FriendlyName}({this.Container.Select( pair => pair.Key.ToString() ).ToStrings()}) ";
 
         public void Add( TKey key ) {
             if ( Equals( key, default(TKey) ) ) {
@@ -132,10 +132,5 @@ namespace Librainian.Collections {
             return this.Container.TryRemove( key, out value );
         }
 
-        /// <summary>
-        /// dispose of managed resources
-        /// </summary>
-        public override void Dispose( ) {
-        }
     }
 }
