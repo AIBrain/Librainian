@@ -48,7 +48,8 @@ namespace Librainian.Threading {
                 }
             }
 
-            return new Milliseconds( now - then );
+            var result = new Milliseconds( TimeSpan.FromTicks( now - then ).TotalMilliseconds );
+            return result;
         }
 
         public static TimeSpan TimeAThreadSwitch() {
