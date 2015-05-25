@@ -18,7 +18,6 @@
 // "Librainian/Types.cs" was last cleaned by Rick on 2014/08/15 at 2:22 PM
 
 namespace Librainian.Extensions {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -44,9 +43,9 @@ namespace Librainian.Extensions {
                     return;
                 }
 
-	            if ( !field.IsLiteral ) {
-					field.SetValue( destination, sourceValue );
-				}
+                if ( !field.IsLiteral ) {
+                    field.SetValue( destination, sourceValue );
+                }
             }
             catch ( TargetException exception ) {
                 exception.More();
@@ -80,7 +79,7 @@ namespace Librainian.Extensions {
                 }
                 return true;
             }
-            catch ( Exception) {
+            catch ( Exception ) {
                 return false;
             }
         }
@@ -103,7 +102,7 @@ namespace Librainian.Extensions {
                 }
                 return true;
             }
-            catch ( Exception) {
+            catch ( Exception ) {
                 return false;
             }
         }
@@ -223,7 +222,7 @@ namespace Librainian.Extensions {
         /// <param name="generic"></param>
         /// <returns></returns>
         public static bool IsSubclassOfRawGeneric( this Type type, Type generic ) {
-            while ( type != typeof(object) ) {
+            while ( type != typeof( object ) ) {
                 var cur = type != null && type.IsGenericType ? type.GetGenericTypeDefinition() : type;
                 if ( generic == cur ) {
                     return true;
@@ -342,10 +341,10 @@ namespace Librainian.Extensions {
                 // Just one edge case you might want to handle.
                 if ( underlyingType == typeof( Guid ) ) {
                     if ( value is string ) {
-                        value = new Guid( ( string ) value );
+                        value = new Guid( ( string )value );
                     }
                     if ( value is byte[] ) {
-                        value = new Guid( ( byte[] ) value );
+                        value = new Guid( ( byte[] )value );
                     }
 
                     result = ( T )Convert.ChangeType( value, underlyingType );

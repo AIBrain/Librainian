@@ -18,13 +18,11 @@
 // "Librainian/NativeWin32.cs" was last cleaned by Rick on 2014/12/24 at 4:29 AM
 
 namespace Librainian.Extensions {
-
     using System;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;
     using IO;
-    
 
     public static class NativeWin32 {
         public const uint ERROR_MORE_DATA = 234;
