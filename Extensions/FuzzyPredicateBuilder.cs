@@ -1,3 +1,5 @@
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -8,26 +10,28 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/FuzzyPredicateBuilder.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/FuzzyPredicateBuilder.cs" was last cleaned by Rick on 2015/06/12 at 2:53 PM
 
 namespace Librainian.Extensions {
+
     using System;
     using System.Linq.Expressions;
 
-    [Obsolete("warning: totally untested and unfinished")]
+    [Obsolete( "warning: totally untested and unfinished" )]
     public static class FuzzyPredicateBuilder {
 
-        public static Expression<Func<TTT, Boolean>> And<TTT>( this Expression<Func<TTT, Single>> expr1, Expression<Func<TTT, Single>> expr2 ) => Expression.Lambda<Func<TTT, Boolean>>( Expression.AndAlso( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
+        public static Expression<Func<TTt, Boolean>> And<TTt>(this Expression<Func<TTt, Single>> expr1, Expression<Func<TTt, Single>> expr2) => Expression.Lambda<Func<TTt, Boolean>>( Expression.AndAlso( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
 
-        public static Expression<Func<TTT, Boolean>> False<TTT>() => f => false;
+        public static Expression<Func<TTt, Boolean>> False<TTt>() => f => false;
 
-        public static Expression<Func<TTT, Boolean>> Or<TTT>( this Expression<Func<TTT, Single>> expr1, Expression<Func<TTT, Single>> expr2 ) => Expression.Lambda<Func<TTT, Boolean>>( body: Expression.GreaterThanOrEqual( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), parameters: expr1.Parameters );
+        public static Expression<Func<TTt, Boolean>> Or<TTt>(this Expression<Func<TTt, Single>> expr1, Expression<Func<TTt, Single>> expr2) => Expression.Lambda<Func<TTt, Boolean>>( body: Expression.GreaterThanOrEqual( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), parameters: expr1.Parameters );
 
-        public static Expression<Func<TTT, Boolean>> True<TTT>() => f => true;
+        public static Expression<Func<TTt, Boolean>> True<TTt>() => f => true;
     }
 }

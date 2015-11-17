@@ -1,23 +1,25 @@
-﻿#region License & Information
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/MkModel.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
-#endregion
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/MkModel.cs" was last cleaned by Rick on 2015/06/12 at 3:09 PM
 
 namespace Librainian.Parsing.Markov {
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -32,18 +34,17 @@ namespace Librainian.Parsing.Markov {
 
     public class MkModel {
         public readonly String Name;
-
-        private readonly ConcurrentDictionary< String, List< String > > _markovChains = new ConcurrentDictionary< String, List< String > >();
+        private readonly ConcurrentDictionary<String, List<String>> _markovChains = new ConcurrentDictionary<String, List<String>>();
 
         public MkModel() {
             throw new NotImplementedException();
         }
 
-        public MkModel( String name ) {
+        public MkModel(String name) {
             this.Name = name;
         }
 
-        public String GenerateRandomCorpus( int numberOfWords ) {
+        public String GenerateRandomCorpus(Int32 numberOfWords) {
             if ( !this._markovChains.Any() ) {
                 return String.Empty;
             }
@@ -66,14 +67,12 @@ namespace Librainian.Parsing.Markov {
             return newCorpus.ToString();
         }
 
-        public Boolean Load() => this.Name.Loader< MkModel >( source => source.DeepClone( destination: this ) );
+        public Boolean Load() => this.Name.Loader<MkModel>( source => source.DeepClone( destination: this ) );
 
-        /// <summary>
-        ///     Return the list of strings found after this <paramref name="word" />.
-        /// </summary>
+        /// <summary>Return the list of strings found after this <paramref name="word" />.</summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        public IEnumerable< String > Nexts( [CanBeNull] String word ) {
+        public IEnumerable<String> Nexts([CanBeNull] String word) {
             if ( word == null ) {
                 return CollectionExtensions.EmptyList;
             }
@@ -83,11 +82,12 @@ namespace Librainian.Parsing.Markov {
 
         public Boolean Save() => this.Saver( this.Name );
 
-        public void Train( String corpus, int level = 3 ) {
+        public void Train(String corpus, Int32 level = 3) {
+
             //return Task.Run( () => {
             var words = corpus.ToWords().AsParallel().ToArray();
 
-            Parallel.For( 0, words.Length, ( i, state ) => this._markovChains.TryAdd( key: words[ i ], value: words.Skip( i + 1 ).Take( level ).ToList() ) );
+            Parallel.For( 0, words.Length, (i, state) => this._markovChains.TryAdd( key: words[ i ], value: words.Skip( i + 1 ).Take( level ).ToList() ) );
 
             //for ( var i = 0; i < words.Length; i++ ) {
             //    this._markovChains.TryAdd( key: words[ i ], value: words.Skip( i + 1 ).Take( level ).ToList() );

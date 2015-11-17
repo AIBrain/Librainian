@@ -1,32 +1,34 @@
-﻿#region License & Information
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/WikiPedia.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
-#endregion
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/WikiPedia.cs" was last cleaned by Rick on 2015/06/12 at 2:56 PM
 
 namespace Librainian.Internet.Wiki {
+
     using System;
     using System.Collections.Generic;
     using System.Net;
     using System.Xml;
     using System.Xml.Linq;
     using Parsing;
-    using Threading;
 
     public class WikiPedia {
+
         private static XmlDocument BaseResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
 
         //public static Boolean doesWikiRespond {
@@ -42,12 +44,12 @@ namespace Librainian.Internet.Wiki {
         //        /*
         //        http://wikipedia.org/w/api.php?action=query&format=xml&prop=info&titles=cat
 
-        //        http://en.wiktionary.org/w/api.php?action=query&format=xml&prop=info&list=search&titles=cat
+        // http: //en.wiktionary.org/w/api.php?action=query&format=xml&prop=info&list=search&titles=cat
 
-        //        http://en.wiktionary.org/w/api.php?action=query&format=xml&prop=extlinks&titles=cat
-        //        http://en.wiktionary.org/w/api.php?action=query&format=xml&prop=templates&titles=cat
+        // http: //en.wiktionary.org/w/api.php?action=query&format=xml&prop=extlinks&titles=cat
+        // http: //en.wiktionary.org/w/api.php?action=query&format=xml&prop=templates&titles=cat
 
-        //        http://wikipedia.org/w/api.php?action=query&prop=revisions&titles=cat&rvprop=content&format=xml
+        // http: //wikipedia.org/w/api.php?action=query&prop=revisions&titles=cat&rvprop=content&format=xml
 
         //        return @"http://wikipedia.org/w/api.php?action=query&format=xml&prop=info&titles=cat";
         //        //return @"http://wikipedia.org/w/api.php?action                =query&format=xml&list=categorymembers&cmlimit=500&cmtitle=cat
@@ -69,20 +71,16 @@ namespace Librainian.Internet.Wiki {
         //        webRequest.UserAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)";
         //        webRequest.Accept = "text/xml";
 
-        //        var webResponse = ( HttpWebResponse )webRequest.GetResponse();
-        //        var responseStream = webResponse.GetResponseStream();
-        //        var xmlreader = new XmlTextReader( responseStream );
-        //        var xpathdoc = new XPathDocument( xmlreader );
-        //        xmlreader.Close();
-        //        webResponse.Close();
-        //        var myXPathNavigator = xpathdoc.CreateNavigator();
-        //        var nodesIt = myXPathNavigator.SelectDescendants( "text", "http://www.mediawiki.org/xml/export-0.4/", false );
+        // var webResponse = ( HttpWebResponse )webRequest.GetResponse(); var responseStream =
+        // webResponse.GetResponseStream(); var xmlreader = new XmlTextReader( responseStream ); var
+        // xpathdoc = new XPathDocument( xmlreader ); xmlreader.Close(); webResponse.Close(); var
+        // myXPathNavigator = xpathdoc.CreateNavigator(); var nodesIt =
+        // myXPathNavigator.SelectDescendants( "text", "http://www.mediawiki.org/xml/export-0.4/",
+        // false );
 
-        //        var rtWikiContent = new StringBuilder();
+        // var rtWikiContent = new StringBuilder();
 
-        //        while ( nodesIt.MoveNext() ) {
-        //            rtWikiContent.Append( nodesIt.Current.InnerXml );
-        //        }
+        // while ( nodesIt.MoveNext() ) { rtWikiContent.Append( nodesIt.Current.InnerXml ); }
 
         //        return rtWikiContent.ToString();
         //    }
@@ -92,21 +90,22 @@ namespace Librainian.Internet.Wiki {
         //    }
         //}
 
-        public static IEnumerable< String > GetCategories( String titles ) {
+        public static IEnumerable<String> GetCategories(String titles) {
             try {
-                var uri = new Uri( String.Format( "http://wikipedia.org/w/api.php?action=query&prop=categories&format=xml&titles={0}", titles ) );
-                var webRequest = ( HttpWebRequest ) WebRequest.Create( uri );
+                var uri = new Uri( $"http://wikipedia.org/w/api.php?action=query&prop=categories&format=xml&titles={titles}" );
+                var webRequest = ( HttpWebRequest )WebRequest.Create( uri );
                 webRequest.Credentials = CredentialCache.DefaultCredentials;
                 webRequest.AllowAutoRedirect = true;
                 webRequest.UserAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)";
                 webRequest.AutomaticDecompression = DecompressionMethods.GZip;
                 webRequest.Accept = "text/xml";
-                using ( var webResponse = ( HttpWebResponse ) webRequest.GetResponse() ) {
+                using ( var webResponse = ( HttpWebResponse )webRequest.GetResponse() ) {
+
                     //var responseStream = webResponse.GetResponseStream();
                     var alltext = webResponse.StringFromResponse();
                     var alldata = XElement.Parse( alltext, LoadOptions.None );
                     var cats = alldata.Elements( "categories" );
-                    var results = new HashSet< String >();
+                    var results = new HashSet<String>();
                     foreach ( var xElement in cats ) {
                         results.Add( xElement.Value );
                     }
@@ -119,15 +118,15 @@ namespace Librainian.Internet.Wiki {
                     //}
                 }
             }
-            catch ( Exception Exception ) {
-                Exception.More();
+            catch ( Exception exception ) {
+                exception.More();
                 return null;
             }
         }
 
-        public static XElement GetWikiData( String title ) {
+        public static XElement GetWikiData(String title) {
             try {
-                var webRequest = ( HttpWebRequest ) WebRequest.Create( "http://wikipedia.org/wiki/" + "Special:Export/" + title );
+                var webRequest = ( HttpWebRequest )WebRequest.Create( "http://wikipedia.org/wiki/" + "Special:Export/" + title );
                 webRequest.Credentials = CredentialCache.DefaultCredentials;
                 webRequest.AllowAutoRedirect = true;
                 webRequest.UserAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)";
@@ -150,8 +149,8 @@ namespace Librainian.Internet.Wiki {
                     //}
                 }
             }
-            catch ( Exception Exception ) {
-                Exception.More();
+            catch ( Exception exception ) {
+                exception.More();
                 return null;
             }
         }

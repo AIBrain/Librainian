@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,14 +10,13 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/ConcurrentCollection.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-
-#endregion License & Information
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/ConcurrentCollection.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
 
 namespace Librainian.Collections {
 
@@ -31,91 +30,73 @@ namespace Librainian.Collections {
     using Threading;
 
     public class ConcurrentCollection<T> : IProducerConsumerCollection<T> {
-        private const int BACKOFF_MAX_YIELDS = 8;
+        private const Int32 BackoffMaxYields = 8;
 
         [NonSerialized]
-        private Node m_head;
+        private Node _mHead;
 
-        private T[] m_serializationArray;
+        private T[] _mSerializationArray;
 
-        public ConcurrentCollection( ) {
-        }
-
-        public ConcurrentCollection( IEnumerable<T> collection ) {
-            if ( collection == null ) {
-                throw new ArgumentNullException( nameof( collection ) );
-            }
-            this.InitializeFromCollection( collection );
-        }
-
-        public Boolean IsEmpty => this.m_head == null;
-
-        public int Count {
+        public Int32 Count {
             get {
                 var num = 0;
-                for ( var node = this.m_head; node != null; node = node.m_next ) {
+                for ( var node = this._mHead; node != null; node = node.MNext ) {
                     ++num;
                 }
                 return num;
             }
         }
 
+        public Boolean IsEmpty => this._mHead == null;
+
         Boolean ICollection.IsSynchronized => false;
 
-        object ICollection.SyncRoot { get { throw new NotSupportedException( "ConcurrentCollection_SyncRoot_NotSupported" ); } }
+        Object ICollection.SyncRoot {
+            get {
+                throw new NotSupportedException( "ConcurrentCollection_SyncRoot_NotSupported" );
+            }
+        }
 
-        public void CopyTo( T[] array, int index ) {
+        public ConcurrentCollection() {
+        }
+
+        public ConcurrentCollection(IEnumerable<T> collection) {
+            if ( collection == null ) {
+                throw new ArgumentNullException( nameof( collection ) );
+            }
+            this.InitializeFromCollection( collection );
+        }
+
+        public void Clear() => this._mHead = null;
+
+        public void CopyTo(T[] array, Int32 index) {
             if ( array == null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
-            this.ToList( ).CopyTo( array, index );
+            this.ToList().CopyTo( array, index );
         }
 
-        public IEnumerator<T> GetEnumerator( ) => GetEnumerator( this.m_head );
+        public IEnumerator<T> GetEnumerator() => GetEnumerator( this._mHead );
 
-        void ICollection.CopyTo( Array array, int index ) {
-            if ( array == null ) {
-                throw new ArgumentNullException( nameof( array ) );
-            }
-            if ( ( array as T[] ) == null ) {
-                throw new ArgumentNullException( nameof( array ) );
-            }
-            this.ToList( ).CopyTo( ( T[] )array, index );
-        }
-
-        // ReSharper restore RemoveToList.1
-        IEnumerator IEnumerable.GetEnumerator( ) => this.GetEnumerator( );
-
-        Boolean IProducerConsumerCollection<T>.TryAdd( T item ) {
-            this.Push( item );
-            return true;
-        }
-
-        Boolean IProducerConsumerCollection<T>.TryTake( out T item ) => this.TryPop( out item );
-
-        public T[] ToArray( ) => this.ToList( ).ToArray( );
-
-        public void Clear( ) => this.m_head = null;
-
-        public void Push( T item ) {
+        public void Push(T item) {
             var node = new Node( item ) {
-                m_next = this.m_head
+                MNext = this._mHead
             };
-            var mHead = this.m_head;
-            if ( Interlocked.CompareExchange( ref mHead, node, node.m_next ) == node.m_next ) {
+            var mHead = this._mHead;
+            if ( Interlocked.CompareExchange( ref mHead, node, node.MNext ) == node.MNext ) {
                 return;
             }
             this.PushCore( node, node );
         }
 
-        public void PushRange( T[] items ) {
+        public void PushRange(T[] items) {
             if ( items == null ) {
                 throw new ArgumentNullException( nameof( items ) );
             }
             this.PushRange( items, 0, items.Length );
         }
 
-        public void PushRange( T[] items, int startIndex, int count ) {
+        public void PushRange(T[] items, Int32 startIndex, Int32 count) {
             ValidatePushPopRangeInput( items, startIndex, count );
             if ( count == 0 ) {
                 return;
@@ -124,37 +105,42 @@ namespace Librainian.Collections {
             var head = tail = new Node( items[ startIndex ] );
             for ( var index = startIndex + 1; index < startIndex + count; ++index ) {
                 head = new Node( items[ index ] ) {
-                    m_next = head
+                    MNext = head
                 };
             }
-            tail.m_next = this.m_head;
-            var mHead = this.m_head;
-            if ( Interlocked.CompareExchange( ref mHead, head, tail.m_next ) == tail.m_next ) {
+            tail.MNext = this._mHead;
+            var mHead = this._mHead;
+            if ( Interlocked.CompareExchange( ref mHead, head, tail.MNext ) == tail.MNext ) {
                 return;
             }
             this.PushCore( head, tail );
         }
 
-        // ReSharper disable RemoveToList.1
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        // ReSharper disable once RemoveToList.1
+        public T[] ToArray() =>  this.ToList().ToArray();
 
-        public Boolean TryPeek( out T result ) {
-            var node = this.m_head;
+        public Boolean TryPeek(out T result) {
+            var node = this._mHead;
             if ( node == null ) {
                 result = default(T);
                 return false;
             }
-            result = node.m_value;
+            result = node.MValue;
             return true;
         }
 
-        public Boolean TryPop( out T result ) {
-            var comparand = this.m_head;
+        public Boolean TryPop(out T result) {
+            var comparand = this._mHead;
             if ( comparand != null ) {
-                var mHead = this.m_head;
-                if ( Interlocked.CompareExchange( ref mHead, comparand.m_next, comparand ) != comparand ) {
+                var mHead = this._mHead;
+                if ( Interlocked.CompareExchange( ref mHead, comparand.MNext, comparand ) != comparand ) {
                     return this.TryPopCore( out result );
                 }
-                result = comparand.m_value;
+                result = comparand.MValue;
                 return true;
             }
 
@@ -162,14 +148,14 @@ namespace Librainian.Collections {
             return false;
         }
 
-        public int TryPopRange( T[] items ) {
+        public Int32 TryPopRange(T[] items) {
             if ( items == null ) {
                 throw new ArgumentNullException( nameof( items ) );
             }
             return this.TryPopRange( items, 0, items.Length );
         }
 
-        public int TryPopRange( T[] items, int startIndex, int count ) {
+        public Int32 TryPopRange(T[] items, Int32 startIndex, Int32 count) {
             ValidatePushPopRangeInput( items, startIndex, count );
             if ( count == 0 ) {
                 return 0;
@@ -183,21 +169,21 @@ namespace Librainian.Collections {
             return nodesCount;
         }
 
-        private static void CopyRemovedItems( Node head, IList<T> collection, int startIndex, int nodesCount ) {
+        private static void CopyRemovedItems(Node head, IList<T> collection, Int32 startIndex, Int32 nodesCount) {
             var node = head;
             for ( var index = startIndex; index < startIndex + nodesCount; ++index ) {
-                collection[ index ] = node.m_value;
-                node = node.m_next;
+                collection[ index ] = node.MValue;
+                node = node.MNext;
             }
         }
 
-        private static IEnumerator<T> GetEnumerator( Node head ) {
-            for ( var current = head; current != null; current = current.m_next ) {
-                yield return current.m_value;
+        private static IEnumerator<T> GetEnumerator(Node head) {
+            for ( var current = head; current != null; current = current.MNext ) {
+                yield return current.MValue;
             }
         }
 
-        private static void ValidatePushPopRangeInput( ICollection<T> items, int startIndex, int count ) {
+        private static void ValidatePushPopRangeInput(ICollection<T> items, Int32 startIndex, Int32 count) {
             if ( items == null ) {
                 throw new ArgumentNullException( nameof( items ) );
             }
@@ -205,7 +191,7 @@ namespace Librainian.Collections {
                 throw new ArgumentOutOfRangeException( nameof( count ), "ConcurrentStack_PushPopRange_CountOutOfRange" );
             }
             var length = items.Count;
-            if ( startIndex >= length || startIndex < 0 ) {
+            if ( ( startIndex >= length ) || ( startIndex < 0 ) ) {
                 throw new ArgumentOutOfRangeException( nameof( startIndex ), "ConcurrentStack_PushPopRange_StartOutOfRange" );
             }
             if ( length - count < startIndex ) {
@@ -213,102 +199,122 @@ namespace Librainian.Collections {
             }
         }
 
-        private void InitializeFromCollection( IEnumerable<T> collection ) {
-            var node = collection.Aggregate<T, Node>( null, ( current, obj ) => new Node( obj ) {
-                m_next = current
+        void ICollection.CopyTo(Array array, Int32 index) {
+            if ( array == null ) {
+                throw new ArgumentNullException( nameof( array ) );
+            }
+            if ( array as T[] == null ) {
+                throw new ArgumentNullException( nameof( array ) );
+            }
+            this.ToList().CopyTo( ( T[] )array, index );
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        private void InitializeFromCollection(IEnumerable<T> collection) {
+            var node = collection.Aggregate<T, Node>( null, (current, obj) => new Node( obj ) {
+                MNext = current
             } );
-            this.m_head = node;
+            this._mHead = node;
         }
 
         [OnDeserialized]
-        private void OnDeserialized( StreamingContext context ) {
+        private void OnDeserialized(StreamingContext context) {
             Node node1 = null;
             Node node2 = null;
-            foreach ( var node3 in this.m_serializationArray.Select( t => new Node( t ) ) ) {
+            foreach ( var node3 in this._mSerializationArray.Select( t => new Node( t ) ) ) {
                 if ( node1 == null ) {
                     node2 = node3;
                 }
                 else {
-                    node1.m_next = node3;
+                    node1.MNext = node3;
                 }
                 node1 = node3;
             }
-            this.m_head = node2;
-            this.m_serializationArray = null;
+            this._mHead = node2;
+            this._mSerializationArray = null;
         }
 
         [OnSerializing]
-        private void OnSerializing( StreamingContext context ) => this.m_serializationArray = this.ToArray( );
+        private void OnSerializing(StreamingContext context) => this._mSerializationArray = this.ToArray();
 
-        private void PushCore( Node head, Node tail ) {
-            var spinWait = new SpinWait( );
-            var mHead = this.m_head;
+        private void PushCore(Node head, Node tail) {
+            var spinWait = new SpinWait();
+            var mHead = this._mHead;
             do {
-                spinWait.SpinOnce( );
-                tail.m_next = this.m_head;
-            } while ( Interlocked.CompareExchange( ref mHead, head, tail.m_next ) != tail.m_next );
+                spinWait.SpinOnce();
+                tail.MNext = this._mHead;
+            } while ( Interlocked.CompareExchange( ref mHead, head, tail.MNext ) != tail.MNext );
         }
 
-        private List<T> ToList( ) {
-            var list = new List<T>( );
-            for ( var node = this.m_head; node != null; node = node.m_next ) {
-                list.Add( node.m_value );
+        private List<T> ToList() {
+            var list = new List<T>();
+            for ( var node = this._mHead; node != null; node = node.MNext ) {
+                list.Add( node.MValue );
             }
             return list;
         }
 
-        private Boolean TryPopCore( out T result ) {
+        Boolean IProducerConsumerCollection<T>.TryAdd(T item) {
+            this.Push( item );
+            return true;
+        }
+
+        private Boolean TryPopCore(out T result) {
             Node poppedHead;
             if ( this.TryPopCore( 1, out poppedHead ) == 1 ) {
-                result = poppedHead.m_value;
+                result = poppedHead.MValue;
                 return true;
             }
             result = default(T);
             return false;
         }
 
-        private int TryPopCore( int count, out Node poppedHead ) {
-            var spinWait = new SpinWait( );
+        private Int32 TryPopCore(Int32 count, out Node poppedHead) {
+            var spinWait = new SpinWait();
             var num1 = 1;
 
             //var random = new Random( Environment.TickCount & int.MaxValue );
             Node comparand;
-            int num2;
+            Int32 num2;
             while ( true ) {
-                comparand = this.m_head;
+                comparand = this._mHead;
                 if ( comparand == null ) {
                     break;
                 }
                 var node = comparand;
-                for ( num2 = 1; num2 < count && node.m_next != null; ++num2 ) {
-                    node = node.m_next;
+                for ( num2 = 1; ( num2 < count ) && ( node.MNext != null ); ++num2 ) {
+                    node = node.MNext;
                 }
-                var mHead = this.m_head;
-                if ( Interlocked.CompareExchange( ref mHead, node.m_next, comparand ) == comparand ) {
+                var mHead = this._mHead;
+                if ( Interlocked.CompareExchange( ref mHead, node.MNext, comparand ) == comparand ) {
                     goto label_9;
                 }
                 for ( var index = 0; index < num1; ++index ) {
-                    spinWait.SpinOnce( );
+                    spinWait.SpinOnce();
                 }
-                num1 = spinWait.NextSpinWillYield ? Randem.Next( 1, 8 ) : num1 * 2;
+                num1 = spinWait.NextSpinWillYield ? 1.Next( 8 ) : num1 * 2;
             }
             poppedHead = null;
             return 0;
-        label_9:
+            label_9:
 
             poppedHead = comparand;
             return num2;
         }
 
+        Boolean IProducerConsumerCollection<T>.TryTake(out T item) => this.TryPop( out item );
+
         private sealed class Node {
-            internal readonly T m_value;
+            internal readonly T MValue;
+            internal Node MNext;
 
-            internal Node m_next;
-
-            internal Node( T value ) {
-                this.m_value = value;
-                this.m_next = null;
+            internal Node(T value) {
+                this.MValue = value;
+                this.MNext = null;
             }
         }
+
+        // ReSharper restore RemoveToList.1
     }
 }

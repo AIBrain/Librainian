@@ -1,38 +1,35 @@
-﻿#region License & Information
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/Windows.cs" was last cleaned by Rick on 2014/08/19 at 11:51 AM
-#endregion
+// "Librainian/Windows.cs" was last cleaned by Rick on 2015/06/12 at 3:12 PM
 
 namespace Librainian.Security {
+
     using System;
     using System.Security;
     using System.Security.Principal;
 
     public static class Windows {
 
-        /// <summary>
-        /// Determine if the current user is in the role of <see cref="WindowsBuiltInRole"/>.
-        /// </summary>
+        /// <summary>Determine if the current user is in the role of <see cref="WindowsBuiltInRole" />.</summary>
         /// <param name="role"></param>
         /// <returns></returns>
-        public static Boolean IsUserInRole( WindowsBuiltInRole role ) {
-
+        public static Boolean IsUserInRole(WindowsBuiltInRole role) {
             try {
                 using ( var windowsIdentity = WindowsIdentity.GetCurrent() ) {
                     if ( windowsIdentity != null ) {
@@ -41,9 +38,9 @@ namespace Librainian.Security {
                     }
                 }
             }
-            catch ( SecurityException ) {}
-            catch ( ArgumentNullException ) {}
-            catch ( ArgumentException ) {}
+            catch ( SecurityException ) { }
+            catch ( ArgumentNullException ) { }
+            catch ( ArgumentException ) { }
 
             return false;
         }

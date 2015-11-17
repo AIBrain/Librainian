@@ -1,5 +1,25 @@
-﻿
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
+// This notice must be kept visible in the source.
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
+// Donations and Royalties can be paid via
+// PayPal: paypal@aibrain.org
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/ThreadingExtensions.cs" was last cleaned by Rick on 2015/06/12 at 3:14 PM
+
 namespace Librainian.Threading {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -9,68 +29,258 @@ namespace Librainian.Threading {
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using JetBrains.Annotations;
     using Maths;
     using Measurement.Time;
+    using static LanguageExt.Prelude;
 
     public static class ThreadingExtensions {
 
-        public static void Fraggle( this Thread thread, TimeSpan timeSpan ) {
-            var stopwatch = Stopwatch.StartNew( );
-            var tenth = TimeSpan.FromMilliseconds( timeSpan.TotalMilliseconds/10 );
+        /// <summary>
+        /// <para>
+        /// Sets the <see cref="System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism" /> of a
+        /// <see cref="System.Threading.Tasks.ParallelOptions" /> to <see cref="Environment.ProcessorCount" />.
+        /// </para>
+        /// <para>1 core to 1</para>
+        /// <para>2 cores to 1</para>
+        /// <para>4 cores to 3</para>
+        /// <para>8 cores to 7</para>
+        /// <para>n cores to n-1</para>
+        /// </summary>
+        [NotNull]
+        public static readonly ParallelOptions ParallelOptions = new ParallelOptions {
+            MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount - 1 )  //leave the OS a little wiggle room
+        };
+
+        [NotNull]
+        public static readonly ThreadLocal<SHA256Managed> ThreadLocalSHA256Managed = new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
+
+        /// <summary>Only allow a delegate to run X times.</summary>
+        /// <param name="action"></param>
+        /// <param name="callsAllowed"></param>
+        /// <returns></returns>
+        /// <example>
+        /// var barWithBarrier = ThreadingExtensions.ActionBarrier( action: Bar,
+        /// remainingCallsAllowed: 2 );
+        /// </example>
+        /// <remarks>
+        /// Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.
+        /// </remarks>
+        public static Action ActionBarrier( [CanBeNull] this Action action, Int64? callsAllowed = null ) {
+            var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
+            return () => {
+                if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
+                    action?.Invoke();
+                }
+            };
+        }
+
+        /// <summary>Only allow a delegate to run X times.</summary>
+        /// <param name="action"></param>
+        /// <param name="parameter"></param>
+        /// <param name="callsAllowed"></param>
+        /// <returns></returns>
+        /// <example>
+        /// var barWithBarrier = ThreadingExtensions.ActionBarrier( action: Bar,
+        /// remainingCallsAllowed: 2 );
+        /// </example>
+        /// <remarks>
+        /// Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.
+        /// </remarks>
+        public static Action ActionBarrier<T1>( [CanBeNull] this Action<T1> action, T1 parameter, Int64? callsAllowed = null ) {
+            var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
+            return () => {
+                if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
+                    action?.Invoke( parameter );
+                }
+            };
+        }
+
+        /// <summary>Thread.BeginThreadAffinity(); Thread.BeginCriticalRegion();</summary>
+        public static void Begin( Boolean lowPriority = true ) {
+            Thread.BeginThreadAffinity();
+            Thread.BeginCriticalRegion();
+            if ( !lowPriority ) {
+                return;
+            }
+
+            // ReSharper disable RedundantCheckBeforeAssignment
+            if ( Thread.CurrentThread.Priority != ThreadPriority.Lowest ) {
+
+                // ReSharper restore RedundantCheckBeforeAssignment
+                Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+            }
+        }
+
+        /// <summary>About X bytes by polling the object's fields.</summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static UInt64 CalcSizeInBytes<T>( this T obj ) {
+            if ( Equals( obj, default( T ) ) ) {
+                return 0;
+            }
+
+            UInt64 sizeInBytes;
+            if ( obj.GetSizeOfPrimitives( out sizeInBytes ) ) {
+                return sizeInBytes;
+            }
+
+            var fields = obj.GetType().GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
+            foreach ( var field in fields ) {
+
+                //UInt64 localsize;
+                //if ( GetSizeOfPrimitives( field.FieldType, out localsize ) ) {
+                //    sizeInBytes += localsize;
+                //    continue;
+                //}
+                //if ( field.is ) {
+                //TODO check for array in GetValue 
+                //}
+                var value = field.GetValue( obj );
+
+                // http://rogeralsing.com/2008/02/28/linq-expressions-creating-objects/
+                //// Make a NewExpression that calls the ctor with the args we just created
+                //NewExpression newExp = Expression.New( ctor, argsExp );
+
+                //// Create a lambda with the New expression as body and our param object[] as arg
+                //LambdaExpression lambda = Expression.Lambda( typeof( ObjectActivator ), newExp, param );
+
+                //// Compile it
+                //ObjectActivator compiled = ( ObjectActivator )lambda.Compile();
+
+                if ( field.FieldType.IsSubclassOf( typeof( IList ) ) ) {
+                    var list = value as IList;
+                    if ( list == null ) {
+                        continue;
+                    }
+                    foreach ( var o in list ) {
+                        sizeInBytes += o.CalcSizeInBytes();
+                    }
+
+                    continue;
+                }
+
+                if ( field.FieldType.IsSubclassOf( typeof( IDictionary ) ) ) {
+                    var dictionary = value as IDictionary;
+                    if ( dictionary != null ) {
+                        foreach ( var key in dictionary.Keys ) {
+                            sizeInBytes += key.CalcSizeInBytes();   //TODO could optimize this out of the loop
+                            sizeInBytes += dictionary[ key ].CalcSizeInBytes();
+                        }
+                    }
+                    continue;
+                }
+
+                if ( field.FieldType.IsSubclassOf( typeof( IEnumerable ) ) ) {
+                    var enumerable = value as IEnumerable;
+                    if ( enumerable != null ) {
+                        sizeInBytes = enumerable.Cast<Object>().Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
+                    }
+                    continue;
+                }
+
+                if ( field.FieldType.IsArray ) {
+                    var bob = field.GetValue( obj );
+                    if ( null == bob ) {
+                        continue;
+                    }
+                    var list = List( bob ) ;
+                    foreach ( var o in list ) {
+                        sizeInBytes += o.CalcSizeInBytes();
+                    }
+                    continue;
+                }
+
+                sizeInBytes += value.CalcSizeInBytes();
+
+                //if ( value.GetType().IsSerializable ) {
+                //    try {
+                //        using ( var ms = new MemoryStream() ) {
+                //            var bf = new BinaryFormatter();
+                //            bf.Serialize( ms, value );
+                //            sizeInBytes += ( UInt64 )ms.Position;
+                //        }
+                //    }
+                //    catch ( Exception exception ) {
+                //        continue;
+                //    }
+                //}
+
+
+
+                ////sizeInBytes += ( UInt64 ) new StringInfo( value.Serialize() ).LengthInTextElements;
+                //sizeInBytes += value.GetType().CalcSizeInBytes();
+
+            }
+            return sizeInBytes;
+        }
+
+        /// <summary>
+        /// Has attributes <see cref="MethodImplOptions.NoInlining" /> and
+        /// <see cref="MethodImplOptions.NoOptimization" /> .
+        /// </summary>
+        [MethodImpl( MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization )]
+        public static void DoNothing() {
+        }
+
+        /// <summary>Thread.EndThreadAffinity(); Thread.EndCriticalRegion();</summary>
+        public static void End() {
+            Thread.EndThreadAffinity();
+            Thread.EndCriticalRegion();
+        }
+
+        /// <summary>
+        /// Split the given <paramref name="timeSpan"/> into tenths, alternating between <see cref="Thread.Sleep(TimeSpan)"/> and <see cref="Thread.Yield"/>
+        /// </summary>
+        /// <param name="thread"></param>
+        /// <param name="timeSpan"></param>
+        public static void Fraggle( [NotNull] this Thread thread, TimeSpan timeSpan ) {
+            if ( null == thread ) {
+                throw new ArgumentNullException( nameof( thread ) );
+            }
+            var stopwatch = Stopwatch.StartNew();
+            var tenth = TimeSpan.FromMilliseconds( timeSpan.TotalMilliseconds / 10.0 );
+            if ( tenth > Seconds.One ) {
+                tenth = Seconds.One;
+            }
             var toggle = true;
             do {
                 toggle = !toggle;
                 if ( toggle ) {
                     Thread.Sleep( tenth );
                 }
-                else { Thread.Yield( ); }
-                Application.DoEvents( );
+                else {
+                    Thread.Yield();
+                }
+                Application.DoEvents();
             } while ( stopwatch.Elapsed < timeSpan );
         }
 
-        /// <summary>
-        /// <para> Sets the <see cref="ParallelOptions.MaxDegreeOfParallelism" /> of a <see
-        /// cref="ParallelOptions" /> to <see cref="Environment.ProcessorCount" />. </para>
-        /// <para>1 core to 1</para>
-        /// <para>2 cores to 2</para>
-        /// <para>4 cores to 4</para>
-        /// <para>8 cores to 8</para>
-        /// <para>n cores to n</para>
-        /// </summary>
-        [NotNull]
-        public static readonly ParallelOptions Parallelism = new ParallelOptions {
-            MaxDegreeOfParallelism = Environment.ProcessorCount
-        };
+        public static IEnumerable<T> GetEnums<T>( this T hmm ) => Enum.GetValues( typeof( T ) ).Cast<T>();    //BUG does this even work?
 
-        [NotNull]
-        public static readonly ThreadLocal<SHA256Managed> ThreadLocalSHA256Managed = new ThreadLocal<SHA256Managed>( valueFactory: ( ) => new SHA256Managed( ), trackAllValues: false );
-
-        public static int GetMaximumActiveWorkerThreads( ) {
-            int maxWorkerThreads, maxPortThreads;
+        public static Int32 GetMaximumActiveWorkerThreads() {
+            Int32 maxWorkerThreads, maxPortThreads;
             ThreadPool.GetMaxThreads( workerThreads: out maxWorkerThreads, completionPortThreads: out maxPortThreads );
             return maxPortThreads;
         }
 
-        /// <summary>
-        /// Has attributes <see cref="MethodImplOptions.NoInlining"/> and <see cref="MethodImplOptions.NoOptimization"/>.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-        public static void DoNothing( ) {
-        }
-
-
         /*
-                /// <summary>Creates a new Task that mirrors the supplied task but that will be canceled after the specified timeout.</summary>
-                /// <typeparam name="TResult">Specifies the type of data contained in the task.</typeparam>
+
+                /// <summary>
+                /// Creates a new Task that mirrors the supplied task but that will be canceled
+                /// after the specified timeout.
+                /// </summary>
+                /// <typeparam name="TResult">
+                /// Specifies the type of data contained in the task.
+                /// </typeparam>
                 /// <param name="task">The task.</param>
                 /// <param name="timeout">The timeout.</param>
                 /// <returns>The new Task that may time out.</returns>
-                /// <seealso cref="http://stackoverflow.com/a/20639723/956364"/>
+                /// <seealso cref="http://stackoverflow.com/a/20639723/956364" />
                 public static Task<TResult> WithTimeout<TResult>( this Task<TResult> task, TimeSpan timeout ) {
                     var result = new TaskCompletionSource<TResult>( task.AsyncState );
                     var timer = new Timer( state =>
@@ -84,243 +294,143 @@ namespace Librainian.Threading {
                 }
         */
 
-        /// <summary>
-        ///     About X bytes by polling just and ONLY fields.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public static int CalcSizeInBytes<T>( this T obj ) {
-            if ( Equals( obj, default(T) ) ) {
-                return 0;
+        public static Boolean GetSizeOfPrimitives<T>( this T obj, out UInt64 total ) {
+
+            //if ( obj is String ) {
+            //    total = ( UInt64 ) ( obj as String ).Length;
+            //    return true;
+            //}
+
+            var type = obj.GetType();
+
+            if ( !type.IsPrimitive ) {
+                total = 0;
+                return false;
             }
 
-            var type = typeof(T);
-            var sizeInBytes = GetSizeOfPrimitives( type );
-            var fields = type.GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
-
-            foreach ( var field in fields ) {
-                sizeInBytes += GetSizeOfPrimitives( field.FieldType ); //the size of the field itself
-
-                var fv = field.GetValue( obj );
-
-                if ( Equals( obj, default(T) ) ) {
-                    continue;
-                }
-                if ( field.FieldType == typeof(String) ) {
-                    var s = fv as String ?? String.Empty;
-                    sizeInBytes += Encoding.Unicode.GetByteCount( s );
-                }
-                else if ( field.FieldType.IsSubclassOf( typeof(IList) ) ) {
-                    var list = fv as IList;
-                    if ( list != null ) {
-                        var count = list.Count;
-                        sizeInBytes += count * list[ 0 ].CalcSizeInBytes( );
-                    }
-                }
-                else if ( field.FieldType.IsSubclassOf( typeof(IDictionary) ) ) {
-                    var dictionary = fv as IDictionary;
-                    if ( dictionary != null ) {
-                        sizeInBytes = dictionary.Keys.Cast<object>( ).Aggregate<object, int>( sizeInBytes, ( current, key ) => current + dictionary[ key ].CalcSizeInBytes( ) );
-                    }
-                }
-                else if ( field.FieldType.IsSubclassOf( typeof(IEnumerable) ) ) {
-                    var enumerable = fv as IEnumerable;
-                    if ( enumerable != null ) {
-                        sizeInBytes = enumerable.Cast<object>( ).Aggregate<object, int>( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes( ) );
-                    }
-                }
-                else if ( field.FieldType.IsArray ) {
-                    var list = fv as IList;
-                    if ( list != null ) {
-                        var count = list.Count;
-                        sizeInBytes += count * list[ 0 ].CalcSizeInBytes( );
-                    }
-                }
+            if ( obj is UInt32 ) {
+                total = sizeof( UInt32 );
+                return true;
             }
-            return sizeInBytes;
+
+            if ( obj is Int32 ) {
+                total = sizeof( Int32 );
+                return true;
+            }
+
+            if ( obj is UInt64 ) {
+                total = sizeof( UInt64 );
+                return true;
+            }
+
+            if ( obj is Int64 ) {
+                total = sizeof( Int64 );
+                return true;
+            }
+
+            if ( obj is Decimal ) {
+                total = sizeof( Decimal );
+                return true;
+            }
+
+            if ( obj is Double ) {
+                total = sizeof( Double );
+                return true;
+            }
+
+            if ( obj is UInt16 ) {
+                total = sizeof( UInt16 );
+                return true;
+            }
+
+            if ( obj is Byte ) {
+                total = sizeof( Byte );
+                return true;
+            }
+
+            if ( obj is SByte ) {
+                total = sizeof( SByte );
+                return true;
+            }
+
+            if ( obj is Int16 ) {
+                total = sizeof( Int16 );
+                return true;
+            }
+
+            if ( obj is Single ) {
+                total = sizeof( Single );
+                return true;
+            }
+
+            if ( obj is Boolean ) {
+                total = sizeof( Boolean );
+                return true;
+            }
+
+
+            total = 0;
+            return false;  //unknown type
         }
 
-        public static IEnumerable<T> GetEnums<T>( this T hmm ) => Enum.GetValues( typeof(T) ).Cast<T>( );
-
-        public static int GetSizeOfPrimitives<T>( this T type ) {
-            var total = 0;
-            if ( type is UInt64 ) {
-                total += sizeof(UInt64);
-            }
-            if ( type is Int64 ) {
-                total += sizeof(Int64);
-            }
-            if ( type is Decimal ) {
-                total += sizeof(Decimal);
-            }
-            if ( type is Double ) {
-                total += sizeof(Double);
-            }
-
-            if ( type is UInt32 ) {
-                total += sizeof(UInt32);
-            }
-
-            if ( type is UInt16 ) {
-                total += sizeof(UInt16);
-            }
-            if ( type is Byte ) {
-                total += sizeof(Byte);
-            }
-
-            if ( type is SByte ) {
-                total += sizeof(SByte);
-            }
-            if ( type is Int16 ) {
-                total += sizeof(Int16);
-            }
-            if ( type is Int32 ) {
-                total += sizeof(Int32);
-            }
-
-            if ( type is Single ) {
-                total += sizeof(Single);
-            }
-            if ( type is Boolean ) {
-                total += sizeof(Boolean);
-            }
-
-            var s = type as String;
-            if ( s != null ) {
-                total += s.Length;
-            }
-
-            return total;
-        }
-
-        /// <summary>
-        ///     Thread.BeginThreadAffinity();
-        ///     Thread.BeginCriticalRegion();
-        /// </summary>
-        public static void Begin( Boolean lowPriority = true ) {
-            Thread.BeginThreadAffinity( );
-            Thread.BeginCriticalRegion( );
-            if ( !lowPriority ) {
-                return;
-            }
-            // ReSharper disable RedundantCheckBeforeAssignment
-            if ( Thread.CurrentThread.Priority != ThreadPriority.Lowest ) {
-                // ReSharper restore RedundantCheckBeforeAssignment
-                Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-            }
-        }
-
-        /// <summary>
-        ///     Thread.EndThreadAffinity();
-        ///     Thread.EndCriticalRegion();
-        /// </summary>
-        public static void End( ) {
-            Thread.EndThreadAffinity( );
-            Thread.EndCriticalRegion( );
-        }
-
-        /// <summary>
-        ///     returns Marshal.SizeOf( typeof( T ) );
-        /// </summary>
+        /// <summary>returns Marshal.SizeOf( typeof( T ) );</summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         [DebuggerStepThrough]
-        public static int MarshalSizeOf<T>( ) where T : struct => Marshal.SizeOf( typeof(T) );
+        public static Int32 MarshalSizeOf<T>() where T : struct => Marshal.SizeOf( typeof( T ) );
 
-        /// <summary>
-        ///     boxed returns Marshal.SizeOf( obj )
-        /// </summary>
+        /// <summary>boxed returns Marshal.SizeOf( obj )</summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static int MarshalSizeOf( [NotNull] this object obj ) {
+        public static Int32 MarshalSizeOf( [NotNull] this Object obj ) {
             if ( obj == null ) {
                 throw new ArgumentNullException( nameof( obj ) );
             }
             return Marshal.SizeOf( obj );
         }
 
-        /// <summary>
-        ///     generic returns Marshal.SizeOf( obj )
-        /// </summary>
+        /// <summary>generic returns Marshal.SizeOf( obj )</summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static int MarshalSizeOf<T>( this T obj ) => Marshal.SizeOf( obj );
+        public static Int32 MarshalSizeOf<T>( this T obj ) => Marshal.SizeOf( obj );
 
-        /// <summary>
-        ///     Only allow a delegate to run X times.
-        /// </summary>
+        /// <summary>Repeat the <paramref name="action" /><paramref name="times" /> .</summary>
+        /// <param name="times"></param>
         /// <param name="action"></param>
-        /// <param name="callsAllowed"></param>
-        /// <returns></returns>
-        /// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier( action: Bar, remainingCallsAllowed: 2 );</example>
-        /// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
-        public static Action ActionBarrier( [CanBeNull] this Action action, long? callsAllowed = null ) {
-            var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
-            return ( ) => {
-                if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
-                    action?.Invoke( );
-                }
-            };
-        }
-
-        /// <summary>
-        ///     Only allow a delegate to run X times.
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="parameter"></param>
-        /// <param name="callsAllowed"></param>
-        /// <returns></returns>
-        /// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier( action: Bar, remainingCallsAllowed: 2 );</example>
-        /// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
-        public static Action ActionBarrier<T1>( [CanBeNull] this Action<T1> action, T1 parameter, long? callsAllowed = null ) {
-            var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
-            return ( ) => {
-                if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
-                    action?.Invoke( parameter );
-                }
-            };
-        }
-
-        /// <summary>
-        ///     Repeat the <paramref name="action" /> <paramref name="times" /> .
-        /// </summary>
-        /// <param name="times"> </param>
-        /// <param name="action"> </param>
-        public static void Repeat( this int times, [CanBeNull] Action action ) {
+        public static void Repeat( this Int32 times, [CanBeNull] Action action ) {
             if ( null == action ) {
                 return;
             }
             for ( var i = 0; i < Math.Abs( times ); i++ ) {
-                action( );
+                action();
             }
         }
 
-        public static void Repeat( [CanBeNull] this Action action, int times ) {
+        public static void Repeat( [CanBeNull] this Action action, Int32 times ) {
             if ( null == action ) {
                 return;
             }
             for ( var i = 0; i < Math.Abs( times ); i++ ) {
-                action( );
+                action();
             }
         }
 
-        public static void RepeatAction( this int counter, Action action ) {
+        public static void RepeatAction( this Int32 counter, Action action ) {
             if ( null == action ) {
                 return;
             }
-            Parallel.For( 1, counter, i => action( ) );
+            Parallel.For( 1, counter, i => action() );
         }
 
         /// <summary>
-        ///     Run each task, optionally in parallel, optionally printing feedback through an action.
+        /// Run each task, optionally in parallel, optionally printing feedback through an action.
         /// </summary>
-        /// <param name="tasks"> </param>
-        /// <param name="output"> </param>
-        /// <param name="description"> </param>
-        /// <param name="inParallel"> </param>
-        /// <returns> </returns>
-        public static Boolean Run( this IEnumerable<Action> tasks, Action<string> output = null, String description = null, Boolean inParallel = true ) {
+        /// <param name="tasks"></param>
+        /// <param name="output"></param>
+        /// <param name="description"></param>
+        /// <param name="inParallel"></param>
+        /// <returns></returns>
+        public static Boolean Run( this IEnumerable<Action> tasks, Action<String> output = null, String description = null, Boolean inParallel = true ) {
             if ( Equals( tasks, null ) ) {
                 return false;
             }
@@ -328,83 +438,43 @@ namespace Librainian.Threading {
                 output( description );
             }
             if ( inParallel ) {
-                var result = Parallel.ForEach( tasks, task => task?.Invoke( ) );
+                var result = Parallel.ForEach( tasks, task => task?.Invoke() );
                 return result.IsCompleted;
             }
             foreach ( var task in tasks ) {
-                task( );
+                task();
             }
             return true;
         }
 
         /// <summary>
-        ///     Run each task in parallel, optionally printing feedback through an action.
+        /// Run each task in parallel, optionally printing feedback through an action.
         /// </summary>
-        /// <param name="tasks"> </param>
-        /// <param name="output"> </param>
-        /// <param name="description"> </param>
-        /// <param name="inParallel"> </param>
-        /// <returns> </returns>
-        public static Boolean Run( this IEnumerable<Func<bool>> tasks, Action<string> output = null, String description = null, Boolean inParallel = true ) {
+        /// <param name="tasks"></param>
+        /// <param name="output"></param>
+        /// <param name="description"></param>
+        /// <param name="inParallel"></param>
+        /// <returns></returns>
+        public static Boolean Run( this IEnumerable<Func<Boolean>> tasks, Action<String> output = null, String description = null, Boolean inParallel = true ) {
             if ( Equals( tasks, null ) ) {
                 return false;
             }
             if ( !Equals( output, null ) && !String.IsNullOrWhiteSpace( description ) ) {
                 output( description );
             }
-            var notnull = tasks.Where( task => !Equals( task, default(Action) ) );
+            var notnull = tasks.Where( task => !Equals( task, default( Action ) ) );
             if ( inParallel ) {
-                var result = Parallel.ForEach( notnull, task => task( ) );
+                var result = Parallel.ForEach( notnull, task => task() );
                 return result.IsCompleted;
             }
             foreach ( var task in notnull ) {
-                task( );
+                task();
             }
             return true;
         }
 
-        /// <summary>
-        /// “I have an async operation that’s not cancelable.  How do I cancel it?”
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="task"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <copyright>http://blogs.msdn.com/b/pfxteam/archive/2012/10/05/how-do-i-cancel-non-cancelable-async-operations.aspx</copyright>
-        public static async Task<T> WithCancellation<T>( this Task<T> task, CancellationToken cancellationToken ) {
-            var tcs = new TaskCompletionSource<bool>( );
-            using (cancellationToken.Register( o => ( ( TaskCompletionSource<bool> )o ).TrySetResult( true ), tcs )) {
-                if ( task != await Task.WhenAny( task, tcs.Task ) ) {
-                    throw new OperationCanceledException( cancellationToken );
-                }
-                return await task;
-            }
-        }
-
-        /// <summary>
-        /// "you can even have a timeout using the following simple extension method"
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="task"></param>
-        /// <param name="timeout"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public static async Task<T> WithCancellation<T>( this Task<T> task, TimeSpan timeout, CancellationToken cancellationToken ) {
-
-            var t = await Task.WhenAny( task, Task.Delay( timeout, cancellationToken ) );
-
-            cancellationToken.ThrowIfCancellationRequested( );
-
-            if ( t != task ) {
-
-                throw new OperationCanceledException( "timeout" );
-            }
-
-            return task.Result;
-
-        }
-
         public static Task Then( [NotNull] this Task first, [NotNull] Action next ) {
+
             //if ( next == null ) {
             //    throw new ArgumentNullException( "next" );
             //}
@@ -415,7 +485,7 @@ namespace Librainian.Threading {
             if ( next == null ) {
                 throw new ArgumentNullException( nameof( next ) );
             }
-            var tcs = new TaskCompletionSource<object>( ); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<Object>(); //Tasks.FactorySooner.CreationOptions
 
             first.ContinueWith( task => {
                 if ( first.IsFaulted ) {
@@ -424,11 +494,11 @@ namespace Librainian.Threading {
                     }
                 }
                 else if ( first.IsCanceled ) {
-                    tcs.TrySetCanceled( );
+                    tcs.TrySetCanceled();
                 }
                 else {
                     try {
-                        next( );
+                        next();
                         tcs.TrySetResult( null );
                     }
                     catch ( Exception ex ) {
@@ -440,7 +510,7 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-        [Obsolete("use continuewith", true)]
+        [Obsolete( "use continuewith", true )]
         public static Task<T2> Then<T2>( this Task first, Func<Task<T2>> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( nameof( first ) );
@@ -449,7 +519,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
-            var tcs = new TaskCompletionSource<T2>( ); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( obj => {
                 if ( first.IsFaulted ) {
                     if ( first.Exception != null ) {
@@ -457,13 +527,13 @@ namespace Librainian.Threading {
                     }
                 }
                 else if ( first.IsCanceled ) {
-                    tcs.TrySetCanceled( );
+                    tcs.TrySetCanceled();
                 }
                 else {
                     try {
-                        var t = next( );
+                        var t = next();
                         if ( t == null ) {
-                            tcs.TrySetCanceled( );
+                            tcs.TrySetCanceled();
                         }
                         else {
                             t.ContinueWith( obj1 => {
@@ -473,7 +543,7 @@ namespace Librainian.Threading {
                                     }
                                 }
                                 else if ( t.IsCanceled ) {
-                                    tcs.TrySetCanceled( );
+                                    tcs.TrySetCanceled();
                                 }
                                 else {
                                     tcs.TrySetResult( t.Result );
@@ -489,7 +559,6 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-
         public static Task Then<T1>( this Task<T1> first, Action<T1> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( nameof( first ) );
@@ -498,7 +567,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
-            var tcs = new TaskCompletionSource<object>( ); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<Object>(); //Tasks.FactorySooner.CreationOptions
 
             first.ContinueWith( task => {
                 if ( first.IsFaulted ) {
@@ -507,7 +576,7 @@ namespace Librainian.Threading {
                     }
                 }
                 else if ( first.IsCanceled ) {
-                    tcs.TrySetCanceled( );
+                    tcs.TrySetCanceled();
                 }
                 else {
                     try {
@@ -523,7 +592,6 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-
         public static Task Then<T1>( this Task<T1> first, Func<T1, Task> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( nameof( first ) );
@@ -532,7 +600,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
-            var tcs = new TaskCompletionSource<object>( ); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<Object>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
                 if ( first.IsFaulted ) {
                     if ( first.Exception != null ) {
@@ -540,13 +608,13 @@ namespace Librainian.Threading {
                     }
                 }
                 else if ( first.IsCanceled ) {
-                    tcs.TrySetCanceled( );
+                    tcs.TrySetCanceled();
                 }
                 else {
                     try {
                         var t = next( first.Result );
                         if ( t == null ) {
-                            tcs.TrySetCanceled( );
+                            tcs.TrySetCanceled();
                         }
                         else {
                             t.ContinueWith( delegate {
@@ -556,7 +624,7 @@ namespace Librainian.Threading {
                                     }
                                 }
                                 else if ( t.IsCanceled ) {
-                                    tcs.TrySetCanceled( );
+                                    tcs.TrySetCanceled();
                                 }
                                 else {
                                     tcs.TrySetResult( null );
@@ -573,7 +641,6 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-
         public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, T2> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( nameof( first ) );
@@ -582,7 +649,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
-            var tcs = new TaskCompletionSource<T2>( ); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
                 if ( first.IsFaulted ) {
                     if ( first.Exception != null ) {
@@ -590,7 +657,7 @@ namespace Librainian.Threading {
                     }
                 }
                 else if ( first.IsCanceled ) {
-                    tcs.TrySetCanceled( );
+                    tcs.TrySetCanceled();
                 }
                 else {
                     try {
@@ -605,7 +672,6 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
-
         public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, Task<T2>> next ) {
             if ( first == null ) {
                 throw new ArgumentNullException( nameof( first ) );
@@ -614,7 +680,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
-            var tcs = new TaskCompletionSource<T2>( ); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
             first.ContinueWith( delegate {
                 if ( first.IsFaulted ) {
                     if ( first.Exception != null ) {
@@ -622,13 +688,13 @@ namespace Librainian.Threading {
                     }
                 }
                 else if ( first.IsCanceled ) {
-                    tcs.TrySetCanceled( );
+                    tcs.TrySetCanceled();
                 }
                 else {
                     try {
                         var t = next( first.Result );
                         if ( t == null ) {
-                            tcs.TrySetCanceled( );
+                            tcs.TrySetCanceled();
                         }
                         else {
                             t.ContinueWith( delegate {
@@ -638,7 +704,7 @@ namespace Librainian.Threading {
                                     }
                                 }
                                 else if ( t.IsCanceled ) {
-                                    tcs.TrySetCanceled( );
+                                    tcs.TrySetCanceled();
                                 }
                                 else {
                                     tcs.TrySetResult( t.Result );
@@ -654,10 +720,67 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
+        /// <summary>
+        /// <para>Returns true if the task finished before the <paramref name="timeout" />.</para>
+        /// <para>Use this function if the Task does not have a built-in timeout.</para>
+        /// <para>This function does not end the given <paramref name="task" /> if it does timeout.</para>
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        public static async Task<Boolean> Until( this Task task, TimeSpan timeout ) {
+            var delay = Task.Delay( timeout );
+
+            var whichTaskFinished = await Task.WhenAny( task, delay );
+
+            var didOurTaskFinish = whichTaskFinished == task;
+
+            return didOurTaskFinish;
+        }
+
+        /// <summary>Returns true if the task finished before the <paramref name="timeout" />.</summary>
+        /// <param name="task"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        public static async Task<Boolean> Until( this TimeSpan timeout, Task task ) => await Until( task, timeout );
+
+        /// <summary>“I have an async operation that’s not cancelable. How do I cancel it?”</summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="task"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <copyright>http: //blogs.msdn.com/b/pfxteam/archive/2012/10/05/how-do-i-cancel-non-cancelable-async-operations.aspx</copyright>
+        public static async Task<T> WithCancellation<T>( this Task<T> task, CancellationToken cancellationToken ) {
+            var tcs = new TaskCompletionSource<Boolean>();
+            using ( cancellationToken.Register( o => ( ( TaskCompletionSource<Boolean> )o ).TrySetResult( true ), tcs ) ) {
+                if ( task != await Task.WhenAny( task, tcs.Task ) ) {
+                    throw new OperationCanceledException( cancellationToken );
+                }
+                return await task;
+            }
+        }
+
+        /// <summary>"you can even have a timeout using the following simple extension method"</summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="task"></param>
+        /// <param name="timeout"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public static async Task<T> WithCancellation<T>( this Task<T> task, TimeSpan timeout, CancellationToken cancellationToken ) {
+            var t = await Task.WhenAny( task, Task.Delay( timeout, cancellationToken ) );
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if ( t != task ) {
+                throw new OperationCanceledException( "timeout" );
+            }
+
+            return task.Result;
+        }
+
         /*
-                /// <summary>
-                ///     a fire-and-forget wrapper for an <see cref="Action" />.
-                /// </summary>
+
+                /// <summary>a fire-and-forget wrapper for an <see cref="Action" />.</summary>
                 /// <param name="action"></param>
                 /// <param name="next"></param>
                 /// <returns></returns>
@@ -670,9 +793,7 @@ namespace Librainian.Threading {
                 }
         */
 
-        /// <summary>
-        ///     var result = await Wrap( () => OldNonAsyncFunction( ) );
-        /// </summary>
+        /// <summary>var result = await Wrap( () =&gt; OldNonAsyncFunction( ) );</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="selector"></param>
         /// <returns></returns>
@@ -684,7 +805,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     var result = await Wrap( () => OldNonAsyncFunction( "hello world" ) );
+        /// var result = await Wrap( () =&gt; OldNonAsyncFunction( "hello world" ) );
         /// </summary>
         /// <typeparam name="TIn"></typeparam>
         /// <typeparam name="TOut"></typeparam>
@@ -695,12 +816,10 @@ namespace Librainian.Threading {
             if ( selector == null ) {
                 throw new ArgumentNullException( nameof( selector ) );
             }
-            return Task.Run( ( ) => selector( input ) );
+            return Task.Run( () => selector( input ) );
         }
 
-        /// <summary>
-        ///     Just a try/catch wrapper for methods.
-        /// </summary>
+        /// <summary>Just a try/catch wrapper for methods.</summary>
         /// <param name="action"></param>
         /// <param name="timeAction"></param>
         /// <param name="andTookLongerThan"></param>
@@ -708,79 +827,52 @@ namespace Librainian.Threading {
         /// <param name="callerMemberName"></param>
         /// <returns></returns>
         public static Boolean Wrap( this Action action, Boolean timeAction = true, TimeSpan? andTookLongerThan = null, Action onException = null, [CallerMemberName] String callerMemberName = "" ) {
-            var attempts = 2;
-        TryAgain:
+            var attempts = 1;
+            TryAgain:
             try {
                 if ( null != action ) {
                     if ( timeAction ) {
                         if ( null == andTookLongerThan ) {
                             andTookLongerThan = Milliseconds.ThreeHundredThirtyThree;
                         }
-                        var stopwatch = Stopwatch.StartNew( );
-                        action( );
+                        var stopwatch = Stopwatch.StartNew();
+                        action();
                         if ( stopwatch.Elapsed > andTookLongerThan.Value ) {
-                            String.Format( "{0} took {1}.", callerMemberName, stopwatch.Elapsed.Simpler( ) ).WriteLine( );
+                            $"{callerMemberName} took {stopwatch.Elapsed.Simpler()}.".WriteLine();
                         }
                     }
                     else {
-                        action( );
+                        action();
                     }
                     return true;
                 }
             }
             catch ( OutOfMemoryException lowMemory ) {
-                lowMemory.More( );
-                Log.Garbage( );
+                lowMemory.More();
+                Log.Garbage();
                 attempts--;
-                if ( attempts.Any( ) ) {
+                if ( attempts.Any() ) {
                     goto TryAgain;
                 }
             }
             catch ( Exception exception ) {
                 if ( null != onException ) {
-                    return onException.Wrap( );
+                    return onException.Wrap();
                 }
-                exception.More( );
+                exception.More();
             }
             return false;
         }
 
         public sealed class ContextCallOnlyXTimes {
-            public long CallsAllowed;
+            public Int64 CallsAllowed;
 
-            public ContextCallOnlyXTimes( long times ) {
+            public ContextCallOnlyXTimes( Int64 times ) {
                 if ( times <= 0 ) {
                     times = 0;
                 }
                 this.CallsAllowed = times;
             }
         }
-
-        /// <summary>
-        /// <para>Returns true if the task finished before the <paramref name="timeout"/>.</para>
-        /// <para>Use this function if the Task does not have a built-in timeout.</para>
-        /// <para>This function does not end the given <paramref name="task"/> if it does timeout.</para>
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="timeout"></param>
-        /// <returns></returns>
-        public static async Task<Boolean> Until( this Task task, TimeSpan timeout ) {
-
-            var delay = Task.Delay( timeout );
-
-            var whichTaskFinished = await Task.WhenAny( task, delay );
-
-            var didOurTaskFinish = whichTaskFinished == task;
-
-            return didOurTaskFinish;
-        }
-
-        /// <summary>
-        /// Returns true if the task finished before the <paramref name="timeout"/>.
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="timeout"></param>
-        /// <returns></returns>
-        public static async Task<Boolean> Until( this TimeSpan timeout, Task task ) => await Until( task, timeout );
     }
 }

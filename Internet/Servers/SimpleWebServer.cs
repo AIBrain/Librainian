@@ -1,27 +1,25 @@
-﻿#region License & Information
-
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/Class2.cs" was last cleaned by Rick on 2014/09/08 at 5:08 AM
-
-#endregion License & Information
+// 
+// "Librainian/SimpleWebServer.cs" was last cleaned by Rick on 2015/06/12 at 2:56 PM
 
 namespace Librainian.Internet.Servers {
+
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -32,44 +30,42 @@ namespace Librainian.Internet.Servers {
     using System.Threading.Tasks;
     using FluentAssertions;
     using JetBrains.Annotations;
-    using Threading;
 
-    /// <summary>
-    ///
-    /// </summary>
+    /// <summary></summary>
     /// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>
     /// <example>
-    /// WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/");
-    /// ws.Run();
-    /// Console.WriteLine("A simple webserver. Press a key to quit.");
-    /// Console.ReadKey();
-    /// ws.Stop();
+    /// WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/"); ws.Run();
+    /// Console.WriteLine("A simple webserver. Press a key to quit."); Console.ReadKey(); ws.Stop();
     /// </example>
     /// <example>
-    /// public static string SendResponse(HttpListenerRequest request) {
-    ///     return string.Format("My web page", DateTime.Now);
-    /// }
+    /// public static string SendResponse(HttpListenerRequest request) { return string.Format("My
+    /// web page", DateTime.Now); }
     /// </example>
-    [ UsedImplicitly ]
+    [UsedImplicitly]
     public class SimpleWebServer : IDisposable {
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         [NotNull]
         private readonly HttpListener _httpListener = new HttpListener();
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         [CanBeNull]
         private readonly Func<HttpListenerRequest, String> _responderMethod;
 
-        /// <summary>
-        /// </summary>
+        public Boolean IsReadyForRequests {
+            get; private set;
+        }
+
+        public String NotReadyBecause {
+            get; private set;
+        }
+
+        /// <summary></summary>
         /// <param name="prefixes"></param>
         /// <param name="method"></param>
         /// <exception cref="HttpListenerException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public SimpleWebServer( ICollection<String> prefixes, Func<HttpListenerRequest, String> method ) {
+        public SimpleWebServer(ICollection<String> prefixes, Func<HttpListenerRequest, String> method) {
             this.ImNotReady( String.Empty );
 
             this._httpListener.Should().NotBeNull( "this._httpListener is null." );
@@ -81,7 +77,7 @@ namespace Librainian.Internet.Servers {
             }
 
             prefixes.Should().NotBeNullOrEmpty( "URI prefixes are required, for example http://localhost:8080/index/. " );
-            if ( prefixes == null || !prefixes.Any() ) {
+            if ( ( prefixes == null ) || !prefixes.Any() ) {
                 this.ImNotReady( because: "URI prefixes are required." );
                 return;
             }
@@ -107,65 +103,60 @@ namespace Librainian.Internet.Servers {
             }
         }
 
-        public SimpleWebServer( Func<HttpListenerRequest, String> method, params String[] prefixes )
-            : this( prefixes, method ) {
-        }
-
-        public Boolean IsReadyForRequests {
-            get;
-            private set;
-        }
-
-        public String NotReadyBecause {
-            get;
-            private set;
+        public SimpleWebServer(Func<HttpListenerRequest, String> method, params String[] prefixes) : this( prefixes, method ) {
         }
 
         /// <summary>
-        /// Start the http listener.
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting
+        /// unmanaged resources.
         /// </summary>
+        public void Dispose() => this.Stop();
+
+        /// <summary>Start the http listener.</summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        /// <seealso cref="Stop"/>
-        public Task Run( CancellationToken cancellationToken ) => Task.Run( async () => {
-                                                                                      "Webserver running...".Info();
-                                                                                      try {
-                                                                                          while ( this._httpListener.IsListening ) {
-                                                                                              Debug.WriteLine( "Webserver listening.." );
-                                                                                              await Task.Run( async () => {
-                                                                                                                        var listenerContext = await this._httpListener.GetContextAsync();  // Waits for an incoming request as an asynchronous operation.
-                                                                                                                        if ( listenerContext == null ) {
-                                                                                                                            return;
-                                                                                                                        }
-                                                                                                                        var responderMethod = this._responderMethod;
-                                                                                                                        if ( responderMethod == null ) {        //no responderMethod?!?
-                                                                                                                            return;
-                                                                                                                        }
-                                                                                                                        try {
-                                                                                                                            var response = responderMethod( listenerContext.Request );
-                                                                                                                            var buf = Encoding.UTF8.GetBytes( response );
-                                                                                                                            listenerContext.Response.ContentLength64 = buf.Length;
-                                                                                                                            listenerContext.Response.OutputStream.Write( buf, 0, buf.Length );
-                                                                                                                        }
+        /// <seealso cref="Stop" />
+        public Task Run(CancellationToken cancellationToken) => Task.Run( async () => {
+            "Webserver running...".Info();
+            try {
+                while ( this._httpListener.IsListening ) {
+                    Debug.WriteLine( "Webserver listening.." );
+                    await Task.Run( async () => {
+                        var listenerContext = await this._httpListener.GetContextAsync(); // Waits for an incoming request as an asynchronous operation.
+                        if ( listenerContext == null ) {
+                            return;
+                        }
+                        var responderMethod = this._responderMethod;
+                        if ( responderMethod == null ) {
 
-                                                                                                                            // ReSharper disable once EmptyGeneralCatchClause
-                                                                                                                        catch {
+                            //no responderMethod?!?
+                            return;
+                        }
+                        try {
+                            var response = responderMethod( listenerContext.Request );
+                            var buf = Encoding.UTF8.GetBytes( response );
+                            listenerContext.Response.ContentLength64 = buf.Length;
+                            listenerContext.Response.OutputStream.Write( buf, 0, buf.Length );
+                        }
 
-                                                                                                                            // suppress any exceptions
-                                                                                                                        }
-                                                                                                                        finally {
-                                                                                                                            listenerContext.Response.OutputStream.Close();  // always close the stream
-                                                                                                                        }
-                                                                                                                    }, cancellationToken );
-                                                                                          }
-                                                                                      }
+                        // ReSharper disable once EmptyGeneralCatchClause
+                        catch {
 
-                                                                                          // ReSharper disable once EmptyGeneralCatchClause
-                                                                                      catch {
+                            // suppress any exceptions
+                        }
+                        finally {
+                            listenerContext.Response.OutputStream.Close(); // always close the stream
+                        }
+                    }, cancellationToken );
+                }
+            }
 
-                                                                                          // suppress any exceptions
-                                                                                      }
-                                                                                  }, cancellationToken );
+            // ReSharper disable once EmptyGeneralCatchClause
+            catch {
+
+                // suppress any exceptions
+            }
+        }, cancellationToken );
 
         public void Stop() {
             using ( this._httpListener ) {
@@ -174,19 +165,14 @@ namespace Librainian.Internet.Servers {
                         this._httpListener.Stop();
                     }
                 }
-                catch ( ObjectDisposedException ) {}
+                catch ( ObjectDisposedException ) { }
                 this._httpListener.Close();
             }
         }
 
-        private void ImNotReady( String because ) {
+        private void ImNotReady(String because) {
             this.IsReadyForRequests = false;
             this.NotReadyBecause = because;
         }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose() => this.Stop();
     }
 }

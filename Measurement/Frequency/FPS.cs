@@ -1,121 +1,98 @@
-﻿namespace Librainian.Measurement.Frequency {
+﻿#region License & Information
+
+// Copyright 2015 Rick@AIBrain.org.
+// 
+// This notice must be kept visible in the source.
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
+// Donations and Royalties can be paid via
+// PayPal: paypal@aibrain.org
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/FPS.cs" was last cleaned by Rick on 2015/06/12 at 3:02 PM
+#endregion License & Information
+
+namespace Librainian.Measurement.Frequency {
     using System;
     using System.Diagnostics;
     using System.Runtime.Serialization;
-    using JetBrains.Annotations;
     using Maths;
     using NUnit.Framework;
     using Time;
 
-	/// <summary>
-	///     
-	/// </summary>
-	/// <seealso cref="http://en.wikipedia.org/wiki/Frame_rate"/>
-	[DataContract( IsReference = true )]
-	
-	[DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    public struct FPS {
+    /// <summary></summary>
+    /// <seealso cref="http://en.wikipedia.org/wiki/Frame_rate" />
+    [DataContract( IsReference = true )]
+    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    public struct Fps {
 
-        /// <summary>
-        ///     Fifteen <see cref="FPS" />s.
-        /// </summary>
-        public static readonly FPS Fifteen = new FPS( 15 );
+        /// <summary>Fifteen <see cref="Fps" /> s.</summary>
+        public static readonly Fps Fifteen = new Fps( 15 );
 
-        /// <summary>
-        ///     59.9 <see cref="FPS" />.
-        /// </summary>
-        public static readonly FPS FiftyNinePointNine = new FPS( 59.9 );
+        /// <summary>59. 9 <see cref="Fps" />.</summary>
+        public static readonly Fps FiftyNinePointNine = new Fps( 59.9 );
 
-        /// <summary>
-        ///     Five <see cref="FPS" />s.
-        /// </summary>
-        public static readonly FPS Five = new FPS( 5 );
+        /// <summary>Five <see cref="Fps" /> s.</summary>
+        public static readonly Fps Five = new Fps( 5 );
 
-        /// <summary>
-        ///     Five Hundred <see cref="FPS" />s.
-        /// </summary>
-        public static readonly FPS FiveHundred = new FPS( 500 );
+        /// <summary>Five Hundred <see cref="Fps" /> s.</summary>
+        public static readonly Fps FiveHundred = new Fps( 500 );
 
-        /// <summary>
-        ///     111.1 Hertz <see cref="FPS" />.
-        /// </summary>
-        public static readonly FPS Hertz111 = new FPS( 111.1 );
+        /// <summary>111. 1 Hertz <see cref="Fps" />.</summary>
+        public static readonly Fps Hertz111 = new Fps( 111.1 );
 
-        /// <summary>
-        ///     One <see cref="FPS" />.
-        /// </summary>
-        public static readonly FPS One = new FPS( 1 );
+        /// <summary>One <see cref="Fps" />.</summary>
+        public static readonly Fps One = new Fps( 1 );
 
-        /// <summary>
-        ///     120 <see cref="FPS" />.
-        /// </summary>
-        public static readonly FPS OneHundredTwenty = new FPS( 120 );
+        /// <summary>120 <see cref="Fps" />.</summary>
+        public static readonly Fps OneHundredTwenty = new Fps( 120 );
 
-        /// <summary>
-        ///     One Thousand Nine <see cref="FPS" /> (Prime).
-        /// </summary>
-        public static readonly FPS OneThousandNine = new FPS( 1009 );
+        /// <summary>One Thousand Nine <see cref="Fps" /> (Prime).</summary>
+        public static readonly Fps OneThousandNine = new Fps( 1009 );
 
-        /// <summary>
-        ///     Sixty <see cref="FPS" />.
-        /// </summary>
-        public static readonly FPS Sixty = new FPS( 60 );
+        /// <summary>Sixty <see cref="Fps" />.</summary>
+        public static readonly Fps Sixty = new Fps( 60 );
 
-        /// <summary>
-        ///     Ten <see cref="FPS" />s.
-        /// </summary>
-        public static readonly FPS Ten = new FPS( 10 );
+        /// <summary>Ten <see cref="Fps" /> s.</summary>
+        public static readonly Fps Ten = new Fps( 10 );
 
-        /// <summary>
-        ///     Three <see cref="FPS" />s.
-        /// </summary>
-        public static readonly FPS Three = new FPS( 3 );
+        /// <summary>Three <see cref="Fps" /> s.</summary>
+        public static readonly Fps Three = new Fps( 3 );
 
-        /// <summary>
-        ///     Three Three Three <see cref="FPS" />.
-        /// </summary>
-        public static readonly FPS ThreeHundredThirtyThree = new FPS( 333 );
+        /// <summary>Three Three Three <see cref="Fps" />.</summary>
+        public static readonly Fps ThreeHundredThirtyThree = new Fps( 333 );
 
-        /// <summary>
-        ///     Two <see cref="FPS" />s.
-        /// </summary>
-        public static readonly FPS Two = new FPS( 2 ); 
-        
-        /// <summary>
-        ///     Two.Five <see cref="FPS" />s.
-        /// </summary>
-        public static readonly FPS TwoPointFive = new FPS( 2.5 );
+        /// <summary>Two <see cref="Fps" /> s.</summary>
+        public static readonly Fps Two = new Fps( 2 );
 
-        /// <summary>
-        ///     Two Hundred <see cref="FPS" />.
-        /// </summary>
-        public static readonly FPS TwoHundred = new FPS( 200 ); //faster WPM than a female (~240wpm)
+        /// <summary>Two.Five <see cref="Fps" /> s.</summary>
+        public static readonly Fps TwoPointFive = new Fps( 2.5 );
 
-        /// <summary>
-        ///     Two Hundred Eleven <see cref="FPS" /> (Prime).
-        /// </summary>
-        public static readonly FPS TwoHundredEleven = new FPS( 211 ); //faster WPM than a female (~240wpm)
+        /// <summary>Two Hundred <see cref="Fps" />.</summary>
+        public static readonly Fps TwoHundred = new Fps( 200 ); //faster WPM than a female (~240wpm)
 
-        /// <summary>
-        ///     Two Thousand Three <see cref="FPS" /> (Prime).
-        /// </summary>
-        public static readonly FPS TwoThousandThree = new FPS( 2003 );
+        /// <summary>Two Hundred Eleven <see cref="Fps" /> (Prime).</summary>
+        public static readonly Fps TwoHundredEleven = new Fps( 211 ); //faster WPM than a female (~240wpm)
 
-        /// <summary>
-        ///     One <see cref="FPS" />.
-        /// </summary>
-        public static readonly FPS Zero = new FPS( 0 );
+        /// <summary>Two Thousand Three <see cref="Fps" /> (Prime).</summary>
+        public static readonly Fps TwoThousandThree = new Fps( 2003 );
+
+        /// <summary>One <see cref="Fps" />.</summary>
+        public static readonly Fps Zero = new Fps( 0 );
 
         [DataMember]
-        private readonly decimal _value;
+        private readonly Decimal _value;
 
-        [Test]
-        public void TestFPS() {
-            Assert.That( One < Two );
-            Assert.That( Ten > One );
-        }
-
-        public FPS( Decimal fps ) {
+        public Fps(Decimal fps) {
             if ( fps <= 0m.Epsilon() ) {
                 this._value = 0m.Epsilon();
             }
@@ -124,31 +101,31 @@
             }
         }
 
-        /// <summary>
-        /// Frames per second.
-        /// </summary>
+        /// <summary>Frames per second.</summary>
         /// <param name="fps"></param>
-        public FPS( UInt64 fps ) : this( ( Decimal )fps ) {
+        public Fps(UInt64 fps) : this( ( Decimal )fps ) {
         }
 
-        /// <summary>
-        /// Frames per second.
-        /// </summary>
+        /// <summary>Frames per second.</summary>
         /// <param name="fps"></param>
-        public FPS( Double fps ) : this( ( Decimal )fps ) {
+        public Fps(Double fps) : this( ( Decimal )fps ) {
         }
 
         public Decimal Value => this._value;
+        private String DebuggerDisplay => $"{this.Value} FPS ({( ( TimeSpan ) this ).Simpler()})";
 
-        [UsedImplicitly]
-        private String DebuggerDisplay => String.Format( "{0} FPS ({1})", this.Value, ( ( TimeSpan )this ).Simpler() );
+        [Test]
+        public void TestFps() {
+            Assert.That( One < Two );
+            Assert.That( Ten > One );
+        }
 
-        public static implicit operator TimeSpan( FPS fps ) => TimeSpan.FromSeconds( ( Double )( 1.0m / fps.Value ) );
+        public static implicit operator TimeSpan(Fps fps) => TimeSpan.FromSeconds( ( Double )( 1.0m / fps.Value ) );
 
-        public static implicit operator Span( FPS fps ) => new Seconds( 1.0m / fps.Value );
+        public static implicit operator Span(Fps fps) => new Seconds( 1.0m / fps.Value );
 
-        public static Boolean operator <( FPS lhs, FPS rhs ) => lhs.Value.CompareTo( rhs.Value ) < 0;
+        public static Boolean operator <(Fps lhs, Fps rhs) => lhs.Value.CompareTo( rhs.Value ) < 0;
 
-        public static Boolean operator >( FPS lhs, FPS rhs ) => lhs.Value.CompareTo( rhs.Value ) > 0;
+        public static Boolean operator >(Fps lhs, Fps rhs) => lhs.Value.CompareTo( rhs.Value ) > 0;
     }
 }

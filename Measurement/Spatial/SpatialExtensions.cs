@@ -1,22 +1,39 @@
-﻿namespace Librainian.Measurement.Spatial {
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
+// This notice must be kept visible in the source.
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
+// Donations and Royalties can be paid via
+// PayPal: paypal@aibrain.org
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/SpatialExtensions.cs" was last cleaned by Rick on 2015/06/12 at 3:02 PM
+
+namespace Librainian.Measurement.Spatial {
+
     using System;
     using System.Windows;
     using System.Windows.Media.Media3D;
-    
+    using AForge.Math;
 
-	public static class SpatialExtensions {
-
+    public static class SpatialExtensions {
         public const Single TwoPi = ( Single )( Math.PI * 2 );
-
         public const Single TwoPI = ( Single )( Math.PI * 2 );
 
-        public static T Clamp<T>( this T val, T min, T max ) where T : IComparable<T> => val.CompareTo( min ) < 0 ? min : ( val.CompareTo( max ) > 0 ? max : val );
+        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T> => val.CompareTo( min ) < 0 ? min : ( val.CompareTo( max ) > 0 ? max : val );
 
-        public static Double Clamp01( this Double value ) => Clamp( value, 0.0f, 1.0f );
+        public static Double Clamp01(this Double value) => Clamp( value, 0.0f, 1.0f );
 
-        /// <summary>
-        /// Lerp function for compass angles
-        /// </summary>
+        /// <summary>Lerp function for compass angles</summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="portion"></param>
@@ -26,16 +43,15 @@
         /// 2, 3....10. And not the other way around going 350, 349, 348.....200...1000, 12, 11, 10.
         /// </remarks>
         /// <returns></returns>
-        public static Double CompassAngleLerp( this Double from, Double to, Double portion ) {
+        public static Double CompassAngleLerp(this Double from, Double to, Double portion) {
             var dif = To180Angle( to - @from );
             dif *= Clamp01( portion );
             return To360Angle( @from + dif );
         }
 
-        public static Double DegreesToRadians( Double degrees ) => degrees * Degrees.DegreesToRadiansFactor;
+        public static Double DegreesToRadians(Double degrees) => degrees * Degrees.DegreesToRadiansFactor;
 
-        public static Double FindAngle( this Point here, Point there ) {
-
+        public static Double FindAngle(this Point here, Point there) {
             var dx = there.X - here.X;
             var dy = there.Y - here.Y;
             var angle = RadiansToDegrees( Math.Atan2( dy, dx ) );
@@ -47,8 +63,8 @@
 
         //public const Single RadiansToDegrees = ( float ) ( 180.0 / Math.PI );
         //public const Single DegreesToRadians = ( float )( Math.PI / 180.0 );
-        public static GeoLocation FindPointAtDistanceFrom( this GeoLocation startPoint, Double initialBearingRadians, Double distanceKilometres ) {
-            const double radiusEarthKilometres = 6371.01;
+        public static GeoLocation FindPointAtDistanceFrom(this GeoLocation startPoint, Double initialBearingRadians, Double distanceKilometres) {
+            const Double radiusEarthKilometres = 6371.01;
             var distRatio = distanceKilometres / radiusEarthKilometres;
             var distRatioSine = Math.Sin( distRatio );
             var distRatioCosine = Math.Cos( distRatio );
@@ -59,7 +75,7 @@
             var startLatCos = Math.Cos( startLatRad );
             var startLatSin = Math.Sin( startLatRad );
 
-            var endLatRads = Math.Asin( ( startLatSin * distRatioCosine ) + ( startLatCos * distRatioSine * Math.Cos( initialBearingRadians ) ) );
+            var endLatRads = Math.Asin( startLatSin * distRatioCosine + startLatCos * distRatioSine * Math.Cos( initialBearingRadians ) );
 
             var endLonRads = startLonRad + Math.Atan2( Math.Sin( initialBearingRadians ) * distRatioSine * startLatCos, distRatioCosine - startLatSin * Math.Sin( endLatRads ) );
 
@@ -76,20 +92,18 @@
         /// </summary>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public static Double MathAngleToCompassAngle( Double angle ) {
+        public static Double MathAngleToCompassAngle(Double angle) {
             angle = 90.0f - angle;
             return To360Angle( angle );
         }
 
-        public static Double RadiansToDegrees( Double radians ) => radians * Radians.RadiansToDegreesFactor;
+        public static Double RadiansToDegrees(Double radians) => radians * Radians.RadiansToDegreesFactor;
 
-        /// <summary>
-        /// Clockwise from a top-down view.
-        /// </summary>
+        /// <summary>Clockwise from a top-down view.</summary>
         /// <param name="degrees"></param>
         /// <param name="byAmount"></param>
         /// <returns></returns>
-        public static Degrees RotateLeft( this Degrees degrees, Single byAmount = 1 ) {
+        public static Degrees RotateLeft(this Degrees degrees, Single byAmount = 1) {
             if ( Single.IsNaN( byAmount ) ) {
                 return degrees;
             }
@@ -100,13 +114,11 @@
             return degrees - byAmount;
         }
 
-        /// <summary>
-        /// Clockwise from a top-down view.
-        /// </summary>
+        /// <summary>Clockwise from a top-down view.</summary>
         /// <param name="degrees"></param>
         /// <param name="byAmount"></param>
         /// <returns></returns>
-        public static Degrees RotateRight( this Degrees degrees, Single byAmount = 1 ) {
+        public static Degrees RotateRight(this Degrees degrees, Single byAmount = 1) {
             if ( Single.IsNaN( byAmount ) ) {
                 return degrees;
             }
@@ -122,23 +134,23 @@
         /// </summary>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public static Double To180Angle( this Double angle ) {
-            while ( angle < -180.0 )
+        public static Double To180Angle(this Double angle) {
+            while ( angle < -180.0 ) {
                 angle += 360.0f;
-            while ( angle >= 180.0 )
+            }
+            while ( angle >= 180.0 ) {
                 angle -= 360.0f;
+            }
             return angle;
         }
 
-        /// <summary>
-        /// And for a Vector with 3 angles
-        /// </summary>
+        /// <summary>And for a Vector with 3 angles</summary>
         /// <param name="angles"></param>
         /// <returns></returns>
-        public static AForge.Math.Vector3 To180Angle( AForge.Math.Vector3 angles ) {
-            angles.X = ( float )To180Angle( angles.X );
-            angles.Y = ( float )To180Angle( angles.Y );
-            angles.Z = ( float )To180Angle( angles.Z );
+        public static Vector3 To180Angle(Vector3 angles) {
+            angles.X = ( Single )To180Angle( angles.X );
+            angles.Y = ( Single )To180Angle( angles.Y );
+            angles.Z = ( Single )To180Angle( angles.Z );
             return angles;
         }
 
@@ -147,7 +159,7 @@
         /// </summary>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public static Double To360Angle( this Double angle ) {
+        public static Double To360Angle(this Double angle) {
             while ( angle < 0.0 ) {
                 angle += 360.0;
             }
@@ -157,12 +169,12 @@
             return angle;
         }
 
-  /// <summary>
+        /// <summary>
         /// When you have an angle in degrees, that you want to convert in the range of 0-360
         /// </summary>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public static Single To360Angle( this Single angle ) {
+        public static Single To360Angle(this Single angle) {
             while ( angle < 0.0f ) {
                 angle += 360.0f;
             }
@@ -172,40 +184,42 @@
             return angle;
         }
 
-        /// <summary>
-        /// To do the same for a vector of 3 angles
-        /// </summary>
+        /// <summary>To do the same for a vector of 3 angles</summary>
         /// <param name="angles"></param>
         /// <returns></returns>
-        public static AForge.Math.Vector3 To360Angle( this AForge.Math.Vector3 angles ) {
+        public static Vector3 To360Angle(this Vector3 angles) {
             angles.X = To360Angle( angles.X );
             angles.Y = To360Angle( angles.Y );
             angles.Z = To360Angle( angles.Z );
             return angles;
         }
 
-        public static Degrees TurnLeft( this Degrees degrees, Single angle ) => new Degrees( degrees.Value += DegreesToRadians( angle ) );
+        public static Degrees TurnLeft(this Degrees degrees, Single angle) => new Degrees( degrees.Value += DegreesToRadians( angle ) );
 
-        public static Degrees TurnRight( this Degrees degrees, Single angle ) => new Degrees( degrees.Value -= DegreesToRadians( angle ) );
+        public static Degrees TurnRight(this Degrees degrees, Single angle) => new Degrees( degrees.Value -= DegreesToRadians( angle ) );
 
-/*
-        /// <summary>
-        /// Calculates the angle that an object should face, given its position, its target's position, its current angle, and its maximum turning speed.
-        /// </summary>
-        public static float TurnToFace( this Vector3 position, Vector3 faceThis, float currentAngle, float turnSpeed ) {
-            return TurnToFace( new Vector( position.X,position.Y), new Vector( faceThis.X, faceThis.Y), currentAngle, turnSpeed );
-        }
-*/
-        
-        /// <summary>
-        /// Calculates the angle that an object should face, given its position, its target's position, its current angle, and its maximum turning speed.
-        /// </summary>
-        public static float TurnToFace( this Point3D position, Point3D faceThis, float currentAngle, float turnSpeed ) => TurnToFace( new Vector( position.X,position.Y), new Vector( faceThis.X, faceThis.Y), currentAngle, turnSpeed );
+        /*
+
+                /// <summary>
+                /// Calculates the angle that an object should face, given its position, its
+                /// target's position, its current angle, and its maximum turning speed.
+                /// </summary>
+                public static float TurnToFace( this Vector3 position, Vector3 faceThis, float currentAngle, float turnSpeed ) {
+                    return TurnToFace( new Vector( position.X,position.Y), new Vector( faceThis.X, faceThis.Y), currentAngle, turnSpeed );
+                }
+        */
 
         /// <summary>
-        /// Calculates the angle that an object should face, given its position, its target's position, its current angle, and its maximum turning speed.
+        /// Calculates the angle that an object should face, given its position, its target's
+        /// position, its current angle, and its maximum turning speed.
         /// </summary>
-        public static float TurnToFace( this Vector position, Vector faceThis, float currentAngle, float turnSpeed ) {
+        public static Single TurnToFace(this Point3D position, Point3D faceThis, Single currentAngle, Single turnSpeed) => TurnToFace( new Vector( position.X, position.Y ), new Vector( faceThis.X, faceThis.Y ), currentAngle, turnSpeed );
+
+        /// <summary>
+        /// Calculates the angle that an object should face, given its position, its target's
+        /// position, its current angle, and its maximum turning speed.
+        /// </summary>
+        public static Single TurnToFace(this Vector position, Vector faceThis, Single currentAngle, Single turnSpeed) {
 
             // consider this diagram: C /| / | / | y / o | S-------- x where S is the position of
             // the spot light, C is the position of the cat, and "o" is the angle that the spot
@@ -220,7 +234,7 @@
             // we'll use the Atan2 function. Atan will calculates the arc tangent of y / x for us,
             // and has the added benefit that it will use the signs of x and y to determine what
             // cartesian quadrant to put the result in.
-            // http: //msdn2.microsoft.com/en-us/library/system.math.atan2.aspx
+            // http: //msdn2.microsoft.com/en-us/Library/system.math.atan2.aspx
             var desiredAngle = new Radians( Math.Atan2( y, x ) );
 
             // so now we know where we WANT to be facing, and where we ARE facing... if we weren't
@@ -231,7 +245,7 @@
             // first, figure out how much we want to turn, using WrapAngle to get our result from
             // - Pi to Pi ( -180 degrees to 180 degrees )
             //var difference = WrapAngle( desiredAngle - currentAngle );
-            var difference = To360Angle( desiredAngle - currentAngle);
+            var difference = To360Angle( desiredAngle - currentAngle );
 
             // clamp that between -turnSpeed and turnSpeed.
             difference = Clamp( difference, -turnSpeed, turnSpeed );
@@ -242,10 +256,8 @@
             return To360Angle( currentAngle + difference );
         }
 
-        /// <summary>
-        /// Returns the angle expressed in radians between -Pi and Pi.
-        /// </summary>
-        private static float WrapAngle( float radians ) {
+        /// <summary>Returns the angle expressed in radians between -Pi and Pi.</summary>
+        private static Single WrapAngle(Single radians) {
             while ( radians < -Math.PI ) {
                 radians += TwoPI;
             }

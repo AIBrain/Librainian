@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,16 +10,13 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Universe/IPotpourri.cs" was last cleaned by Rick on 2014/08/26 at 2:24 AM
-
-#endregion License & Information
+// "Librainian/IPotpourri.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
 
 namespace Librainian.Collections {
 
@@ -30,33 +27,29 @@ namespace Librainian.Collections {
 
     public interface IPotpourri<TKey> : IEnumerable<KeyValuePair<TKey, BigInteger>> {
 
-        void Add( TKey key, BigInteger count );
+        void Add(TKey key, BigInteger count);
 
-        void Add( KeyValuePair<TKey, BigInteger> keyValuePair );
+        void Add(KeyValuePair<TKey, BigInteger> keyValuePair);
 
-        void Clear( );
+        void Clear();
 
-        Boolean Contains( [CanBeNull] TKey key );
+        Boolean Contains([CanBeNull] TKey key);
 
-        BigInteger Count( );
+        BigInteger Count();
 
-        BigInteger Count<TParticle>( );
+        BigInteger Count<TParticle>();
 
-        /// <summary>
-        /// Get all particles
-        /// </summary>
+        /// <summary>Get all particles</summary>
         /// <returns></returns>
-        IEnumerable<KeyValuePair<TKey, BigInteger>> Get( );
+        IEnumerable<KeyValuePair<TKey, BigInteger>> Get();
 
-        /// <summary>
-        /// Get all particles of type( <see cref="TParticle" />).
-        /// </summary>
+        /// <summary>Get all particles of type( <see cref="TParticle" />).</summary>
         /// <typeparam name="TParticle"></typeparam>
         /// <returns></returns>
-        IEnumerable<KeyValuePair<TParticle, BigInteger>> Get<TParticle>( );
+        IEnumerable<KeyValuePair<TParticle, BigInteger>> Get<TParticle>();
 
-        Boolean Remove( TKey key, BigInteger count );
+        Boolean Remove(TKey key, BigInteger count);
 
-        Boolean RemoveAll( TKey key );
+        Boolean RemoveAll(TKey key);
     }
 }

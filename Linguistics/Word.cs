@@ -1,21 +1,25 @@
-﻿// This notice must be kept visible in the source.
-//
+﻿#region License & Information
+
+// Copyright 2015 Rick@AIBrain.org.
+// 
+// This notice must be kept visible in the source.
+// 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-//
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
+// 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/Word.cs" was last cleaned by Rick on 2014/10/21 at 5:02 AM
+// 
+// "Librainian/Word.cs" was last cleaned by Rick on 2015/06/12 at 2:59 PM
+#endregion License & Information
 
 namespace Librainian.Linguistics {
     using System;
@@ -28,11 +32,9 @@ namespace Librainian.Linguistics {
     using FluentAssertions;
     using JetBrains.Annotations;
 
-    /// <summary>
-    /// A <see cref="Word" /> is a sequence of <see cref="Character" /> . <seealso cref="http://wikipedia.org/wiki/Truthbearer" />
-    /// </summary>
+    /// <summary>A <see cref="Word" /> is a sequence of <see cref="Character" /> . <seealso cref="http://wikipedia.org/wiki/Truthbearer" /></summary>
     /// <seealso cref="Sentence"></seealso>
-    [DataContract(IsReference = true)]
+    [DataContract( IsReference = true )]
     [Immutable]
     public class Word : IEquatable<Word>, IEnumerable<Character> {
         public const UInt64 Level = Character.Level << 1;
@@ -45,7 +47,7 @@ namespace Librainian.Linguistics {
             Level.Should().BeGreaterThan( Character.Level );
         }
 
-        public Word( [CanBeNull] String word ) {
+        public Word([CanBeNull] String word) {
             if ( String.IsNullOrEmpty( word ) ) {
                 word = String.Empty;
             }
@@ -53,7 +55,21 @@ namespace Librainian.Linguistics {
             this._tokens.Fix();
         }
 
-        public static implicit operator string ( Word word ) => word._tokens.ToStrings( "" );
+        /// <summary>Returns an enumerator that iterates through the collection.</summary>
+        /// <returns>
+        /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate
+        /// through the collection.
+        /// </returns>
+        /// <filterpriority>1</filterpriority>
+        public IEnumerator<Character> GetEnumerator() => this._tokens.GetEnumerator();
+
+        /// <summary>Returns an enumerator that iterates through a collection.</summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate
+        /// through the collection.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
@@ -63,32 +79,14 @@ namespace Librainian.Linguistics {
         /// otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public Boolean Equals( [CanBeNull] Word other ) {
+        public Boolean Equals([CanBeNull] Word other) {
             if ( ReferenceEquals( other, null ) ) {
                 return false;
             }
             return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
 
-        /// <summary>
-        /// Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate
-        /// through the collection.
-        /// </returns>
-        /// <filterpriority>1</filterpriority>
-        public IEnumerator<Character> GetEnumerator() => this._tokens.GetEnumerator();
-
-        /// <summary>
-        /// Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate
-        /// through the collection.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        public static implicit operator String (Word word) => word._tokens.ToStrings( "" );
 
         public IEnumerable<Tuple<UInt64, String>> Possibles() {
             if ( !this._tokens.Any() ) {

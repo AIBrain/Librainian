@@ -1,26 +1,27 @@
-﻿#region License & Information
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/ContinuousSentence.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
-#endregion
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/ContinuousSentence.cs" was last cleaned by Rick on 2015/06/12 at 3:09 PM
 
 namespace Librainian.Parsing {
+
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Runtime.Serialization;
     using System.Threading;
@@ -28,23 +29,22 @@ namespace Librainian.Parsing {
     using JetBrains.Annotations;
 
     /// <summary>
-    ///     A thread-safe object to contain a moving target of sentences.
-    ///     I'd like to make this act like a <see cref="Stream" /> if possible?
+    /// A thread-safe object to contain a moving target of sentences. I'd like to make this act like
+    /// a <see cref="Stream" /> if possible?
     /// </summary>
     [DataContract( IsReference = true )]
     public class ContinuousSentence {
-        public static IEnumerable< string > EndOfSentencesEnglishUS { get; } = new[] { ".", "?", "!", "lol", ":)", ";)", ":P" };
 
-        [DataMember]  private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+        [DataMember]
+        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-        [DataMember]  private String _currentSentence = String.Empty;
+        [DataMember]
+        private String _currentSentence = String.Empty;
 
-        public ContinuousSentence( [NotNull] String paragraph = "" ) {
-            if ( paragraph == null ) {
-                throw new ArgumentNullException( nameof( paragraph ) );
-            }
-            this.CurrentSentence = paragraph;
+        public static IEnumerable<String> EndOfSentencesEnglishUs {
+            get;
         }
+        = new[] { ".", "?", "!", "lol", ":)", ";)", ":P" };
 
         public String CurrentSentence {
             get {
@@ -56,6 +56,7 @@ namespace Librainian.Parsing {
                     this._access.ExitReadLock();
                 }
             }
+
             set {
                 try {
                     this._access.EnterWriteLock();
@@ -67,15 +68,20 @@ namespace Librainian.Parsing {
             }
         }
 
-        /// <summary>
-        ///     Append the <paramref name="text" /> to the current sentence buffer.
-        /// </summary>
+        public ContinuousSentence([NotNull] String paragraph = "") {
+            if ( paragraph == null ) {
+                throw new ArgumentNullException( nameof( paragraph ) );
+            }
+            this.CurrentSentence = paragraph;
+        }
+
+        /// <summary>Append the <paramref name="text" /> to the current sentence buffer.</summary>
         /// <returns></returns>
-        public ContinuousSentence Add( [NotNull] String text ) {
+        public ContinuousSentence Add([NotNull] String text) {
             if ( text == null ) {
                 throw new ArgumentNullException( nameof( text ) );
             }
-            var temp = new List< String >();
+            var temp = new List<String>();
             if ( !String.IsNullOrEmpty( this.CurrentSentence ) ) {
                 temp.Add( this.CurrentSentence );
             }
@@ -88,11 +94,9 @@ namespace Librainian.Parsing {
 
         public String PeekNextChar() => new String( new[] { this.CurrentSentence.FirstOrDefault() } );
 
-        /// <summary>
-        ///     for now, find the next .?!
-        /// </summary>
+        /// <summary>for now, find the next .?!</summary>
         /// <returns></returns>
-        public String PeekNextSentence( int noMoreThanXWords = 10 ) {
+        public String PeekNextSentence(Int32 noMoreThanXWords = 10) {
             try {
                 this._access.EnterReadLock();
 
@@ -105,7 +109,7 @@ namespace Librainian.Parsing {
                     }
                 }
                 else {
-                    if ( EndOfSentencesEnglishUS.Any( sentence.EndsWith ) || this._currentSentence.WordCount() >= noMoreThanXWords ) {
+                    if ( EndOfSentencesEnglishUs.Any( sentence.EndsWith ) || ( this._currentSentence.WordCount() >= noMoreThanXWords ) ) {
                         return sentence;
                     }
                 }
@@ -139,11 +143,9 @@ namespace Librainian.Parsing {
             }
         }
 
-        /// <summary>
-        ///     for now, find the next .?!
-        /// </summary>
+        /// <summary>for now, find the next .?!</summary>
         /// <returns></returns>
-        public String PullNextSentence( int noMoreThanXWords = 10 ) {
+        public String PullNextSentence(Int32 noMoreThanXWords = 10) {
             try {
                 this._access.EnterUpgradeableReadLock();
 

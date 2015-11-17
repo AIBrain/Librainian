@@ -1,21 +1,25 @@
+#region License & Information
+
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
-//
+// 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-//
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
+// 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/Paragraph.cs" was last cleaned by Rick on 2014/10/21 at 5:02 AM
+// 
+// "Librainian/Paragraph.cs" was last cleaned by Rick on 2015/06/12 at 2:59 PM
+#endregion License & Information
 
 namespace Librainian.Linguistics {
     using System;
@@ -31,10 +35,9 @@ namespace Librainian.Linguistics {
     using Parsing;
 
     /// <summary>
-    /// <para>A <see cref="Paragraph" /> is a sequence of <see cref="Sentence" /> .</para>
-    /// </summary>
+    /// <para>A <see cref="Paragraph" /> is a sequence of <see cref="Sentence" /> .</para></summary>
     /// <seealso cref="Page"></seealso>
-    [DataContract(IsReference = true)]
+    [DataContract( IsReference = true )]
     [Immutable]
     public sealed class Paragraph : IEquatable<Paragraph>, IEnumerable<Sentence> {
         public const UInt64 Level = Sentence.Level << 1;
@@ -47,36 +50,32 @@ namespace Librainian.Linguistics {
             Level.Should().BeGreaterThan( Sentence.Level );
         }
 
-        /// <summary>
-        /// A <see cref="Paragraph" /> is ordered sequence of sentences.
-        /// </summary>
+        /// <summary>A <see cref="Paragraph" /> is ordered sequence of sentences.</summary>
         /// <param name="paragraph"></param>
-        public Paragraph( [CanBeNull] String paragraph ) : this( paragraph.ToSentences() ) {
+        public Paragraph([CanBeNull] String paragraph) : this( paragraph.ToSentences() ) {
         }
 
-        /// <summary>
-        /// A <see cref="Paragraph" /> is a collection of sentences.
-        /// </summary>
+        /// <summary>A <see cref="Paragraph" /> is a collection of sentences.</summary>
         /// <param name="sentences"></param>
-        public Paragraph( [CanBeNull] IEnumerable<Sentence> sentences ) {
+        public Paragraph([CanBeNull] IEnumerable<Sentence> sentences) {
             if ( sentences != null ) {
                 this._tokens.AddRange( sentences );
             }
             this._tokens.Fix();
         }
 
-        public static implicit operator String( Paragraph paragraph ) => paragraph.ToString();
+        public IEnumerator<Sentence> GetEnumerator() => this._tokens.GetEnumerator();
 
-        public Boolean Equals( [CanBeNull] Paragraph other ) {
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        public Boolean Equals([CanBeNull] Paragraph other) {
             if ( ReferenceEquals( other, null ) ) {
                 return false;
             }
             return ReferenceEquals( this, other ) || this._tokens.SequenceEqual( other._tokens );
         }
 
-        public IEnumerator<Sentence> GetEnumerator() => this._tokens.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        public static implicit operator String(Paragraph paragraph) => paragraph.ToString();
 
         /*
                 public IEnumerable<Tuple<UInt64, String>> Possibles() {

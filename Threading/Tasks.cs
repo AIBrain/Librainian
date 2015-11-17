@@ -1,27 +1,25 @@
-﻿#region License & Information
-
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/Tasks.cs" was last cleaned by Rick on 2014/08/15 at 10:39 AM
-
-#endregion License & Information
+// 
+// "Librainian/Tasks.cs" was last cleaned by Rick on 2015/06/12 at 3:14 PM
 
 namespace Librainian.Threading {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -31,10 +29,9 @@ namespace Librainian.Threading {
     using JetBrains.Annotations;
     using Measurement.Time;
 
-    /// <summary>
-    /// Execute an <see cref="Action"/> on a <see cref="Timer"/>.
-    /// </summary>
+    /// <summary>Execute an <see cref="Action" /> on a <see cref="Timer" />.</summary>
     public static class Tasks {
+
         //private static readonly BufferBlock<OneJob> JobsBlock = new BufferBlock<OneJob>( dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
 
         //public static readonly TransformBlock<OneJob, OneJob> PriorityBlock = new TransformBlock<OneJob, OneJob>();
@@ -62,61 +59,56 @@ namespace Librainian.Threading {
         //private static long spawnCounter;
 
         /// <summary>
-        ///     <para>Cancel has been requested. Don't queue or start any more spawns. If we're in a method, try to check the token.</para>
+        /// <para>
+        /// Cancel has been requested. Don't queue or start any more spawns. If we're in a method,
+        /// try to check the token.
+        /// </para>
         /// </summary>
-        public static readonly CancellationTokenSource CancelJobsTokenSource = new CancellationTokenSource(  );
+        public static readonly CancellationTokenSource CancelJobsTokenSource = new CancellationTokenSource();
 
-/*
-        public static readonly PriorityBlock JobPriorityBlock = new PriorityBlock( CancelAllJobsToken );
-*/
+        /*
+                public static readonly PriorityBlock JobPriorityBlock = new PriorityBlock( CancelAllJobsToken );
+        */
 
-/*
-        /// <summary>
-        ///     <para>Cancel has been requested. Don't queue any more spawns.</para>
-        /// </summary>
-        public static readonly CancellationToken CancelNewJobsToken = new CancellationToken( false );
-*/
+        /*
+
+                /// <summary>
+                /// <para>Cancel has been requested. Don't queue any more spawns.</para></summary>
+                public static readonly CancellationToken CancelNewJobsToken = new CancellationToken( false );
+        */
 
         //public static UInt64 GetSpawnsWaiting() {
         //    return ( UInt64 )Interlocked.Read( ref spawnCounter );
         //}
 
-/*
-        [Obsolete( "use Task.Run()" )]
-        public static void Spawn( this Action job, Single priority = 0.50f, Span? delay = null ) {
-            if ( CancelNewJobsToken.IsCancellationRequested ) {
-                return;
-            }
-            if ( !delay.HasValue ) {
-                var onejob = new OneJob( priority, job );
-                JobPriorityBlock.Add( onejob );
-            }
-            else {
-                delay.Value.Create( () => job.Spawn( priority ) ).AndStart();
-            }
-        }
-*/
+        /*
+                [Obsolete( "use Task.Run()" )]
+                public static void Spawn( this Action job, Single priority = 0.50f, Span? delay = null ) {
+                    if ( CancelNewJobsToken.IsCancellationRequested ) {
+                        return;
+                    }
+                    if ( !delay.HasValue ) {
+                        var onejob = new OneJob( priority, job );
+                        JobPriorityBlock.Add( onejob );
+                    }
+                    else {
+                        delay.Value.Create( () => job.Spawn( priority ) ).AndStart();
+                    }
+                }
+        */
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="tasks"></param>
         /// <returns></returns>
         /// <example>
-        ///     var tasks = new[] {
-        ///     Task.Delay(3000).ContinueWith(_ => 3),
-        ///     Task.Delay(1000).ContinueWith(_ => 1),
-        ///     Task.Delay(2000).ContinueWith(_ => 2),
-        ///     Task.Delay(5000).ContinueWith(_ => 5),
-        ///     Task.Delay(4000).ContinueWith(_ => 4),
-        ///     };
-        ///     foreach (var bucket in Interleaved(tasks)) {
-        ///     var t = await bucket;
-        ///     int result = await t;
-        ///     Console.WriteLine("{0}: {1}", DateTime.Now, result);
-        ///     }
+        /// var tasks = new[] { Task.Delay(3000).ContinueWith(_ =&gt; 3),
+        /// Task.Delay(1000).ContinueWith(_ =&gt; 1), Task.Delay(2000).ContinueWith(_ =&gt; 2),
+        /// Task.Delay(5000).ContinueWith(_ =&gt; 5), Task.Delay(4000).ContinueWith(_ =&gt; 4), };
+        /// foreach (var bucket in Interleaved(tasks)) { var t = await bucket; int result = await t;
+        /// Console.WriteLine("{0}: {1}", DateTime.Now, result); }
         /// </example>
-        public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
+        public static Task<Task<T>>[] Interleaved<T>([NotNull] IEnumerable<Task<T>> tasks) {
             if ( tasks == null ) {
                 throw new ArgumentNullException( nameof( tasks ) );
             }
@@ -127,7 +119,7 @@ namespace Librainian.Threading {
 
             var results = new Task<Task<T>>[ buckets.Length ];
 
-            for ( var i = 0 ; i < buckets.Length ; i++ ) {
+            for ( var i = 0; i < buckets.Length; i++ ) {
                 buckets[ i ] = new TaskCompletionSource<Task<T>>();
                 results[ i ] = buckets[ i ].Task;
             }
@@ -159,12 +151,13 @@ namespace Librainian.Threading {
         //}
 
         /// <summary>
-        ///     Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />     .
+        /// Do the <paramref name="job" /> with a dataflow after a
+        /// <see cref="System.Threading.Timer" /> .
         /// </summary>
-        /// <param name="delay"> </param>
-        /// <param name="job"> </param>
-        /// <returns> </returns>
-        public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
+        /// <param name="delay"></param>
+        /// <param name="job"></param>
+        /// <returns></returns>
+        public static async Task Then(this TimeSpan delay, [NotNull] Action job) {
             if ( job == null ) {
                 throw new ArgumentNullException( nameof( job ) );
             }
@@ -175,12 +168,11 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
-        /// </summary>
-        /// <param name="delay"> </param>
-        /// <param name="job"> </param>
-        /// <returns> </returns>
-        public static async Task Then( this Span delay, [NotNull] Action job ) {
+        /// <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para></summary>
+        /// <param name="delay"></param>
+        /// <param name="job"></param>
+        /// <returns></returns>
+        public static async Task Then(this Span delay, [NotNull] Action job) {
             if ( job == null ) {
                 throw new ArgumentNullException( nameof( job ) );
             }
@@ -190,12 +182,11 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
-        /// </summary>
-        /// <param name="delay"> </param>
-        /// <param name="job"> </param>
-        /// <returns> </returns>
-        public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
+        /// <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para></summary>
+        /// <param name="delay"></param>
+        /// <param name="job"></param>
+        /// <returns></returns>
+        public static async Task Then(this Milliseconds delay, [NotNull] Action job) {
             if ( job == null ) {
                 throw new ArgumentNullException( nameof( job ) );
             }
@@ -205,12 +196,11 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
-        /// </summary>
-        /// <param name="delay"> </param>
-        /// <param name="job"> </param>
-        /// <returns> </returns>
-        public static async Task Then( this Seconds delay, [NotNull] Action job ) {
+        /// <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para></summary>
+        /// <param name="delay"></param>
+        /// <param name="job"></param>
+        /// <returns></returns>
+        public static async Task Then(this Seconds delay, [NotNull] Action job) {
             if ( job == null ) {
                 throw new ArgumentNullException( nameof( job ) );
             }
@@ -220,12 +210,11 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
-        /// </summary>
-        /// <param name="delay"> </param>
-        /// <param name="job"> </param>
-        /// <returns> </returns>
-        public static async Task Then( this Minutes delay, [NotNull] Action job ) {
+        /// <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para></summary>
+        /// <param name="delay"></param>
+        /// <param name="job"></param>
+        /// <returns></returns>
+        public static async Task Then(this Minutes delay, [NotNull] Action job) {
             if ( job == null ) {
                 throw new ArgumentNullException( nameof( job ) );
             }
@@ -234,17 +223,15 @@ namespace Librainian.Threading {
             await Task.Run( job );
         }
 
-        /// <summary>
-        ///     Wrap 3 methods into one.
-        /// </summary>
+        /// <summary>Wrap 3 methods into one.</summary>
         /// <param name="action"></param>
         /// <param name="pre"></param>
         /// <param name="post"></param>
         /// <returns></returns>
-        public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) => () => {
-                                                                                                                                  pre?.Invoke();
-                                                                                                                                  action?.Invoke();
-                                                                                                                                  post?.Invoke();
+        public static Action Wrap([CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post) => () => {
+            pre?.Invoke();
+            action?.Invoke();
+            post?.Invoke();
         };
 
         ///// <summary>
@@ -397,25 +384,16 @@ namespace Librainian.Threading {
         //public static Task OldRun( TimeSpan delay, params Action[] tasks ) {
         //    if ( null == tasks ) { tasks = new Action[] { () => { } }; }
 
-        //    var continueTask = default( Task );
-        //    var mainTask = default( Task );
-        //    foreach ( var action in tasks.Where( action => null != action ) ) {
-        //        if ( default( Task ) == mainTask ) {
-        //            if ( delay.Ticks > 0 ) { doDelay( delay ); }
-        //            mainTask = Factory.StartNew( action: action );
-        //            continueTask = mainTask;
-        //            //ActiveTasks.AddOrUpdate( task, DateTime.UtcNow, ( id, dateTime ) => DateTime.UtcNow );    //so the task doesn't get GC'd before it runs..
-        //        }
-        //        else {
-        //            continueTask = continueTask.ContinueWith( task2 => action() );
-        //        }
-        //    }
-        //    //if ( default( Task ) == mainTask ) { return default( Task ); }
-        //    //*task =*/ task.ContinueWith( key => {
-        //    //    DateTime value;
-        //    //    //ActiveTasks.TryRemove( key, out value );
-        //    //    //var been = ActiveTasks.Where( pair => pair.Key.IsCompleted );
-        //    //    //Parallel.ForEach( been, pair => ActiveTasks.TryRemove( pair.Key, out value ) );
+        // var continueTask = default( Task ); var mainTask = default( Task ); foreach ( var action
+        // in tasks.Where( action => null != action ) ) { if ( default( Task ) == mainTask ) { if (
+        // delay.Ticks > 0 ) { doDelay( delay ); } mainTask = Factory.StartNew( action: action );
+        // continueTask = mainTask; //ActiveTasks.AddOrUpdate( task, DateTime.UtcNow, ( id, dateTime
+        // ) => DateTime.UtcNow ); //so the task doesn't get GC'd before it runs.. } else {
+        // continueTask = continueTask.ContinueWith( task2 => action() ); } } //if ( default( Task )
+        // == mainTask ) { return default( Task ); } //*task =*/ task.ContinueWith( key => { //
+        // DateTime value; // //ActiveTasks.TryRemove( key, out value ); // //var been =
+        // ActiveTasks.Where( pair => pair.Key.IsCompleted ); // //Parallel.ForEach( been, pair =>
+        // ActiveTasks.TryRemove( pair.Key, out value ) );
 
         //    //} );
         //    return mainTask;
@@ -447,7 +425,7 @@ namespace Librainian.Threading {
         /// <typeparam name="T"></typeparam>
         /// <param name="target"></param>
         /// <param name="item"></param>
-        public static void TryPost<T>( this ITargetBlock<T> target, T item ) {
+        public static void TryPost<T>(this ITargetBlock<T> target, T item) {
             if ( target == null ) {
 #if DEBUG
                 throw new ArgumentNullException( nameof( target ) );
@@ -457,20 +435,21 @@ namespace Librainian.Threading {
             }
 
             if ( !target.Post( item ) ) {
+
                 //var bob = target as IDataflowBlock;
                 //if ( bob.Completion.IsCompleted  )
-                TryPost( target: target, item: item, delay: ( Span )Threads.GetAverageTimerPrecision() ); //retry
+                TryPost( target: target, item: item, delay: Threads.GetAverageTimerPrecision() ); //retry
             }
         }
 
         /// <summary>
-        ///     After a delay, keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
+        /// After a delay, keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="target"></param>
         /// <param name="item"></param>
         /// <param name="delay"></param>
-        public static System.Timers.Timer TryPost<T>( this ITargetBlock<T> target, T item, Span delay ) {
+        public static System.Timers.Timer TryPost<T>(this ITargetBlock<T> target, T item, TimeSpan delay) {
             if ( target == null ) {
                 throw new ArgumentNullException( nameof( target ) );
             }
@@ -488,13 +467,13 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     Start a timer. When it fires, check the <paramref name="condition" />, and if true do the
-        ///     <paramref name="action" />.
+        /// Start a timer. When it fires, check the <paramref name="condition" />, and if true do
+        /// the <paramref name="action" />.
         /// </summary>
         /// <param name="afterDelay"></param>
         /// <param name="action"></param>
         /// <param name="condition"></param>
-        public static System.Timers.Timer When( this Span afterDelay, Func<Boolean> condition, Action action ) {
+        public static System.Timers.Timer When(this TimeSpan afterDelay, Func<Boolean> condition, Action action) {
             if ( condition == null ) {
                 throw new ArgumentNullException( nameof( condition ) );
             }
@@ -514,5 +493,4 @@ namespace Librainian.Threading {
             }
         }
     }
-
 }

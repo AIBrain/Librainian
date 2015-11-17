@@ -1,4 +1,6 @@
-#region License & Information
+
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
@@ -7,15 +9,15 @@
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/Gate.cs" was last cleaned by Rick on 2014/08/11 at 12:41 AM
-#endregion
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/Gate.cs" was last cleaned by Rick on 2015/06/12 at 3:14 PM
 
 namespace Librainian.Threading {
     using System;
@@ -26,23 +28,9 @@ namespace Librainian.Threading {
     /// </summary>
     // TODO 2013, unfinished
     // TODO 2014, what was this class for? lol.
+    // TODO 2015, still no idea.
     public sealed class Gate {
-        private int _value;
-
-        /// <summary>
-        ///     Initializes a new instance of the Gate class.
-        /// </summary>
-        /// <param name="openOrClosed">Defaults to <see cref="OpenOrClosed.Closed" />.</param>
-        public Gate( OpenOrClosed openOrClosed = OpenOrClosed.Closed ) {
-            this._value = ( int ) openOrClosed;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the Gate class in the closed state.
-        /// </summary>
-        public Gate() {
-            //
-        }
+        private Int32 _value;
 
         /// <summary>
         ///     Returns true if the gate is closed
@@ -52,8 +40,22 @@ namespace Librainian.Threading {
         /// <summary>
         ///     Returns true if the gate is open
         /// </summary>
-        public Boolean IsOpened => OpenOrClosed.Opened == ( OpenOrClosed ) Interlocked.Add( ref this._value, 0 );
+        public Boolean IsOpened => OpenOrClosed.Opened == ( OpenOrClosed )Interlocked.Add( ref this._value, 0 );
 
+        /// <summary>
+        ///     Initializes a new instance of the Gate class.
+        /// </summary>
+        /// <param name="openOrClosed">Defaults to <see cref="OpenOrClosed.Closed" />.</param>
+        public Gate( OpenOrClosed openOrClosed = OpenOrClosed.Closed ) {
+            this._value = ( Int32 ) openOrClosed;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the Gate class in the closed state.
+        /// </summary>
+        public Gate() {
+            //
+        }
         /// <summary>
         ///     Closes the gate. The gate must be in the open state.
         /// </summary>

@@ -132,4 +132,10 @@
   <data name="Database_GetConnection_Timeout_is_less_than_one_" xml:space="preserve">
     <value>Timeout is less than one.</value>
   </data>
+  <data name="wrong_version_must_be_either_3_or_5_" xml:space="preserve">
+    <value>version must be either 3 or 5.</value>
+  </data>
+  <data name="Must_be_greater_than_or_equal_to_0" xml:space="preserve">
+    <value>Must be greater than or equal to 0</value>
+  </data>
 </root>

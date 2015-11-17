@@ -79,6 +79,15 @@ namespace Librainian.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Must be greater than or equal to 0.
+        /// </summary>
+        internal static string Must_be_greater_than_or_equal_to_0 {
+            get {
+                return ResourceManager.GetString("Must_be_greater_than_or_equal_to_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Out of range.
         /// </summary>
         internal static string Out_of_range {
@@ -102,6 +111,15 @@ namespace Librainian.Properties {
         internal static string SafeRandom_Next_maxValue_must_be_greater_than_or_equal_to_zero_ {
             get {
                 return ResourceManager.GetString("SafeRandom_Next_maxValue_must_be_greater_than_or_equal_to_zero_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to version must be either 3 or 5..
+        /// </summary>
+        internal static string wrong_version_must_be_either_3_or_5_ {
+            get {
+                return ResourceManager.GetString("wrong_version_must_be_either_3_or_5_", resourceCulture);
             }
         }
     }

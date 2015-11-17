@@ -1,48 +1,53 @@
-﻿namespace Librainian.Collections {
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
+// This notice must be kept visible in the source.
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
+// Donations and Royalties can be paid via
+// PayPal: paypal@aibrain.org
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/ConcurrentBlockingQueue.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
+
+namespace Librainian.Collections {
 
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Threading;
 
-    /// <summary>
-    /// Represents a thread-safe blocking, first-in, first-out collection of objects.
-    /// </summary>
+    /// <summary>Represents a thread-safe blocking, first-in, first-out collection of objects.</summary>
     /// <typeparam name="T">Specifies the type of elements in the queue.</typeparam>
     public class ConcurrentBlockingQueue<T> : IDisposable {
-        private readonly ConcurrentQueue<T> queue = new ConcurrentQueue<T>( );
-        private readonly AutoResetEvent workEvent = new AutoResetEvent( false );
+        private readonly ConcurrentQueue<T> _queue = new ConcurrentQueue<T>();
+        private readonly AutoResetEvent _workEvent = new AutoResetEvent( false );
+        private Boolean _isCompleteAdding;
+        private Boolean _isDisposed;
 
-        private bool isCompleteAdding;
-        private bool isDisposed;
-
-        /// <summary>
-        /// Release all resources.
-        /// </summary>
-        public void Dispose( ) {
-            if ( this.isDisposed )
-                return;
-
-            this.workEvent.Dispose( );
-            this.isDisposed = true;
-        }
-
-        /// <summary>
-        /// Adds the item to the queue.
-        /// </summary>
+        /// <summary>Adds the item to the queue.</summary>
         /// <param name="item">The item to be added.</param>
-        public void Add( T item ) {
-            this.CheckDisposed( );
+        public void Add(T item) {
+            this.CheckDisposed();
 
             // queue must not be marked as completed adding
-            if ( this.isCompleteAdding )
-                throw new InvalidOperationException( );
+            if ( this._isCompleteAdding ) {
+                throw new InvalidOperationException();
+            }
 
             // queue the item
-            this.queue.Enqueue( item );
+            this._queue.Enqueue( item );
 
             // notify the consuming enumerable
-            this.workEvent.Set( );
+            this._workEvent.Set();
         }
 
         /// <summary>
@@ -52,50 +57,58 @@
         /// After adding has been completed, any consuming enumerables will complete once the queue
         /// is empty.
         /// </remarks>
-        public void CompleteAdding( ) {
-            this.CheckDisposed( );
+        public void CompleteAdding() {
+            this.CheckDisposed();
 
             // mark complete
-            this.isCompleteAdding = true;
+            this._isCompleteAdding = true;
 
             // notify the consuming enumerable
-            this.workEvent.Set( );
+            this._workEvent.Set();
         }
 
-        /// <summary>
-        /// Provides a consuming enumerable of the items in the queue.
-        /// </summary>
+        /// <summary>Release all resources.</summary>
+        public void Dispose() {
+            if ( this._isDisposed ) {
+                return;
+            }
+
+            this._workEvent.Dispose();
+            this._isDisposed = true;
+        }
+
+        /// <summary>Provides a consuming enumerable of the items in the queue.</summary>
         /// <remarks>
         /// The consuming enumerable dequeues as many items as possible from the queue, and blocks
         /// when it is empty until additional items are added. The consuming enumerable will not
         /// return until the queue is complete for adding, and all items have been dequeued.
         /// </remarks>
         /// <returns>The consuming enumerable.</returns>
-        public IEnumerable<T> GetConsumingEnumerable( ) {
+        public IEnumerable<T> GetConsumingEnumerable() {
             do {
 
                 // dequeue and yield as many items as are available
                 T value;
-                while ( this.queue.TryDequeue( out value ) ) {
+                while ( this._queue.TryDequeue( out value ) ) {
                     yield return value;
                 }
 
                 // once the queue is empty, check if adding is completed and return if so
-                if ( this.isCompleteAdding && this.queue.Count == 0 ) {
+                if ( this._isCompleteAdding && ( this._queue.Count == 0 ) ) {
 
                     // ensure all other consuming enumerables are unblocked when complete
-                    this.workEvent.Set( );
+                    this._workEvent.Set();
                     yield break;
                 }
 
                 // otherwise, wait for additional items to be added and continue
-            }
-            while ( this.workEvent.WaitOne( ) );
+            } while ( this._workEvent.WaitOne() );
         }
 
-        private void CheckDisposed( ) {
-            if ( this.isDisposed )
+        private void CheckDisposed() {
+            if ( this._isDisposed ) {
                 throw new ObjectDisposedException( "ConcurrentBlockingQueue" );
+            }
         }
     }
 }

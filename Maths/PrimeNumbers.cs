@@ -1,51 +1,38 @@
-﻿#region License & Information
-
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
-// "Librainian/PrimeNumbers.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
-
-#endregion License & Information
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/PrimeNumbers.cs" was last cleaned by Rick on 2015/06/12 at 3:00 PM
 
 namespace Librainian.Maths {
+
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
     public class PrimeNumbers {
+        public static readonly HashSet<Int32> MemoizedPrimes = new HashSet<Int32>();
+        public static Int64[][] GoldenPrimes = { new Int64[] { 1, 1 }, new Int64[] { 41, 59 }, new Int64[] { 2377, 1677 }, new Int64[] { 147299, 187507 }, new Int64[] { 9132313, 5952585 }, new Int64[] { 566201239, 643566407 }, new[] { 35104476161, 22071637057 }, new[] { 2176477521929, 294289236153 }, new[] { 134941606358731, 88879354792675 }, new[] { 8366379594239857, 7275288500431249 }, new[] { 518715534842869223, 280042546585394647 } };
 
-        public static long[][] GoldenPrimes = {
-                                                   new long[]{1,1},
-                                                   new long[]{41,59},
-                                                   new long[]{2377,1677},
-                                                   new long[]{147299,187507},
-                                                   new long[]{9132313,5952585},
-                                                   new long[]{566201239,643566407},
-                                                   new[]{35104476161,22071637057},
-                                                   new[]{2176477521929,294289236153},
-                                                   new[]{134941606358731,88879354792675},
-                                                   new[]{8366379594239857,7275288500431249},
-                                                   new[]{518715534842869223,280042546585394647}
-                                               };
-
-        public static readonly HashSet<int> MemoizedPrimes = new HashSet<int>();
-
-        public static IEnumerable<int> PotentialPrimes() {
+        public static IEnumerable<Int32> PotentialPrimes() {
             yield return 2;
             yield return 3;
             var k = 1;
-        loop:
+            loop:
             yield return k * 6 - 1;
             yield return k * 6 + 1;
             k++;
@@ -55,15 +42,15 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Untested. Returns a list of integers that COULD be prime, not that ARE prime.
+        /// Untested. Returns a list of integers that COULD be prime, not that ARE prime.
         /// </summary>
         /// <param name="lowEnd"></param>
         /// <param name="highEnd"></param>
         /// <returns></returns>
-        public static IEnumerable<int> PotentialPrimes( int lowEnd, int highEnd ) {
+        public static IEnumerable<Int32> PotentialPrimes(Int32 lowEnd, Int32 highEnd) {
             var k = lowEnd;
             yield return k;
-        loop:
+            loop:
             yield return k * 6 - 1;
             yield return k * 6 + 1;
             k++;
@@ -73,7 +60,7 @@ namespace Librainian.Maths {
             goto loop;
         }
 
-        public static IEnumerable<int> Primes() {
+        public static IEnumerable<Int32> Primes() {
 
             //var memoized = new List<int>();
             var sqrt = 1;
@@ -88,12 +75,12 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Untested. Should return a list of prime numbers between <paramref name="lowEnd" /> and <paramref name="highEnd" />
+        /// Untested. Should return a list of prime numbers between <paramref name="lowEnd" /> and <paramref name="highEnd" />
         /// </summary>
         /// <param name="lowEnd"></param>
         /// <param name="highEnd"></param>
         /// <returns></returns>
-        public static IEnumerable<int> Primes( int lowEnd, int highEnd ) {
+        public static IEnumerable<Int32> Primes(Int32 lowEnd, Int32 highEnd) {
 
             //var memoized = new HashSet<int>(); //TODO move this over to a static variable?
             var sqrt = 1;
@@ -107,7 +94,7 @@ namespace Librainian.Maths {
             }
         }
 
-        private static int GetSqrtCeiling( int value, int start ) {
+        private static Int32 GetSqrtCeiling(Int32 value, Int32 start) {
             while ( start * start < value ) {
                 start++;
             }

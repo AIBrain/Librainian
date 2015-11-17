@@ -1,44 +1,45 @@
-﻿#region License & Information
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/AutoLayoutWindow.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
-#endregion
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/AutoLayoutWindow.cs" was last cleaned by Rick on 2015/06/12 at 2:52 PM
 
 namespace Librainian.Controls {
+
     using System;
     using System.Collections.Concurrent;
     using System.Windows.Forms;
 
     public partial class AutoLayoutWindow : Form {
-        private readonly ConcurrentBag< Label > Labels = new ConcurrentBag< Label >();
-
-        private readonly ConcurrentQueue< String > Messages = new ConcurrentQueue< String >();
+        private readonly ConcurrentBag<Label> _labels = new ConcurrentBag<Label>();
+        private readonly ConcurrentQueue<String> _messages = new ConcurrentQueue<String>();
 
         public AutoLayoutWindow() {
             this.InitializeComponent();
         }
 
-        public Boolean Add( String message ) {
+        public Boolean Add(String message) {
             try {
-                this.Messages.Enqueue( message );
+                this._messages.Enqueue( message );
 
                 var label = new Label {
-                                          Text = message
-                                      };
-                this.Labels.Add( label );
+                    Text = message
+                };
+                this._labels.Add( label );
 
                 this.Panel.Controls.Add( label );
                 this.Panel.Update();

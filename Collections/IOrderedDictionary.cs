@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,17 +10,17 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/IOrderedDictionary.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-
-#endregion License & Information
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/IOrderedDictionary.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
 
 namespace Librainian.Collections {
 
+    using System;
     using System.Collections.Generic;
     using System.Collections.Specialized;
 
@@ -32,9 +32,7 @@ namespace Librainian.Collections {
     /// <typeparam name="TValue">The type of the values in the dictionary</typeparam>
     public interface IOrderedDictionary<TKey, TValue> : IOrderedDictionary, IDictionary<TKey, TValue> {
 
-        /// <summary>
-        /// Gets or sets the value at the specified index.
-        /// </summary>
+        /// <summary>Gets or sets the value at the specified index.</summary>
         /// <param name="index">The zero-based index of the value to get or set.</param>
         /// <value>The value of the item at the specified index.</value>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -42,7 +40,9 @@ namespace Librainian.Collections {
         /// - or- <br /><paramref name="index" /> is equal to or greater than
         ///   <see cref="System.Collections.ICollection.Count" /> .
         /// </exception>
-        new TValue this[ int index ] { get; set; }
+        new TValue this[ Int32 index ] {
+            get; set;
+        }
 
         /// <summary>
         /// Adds an entry with the specified key and value into the
@@ -64,8 +64,7 @@ namespace Librainian.Collections {
         /// </para>
         /// </remarks>
         /// <exception cref="ArgumentException">
-        /// An element with the same key already exists in the
-        /// <see cref="IOrderedDictionary{TKey,TValue}"> IOrderedDictionary&lt;TKey,TValue&gt; </see>
+        /// An element with the same key already exists in the <see cref="IOrderedDictionary{TKey,TValue}">IOrderedDictionary&lt;TKey,TValue&gt;</see>
         /// </exception>
         /// <exception cref="NotSupportedException">
         /// The <see cref="IOrderedDictionary{TKey,TValue}"> IOrderedDictionary&lt;TKey,TValue&gt;
@@ -73,7 +72,7 @@ namespace Librainian.Collections {
         /// - or- <br /> The <see cref="IOrderedDictionary{TKey,TValue}"> IOrderedDictionary&lt;TKey,TValue&gt;
         /// </see> has a fized size.
         /// </exception>
-        new int Add( TKey key, TValue value );
+        new Int32 Add(TKey key, TValue value);
 
         /// <summary>
         /// Inserts a new entry into the <see cref="IOrderedDictionary{TKey,TValue}">
@@ -102,6 +101,6 @@ namespace Librainian.Collections {
         /// - or- <br /> The <see cref="IOrderedDictionary{TKey,TValue}"> IOrderedDictionary&lt;TKey,TValue&gt;
         /// </see> has a fized size.
         /// </exception>
-        void Insert( int index, TKey key, TValue value );
+        void Insert(Int32 index, TKey key, TValue value);
     }
 }

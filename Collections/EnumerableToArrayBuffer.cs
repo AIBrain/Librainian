@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,14 +10,13 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/EnumerableToArrayBuffer.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-
-#endregion License & Information
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/EnumerableToArrayBuffer.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
 
 namespace Librainian.Collections {
 
@@ -26,10 +25,12 @@ namespace Librainian.Collections {
 
     public struct EnumerableToArrayBuffer<T> {
         private readonly ICollection<T> _collection;
-        private readonly int _count;
         private readonly T[] _items;
+        private readonly Int32 _count;
 
-        internal EnumerableToArrayBuffer( IEnumerable<T> source ) {
+        internal Int32 Count => this._collection?.Count ?? this._count;
+
+        internal EnumerableToArrayBuffer(IEnumerable<T> source) {
             T[] array = null;
             var length = 0;
             this._collection = source as ICollection<T>;
@@ -54,13 +55,9 @@ namespace Librainian.Collections {
             this._count = length;
         }
 
-        internal int Count => this._collection?.Count ?? this._count;
-
-        /// <summary>
-        /// Caller to guarantee items.Length &gt; index &gt;= 0
-        /// </summary>
-        internal void CopyTo( T[] items, int index ) {
-            if ( this._collection != null && this._collection.Count > 0 ) {
+        /// <summary>Caller to guarantee items.Length &gt; index &gt;= 0</summary>
+        internal void CopyTo(T[] items, Int32 index) {
+            if ( ( this._collection != null ) && ( this._collection.Count > 0 ) ) {
                 this._collection.CopyTo( items, index );
             }
             else if ( this._count > 0 ) {
@@ -68,7 +65,7 @@ namespace Librainian.Collections {
             }
         }
 
-        internal T[] ToArray( ) {
+        internal T[] ToArray() {
             var count = this.Count;
             if ( count == 0 ) {
                 return new T[ 0 ];
@@ -84,12 +81,12 @@ namespace Librainian.Collections {
             }
             var list = this._collection as List<T>;
             if ( list != null ) {
-                return list.ToArray( );
+                return list.ToArray();
             }
 
             var ac = this._collection as AbstractCollection<T>;
             if ( ac != null ) {
-                return ac.ToArray( );
+                return ac.ToArray();
             }
 
             destinationArray = new T[ count ];

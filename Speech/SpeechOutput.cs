@@ -1,23 +1,25 @@
-﻿#region License & Information
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/SpeechOutput.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
-#endregion
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/SpeechOutput.cs" was last cleaned by Rick on 2015/06/12 at 3:13 PM
 
 namespace Librainian.Speech {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -25,20 +27,17 @@ namespace Librainian.Speech {
     using System.Threading;
     using System.Windows.Forms;
     using JetBrains.Annotations;
-    using Threading;
 
     public static class SpeechExtensions {
 
-        /// <summary>
-        /// 
-        /// </summary>
+        /// <summary></summary>
         /// <param name="message"></param>
         /// <param name="sayAs"></param>
         /// <param name="emphasis"></param>
         /// <param name="promptRate"></param>
         /// <param name="volume"></param>
-        public static void Speak( this String message, SayAs sayAs = SayAs.Text, PromptEmphasis emphasis = PromptEmphasis.None, PromptRate promptRate = PromptRate.Medium, PromptVolume volume = PromptVolume.Soft ) {
-            var promptBuilder = new PromptBuilder( );   //7.5
+        public static void Speak(this String message, SayAs sayAs = SayAs.Text, PromptEmphasis emphasis = PromptEmphasis.None, PromptRate promptRate = PromptRate.Medium, PromptVolume volume = PromptVolume.Soft) {
+            var promptBuilder = new PromptBuilder(); //7.5
 
             var promptStyle = new PromptStyle {
                 Volume = volume,
@@ -47,55 +46,68 @@ namespace Librainian.Speech {
             };
             promptBuilder.StartStyle( promptStyle );
             promptBuilder.AppendTextWithHint( message, sayAs );
-            promptBuilder.EndStyle( );
+            promptBuilder.EndStyle();
 
             //using (var speechSynthesizer = new SpeechSynthesizer( )) {
-            var speechSynthesizer = new SpeechSynthesizer( );
+            var speechSynthesizer = new SpeechSynthesizer();
             speechSynthesizer.SpeakAsync( promptBuilder );
+
             //}
         }
-
     }
 
-    /// <summary>
-    ///     Use whatever TTS engine is available...
-    /// </summary>
+    /// <summary>Use whatever TTS engine is available...</summary>
     public sealed class SpeechOutput {
+
         [CanBeNull]
-        private SpeechSynthesizer SpeechSynthesizer { get; set; }
-
-        public void Initialize( ) {
-            this.SpeechSynthesizer = new SpeechSynthesizer( );
-            this.SpeechSynthesizer.SelectVoiceByHints( VoiceGender.Female, VoiceAge.Teen );
+        private SpeechSynthesizer SpeechSynthesizer {
+            get; set;
         }
 
-        public IEnumerable<InstalledVoice> GetVoices( ) {
-            var speechSynthesizer = this.SpeechSynthesizer;
-            return speechSynthesizer?.GetInstalledVoices( ) ?? Enumerable.Empty<InstalledVoice>( );
-        }
+        public void AttachEvents(Action<EventArgs> speechFeedbackEvent = null) {
+            try {
+                if ( null == speechFeedbackEvent ) {
+                    return;
+                }
 
-        /// <summary>
-        ///     Pumps message loop while Talking
-        /// </summary>
-        public void Wait( ) {
-            while ( this.IsTalking( ) ) {
-                Thread.Yield( );
-                Application.DoEvents( );
+                var speechSynthesizer = this.SpeechSynthesizer;
+                if ( speechSynthesizer == null ) {
+                    return;
+                }
+
+                speechSynthesizer.SpeakStarted += (sender, e) => speechFeedbackEvent( e );
+                speechSynthesizer.SpeakStarted += (sender, e) => speechFeedbackEvent( e );
+                speechSynthesizer.SpeakProgress += (sender, e) => speechFeedbackEvent( e );
+                speechSynthesizer.PhonemeReached += (sender, e) => speechFeedbackEvent( e );
+                speechSynthesizer.SpeakCompleted += (sender, e) => speechFeedbackEvent( e );
+                speechSynthesizer.StateChanged += (sender, e) => speechFeedbackEvent( e );
+            }
+            catch ( Exception exception ) {
+                exception.More();
             }
         }
 
-        public Boolean IsTalking( ) {
+        public IEnumerable<InstalledVoice> GetVoices() {
             var speechSynthesizer = this.SpeechSynthesizer;
-            return speechSynthesizer != null && speechSynthesizer.State == SynthesizerState.Speaking;
+            return speechSynthesizer?.GetInstalledVoices() ?? Enumerable.Empty<InstalledVoice>();
+        }
+
+        public void Initialize() {
+            this.SpeechSynthesizer = new SpeechSynthesizer();
+            this.SpeechSynthesizer.SelectVoiceByHints( VoiceGender.Female, VoiceAge.Teen );
+        }
+
+        public Boolean IsTalking() {
+            var speechSynthesizer = this.SpeechSynthesizer;
+            return ( speechSynthesizer != null ) && ( speechSynthesizer.State == SynthesizerState.Speaking );
         }
 
         /// <summary>
-        ///     Start speaking ASAP
-        ///     Start speaking (optionally interrupting anything already being said).
+        /// Start speaking ASAP Start speaking (optionally interrupting anything already being said).
         /// </summary>
         /// <param name="message"></param>
         /// <param name="interruptTalking"></param>
-        public void Speak( [CanBeNull] String message, Boolean interruptTalking = false ) {
+        public void Speak([CanBeNull] String message, Boolean interruptTalking = false) {
             try {
                 if ( null == this.SpeechSynthesizer ) {
                     return;
@@ -103,8 +115,9 @@ namespace Librainian.Speech {
                 if ( String.IsNullOrEmpty( message ) ) {
                     return;
                 }
+
                 // ReSharper disable once PossibleNullReferenceException
-                message = message.Trim( );
+                message = message.Trim();
 
                 if ( String.IsNullOrEmpty( message ) ) {
                     return;
@@ -120,48 +133,33 @@ namespace Librainian.Speech {
                     message = message.Replace( "AIBrain", "A-I-Brain" ); //HACK ugh.
                 }
 
-                message = message.Trim( );
+                message = message.Trim();
 
                 if ( interruptTalking /*&& this.IsTalking()*/ ) {
-                    this.SpeechSynthesizer.SpeakAsyncCancelAll( );
+                    this.SpeechSynthesizer.SpeakAsyncCancelAll();
                 }
                 this.SpeechSynthesizer.Speak( message );
             }
             catch ( Exception exception ) {
-                exception.More( );
+                exception.More();
             }
         }
 
-        public void Start( ) { }
+        public void Start() {
+        }
 
-        public void Stop( ) {
+        public void Stop() {
             var speechSynthesizer = this.SpeechSynthesizer;
             if ( speechSynthesizer != null ) {
-                speechSynthesizer.SpeakAsyncCancelAll( );
+                speechSynthesizer.SpeakAsyncCancelAll();
             }
         }
 
-
-        public void AttachEvents( Action<EventArgs> speechFeedbackEvent = null ) {
-            try {
-                if ( null == speechFeedbackEvent ) {
-                    return;
-                }
-
-                var speechSynthesizer = this.SpeechSynthesizer;
-                if ( speechSynthesizer == null ) {
-                    return;
-                }
-
-                speechSynthesizer.SpeakStarted += ( sender, e ) => speechFeedbackEvent( e );
-                speechSynthesizer.SpeakStarted += ( sender, e ) => speechFeedbackEvent( e );
-                speechSynthesizer.SpeakProgress += ( sender, e ) => speechFeedbackEvent( e );
-                speechSynthesizer.PhonemeReached += ( sender, e ) => speechFeedbackEvent( e );
-                speechSynthesizer.SpeakCompleted += ( sender, e ) => speechFeedbackEvent( e );
-                speechSynthesizer.StateChanged += ( sender, e ) => speechFeedbackEvent( e );
-            }
-            catch ( Exception exception ) {
-                exception.More( );
+        /// <summary>Pumps message loop while Talking</summary>
+        public void Wait() {
+            while ( this.IsTalking() ) {
+                Thread.Yield();
+                Application.DoEvents();
             }
         }
     }

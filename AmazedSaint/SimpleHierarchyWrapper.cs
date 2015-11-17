@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,14 +10,13 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/SimpleHierarchyWrapper.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-
-#endregion License & Information
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/SimpleHierarchyWrapper.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
 
 namespace Librainian.AmazedSaint {
 
@@ -25,15 +24,10 @@ namespace Librainian.AmazedSaint {
     using System.Collections.Generic;
     using System.Linq;
 
-    /// <summary>
-    /// A concrete hierarchy wrapper
-    /// </summary>
+    /// <summary>A concrete hierarchy wrapper</summary>
     public class SimpleHierarchyWrapper : IElasticHierarchyWrapper {
-        private readonly Dictionary<String, ElasticObject> _attributes = new Dictionary<String, ElasticObject>( );
-
-        private readonly Dictionary<String, List<ElasticObject>> _elements = new Dictionary<String, List<ElasticObject>>( );
-
-        #region IElasticHierarchyWrapper Members
+        private readonly Dictionary<String, ElasticObject> _attributes = new Dictionary<String, ElasticObject>();
+        private readonly Dictionary<String, List<ElasticObject>> _elements = new Dictionary<String, List<ElasticObject>>();
 
         public IEnumerable<KeyValuePair<String, ElasticObject>> Attributes => this._attributes;
 
@@ -44,34 +38,42 @@ namespace Librainian.AmazedSaint {
             }
         }
 
-        public object InternalContent { get; set; }
+        public Object InternalContent {
+            get; set;
+        }
 
-        public String InternalName { get; set; }
+        public String InternalName {
+            get; set;
+        }
 
-        public ElasticObject InternalParent { get; set; }
+        public ElasticObject InternalParent {
+            get; set;
+        }
 
-        public object InternalValue { get; set; }
+        public Object InternalValue {
+            get; set;
+        }
 
-        public void AddAttribute( String key, ElasticObject value ) => this._attributes.Add( key, value );
+        public void AddAttribute(String key, ElasticObject value) => this._attributes.Add( key, value );
 
-        public void AddElement( ElasticObject element ) {
+        public void AddElement(ElasticObject element) {
             if ( !this._elements.ContainsKey( element.InternalName ) ) {
-                this._elements[ element.InternalName ] = new List<ElasticObject>( );
+                this._elements[ element.InternalName ] = new List<ElasticObject>();
             }
             this._elements[ element.InternalName ].Add( element );
         }
 
-        public ElasticObject Attribute( String name ) => this.HasAttribute( name ) ? this._attributes[ name ] : null;
+        public ElasticObject Attribute(String name) => this.HasAttribute( name ) ? this._attributes[ name ] : null;
 
-        public ElasticObject Element( String name ) => this.Elements.FirstOrDefault( item => item.InternalName == name );
+        public ElasticObject Element(String name) => this.Elements.FirstOrDefault( item => item.InternalName == name );
 
-        public object GetAttributeValue( String name ) => this._attributes[ name ].InternalValue;
+        public Object GetAttributeValue(String name) => this._attributes[ name ].InternalValue;
 
-        public Boolean HasAttribute( String name ) => this._attributes.ContainsKey( name );
+        public Boolean HasAttribute(String name) => this._attributes.ContainsKey( name );
 
-        public void RemoveAttribute( String key ) => this._attributes.Remove( key );
+        public void RemoveAttribute(String key) => this._attributes.Remove( key );
 
-        public void RemoveElement( ElasticObject element ) {
+        public void RemoveElement(ElasticObject element) {
             if ( !this._elements.ContainsKey( element.InternalName ) ) {
                 return;
             }
@@ -80,8 +82,6 @@ namespace Librainian.AmazedSaint {
             }
         }
 
-        public void SetAttributeValue( String name, object obj ) => this._attributes[ name ].InternalValue = obj;
-
-        #endregion IElasticHierarchyWrapper Members
+        public void SetAttributeValue(String name, Object obj) => this._attributes[ name ].InternalValue = obj;
     }
 }

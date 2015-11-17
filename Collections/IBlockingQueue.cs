@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,14 +10,13 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/IBlockingQueue.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-
-#endregion License & Information
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/IBlockingQueue.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
 
 namespace Librainian.Collections {
 
@@ -33,9 +32,9 @@ namespace Librainian.Collections {
     /// <para>
     /// <see cref="IBlockingQueue{T}" /> methods come in four forms, with different ways of handling
     /// operations that cannot be satisfied immediately, but may be satisfied at some point in the
-    /// future: <list type="bullet"><item> one throws an exception, </item><item> the second returns
-    /// a special value (either <c>default(T)</c> or <see langword="false" />, depending on the
-    /// operation), </item><item> the third blocks the current thread indefinitely until the
+    /// future: <list type="bullet"><item>one throws an exception,</item><item> the second returns a
+    /// special value (either <c>default(T)</c> or <see langword="false" />, depending on the
+    /// operation) , </item><item> the third blocks the current thread indefinitely until the
     /// operation can succeed, and </item><item> the fourth blocks for only a given maximum time
     /// limit before giving up. </item></list>
     /// </para>
@@ -140,7 +139,7 @@ namespace Librainian.Collections {
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
         /// <seealso cref="DrainTo(ICollection{T},int)" />
         /// <seealso cref="IQueue{T}.Drain(System.Action{T},int)" />
-        int DrainTo( ICollection<T> collection );
+        Int32 DrainTo(ICollection<T> collection);
 
         /// <summary>
         /// Removes all available elements that meet the criteria defined by
@@ -173,7 +172,7 @@ namespace Librainian.Collections {
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
         /// <seealso cref="DrainTo(ICollection{T},int)" />
         /// <seealso cref="IQueue{T}.Drain(System.Action{T},int)" />
-        int DrainTo( ICollection<T> collection, Predicate<T> predicate );
+        Int32 DrainTo(ICollection<T> collection, Predicate<T> predicate);
 
         /// <summary>
         /// Removes at most the given number of available elements from this queue and adds them to
@@ -206,7 +205,7 @@ namespace Librainian.Collections {
         /// <seealso cref="DrainTo(ICollection{T})" />
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
         /// <seealso cref="IQueue{T}.Drain(System.Action{T},int)" />
-        int DrainTo( ICollection<T> collection, int maxElements );
+        Int32 DrainTo(ICollection<T> collection, Int32 maxElements);
 
         /// <summary>
         /// Removes at most the given number of available elements that meet the criteria defined by
@@ -240,7 +239,7 @@ namespace Librainian.Collections {
         /// <seealso cref="DrainTo(ICollection{T})" />
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
         /// <seealso cref="IQueue{T}.Drain(System.Action{T},int)" />
-        int DrainTo( ICollection<T> collection, int maxElements, Predicate<T> predicate );
+        Int32 DrainTo(ICollection<T> collection, Int32 maxElements, Predicate<T> predicate);
 
         /// <summary>
         /// Inserts the specified element into this queue, waiting up to the specified wait time if
@@ -260,7 +259,7 @@ namespace Librainian.Collections {
         /// If some property of the supplied <paramref name="element" /> prevents it from being
         /// added to this queue.
         /// </exception>
-        Boolean Offer( T element, TimeSpan duration );
+        Boolean Offer(T element, TimeSpan duration);
 
         /// <summary>
         /// Retrieves and removes the head of this queue, waiting up to the specified wait time if
@@ -274,7 +273,7 @@ namespace Librainian.Collections {
         /// <c>false</c> if the queue is still empty after waited for the time specified by the
         /// <paramref name="duration" />. Otherwise <c>true</c>.
         /// </returns>
-        Boolean Poll( TimeSpan duration, out T element );
+        Boolean Poll(TimeSpan duration, out T element);
 
         /// <summary>
         /// Inserts the specified element into this queue, waiting if necessary for space to become available.
@@ -285,13 +284,13 @@ namespace Librainian.Collections {
         /// If some property of the supplied <paramref name="element" /> prevents it from being
         /// added to this queue.
         /// </exception>
-        void Put( T element );
+        void Put(T element);
 
         /// <summary>
         /// Retrieves and removes the head of this queue, waiting if necessary until an element
         /// becomes available.
         /// </summary>
         /// <returns>the head of this queue</returns>
-        T Take( );
+        T Take();
     }
 }

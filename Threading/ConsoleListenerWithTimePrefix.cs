@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,40 +10,31 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian 2015/ConsoleListenerWithTimePrefix.cs" was last cleaned by aibra_000 on 2015/03/31 at
-// 6:04 PM
-
-#endregion License & Information
+// "Librainian/ConsoleListenerWithTimePrefix.cs" was last cleaned by Rick on 2015/06/12 at 3:14 PM
 
 namespace Librainian.Threading {
 
     using System;
     using System.Diagnostics;
-    using System.Threading;
 
     public class ConsoleListenerWithTimePrefix : ConsoleTraceListener {
 
-        //TODO  http://msdn.microsoft.com/en-us/library/system.diagnostics.consoletracelistener(v=vs.110).aspx
+        //TODO  http://msdn.microsoft.com/en-us/Library/system.diagnostics.consoletracelistener(v=vs.110).aspx
 
-        public ConsoleListenerWithTimePrefix() : base( useErrorStream: true ) {
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether the trace listener is thread safe.
-        /// </summary>
+        /// <summary>Gets a value indicating whether the trace listener is thread safe.</summary>
         /// <returns>
         /// true if the trace listener is thread safe; otherwise, false. The default is false.
         /// </returns>
-        public override bool IsThreadSafe => true;
+        public override Boolean IsThreadSafe => true;
 
-        private static String HeaderTimeThread() => String.Format( "[{0:yyyy-MM-dd HH:mm:ss} ({1})] ", DateTime.Now, Thread.CurrentThread.ManagedThreadId );
+        public ConsoleListenerWithTimePrefix() : base( useErrorStream: true ) {
+        }
 
         /// <summary>
         /// Emits an error message and a detailed error message to the listener you create when you
@@ -51,17 +42,15 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="message">A message to emit.</param>
         /// <param name="detailMessage">A detailed message to emit.</param>
-        public override void Fail( String message, String detailMessage ) {
+        public override void Fail(String message, String detailMessage) {
             base.Fail( message, detailMessage );
             Flush();
         }
 
-        /// <summary>
-        /// Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer" />.
-        /// </summary>
+        /// <summary>Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer" />.</summary>
         /// <param name="message">A message to write.</param>
         /// <PermissionSet><IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true" /></PermissionSet>
-        public override void Write( string message ) {
+        public override void Write(String message) {
             Console.Write( message );
             Flush();
         }
@@ -74,10 +63,12 @@ namespace Librainian.Threading {
         /// <param name="message">A message to write.</param>
         /// <filterpriority>1</filterpriority>
         /// <PermissionSet><IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true" /></PermissionSet>
-        public override void WriteLine( String message ) {
-            Write( HeaderTimeThread() );
+        public override void WriteLine(String message) {
+            //Write( HeaderTimeThread() );
             Console.WriteLine( message );
             Flush();
         }
+
+        //private static String HeaderTimeThread() => $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} ({Thread.CurrentThread.ManagedThreadId})] ";
     }
 }

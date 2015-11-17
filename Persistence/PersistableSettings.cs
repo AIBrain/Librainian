@@ -17,18 +17,10 @@
 
 //namespace Librainian.Persistence {
 
-//    using System;
-//    using System.Diagnostics;
-    
-//    using System.IO;
-//    using System.Windows.Forms;
-//    using Controls;
-//    using Extensions;
-//    using IO;
-//    using JetBrains.Annotations;
-//    using Parsing;
-//    using Properties;
-//    using Threading;
+// using System; using System.Diagnostics;
+
+// using System.IO; using System.Windows.Forms; using Controls; using Extensions; using IO; using
+// JetBrains.Annotations; using Parsing; using Properties; using Threading;
 
 ////    public class PersistableSettings {
 
@@ -48,7 +40,7 @@
 ////        /// <summary>
 ////        /// ask user for folder/network path where to store
 ////        /// </summary>
-////        [UsedImplicitly]
+////
 ////        public void AskUserForStorageFolder() {
 ////            var folderBrowserDialog = new FolderBrowserDialog {
 ////                ShowNewFolderButton = true,

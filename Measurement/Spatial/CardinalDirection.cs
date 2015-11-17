@@ -1,39 +1,33 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/CardinalDirections.cs" was last cleaned by Rick on 2014/09/29 at 1:41 PM
-
-#endregion License & Information
+// 
+// "Librainian/CardinalDirection.cs" was last cleaned by Rick on 2015/06/12 at 3:02 PM
 
 namespace Librainian.Measurement.Spatial {
 
     public enum CardinalDirection {
 
-        /// <summary>
-        /// 0 (equal to 360)
-        /// </summary>
+        /// <summary>0 (equal to 360)</summary>
         North = 0,
 
-        /// <summary>
-        /// 22
-        /// </summary>
+        /// <summary>22</summary>
         NorthNorthEast = ( North + NorthEast ) / 2,
+
         NorthEast = ( North + East ) / 2,
         EastNorthEast = ( East + NorthEast ) / 2,
         East = 90,
@@ -49,9 +43,7 @@ namespace Librainian.Measurement.Spatial {
         NorthWest = ( FullNorth + West ) / 2,
         NorthNorthWest = ( FullNorth + NorthWest ) / 2,
 
-        /// <summary>
-        /// 360
-        /// </summary>
+        /// <summary>360</summary>
         FullNorth = 360,
     }
 }

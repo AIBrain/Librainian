@@ -1,4 +1,6 @@
-﻿#region License & Information
+﻿
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
@@ -7,31 +9,33 @@
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
 // 
-// "Librainian/YANWiki.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
-#endregion
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/YANWiki.cs" was last cleaned by Rick on 2015/06/12 at 2:56 PM
 
 namespace Librainian.Internet.Wiki {
     using System;
     using System.Xml;
     using Parsing;
 
-    public class YANWiki {
-        public static Boolean doesWikiRespond {
-            get {
+    public class YanWiki {
+        public static Boolean DoesWikiRespond
+        {
+            get
+            {
                 var doc = Http.Get( BaseQuery ).ToXmlDoc();
                 return BaseResponse.OuterXml.Equals( doc.OuterXml );
             }
         }
 
-        private static XmlDocument BaseResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
-
         private static String BaseQuery => @"http://en.wiktionary.org/w/api.php?action=query&format=xml&prop=info&search=";
+
+        private static XmlDocument BaseResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
     }
 }

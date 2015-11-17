@@ -1,31 +1,30 @@
-﻿#region License & Information
-
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-//
+// 
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+// 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-//
-// "Librainian/AbandonableTask.cs" was last cleaned by Rick on 2014/08/11 at 12:40 AM
-
-#endregion License & Information
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// 
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/AbandonableTask.cs" was last cleaned by Rick on 2015/06/12 at 3:14 PM
 
 namespace Librainian.Threading {
+
     using System;
     using System.Threading;
     using System.Threading.Tasks;
 
-    /// <summary>
-    /// </summary>
+    /// <summary></summary>
     /// <see cref="http://stackoverflow.com/a/4749401/956364" />
     public sealed class AbandonableTask {
         private readonly Action<Task> _afterComplete;
@@ -33,7 +32,7 @@ namespace Librainian.Threading {
         private readonly Action _blockingWork;
         private readonly CancellationToken _cancellationToken;
 
-        private AbandonableTask( CancellationToken cancellationToken, Action beginWork, Action blockingWork, Action<Task> afterComplete ) {
+        private AbandonableTask(CancellationToken cancellationToken, Action beginWork, Action blockingWork, Action<Task> afterComplete) {
             if ( blockingWork == null ) {
                 throw new ArgumentNullException( nameof( blockingWork ) );
             }
@@ -44,7 +43,7 @@ namespace Librainian.Threading {
             this._afterComplete = afterComplete;
         }
 
-        public static Task Start( CancellationToken cancellationToken, Action blockingWork, Action beginWork = null, Action<Task> afterComplete = null ) {
+        public static Task Start(CancellationToken cancellationToken, Action blockingWork, Action beginWork = null, Action<Task> afterComplete = null) {
             if ( blockingWork == null ) {
                 throw new ArgumentNullException( nameof( blockingWork ) );
             }
@@ -64,7 +63,7 @@ namespace Librainian.Threading {
             innerTask.Start();
 
             innerTask.Wait( this._cancellationToken );
-            if ( innerTask.IsCompleted && this._afterComplete != null ) {
+            if ( innerTask.IsCompleted && ( this._afterComplete != null ) ) {
                 this._afterComplete( innerTask );
             }
         }

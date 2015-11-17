@@ -12,7 +12,7 @@ var eventEmitter = new events.EventEmitter();
 var timerRefs = [];
 //when [does?] nodejs do garbage collection?
 
-String.prototype.format = function() {
+String.prototype.format = function () {
     var formatted = this;
     for (arg in arguments) {
         formatted = formatted.replace("{" + arg + "}", arguments[arg]);
@@ -40,16 +40,16 @@ function random(min, max) {
 
 var DisplayID = 0;
 
-function elapsed(createID) {
+function elapsed(createId) {
     DisplayID++;
     var rand = random(0, 100).toFixed(0);
-    console.log("Random={0}\tCreateId={1}\tDisplayId={2}".format(rand, createID, DisplayID));
+    console.log("Random={0}\tCreateId={1}\tDisplayId={2}".format(rand, createId, DisplayID));
     if (DisplayID >= Config.TotalTimers) {
         eventEmitter.emit('endDemo');
     }
 }
 
-eventEmitter.on('startDemo', function() {
+eventEmitter.on('startDemo', function () {
     for (var createid = 0; createid < Config.TotalTimers; createid++) {
         clearTimeout(timerRefs[createid]);
         var delay = random(Config.ShortestTimer, Config.LongestTimer);
@@ -57,7 +57,7 @@ eventEmitter.on('startDemo', function() {
     }
 });
 
-eventEmitter.on('endDemo', function() {
+eventEmitter.on('endDemo', function () {
     var endingTime = new Date().getTime();
     var elapsedTime = (endingTime - startingTime) / 1000.0;
     console.log("Total time {0} seconds.".format(elapsedTime.toFixed(2)));

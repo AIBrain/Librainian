@@ -1,5 +1,7 @@
 ﻿#region License & Information
 
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,14 +12,13 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian 2015/Sentence.cs" was last cleaned by Rick on 2015/01/23 at 4:15 PM
+// "Librainian/Sentence.cs" was last cleaned by Rick on 2015/06/12 at 2:59 PM
 #endregion License & Information
 
 namespace Librainian.Linguistics {
@@ -32,19 +33,20 @@ namespace Librainian.Linguistics {
     using Parsing;
 
     /// <summary>
-    /// A <see cref="Sentence"/> is an ordered sequence of <see cref="Word"/> .
+    /// A <see cref="Sentence" /> is an ordered sequence of <see cref="Word" /> .
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Sentence_(linguistics)"></seealso>
     /// <seealso cref="Paragraph"></seealso>
-    [DataContract(IsReference = true)]
+    [DataContract( IsReference = true )]
     public sealed class Sentence : IEquatable<Sentence>, IEnumerable<Word> {
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
+        public const UInt64 Level = Word.Level << 1;
+
+        /// <summary></summary>
         public static readonly Sentence EndOfLine = new Sentence( "\0" );
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         [NotNull]
         [DataMember]
         private readonly List<Word> _tokens = new List<Word>();
@@ -53,17 +55,14 @@ namespace Librainian.Linguistics {
             Level.Should().BeGreaterThan( Word.Level );
         }
 
-        /// <summary>
-        /// A <see cref="Sentence"/> is an ordered sequence of words.
-        /// </summary>
+        /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
         /// <param name="sentence"></param>
-        public Sentence( [NotNull] String sentence ) : this( sentence.ToWords().Select( word => new Word( word ) ) ) { }
+        public Sentence([NotNull] String sentence) : this( sentence.ToWords().Select( word => new Word( word ) ) ) {
+        }
 
-        /// <summary>
-        /// A <see cref="Sentence"/> is an ordered sequence of words.
-        /// </summary>
+        /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
         /// <param name="words"></param>
-        public Sentence( [NotNull] IEnumerable<Word> words ) {
+        public Sentence([NotNull] IEnumerable<Word> words) {
             if ( words == null ) {
                 throw new ArgumentNullException( nameof( words ) );
             }
@@ -71,22 +70,18 @@ namespace Librainian.Linguistics {
             this._tokens.Fix();
         }
 
-        /// <summary>
-        /// </summary>
-        public const UInt64 Level = Word.Level << 1;
-
         public IEnumerator<Word> GetEnumerator() => this._tokens.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        public Boolean Equals( [NotNull] Sentence other ) {
+        public Boolean Equals([NotNull] Sentence other) {
             if ( other == null ) {
                 throw new ArgumentNullException( nameof( other ) );
             }
             return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
 
-        public static implicit operator String( Sentence sentence ) => sentence._tokens.ToStrings( " " );
+        public static implicit operator String(Sentence sentence) => sentence._tokens.ToStrings( " " );
 
         /*
                 public IEnumerable<Tuple<UInt64, String>> Possibles() {

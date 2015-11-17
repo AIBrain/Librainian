@@ -1,23 +1,25 @@
-#region License & Information
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 // 
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/C5Random.cs" was last cleaned by Rick on 2014/08/11 at 12:41 AM
-#endregion
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/C5Random.cs" was last cleaned by Rick on 2015/06/12 at 3:12 PM
 
 namespace Librainian.Security {
+
     using System;
     using System.Threading;
     using JetBrains.Annotations;
@@ -44,36 +46,31 @@ namespace Librainian.Security {
 */
 
     /// <summary>
-    ///     <para>
-    ///         A modern random number generator based on G. Marsaglia:
-    ///         Seeds for Random Number Generators, Communications of the
-    ///         ACM 46, 5 (May 2003) 90-93; and a posting by Marsaglia to
-    ///         comp.lang.c on 2003-04-03.
-    ///     </para>
+    /// <para>
+    /// A modern random number generator based on G. Marsaglia: Seeds for Random Number Generators,
+    /// Communications of the ACM 46, 5 (May 2003) 90-93; and a posting by Marsaglia to comp.lang.c
+    /// on 2003-04-03.
+    /// </para>
     /// </summary>
     /// <remarks>Modified by Rick to be threadsafe. I hope.</remarks>
-    [UsedImplicitly]
     public class C5Random : Random {
-        private readonly ThreadLocal< uint > _c = new ThreadLocal< uint >( () => 362436, false );
-        private readonly ThreadLocal< uint > _i = new ThreadLocal< uint >( () => 15, false );
-        private readonly ThreadLocal< uint[] > _q = new ThreadLocal< uint[] >( () => new uint[16], false );
+        private readonly ThreadLocal<UInt32> _c = new ThreadLocal<UInt32>( () => 362436, false );
+        private readonly ThreadLocal<UInt32> _i = new ThreadLocal<UInt32>( () => 15, false );
+        private readonly ThreadLocal<UInt32[]> _q = new ThreadLocal<UInt32[]>( () => new UInt32[ 16 ], false );
 
-        /// <summary>
-        ///     Create a random number generator seed by system time.
-        /// </summary>
-        public C5Random() : this( DateTime.Now.Ticks ) { }
+        /// <summary>Create a random number generator seed by system time.</summary>
+        public C5Random() : this( DateTime.Now.Ticks ) {
+        }
 
-        /// <summary>
-        ///     Create a random number generator with a given seed
-        /// </summary>
+        /// <summary>Create a random number generator with a given seed</summary>
         /// <exception cref="ArgumentException">If seed is zero</exception>
         /// <param name="seed">The seed</param>
-        public C5Random( long seed ) {
+        public C5Random(Int64 seed) {
             if ( seed == 0 ) {
                 throw new ArgumentException( "Seed must be non-zero" );
             }
 
-            var j = ( uint ) ( seed & 0xFFFFFFFF );
+            var j = ( UInt32 )( seed & 0xFFFFFFFF );
 
             for ( var i = 0; i < 16; i++ ) {
                 j ^= j << 13;
@@ -82,15 +79,15 @@ namespace Librainian.Security {
                 this._q.Value[ i ] = j;
             }
 
-            this._q.Value[ 15 ] = ( uint ) ( seed ^ ( seed >> 32 ) );
+            this._q.Value[ 15 ] = ( UInt32 )( seed ^ ( seed >> 32 ) );
         }
 
-        /// <summary>
-        ///     Create a random number generator with a specified internal start state.
-        /// </summary>
+        /// <summary>Create a random number generator with a specified internal start state.</summary>
         /// <exception cref="ArgumentException">If Q is not of length exactly 16</exception>
-        /// <param name="q">The start state. Must be a collection of random bits given by an array of exactly 16 uints.</param>
-        public C5Random( [NotNull] uint[] q ) {
+        /// <param name="q">
+        /// The start state. Must be a collection of random bits given by an array of exactly 16 uints.
+        /// </param>
+        public C5Random([NotNull] UInt32[] q) {
             if ( q == null ) {
                 throw new ArgumentNullException( nameof( q ) );
             }
@@ -100,26 +97,62 @@ namespace Librainian.Security {
             Array.Copy( q, this._q.Value, this._q.Value.Length );
         }
 
-        /// <summary>
-        ///     Get a new random System.Double value
-        /// </summary>
+        /// <summary>Get a new random System.Int32 value</summary>
+        /// <returns>The random int</returns>
+        public override Int32 Next() => ( Int32 )this.Cmwc();
+
+        /// <summary>Get a random integer between two given bounds</summary>
+        /// <exception cref="ArgumentException">If max is less than min</exception>
+        /// <param name="min">The lower bound (inclusive)</param>
+        /// <param name="max">The upper bound (exclusive)</param>
+        /// <returns></returns>
+        public override Int32 Next(Int32 min, Int32 max) {
+            if ( min > max ) {
+                throw new ArgumentException( "min must be less than or equal to max" );
+            }
+
+            return min + ( Int32 )( this.Cmwc() / 4294967296.0 * ( max - min ) );
+        }
+
+        /// <summary>Get a random non-negative integer less than a given upper bound</summary>
+        /// <exception cref="ArgumentException">If max is negative</exception>
+        /// <param name="max">The upper bound (exclusive)</param>
+        /// <returns></returns>
+        public override Int32 Next(Int32 max) {
+            if ( max < 0 ) {
+                throw new ArgumentException( "max must be non-negative" );
+            }
+
+            return ( Int32 )( this.Cmwc() / 4294967296.0 * max );
+        }
+
+        /// <summary>Fill a array of byte with random bytes</summary>
+        /// <param name="buffer">The array to fill</param>
+        public override void NextBytes([NotNull] Byte[] buffer) {
+            if ( buffer == null ) {
+                throw new ArgumentNullException( nameof( buffer ) );
+            }
+            for ( Int32 i = 0, length = buffer.Length; i < length; i++ ) {
+                buffer[ i ] = ( Byte )this.Cmwc();
+            }
+        }
+
+        /// <summary>Get a new random System.Double value</summary>
+        /// <returns>The random Double</returns>
+        public override Double NextDouble() => this.Cmwc() / 4294967296.0;
+
+        /// <summary>Get a new random System.Double value</summary>
         /// <returns>The random Double</returns>
         protected override Double Sample() => this.NextDouble();
 
-        /// <summary>
-        ///     Get a new random System.Double value
-        /// </summary>
-        /// <returns>The random Double</returns>
-        public override Double NextDouble() => this.Cmwc()/4294967296.0;
-
-        private uint Cmwc() {
+        private UInt32 Cmwc() {
             const UInt64 a = 487198574UL;
-            const uint r = 0xfffffffe;
+            const UInt32 r = 0xfffffffe;
 
             this._i.Value = ( this._i.Value + 1 ) & 15;
-            var t = a*this._q.Value[ this._i.Value ] + this._c.Value;
-            this._c.Value = ( uint ) ( t >> 32 );
-            var x = ( uint ) ( t + this._c.Value );
+            var t = a * this._q.Value[ this._i.Value ] + this._c.Value;
+            this._c.Value = ( UInt32 )( t >> 32 );
+            var x = ( UInt32 )( t + this._c.Value );
             if ( x >= this._c.Value ) {
                 return this._q.Value[ this._i.Value ] = r - x;
             }
@@ -127,54 +160,6 @@ namespace Librainian.Security {
             this._c.Value++;
 
             return this._q.Value[ this._i.Value ] = r - x;
-        }
-
-        /// <summary>
-        ///     Get a new random System.Int32 value
-        /// </summary>
-        /// <returns>The random int</returns>
-        public override int Next() => ( int ) this.Cmwc();
-
-        /// <summary>
-        ///     Get a random integer between two given bounds
-        /// </summary>
-        /// <exception cref="ArgumentException">If max is less than min</exception>
-        /// <param name="min">The lower bound (inclusive)</param>
-        /// <param name="max">The upper bound (exclusive)</param>
-        /// <returns></returns>
-        public override int Next( int min, int max ) {
-            if ( min > max ) {
-                throw new ArgumentException( "min must be less than or equal to max" );
-            }
-
-            return min + ( int ) ( this.Cmwc()/4294967296.0*( max - min ) );
-        }
-
-        /// <summary>
-        ///     Get a random non-negative integer less than a given upper bound
-        /// </summary>
-        /// <exception cref="ArgumentException">If max is negative</exception>
-        /// <param name="max">The upper bound (exclusive)</param>
-        /// <returns></returns>
-        public override int Next( int max ) {
-            if ( max < 0 ) {
-                throw new ArgumentException( "max must be non-negative" );
-            }
-
-            return ( int ) ( this.Cmwc()/4294967296.0*max );
-        }
-
-        /// <summary>
-        ///     Fill a array of byte with random bytes
-        /// </summary>
-        /// <param name="buffer">The array to fill</param>
-        public override void NextBytes( [NotNull] byte[] buffer ) {
-            if ( buffer == null ) {
-                throw new ArgumentNullException( nameof( buffer ) );
-            }
-            for ( int i = 0, length = buffer.Length; i < length; i++ ) {
-                buffer[ i ] = ( byte ) this.Cmwc();
-            }
         }
     }
 }

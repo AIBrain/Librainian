@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,14 +10,13 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/Q.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
-
-#endregion License & Information
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/Q.cs" was last cleaned by Rick on 2015/06/12 at 2:51 PM
 
 namespace Librainian.Collections {
 
@@ -31,12 +30,10 @@ namespace Librainian.Collections {
     using System.Security.Permissions;
     using System.Threading;
 
-    [ComVisible(false)]
-
-    
-    [DebuggerDisplay("Count={Count}")]
+    [ComVisible( false )]
+    [DebuggerDisplay( "Count={Count}" )]
     [Serializable]
-    [HostProtection(SecurityAction.LinkDemand, ExternalThreading = true, Synchronization = true)]
+    [HostProtection( SecurityAction.LinkDemand, ExternalThreading = true, Synchronization = true )]
     public class Q<T> : IProducerConsumerCollection<T> {
 
         [NonSerialized]
@@ -47,28 +44,17 @@ namespace Librainian.Collections {
         [NonSerialized]
         private Segment _tail;
 
-        public Q( ) {
-            this._head = this._tail = new Segment( 0L );
-        }
-
-        public Q( IEnumerable<T> collection ) {
-            if ( collection == null ) {
-                throw new ArgumentNullException( nameof( collection ) );
-            }
-            this.InitializeFromCollection( collection );
-        }
-
-        public int Count {
+        public Int32 Count {
             get {
                 Segment head;
                 Segment tail;
-                int headLow;
-                int tailHigh;
+                Int32 headLow;
+                Int32 tailHigh;
                 this.GetHeadTailPositions( out head, out tail, out headLow, out tailHigh );
                 if ( head == tail ) {
                     return tailHigh - headLow + 1;
                 }
-                return 32 - headLow + 32 * ( int )( tail._index - head._index - 1L ) + ( tailHigh + 1 );
+                return 32 - headLow + 32 * ( Int32 )( tail.Index - head.Index - 1L ) + tailHigh + 1;
             }
         }
 
@@ -86,7 +72,7 @@ namespace Librainian.Collections {
                     if ( segment.Next == null ) {
                         return true;
                     }
-                    Thread.Yield( );
+                    Thread.Yield();
                 }
                 return false;
             }
@@ -94,28 +80,41 @@ namespace Librainian.Collections {
 
         Boolean ICollection.IsSynchronized => false;
 
-        object ICollection.SyncRoot { get { throw new NotSupportedException( ); } }
+        Object ICollection.SyncRoot {
+            get {
+                throw new NotSupportedException();
+            }
+        }
 
-        public void CopyTo( T[] array, int index ) {
+        public Q() {
+            this._head = this._tail = new Segment( 0L );
+        }
+
+        public Q(IEnumerable<T> collection) {
+            if ( collection == null ) {
+                throw new ArgumentNullException( nameof( collection ) );
+            }
+            this.InitializeFromCollection( collection );
+        }
+
+        public void CopyTo(T[] array, Int32 index) {
             if ( array == null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
-            this.ToList( ).CopyTo( array, index );
+            this.ToList().CopyTo( array, index );
         }
 
-        public void Enqueue( T item ) {
+        public void Enqueue(T item) {
             while ( !this._tail.TryAppend( item, ref this._tail ) ) {
-                Thread.Yield( );
+                Thread.Yield();
             }
         }
 
-        // ReSharper restore RemoveToList.1
-        public IEnumerator<T> GetEnumerator( ) => this.ToList( ).GetEnumerator( );
+        public IEnumerator<T> GetEnumerator() => this.ToList().GetEnumerator();
 
-        // ReSharper disable RemoveToList.1
-        public T[] ToArray( ) => this.ToList( ).ToArray( );
+        public T[] ToArray() => this.ToList().ToArray();
 
-        public Boolean TryDequeue( out T result ) {
+        public Boolean TryDequeue(out T result) {
             while ( !this.IsEmpty ) {
                 if ( this._head.TryRemove( out result, ref this._head ) ) {
                     return true;
@@ -125,7 +124,7 @@ namespace Librainian.Collections {
             return false;
         }
 
-        public Boolean TryPeek( out T result ) {
+        public Boolean TryPeek(out T result) {
             while ( !this.IsEmpty ) {
                 if ( this._head.TryPeek( out result ) ) {
                     return true;
@@ -135,24 +134,24 @@ namespace Librainian.Collections {
             return false;
         }
 
-        public Boolean TryTake( out T item ) => this.TryDequeue( out item );
+        public Boolean TryTake(out T item) => this.TryDequeue( out item );
 
-        void ICollection.CopyTo( Array array, int index ) {
+        void ICollection.CopyTo(Array array, Int32 index) {
             if ( array == null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
-            this.ToArray( ).CopyTo( array, index );
+            this.ToArray().CopyTo( array, index );
         }
 
-        IEnumerator IEnumerable.GetEnumerator( ) => this.GetEnumerator( );
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        private void GetHeadTailPositions( out Segment head, out Segment tail, out int headLow, out int tailHigh ) {
+        private void GetHeadTailPositions(out Segment head, out Segment tail, out Int32 headLow, out Int32 tailHigh) {
             head = this._head;
             tail = this._tail;
             headLow = head.Low;
             tailHigh = tail.High;
-            while ( head != this._head || tail != this._tail || ( headLow != head.Low || tailHigh != tail.High ) || head._index > tail._index ) {
-                Thread.Yield( );
+            while ( ( head != this._head ) || ( tail != this._tail ) || ( headLow != head.Low ) || ( tailHigh != tail.High ) || ( head.Index > tail.Index ) ) {
+                Thread.Yield();
                 head = this._head;
                 tail = this._tail;
                 headLow = head.Low;
@@ -160,7 +159,7 @@ namespace Librainian.Collections {
             }
         }
 
-        private void InitializeFromCollection( IEnumerable<T> collection ) {
+        private void InitializeFromCollection(IEnumerable<T> collection) {
             this._head = this._tail = new Segment( 0L );
             var num = 0;
             foreach ( var obj in collection ) {
@@ -169,25 +168,25 @@ namespace Librainian.Collections {
                 if ( num < 32 ) {
                     continue;
                 }
-                this._tail = this._tail.UnsafeGrow( );
+                this._tail = this._tail.UnsafeGrow();
                 num = 0;
             }
         }
 
         [OnDeserialized]
-        private void OnDeserialized( StreamingContext context ) {
+        private void OnDeserialized(StreamingContext context) {
             this.InitializeFromCollection( this._serializationArray );
             this._serializationArray = null;
         }
 
         [OnSerializing]
-        private void OnSerializing( StreamingContext context ) => this._serializationArray = this.ToArray( );
+        private void OnSerializing(StreamingContext context) => this._serializationArray = this.ToArray();
 
-        private List<T> ToList( ) {
+        private List<T> ToList() {
             Segment head;
             Segment tail;
-            int headLow;
-            int tailHigh;
+            Int32 headLow;
+            Int32 tailHigh;
             this.GetHeadTailPositions( head: out head, tail: out tail, headLow: out headLow, tailHigh: out tailHigh );
             if ( head == tail ) {
                 return head.ToList( headLow, tailHigh );
@@ -200,46 +199,45 @@ namespace Librainian.Collections {
             return list;
         }
 
-        Boolean IProducerConsumerCollection<T>.TryAdd( T item ) {
+        Boolean IProducerConsumerCollection<T>.TryAdd(T item) {
             this.Enqueue( item );
             return true;
         }
 
         private sealed class Segment {
             public Segment Next;
-            internal readonly long _index;
+            internal readonly Int64 Index;
             private readonly T[] _array;
-            private readonly int[] _state;
-            private int _high;
+            private readonly Int32[] _state;
+            private Int32 _high;
+            private Int32 _low;
 
-            private int _low;
-
-            internal Segment( long index ) {
-                this._array = new T[ 32 ];
-                this._state = new int[ 32 ];
-                this._high = -1;
-                this._index = index;
-            }
-
-            public int High => Math.Min( this._high, 31 );
+            public Int32 High => Math.Min( this._high, 31 );
 
             public Boolean IsEmpty => this.Low > this.High;
 
-            public int Low => Math.Min( this._low, 32 );
+            public Int32 Low => Math.Min( this._low, 32 );
 
-            public List<T> ToList( int start, int end ) {
-                var list = new List<T>( );
+            internal Segment(Int64 index) {
+                this._array = new T[ 32 ];
+                this._state = new Int32[ 32 ];
+                this._high = -1;
+                this.Index = index;
+            }
+
+            public List<T> ToList(Int32 start, Int32 end) {
+                var list = new List<T>();
 
                 for ( var index = start; index <= end; ++index ) {
                     while ( this._state[ index ] == 0 ) {
-                        Thread.Yield( );
+                        Thread.Yield();
                     }
                     list.Add( this._array[ index ] );
                 }
                 return list;
             }
 
-            public Boolean TryAppend( T value, ref Segment tail ) {
+            public Boolean TryAppend(T value, ref Segment tail) {
                 if ( this._high >= 31 ) {
                     return false;
                 }
@@ -258,7 +256,7 @@ namespace Librainian.Collections {
                 return index <= 31;
             }
 
-            public Boolean TryPeek( out T result ) {
+            public Boolean TryPeek(out T result) {
                 result = default(T);
                 var low = this.Low;
                 if ( low > this.High ) {
@@ -266,29 +264,29 @@ namespace Librainian.Collections {
                 }
 
                 while ( this._state[ low ] == 0 ) {
-                    Thread.Yield( );
+                    Thread.Yield();
                 }
                 result = this._array[ low ];
                 return true;
             }
 
-            public Boolean TryRemove( out T result, ref Segment head ) {
+            public Boolean TryRemove(out T result, ref Segment head) {
                 var low = this.Low;
                 for ( var high = this.High; low <= high; high = this.High ) {
 #pragma warning disable 420
                     if ( Interlocked.CompareExchange( ref this._low, low + 1, low ) != low ) {
 #pragma warning restore 420
-                        Thread.Yield( );
+                        Thread.Yield();
                         low = this.Low;
                     }
                     else {
                         while ( this._state[ low ] == 0 ) {
-                            Thread.Yield( );
+                            Thread.Yield();
                         }
                         result = this._array[ low ];
                         if ( low + 1 >= 32 ) {
                             while ( this.Next == null ) {
-                                Thread.Yield( );
+                                Thread.Yield();
                             }
                             head = this.Next;
                         }
@@ -299,22 +297,24 @@ namespace Librainian.Collections {
                 return false;
             }
 
-            public void UnsafeAdd( T value ) {
+            public void UnsafeAdd(T value) {
                 ++this._high;
                 this._array[ this._high ] = value;
                 this._state[ this._high ] = 1;
             }
 
-            public Segment UnsafeGrow( ) {
-                var segment = new Segment( this._index + 1L );
+            public Segment UnsafeGrow() {
+                var segment = new Segment( this.Index + 1L );
                 this.Next = segment;
                 return segment;
             }
 
-            private void Grow( out Segment tail ) {
-                this.Next = new Segment( this._index + 1L );
+            private void Grow(out Segment tail) {
+                this.Next = new Segment( this.Index + 1L );
                 tail = this.Next;
             }
         }
+
+        // ReSharper restore RemoveToList.1 ReSharper disable RemoveToList.1
     }
 }

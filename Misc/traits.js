@@ -1,5 +1,4 @@
-﻿
-// Copyright (C) 2010 Google Inc.
+﻿// Copyright (C) 2010 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,18 +13,18 @@
 // limitations under the License.
 
 // See http://code.google.com/p/es-lab/wiki/Traits
-// for background on traits and a description of this library
+// for background on traits and a description of this Library
 
-var Trait = (function() {
+var Trait = (function () {
 
     // == Ancillary functions ==
 
-    var SUPPORTS_DEFINEPROP = (function() {
+    var supportsDefineprop = (function () {
         try {
             var test = {};
-            Object.defineProperty(test, 'x', { get: function() { return 0; } });
+            Object.defineProperty(test, 'x', { get: function () { return 0; } });
             return test.x === 0;
-        } catch(e) {
+        } catch (e) {
             return false;
         }
     })();
@@ -35,27 +34,27 @@ var Trait = (function() {
     // Hence, we need a more elaborate feature-test to see whether the
     // browser truly supports these methods:
 
-    function supportsGOPD() {
+    function supportsGopd() {
         try {
             if (Object.getOwnPropertyDescriptor) {
                 var test = { x: 0 };
                 return !!Object.getOwnPropertyDescriptor(test, 'x');
             }
-        } catch(e) {
+        } catch (e) {
         }
         return false;
     }
 
     ;
 
-    function supportsDP() {
+    function supportsDp() {
         try {
             if (Object.defineProperty) {
                 var test = {};
                 Object.defineProperty(test, 'x', { value: 0 });
                 return test.x === 0;
             }
-        } catch(e) {
+        } catch (e) {
         }
         return false;
     }
@@ -64,13 +63,12 @@ var Trait = (function() {
 
     var call = Function.prototype.call;
 
-
     // An ad hoc version of bind that only binds the 'this' parameter.
     var bindThis = Function.prototype.bind ?
-        function(fun, self) { return Function.prototype.bind.call(fun, self); } :
-        function(fun, self) {
+        function (fun, self) { return Function.prototype.bind.call(fun, self); } :
+        function (fun, self) {
 
-            function funcBound(var_args) {
+            function funcBound(varArgs) {
                 return fun.apply(self, arguments);
             }
 
@@ -83,18 +81,18 @@ var Trait = (function() {
     // feature testing such that traits.js runs on both ES3 and ES5
     var forEach = Array.prototype.forEach ?
         bindThis(call, Array.prototype.forEach) :
-        function(arr, fun) {
+        function (arr, fun) {
             for (var i = 0, len = arr.length; i < len; i++) {
                 fun(arr[i]);
             }
         };
 
-    var freeze = Object.freeze || function(obj) { return obj; };
-    var getPrototypeOf = Object.getPrototypeOf || function(obj) {
+    var freeze = Object.freeze || function (obj) { return obj; };
+    var getPrototypeOf = Object.getPrototypeOf || function (obj) {
         return Object.prototype;
     };
     var getOwnPropertyNames = Object.getOwnPropertyNames ||
-        function(obj) {
+        function (obj) {
             var props = [];
             for (var p in obj) {
                 if (hasOwnProperty(obj, p)) {
@@ -103,9 +101,9 @@ var Trait = (function() {
             }
             return props;
         };
-    var getOwnPropertyDescriptor = supportsGOPD() ?
+    var getOwnPropertyDescriptor = supportsGopd() ?
         Object.getOwnPropertyDescriptor :
-        function(obj, name) {
+        function (obj, name) {
             return {
                 value: obj[name],
                 enumerable: true,
@@ -113,20 +111,20 @@ var Trait = (function() {
                 configurable: true
             };
         };
-    var defineProperty = supportsDP() ? Object.defineProperty :
-        function(obj, name, pd) {
+    var defineProperty = supportsDp() ? Object.defineProperty :
+        function (obj, name, pd) {
             obj[name] = pd.value;
         };
     var defineProperties = Object.defineProperties ||
-        function(obj, propMap) {
+        function (obj, propMap) {
             for (var name in propMap) {
                 if (hasOwnProperty(propMap, name)) {
                     defineProperty(obj, name, propMap[name]);
                 }
             }
         };
-    var Object_create = Object.create ||
-        function(proto, propMap) {
+    var objectCreate = Object.create ||
+        function (proto, propMap) {
             var self;
 
             function dummy() {
@@ -141,9 +139,9 @@ var Trait = (function() {
             return self;
         };
     var getOwnProperties = Object.getOwnProperties ||
-        function(obj) {
+        function (obj) {
             var map = {};
-            forEach(getOwnPropertyNames(obj), function(name) {
+            forEach(getOwnPropertyNames(obj), function (name) {
                 map[name] = getOwnPropertyDescriptor(obj, name);
             });
             return map;
@@ -152,7 +150,7 @@ var Trait = (function() {
     // end of ES3 - ES5 compatibility functions
 
     function makeConflictAccessor(name) {
-        var accessor = function(var_args) {
+        var accessor = function (varArgs) {
             throw new Error("Conflicting property: " + name);
         };
         freeze(accessor.prototype);
@@ -171,7 +169,7 @@ var Trait = (function() {
 
     function makeConflictingPropDesc(name) {
         var conflict = makeConflictAccessor(name);
-        if (SUPPORTS_DEFINEPROP) {
+        if (supportsDefineprop) {
             return freeze({
                 get: conflict,
                 set: conflict,
@@ -237,7 +235,7 @@ var Trait = (function() {
 
     function makeSet(names) {
         var set = {};
-        forEach(names, function(name) {
+        forEach(names, function (name) {
             set[name] = true;
         });
         return freeze(set);
@@ -246,7 +244,7 @@ var Trait = (function() {
     // == singleton object to be used as the placeholder for a required property ==
 
     var required = freeze({
-        toString: function() { return '<Trait.required>'; }
+        toString: function () { return '<Trait.required>'; }
     });
 
     // == The public API methods ==
@@ -279,7 +277,7 @@ var Trait = (function() {
 
     function trait(obj) {
         var map = {};
-        forEach(getOwnPropertyNames(obj), function(name) {
+        forEach(getOwnPropertyNames(obj), function (name) {
             var pd = getOwnPropertyDescriptor(obj, name);
             if (pd.value === required) {
                 pd = makeRequiredPropDesc(name);
@@ -318,12 +316,12 @@ var Trait = (function() {
    *   compose() returns an empty trait
    */
 
-    function compose(var_args) {
+    function compose(varArgs) {
         var traits = slice(arguments, 0);
         var newTrait = {};
 
-        forEach(traits, function(trait) {
-            forEach(getOwnPropertyNames(trait), function(name) {
+        forEach(traits, function (trait) {
+            forEach(getOwnPropertyNames(trait), function (name) {
                 var pd = trait[name];
                 if (hasOwnProperty(newTrait, name) &&
                     !newTrait[name].required) {
@@ -343,7 +341,6 @@ var Trait = (function() {
                         newTrait[name] = makeConflictingPropDesc(name);
                     } // else,
                     // properties are not in conflict if they refer to the same value
-
                 } else {
                     newTrait[name] = pd;
                 }
@@ -368,7 +365,7 @@ var Trait = (function() {
         var exclusions = makeSet(names);
         var newTrait = {};
 
-        forEach(getOwnPropertyNames(trait), function(name) {
+        forEach(getOwnPropertyNames(trait), function (name) {
             // required properties are not excluded but ignored
             if (!hasOwnProperty(exclusions, name) || trait[name].required) {
                 newTrait[name] = trait[name];
@@ -401,11 +398,11 @@ var Trait = (function() {
    * override(trait_1) returns a trait equivalent to trait_1
    */
 
-    function override(var_args) {
+    function override(varArgs) {
         var traits = slice(arguments, 0);
         var newTrait = {};
-        forEach(traits, function(trait) {
-            forEach(getOwnPropertyNames(trait), function(name) {
+        forEach(traits, function (trait) {
+            forEach(getOwnPropertyNames(trait), function (name) {
                 var pd = trait[name];
                 // add this trait's property to the composite trait only if
                 // - the trait does not yet have this property
@@ -473,7 +470,7 @@ var Trait = (function() {
 
     function rename(map, trait) {
         var renamedTrait = {};
-        forEach(getOwnPropertyNames(trait), function(name) {
+        forEach(getOwnPropertyNames(trait), function (name) {
             // required props are never renamed
             if (hasOwnProperty(map, name) && !trait[name].required) {
                 var alias = map[name]; // alias defined in map
@@ -592,10 +589,10 @@ var Trait = (function() {
    */
 
     function create(proto, trait) {
-        var self = Object_create(proto);
+        var self = objectCreate(proto);
         var properties = {};
 
-        forEach(getOwnPropertyNames(trait), function(name) {
+        forEach(getOwnPropertyNames(trait), function (name) {
             var pd = trait[name];
             // check for remaining 'required' properties
             // Note: it's OK for the prototype to provide the properties
@@ -665,12 +662,12 @@ var Trait = (function() {
     }
 
     // if this code is ran in ES3 without an Object.create function, this
-    // library will define it on Object:
+    // Library will define it on Object:
     if (!Object.create) {
-        Object.create = Object_create;
+        Object.create = objectCreate;
     }
     // ES5 does not by default provide Object.getOwnProperties
-    // if it's not defined, the Traits library defines this utility
+    // if it's not defined, the Traits Library defines this utility
     // function on Object
     if (!Object.getOwnProperties) {
         Object.getOwnProperties = getOwnProperties;
@@ -691,7 +688,6 @@ var Trait = (function() {
     Trait.eqv = freeze(eqv);
     Trait.object = freeze(object); // not essential, cf. create + trait
     return freeze(Trait);
-
 })();
 
 if (typeof exports !== "undefined") { // CommonJS module support

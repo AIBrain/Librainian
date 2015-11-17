@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,14 +10,13 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/ConcurrentStackNoBlock.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-
-#endregion License & Information
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/ConcurrentStackNoBlock.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
 
 namespace Librainian.Collections {
 
@@ -28,24 +27,29 @@ namespace Librainian.Collections {
     using System.Threading.Tasks;
     using Threading;
 
-    public class ConcurrentNoBlockStackL<T>{
-        internal sealed class Node {
-            internal T Item;
-            internal Node Next;
-            public Node( ) { }
-            public Node( T item, Node next ) { this.Item = item; this.Next = next; }
-        }
-
+    public class ConcurrentNoBlockStackL<T> {
         private volatile Node _head;
 
-        public ConcurrentNoBlockStackL( ) {
+        public ConcurrentNoBlockStackL() {
             _head = new Node( default(T), _head );
         }
 
-        public void Push( T item ) {
+        public T Pop() {
+            Node ret;
+
+            do {
+                ret = _head;
+                if ( ret.Next == null ) {
+                    throw new IndexOutOfRangeException( "Stack is empty" );
+                }
+            } while ( Interlocked.CompareExchange( ref _head, ret.Next, ret ) != ret );
+            return ret.Item;
+        }
+
+        public void Push(T item) {
             var nodeNew = new Node {
-                                        Item = item
-                                    };
+                Item = item
+            };
 
             Node tmp;
             do {
@@ -54,41 +58,43 @@ namespace Librainian.Collections {
             } while ( Interlocked.CompareExchange( ref _head, nodeNew, tmp ) != tmp );
         }
 
-        public T Pop( ) {
-            Node ret;
+        internal sealed class Node {
+            internal T Item;
+            internal Node Next;
 
-            do {
-                ret = _head;
-                if ( ret.Next == null )
-                    throw new IndexOutOfRangeException( "Stack is empty" );
+            public Node() {
+            }
 
-            } while ( Interlocked.CompareExchange( ref _head, ret.Next, ret ) != ret );
-            return ret.Item;
+            public Node(T item, Node next) {
+                this.Item = item;
+                this.Next = next;
+            }
         }
     }
 
-    /// <summary>
-    /// </summary>
+    /// <summary></summary>
     /// <typeparam name="T"></typeparam>
     /// <see cref="http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack" />
     public class ConcurrentStackNoBlock<T> {
         private Node _head;
 
-        public ConcurrentStackNoBlock( ) {
+        public Int32 Count {
+            get; private set;
+        }
+
+        public ConcurrentStackNoBlock() {
             this._head = new Node( item: default(T), next: this._head );
         }
 
-        public int Count { get; private set; }
+        public void Add(T item) => this.Push( item );
 
-        public void Add( T item ) => this.Push( item );
+        public void Add(IEnumerable<T> items) => Parallel.ForEach( items, ThreadingExtensions.ParallelOptions, this.Push );
 
-        public void Add( IEnumerable<T> items ) => Parallel.ForEach( items, ThreadingExtensions.Parallelism, this.Push );
+        public void Add(ParallelQuery<T> items) => items.ForAll( this.Push );
 
-        public void Add( ParallelQuery<T> items ) => items.ForAll( this.Push );
+        public Int64 LongCount() => this.Count;
 
-        public long LongCount( ) => this.Count;
-
-        public void Push( T item ) {
+        public void Push(T item) {
             if ( Equals( default(T), item ) ) {
                 return;
             }
@@ -107,7 +113,7 @@ namespace Librainian.Collections {
             ++this.Count;
         }
 
-        public Boolean TryPop( out T result ) {
+        public Boolean TryPop(out T result) {
             result = default(T);
 
             Node ret;
@@ -127,13 +133,11 @@ namespace Librainian.Collections {
             return !Equals( result, default(T) );
         }
 
-        /// <summary>
-        /// Attempt two <see cref="TryPop" />
-        /// </summary>
+        /// <summary>Attempt two <see cref="TryPop" /></summary>
         /// <param name="itemOne"></param>
         /// <param name="itemTwo"></param>
         /// <returns></returns>
-        public Boolean TryPopPop( out T itemOne, out T itemTwo ) {
+        public Boolean TryPopPop(out T itemOne, out T itemTwo) {
             if ( !this.TryPop( out itemOne ) ) {
                 itemTwo = default(T);
                 return false;
@@ -147,13 +151,12 @@ namespace Librainian.Collections {
 
         internal class Node {
             internal T Item;
-
             internal Node Next;
 
-            public Node( ) {
+            public Node() {
             }
 
-            public Node( T item, Node next ) {
+            public Node(T item, Node next) {
                 this.Item = item;
                 this.Next = next;
             }

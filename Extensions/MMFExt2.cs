@@ -1,3 +1,5 @@
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -8,21 +10,23 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/MMFExt2.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/MMFExt2.cs" was last cleaned by Rick on 2015/06/12 at 2:53 PM
 
 namespace Librainian.Extensions {
+
     using System;
     using System.IO;
     using System.IO.MemoryMappedFiles;
 
-    public class MMFExt2 {
+    public class MmfExt2 {
 
-        public static Boolean Resize( FileInfo source, FileInfo destination, Boolean overwriteDestination = true, Boolean findRoom = true ) {
+        public static Boolean Resize(FileInfo source, FileInfo destination, Boolean overwriteDestination = true, Boolean findRoom = true) {
             source.Refresh();
             if ( !source.Exists ) {
                 return false;
@@ -39,7 +43,8 @@ namespace Librainian.Extensions {
             }
 
             // ReSharper disable once UnusedVariable
-            using (var sourceMappedFile = MemoryMappedFile.CreateFromFile( source.FullName, FileMode.Open, "why?", source.Length, MemoryMappedFileAccess.Read )) { }
+            using ( var sourceMappedFile = MemoryMappedFile.CreateFromFile( source.FullName, FileMode.Open, "why?", source.Length, MemoryMappedFileAccess.Read ) ) {
+            }
 
             return false;
         }

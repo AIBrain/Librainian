@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,23 +10,20 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/IQueue.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-
-#endregion License & Information
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/IQueue.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
 
 namespace Librainian.Collections {
 
     using System;
     using System.Collections.Generic;
 
-    /// <summary>
-    /// A collection designed for holding elements prior to processing.
-    /// </summary>
+    /// <summary>A collection designed for holding elements prior to processing.</summary>
     /// <remarks>
     /// <para>
     /// Besides basic <see cref="ICollection{T}" /> operations, queues provide additional insertion,
@@ -89,7 +86,9 @@ namespace Librainian.Collections {
         /// Gets the remaining capacity of a bounded queue or <see cref="int.MaxValue" /> if the
         /// queue is un-bounded.
         /// </summary>
-        int RemainingCapacity { get; }
+        Int32 RemainingCapacity {
+            get;
+        }
 
         /// <summary>
         /// Removes all available elements from this queue and invoke the given
@@ -116,7 +115,7 @@ namespace Librainian.Collections {
         /// <seealso cref="IBlockingQueue{T}.DrainTo(System.Collections.Generic.ICollection{T})" />
         /// <seealso cref="IBlockingQueue{T}.DrainTo(System.Collections.Generic.ICollection{T},int)" />
         /// <seealso cref="Drain(System.Action{T},int)" />
-        int Drain( Action<T> action );
+        Int32 Drain(Action<T> action);
 
         /// <summary>
         /// Removes all available elements that meet the criteria defined by
@@ -143,7 +142,7 @@ namespace Librainian.Collections {
         /// If the specified action is <see langword="null" />.
         /// </exception>
         /// <seealso cref="Drain(System.Action{T},int)" />
-        int Drain( Action<T> action, Predicate<T> criteria );
+        Int32 Drain(Action<T> action, Predicate<T> criteria);
 
         /// <summary>
         /// Removes at most the given number of available elements from this queue and invoke the
@@ -165,7 +164,7 @@ namespace Librainian.Collections {
         /// If the specified action is <see langword="null" />.
         /// </exception>
         /// <seealso cref="Drain(System.Action{T})" />
-        int Drain( Action<T> action, int maxElements );
+        Int32 Drain(Action<T> action, Int32 maxElements);
 
         /// <summary>
         /// Removes at most the given number of available elements that meet the criteria defined by
@@ -189,18 +188,16 @@ namespace Librainian.Collections {
         /// If the specified action is <see langword="null" />.
         /// </exception>
         /// <seealso cref="Drain(System.Action{T})" />
-        int Drain( Action<T> action, int maxElements, Predicate<T> criteria );
+        Int32 Drain(Action<T> action, Int32 maxElements, Predicate<T> criteria);
 
-        /// <summary>
-        /// Retrieves, but does not remove, the head of this queue.
-        /// </summary>
+        /// <summary>Retrieves, but does not remove, the head of this queue.</summary>
         /// <remarks>
         /// This method differs from <see cref="Peek(out T)" /> in that it throws an exception if
         /// this queue is empty.
         /// </remarks>
         /// <returns>The head of this queue.</returns>
         /// <exception cref="InvalidOperationException">If this queue is empty.</exception>
-        T Element( );
+        T Element();
 
         /// <summary>
         /// Inserts the specified element into this queue if it is possible to do so immediately
@@ -221,29 +218,25 @@ namespace Librainian.Collections {
         /// If some property of the supplied <paramref name="element" /> prevents it from being
         /// added to this queue.
         /// </exception>
-        Boolean Offer( T element );
+        Boolean Offer(T element);
 
         /// <summary>
         /// Retrieves, but does not remove, the head of this queue into out parameter <paramref name="element" />.
         /// </summary>
         /// <param name="element">The head of this queue. <c>default(T)</c> if queue is empty.</param>
         /// <returns><c>false</c> is the queue is empty. Otherwise <c>true</c>.</returns>
-        Boolean Peek( out T element );
+        Boolean Peek(out T element);
 
-        /// <summary>
-        /// Retrieves and removes the head of this queue into out parameter <paramref name="element" />.
-        /// </summary>
+        /// <summary>Retrieves and removes the head of this queue into out parameter <paramref name="element" />.</summary>
         /// <param name="element">
         /// Set to the head of this queue. <c>default(T)</c> if queue is empty.
         /// </param>
         /// <returns><c>false</c> if the queue is empty. Otherwise <c>true</c>.</returns>
-        Boolean Poll( out T element );
+        Boolean Poll(out T element);
 
-        /// <summary>
-        /// Retrieves and removes the head of this queue.
-        /// </summary>
+        /// <summary>Retrieves and removes the head of this queue.</summary>
         /// <returns>The head of this queue</returns>
         /// <exception cref="InvalidOperationException">If this queue is empty.</exception>
-        T Remove( );
+        T Remove();
     }
 }

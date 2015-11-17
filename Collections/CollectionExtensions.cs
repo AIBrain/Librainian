@@ -1,25 +1,21 @@
-﻿#region License & Information
-
+﻿// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 // 
-// Donations and Royalties can be paid via
+// Donations and royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS.
+// I am not responsible for Anything You Do.
 // 
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/CollectionExtensions.cs" was last cleaned by Rick on 2014/08/28 at 5:21 PM
-
-#endregion License & Information
+//  
+// "Librainian/CollectionExtensions.cs" was last cleaned by Rick on 2015/10/17 at 3:15 AM
 
 namespace Librainian.Collections {
 
@@ -34,34 +30,24 @@ namespace Librainian.Collections {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Maths;
+    using Measurement.Time;
     using Threading;
 
     public static class CollectionExtensions {
-        public static readonly List<String> EmptyList = new List<String>( );
+
+        public static readonly List< String > EmptyList = new List< String >();
 
         /// <summary>
-        /// <para>A list containing <see cref="bool.False" /> then <see cref="bool.True" />.</para>
+        ///     <para>A list containing <see cref="Boolean.False" /> then <see cref="Boolean.True" />.</para>
         /// </summary>
-        public static readonly Lazy<List<bool>> FalseThenTrue = new Lazy<List<bool>>( ( ) => new List<bool>( new[ ] { false, true } ) );
+        public static readonly Lazy< List< Boolean > > FalseThenTrue = new Lazy< List< Boolean > >( () => new List< Boolean >( new[] {false, true} ) );
 
         /// <summary>
-        /// <para>A list containing <see cref="Boolean.True" /> then <see cref="Boolean.False" />.</para>
+        ///     <para>A list containing <see cref="Boolean.True" /> then <see cref="Boolean.False" />.</para>
         /// </summary>
-        public static readonly Lazy<List<bool>> TrueThenFalse = new Lazy<List<bool>>( ( ) => new List<bool>( new[ ] { true, false } ) );
+        public static readonly Lazy< List< Boolean > > TrueThenFalse = new Lazy< List< Boolean > >( () => new List< Boolean >( new[] {true, false} ) );
 
-        public static void AddRange<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] IEnumerable<T> items ) {
-            if ( collection == null ) {
-                throw new ArgumentNullException( nameof( collection ) );
-            }
-            if ( items == null ) {
-                throw new ArgumentNullException( nameof( items ) );
-            }
-            Parallel.ForEach( source: items.AsParallel( ), parallelOptions: ThreadingExtensions.Parallelism, body: collection.Add );
-        }
-
-        public static UInt64 LongSum( this IEnumerable<int> collection ) => collection.Aggregate( 0UL, ( current, u ) => current + ( UInt64 )u );
-
-        public static void Add<T>( this IProducerConsumerCollection<T> collection, T item ) {
+        public static void Add< T >( this IProducerConsumerCollection< T > collection, T item ) {
             if ( null == collection ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
@@ -69,16 +55,94 @@ namespace Librainian.Collections {
             collection.TryAdd( item );
         }
 
-        /*
-                public static T Append<T>( [NotNull] this Enum type, T value ) where T : struct {
-                    if ( type == null ) {
-                        throw new ArgumentNullException( "type" );
-                    }
-                    return ( T )( ValueType )( ( ( int )( ValueType )type | ( int )( ValueType )value ) );
-                }
-        */
+        public static void AddRange< T >( [NotNull] this IProducerConsumerCollection< T > collection, [NotNull] IEnumerable< T > items ) {
+            if ( collection == null ) {
+                throw new ArgumentNullException( nameof( collection ) );
+            }
+            if ( items == null ) {
+                throw new ArgumentNullException( nameof( items ) );
+            }
+            Parallel.ForEach( source: items.AsParallel(), parallelOptions: ThreadingExtensions.ParallelOptions, body: collection.Add );
+        }
 
-        public static BigInteger CountBig<TType>( [NotNull] this IEnumerable<TType> items ) {
+        public static Int32 Clear< T >( [NotNull] this IProducerConsumerCollection< T > collection ) => collection.RemoveAll();
+
+        public static void Clear< T >( [NotNull] this ConcurrentBag< T > bag ) {
+            if ( bag == null ) {
+                throw new ArgumentNullException( nameof( bag ) );
+            }
+            do {
+                T result;
+                bag.TryTake( out result );
+            } while ( !bag.IsEmpty );
+        }
+
+        public static Byte[] CloneByteArray( this Byte[] bytes ) {
+            if ( bytes == null ) {
+                return null;
+            }
+            var copy = new Byte[bytes.Length];
+            Array.Copy( bytes, copy, bytes.Length );
+            return copy;
+        }
+
+        public static Byte[] ClonePortion( [NotNull] this Byte[] bytes, Int32 offset, Int32 length ) {
+            if ( bytes == null ) {
+                throw new ArgumentNullException( nameof( bytes ) );
+            }
+            if ( offset < 0 ) {
+                throw new ArgumentOutOfRangeException();
+            }
+            if ( length < 0 ) {
+                throw new ArgumentOutOfRangeException();
+            }
+            var copy = new Byte[length];
+            Array.Copy( bytes, offset, copy, 0, length );
+            return copy;
+        }
+
+        public static Byte[] ConcatenateByteArrays( params Byte[][] bytearrays ) {
+            var totalLength = bytearrays.Sum( t => t.Length );
+            var idx = 0;
+            var rv = new Byte[totalLength];
+            foreach ( var t in bytearrays ) {
+                Array.Copy( t, 0, rv, idx, t.Length );
+                idx += t.Length;
+            }
+            return rv;
+        }
+
+        /// <summary>
+        ///     Checks if two IEnumerables contain the exact same elements and same number of elements.
+        ///     Order does not matter.
+        /// </summary>
+        /// <typeparam name="T">The Type of object.</typeparam>
+        /// <param name="a">The first collection.</param>
+        /// <param name="b">The second collection.</param>
+        /// <returns>
+        ///     True if both IEnumerables contain the same items, and same number of items; otherwise, false.
+        /// </returns>
+        public static Boolean ContainSameElements< T >( this IEnumerable< T > a, IEnumerable< T > b ) {
+            var aa = a.ToList();
+            aa.Fix();
+
+            var bb = b.ToList();
+            bb.Fix();
+
+            if ( aa.Count != bb.Count ) {
+                return false;
+            }
+
+            if ( aa.Any( item => !bb.Remove( item ) ) ) {
+                return false;
+            }
+
+            Debug.Assert( !bb.Any() );
+
+            return true;
+        }
+
+        public static BigInteger CountBig< TType >( [NotNull] this IEnumerable< TType > items ) {
             if ( items == null ) {
                 throw new ArgumentNullException( nameof( items ) );
             }
@@ -86,17 +150,17 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns duplicate items found in the <see cref="sequence" /> .
+        ///     Returns duplicate items found in the <see cref="sequence" /> .
         /// </summary>
-        public static HashSet<T> Duplicates<T>( this IEnumerable<T> sequence ) {
+        public static HashSet< T > Duplicates< T >( this IEnumerable< T > sequence ) {
             if ( null == sequence ) {
                 throw new ArgumentNullException( nameof( sequence ) );
             }
-            var set = new HashSet<T>( );
-            return new HashSet<T>( sequence.Where( item => !set.Add( item: item ) ) );
+            var set = new HashSet< T >();
+            return new HashSet< T >( sequence.Where( item => !set.Add( item: item ) ) );
         }
 
-        public static IEnumerable<T> EnumerableFromArray<T>( [NotNull] IEnumerable<T> array ) {
+        public static IEnumerable< T > EnumerableFromArray< T >( [NotNull] IEnumerable< T > array ) {
             if ( array == null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
@@ -104,38 +168,50 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// The <seealso cref="List{T}.Capacity" /> is resized down to the <seealso cref="List{T}.Count" />.
+        ///     The <seealso cref="List{T}.Capacity" /> is resized down to the <seealso cref="List{T}.Count" />.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
-        public static void Fix<T>( [NotNull] this List<T> collection ) {
+        public static void Fix< T >( [NotNull] this List< T > collection ) {
             if ( collection == null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
 
-            collection.Capacity = collection.Count( );
-
-            //collection.TrimExcess();
+            collection.Capacity = collection.Count;
         }
 
-        public static Boolean Has<T>( [NotNull] this Enum type, T value ) where T : struct {
+        public static void ForEach< T >( this IEnumerable< T > items, Action< T > action ) {
+            if ( null == items ) {
+                throw new ArgumentNullException( nameof( items ) );
+            }
+            if ( null == action ) {
+                throw new ArgumentNullException( nameof( action ) );
+            }
+
+            foreach ( var item in items ) {
+                action( item );
+            }
+        }
+
+        public static Boolean Has< T >( [NotNull] this Enum type, T value ) where T : struct {
             if ( type == null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
-            return ( ( int )( ValueType )type & ( int )( ValueType )value ) == ( int )( ValueType )value;
+            return ( ( Int32 ) ( ValueType ) type & ( Int32 ) ( ValueType ) value ) == ( Int32 ) ( ValueType ) value;
         }
 
-        public static Boolean HasDuplicates<T>( [NotNull] this IEnumerable<T> sequence ) {
+        public static Boolean HasDuplicates< T >( [NotNull] this IEnumerable< T > sequence ) {
             if ( sequence == null ) {
                 throw new ArgumentNullException( nameof( sequence ) );
             }
             if ( Equals( sequence, null ) ) {
                 throw new ArgumentNullException( nameof( sequence ) );
             }
-            return sequence.Duplicates( ).Any( );
+            return sequence.Duplicates()
+                           .Any();
         }
 
-        public static Boolean In<T>( this T value, [NotNull] params T[] items ) {
+        public static Boolean In< T >( this T value, [NotNull] params T[] items ) {
             if ( items == null ) {
                 throw new ArgumentNullException( nameof( items ) );
             }
@@ -149,14 +225,14 @@ namespace Librainian.Collections {
         /// <param name="sequence"></param>
         /// <returns></returns>
         /// <see cref="http://stackoverflow.com/a/3562370/956364" />
-        public static int IndexOfSequence<T>( [NotNull] this IEnumerable<T> source, [NotNull] IEnumerable<T> sequence ) {
+        public static Int32 IndexOfSequence< T >( [NotNull] this IEnumerable< T > source, [NotNull] IEnumerable< T > sequence ) {
             if ( source == null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
             if ( sequence == null ) {
                 throw new ArgumentNullException( nameof( sequence ) );
             }
-            return source.IndexOfSequence( sequence, EqualityComparer<T>.Default );
+            return source.IndexOfSequence( sequence, EqualityComparer< T >.Default );
         }
 
         /// <summary>
@@ -167,7 +243,7 @@ namespace Librainian.Collections {
         /// <param name="comparer"></param>
         /// <returns></returns>
         /// <see cref="http://stackoverflow.com/a/3562370/956364" />
-        public static int IndexOfSequence<T>( [NotNull] this IEnumerable<T> source, [NotNull] IEnumerable<T> sequence, [NotNull] IEqualityComparer<T> comparer ) {
+        public static Int32 IndexOfSequence< T >( [NotNull] this IEnumerable< T > source, [NotNull] IEnumerable< T > sequence, [NotNull] IEqualityComparer< T > comparer ) {
             if ( source == null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
@@ -178,16 +254,15 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( nameof( comparer ) );
             }
 
-            var seq = sequence.ToArray( );
+            var seq = sequence.ToArray();
 
             var p = 0; // current position in source sequence
 
             var i = 0; // current position in searched sequence
 
-            var prospects = new List<int>( ); // list of prospective matches
+            var prospects = new List< Int32 >(); // list of prospective matches
 
             foreach ( var item in source ) {
-
                 // Remove bad prospective matches
                 var item1 = item;
                 var p1 = p;
@@ -204,7 +279,6 @@ namespace Librainian.Collections {
 
                     // Do we have a complete match ?
                     if ( i == seq.Length ) {
-
                         // Bingo !
                         return p - seq.Length + 1;
                     }
@@ -213,13 +287,11 @@ namespace Librainian.Collections {
                 {
                     // Do we have prospective matches to fall back to ?
                     if ( prospects.Count > 0 ) {
-
                         // Yes, use the first one
                         var k = prospects[ 0 ];
                         i = p - k + 1;
                     }
                     else {
-
                         // No, start from beginning of searched sequence
                         i = 0;
                     }
@@ -232,9 +304,9 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>A list containing <see cref="Boolean.True" /> then <see cref="Boolean.False" />.</para>
+        ///     <para>A list containing <see cref="Boolean.True" /> then <see cref="Boolean.False" />.</para>
         /// </summary>
-        public static IEnumerable<bool> Infinitely( this Boolean value ) {
+        public static IEnumerable< Boolean > Infinitely( this Boolean value ) {
             do {
                 yield return value;
             } while ( true );
@@ -243,18 +315,43 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
+        ///     Checks if an IEnumerable is empty.
+        /// </summary>
+        /// <typeparam name="T">The type of objects to enumerate.</typeparam>
+        /// <param name="source">The IEnumerable to check if empty.</param>
+        /// <returns>True if the <paramref name="source" /> is null or empty; otherwise false.</returns>
+        public static Boolean IsEmpty< T >( this IEnumerable< T > source ) {
+            if ( source == null ) {
+                return true;
+            }
+
+            return !source.Any();
+        }
+
+        public static UInt64 LongSum( this IEnumerable< Int32 > collection ) => collection.Aggregate( 0UL, ( current, u ) => current + ( UInt64 ) u );
+
+        /*
+                public static T Append<T>( [NotNull] this Enum type, T value ) where T : struct {
+                    if ( type == null ) {
+                        throw new ArgumentNullException( "type" );
+                    }
+                    return ( T )( ValueType )( ( ( int )( ValueType )type | ( int )( ValueType )value ) );
+                }
+        */
+
+        /// <summary>
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="current"></param>
         /// <returns></returns>
-        public static LinkedListNode<TType> NextOrFirst<TType>( [NotNull] this LinkedListNode<TType> current ) {
+        public static LinkedListNode< TType > NextOrFirst< TType >( [NotNull] this LinkedListNode< TType > current ) {
             if ( current == null ) {
                 throw new ArgumentNullException( nameof( current ) );
             }
             return current.Next ?? current.List.First;
         }
 
-        public static IEnumerable<IEnumerable<T>> Partition<T>( [NotNull] this IEnumerable<T> source, int size ) {
+        public static IEnumerable< IEnumerable< T > > Partition< T >( [NotNull] this IEnumerable< T > source, Int32 size ) {
             if ( source == null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
@@ -262,14 +359,14 @@ namespace Librainian.Collections {
             var count = 0;
             foreach ( var item in source ) {
                 if ( array == null ) {
-                    array = new T[ size ];
+                    array = new T[size];
                 }
                 array[ count ] = item;
                 count++;
                 if ( count != size ) {
                     continue;
                 }
-                yield return new ReadOnlyCollection<T>( array );
+                yield return new ReadOnlyCollection< T >( array );
                 array = null;
                 count = 0;
             }
@@ -277,7 +374,7 @@ namespace Librainian.Collections {
                 yield break;
             }
             Array.Resize( ref array, count );
-            yield return new ReadOnlyCollection<T>( array );
+            yield return new ReadOnlyCollection< T >( array );
         }
 
         /// <summary>
@@ -285,15 +382,14 @@ namespace Librainian.Collections {
         /// <typeparam name="TType"></typeparam>
         /// <param name="current"></param>
         /// <returns></returns>
-        public static LinkedListNode<TType> PreviousOrLast<TType>( [NotNull] this LinkedListNode<TType> current ) {
+        public static LinkedListNode< TType > PreviousOrLast< TType >( [NotNull] this LinkedListNode< TType > current ) {
             if ( current == null ) {
                 throw new ArgumentNullException( nameof( current ) );
             }
             return current.Previous ?? current.List.Last;
         }
 
-        public static IEnumerable<TU> Rank<T, TKey, TU>( [NotNull] this IEnumerable<T> source, [NotNull] Func<T, TKey> keySelector, [NotNull] Func<T, int, TU> selector ) {
-
+        public static IEnumerable< TU > Rank< T, TKey, TU >( [NotNull] this IEnumerable< T > source, [NotNull] Func< T, TKey > keySelector, [NotNull] Func< T, Int32, TU > selector ) {
             //if ( !source.Any() ) {
             //    yield break;
             //}
@@ -309,7 +405,8 @@ namespace Librainian.Collections {
             }
             var rank = 0;
             var itemCount = 0;
-            var ordered = source.OrderBy( keySelector ).ToArray( );
+            var ordered = source.OrderBy( keySelector )
+                                .ToArray();
             var previous = keySelector( ordered[ 0 ] );
             foreach ( var t in ordered ) {
                 itemCount += 1;
@@ -322,30 +419,30 @@ namespace Librainian.Collections {
             }
         }
 
-        public static T Remove<T>( [NotNull] this IProducerConsumerCollection<T> collection ) {
+        public static T Remove< T >( [NotNull] this IProducerConsumerCollection< T > collection ) {
             if ( collection == null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
             T result;
-            return collection.TryTake( out result ) ? result : default(T);
+            return collection.TryTake( out result ) ? result : default ( T );
         }
 
-        public static T Remove<T>( [NotNull] this Enum type, T value ) where T : struct {
+        public static T Remove< T >( [NotNull] this Enum type, T value ) where T : struct {
             if ( type == null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
-            return ( T )( ValueType )( ( ( int )( ValueType )type & ~( int )( ValueType )value ) );
+            return ( T ) ( ValueType ) ( ( Int32 ) ( ValueType ) type & ~( Int32 ) ( ValueType ) value );
         }
 
         /// <summary>
-        /// Removes the <paramref name="specificItem" /> from the <paramref name="collection" /> and
-        /// returns how many <paramref name="specificItem" /> or null were removed.
+        ///     Removes the <paramref name="specificItem" /> from the <paramref name="collection" /> and
+        ///     returns how many <paramref name="specificItem" /> or null were removed.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
         /// <param name="specificItem"></param>
         /// <returns></returns>
-        public static int Remove<T>( this IProducerConsumerCollection<T> collection, T specificItem ) {
+        public static Int32 Remove< T >( this IProducerConsumerCollection< T > collection, T specificItem ) {
             if ( null == collection ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
@@ -360,7 +457,7 @@ namespace Librainian.Collections {
                 if ( !collection.TryTake( out temp ) ) {
                     continue;
                 }
-                if ( Equals( temp, default(T) ) || Equals( temp, specificItem ) ) {
+                if ( Equals( temp, default ( T ) ) || Equals( temp, specificItem ) ) {
                     removed += 1;
                     continue;
                 }
@@ -371,14 +468,12 @@ namespace Librainian.Collections {
             return removed;
         }
 
-        public static int Clear<T>( [NotNull] this IProducerConsumerCollection<T> collection ) => collection.RemoveAll( );
-
-        public static int RemoveAll<T>( [NotNull] this IProducerConsumerCollection<T> collection ) {
+        public static Int32 RemoveAll< T >( [NotNull] this IProducerConsumerCollection< T > collection ) {
             if ( collection == null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
             var removed = 0;
-            while ( collection.Any( ) ) {
+            while ( collection.Any() ) {
                 T result;
                 while ( collection.TryTake( out result ) ) {
                     removed++;
@@ -387,17 +482,7 @@ namespace Librainian.Collections {
             return removed;
         }
 
-        public static void Clear<T>( [NotNull] this ConcurrentBag<T> bag ) {
-            if ( bag == null ) {
-                throw new ArgumentNullException( nameof( bag ) );
-            }
-            do {
-                T result;
-                bag.TryTake( out result );
-            } while ( !bag.IsEmpty );
-        }
-
-        public static IEnumerable<T> RemoveEach<T>( [NotNull] this IProducerConsumerCollection<T> collection ) {
+        public static IEnumerable< T > RemoveEach< T >( [NotNull] this IProducerConsumerCollection< T > collection ) {
             if ( collection == null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
@@ -408,14 +493,14 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Shuffle an array[] in <paramref name="iterations" />.</para>
+        ///     <para>Shuffle an array[] in <paramref name="iterations" />.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="array"></param>
         /// <param name="iterations"></param>
         /// <example>Deck.Shuffle( 7 );</example>
-        [Obsolete("broken at the moment. seealso Shuffle<List>")]
-        public static void Shuffle<T>( [NotNull] this T[] array, int iterations = 1 ) {
+        [Obsolete( "broken at the moment. seealso Shuffle<List>" )]
+        public static void Shuffle< T >( [NotNull] this T[] array, Int32 iterations = 1 ) {
             if ( array == null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
@@ -430,29 +515,32 @@ namespace Librainian.Collections {
                 iterations--;
 
                 // make a copy of all items
-                var bag = new ConcurrentBag<T>( array );
-                bag.Should( ).NotBeEmpty( );
+                var bag = new ConcurrentBag< T >( array );
+                bag.Should()
+                   .NotBeEmpty();
                 var originalcount = bag.Count;
 
-                var sqrt = ( int )Math.Sqrt( originalcount );
+                var sqrt = ( Int32 ) Math.Sqrt( originalcount );
                 if ( sqrt <= 1 ) {
                     sqrt = 1;
                 }
 
                 // make some buckets.
-                var buckets = new List<ConcurrentBag<T>>( capacity: sqrt );
-                buckets.AddRange( 1.To( sqrt ).Select( i => new ConcurrentBag<T>( ) ) );
+                var buckets = new List< ConcurrentBag< T > >( capacity: sqrt );
+                buckets.AddRange( 1.To( sqrt )
+                                   .Select( i => new ConcurrentBag< T >() ) );
 
                 // pull the items out of the bag, and put them into a random bucket each
                 T item;
                 while ( bag.TryTake( out item ) ) {
-                    var index = Randem.Next( 0, sqrt );
+                    var index = 0.Next( sqrt );
                     buckets[ index ].Add( item );
                 }
-                bag.Should( ).BeEmpty( "All items should have been taken out of the bag" );
+                bag.Should()
+                   .BeEmpty( "All items should have been taken out of the bag" );
 
                 while ( bag.Count < originalcount ) {
-                    var index = Randem.Next( minValue: 0, maxValue: buckets.Count );
+                    var index = 0.Next( maxValue: buckets.Count );
                     var bucket = buckets[ index ];
 
                     if ( bucket.TryTake( out item ) ) {
@@ -462,10 +550,11 @@ namespace Librainian.Collections {
                         buckets.Remove( bucket );
                     }
                 }
-                bag.Count.Should( ).Be( originalcount );
+                bag.Count.Should()
+                   .Be( originalcount );
 
                 // put them back into the array
-                var newArray = bag.ToArray( );
+                var newArray = bag.ToArray();
                 newArray.CopyTo( array, 0 );
             }
 
@@ -479,20 +568,21 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Shuffle a list in <paramref name="iterations" />.</para>
+        ///     <para>Shuffle a list in <paramref name="iterations" />.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
         /// <param name="iterations"></param>
         /// <param name="shufflingType"></param>
         /// <param name="forHowLong"></param>
+        /// <param name="orUntilCancelled"></param>
         /// <example>Deck.Shuffle( 7 );</example>
-        public static void Shuffle<T>( [NotNull] this List<T> list, UInt64 iterations = 1, ShufflingType shufflingType = ShufflingType.AutoChoice, TimeSpan? forHowLong = null ) {
+        public static void Shuffle< T >( [NotNull] this List< T > list, UInt64 iterations = 1, ShufflingType shufflingType = ShufflingType.AutoChoice, TimeSpan? forHowLong = null, SimpleCancel orUntilCancelled = null ) {
             if ( list == null ) {
                 throw new ArgumentNullException( nameof( list ) );
             }
             try {
-                if ( list.LongCount( ) <= 0 ) {
+                if ( !list.Any() ) {
                     return; //nothing to shuffle
                 }
 
@@ -501,34 +591,29 @@ namespace Librainian.Collections {
                 }
 
                 switch ( shufflingType ) {
-                    case ShufflingType.ByGuid:
-                        {
-                            ShuffleByGuid( ref list, iterations );
-                        }
+                    case ShufflingType.ByGuid: {
+                        ShuffleByGuid( ref list, iterations );
+                    }
                         break;
 
-                    case ShufflingType.ByRandom:
-                        {
-                            ShuffleByRandomThenByRandom( ref list, iterations );
-                        }
+                    case ShufflingType.ByRandom: {
+                        ShuffleByRandomThenByRandom( ref list, iterations );
+                    }
                         break;
 
-                    case ShufflingType.ByHarker:
-                        {
-                            ShuffleByHarker( ref list, iterations, forHowLong );
-                        }
+                    case ShufflingType.ByHarker: {
+                        ShuffleByHarker( ref list, iterations, forHowLong, orUntilCancelled );
+                    }
                         break;
 
-                    case ShufflingType.ByBags:
-                        {
-                            ShuffleByBags( ref list, iterations, list.LongCount( ) );
-                        }
+                    case ShufflingType.ByBags: {
+                        ShuffleByBags( ref list, iterations, list.LongCount() );
+                    }
                         break;
 
-                    case ShufflingType.AutoChoice:
-                        {
-                            ShuffleByHarker( ref list, iterations, forHowLong );
-                        }
+                    case ShufflingType.AutoChoice: {
+                        ShuffleByHarker( ref list, iterations, forHowLong, orUntilCancelled );
+                    }
                         break;
 
                     default:
@@ -536,40 +621,55 @@ namespace Librainian.Collections {
                 }
             }
             catch ( IndexOutOfRangeException exception ) {
-                exception.More( );
+                exception.More();
             }
         }
 
         /// <summary>
-        /// untested for speed and cpu/threading impact. Also, a lot of elements will NOT be
-        /// shuffled much.
+        ///     Untested for speed and cpu/threading impact. Also, a lot of elements will/could NOT be
+        ///     shuffled much.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
         /// <param name="iterations"></param>
         /// <param name="originalcount"></param>
-        public static void ShuffleByBags<T>( ref List<T> list, UInt64 iterations, long originalcount ) {
-            var bag = new ConcurrentBag<T>( );
+        public static void ShuffleByBags< T >( ref List< T > list, UInt64 iterations, Int64 originalcount ) {
+            var bag = new ConcurrentBag< T >();
 
             while ( iterations > 0 ) {
                 iterations--;
 
-                bag.AddRange( list.AsParallel( ) );
-                bag.Should( ).NotBeEmpty( because: "made an unordered copy of all items" );
+                bag.AddRange( list.AsParallel() );
+                bag.Should()
+                   .NotBeEmpty( because: "made an unordered copy of all items" );
 
-                list.Clear( );
-                list.Should( ).BeEmpty( because: "emptied the original list" );
+                list.Clear();
+                list.Should()
+                    .BeEmpty( because: "emptied the original list" );
 
                 list.AddRange( bag );
-                list.LongCount( ).Should( ).Be( originalcount );
+                list.LongCount()
+                    .Should()
+                    .Be( originalcount );
 
-                bag.RemoveAll( );
+                bag.RemoveAll();
+            }
+        }
+
+        public static void ShuffleByGuid< T >( ref List< T > list, UInt64 iterations = 1 ) {
+            while ( iterations > 0 ) {
+                iterations--;
+                var copy = list.AsParallel()
+                               .OrderBy( arg => Guid.NewGuid() )
+                               .ToList();
+                list.Clear();
+                list.AddRange( copy.AsParallel() );
             }
         }
 
         /// <summary>
-        /// Fast shuffle. Not guaranteed or tested to be the fastest, but it should shuffle *well*
-        /// in reasonable time.
+        ///     Fast shuffle. Not guaranteed or tested to be the fastest, but it should shuffle *well*
+        ///     in reasonable time.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
@@ -577,18 +677,18 @@ namespace Librainian.Collections {
         /// <param name="forHowLong"></param>
         /// <param name="orUntilCancelled"></param>
         /// <remarks>
-        /// The while.Any() could be replaced with a for loop.. the count is well known ahead of time.
+        ///     The while.Any() could be replaced with a for loop.. the count is well known ahead of time.
         /// </remarks>
         /// <remarks>
-        /// The new List(itemCount) could be streamlined to a lower number, once we know how much
-        /// List.Add increments its allocations. For large lists hitting an OoM exception.
+        ///     The new List(itemCount) could be streamlined to a lower number, once we know how much
+        ///     List.Add increments its allocations. For large lists hitting an OoM exception.
         /// </remarks>
-        public static void ShuffleByHarker<T>( ref List<T> list, UInt64 iterations = 1, TimeSpan? forHowLong = null, SimpleCancel orUntilCancelled = null ) {
+        public static void ShuffleByHarker< T >( ref List< T > list, UInt64 iterations = 1, TimeSpan? forHowLong = null, SimpleCancel orUntilCancelled = null ) {
             var itemCount = list.Count;
 
-            var copy = new List<T>( itemCount );
+            var copy = new List< T >( itemCount );
 
-            var whenStarted = Stopwatch.StartNew( );
+            var whenStarted = StopWatch.StartNew();
 
             if ( iterations < 1 ) {
                 iterations = 1;
@@ -601,72 +701,66 @@ namespace Librainian.Collections {
             do {
                 iterations--;
 
-                while ( list.Any( ) ) {
-                    var index = Randem.Next( minValue: 0, maxValue: list.Count );
+                while ( list.Any() ) {
+                    var index = 0.Next( maxValue: list.Count );
                     copy.Add( list[ index ] );
                     list.RemoveAt( index );
                 }
 
-                list.Should( ).BeEmpty( );
+                list.Should()
+                    .BeEmpty();
 
-                while ( copy.Any( ) ) {
-                    var index = Randem.Next( minValue: 0, maxValue: copy.Count );
+                while ( copy.Any() ) {
+                    var index = 0.Next( maxValue: copy.Count );
                     list.Add( copy[ index ] );
                     copy.RemoveAt( index );
                 }
 
-                copy.Should( ).BeEmpty( );
+                copy.Should()
+                    .BeEmpty();
 
                 if ( whenStarted.Elapsed < forHowLong ) {
                     iterations++;
                 }
 
-                if ( null != orUntilCancelled && orUntilCancelled.HaveAnyCancellationsBeenRequested( ) ) {
+                if ( ( null != orUntilCancelled ) && orUntilCancelled.HaveAnyCancellationsBeenRequested() ) {
                     break;
                 }
             } while ( iterations > 0 );
 
-            list.Count.Should( ).Be( itemCount );
+            list.Count.Should()
+                .Be( itemCount );
         }
 
-        public static void ShuffleByRandomThenByRandom<T>( ref List<T> list, UInt64 iterations = 1 ) {
+        public static void ShuffleByRandomThenByRandom< T >( ref List< T > list, UInt64 iterations = 1 ) {
             while ( iterations > 0 ) {
                 iterations--;
-                var copy = list.AsParallel( ).OrderBy( o => Randem.NextDouble( ) ).ThenBy( o => Randem.NextDouble( ) ).ToList( );
-                list.Clear( );
-                list.AddRange( copy );  //TODO can we just return/replace 'list' with 'copy' instead of addrange?
+                var copy = list.AsParallel()
+                               .OrderBy( o => Randem.Next() )
+                               .ThenBy( o => Randem.Next() )
+                               .ToList();
+                list.Clear();
+                list.AddRange( copy ); //TODO can we just return/replace 'list' with 'copy' instead of addrange?
             }
         }
 
-        public static void ShuffleByGuid<T>( ref List<T> list, UInt64 iterations = 1 ) {
-            while ( iterations > 0 ) {
-                iterations--;
-                var copy = list.AsParallel( ).OrderBy( arg => Guid.NewGuid( ) ).ToList( );
-                list.Clear( );
-                list.AddRange( copy.AsParallel( ) );
-            }
-        }
-
-        public static IEnumerable<IEnumerable<T>> Split<T>( [NotNull] this IEnumerable<T> list, int parts ) {
+        public static IEnumerable< IEnumerable< T > > Split< T >( [NotNull] this IEnumerable< T > list, Int32 parts ) {
             if ( list == null ) {
                 throw new ArgumentNullException( nameof( list ) );
             }
             var i = 0;
-            var splits = from item in list
-                         group item by i++ % parts
-                             into part
-                         select part; //.AsEnumerable();
+            var splits = from item in list group item by i++ % parts into part select part; //.AsEnumerable();
             return splits;
         }
 
         /// <summary>
-        /// Swap the two indexes
+        ///     Swap the two indexes
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="array"></param>
         /// <param name="index1"></param>
         /// <param name="index2"></param>
-        public static void Swap<T>( [NotNull] this T[] array, int index1, int index2 ) {
+        public static void Swap< T >( [NotNull] this T[] array, Int32 index1, Int32 index2 ) {
             if ( array == null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
@@ -676,10 +770,10 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>
-        /// Remove and return the first item in the list, otherwise return null (or the default()
-        /// for value types).
-        /// </para>
+        ///     <para>
+        ///         Remove and return the first item in the list, otherwise return null (or the default()
+        ///         for value types).
+        ///     </para>
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
@@ -688,12 +782,12 @@ namespace Librainian.Collections {
         /// <exception cref="IndexOutOfRangeException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="NotSupportedException"></exception>
-        public static Boolean TakeFirst<TType>( this IList<TType> list, out TType item ) {
+        public static Boolean TakeFirst< TType >( this IList< TType > list, out TType item ) {
             if ( list == null ) {
                 throw new ArgumentNullException( nameof( list ) );
             }
             if ( list.Count <= 0 ) {
-                item = default(TType);
+                item = default ( TType );
                 return false;
             }
             item = list[ 0 ];
@@ -702,18 +796,18 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Remove and return the first item in the list, otherwise return null.</para>
+        ///     <para>Remove and return the first item in the list, otherwise return null.</para>
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static TType TakeFirst<TType>( this IList<TType> list ) {
+        public static TType TakeFirst< TType >( this IList< TType > list ) {
             if ( list == null ) {
                 throw new ArgumentNullException( nameof( list ) );
             }
             if ( list.Count <= 0 ) {
-                return default(TType);
+                return default ( TType );
             }
             var item = list[ 0 ];
             list.RemoveAt( 0 );
@@ -721,19 +815,19 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Remove and return the last item in the list, otherwise return null.</para>
+        ///     <para>Remove and return the last item in the list, otherwise return null.</para>
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
         /// <param name="item"></param>
         /// <returns></returns>
-        public static Boolean TakeLast<TType>( this IList<TType> list, out TType item ) {
+        public static Boolean TakeLast< TType >( this IList< TType > list, out TType item ) {
             if ( list == null ) {
                 throw new ArgumentNullException( nameof( list ) );
             }
             var index = list.Count - 1;
             if ( index < 0 ) {
-                item = default(TType);
+                item = default ( TType );
                 return false;
             }
             item = list[ index ];
@@ -742,13 +836,13 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Remove and return the last item in the list, otherwise return null.</para>
+        ///     <para>Remove and return the last item in the list, otherwise return null.</para>
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static TType TakeLast<TType>( this IList<TType> list ) where TType : class {
+        public static TType TakeLast< TType >( this IList< TType > list ) where TType : class {
             if ( list == null ) {
                 throw new ArgumentNullException( nameof( list ) );
             }
@@ -762,9 +856,28 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>
-        /// Returns a String with the <paramref name="separator" /> between each item of an <paramref name="enumerable" />.
-        /// </para>
+        ///     Do a Take() on the top X percent
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public static IEnumerable< TSource > Top< TSource >( [NotNull] this IEnumerable< TSource > source, Double x ) {
+            if ( source == null ) {
+                throw new ArgumentNullException( nameof( source ) );
+            }
+            var sources = source as IList< TSource > ?? source.ToList();
+            return sources.Take( ( Int32 ) ( x * sources.Count ) );
+        }
+
+        public static String ToStrings( this IEnumerable< Object > enumerable, Char c ) {
+            return ToStrings( enumerable, new String( new[] {c} ) );
+        }
+
+        /// <summary>
+        ///     <para>
+        ///         Returns a String with the <paramref name="separator" /> between each item of an <paramref name="enumerable" />.
+        ///     </para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="enumerable"></param>
@@ -772,7 +885,7 @@ namespace Librainian.Collections {
         /// <param name="atTheEnd"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
-        public static String ToStrings<T>( [NotNull] this IEnumerable<T> enumerable, [NotNull] String separator = ", ", String atTheEnd = null ) {
+        public static String ToStrings< T >( [NotNull] this IEnumerable< T > enumerable, [NotNull] String separator = ", ", String atTheEnd = null ) {
             if ( enumerable == null ) {
                 throw new ArgumentNullException( nameof( enumerable ) );
             }
@@ -781,9 +894,9 @@ namespace Librainian.Collections {
             }
 
             String result;
-            var list = enumerable as IList<T> ?? enumerable.ToList( );
+            var list = enumerable as IList< T > ?? enumerable.ToList();
 
-            if ( String.IsNullOrEmpty( atTheEnd ) || list.Count <= 2 ) {
+            if ( String.IsNullOrEmpty( atTheEnd ) || ( list.Count <= 2 ) ) {
                 result = String.Join( separator, list );
             }
             else {
@@ -805,13 +918,13 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Wrapper for <see cref="ConcurrentQueue{T}.TryDequeue" />
+        ///     Wrapper for <see cref="ConcurrentQueue{T}.TryDequeue" />
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="queue"></param>
         /// <param name="item"></param>
         /// <returns></returns>
-        public static Boolean TryTake<T>( [NotNull] this ConcurrentQueue<T> queue, out T item ) {
+        public static Boolean TryTake< T >( [NotNull] this ConcurrentQueue< T > queue, out T item ) {
             if ( queue == null ) {
                 throw new ArgumentNullException( nameof( queue ) );
             }
@@ -822,20 +935,20 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Wrapper for <see cref="ConcurrentStack{T}.TryPop" />
+        ///     Wrapper for <see cref="ConcurrentStack{T}.TryPop" />
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="stack"></param>
         /// <param name="item"></param>
         /// <returns></returns>
-        public static Boolean TryTake<T>( this ConcurrentStack<T> stack, out T item ) {
+        public static Boolean TryTake< T >( this ConcurrentStack< T > stack, out T item ) {
             if ( null == stack ) {
                 throw new ArgumentNullException( nameof( stack ) );
             }
             return stack.TryPop( out item );
         }
 
-        public static void Update<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dictionary, TKey key, TValue value ) {
+        public static void Update< TKey, TValue >( [NotNull] this ConcurrentDictionary< TKey, TValue > dictionary, TKey key, TValue value ) {
             if ( dictionary == null ) {
                 throw new ArgumentNullException( nameof( dictionary ) );
             }
@@ -847,108 +960,6 @@ namespace Librainian.Collections {
             //dictionary.TryUpdate( key, value, wtf );  //BUG I don't understand the whole if-same-then-replace-semantics. If we're going to replace the value, then why do we care what the current value is anyway?
         }
 
-        public static void ForEach<T>( this IEnumerable<T> items, Action<T> action ) {
-            if ( null == items ) {
-                throw new ArgumentNullException( nameof( items ) );
-            }
-            if ( null == action ) {
-                throw new ArgumentNullException( nameof( action ) );
-            }
-
-            foreach ( var item in items.Where( item => !Equals( item, null ) ) ) {
-                action( item );
-
-                //yield return item;
-            }
-        }
-
-        public static byte[] ConcatenateByteArrays( params byte[][] bytearrays ) {
-            var totalLength = bytearrays.Sum( t => t.Length );
-            var idx = 0;
-            var rv = new byte[ totalLength ];
-            foreach ( var t in bytearrays ) {
-                Array.Copy( t, 0, rv, idx, t.Length );
-                idx += t.Length;
-            }
-            return rv;
-        }
-
-        public static byte[] ClonePortion( [NotNull] this byte[] bytes, int offset, int length ) {
-            if ( bytes == null ) {
-                throw new ArgumentNullException( "ba" );
-            }
-            if ( offset < 0 ) {
-                throw new ArgumentOutOfRangeException( );
-            }
-            if ( length < 0 ) {
-                throw new ArgumentOutOfRangeException( );
-            }
-            var copy = new byte[ length ];
-            Array.Copy( bytes, offset, copy, 0, length );
-            return copy;
-        }
-
-        public static byte[] CloneByteArray( this byte[] bytes ) {
-            if ( bytes == null ) {
-                return null;
-            }
-            var copy = new byte[ bytes.Length ];
-            Array.Copy( bytes, copy, bytes.Length );
-            return copy;
-        }
-
-        /// <summary>
-        /// Do a Take() on the top X percent
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="x"></param>
-        /// <returns></returns>
-        public static IEnumerable<TSource> Top<TSource>( [NotNull] this IEnumerable<TSource> source, Double x ) {
-            if ( source == null ) {
-                throw new ArgumentNullException( nameof( source ) );
-            }
-            var sources = source as IList<TSource> ?? source.ToList( );
-            return sources.Take( ( int )( x * sources.Count( ) ) );
-        }
-
-        /// <summary>
-        /// Checks if two IEnumerables contain the exact same elements and same number of elements. Order does not matter.
-        /// </summary>
-        /// <typeparam name="T">The Type of object.</typeparam>
-        /// <param name="a">The first collection.</param>
-        /// <param name="b">The second collection.</param>
-        /// <returns>True if both IEnumerables contain the same items, and same number of items; otherwise, false.</returns>
-        public static bool ContainSameElements<T>( this IEnumerable<T> a, IEnumerable<T> b ) {
-            var aa = a as IList< T > ?? a.ToList();
-
-            var bb = b as IList< T > ?? b.ToList();
-
-            if ( aa.Count() != bb.Count() )
-                return false;
-
-            var listB = bb.ToList();
-
-            if ( aa.Any( item => !listB.Remove( item ) ) ) {
-                return false;
-            }
-
-            Debug.Assert( listB.Count == 0 );
-
-            return true;
-        }
-
-        /// <summary>
-        /// Checks if an IEnumerable is empty.
-        /// </summary>
-        /// <typeparam name="T">The type of objects to enumerate.</typeparam>
-        /// <param name="source">The IEnumerable to check if empty.</param>
-        /// <returns>True if the <paramref name="source"/> is null or empty; otherwise false.</returns>
-        public static bool IsEmpty<T>( this IEnumerable<T> source ) {
-            if ( source == null )
-                return true;
-
-            return !source.Any();
-        }
     }
+
 }

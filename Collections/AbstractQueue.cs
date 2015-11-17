@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,14 +10,13 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/AbstractQueue.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-
-#endregion License & Information
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/AbstractQueue.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
 
 namespace Librainian.Collections {
 
@@ -39,10 +38,10 @@ namespace Librainian.Collections {
     [Serializable]
     internal abstract class AbstractQueue<T> : AbstractCollection<T>, IQueue<T> //JDK_1_6
     {
-        /// <summary>
-        /// Returns the current capacity of this queue.
-        /// </summary>
-        public abstract int Capacity { get; }
+        /// <summary>Returns the current capacity of this queue.</summary>
+        public abstract Int32 Capacity {
+            get;
+        }
 
         /// <summary>
         /// Returns <see langword="true" /> if there are no elements in the
@@ -60,10 +59,10 @@ namespace Librainian.Collections {
         /// </returns>
         public override Boolean IsReadOnly => false;
 
-        /// <summary>
-        /// Returns the remaining capacity of this queue.
-        /// </summary>
-        public abstract int RemainingCapacity { get; }
+        /// <summary>Returns the remaining capacity of this queue.</summary>
+        public abstract Int32 RemainingCapacity {
+            get;
+        }
 
         /// <summary>
         /// Inserts the specified <paramref name="element" /> into this queue if it is possible to
@@ -74,21 +73,20 @@ namespace Librainian.Collections {
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="element" /> cannot be added at this time due to capacity restrictions.
         /// </exception>
-        public override void Add( T element ) {
+        public override void Add(T element) {
             if ( !this.Offer( element ) ) {
                 throw new InvalidOperationException( "Queue full." );
             }
         }
 
-        /// <summary>
-        /// Removes all items from the queue.
-        /// </summary>
+        /// <summary>Removes all items from the queue.</summary>
         /// <remarks>
         /// This implementation repeatedly calls the <see cref="Poll" /> moethod until it returns <c>false</c>.
         /// </remarks>
-        public override void Clear( ) {
+        public override void Clear() {
             T element;
-            while ( this.Poll( out element ) ) { }
+            while ( this.Poll( out element ) ) {
+            }
         }
 
         /// <summary>
@@ -114,7 +112,7 @@ namespace Librainian.Collections {
         /// If the specified action is <see langword="null" />.
         /// </exception>
         /// <seealso cref="IQueue{T}.Drain(Action{T}, int)" />
-        public virtual int Drain( Action<T> action ) => this.Drain( action, null );
+        public virtual Int32 Drain(Action<T> action) => this.Drain( action, null );
 
         /// <summary>
         /// Removes all elements that pass the given <paramref name="criteria" /> from this queue
@@ -142,7 +140,7 @@ namespace Librainian.Collections {
         /// If the specified action is <see langword="null" />.
         /// </exception>
         /// <seealso cref="IQueue{T}.Drain(Action{T}, int)" />
-        public virtual int Drain( Action<T> action, Predicate<T> criteria ) {
+        public virtual Int32 Drain(Action<T> action, Predicate<T> criteria) {
             if ( action == null ) {
                 throw new ArgumentNullException( nameof( action ) );
             }
@@ -169,7 +167,7 @@ namespace Librainian.Collections {
         /// If the specified action is <see langword="null" />.
         /// </exception>
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
-        public virtual int Drain( Action<T> action, int maxElements ) => this.Drain( action, maxElements, null );
+        public virtual Int32 Drain(Action<T> action, Int32 maxElements) => this.Drain( action, maxElements, null );
 
         /// <summary>
         /// Removes at most the given number of elements that pass the given
@@ -195,16 +193,14 @@ namespace Librainian.Collections {
         /// If the specified action is <see langword="null" />.
         /// </exception>
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
-        public virtual int Drain( Action<T> action, int maxElements, Predicate<T> criteria ) {
+        public virtual Int32 Drain(Action<T> action, Int32 maxElements, Predicate<T> criteria) {
             if ( action == null ) {
                 throw new ArgumentNullException( nameof( action ) );
             }
             return maxElements > 0 ? this.DoDrain( action, maxElements, criteria ) : 0;
         }
 
-        /// <summary>
-        /// Retrieves, but does not remove, the head of this queue.
-        /// </summary>
+        /// <summary>Retrieves, but does not remove, the head of this queue.</summary>
         /// <remarks>
         /// <para>
         /// This method differs from <see cref="Peek(out T)" /> in that it throws an exception if
@@ -216,7 +212,7 @@ namespace Librainian.Collections {
         /// </remarks>
         /// <returns>The head of this queue.</returns>
         /// <exception cref="InvalidOperationException">If this queue is empty.</exception>
-        public virtual T Element( ) {
+        public virtual T Element() {
             T element;
             if ( this.Peek( out element ) ) {
                 return element;
@@ -242,30 +238,26 @@ namespace Librainian.Collections {
         /// If some property of the supplied <paramref name="element" /> prevents it from being
         /// added to this queue.
         /// </exception>
-        public abstract Boolean Offer( T element );
+        public abstract Boolean Offer(T element);
 
         /// <summary>
         /// Retrieves, but does not remove, the head of this queue into out parameter <paramref name="element" />.
         /// </summary>
         /// <param name="element">The head of this queue. <c>default(T)</c> if queue is empty.</param>
         /// <returns><c>false</c> is the queue is empty. Otherwise <c>true</c>.</returns>
-        public abstract Boolean Peek( out T element );
+        public abstract Boolean Peek(out T element);
 
-        /// <summary>
-        /// Retrieves and removes the head of this queue into out parameter <paramref name="element" />.
-        /// </summary>
+        /// <summary>Retrieves and removes the head of this queue into out parameter <paramref name="element" />.</summary>
         /// <param name="element">
         /// Set to the head of this queue. <c>default(T)</c> if queue is empty.
         /// </param>
         /// <returns><c>false</c> if the queue is empty. Otherwise <c>true</c>.</returns>
-        public abstract Boolean Poll( out T element );
+        public abstract Boolean Poll(out T element);
 
-        /// <summary>
-        /// Retrieves and removes the head of this queue.
-        /// </summary>
+        /// <summary>Retrieves and removes the head of this queue.</summary>
         /// <returns>The head of this queue</returns>
         /// <exception cref="InvalidOperationException">If this queue is empty.</exception>
-        public virtual T Remove( ) {
+        public virtual T Remove() {
             T element;
             if ( this.Poll( out element ) ) {
                 return element;
@@ -276,7 +268,7 @@ namespace Librainian.Collections {
         /// <summary>
         /// Does the real work for the <see cref="AbstractQueue{T}.Drain(System.Action{T})" /> and <see cref="AbstractQueue{T}.Drain(System.Action{T},Predicate{T})" />.
         /// </summary>
-        protected internal virtual int DoDrain( Action<T> action, Predicate<T> criteria ) => this.DoDrain( action, int.MaxValue, criteria );
+        protected internal virtual Int32 DoDrain(Action<T> action, Predicate<T> criteria) => this.DoDrain( action, Int32.MaxValue, criteria );
 
         /// <summary>
         /// Does the real work for all drain methods. Caller must guarantee the
@@ -287,6 +279,6 @@ namespace Librainian.Collections {
         /// <seealso cref="IQueue{T}.Drain(System.Action{T}, int)" />
         /// <seealso cref="IQueue{T}.Drain(System.Action{T}, Predicate{T})" />
         /// <seealso cref="IQueue{T}.Drain(System.Action{T}, int, Predicate{T})" />
-        protected internal abstract int DoDrain( Action<T> action, int maxElements, Predicate<T> criteria );
+        protected internal abstract Int32 DoDrain(Action<T> action, Int32 maxElements, Predicate<T> criteria);
     }
 }

@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,21 +10,19 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/FIFOWaitQueue.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-
-#endregion License & Information
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/FIFOWaitQueue.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
 
 namespace Librainian.Collections {
 
     using System;
     using System.Collections.Generic;
     using System.Threading;
-    using JetBrains.Annotations;
     using Threading;
 
     /// <summary>
@@ -36,8 +34,7 @@ namespace Librainian.Collections {
     /// <author>Griffin Caprio (.NET)</author>
     /// <author>Kenneth Xu</author>
     [Serializable]
-    [UsedImplicitly]
-    internal class FIFOWaitQueue : IWaitQueue {
+    internal class FifoWaitQueue : IWaitQueue {
 
         [NonSerialized]
         protected WaitNode Head;
@@ -47,7 +44,7 @@ namespace Librainian.Collections {
 
         public Boolean HasNodes => this.Head != null;
 
-        public int Length {
+        public Int32 Length {
             get {
                 var count = 0;
                 var node = this.Head;
@@ -63,7 +60,7 @@ namespace Librainian.Collections {
 
         public ICollection<Thread> WaitingThreads {
             get {
-                IList<Thread> list = new List<Thread>( );
+                var list = new List<Thread>();
                 var node = this.Head;
                 while ( node != null ) {
                     if ( node.IsWaiting ) {
@@ -75,7 +72,7 @@ namespace Librainian.Collections {
             }
         }
 
-        public WaitNode Dequeue( ) {
+        public WaitNode Dequeue() {
             if ( this.Head == null ) {
                 return null;
             }
@@ -89,7 +86,7 @@ namespace Librainian.Collections {
             return w;
         }
 
-        public void Enqueue( WaitNode w ) {
+        public void Enqueue(WaitNode w) {
             if ( this.Tail == null ) {
                 this.Head = this.Tail = w;
             }
@@ -99,25 +96,16 @@ namespace Librainian.Collections {
             }
         }
 
-        public Boolean IsWaiting( Thread thread ) {
+        public Boolean IsWaiting(Thread thread) {
             if ( thread == null ) {
                 throw new ArgumentNullException( nameof( thread ) );
             }
             for ( var node = this.Head; node != null; node = node.NextWaitNode ) {
-                if ( node.IsWaiting && node.Owner == thread ) {
+                if ( node.IsWaiting && ( node.Owner == thread ) ) {
                     return true;
                 }
             }
             return false;
         }
-
-        // In backport 3.1 but not used.
-        //public void PutBack(WaitNode w)
-        //{
-        //    w.NextWaitNode = _head;
-        //    _head = w;
-        //    if (_tail == null)
-        //        _tail = w;
-        //}
     }
 }

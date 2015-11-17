@@ -1,5 +1,5 @@
-#region License & Information
-
+// Copyright 2015 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
 // 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -10,14 +10,13 @@
 // Donations and Royalties can be paid via
 // PayPal: paypal@aibrain.org
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
 // litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
-// "Librainian/IHierarchyWrapperProvider.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-
-#endregion License & Information
+// Contact me by email if you have any questions or helpful criticism.
+// 
+// "Librainian/IHierarchyWrapperProvider.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
 
 namespace Librainian.AmazedSaint {
 
@@ -26,34 +25,46 @@ namespace Librainian.AmazedSaint {
 
     public interface IHierarchyWrapperProvider<T> {
 
-        IEnumerable<KeyValuePair<String, T>> Attributes { get; }
+        IEnumerable<KeyValuePair<String, T>> Attributes {
+            get;
+        }
 
-        IEnumerable<T> Elements { get; }
+        IEnumerable<T> Elements {
+            get;
+        }
 
-        object InternalContent { get; set; }
+        Object InternalContent {
+            get; set;
+        }
 
-        String InternalName { get; set; }
+        String InternalName {
+            get; set;
+        }
 
-        T InternalParent { get; set; }
+        T InternalParent {
+            get; set;
+        }
 
-        object InternalValue { get; set; }
+        Object InternalValue {
+            get; set;
+        }
 
-        void AddAttribute( String key, T value );
+        void AddAttribute(String key, T value);
 
-        void AddElement( T element );
+        void AddElement(T element);
 
-        T Attribute( String name );
+        T Attribute(String name);
 
-        T Element( String name );
+        T Element(String name);
 
-        object GetAttributeValue( String name );
+        Object GetAttributeValue(String name);
 
-        Boolean HasAttribute( String name );
+        Boolean HasAttribute(String name);
 
-        void RemoveAttribute( String key );
+        void RemoveAttribute(String key);
 
-        void RemoveElement( T element );
+        void RemoveElement(T element);
 
-        void SetAttributeValue( String name, object obj );
+        void SetAttributeValue(String name, Object obj);
     }
 }
