@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
+//
 // Donations and royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.I am not responsible for Anything You Do.
-// 
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Class1.cs" was last cleaned by Rick on 2015/10/04 at 3:33 AM
+//
+// "Librainian/ParagraphExtensions.cs" was last cleaned by Rick on 2016/06/18 at 10:55 PM
 
 namespace Librainian.Parsing {
 
@@ -27,7 +27,6 @@ namespace Librainian.Parsing {
     using Threading;
 
     public static class ParagraphExtensions {
-
         public const String FakeLatin = "lorem ipsum dolor sit amet consectetuer adipiscing elit sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat ut wisi enim ad minim veniam quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi Ut wisi enim ad minim veniam quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi";
 
         public static String FakeLatinSentence( UInt16 wordCount ) {
@@ -36,8 +35,9 @@ namespace Librainian.Parsing {
             return $"{Char.ToUpperInvariant( sentence[ 0 ] )}{sentence.Substring( 1 ).TrimEnd()}.";
         }
 
-        //public static String FakeLatinParagraphs( this HtmlHelper helper, UInt16 paragraphCount, UInt16 wordsPerParagraph, String beforeParagraph, String afterParagraph ) {
         //TODO
+
+        //public static String FakeLatinParagraphs( this HtmlHelper helper, UInt16 paragraphCount, UInt16 wordsPerParagraph, String beforeParagraph, String afterParagraph ) {
         //    var paragraphs = new StringBuilder();
 
         //    for ( var n = 0; n < paragraphCount; n++ ) {

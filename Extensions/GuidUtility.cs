@@ -1,36 +1,35 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/GuidUtility.cs" was last cleaned by Rick on 2015/06/12 at 2:53 PM
+//
+// "Librainian/GuidUtility.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Extensions {
 
     using System;
     using System.Security.Cryptography;
     using System.Text;
-    using Properties;
 
     /// <summary>Helper methods for working with <see cref="Guid" />.</summary>
     /// <seealso cref="http://github.com/LogosBible/Logos.Utility/blob/master/src/Logos.Utility/GuidUtility.cs" />
     public static class GuidUtility {
 
         /// <summary>
-        /// The namespace for fully-qualified domain names (from RFC 4122, Appendix C).
+        ///     The namespace for fully-qualified domain names (from RFC 4122, Appendix C).
         /// </summary>
         public static readonly Guid DnsNamespace = new Guid( "6ba7b810-9dad-11d1-80b4-00c04fd430c8" );
 
@@ -45,11 +44,14 @@ namespace Librainian.Extensions {
         /// <param name="name">The name (within that namespace).</param>
         /// <returns>A UUID derived from the namespace and name.</returns>
         /// <remarks>
-        /// See
-        /// <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html">Generating
-        /// a deterministic GUID</a> .
+        ///     See
+        ///     <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html">
+        ///         Generating
+        ///         a deterministic GUID
+        ///     </a>
+        ///     .
         /// </remarks>
-        public static Guid Create(Guid namespaceId, String name) {
+        public static Guid Create( Guid namespaceId, String name ) {
             return Create( namespaceId, name, 5 );
         }
 
@@ -57,21 +59,24 @@ namespace Librainian.Extensions {
         /// <param name="namespaceId">The ID of the namespace.</param>
         /// <param name="name">The name (within that namespace).</param>
         /// <param name="version">
-        /// The version number of the UUID to create; this value must be either 3 (for MD5 hashing)
-        /// or 5 (for SHA-1 hashing).
+        ///     The version number of the UUID to create; this value must be either 3 (for MD5 hashing)
+        ///     or 5 (for SHA-1 hashing).
         /// </param>
         /// <returns>A UUID derived from the namespace and name.</returns>
         /// <remarks>
-        /// See
-        /// <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html">Generating
-        /// a deterministic GUID</a> .
+        ///     See
+        ///     <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html">
+        ///         Generating
+        ///         a deterministic GUID
+        ///     </a>
+        ///     .
         /// </remarks>
-        public static Guid Create(Guid namespaceId, String name, Int32 version) {
+        public static Guid Create( Guid namespaceId, String name, Int32 version ) {
             if ( name == null ) {
                 throw new ArgumentNullException( nameof( name ) );
             }
             if ( ( version != 3 ) && ( version != 5 ) ) {
-                throw new ArgumentOutOfRangeException( nameof( version ), Resources.wrong_version_must_be_either_3_or_5_ );
+                throw new ArgumentOutOfRangeException( nameof( version ), "version must be either 3 or 5." );
             }
 
             // convert the name to a sequence of octets (as defined by the standard or conventions
@@ -83,7 +88,7 @@ namespace Librainian.Extensions {
             var namespaceBytes = namespaceId.ToByteArray();
             SwapByteOrder( namespaceBytes );
 
-            // comput the hash of the name space ID concatenated with the name (step 4)
+            // compute the hash of the name space ID concatenated with the name (step 4)
             Byte[] hash;
             using ( var algorithm = version == 3 ? ( HashAlgorithm )MD5.Create() : SHA1.Create() ) {
                 algorithm.TransformBlock( namespaceBytes, 0, namespaceBytes.Length, null, 0 );
@@ -110,14 +115,14 @@ namespace Librainian.Extensions {
         }
 
         // Converts a GUID (expressed as a byte array) to/from network order (MSB-first).
-        internal static void SwapByteOrder(Byte[] guid) {
+        internal static void SwapByteOrder( Byte[] guid ) {
             SwapBytes( guid, 0, 3 );
             SwapBytes( guid, 1, 2 );
             SwapBytes( guid, 4, 5 );
             SwapBytes( guid, 6, 7 );
         }
 
-        private static void SwapBytes(Byte[] guid, Int32 left, Int32 right) {
+        private static void SwapBytes( Byte[] guid, Int32 left, Int32 right ) {
             var temp = guid[ left ];
             guid[ left ] = guid[ right ];
             guid[ right ] = temp;

@@ -1,22 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Locks.cs" was last cleaned by Rick on 2015/06/12 at 2:53 PM
+//
+// "Librainian/Locks.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.Extensions {
 
@@ -30,30 +30,37 @@ namespace Librainian.Extensions {
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <example>
-        /// ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }
+        ///     ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }
         /// </example>
-        public static IDisposable Read(this ReaderWriterLockSlim obj) => new ReadLockToken( obj );
+        public static IDisposable Read( this ReaderWriterLockSlim obj ) => new ReadLockToken( obj );
 
         /// <summary>put an upgradeable ( will-read / may-write ) lock on the access object.</summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <example>
-        /// ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }
+        ///     ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }
         /// </example>
-        public static IDisposable Upgrade(this ReaderWriterLockSlim obj) => new UpgradeLockToken( obj );
+        public static IDisposable Upgrade( this ReaderWriterLockSlim obj ) => new UpgradeLockToken( obj );
 
         /// <summary>put a Write ( will-write ) lock on the access object.</summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <example>
-        /// ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }
+        ///     ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }
         /// </example>
-        public static IDisposable Write(this ReaderWriterLockSlim obj) => new WriteLockToken( obj );
+        public static IDisposable Write( this ReaderWriterLockSlim obj ) => new WriteLockToken( obj );
 
         public sealed class Manager : IDisposable {
             private readonly ReaderWriterLockSlim _slimLock;
+
             private Boolean _isDisposed;
+
             private LockTypes _lockType = LockTypes.None;
+
+            public Manager( ReaderWriterLockSlim slimLock ) {
+                Assert.NotNull( slimLock );
+                this._slimLock = slimLock;
+            }
 
             private enum LockTypes {
                 None,
@@ -61,11 +68,6 @@ namespace Librainian.Extensions {
                 Read,
 
                 Write
-            }
-
-            public Manager(ReaderWriterLockSlim slimLock) {
-                Assert.NotNull( slimLock );
-                this._slimLock = slimLock;
             }
 
             public void Dispose() {
@@ -87,7 +89,7 @@ namespace Librainian.Extensions {
                 this._lockType = LockTypes.Write;
             }
 
-            private void Dispose(Boolean freeManagedObjectsAlso) {
+            private void Dispose( Boolean freeManagedObjectsAlso ) {
                 if ( !this._isDisposed ) {
                     if ( freeManagedObjectsAlso ) {
                         switch ( this._lockType ) {
@@ -109,7 +111,7 @@ namespace Librainian.Extensions {
         private sealed class ReadLockToken : IDisposable {
             private ReaderWriterLockSlim _readerWriterLockSlim;
 
-            public ReadLockToken(ReaderWriterLockSlim slimLock) {
+            public ReadLockToken( ReaderWriterLockSlim slimLock ) {
                 Assert.NotNull( slimLock );
                 Assert.False( slimLock.IsReadLockHeld );
                 Assert.False( slimLock.IsUpgradeableReadLockHeld );
@@ -130,7 +132,7 @@ namespace Librainian.Extensions {
         private sealed class UpgradeLockToken : IDisposable {
             private ReaderWriterLockSlim _readerWriterLockSlim;
 
-            public UpgradeLockToken(ReaderWriterLockSlim slimLock) {
+            public UpgradeLockToken( ReaderWriterLockSlim slimLock ) {
                 this._readerWriterLockSlim = slimLock;
                 slimLock.EnterUpgradeableReadLock();
             }
@@ -147,7 +149,7 @@ namespace Librainian.Extensions {
         private sealed class WriteLockToken : IDisposable {
             private ReaderWriterLockSlim _readerWriterLockSlim;
 
-            public WriteLockToken(ReaderWriterLockSlim slimLock) {
+            public WriteLockToken( ReaderWriterLockSlim slimLock ) {
                 this._readerWriterLockSlim = slimLock;
                 slimLock.EnterWriteLock();
             }

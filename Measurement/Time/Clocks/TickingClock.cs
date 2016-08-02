@@ -1,42 +1,50 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/TickingClock.cs" was last cleaned by Rick on 2015/06/12 at 3:02 PM
+//
+// "Librainian/TickingClock.cs" was last cleaned by Rick on 2016/06/18 at 10:54 PM
 
 namespace Librainian.Measurement.Time.Clocks {
 
     using System;
-    using System.Runtime.Serialization;
     using System.Timers;
     using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     /// <summary>
-    /// <para>Starts a forward-ticking clock at the given time with settable events.</para>
-    /// <para>Should be threadsafe.</para>
-    /// <para>
-    /// Settable events are:
-    /// <para><see cref="OnHourTick" /></para>
-    /// <para><see cref="OnMinuteTick" /></para>
-    /// <para><see cref="OnSecondTick" /></para>
-    /// <para><see cref="OnMillisecondTick" /></para>
-    /// </para>
+    ///     <para>Starts a forward-ticking clock at the given time with settable events.</para>
+    ///     <para>Should be threadsafe.</para>
+    ///     <para>
+    ///         Settable events are:
+    ///         <para>
+    ///             <see cref="OnHourTick" />
+    ///         </para>
+    ///         <para>
+    ///             <see cref="OnMinuteTick" />
+    ///         </para>
+    ///         <para>
+    ///             <see cref="OnSecondTick" />
+    ///         </para>
+    ///         <para>
+    ///             <see cref="OnMillisecondTick" />
+    ///         </para>
+    ///     </para>
     /// </summary>
-    [DataContract( IsReference = true )]
+    [JsonObject]
     public class TickingClock : IStandardClock {
 
         /// <summary>
@@ -45,22 +53,25 @@ namespace Librainian.Measurement.Time.Clocks {
         private Timer _timer;
 
         public TickingClock( DateTime time, Granularity granularity = Granularity.Seconds ) {
-            this.Hour = new Hour( ( Byte )time.Hour );
-            this.Minute = new Minute( ( Byte )time.Minute );
-            this.Second = new Second( ( Byte )time.Second );
-            this.Millisecond = new Millisecond( ( UInt16 )time.Millisecond );
+            this.Hour = ( Byte )time.Hour;
+            this.Minute = ( Byte )time.Minute;
+            this.Second = ( Byte )time.Second;
+            this.Millisecond = ( UInt16 )time.Millisecond;
+            this.Microsecond = 0; //TODO can we get using DateTime.Ticks vs StopWatch.TicksPer/Frequency stuff?
             this.ResetTimer( granularity );
         }
 
         public TickingClock( Time time, Granularity granularity = Granularity.Seconds ) {
-            this.Hour = new Hour( time.Hour );
-            this.Minute = new Minute( time.Minute );
-            this.Second = new Second( time.Second );
-            this.Millisecond = new Millisecond( time.Millisecond );
+            this.Hour = time.Hour;
+            this.Minute = time.Minute;
+            this.Second = time.Second;
+            this.Millisecond = time.Millisecond;
+            this.Microsecond = time.Microsecond;
             this.ResetTimer( granularity );
         }
 
         public enum Granularity {
+            Microseconds,
             Milliseconds,
             Seconds,
             Minutes,
@@ -69,48 +80,57 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>
         /// </summary>
-        [DataMember]
+        [JsonProperty]
         public Hour Hour {
+            get; private set;
+        }
+
+        [JsonProperty]
+        public UInt16 Microsecond {
             get; private set;
         }
 
         /// <summary>
         /// </summary>
-        [DataMember]
+        [JsonProperty]
         public Millisecond Millisecond {
             get; private set;
         }
 
         /// <summary>
         /// </summary>
-        [DataMember]
+        [JsonProperty]
         public Minute Minute {
             get; private set;
         }
 
         [CanBeNull]
+        [JsonProperty]
         public Action<Hour> OnHourTick {
             get; set;
         }
 
         [CanBeNull]
+        [JsonProperty]
         public Action OnMillisecondTick {
             get; set;
         }
 
         [CanBeNull]
+        [JsonProperty]
         public Action OnMinuteTick {
             get; set;
         }
 
         [CanBeNull]
+        [JsonProperty]
         public Action OnSecondTick {
             get; set;
         }
 
         /// <summary>
         /// </summary>
-        [DataMember]
+        [JsonProperty]
         public Second Second {
             get; private set;
         }
@@ -128,33 +148,25 @@ namespace Librainian.Measurement.Time.Clocks {
             switch ( granularity ) {
                 case Granularity.Milliseconds:
 
-                    this._timer = new Timer( interval: ( Double )Milliseconds.One.Value ) {
-                        AutoReset = true
-                    };
+                    this._timer = new Timer( interval: ( Double )Milliseconds.One.Value ) { AutoReset = true };
                     this._timer.Elapsed += this.OnMillisecondElapsed;
                     break;
 
                 case Granularity.Seconds:
 
-                    this._timer = new Timer( interval: ( Double )Seconds.One.Value ) {
-                        AutoReset = true
-                    };
+                    this._timer = new Timer( interval: ( Double )Seconds.One.Value ) { AutoReset = true };
                     this._timer.Elapsed += this.OnSecondElapsed;
                     break;
 
                 case Granularity.Minutes:
 
-                    this._timer = new Timer( interval: ( Double )Minutes.One.Value ) {
-                        AutoReset = true
-                    };
+                    this._timer = new Timer( interval: ( Double )Minutes.One.Value ) { AutoReset = true };
                     this._timer.Elapsed += this.OnMinuteElapsed;
                     break;
 
                 case Granularity.Hours:
 
-                    this._timer = new Timer( interval: ( Double )Hours.One.Value ) {
-                        AutoReset = true
-                    };
+                    this._timer = new Timer( interval: ( Double )Hours.One.Value ) { AutoReset = true };
                     this._timer.Elapsed += this.OnHourElapsed;
                     break;
 

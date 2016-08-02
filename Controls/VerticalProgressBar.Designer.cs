@@ -6,7 +6,7 @@
         /// <summary> 
         /// Required designer variable.
         /// </summary>
-        private IContainer components = null;
+        private IContainer components;
 
         /// <summary> 
         /// Clean up any resources being used.

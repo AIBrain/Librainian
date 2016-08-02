@@ -1,21 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
 // Donations and royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // Contact me by email if you have any questions or helpful criticism.
-//  
-// "Librainian/HistogramaDesenat.cs" was last cleaned by Rick on 2015/10/24 at 4:27 AM
+//
+// "Librainian/HistogramaDesenat.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Controls {
 
@@ -36,7 +37,7 @@ namespace Librainian.Controls {
         ///     Required designer variable.
         /// </summary>
 #pragma warning disable 169
-        private readonly Container _components = null;
+        private readonly Container _components;
 #pragma warning restore 169
 
         private readonly Font _myFont = new Font( "Tahoma", 10 );
@@ -54,6 +55,7 @@ namespace Librainian.Controls {
         private Single _myYUnit;
 
         public HistogramaDesenat() {
+
             // This call is required by the Windows.Forms Form Designer.
             this.InitializeComponent();
 
@@ -79,7 +81,9 @@ namespace Librainian.Controls {
                 }
             }
 
-            get { return this._myOffset; }
+            get {
+                return this._myOffset;
+            }
         }
 
         /// <summary>
@@ -87,7 +91,7 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="values">The values being drawn</param>
         public void DrawHistogram( Int64[] values ) {
-            this._myValues = new Int64[values.Length];
+            this._myValues = new Int64[ values.Length ];
             values.CopyTo( this._myValues, 0 );
 
             this._myIsDrawing = true;
@@ -107,8 +111,8 @@ namespace Librainian.Controls {
         //}
 
         private void ComputeXyUnitValues() {
-            this._myYUnit = ( Single ) ( this.Height - 2 * this._myOffset ) / this._myMaxValue;
-            this._myXUnit = ( Single ) ( this.Width - 2 * this._myOffset ) / ( this._myValues.Length - 1 );
+            this._myYUnit = ( Single )( this.Height - 2 * this._myOffset ) / this._myMaxValue;
+            this._myXUnit = ( Single )( this.Width - 2 * this._myOffset ) / ( this._myValues.Length - 1 );
         }
 
         /// <summary>
@@ -116,10 +120,9 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="vals">The array of values in which we look</param>
         /// <returns>The maximum value</returns>
-        private Int64 GetMaxim( IEnumerable< Int64 > vals ) {
+        private Int64 GetMaxim( IEnumerable<Int64> vals ) {
             if ( this._myIsDrawing ) {
-                return vals.Concat( new Int64[] {0} )
-                           .Max();
+                return vals.Concat( new Int64[] { 0 } ).Max();
             }
             return 1;
         }
@@ -134,6 +137,7 @@ namespace Librainian.Controls {
 
             //The width of the pen is given by the XUnit for the control.
             for ( var i = 0; i < this._myValues.Length; i++ ) {
+
                 //We draw each line
                 g.DrawLine( myPen, new PointF( this._myOffset + i * this._myXUnit, this.Height - this._myOffset ), new PointF( this._myOffset + i * this._myXUnit, this.Height - this._myOffset - this._myValues[ i ] * this._myYUnit ) );
 
@@ -149,12 +153,7 @@ namespace Librainian.Controls {
 
             //We draw the indexes for 0 and for the length of the array being plotted
             g.DrawString( "0", this._myFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset, this.Height - this._myFont.Height ), StringFormat.GenericDefault );
-            g.DrawString(
-                s: ( this._myValues.Length - 1 ).ToString(),
-                font: this._myFont,
-                brush: new SolidBrush( this.DisplayColor ),
-                point: new PointF( this._myOffset + this._myValues.Length * this._myXUnit - g.MeasureString( this._myValues.Length.ToString(), this._myFont ).Width, this.Height - this._myFont.Height ),
-                format: StringFormat.GenericDefault );
+            g.DrawString( s: ( this._myValues.Length - 1 ).ToString(), font: this._myFont, brush: new SolidBrush( this.DisplayColor ), point: new PointF( this._myOffset + this._myValues.Length * this._myXUnit - g.MeasureString( this._myValues.Length.ToString(), this._myFont ).Width, this.Height - this._myFont.Height ), format: StringFormat.GenericDefault );
 
             //We draw a rectangle surrounding the control.
             g.DrawRectangle( new Pen( new SolidBrush( Color.Black ), 1 ), 0, 0, this.Width - 1, this.Height - 1 );
@@ -172,12 +171,11 @@ namespace Librainian.Controls {
         ///     the code editor.
         /// </summary>
         private void InitializeComponent() {
+
             // HistogramaDesenat
             this.Font = new Font( "Tahoma", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0 );
             this.Name = "HistogramaDesenat";
             this.Size = new Size( 208, 176 );
         }
-
     }
-
 }

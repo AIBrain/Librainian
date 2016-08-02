@@ -1,21 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
 // Donations and royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // Contact me by email if you have any questions or helpful criticism.
-//  
-// "Librainian/StreamString.cs" was last cleaned by Rick on 2015/11/13 at 11:31 PM
+//
+// "Librainian/StreamString.cs" was last cleaned by Rick on 2016/06/18 at 10:55 PM
 
 namespace Librainian.OperatingSystem.Streams {
 
@@ -27,7 +28,6 @@ namespace Librainian.OperatingSystem.Streams {
     /// </summary>
     /// <seealso cref="http://github.com/firepacket/anark.it/" />
     public class StreamString {
-
         private readonly Stream _ioStream;
 
         private readonly UnicodeEncoding _streamEncoding;
@@ -40,7 +40,7 @@ namespace Librainian.OperatingSystem.Streams {
         public String ReadString() {
             var len = this._ioStream.ReadByte() * 256;
             len += this._ioStream.ReadByte();
-            var inBuffer = new Byte[len];
+            var inBuffer = new Byte[ len ];
             this._ioStream.Read( inBuffer, 0, len );
 
             return this._streamEncoding.GetString( inBuffer );
@@ -52,14 +52,12 @@ namespace Librainian.OperatingSystem.Streams {
             if ( len > UInt16.MaxValue ) {
                 len = UInt16.MaxValue;
             }
-            this._ioStream.WriteByte( ( Byte ) ( len / 256 ) );
-            this._ioStream.WriteByte( ( Byte ) ( len & 255 ) );
+            this._ioStream.WriteByte( ( Byte )( len / 256 ) );
+            this._ioStream.WriteByte( ( Byte )( len & 255 ) );
             this._ioStream.Write( outBuffer, 0, len );
             this._ioStream.Flush();
 
             return outBuffer.Length + 2;
         }
-
     }
-
 }

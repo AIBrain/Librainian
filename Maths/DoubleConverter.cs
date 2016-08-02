@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/DoubleConverter.cs" was last cleaned by Rick on 2015/06/12 at 3:00 PM
+//
+// "Librainian/DoubleConverter.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
 
 namespace Librainian.Maths {
 
@@ -24,18 +24,18 @@ namespace Librainian.Maths {
     using System.Globalization;
 
     /// <summary>
-    /// A class to allow the conversion of doubles to String representations of their exact
-    /// System.Decimal values. The implementation aims for readability over efficiency.
+    ///     A class to allow the conversion of doubles to String representations of their exact
+    ///     System.Decimal values. The implementation aims for readability over efficiency.
     /// </summary>
     /// <see cref="http://yoda.arachsys.com/csharp/DoubleConverter.cs" />
     public class DoubleConverter {
 
         /// <summary>
-        /// Converts the given Double to a String representation of its exact System.Decimal value.
+        ///     Converts the given Double to a String representation of its exact System.Decimal value.
         /// </summary>
         /// <param name="d">The Double to convert.</param>
         /// <returns>A String representation of the Double's exact System.Decimal value.</returns>
-        public static String ToExactString(Double d) {
+        public static String ToExactString( Double d ) {
             if ( Double.IsPositiveInfinity( d ) ) {
                 return "+Infinity";
             }
@@ -116,10 +116,10 @@ namespace Librainian.Maths {
             private Byte[] _digits;
 
             /// <summary>
-            /// Constructs an arbitrary System.Decimal expansion from the given long. The long must
-            /// not be negative.
+            ///     Constructs an arbitrary System.Decimal expansion from the given long. The long must
+            ///     not be negative.
             /// </summary>
-            internal ArbitraryDecimal(Int64 x) {
+            internal ArbitraryDecimal( Int64 x ) {
                 var tmp = x.ToString( CultureInfo.InvariantCulture );
                 this._digits = new Byte[ tmp.Length ];
                 for ( var i = 0; i < tmp.Length; i++ ) {
@@ -158,9 +158,9 @@ namespace Librainian.Maths {
             }
 
             /// <summary>
-            /// Multiplies the current expansion by the given amount, which should only be 2 or 5.
+            ///     Multiplies the current expansion by the given amount, which should only be 2 or 5.
             /// </summary>
-            internal void MultiplyBy(Int32 amount) {
+            internal void MultiplyBy( Int32 amount ) {
                 var result = new Byte[ this._digits.Length + 1 ];
                 for ( var i = this._digits.Length - 1; i >= 0; i-- ) {
                     var resultDigit = this._digits[ i ] * amount + result[ i + 1 ];
@@ -205,11 +205,11 @@ namespace Librainian.Maths {
             }
 
             /// <summary>
-            /// Shifts the System.Decimal point; a negative value makes the System.Decimal expansion
-            /// bigger (as fewer digits come after the System.Decimal place) and a positive value
-            /// makes the System.Decimal expansion smaller.
+            ///     Shifts the System.Decimal point; a negative value makes the System.Decimal expansion
+            ///     bigger (as fewer digits come after the System.Decimal place) and a positive value
+            ///     makes the System.Decimal expansion smaller.
             /// </summary>
-            internal void Shift(Int32 amount) => this._decimalPoint += amount;
+            internal void Shift( Int32 amount ) => this._decimalPoint += amount;
         }
     }
 }

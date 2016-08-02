@@ -1,22 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/JunctionPoint.cs" was last cleaned by Rick on 2015/06/12 at 2:53 PM
+//
+// "Librainian/JunctionPoint.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Extensions {
 
@@ -45,7 +45,7 @@ namespace Librainian.Extensions {
         private const Int32 ErrorNotAReparsePoint = 4390;
 
         /// <summary>
-        /// The reparse point attribute cannot be set because it conflicts with an existing attribute.
+        ///     The reparse point attribute cannot be set because it conflicts with an existing attribute.
         /// </summary>
         private const Int32 ErrorReparseAttributeConflict = 4391;
 
@@ -53,8 +53,8 @@ namespace Librainian.Extensions {
         private const Int32 ErrorReparseTagInvalid = 4393;
 
         /// <summary>
-        /// There is a mismatch between the tag specified in the request and the tag present in the
-        /// reparse point.
+        ///     There is a mismatch between the tag specified in the request and the tag present in the
+        ///     reparse point.
         /// </summary>
         private const Int32 ErrorReparseTagMismatch = 4394;
 
@@ -71,8 +71,8 @@ namespace Librainian.Extensions {
         private const UInt32 IOReparseTagMountPoint = 0xA0000003;
 
         /// <summary>
-        /// This prefix indicates to NTFS that the path is to be treated as a non-interpreted path
-        /// in the virtual file system.
+        ///     This prefix indicates to NTFS that the path is to be treated as a non-interpreted path
+        ///     in the virtual file system.
         /// </summary>
         private const String NonInterpretedPathPrefix = @"\??\";
 
@@ -122,17 +122,17 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Creates a junction point from the specified directory to the specified target directory.
+        ///     Creates a junction point from the specified directory to the specified target directory.
         /// </summary>
         /// <remarks>Only works on NTFS.</remarks>
         /// <param name="junctionPoint">The junction point path</param>
         /// <param name="targetDir">The target directory</param>
         /// <param name="overwrite">If true overwrites an existing reparse point or empty directory</param>
         /// <exception cref="IOException">
-        /// Thrown when the junction point could not be created or when an existing directory was
-        /// found and <paramref name="overwrite" /> if false
+        ///     Thrown when the junction point could not be created or when an existing directory was
+        ///     found and <paramref name="overwrite" /> if false
         /// </exception>
-        public static void Create(String junctionPoint, String targetDir, Boolean overwrite) {
+        public static void Create( String junctionPoint, String targetDir, Boolean overwrite ) {
             targetDir = Path.GetFullPath( targetDir );
 
             if ( !Directory.Exists( targetDir ) ) {
@@ -151,15 +151,7 @@ namespace Librainian.Extensions {
             using ( var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericWrite ) ) {
                 var targetDirBytes = Encoding.Unicode.GetBytes( NonInterpretedPathPrefix + Path.GetFullPath( targetDir ) );
 
-                var reparseDataBuffer = new ReparseDataBuffer {
-                    ReparseTag = IOReparseTagMountPoint,
-                    ReparseDataLength = ( UInt16 )( targetDirBytes.Length + 12 ),
-                    SubstituteNameOffset = 0,
-                    SubstituteNameLength = ( UInt16 )targetDirBytes.Length,
-                    PrintNameOffset = ( UInt16 )( targetDirBytes.Length + 2 ),
-                    PrintNameLength = 0,
-                    PathBuffer = new Byte[ 0x3ff0 ]
-                };
+                var reparseDataBuffer = new ReparseDataBuffer { ReparseTag = IOReparseTagMountPoint, ReparseDataLength = ( UInt16 )( targetDirBytes.Length + 12 ), SubstituteNameOffset = 0, SubstituteNameLength = ( UInt16 )targetDirBytes.Length, PrintNameOffset = ( UInt16 )( targetDirBytes.Length + 2 ), PrintNameLength = 0, PathBuffer = new Byte[ 0x3ff0 ] };
 
                 Array.Copy( targetDirBytes, reparseDataBuffer.PathBuffer, targetDirBytes.Length );
 
@@ -183,12 +175,12 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Deletes a junction point at the specified source directory along with the directory
-        /// itself. Does nothing if the junction point does not exist.
+        ///     Deletes a junction point at the specified source directory along with the directory
+        ///     itself. Does nothing if the junction point does not exist.
         /// </summary>
         /// <remarks>Only works on NTFS.</remarks>
         /// <param name="junctionPoint">The junction point path</param>
-        public static void Delete(String junctionPoint) {
+        public static void Delete( String junctionPoint ) {
             if ( !Directory.Exists( junctionPoint ) ) {
                 if ( File.Exists( junctionPoint ) ) {
                     throw new IOException( "Path is not a junction point." );
@@ -198,11 +190,7 @@ namespace Librainian.Extensions {
             }
 
             using ( var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericWrite ) ) {
-                var reparseDataBuffer = new ReparseDataBuffer {
-                    ReparseTag = IOReparseTagMountPoint,
-                    ReparseDataLength = 0,
-                    PathBuffer = new Byte[ 0x3ff0 ]
-                };
+                var reparseDataBuffer = new ReparseDataBuffer { ReparseTag = IOReparseTagMountPoint, ReparseDataLength = 0, PathBuffer = new Byte[ 0x3ff0 ] };
 
                 var inBufferSize = Marshal.SizeOf( reparseDataBuffer );
                 var inBuffer = Marshal.AllocHGlobal( inBufferSize );
@@ -230,14 +218,14 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Determines whether the specified path exists and refers to a junction point.
+        ///     Determines whether the specified path exists and refers to a junction point.
         /// </summary>
         /// <param name="path">The junction point path</param>
         /// <returns>True if the specified path represents a junction point</returns>
         /// <exception cref="IOException">
-        /// Thrown if the specified path is invalid or some other error occurs
+        ///     Thrown if the specified path is invalid or some other error occurs
         /// </exception>
-        public static Boolean Exists(String path) {
+        public static Boolean Exists( String path ) {
             if ( !Directory.Exists( path ) ) {
                 return false;
             }
@@ -253,10 +241,10 @@ namespace Librainian.Extensions {
         /// <param name="junctionPoint">The junction point path</param>
         /// <returns>The target of the junction point</returns>
         /// <exception cref="IOException">
-        /// Thrown when the specified path does not exist, is invalid, is not a junction point, or
-        /// some other error occurs
+        ///     Thrown when the specified path does not exist, is invalid, is not a junction point, or
+        ///     some other error occurs
         /// </exception>
-        public static String GetTarget(String junctionPoint) {
+        public static String GetTarget( String junctionPoint ) {
             using ( var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericRead ) ) {
                 var target = InternalGetTarget( handle );
                 if ( target == null ) {
@@ -267,7 +255,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        private static String InternalGetTarget(SafeHandle handle) {
+        private static String InternalGetTarget( SafeHandle handle ) {
             var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
             var outBuffer = Marshal.AllocHGlobal( outBufferSize );
 
@@ -303,7 +291,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        private static SafeFileHandle OpenReparsePoint(String reparsePoint, EFileAccess accessMode) {
+        private static SafeFileHandle OpenReparsePoint( String reparsePoint, EFileAccess accessMode ) {
             var bob = NativeWin32.CreateFile( reparsePoint, accessMode, EFileShare.Read | EFileShare.Write | EFileShare.Delete, IntPtr.Zero, ECreationDisposition.OpenExisting, EFileAttributes.BackupSemantics | EFileAttributes.OpenReparsePoint, IntPtr.Zero );
             var reparsePointHandle = new SafeFileHandle( bob, true );
 
@@ -314,7 +302,7 @@ namespace Librainian.Extensions {
             return reparsePointHandle;
         }
 
-        private static void ThrowLastWin32Error(String message) {
+        private static void ThrowLastWin32Error( String message ) {
             throw new IOException( message, Marshal.GetExceptionForHR( Marshal.GetHRForLastWin32Error() ) );
         }
 
@@ -325,9 +313,9 @@ namespace Librainian.Extensions {
             public UInt32 ReparseTag;
 
             /// <summary>
-            /// Size, in bytes, of the data after the Reserved member. This can be calculated by: (4
-            /// * sizeof(UInt16)) + SubstituteNameLength + PrintNameLength + (namesAreNullTerminated
-            ///   ? 2 * sizeof(char) : 0);
+            ///     Size, in bytes, of the data after the Reserved member. This can be calculated by: (4
+            ///     * sizeof(UInt16)) + SubstituteNameLength + PrintNameLength + (namesAreNullTerminated
+            ///     ? 2 * sizeof(char) : 0);
             /// </summary>
             public UInt16 ReparseDataLength;
 
@@ -335,13 +323,13 @@ namespace Librainian.Extensions {
             public readonly UInt16 Reserved;
 
             /// <summary>
-            /// Offset, in bytes, of the substitute name String in the PathBuffer array.
+            ///     Offset, in bytes, of the substitute name String in the PathBuffer array.
             /// </summary>
             public UInt16 SubstituteNameOffset;
 
             /// <summary>
-            /// Length, in bytes, of the substitute name String. If this String is null-terminated,
-            /// SubstituteNameLength does not include space for the null character.
+            ///     Length, in bytes, of the substitute name String. If this String is null-terminated,
+            ///     SubstituteNameLength does not include space for the null character.
             /// </summary>
             public UInt16 SubstituteNameLength;
 
@@ -349,14 +337,14 @@ namespace Librainian.Extensions {
             public UInt16 PrintNameOffset;
 
             /// <summary>
-            /// Length, in bytes, of the print name String. If this String is null-terminated,
-            /// PrintNameLength does not include space for the null character.
+            ///     Length, in bytes, of the print name String. If this String is null-terminated,
+            ///     PrintNameLength does not include space for the null character.
             /// </summary>
             public UInt16 PrintNameLength;
 
             /// <summary>
-            /// A buffer containing the unicode-encoded path String. The path String contains the
-            /// substitute name String and print name String.
+            ///     A buffer containing the unicode-encoded path String. The path String contains the
+            ///     substitute name String and print name String.
             /// </summary>
             [MarshalAs( UnmanagedType.ByValArray, SizeConst = 0x3FF0 )]
             public Byte[] PathBuffer;

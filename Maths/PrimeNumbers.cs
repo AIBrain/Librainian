@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/PrimeNumbers.cs" was last cleaned by Rick on 2015/06/12 at 3:00 PM
+//
+// "Librainian/PrimeNumbers.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
 
 namespace Librainian.Maths {
 
@@ -42,12 +42,12 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        /// Untested. Returns a list of integers that COULD be prime, not that ARE prime.
+        ///     Untested. Returns a list of integers that COULD be prime, not that ARE prime.
         /// </summary>
         /// <param name="lowEnd"></param>
         /// <param name="highEnd"></param>
         /// <returns></returns>
-        public static IEnumerable<Int32> PotentialPrimes(Int32 lowEnd, Int32 highEnd) {
+        public static IEnumerable<Int32> PotentialPrimes( Int32 lowEnd, Int32 highEnd ) {
             var k = lowEnd;
             yield return k;
             loop:
@@ -75,12 +75,12 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        /// Untested. Should return a list of prime numbers between <paramref name="lowEnd" /> and <paramref name="highEnd" />
+        ///     Untested. Should return a list of prime numbers between <paramref name="lowEnd" /> and <paramref name="highEnd" />
         /// </summary>
         /// <param name="lowEnd"></param>
         /// <param name="highEnd"></param>
         /// <returns></returns>
-        public static IEnumerable<Int32> Primes(Int32 lowEnd, Int32 highEnd) {
+        public static IEnumerable<Int32> Primes( Int32 lowEnd, Int32 highEnd ) {
 
             //var memoized = new HashSet<int>(); //TODO move this over to a static variable?
             var sqrt = 1;
@@ -94,7 +94,7 @@ namespace Librainian.Maths {
             }
         }
 
-        private static Int32 GetSqrtCeiling(Int32 value, Int32 start) {
+        private static Int32 GetSqrtCeiling( Int32 value, Int32 start ) {
             while ( start * start < value ) {
                 start++;
             }

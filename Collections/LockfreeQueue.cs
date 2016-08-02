@@ -1,22 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/LockfreeQueue.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
+//
+// "Librainian/LockfreeQueue.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Collections {
 
@@ -26,7 +26,7 @@ namespace Librainian.Collections {
     using System.Threading;
 
     /// <summary>
-    /// Represents a lock-free, thread-safe, first-in, first-out collection of objects.
+    ///     Represents a lock-free, thread-safe, first-in, first-out collection of objects.
     /// </summary>
     /// <typeparam name="T">specifies the type of the elements in the queue</typeparam>
     /// <remarks>Enumeration and clearing are not thread-safe.</remarks>
@@ -35,19 +35,19 @@ namespace Librainian.Collections {
         private SingleLinkNode<T> _head = new SingleLinkNode<T>();
         private SingleLinkNode<T> _tail;
 
-        /// <summary>Gets the number of elements contained in the queue.</summary>
-        public Int32 Count => Thread.VolatileRead( ref this._count );
-
         /// <summary>Default constructor.</summary>
         public LockfreeQueue() {
             this._tail = this._head;
         }
 
-        public LockfreeQueue(IEnumerable<T> items) : this() {
+        public LockfreeQueue( IEnumerable<T> items ) : this() {
             foreach ( var item in items ) {
                 this.Enqueue( item );
             }
         }
+
+        /// <summary>Gets the number of elements contained in the queue.</summary>
+        public Int32 Count => Thread.VolatileRead( ref this._count );
 
         /// <summary>Clears the queue.</summary>
         /// <remarks>This method is not thread-safe.</remarks>
@@ -58,7 +58,7 @@ namespace Librainian.Collections {
                 var tempNode = currentNode;
                 currentNode = currentNode.Next;
 
-                tempNode.Item = default(T);
+                tempNode.Item = default( T );
                 tempNode.Next = null;
             }
 
@@ -81,12 +81,10 @@ namespace Librainian.Collections {
 
         /// <summary>Adds an object to the end of the queue.</summary>
         /// <param name="item">the object to add to the queue</param>
-        public void Enqueue(T item) {
+        public void Enqueue( T item ) {
             SingleLinkNode<T> oldTail = null;
 
-            var newNode = new SingleLinkNode<T> {
-                Item = item
-            };
+            var newNode = new SingleLinkNode<T> { Item = item };
 
             var newNodeWasAdded = false;
 
@@ -122,6 +120,10 @@ namespace Librainian.Collections {
             } while ( ( currentNode = currentNode.Next ) != null );
         }
 
+        /// <summary>Returns an enumerator that iterates through the queue.</summary>
+        /// <returns>an enumerator for the queue</returns>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
         public T TryDequeue() {
             T item;
             this.TryDequeue( out item );
@@ -130,14 +132,14 @@ namespace Librainian.Collections {
 
         /// <summary>Removes and returns the object at the beginning of the queue.</summary>
         /// <param name="item">
-        /// when the method returns, contains the object removed from the beginning of the queue, if
-        /// the queue is not empty; otherwise it is the default value for the element type
+        ///     when the method returns, contains the object removed from the beginning of the queue, if
+        ///     the queue is not empty; otherwise it is the default value for the element type
         /// </param>
         /// <returns>
-        /// true if an object from removed from the beginning of the queue; false if the queue is empty
+        ///     true if an object from removed from the beginning of the queue; false if the queue is empty
         /// </returns>
-        public Boolean TryDequeue(out T item) {
-            item = default(T);
+        public Boolean TryDequeue( out T item ) {
+            item = default( T );
 
             var haveAdvancedHead = false;
             while ( !haveAdvancedHead ) {
@@ -166,9 +168,5 @@ namespace Librainian.Collections {
             Interlocked.Decrement( ref this._count );
             return true;
         }
-
-        /// <summary>Returns an enumerator that iterates through the queue.</summary>
-        /// <returns>an enumerator for the queue</returns>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

@@ -1,22 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/RegistryServer.cs" was last cleaned by Rick on 2015/06/12 at 2:53 PM
+//
+// "Librainian/RegistryServer.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.Extensions {
 
@@ -29,9 +29,9 @@ namespace Librainian.Extensions {
     using Microsoft.Win32;
 
     /// <summary>
-    /// Provider immutable projections from the registry of the machine, as well as events for
-    /// status and errors via a singeton wrapper on the .NET Registry singleton. Here we are only
-    /// exposing the HKLM area subkey but you can see it is easily extensible
+    ///     Provider immutable projections from the registry of the machine, as well as events for
+    ///     status and errors via a singeton wrapper on the .NET Registry singleton. Here we are only
+    ///     exposing the HKLM area subkey but you can see it is easily extensible
     /// </summary>
     public class RegistryServer : IEqualityComparer<RegistryKey> /*, IInitializable*/, IEnumerable<RegistryKey> {
 
@@ -46,24 +46,11 @@ namespace Librainian.Extensions {
         private PopulateProgressDelegateError _populateError;
         private PopulateProgressDelegate _populateEventOk;
 
-        public static Int64 Count {
-            get {
-                if ( !Instance._isInitialized ) {
-                    throw new InvalidOperationException( "Please initialize the backing store first" );
-                }
-
-                return Instance._allKeys.Count;
-            }
+        static RegistryServer() {
+            Instance = new RegistryServer();
         }
 
-        public static RegistryServer Hklm {
-            get {
-                if ( !Instance._isInitialized ) {
-                    throw new InvalidOperationException( "Please initialize the backing store first" );
-                }
-
-                return Instance;
-            }
+        private RegistryServer() {
         }
 
         public static event PopulateProgressDelegate PopulateProgress {
@@ -93,24 +80,37 @@ namespace Librainian.Extensions {
             // ReSharper restore DelegateSubtraction
         }
 
-        static RegistryServer() {
-            Instance = new RegistryServer();
+        public static Int64 Count {
+            get {
+                if ( !Instance._isInitialized ) {
+                    throw new InvalidOperationException( "Please initialize the backing store first" );
+                }
+
+                return Instance._allKeys.Count;
+            }
         }
 
-        private RegistryServer() {
+        public static RegistryServer Hklm {
+            get {
+                if ( !Instance._isInitialized ) {
+                    throw new InvalidOperationException( "Please initialize the backing store first" );
+                }
+
+                return Instance;
+            }
         }
 
         public static void Initialize() => Initialize( Registry.LocalMachine );
 
         /// <summary>
-        /// If either contains a null, the result is false (actually it is null be we do not have
-        /// that option. It is 'unknown and indeterminant'. An emptry String however is treated as
-        /// 'known to be empty' where null is 'could be anything we have no idea'.
+        ///     If either contains a null, the result is false (actually it is null be we do not have
+        ///     that option. It is 'unknown and indeterminant'. An emptry String however is treated as
+        ///     'known to be empty' where null is 'could be anything we have no idea'.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public Boolean Equals(RegistryKey x, RegistryKey y) => ( x.Name != null ) && ( y.Name != null ) && ( x.Name == y.Name );
+        public Boolean Equals( RegistryKey x, RegistryKey y ) => ( x.Name != null ) && ( y.Name != null ) && ( x.Name == y.Name );
 
         public IEnumerator<RegistryKey> GetEnumerator() {
             if ( !this._isInitialized ) {
@@ -121,13 +121,15 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// For null names here we will calculate a funky random number as null != null
+        ///     For null names here we will calculate a funky random number as null != null
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public Int32 GetHashCode(RegistryKey obj) => obj.Name?.GetHashCode() ?? RuntimeHelpers.GetHashCode( new Object() );
+        public Int32 GetHashCode( RegistryKey obj ) => obj.Name?.GetHashCode() ?? RuntimeHelpers.GetHashCode( new Object() );
 
-        private static IEnumerable<RegistryKey> GetAllSubkeys(RegistryKey startkeyIn, String nodeKey) {
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        private static IEnumerable<RegistryKey> GetAllSubkeys( RegistryKey startkeyIn, String nodeKey ) {
             Instance.InvokePopulateProgress();
 
             if ( startkeyIn == null ) {
@@ -146,7 +148,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        private static void Initialize(RegistryKey registryStartKey) {
+        private static void Initialize( RegistryKey registryStartKey ) {
             if ( Instance._isInitialized ) {
                 return;
             }
@@ -157,14 +159,11 @@ namespace Librainian.Extensions {
             Instance._isInitialized = true;
         }
 
-        private static void InvokePopulateProgressItemError(PopulateProgressEventArgs args) {
-            var populateProgressDelegateError = Instance._populateError;
-            if ( populateProgressDelegateError != null ) {
-                populateProgressDelegateError( Instance, args );
-            }
+        private static void InvokePopulateProgressItemError( PopulateProgressEventArgs args ) {
+            Instance._populateError?.Invoke( Instance, args );
         }
 
-        private static Boolean TryOpenSubKey(RegistryKey startFrom, String name, out RegistryKey itemOut) {
+        private static Boolean TryOpenSubKey( RegistryKey startFrom, String name, out RegistryKey itemOut ) {
             var bIsOk = false;
             itemOut = null;
 
@@ -180,8 +179,6 @@ namespace Librainian.Extensions {
 
             return bIsOk;
         }
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         private void InvokePopulateProgress() {
             var populateProgressDelegate = Instance._populateEventOk;

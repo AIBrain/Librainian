@@ -1,20 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
 // Donations and royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.I am not responsible for Anything You Do.
-// 
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // Contact me by email if you have any questions or helpful criticism.
-//  
-// "Librainian/SimpleCancel.cs" was last cleaned by Rick on 2015/09/25 at 12:49 AM
+//
+// "Librainian/SimpleCancel.cs" was last cleaned by Rick on 2016/06/18 at 10:57 PM
 
 namespace Librainian.Threading {
 
@@ -23,29 +25,32 @@ namespace Librainian.Threading {
     using System.Threading.Tasks;
 
     /// <summary>
-    ///     Don't like the <see cref="CancellationTokenSource" /> throwing exceptions after
-    ///     <see cref="CancellationTokenSource.Cancel()" /> is called. I understand why, I just don't
-    ///     like it. Plus, this version has the Dates and Times of the cancel requests.
+    ///     A simpler threadsafe way to cancel a <see cref="Task" />.
+    ///     <seealso cref="CancellationToken" />
+    ///     This version has the Date and Time of the cancel request.
     /// </summary>
     public sealed class SimpleCancel : IDisposable {
 
+        /// <summary>
+        /// </summary>
         private Int64 _cancelRequests;
 
+        /// <summary>
+        /// </summary>
         public SimpleCancel() {
             this.Reset();
         }
 
-        //public ConcurrentQueue< DateTime > CancelRequests { get; } = new ConcurrentQueue< DateTime >();
-
         /// <summary></summary>
-        public DateTime? OldestCancelRequest { get; private set; }
-
-        public DateTime? YoungestCancelRequest { get; private set; }
+        public DateTime? OldestCancelRequest {
+            get; private set;
+        }
 
         /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose() => this.RequestCancel( false );
+        public DateTime? YoungestCancelRequest {
+            get; private set;
+        }
 
         /// <summary>Returns true if the cancel request was approved.</summary>
         /// <param name="throwIfAlreadyRequested"></param>
@@ -55,6 +60,11 @@ namespace Librainian.Threading {
         ///     Thrown if a cancellation has already been requested.
         /// </exception>
         public Boolean Cancel( Boolean throwIfAlreadyRequested = false, String throwMessage = "" ) => RequestCancel( throwIfAlreadyRequested, throwMessage );
+
+        /// <summary>
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose() => this.RequestCancel( false );
 
         /// <summary></summary>
         /// <returns></returns>
@@ -76,6 +86,7 @@ namespace Librainian.Threading {
             }
             var now = DateTime.UtcNow;
             if ( !this.OldestCancelRequest.HasValue ) {
+
                 //TODO name these better
                 this.OldestCancelRequest = now; //TODO check logic here, might be backwards
             }
@@ -90,7 +101,5 @@ namespace Librainian.Threading {
 
         /// <summary>Resets all requests back to starting values.</summary>
         public void Reset() => Interlocked.Add( ref _cancelRequests, -Interlocked.Read( ref _cancelRequests ) );
-
     }
-
 }

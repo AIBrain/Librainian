@@ -1,56 +1,56 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Captcha.cs" was last cleaned by Rick on 2015/06/12 at 2:56 PM
+//
+// "Librainian/Captcha.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Internet {
 
     using System;
     using System.Collections.Concurrent;
-    using System.Runtime.Serialization;
     using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-    [DataContract( IsReference = true )]
+    [JsonObject]
     public sealed class Captcha {
 
-        [DataMember]
+        [JsonProperty]
         private CaptchaStatus _status;
 
         [CanBeNull]
-        [DataMember]
+        [JsonProperty]
         public String ChallengeElementID {
             get; set;
         }
 
         [CanBeNull]
-        [DataMember]
+        [JsonProperty]
         public String FormID {
             get; set;
         }
 
         [CanBeNull]
-        [DataMember]
+        [JsonProperty]
         public Uri ImageUri {
             get; set;
         }
 
         [CanBeNull]
-        [DataMember]
+        [JsonProperty]
         public String ResponseElementID {
             get; set;
         }
@@ -69,20 +69,17 @@ namespace Librainian.Internet {
         }
 
         [NotNull]
-        [DataMember]
-        public ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory {
-            get;
-        }
-        = new ConcurrentDictionary<DateTime, CaptchaStatus>();
+        [JsonProperty]
+        public ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory { get; } = new ConcurrentDictionary<DateTime, CaptchaStatus>();
 
         [CanBeNull]
-        [DataMember]
+        [JsonProperty]
         public String SubmitID {
             get; set;
         }
 
         [CanBeNull]
-        [DataMember]
+        [JsonProperty]
         public Uri Uri {
             get; set;
         }

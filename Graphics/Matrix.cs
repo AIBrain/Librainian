@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Matrix.cs" was last cleaned by Rick on 2015/06/12 at 2:55 PM
+//
+// "Librainian/Matrix.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.Graphics {
 
@@ -24,24 +24,24 @@ namespace Librainian.Graphics {
 
     public class Matrix {
         protected readonly Int32 Cols;
-        protected readonly Single[, ] matrix;
+        protected readonly Single[,] matrix;
         protected readonly Int32 Rows;
 
-        protected Matrix(Single[, ] matrix) {
+        protected Matrix( Single[,] matrix ) {
             this.matrix = matrix;
             this.Rows = matrix.GetLength( 0 );
             this.Cols = matrix.GetLength( 1 );
         }
 
-        protected Matrix(Int32 rows, Int32 cols) {
+        protected Matrix( Int32 rows, Int32 cols ) {
             this.matrix = new Single[ rows, cols ];
             this.Rows = rows;
             this.Cols = cols;
         }
 
-        public static Matrix operator *(Matrix m, Single scalar) => new Matrix( Multiply( m, scalar ) );
+        public static Matrix operator *( Matrix m, Single scalar ) => new Matrix( Multiply( m, scalar ) );
 
-        public static Matrix operator *(Matrix m1, Matrix m2) => new Matrix( Multiply( m1, m2 ) );
+        public static Matrix operator *( Matrix m1, Matrix m2 ) => new Matrix( Multiply( m1, m2 ) );
 
         public override String ToString() {
             var res = "";
@@ -59,7 +59,7 @@ namespace Librainian.Graphics {
             return $"({res})";
         }
 
-        protected static Single[, ] Multiply(Matrix matrix, Single scalar) {
+        protected static Single[,] Multiply( Matrix matrix, Single scalar ) {
             var rows = matrix.Rows;
             var cols = matrix.Cols;
             var m1 = matrix.matrix;
@@ -72,7 +72,7 @@ namespace Librainian.Graphics {
             return m2;
         }
 
-        private static Single[, ] Multiply(Matrix matrix1, Matrix matrix2) {
+        private static Single[,] Multiply( Matrix matrix1, Matrix matrix2 ) {
             var m1Cols = matrix1.Cols;
             if ( m1Cols != matrix2.Rows ) {
                 throw new ArgumentException();

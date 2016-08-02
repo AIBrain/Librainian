@@ -1,22 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/ThreadSafeList.cs" was last cleaned by Rick on 2015/06/12 at 2:51 PM
+//
+// "Librainian/ThreadSafeList.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Collections {
 
@@ -25,21 +25,25 @@ namespace Librainian.Collections {
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using System.Runtime.Serialization;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using Threading;
 
     /// <summary>Just a simple thread safe collection. Doesn't scale well because of the locks.</summary>
     /// <typeparam name="T"></typeparam>
     /// <value>Version 1.7</value>
     /// <remarks>TODO replace locks with AsyncLocks</remarks>
-    [CollectionDataContract]
+    [JsonObject]
     [DebuggerDisplay( "Count={Count}" )]
     public sealed class ThreadSafeList<T> : IList<T> {
 
         /// <summary>TODO replace the locks with a ReaderWriterLockSlim</summary>
-        [DataMember]
+        [JsonProperty]
         private readonly List<T> _items = new List<T>();
+
+        public ThreadSafeList( IEnumerable<T> items = null ) {
+            this.AddRange( items );
+        }
 
         public Int32 Count {
             get {
@@ -73,24 +77,18 @@ namespace Librainian.Collections {
             }
         }
 
-        public ThreadSafeList(IEnumerable<T> items = null) {
-            this.AddRange( items );
-        }
-
-        public void Add(T item) {
+        public void Add( T item ) {
             lock ( this._items ) {
                 this._items.Add( item );
             }
         }
 
-        public Task AddAsync(T item) => Task.Run( () => {
-            this.TryAdd( item );
-        } );
+        public Task AddAsync( T item ) => Task.Run( () => { this.TryAdd( item ); } );
 
         /// <summary>Add in an enumerable of items.</summary>
         /// <param name="collection"></param>
         /// <param name="asParallel"></param>
-        public void AddRange(IEnumerable<T> collection, Boolean asParallel = true) {
+        public void AddRange( IEnumerable<T> collection, Boolean asParallel = true ) {
             if ( null == collection ) {
                 return;
             }
@@ -107,19 +105,19 @@ namespace Librainian.Collections {
 
         /// <summary>Returns a new copy of all items in the <see cref="List{T}" />.</summary>
         /// <returns></returns>
-        public List<T> Clone(Boolean asParallel = true) {
+        public List<T> Clone( Boolean asParallel = false /*is order guaranteed if true? Based upon ParallelEnumerableWrapper it seems it would be.*/ ) {
             lock ( this._items ) {
                 return asParallel ? new List<T>( this._items.AsParallel() ) : new List<T>( this._items );
             }
         }
 
-        public Boolean Contains(T item) {
+        public Boolean Contains( T item ) {
             lock ( this._items ) {
                 return this._items.Contains( item );
             }
         }
 
-        public void CopyTo(T[] array, Int32 arrayIndex) {
+        public void CopyTo( T[] array, Int32 arrayIndex ) {
             lock ( this._items ) {
                 this._items.CopyTo( array, arrayIndex );
             }
@@ -128,15 +126,16 @@ namespace Librainian.Collections {
         /// <summary>Perform the <paramref name="action" /> on each item in the list.</summary>
         /// <param name="action"><paramref name="action" /> to perform on each item.</param>
         /// <param name="performActionOnClones">
-        /// If true, the <paramref name="action" /> will be performed on a <see cref="Clone" /> of
-        /// the items.
+        ///     If true, the <paramref name="action" /> will be performed on a <see cref="Clone" /> of
+        ///     the items.
         /// </param>
         /// <param name="asParallel">Use the <see cref="ParallelQuery{TSource}" /> method.</param>
         /// <param name="inParallel">
-        /// Use the
-        /// <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})" /> method.
+        ///     Use the
+        ///     <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})" />
+        ///     method.
         /// </param>
-        public void ForAll(Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false) {
+        public void ForAll( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
             if ( action == null ) {
                 throw new ArgumentNullException( nameof( action ) );
             }
@@ -201,7 +200,7 @@ namespace Librainian.Collections {
         ///         cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})" />
         ///     method.
         /// </param>
-        public void ForEach(Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false) {
+        public void ForEach( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
             if ( action == null ) {
                 throw new ArgumentNullException( nameof( action ) );
             }
@@ -243,31 +242,33 @@ namespace Librainian.Collections {
 
         public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
 
-        public Int32 IndexOf(T item) {
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        public Int32 IndexOf( T item ) {
             lock ( this._items ) {
                 return this._items.IndexOf( item );
             }
         }
 
-        public void Insert(Int32 index, T item) {
+        public void Insert( Int32 index, T item ) {
             lock ( this._items ) {
                 this._items.Insert( index, item );
             }
         }
 
-        public Boolean Remove(T item) {
+        public Boolean Remove( T item ) {
             lock ( this._items ) {
                 return this._items.Remove( item );
             }
         }
 
-        public void RemoveAt(Int32 index) {
+        public void RemoveAt( Int32 index ) {
             lock ( this._items ) {
                 this._items.RemoveAt( index );
             }
         }
 
-        public Boolean TryAdd(T item) {
+        public Boolean TryAdd( T item ) {
             try {
                 lock ( this._items ) {
                     this._items.Add( item );
@@ -282,7 +283,7 @@ namespace Librainian.Collections {
             return false;
         }
 
-        public Boolean TryTake(out T item) {
+        public Boolean TryTake( out T item ) {
             lock ( this._items ) {
                 var count = this._items.Count;
                 if ( count >= 1 ) {
@@ -292,7 +293,7 @@ namespace Librainian.Collections {
                     return true;
                 }
             }
-            item = default(T);
+            item = default( T );
             return false;
         }
 
@@ -300,7 +301,7 @@ namespace Librainian.Collections {
         /// <param name="item"></param>
         /// <param name="rest"></param>
         /// <returns></returns>
-        public Boolean TryTakeOneCopyRest(out T item, out List<T> rest) {
+        public Boolean TryTakeOneCopyRest( out T item, out List<T> rest ) {
             lock ( this._items ) {
                 var count = this._items.Count;
                 if ( count >= 1 ) {
@@ -310,11 +311,9 @@ namespace Librainian.Collections {
                     return true;
                 }
             }
-            item = default(T);
-            rest = default(List<T>);
+            item = default( T );
+            rest = default( List<T> );
             return false;
         }
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Bitten.cs" was last cleaned by Rick on 2015/06/12 at 3:07 PM
+//
+// "Librainian/Bitten.cs" was last cleaned by Rick on 2016/06/18 at 10:55 PM
 
 namespace Librainian.Misc {
 
@@ -24,9 +24,10 @@ namespace Librainian.Misc {
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using Newtonsoft.Json;
 
     [StructLayout( LayoutKind.Sequential )]
-    [Serializable]
+    [JsonObject]
     [ComVisible( true )]
     [Obsolete( "untested" )]
     public struct Bitten {
@@ -49,7 +50,7 @@ namespace Librainian.Misc {
         private readonly Byte _k;
 
         /// Creates a new guid from an array of bytes.
-        public Bitten(IList<Byte> b) {
+        public Bitten( IList<Byte> b ) {
             this._d = b[ 0 ];
             this._e = b[ 1 ];
             this._f = b[ 2 ];
@@ -60,7 +61,7 @@ namespace Librainian.Misc {
             this._k = b[ 7 ];
         }
 
-        public Bitten(Byte d, Byte e, Byte f, Byte g, Byte h, Byte i, Byte j, Byte k) {
+        public Bitten( Byte d, Byte e, Byte f, Byte g, Byte h, Byte i, Byte j, Byte k ) {
             this._d = d;
             this._e = e;
             this._f = f;
@@ -94,22 +95,22 @@ namespace Librainian.Misc {
 
             ParenthesisFormat = RequireParenthesis | RequireDashes, /* P */
 
-            Any = AllowParenthesis | AllowBraces | AllowDashes | AllowHexPrefix,
+            Any = AllowParenthesis | AllowBraces | AllowDashes | AllowHexPrefix
         }
 
         // Creates a new guid based on the value in the String. The value is made up of hex digits
         // speared by the dash ("-"). The String may begin and end with brackets ("{", "}").
-        // 
+        //
         // The String must be of the form dddddddd-dddd-dddd-dddd-dddddddddddd. where d is a hex
         // digit. (That is 8 hex digits, followed by 4, then 4, then 4, then 12) such as: "CA761232-ED42-11CE-BACD-00AA0057B223"
-        public Bitten(String g) {
+        public Bitten( String g ) {
             if ( g == null ) {
                 throw new ArgumentNullException( nameof( g ) );
             }
             this = Parse( g );
         }
 
-        public static Bitten Parse(String input) {
+        public static Bitten Parse( String input ) {
             Guid result;
             return Guid.TryParse( input, out result ) ? new Bitten( result.ToByteArray().Skip( 8 ).ToList() ) : Empty;
         }
@@ -130,7 +131,7 @@ namespace Librainian.Misc {
             return g;
         }
 
-        public Boolean Equals(Bitten g) {
+        public Boolean Equals( Bitten g ) {
 
             // Now compare each of the elements
             if ( g._d != this._d ) {
@@ -157,7 +158,7 @@ namespace Librainian.Misc {
             return g._k == this._k;
         }
 
-        public static Boolean operator ==(Bitten a, Bitten b) {
+        public static Boolean operator ==( Bitten a, Bitten b ) {
 
             // Now compare each of the elements
 
@@ -185,14 +186,14 @@ namespace Librainian.Misc {
             return a._k == b._k;
         }
 
-        public static Boolean operator !=(Bitten a, Bitten b) => !( a == b );
+        public static Boolean operator !=( Bitten a, Bitten b ) => !( a == b );
 
-        private static Char HexToChar(Int32 a) {
+        private static Char HexToChar( Int32 a ) {
             a = a & 0xf;
             return ( Char )( a > 9 ? a - 10 + 0x61 : a + 0x30 );
         }
 
-        private static Int32 HexsToChars(IList<Char> guidChars, Int32 offset, Int32 a, Int32 b, Boolean hex = false) {
+        private static Int32 HexsToChars( IList<Char> guidChars, Int32 offset, Int32 a, Int32 b, Boolean hex = false ) {
             if ( hex ) {
                 guidChars[ offset++ ] = '0';
                 guidChars[ offset++ ] = 'x';
@@ -233,7 +234,7 @@ namespace Librainian.Misc {
         //    return other._d == this._d && other._e == this._e && other._f == this._f && other._g == this._g && other._h == this._h && other._i == this._i && other._j == this._j && other._k == this._k;
         //}
 
-        public override Boolean Equals(Object obj) {
+        public override Boolean Equals( Object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }

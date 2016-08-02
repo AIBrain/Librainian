@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/SpatialExtensions.cs" was last cleaned by Rick on 2015/06/12 at 3:02 PM
+//
+// "Librainian/SpatialExtensions.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
 
 namespace Librainian.Measurement.Spatial {
 
@@ -24,34 +24,34 @@ namespace Librainian.Measurement.Spatial {
     using System.Windows;
     using System.Windows.Media.Media3D;
     using AForge.Math;
+    using JetBrains.Annotations;
 
     public static class SpatialExtensions {
         public const Single TwoPi = ( Single )( Math.PI * 2 );
-        public const Single TwoPI = ( Single )( Math.PI * 2 );
 
-        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T> => val.CompareTo( min ) < 0 ? min : ( val.CompareTo( max ) > 0 ? max : val );
+        public static T Clamp<T>( this T val, T min, T max ) where T : IComparable<T> => val.CompareTo( min ) < 0 ? min : ( val.CompareTo( max ) > 0 ? max : val );
 
-        public static Double Clamp01(this Double value) => Clamp( value, 0.0f, 1.0f );
+        public static Single Clamp01( this Single value ) => Clamp( value, 0.0f, 1.0f );
 
         /// <summary>Lerp function for compass angles</summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="portion"></param>
         /// <remarks>
-        /// When you gradually want to steer towards a target heading, you need a Lerp function. But
-        /// to slide from 350 degrees to 10 degrees should work like 350, 351, 352, ....359, 0, 1,
-        /// 2, 3....10. And not the other way around going 350, 349, 348.....200...1000, 12, 11, 10.
+        ///     When you gradually want to steer towards a target heading, you need a Lerp function. But
+        ///     to slide from 350 degrees to 10 degrees should work like 350, 351, 352, ....359, 0, 1,
+        ///     2, 3....10. And not the other way around going 350, 349, 348.....200...1000, 12, 11, 10.
         /// </remarks>
         /// <returns></returns>
-        public static Double CompassAngleLerp(this Double from, Double to, Double portion) {
+        public static Single CompassAngleLerp( this Single from, Single to, Single portion ) {
             var dif = To180Angle( to - @from );
             dif *= Clamp01( portion );
             return To360Angle( @from + dif );
         }
 
-        public static Double DegreesToRadians(Double degrees) => degrees * Degrees.DegreesToRadiansFactor;
+        public static Single DegreesToRadians( Single degrees ) => degrees * Degrees.DegreesToRadiansFactor;
 
-        public static Double FindAngle(this Point here, Point there) {
+        public static Double FindAngle( this Point here, Point there ) {
             var dx = there.X - here.X;
             var dy = there.Y - here.Y;
             var angle = RadiansToDegrees( Math.Atan2( dy, dx ) );
@@ -63,7 +63,7 @@ namespace Librainian.Measurement.Spatial {
 
         //public const Single RadiansToDegrees = ( float ) ( 180.0 / Math.PI );
         //public const Single DegreesToRadians = ( float )( Math.PI / 180.0 );
-        public static GeoLocation FindPointAtDistanceFrom(this GeoLocation startPoint, Double initialBearingRadians, Double distanceKilometres) {
+        public static GeoLocation FindPointAtDistanceFrom( this GeoLocationF startPoint, Double initialBearingRadians, Double distanceKilometres ) {
             const Double radiusEarthKilometres = 6371.01;
             var distRatio = distanceKilometres / radiusEarthKilometres;
             var distRatioSine = Math.Sin( distRatio );
@@ -79,31 +79,28 @@ namespace Librainian.Measurement.Spatial {
 
             var endLonRads = startLonRad + Math.Atan2( Math.Sin( initialBearingRadians ) * distRatioSine * startLatCos, distRatioCosine - startLatSin * Math.Sin( endLatRads ) );
 
-            return new GeoLocation {
-                Latitude = RadiansToDegrees( endLatRads ),
-                Longitude = RadiansToDegrees( endLonRads )
-            };
+            return new GeoLocation { Latitude = RadiansToDegrees( endLatRads ), Longitude = RadiansToDegrees( endLonRads ) };
         }
 
         /// <summary>
-        /// Compass angles are slightly different from mathematical angles, because they start at
-        /// the top (north and go clockwise, whereas mathematical angles start at the x-axis (east)
-        /// and go counter-clockwise.
+        ///     Compass angles are slightly different from mathematical angles, because they start at
+        ///     the top (north and go clockwise, whereas mathematical angles start at the x-axis (east)
+        ///     and go counter-clockwise.
         /// </summary>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public static Double MathAngleToCompassAngle(Double angle) {
+        public static Double MathAngleToCompassAngle( Double angle ) {
             angle = 90.0f - angle;
             return To360Angle( angle );
         }
 
-        public static Double RadiansToDegrees(Double radians) => radians * Radians.RadiansToDegreesFactor;
+        public static Double RadiansToDegrees( Double radians ) => radians * Radians.RadiansToDegreesFactor;
 
         /// <summary>Clockwise from a top-down view.</summary>
         /// <param name="degrees"></param>
         /// <param name="byAmount"></param>
         /// <returns></returns>
-        public static Degrees RotateLeft(this Degrees degrees, Single byAmount = 1) {
+        public static Degrees RotateLeft( this Degrees degrees, Single byAmount = 1 ) {
             if ( Single.IsNaN( byAmount ) ) {
                 return degrees;
             }
@@ -118,7 +115,7 @@ namespace Librainian.Measurement.Spatial {
         /// <param name="degrees"></param>
         /// <param name="byAmount"></param>
         /// <returns></returns>
-        public static Degrees RotateRight(this Degrees degrees, Single byAmount = 1) {
+        public static Degrees RotateRight( this Degrees degrees, Single byAmount = 1 ) {
             if ( Single.IsNaN( byAmount ) ) {
                 return degrees;
             }
@@ -130,15 +127,15 @@ namespace Librainian.Measurement.Spatial {
         }
 
         /// <summary>
-        /// Convert angle between -180 and 180 degrees If you want the angle to be between -180 and 180
+        ///     Convert angle between -180 and 180 degrees If you want the angle to be between -180 and 180
         /// </summary>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public static Double To180Angle(this Double angle) {
-            while ( angle < -180.0 ) {
+        public static Single To180Angle( this Single angle ) {
+            while ( angle < -180.0f ) {
                 angle += 360.0f;
             }
-            while ( angle >= 180.0 ) {
+            while ( angle >= 180.0f ) {
                 angle -= 360.0f;
             }
             return angle;
@@ -147,19 +144,19 @@ namespace Librainian.Measurement.Spatial {
         /// <summary>And for a Vector with 3 angles</summary>
         /// <param name="angles"></param>
         /// <returns></returns>
-        public static Vector3 To180Angle(Vector3 angles) {
-            angles.X = ( Single )To180Angle( angles.X );
-            angles.Y = ( Single )To180Angle( angles.Y );
-            angles.Z = ( Single )To180Angle( angles.Z );
+        public static Vector3 To180Angle( Vector3 angles ) {
+            angles.X = To180Angle( angles.X );
+            angles.Y = To180Angle( angles.Y );
+            angles.Z = To180Angle( angles.Z );
             return angles;
         }
 
         /// <summary>
-        /// When you have an angle in degrees, that you want to convert in the range of 0-360
+        ///     When you have an angle in degrees, that you want to convert in the range of 0-360
         /// </summary>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public static Double To360Angle(this Double angle) {
+        public static Double To360Angle( this Double angle ) {
             while ( angle < 0.0 ) {
                 angle += 360.0;
             }
@@ -170,11 +167,11 @@ namespace Librainian.Measurement.Spatial {
         }
 
         /// <summary>
-        /// When you have an angle in degrees, that you want to convert in the range of 0-360
+        ///     When you have an angle in degrees, that you want to convert in the range of 0-360
         /// </summary>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public static Single To360Angle(this Single angle) {
+        public static Single To360Angle( this Single angle ) {
             while ( angle < 0.0f ) {
                 angle += 360.0f;
             }
@@ -187,16 +184,16 @@ namespace Librainian.Measurement.Spatial {
         /// <summary>To do the same for a vector of 3 angles</summary>
         /// <param name="angles"></param>
         /// <returns></returns>
-        public static Vector3 To360Angle(this Vector3 angles) {
+        public static Vector3 To360Angle( this Vector3 angles ) {
             angles.X = To360Angle( angles.X );
             angles.Y = To360Angle( angles.Y );
             angles.Z = To360Angle( angles.Z );
             return angles;
         }
 
-        public static Degrees TurnLeft(this Degrees degrees, Single angle) => new Degrees( degrees.Value += DegreesToRadians( angle ) );
+        public static Degrees TurnLeft( this Degrees degrees, Single angle ) => new Degrees( degrees.Value += DegreesToRadians( angle ) );
 
-        public static Degrees TurnRight(this Degrees degrees, Single angle) => new Degrees( degrees.Value -= DegreesToRadians( angle ) );
+        public static Degrees TurnRight( this Degrees degrees, Single angle ) => new Degrees( degrees.Value -= DegreesToRadians( angle ) );
 
         /*
 
@@ -210,16 +207,16 @@ namespace Librainian.Measurement.Spatial {
         */
 
         /// <summary>
-        /// Calculates the angle that an object should face, given its position, its target's
-        /// position, its current angle, and its maximum turning speed.
+        ///     Calculates the angle that an object should face, given its position, its target's
+        ///     position, its current angle, and its maximum turning speed.
         /// </summary>
-        public static Single TurnToFace(this Point3D position, Point3D faceThis, Single currentAngle, Single turnSpeed) => TurnToFace( new Vector( position.X, position.Y ), new Vector( faceThis.X, faceThis.Y ), currentAngle, turnSpeed );
+        public static Single TurnToFace( this Point3D position, Point3D faceThis, Single currentAngle, Single turnSpeed ) => TurnToFace( new Vector( position.X, position.Y ), new Vector( faceThis.X, faceThis.Y ), currentAngle, turnSpeed );
 
         /// <summary>
-        /// Calculates the angle that an object should face, given its position, its target's
-        /// position, its current angle, and its maximum turning speed.
+        ///     Calculates the angle that an object should face, given its position, its target's
+        ///     position, its current angle, and its maximum turning speed.
         /// </summary>
-        public static Single TurnToFace(this Vector position, Vector faceThis, Single currentAngle, Single turnSpeed) {
+        public static Single TurnToFace( this Vector position, Vector faceThis, Single currentAngle, Single turnSpeed ) {
 
             // consider this diagram: C /| / | / | y / o | S-------- x where S is the position of
             // the spot light, C is the position of the cat, and "o" is the angle that the spot
@@ -235,7 +232,7 @@ namespace Librainian.Measurement.Spatial {
             // and has the added benefit that it will use the signs of x and y to determine what
             // cartesian quadrant to put the result in.
             // http: //msdn2.microsoft.com/en-us/Library/system.math.atan2.aspx
-            var desiredAngle = new Radians( Math.Atan2( y, x ) );
+            var desiredAngle = new Radians( ( Single )Math.Atan2( y, x ) );
 
             // so now we know where we WANT to be facing, and where we ARE facing... if we weren't
             // constrained by turnSpeed, this would be easy: we'd just return desiredAngle. instead,
@@ -257,9 +254,10 @@ namespace Librainian.Measurement.Spatial {
         }
 
         /// <summary>Returns the angle expressed in radians between -Pi and Pi.</summary>
-        private static Single WrapAngle(Single radians) {
+        [UsedImplicitly]
+        private static Single WrapAngle( Single radians ) {
             while ( radians < -Math.PI ) {
-                radians += TwoPI;
+                radians += TwoPi;
             }
             while ( radians > Math.PI ) {
                 radians -= TwoPi;

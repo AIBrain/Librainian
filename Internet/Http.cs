@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Http.cs" was last cleaned by Rick on 2015/06/12 at 2:56 PM
+//
+// "Librainian/Http.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Internet {
 
@@ -51,6 +51,10 @@ namespace Librainian.Internet {
         private static readonly Object Synch = new Object();
         private static Hashtable _urls;
 
+        static Http() {
+            Urls = new Hashtable( 100 );
+        }
+
         private static Hashtable Urls {
             get {
                 lock ( Synch ) {
@@ -65,13 +69,9 @@ namespace Librainian.Internet {
             }
         }
 
-        static Http() {
-            Urls = new Hashtable( 100 );
-        }
+        public static String Get( String url ) => Get( new Uri( url ) );
 
-        public static String Get(String url) => Get( new Uri( url ) );
-
-        public static String Get(Uri uri) {
+        public static String Get( Uri uri ) {
             uri.IsWellFormedOriginalString().BreakIfFalse();
             if ( !uri.IsWellFormedOriginalString() ) {
                 return null;
@@ -122,9 +122,9 @@ namespace Librainian.Internet {
             return String.Empty;
         }
 
-        public static IAsyncResult GetAsync(String url) => GetAsync( new Uri( url ) );
+        public static IAsyncResult GetAsync( String url ) => GetAsync( new Uri( url ) );
 
-        public static IAsyncResult GetAsync(Uri uri) {
+        public static IAsyncResult GetAsync( Uri uri ) {
             uri.IsWellFormedOriginalString().BreakIfFalse();
             if ( !uri.IsWellFormedOriginalString() ) {
                 return null;
@@ -143,14 +143,14 @@ namespace Librainian.Internet {
         }
 
         /// <summary>
-        /// From: http://www.albahari.com/threading/part3.aspx#_Asynch_Delegates Use: DownloadString
-        ///       http1 = new WebClient().DownloadString; IAsyncResult cookie1 =
-        ///       download1.BeginInvoke( uri, null, null); ... String s1 = download1.EndInvoke(
-        ///       cookie1 );
+        ///     From: http://www.albahari.com/threading/part3.aspx#_Asynch_Delegates Use: DownloadString
+        ///     http1 = new WebClient().DownloadString; IAsyncResult cookie1 =
+        ///     download1.BeginInvoke( uri, null, null); ... String s1 = download1.EndInvoke(
+        ///     cookie1 );
         /// </summary>
         /// <param name="uri"></param>
         /// <returns></returns>
-        public static IAsyncResult GetStart(Uri uri) {
+        public static IAsyncResult GetStart( Uri uri ) {
             uri.IsWellFormedOriginalString().BreakIfFalse();
             if ( !uri.IsWellFormedOriginalString() ) {
                 return null;
@@ -170,14 +170,14 @@ namespace Librainian.Internet {
         }
 
         /// <summary>
-        /// Returns the document for the address specified or String.Empty if nothing has been
-        /// captured yet.
+        ///     Returns the document for the address specified or String.Empty if nothing has been
+        ///     captured yet.
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static String Peek(String url) => Peek( new Uri( url ) );
+        public static String Peek( String url ) => Peek( new Uri( url ) );
 
-        public static String Peek(Uri uri) {
+        public static String Peek( Uri uri ) {
             if ( !uri.IsWellFormedOriginalString() ) {
                 return String.Empty;
             }
@@ -189,13 +189,13 @@ namespace Librainian.Internet {
         }
 
         /// <summary>
-        /// Starts an asynchronous http request. It can be checked by Peek( url ) Each Poke starts
-        /// another request. The order of responses is undeterminitic (can be out-of-order). This is
-        /// by design.
+        ///     Starts an asynchronous http request. It can be checked by Peek( url ) Each Poke starts
+        ///     another request. The order of responses is undeterminitic (can be out-of-order). This is
+        ///     by design.
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static IAsyncResult Poke(String url) {
+        public static IAsyncResult Poke( String url ) {
             var uri = new Uri( url );
             if ( !uri.IsWellFormedOriginalString() ) {
                 return null;
@@ -207,16 +207,16 @@ namespace Librainian.Internet {
         }
 
         /// <summary>
-        /// Pump messages while waiting forever for a response to be populated for this url.
+        ///     Pump messages while waiting forever for a response to be populated for this url.
         /// </summary>
         /// <param name="url"></param>
-        public static void Wait(String url) => Wait( new Uri( url ) );
+        public static void Wait( String url ) => Wait( new Uri( url ) );
 
         /// <summary>
-        /// Pump messages while waiting forever for a response to be populated for this uri.
+        ///     Pump messages while waiting forever for a response to be populated for this uri.
         /// </summary>
         /// <param name="uri"></param>
-        public static void Wait(Uri uri) {
+        public static void Wait( Uri uri ) {
             uri.IsWellFormedOriginalString().BreakIfFalse();
             if ( !uri.IsWellFormedOriginalString() ) {
                 return;
@@ -228,7 +228,7 @@ namespace Librainian.Internet {
             }
         }
 
-        private static void GetAsynchCallback(IAsyncResult result) {
+        private static void GetAsynchCallback( IAsyncResult result ) {
             if ( !result.IsCompleted ) {
                 return;
             }

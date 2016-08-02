@@ -1,3 +1,23 @@
+// Copyright 2016 Rick@AIBrain.org.
+//
+// This notice must be kept visible in the source.
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/CreateUnsafeSerializer.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
+
 namespace Librainian.Database.MMF {
 
     using System;
@@ -9,7 +29,7 @@ namespace Librainian.Database.MMF {
     using Microsoft.CSharp;
 
     /// <summary>
-    /// Class which tries to create a ISerializeDeserialize based on pointer movement (unsafe).
+    ///     Class which tries to create a ISerializeDeserialize based on pointer movement (unsafe).
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class CreateUnsafeSerializer<T> {
@@ -34,7 +54,7 @@ namespace Librainian.Database.MMF {
             return ( ISerializeDeserialize<T> )res.CompiledAssembly.CreateInstance( "UnsafeConverter" );
         }
 
-        private static void BytesToObjectCode(StringBuilder sb, String typeFullName) {
+        private static void BytesToObjectCode( StringBuilder sb, String typeFullName ) {
             sb.AppendFormat( "public unsafe {0} BytesToObject( byte[] bytes )", typeFullName );
             sb.Append( "{" );
             sb.Append( @"
@@ -55,9 +75,7 @@ namespace Librainian.Database.MMF {
         }
 
         private CompilerResults CompileCode() {
-            var providerOptions = new Dictionary<String, String> {
-                { "CompilerVersion", "v3.5" }
-            };
+            var providerOptions = new Dictionary<String, String> { { "CompilerVersion", "v3.5" } };
             CodeDomProvider provider = new CSharpCodeProvider( providerOptions );
             var compilerParameters = this.GetCompilerParameters();
             return provider.CompileAssemblyFromSource( compilerParameters, this.GenerateCode() );
@@ -83,7 +101,7 @@ namespace Librainian.Database.MMF {
             return sb.ToString();
         }
 
-        private void GenerateMethodBodyCode(StringBuilder sb) {
+        private void GenerateMethodBodyCode( StringBuilder sb ) {
             this._addCount = 0;
             var length = this._size;
             do {
@@ -96,19 +114,13 @@ namespace Librainian.Database.MMF {
         }
 
         private CompilerParameters GetCompilerParameters() {
-            var cParameters = new CompilerParameters {
-                GenerateInMemory = true,
-                GenerateExecutable = false,
-                TreatWarningsAsErrors = false,
-                IncludeDebugInformation = false,
-                CompilerOptions = "/optimize /unsafe"
-            };
+            var cParameters = new CompilerParameters { GenerateInMemory = true, GenerateExecutable = false, TreatWarningsAsErrors = false, IncludeDebugInformation = false, CompilerOptions = "/optimize /unsafe" };
             cParameters.ReferencedAssemblies.Add( Assembly.GetExecutingAssembly().Location );
             cParameters.ReferencedAssemblies.Add( this._type.Assembly.Location );
             return cParameters;
         }
 
-        private void MovePointers(StringBuilder sb) {
+        private void MovePointers( StringBuilder sb ) {
             var modifer = this._addCount / this._ptrSize;
             if ( modifer >= this._ptrSize ) {
                 sb.AppendFormat( "dest += {0};", this._addCount );
@@ -117,7 +129,7 @@ namespace Librainian.Database.MMF {
             }
         }
 
-        private void ObjectToBytesCode(StringBuilder sb, String typeFullName) {
+        private void ObjectToBytesCode( StringBuilder sb, String typeFullName ) {
             sb.AppendFormat( "public unsafe byte[] ObjectToBytes({0} srcObject)", typeFullName );
             sb.Append( "{" );
             sb.AppendFormat( "byte[] buffer = new byte[{0}];", this._size );
@@ -134,7 +146,7 @@ namespace Librainian.Database.MMF {
                 return buffer;}" );
         }
 
-        private void SetPointerLength(Int32 length) {
+        private void SetPointerLength( Int32 length ) {
             if ( length >= 8 ) {
                 this._ptrSize = 8;
                 this._ptrType = "Int64";
@@ -153,5 +165,4 @@ namespace Librainian.Database.MMF {
             }
         }
     }
-
 }

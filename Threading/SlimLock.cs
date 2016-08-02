@@ -1,22 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/SlimLock.cs" was last cleaned by Rick on 2015/06/12 at 3:14 PM
+//
+// "Librainian/SlimLock.cs" was last cleaned by Rick on 2016/06/18 at 10:57 PM
 
 namespace Librainian.Threading {
 
@@ -26,10 +26,10 @@ namespace Librainian.Threading {
     using NUnit.Framework;
 
     /// <summary>
-    /// A reader-writer lock implementation that is intended to be simple, yet very efficient. In
-    /// particular only 1 interlocked operation is taken for any lock operation (we use spin locks
-    /// to achieve this). The spin lock is never held for more than a few instructions (in
-    /// particular, we never call event APIs or in fact any non-trivial API while holding the spin lock).
+    ///     A reader-writer lock implementation that is intended to be simple, yet very efficient. In
+    ///     particular only 1 interlocked operation is taken for any lock operation (we use spin locks
+    ///     to achieve this). The spin lock is never held for more than a few instructions (in
+    ///     particular, we never call event APIs or in fact any non-trivial API while holding the spin lock).
     /// </summary>
     [HostProtection( Synchronization = true, ExternalThreading = true )]
     [HostProtection( MayLeakOnAbort = true )]
@@ -107,7 +107,7 @@ namespace Librainian.Threading {
         public SlimLock() : this( LockRecursionPolicy.NoRecursion ) {
         }
 
-        public SlimLock(LockRecursionPolicy recursionPolicy) {
+        public SlimLock( LockRecursionPolicy recursionPolicy ) {
             if ( recursionPolicy == LockRecursionPolicy.SupportsRecursion ) {
                 this._fIsReentrant = true;
             }
@@ -229,15 +229,15 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// This routine retrieves/sets the per-thread counts needed to enforce the various rules
-        /// related to acquiring the lock. It's a simple hash table, where the first entry is
-        /// pre-allocated for optimizing the common case. After the first element has been
-        /// allocated, duplicates are kept of in linked-list. The entries are never freed, and the
-        /// max size of the table would be bounded by the max number of threads that held the lock
-        /// simultaneously. DontAllocate is set to true if the caller just wants to get an existing
-        /// entry for this thread, but doesn't want to add one if an existing one could not be found.
+        ///     This routine retrieves/sets the per-thread counts needed to enforce the various rules
+        ///     related to acquiring the lock. It's a simple hash table, where the first entry is
+        ///     pre-allocated for optimizing the common case. After the first element has been
+        ///     allocated, duplicates are kept of in linked-list. The entries are never freed, and the
+        ///     max size of the table would be bounded by the max number of threads that held the lock
+        ///     simultaneously. DontAllocate is set to true if the caller just wants to get an existing
+        ///     entry for this thread, but doesn't want to add one if an existing one could not be found.
         /// </summary>
-        private ReaderWriterCount GetThreadRwCount(Int32 id, Boolean dontAllocate) {
+        private ReaderWriterCount GetThreadRwCount( Int32 id, Boolean dontAllocate ) {
             var hash = id & HashTableSize;
             ReaderWriterCount firstfound = null;
 
@@ -287,10 +287,7 @@ namespace Librainian.Threading {
             }
 
             if ( firstfound == null ) {
-                temp = new ReaderWriterCount( this._fIsReentrant ) {
-                    Threadid = id,
-                    Next = this._rwc[ hash ].Next
-                };
+                temp = new ReaderWriterCount( this._fIsReentrant ) { Threadid = id, Next = this._rwc[ hash ].Next };
                 this._rwc[ hash ].Next = temp;
                 return temp;
             }
@@ -298,7 +295,7 @@ namespace Librainian.Threading {
             return firstfound;
         }
 
-        private static Boolean IsRwEntryEmpty(ReaderWriterCount rwc) => ( rwc.Threadid == -1 ) || ( ( rwc.Readercount == 0 ) && ( rwc.RecursiveCounts == null ) ) || ( ( rwc.Readercount == 0 ) && ( rwc.RecursiveCounts.Writercount == 0 ) && ( rwc.RecursiveCounts.Upgradecount == 0 ) );
+        private static Boolean IsRwEntryEmpty( ReaderWriterCount rwc ) => ( rwc.Threadid == -1 ) || ( ( rwc.Readercount == 0 ) && ( rwc.RecursiveCounts == null ) ) || ( ( rwc.Readercount == 0 ) && ( rwc.RecursiveCounts.Writercount == 0 ) && ( rwc.RecursiveCounts.Upgradecount == 0 ) );
 
         private void ExitMyLock() {
             Assert.That( this._myLock != 0, "Exiting spin lock that is not held" );
@@ -313,7 +310,7 @@ namespace Librainian.Threading {
 
         public void EnterReadLock() => this.TryEnterReadLock( -1 );
 
-        public Boolean TryEnterReadLock(Int32 millisecondsTimeout) {
+        public Boolean TryEnterReadLock( Int32 millisecondsTimeout ) {
             Thread.BeginCriticalRegion();
             var result = false;
             try {
@@ -327,7 +324,7 @@ namespace Librainian.Threading {
             return result;
         }
 
-        private Boolean TryEnterReadLockCore(Int32 millisecondsTimeout) {
+        private Boolean TryEnterReadLockCore( Int32 millisecondsTimeout ) {
             if ( millisecondsTimeout < -1 ) {
                 throw new ArgumentOutOfRangeException( nameof( millisecondsTimeout ) );
             }
@@ -400,7 +397,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for ( ; ; ) {
+            for ( ;;) {
 
                 // We can enter a read lock if there are only read-locks have been given out and a
                 // writer is not trying to get in.
@@ -451,7 +448,7 @@ namespace Librainian.Threading {
             return true;
         }
 
-        private static void SpinWait(Int32 spinCount) {
+        private static void SpinWait( Int32 spinCount ) {
 
             //Exponential backoff
             if ( ( spinCount < 5 ) && ( ProcessorCount > 1 ) ) {
@@ -465,14 +462,14 @@ namespace Librainian.Threading {
             }
         }
 
-        private static Boolean IsRwHashEntryChanged(ReaderWriterCount lrwc, Int32 id) => lrwc.Threadid != id;
+        private static Boolean IsRwHashEntryChanged( ReaderWriterCount lrwc, Int32 id ) => lrwc.Threadid != id;
 
         /// <summary>
-        /// A routine for lazily creating a event outside the lock (so if errors happen they are
-        /// outside the lock and that we don't do much work while holding a spin lock). If all goes
-        /// well, reenter the lock and set 'waitEvent'
+        ///     A routine for lazily creating a event outside the lock (so if errors happen they are
+        ///     outside the lock and that we don't do much work while holding a spin lock). If all goes
+        ///     well, reenter the lock and set 'waitEvent'
         /// </summary>
-        private void LazyCreateEvent(ref EventWaitHandle waitEvent, Boolean makeAutoResetEvent) {
+        private void LazyCreateEvent( ref EventWaitHandle waitEvent, Boolean makeAutoResetEvent ) {
 #if DEBUG
             Assert.That( this.MyLockHeld );
             Assert.That( waitEvent == null );
@@ -489,10 +486,10 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Waits on 'waitEvent' with a timeout of 'millisceondsTimeout. Before the wait
-        /// 'numWaiters' is incremented and is restored before leaving this routine.
+        ///     Waits on 'waitEvent' with a timeout of 'millisceondsTimeout. Before the wait
+        ///     'numWaiters' is incremented and is restored before leaving this routine.
         /// </summary>
-        private Boolean WaitOnEvent(EventWaitHandle waitEvent, ref UInt32 numWaiters, Int32 millisecondsTimeout) {
+        private Boolean WaitOnEvent( EventWaitHandle waitEvent, ref UInt32 numWaiters, Int32 millisecondsTimeout ) {
 #if DEBUG
             Assert.That( this.MyLockHeld );
 #endif
@@ -547,7 +544,7 @@ namespace Librainian.Threading {
 
         public void EnterWriteLock() => this.TryEnterWriteLock( -1 );
 
-        public Boolean TryEnterWriteLock(Int32 millisecondsTimeout) {
+        public Boolean TryEnterWriteLock( Int32 millisecondsTimeout ) {
             Thread.BeginCriticalRegion();
             var result = false;
             try {
@@ -561,7 +558,7 @@ namespace Librainian.Threading {
             return result;
         }
 
-        private Boolean TryEnterWriteLockCore(Int32 millisecondsTimeout) {
+        private Boolean TryEnterWriteLockCore( Int32 millisecondsTimeout ) {
             if ( millisecondsTimeout < -1 ) {
                 throw new ArgumentOutOfRangeException( nameof( millisecondsTimeout ) );
             }
@@ -618,7 +615,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for ( ; ; ) {
+            for ( ;;) {
                 if ( this.IsWriterAcquired() ) {
 
                     // Good case, there is no contention, we are basically done
@@ -729,7 +726,7 @@ namespace Librainian.Threading {
 
         public void EnterUpgradeableReadLock() => this.TryEnterUpgradeableReadLock( -1 );
 
-        public Boolean TryEnterUpgradeableReadLock(Int32 millisecondsTimeout) {
+        public Boolean TryEnterUpgradeableReadLock( Int32 millisecondsTimeout ) {
             Thread.BeginCriticalRegion();
             var result = false;
             try {
@@ -743,7 +740,7 @@ namespace Librainian.Threading {
             return result;
         }
 
-        private Boolean TryEnterUpgradeableReadLockCore(Int32 millisecondsTimeout) {
+        private Boolean TryEnterUpgradeableReadLockCore( Int32 millisecondsTimeout ) {
             if ( millisecondsTimeout < -1 ) {
                 throw new ArgumentOutOfRangeException( nameof( millisecondsTimeout ) );
             }
@@ -809,7 +806,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for ( ; ; ) {
+            for ( ;;) {
 
                 //Once an upgrade lock is taken, it's like having a reader lock held
                 //until upgrade or downgrade operations are performed.
@@ -907,7 +904,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Determines the appropriate events to set, leaves the locks, and sets the events.
+        ///     Determines the appropriate events to set, leaves the locks, and sets the events.
         /// </summary>
         private void ExitAndWakeUpAppropriateWaiters() {
 #if DEBUG
@@ -1067,7 +1064,7 @@ namespace Librainian.Threading {
             Thread.EndCriticalRegion();
         }
 
-        private void Dispose(Boolean disposing) {
+        private void Dispose( Boolean disposing ) {
             if ( !disposing ) {
                 return;
             }
@@ -1106,7 +1103,7 @@ namespace Librainian.Threading {
             this._fDisposed = true;
         }
 
-        public Boolean TryEnterReadLock(TimeSpan timeout) {
+        public Boolean TryEnterReadLock( TimeSpan timeout ) {
             var ltm = ( Int64 )timeout.TotalMilliseconds;
             if ( ( ltm < -1 ) || ( ltm > Int32.MaxValue ) ) {
                 throw new ArgumentOutOfRangeException( nameof( timeout ) );
@@ -1115,7 +1112,7 @@ namespace Librainian.Threading {
             return this.TryEnterReadLock( tm );
         }
 
-        public Boolean TryEnterWriteLock(TimeSpan timeout) {
+        public Boolean TryEnterWriteLock( TimeSpan timeout ) {
             var ltm = ( Int64 )timeout.TotalMilliseconds;
             if ( ( ltm < -1 ) || ( ltm > Int32.MaxValue ) ) {
                 throw new ArgumentOutOfRangeException( nameof( timeout ) );
@@ -1125,7 +1122,7 @@ namespace Librainian.Threading {
             return this.TryEnterWriteLock( tm );
         }
 
-        public Boolean TryEnterUpgradeableReadLock(TimeSpan timeout) {
+        public Boolean TryEnterUpgradeableReadLock( TimeSpan timeout ) {
             var ltm = ( Int64 )timeout.TotalMilliseconds;
             if ( ( ltm < -1 ) || ( ltm > Int32.MaxValue ) ) {
                 throw new ArgumentOutOfRangeException( nameof( timeout ) );

@@ -1,21 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
 // Donations and royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // Contact me by email if you have any questions or helpful criticism.
-//  
-// "Librainian/Text.cs" was last cleaned by Rick on 2015/11/14 at 6:30 AM
+//
+// "Librainian/Text.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Database {
 
@@ -28,55 +29,36 @@ namespace Librainian.Database {
         public Text( String path, Boolean hasHeaders, Char delimiter ) {
             this.Path = path;
             this.Delimiter = delimiter;
-            var connectionStringBuilder = new OleDbConnectionStringBuilder {Provider = "Microsoft.Jet.OLEDB.4.0", DataSource = path};
+            var connectionStringBuilder = new OleDbConnectionStringBuilder { Provider = "Microsoft.Jet.OLEDB.4.0", DataSource = path };
             connectionStringBuilder.Add( "Extended Properties", "Excel 8.0;" + $"HDR={( hasHeaders ? "Yes" : "No" )}{';'}" );
             this.ConnectionString = connectionStringBuilder.ToString();
         }
 
-        private String Path { get; }
+        private String ConnectionString {
+            get;
+        }
 
-        private Char Delimiter { get; }
+        private Char Delimiter {
+            get;
+        }
 
-        private String ConnectionString { get; }
-
-        public String[] GetWorksheetList() {
-            String[] worksheets = {};
-
-            try {
-                DataTable tableWorksheets;
-                using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-                    connection.Open();
-                    tableWorksheets = connection.GetSchema( "Tables" );
-                }
-
-                worksheets = new String[tableWorksheets.Rows.Count];
-
-                for ( var i = 0; i < worksheets.Length; i++ ) {
-                    worksheets[ i ] = ( String ) tableWorksheets.Rows[ i ][ "TABLE_NAME" ];
-                    worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 )
-                                                     .Trim( '"', '\'' );
-                }
-            }
-            catch ( OleDbException exception ) {
-                exception.More();
-            }
-
-            return worksheets;
+        private String Path {
+            get;
         }
 
         public String[] GetColumnsList( String worksheet ) {
-            String[] columns = {};
+            String[] columns = { };
 
             try {
                 var connection = new OleDbConnection( this.ConnectionString );
                 connection.Open();
-                var tableColumns = connection.GetSchema( "Columns", new[] {null, null, worksheet + '$', null} );
+                var tableColumns = connection.GetSchema( "Columns", new[] { null, null, worksheet + '$', null } );
                 connection.Close();
 
-                columns = new String[tableColumns.Rows.Count];
+                columns = new String[ tableColumns.Rows.Count ];
 
                 for ( var i = 0; i < columns.Length; i++ ) {
-                    columns[ i ] = ( String ) tableColumns.Rows[ i ][ "COLUMN_NAME" ];
+                    columns[ i ] = ( String )tableColumns.Rows[ i ][ "COLUMN_NAME" ];
                 }
             }
             catch ( Exception exception ) {
@@ -84,17 +66,6 @@ namespace Librainian.Database {
             }
 
             return columns;
-        }
-
-        public DataTable GetWorksheet( String worksheet ) {
-            using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-                using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) ) {
-                    var ws = new DataTable( worksheet );
-                    adaptor.FillSchema( ws, SchemaType.Source );
-                    adaptor.Fill( ws );
-                    return ws;
-                }
-            }
         }
 
         public DataSet GetWorkplace() {
@@ -108,6 +79,39 @@ namespace Librainian.Database {
             }
         }
 
-    }
+        public DataTable GetWorksheet( String worksheet ) {
+            using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
+                using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) ) {
+                    var ws = new DataTable( worksheet );
+                    adaptor.FillSchema( ws, SchemaType.Source );
+                    adaptor.Fill( ws );
+                    return ws;
+                }
+            }
+        }
 
+        public String[] GetWorksheetList() {
+            String[] worksheets = { };
+
+            try {
+                DataTable tableWorksheets;
+                using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
+                    connection.Open();
+                    tableWorksheets = connection.GetSchema( "Tables" );
+                }
+
+                worksheets = new String[ tableWorksheets.Rows.Count ];
+
+                for ( var i = 0; i < worksheets.Length; i++ ) {
+                    worksheets[ i ] = ( String )tableWorksheets.Rows[ i ][ "TABLE_NAME" ];
+                    worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
+                }
+            }
+            catch ( OleDbException exception ) {
+                exception.More();
+            }
+
+            return worksheets;
+        }
+    }
 }

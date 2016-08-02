@@ -1,44 +1,44 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/SimpleWallet.cs" was last cleaned by Rick on 2015/06/12 at 3:02 PM
+//
+// "Librainian/SimpleWallet.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
 
 namespace Librainian.Measurement.Currency {
 
     using System;
     using System.Diagnostics;
-    using System.Runtime.Serialization;
     using System.Threading;
     using System.Windows.Forms;
     using BTC;
     using Controls;
     using JetBrains.Annotations;
+    using Newtonsoft.Json;
     using Threading;
     using Time;
 
     /// <summary>
-    /// A very simple, thread-safe, Decimal-based wallet. 8 points past decimal dot.
+    ///     A very simple, thread-safe, Decimal-based wallet. 8 points past decimal dot.
     /// </summary>
-    /// <remarks>TODO add in support for automatic persisting
+    /// <remarks>
+    ///     TODO add in support for automatic persisting
     /// </remarks>
-    [DebuggerDisplay( "{Formatted,nq}" )]
-    [Serializable]
-    [DataContract( IsReference = true )]
+    [DebuggerDisplay( "{ToString(),nq}" )]
+    [JsonObject]
     public class SimpleWallet : ISimpleWallet, IEquatable<SimpleWallet> {
 
         [NotNull]
@@ -46,8 +46,17 @@ namespace Librainian.Measurement.Currency {
 
         private readonly Int32 _hashcode;
 
-        [DataMember]
+        [JsonProperty]
         private Decimal _balance;
+
+        public SimpleWallet() {
+            this.Timeout = Minutes.One;
+            this._hashcode = Randem.NextInt32();
+        }
+
+        /// <summary>Initialize the wallet with the specified <paramref name="balance" />.</summary>
+        /// <param name="balance"></param>
+        public SimpleWallet( Decimal balance ) : this() { this._balance = balance.Sanitize(); }
 
         public Decimal Balance {
             get {
@@ -61,8 +70,6 @@ namespace Librainian.Measurement.Currency {
                 }
             }
         }
-
-        public String Formatted => this.ToString();
 
         public Label LabelToFlashOnChanges {
             get; set;
@@ -89,31 +96,21 @@ namespace Librainian.Measurement.Currency {
         }
 
         /// <summary>
-        /// <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para></summary>
+        ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
+        /// </summary>
         public TimeSpan Timeout {
             get; set;
         }
 
-        public SimpleWallet() {
-            this.Timeout = Minutes.One;
-            this._hashcode = Randem.NextInt32();
-        }
-
-        /// <summary>Initialize the wallet with the specified <paramref name="balance" />.</summary>
-        /// <param name="balance"></param>
-        public SimpleWallet(Decimal balance) : this() {
-            this._balance = balance.Sanitize();
-        }
-
         /// <summary>
-        /// <para>Static comparison.</para>
-        /// <para>Returns true if the wallets ARE the same instance.</para>
-        /// <para>Returns true if the wallets HAVE the same balance.</para>
+        ///     <para>Static comparison.</para>
+        ///     <para>Returns true if the wallets ARE the same instance.</para>
+        ///     <para>Returns true if the wallets HAVE the same balance.</para>
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals([CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right) {
+        public static Boolean Equals( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) {
             if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
@@ -125,11 +122,11 @@ namespace Librainian.Measurement.Currency {
         }
 
         /// <summary>
-        /// Indicates whether the current wallet has the same balance as the
-        /// <paramref name="other" /> wallet.
+        ///     Indicates whether the current wallet has the same balance as the
+        ///     <paramref name="other" /> wallet.
         /// </summary>
         /// <param name="other">Annother to compare with this wallet.</param>
-        public Boolean Equals(SimpleWallet other) => Equals( this, other );
+        public Boolean Equals( SimpleWallet other ) => Equals( this, other );
 
         [Pure]
         public override Int32 GetHashCode() => this._hashcode;
@@ -140,7 +137,7 @@ namespace Librainian.Measurement.Currency {
         /// <param name="amount"></param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryAdd(Decimal amount, Boolean sanitize = true) {
+        public Boolean TryAdd( Decimal amount, Boolean sanitize = true ) {
             if ( sanitize ) {
                 amount = amount.Sanitize();
             }
@@ -156,14 +153,11 @@ namespace Librainian.Measurement.Currency {
                 if ( this._access.IsWriteLockHeld ) {
                     this._access.ExitWriteLock();
                 }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
-        public Boolean TryAdd([NotNull] SimpleWallet wallet, Boolean sanitize = true) {
+        public Boolean TryAdd( [NotNull] SimpleWallet wallet, Boolean sanitize = true ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
@@ -174,28 +168,22 @@ namespace Librainian.Measurement.Currency {
         /// <param name="amount"></param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryDeposit(Decimal amount, Boolean sanitize = true) {
+        public Boolean TryDeposit( Decimal amount, Boolean sanitize = true ) {
             if ( sanitize ) {
                 amount = amount.Sanitize();
             }
             if ( amount <= Decimal.Zero ) {
                 return false;
             }
-            var onBeforeDeposit = this.OnBeforeDeposit;
-            if ( onBeforeDeposit != null ) {
-                onBeforeDeposit( amount );
-            }
+            this.OnBeforeDeposit?.Invoke( amount );
             if ( !this.TryAdd( amount ) ) {
                 return false;
             }
-            var onAfterDeposit = this.OnAfterDeposit;
-            if ( onAfterDeposit != null ) {
-                onAfterDeposit( amount );
-            }
+            this.OnAfterDeposit?.Invoke( amount );
             return true;
         }
 
-        public Boolean TryTransfer(Decimal amount, ref SimpleWallet intoWallet, Boolean sanitize = true) {
+        public Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet, Boolean sanitize = true ) {
             if ( sanitize ) {
                 amount = amount.Sanitize();
             }
@@ -223,23 +211,18 @@ namespace Librainian.Measurement.Currency {
                     intoWallet.TryDeposit( amount: withdrewAmount.Value, sanitize: false );
                 }
 
-                var onWithdraw = this.OnAfterWithdraw;
-                if ( onWithdraw != null ) {
-                    onWithdraw( amount );
-                }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                this.OnAfterWithdraw?.Invoke( amount );
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
         /// <summary>
-        /// <para>Directly sets the <see cref="Balance" /> of this wallet.</para></summary>
+        ///     <para>Directly sets the <see cref="Balance" /> of this wallet.</para>
+        /// </summary>
         /// <param name="amount"></param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryUpdateBalance(Decimal amount, Boolean sanitize = true) {
+        public Boolean TryUpdateBalance( Decimal amount, Boolean sanitize = true ) {
             try {
                 if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
                     return false;
@@ -254,23 +237,20 @@ namespace Librainian.Measurement.Currency {
                 if ( this._access.IsWriteLockHeld ) {
                     this._access.ExitWriteLock();
                 }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
-        public void TryUpdateBalance(SimpleWallet simpleWallet) => this.TryUpdateBalance( simpleWallet.Balance );
+        public void TryUpdateBalance( SimpleWallet simpleWallet ) => this.TryUpdateBalance( simpleWallet.Balance );
 
         /// <summary>
-        /// <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
-        /// <para>If the amount is not available, then nothing is withdrawn.</para>
+        ///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
+        ///     <para>If the amount is not available, then nothing is withdrawn.</para>
         /// </summary>
         /// <param name="amount"></param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryWithdraw(Decimal amount, Boolean sanitize = true) {
+        public Boolean TryWithdraw( Decimal amount, Boolean sanitize = true ) {
             if ( sanitize ) {
                 amount = amount.Sanitize();
             }
@@ -292,18 +272,12 @@ namespace Librainian.Measurement.Currency {
                 if ( this._access.IsWriteLockHeld ) {
                     this._access.ExitWriteLock();
                 }
-                var onWithdraw = this.OnAfterWithdraw;
-                if ( onWithdraw != null ) {
-                    onWithdraw( amount );
-                }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                this.OnAfterWithdraw?.Invoke( amount );
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
-        public Boolean TryWithdraw([NotNull] SimpleWallet wallet) {
+        public Boolean TryWithdraw( [NotNull] SimpleWallet wallet ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }

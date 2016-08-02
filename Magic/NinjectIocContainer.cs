@@ -1,28 +1,27 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/NinjectIocContainer.cs" was last cleaned by Rick on 2015/06/12 at 3:00 PM
+//
+// "Librainian/NinjectIocContainer.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Magic {
 
     using System;
     using System.Diagnostics;
-    using System.Linq;
     using Collections;
     using Extensions;
     using FluentAssertions;
@@ -33,31 +32,23 @@ namespace Librainian.Magic {
 
     public sealed class NinjectIocContainer : IIocContainer {
 
-        //public NinjectIocContainer() {
-        //this.Kernel.Should().BeNull();
-        //this.Kernel = new StandardKernel();
-        //this.Kernel.Should().NotBeNull();
-        //if ( null == this.Kernel ) {
-        //    throw new InvalidOperationException();
-        //}
-        //}
-
-        public IKernel Kernel {
-            get; set;
-        }
-
-        public NinjectIocContainer([NotNull] params INinjectModule[] modules) {
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
             if ( modules == null ) {
                 throw new ArgumentNullException( nameof( modules ) );
             }
             this.Kernel.Should().BeNull();
-            "Loading kernel...".WriteColor( ConsoleColor.White, ConsoleColor.Blue );
+            "Loading IoC kernel...".WriteColor( ConsoleColor.White, ConsoleColor.Blue );
             this.Kernel = new StandardKernel( modules );
             this.Kernel.Should().NotBeNull();
             if ( null == this.Kernel ) {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException( "Unable to load kernel!" );
             }
             "done.".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
+        }
+
+        public IKernel Kernel {
+            get;
         }
 
         //public object Get( Type type ) {
@@ -78,7 +69,26 @@ namespace Librainian.Magic {
         //    return result;
         //}
 
-        public void Inject(Object item) => this.Kernel.Inject( item );
+        /// <summary>
+        ///     Returns a new instance of the given type or throws NullReferenceException.
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="NullReferenceException"></exception>
+        [DebuggerStepThrough]
+        public TType Get<TType>() {
+            var tryGet = this.Kernel.TryGet<TType>();
+            if ( !Equals( default( TType ), tryGet ) ) {
+                return tryGet;
+            }
+            tryGet = this.Kernel.TryGet<TType>(); //HACK wtf, why would it work at the second time?
+            if ( Equals( default( TType ), tryGet ) ) {
+                throw new NullReferenceException( "Unable to Get() class " + typeof( TType ).FullName );
+            }
+            return tryGet;
+        }
+
+        public void Inject( Object item ) => this.Kernel.Inject( item );
 
         /// <summary>Warning!</summary>
         public void ResetKernel() {
@@ -87,17 +97,23 @@ namespace Librainian.Magic {
             this.Kernel.Components.Get<ICache>().Clear();
             this.Kernel.Should().NotBeNull();
 
-            Log.Before( "Ninject is loading assemblies..." );
+            //Log.Before( "Ninject is loading assemblies..." );
             this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
-            Log.After( $"loaded {this.Kernel.GetModules().Count()} assemblies." );
+
+            //Log.After( $"loaded {this.Kernel.GetModules().Count()} assemblies." );
             $"{this.Kernel.GetModules().ToStrings()}".WriteLine();
         }
 
+        /// <summary>
+        ///     Re
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <returns></returns>
         [DebuggerStepThrough]
-        public T TryGet<T>() {
-            var tryGet = this.Kernel.TryGet<T>();
-            if ( Equals( default(T), tryGet ) ) {
-                tryGet = this.Kernel.TryGet<T>(); //HACK wtf??
+        public TType TryGet<TType>() {
+            var tryGet = this.Kernel.TryGet<TType>();
+            if ( Equals( default( TType ), tryGet ) ) {
+                tryGet = this.Kernel.TryGet<TType>(); //HACK wtf??
             }
             return tryGet;
         }

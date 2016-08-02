@@ -1,33 +1,39 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/MillisecondStopWatch.cs" was last cleaned by Rick on 2015/06/12 at 3:02 PM
+//
+// "Librainian/MillisecondStopWatch.cs" was last cleaned by Rick on 2016/06/18 at 10:54 PM
 
 namespace Librainian.Measurement.Time.Clocks {
 
     using System;
 
     /// <summary>Use with WindowsCE and Silverlight which don't have Stopwatch</summary>
-    /// <remarks>Based on <seealso cref="http://github.com/amibar/SmartThreadPool/blob/master/SmartThreadPool/Stopwatch.cs" /></remarks>
+    /// <remarks>
+    ///     Based on <seealso cref="http://github.com/amibar/SmartThreadPool/blob/master/SmartThreadPool/Stopwatch.cs" />
+    /// </remarks>
     internal class MillisecondStopWatch {
         private const Decimal TicksPerMillisecond = 10000.0m;
         private UInt64 _elapsed;
         private UInt64 _startTimeStamp;
+
+        public MillisecondStopWatch() {
+            Reset();
+        }
 
         /// <summary></summary>
         public Span Elapsed => new Span( milliseconds: GetElapsedDateTimeTicks() / TicksPerMillisecond );
@@ -35,10 +41,6 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <summary></summary>
         public Boolean IsRunning {
             get; private set;
-        }
-
-        public MillisecondStopWatch() {
-            Reset();
         }
 
         public static MillisecondStopWatch StartNew() {

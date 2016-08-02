@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/ERG.cs" was last cleaned by Rick on 2015/06/12 at 2:55 PM
+//
+// "Librainian/ERG.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.Graphics.Imaging {
 
@@ -24,36 +24,51 @@ namespace Librainian.Graphics.Imaging {
     using System.Collections.Concurrent;
     using System.Drawing;
     using System.Drawing.Imaging;
-    using System.Runtime.Serialization;
+    using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Collections;
+    using FileSystem;
     using JetBrains.Annotations;
     using Maths;
     using Measurement.Time;
-    using OperatingSystem.FileSystem;
-    using Threading;
+    using Newtonsoft.Json;
 
-    /// <summary> Experimental Resilient Graphics </summary> <remarks> Just for fun & learning.
-    /// </remarks> <remarks> Prefer native file system compression over encoding/compression speed
-    /// (assuming local cpu will be 'faster' than network transfer
-    /// speed) . Allow 'pages' of animation, each with their own delay. Default should be page 0 = 0
-    ///        delay. Checksums are used on each pixel to guard against (detect but not fix) corruption.
-    /// </remarks> <remarks> 60 frames per second allows 16.67 milliseconds per frame.</remarks>
+    /// <summary> Experimental Resilient Graphics </summary>
+    /// <remarks>
+    ///     Just for fun & learning.
+    /// </remarks>
+    /// <remarks>
+    ///     Prefer native file system compression over encoding/compression speed
+    ///     (assuming local cpu will be 'faster' than network transfer speed).
+    ///     <para>Allow 'pages' of animation, each with their own delay. Default should be page 0 = 0 delay.</para>
+    ///     <para>Checksums are used on each pixel to guard against (detect but not fix) corruption.</para>
+    /// </remarks>
+    /// <remarks> 60 frames per second allows 16.67 milliseconds per frame.</remarks>
     /// <remarks> 1920x1080 pixels = 2,052,000 possible pixels ...so about 8 nanoseconds per pixel? </remarks>
-    [DataContract]
-    [Serializable]
+    [JsonObject]
     public class Erg {
         public static readonly String Extension = ".erg";
 
-        /// <summary>Human readable file header.</summary>
-        public static readonly String Header = "ERG1";
+        /// <summary>
+        ///     Human readable file header.
+        /// </summary>
+        public static readonly String Header = "ERG0.1";
 
-        /// <summary>EXIF metadatas</summary>
-        [DataMember]
+        /// <summary>
+        ///     EXIF metadata
+        /// </summary>
+        [JsonProperty]
         public readonly ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
 
-        /// <summary>Checksum of all pages</summary>
-        [DataMember]
+        public Erg() {
+            this.Checksum = UInt64.MaxValue; //an unlikely hash
+        }
+
+        /// <summary>
+        ///     Checksum of all pages
+        /// </summary>
+        [JsonProperty]
         public UInt64 Checksum {
             get; private set;
         }
@@ -62,26 +77,17 @@ namespace Librainian.Graphics.Imaging {
             get; private set;
         }
 
-        [DataMember]
-        public ConcurrentSet<Pixel> Pixels {
-            get;
-        }
-        = new ConcurrentSet<Pixel>();
+        [JsonProperty]
+        public ConcurrentSet<Pixel> Pixels { get; } = new ConcurrentSet<Pixel>();
 
-        public ConcurrentSet<Int32> PropertyIdList {
-            get; private set;
-        }
+        [JsonProperty]
+        public ConcurrentSet<Int32> PropertyIdList { get; } = new ConcurrentSet<Int32>();
 
-        public ConcurrentSet<PropertyItem> PropertyItems {
-            get; private set;
-        }
+        [JsonProperty]
+        public ConcurrentSet<PropertyItem> PropertyItems { get; } = new ConcurrentSet<PropertyItem>();
 
         public UInt32 Width {
             get; private set;
-        }
-
-        public Erg() {
-            this.Checksum = UInt64.MaxValue; //an unlikely hash
         }
 
         public async Task<UInt64> CalculateChecksumAsync() => await Task.Run( () => {
@@ -90,9 +96,9 @@ namespace Librainian.Graphics.Imaging {
             }
         } );
 
-        public async Task<Boolean> TryAdd(Document document, Span delay, SimpleCancel simpleCancel) => await this.TryAdd( new Bitmap( document.FullPathWithFileName ), delay, simpleCancel );
+        public async Task<Boolean> TryAdd( Document document, TimeSpan delay, CancellationToken cancellationToken ) => await this.TryAdd( new Bitmap( document.FullPathWithFileName ), delay, cancellationToken );
 
-        public async Task<Boolean> TryAdd([CanBeNull] Bitmap bitmap, Span timeout, SimpleCancel simpleCancel) {
+        public async Task<Boolean> TryAdd( [CanBeNull] Bitmap bitmap, TimeSpan timeout, CancellationToken cancellationToken ) {
             if ( bitmap == null ) {
                 return false;
             }
@@ -108,8 +114,8 @@ namespace Librainian.Graphics.Imaging {
                     return false;
                 }
 
-                this.PropertyIdList = new ConcurrentSet<Int32>( bitmap.PropertyIdList );
-                this.PropertyItems = new ConcurrentSet<PropertyItem>( bitmap.PropertyItems );
+                this.PropertyIdList.UnionWith( bitmap.PropertyIdList );
+                this.PropertyItems.UnionWith( bitmap.PropertyItems.Select( item => new PropertyItem { Id = item.Id, Len = item.Len, Type = item.Type, Value = item.Value } ) );
 
                 this.Width = ( UInt32 )bitmap.Width;
                 this.Height = ( UInt32 )bitmap.Height;
@@ -122,7 +128,7 @@ namespace Librainian.Graphics.Imaging {
                     if ( stopwatch.Elapsed > timeout ) {
                         return;
                     }
-                    if ( simpleCancel.HaveAnyCancellationsBeenRequested() ) {
+                    if ( cancellationToken.IsCancellationRequested ) {
                         return;
                     }
                     for ( UInt32 x = 0; x < bitmap.Width; x++ ) {
@@ -139,7 +145,7 @@ namespace Librainian.Graphics.Imaging {
                 //image.Palette?
 
                 return false; //TODO add frame
-            } );
+            }, cancellationToken );
         }
     }
 }

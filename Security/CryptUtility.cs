@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/CryptUtility.cs" was last cleaned by Rick on 2015/06/15 at 4:40 PM
+//
+// "Librainian/CryptUtility.cs" was last cleaned by Rick on 2016/06/18 at 10:56 PM
 
 namespace Librainian.Security {
 
@@ -36,7 +36,7 @@ namespace Librainian.Security {
         /// <summary>Combines key file and password using XOR</summary>
         /// <param name="key">The key/password pair to combine</param>
         /// <returns>The stream created from key and password</returns>
-        public static MemoryStream CreateKeyStream(FilePasswordPair key) {
+        public static MemoryStream CreateKeyStream( FilePasswordPair key ) {
             var fileStream = new FileStream( key.FileName, FileMode.Open );
             var resultStream = new MemoryStream();
             var passwordIndex = 0;
@@ -67,7 +67,7 @@ namespace Librainian.Security {
         /// <param name="bitmap">The carrier bitmap</param>
         /// <param name="keyStream">The key used for hiding the message</param>
         /// <param name="messageStream">Empty stream to receive the message</param>
-        public static void ExtractMessageFromBitmap(CarrierImage[] imageFiles, FilePasswordPair[] keys, ref Stream messageStream, Boolean splitBytes) {
+        public static void ExtractMessageFromBitmap( CarrierImage[] imageFiles, FilePasswordPair[] keys, ref Stream messageStream, Boolean splitBytes ) {
             HideOrExtract( ref messageStream, imageFiles, keys, splitBytes, true );
         }
 
@@ -75,17 +75,18 @@ namespace Librainian.Security {
         /// <param name="messageStream">The message to hide</param>
         /// <param name="bitmap">The carrier bitmap</param>
         /// <param name="keyStream">The key to use</param>
-        public static void HideMessageInBitmap(Stream messageStream, CarrierImage[] imageFiles, FilePasswordPair[] keys, Boolean splitBytes) {
+        public static void HideMessageInBitmap( Stream messageStream, CarrierImage[] imageFiles, FilePasswordPair[] keys, Boolean splitBytes ) {
             HideOrExtract( ref messageStream, imageFiles, keys, splitBytes, false );
+
             // ReSharper disable once RedundantAssignment
-            messageStream = null;   //BUG why is this here?
+            messageStream = null; //BUG why is this here?
         }
 
         /// <summary>Get the value of a bit</summary>
         /// <param name="b">The byte value</param>
         /// <param name="position">The position of the bit</param>
         /// <returns>The value of the bit</returns>
-        private static Boolean GetBit(Byte b, Byte position) {
+        private static Boolean GetBit( Byte b, Byte position ) {
             return ( b & ( Byte )( 1 << position ) ) != 0;
         }
 
@@ -93,7 +94,7 @@ namespace Librainian.Security {
         /// <param name="pixelColor">The Color</param>
         /// <param name="colorComponent">The component to return (0-R, 1-G, 2-B)</param>
         /// <returns>The requested component</returns>
-        private static Byte GetColorComponent(Color pixelColor, Int32 colorComponent) {
+        private static Byte GetColorComponent( Color pixelColor, Int32 colorComponent ) {
             Byte returnValue = 0;
             switch ( colorComponent ) {
                 case 0:
@@ -115,7 +116,7 @@ namespace Librainian.Security {
         /// <summary>Combines all key files and passwords into one key stream</summary>
         /// <param name="keys">The keys to combine</param>
         /// <returns>The resulting key stream</returns>
-        private static MemoryStream GetKeyStream(FilePasswordPair[] keys) {
+        private static MemoryStream GetKeyStream( FilePasswordPair[] keys ) {
 
             //Xor the keys an their passwords
             var keyStreams = new MemoryStream[ keys.Length ];
@@ -153,7 +154,7 @@ namespace Librainian.Security {
             return resultKeyStream;
         }
 
-        private static Byte GetReverseKeyByte(Stream keyStream) {
+        private static Byte GetReverseKeyByte( Stream keyStream ) {
 
             //jump to reverse-read position and read from the end of the stream
             var keyPosition = keyStream.Position;
@@ -165,7 +166,7 @@ namespace Librainian.Security {
             return reverseKeyByte;
         }
 
-        private static void HideBits(Stream keyStream, Stream messageStream, Int64 messageLength, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, BitmapInfo bitmapInfo, Boolean extract) {
+        private static void HideBits( Stream keyStream, Stream messageStream, Int64 messageLength, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, BitmapInfo bitmapInfo, Boolean extract ) {
 
             //Color component to hide the next byte in (0-R, 1-G, 2-B)
             //Rotates with every hidden byte
@@ -275,13 +276,13 @@ namespace Librainian.Security {
         /// <summary>Loop over the message and hide each byte in one pixel</summary>
         /// <param name="keyStream">The key</param>
         /// <param name="messageStream">
-        /// A stream containing the message (extract==false) or an empty stream (extract==true)
+        ///     A stream containing the message (extract==false) or an empty stream (extract==true)
         /// </param>
         /// <param name="messageLength">Expected length of the message</param>
         /// <param name="imageFiles">CarrierImages describing the bitmaps</param>
         /// <param name="bitmaps">The bitmaps</param>
         /// <param name="extract">Hide the message (false) or extract it (true)</param>
-        private static void HideBytes(Stream keyStream, Stream messageStream, Int64 messageLength, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, BitmapInfo bitmapInfo, Boolean extract) {
+        private static void HideBytes( Stream keyStream, Stream messageStream, Int64 messageLength, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, BitmapInfo bitmapInfo, Boolean extract ) {
 
             //Color component to hide the next byte in (0-R, 1-G, 2-B)
             //Rotates with every hidden byte
@@ -360,20 +361,20 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        /// Steps through the pixels of bitmaps using a key pattern and hides or extracts a message
+        ///     Steps through the pixels of bitmaps using a key pattern and hides or extracts a message
         /// </summary>
         /// <param name="messageStream">
-        /// If exctract is false, the message to hide - otherwise an empty stream to receive the
-        /// extracted message
+        ///     If exctract is false, the message to hide - otherwise an empty stream to receive the
+        ///     extracted message
         /// </param>
         /// <param name="bitmap">The carrier bitmap</param>
         /// <param name="keyStream">
-        /// The key specifying the unchanged pixels between two hidden bytes
+        ///     The key specifying the unchanged pixels between two hidden bytes
         /// </param>
         /// <param name="extract">
-        /// Extract a hidden message (true), or hide a message in a clean carrier bitmap (false)
+        ///     Extract a hidden message (true), or hide a message in a clean carrier bitmap (false)
         /// </param>
-        private static void HideOrExtract(ref Stream messageStream, CarrierImage[] imageFiles, FilePasswordPair[] keys, Boolean splitBytes, Boolean extract) {
+        private static void HideOrExtract( ref Stream messageStream, CarrierImage[] imageFiles, FilePasswordPair[] keys, Boolean splitBytes, Boolean extract ) {
             var aviWriter = new AviWriter();
             var aviReader = new AviReader();
 
@@ -521,7 +522,7 @@ namespace Librainian.Security {
             keyStream.Close();
         }
 
-        private static BitmapInfo LoadBitmap(CarrierImage imageFile, AviReader aviReader, AviWriter aviWriter) {
+        private static BitmapInfo LoadBitmap( CarrierImage imageFile, AviReader aviReader, AviWriter aviWriter ) {
             var bitmapInfo = new BitmapInfo();
 
             if ( imageFile.SourceFileName.ToLower().EndsWith( ".avi" ) ) {
@@ -562,7 +563,7 @@ namespace Librainian.Security {
             return bitmapInfo;
         }
 
-        private static void MovePixelPosition(Boolean extract, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, Stream keyStream, ref Int32 countBytesInCurrentImage, ref Int32 indexBitmaps, ref Point pixelPosition, ref Int32 bitmapWidth, ref BitmapInfo bitmapInfo) {
+        private static void MovePixelPosition( Boolean extract, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, Stream keyStream, ref Int32 countBytesInCurrentImage, ref Int32 indexBitmaps, ref Point pixelPosition, ref Int32 bitmapWidth, ref BitmapInfo bitmapInfo ) {
 
             //Repeat the key, if it is shorter than the message
             if ( keyStream.Position == keyStream.Length ) {
@@ -645,7 +646,7 @@ namespace Librainian.Security {
             }
         }
 
-        private static void SaveBitmap(Bitmap bitmap, String fileName) {
+        private static void SaveBitmap( Bitmap bitmap, String fileName ) {
             var fileNameLower = fileName.ToLower();
 
             var format = ImageFormat.Bmp;
@@ -672,7 +673,7 @@ namespace Librainian.Security {
         /// <param name="position">The position (1-8) of the bit</param>
         /// <param name="newBitValue">The new value of the bit in position [position]</param>
         /// <returns>The new byte value</returns>
-        private static Byte SetBit(Byte b, Byte position, Boolean newBitValue) {
+        private static Byte SetBit( Byte b, Byte position, Boolean newBitValue ) {
             var mask = ( Byte )( 1 << position );
             if ( newBitValue ) {
                 return ( Byte )( b | mask );
@@ -684,7 +685,7 @@ namespace Librainian.Security {
         /// <param name="pixelColor">The Color</param>
         /// <param name="colorComponent">The component to change (0-R, 1-G, 2-B)</param>
         /// <param name="newValue">New value of the component</param>
-        private static void SetColorComponent(ref Color pixelColor, Int32 colorComponent, Int32 newValue) {
+        private static void SetColorComponent( ref Color pixelColor, Int32 colorComponent, Int32 newValue ) {
             switch ( colorComponent ) {
                 case 0:
                     pixelColor = Color.FromArgb( newValue, pixelColor.G, pixelColor.B );
@@ -700,7 +701,7 @@ namespace Librainian.Security {
             }
         }
 
-        private static String UnTrimColorString(String color, Int32 desiredLength) {
+        private static String UnTrimColorString( String color, Int32 desiredLength ) {
             var difference = desiredLength - color.Length;
             if ( difference > 0 ) {
                 color = new String( '0', difference ) + color;

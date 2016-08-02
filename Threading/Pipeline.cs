@@ -1,22 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Pipeline.cs" was last cleaned by Rick on 2015/06/12 at 3:14 PM
+//
+// "Librainian/Pipeline.cs" was last cleaned by Rick on 2016/06/18 at 10:57 PM
 
 namespace Librainian.Threading {
 
@@ -33,14 +33,14 @@ namespace Librainian.Threading {
         /// <summary>queue based blocking collection</summary>
         private BlockingCollection<ValueCallBackWrapper> _valueQueue;
 
-        public Pipeline([NotNull] Func<TInput, TOutput> function) {
+        public Pipeline( [NotNull] Func<TInput, TOutput> function ) {
             if ( function == null ) {
                 throw new ArgumentNullException( nameof( function ) );
             }
             this._pipelineFunction = function;
         }
 
-        public Pipeline<TInput, TNewOutput> AddFunction<TNewOutput>([NotNull] Func<TOutput, TNewOutput> newfunction) {
+        public Pipeline<TInput, TNewOutput> AddFunction<TNewOutput>( [NotNull] Func<TOutput, TNewOutput> newfunction ) {
 
             // create a composite function
             if ( newfunction == null ) {
@@ -52,16 +52,13 @@ namespace Librainian.Threading {
             return new Pipeline<TInput, TNewOutput>( compositeFunction );
         }
 
-        public void AddValue(TInput value, [NotNull] Action<TInput, TOutput> callback) {
+        public void AddValue( TInput value, [NotNull] Action<TInput, TOutput> callback ) {
 
             // add the value to the queue for processing
             if ( callback == null ) {
                 throw new ArgumentNullException( nameof( callback ) );
             }
-            this._valueQueue.Add( new ValueCallBackWrapper {
-                Value = value,
-                Callback = callback
-            } );
+            this._valueQueue.Add( new ValueCallBackWrapper { Value = value, Callback = callback } );
         }
 
         public Task StartProcessing() {
@@ -82,8 +79,14 @@ namespace Librainian.Threading {
         public void StopProcessing() => this._valueQueue.CompleteAdding();
 
         private sealed class ValueCallBackWrapper {
-            public Action< TInput, TOutput > Callback { get; set; }
-            public TInput Value { get; set; }
+
+            public Action<TInput, TOutput> Callback {
+                get; set;
+            }
+
+            public TInput Value {
+                get; set;
+            }
         }
     }
 }

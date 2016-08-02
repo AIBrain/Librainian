@@ -1,22 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/HttpProcessor.cs" was last cleaned by Rick on 2015/06/12 at 2:56 PM
+//
+// "Librainian/HttpProcessor.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Internet.Servers {
 
@@ -32,6 +32,12 @@ namespace Librainian.Internet.Servers {
     using Maths;
 
     public class HttpProcessor {
+
+        /// <summary>
+        ///     A Dictionary mapping http header names to values. Names are all converted to lower case
+        ///     before being added to this Dictionary.
+        /// </summary>
+        public readonly Dictionary<String, String> HttpHeaders = new Dictionary<String, String>();
 
         /// <summary>The cookies to send to the remote client.</summary>
         public readonly Cookies ResponseCookies = new Cookies();
@@ -54,67 +60,65 @@ namespace Librainian.Internet.Servers {
         public String HttpProtocolVersionstring;
 
         /// <summary>
-        /// A Dictionary mapping http header names to values. Names are all converted to lower case
-        /// before being added to this Dictionary.
-        /// </summary>
-        public readonly Dictionary<String, String> HttpHeaders = new Dictionary<String, String>();
-
-        /// <summary>
-        /// Be careful to flush each output stream before using a different one!! This stream is for
-        /// writing text data.
+        ///     Be careful to flush each output stream before using a different one!! This stream is for
+        ///     writing text data.
         /// </summary>
         public StreamWriter OutputStream;
 
         /// <summary>
-        /// A String array containing the directories and the page name. For example, if the URL was
-        /// "/articles/science/moon.html?date=2011-10-21", pathParts would be { "articles",
-        /// "science", "moon.html" }
+        ///     A String array containing the directories and the page name. For example, if the URL was
+        ///     "/articles/science/moon.html?date=2011-10-21", pathParts would be { "articles",
+        ///     "science", "moon.html" }
         /// </summary>
         public String[] PathParts;
 
         /// <summary>
-        /// A SortedList mapping lower-case keys to values of parameters. This list is populated if
-        /// and only if the request was a POST request with mimetype "application/x-www-form-urlencoded".
+        ///     A SortedList mapping lower-case keys to values of parameters. This list is populated if
+        ///     and only if the request was a POST request with mimetype "application/x-www-form-urlencoded".
         /// </summary>
         public SortedList<String, String> PostParams = new SortedList<String, String>();
 
-        /// <summary> A SortedList mapping lower-case keys to values of parameters. This list is
-        /// populated parameters that were appended to the url (the query String). e.g. if the url
-        /// is "mypage.html?arg1=value1&arg2=value2", then there will be two parameters ("arg1" with
-        /// value "value1" and "arg2" with value "value2" </summary>
+        /// <summary>
+        ///     A SortedList mapping lower-case keys to values of parameters. This list is
+        ///     populated parameters that were appended to the url (the query String). e.g. if the url
+        ///     is "mypage.html?arg1=value1&arg2=value2", then there will be two parameters ("arg1" with
+        ///     value "value1" and "arg2" with value "value2"
+        /// </summary>
         public SortedList<String, String> QueryString = new SortedList<String, String>();
 
         /// <summary>
-        /// Be careful to flush each output stream before using a different one!! This stream is for
-        /// writing binary data.
+        ///     Be careful to flush each output stream before using a different one!! This stream is for
+        ///     writing binary data.
         /// </summary>
         public BufferedStream RawOutputStream;
 
         /// <summary>
-        /// A SortedList mapping keys to values of parameters. No character case conversion is
-        /// applied in this list. This list is populated if and only if the request was a POST
-        /// request with mimetype "application/x-www-form-urlencoded".
+        ///     A SortedList mapping keys to values of parameters. No character case conversion is
+        ///     applied in this list. This list is populated if and only if the request was a POST
+        ///     request with mimetype "application/x-www-form-urlencoded".
         /// </summary>
         public SortedList<String, String> RawPostParams = new SortedList<String, String>();
 
-        /// <summary> A SortedList mapping keys to values of parameters. No character case
-        /// conversion is applied in this list. This list is populated parameters that were appended
-        /// to the url (the query String). e.g. if the url is "mypage.html?arg1=value1&arg2=value2",
-        /// then there will be two parameters ("arg1" with value "value1" and "arg2" with value
-        /// "value2" </summary>
+        /// <summary>
+        ///     A SortedList mapping keys to values of parameters. No character case
+        ///     conversion is applied in this list. This list is populated parameters that were appended
+        ///     to the url (the query String). e.g. if the url is "mypage.html?arg1=value1&arg2=value2",
+        ///     then there will be two parameters ("arg1" with value "value1" and "arg2" with value
+        ///     "value2"
+        /// </summary>
         public SortedList<String, String> RawQueryString = new SortedList<String, String>();
-
-        /// <summary>The requested url.</summary>
-        public Uri RequestUrl;
 
         /// <summary>The cookies sent by the remote client.</summary>
         public Cookies RequestCookies;
 
         /// <summary>
-        /// The path to and name of the requested page, not including the first '/' For example, if
-        /// the URL was "/articles/science/moon.html?date=2011-10-21", requestedPage would be "articles/science/moon.html"
+        ///     The path to and name of the requested page, not including the first '/' For example, if
+        ///     the URL was "/articles/science/moon.html?date=2011-10-21", requestedPage would be "articles/science/moon.html"
         /// </summary>
         public String RequestedPage;
+
+        /// <summary>The requested url.</summary>
+        public Uri RequestUrl;
 
         private const Int32 BufSize = 4096;
         private static readonly Int32 MaxPostSize = 10 * ( Int32 )MathConstants.OneMegaByte; // 10MB
@@ -125,13 +129,21 @@ namespace Librainian.Internet.Servers {
         private Byte[] _remoteIpAddressBytes;
 
         /// <summary>
-        /// A flag that is set when WriteSuccess(), WriteFailure(), or WriteRedirect() is called. If the
+        ///     A flag that is set when WriteSuccess(), WriteFailure(), or WriteRedirect() is called. If the
         /// </summary>
         private Boolean _responseWritten;
 
+        public HttpProcessor( TcpClient s, HttpServer srv, X509Certificate2 sslCertificate = null ) {
+            this._sslCertificate = sslCertificate;
+            this.SecureHttps = sslCertificate != null;
+            this.TcpClient = s;
+            this.BaseUriThisServer = new Uri( "http" + ( this.SecureHttps ? "s" : "" ) + "://" + s.Client.LocalEndPoint, UriKind.Absolute );
+            this.Srv = srv;
+        }
+
         /// <summary>
-        /// Returns the remote client's IP address, or an empty String if the remote IP address is
-        /// somehow not available.
+        ///     Returns the remote client's IP address, or an empty String if the remote IP address is
+        ///     somehow not available.
         /// </summary>
         public String RemoteIpAddress {
             get {
@@ -170,20 +182,12 @@ namespace Librainian.Internet.Servers {
             }
         }
 
-        public HttpProcessor(TcpClient s, HttpServer srv, X509Certificate2 sslCertificate = null) {
-            this._sslCertificate = sslCertificate;
-            this.SecureHttps = sslCertificate != null;
-            this.TcpClient = s;
-            this.BaseUriThisServer = new Uri( "http" + ( this.SecureHttps ? "s" : "" ) + "://" + s.Client.LocalEndPoint, UriKind.Absolute );
-            this.Srv = srv;
-        }
-
         /// <summary>
-        /// Returns true if the remote client's ipv4 address is in the same class C range as any of
-        /// the Server's ipv4 addresses.
+        ///     Returns true if the remote client's ipv4 address is in the same class C range as any of
+        ///     the Server's ipv4 addresses.
         /// </summary>
         /// <param name="httpProcessor"></param>
-        public static Boolean GetIsLanConnection(HttpProcessor httpProcessor) {
+        public static Boolean GetIsLanConnection( HttpProcessor httpProcessor ) {
             if ( httpProcessor._isLanConnection != -1 ) {
                 return httpProcessor._isLanConnection == 1;
             }
@@ -218,7 +222,7 @@ namespace Librainian.Internet.Servers {
             return httpProcessor._isLanConnection == 1;
         }
 
-        public static Boolean IsOrdinaryDisconnectException(Exception ex) {
+        public static Boolean IsOrdinaryDisconnectException( Exception ex ) {
             if ( ex is IOException ) {
                 if ( ex.InnerException is SocketException ) {
                     if ( ex.InnerException.Message.Contains( "An established connection was aborted by the software in your host machine" ) || ex.InnerException.Message.Contains( "An existing connection was forcibly closed by the remote host" ) || ex.InnerException.Message.Contains( "The socket has been shut down" ) /* Mono/Linux */ ) {
@@ -229,7 +233,7 @@ namespace Librainian.Internet.Servers {
             return false;
         }
 
-        public static String StreamReadLine(Stream inputStream) {
+        public static String StreamReadLine( Stream inputStream ) {
             var data = new StringBuilder();
             while ( true ) {
                 var nextChar = inputStream.ReadByte();
@@ -248,31 +252,31 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// Returns the value of the Query String parameter with the specified key.
+        ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>
-        /// The value of the key, or [defaultValue] if the key does not exist or has no suitable
-        /// value. This function interprets a value of "1" or "true" (case insensitive) as being
-        /// true. Any other parameter value is interpreted as false.
+        ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable
+        ///     value. This function interprets a value of "1" or "true" (case insensitive) as being
+        ///     true. Any other parameter value is interpreted as false.
         /// </returns>
-        public Boolean GetBoolParam(String key) => this.GetQsBoolParam( key );
+        public Boolean GetBoolParam( String key ) => this.GetQsBoolParam( key );
 
         /// <summary>
-        /// Returns the value of the Query String parameter with the specified key.
+        ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>
-        /// The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
+        ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
-        public Double GetDoubleParam(String key, Int32 defaultValue = 0) => this.GetQsDoubleParam( key, defaultValue );
+        public Double GetDoubleParam( String key, Int32 defaultValue = 0 ) => this.GetQsDoubleParam( key, defaultValue );
 
         /// <summary>
-        /// Gets the value of the header, or null if the header does not exist. The name is case insensitive.
+        ///     Gets the value of the header, or null if the header does not exist. The name is case insensitive.
         /// </summary>
         /// <param name="name">The case insensitive name of the header to get the value of.</param>
         /// <returns>The value of the header, or null if the header did not exist.</returns>
-        public String GetHeaderValue(String name, String defaultValue = null) {
+        public String GetHeaderValue( String name, String defaultValue = null ) {
             name = name.ToLower();
             String value;
             if ( !this.HttpHeaders.TryGetValue( name, out value ) ) {
@@ -282,31 +286,31 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// Returns the value of the Query String parameter with the specified key.
+        ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>
-        /// The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
+        ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
-        public Int32 GetIntParam(String key, Int32 defaultValue = 0) => this.GetQsIntParam( key, defaultValue );
+        public Int32 GetIntParam( String key, Int32 defaultValue = 0 ) => this.GetQsIntParam( key, defaultValue );
 
         /// <summary>
-        /// Returns the value of the Query String parameter with the specified key.
+        ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>
-        /// The value of the key, or empty String if the key does not exist or has no value.
+        ///     The value of the key, or empty String if the key does not exist or has no value.
         /// </returns>
-        public String GetParam(String key) => this.GetQsParam( key );
+        public String GetParam( String key ) => this.GetQsParam( key );
 
         /// <summary>Returns the value of a parameter sent via POST with MIME type "application/x-www-form-urlencoded".</summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>
-        /// The value of the key, or [defaultValue] if the key does not exist or has no suitable
-        /// value. This function interprets a value of "1" or "true" (case insensitive) as being
-        /// true. Any other parameter value is interpreted as false.
+        ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable
+        ///     value. This function interprets a value of "1" or "true" (case insensitive) as being
+        ///     true. Any other parameter value is interpreted as false.
         /// </returns>
-        public Boolean GetPostBoolParam(String key) {
+        public Boolean GetPostBoolParam( String key ) {
             var param = this.GetPostParam( key );
             if ( ( param == "1" ) || ( param.ToLower() == "true" ) ) {
                 return true;
@@ -317,9 +321,9 @@ namespace Librainian.Internet.Servers {
         /// <summary>Returns the value of a parameter sent via POST with MIME type "application/x-www-form-urlencoded".</summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>
-        /// The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
+        ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
-        public Double GetPostDoubleParam(String key, Double defaultValue = 0) {
+        public Double GetPostDoubleParam( String key, Double defaultValue = 0 ) {
             if ( key == null ) {
                 return defaultValue;
             }
@@ -333,9 +337,9 @@ namespace Librainian.Internet.Servers {
         /// <summary>Returns the value of a parameter sent via POST with MIME type "application/x-www-form-urlencoded".</summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>
-        /// The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
+        ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
-        public Int32 GetPostIntParam(String key, Int32 defaultValue = 0) {
+        public Int32 GetPostIntParam( String key, Int32 defaultValue = 0 ) {
             if ( key == null ) {
                 return defaultValue;
             }
@@ -349,9 +353,9 @@ namespace Librainian.Internet.Servers {
         /// <summary>Returns the value of a parameter sent via POST with MIME type "application/x-www-form-urlencoded".</summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>
-        /// The value of the key, or empty String if the key does not exist or has no value.
+        ///     The value of the key, or empty String if the key does not exist or has no value.
         /// </returns>
-        public String GetPostParam(String key) {
+        public String GetPostParam( String key ) {
             if ( key == null ) {
                 return "";
             }
@@ -363,15 +367,15 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// Returns the value of the Query String parameter with the specified key.
+        ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>
-        /// The value of the key, or [defaultValue] if the key does not exist or has no suitable
-        /// value. This function interprets a value of "1" or "true" (case insensitive) as being
-        /// true. Any other parameter value is interpreted as false.
+        ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable
+        ///     value. This function interprets a value of "1" or "true" (case insensitive) as being
+        ///     true. Any other parameter value is interpreted as false.
         /// </returns>
-        public Boolean GetQsBoolParam(String key) {
+        public Boolean GetQsBoolParam( String key ) {
             var param = this.GetQsParam( key );
             if ( ( param == "1" ) || ( param.ToLower() == "true" ) ) {
                 return true;
@@ -380,13 +384,13 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// Returns the value of the Query String parameter with the specified key.
+        ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>
-        /// The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
+        ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
-        public Double GetQsDoubleParam(String key, Double defaultValue = 0) {
+        public Double GetQsDoubleParam( String key, Double defaultValue = 0 ) {
             if ( key == null ) {
                 return defaultValue;
             }
@@ -398,13 +402,13 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// Returns the value of the Query String parameter with the specified key.
+        ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>
-        /// The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
+        ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
-        public Int32 GetQsIntParam(String key, Int32 defaultValue = 0) {
+        public Int32 GetQsIntParam( String key, Int32 defaultValue = 0 ) {
             if ( key == null ) {
                 return defaultValue;
             }
@@ -416,13 +420,13 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// Returns the value of the Query String parameter with the specified key.
+        ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
         /// <returns>
-        /// The value of the key, or empty String if the key does not exist or has no value.
+        ///     The value of the key, or empty String if the key does not exist or has no value.
         /// </returns>
-        public String GetQsParam(String key) {
+        public String GetQsParam( String key ) {
             if ( key == null ) {
                 return "";
             }
@@ -434,19 +438,19 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// Writes a failure response header. Call this one time to return an error response.
+        ///     Writes a failure response header. Call this one time to return an error response.
         /// </summary>
         /// <param name="code">
-        /// (OPTIONAL) The http error code (including explanation entity). For example: "404 Not
-        /// Found" where 404 is the error code and "Not Found" is the explanation.
+        ///     (OPTIONAL) The http error code (including explanation entity). For example: "404 Not
+        ///     Found" where 404 is the error code and "Not Found" is the explanation.
         /// </param>
         /// <param name="description">
-        /// (OPTIONAL) A description String to send after the headers as the response. This is
-        /// typically shown to the remote user in his browser. If null, the code String is sent
-        /// here. If "", no response body is sent by this function, and you may or may not want to
-        /// write your own.
+        ///     (OPTIONAL) A description String to send after the headers as the response. This is
+        ///     typically shown to the remote user in his browser. If null, the code String is sent
+        ///     here. If "", no response body is sent by this function, and you may or may not want to
+        ///     write your own.
         /// </param>
-        public void WriteFailure(String code = "404 Not Found", String description = null) {
+        public void WriteFailure( String code = "404 Not Found", String description = null ) {
             this._responseWritten = true;
             this.OutputStream.WriteLine( "HTTP/1.1 " + code );
             this.OutputStream.WriteLine( "Connection: close" );
@@ -460,11 +464,11 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// Writes a redirect header instructing the remote user's browser to load the URL you
-        /// specify. Call this one time and do not write any other data to the response stream.
+        ///     Writes a redirect header instructing the remote user's browser to load the URL you
+        ///     specify. Call this one time and do not write any other data to the response stream.
         /// </summary>
         /// <param name="redirectToUrl">URL to redirect to.</param>
-        public void WriteRedirect(String redirectToUrl) {
+        public void WriteRedirect( String redirectToUrl ) {
             this._responseWritten = true;
             this.OutputStream.WriteLine( "HTTP/1.1 302 Found" );
             this.OutputStream.WriteLine( "Location: " + redirectToUrl );
@@ -473,14 +477,14 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// Writes the response headers for a successful response. Call this one time before writing
-        /// your response, after you have determined that the request is valid.
+        ///     Writes the response headers for a successful response. Call this one time before writing
+        ///     your response, after you have determined that the request is valid.
         /// </summary>
         /// <param name="contentType">The MIME type of your response.</param>
         /// <param name="contentLength">
-        /// (OPTIONAL) The length of your response, in bytes, if you know it.
+        ///     (OPTIONAL) The length of your response, in bytes, if you know it.
         /// </param>
-        public void WriteSuccess(String contentType = "text/html", Int64 contentLength = -1, String responseCode = "200 OK", List<KeyValuePair<String, String>> additionalHeaders = null) {
+        public void WriteSuccess( String contentType = "text/html", Int64 contentLength = -1, String responseCode = "200 OK", List<KeyValuePair<String, String>> additionalHeaders = null ) {
             this._responseWritten = true;
             this.OutputStream.WriteLine( "HTTP/1.1 " + responseCode );
             if ( !String.IsNullOrEmpty( contentType ) ) {
@@ -503,7 +507,7 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>Processes the request.</summary>
-        internal void Process(Object objParameter) {
+        internal void Process( Object objParameter ) {
             Stream tcpStream = null;
             try {
                 tcpStream = this.TcpClient.GetStream();
@@ -592,14 +596,14 @@ namespace Librainian.Internet.Servers {
         //}
 
         /// <summary>
-        /// Parses the specified query String and returns a sorted list containing the arguments
-        /// found in the specified query String. Can also be used to parse the POST request body if
-        /// the mimetype is "application/x-www-form-urlencoded".
+        ///     Parses the specified query String and returns a sorted list containing the arguments
+        ///     found in the specified query String. Can also be used to parse the POST request body if
+        ///     the mimetype is "application/x-www-form-urlencoded".
         /// </summary>
         /// <param name="queryString"></param>
         /// <param name="requireQuestionMark"></param>
         /// <returns></returns>
-        private static SortedList<String, String> ParseQueryStringArguments(String queryString, Boolean requireQuestionMark = true, Boolean preserveKeyCharacterCase = false) {
+        private static SortedList<String, String> ParseQueryStringArguments( String queryString, Boolean requireQuestionMark = true, Boolean preserveKeyCharacterCase = false ) {
             var arguments = new SortedList<String, String>();
             var idx = queryString.IndexOf( '?' );
             if ( idx > -1 ) {
@@ -619,17 +623,17 @@ namespace Librainian.Internet.Servers {
                 var argument = t.Split( '=' );
                 if ( argument.Length == 2 ) {
                     var key = HttpUtility.UrlDecode( argument[ 0 ] );
-                    if ( !preserveKeyCharacterCase ) {
-                        if ( key != null ) {
+                    if ( null != key  ) {
+                        if ( !preserveKeyCharacterCase ) {
                             key = key.ToLower();
                         }
-                    }
-                    String existingValue;
-                    if ( arguments.TryGetValue( key, out existingValue ) ) {
-                        arguments[ key ] += "," + HttpUtility.UrlDecode( argument[ 1 ] );
-                    }
-                    else {
-                        arguments[ key ] = HttpUtility.UrlDecode( argument[ 1 ] );
+                        String existingValue;
+                        if ( arguments.TryGetValue( key, out existingValue ) ) {
+                            arguments[ key ] += "," + HttpUtility.UrlDecode( argument[ 1 ] );
+                        }
+                        else {
+                            arguments[ key ] = HttpUtility.UrlDecode( argument[ 1 ] );
+                        }
                     }
                 }
             }
@@ -640,8 +644,8 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// Asks the HttpServer to handle this request as a GET request. If the HttpServer does not
-        /// write a response code header, this will write a generic failure header.
+        ///     Asks the HttpServer to handle this request as a GET request. If the HttpServer does not
+        ///     write a response code header, this will write a generic failure header.
         /// </summary>
         private void HandleGetRequest() {
             try {
@@ -655,12 +659,12 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// This post data processing just reads everything into a memory stream. This is fine for
-        /// smallish things, but for large stuff we should really hand an input stream to the
-        /// request processor. However, the input stream we hand to the user's code needs to see the
-        /// "end of the stream" at this content length, because otherwise it won't know where the
-        /// end is! If the HttpServer does not write a response code header, this will write a
-        /// generic failure header.
+        ///     This post data processing just reads everything into a memory stream. This is fine for
+        ///     smallish things, but for large stuff we should really hand an input stream to the
+        ///     request processor. However, the input stream we hand to the user's code needs to see the
+        ///     "end of the stream" at this content length, because otherwise it won't know where the
+        ///     end is! If the HttpServer does not write a response code header, this will write a
+        ///     generic failure header.
         /// </summary>
         private void HandlePostRequest() {
             try {
@@ -723,7 +727,7 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// Parses the first line of the http request to get the request method, url, and protocol version.
+        ///     Parses the first line of the http request to get the request method, url, and protocol version.
         /// </summary>
         private void ParseRequest() {
             var request = StreamReadLine( this._inputStream );

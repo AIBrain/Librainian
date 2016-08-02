@@ -1,22 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/ElasticObject.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
+//
+// "Librainian/ElasticObject.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.AmazedSaint {
 
@@ -28,23 +28,31 @@ namespace Librainian.AmazedSaint {
     using System.Linq.Expressions;
 
     /// <summary>
-    /// See http://amazedsaint.blogspot.com/2010/02/introducing-elasticobject-for-net-40.html for details
+    ///     See http://amazedsaint.blogspot.com/2010/02/introducing-elasticobject-for-net-40.html for details
     /// </summary>
     public class ElasticObject : DynamicObject, IElasticHierarchyWrapper, INotifyPropertyChanged {
-        private readonly IElasticHierarchyWrapper _elasticProvider = new SimpleHierarchyWrapper();
-        private NodeType _nodeType = NodeType.Element;
 
-        public IEnumerable<KeyValuePair<String, ElasticObject>> Attributes => this._elasticProvider.Attributes;
+        public ElasticObject() : this( $"id={Guid.NewGuid()}" ) {
+        }
 
-        public IEnumerable<ElasticObject> Elements => this._elasticProvider.Elements;
+        public ElasticObject( String name, Object value = null ) {
+            this.InternalName = name;
+            this.InternalValue = value;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public IEnumerable<KeyValuePair<String, ElasticObject>> Attributes => this.ElasticProvider.Attributes;
+
+        public IEnumerable<ElasticObject> Elements => this.ElasticProvider.Elements;
 
         public Object InternalContent {
             get {
-                return this._elasticProvider.InternalContent;
+                return this.ElasticProvider.InternalContent;
             }
 
             set {
-                this._elasticProvider.InternalContent = value;
+                this.ElasticProvider.InternalContent = value;
             }
         }
 
@@ -65,78 +73,72 @@ namespace Librainian.AmazedSaint {
 
         public String InternalName {
             get {
-                return this._elasticProvider.InternalName;
+                return this.ElasticProvider.InternalName;
             }
 
             set {
-                this._elasticProvider.InternalName = value;
+                this.ElasticProvider.InternalName = value;
             }
         }
 
         public ElasticObject InternalParent {
             get {
-                return this._elasticProvider.InternalParent;
+                return this.ElasticProvider.InternalParent;
             }
 
             set {
-                this._elasticProvider.InternalParent = value;
+                this.ElasticProvider.InternalParent = value;
             }
         }
 
         public Object InternalValue {
             get {
-                return this._elasticProvider.InternalValue;
+                return this.ElasticProvider.InternalValue;
             }
 
             set {
-                this._elasticProvider.InternalValue = value;
+                this.ElasticProvider.InternalValue = value;
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private IElasticHierarchyWrapper ElasticProvider { get; } = new SimpleHierarchyWrapper();
 
-        public ElasticObject() : this( $"id={Guid.NewGuid()}" ) {
-        }
+        private NodeType NodeType { get; set; } = NodeType.Element;
 
-        public ElasticObject(String name, Object value = null) {
-            this.InternalName = name;
-            this.InternalValue = value;
-        }
-
-        public void AddAttribute(String key, ElasticObject value) {
-            value._nodeType = NodeType.Attribute;
+        public void AddAttribute( String key, ElasticObject value ) {
+            value.NodeType = NodeType.Attribute;
             value.InternalParent = this;
-            this._elasticProvider.AddAttribute( key, value );
+            this.ElasticProvider.AddAttribute( key, value );
         }
 
-        public void AddElement(ElasticObject element) {
-            element._nodeType = NodeType.Element;
+        public void AddElement( ElasticObject element ) {
+            element.NodeType = NodeType.Element;
             element.InternalParent = this;
-            this._elasticProvider.AddElement( element );
+            this.ElasticProvider.AddElement( element );
         }
 
-        public ElasticObject Attribute(String name) => this._elasticProvider.Attribute( name );
+        public ElasticObject Attribute( String name ) => this.ElasticProvider.Attribute( name );
 
-        public ElasticObject Element(String name) => this._elasticProvider.Element( name );
+        public ElasticObject Element( String name ) => this.ElasticProvider.Element( name );
 
-        public Object GetAttributeValue(String name) => this._elasticProvider.GetAttributeValue( name );
+        public Object GetAttributeValue( String name ) => this.ElasticProvider.GetAttributeValue( name );
 
-        public Boolean HasAttribute(String name) => this._elasticProvider.HasAttribute( name );
+        public Boolean HasAttribute( String name ) => this.ElasticProvider.HasAttribute( name );
 
-        public void RemoveAttribute(String key) => this._elasticProvider.RemoveAttribute( key );
+        public void RemoveAttribute( String key ) => this.ElasticProvider.RemoveAttribute( key );
 
-        public void RemoveElement(ElasticObject element) => this._elasticProvider.RemoveElement( element );
+        public void RemoveElement( ElasticObject element ) => this.ElasticProvider.RemoveElement( element );
 
-        public void SetAttributeValue(String name, Object obj) => this._elasticProvider.SetAttributeValue( name, obj );
+        public void SetAttributeValue( String name, Object obj ) => this.ElasticProvider.SetAttributeValue( name, obj );
 
         /// <summary>Interpret the invocation of a binary operation</summary>
-        public override Boolean TryBinaryOperation(BinaryOperationBinder binder, Object arg, out Object result) {
-            if ( ( binder.Operation == ExpressionType.LeftShiftAssign ) && ( this._nodeType == NodeType.Element ) ) {
+        public override Boolean TryBinaryOperation( BinaryOperationBinder binder, Object arg, out Object result ) {
+            if ( ( binder.Operation == ExpressionType.LeftShiftAssign ) && ( this.NodeType == NodeType.Element ) ) {
                 this.InternalContent = arg;
                 result = this;
                 return true;
             }
-            if ( ( binder.Operation == ExpressionType.LeftShiftAssign ) && ( this._nodeType == NodeType.Attribute ) ) {
+            if ( ( binder.Operation == ExpressionType.LeftShiftAssign ) && ( this.NodeType == NodeType.Attribute ) ) {
                 this.InternalValue = arg;
                 result = this;
                 return true;
@@ -145,9 +147,7 @@ namespace Librainian.AmazedSaint {
                 case ExpressionType.LeftShift:
                     var s = arg as String;
                     if ( s != null ) {
-                        var exp = new ElasticObject( s ) {
-                            _nodeType = NodeType.Element
-                        };
+                        var exp = new ElasticObject( s ) { NodeType = NodeType.Element };
                         this.AddElement( exp );
                         result = exp;
                         return true;
@@ -163,8 +163,7 @@ namespace Librainian.AmazedSaint {
                     }
                     break;
 
-                case ExpressionType.LessThan:
-                    {
+                case ExpressionType.LessThan: {
                         var memberName = arg as String;
                         if ( arg is String ) {
                             if ( !this.HasAttribute( memberName ) ) {
@@ -199,9 +198,9 @@ namespace Librainian.AmazedSaint {
         }
 
         /// <summary>Handle the indexer operations</summary>
-        public override Boolean TryGetIndex(GetIndexBinder binder, Object[] indexes, out Object result) {
+        public override Boolean TryGetIndex( GetIndexBinder binder, Object[] indexes, out Object result ) {
             if ( ( indexes.Length == 1 ) && ( indexes[ 0 ] == null ) ) {
-                result = this._elasticProvider.Elements.ToList();
+                result = this.ElasticProvider.Elements.ToList();
             }
             else if ( ( indexes.Length == 1 ) && indexes[ 0 ] is Int32 ) {
                 var indx = ( Int32 )indexes[ 0 ];
@@ -223,18 +222,18 @@ namespace Librainian.AmazedSaint {
         /// <param name="binder"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        public override Boolean TryGetMember(GetMemberBinder binder, out Object result) {
-            if ( this._elasticProvider.HasAttribute( binder.Name ) ) {
-                result = this._elasticProvider.Attribute( binder.Name ).InternalValue;
+        public override Boolean TryGetMember( GetMemberBinder binder, out Object result ) {
+            if ( this.ElasticProvider.HasAttribute( binder.Name ) ) {
+                result = this.ElasticProvider.Attribute( binder.Name ).InternalValue;
             }
             else {
-                var obj = this._elasticProvider.Element( binder.Name );
+                var obj = this.ElasticProvider.Element( binder.Name );
                 if ( obj != null ) {
                     result = obj;
                 }
                 else {
                     var exp = new ElasticObject( binder.Name );
-                    this._elasticProvider.AddElement( exp );
+                    this.ElasticProvider.AddElement( exp );
                     result = exp;
                 }
             }
@@ -247,7 +246,7 @@ namespace Librainian.AmazedSaint {
         /// <param name="args"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        public override Boolean TryInvokeMember(InvokeMemberBinder binder, Object[] args, out Object result) {
+        public override Boolean TryInvokeMember( InvokeMemberBinder binder, Object[] args, out Object result ) {
             var obj = new ElasticObject( binder.Name );
             this.AddElement( obj );
             result = obj;
@@ -255,7 +254,7 @@ namespace Librainian.AmazedSaint {
         }
 
         /// <summary>Catch a set member invocation</summary>
-        public override Boolean TrySetMember(SetMemberBinder binder, Object value) {
+        public override Boolean TrySetMember( SetMemberBinder binder, Object value ) {
             var memberName = binder.Name;
 
             var o = value as ElasticObject;
@@ -266,11 +265,11 @@ namespace Librainian.AmazedSaint {
                 }
             }
             else {
-                if ( !this._elasticProvider.HasAttribute( memberName ) ) {
-                    this._elasticProvider.AddAttribute( memberName, new ElasticObject( memberName, value ) );
+                if ( !this.ElasticProvider.HasAttribute( memberName ) ) {
+                    this.ElasticProvider.AddAttribute( memberName, new ElasticObject( memberName, value ) );
                 }
                 else {
-                    this._elasticProvider.SetAttributeValue( memberName, value );
+                    this.ElasticProvider.SetAttributeValue( memberName, value );
                 }
             }
 
@@ -280,9 +279,9 @@ namespace Librainian.AmazedSaint {
         }
 
         /// <summary>Try the unary operation.</summary>
-        public override Boolean TryUnaryOperation(UnaryOperationBinder binder, out Object result) {
+        public override Boolean TryUnaryOperation( UnaryOperationBinder binder, out Object result ) {
             if ( binder.Operation == ExpressionType.OnesComplement ) {
-                result = this._nodeType == NodeType.Element ? this.InternalContent : this.InternalValue;
+                result = this.NodeType == NodeType.Element ? this.InternalContent : this.InternalValue;
                 return true;
             }
             return base.TryUnaryOperation( binder, out result );
@@ -292,7 +291,7 @@ namespace Librainian.AmazedSaint {
         /// <param name="memberName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        internal ElasticObject CreateOrGetAttribute(String memberName, Object value) {
+        internal ElasticObject CreateOrGetAttribute( String memberName, Object value ) {
             if ( !this.HasAttribute( memberName ) ) {
                 this.AddAttribute( memberName, new ElasticObject( memberName, value ) );
             }
@@ -300,6 +299,6 @@ namespace Librainian.AmazedSaint {
             return this.Attribute( memberName );
         }
 
-        private void OnPropertyChanged(String prop) => this.PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( prop ) );
+        private void OnPropertyChanged( String prop ) => this.PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( prop ) );
     }
 }

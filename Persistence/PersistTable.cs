@@ -1,21 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
 // Donations and royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // Contact me by email if you have any questions or helpful criticism.
-//  
-// "Librainian/PersistTable.cs" was last cleaned by Rick on 2015/11/09 at 11:05 PM
+//
+// "Librainian/PersistTable.cs" was last cleaned by Rick on 2016/06/18 at 10:56 PM
 
 namespace Librainian.Persistence {
 
@@ -26,28 +27,31 @@ namespace Librainian.Persistence {
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using System.Runtime.Serialization;
+    using FileSystem;
     using FluentAssertions;
     using JetBrains.Annotations;
     using Measurement.Time;
+    using Microsoft.Database.Isam.Config;
     using Microsoft.Isam.Esent.Collections.Generic;
-    using OperatingSystem.FileSystem;
-    using OperatingSystem.IO;
+    using Microsoft.Isam.Esent.Interop.Windows81;
+    using Newtonsoft.Json;
+    using OperatingSystem.Compression;
     using Parsing;
     using Threading;
 
     /// <summary>
     ///     <para>
-    ///         A little wrapper over the <see cref="PersistentDictionary{TKey,TValue}" /> class for
-    ///         <see cref="DataContract" /> classes.
+    ///         Allows the <see cref="PersistentDictionary{TKey,TValue}" /> class to persist almost any object by using
+    ///         Newtonsoft.Json.
     ///     </para>
     /// </summary>
-    [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    [Serializable]
+    /// <seealso cref="http://managedesent.codeplex.com/wikipage?title=PersistentDictionaryDocumentation" />
+    [DebuggerDisplay( "{ToString(),nq}" )]
+    [JsonObject]
     public sealed class PersistTable<TKey, TValue> : IDictionary<TKey, TValue>, IDisposable where TKey : IComparable<TKey> {
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         /// <param name="specialFolder"></param>
         /// <param name="tableName"></param>
         /// <exception cref="InvalidOperationException"></exception>
@@ -57,8 +61,7 @@ namespace Librainian.Persistence {
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( Environment.SpecialFolder specialFolder, String tableName ) : this( new Folder( specialFolder, null, null, tableName ) ) {
-        }
+        public PersistTable( Environment.SpecialFolder specialFolder, String tableName ) : this( new Folder( specialFolder, null, tableName ) ) { }
 
         /// <summary>
         /// </summary>
@@ -67,10 +70,10 @@ namespace Librainian.Persistence {
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( Folder folder, String tableName ) : this( Path.Combine( folder.FullName, tableName ) ) {
-        }
+        public PersistTable( Folder folder, String tableName ) : this( Path.Combine( folder.FullName, tableName ) ) { }
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         /// <param name="folder"></param>
         /// <param name="testForReadWriteAccess"></param>
         /// <exception cref="ArgumentNullException"></exception>
@@ -81,33 +84,24 @@ namespace Librainian.Persistence {
         // ReSharper disable once NotNullMemberIsNotInitialized
         public PersistTable( [CanBeNull] Folder folder, Boolean testForReadWriteAccess = false ) {
             try {
-                Log.Enter();
-
                 if ( folder == null ) {
                     throw new ArgumentNullException( nameof( folder ) );
                 }
                 this.Folder = folder;
-                var directory = this.Folder.FullName;
 
-                if ( !this.Folder.Exists() ) {
-                    this.Folder.Create();
-                }
-
-                if ( !this.Folder.Exists() ) {
+                if ( !this.Folder.Create() ) {
                     throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
                 }
 
-                this.Dictionary = new PersistentDictionary<TKey, String>( directory );
+                var customConfig = new DatabaseConfig { CreatePathIfNotExist = true, EnableShrinkDatabase = ShrinkDatabaseGrbit.On, DefragmentSequentialBTrees = true };
+                this.Dictionary = new PersistentDictionary<TKey, String>( this.Folder.FullName, customConfig );
 
-                if ( testForReadWriteAccess ) {
-                    this.TestForReadWriteAccess();
+                if ( testForReadWriteAccess && !this.TestForReadWriteAccess() ) {
+                    throw new IOException( $"Read/write permissions denied in folder {folder.FullName}" );
                 }
             }
             catch ( Exception exception ) {
                 exception.More();
-            }
-            finally {
-                Log.Exit();
             }
         }
 
@@ -115,10 +109,11 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <param name="fullpath"></param>
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( [NotNull] String fullpath ) : this( new Folder( fullpath ) ) {
-        }
+        public PersistTable( [NotNull] String fullpath ) : this( new Folder( fullpath ) ) { }
 
-        /// <summary>No path given?</summary>
+        /// <summary>
+        ///     No path given?
+        /// </summary>
         // ReSharper disable once NotNullMemberIsNotInitialized
         private PersistTable() {
             throw new NotImplementedException();
@@ -126,22 +121,6 @@ namespace Librainian.Persistence {
             //var name = Types.Name( () => this );
 
             //TODO Use the programdata\thisapp.exe type of path.
-        }
-
-        [NotNull]
-        public Folder Folder {
-            get;
-        }
-
-        public Boolean IsDisposed {
-            get; private set;
-        }
-
-        private String DebuggerDisplay => this.Dictionary.ToString();
-
-        [NotNull]
-        private PersistentDictionary<TKey, String> Dictionary {
-            get;
         }
 
         /// <summary>
@@ -153,6 +132,15 @@ namespace Librainian.Persistence {
         ///     <see cref="T:System.Collections.Generic.ICollection`1" /> .
         /// </returns>
         public Int32 Count => this.Dictionary.Count;
+
+        [NotNull]
+        public Folder Folder {
+            get;
+        }
+
+        public Boolean IsDisposed {
+            get; private set;
+        }
 
         /// <summary>
         ///     Gets a value indicating whether the
@@ -182,7 +170,13 @@ namespace Librainian.Persistence {
         ///     An <see cref="T:System.Collections.Generic.ICollection`1" /> containing the values in
         ///     the object that implements <see cref="T:System.Collections.Generic.IDictionary`2" /> .
         /// </returns>
-        public ICollection<TValue> Values => this.Dictionary.Values.Select( Value ) as ICollection<TValue> ?? new Collection<TValue>();
+        public ICollection<TValue> Values => this.Dictionary.Values.Select( value => value.FromCompressedBase64().FromJSON<TValue>() ) as ICollection<TValue> ?? new Collection<TValue>();
+
+        [JsonProperty]
+        [NotNull]
+        private PersistentDictionary<TKey, String> Dictionary {
+            get;
+        }
 
         /// <summary>
         ///     <para>
@@ -195,6 +189,7 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         [CanBeNull]
         public TValue this[ [CanBeNull] TKey key ] {
+            [CanBeNull]
             get {
                 if ( Equals( default( TKey ), key ) ) {
                     return default( TValue );
@@ -206,8 +201,8 @@ namespace Librainian.Persistence {
                 if ( !this.Dictionary.TryGetValue( key, out storedValue ) ) {
                     return default( TValue );
                 }
-                var deSerialized = Value( storedValue );
-                return deSerialized;
+                var valueFromStore = storedValue.FromCompressedBase64().FromJSON<TValue>();
+                return valueFromStore;
             }
 
             set {
@@ -215,8 +210,7 @@ namespace Librainian.Persistence {
                     return;
                 }
 
-                // ReSharper disable once AssignNullToNotNullAttribute
-                var valueToStore = Value( value );
+                var valueToStore = value.ToJSON().ToCompressedBase64();
                 this.Dictionary[ key ] = valueToStore;
             }
         }
@@ -268,7 +262,8 @@ namespace Librainian.Persistence {
         ///     The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1" /> .
         /// </param>
         public Boolean Contains( KeyValuePair<TKey, TValue> item ) {
-            var asItem = new KeyValuePair<TKey, String>( item.Key, Value( item.Value ) );
+            var value = item.Value.ToJSON().ToCompressedBase64();
+            var asItem = new KeyValuePair<TKey, String>( item.Key, value );
             return this.Dictionary.Contains( asItem );
         }
 
@@ -312,16 +307,58 @@ namespace Librainian.Persistence {
         ///     <paramref name="array" /> .
         /// </exception>
         public void CopyTo( KeyValuePair<TKey, TValue>[] array, Int32 arrayIndex ) {
+            throw new NotImplementedException();
+
             //this.Dictionary.CopyTo( array, arrayIndex ); ??
         }
 
-        /// <summary>Returns an enumerator that iterates through the deserialized collection.</summary>
+        /// <summary>
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting
+        ///     unmanaged resources.
+        /// </summary>
+        public void Dispose() {
+            using ( Dictionary ) {
+                this.Dictionary.Dispose();
+            }
+            this.IsDisposed = true;
+        }
+
+        public void Flush() => this.Dictionary.Flush();
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through the deserialized collection.
+        /// </summary>
         /// <returns>
         ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate
         ///     through the collection.
         /// </returns>
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => this.Items()
-                                                                                  .GetEnumerator();
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => this.Items().GetEnumerator();
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate
+        ///     through the collection.
+        /// </returns>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        public void Initialize() {
+            Log.Enter();
+            this.Dictionary.Database.Should().NotBeNull();
+            if ( this.Dictionary.Database.ToString().IsNullOrWhiteSpace() ) {
+                throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
+            }
+            Log.Exit();
+        }
+
+        /// <summary>
+        ///     All <see cref="KeyValuePair{TKey,TValue }" /> , with the <see cref="TValue" /> deserialized.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePair<TKey, TValue>> Items() {
+            return this.Dictionary.Select( pair => new KeyValuePair<TKey, TValue>( pair.Key, pair.Value.FromCompressedBase64().FromJSON<TValue>() ) );
+        }
 
         /// <summary>
         ///     Removes the element with the specified key from the
@@ -355,13 +392,31 @@ namespace Librainian.Persistence {
         /// <exception cref="T:System.NotSupportedException">
         ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
         /// </exception>
-        [Obsolete( "haven't fixed this one yet" )]
         public Boolean Remove( KeyValuePair<TKey, TValue> item ) {
-            var asItem = new KeyValuePair<TKey, String>( item.Key, Value( item.Value ) ); //TODO ??
-            throw new NotImplementedException();
+            var value = item.Value.ToJSON().ToCompressedBase64();
+            var asItem = new KeyValuePair<TKey, String>( item.Key, value );
+            return this.Dictionary.Remove( asItem );
         }
 
-        /// <summary>Gets the value associated with the specified key.</summary>
+        /// <summary>
+        ///     Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        ///     A string that represents the current object.
+        /// </returns>
+        public override String ToString() {
+            return $"{this.Count} items";
+        }
+
+        public void TryAdd( TKey key, TValue value ) {
+            if ( !this.Dictionary.ContainsKey( key ) ) {
+                this[ key ] = value;
+            }
+        }
+
+        /// <summary>
+        ///     Gets the value associated with the specified key.
+        /// </summary>
         /// <returns>
         ///     true if the object that implements
         ///     <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an element with the
@@ -381,144 +436,15 @@ namespace Librainian.Persistence {
             if ( !this.Dictionary.TryGetValue( key, out storedValue ) ) {
                 return false;
             }
-            value = Value( storedValue );
+            value = storedValue.FromCompressedBase64().FromJSON<TValue>();
             return true;
-        }
-
-        /// <summary>Returns an enumerator that iterates through a collection.</summary>
-        /// <returns>
-        ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate
-        ///     through the collection.
-        /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting
-        ///     unmanaged resources.
-        /// </summary>
-        public void Dispose() {
-            using ( Dictionary ) {
-                this.Dictionary.Dispose();
-            }
-            this.IsDisposed = true;
-        }
-
-        public void Flush() => this.Dictionary.Flush();
-
-        public void Initialize() {
-            Log.Enter();
-            this.Dictionary.Database.Should()
-                .NotBeNull();
-            if ( this.Dictionary.Database.ToString()
-                     .IsNullOrWhiteSpace() ) {
-                throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
-            }
-            Log.Exit();
-        }
-
-        /// <summary>
-        ///     All <see cref="KeyValuePair{TKey,TValue }" /> , with the <see cref="TValue" /> deserialized.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<KeyValuePair<TKey, TValue>> Items() => this.Dictionary.Select( pair => new KeyValuePair<TKey, TValue>( pair.Key, Value( pair.Value ) ) );
-
-        public void TryAdd( TKey key, TValue value ) {
-            if ( !this.Dictionary.ContainsKey( key ) ) {
-                this[ key ] = value;
-            }
         }
 
         public Boolean TryRemove( TKey key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
 
-        [NotNull]
-        private static String Value( [NotNull] TValue value ) {
-            if ( Equals( value, default( TValue ) ) ) {
-                throw new ArgumentNullException( nameof( value ) );
-            }
-            return value.Serialize() ?? String.Empty;
-        }
-
-        private static TValue Value( [NotNull] String value ) {
-            if ( value == null ) {
-                throw new ArgumentNullException( nameof( value ) );
-            }
-            var deserialize = value.Deserialize<TValue>();
-            return deserialize;
-        }
-
-        /*
-                private dynamic ToExpando( IEnumerable<KeyValuePair<TKey, TValue>> dictionary ) {
-                    var expandoObject = new ExpandoObject() as IDictionary<TKey, TValue>;
-
-                    if ( null != expandoObject ) {
-                        foreach ( var keyValuePair in dictionary ) {
-                            expandoObject[ keyValuePair.Key ] = keyValuePair.Value;
-                        }
-                    }
-
-                    return expandoObject;
-                }
-        */
-
-        /*
-
-                /// <summary>
-                /// check if we have a storage folder. if we don't, popup a dialog to ask. Settings.
-                /// </summary>
-                /// <returns></returns>
-                public void ValidateStorageFolder() {
-                    try {
-                    Again:
-                        if ( null == this.MainStoragePath ) {
-                            this.AskUserForStorageFolder();
-                            if ( null == this.MainStoragePath ) {
-                                goto Again;
-                            }
-                        }
-
-                        this.MainStoragePath.Refresh();
-                        if ( !this.MainStoragePath.Exists ) {
-                            this.AskUserForStorageFolder();
-                        }
-
-                        if ( null == this.MainStoragePath ) {
-                            return;
-                        }
-
-                        if ( null == this.MainStoragePath.Ensure( requestReadAccess: true, requestWriteAccess: true ) ) {
-                            goto Again;
-                        }
-
-                        if ( !this.MainStoragePath.Exists ) {
-                            var dialogResult = MessageBox.Show( String.Format( "Unable to access storage folder [{0}]. Retry?", this.MainStoragePath.FullName ), "Folder Not Found", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error );
-                            switch ( dialogResult ) {
-                                case DialogResult.Retry:
-                                    goto Again;
-                                case DialogResult.Cancel:
-                                    return;
-                            }
-                        }
-
-                        try {
-                            this.TestForReadWriteAccess();
-                        }
-                        catch ( Exception ) {
-                            var dialogResult = MessageBox.Show( String.Format( "Unable to write to storage folder [{0}]. Retry?", this.MainStoragePath ), "No Access", MessageBoxButtons.RetryCancel );
-                            switch ( dialogResult ) {
-                                case DialogResult.Retry:
-                                    goto Again;
-                                case DialogResult.Cancel:
-                                    return;
-                            }
-                        }
-                    }
-                    finally {
-                        String.Format( "Using storage folder `{0}`.", this.MainStoragePath ).TimeDebug();
-                    }
-                }
-        */
-
-        /// <summary>Return true if we can read/write in the <see cref="Folder" /> .</summary>
+        /// <summary>
+        ///     Return true if we can read/write in the <see cref="Folder" /> .
+        /// </summary>
         /// <returns></returns>
         private Boolean TestForReadWriteAccess() {
             try {
@@ -533,7 +459,5 @@ namespace Librainian.Persistence {
             catch ( Exception ) { }
             return false;
         }
-
     }
-
 }

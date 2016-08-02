@@ -1,74 +1,76 @@
-#region License & Information
-
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Pixel.cs" was last cleaned by Rick on 2015/06/12 at 2:55 PM
-#endregion License & Information
+//
+// "Librainian/Pixel.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.Graphics.Imaging {
+
     using System;
     using System.Drawing;
     using System.IO;
     using System.Runtime.InteropServices;
-    using System.Runtime.Serialization;
     using System.Threading.Tasks;
     using Extensions;
     using JetBrains.Annotations;
     using Maths;
+    using Newtonsoft.Json;
 
-    /// <summary> <para> A simple pixel with <see cref="Alpha" />, <see cref="Red" />, <see
-    /// cref="Green" /> , <see cref="Blue" />, and <see cref="X" /> & <see cref="Y" /> values.
-    /// </para> </summary>
+    /// <summary>
+    ///     <para>
+    ///         A simple pixel with <see cref="Checksum" />, <see cref="Alpha" />, <see cref="Red" />, <see cref="Green" />,
+    ///         <see cref="Blue" />, and <see cref="X" /> & <see cref="Y" /> values.
+    ///     </para>
+    ///     <remarks>Thoroughly untested.</remarks>
+    /// </summary>
     [Immutable]
-    [DataContract]
-    [Serializable]
+    [JsonObject]
     [StructLayout( LayoutKind.Explicit )]
     public struct Pixel : IEquatable<Pixel> {
-        [DataMember]
+
+        [JsonProperty]
         [FieldOffset( 0 )]
         public readonly Byte Checksum;
 
-        [DataMember]
-        [FieldOffset( sizeof(Byte) + 0 * sizeof(Byte) )]
+        [JsonProperty]
+        [FieldOffset( sizeof( Byte ) + 0 * sizeof( Byte ) )]
         public readonly Byte Alpha;
 
-        [DataMember]
-        [FieldOffset( sizeof(Byte) + 1 * sizeof(Byte) )]
+        [JsonProperty]
+        [FieldOffset( sizeof( Byte ) + 1 * sizeof( Byte ) )]
         public readonly Byte Red;
 
-        [DataMember]
-        [FieldOffset( sizeof(Byte) + 2 * sizeof(Byte) )]
+        [JsonProperty]
+        [FieldOffset( sizeof( Byte ) + 2 * sizeof( Byte ) )]
         public readonly Byte Green;
 
-        [DataMember]
-        [FieldOffset( sizeof(Byte) + 3 * sizeof(Byte) )]
+        [JsonProperty]
+        [FieldOffset( sizeof( Byte ) + 3 * sizeof( Byte ) )]
         public readonly Byte Blue;
 
-        [DataMember]
-        [FieldOffset( sizeof(Byte) + 4 * sizeof(Byte) )]
+        [JsonProperty]
+        [FieldOffset( sizeof( Byte ) + 4 * sizeof( Byte ) )]
         public readonly UInt32 X;
 
-        [DataMember]
-        [FieldOffset( sizeof(Byte) + 4 * sizeof(Byte) + sizeof(UInt32) )]
+        [JsonProperty]
+        [FieldOffset( sizeof( Byte ) + 4 * sizeof( Byte ) + sizeof( UInt32 ) )]
         public readonly UInt32 Y;
 
-        public Pixel(Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y) {
+        public Pixel( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y ) {
             this.Alpha = alpha;
             this.Red = red;
             this.Green = green;
@@ -78,7 +80,7 @@ namespace Librainian.Graphics.Imaging {
             this.Checksum = ( Byte )MathHashing.GetHashCodes( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
         }
 
-        public Pixel(Color color, UInt32 x, UInt32 y) {
+        public Pixel( Color color, UInt32 x, UInt32 y ) {
             this.Alpha = color.A;
             this.Red = color.R;
             this.Green = color.G;
@@ -90,38 +92,40 @@ namespace Librainian.Graphics.Imaging {
 
         //public static explicit operator Pixel( Color pixel ) => new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
 
-        public static implicit operator Color(Pixel pixel) => Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
+        public static implicit operator Color( Pixel pixel ) => Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
 
-        public static explicit operator Byte[] (Pixel pixel) => new[] { pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue };
+        public static explicit operator Byte[] ( Pixel pixel ) => new[] { pixel.Checksum, pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue };
 
-        /// <summary>Static comparison.</summary>
+        /// <summary>
+        ///     Static comparison.
+        /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equal(Pixel left, Pixel right) => ( left.Alpha == right.Alpha ) && ( left.Red == right.Red ) && ( left.Green == right.Green ) && ( left.Blue == right.Blue ) && ( left.X == right.X ) && ( left.Y == right.Y );
+        public static Boolean Equal( Pixel left, Pixel right ) => left.Checksum == right.Checksum && left.Alpha == right.Alpha && left.Red == right.Red && left.Green == right.Green && left.Blue == right.Blue && left.X == right.X && left.Y == right.Y;
 
         /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
+        ///     Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <returns>
-        /// true if the current object is equal to the <paramref name="other" /> parameter;
-        /// otherwise, false.
+        ///     true if the current object is equal to the <paramref name="other" /> parameter;
+        ///     otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public Boolean Equals(Pixel other) => Equal( this, other );
+        public Boolean Equals( Pixel other ) => Equal( this, other );
 
-        /// <summary>Returns the hash code for this instance.</summary>
+        /// <summary>
+        ///     Returns the hash code for this instance.
+        /// </summary>
         /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
         [Pure]
         public override Int32 GetHashCode() {
-            unchecked {
-                return this.Checksum;
-            }
+            return this.Checksum + this.Alpha + this.Red + this.Green + this.Blue;
         }
 
         public override String ToString() => $"{this.Checksum}({this.Alpha},{this.Red},{this.Green},{this.Blue})@{this.X},{this.Y}";
 
-        public Task WriteToStreamAsync([NotNull] StreamWriter streamWriter) {
+        public Task WriteToStreamAsync( [NotNull] StreamWriter streamWriter ) {
             if ( streamWriter == null ) {
                 throw new ArgumentNullException( nameof( streamWriter ) );
             }
@@ -129,7 +133,7 @@ namespace Librainian.Graphics.Imaging {
         }
 
         [CanBeNull]
-        public static async Task<Pixel?> ReadFromStreamAsync([NotNull] StreamReader reader, [NotNull] StreamWriter errors) {
+        public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader reader, [NotNull] StreamWriter errors ) {
             if ( reader == null ) {
                 throw new ArgumentNullException( nameof( reader ) );
             }

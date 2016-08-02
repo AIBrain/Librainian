@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Scraper.cs" was last cleaned by Rick on 2015/06/12 at 2:56 PM
+//
+// "Librainian/Scraper.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Internet {
 
@@ -27,23 +27,23 @@ namespace Librainian.Internet {
     using System.Net;
     using System.Net.Cache;
     using System.Net.Security;
-    using System.Runtime.Serialization;
     using System.Threading;
     using Collections;
+    using Newtonsoft.Json;
     using Parsing;
 
-    [DataContract]
+    [JsonObject]
     [Obsolete]
     public static class Scraper {
 
-        [DataMember]
+        [JsonProperty]
         private static readonly CookieContainer Cookies = new CookieContainer();
 
-        [DataMember]
+        [JsonProperty]
         private static readonly ReaderWriterLockSlim MAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
         /// <summary>TODO: concurrentbag</summary>
-        [DataMember]
+        [JsonProperty]
         private static readonly List<WebSite> MWebsites = new List<WebSite>();
 
         public static List<WebSite> ScrapedSites {
@@ -58,7 +58,7 @@ namespace Librainian.Internet {
             }
         }
 
-        public static void AddSiteToScrape(String url, Action<WebSite> responseaction) {
+        public static void AddSiteToScrape( String url, Action<WebSite> responseaction ) {
             try {
                 Uri uri;
                 if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out uri ) ) {
@@ -70,7 +70,7 @@ namespace Librainian.Internet {
             }
         }
 
-        public static void AddSiteToScrape(Uri uri, Action<WebSite> responseaction) {
+        public static void AddSiteToScrape( Uri uri, Action<WebSite> responseaction ) {
             if ( !IsSiteQueued( uri ) ) {
                 var web = new WebSite {
                     Location = uri,
@@ -104,7 +104,7 @@ namespace Librainian.Internet {
             StartNextScrape();
         }
 
-        public static Boolean IsSiteQueued(Uri uri) {
+        public static Boolean IsSiteQueued( Uri uri ) {
             try {
                 MAccess.EnterReadLock();
                 return MWebsites.Exists( w => w.Location.Equals( uri ) );
@@ -124,7 +124,7 @@ namespace Librainian.Internet {
             }
         }
 
-        private static void RespCallback(IAsyncResult asynchronousResult) {
+        private static void RespCallback( IAsyncResult asynchronousResult ) {
             try {
                 if ( !( asynchronousResult.AsyncState is WebSite ) ) {
                     return;

@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Factory.cs" was last cleaned by Rick on 2015/06/12 at 2:53 PM
+//
+// "Librainian/Factory.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Database.MMF {
 
@@ -36,13 +36,11 @@ namespace Librainian.Database.MMF {
             if ( !DictionaryCache.TryGetValue( objectType, out result ) ) {
                 DictionaryCache[ objectType ] = result = PickOptimalSerializer();
             }
-            Debug.WriteLine( "{0} uses {1}", typeof( T ), result.GetType() );
+            Debug.WriteLine( $"{typeof( T )} uses {result.GetType()}" );
             return result;
         }
 
-        public ISerializeDeserialize<T> GetSerializer(String name) => ( from pair in DictionaryCache
-                                                                        where pair.Value.GetType().AssemblyQualifiedName == name
-                                                                        select pair.Value ).FirstOrDefault();
+        public ISerializeDeserialize<T> GetSerializer( String name ) => ( from pair in DictionaryCache where pair.Value.GetType().AssemblyQualifiedName == name select pair.Value ).FirstOrDefault();
 
         public List<ISerializeDeserialize<T>> GetValidSerializers() {
             CompileAndRegisterUnsafeSerializer();
@@ -58,7 +56,7 @@ namespace Librainian.Database.MMF {
             return benchmarkTimes.Values.ToList();
         }
 
-        private static Int32 BenchMarkSerializer(ISerializeDeserialize<T> serDeser) {
+        private static Int32 BenchMarkSerializer( ISerializeDeserialize<T> serDeser ) {
             Object[] args = null;
             if ( typeof( T ) == typeof( String ) ) {
                 args = new Object[] { new[] { 'T', 'e', 's', 't', 'T', 'e', 's', 't', 'T', 'e', 's', 't' } };
@@ -82,7 +80,7 @@ namespace Librainian.Database.MMF {
             }
         }
 
-        private static SortedDictionary<Int32, ISerializeDeserialize<T>> BenchmarkSerializers(IEnumerable<Type> listOfSerializers) {
+        private static SortedDictionary<Int32, ISerializeDeserialize<T>> BenchmarkSerializers( IEnumerable<Type> listOfSerializers ) {
             var benchmarkTimes = new SortedDictionary<Int32, ISerializeDeserialize<T>>();
             foreach ( var type in listOfSerializers ) {
                 var serializer = InstantiateSerializer( type );
@@ -96,7 +94,7 @@ namespace Librainian.Database.MMF {
             }
 
             foreach ( var valuePair in benchmarkTimes ) {
-                Debug.WriteLine( "{0} : {1}", valuePair.Key, valuePair.Value.GetType() );
+                Debug.WriteLine( $"{valuePair.Key} : {valuePair.Value.GetType()}" );
             }
 
             return benchmarkTimes;
@@ -119,23 +117,17 @@ namespace Librainian.Database.MMF {
 
         private static IEnumerable<Type> GetListOfGenericSerializers() {
             var interfaceGenricType = typeof( ISerializeDeserialize<T> );
-            var serializers = from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                              from genericType in assembly.GetTypes()
-                              from interfaceType in genericType.GetInterfaces().Where( iType => ( iType.Name == interfaceGenricType.Name ) && genericType.IsGenericTypeDefinition )
-                              select genericType;
+            var serializers = from assembly in AppDomain.CurrentDomain.GetAssemblies() from genericType in assembly.GetTypes() from interfaceType in genericType.GetInterfaces().Where( iType => ( iType.Name == interfaceGenricType.Name ) && genericType.IsGenericTypeDefinition ) select genericType;
             return serializers; //.ToList();
         }
 
         private static IEnumerable<Type> GetListOfImplementedSerializers() {
             var interfaceGenricType = typeof( ISerializeDeserialize<T> );
-            var serializers = from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                              from implementedType in assembly.GetTypes()
-                              from interfaceType in implementedType.GetInterfaces().Where( iType => iType == interfaceGenricType )
-                              select implementedType;
+            var serializers = from assembly in AppDomain.CurrentDomain.GetAssemblies() from implementedType in assembly.GetTypes() from interfaceType in implementedType.GetInterfaces().Where( iType => iType == interfaceGenricType ) select implementedType;
             return serializers; //.ToList();
         }
 
-        private static ISerializeDeserialize<T> InstantiateSerializer(Type type) {
+        private static ISerializeDeserialize<T> InstantiateSerializer( Type type ) {
             var instType = type.IsGenericTypeDefinition ? type.MakeGenericType( typeof( T ) ) : type;
             return ( ISerializeDeserialize<T> )Activator.CreateInstance( instType );
         }

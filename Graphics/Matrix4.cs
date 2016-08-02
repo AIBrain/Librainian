@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Matrix4.cs" was last cleaned by Rick on 2015/06/12 at 2:55 PM
+//
+// "Librainian/Matrix4.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.Graphics {
 
@@ -29,7 +29,7 @@ namespace Librainian.Graphics {
         public Matrix4() : base( 4, 4 ) {
         }
 
-        public Matrix4(Single[, ] matrix) : base( matrix ) {
+        public Matrix4( Single[,] matrix ) : base( matrix ) {
             if ( ( this.Rows != 4 ) || ( this.Cols != 4 ) ) {
                 throw new ArgumentException();
             }
@@ -37,13 +37,13 @@ namespace Librainian.Graphics {
 
         public static Matrix4 NewI() => new Matrix4( new[ , ] { { 1.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 1.0f } } );
 
-        public static Vector3D operator *(Matrix4 matrix4, Vector3D v) {
+        public static Vector3D operator *( Matrix4 matrix4, Vector3D v ) {
             var m = matrix4.matrix;
             var w = m[ 3, 0 ] * v.X + m[ 3, 1 ] * v.Y + m[ 3, 2 ] * v.Z + m[ 3, 3 ];
             return new Vector3D( ( m[ 0, 0 ] * v.X + m[ 0, 1 ] * v.Y + m[ 0, 2 ] * v.Z + m[ 0, 3 ] ) / w, ( m[ 1, 0 ] * v.X + m[ 1, 1 ] * v.Y + m[ 1, 2 ] * v.Z + m[ 1, 3 ] ) / w, ( m[ 2, 0 ] * v.X + m[ 2, 1 ] * v.Y + m[ 2, 2 ] * v.Z + m[ 2, 3 ] ) / w );
         }
 
-        public static Matrix4 operator *(Matrix4 mat1, Matrix4 mat2) {
+        public static Matrix4 operator *( Matrix4 mat1, Matrix4 mat2 ) {
             var m1 = mat1.matrix;
             var m2 = mat2.matrix;
             var m3 = new Single[ 4, 4 ];
@@ -66,6 +66,6 @@ namespace Librainian.Graphics {
             return new Matrix4( m3 );
         }
 
-        public static Matrix4 operator *(Matrix4 m, Single scalar) => new Matrix4( Multiply( m, scalar ) );
+        public static Matrix4 operator *( Matrix4 m, Single scalar ) => new Matrix4( Multiply( m, scalar ) );
     }
 }

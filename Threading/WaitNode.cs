@@ -1,22 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/WaitNode.cs" was last cleaned by Rick on 2015/06/12 at 3:14 PM
+//
+// "Librainian/WaitNode.cs" was last cleaned by Rick on 2016/06/18 at 10:58 PM
 
 namespace Librainian.Threading {
 
@@ -25,8 +25,8 @@ namespace Librainian.Threading {
     using JetBrains.Annotations;
 
     /// <summary>
-    /// The wait node used by implementations of <see cref="Collections.IWaitQueue" />.
-    /// NOTE: this class is NOT present in java.util.concurrent.
+    ///     The wait node used by implementations of <see cref="Collections.IWaitQueue" />.
+    ///     NOTE: this class is NOT present in java.util.concurrent.
     /// </summary>
     /// <author>Doug Lea</author>
     /// <author>Griffin Caprio (.NET)</author>
@@ -36,6 +36,10 @@ namespace Librainian.Threading {
         internal readonly Thread _owner;
         internal WaitNode _nextWaitNode;
         internal Boolean Waiting = true;
+
+        public WaitNode() {
+            this._owner = Thread.CurrentThread;
+        }
 
         internal virtual Boolean IsWaiting => this.Waiting;
 
@@ -51,11 +55,7 @@ namespace Librainian.Threading {
 
         internal virtual Thread Owner => this._owner;
 
-        public WaitNode() {
-            this._owner = Thread.CurrentThread;
-        }
-
-        public virtual Boolean DoTimedWait(IQueuedSync sync, TimeSpan duration) {
+        public virtual Boolean DoTimedWait( IQueuedSync sync, TimeSpan duration ) {
             lock ( this ) {
                 if ( sync.Recheck( this ) || !this.Waiting ) {
                     return true;
@@ -66,7 +66,7 @@ namespace Librainian.Threading {
                 }
                 var deadline = DateTime.UtcNow.Add( duration );
                 try {
-                    for ( ; ; ) {
+                    for ( ;;) {
                         Monitor.Wait( this, duration );
                         if ( !this.Waiting ) // definitely signalled
                         {
@@ -94,7 +94,7 @@ namespace Librainian.Threading {
             }
         }
 
-        public virtual void DoWait([NotNull] IQueuedSync sync) {
+        public virtual void DoWait( [NotNull] IQueuedSync sync ) {
             if ( sync == null ) {
                 throw new ArgumentNullException( nameof( sync ) );
             }
@@ -121,7 +121,7 @@ namespace Librainian.Threading {
             }
         }
 
-        public virtual void DoWaitUninterruptibly(IQueuedSync sync) {
+        public virtual void DoWaitUninterruptibly( IQueuedSync sync ) {
             lock ( this ) {
                 if ( !sync.Recheck( this ) ) {
                     var wasInterrupted = false;
@@ -143,7 +143,7 @@ namespace Librainian.Threading {
             }
         }
 
-        public virtual Boolean Signal([NotNull] IQueuedSync sync) {
+        public virtual Boolean Signal( [NotNull] IQueuedSync sync ) {
             if ( sync == null ) {
                 throw new ArgumentNullException( nameof( sync ) );
             }

@@ -1,22 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/TimeExtensions.cs" was last cleaned by Rick on 2015/06/12 at 3:03 PM
+//
+// "Librainian/TimeExtensions.cs" was last cleaned by Rick on 2016/07/08 at 8:53 PM
 
 namespace Librainian.Measurement.Time {
 
@@ -25,20 +25,23 @@ namespace Librainian.Measurement.Time {
     using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
-    using System.Numerics;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
+    using System.Threading.Tasks;
     using FluentAssertions;
     using JetBrains.Annotations;
     using Maths;
-    using Numerics;
     using Parsing;
 
     public static class TimeExtensions {
 
         /// <summary>The ISO 8601 format string.</summary>
         public const String Iso8601Format = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
+
+        public static TimeSpan? _averageDateTimePrecision;
+
+        public static DateTime StarDateOrigin = new DateTime( 2318, 7, 5, 12, 0, 0 );
 
         /// <summary>Adds the given number of business days to the <see cref="DateTime" />.</summary>
         /// <param name="current">The date to be changed.</param>
@@ -58,7 +61,7 @@ namespace Librainian.Measurement.Time {
         public static DateTime Ago( this DateTime dateTime, TimeSpan timeSpan ) => dateTime - timeSpan;
 
         /// <summary>
-        /// Returns the given <see cref="DateTime" /> with hour and minutes set At given values.
+        ///     Returns the given <see cref="DateTime" /> with hour and minutes set At given values.
         /// </summary>
         /// <param name="current">The current <see cref="DateTime" /> to be changed.</param>
         /// <param name="hour">The hour to set time to.</param>
@@ -67,25 +70,20 @@ namespace Librainian.Measurement.Time {
         public static DateTime At( this DateTime current, Int32 hour, Int32 minute ) => current.SetTime( hour, minute );
 
         /// <summary>
-        /// Returns the given <see cref="DateTime" /> with hour and minutes and seconds set At given values.
+        ///     Returns the given <see cref="DateTime" /> with hour and minutes and seconds set At given values.
         /// </summary>
         /// <param name="current">The current <see cref="DateTime" /> to be changed.</param>
         /// <param name="hour">The hour to set time to.</param>
         /// <param name="minute">The minute to set time to.</param>
         /// <param name="second">The second to set time to.</param>
         /// <returns>
-        /// <see cref="DateTime" /> with hour and minutes and seconds set to given values.
+        ///     <see cref="DateTime" /> with hour and minutes and seconds set to given values.
         /// </returns>
         public static DateTime At( this DateTime current, Int32 hour, Int32 minute, Int32 second ) => current.SetTime( hour, minute, second );
 
-        public static DateTime Average( this IEnumerable<DateTime> dates ) {
-            var ticks = dates.Select( time => time.Ticks ).Average();
-            return new DateTime( ( Int64 )ticks );
-        }
-
         /// <summary>
-        /// Returns the given <see cref="DateTime" /> with hour and minutes and seconds and
-        /// milliseconds set At given values.
+        ///     Returns the given <see cref="DateTime" /> with hour and minutes and seconds and
+        ///     milliseconds set At given values.
         /// </summary>
         /// <param name="current">The current <see cref="DateTime" /> to be changed.</param>
         /// <param name="hour">The hour to set time to.</param>
@@ -93,9 +91,18 @@ namespace Librainian.Measurement.Time {
         /// <param name="second">The second to set time to.</param>
         /// <param name="milliseconds">The milliseconds to set time to.</param>
         /// <returns>
-        /// <see cref="DateTime" /> with hour and minutes and seconds set to given values.
+        ///     <see cref="DateTime" /> with hour and minutes and seconds set to given values.
         /// </returns>
         public static DateTime At( this DateTime current, Int32 hour, Int32 minute, Int32 second, Int32 milliseconds ) => current.SetTime( hour, minute, second, milliseconds );
+
+        public static DateTime Average( [NotNull] this IEnumerable<DateTime> dates ) {
+            if ( dates == null ) {
+                throw new ArgumentNullException( nameof( dates ) );
+            }
+            var ticks = dates.Select( time => time.Ticks )
+                             .Average();
+            return new DateTime( ( Int64 )ticks );
+        }
 
         /// <summary>Returns the Start of the given <paramref name="date" />.</summary>
         /// <param name="date"></param>
@@ -113,7 +120,7 @@ namespace Librainian.Measurement.Time {
         public static TimeSpan Days( this Int32 days ) => TimeSpan.FromDays( days );
 
         /// <summary>
-        /// Decreases the <see cref="DateTime" /> object with given <see cref="TimeSpan" /> value.
+        ///     Decreases the <see cref="DateTime" /> object with given <see cref="TimeSpan" /> value.
         /// </summary>
         public static DateTime DecreaseTime( this DateTime startDate, TimeSpan toSubtract ) => startDate - toSubtract;
 
@@ -133,10 +140,11 @@ namespace Librainian.Measurement.Time {
         /// <param name="timeSpan"></param>
         /// <param name="scalar"></param>
         /// <returns></returns>
-        public static TimeSpan Divide( this TimeSpan timeSpan, Decimal scalar ) => TimeSpan.FromTicks( ( Int64 ) ( timeSpan.Ticks / scalar ) );
+        public static TimeSpan Divide( this TimeSpan timeSpan, Decimal scalar ) => TimeSpan.FromTicks( ( Int64 )( timeSpan.Ticks / scalar ) );
 
         /// <summary>
-        /// <para>Returns the last millisecond of the given <paramref name="date" />.</para></summary>
+        ///     <para>Returns the last millisecond of the given <paramref name="date" />.</para>
+        /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
         public static DateTime EndOfDay( this DateTime date ) => new DateTime( year: date.Year, month: date.Month, day: date.Day, hour: 23, minute: 59, second: 59, millisecond: 999, kind: date.Kind );
@@ -166,11 +174,11 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        /// Sets the day of the <see cref="DateTime" /> to the first day in that month.
+        ///     Sets the day of the <see cref="DateTime" /> to the first day in that month.
         /// </summary>
         /// <param name="current">The current <see cref="DateTime" /> to be changed.</param>
         /// <returns>
-        /// given <see cref="DateTime" /> with the day part set to the first day in that month.
+        ///     given <see cref="DateTime" /> with the day part set to the first day in that month.
         /// </returns>
         public static DateTime FirstDayOfMonth( this DateTime current ) => current.SetDay( 1 );
 
@@ -190,8 +198,8 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        /// Returns the first day of the year keeping the time component intact. Eg,
-        /// 2011-02-04T06:40:20.005 =&gt; 2011-01-01T06:40:20.005
+        ///     Returns the first day of the year keeping the time component intact. Eg,
+        ///     2011-02-04T06:40:20.005 =&gt; 2011-01-01T06:40:20.005
         /// </summary>
         /// <param name="current">The DateTime to adjust</param>
         /// <returns></returns>
@@ -217,6 +225,52 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static DateTime FromUNIXTimestamp( this Int64 timestamp ) => Epochs.Unix.AddSeconds( timestamp );
 
+        /// <summary>
+        ///     Return how many years old the person is in <see cref="Years" />.
+        /// </summary>
+        /// <param name="dateOfBirth"></param>
+        /// <returns></returns>
+        public static Years GetAge( this DateTime dateOfBirth ) {
+            var today = DateTime.Today;
+
+            var a = ( today.Year * 100 + today.Month ) * 100 + today.Day;
+            var b = ( dateOfBirth.Year * 100 + dateOfBirth.Month ) * 100 + dateOfBirth.Day;
+
+            return new Years( ( a - b ) / 10000 );
+        }
+
+        public static TimeSpan GetAverageDateTimePrecision() {
+            if ( _averageDateTimePrecision.HasValue ) {
+                return _averageDateTimePrecision.Value;
+            }
+
+            $"Performing {Environment.ProcessorCount} timeslice calibrations.".WriteLine();
+            _averageDateTimePrecision = new Milliseconds( 0.To( Environment.ProcessorCount )
+                                                           .Select( i => GetDateTimePrecision() )
+                                                           .Average( span => span.TotalMilliseconds ) );
+            if ( _averageDateTimePrecision < Measurement.Time.Milliseconds.One ) {
+                _averageDateTimePrecision = Measurement.Time.Milliseconds.One;
+            }
+            $"Average datetime precision is {_averageDateTimePrecision.Value.Simpler()}.".WriteLine();
+            return _averageDateTimePrecision.Value;
+        }
+
+        public static TimeSpan GetDateTimePrecision() {
+            var then = DateTime.UtcNow.Ticks;
+            var now = DateTime.UtcNow.Ticks;
+            while ( then == now ) {
+                now = DateTime.UtcNow.Ticks;
+            }
+
+            var result = new Milliseconds( TimeSpan.FromTicks( now - then )
+                                                   .TotalMilliseconds );
+            return result;
+        }
+
+        /// <summary>Accurate to within how many nanoseconds?</summary>
+        /// <returns></returns>
+        public static Int64 GetTimerAccuracy() => 1000000000L / Stopwatch.Frequency;
+
         /// <summary>Example: Console.WriteLine( 3.Hours().FromNow() );</summary>
         /// <param name="hours"></param>
         /// <returns></returns>
@@ -228,12 +282,12 @@ namespace Librainian.Measurement.Time {
         public static TimeSpan Hours( this Int32 hours ) => TimeSpan.FromHours( hours );
 
         /// <summary>
-        /// Increases the <see cref="DateTime" /> object with given <see cref="TimeSpan" /> value.
+        ///     Increases the <see cref="DateTime" /> object with given <see cref="TimeSpan" /> value.
         /// </summary>
         public static DateTime IncreaseTime( this DateTime startDate, TimeSpan toAdd ) => startDate + toAdd;
 
         /// <summary>
-        /// Determines whether the specified <see cref="DateTime" /> value is After then current value.
+        ///     Determines whether the specified <see cref="DateTime" /> value is After then current value.
         /// </summary>
         /// <param name="current">The current value.</param>
         /// <param name="toCompareWith">Value to compare with.</param>
@@ -241,7 +295,7 @@ namespace Librainian.Measurement.Time {
         public static Boolean IsAfter( this DateTime current, DateTime toCompareWith ) => current > toCompareWith;
 
         /// <summary>
-        /// Determines whether the specified <see cref="DateTime" /> is before then current value.
+        ///     Determines whether the specified <see cref="DateTime" /> is before then current value.
         /// </summary>
         /// <param name="current">The current value.</param>
         /// <param name="toCompareWith">Value to compare with.</param>
@@ -251,7 +305,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>Determine if a <see cref="DateTime" /> is in the future.</summary>
         /// <param name="dateTime">The date to be checked.</param>
         /// <returns>
-        /// <c>true</c> if <paramref name="dateTime" /> is in the future; otherwise <c>false</c>.
+        ///     <c>true</c> if <paramref name="dateTime" /> is in the future; otherwise <c>false</c>.
         /// </returns>
         public static Boolean IsInFuture( this DateTime dateTime ) => dateTime.ToUniversalTime() > DateTime.UtcNow;
 
@@ -260,9 +314,15 @@ namespace Librainian.Measurement.Time {
         /// <returns><c>true</c> if <paramref name="dateTime" /> is in the past; otherwise <c>false</c>.</returns>
         public static Boolean IsInPast( this DateTime dateTime ) => dateTime.ToUniversalTime() < DateTime.UtcNow;
 
-        /// <summary> <para>Determines if the specified year is a leap year.</para> </summary>
-        /// <returns></returns> <param name="year">Year to test.</param> <copyright> Tommy Dugger &
-        /// Jared Chavez </copyright>
+        /// <summary>
+        ///     <para>Determines if the specified year is a leap year.</para>
+        /// </summary>
+        /// <returns></returns>
+        /// <param name="year">Year to test.</param>
+        /// <copyright>
+        ///     Tommy Dugger &
+        ///     Jared Chavez
+        /// </copyright>
         public static Boolean IsLeapYear( this Int64 year ) {
 
             // not divisible by 4? not a leap year
@@ -280,23 +340,24 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        /// Sets the day of the <see cref="DateTime" /> to the last day in that month.
+        ///     Sets the day of the <see cref="DateTime" /> to the last day in that month.
         /// </summary>
         /// <param name="current">The current DateTime to be changed.</param>
         /// <returns>
-        /// given <see cref="DateTime" /> with the day part set to the last day in that month.
+        ///     given <see cref="DateTime" /> with the day part set to the last day in that month.
         /// </returns>
         public static DateTime LastDayOfMonth( this DateTime current ) => current.SetDay( DateTime.DaysInMonth( current.Year, current.Month ) );
 
         public static DateTime LastDayOfTheMonth( this DateTime date ) => new DateTime( year: date.Year, month: date.Month, day: DateTime.DaysInMonth( year: date.Year, month: date.Month ) );
 
         /// <summary>
-        /// Returns the last day of the week keeping the time component intact. Eg,
-        /// 2011-12-24T06:40:20.005 =&gt; 2011-12-25T06:40:20.005
+        ///     Returns the last day of the week keeping the time component intact. Eg,
+        ///     2011-12-24T06:40:20.005 =&gt; 2011-12-25T06:40:20.005
         /// </summary>
         /// <param name="current">The DateTime to adjust</param>
         /// <returns></returns>
-        public static DateTime LastDayOfWeeek( this DateTime current ) => current.FirstDayOfWeek().AddDays( 6 );
+        public static DateTime LastDayOfWeeek( this DateTime current ) => current.FirstDayOfWeek()
+                                                                                 .AddDays( 6 );
 
         /// <summary>untested.</summary>
         /// <param name="date"></param>
@@ -314,16 +375,16 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        /// Returns the last day of the year keeping the time component intact. Eg,
-        /// 2011-12-24T06:40:20.005 =&gt; 2011-12-31T06:40:20.005
+        ///     Returns the last day of the year keeping the time component intact. Eg,
+        ///     2011-12-24T06:40:20.005 =&gt; 2011-12-31T06:40:20.005
         /// </summary>
         /// <param name="current">The DateTime to adjust</param>
         /// <returns></returns>
         public static DateTime LastDayOfYear( this DateTime current ) => current.SetDate( current.Year, 12, 31 );
 
         /// <summary>
-        /// Returns original <see cref="DateTime" /> value with time part set to midnight (alias for
-        /// <see cref="BeginningOfDay" /> method).
+        ///     Returns original <see cref="DateTime" /> value with time part set to midnight (alias for
+        ///     <see cref="BeginningOfDay" /> method).
         /// </summary>
         public static DateTime Midnight( this DateTime value ) => value.BeginningOfDay();
 
@@ -352,6 +413,34 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static TimeSpan Minutes( this Double minutes ) => TimeSpan.FromMinutes( minutes );
 
+        /// <summary>
+        ///     Multiplies a timespan by an integer value
+        /// </summary>
+        public static TimeSpan Multiply( this TimeSpan multiplicand, Int64 multiplier ) {
+            return TimeSpan.FromTicks( multiplicand.Ticks * multiplier );
+        }
+
+        /// <summary>
+        ///     Multiplies a timespan by a double value
+        /// </summary>
+        public static TimeSpan Multiply( this TimeSpan multiplicand, Double multiplier ) {
+            return TimeSpan.FromTicks( ( Int64 )( multiplicand.Ticks * multiplier ) );
+        }
+
+        /// <summary>
+        ///     Multiplies a timespan by a decimal value
+        /// </summary>
+        public static TimeSpan Multiply( this TimeSpan multiplicand, Decimal multiplier ) {
+            return TimeSpan.FromTicks( ( Int64 )( multiplicand.Ticks * multiplier ) );
+        }
+
+        /// <summary>
+        ///     Multiplies a timespan by an integer value
+        /// </summary>
+        public static TimeSpan Multiply( this TimeSpan multiplicand, Int32 multiplier ) {
+            return TimeSpan.FromTicks( multiplicand.Ticks * multiplier );
+        }
+
         /// <summary>Returns first next occurrence of specified <see cref="DayOfWeek" />.</summary>
         public static DateTime Next( this DateTime start, DayOfWeek day ) {
             do {
@@ -361,58 +450,14 @@ namespace Librainian.Measurement.Time {
             return start;
         }
 
-        /// <summary>
-        /// Return how many years old the person is in <see cref="Years"/>.
-        /// </summary>
-        /// <param name="dateOfBirth"></param>
-        /// <returns></returns>
-        public static Years GetAge( this DateTime dateOfBirth ) {
-            var today = DateTime.Today;
-
-            var a = ( today.Year * 100 + today.Month ) * 100 + today.Day;
-            var b = ( dateOfBirth.Year * 100 + dateOfBirth.Month ) * 100 + dateOfBirth.Day;
-
-            return new Years( ( a - b ) / 10000 );
-        }
-
-        public static DateTime StarDateOrigin = new DateTime( 2318, 7, 5, 12, 0, 0 );
-
-        public static Decimal ToStarDate( this DateTime earthDateTime ) {
-            var earthToStarDateDiff = earthDateTime - StarDateOrigin;
-            var millisecondConversion = (Decimal)earthToStarDateDiff.TotalMilliseconds / 34367056.4m;
-            var starDate = Math.Floor( millisecondConversion * 100 ) / 100;
-            return Math.Round( starDate, 2, MidpointRounding.AwayFromZero );
-        }
-
-        /// <summary>
-        /// Multiplies a timespan by an integer value
-        /// </summary>
-        public static TimeSpan Multiply( this TimeSpan multiplicand, Int64 multiplier ) {
-            return TimeSpan.FromTicks( multiplicand.Ticks * multiplier );
-        }
-
-        /// <summary>
-        /// Multiplies a timespan by a double value
-        /// </summary>
-        public static TimeSpan Multiply( this TimeSpan multiplicand, Double multiplier ) {
-            return TimeSpan.FromTicks( ( Int64 )( multiplicand.Ticks * multiplier ) );
-        }
-
-        /// <summary>
-        /// Multiplies a timespan by a decimal value
-        /// </summary>
-        public static TimeSpan Multiply( this TimeSpan multiplicand, Decimal multiplier ) {
-            return TimeSpan.FromTicks( ( Int64 )( multiplicand.Ticks * multiplier ) );
-        }
-
         /// <summary>Returns <see cref="DateTime" /> increased by 24 hours ie Next Day.</summary>
         public static DateTime NextDay( this DateTime start ) => start + 1.Days();
 
         /// <summary>
-        /// Returns the next month keeping the time component intact. Eg, 2012-12-05T06:40:20.005
-        /// = &gt; 2013-01-05T06:40:20.005 If the next month doesn't have that many days the last
-        ///   day of the next month is used. Eg, 2013-01-31T06:40:20.005
-        /// = &gt; 2013-02-28T06:40:20.005
+        ///     Returns the next month keeping the time component intact. Eg, 2012-12-05T06:40:20.005
+        ///     = &gt; 2013-01-05T06:40:20.005 If the next month doesn't have that many days the last
+        ///     day of the next month is used. Eg, 2013-01-31T06:40:20.005
+        ///     = &gt; 2013-02-28T06:40:20.005
         /// </summary>
         /// <param name="current">The DateTime to adjust</param>
         /// <returns></returns>
@@ -423,7 +468,8 @@ namespace Librainian.Measurement.Time {
 
             var firstDayOfNextMonth = current.SetDate( year, month, 1 );
 
-            var lastDayOfPreviousMonth = firstDayOfNextMonth.LastDayOfMonth().Day;
+            var lastDayOfPreviousMonth = firstDayOfNextMonth.LastDayOfMonth()
+                                                            .Day;
 
             var day = current.Day > lastDayOfPreviousMonth ? lastDayOfPreviousMonth : current.Day;
 
@@ -431,9 +477,9 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        /// Returns the same date (same Day, Month, Hour, Minute, Second etc) in the next calendar
-        /// year. If that day does not exist in next year in same month, number of missing days is
-        /// added to the last day in same month next year.
+        ///     Returns the same date (same Day, Month, Hour, Minute, Second etc) in the next calendar
+        ///     year. If that day does not exist in next year in same month, number of missing days is
+        ///     added to the last day in same month next year.
         /// </summary>
         public static DateTime NextYear( this DateTime start ) {
             var nextYear = start.Year + 1;
@@ -448,14 +494,14 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        /// Returns original <see cref="DateTime" /> value with time part set to Noon (12:00:00h).
+        ///     Returns original <see cref="DateTime" /> value with time part set to Noon (12:00:00h).
         /// </summary>
         /// <param name="value">The <see cref="DateTime" /> find Noon for.</param>
         /// <returns>A <see cref="DateTime" /> value with time part set to Noon (12:00:00h).</returns>
         public static DateTime Noon( this DateTime value ) => value.SetTime( 12, 0, 0, 0 );
 
         /// <summary>
-        /// Converts the specified ISO 8601 representation of a date and time to its DateTime equivalent.
+        ///     Converts the specified ISO 8601 representation of a date and time to its DateTime equivalent.
         /// </summary>
         /// <param name="value">The ISO 8601 string representation to parse.</param>
         /// <returns>The DateTime equivalent.</returns>
@@ -501,15 +547,15 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        /// Returns <see cref="DateTime" /> decreased by 24h period ie Previous Day.
+        ///     Returns <see cref="DateTime" /> decreased by 24h period ie Previous Day.
         /// </summary>
         public static DateTime PreviousDay( this DateTime start ) => start - 1.Days();
 
         /// <summary>
-        /// Returns the previous month keeping the time component intact. Eg,
-        /// 2010-01-20T06:40:20.005 =&gt; 2009-12-20T06:40:20.005 If the previous month doesn't have
-        /// that many days the last day of the previous month is used. Eg, 2009-03-31T06:40:20.005
-        /// = &gt; 2009-02-28T06:40:20.005
+        ///     Returns the previous month keeping the time component intact. Eg,
+        ///     2010-01-20T06:40:20.005 =&gt; 2009-12-20T06:40:20.005 If the previous month doesn't have
+        ///     that many days the last day of the previous month is used. Eg, 2009-03-31T06:40:20.005
+        ///     = &gt; 2009-02-28T06:40:20.005
         /// </summary>
         /// <param name="current">The DateTime to adjust</param>
         /// <returns></returns>
@@ -520,7 +566,8 @@ namespace Librainian.Measurement.Time {
 
             var firstDayOfPreviousMonth = current.SetDate( year, month, 1 );
 
-            var lastDayOfPreviousMonth = firstDayOfPreviousMonth.LastDayOfMonth().Day;
+            var lastDayOfPreviousMonth = firstDayOfPreviousMonth.LastDayOfMonth()
+                                                                .Day;
 
             var day = current.Day > lastDayOfPreviousMonth ? lastDayOfPreviousMonth : current.Day;
 
@@ -528,9 +575,9 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        /// Returns the same date (same Day, Month, Hour, Minute, Second etc) in the previous
-        /// calendar year. If that day does not exist in previous year in same month, number of
-        /// missing days is added to the last day in same month previous year.
+        ///     Returns the same date (same Day, Month, Hour, Minute, Second etc) in the previous
+        ///     calendar year. If that day does not exist in previous year in same month, number of
+        ///     missing days is added to the last day in same month previous year.
         /// </summary>
         public static DateTime PreviousYear( this DateTime start ) {
             var previousYear = start.Year - 1;
@@ -544,81 +591,39 @@ namespace Librainian.Measurement.Time {
             return dateTime + differenceInDays.Days();
         }
 
-        /// <summary>
-        /// Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and
-        /// return the amount(integer) reduced.
-        /// </summary>
-        /// <param name="constant"></param>
-        /// <param name="planckTimes"></param>
-        /// <returns></returns>
-        public static BigInteger PullPlancks( this BigInteger constant, ref BigInteger planckTimes ) {
-
-            //if ( planckTimes < constant ) {
-            //    return BigInteger.Zero;
-            //}
-            var integer = BigInteger.Divide( planckTimes, constant );
-            planckTimes -= BigInteger.Multiply( integer, constant );
-            return integer;
-        }
-
-        /// <summary>
-        /// Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and
-        /// return the amount(integer) reduced.
-        /// </summary>
-        /// <param name="constant"></param>
-        /// <param name="planckTimes"></param>
-        /// <returns></returns>
-        public static BigInteger PullPlancks( this BigRational constant, ref BigInteger planckTimes ) {
-
-            //if ( planckTimes < constant ) {
-            //    return BigInteger.Zero;
-            //}
-            //var integer = BigInteger.Divide( planckTimes, ( BigInteger ) constant );
-            var pullPlancks = ( BigInteger )( planckTimes / constant );
-
-            //planckTimes -= BigInteger.Multiply( pullPlancks, ( BigInteger ) constant );
-            planckTimes -= ( BigInteger )( pullPlancks * constant );
-            return pullPlancks;
-        }
-
         public static DateTime Round( this DateTime dateTime, RoundTo rt ) {
             DateTime rounded;
 
             switch ( rt ) {
-                case RoundTo.Second:
-                    {
+                case RoundTo.Second: {
                         rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind );
                         if ( dateTime.Millisecond >= 500 ) {
                             rounded = rounded.AddSeconds( 1 );
                         }
                         break;
                     }
-                case RoundTo.Minute:
-                    {
+                case RoundTo.Minute: {
                         rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Kind );
                         if ( dateTime.Second >= 30 ) {
                             rounded = rounded.AddMinutes( 1 );
                         }
                         break;
                     }
-                case RoundTo.Hour:
-                    {
+                case RoundTo.Hour: {
                         rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0, dateTime.Kind );
                         if ( dateTime.Minute >= 30 ) {
                             rounded = rounded.AddHours( 1 );
                         }
                         break;
                     }
-                case RoundTo.Day:
-                    {
+                case RoundTo.Day: {
                         rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, dateTime.Kind );
                         if ( dateTime.Hour >= 12 ) {
                             rounded = rounded.AddDays( 1 );
                         }
                         break;
                     }
-                default:
-                    {
+                default: {
                         throw new ArgumentOutOfRangeException( nameof( rt ) );
                     }
             }
@@ -664,25 +669,25 @@ namespace Librainian.Measurement.Time {
         public static DateTime SetSecond( this DateTime originalDate, Int32 second ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>
-        /// Returns the original <see cref="DateTime" /> with Hour part changed to supplied hour parameter.
+        ///     Returns the original <see cref="DateTime" /> with Hour part changed to supplied hour parameter.
         /// </summary>
         public static DateTime SetTime( this DateTime originalDate, Int32 hour ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>
-        /// Returns the original <see cref="DateTime" /> with Hour and Minute parts changed to
-        /// supplied hour and minute parameters.
+        ///     Returns the original <see cref="DateTime" /> with Hour and Minute parts changed to
+        ///     supplied hour and minute parameters.
         /// </summary>
         public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>
-        /// Returns the original <see cref="DateTime" /> with Hour, Minute and Second parts changed
-        /// to supplied hour, minute and second parameters.
+        ///     Returns the original <see cref="DateTime" /> with Hour, Minute and Second parts changed
+        ///     to supplied hour, minute and second parameters.
         /// </summary>
         public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>
-        /// Returns the original <see cref="DateTime" /> with Hour, Minute, Second and Millisecond
-        /// parts changed to supplied hour, minute, second and millisecond parameters.
+        ///     Returns the original <see cref="DateTime" /> with Hour, Minute, Second and Millisecond
+        ///     parts changed to supplied hour, minute, second and millisecond parameters.
         /// </summary>
         public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second, Int32 millisecond ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, millisecond, originalDate.Kind );
 
@@ -690,72 +695,120 @@ namespace Librainian.Measurement.Time {
         public static DateTime SetYear( this DateTime value, Int32 year ) => new DateTime( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>
-        /// Display a <see cref="TimeSpan" /> in simpler terms. ie "2 hours 4 minutes 33 seconds".
+        ///     Display a <see cref="TimeSpan" /> in simpler terms. ie "2 hours 4 minutes 33 seconds".
         /// </summary>
-        /// <param name="ts"></param>
-        public static String Simpler( this TimeSpan ts ) {
-            //var span = ( Span )ts;
-            //return span.ToString();
-
+        /// <param name="timeSpan"></param>
+        public static String Simpler( this TimeSpan timeSpan ) {
             var sb = new StringBuilder();
 
-            if ( ts.Days > 365 * 2 ) {
-                sb.AppendFormat( " {0:n0} years", ts.Days / 365 );
+            //if ( timeSpan.Days > 365 * 2 ) {
+            //    sb.AppendFormat( " {0:n0} years", timeSpan.Days / 365 );
+            //}
+            //else if ( timeSpan.Days > 365 ) {
+            //    sb.AppendFormat( " {0} year", timeSpan.Days / 365 );
+            //}
+            //else if ( timeSpan.Days > 14 ) {
+            //    sb.AppendFormat( " {0:n0} weeks", timeSpan.Days / 7 );
+            //}
+            //else if ( timeSpan.Days > 7 ) {
+            //    sb.AppendFormat( " {0} week", timeSpan.Days / 7 );
+            //}
+            //else
+            if ( timeSpan.Days > 1 ) {
+                sb.AppendFormat( " {0:R} days", timeSpan.Days );
             }
-            else if ( ts.Days > 365 ) {
-                sb.AppendFormat( " {0} year", ts.Days / 365 );
-            }
-            else if ( ts.Days > 14 ) {
-                sb.AppendFormat( " {0:n0} weeks", ts.Days / 7 );
-            }
-            else if ( ts.Days > 7 ) {
-                sb.AppendFormat( " {0} week", ts.Days / 7 );
-            }
-            else if ( ts.Days > 1 ) {
-                sb.AppendFormat( " {0:n0} days", ts.Days );
-            }
-            else if ( ts.Days == 1 ) {
-                sb.AppendFormat( " {0} day", ts.Days );
-            }
-
-            if ( ts.Hours > 1 ) {
-                sb.AppendFormat( " {0:n0} hours", ts.Hours );
-            }
-            else if ( ts.Hours == 1 ) {
-                sb.AppendFormat( " {0} hour", ts.Hours );
+            else if ( timeSpan.Days == 1 ) {
+                sb.AppendFormat( " {0:R} day", timeSpan.Days );
             }
 
-            if ( ts.Minutes > 1 ) {
-                sb.AppendFormat( " {0:n0} minutes", ts.Minutes );
+            if ( timeSpan.Hours > 1 ) {
+                sb.AppendFormat( " {0:n0} hours", timeSpan.Hours );
             }
-            else if ( ts.Minutes == 1 ) {
-                sb.AppendFormat( " {0} minute", ts.Minutes );
-            }
-
-            if ( ts.Seconds > 1 ) {
-                sb.AppendFormat( " {0:n0} seconds", ts.Seconds );
-            }
-            else if ( ts.Seconds == 1 ) {
-                sb.AppendFormat( " {0} second", ts.Seconds );
+            else if ( timeSpan.Hours == 1 ) {
+                sb.AppendFormat( " {0} hour", timeSpan.Hours );
             }
 
-            if ( ts.Milliseconds > 1 ) {
-                sb.AppendFormat( " {0:n0} milliseconds", ts.Milliseconds );
+            if ( timeSpan.Minutes > 1 ) {
+                sb.AppendFormat( " {0:n0} minutes", timeSpan.Minutes );
             }
-            else if ( ts.Milliseconds == 1 ) {
-                sb.AppendFormat( " {0} millisecond", ts.Milliseconds );
+            else if ( timeSpan.Minutes == 1 ) {
+                sb.AppendFormat( " {0} minute", timeSpan.Minutes );
             }
 
-            if ( String.IsNullOrEmpty( sb.ToString().Trim() ) ) {
+            if ( timeSpan.Seconds > 1 ) {
+                sb.AppendFormat( " {0:n0} seconds", timeSpan.Seconds );
+            }
+            else if ( timeSpan.Seconds == 1 ) {
+                sb.AppendFormat( " {0} second", timeSpan.Seconds );
+            }
+
+            if ( timeSpan.Milliseconds > 1 ) {
+                sb.AppendFormat( " {0:n0} milliseconds", timeSpan.Milliseconds );
+            }
+            else if ( timeSpan.Milliseconds == 1 ) {
+                sb.AppendFormat( " {0} millisecond", timeSpan.Milliseconds );
+            }
+
+            if ( String.IsNullOrEmpty( sb.ToString()
+                                         .Trim() ) ) {
                 sb.Append( " 0 milliseconds " );
             }
 
-            return sb.ToString().Trim();
+            return sb.ToString()
+                     .Trim();
         }
 
         /// <summary>
-        /// Obsolete. This method has been renamed to FirstDayOfWeek to be more consistent with
-        /// existing conventions.
+        ///     Display a <see cref="Duration" /> in simpler terms. ie "2 hours 4 minutes 33 seconds".
+        /// </summary>
+        /// <param name="duration"></param>
+        public static String Simpler( this Duration duration ) {
+            var sb = new StringBuilder();
+
+            if ( Math.Abs( duration.Years ) >= Double.Epsilon ) {
+                sb.AppendFormat( Math.Abs( duration.Years - 1 ) <= Double.Epsilon ? " {0:R} year" : " {0:R} years", duration.Years );
+            }
+
+            if ( Math.Abs( duration.Weeks ) >= Double.Epsilon ) {
+                sb.AppendFormat( Math.Abs( duration.Weeks - 1 ) <= Double.Epsilon ? " {0:R} week" : " {0:R} weeks", duration.Weeks );
+            }
+
+            if ( Math.Abs( duration.Days ) >= Double.Epsilon ) {
+                sb.AppendFormat( Math.Abs( duration.Days - 1 ) <= Double.Epsilon ? " {0:R} day" : " {0:R} days", duration.Days );
+            }
+
+            if ( Math.Abs( duration.Hours ) >= Double.Epsilon ) {
+                sb.AppendFormat( Math.Abs( duration.Hours - 1 ) <= Double.Epsilon ? " {0:R} hour" : " {0:R} hours", duration.Hours );
+            }
+
+            if ( Math.Abs( duration.Minutes ) >= Double.Epsilon ) {
+                sb.AppendFormat( Math.Abs( duration.Minutes - 1 ) <= Double.Epsilon ? " {0:R} minute" : " {0:R} minutes", duration.Minutes );
+            }
+
+            if ( Math.Abs( duration.Seconds ) >= Double.Epsilon ) {
+                sb.AppendFormat( Math.Abs( duration.Seconds - 1 ) <= Double.Epsilon ? " {0:R} second" : " {0:R} seconds", duration.Seconds );
+            }
+
+            if ( Math.Abs( duration.Milliseconds ) >= Double.Epsilon ) {
+                sb.AppendFormat( Math.Abs( duration.Milliseconds - 1 ) <= Double.Epsilon ? " {0:R} millisecond" : " {0:R} milliseconds", duration.Milliseconds );
+            }
+
+            if ( Math.Abs( duration.Microseconds ) >= Double.Epsilon ) {
+                sb.AppendFormat( Math.Abs( duration.Microseconds - 1 ) <= Double.Epsilon ? " {0:R} microsecond" : " {0:R} microseconds", duration.Microseconds );
+            }
+
+            if ( String.IsNullOrEmpty( sb.ToString()
+                                         .Trim() ) ) {
+                sb.Append( " 0 microseconds " );
+            }
+
+            return sb.ToString()
+                     .Trim();
+        }
+
+        /// <summary>
+        ///     Obsolete. This method has been renamed to FirstDayOfWeek to be more consistent with
+        ///     existing conventions.
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
@@ -769,14 +822,15 @@ namespace Librainian.Measurement.Time {
         public static DateTime SubtractBusinessDays( this DateTime current, Int32 days ) => AddBusinessDays( current, -days );
 
         /// <summary>
-        /// <para>
-        /// Throws an <see cref="OverflowException" /> if the <paramref name="value" /> is lower
-        /// than <see cref="Decimal.MinValue" /> or higher than <see cref="Decimal.MaxValue" />.
-        /// </para>
+        ///     <para>
+        ///         Throws an <see cref="OverflowException" /> if the <paramref name="value" /> is lower
+        ///         than <see cref="Decimal.MinValue" /> or higher than <see cref="Decimal.MaxValue" />.
+        ///     </para>
         /// </summary>
         /// <param name="value"></param>
         public static void ThrowIfOutOfDecimalRange( this Double value ) {
-            value.Should().BeInRange( ( Double )Decimal.MinValue, ( Double )Decimal.MaxValue );
+            value.Should()
+                 .BeInRange( ( Double )Decimal.MinValue, ( Double )Decimal.MaxValue );
 
             if ( value < ( Double )Decimal.MinValue ) {
                 throw new OverflowException( Constants.ValueIsTooLow );
@@ -785,6 +839,22 @@ namespace Librainian.Measurement.Time {
             if ( value > ( Double )Decimal.MaxValue ) {
                 throw new OverflowException( Constants.ValueIsTooHigh );
             }
+        }
+
+        /// <summary>The fastest time a task context switch should take?</summary>
+        public static TimeSpan TimeATaskWait() {
+            var stopwatch = Stopwatch.StartNew();
+            Task.Run( () => Task.Delay( 1 )
+                                .Wait() )
+                .Wait();
+            return stopwatch.Elapsed;
+        }
+
+        /// <summary>The fastest time a task context switch should take?</summary>
+        public static TimeSpan TimeAThreadSwitch() {
+            var stopwatch = Stopwatch.StartNew();
+            Thread.Sleep( 1 );
+            return stopwatch.Elapsed;
         }
 
         //    if ( value > Constants.MaximumUsefulDecimal ) {
@@ -815,8 +885,8 @@ namespace Librainian.Measurement.Time {
         /// <summary>Formats the date in the standard ISO 8601 format.</summary>
         /// <param name="value">The date to format.</param>
         /// <returns>The formatted date.</returns>
-        public static String ToIso8601( this DateTime value ) => value.ToUniversalTime().ToString( Iso8601Format, CultureInfo.InvariantCulture );
-
+        public static String ToIso8601( this DateTime value ) => value.ToUniversalTime()
+                                                                      .ToString( Iso8601Format, CultureInfo.InvariantCulture );
 
         public static String ToPath( this DateTime dateTime ) {
             var sb = new StringBuilder( String.Empty, 24 );
@@ -836,6 +906,13 @@ namespace Librainian.Measurement.Time {
             span += new Months( ( Decimal )date.Month.Value );
             span += new Days( date.Day.Value );
             return span;
+        }
+
+        public static Decimal ToStarDate( this DateTime earthDateTime ) {
+            var earthToStarDateDiff = earthDateTime - StarDateOrigin;
+            var millisecondConversion = ( Decimal )earthToStarDateDiff.TotalMilliseconds / 34367056.4m;
+            var starDate = Math.Floor( millisecondConversion * 100 ) / 100;
+            return Math.Round( starDate, 2, MidpointRounding.AwayFromZero );
         }
 
         /// <summary>Seconds since 1970-01-01</summary>
@@ -882,7 +959,7 @@ namespace Librainian.Measurement.Time {
 
         private static DateTime ParseFormattedDate( String input, CultureInfo culture ) {
             var formats = new[] { "u", "s", "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", "yyyy-MM-ddTHH:mm:ssZ", "yyyy-MM-dd HH:mm:ssZ", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-ddTHH:mm:sszzzzzz", "M/d/yyyy h:mm:ss tt" // default format for invariant culture
-                                };
+            };
 
             DateTime date;
             if ( DateTime.TryParseExact( input, formats, culture, DateTimeStyles.None, out date ) ) {

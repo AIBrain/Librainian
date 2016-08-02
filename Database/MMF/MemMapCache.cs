@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/MemMapCache.cs" was last cleaned by Rick on 2015/06/12 at 2:53 PM
+//
+// "Librainian/MemMapCache.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Database.MMF {
 
@@ -37,6 +37,18 @@ namespace Librainian.Database.MMF {
         private BinaryFormatter _formatter;
         private NetworkStream _networkStream;
         private TcpClient _tcpClient;
+
+        public MemMapCache() {
+            this.Encoding = Encoding.ASCII;
+            this.ChunkSize = 1024 * 1024 * 30;
+
+            this.Server = "127.0.0.1"; //limited to local
+            this.Port = 57742;
+
+            this.CacheHitAlwaysMiss = false;
+
+            this._keyExpirations = new Dictionary<String, DateTime>();
+        }
 
         public Boolean CacheHitAlwaysMiss {
             get; set;
@@ -62,18 +74,6 @@ namespace Librainian.Database.MMF {
             get; protected set;
         }
 
-        public MemMapCache() {
-            this.Encoding = Encoding.ASCII;
-            this.ChunkSize = 1024 * 1024 * 30;
-
-            this.Server = "127.0.0.1"; //limited to local
-            this.Port = 57742;
-
-            this.CacheHitAlwaysMiss = false;
-
-            this._keyExpirations = new Dictionary<String, DateTime>();
-        }
-
         //ideal for Unit Testing of classes that depend upon this Library.
 
         //32 bytes for datetime String... it's an overkill i know
@@ -85,13 +85,13 @@ namespace Librainian.Database.MMF {
             this._formatter = new BinaryFormatter();
         }
 
-        public T Get(String key) {
+        public T Get( String key ) {
             if ( !this.IsConnected ) {
-                return default(T);
+                return default( T );
             }
 
             if ( this.CacheHitAlwaysMiss ) {
-                return default(T);
+                return default( T );
             }
 
             try {
@@ -100,7 +100,7 @@ namespace Librainian.Database.MMF {
                         if ( DateTime.UtcNow >= this._keyExpirations[ key ] ) {
                             memoryMappedFile.Dispose();
                             this._keyExpirations.Remove( key );
-                            return default(T);
+                            return default( T );
                         }
                     }
 
@@ -113,20 +113,20 @@ namespace Librainian.Database.MMF {
             catch ( SerializationException ) {
 
                 //throw;
-                return default(T);
+                return default( T );
             }
             catch ( Exception ) {
                 if ( this._keyExpirations.ContainsKey( key ) ) {
                     this._keyExpirations.Remove( key );
                 }
 
-                return default(T);
+                return default( T );
             }
         }
 
-        public void Set(String key, T obj) => this.Set( key, obj, this.ChunkSize, DateTime.MaxValue );
+        public void Set( String key, T obj ) => this.Set( key, obj, this.ChunkSize, DateTime.MaxValue );
 
-        public void Set(String key, T obj, Int64 size, DateTime expire) {
+        public void Set( String key, T obj, Int64 size, DateTime expire ) {
             try {
                 if ( String.IsNullOrEmpty( key ) ) {
                     throw new Exception( "The key can't be null or empty." );
@@ -172,18 +172,18 @@ namespace Librainian.Database.MMF {
             }
         }
 
-        public void Set(String key, T obj, DateTime expire) => this.Set( key, obj, this.ChunkSize, expire );
+        public void Set( String key, T obj, DateTime expire ) => this.Set( key, obj, this.ChunkSize, expire );
 
-        public void Set(String key, T obj, TimeSpan expire) {
+        public void Set( String key, T obj, TimeSpan expire ) {
             var expireDt = DateTime.Now.Add( expire );
             this.Set( key, obj, this.ChunkSize, expireDt );
         }
 
-        public void Set(String key, T obj, Int64 size) => this.Set( key, obj, size, DateTime.MaxValue );
+        public void Set( String key, T obj, Int64 size ) => this.Set( key, obj, size, DateTime.MaxValue );
 
-        public T TryGetThenSet(String key, Func<T> cacheMiss) => this.TryGetThenSet( key, DateTime.MaxValue, cacheMiss );
+        public T TryGetThenSet( String key, Func<T> cacheMiss ) => this.TryGetThenSet( key, DateTime.MaxValue, cacheMiss );
 
-        public T TryGetThenSet(String key, DateTime expire, Func<T> cacheMiss) {
+        public T TryGetThenSet( String key, DateTime expire, Func<T> cacheMiss ) {
             var obj = this.Get( key );
             if ( obj != null ) {
                 return obj;
@@ -194,17 +194,17 @@ namespace Librainian.Database.MMF {
             return obj;
         }
 
-        public T TryGetThenSet(String key, TimeSpan expire, Func<T> cacheMiss) {
+        public T TryGetThenSet( String key, TimeSpan expire, Func<T> cacheMiss ) {
             var expireDt = DateTime.Now.Add( expire );
             return this.TryGetThenSet( key, expireDt, cacheMiss );
         }
 
-        public T TryGetThenSet(String key, Int64 size, TimeSpan expire, Func<T> cacheMiss) {
+        public T TryGetThenSet( String key, Int64 size, TimeSpan expire, Func<T> cacheMiss ) {
             var expireDt = DateTime.Now.Add( expire );
             return this.TryGetThenSet( key, size, expireDt, cacheMiss );
         }
 
-        public T TryGetThenSet(String key, Int64 size, DateTime expire, Func<T> cacheMiss) {
+        public T TryGetThenSet( String key, Int64 size, DateTime expire, Func<T> cacheMiss ) {
             var obj = this.Get( key );
             if ( obj == null ) {
                 obj = cacheMiss.Invoke();

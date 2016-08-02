@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Librainian</RootNamespace>
     <AssemblyName>Librainian</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <TargetFrameworkProfile>
@@ -40,7 +40,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <WarningsAsErrors>4014,1998,618,8073</WarningsAsErrors>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>6</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
@@ -68,151 +68,128 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AForge.Math, Version=2.2.5.0, Culture=neutral, PublicKeyToken=abba2e25397ee8c9, processorArchitecture=MSIL">
-      <HintPath>..\packages\AForge.Math.2.2.5\lib\AForge.Math.dll</HintPath>
+      <HintPath>..\..\packages\AForge.Math.2.2.5\lib\AForge.Math.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="BigRationalLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BigRationalLibrary.1.0.0.0\lib\NETFramework40\BigRationalLibrary.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CodeContracts, Version=1.0.5680.18392, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Projects 2014\CexBot\packages\CodeContracts.1.0.5680.18392\lib\net40\CodeContracts.dll</HintPath>
+    <Reference Include="CodeFluent.Runtime.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1bb6d7cccf1045ec, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CodeFluentRuntimeClient.1.0.0.844\lib\CodeFluent.Runtime.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CsQuery, Version=1.3.3.249, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CsQuery.1.3.4\lib\net40\CsQuery.dll</HintPath>
+    <Reference Include="Esent.Collections, Version=1.9.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Database.Collections.Generic.1.9.4\lib\net40\Esent.Collections.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esent.Collections, Version=1.9.3.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Database.Collections.Generic.1.9.3.2\lib\net40\Esent.Collections.dll</HintPath>
+    <Reference Include="Esent.Interop, Version=1.9.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ManagedEsent.1.9.4\lib\net40\Esent.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esent.Interop, Version=1.9.3.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\ManagedEsent.1.9.3.2\lib\net40\Esent.Interop.dll</HintPath>
+    <Reference Include="Esent.Isam, Version=1.9.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Database.Isam.1.9.4\lib\net40\Esent.Isam.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esent.Isam, Version=1.9.3.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Database.Isam.1.9.3.2\lib\net40\Esent.Isam.dll</HintPath>
+    <Reference Include="FluentAssertions, Version=4.12.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentAssertions.4.12.0\lib\net45\FluentAssertions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FluentAssertions, Version=4.0.1.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentAssertions.4.0.1\lib\net45\FluentAssertions.dll</HintPath>
+    <Reference Include="FluentAssertions.Core, Version=4.12.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentAssertions.4.12.0\lib\net45\FluentAssertions.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FluentAssertions.Core, Version=4.0.1.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentAssertions.4.0.1\lib\net45\FluentAssertions.Core.dll</HintPath>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.84.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
+      <HintPath>..\..\packages\ngit.1.0.0.20110815\lib\net35\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.7.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetZip.1.9.7\lib\net20\Ionic.Zip.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="JetBrains.Annotations, Version=10.0.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.10.0.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+    <Reference Include="JetBrains.Annotations, Version=10.1.5.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\JetBrains.Annotations.10.1.5\lib\net\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="LanguageExt.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LanguageExt.1.6.2\lib\LanguageExt.Core.dll</HintPath>
+      <HintPath>..\..\packages\LanguageExt.Core.1.7.38\lib\net46\LanguageExt.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    <Reference Include="MathNet.Numerics, Version=3.12.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MathNet.Numerics.3.12.0\lib\net40\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ngit.1.0.0.20110815\lib\net35\Mono.Posix.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MySql.Data, Version=6.6.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\NFX.2.0.0.10\lib\MySql.Data.dll</HintPath>
+    <Reference Include="Mono.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ngit.1.0.0.20110815\lib\net35\Mono.Security.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Mono.Security.Win32, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ngit.1.0.0.20110815\lib\net35\Mono.Security.Win32.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NFX, Version=2.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NFX.2.0.0.10\lib\NFX.dll</HintPath>
+    <Reference Include="NBitcoin, Version=3.0.0.38, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NBitcoin.3.0.0.38\lib\net45\NBitcoin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NFX.MySQL, Version=2.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NFX.2.0.0.10\lib\NFX.MySQL.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NFX.Wave, Version=2.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NFX.2.0.0.10\lib\NFX.Wave.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NFX.Web, Version=2.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NFX.2.0.0.10\lib\NFX.Web.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NFX.WinForms, Version=2.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NFX.2.0.0.10\lib\NFX.WinForms.dll</HintPath>
+    <Reference Include="NGit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ngit.1.0.0.20110815\lib\net35\NGit.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nunit.framework, Version=3.0.5797.27534, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.3.0.0\lib\net45\nunit.framework.dll</HintPath>
+    <Reference Include="NSch, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ngit.1.0.0.20110815\lib\net35\NSch.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="RandomNameGeneratorLibrary, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\RandomNameGeneratorLibrary.1.0.5.1\lib\net45\RandomNameGeneratorLibrary.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\RandomNameGeneratorLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="Remotion.Linq, Version=2.0.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-      <HintPath>..\packages\Remotion.Linq.2.0.0\lib\net45\Remotion.Linq.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Splat.1.6.2\lib\Net45\Splat.dll</HintPath>
+    <Reference Include="Sharpen, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ngit.1.0.0.20110815\lib\net35\Sharpen.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.1.37\lib\dotnet\System.Collections.Immutable.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity.Design" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Interactive.Async, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ix-Async.1.2.5\lib\net45\System.Interactive.Async.dll</HintPath>
+    <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Management" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors" />
-    <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
+    <Reference Include="System.Reactive.Interfaces, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rx-Interfaces.2.2.5\lib\net45\System.Reactive.Interfaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Reactive.Linq, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-Linq.2.2.5\lib\net45\System.Reactive.Linq.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Rx-Linq.2.2.5\lib\net45\System.Reactive.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.PlatformServices, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
+      <HintPath>..\..\packages\Rx-PlatformServices.2.2.5\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Reactive.Windows.Threading, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-Xaml.2.2.5\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
@@ -222,47 +199,10 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Entity" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.Mobile" />
-    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.Routing" />
-    <Reference Include="System.Web.Services" />
-    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Tesseract, Version=2.4.1.0, Culture=neutral, PublicKeyToken=ebeb3d86bef60cbe, processorArchitecture=MSIL">
-      <HintPath>..\packages\Tesseract.2.4.1.0\lib\net451\Tesseract.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Windows">
-      <HintPath>C:\Program Files (x86)\Windows Phone Kits\8.1\References\CommonConfiguration\Neutral\Annotated\Windows.winmd</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -273,10 +213,22 @@
     <Compile Include="AmazedSaint\IHierarchyWrapperProvider.cs" />
     <Compile Include="AmazedSaint\NodeType.cs" />
     <Compile Include="AmazedSaint\SimpleHierarchyWrapper.cs" />
-    <Compile Include="Collections\EnumPriorityQueue.cs" />
+    <Compile Include="Collections\ConcurrentListTests.cs" />
     <Compile Include="Collections\Positionial.cs" />
     <Compile Include="Collections\PriorityQueue.cs" />
     <Compile Include="Collections\PriorityTime.cs" />
+    <Compile Include="Controls\CheckboxWithToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\LabelWithToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\QuestionBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\QuestionBox.Designer.cs">
+      <DependentUpon>QuestionBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\BufferedTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -286,14 +238,80 @@
     </Compile>
     <Compile Include="Database\Excel.cs" />
     <Compile Include="Database\MMF\CreateUnsafeSerializer.cs" />
+    <Compile Include="Database\StressTest.cs" />
     <Compile Include="Database\Text.cs" />
     <Compile Include="Database\ReflectionPopulator.cs" />
     <Compile Include="Database\GenericPopulator.cs" />
     <Compile Include="Extensions\AssemblyInformation.cs" />
+    <Compile Include="Extensions\FuncExtensions.cs" />
     <Compile Include="Extensions\EvalProvider.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Controls\ListBoxLog.cs" />
+    <Compile Include="FileSystem\PhysicalDiskTests.cs" />
+    <Compile Include="FileSystem\DriveTests.cs" />
+    <Compile Include="FileSystem\LogicalDisk.cs" />
+    <Compile Include="FileSystem\Win32DiskPartition.cs" />
+    <Compile Include="FileSystem\NetworkConnection.cs" />
+    <Compile Include="FileSystem\Partitions.cs" />
+    <Compile Include="Financial\Containers\Wallets\CashDrawer.cs" />
+    <Compile Include="Financial\Containers\Shopping\ShoppingItem.cs" />
+    <Compile Include="Financial\Containers\Shopping\ShoppingCart.cs" />
+    <Compile Include="Financial\Containers\Wallets\WalletTests.cs" />
+    <Compile Include="Financial\Currency\BankNotes\Fifty.cs" />
+    <Compile Include="Financial\Currency\BankNotes\Five.cs" />
+    <Compile Include="Financial\Currency\BankNotes\Hundred.cs" />
+    <Compile Include="Financial\Currency\BankNotes\Ten.cs" />
+    <Compile Include="Financial\Currency\BankNotes\Twenty.cs" />
+    <Compile Include="Financial\Currency\Coins\Dime.cs" />
+    <Compile Include="Financial\Currency\BankNotes\IBankNote.cs" />
+    <Compile Include="Financial\Currency\Coins\ICoin.cs" />
+    <Compile Include="Financial\Currency\Coins\Nickel.cs" />
+    <Compile Include="Financial\Currency\BankNotes\One.cs" />
+    <Compile Include="Financial\Currency\Coins\Penny.cs" />
+    <Compile Include="Financial\Currency\Coins\Quarter.cs" />
+    <Compile Include="Financial\Store.cs" />
+    <Compile Include="Graphics\Imaging\FasterBitmap.cs" />
+    <Compile Include="Graphics\Imaging\ImagingExtensions.cs" />
+    <Compile Include="Graphics\Imaging\PropertyItem.cs" />
+    <Compile Include="Internet\AdapterInfo.cs" />
+    <Compile Include="Internet\NetworkInterfaceHelper.cs" />
+    <Compile Include="Internet\IPHelperInvoke.cs" />
+    <Compile Include="Maths\HumanCalculator.cs" />
+    <Compile Include="Maths\MathTests.cs" />
+    <Compile Include="Maths\Numbers\Binary.cs" />
+    <Compile Include="Maths\Numbers\BinaryMatrix.cs" />
+    <Compile Include="Maths\Numbers\Hex32.cs" />
+    <Compile Include="Measurement\Benchmark.cs" />
+    <Compile Include="Measurement\BenchmarkResult.cs" />
+    <Compile Include="Measurement\BenchmarkTests.cs" />
+    <Compile Include="Measurement\Spatial\Compass.cs" />
+    <Compile Include="Measurement\Time\DateSpanTests.cs" />
+    <Compile Include="Measurement\Time\DateSpan.cs" />
+    <Compile Include="Measurement\Time\CountDownWatch.cs" />
+    <Compile Include="Measurement\Time\DateInterval.cs" />
+    <Compile Include="Measurement\Time\HighResolutionDateTime.cs" />
+    <Compile Include="Measurement\Time\Clocks\WindowsClock.cs" />
+    <Compile Include="Measurement\Time\Duration.cs" />
+    <Compile Include="FileSystem\FolderBagTests.cs" />
+    <Compile Include="OperatingSystem\Audio.cs" />
+    <Compile Include="OperatingSystem\OSInfoTests.cs" />
+    <Compile Include="OperatingSystem\DetectSSD.cs" />
+    <Compile Include="OperatingSystem\OSInfo.cs" />
+    <Compile Include="Persistence\ConcurrentDictionaryFile.cs" />
+    <Compile Include="Persistence\ConcurrentListFile.cs" />
+    <Compile Include="Security\PasswordTests.cs" />
+    <Compile Include="Security\GpwData.cs" />
+    <Compile Include="Security\PronounceablePasswordCreator.cs" />
+    <Compile Include="Threading\VolatileBoolean.cs" />
+    <Compile Include="Measurement\Time\Clocks\DateAndTime.cs" />
+    <Compile Include="Measurement\Time\Clocks\GameTimer.cs" />
+    <Compile Include="Measurement\Time\Clocks\PauseableClock.cs" />
+    <Compile Include="OperatingSystem\Compression\ZipStorer.cs" />
     <Compile Include="OperatingSystem\Computer.cs" />
+    <Compile Include="FileSystem\FolderBag.cs" />
+    <Compile Include="FileSystem\DocumentCopyStatistics.cs" />
+    <Compile Include="FileSystem\DefragTests.cs" />
+    <Compile Include="FileSystem\PathSplitterTests.cs" />
     <Compile Include="OperatingSystem\Windows.cs" />
     <Compile Include="Extensions\DerivedSerializableExceptionWithAdditionalCustomProperty.cs" />
     <Compile Include="Extensions\CopyProgressRoutine.cs" />
@@ -301,25 +319,23 @@
     <Compile Include="Extensions\SafeSearchHandle.cs" />
     <Compile Include="Extensions\SerializableExceptionWithCustomProperties.cs" />
     <Compile Include="Extensions\SerializableExceptionWithoutCustomProperties.cs" />
-    <Compile Include="Financial\Bank.cs" />
-    <Compile Include="Financial\BankAccount.cs" />
-    <Compile Include="Financial\BankException.cs" />
-    <Compile Include="Financial\Cashier.cs" />
-    <Compile Include="Financial\CheckingAccount.cs" />
-    <Compile Include="Financial\IWallet.cs" />
-    <Compile Include="Financial\WalletException.cs" />
-    <Compile Include="Financial\Customer.cs" />
-    <Compile Include="Financial\Extensions.cs" />
-    <Compile Include="Financial\IBankAccount.cs" />
-    <Compile Include="Financial\ICustomer.cs" />
-    <Compile Include="Financial\IPerson.cs" />
-    <Compile Include="Financial\Ledger.cs" />
-    <Compile Include="Financial\SavingsAccount.cs" />
+    <Compile Include="Financial\Containers\Banking\Bank.cs" />
+    <Compile Include="Financial\Containers\Banking\BankAccount.cs" />
+    <Compile Include="Financial\Containers\Banking\BankException.cs" />
+    <Compile Include="Financial\Customers\Cashier.cs" />
+    <Compile Include="Financial\Containers\Accounts\CheckingAccount.cs" />
+    <Compile Include="Financial\Containers\Wallets\WalletException.cs" />
+    <Compile Include="Financial\Customers\Customer.cs" />
+    <Compile Include="Financial\Containers\Wallets\WalletExtensions.cs" />
+    <Compile Include="Financial\Containers\Banking\IBankAccount.cs" />
+    <Compile Include="Financial\Customers\ICustomer.cs" />
+    <Compile Include="Financial\Customers\IPerson.cs" />
+    <Compile Include="Financial\Containers\Wallets\Ledger.cs" />
+    <Compile Include="Financial\Containers\Accounts\SavingsAccount.cs" />
     <Compile Include="Financial\TransactionMessage.cs" />
     <Compile Include="Financial\TransactionType.cs" />
-    <Compile Include="Financial\WalletStatistics.cs" />
-    <Compile Include="Financial\Wallet.cs" />
-    <Compile Include="Graphics\CoordinateExtensions.cs" />
+    <Compile Include="Financial\Containers\Wallets\WalletStatistics.cs" />
+    <Compile Include="Financial\Containers\Wallets\Wallet.cs" />
     <Compile Include="Graphics\Imaging\ImageFile.cs" />
     <Compile Include="Graphics\Line\LineExtensions.cs" />
     <Compile Include="Graphics\Manipulation\ManipulationExtensions.cs" />
@@ -333,42 +349,44 @@
     <Compile Include="Internet\TraceExtensions.cs" />
     <Compile Include="Internet\InternetExtensions.cs" />
     <Compile Include="OperatingSystem\ComputerFingerPrint.cs" />
-    <Compile Include="OperatingSystem\FileSystem\DefragExtensions.cs" />
-    <Compile Include="OperatingSystem\IO\DocumentExtensions.cs" />
-    <Compile Include="OperatingSystem\FileSystem\Disk.cs" />
-    <Compile Include="OperatingSystem\FileSystem\Drive.cs" />
-    <Compile Include="OperatingSystem\IO\DriveExtensions.cs" />
+    <Compile Include="FileSystem\DefragExtensions.cs" />
+    <Compile Include="FileSystem\DocumentExtensions.cs" />
+    <Compile Include="FileSystem\PhysicalDisk.cs" />
+    <Compile Include="FileSystem\Drive.cs" />
+    <Compile Include="FileSystem\DriveExtensions.cs" />
     <Compile Include="OperatingSystem\FileHistory\FileHistoryFile.cs" />
     <Compile Include="OperatingSystem\FileHistory\FileHistoryFileExtensions.cs" />
     <Compile Include="OperatingSystem\FileHistory\FileHistoryFileTests.cs" />
-    <Compile Include="OperatingSystem\FileSystem\FolderExtensions.cs" />
-    <Compile Include="OperatingSystem\IO\FSConstants.cs" />
-    <Compile Include="OperatingSystem\IO\IOWrapper.cs" />
-    <Compile Include="OperatingSystem\FileSystem\Volume.cs" />
-    <Compile Include="OperatingSystem\IO\PathSplitter.cs" />
+    <Compile Include="FileSystem\FolderExtensions.cs" />
+    <Compile Include="FileSystem\FSConstants.cs" />
+    <Compile Include="FileSystem\IOWrapper.cs" />
+    <Compile Include="FileSystem\Volume.cs" />
+    <Compile Include="FileSystem\PathSplitter.cs" />
     <Compile Include="Magic\ChainElement.cs" />
     <Compile Include="Magic\Instantiator.cs" />
-    <Compile Include="Maths\BigInt.cs" />
+    <Compile Include="Maths\Numbers\BigInt.cs" />
     <Compile Include="Maths\MathConstants.cs" />
-    <Compile Include="Maths\CountableBigIntegers.cs" />
+    <Compile Include="Maths\Numbers\Countable.cs" />
     <Compile Include="Maths\CountableIntegersTests.cs" />
-    <Compile Include="Maths\Int256.cs" />
+    <Compile Include="Maths\Numbers\Int256.cs" />
     <Compile Include="Maths\Credits.cs" />
-    <Compile Include="Maths\DecimalRange.cs" />
-    <Compile Include="Maths\Digit.cs" />
+    <Compile Include="Maths\Ranges\DecimalRange.cs" />
+    <Compile Include="Maths\Numbers\Digit.cs" />
     <Compile Include="Maths\MathHashing.cs" />
     <Compile Include="Maths\MathStatistics.cs" />
-    <Compile Include="Maths\Minus1To1.cs" />
+    <Compile Include="Maths\Numbers\Minus1To1.cs" />
     <Compile Include="Maths\Versus.cs" />
-    <Compile Include="Maths\ZeroToOne.cs" />
+    <Compile Include="Maths\Numbers\ZeroToOne.cs" />
     <Compile Include="Measurement\Temperature.cs" />
     <Compile Include="Measurement\Frequency\FPS.cs" />
-    <Compile Include="Measurement\Time\CaesiumPeriod.cs" />
     <Compile Include="Measurement\Time\StopWatch.cs" />
     <Compile Include="Measurement\Time\DurationParser.cs" />
     <Compile Include="Measurement\Time\TimeTests.cs" />
     <Compile Include="Parsing\ParagraphExtensions.cs" />
-    <Compile Include="Persistence\Ini.cs" />
+    <Compile Include="Persistence\INIFile.cs" />
+    <Compile Include="Persistence\INIFile_Tests.cs" />
+    <Compile Include="Persistence\JSONFile.cs" />
+    <Compile Include="Persistence\JSONFile_Tests.cs" />
     <Compile Include="Persistence\PasswordExtensions.cs" />
     <Compile Include="Collections\AbstractBlockingQueue.cs" />
     <Compile Include="Collections\AbstractCollection.cs" />
@@ -378,8 +396,6 @@
     <Compile Include="Collections\ConcurrentSet.cs" />
     <Compile Include="Collections\ConcurrentBlockingQueue.cs" />
     <Compile Include="Collections\ImmutableList.cs" />
-    <Compile Include="Collections\IPotpourri.cs" />
-    <Compile Include="Collections\Potpourri.cs" />
     <Compile Include="Collections\ShufflingType.cs" />
     <Compile Include="Collections\TreeTraversalType.cs" />
     <Compile Include="Collections\CollectionDebugView.cs" />
@@ -387,7 +403,7 @@
     <Compile Include="Collections\ConcurrentStackNoBlock.cs" />
     <Compile Include="Collections\EnumerableToArrayBuffer.cs" />
     <Compile Include="Collections\FIFOWaitQueue.cs" />
-    <Compile Include="Collections\GuidBag.cs" />
+    <Compile Include="Collections\Bag.cs" />
     <Compile Include="Collections\IBlockingQueue.cs" />
     <Compile Include="Collections\IOrderedDictionary.cs" />
     <Compile Include="Collections\IQueue.cs" />
@@ -410,7 +426,6 @@
     <Compile Include="Collections\VirtualList.cs" />
     <Compile Include="Collections\WithTime.cs" />
     <Compile Include="Collections\WordToGuidAndGuidToWord.cs" />
-    <Compile Include="Computer.cs" />
     <Compile Include="Controls\AutoLayoutWindow.cs">
       <SubType>form</SubType>
     </Compile>
@@ -420,7 +435,6 @@
     <Compile Include="Controls\DoubleBufferPanel.cs">
       <SubType>component</SubType>
     </Compile>
-    <Compile Include="Controls\Extensions.cs" />
     <Compile Include="Controls\VerticalProgressBar.cs">
       <SubType>component</SubType>
     </Compile>
@@ -442,7 +456,7 @@
     <Compile Include="Database\MMF\ValueTypeCheck.cs" />
     <Compile Include="Database\DatabaseExtensions.cs" />
     <Compile Include="Database\Database.cs" />
-    <Compile Include="Diagnostical.cs" />
+    <Compile Include="DiagnosticTests.cs" />
     <Compile Include="Extensions\BigNullStream.cs" />
     <Compile Include="Extensions\BooleanPredicateBuilder.cs" />
     <Compile Include="Extensions\DisposableBase.cs" />
@@ -450,7 +464,7 @@
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\DummyXMLResolver.cs" />
     <Compile Include="Extensions\EventArgs.cs" />
-    <Compile Include="OperatingSystem\FileSystem\FileSizeFormatProviderExtensions.cs" />
+    <Compile Include="FileSystem\FileSizeFormatProviderExtensions.cs" />
     <Compile Include="Extensions\FuzzyPredicateBuilder.cs" />
     <Compile Include="Extensions\HashSetLinqAccess.cs" />
     <Compile Include="Extensions\ImmutableAttribute.cs" />
@@ -511,19 +525,19 @@
     <Compile Include="Internet\PingExtensions.cs" />
     <Compile Include="Internet\NetworkBrowser.cs" />
     <Compile Include="OperatingSystem\Compression\CompressExtensions.cs" />
-    <Compile Include="OperatingSystem\IO\FileSizeFormatProvider.cs" />
+    <Compile Include="FileSystem\FileSizeFormatProvider.cs" />
     <Compile Include="OperatingSystem\WMI\WMIExtensions.cs" />
-    <Compile Include="OperatingSystem\IO\NetworkAdapter.cs" />
+    <Compile Include="FileSystem\NetworkAdapter.cs" />
     <Compile Include="OperatingSystem\Compression\RandomnessFeeding.cs" />
     <Compile Include="OperatingSystem\Compression\RandomnessTest.cs" />
     <Compile Include="OperatingSystem\Streams\StreamString.cs" />
     <Compile Include="OperatingSystem\Streams\ContainerStream.cs" />
-    <Compile Include="OperatingSystem\IO\CopyProgressCallbackReason.cs" />
-    <Compile Include="OperatingSystem\IO\CopyProgressResult.cs" />
-    <Compile Include="OperatingSystem\FileSystem\Folder.cs" />
-    <Compile Include="OperatingSystem\IO\MoveFileFlags.cs" />
+    <Compile Include="FileSystem\CopyProgressCallbackReason.cs" />
+    <Compile Include="FileSystem\CopyProgressResult.cs" />
+    <Compile Include="FileSystem\Folder.cs" />
+    <Compile Include="FileSystem\MoveFileFlags.cs" />
     <Compile Include="OperatingSystem\Streams\ProgressStream.cs" />
-    <Compile Include="OperatingSystem\IO\SearchStyle.cs" />
+    <Compile Include="FileSystem\SearchStyle.cs" />
     <Compile Include="Linguistics\Author.cs" />
     <Compile Include="Linguistics\UDC.cs" />
     <Compile Include="Magic\BetterDisposableClass.cs" />
@@ -533,9 +547,9 @@
     <Compile Include="Magic\ManagedDisposable.cs" />
     <Compile Include="Magic\NativeDisposable.cs" />
     <Compile Include="Magic\NinjectIocContainer.cs" />
-    <Compile Include="OperatingSystem\IO\Crc32.cs" />
-    <Compile Include="OperatingSystem\IO\IOExtensions.cs" />
-    <Compile Include="OperatingSystem\FileSystem\Document.cs" />
+    <Compile Include="FileSystem\Crc32.cs" />
+    <Compile Include="FileSystem\IOExtensions.cs" />
+    <Compile Include="FileSystem\Document.cs" />
     <Compile Include="Internet\Browser\Chrome.cs" />
     <Compile Include="Internet\Inet.cs" />
     <Compile Include="Internet\FTP\BasicFTPClient.cs" />
@@ -544,7 +558,6 @@
     <Compile Include="Internet\MultiBrowserForm.Designer.cs">
       <DependentUpon>MultiBrowserForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Internet\Reddit\RedditAPI.cs" />
     <Compile Include="Internet\Scraper.cs" />
     <Compile Include="Internet\Surfer.cs" />
     <Compile Include="Internet\TheInternet.cs" />
@@ -580,23 +593,23 @@
     <Compile Include="Linguistics\PoS\PartsOfSpeech.cs" />
     <Compile Include="Linguistics\PoS\TaggedSentence.cs" />
     <Compile Include="Linguistics\WordCombo.cs" />
-    <Compile Include="Maths\BigDecimal.cs">
+    <Compile Include="Maths\Numbers\BigDecimal.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Maths\BigIntegerRange.cs" />
-    <Compile Include="Maths\BiggerRational.cs" />
-    <Compile Include="Maths\Int64Range.cs" />
+    <Compile Include="Maths\Ranges\BigIntegerRange.cs" />
+    <Compile Include="Maths\Numbers\BiggerRational.cs" />
+    <Compile Include="Maths\Ranges\Int64Range.cs" />
     <Compile Include="Maths\FourBytes.cs" />
     <Compile Include="Maths\Translate32.cs" />
     <Compile Include="Maths\Translate64.cs" />
-    <Compile Include="Maths\UInt256.cs" />
+    <Compile Include="Maths\Numbers\UInt256.cs" />
     <Compile Include="Maths\Bits.cs" />
-    <Compile Include="Maths\RomanNumber.cs" />
+    <Compile Include="Maths\Numbers\RomanNumber.cs" />
     <Compile Include="Maths\MovingAverageCalculator.cs" />
     <Compile Include="Maths\DoubleConverter.cs" />
     <Compile Include="Maths\RomanConverter.cs" />
-    <Compile Include="Maths\VotallyI.cs" />
-    <Compile Include="Maths\VotallyD.cs" />
+    <Compile Include="Maths\Numbers\VotallyI.cs" />
+    <Compile Include="Maths\Numbers\VotallyD.cs" />
     <Compile Include="Measurement\Currency\AltCoinExtensions.cs" />
     <Compile Include="Measurement\Currency\BTC\ICoin.cs" />
     <Compile Include="Measurement\Currency\LTC\ICoin.cs" />
@@ -686,11 +699,6 @@
     <Compile Include="Persistence\DynamicContext.cs" />
     <Compile Include="Persistence\PersistableSettings.cs" />
     <Compile Include="Persistence\PersistTable.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Security\CryptUtility.cs" />
     <Compile Include="Security\Crypto.cs" />
     <Compile Include="Security\FilePasswordPair.cs" />
@@ -714,8 +722,8 @@
     <Compile Include="Measurement\Currency\ISimpleWallet.cs" />
     <Compile Include="Measurement\Currency\LTC\Litoshi.cs" />
     <Compile Include="Measurement\Currency\LTC\ICoinWallet.cs" />
-    <Compile Include="Financial\IDenomination.cs" />
-    <Compile Include="Measurement\Currency\USD\Money.cs" />
+    <Compile Include="Financial\Currency\IDenomination.cs" />
+    <Compile Include="Financial\Currency\USD.cs" />
     <Compile Include="Measurement\Frequency\BPM.cs" />
     <Compile Include="Measurement\Frequency\Hertz.cs" />
     <Compile Include="Measurement\Length\Centimeters.cs" />
@@ -745,13 +753,12 @@
     <Compile Include="Parsing\Sequence.cs" />
     <Compile Include="Linguistics\Word.cs" />
     <Compile Include="Parsing\WordGuid.cs" />
-    <Compile Include="Maths\AutoNumber.cs" />
+    <Compile Include="Maths\Numbers\AutoNumber.cs" />
     <Compile Include="Persistence\DeserializeReportStats.cs" />
     <Compile Include="Persistence\PersistenceExtensions.cs" />
     <Compile Include="Security\Windows.cs" />
-    <Compile Include="Speech\Speecher.cs" />
     <Compile Include="Speech\SpeechOutput.cs" />
-    <Compile Include="Speech\SpeechToText.cs" />
+    <Compile Include="Speech\SpeechInput.cs" />
     <Compile Include="Threading\Actor.cs" />
     <Compile Include="Threading\ActorException.cs" />
     <Compile Include="Threading\ArrayExtensions.cs" />
@@ -782,31 +789,31 @@
     <Compile Include="Threading\FileSingleton.cs" />
     <Compile Include="Threading\Gate.cs" />
     <Compile Include="Threading\GCNotification.cs" />
-    <Compile Include="Graphics\DDD\Coordinate.cs" />
+    <Compile Include="Graphics\DDD\CoordinateF.cs" />
     <Compile Include="Graphics\DDD\Coordinate64.cs" />
     <Compile Include="Threading\Heap.cs" />
     <Compile Include="Threading\ICondition.cs" />
     <Compile Include="Threading\ILock.cs" />
     <Compile Include="Threading\IQueuedSync.cs" />
-    <Compile Include="Maths\AtomicDouble.cs" />
-    <Compile Include="Maths\AtomicInt.cs" />
+    <Compile Include="Maths\Numbers\AtomicDouble.cs" />
+    <Compile Include="Maths\Numbers\AtomicInt.cs" />
     <Compile Include="Maths\MathExtensions.cs" />
-    <Compile Include="Maths\DoubleRange.cs" />
-    <Compile Include="Maths\PotentialF.cs" />
+    <Compile Include="Maths\Ranges\DoubleRange.cs" />
+    <Compile Include="Maths\Numbers\PotentialF.cs" />
     <Compile Include="Maths\Fuzzy.cs" />
     <Compile Include="Maths\FuzzyNonTS.cs" />
     <Compile Include="Maths\IAtomic.cs" />
-    <Compile Include="Maths\Int32Range.cs" />
-    <Compile Include="Maths\Minus1To1D.cs" />
-    <Compile Include="Maths\Minus1to1TS.cs" />
-    <Compile Include="Maths\Percentage.cs" />
-    <Compile Include="Maths\PercentageNonTS.cs" />
+    <Compile Include="Maths\Ranges\Int32Range.cs" />
+    <Compile Include="Maths\Numbers\Minus1To1D.cs" />
+    <Compile Include="Maths\Numbers\Minus1to1TS.cs" />
+    <Compile Include="Maths\Numbers\Percentage.cs" />
+    <Compile Include="Maths\Numbers\PercentageNonTS.cs" />
     <Compile Include="Maths\PrimeNumbers.cs" />
-    <Compile Include="Maths\SingleRange.cs" />
-    <Compile Include="Maths\Statistically.cs" />
+    <Compile Include="Maths\Ranges\SingleRange.cs" />
+    <Compile Include="Maths\Numbers\Statistically.cs" />
     <Compile Include="Measurement\Time\TimeSpanRange.cs" />
-    <Compile Include="Maths\UBigInteger.cs" />
-    <Compile Include="Maths\UInt64Range.cs" />
+    <Compile Include="Maths\Numbers\UBigInteger.cs" />
+    <Compile Include="Maths\Ranges\UInt64Range.cs" />
     <Compile Include="Maths\WeightObsolete.cs" />
     <Compile Include="Threading\OneJob.cs" />
     <Compile Include="Threading\OpenOrClosed.cs" />
@@ -826,26 +833,30 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threading\Tasks.cs" />
     <Compile Include="Threading\ThreadingExtensions.cs" />
-    <Compile Include="Threading\Threads.cs" />
-    <Compile Include="Threading\FluentTimers.cs" />
+    <Compile Include="Threading\FluentTimer.cs" />
     <Compile Include="Threading\WaitNode.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Misc\asingle.js" />
+    <Content Include="External\Readme.txt" />
+    <Content Include="External\x64\CodeFluent.Runtime.Compression.dll" />
+    <Content Include="External\x86\CodeFluent.Runtime.Compression.dll" />
     <Content Include="Misc\brain.js" />
     <Content Include="Misc\JavaScript1.js" />
     <Content Include="Misc\Readability.js" />
     <Content Include="Misc\traits.js" />
-    <Content Include="x64\liblept168.dll">
+    <Content Include="md5sum.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x64\liblept172.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="x64\libtesseract302.dll">
+    <Content Include="x64\libtesseract304.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="x86\liblept168.dll">
+    <Content Include="x86\liblept172.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="x86\libtesseract302.dll">
+    <Content Include="x86\libtesseract304.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -856,8 +867,13 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
+    <Folder Include="Measurement\Currency\USD\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\QuestionBox.resx">
+      <DependentUpon>QuestionBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\AutoLayoutWindow.resx">
       <DependentUpon>AutoLayoutWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -867,11 +883,9 @@
       <DependentUpon>MultiBrowserForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/AESThenHMAC.cs" was last cleaned by Rick on 2015/06/12 at 3:12 PM
+//
+// "Librainian/AESThenHMAC.cs" was last cleaned by Rick on 2016/06/18 at 10:56 PM
 
 namespace Librainian.Security {
 
@@ -27,10 +27,10 @@ namespace Librainian.Security {
     using Threading;
 
     /// <summary>
-    /// This work (Modern Encryption of a String C#, by James Tuley), identified by James Tuley, is
-    /// free of known copyright restrictions.
-    /// https: //gist.github.com/4336842
-    /// http: //creativecommons.org/publicdomain/mark/1.0/
+    ///     This work (Modern Encryption of a String C#, by James Tuley), identified by James Tuley, is
+    ///     free of known copyright restrictions.
+    ///     https: //gist.github.com/4336842
+    ///     http: //creativecommons.org/publicdomain/mark/1.0/
     /// </summary>
     public static class AESThenHmac {
         public const Int32 BlockBitSize = 128;
@@ -54,14 +54,14 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        /// Simple Authentication (HMAC) then Decryption (AES) for a secrets UTF8 Message.
+        ///     Simple Authentication (HMAC) then Decryption (AES) for a secrets UTF8 Message.
         /// </summary>
         /// <param name="encryptedMessage">The encrypted message.</param>
         /// <param name="cryptKey">The crypt key.</param>
         /// <param name="authKey">The auth key.</param>
         /// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
         /// <returns>Decrypted Message</returns>
-        public static Byte[] SimpleDecrypt(Byte[] encryptedMessage, Byte[] cryptKey, Byte[] authKey, Int32 nonSecretPayloadLength = 0) {
+        public static Byte[] SimpleDecrypt( Byte[] encryptedMessage, Byte[] cryptKey, Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
 
             //Basic Usage Error Checks
             if ( ( cryptKey == null ) || ( cryptKey.Length != KeyBitSize / 8 ) ) {
@@ -102,12 +102,7 @@ namespace Librainian.Security {
                     return null;
                 }
 
-                using ( var aes = new AesManaged {
-                    KeySize = KeyBitSize,
-                    BlockSize = BlockBitSize,
-                    Mode = CipherMode.CBC,
-                    Padding = PaddingMode.PKCS7
-                } ) {
+                using ( var aes = new AesManaged { KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7 } ) {
 
                     //Grab IV from message
                     var iv = new Byte[ ivLength ];
@@ -132,7 +127,7 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        /// Simple Authentication (HMAC) then Decryption (AES) for a secrets UTF8 Message.
+        ///     Simple Authentication (HMAC) then Decryption (AES) for a secrets UTF8 Message.
         /// </summary>
         /// <param name="encryptedMessage">The encrypted message.</param>
         /// <param name="cryptKey">The crypt key.</param>
@@ -140,7 +135,7 @@ namespace Librainian.Security {
         /// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
         /// <returns>Decrypted Message</returns>
         /// <exception cref="System.ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
-        public static String SimpleDecrypt(String encryptedMessage, Byte[] cryptKey, Byte[] authKey, Int32 nonSecretPayloadLength = 0) {
+        public static String SimpleDecrypt( String encryptedMessage, Byte[] cryptKey, Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
             if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
                 throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
@@ -151,8 +146,8 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        /// Simple Authentication (HMAC) and then Descryption (AES) of a UTF8 Message using keys
-        /// derived from a password (PBKDF2).
+        ///     Simple Authentication (HMAC) and then Descryption (AES) of a UTF8 Message using keys
+        ///     derived from a password (PBKDF2).
         /// </summary>
         /// <param name="encryptedMessage">The encrypted message.</param>
         /// <param name="password">The password.</param>
@@ -160,7 +155,7 @@ namespace Librainian.Security {
         /// <returns>Decrypted Message</returns>
         /// <exception cref="System.ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
         /// <remarks>Significantly less secure than using random binary keys.</remarks>
-        public static String SimpleDecryptWithPassword(String encryptedMessage, String password, Int32 nonSecretPayloadLength = 0) {
+        public static String SimpleDecryptWithPassword( String encryptedMessage, String password, Int32 nonSecretPayloadLength = 0 ) {
             if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
                 throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
@@ -171,8 +166,8 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        /// Simple Authentication (HMAC) and then Descryption (AES) of a UTF8 Message using keys
-        /// derived from a password (PBKDF2).
+        ///     Simple Authentication (HMAC) and then Descryption (AES) of a UTF8 Message using keys
+        ///     derived from a password (PBKDF2).
         /// </summary>
         /// <param name="encryptedMessage">The encrypted message.</param>
         /// <param name="password">The password.</param>
@@ -180,7 +175,7 @@ namespace Librainian.Security {
         /// <returns>Decrypted Message</returns>
         /// <exception cref="System.ArgumentException">Must have a password of minimum length;password</exception>
         /// <remarks>Significantly less secure than using random binary keys.</remarks>
-        public static Byte[] SimpleDecryptWithPassword(Byte[] encryptedMessage, String password, Int32 nonSecretPayloadLength = 0) {
+        public static Byte[] SimpleDecryptWithPassword( Byte[] encryptedMessage, String password, Int32 nonSecretPayloadLength = 0 ) {
 
             //User Error Checks
             if ( String.IsNullOrWhiteSpace( password ) || ( password.Length < MinPasswordLength ) ) {
@@ -221,10 +216,10 @@ namespace Librainian.Security {
         /// <param name="nonSecretPayload">(Optional) Non-Secret Payload.</param>
         /// <returns>Encrypted Message</returns>
         /// <remarks>
-        /// Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize +
-        /// HMac-Tag(32)) * 1.33 Base64
+        ///     Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize +
+        ///     HMac-Tag(32)) * 1.33 Base64
         /// </remarks>
-        public static Byte[] SimpleEncrypt(Byte[] secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[] nonSecretPayload = null) {
+        public static Byte[] SimpleEncrypt( Byte[] secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[] nonSecretPayload = null ) {
 
             //User Error Checks
             if ( ( cryptKey == null ) || ( cryptKey.Length != KeyBitSize / 8 ) ) {
@@ -245,12 +240,7 @@ namespace Librainian.Security {
             Byte[] cipherText;
             Byte[] iv;
 
-            using ( var aes = new AesManaged {
-                KeySize = KeyBitSize,
-                BlockSize = BlockBitSize,
-                Mode = CipherMode.CBC,
-                Padding = PaddingMode.PKCS7
-            } ) {
+            using ( var aes = new AesManaged { KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7 } ) {
 
                 //Use random IV
                 aes.GenerateIV();
@@ -305,10 +295,10 @@ namespace Librainian.Security {
         /// <returns>Encrypted Message</returns>
         /// <exception cref="System.ArgumentException">Secret Message Required!;secretMessage</exception>
         /// <remarks>
-        /// Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize +
-        /// HMac-Tag(32)) * 1.33 Base64
+        ///     Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize +
+        ///     HMac-Tag(32)) * 1.33 Base64
         /// </remarks>
-        public static String SimpleEncrypt(String secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[] nonSecretPayload = null) {
+        public static String SimpleEncrypt( String secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[] nonSecretPayload = null ) {
             if ( String.IsNullOrEmpty( secretMessage ) ) {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
@@ -319,8 +309,8 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        /// Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived
-        /// from a Password (PBKDF2).
+        ///     Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived
+        ///     from a Password (PBKDF2).
         /// </summary>
         /// <param name="secretMessage">The secret message.</param>
         /// <param name="password">The password.</param>
@@ -328,10 +318,10 @@ namespace Librainian.Security {
         /// <returns>Encrypted Message</returns>
         /// <exception cref="System.ArgumentException">password</exception>
         /// <remarks>
-        /// Significantly less secure than using random binary keys. Adds additional non secret
-        /// payload for key generation parameters.
+        ///     Significantly less secure than using random binary keys. Adds additional non secret
+        ///     payload for key generation parameters.
         /// </remarks>
-        public static String SimpleEncryptWithPassword(String secretMessage, String password, Byte[] nonSecretPayload = null) {
+        public static String SimpleEncryptWithPassword( String secretMessage, String password, Byte[] nonSecretPayload = null ) {
             if ( String.IsNullOrEmpty( secretMessage ) ) {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
@@ -342,8 +332,8 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        /// Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived
-        /// from a Password (PBKDF2)
+        ///     Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived
+        ///     from a Password (PBKDF2)
         /// </summary>
         /// <param name="secretMessage">The secret message.</param>
         /// <param name="password">The password.</param>
@@ -351,10 +341,10 @@ namespace Librainian.Security {
         /// <returns>Encrypted Message</returns>
         /// <exception cref="System.ArgumentException">Must have a password of minimum length;password</exception>
         /// <remarks>
-        /// Significantly less secure than using random binary keys. Adds additional non secret
-        /// payload for key generation parameters.
+        ///     Significantly less secure than using random binary keys. Adds additional non secret
+        ///     payload for key generation parameters.
         /// </remarks>
-        public static Byte[] SimpleEncryptWithPassword(Byte[] secretMessage, String password, Byte[] nonSecretPayload = null) {
+        public static Byte[] SimpleEncryptWithPassword( Byte[] secretMessage, String password, Byte[] nonSecretPayload = null ) {
             nonSecretPayload = nonSecretPayload ?? new Byte[] { };
 
             //User Error Checks

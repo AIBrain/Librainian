@@ -1,25 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Class1.cs" was last cleaned by Rick on 2015/06/15 at 3:36 PM
-
-// resource:
-// https: //github.com/Digiex/MCLauncher.NET/blob/master/MCLauncher.net/Crypto.cs
+//
+// "Librainian/Crypto.cs" was last cleaned by Rick on 2016/06/18 at 10:56 PM
 
 namespace Librainian.Security {
 
@@ -32,12 +29,12 @@ namespace Librainian.Security {
         private static readonly Byte[] Salt = Encoding.ASCII.GetBytes( "evatuewot8evtet8e8paaa40aqta" );
 
         /// <summary>
-        /// Decrypt the given string. Assumes the string was encrypted using EncryptStringAES(),
-        /// using an identical sharedSecret.
+        ///     Decrypt the given string. Assumes the string was encrypted using EncryptStringAES(),
+        ///     using an identical sharedSecret.
         /// </summary>
         /// <param name="cipherText">The text to decrypt.</param>
         /// <param name="sharedSecret">A password used to generate a key for decryption.</param>
-        public static String DecryptStringAES(this String cipherText, String sharedSecret) {
+        public static String DecryptStringAES( this String cipherText, String sharedSecret ) {
             if ( String.IsNullOrEmpty( cipherText ) ) {
                 throw new ArgumentNullException( nameof( cipherText ) );
             }
@@ -80,6 +77,7 @@ namespace Librainian.Security {
                 }
             }
             finally {
+
                 // Clear the RijndaelManaged object.
                 aesAlg?.Clear();
             }
@@ -88,12 +86,12 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        /// Encrypt the given string using AES. The string can be decrypted using
-        /// DecryptStringAES(). The sharedSecret parameters must match.
+        ///     Encrypt the given string using AES. The string can be decrypted using
+        ///     DecryptStringAES(). The sharedSecret parameters must match.
         /// </summary>
         /// <param name="plainText">The text to encrypt.</param>
         /// <param name="sharedSecret">A password used to generate a key for encryption.</param>
-        public static String EncryptStringAES(String plainText, String sharedSecret) {
+        public static String EncryptStringAES( String plainText, String sharedSecret ) {
             if ( String.IsNullOrEmpty( plainText ) ) {
                 throw new ArgumentNullException( nameof( plainText ) );
             }
@@ -120,7 +118,7 @@ namespace Librainian.Security {
                 using ( var msEncrypt = new MemoryStream() ) {
 
                     // prepend the IV
-                    msEncrypt.Write( BitConverter.GetBytes( aesAlg.IV.Length ), 0, sizeof(Int32) );
+                    msEncrypt.Write( BitConverter.GetBytes( aesAlg.IV.Length ), 0, sizeof( Int32 ) );
                     msEncrypt.Write( aesAlg.IV, 0, aesAlg.IV.Length );
                     using ( var csEncrypt = new CryptoStream( msEncrypt, encryptor, CryptoStreamMode.Write ) ) {
                         using ( var swEncrypt = new StreamWriter( csEncrypt ) ) {
@@ -133,6 +131,7 @@ namespace Librainian.Security {
                 }
             }
             finally {
+
                 // Clear the RijndaelManaged object.
                 aesAlg?.Clear();
             }
@@ -141,8 +140,8 @@ namespace Librainian.Security {
             return outStr;
         }
 
-        public static Byte[] ReadByteArray( this Stream s) {
-            var rawLength = new Byte[ sizeof(Int32) ];
+        public static Byte[] ReadByteArray( this Stream s ) {
+            var rawLength = new Byte[ sizeof( Int32 ) ];
             if ( s.Read( rawLength, 0, rawLength.Length ) != rawLength.Length ) {
                 throw new SystemException( "Stream did not contain properly formatted byte array" );
             }

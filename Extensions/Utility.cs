@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Utility.cs" was last cleaned by Rick on 2015/06/12 at 2:54 PM
+//
+// "Librainian/Utility.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.Extensions {
 
@@ -31,11 +31,11 @@ namespace Librainian.Extensions {
         private static readonly ReaderWriterLockSlim ConsoleOutputSynch = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
         /// <summary>
-        /// Output the <paramref name="text" /> at the end of the current <seealso cref="Console" /> line.
+        ///     Output the <paramref name="text" /> at the end of the current <seealso cref="Console" /> line.
         /// </summary>
         /// <param name="text"></param>
         /// <param name="yOffset"></param>
-        public static void AtEndOfLine(this String text, Int32 yOffset = 0) {
+        public static void AtEndOfLine( this String text, Int32 yOffset = 0 ) {
             if ( String.IsNullOrEmpty( text ) ) {
                 return;
             }
@@ -81,7 +81,7 @@ namespace Librainian.Extensions {
         //    Console.SetCursorPosition( left: oldLeft, top: oldTop );
         //}
 
-        public static void OnSet<T>(this EventHandler<T> @event, Object sender, T e) where T : EventArgs {
+        public static void OnSet<T>( this EventHandler<T> @event, Object sender, T e ) where T : EventArgs {
             throw new NotImplementedException();
 
             //if ( @event != null ) { @event( sender, e ); }
@@ -90,7 +90,7 @@ namespace Librainian.Extensions {
         //    return false;
         //}
 
-        public static void Spin(String text) {
+        public static void Spin( String text ) {
             var oldTop = Console.CursorTop;
             var oldLeft = Console.CursorLeft;
             Console.Write( text );
@@ -139,7 +139,7 @@ namespace Librainian.Extensions {
         //    Debug.WriteLine( "]" );
         //}
 
-        public static void TopRight(String text) {
+        public static void TopRight( String text ) {
             if ( String.IsNullOrEmpty( text ) ) {
                 return;
             }
@@ -164,9 +164,10 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static void WriteColor(this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black, params Object[] parms) {
+        public static void WriteColor( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black, params Object[] parms ) {
             lock ( ConsoleOutputSynch ) {
                 if ( ( null == parms ) || !parms.Any() ) {
+
                     //text.WriteLine();
                     var oldFore = Console.ForegroundColor;
                     var oldBack = Console.BackgroundColor;
@@ -177,6 +178,7 @@ namespace Librainian.Extensions {
                     Console.ForegroundColor = oldFore;
                 }
                 else {
+
                     //String.Format( text, parms ).WriteLine();
                     var oldFore = Console.ForegroundColor;
                     var oldBack = Console.BackgroundColor;
@@ -189,9 +191,10 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static void WriteLineColor(this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black, params Object[] parms) {
+        public static void WriteLineColor( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black, params Object[] parms ) {
             lock ( ConsoleOutputSynch ) {
                 if ( Equals( parms, null ) || !parms.Any() ) {
+
                     //text.WriteLine();
                     var oldFore = Console.ForegroundColor;
                     var oldBack = Console.BackgroundColor;
@@ -202,6 +205,7 @@ namespace Librainian.Extensions {
                     Console.ForegroundColor = oldFore;
                 }
                 else {
+
                     //String.Format( text, parms ).WriteLine();
                     var oldFore = Console.ForegroundColor;
                     var oldBack = Console.BackgroundColor;

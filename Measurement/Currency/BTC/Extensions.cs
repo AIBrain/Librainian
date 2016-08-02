@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Extensions.cs" was last cleaned by Rick on 2015/06/12 at 3:02 PM
+//
+// "Librainian/Extensions.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
 
 namespace Librainian.Measurement.Currency.BTC {
 
@@ -37,15 +37,12 @@ namespace Librainian.Measurement.Currency.BTC {
         [NotNull]
 
         // ReSharper disable once CollectionNeverUpdated.Global ReSharper disable once ReturnTypeCanBeEnumerable.Global
-        public static HashSet<ICoin> PossibleCoins {
-            get;
-        }
-        = new HashSet<ICoin>( typeof( ICoin ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<ICoin>() );
+        public static HashSet<ICoin> PossibleCoins { get; } = new HashSet<ICoin>( typeof( ICoin ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<ICoin>() );
 
         /// <summary>Deposit <paramref name="coins" /> into this wallet.</summary>
         /// <param name="coinWallet"></param>
         /// <param name="coins"></param>
-        public static void Deposit([NotNull] this CoinWallet coinWallet, IEnumerable<KeyValuePair<ICoin, UInt64>> coins = null) {
+        public static void Deposit( [NotNull] this CoinWallet coinWallet, IEnumerable<KeyValuePair<ICoin, UInt64>> coins = null ) {
             if ( coinWallet == null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
@@ -56,14 +53,14 @@ namespace Librainian.Measurement.Currency.BTC {
             }
         }
 
-        public static void Fund([NotNull] CoinWallet coinWallet, [CanBeNull] params KeyValuePair<ICoin, UInt64>[] sourceAmounts) {
+        public static void Fund( [NotNull] CoinWallet coinWallet, [CanBeNull] params KeyValuePair<ICoin, UInt64>[] sourceAmounts ) {
             if ( coinWallet == null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
             Fund( coinWallet, sourceAmounts.AsEnumerable() );
         }
 
-        public static void Fund([NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts) {
+        public static void Fund( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts ) {
             if ( coinWallet == null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
@@ -74,14 +71,14 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        /// Adds the optimal amount of <see cref="ICoin" />. Returns any unused portion of the money
-        /// (fractions of the smallest <see cref="ICoin" />).
+        ///     Adds the optimal amount of <see cref="ICoin" />. Returns any unused portion of the money
+        ///     (fractions of the smallest <see cref="ICoin" />).
         /// </summary>
         /// <param name="coinWallet"></param>
         /// <param name="amount"></param>
         /// <param name="optimalAmountOfCoin"></param>
         /// <returns></returns>
-        public static Decimal Fund([NotNull] this CoinWallet coinWallet, Decimal amount, Boolean optimalAmountOfCoin = true) {
+        public static Decimal Fund( [NotNull] this CoinWallet coinWallet, Decimal amount, Boolean optimalAmountOfCoin = true ) {
             if ( coinWallet == null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
@@ -92,13 +89,13 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        /// Given the <paramref name="amount" />, return the optimal amount of <see cref="ICoin" />
-        /// ( <see cref="CoinWallet.Total" />) it would take to <see cref="CoinWallet.Total" /> the <paramref name="amount" />.
+        ///     Given the <paramref name="amount" />, return the optimal amount of <see cref="ICoin" />
+        ///     ( <see cref="CoinWallet.Total" />) it would take to <see cref="CoinWallet.Total" /> the <paramref name="amount" />.
         /// </summary>
         /// <param name="amount"></param>
         /// <param name="leftOverAmount">Fractions of Pennies not accounted for.</param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<ICoin, UInt64>> Optimal(this Decimal amount, ref Decimal leftOverAmount) {
+        public static IEnumerable<KeyValuePair<ICoin, UInt64>> Optimal( this Decimal amount, ref Decimal leftOverAmount ) {
             var left = new List<ICoin>( PossibleCoins );
             var result = left.ToDictionary<ICoin, ICoin, UInt64>( denomination => denomination, denomination => 0 );
 
@@ -123,14 +120,14 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <summary>Truncate anything lesser than 1 <see cref="Satoshi" />.</summary>
         /// <param name="btc"></param>
         /// <returns></returns>
-        public static Decimal Sanitize(this Decimal btc) {
+        public static Decimal Sanitize( this Decimal btc ) {
             var sanitized = btc.ToSatoshi().ToBTC();
 
             //Assert.GreaterOrEqual( btc, sanitized );
             return sanitized;
         }
 
-        public static String SimplerBTC([NotNull] this SimpleBitcoinWallet wallet) {
+        public static String SimplerBTC( [NotNull] this SimpleBitcoinWallet wallet ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
@@ -138,18 +135,18 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        /// <para>0. 00000001 -&gt; 1 satoshi</para>
-        /// <para>0. 00000011 -&gt; 11 satoshi</para>
-        /// <para>0. 00000110 -&gt; 11 μBTC</para>
+        ///     <para>0. 00000001 -&gt; 1 satoshi</para>
+        ///     <para>0. 00000011 -&gt; 11 satoshi</para>
+        ///     <para>0. 00000110 -&gt; 11 μBTC</para>
         /// </summary>
         /// <param name="btc"></param>
         /// <param name="coinSuffix">
-        /// <para>BTC</para>
-        /// <para>NMC</para>
-        /// <para>etc...</para>
+        ///     <para>BTC</para>
+        ///     <para>NMC</para>
+        ///     <para>etc...</para>
         /// </param>
         /// <returns></returns>
-        public static String SimplerBTC(this Decimal btc, [NotNull] String coinSuffix = "BTC") {
+        public static String SimplerBTC( this Decimal btc, [NotNull] String coinSuffix = "BTC" ) {
             if ( coinSuffix == null ) {
                 throw new ArgumentNullException( nameof( coinSuffix ) );
             }
@@ -158,12 +155,7 @@ namespace Librainian.Measurement.Currency.BTC {
             //var wallet = new SimpleBitcoinWallet( btc );
             //Console.WriteLine( wallet.Formatted );
 
-            var list = new List<String> {
-                                              new SimpleBitcoinWallet( btc ).Formatted.TrimEnd( '0' ).TrimEnd( '.' ),
-                                              $"{btc.TomBtc():N6}".TrimEnd( '0' ).TrimEnd( '.' ) + " m" + coinSuffix,
-                                              $"{btc.ToμBtc():N4}".TrimEnd( '0' ).TrimEnd( '.' ) + " μ" + coinSuffix,
-                                              $"{btc.ToSatoshi():N0}" + " sat"
-                                          };
+            var list = new List<String> { new SimpleBitcoinWallet( btc ).ToString().TrimEnd( '0' ).TrimEnd( '.' ), $"{btc.TomBtc():N6}".TrimEnd( '0' ).TrimEnd( '.' ) + " m" + coinSuffix, $"{btc.ToμBtc():N4}".TrimEnd( '0' ).TrimEnd( '.' ) + " μ" + coinSuffix, $"{btc.ToSatoshi():N0}" + " sat" };
 
             //as btc
 
@@ -180,7 +172,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="coinWallet"></param>
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
-        public static Task StartDeposit([NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts) {
+        public static Task StartDeposit( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts ) {
             if ( coinWallet == null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
@@ -192,13 +184,13 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        /// Transfer everything FROM the <paramref name="source" /><see cref="CoinWallet" /> into
-        /// this <paramref name="target" /><see cref="CoinWallet" />.
+        ///     Transfer everything FROM the <paramref name="source" /><see cref="CoinWallet" /> into
+        ///     this <paramref name="target" /><see cref="CoinWallet" />.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="target"></param>
         [NotNull]
-        public static Task<ConcurrentDictionary<ICoin, UInt64>> StartTransfer([CanBeNull] this CoinWallet source, [CanBeNull] CoinWallet target) => Task.Run( () => {
+        public static Task<ConcurrentDictionary<ICoin, UInt64>> StartTransfer( [CanBeNull] this CoinWallet source, [CanBeNull] CoinWallet target ) => Task.Run( () => {
             if ( ( null == source ) || ( null == target ) ) {
                 return new ConcurrentDictionary<ICoin, UInt64>();
             }
@@ -206,24 +198,24 @@ namespace Librainian.Measurement.Currency.BTC {
             return new ConcurrentDictionary<ICoin, UInt64>( Transfer( source, target ) );
         } );
 
-        public static Decimal ToBTC(this Int16 satoshi) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
+        public static Decimal ToBTC( this Int16 satoshi ) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
 
-        public static Decimal ToBTC(this Int32 satoshi) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
+        public static Decimal ToBTC( this Int32 satoshi ) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
 
-        public static Decimal ToBTC(this Int64 satoshi) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
+        public static Decimal ToBTC( this Int64 satoshi ) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
 
-        public static Decimal TomBtc(this Decimal btc) => btc * SimpleBitcoinWallet.MBtcInOneBtc;
+        public static Decimal TomBtc( this Decimal btc ) => btc * SimpleBitcoinWallet.MBtcInOneBtc;
 
-        public static Int64 ToSatoshi(this Decimal btc) => ( Int64 )( btc * SimpleBitcoinWallet.SatoshiInOneBtc );
+        public static Int64 ToSatoshi( this Decimal btc ) => ( Int64 )( btc * SimpleBitcoinWallet.SatoshiInOneBtc );
 
         /// <summary>Return the <paramref name="wallet" /> in Satoshi.</summary>
         /// <param name="wallet"></param>
         /// <returns></returns>
-        public static Int64 ToSatoshi(this SimpleBitcoinWallet wallet) => wallet.Balance.ToSatoshi();
+        public static Int64 ToSatoshi( this SimpleBitcoinWallet wallet ) => wallet.Balance.ToSatoshi();
 
-        public static Decimal ToμBtc(this Decimal btc) => btc * SimpleBitcoinWallet.ΜBtcInOneBtc;
+        public static Decimal ToμBtc( this Decimal btc ) => btc * SimpleBitcoinWallet.ΜBtcInOneBtc;
 
-        public static IEnumerable<KeyValuePair<ICoin, UInt64>> Transfer([NotNull] this CoinWallet source, [NotNull] CoinWallet target) {
+        public static IEnumerable<KeyValuePair<ICoin, UInt64>> Transfer( [NotNull] this CoinWallet source, [NotNull] CoinWallet target ) {
             if ( source == null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
@@ -239,13 +231,13 @@ namespace Librainian.Measurement.Currency.BTC {
                 }
                 var denomination = pair.Key;
                 var count = pair.Value;
-                transferred.AddOrUpdate( denomination, count, (denomination1, running) => running + count );
+                transferred.AddOrUpdate( denomination, count, ( denomination1, running ) => running + count );
             }
 
             return transferred;
         }
 
-        public static Boolean Transfer([NotNull] this CoinWallet source, [NotNull] CoinWallet target, KeyValuePair<ICoin, UInt64> denominationAndAmount) {
+        public static Boolean Transfer( [NotNull] this CoinWallet source, [NotNull] CoinWallet target, KeyValuePair<ICoin, UInt64> denominationAndAmount ) {
             if ( source == null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
@@ -256,12 +248,12 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        /// Create a TPL dataflow task for depositing large volumes of money into this wallet.
+        ///     Create a TPL dataflow task for depositing large volumes of money into this wallet.
         /// </summary>
         /// <param name="coinWallet"></param>
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
-        public static Task Transfer([NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts) {
+        public static Task Transfer( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts ) {
             if ( coinWallet == null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
@@ -271,14 +263,14 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        /// Given the <paramref name="amount" />, return the unoptimal amount of
-        /// <see cref="ICoin" /> ( <see cref="CoinWallet.Total" />) it would take to
-        /// <see cref="CoinWallet.Total" /> the <paramref name="amount" />.
+        ///     Given the <paramref name="amount" />, return the unoptimal amount of
+        ///     <see cref="ICoin" /> ( <see cref="CoinWallet.Total" />) it would take to
+        ///     <see cref="CoinWallet.Total" /> the <paramref name="amount" />.
         /// </summary>
         /// <param name="amount"></param>
         /// <param name="leftOverAmount">Fractions of coin not accounted for.</param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<ICoin, UInt64>> UnOptimal(this Decimal amount, ref Decimal leftOverAmount) {
+        public static IEnumerable<KeyValuePair<ICoin, UInt64>> UnOptimal( this Decimal amount, ref Decimal leftOverAmount ) {
             var left = new List<ICoin>( PossibleCoins );
             var result = left.ToDictionary<ICoin, ICoin, UInt64>( denomination => denomination, denomination => 0 );
 

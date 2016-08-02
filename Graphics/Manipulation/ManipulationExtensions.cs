@@ -1,40 +1,71 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
 // Donations and royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.I am not responsible for Anything You Do.
-// 
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // Contact me by email if you have any questions or helpful criticism.
-//  
-// "Librainian/ManipulationExtensions.cs" was last cleaned by Rick on 2015/10/04 at 11:17 AM
+//
+// "Librainian/ManipulationExtensions.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.Graphics.Manipulation {
 
     using System;
     using System.Drawing;
     using System.Drawing.Imaging;
+    using System.IO;
+    using FileSystem;
+    using JetBrains.Annotations;
+    using Maths;
 
     public static class ManipulationExtensions {
 
+        [CanBeNull]
+        public static Bitmap LoadAndResize( this String document, Single multiplier ) {
+            return LoadAndResize( new Document( document ), multiplier );
+        }
+
+        [CanBeNull]
+        public static Bitmap LoadAndResize( Document document, Single multiplier ) {
+            if ( !multiplier.IsNumber() ) {
+                return null;
+            }
+            try {
+                var image = Image.FromFile( document.FullPathWithFileName );
+                var newSize = new Size( ( Int32 )( image.Size.Width * multiplier ), ( Int32 )( image.Size.Height * multiplier ) );
+                return new Bitmap( image, newSize );
+            }
+            catch ( FileNotFoundException ) {
+                return null;
+            }
+            catch ( OutOfMemoryException ) {
+                return null;
+            }
+        }
+
         public static Bitmap MakeGrayscale( this Bitmap original ) {
+
             //create a blank bitmap the same size as original
             var newBitmap = new Bitmap( original.Width, original.Height );
 
             //get a graphics object from the new image
             using ( var g = Graphics.FromImage( newBitmap ) ) {
+
                 //create some image attributes
                 var attributes = new ImageAttributes();
 
                 //create the grayscale ColorMatrix
-                var colorMatrix = new ColorMatrix( new[] {new[] {.3f, .3f, .3f, 0, 0}, new[] {.59f, .59f, .59f, 0, 0}, new[] {.11f, .11f, .11f, 0, 0}, new[] {0.0f, 0, 0, 1, 0}, new[] {0.0f, 0, 0, 0, 1}} );
+                var colorMatrix = new ColorMatrix( new[] { new[] { .3f, .3f, .3f, 0, 0 }, new[] { .59f, .59f, .59f, 0, 0 }, new[] { .11f, .11f, .11f, 0, 0 }, new[] { 0.0f, 0, 0, 1, 0 }, new[] { 0.0f, 0, 0, 0, 1 } } );
 
                 //set the color matrix attribute
                 attributes.SetColorMatrix( colorMatrix );
@@ -89,7 +120,5 @@ namespace Librainian.Graphics.Manipulation {
 
             return pixelated;
         }
-
     }
-
 }

@@ -67,7 +67,6 @@ var Trait = (function () {
     var bindThis = Function.prototype.bind ?
         function (fun, self) { return Function.prototype.bind.call(fun, self); } :
         function (fun, self) {
-
             function funcBound(varArgs) {
                 return fun.apply(self, arguments);
             }
@@ -189,9 +188,11 @@ var Trait = (function () {
 
     function identical(x, y) {
         if (x === y) {
+
             // 0 === -0, but they are not identical
             return x !== 0 || 1 / x === 1 / y;
         } else {
+
             // NaN !== NaN, but they are identical.
             // NaNs are the only non-reflexive value, i.e., if x !== x,
             // then x is a NaN.
@@ -205,6 +206,7 @@ var Trait = (function () {
     // a conflict)
 
     function isSameDesc(desc1, desc2) {
+
         // for conflicting properties, don't compare values because
         // the conflicting property values are never equal
         if (desc1.conflict && desc2.conflict) {
@@ -331,15 +333,18 @@ var Trait = (function () {
                     // 'required' property itself:
                     if (pd.required) {
                         return; // skip this property, the required property is
+
                         // now present
                     }
 
                     if (!isSameDesc(newTrait[name], pd)) {
+
                         // a distinct, non-required property with the same name
                         // was previously defined by another trait => mark as
                         // conflicting property
                         newTrait[name] = makeConflictingPropDesc(name);
                     } // else,
+
                     // properties are not in conflict if they refer to the same value
                 } else {
                     newTrait[name] = pd;
@@ -366,10 +371,12 @@ var Trait = (function () {
         var newTrait = {};
 
         forEach(getOwnPropertyNames(trait), function (name) {
+
             // required properties are not excluded but ignored
             if (!hasOwnProperty(exclusions, name) || trait[name].required) {
                 newTrait[name] = trait[name];
             } else {
+
                 // excluded properties are replaced by required properties
                 newTrait[name] = makeRequiredPropDesc(name);
             }
@@ -404,6 +411,7 @@ var Trait = (function () {
         forEach(traits, function (trait) {
             forEach(getOwnPropertyNames(trait), function (name) {
                 var pd = trait[name];
+
                 // add this trait's property to the composite trait only if
                 // - the trait does not yet have this property
                 // - or, the trait does have the property, but it's a required property
@@ -427,13 +435,16 @@ var Trait = (function () {
    */
     /*function override(frontT, backT) {
     var newTrait = {};
+
     // first copy all of backT's properties into newTrait
     forEach(getOwnPropertyNames(backT), function (name) {
       newTrait[name] = backT[name];
     });
+
     // now override all these properties with frontT's properties
     forEach(getOwnPropertyNames(frontT), function (name) {
       var pd = frontT[name];
+
       // frontT's required property does not override the provided property
       if (!(pd.required && hasOwnProperty(newTrait, name))) {
         newTrait[name] = pd;
@@ -471,17 +482,21 @@ var Trait = (function () {
     function rename(map, trait) {
         var renamedTrait = {};
         forEach(getOwnPropertyNames(trait), function (name) {
+
             // required props are never renamed
             if (hasOwnProperty(map, name) && !trait[name].required) {
                 var alias = map[name]; // alias defined in map
                 if (hasOwnProperty(renamedTrait, alias) &&
                     !renamedTrait[alias].required) {
+
                     // could happen if 2 props are mapped to the same alias
                     renamedTrait[alias] = makeConflictingPropDesc(alias);
                 } else {
+
                     // add the property under an alias
                     renamedTrait[alias] = trait[name];
                 }
+
                 // add a required property under the original name
                 // but only if a property under the original name does not exist
                 // such a prop could exist if an earlier prop in the trait was
@@ -491,10 +506,12 @@ var Trait = (function () {
                 }
             } else { // no alias defined
                 if (hasOwnProperty(renamedTrait, name)) {
+
                     // could happen if another prop was previously aliased to name
                     if (!trait[name].required) {
                         renamedTrait[name] = makeConflictingPropDesc(name);
                     }
+
                     // else required property overridden by a previously aliased
                     // property and otherwise ignored
                 } else {
@@ -542,6 +559,7 @@ var Trait = (function () {
     function resolve(resolutions, trait) {
         var renames = {};
         var exclusions = [];
+
         // preprocess renamed and excluded properties
         for (var name in resolutions) {
             if (hasOwnProperty(resolutions, name)) {
@@ -594,6 +612,7 @@ var Trait = (function () {
 
         forEach(getOwnPropertyNames(trait), function (name) {
             var pd = trait[name];
+
             // check for remaining 'required' properties
             // Note: it's OK for the prototype to provide the properties
             if (pd.required) {
@@ -603,8 +622,10 @@ var Trait = (function () {
             } else if (pd.conflict) { // check for remaining conflicting properties
                 throw new Error('Remaining conflicting property: ' + name);
             } else if ('value' in pd) { // data property
+
                 // freeze all function properties and their prototype
                 if (pd.method) { // the property is meant to be used as a method
+
                     // bind 'this' in trait method to the composite object
                     properties[name] = {
                         value: freezeAndBind(pd.value, self),
@@ -666,6 +687,7 @@ var Trait = (function () {
     if (!Object.create) {
         Object.create = objectCreate;
     }
+
     // ES5 does not by default provide Object.getOwnProperties
     // if it's not defined, the Traits Library defines this utility
     // function on Object
@@ -676,6 +698,7 @@ var Trait = (function () {
     // expose the public API of this module
 
     function Trait(record) {
+
         // calling Trait as a function creates a new atomic trait
         return trait(record);
     }

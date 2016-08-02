@@ -1,29 +1,30 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Fuzzy.cs" was last cleaned by Rick on 2015/06/12 at 3:00 PM
+//
+// "Librainian/Fuzzy.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
 
 namespace Librainian.Maths {
 
     using System;
-    using System.Runtime.Serialization;
     using Collections;
     using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Numbers;
     using Threading;
 
     public enum LowMiddleHigh {
@@ -35,31 +36,31 @@ namespace Librainian.Maths {
     }
 
     /// <summary>
-    /// A Double number, constrained between 0 and 1. Kinda thread-safe by Interlocked
+    ///     A Double number, constrained between 0 and 1. Kinda thread-safe by Interlocked
     /// </summary>
-    [DataContract]
+    [JsonObject]
     public struct Fuzzy : ICloneable {
         public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
 
         /// <summary>
-        /// 1
+        ///     1
         /// </summary>
         public const Double MaxValue = 1D;
 
         /// <summary>
-        /// 0
+        ///     0
         /// </summary>
         public const Double MinValue = 0D;
 
         /// <summary>
-        /// ~25 to 75% probability.
+        ///     ~25 to 75% probability.
         /// </summary>
         private static readonly PairOfDoubles Undecided = new PairOfDoubles( low: Combine( MinValue, HalfValue ), high: Combine( HalfValue, MaxValue ) );
 
         /// <summary>
-        /// ONLY used in the getter and setter.
+        ///     ONLY used in the getter and setter.
         /// </summary>
-        [DataMember]
+        [JsonProperty]
         private AtomicDouble _value;
 
         //private static readonly Fuzzy Truer = Fuzzy.Combine( Undecided, MaxValue );
@@ -67,7 +68,7 @@ namespace Librainian.Maths {
         //private static readonly Fuzzy UndecidedUpper = Combine( Undecided, Truer);
         //private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
         /// <summary>
-        /// Initializes a random number between 0 and 1
+        ///     Initializes a random number between 0 and 1
         /// </summary>
         public Fuzzy( Double? value = null ) : this() {
             if ( value.HasValue ) {
@@ -118,7 +119,7 @@ namespace Librainian.Maths {
         public Boolean IsUndecided() => !this.IsTrueish() && !this.IsFalseish();
 
         /// <summary>
-        /// Initializes a random number between 0 and 1 within a range, defaulting to Middle range (~0.50)
+        ///     Initializes a random number between 0 and 1 within a range, defaulting to Middle range (~0.50)
         /// </summary>
         public void Randomize( LowMiddleHigh? lmh = LowMiddleHigh.Middle ) {
             switch ( lmh ) {

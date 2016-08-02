@@ -1,29 +1,120 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
 // Donations and royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // Contact me by email if you have any questions or helpful criticism.
-//  
-// "Librainian/MathHashing.cs" was last cleaned by Rick on 2015/10/08 at 6:35 PM
+//
+// "Librainian/MathHashing.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
 
 namespace Librainian.Maths {
 
     using System;
+    using System.IO;
     using System.Linq;
+    using System.Runtime.CompilerServices;
+    using FileSystem;
     using JetBrains.Annotations;
 
     public static class MathHashing {
+
+        /// <summary>
+        ///     Returns argument increased to the nearest number divisible by 16
+        /// </summary>
+        public static Int32 Align16( this Int32 i ) {
+            var r = i & 15; // 00001111
+            return r == 0 ? i : i + ( 16 - r );
+        }
+
+        /// <summary>
+        ///     Returns argument increased to the nearest number divisible by 16
+        /// </summary>
+        public static Int64 Align16( this Int64 i ) {
+            var r = i & 15; // 00001111
+            return r == 0 ? i : i + ( 16 - r );
+        }
+
+        /// <summary>
+        ///     Returns argument increased to the nearest number divisible by 8
+        /// </summary>
+        public static Int32 Align8( this Int32 i ) {
+            var r = i & 7; // 00000111
+            return r == 0 ? i : i + ( 8 - r );
+        }
+
+        /// <summary>
+        ///     Returns argument increased to the nearest number divisible by 8
+        /// </summary>
+        public static Int64 Align8( this Int64 i ) {
+            var r = i & 7; // 00000111
+            return r == 0 ? i : i + ( 8 - r );
+        }
+
+        /// <summary>
+        ///     poor mans crc
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <returns></returns>
+        public static Int32 CalcHash( [NotNull] this FileInfo fileInfo ) {
+            if ( fileInfo == null ) {
+                throw new ArgumentNullException( nameof( fileInfo ) );
+            }
+
+            return fileInfo.AsByteArray().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
+        }
+
+        /// <summary>
+        ///     poor mans crc
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        public static Int32 CalcHash( [NotNull] this Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( nameof( document ) );
+            }
+
+            var fileInfo = new FileInfo( document.FullPathWithFileName );
+            if ( fileInfo == null ) {
+                throw new NullReferenceException( "fileInfo" );
+            }
+
+            return fileInfo.AsByteArray().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
+        }
+
+        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2 ) {
+            return ( ( h1 << 5 ) + h1 ) ^ h2;
+        }
+
+        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3 ) {
+            return CombineHashCodes( h1, h2 ).CombineHashCodes( h3 );
+        }
+
+        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4 ) {
+            return CombineHashCodes( h1, h2 ).CombineHashCodes( h3.CombineHashCodes( h4 ) );
+        }
+
+        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5 ) {
+            return h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5 );
+        }
+
+        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6 ) {
+            return h1.CombineHashCodes( h2, h3 ).CombineHashCodes( h4.CombineHashCodes( h5, h6 ) );
+        }
+
+        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6, Int32 h7 ) {
+            return h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5.CombineHashCodes( h6, h7 ) );
+        }
 
         public static Byte GetHashCodeByte<TLeft>( this TLeft objectA, Byte maximum = Byte.MaxValue ) {
             if ( Equals( objectA, default( TLeft ) ) ) {
@@ -36,12 +127,13 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        /// Returns the combined <see cref="object.GetHashCode" /> of all <paramref name="objects" />.
+        ///     Returns the combined <see cref="Object.GetHashCode" /> of all <paramref name="objects" />.
         /// </summary>
         /// <param name="objects"></param>
         /// <returns></returns>
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [Pure]
-        public static Int64 GetHashCodes( params Object[] objects ) {
+        public static Int32 GetHashCodes( params Object[] objects ) {
             if ( null == objects ) {
                 return 0;
             }
@@ -54,13 +146,13 @@ namespace Librainian.Maths {
                 var objectA = objects[ 0 ];
                 var hashA = objectA.GetHashCode();
 
-                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate<Int32, Int64>( hashA, ( current, hashB ) => ( ( current << 5 ) + current ) ^ hashB );
+                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate( hashA, ( current, hashB ) => ( ( current << 5 ) + current ) ^ hashB );
             }
         }
 
         /// <summary>
-        /// Returns a combined <see cref="object.GetHashCode" /> based on
-        /// <paramref name="objectA" /> and <paramref name="objectB" />.
+        ///     Returns a combined <see cref="object.GetHashCode" /> based on
+        ///     <paramref name="objectA" /> and <paramref name="objectB" />.
         /// </summary>
         /// <typeparam name="TLeft"></typeparam>
         /// <typeparam name="TRight"></typeparam>
@@ -74,10 +166,8 @@ namespace Librainian.Maths {
             if ( Equals( objectB, default( TRight ) ) ) {
                 return 0;
             }
-            unchecked {
-                var bob = new Translate64( objectA.GetHashCode(), objectB.GetHashCode() );
-                return bob.UnsignedValue;
-            }
+            var bob = new Translate64( objectA.GetHashCode(), objectB.GetHashCode() );
+            return bob.UnsignedValue;
         }
 
         public static UInt16 GetHashCodeUInt16<TLeft>( this TLeft objectA, UInt16 maximum = UInt16.MaxValue ) {
@@ -111,8 +201,8 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        /// Returns a combined <see cref="object.GetHashCode" /> based on
-        /// <paramref name="objectA" /> and <paramref name="objectB" />.
+        ///     Returns a combined <see cref="object.GetHashCode" /> based on
+        ///     <paramref name="objectA" /> and <paramref name="objectB" />.
         /// </summary>
         /// <typeparam name="TLeft"></typeparam>
         /// <typeparam name="TRight"></typeparam>
@@ -135,65 +225,5 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary>
-        /// Returns argument increased to the nearest number divisible by 8
-        /// </summary>
-        public static Int32 Align8( this Int32 i ) {
-            var r = i & 7; // 00000111
-            return r == 0 ? i : i + ( 8 - r );
-        }
-
-        /// <summary>
-        /// Returns argument increased to the nearest number divisible by 16
-        /// </summary>
-        public static Int32 Align16( this Int32 i ) {
-            var r = i & 15;// 00001111
-            return r == 0 ? i : i + ( 16 - r );
-        }
-
-        /// <summary>
-        /// Returns argument increased to the nearest number divisible by 8
-        /// </summary>
-        public static Int64 Align8( this Int64 i ) {
-            var r = i & 7; // 00000111
-            return r == 0 ? i : i + ( 8 - r );
-        }
-
-        /// <summary>
-        /// Returns argument increased to the nearest number divisible by 16
-        /// </summary>
-        public static Int64 Align16( this Int64 i ) {
-            var r = i & 15;// 00001111
-            return r == 0 ? i : i + ( 16 - r );
-        }
-
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2 ) {
-            return ( ( h1 << 5 ) + h1 ) ^ h2;
-        }
-
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3 ) {
-            return CombineHashCodes( h1, h2 ).CombineHashCodes( h3 );
-        }
-
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4 ) {
-            return CombineHashCodes( h1, h2 ).CombineHashCodes( h3.CombineHashCodes( h4 ) );
-        }
-
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5 ) {
-            return h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5 );
-        }
-
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6 ) {
-            return h1.CombineHashCodes( h2, h3 ).CombineHashCodes( h4.CombineHashCodes( h5, h6 ) );
-        }
-
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6, Int32 h7 ) {
-            return h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5.CombineHashCodes( h6, h7 ) );
-        }
-
-        internal static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6, Int32 h7, Int32 h8 ) {
-            return h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5.CombineHashCodes( h6, h7, h8 ) );
-        }
     }
-
 }

@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Surfer.cs" was last cleaned by Rick on 2015/06/12 at 2:56 PM
+//
+// "Librainian/Surfer.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Internet {
 
@@ -40,36 +40,11 @@ namespace Librainian.Internet {
 
         private Boolean _downloadInProgressStatus;
 
-        /// <summary>Returns True if a download is currently in progress</summary>
-        public Boolean DownloadInProgress {
-            get {
-                try {
-                    this._downloadInProgressAccess.EnterReadLock();
-                    return this._downloadInProgressStatus;
-                }
-                finally {
-                    this._downloadInProgressAccess.ExitReadLock();
-                }
-            }
-
-            private set {
-                try {
-                    this._downloadInProgressAccess.EnterWriteLock();
-                    this._downloadInProgressStatus = value;
-                }
-                finally {
-                    this._downloadInProgressAccess.ExitWriteLock();
-                }
-            }
-        }
-
-        public Surfer(Action<DownloadStringCompletedEventArgs> onDownloadStringCompleted) {
-            this._webclient = new WebClient {
-                CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default )
-            };
+        public Surfer( Action<DownloadStringCompletedEventArgs> onDownloadStringCompleted ) {
+            this._webclient = new WebClient { CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default ) };
 
             if ( null != onDownloadStringCompleted ) {
-                this._webclient.DownloadStringCompleted += (sender, e) => onDownloadStringCompleted( e );
+                this._webclient.DownloadStringCompleted += ( sender, e ) => onDownloadStringCompleted( e );
             }
             else {
                 this._webclient.DownloadStringCompleted += this.webclient_DownloadStringCompleted;
@@ -94,7 +69,30 @@ namespace Librainian.Internet {
             */
         }
 
-        public static IEnumerable<UriLinkItem> ParseLinks(Uri baseUri, String webpage) {
+        /// <summary>Returns True if a download is currently in progress</summary>
+        public Boolean DownloadInProgress {
+            get {
+                try {
+                    this._downloadInProgressAccess.EnterReadLock();
+                    return this._downloadInProgressStatus;
+                }
+                finally {
+                    this._downloadInProgressAccess.ExitReadLock();
+                }
+            }
+
+            private set {
+                try {
+                    this._downloadInProgressAccess.EnterWriteLock();
+                    this._downloadInProgressStatus = value;
+                }
+                finally {
+                    this._downloadInProgressAccess.ExitWriteLock();
+                }
+            }
+        }
+
+        public static IEnumerable<UriLinkItem> ParseLinks( Uri baseUri, String webpage ) {
 
             // ReSharper disable LoopCanBeConvertedToQuery
             foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
@@ -103,21 +101,18 @@ namespace Librainian.Internet {
                 var value = match.Groups[ 1 ].Value;
                 var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
 
-                var i = new UriLinkItem {
-                    Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ),
-                    Href = new Uri( baseUri: baseUri, relativeUri: m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
-                };
+                var i = new UriLinkItem { Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ), Href = new Uri( baseUri: baseUri, relativeUri: m2.Success ? m2.Groups[ 1 ].Value : String.Empty ) };
 
                 yield return i;
             }
         }
 
         /// <summary>
-        /// Returns True if the address was successfully added to the queue to be downloaded.
+        ///     Returns True if the address was successfully added to the queue to be downloaded.
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
-        public Boolean Surf(String address) {
+        public Boolean Surf( String address ) {
             if ( String.IsNullOrWhiteSpace( value: address ) ) {
                 return false;
             }
@@ -132,11 +127,11 @@ namespace Librainian.Internet {
         }
 
         /// <summary>
-        /// Returns True if the address was successfully added to the queue to be downloaded.
+        ///     Returns True if the address was successfully added to the queue to be downloaded.
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
-        public Boolean Surf(Uri address) {
+        public Boolean Surf( Uri address ) {
             if ( null == address ) {
                 return false;
             }
@@ -152,7 +147,7 @@ namespace Librainian.Internet {
             }
         }
 
-        internal void webclient_DownloadStringCompleted(Object sender, DownloadStringCompletedEventArgs e) {
+        internal void webclient_DownloadStringCompleted( Object sender, DownloadStringCompletedEventArgs e ) {
             if ( e.UserState is Uri ) {
                 String.Format( format: "Surf(): Download completed on {0}", arg0: e.UserState as Uri ).WriteLine();
                 this._pastUrls.Add( e.UserState as Uri );
@@ -172,7 +167,7 @@ namespace Librainian.Internet {
             }
 
             this.DownloadInProgress = true;
-                                                                       $"Surf(): Starting download: {address.AbsoluteUri}".WriteLine();
+            $"Surf(): Starting download: {address.AbsoluteUri}".WriteLine();
             this._webclient.DownloadStringAsync( address: address, userToken: address );
         } ).ContinueWith( t => {
             if ( this._urls.Any() ) {

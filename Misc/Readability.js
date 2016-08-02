@@ -66,6 +66,7 @@ var readability =
         videos: /http:\/\/(www\.)?(youtube|vimeo)\.com/i,
         skipFootnoteLink: /^\s*(\[?[a-z0-9]{1,2}\]?|^|edit|citation needed)\s*$/i,
         nextLink: /(next|weiter|continue|>([^\|]|$)|Â»([^\|]|$))/i,
+
         // Match: next, continue, >, >>, Â» but not >|, Â»| as those usually mean last.
         prevLink: /(prev|earl|old|new|<|Â«)/i
     },
@@ -267,7 +268,6 @@ var readability =
     * @return "rtl" || "ltr"
     **/
     getSuggestedDirection: function (text) {
-
         function sanitizeText() {
             return text.replace(/@\w+/, "");
         }
@@ -350,6 +350,7 @@ var readability =
     * For research purposes, generate an img src that contains the chosen readstyle etc,
     * so we can generate aggregate stats and change styles based on them in the future
     **/
+
         // var statsQueryParams = "?readStyle=" + encodeURIComponent(readStyle) + "&readMargin=" + encodeURIComponent(readMargin) + "&readSize=" + encodeURIComponent(readSize);
         /* TODO: attach this to an image */
 
@@ -1029,6 +1030,7 @@ var readability =
         // Go until there are no more child nodes
         while (cur !== null) {
             if (cur.nodeType == 1) {
+
                 // Remove style attribute(s) :
                 if (cur.className != "readability-styled") {
                     cur.removeAttribute("style");
@@ -1255,10 +1257,12 @@ var readability =
         **/
             linkTextAsNumber = parseInt(linkText, 10);
             if (linkTextAsNumber) {
+
                 // Punish 1 since we're either already there, or it's probably before what we want anyways.
                 if (linkTextAsNumber === 1) {
                     linkObj.score -= 10;
                 } else {
+
                     // Todo: Describe this better
                     linkObj.score += Math.max(0, 10 - linkTextAsNumber);
                 }
@@ -1395,7 +1399,6 @@ var readability =
         }) {
             readability.ajax(pageUrl, {
                 success: function (r) {
-
                     /* First, check to see if we have a matching ETag in headers - if we do, this is a duplicate page. */
                     var eTag = r.getResponseHeader('ETag');
                     if (eTag) {
@@ -1578,7 +1581,6 @@ var readability =
     * @return void
     **/
     cleanConditionally: function (e, tag) {
-
         if (!readability.flagIsActive(readability.FLAG_CLEAN_CONDITIONALLY)) {
             return;
         }

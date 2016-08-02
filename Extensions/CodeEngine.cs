@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/CodeEngine.cs" was last cleaned by Rick on 2015/06/12 at 3:07 PM
+//
+// "Librainian/CodeEngine.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Extensions {
 
@@ -32,13 +32,35 @@ namespace Librainian.Extensions {
     public class CodeEngine {
         public static readonly CSharpCodeProvider CSharpCodeProvider = new CSharpCodeProvider();
 
-        public Action<String> Output = delegate {
-        };
+        public Action<String> Output = delegate { };
 
         private readonly Object _oRun = new Object();
+
         private readonly Object _oSourceCode = new Object();
+
         private CompilerResults _compilerResults;
+
         private String _mSourceCode = String.Empty;
+
+        public CodeEngine( String sourcePath, Action<String> output ) : this( Guid.NewGuid(), sourcePath, output ) {
+        }
+
+        public CodeEngine( Guid id, String sourcePath, Action<String> output ) {
+            if ( null != output ) {
+                this.Output = output;
+            }
+
+            //if ( ID.Equals( Guid.Empty ) ) { throw new InvalidOperationException( "Null guid given" ); }
+            this.SourcePath = Path.Combine( sourcePath, id + ".cs" );
+            if ( !this.Load() ) {
+                this.SourceCode = DefaultCode();
+            }
+        }
+
+        public interface IOutput {
+
+            void Output();
+        }
 
         public Guid ID {
             get; private set;
@@ -67,27 +89,7 @@ namespace Librainian.Extensions {
             get;
         }
 
-        public CodeEngine(String sourcePath, Action<String> output) : this( Guid.NewGuid(), sourcePath, output ) {
-        }
-
-        public CodeEngine(Guid id, String sourcePath, Action<String> output) {
-            if ( null != output ) {
-                this.Output = output;
-            }
-
-            //if ( ID.Equals( Guid.Empty ) ) { throw new InvalidOperationException( "Null guid given" ); }
-            this.SourcePath = Path.Combine( sourcePath, id + ".cs" );
-            if ( !this.Load() ) {
-                this.SourceCode = DefaultCode();
-            }
-        }
-
-        public interface IOutput {
-
-            void Output();
-        }
-
-        public static Boolean Test(Action<String> output) {
+        public static Boolean Test( Action<String> output ) {
             try {
                 var test = new CodeEngine( id: Guid.Empty, sourcePath: Path.GetTempPath(), output: output );
                 var ooo = test.Run();
@@ -186,10 +188,7 @@ namespace Coding
         /// <summary>Prepare the assembly for Run()</summary>
         private Boolean Compile() {
             try {
-                this._compilerResults = CSharpCodeProvider.CompileAssemblyFromSource( new CompilerParameters {
-                    GenerateInMemory = true,
-                    GenerateExecutable = false
-                }, this.SourceCode );
+                this._compilerResults = CSharpCodeProvider.CompileAssemblyFromSource( new CompilerParameters { GenerateInMemory = true, GenerateExecutable = false }, this.SourceCode );
                 if ( this._compilerResults.Errors.HasErrors ) {
                     if ( Debugger.IsAttached ) {
                         Debugger.Break();

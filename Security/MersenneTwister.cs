@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/MersenneTwister.cs" was last cleaned by Rick on 2015/06/12 at 3:12 PM
+//
+// "Librainian/MersenneTwister.cs" was last cleaned by Rick on 2016/06/18 at 10:56 PM
 
 namespace Librainian.Security {
 
@@ -33,14 +33,14 @@ namespace Librainian.Security {
         private const UInt32 TemperingMaskB = 0x9d2c5680;
         private const UInt32 TemperingMaskC = 0xefc60000;
         private const UInt32 UpperMask = 0x80000000; /* most significant w-r bits */
-                                                   /* least significant r bits */
-                                                   /* Tempering parameters */
+        /* least significant r bits */
+        /* Tempering parameters */
         private static readonly UInt32[] Mag01 = { 0x0, MatrixA };
         private readonly UInt32[] _mt = new UInt32[ N ]; /* the array for the state vector  */
         private Int16 _mti;
         /* initializing the array with a NONZERO seed */
 
-        public MersenneTwister(UInt32 seed) {
+        public MersenneTwister( UInt32 seed ) {
             /* setting initial seeds to mt[N] using         */
             /* the generator Line 25 of Table 1 in          */
             /* [KNUTH 1981, The Art of Computer Programming */
@@ -52,12 +52,11 @@ namespace Librainian.Security {
         }
 
         /// <summary>a default initial seed is used</summary>
-        public MersenneTwister() : this( 4357 ) {
-        }
+        public MersenneTwister() : this( 4357 ) { }
 
         public override Int32 Next() => this.Next( Int32.MaxValue );
 
-        public override Int32 Next(Int32 maxValue) /* throws ArgumentOutOfRangeException */ {
+        public override Int32 Next( Int32 maxValue ) /* throws ArgumentOutOfRangeException */ {
             if ( maxValue > 1 ) {
                 return ( Int32 )( this.NextDouble() * maxValue );
             }
@@ -68,7 +67,7 @@ namespace Librainian.Security {
             return 0;
         }
 
-        public override Int32 Next(Int32 minValue, Int32 maxValue) {
+        public override Int32 Next( Int32 minValue, Int32 maxValue ) {
             if ( maxValue < minValue ) {
                 throw new ArgumentOutOfRangeException();
             }
@@ -81,7 +80,7 @@ namespace Librainian.Security {
         /// <summary></summary>
         /// <param name="buffer"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public override void NextBytes(Byte[] buffer) /* throws ArgumentNullException*/ {
+        public override void NextBytes( Byte[] buffer ) /* throws ArgumentNullException*/ {
             if ( buffer == null ) {
                 throw new ArgumentNullException();
             }
@@ -97,9 +96,9 @@ namespace Librainian.Security {
 
         public virtual UInt32 NextUInt() => this.GenerateUInt();
 
-        public virtual UInt32 NextUInt(UInt32 maxValue) => ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / maxValue ) );
+        public virtual UInt32 NextUInt( UInt32 maxValue ) => ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / maxValue ) );
 
-        public virtual UInt32 NextUInt(UInt32 minValue, UInt32 maxValue) /* throws ArgumentOutOfRangeException */ {
+        public virtual UInt32 NextUInt( UInt32 minValue, UInt32 maxValue ) /* throws ArgumentOutOfRangeException */ {
             if ( minValue >= maxValue ) {
                 throw new ArgumentOutOfRangeException();
             }
@@ -139,12 +138,12 @@ namespace Librainian.Security {
             return y;
         }
 
-        private static UInt32 TEMPERING_SHIFT_L(UInt32 y) => y >> 18;
+        private static UInt32 TEMPERING_SHIFT_L( UInt32 y ) => y >> 18;
 
-        private static UInt32 TEMPERING_SHIFT_S(UInt32 y) => y << 7;
+        private static UInt32 TEMPERING_SHIFT_S( UInt32 y ) => y << 7;
 
-        private static UInt32 TEMPERING_SHIFT_T(UInt32 y) => y << 15;
+        private static UInt32 TEMPERING_SHIFT_T( UInt32 y ) => y << 15;
 
-        private static UInt32 TEMPERING_SHIFT_U(UInt32 y) => y >> 11;
+        private static UInt32 TEMPERING_SHIFT_U( UInt32 y ) => y >> 11;
     }
 }

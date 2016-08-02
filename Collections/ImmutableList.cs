@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/ImmutableList.cs" was last cleaned by Rick on 2015/06/12 at 2:50 PM
+//
+// "Librainian/ImmutableList.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Collections {
 
@@ -28,38 +28,14 @@ namespace Librainian.Collections {
     using JetBrains.Annotations;
 
     /// <summary>
-    /// A list that has been written to be observationally immutable. A mutable array is used as the backing store for the list, but no mutable operations are offered.
+    ///     A list that has been written to be observationally immutable. A mutable array is used as the backing store for the
+    ///     list, but no mutable operations are offered.
     /// </summary>
     /// <typeparam name="T">The type of elements contained in the list.</typeparam>
     /// <seealso cref="http://joeduffyblog.com/2007/11/11/immutable-types-for-c/" />
     [Immutable]
     public sealed class ImmutableList<T> : IList<T> {
         private readonly T[] _mArray;
-
-        /// <summary>Retrieves the immutable count of the list.</summary>
-        public Int32 Count => this._mArray.Length;
-
-        /// <summary>
-        /// Whether the list is read only: because the list is immutable, this is always true.
-        /// </summary>
-        public Boolean IsReadOnly => true;
-
-        /// <summary>
-        /// Accesses the element at the specified index. Because the list is immutable, the setter
-        /// will always throw an exception.
-        /// </summary>
-        /// <param name="index">The index to access.</param>
-        /// <returns>The element at the specified index.</returns>
-        public T this[ Int32 index ] {
-            get {
-                return this._mArray[ index ];
-            }
-
-            // ReSharper disable once ValueParameterNotUsed
-            set {
-                ThrowMutableException( "CopyAndSet" );
-            }
-        }
 
         /// <summary>Create a new list.</summary>
         public ImmutableList() {
@@ -83,6 +59,31 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( nameof( enumerableToCopy ) );
             }
             this._mArray = enumerableToCopy.ToArray();
+        }
+
+        /// <summary>Retrieves the immutable count of the list.</summary>
+        public Int32 Count => this._mArray.Length;
+
+        /// <summary>
+        ///     Whether the list is read only: because the list is immutable, this is always true.
+        /// </summary>
+        public Boolean IsReadOnly => true;
+
+        /// <summary>
+        ///     Accesses the element at the specified index. Because the list is immutable, the setter
+        ///     will always throw an exception.
+        /// </summary>
+        /// <param name="index">The index to access.</param>
+        /// <returns>The element at the specified index.</returns>
+        public T this[ Int32 index ] {
+            get {
+                return this._mArray[ index ];
+            }
+
+            // ReSharper disable once ValueParameterNotUsed
+            set {
+                ThrowMutableException( "CopyAndSet" );
+            }
         }
 
         /// <summary>Checks whether the specified item is contained in the list.</summary>
@@ -158,25 +159,17 @@ namespace Librainian.Collections {
         /// <returns>An enumerator.</returns>
         public IEnumerator<T> GetEnumerator() => ( ( IEnumerable<T> )this._mArray ).GetEnumerator();
 
-        /// <summary>Finds the index of the specified element.</summary>
-        /// <param name="item">An item to search for.</param>
-        /// <returns>The index of the item, or -1 if it was not found.</returns>
-        public Int32 IndexOf( T item ) => Array.IndexOf( this._mArray, item );
-
-        /// <summary>
-        /// A helper method used below when a mutable method is accessed. Several operations on the
-        /// collections interfaces IList&lt;T&gt; and ICollection&lt;T&gt; are mutable, so we cannot
-        /// support them. We offer immutable versions of each.
-        /// </summary>
-        private static void ThrowMutableException( String copyMethod ) {
-            throw new InvalidOperationException( $"Cannot mutate an immutable list; see copying method ‘{copyMethod}’" );
-        }
-
         /// <summary>This method is unsupported on this type, because it is immutable.</summary>
         void ICollection<T>.Add( T item ) => ThrowMutableException( "CopyAndAdd" );
 
         /// <summary>This method is unsupported on this type, because it is immutable.</summary>
         void ICollection<T>.Clear() => ThrowMutableException( "CopyAndClear" );
+
+        /// <summary>This method is unsupported on this type, because it is immutable.</summary>
+        Boolean ICollection<T>.Remove( T item ) {
+            ThrowMutableException( "CopyAndRemove" );
+            return false;
+        }
 
         /// <summary>Retrieves an enumerator for the list’s collections.</summary>
         /// <returns>An enumerator.</returns>
@@ -186,12 +179,20 @@ namespace Librainian.Collections {
         void IList<T>.Insert( Int32 index, T item ) => ThrowMutableException( "CopyAndInsert" );
 
         /// <summary>This method is unsupported on this type, because it is immutable.</summary>
-        Boolean ICollection<T>.Remove( T item ) {
-            ThrowMutableException( "CopyAndRemove" );
-            return false;
-        }
-
-        /// <summary>This method is unsupported on this type, because it is immutable.</summary>
         void IList<T>.RemoveAt( Int32 index ) => ThrowMutableException( "CopyAndRemoveAt" );
+
+        /// <summary>Finds the index of the specified element.</summary>
+        /// <param name="item">An item to search for.</param>
+        /// <returns>The index of the item, or -1 if it was not found.</returns>
+        public Int32 IndexOf( T item ) => Array.IndexOf( this._mArray, item );
+
+        /// <summary>
+        ///     A helper method used below when a mutable method is accessed. Several operations on the
+        ///     collections interfaces IList&lt;T&gt; and ICollection&lt;T&gt; are mutable, so we cannot
+        ///     support them. We offer immutable versions of each.
+        /// </summary>
+        private static void ThrowMutableException( String copyMethod ) {
+            throw new InvalidOperationException( $"Cannot mutate an immutable list; see copying method ‘{copyMethod}’" );
+        }
     }
 }

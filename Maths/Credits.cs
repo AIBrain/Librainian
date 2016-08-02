@@ -1,44 +1,48 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.I am not responsible for Anything You Do.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // Contact me by email if you have any questions or helpful criticism.
-//  
-// "Librainian/Credits.cs" was last cleaned by Rick on 2015/08/05 at 1:40 PM
+//
+// "Librainian/Credits.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
 
 namespace Librainian.Maths {
 
     using System;
     using System.Diagnostics;
-    using System.Runtime.Serialization;
     using System.Threading;
     using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     /// <summary>
-    /// <para>Keep count of credits, current and lifetime.</para></summary>
-    [DataContract( IsReference = true )]
-    [Serializable]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    ///     <para>Keep count of credits, current and lifetime.</para>
+    /// </summary>
+    [JsonObject]
+    [DebuggerDisplay( "{ToString(),nq}" )]
     public class Credits {
-
-        /// <summary>ONLY used in the getter and setter.</summary>
-        [DataMember] private UInt64 _currentCredits;
-
-        /// <summary>ONLY used in the getter and setter.</summary>
-        [DataMember] private UInt64 _lifetimeCredits;
 
         /// <summary>No credits.</summary>
         public static readonly Credits Zero = new Credits( currentCredits: 0, lifetimeCredits: 0 );
+
+        /// <summary>ONLY used in the getter and setter.</summary>
+        [JsonProperty]
+        private UInt64 _currentCredits;
+
+        /// <summary>ONLY used in the getter and setter.</summary>
+        [JsonProperty]
+        private UInt64 _lifetimeCredits;
 
         public Credits( UInt64 currentCredits = 0, UInt64 lifetimeCredits = 0 ) {
             this.CurrentCredits = currentCredits;
@@ -46,18 +50,24 @@ namespace Librainian.Maths {
         }
 
         public UInt64 CurrentCredits {
-            get { return Thread.VolatileRead( ref this._currentCredits ); }
+            get {
+                return Thread.VolatileRead( ref this._currentCredits );
+            }
 
-            private set { Thread.VolatileWrite( ref this._currentCredits, value ); }
+            private set {
+                Thread.VolatileWrite( ref this._currentCredits, value );
+            }
         }
 
         public UInt64 LifetimeCredits {
-            get { return Thread.VolatileRead( ref this._lifetimeCredits ); }
+            get {
+                return Thread.VolatileRead( ref this._lifetimeCredits );
+            }
 
-            private set { Thread.VolatileWrite( ref this._lifetimeCredits, value ); }
+            private set {
+                Thread.VolatileWrite( ref this._lifetimeCredits, value );
+            }
         }
-
-        private String DebuggerDisplay => this.ToString();
 
         public static Credits Combine( [NotNull] Credits left, [NotNull] Credits right ) {
             if ( left == null ) {
@@ -77,8 +87,8 @@ namespace Librainian.Maths {
         public Credits Clone() => new Credits( this.CurrentCredits, this.LifetimeCredits );
 
         public void SubtractCredits( UInt64 credits = 1 ) {
-            var currentcredits = ( Int64 ) this.CurrentCredits;
-            if ( currentcredits - ( Int64 ) credits < 0 ) {
+            var currentcredits = ( Int64 )this.CurrentCredits;
+            if ( currentcredits - ( Int64 )credits < 0 ) {
                 this.CurrentCredits = 0;
             }
             else {
@@ -87,7 +97,5 @@ namespace Librainian.Maths {
         }
 
         public override String ToString() => $"{this.CurrentCredits:N0} credits ({this.LifetimeCredits:N0} lifetime credits).";
-
     }
-
 }

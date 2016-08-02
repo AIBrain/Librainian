@@ -1,22 +1,22 @@
-// Copyright 2015 Rick@AIBrain.org.
-// 
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/HttpServer.cs" was last cleaned by Rick on 2015/06/12 at 2:56 PM
+//
+// "Librainian/HttpServer.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Internet.Servers {
 
@@ -47,20 +47,20 @@ namespace Librainian.Internet.Servers {
 
         /// <summary></summary>
         /// <param name="port">
-        /// The port number on which to accept regular http connections. If -1, the Server will not
-        /// listen for http connections.
+        ///     The port number on which to accept regular http connections. If -1, the Server will not
+        ///     listen for http connections.
         /// </param>
         /// <param name="httpsPort">
-        /// (Optional) The port number on which to accept https connections. If -1, the Server will
-        /// not listen for https connections.
+        ///     (Optional) The port number on which to accept https connections. If -1, the Server will
+        ///     not listen for https connections.
         /// </param>
         /// <param name="cert">
-        /// (Optional) Certificate to use for https connections. If null and an httpsPort was
-        /// specified, a certificate is automatically created if necessary and loaded from
-        /// "SimpleHttpServer-SslCert.pfx" in the same directory that the current executable is
-        /// located in.
+        ///     (Optional) Certificate to use for https connections. If null and an httpsPort was
+        ///     specified, a certificate is automatically created if necessary and loaded from
+        ///     "SimpleHttpServer-SslCert.pfx" in the same directory that the current executable is
+        ///     located in.
         /// </param>
-        public HttpServer(Int32 port, Int32 httpsPort = -1, X509Certificate2 cert = null) {
+        public HttpServer( Int32 port, Int32 httpsPort = -1, X509Certificate2 cert = null ) {
             this.Port = port;
             this.SecurePort = httpsPort;
             this._sslCertificate = cert;
@@ -73,9 +73,7 @@ namespace Librainian.Internet.Servers {
             }
 
             if ( this.Port > -1 ) {
-                this._thrHttp = new Thread( this.Listen ) {
-                    Name = "HttpServer Thread"
-                };
+                this._thrHttp = new Thread( this.Listen ) { Name = "HttpServer Thread" };
             }
 
             //if ( this.SecurePort > -1 ) {
@@ -116,26 +114,26 @@ namespace Librainian.Internet.Servers {
 
         /// <summary>Handles an Http GET request.</summary>
         /// <param name="p">The HttpProcessor handling the request.</param>
-        public abstract void HandleGetRequest(HttpProcessor p);
+        public abstract void HandleGetRequest( HttpProcessor p );
 
         /// <summary>Handles an Http POST request.</summary>
         /// <param name="p">The HttpProcessor handling the request.</param>
         /// <param name="inputData">
-        /// The input stream. If the request's MIME type was "application/x-www-form-urlencoded",
-        /// the StreamReader will be null and you can obtain the parameter values using
-        /// p.PostParams, p.GetPostParam(), p.GetPostIntParam(), etc.
+        ///     The input stream. If the request's MIME type was "application/x-www-form-urlencoded",
+        ///     the StreamReader will be null and you can obtain the parameter values using
+        ///     p.PostParams, p.GetPostParam(), p.GetPostIntParam(), etc.
         /// </param>
-        public abstract void HandlePostRequest(HttpProcessor p, StreamReader inputData);
+        public abstract void HandlePostRequest( HttpProcessor p, StreamReader inputData );
 
         /// <summary>
-        /// Blocks the calling thread until the http listening threads finish or the timeout
-        /// expires. Call this after calling Stop() if you need to wait for the listener to clean
-        /// up, such as if you intend to start another instance of the Server using the same port(s).
+        ///     Blocks the calling thread until the http listening threads finish or the timeout
+        ///     expires. Call this after calling Stop() if you need to wait for the listener to clean
+        ///     up, such as if you intend to start another instance of the Server using the same port(s).
         /// </summary>
         /// <param name="timeoutMilliseconds">
-        /// Maximum number of milliseconds to wait for the HttpServer Threads to stop.
+        ///     Maximum number of milliseconds to wait for the HttpServer Threads to stop.
         /// </param>
-        public void Join(Int32 timeoutMilliseconds = 2000) {
+        public void Join( Int32 timeoutMilliseconds = 2000 ) {
             var stopwatch = new StopWatch();
             var timeToWait = timeoutMilliseconds;
             stopwatch.Start();
@@ -220,15 +218,15 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// This is called when the Server is stopping. Perform any cleanup work here.
+        ///     This is called when the Server is stopping. Perform any cleanup work here.
         /// </summary>
         public abstract void StopServer();
 
         /// <summary>
-        /// Listens for connections, somewhat robustly. Does not return until the Server is stopped
-        /// or until more than 100 listener restarts occur in a single day.
+        ///     Listens for connections, somewhat robustly. Does not return until the Server is stopped
+        ///     or until more than 100 listener restarts occur in a single day.
         /// </summary>
-        private void Listen(Object param) {
+        private void Listen( Object param ) {
             var isSecureListener = ( Boolean )param;
 
             var errorCount = 0;

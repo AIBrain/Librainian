@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/SimpleWebServer.cs" was last cleaned by Rick on 2015/06/12 at 2:56 PM
+//
+// "Librainian/SimpleWebServer.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Internet.Servers {
 
@@ -34,12 +34,12 @@ namespace Librainian.Internet.Servers {
     /// <summary></summary>
     /// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>
     /// <example>
-    /// WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/"); ws.Run();
-    /// Console.WriteLine("A simple webserver. Press a key to quit."); Console.ReadKey(); ws.Stop();
+    ///     WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/"); ws.Run();
+    ///     Console.WriteLine("A simple webserver. Press a key to quit."); Console.ReadKey(); ws.Stop();
     /// </example>
     /// <example>
-    /// public static string SendResponse(HttpListenerRequest request) { return string.Format("My
-    /// web page", DateTime.Now); }
+    ///     public static string SendResponse(HttpListenerRequest request) { return string.Format("My
+    ///     web page", DateTime.Now); }
     /// </example>
     [UsedImplicitly]
     public class SimpleWebServer : IDisposable {
@@ -52,20 +52,12 @@ namespace Librainian.Internet.Servers {
         [CanBeNull]
         private readonly Func<HttpListenerRequest, String> _responderMethod;
 
-        public Boolean IsReadyForRequests {
-            get; private set;
-        }
-
-        public String NotReadyBecause {
-            get; private set;
-        }
-
         /// <summary></summary>
         /// <param name="prefixes"></param>
         /// <param name="method"></param>
         /// <exception cref="HttpListenerException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public SimpleWebServer(ICollection<String> prefixes, Func<HttpListenerRequest, String> method) {
+        public SimpleWebServer( ICollection<String> prefixes, Func<HttpListenerRequest, String> method ) {
             this.ImNotReady( String.Empty );
 
             this._httpListener.Should().NotBeNull( "this._httpListener is null." );
@@ -103,12 +95,20 @@ namespace Librainian.Internet.Servers {
             }
         }
 
-        public SimpleWebServer(Func<HttpListenerRequest, String> method, params String[] prefixes) : this( prefixes, method ) {
+        public SimpleWebServer( Func<HttpListenerRequest, String> method, params String[] prefixes ) : this( prefixes, method ) {
+        }
+
+        public Boolean IsReadyForRequests {
+            get; private set;
+        }
+
+        public String NotReadyBecause {
+            get; private set;
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting
-        /// unmanaged resources.
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting
+        ///     unmanaged resources.
         /// </summary>
         public void Dispose() => this.Stop();
 
@@ -116,7 +116,7 @@ namespace Librainian.Internet.Servers {
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <seealso cref="Stop" />
-        public Task Run(CancellationToken cancellationToken) => Task.Run( async () => {
+        public Task Run( CancellationToken cancellationToken ) => Task.Run( async () => {
             "Webserver running...".Info();
             try {
                 while ( this._httpListener.IsListening ) {
@@ -170,7 +170,7 @@ namespace Librainian.Internet.Servers {
             }
         }
 
-        private void ImNotReady(String because) {
+        private void ImNotReady( String because ) {
             this.IsReadyForRequests = false;
             this.NotReadyBecause = because;
         }

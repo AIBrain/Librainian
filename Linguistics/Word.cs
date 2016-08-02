@@ -1,53 +1,56 @@
-﻿#region License & Information
-
-// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Word.cs" was last cleaned by Rick on 2015/06/12 at 2:59 PM
-#endregion License & Information
+//
+// "Librainian/Word.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Linguistics {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
-    using System.Runtime.Serialization;
     using Collections;
     using Extensions;
     using FluentAssertions;
     using JetBrains.Annotations;
+    using Maths;
+    using Newtonsoft.Json;
 
-    /// <summary>A <see cref="Word" /> is a sequence of <see cref="Character" /> . <seealso cref="http://wikipedia.org/wiki/Truthbearer" /></summary>
+    /// <summary>
+    ///     A <see cref="Word" /> is a sequence of <see cref="Character" /> .
+    /// </summary>
     /// <seealso cref="Sentence"></seealso>
-    [DataContract( IsReference = true )]
+    [JsonObject]
     [Immutable]
-    public class Word : IEquatable<Word>, IEnumerable<Character> {
+    [DebuggerDisplay( "{ToString()}" )]
+    public class Word : IEquatable<Word>, IEnumerable<Character>, IComparable<Word> {
         public const UInt64 Level = Character.Level << 1;
 
         [NotNull]
-        [DataMember]
+        [JsonProperty]
         private readonly List<Character> _tokens = new List<Character>();
 
         static Word() {
             Level.Should().BeGreaterThan( Character.Level );
         }
 
-        public Word([CanBeNull] String word) {
+        public Word( [CanBeNull] String word ) {
             if ( String.IsNullOrEmpty( word ) ) {
                 word = String.Empty;
             }
@@ -55,47 +58,40 @@ namespace Librainian.Linguistics {
             this._tokens.Fix();
         }
 
-        /// <summary>Returns an enumerator that iterates through the collection.</summary>
-        /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate
-        /// through the collection.
-        /// </returns>
-        /// <filterpriority>1</filterpriority>
-        public IEnumerator<Character> GetEnumerator() => this._tokens.GetEnumerator();
-
-        /// <summary>Returns an enumerator that iterates through a collection.</summary>
-        /// <returns>
-        /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate
-        /// through the collection.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        public static implicit operator String( Word word ) => word._tokens.ToStrings( "" );
 
         /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
+        ///     Compares the current instance with another object of the same type and returns an integer that indicates whether
+        ///     the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
         /// </summary>
         /// <returns>
-        /// true if the current object is equal to the <paramref name="other" /> parameter;
-        /// otherwise, false.
+        ///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
+        ///     Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This instance
+        ///     occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This instance follows
+        ///     <paramref name="other" /> in the sort order.
         /// </returns>
-        /// <param name="other">An object to compare with this object.</param>
-        public Boolean Equals([CanBeNull] Word other) {
+        /// <param name="other">An object to compare with this instance. </param>
+        public Int32 CompareTo( Word other ) {
+            return String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
+        }
+
+        public Boolean Equals( [CanBeNull] Word other ) {
             if ( ReferenceEquals( other, null ) ) {
                 return false;
             }
             return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
 
-        public static implicit operator String (Word word) => word._tokens.ToStrings( "" );
+        public IEnumerator<Character> GetEnumerator() => this._tokens.GetEnumerator();
+
+        public override Int32 GetHashCode() {
+            return MathHashing.GetHashCodes( this._tokens );
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public IEnumerable<Tuple<UInt64, String>> Possibles() {
-            if ( !this._tokens.Any() ) {
-                yield break;
-            }
-
-            foreach ( var character in this._tokens ) {
-                yield return new Tuple<UInt64, String>( Level, character.ToString() );
-            }
+            return this._tokens.Select( character => new Tuple<UInt64, String>( Level, character.ToString() ) );
         }
 
         public override String ToString() => this._tokens.ToStrings( "" );

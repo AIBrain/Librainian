@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Matrix3X3.cs" was last cleaned by Rick on 2015/06/12 at 2:55 PM
+//
+// "Librainian/Matrix3X3.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.Graphics {
 
@@ -37,13 +37,50 @@ namespace Librainian.Graphics {
         private const Int32 _M33 = 8;
         private readonly Double[] _coeffs;
 
+        /// <summary>Initializes a new instance of the <see cref="Matrix3X3" /> class.</summary>
+        public Matrix3X3() {
+            _coeffs = new Double[ 9 ];
+        }
+
+        /// <summary>Initializes a new instance of the <see cref="Matrix3X3" /> class.</summary>
+        /// <param name="coefficients">
+        ///     The coefficients to initialise. The number of elements of the array should be equal to
+        ///     9, else an exception will be thrown
+        /// </param>
+        public Matrix3X3( Double[] coefficients ) {
+            if ( coefficients.GetLength( 0 ) != 9 ) {
+                throw new Exception( "The number of coefficients passed in to the constructor must be 9" );
+            }
+
+            _coeffs = coefficients;
+        }
+
+        /// <summary>Initializes a new instance of the <see cref="Matrix3X3" /> class.</summary>
+        /// <param name="m11">The M11 coefficient</param>
+        /// <param name="m12">The M12 coefficien</param>
+        /// <param name="m13">The M13 coefficien</param>
+        /// <param name="m21">The M21 coefficien</param>
+        /// <param name="m22">The M22 coefficien</param>
+        /// <param name="m23">The M23 coefficien</param>
+        /// <param name="m31">The M31 coefficien</param>
+        /// <param name="m32">The M32 coefficien</param>
+        /// <param name="m33">The M33 coefficien</param>
+        public Matrix3X3( Double m11, Double m12, Double m13, Double m21, Double m22, Double m23, Double m31, Double m32, Double m33 ) {
+
+            // The 3x3 matrix is constructed as follows
+            //
+            // | M11 M12 M13 | | M21 M22 M23 | | M31 M32 M33 |
+
+            _coeffs = new[] { m11, m12, m13, m21, m22, m23, m31, m32, m33 };
+        }
+
         /// <summary>Gets the determinant of the matrix</summary>
         /// <value>The determinant</value>
         public Double Determinant {
             get {
 
                 // |a b c| In general, for a 3X3 matrix |d e f| |g h i|
-                // 
+                //
                 // The determinant can be found as follows: a(ei-fh) - b(di-fg) + c(dh-eg)
 
                 // Get coeffs
@@ -69,7 +106,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Gets the inverse of this matrix. If the matrix is singular, this method will throw an exception
+        ///     Gets the inverse of this matrix. If the matrix is singular, this method will throw an exception
         /// </summary>
         /// <value>The inverse</value>
         public Matrix3X3 Inverse {
@@ -135,14 +172,14 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Gets a value indicating whether this matrix is affine. This will be true if the right
-        /// column (M13, M23, M33) is 0 0 1
+        ///     Gets a value indicating whether this matrix is affine. This will be true if the right
+        ///     column (M13, M23, M33) is 0 0 1
         /// </summary>
         /// <value><c>true</c> if this instance is affine; otherwise, <c>false</c>.</value>
         public Boolean IsAffine => this._coeffs[ _M13 ].Near( 0 ) && this._coeffs[ _M23 ].Near( 0 ) && this._coeffs[ _M33 ].Near( 1 );
 
         /// <summary>
-        /// Gets a value indicating whether this matrix is singular. If it is singular, it cannot be inverted
+        ///     Gets a value indicating whether this matrix is singular. If it is singular, it cannot be inverted
         /// </summary>
         /// <value><c>true</c> if this instance is singular; otherwise, <c>false</c>.</value>
         public Boolean IsSingular => Determinant.Near( 0 );
@@ -281,43 +318,6 @@ namespace Librainian.Graphics {
             }
         }
 
-        /// <summary>Initializes a new instance of the <see cref="Matrix3X3" /> class.</summary>
-        public Matrix3X3() {
-            _coeffs = new Double[ 9 ];
-        }
-
-        /// <summary>Initializes a new instance of the <see cref="Matrix3X3" /> class.</summary>
-        /// <param name="coefficients">
-        /// The coefficients to initialise. The number of elements of the array should be equal to
-        /// 9, else an exception will be thrown
-        /// </param>
-        public Matrix3X3(Double[] coefficients) {
-            if ( coefficients.GetLength( 0 ) != 9 ) {
-                throw new Exception( "The number of coefficients passed in to the constructor must be 9" );
-            }
-
-            _coeffs = coefficients;
-        }
-
-        /// <summary>Initializes a new instance of the <see cref="Matrix3X3" /> class.</summary>
-        /// <param name="m11">The M11 coefficient</param>
-        /// <param name="m12">The M12 coefficien</param>
-        /// <param name="m13">The M13 coefficien</param>
-        /// <param name="m21">The M21 coefficien</param>
-        /// <param name="m22">The M22 coefficien</param>
-        /// <param name="m23">The M23 coefficien</param>
-        /// <param name="m31">The M31 coefficien</param>
-        /// <param name="m32">The M32 coefficien</param>
-        /// <param name="m33">The M33 coefficien</param>
-        public Matrix3X3(Double m11, Double m12, Double m13, Double m21, Double m22, Double m23, Double m31, Double m32, Double m33) {
-
-            // The 3x3 matrix is constructed as follows
-            // 
-            // | M11 M12 M13 | | M21 M22 M23 | | M31 M32 M33 |
-
-            _coeffs = new[] { m11, m12, m13, m21, m22, m23, m31, m32, m33 };
-        }
-
         /// <summary>Creates a new object that is a copy of the current instance.</summary>
         /// <returns>A new object that is a copy of this instance.</returns>
         public Object Clone() {
@@ -344,7 +344,7 @@ namespace Librainian.Graphics {
         */
 
         /// <summary>
-        /// Makes the matrix an affine matrix by setting the right column (M13, M23, M33) to 0 0 1
+        ///     Makes the matrix an affine matrix by setting the right column (M13, M23, M33) to 0 0 1
         /// </summary>
         public void MakeAffine() {
             _coeffs[ _M13 ] = 0;
@@ -354,7 +354,7 @@ namespace Librainian.Graphics {
 
         /// <summary>Multiplies the current matrix by the 3x3 matrix passed in</summary>
         /// <param name="rhs"></param>
-        public void Multiply(Matrix3X3 rhs) {
+        public void Multiply( Matrix3X3 rhs ) {
 
             // Get coeffs
             var a = _coeffs[ _M11 ];
@@ -393,7 +393,7 @@ namespace Librainian.Graphics {
 
         /// <summary>Scales the matrix by the specified scalar value</summary>
         /// <param name="scalar">The scalar.</param>
-        public void Scale(Double scalar) {
+        public void Scale( Double scalar ) {
             _coeffs[ 0 ] *= scalar;
             _coeffs[ 1 ] *= scalar;
             _coeffs[ 2 ] *= scalar;

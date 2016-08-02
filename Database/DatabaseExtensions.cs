@@ -1,22 +1,22 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
-// 
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/DatabaseExtensions.cs" was last cleaned by Rick on 2015/06/12 at 2:52 PM
+//
+// "Librainian/DatabaseExtensions.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Database {
 
@@ -29,6 +29,15 @@ namespace Librainian.Database {
     using System.Reflection;
 
     public static class DatabaseExtensions {
+        private static readonly Dictionary<Type, IList<PropertyInfo>> typeDictionary = new Dictionary<Type, IList<PropertyInfo>>();
+
+        public static IList<PropertyInfo> GetPropertiesForType<T>() {
+            var type = typeof( T );
+            if ( !typeDictionary.ContainsKey( typeof( T ) ) ) {
+                typeDictionary.Add( type, type.GetProperties().ToList() );
+            }
+            return typeDictionary[ type ];
+        }
 
         /// <summary>Convert our IList to a DataSet</summary>
         /// <typeparam name="T"></typeparam>
@@ -42,7 +51,8 @@ namespace Librainian.Database {
         }
 
         /// <summary>
-        /// <para>Warning: Untested and buggy.</para>Convert our IList to a DataTable
+        ///     <para>Warning: Untested and buggy.</para>
+        ///     Convert our IList to a DataTable
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
@@ -85,9 +95,19 @@ namespace Librainian.Database {
             return table;
         }
 
-        public static SqlParameter ToSqlParameter<TValue>( this TValue value, String parameterName ) => new SqlParameter( parameterName, value ) {
-            Value = value
-        };
+        public static IList<T> ToList<T>( this DataTable table ) {
+            var properties = GetPropertiesForType<T>();
+            IList<T> result = new List<T>();
+
+            foreach ( var row in table.Rows ) {
+                var item = CreateItemFromRow<T>( ( DataRow )row, properties );
+                result.Add( item );
+            }
+
+            return result;
+        }
+
+        public static SqlParameter ToSqlParameter<TValue>( this TValue value, String parameterName ) => new SqlParameter( parameterName, value ) { Value = value };
 
         public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, String parameterName, Int32 size ) => new SqlParameter( parameterName, sqlDbType, size );
 
@@ -207,39 +227,31 @@ namespace Librainian.Database {
             }
         }
 
+        private static T CreateItemFromRow<T>( DataRow row, IList<PropertyInfo> properties ) {
 
-        private static Dictionary<Type, IList<PropertyInfo>> typeDictionary = new Dictionary<Type, IList<PropertyInfo>>();
-
-        public static IList<PropertyInfo> GetPropertiesForType<T>() {
-            var type = typeof( T );
-            if ( !typeDictionary.ContainsKey( typeof( T ) ) ) {
-                typeDictionary.Add( type, type.GetProperties().ToList() );
-            }
-            return typeDictionary[ type ];
-        }
-
-        public static IList<T> ToList<T>( this DataTable table ) {
-            IList<PropertyInfo> properties = GetPropertiesForType<T>();
-            IList<T> result = new List<T>();
-
-            foreach ( var row in table.Rows ) {
-                var item = CreateItemFromRow<T>( ( DataRow )row, properties );
-                result.Add( item );
-            }
-
-            return result;
-        }
-
-        private static T CreateItemFromRow<T>( DataRow row, IList<PropertyInfo> properties )  {
             //T item = new T();
-            T item = Activator.CreateInstance<T>();
+            var item = Activator.CreateInstance<T>();
             foreach ( var property in properties ) {
                 property.SetValue( item, row[ property.Name ], null );
             }
             return item;
         }
-        
 
+        /*
+                [Obsolete( "No access to a local Server atm." )]
+                public static TimeSpan PingAverage() {
+                    var stopwatch = Stopwatch.StartNew();
+                    var db = new SQLQuery();
+                    var bag = new ConcurrentBag< TimeSpan >();
+                    do {
+                        bag.Add( EasyPing( db ) ); //hack
+                    } while ( stopwatch.Elapsed < Second.Three || bag.Count < 10 );
+
+                    //var list = new List<TimeSpan>( bag.Distinct() );
+                    var average = bag.Average( timeSpan => timeSpan.TotalMilliseconds );
+                    return TimeSpan.FromMilliseconds( average );
+                }
+        */
 
         /*
 
@@ -273,21 +285,6 @@ namespace Librainian.Database {
 
                     //Generic.Report( String.Format( "Database ping actual: {0}.", stopwatch.Elapsed.Simple() ) );
                     return stopwatch.Elapsed;
-                }
-        */
-        /*
-                [Obsolete( "No access to a local Server atm." )]
-                public static TimeSpan PingAverage() {
-                    var stopwatch = Stopwatch.StartNew();
-                    var db = new SQLQuery();
-                    var bag = new ConcurrentBag< TimeSpan >();
-                    do {
-                        bag.Add( EasyPing( db ) ); //hack
-                    } while ( stopwatch.Elapsed < Second.Three || bag.Count < 10 );
-
-                    //var list = new List<TimeSpan>( bag.Distinct() );
-                    var average = bag.Average( timeSpan => timeSpan.TotalMilliseconds );
-                    return TimeSpan.FromMilliseconds( average );
                 }
         */
     }
