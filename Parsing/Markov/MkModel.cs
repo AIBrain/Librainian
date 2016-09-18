@@ -29,8 +29,8 @@ namespace Librainian.Parsing.Markov {
     using Collections;
     using Extensions;
     using JetBrains.Annotations;
+    using Maths;
     using Persistence;
-    using Threading;
 
     public class MkModel {
         public readonly String Name;
@@ -56,7 +56,7 @@ namespace Librainian.Parsing.Markov {
                 var randomChain = this.Nexts( word: word ).OrderBy( o => Randem.Next() );
 
                 foreach ( var w in randomChain ) {
-                    newCorpus.AppendFormat( "{0} ", w );
+                    newCorpus.Append( $"{w} " );
                     if ( String.IsNullOrEmpty( w ) ) {
                         continue;
                     }
