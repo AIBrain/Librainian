@@ -24,9 +24,11 @@ namespace Librainian.Graphics.Video {
     using System.Drawing;
     using System.IO;
     using System.Runtime.InteropServices;
+    using Magic;
+    using OperatingSystem;
 
     /// <summary>Extract bitmaps from AVI files</summary>
-    public class AviReader {
+    public class AviReader : ABetterClassDispose {
 
         //pointers
         private Int32 _aviFile;
@@ -52,18 +54,18 @@ namespace Librainian.Graphics.Video {
         /// <summary>Closes all streams, files and libraries</summary>
         public void Close() {
             if ( this._getFrameObject != 0 ) {
-                Avi.AVIStreamGetFrameClose( this._getFrameObject );
+                NativeMethods.AVIStreamGetFrameClose( this._getFrameObject );
                 this._getFrameObject = 0;
             }
             if ( this._aviStream != IntPtr.Zero ) {
-                Avi.AVIStreamRelease( this._aviStream );
+                NativeMethods.AVIStreamRelease( this._aviStream );
                 this._aviStream = IntPtr.Zero;
             }
             if ( this._aviFile != 0 ) {
-                Avi.AVIFileRelease( this._aviFile );
+                NativeMethods.AVIFileRelease( this._aviFile );
                 this._aviFile = 0;
             }
-            Avi.AVIFileExit();
+            NativeMethods.AVIFileExit();
         }
 
         /// <summary>Exports a frame into a bitmap file</summary>
@@ -75,7 +77,7 @@ namespace Librainian.Graphics.Video {
             }
 
             //Decompress the frame and return a pointer to the DIB
-            var pDib = Avi.AVIStreamGetFrame( this._getFrameObject, this._firstFrame + position );
+            var pDib = NativeMethods.AVIStreamGetFrame( this._getFrameObject, this._firstFrame + position );
 
             //Copy the bitmap header into a managed struct
             var bih = new Avi.Bitmapinfoheader();
@@ -107,29 +109,32 @@ namespace Librainian.Graphics.Video {
             }
 
             //Create file header
-            var bfh = new Avi.Bitmapfileheader { bfType = Avi.BmpMagicCookie, bfSize = ( Int32 )( 55 + bih.biSizeImage ), bfReserved1 = 0, bfReserved2 = 0 };
+            var bfh = new Avi.Bitmapfileheader {
+                bfType = Avi.BmpMagicCookie,
+                bfSize = ( Int32 )( 55 + bih.biSizeImage ),
+                bfReserved1 = 0,
+                bfReserved2 = 0
+            };
 
             //size of file as written to disk
             bfh.bfOffBits = Marshal.SizeOf( bih ) + Marshal.SizeOf( bfh );
 
             //Create or overwrite the destination file
-            var fs = new FileStream( dstFileName, FileMode.Create );
-            var bw = new BinaryWriter( fs );
+            using ( var bw = new BinaryWriter( new FileStream( dstFileName, FileMode.Create ) ) ) {
 
-            //Write header
-            bw.Write( bfh.bfType );
-            bw.Write( bfh.bfSize );
-            bw.Write( bfh.bfReserved1 );
-            bw.Write( bfh.bfReserved2 );
-            bw.Write( bfh.bfOffBits );
+                //Write header
+                bw.Write( bfh.bfType );
+                bw.Write( bfh.bfSize );
+                bw.Write( bfh.bfReserved1 );
+                bw.Write( bfh.bfReserved2 );
+                bw.Write( bfh.bfOffBits );
 
-            //Write bitmap info
-            bw.Write( bitmapInfo );
+                //Write bitmap info
+                bw.Write( bitmapInfo );
 
-            //Write bitmap data
-            bw.Write( bitmapData );
-            bw.Close();
-            fs.Close();
+                //Write bitmap data
+                bw.Write( bitmapData );
+            }
         }
 
         /// <summary>Opens an AVI file and creates a GetFrame object</summary>
@@ -137,27 +142,27 @@ namespace Librainian.Graphics.Video {
         public void Open( String fileName ) {
 
             //Intitialize AVI Library
-            Avi.AVIFileInit();
+            NativeMethods.AVIFileInit();
 
             //Open the file
-            var result = Avi.AVIFileOpen( ref this._aviFile, fileName, Avi.OfShareDenyWrite, 0 );
+            var result = NativeMethods.AVIFileOpen( ref this._aviFile, fileName, Avi.OfShareDenyWrite, 0 );
 
             if ( result != 0 ) {
                 throw new Exception( "Exception in AVIFileOpen: " + result );
             }
 
             //Get the video stream
-            result = Avi.AVIFileGetStream( this._aviFile, out this._aviStream, Avi.StreamtypeVideo, 0 );
+            result = NativeMethods.AVIFileGetStream( this._aviFile, out this._aviStream, Avi.StreamtypeVideo, 0 );
 
             if ( result != 0 ) {
                 throw new Exception( "Exception in AVIFileGetStream: " + result );
             }
 
-            this._firstFrame = Avi.AVIStreamStart( this._aviStream.ToInt32() );
-            this.CountFrames = Avi.AVIStreamLength( this._aviStream.ToInt32() );
+            this._firstFrame = NativeMethods.AVIStreamStart( this._aviStream.ToInt32() );
+            this.CountFrames = NativeMethods.AVIStreamLength( this._aviStream.ToInt32() );
 
             this._streamInfo = new Avi.Avistreaminfo();
-            result = Avi.AVIStreamInfo( this._aviStream.ToInt32(), ref this._streamInfo, Marshal.SizeOf( this._streamInfo ) );
+            result = NativeMethods.AVIStreamInfo( this._aviStream.ToInt32(), ref this._streamInfo, Marshal.SizeOf( this._streamInfo ) );
 
             if ( result != 0 ) {
                 throw new Exception( "Exception in AVIStreamInfo: " + result );
@@ -172,12 +177,20 @@ namespace Librainian.Graphics.Video {
             bih.biXPelsPerMeter = 0;
             bih.biYPelsPerMeter = 0;
 
-            this._getFrameObject = Avi.AVIStreamGetFrameOpen( this._aviStream, ref bih ); //force function to return 24bit DIBS
+            this._getFrameObject = NativeMethods.AVIStreamGetFrameOpen( this._aviStream, ref bih ); //force function to return 24bit DIBS
 
             //getFrameObject = Avi.AVIStreamGetFrameOpen(aviStream, 0); //return any bitmaps
             if ( this._getFrameObject == 0 ) {
                 throw new Exception( "Exception in AVIStreamGetFrameOpen!" );
             }
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
+
+        }
+
     }
 }

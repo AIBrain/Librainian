@@ -53,20 +53,20 @@ namespace Librainian.Internet.Servers {
 
         internal static void Log( Exception ex, String additionalInformation = "" ) {
             try {
-                if ( _logger != null ) {
-                    _logger.Log( ex, additionalInformation );
-                }
+                _logger?.Log( ex, additionalInformation );
             }
-            catch ( Exception ) { }
+            catch ( Exception ) {
+                // ignored
+            }
         }
 
         internal static void Log( String str ) {
             try {
-                if ( _logger != null ) {
-                    _logger.Log( str );
-                }
+                _logger?.Log( str );
             }
-            catch ( Exception ) { }
+            catch ( Exception ) {
+                // ignored
+            }
         }
 
         internal static void LogVerbose( Exception ex, String additionalInformation = "" ) {

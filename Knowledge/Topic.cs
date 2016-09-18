@@ -21,12 +21,12 @@
 namespace Librainian.Knowledge {
 
     using System;
-    using System.Collections.Generic;
     using Collections;
+    using Magic;
     using Newtonsoft.Json;
 
     [JsonObject]
-    public class Topic : IEqualityComparer<Topic> {
+    public class Topic : ABetterClassDispose {
 
         [JsonProperty]
         public readonly ConcurrentList<Factoid> Facts = new ConcurrentList<Factoid>();
@@ -36,24 +36,10 @@ namespace Librainian.Knowledge {
             get; private set;
         }
 
-        /// <summary>Determines whether the specified objects are equal.</summary>
-        /// <returns>true if the specified objects are equal; otherwise, false.</returns>
-        /// <param name="x">The first object of type <paramref name="T" /> to compare.</param>
-        /// <param name="y">The second object of type <paramref name="T" /> to compare.</param>
-        public Boolean Equals( Topic x, Topic y ) {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this.Facts.Dispose(); }
 
-        /// <summary>Returns a hash code for the specified object.</summary>
-        /// <returns>A hash code for the specified object.</returns>
-        /// <param name="obj">
-        ///     The <see cref="T:System.Object" /> for which a hash code is to be returned.
-        /// </param>
-        /// <exception cref="T:System.ArgumentNullException">
-        ///     The type of <paramref name="obj" /> is a reference type and <paramref name="obj" /> is null.
-        /// </exception>
-        public Int32 GetHashCode( Topic obj ) {
-            throw new NotImplementedException();
-        }
     }
 }

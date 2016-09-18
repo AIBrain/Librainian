@@ -16,17 +16,16 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Book.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+// "Librainian/Book.cs" was last cleaned by Rick on 2016/08/26 at 10:14 AM
 
 namespace Librainian.Linguistics {
 
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
-    using Collections;
     using Extensions;
-    using FluentAssertions;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
 
@@ -35,45 +34,85 @@ namespace Librainian.Linguistics {
     /// </summary>
     [JsonObject]
     [Immutable]
-    public sealed class Book : IEquatable<Book>, IEnumerable<Page> {
-        public const UInt64 Level = Page.Level << 1;
+    [DebuggerDisplay( "{ToString()}" )]
+    [Serializable]
+    public sealed class Book : IEquatable<Book>, IEnumerable<KeyValuePair<Int32, Page>> {
 
-        [NotNull]
-        [JsonProperty]
-        private readonly List<Author> _authors = new List<Author>();
+        public Book( [ItemCanBeNull] [NotNull] IEnumerable<Page> pages, [ItemCanBeNull] [CanBeNull] IEnumerable<Author> authors = null ) {
+            if ( pages == null ) {
+                throw new ArgumentNullException( nameof( pages ) );
+            }
 
-        [NotNull]
-        [JsonProperty]
-        private readonly List<Page> _tokens = new List<Page>();
+            var pageNumber = 0;
+            foreach ( var page in pages.Where( page => page != null ) ) {
+                pageNumber++;
+                this.Pages[ pageNumber ] = page;
+            }
 
-        static Book() {
-            Level.Should().BeGreaterThan( Page.Level );
+            if ( null != authors ) {
+                this.Authors.AddRange( authors.Where( author => null != author ) );
+            }
         }
 
-        public Book( [NotNull] String text, [CanBeNull] IEnumerable<Author> authors = null ) {
-            if ( text == null ) {
-                throw new ArgumentNullException( nameof( text ) );
+        private Book() {
+        }
+
+        public static Book Empty { get; } = new Book();
+
+        [NotNull]
+        [JsonProperty]
+        private HashSet<Author> Authors { get; } = new HashSet<Author>();
+
+        [NotNull]
+        [JsonProperty]
+        private Dictionary<Int32, Page> Pages { get; } = new Dictionary<Int32, Page>();
+
+        /// <summary>
+        ///     static equality test, compare sequence of Books
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
+        public static Boolean Equals( Book lhs, Book rhs ) {
+            if ( ReferenceEquals( lhs, rhs ) ) {
+                return true;
             }
-            this._tokens.Add( new Page( text ) ); //TODO //BUG this needs to add all pages
-            this._tokens.Fix();
-            if ( null != authors ) {
-                this._authors.AddRange( authors );
+            if ( ReferenceEquals( lhs, null ) ) {
+                return false;
             }
-            this._authors.Fix();
+            if ( ReferenceEquals( null, rhs ) ) {
+                return false;
+            }
+
+            return lhs.SequenceEqual( rhs ); //no authors??
         }
 
         public Boolean Equals( [CanBeNull] Book other ) {
-            if ( ReferenceEquals( other, null ) ) {
-                return false;
-            }
-            return ReferenceEquals( this, other ) || this.SequenceEqual( other );
+            return Equals( this, other );
         }
 
-        //TODO public static Boolean Equals
-        public IEnumerable<Author> GetAuthors() => this._authors;
+        public IEnumerable<Author> GetAuthors() => this.Authors;
 
-        public IEnumerator<Page> GetEnumerator() => this._tokens.GetEnumerator();
+        /// <summary>Returns an enumerator that iterates through the collection.</summary>
+        /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+        public IEnumerator<KeyValuePair<Int32, Page>> GetEnumerator() {
+            return this.Pages.GetEnumerator();
+        }
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        /// <summary>Serves as the default hash function. </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() {
+            return this.Pages.GetHashCode();
+        }
+
+        public IEnumerable<KeyValuePair<Int32, Page>> GetPages() {
+            return this.Pages;
+        }
+
+        /// <summary>Returns an enumerator that iterates through a collection.</summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        IEnumerator IEnumerable.GetEnumerator() {
+            return ( ( IEnumerable )this.Pages ).GetEnumerator();
+        }
     }
 }

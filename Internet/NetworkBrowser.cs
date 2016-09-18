@@ -69,10 +69,10 @@ namespace Librainian.Internet {
         /// <returns>
         ///     Arraylist that represents all the SV_TYPE_WORKSTATION and SV_TYPE_SERVER PC's in the Domain
         /// </returns>
-        public static IEnumerable<NativeWin32.ServerInfo101> GetNetworkComputers() {
+        public static IEnumerable<NativeMethods.ServerInfo101> GetNetworkComputers() {
 
             //local fields
-            var networkComputers = new List<NativeWin32.ServerInfo101>();
+            var networkComputers = new List<NativeMethods.ServerInfo101>();
             const Int32 maxPreferredLength = -1;
 
             //const int SV_TYPE_WORKSTATION = 1;
@@ -80,7 +80,7 @@ namespace Librainian.Internet {
             var buffer = IntPtr.Zero;
 
             //var tmpBuffer = IntPtr.Zero;
-            var sizeofInfo = Marshal.SizeOf( typeof( NativeWin32.ServerInfo101 ) );
+            var sizeofInfo = Marshal.SizeOf( typeof( NativeMethods.ServerInfo101 ) );
 
             try {
 
@@ -92,7 +92,7 @@ namespace Librainian.Internet {
                 var entriesRead = 0;
                 var totalEntries = 0;
                 var resHandle = new IntPtr( 0 );
-                var ret = NativeWin32.NetServerEnum( null, 100, out buffer, maxPreferredLength, ref entriesRead, ref totalEntries, NativeWin32.Sv101Types.SvTypeWorkstation | NativeWin32.Sv101Types.SvTypeServer, null, resHandle );
+                var ret = NativeMethods.NetServerEnum( null, 100, out buffer, maxPreferredLength, ref entriesRead, ref totalEntries, NativeMethods.Sv101Types.SvTypeWorkstation | NativeMethods.Sv101Types.SvTypeServer, null, resHandle );
 
                 //if the returned with a NERR_Success
                 //(C++ term), =0 for C#
@@ -117,10 +117,10 @@ namespace Librainian.Internet {
                         //managed object, again using
                         //STRUCTURE to ensure the correct data
                         //is marshalled
-                        var svrInfo = Marshal.PtrToStructure( tmpBuffer, typeof( NativeWin32.ServerInfo101 ) );
+                        var svrInfo = Marshal.PtrToStructure( tmpBuffer, typeof( NativeMethods.ServerInfo101 ) );
 
                         //add the PC names to the ArrayList
-                        networkComputers.Add( ( NativeWin32.ServerInfo101 )svrInfo );
+                        networkComputers.Add( ( NativeMethods.ServerInfo101 )svrInfo );
                     }
                 }
             }
@@ -130,7 +130,7 @@ namespace Librainian.Internet {
             finally {
 
                 //The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates
-                NativeWin32.NetApiBufferFree( buffer );
+                NativeMethods.NetApiBufferFree( buffer );
             }
 
             //return entries found
@@ -148,25 +148,25 @@ namespace Librainian.Internet {
             return ( from DirectoryEntry entries in root.Children from DirectoryEntry entry in entries.Children select entry ).Where( entry => !entry.Name.Equals( "Schema", StringComparison.Ordinal ) );
         }
 
-        public static IEnumerable<NativeWin32.ServerInfo101> GetServerListAlt( NativeWin32.Sv101Types serverType ) {
+        public static IEnumerable<NativeMethods.ServerInfo101> GetServerListAlt( NativeMethods.Sv101Types serverType ) {
             Int32 entriesread = 0, totalentries = 0;
-            var alServers = new List<NativeWin32.ServerInfo101>();
+            var alServers = new List<NativeMethods.ServerInfo101>();
 
             do {
 
                 // Buffer to store the available servers Filled by the NetServerEnum function
                 IntPtr buf;
 
-                var ret = NativeWin32.NetServerEnum( servername: null, level: 101, bufptr: out buf, prefmaxlen: -1, entriesread: ref entriesread, totalentries: ref totalentries, servertype: serverType, domain: null, resumeHandle: IntPtr.Zero );
+                var ret = NativeMethods.NetServerEnum( servername: null, level: 101, bufptr: out buf, prefmaxlen: -1, entriesread: ref entriesread, totalentries: ref totalentries, servertype: serverType, domain: null, resumeHandle: IntPtr.Zero );
 
                 // if the function returned any data, fill the tree view
-                if ( ( ret == NativeWin32.ErrorSuccess ) || ( ret == NativeWin32.ErrorMoreData ) || ( entriesread > 0 ) ) {
+                if ( ( ret == NativeMethods.ErrorSuccess ) || ( ret == NativeMethods.ErrorMoreData ) || ( entriesread > 0 ) ) {
                     var ptr = buf;
 
                     for ( var i = 0; i < entriesread; i++ ) {
 
                         // cast pointer to a SERVER_INFO_101 structure
-                        var server = ( NativeWin32.ServerInfo101 )Marshal.PtrToStructure( ptr, typeof( NativeWin32.ServerInfo101 ) );
+                        var server = ( NativeMethods.ServerInfo101 )Marshal.PtrToStructure( ptr, typeof( NativeMethods.ServerInfo101 ) );
 
                         //Cast the pointer to a UInt64 so this addition will work on 32-bit or 64-bit systems.
                         ptr = ( IntPtr )( ( UInt64 )ptr + ( UInt64 )Marshal.SizeOf( server ) );
@@ -178,7 +178,7 @@ namespace Librainian.Internet {
                 }
 
                 // free the buffer
-                NativeWin32.NetApiBufferFree( buf );
+                NativeMethods.NetApiBufferFree( buf );
             } while ( ( entriesread < totalentries ) && ( entriesread != 0 ) );
 
             return alServers;

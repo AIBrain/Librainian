@@ -29,9 +29,10 @@ namespace Librainian.Internet.Servers {
     using System.Security.Cryptography.X509Certificates;
     using System.Text;
     using System.Web;
+    using Magic;
     using Maths;
 
-    public class HttpProcessor {
+    public class HttpProcessor : ABetterClassDispose {
 
         /// <summary>
         ///     A Dictionary mapping http header names to values. Names are all converted to lower case
@@ -81,7 +82,7 @@ namespace Librainian.Internet.Servers {
         /// <summary>
         ///     A SortedList mapping lower-case keys to values of parameters. This list is
         ///     populated parameters that were appended to the url (the query String). e.g. if the url
-        ///     is "mypage.html?arg1=value1&arg2=value2", then there will be two parameters ("arg1" with
+        ///     is "mypage.html?arg1=value1&amp;arg2=value2", then there will be two parameters ("arg1" with
         ///     value "value1" and "arg2" with value "value2"
         /// </summary>
         public SortedList<String, String> QueryString = new SortedList<String, String>();
@@ -102,7 +103,7 @@ namespace Librainian.Internet.Servers {
         /// <summary>
         ///     A SortedList mapping keys to values of parameters. No character case
         ///     conversion is applied in this list. This list is populated parameters that were appended
-        ///     to the url (the query String). e.g. if the url is "mypage.html?arg1=value1&arg2=value2",
+        ///     to the url (the query String). e.g. if the url is "mypage.html?arg1=value1&amp;arg2=value2",
         ///     then there will be two parameters ("arg1" with value "value1" and "arg2" with value
         ///     "value2"
         /// </summary>
@@ -266,6 +267,7 @@ namespace Librainian.Internet.Servers {
         ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
+        /// <param name="defaultValue"></param>
         /// <returns>
         ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
@@ -275,6 +277,7 @@ namespace Librainian.Internet.Servers {
         ///     Gets the value of the header, or null if the header does not exist. The name is case insensitive.
         /// </summary>
         /// <param name="name">The case insensitive name of the header to get the value of.</param>
+        /// <param name="defaultValue"></param>
         /// <returns>The value of the header, or null if the header did not exist.</returns>
         public String GetHeaderValue( String name, String defaultValue = null ) {
             name = name.ToLower();
@@ -289,6 +292,7 @@ namespace Librainian.Internet.Servers {
         ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
+        /// <param name="defaultValue"></param>
         /// <returns>
         ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
@@ -320,6 +324,7 @@ namespace Librainian.Internet.Servers {
 
         /// <summary>Returns the value of a parameter sent via POST with MIME type "application/x-www-form-urlencoded".</summary>
         /// <param name="key">A case insensitive key.</param>
+        /// <param name="defaultValue"></param>
         /// <returns>
         ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
@@ -336,6 +341,7 @@ namespace Librainian.Internet.Servers {
 
         /// <summary>Returns the value of a parameter sent via POST with MIME type "application/x-www-form-urlencoded".</summary>
         /// <param name="key">A case insensitive key.</param>
+        /// <param name="defaultValue"></param>
         /// <returns>
         ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
@@ -387,6 +393,7 @@ namespace Librainian.Internet.Servers {
         ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
+        /// <param name="defaultValue"></param>
         /// <returns>
         ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
@@ -395,16 +402,14 @@ namespace Librainian.Internet.Servers {
                 return defaultValue;
             }
             Double value;
-            if ( Double.TryParse( this.GetQsParam( key.ToLower() ), out value ) ) {
-                return value;
-            }
-            return defaultValue;
+            return Double.TryParse( this.GetQsParam( key.ToLower() ), out value ) ? value : defaultValue;
         }
 
         /// <summary>
         ///     Returns the value of the Query String parameter with the specified key.
         /// </summary>
         /// <param name="key">A case insensitive key.</param>
+        /// <param name="defaultValue"></param>
         /// <returns>
         ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
@@ -484,6 +489,8 @@ namespace Librainian.Internet.Servers {
         /// <param name="contentLength">
         ///     (OPTIONAL) The length of your response, in bytes, if you know it.
         /// </param>
+        /// <param name="responseCode"></param>
+        /// <param name="additionalHeaders"></param>
         public void WriteSuccess( String contentType = "text/html", Int64 contentLength = -1, String responseCode = "200 OK", List<KeyValuePair<String, String>> additionalHeaders = null ) {
             this._responseWritten = true;
             this.OutputStream.WriteLine( "HTTP/1.1 " + responseCode );
@@ -564,17 +571,13 @@ namespace Librainian.Internet.Servers {
             }
             finally {
                 try {
-                    if ( this.TcpClient != null ) {
-                        this.TcpClient.Close();
-                    }
+                    this.TcpClient?.Close();
                 }
                 catch ( Exception ex ) {
                     SimpleHttpLogger.LogVerbose( ex );
                 }
                 try {
-                    if ( tcpStream != null ) {
-                        tcpStream.Close();
-                    }
+                    tcpStream?.Close();
                 }
                 catch ( Exception ex ) {
                     SimpleHttpLogger.LogVerbose( ex );
@@ -602,6 +605,7 @@ namespace Librainian.Internet.Servers {
         /// </summary>
         /// <param name="queryString"></param>
         /// <param name="requireQuestionMark"></param>
+        /// <param name="preserveKeyCharacterCase"></param>
         /// <returns></returns>
         private static SortedList<String, String> ParseQueryStringArguments( String queryString, Boolean requireQuestionMark = true, Boolean preserveKeyCharacterCase = false ) {
             var arguments = new SortedList<String, String>();
@@ -623,7 +627,7 @@ namespace Librainian.Internet.Servers {
                 var argument = t.Split( '=' );
                 if ( argument.Length == 2 ) {
                     var key = HttpUtility.UrlDecode( argument[ 0 ] );
-                    if ( null != key  ) {
+                    if ( null != key ) {
                         if ( !preserveKeyCharacterCase ) {
                             key = key.ToLower();
                         }
@@ -722,7 +726,9 @@ namespace Librainian.Internet.Servers {
                         this.WriteFailure();
                     }
                 }
-                catch ( Exception ) { }
+                catch ( Exception ) {
+                    // ignored
+                }
             }
         }
 
@@ -765,5 +771,14 @@ namespace Librainian.Internet.Servers {
                 this.HttpHeaders[ name.ToLower() ] = value;
             }
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
+            this.OutputStream?.Dispose();
+            this.RawOutputStream?.Dispose();
+        }
+
     }
 }

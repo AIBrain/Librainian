@@ -16,16 +16,16 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Page.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+// "Librainian/Page.cs" was last cleaned by Rick on 2016/08/26 at 10:14 AM
 
 namespace Librainian.Linguistics {
 
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using Extensions;
-    using FluentAssertions;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
 
@@ -33,42 +33,44 @@ namespace Librainian.Linguistics {
     ///     <para>A <see cref="Page" /> is a sequence of <see cref="Paragraph" /> .</para>
     /// </summary>
     /// <seealso cref="Book"></seealso>
-    [Immutable]
     [JsonObject]
+    [Immutable]
+    [DebuggerDisplay( "{ToString()}" )]
+    [Serializable]
     public sealed class Page : IEquatable<Page>, IEnumerable<Paragraph> {
-        public const UInt64 Level = Paragraph.Level << 1;
+
+        public Page( [NotNull] IEnumerable<Paragraph> paragraphs ) {
+            if ( paragraphs == null ) {
+                throw new ArgumentNullException( nameof( paragraphs ) );
+            }
+
+            this.Paragraphs.AddRange( paragraphs.Where( paragraph => paragraph != null ) );
+        }
+
+        private Page() {
+        }
+
+        public static Page Empty { get; } = new Page();
 
         [NotNull]
         [JsonProperty]
-        private readonly List<Paragraph> _tokens = new List<Paragraph>();
-
-        static Page() {
-            Level.Should().BeGreaterThan( Paragraph.Level );
-        }
-
-        public Page( [NotNull] String text ) {
-            if ( text == null ) {
-                throw new ArgumentNullException( nameof( text ) );
-            }
-            this.Add( text );
-        }
-
-        public Boolean Add( [NotNull] String text ) {
-            if ( text == null ) {
-                throw new ArgumentNullException( nameof( text ) );
-            }
-            this._tokens.Add( new Paragraph( text ) ); //TODO //BUG this needs to add all paragraphs
-            return true;
-        }
+        private List<Paragraph> Paragraphs { get; } = new List<Paragraph>();
 
         public Boolean Equals( [CanBeNull] Page other ) {
             if ( ReferenceEquals( other, null ) ) {
                 return false;
             }
-            return ReferenceEquals( this, other ) || this._tokens.SequenceEqual( other._tokens );
+
+            return ReferenceEquals( this, other ) || this.Paragraphs.SequenceEqual( other.Paragraphs );
         }
 
-        public IEnumerator<Paragraph> GetEnumerator() => this._tokens.GetEnumerator();
+        public IEnumerator<Paragraph> GetEnumerator() => this.Paragraphs.GetEnumerator();
+
+        /// <summary>Serves as the default hash function. </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() {
+            return this.Paragraphs.GetHashCode();
+        }
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }

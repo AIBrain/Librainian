@@ -87,7 +87,7 @@ namespace Librainian.Internet {
                     result.Append( symbol );
                 }
                 else {
-                    result.AppendFormat( "{0}{1}", '%', $"{( Int32 )symbol:X2}" );
+                    result.Append( $"{'%'}{$"{( Int32 )symbol:X2}"}" );
                 }
             }
 
@@ -113,6 +113,10 @@ namespace Librainian.Internet {
         /// <param name="token">The token, if available. If not available pass null or an empty string</param>
         /// <param name="tokenSecret">The token secret, if available. If not available pass null or an empty string</param>
         /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
+        /// <param name="timeStamp"></param>
+        /// <param name="nonce"></param>
+        /// <param name="normalizedUrl"></param>
+        /// <param name="normalizedRequestParameters"></param>
         /// <returns>A base64 string of the hash value</returns>
         public String GenerateSignature( Uri url, String consumerKey, String consumerSecret, String token, String tokenSecret, String httpMethod, String timeStamp, String nonce, out String normalizedUrl, out String normalizedRequestParameters ) {
             return this.GenerateSignature( url, consumerKey, consumerSecret, token, tokenSecret, httpMethod, timeStamp, nonce, SignatureTypes.Hmacsha1, out normalizedUrl, out normalizedRequestParameters );
@@ -127,7 +131,11 @@ namespace Librainian.Internet {
         /// <param name="token">The token, if available. If not available pass null or an empty string</param>
         /// <param name="tokenSecret">The token secret, if available. If not available pass null or an empty string</param>
         /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
+        /// <param name="nonce"></param>
         /// <param name="signatureType">The type of signature to use</param>
+        /// <param name="timeStamp"></param>
+        /// <param name="normalizedUrl"></param>
+        /// <param name="normalizedRequestParameters"></param>
         /// <returns>A base64 string of the hash value</returns>
         public String GenerateSignature( Uri url, String consumerKey, String consumerSecret, String token, String tokenSecret, String httpMethod, String timeStamp, String nonce, SignatureTypes signatureType, out String normalizedUrl, out String normalizedRequestParameters ) {
             normalizedUrl = null;
@@ -159,10 +167,14 @@ namespace Librainian.Internet {
         /// <param name="token">The token, if available. If not available pass null or an empty string</param>
         /// <param name="tokenSecret">The token secret, if available. If not available pass null or an empty string</param>
         /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
+        /// <param name="nonce"></param>
         /// <param name="signatureType">
         ///     The signature type. To use the default values use
         ///     <see cref="OAuthBase.SignatureTypes">OAuthBase.SignatureTypes</see>.
         /// </param>
+        /// <param name="timeStamp"></param>
+        /// <param name="normalizedUrl"></param>
+        /// <param name="normalizedRequestParameters"></param>
         /// <returns>The signature base</returns>
         public String GenerateSignatureBase( Uri url, String consumerKey, String token, String tokenSecret, String httpMethod, String timeStamp, String nonce, String signatureType, out String normalizedUrl, out String normalizedRequestParameters ) {
             if ( token == null ) {
@@ -208,9 +220,9 @@ namespace Librainian.Internet {
             normalizedRequestParameters = NormalizeRequestParameters( parameters );
 
             var signatureBase = new StringBuilder();
-            signatureBase.AppendFormat( "{0}&", httpMethod.ToUpper() );
-            signatureBase.AppendFormat( "{0}&", UrlEncode( normalizedUrl ) );
-            signatureBase.AppendFormat( "{0}", UrlEncode( normalizedRequestParameters ) );
+            signatureBase.Append( $"{httpMethod.ToUpper()}&" );
+            signatureBase.Append( $"{UrlEncode( normalizedUrl )}&" );
+            signatureBase.Append( $"{UrlEncode( normalizedRequestParameters )}" );
 
             return signatureBase.ToString();
         }
@@ -248,7 +260,7 @@ namespace Librainian.Internet {
             var sb = new StringBuilder();
             for ( var i = 0; i < parameters.Count; i++ ) {
                 var p = parameters[ i ];
-                sb.AppendFormat( "{0}={1}", p.Name, p.Value );
+                sb.Append( $"{p.Name}={p.Value}" );
 
                 if ( i < parameters.Count - 1 ) {
                     sb.Append( "&" );

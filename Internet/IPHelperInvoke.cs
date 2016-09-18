@@ -35,15 +35,10 @@ namespace Librainian.Internet {
 
         public const Int32 MaxAdapterNameLength = 256;
 
-        [DllImport( "iphlpapi.dll", CharSet = CharSet.Ansi )]
-        public static extern Int32 GetAdaptersInfo( IntPtr pAdapterInfo, ref Int64 pBufOutLen );
-
-        [DllImport( "iphlpapi.dll", SetLastError = true )]
-        public static extern Int32 GetBestInterface( UInt32 destAddr, out UInt32 bestIfIndex );
-
         [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
         public struct IPAdapterInfo {
-            public IntPtr Next;
+
+            internal IntPtr Next;
             public readonly Int32 ComboIndex;
 
             [MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxAdapterNameLength + 4 )]
@@ -60,7 +55,8 @@ namespace Librainian.Internet {
             public Int32 Index;
             public UInt32 Type;
             public UInt32 DhcpEnabled;
-            public IntPtr CurrentIpAddress;
+
+            private IntPtr CurrentIpAddress;
             public IPAddrString IpAddressList;
             public IPAddrString GatewayList;
             public IPAddrString DhcpServer;
@@ -80,7 +76,8 @@ namespace Librainian.Internet {
 
         [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
         public struct IPAddrString {
-            public IntPtr Next;
+
+            private IntPtr Next;
             public IPAddressString IpAddress;
             public IPAddressString IpMask;
             public readonly Int32 Context;

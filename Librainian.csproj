@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Librainian</RootNamespace>
     <AssemblyName>Librainian</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <TargetFrameworkProfile>
@@ -48,6 +48,8 @@
     <DocumentationFile>
     </DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -72,7 +74,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="BigRationalLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BigRationalLibrary.1.0.0.0\lib\NETFramework40\BigRationalLibrary.dll</HintPath>
+      <HintPath>..\..\packages\BigRationalLibrary.1.0.0.0\lib\NETFramework40\BigRationalLibrary.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CodeFluent.Runtime.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1bb6d7cccf1045ec, processorArchitecture=MSIL">
@@ -91,12 +93,12 @@
       <HintPath>..\..\packages\Microsoft.Database.Isam.1.9.4\lib\net40\Esent.Isam.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FluentAssertions, Version=4.12.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FluentAssertions.4.12.0\lib\net45\FluentAssertions.dll</HintPath>
+    <Reference Include="FluentAssertions, Version=4.14.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentAssertions.4.14.0\lib\net45\FluentAssertions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FluentAssertions.Core, Version=4.12.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FluentAssertions.4.12.0\lib\net45\FluentAssertions.Core.dll</HintPath>
+    <Reference Include="FluentAssertions.Core, Version=4.14.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentAssertions.4.14.0\lib\net45\FluentAssertions.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.84.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
@@ -108,11 +110,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="LanguageExt.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\LanguageExt.Core.1.7.38\lib\net46\LanguageExt.Core.dll</HintPath>
+      <HintPath>..\..\packages\LanguageExt.Core.1.9.2\lib\net46\LanguageExt.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MathNet.Numerics, Version=3.12.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MathNet.Numerics.3.12.0\lib\net40\MathNet.Numerics.dll</HintPath>
+    <Reference Include="MathNet.Numerics, Version=3.13.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MathNet.Numerics.3.13.1\lib\net40\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -130,8 +132,8 @@
       <HintPath>..\..\packages\ngit.1.0.0.20110815\lib\net35\Mono.Security.Win32.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NBitcoin, Version=3.0.0.38, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NBitcoin.3.0.0.38\lib\net45\NBitcoin.dll</HintPath>
+    <Reference Include="NBitcoin, Version=3.0.0.57, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NBitcoin.3.0.0.57\lib\net45\NBitcoin.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -156,9 +158,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="RandomNameGeneratorLibrary, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\RandomNameGeneratorLibrary.dll</HintPath>
+    <Reference Include="RandomNameGeneratorLibrary, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\RandomNameGeneratorLibrary.1.2.1\lib\RandomNameGeneratorLibrary.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Sharpen, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ngit.1.0.0.20110815\lib\net35\Sharpen.dll</HintPath>
@@ -169,6 +171,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity.Design" />
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
@@ -199,10 +202,14 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Windows">
+      <HintPath>C:\Program Files (x86)\Windows Kits\10\App Certification Kit\winmds\winphone81\Windows.winmd</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -236,20 +243,31 @@
     <Compile Include="Controls\HistogramaDesenat.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Database\DatabaseErrors.cs" />
+    <Compile Include="Database\DurableDatabase.cs" />
     <Compile Include="Database\Excel.cs" />
+    <Compile Include="Database\IDatabase.cs" />
     <Compile Include="Database\MMF\CreateUnsafeSerializer.cs" />
     <Compile Include="Database\StressTest.cs" />
     <Compile Include="Database\Text.cs" />
     <Compile Include="Database\ReflectionPopulator.cs" />
     <Compile Include="Database\GenericPopulator.cs" />
     <Compile Include="Extensions\AssemblyInformation.cs" />
+    <Compile Include="Extensions\MarshalCache.cs" />
     <Compile Include="Extensions\FuncExtensions.cs" />
     <Compile Include="Extensions\EvalProvider.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Controls\ListBoxLog.cs" />
+    <Compile Include="FileSystem\Logical\LogicalDisk.cs" />
     <Compile Include="FileSystem\PhysicalDiskTests.cs" />
     <Compile Include="FileSystem\DriveTests.cs" />
-    <Compile Include="FileSystem\LogicalDisk.cs" />
+    <Compile Include="FileSystem\Physical\Device.cs" />
+    <Compile Include="FileSystem\Physical\DeviceCapabilities.cs" />
+    <Compile Include="FileSystem\Physical\DeviceClass.cs" />
+    <Compile Include="FileSystem\Physical\DiskDeviceClass.cs" />
+    <Compile Include="FileSystem\Physical\Volume.cs" />
+    <Compile Include="FileSystem\Physical\VolumeDeviceClass.cs" />
+    <Compile Include="FileSystem\ResultCode.cs" />
     <Compile Include="FileSystem\Win32DiskPartition.cs" />
     <Compile Include="FileSystem\NetworkConnection.cs" />
     <Compile Include="FileSystem\Partitions.cs" />
@@ -281,6 +299,7 @@
     <Compile Include="Maths\Numbers\Binary.cs" />
     <Compile Include="Maths\Numbers\BinaryMatrix.cs" />
     <Compile Include="Maths\Numbers\Hex32.cs" />
+    <Compile Include="Maths\Randem.cs" />
     <Compile Include="Measurement\Benchmark.cs" />
     <Compile Include="Measurement\BenchmarkResult.cs" />
     <Compile Include="Measurement\BenchmarkTests.cs" />
@@ -293,10 +312,12 @@
     <Compile Include="Measurement\Time\Clocks\WindowsClock.cs" />
     <Compile Include="Measurement\Time\Duration.cs" />
     <Compile Include="FileSystem\FolderBagTests.cs" />
+    <Compile Include="Misc\PlaySound.cs" />
+    <Compile Include="OperatingSystem\Applications\Class1.cs" />
     <Compile Include="OperatingSystem\Audio.cs" />
     <Compile Include="OperatingSystem\OSInfoTests.cs" />
     <Compile Include="OperatingSystem\DetectSSD.cs" />
-    <Compile Include="OperatingSystem\OSInfo.cs" />
+    <Compile Include="OperatingSystem\Info.cs" />
     <Compile Include="Persistence\ConcurrentDictionaryFile.cs" />
     <Compile Include="Persistence\ConcurrentListFile.cs" />
     <Compile Include="Security\PasswordTests.cs" />
@@ -360,11 +381,9 @@
     <Compile Include="FileSystem\FolderExtensions.cs" />
     <Compile Include="FileSystem\FSConstants.cs" />
     <Compile Include="FileSystem\IOWrapper.cs" />
-    <Compile Include="FileSystem\Volume.cs" />
     <Compile Include="FileSystem\PathSplitter.cs" />
     <Compile Include="Magic\ChainElement.cs" />
     <Compile Include="Magic\Instantiator.cs" />
-    <Compile Include="Maths\Numbers\BigInt.cs" />
     <Compile Include="Maths\MathConstants.cs" />
     <Compile Include="Maths\Numbers\Countable.cs" />
     <Compile Include="Maths\CountableIntegersTests.cs" />
@@ -405,7 +424,6 @@
     <Compile Include="Collections\FIFOWaitQueue.cs" />
     <Compile Include="Collections\Bag.cs" />
     <Compile Include="Collections\IBlockingQueue.cs" />
-    <Compile Include="Collections\IOrderedDictionary.cs" />
     <Compile Include="Collections\IQueue.cs" />
     <Compile Include="Collections\ITreeNodeAware.cs" />
     <Compile Include="Collections\IWaitQueue.cs" />
@@ -459,7 +477,6 @@
     <Compile Include="DiagnosticTests.cs" />
     <Compile Include="Extensions\BigNullStream.cs" />
     <Compile Include="Extensions\BooleanPredicateBuilder.cs" />
-    <Compile Include="Extensions\DisposableBase.cs" />
     <Compile Include="Extensions\ReflectionHelper.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\DummyXMLResolver.cs" />
@@ -540,12 +557,10 @@
     <Compile Include="FileSystem\SearchStyle.cs" />
     <Compile Include="Linguistics\Author.cs" />
     <Compile Include="Linguistics\UDC.cs" />
-    <Compile Include="Magic\BetterDisposableClass.cs" />
+    <Compile Include="Magic\ABetterClassDispose.cs" />
     <Compile Include="Magic\IIocContainer.cs" />
     <Compile Include="Magic\Ioc.cs" />
     <Compile Include="Magic\MagicExtensions.cs" />
-    <Compile Include="Magic\ManagedDisposable.cs" />
-    <Compile Include="Magic\NativeDisposable.cs" />
     <Compile Include="Magic\NinjectIocContainer.cs" />
     <Compile Include="FileSystem\Crc32.cs" />
     <Compile Include="FileSystem\IOExtensions.cs" />
@@ -750,9 +765,7 @@
     <Compile Include="Parsing\OpenMatchContext.cs" />
     <Compile Include="Linguistics\Paragraph.cs" />
     <Compile Include="Linguistics\Sentence.cs" />
-    <Compile Include="Parsing\Sequence.cs" />
     <Compile Include="Linguistics\Word.cs" />
-    <Compile Include="Parsing\WordGuid.cs" />
     <Compile Include="Maths\Numbers\AutoNumber.cs" />
     <Compile Include="Persistence\DeserializeReportStats.cs" />
     <Compile Include="Persistence\PersistenceExtensions.cs" />
@@ -785,15 +798,11 @@
     <Compile Include="Extensions\Combiner.cs" />
     <Compile Include="Extensions\GuidExtensions.cs" />
     <Compile Include="Extensions\Enums.cs" />
-    <Compile Include="OperatingSystem\NativeWin32.cs" />
+    <Compile Include="OperatingSystem\NativeMethods.cs" />
     <Compile Include="Threading\FileSingleton.cs" />
     <Compile Include="Threading\Gate.cs" />
-    <Compile Include="Threading\GCNotification.cs" />
     <Compile Include="Graphics\DDD\CoordinateF.cs" />
     <Compile Include="Graphics\DDD\Coordinate64.cs" />
-    <Compile Include="Threading\Heap.cs" />
-    <Compile Include="Threading\ICondition.cs" />
-    <Compile Include="Threading\ILock.cs" />
     <Compile Include="Threading\IQueuedSync.cs" />
     <Compile Include="Maths\Numbers\AtomicDouble.cs" />
     <Compile Include="Maths\Numbers\AtomicInt.cs" />
@@ -821,7 +830,6 @@
     <Compile Include="Threading\PolicyOnLockRecursion.cs" />
     <Compile Include="Threading\PriorityBlock.cs" />
     <Compile Include="Threading\PriorityScheduler.cs" />
-    <Compile Include="Threading\Randem.cs" />
     <Compile Include="Threading\ReaderWriterCount.cs" />
     <Compile Include="Threading\RecursiveCounts.cs" />
     <Compile Include="Threading\Releaser.cs" />
@@ -840,10 +848,6 @@
     <Content Include="External\Readme.txt" />
     <Content Include="External\x64\CodeFluent.Runtime.Compression.dll" />
     <Content Include="External\x86\CodeFluent.Runtime.Compression.dll" />
-    <Content Include="Misc\brain.js" />
-    <Content Include="Misc\JavaScript1.js" />
-    <Content Include="Misc\Readability.js" />
-    <Content Include="Misc\traits.js" />
     <Content Include="md5sum.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -892,6 +896,11 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_StartDate="2000/1/1" />
+    </VisualStudio>
+  </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -24,6 +24,7 @@ namespace Librainian.Internet {
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using OperatingSystem;
 
     /// <summary>
     ///     http://pastebin.com/u9159Ys8
@@ -47,14 +48,14 @@ namespace Librainian.Internet {
             Int64 structSize = Marshal.SizeOf( typeof( IPHelperInvoke.IPAdapterInfo ) );
             var pArray = Marshal.AllocHGlobal( new IntPtr( structSize ) );
 
-            var ret = IPHelperInvoke.GetAdaptersInfo( pArray, ref structSize );
+            var ret = NativeMethods.GetAdaptersInfo( pArray, ref structSize );
 
             var pEntry = pArray;
             if ( ret == IPHelperInvoke.ErrorBufferOverflow ) {
 
                 // Buffer was too small, reallocate the correct size for the buffer.
                 pArray = Marshal.ReAllocHGlobal( pArray, new IntPtr( structSize ) ); //BUG memory leak? or does realloc take into account?
-                ret = IPHelperInvoke.GetAdaptersInfo( pArray, ref structSize );
+                ret = NativeMethods.GetAdaptersInfo( pArray, ref structSize );
             }
 
             var result = new List<IPHelperInvoke.IPAdapterInfo>();

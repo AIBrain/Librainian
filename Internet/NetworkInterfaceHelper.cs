@@ -25,6 +25,7 @@ namespace Librainian.Internet {
     using System.Linq;
     using System.Net;
     using System.Net.NetworkInformation;
+    using OperatingSystem;
 
     /// <summary>
     ///     http://pastebin.com/u9159Ys8
@@ -44,7 +45,7 @@ namespace Librainian.Internet {
 
             var ipaddr = BitConverter.ToUInt32( byteArray1, 0 );
             UInt32 interfaceIndex;
-            var error = IPHelperInvoke.GetBestInterface( ipaddr, out interfaceIndex );
+            var error = NativeMethods.GetBestInterface( ipaddr, out interfaceIndex );
 
             if ( error != 0 ) {
                 throw new InvalidOperationException( $"Error while calling GetBestInterface(). Error={error}" );

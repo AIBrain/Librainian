@@ -50,6 +50,7 @@ namespace Librainian.Internet.Servers {
         ///     The port number on which to accept regular http connections. If -1, the Server will not
         ///     listen for http connections.
         /// </param>
+        /// <param name="thrHttps"></param>
         /// <param name="httpsPort">
         ///     (Optional) The port number on which to accept https connections. If -1, the Server will
         ///     not listen for https connections.
@@ -60,8 +61,9 @@ namespace Librainian.Internet.Servers {
         ///     "SimpleHttpServer-SslCert.pfx" in the same directory that the current executable is
         ///     located in.
         /// </param>
-        public HttpServer( Int32 port, Int32 httpsPort = -1, X509Certificate2 cert = null ) {
+        public HttpServer( Int32 port, Thread thrHttps, Int32 httpsPort = -1, X509Certificate2 cert = null ) {
             this.Port = port;
+            this._thrHttps = thrHttps;
             this.SecurePort = httpsPort;
             this._sslCertificate = cert;
 
@@ -163,12 +165,8 @@ namespace Librainian.Internet.Servers {
 
         /// <summary>Starts listening for connections.</summary>
         public void Start() {
-            if ( this._thrHttp != null ) {
-                this._thrHttp.Start( false );
-            }
-            if ( this._thrHttps != null ) {
-                this._thrHttps.Start( true );
-            }
+            this._thrHttp?.Start( false );
+            this._thrHttps?.Start( true );
         }
 
         /// <summary>Stops listening for connections.</summary>
@@ -260,20 +258,15 @@ namespace Librainian.Internet.Servers {
                                 ThreadPool.QueueUserWorkItem( processor.Process );
                             }
                             else {
-                                try {
-                                    var outputStream = new StreamWriter( s.GetStream() );
-                                    outputStream.WriteLine( "HTTP/1.1 503 Service Unavailable" );
-                                    outputStream.WriteLine( "Connection: close" );
-                                    outputStream.WriteLine( "" );
-                                    outputStream.WriteLine( "Server too busy" );
-                                }
-                                catch ( ThreadAbortException ex ) {
-                                    throw ex;
-                                }
+                                var outputStream = new StreamWriter( s.GetStream() );
+                                outputStream.WriteLine( "HTTP/1.1 503 Service Unavailable" );
+                                outputStream.WriteLine( "Connection: close" );
+                                outputStream.WriteLine( "" );
+                                outputStream.WriteLine( "Server too busy" );
                             }
                         }
-                        catch ( ThreadAbortException ex ) {
-                            throw ex;
+                        catch ( ThreadAbortException  ) {
+                            throw ;
                         }
                         catch ( Exception ex ) {
                             if ( ( DateTime.Now.Hour != innerLastError.Hour ) || ( DateTime.Now.DayOfYear != innerLastError.DayOfYear ) ) {
@@ -283,7 +276,7 @@ namespace Librainian.Internet.Servers {
                                 innerErrorCount = 0;
                             }
                             if ( ++innerErrorCount > 10 ) {
-                                throw ex;
+                                throw;
                             }
                             SimpleHttpLogger.Log( ex, "Inner Error count this hour: " + innerErrorCount );
                             Thread.Sleep( 1 );
@@ -299,7 +292,7 @@ namespace Librainian.Internet.Servers {
                         errorCount = 0;
                     }
                     if ( ++errorCount > 100 ) {
-                        throw ex;
+                        throw;
                     }
                     SimpleHttpLogger.Log( ex, "Restarting listener. Error count today: " + errorCount );
                     threwExceptionOuter = true;
@@ -316,7 +309,9 @@ namespace Librainian.Internet.Servers {
                     catch ( ThreadAbortException ) {
                         this.StopRequested = true;
                     }
-                    catch ( Exception ) { }
+                    catch ( Exception ) {
+                        // ignored
+                    }
                 }
             }
         }

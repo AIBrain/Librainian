@@ -24,9 +24,11 @@ namespace Librainian.Graphics.Video {
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.Runtime.InteropServices;
+    using Magic;
+    using OperatingSystem;
 
     /// <summary>Create AVI files from bitmaps</summary>
-    public class AviWriter {
+    public class AviWriter : ABetterClassDispose {
         private readonly UInt32 _fccHandler = 1668707181;
 
         //"Microsoft Video 1" - Use CVID for default codec: (UInt32)Avi.mmioStringToFOURCC("CVID", 0);
@@ -59,7 +61,7 @@ namespace Librainian.Graphics.Video {
                 this.CreateStream();
             }
 
-            var result = Avi.AVIStreamWrite( this._aviStream, this._countFrames, 1, bmpDat.Scan0, //pointer to the beginning of the image data
+            var result = NativeMethods.AVIStreamWrite( this._aviStream, this._countFrames, 1, bmpDat.Scan0, //pointer to the beginning of the image data
                                              ( Int32 )( this._stride * this._height ), 0, 0, 0 );
 
             if ( result != 0 ) {
@@ -73,14 +75,14 @@ namespace Librainian.Graphics.Video {
         /// <summary>Closes stream, file and AVI Library</summary>
         public void Close() {
             if ( this._aviStream != IntPtr.Zero ) {
-                Avi.AVIStreamRelease( this._aviStream );
+                NativeMethods.AVIStreamRelease( this._aviStream );
                 this._aviStream = IntPtr.Zero;
             }
             if ( this._aviFile != 0 ) {
-                Avi.AVIFileRelease( this._aviFile );
+                NativeMethods.AVIFileRelease( this._aviFile );
                 this._aviFile = 0;
             }
-            Avi.AVIFileExit();
+            NativeMethods.AVIFileExit();
         }
 
         /// <summary>Creates a new AVI file</summary>
@@ -89,12 +91,18 @@ namespace Librainian.Graphics.Video {
         public void Open( String fileName, UInt32 frameRate ) {
             this._frameRate = frameRate;
 
-            Avi.AVIFileInit();
+            NativeMethods.AVIFileInit();
 
-            var hr = Avi.AVIFileOpen( ref this._aviFile, fileName, 4097 /* OF_WRITE | OF_CREATE (winbase.h) */, 0 );
+            var hr = NativeMethods.AVIFileOpen( ref this._aviFile, fileName, 4097 /* OF_WRITE | OF_CREATE (winbase.h) */, 0 );
             if ( hr != 0 ) {
                 throw new Exception( "Error in AVIFileOpen: " + hr );
             }
+        }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
         }
 
         /// <summary>Creates a new video stream in the AVI file</summary>
@@ -103,7 +111,7 @@ namespace Librainian.Graphics.Video {
 
             //highest quality! Compression destroys the hidden message
 
-            var result = Avi.AVIFileCreateStream( this._aviFile, out this._aviStream, ref strhdr );
+            var result = NativeMethods.AVIFileCreateStream( this._aviFile, out this._aviStream, ref strhdr );
             if ( result != 0 ) {
                 throw new Exception( "Error in AVIFileCreateStream: " + result );
             }
@@ -118,7 +126,7 @@ namespace Librainian.Graphics.Video {
             bi.biBitCount = 24;
             bi.biSizeImage = ( UInt32 )( this._stride * this._height );
 
-            result = Avi.AVIStreamSetFormat( this._aviStream, 0, ref bi, Marshal.SizeOf( bi ) );
+            result = NativeMethods.AVIStreamSetFormat( this._aviStream, 0, ref bi, Marshal.SizeOf( bi ) );
             if ( result != 0 ) {
                 throw new Exception( "Error in AVIStreamSetFormat: " + result );
             }

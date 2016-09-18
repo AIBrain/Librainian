@@ -16,12 +16,10 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ITaggedWord.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+// "Librainian/ITaggedWord.cs" was last cleaned by Rick on 2016/08/26 at 10:14 AM
 
 namespace Librainian.Linguistics.PoS {
 
-    using System;
-
-    public interface ITaggedWord : IEquatable<ITaggedWord>, IIHasPartOfSpeech {
+    public interface ITaggedWord : IIHasPartOfSpeech {
     }
 }

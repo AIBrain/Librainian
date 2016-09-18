@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/InternetExtensions.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+// "Librainian/InternetExtensions.cs" was last cleaned by Rick on 2016/08/15 at 4:59 PM
 
 namespace Librainian.Internet {
 
@@ -37,6 +37,7 @@ namespace Librainian.Internet {
             if ( request == null ) {
                 throw new ArgumentNullException( nameof( request ) );
             }
+
             var result = await Task.Factory.FromAsync( ( asyncCallback, state ) => ( ( HttpWebRequest )state ).BeginGetResponse( asyncCallback, state ), asyncResult => ( ( HttpWebRequest )asyncResult.AsyncState ).EndGetResponse( asyncResult ), request );
             var stream = result.GetResponseStream();
             return stream != null ? new StreamReader( stream ) : TextReader.Null;
@@ -46,6 +47,7 @@ namespace Librainian.Internet {
             if ( uri == null ) {
                 throw new ArgumentNullException( nameof( uri ) );
             }
+
             var request = WebRequest.CreateHttp( uri );
 
             //request.AllowReadStreamBuffering = true;
@@ -57,6 +59,7 @@ namespace Librainian.Internet {
             if ( request == null ) {
                 throw new ArgumentNullException( nameof( request ) );
             }
+
             var reader = await DoRequestAsync( request );
             var response = await reader.ReadToEndAsync();
             return JsonConvert.DeserializeObject<T>( response );
@@ -97,22 +100,24 @@ namespace Librainian.Internet {
                 request.Credentials = CredentialCache.DefaultCredentials;
 
                 using ( var response = request.GetResponse() as HttpWebResponse ) {
-                    if ( response != null ) {
-                        using ( var dataStream = response.GetResponseStream() ) {
-                            if ( dataStream != null ) {
-                                using ( var reader = new StreamReader( dataStream ) ) {
-                                    var responseFromServer = reader.ReadToEnd();
-                                    return responseFromServer;
-                                }
+                    var dataStream = response?.GetResponseStream();
+                    if ( dataStream != null ) {
+                        try {
+                            using ( var reader = new StreamReader( dataStream ) ) {
+                                var responseFromServer = reader.ReadToEnd();
+                                return responseFromServer;
                             }
                         }
-                        response.Close();
+                        finally {
+                            dataStream.Dispose();
+                        }
                     }
                 }
             }
             catch {
                 throw new Exception( $"Unable to connect to {url}." );
             }
+
             return null;
         }
 
@@ -135,6 +140,7 @@ namespace Librainian.Internet {
             catch {
                 $"Unable to connect to {url}.".Error();
             }
+
             return null;
         }
 

@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Library.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+// "Librainian/Library.cs" was last cleaned by Rick on 2016/08/26 at 10:19 AM
 
 namespace Librainian.Linguistics {
 
@@ -24,49 +24,79 @@ namespace Librainian.Linguistics {
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
-    using FluentAssertions;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     /// <summary>
-    ///     <para>A <see cref="Library" /> is a cluster of <see cref="Book" /> .</para>
+    ///     <para>A <see cref="Library" /> is a cluster of <see cref="Book" />s.</para>
     /// </summary>
     [JsonObject]
-    public sealed class Library : IEquatable<Library>, IEnumerable<Book> {
+    [DebuggerDisplay( "{ToString()}" )]
+    [Serializable]
+    public sealed class Library : IEquatable<Library>, IEnumerable<KeyValuePair<UDC, Book>> {
 
-        /// <summary></summary>
-        public const UInt64 Level = Book.Level << 1;
-
-        [NotNull]
-        [JsonProperty]
-        private readonly ConcurrentDictionary<Udc, Book> _tokens = new ConcurrentDictionary<Udc, Book>();
-
-        static Library() {
-            Level.Should().BeGreaterThan( Book.Level );
-        }
-
-        public Library( [NotNull] Udc udc, [NotNull] Book book ) {
+        public Library( [NotNull] UDC udc, [NotNull] Book book ) {
             this.Add( udc, book );
         }
 
-        public Boolean Add( [NotNull] Udc udc, [NotNull] Book book ) {
+        [NotNull]
+        [JsonProperty]
+        private ConcurrentDictionary<UDC, Book> Books { get; } = new ConcurrentDictionary<UDC, Book>();
+
+        /// <summary>
+        /// Static equality test
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
+        public static Boolean Equals( Library lhs, Library rhs ) {
+            if ( ReferenceEquals( lhs, rhs ) ) {
+                return true;
+            }
+            if ( ReferenceEquals( lhs, null ) ) {
+                return false;
+            }
+            if ( ReferenceEquals( null, rhs ) ) {
+                return false;
+            }
+
+            return lhs.OrderBy( pair => pair.Key ).SequenceEqual( rhs.OrderBy( pair => pair.Key ) );
+        }
+
+        public Boolean Add( [ NotNull ] UDC udc, [NotNull] Book book ) {
+            if ( udc == null ) {
+                throw new ArgumentNullException( nameof( udc ) );
+            }
             if ( book == null ) {
                 throw new ArgumentNullException( nameof( book ) );
             }
-            this._tokens.TryAdd( udc, book );
+
+            this.Books.TryAdd( udc, book );
             return true;
         }
 
         public Boolean Equals( [CanBeNull] Library other ) {
-            if ( ReferenceEquals( other, null ) ) {
-                return false;
-            }
-            return ReferenceEquals( this, other ) || this.SequenceEqual( other );
+            return Equals( this, other );
         }
 
-        public IEnumerator<Book> GetEnumerator() => this._tokens.Values.GetEnumerator();
+        /// <summary>Returns an enumerator that iterates through the collection.</summary>
+        /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+        public IEnumerator<KeyValuePair<UDC, Book>> GetEnumerator() {
+            return this.Books.GetEnumerator();
+        }
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        /// <summary>Serves as the default hash function. </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() {
+            return this.Books.GetHashCode();
+        }
+
+        /// <summary>Returns an enumerator that iterates through a collection.</summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        IEnumerator IEnumerable.GetEnumerator() {
+            return ( ( IEnumerable )this.Books ).GetEnumerator();
+        }
     }
 }

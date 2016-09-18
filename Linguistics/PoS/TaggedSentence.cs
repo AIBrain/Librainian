@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/TaggedSentence.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+// "Librainian/TaggedSentence.cs" was last cleaned by Rick on 2016/08/26 at 10:14 AM
 
 namespace Librainian.Linguistics.PoS {
 
@@ -52,10 +52,11 @@ namespace Librainian.Linguistics.PoS {
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         [Pure]
-        public Boolean Equals( [NotNull] TaggedSentence other ) {
+        public Boolean Equals( TaggedSentence other ) {
             if ( other == null ) {
-                throw new ArgumentNullException( nameof( other ) );
+                return false;
             }
+
             return ReferenceEquals( this, other ) || this.Tokens.SequenceEqual( other.Tokens );
         }
 

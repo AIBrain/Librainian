@@ -30,6 +30,7 @@ namespace Librainian.Knowledge {
     using System.Windows.Forms;
     using FileSystem;
     using JetBrains.Annotations;
+    using Maths;
     using Newtonsoft.Json;
     using Parsing;
     using Threading;
@@ -49,12 +50,12 @@ namespace Librainian.Knowledge {
                 throw new ArgumentNullException( nameof( dataFile ) );
             }
 
-            if ( !dataFile.Extension.Like( ".knb" ) ) {
+            if ( !dataFile.Extension().Like( ".knb" ) ) {
                 return 0;
             }
 
             Interlocked.Increment( ref this.FilesFound );
-            feedback?.Invoke( this, new ProgressChangedEventArgs( this.FilesFound, $"Found data file {dataFile.FileName}" ) );
+            feedback?.Invoke( this, new ProgressChangedEventArgs( this.FilesFound, $"Found data file {dataFile.FileName()}" ) );
 
             if ( !this.KnbFiles.Contains( dataFile ) ) {
                 this.KnbFiles.Add( dataFile );

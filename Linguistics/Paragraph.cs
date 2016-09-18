@@ -16,18 +16,18 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Paragraph.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+// "Librainian/Paragraph.cs" was last cleaned by Rick on 2016/08/26 at 10:14 AM
 
 namespace Librainian.Linguistics {
 
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using Collections;
     using Extensions;
-    using FluentAssertions;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
     using Parsing;
@@ -38,16 +38,13 @@ namespace Librainian.Linguistics {
     /// <seealso cref="Page"></seealso>
     [JsonObject]
     [Immutable]
+    [DebuggerDisplay( "{ToString()}" )]
+    [Serializable]
     public sealed class Paragraph : IEquatable<Paragraph>, IEnumerable<Sentence> {
-        public const UInt64 Level = Sentence.Level << 1;
 
         [NotNull]
         [JsonProperty]
-        private readonly List<Sentence> _tokens = new List<Sentence>();
-
-        static Paragraph() {
-            Level.Should().BeGreaterThan( Sentence.Level );
-        }
+        private readonly List<Sentence> Sentences = new List<Sentence>();
 
         /// <summary>A <see cref="Paragraph" /> is ordered sequence of sentences.</summary>
         /// <param name="paragraph"></param>
@@ -57,10 +54,15 @@ namespace Librainian.Linguistics {
         /// <param name="sentences"></param>
         public Paragraph( [CanBeNull] IEnumerable<Sentence> sentences ) {
             if ( sentences != null ) {
-                this._tokens.AddRange( sentences );
+                this.Sentences.AddRange( sentences.Where( sentence => sentence != null ) );
             }
-            this._tokens.Fix();
+            this.Sentences.Fix();
         }
+
+        private Paragraph() {
+        }
+
+        public static Paragraph Empty { get; } = new Paragraph();
 
         public static implicit operator String( Paragraph paragraph ) => paragraph.ToString();
 
@@ -68,30 +70,26 @@ namespace Librainian.Linguistics {
             if ( ReferenceEquals( other, null ) ) {
                 return false;
             }
-            return ReferenceEquals( this, other ) || this._tokens.SequenceEqual( other._tokens );
+
+            return ReferenceEquals( this, other ) || this.Sentences.SequenceEqual( other.Sentences );
         }
 
-        public IEnumerator<Sentence> GetEnumerator() => this._tokens.GetEnumerator();
+        public IEnumerator<Sentence> GetEnumerator() => this.Sentences.GetEnumerator();
+
+        /// <summary>Serves as the default hash function. </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() {
+            return this.Sentences.GetHashCode();
+        }
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        /*
-                public IEnumerable<Tuple<UInt64, String>> Possibles() {
-                    foreach ( var sentence in this ) {
-                        yield return new Tuple<UInt64, String>( Level, sentence );
-
-                        foreach ( var possible in sentence.Possibles() ) {
-                            yield return possible;
-                        }
-                    }
-                }
-        */
-
         public override String ToString() {
             var sb = new StringBuilder();
-            foreach ( var sentence in this._tokens ) {
-                sb.AppendLine( sentence );
+            foreach ( var sentence in this.Sentences ) {
+                sb.AppendLine( sentence.ToString() );
             }
+
             return sb.ToString();
         }
     }

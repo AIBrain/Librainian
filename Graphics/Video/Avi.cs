@@ -31,66 +31,36 @@ namespace Librainian.Graphics.Video {
         public const Int32 StreamtypeVideo = 1935960438;
 
         //Create a new stream in an open AVI file
-        [DllImport( "avifil32.dll" )]
-        public static extern Int32 AVIFileCreateStream( Int32 pfile, out IntPtr ppavi, ref Avistreaminfo ptrStreaminfo );
 
         //ascii string "BM"
         //Close the AVI Library
-        [DllImport( "avifil32.dll" )]
-        public static extern void AVIFileExit();
 
         //mmioStringToFOURCC("vids", 0)
         //Get a stream from an open AVI file
-        [DllImport( "avifil32.dll" )]
-        public static extern Int32 AVIFileGetStream( Int32 pfile, out IntPtr ppavi, Int32 fccType, Int32 lParam );
 
         //Initialize the AVI Library
-        [DllImport( "avifil32.dll" )]
-        public static extern void AVIFileInit();
 
         //Open an AVI file
-        [DllImport( "avifil32.dll", PreserveSig = true )]
-        public static extern Int32 AVIFileOpen( ref Int32 ppfile, String szFile, Int32 uMode, Int32 pclsidHandler );
 
         //Release an open AVI file
-        [DllImport( "avifil32.dll" )]
-        public static extern Int32 AVIFileRelease( Int32 pfile );
 
         //Get a pointer to a packed DIB (returns 0 on error)
-        [DllImport( "avifil32.dll" )]
-        public static extern Int32 AVIStreamGetFrame( Int32 pGetFrameObj, Int32 lPos );
 
         //Release the GETFRAME object
-        [DllImport( "avifil32.dll" )]
-        public static extern Int32 AVIStreamGetFrameClose( Int32 pGetFrameObj );
 
         //Get a pointer to a GETFRAME object (returns 0 on error)
-        [DllImport( "avifil32.dll" )]
-        public static extern Int32 AVIStreamGetFrameOpen( IntPtr pAviStream, ref Bitmapinfoheader bih );
 
         //Get information about an open stream
-        [DllImport( "avifil32.dll" )]
-        public static extern Int32 AVIStreamInfo( Int32 pAviStream, ref Avistreaminfo psi, Int32 lSize );
 
         //Get the length of a stream in frames
-        [DllImport( "avifil32.dll", PreserveSig = true )]
-        public static extern Int32 AVIStreamLength( Int32 pavi );
 
         //Release an open AVI stream
-        [DllImport( "avifil32.dll" )]
-        public static extern Int32 AVIStreamRelease( IntPtr aviStream );
 
         //Set the format for a new stream
-        [DllImport( "avifil32.dll" )]
-        public static extern Int32 AVIStreamSetFormat( IntPtr aviStream, Int32 lPos, ref Bitmapinfoheader lpFormat, Int32 cbFormat );
 
         //Get the start position of a stream
-        [DllImport( "avifil32.dll", PreserveSig = true )]
-        public static extern Int32 AVIStreamStart( Int32 pavi );
 
         //Write a sample to a stream
-        [DllImport( "avifil32.dll" )]
-        public static extern Int32 AVIStreamWrite( IntPtr aviStream, Int32 lStart, Int32 lSamples, IntPtr lpBuffer, Int32 cbBuffer, Int32 dwFlags, Int32 dummy1, Int32 dummy2 );
 
         [StructLayout( LayoutKind.Sequential, Pack = 1 )]
         public struct Avistreaminfo {

@@ -29,8 +29,9 @@ namespace Librainian.Internet {
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
+    using Magic;
 
-    public class Surfer {
+    public class Surfer : ABetterClassDispose {
         private readonly ReaderWriterLockSlim _downloadInProgressAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
         private readonly ConcurrentBag<Uri> _pastUrls = new ConcurrentBag<Uri>();
         private readonly ConcurrentQueue<Uri> _urls = new ConcurrentQueue<Uri>();
@@ -174,5 +175,13 @@ namespace Librainian.Internet {
                 this.StartNextDownload();
             }
         } );
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
+            this._downloadInProgressAccess.Dispose();
+        }
+
     }
 }

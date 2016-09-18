@@ -23,9 +23,11 @@ namespace Librainian.Internet.Servers {
     using System;
     using System.Net;
     using System.Threading;
+    using Magic;
 
-    public class WebServer {
-        private static readonly AutoResetEvent ListenForNextRequest = new AutoResetEvent( false );
+    public class WebServer : ABetterClassDispose {
+
+        private readonly AutoResetEvent _listenForNextRequest = new AutoResetEvent( false );
         private readonly HttpListener _httpListener;
 
         protected WebServer() {
@@ -64,8 +66,14 @@ namespace Librainian.Internet.Servers {
         private void Listen( Object state ) {
             while ( _httpListener.IsListening ) {
                 _httpListener.BeginGetContext( ListenerCallback, _httpListener );
-                ListenForNextRequest.WaitOne();
+                this._listenForNextRequest.WaitOne();
             }
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this._listenForNextRequest?.Dispose(); }
+
     }
 }
