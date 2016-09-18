@@ -31,6 +31,7 @@ namespace Librainian.Measurement.Currency.BTC {
     using Financial;
     using Financial.Containers.Wallets;
     using JetBrains.Annotations;
+    using Magic;
     using Maths;
     using Newtonsoft.Json;
     using Threading;
@@ -42,10 +43,10 @@ namespace Librainian.Measurement.Currency.BTC {
     /// </summary>
     [JsonObject]
     [DebuggerDisplay( "{Formatted,nq}" )]
-    public class CoinWallet : IEnumerable<KeyValuePair<ICoin, UInt64>>, ICoinWallet {
+    public class CoinWallet : ABetterClassDispose, IEnumerable<KeyValuePair<ICoin, UInt64>>, ICoinWallet {
 
-        [JsonProperty]
-        public WalletStatistics WalletStatistics;
+        [ JsonProperty ]
+        public WalletStatistics Statistics { get; } = new WalletStatistics();
 
         /// <summary>Count of each <see cref="ICoin" />.</summary>
         [NotNull]
@@ -53,7 +54,6 @@ namespace Librainian.Measurement.Currency.BTC {
 
         private CoinWallet( Guid id ) {
             this.ID = id;
-            this.WalletStatistics = new WalletStatistics();
             this.Actor = new ActionBlock<BitcoinTransactionMessage>( message => {
                 switch ( message.TransactionType ) {
                     case TransactionType.Deposit:
@@ -153,7 +153,7 @@ namespace Librainian.Measurement.Currency.BTC {
             }
             finally {
                 if ( updateStatistics ) {
-                    this.WalletStatistics.AllTimeDeposited += coin.FaceValue * quantity;
+                    this.Statistics.AllTimeDeposited += coin.FaceValue * quantity;
                 }
                 var onDeposit = this.OnDeposit;
                 onDeposit?.Invoke( new KeyValuePair<ICoin, UInt64>( coin, quantity ) );
@@ -214,5 +214,11 @@ namespace Librainian.Measurement.Currency.BTC {
 
             return this.TryWithdraw( coin, 1 ) ? coin : default( ICoin );
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this.Statistics.Dispose(); }
+
     }
 }

@@ -23,6 +23,7 @@ namespace Librainian.Measurement.Length {
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using FluentAssertions;
     using Newtonsoft.Json;
     using NUnit.Framework;
 
@@ -43,13 +44,6 @@ namespace Librainian.Measurement.Length {
 
         [JsonProperty]
         public readonly BigInteger Value;
-
-        static PlanckLengths() {
-            Assert.That( Zero.Value < One.Value );
-            Assert.That( One.Value < Two.Value );
-            Assert.That( Two.Value > One.Value );
-            Assert.That( One.Value > Zero.Value );
-        }
 
         public PlanckLengths( BigInteger planckLengths ) : this() {
             this.Value = planckLengths;
@@ -88,4 +82,17 @@ namespace Librainian.Measurement.Length {
         //    return lhs.Comparison( rhs ) > 0;
         //}
     }
+
+    [TestFixture]
+    public static class TestPlanckLengths {
+
+        [Test]
+        public static void TestSmallValuePlancks() {
+
+            PlanckLengths.One.Should().BeLessThan( PlanckLengths.Two );
+            PlanckLengths.Two.Should().BeGreaterThan( PlanckLengths.One );
+        }
+
+    }
+
 }

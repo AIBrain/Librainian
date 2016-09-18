@@ -93,7 +93,7 @@ namespace Librainian.Measurement.Time {
             using ( this._timer ) {
 
                 //TODO what happens if this is null?
-                this._timer?.Close();
+                //this._timer?.Close();
             }
             this._stopwatch.Stop();
             this._datapoints.Clear();

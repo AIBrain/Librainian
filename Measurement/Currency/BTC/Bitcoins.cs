@@ -25,7 +25,7 @@ namespace Librainian.Measurement.Currency.BTC {
     /// <summary>
     ///     Bitcoins
     /// </summary>
-    /// <see cref="https://en.bitcoin.it/wiki/FAQ" />
+    /// <see cref="http://en.bitcoin.it/wiki/FAQ" />
     //TODO
     public class Bitcoins : ICurrency {
 
@@ -39,13 +39,12 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <remarks>The amount is in satoshis! 1 BTC = 100000000 satoshis.</remarks>
         public readonly Decimal Satoshis;
 
-        public readonly Decimal Value;
+        //public readonly Decimal Value;
 
-        public Bitcoins( Decimal value ) {
-            this.Value = value;
-            this.Btc = Math.Truncate( value );
-
-            //this.Satoshis = this.Dollars - value;
+        public Bitcoins( Decimal satoshis ) {
+            //this.Value = value;
+            this.Btc = Math.Truncate( satoshis );
+            this.Satoshis = satoshis - this.Btc;
         }
     }
 }

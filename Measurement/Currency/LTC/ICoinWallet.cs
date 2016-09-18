@@ -22,6 +22,7 @@ namespace Librainian.Measurement.Currency.LTC {
 
     using System;
     using System.Collections.Generic;
+    using BTC;
     using JetBrains.Annotations;
 
     public interface ICoinWallet {

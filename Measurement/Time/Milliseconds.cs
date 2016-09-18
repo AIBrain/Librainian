@@ -98,7 +98,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     Three Three Three <see cref="Milliseconds" />.
         /// </summary>
-        public static readonly Milliseconds ThreeHundredThirtyThree = new Milliseconds( 333 );
+        public static Milliseconds ThreeHundredThirtyThree { get; } = new Milliseconds( 333 );
 
         /// <summary>
         ///     Two <see cref="Milliseconds" /> s.

@@ -21,7 +21,7 @@
 namespace Librainian.Measurement.Time {
 
     using System;
-    using System.Runtime.InteropServices;
+    using OperatingSystem;
 
     /// <summary>
     ///     From https://manski.net/2014/07/high-resolution-clock-in-csharp/
@@ -31,7 +31,7 @@ namespace Librainian.Measurement.Time {
         static HighResolutionDateTime() {
             try {
                 Int64 filetime;
-                GetSystemTimePreciseAsFileTime( out filetime );
+                NativeMethods.GetSystemTimePreciseAsFileTime( out filetime );
                 IsAvailable = true;
             }
             catch ( EntryPointNotFoundException ) {
@@ -48,15 +48,13 @@ namespace Librainian.Measurement.Time {
         public static DateTime UtcNow {
             get {
                 if ( !IsAvailable ) {
-                    throw new InvalidOperationException( "High resolution clock isn't available." );
+                    throw new InvalidOperationException( "High resolution clock is not available." );
                 }
                 Int64 filetime;
-                GetSystemTimePreciseAsFileTime( out filetime );
+                NativeMethods.GetSystemTimePreciseAsFileTime( out filetime );
                 return DateTime.FromFileTimeUtc( filetime );
             }
         }
 
-        [DllImport( "Kernel32.dll", CallingConvention = CallingConvention.Winapi )]
-        private static extern void GetSystemTimePreciseAsFileTime( out Int64 filetime );
     }
 }

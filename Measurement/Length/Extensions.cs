@@ -46,10 +46,10 @@ namespace Librainian.Measurement.Length {
 
         public static Int32 Comparison( this Millimeters lhs, Millimeters rhs ) => lhs.Value.CompareTo( rhs.Value );
 
-        public static Int32 Comparison( this Millimeters millimeters, Centimeters centimeters ) {
-            var lhs = new Centimeters( millimeters: millimeters ).Value; //upconvert. less likely to overflow.
-            var rhs = centimeters.Value;
-            return lhs.CompareTo( rhs );
-        }
+        //public static Int32 Comparison( this Millimeters millimeters, Centimeters centimeters ) {
+        //    var lhs = new Centimeters( millimeters: millimeters ).Value; //upconvert. less likely to overflow.
+        //    var rhs = centimeters.Value;
+        //    return lhs.CompareTo( rhs );
+        //}
     }
 }

@@ -26,8 +26,9 @@ namespace Librainian.Measurement.Currency.BTC {
     using System.Windows.Forms;
     using Controls;
     using JetBrains.Annotations;
+    using Magic;
+    using Maths;
     using Newtonsoft.Json;
-    using Threading;
     using Time;
 
     /// <summary>A very simple, thread-safe, Decimal-based bitcoin wallet.</summary>
@@ -37,7 +38,7 @@ namespace Librainian.Measurement.Currency.BTC {
     [DebuggerDisplay( "{ToString(),nq}" )]
     [Serializable]
     [JsonObject]
-    public class SimpleBitcoinWallet : IEquatable<SimpleBitcoinWallet> {
+    public class SimpleBitcoinWallet : ABetterClassDispose,IEquatable<SimpleBitcoinWallet> {
 
         /// <summary>1</summary>
         public const Decimal Btc = 1M;
@@ -63,6 +64,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <summary>1,000,000 μBTC are in 1 BTC</summary>
         public const UInt64 ΜBtcInOneBtc = ( UInt64 )( Btc / ΜBtc );
 
+        [NonSerialized]
         [NotNull]
         private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
@@ -209,17 +211,14 @@ namespace Librainian.Measurement.Currency.BTC {
             if ( amount <= Decimal.Zero ) {
                 return false;
             }
-            var onBeforeDeposit = this.OnBeforeDeposit;
-            if ( onBeforeDeposit != null ) {
-                onBeforeDeposit( amount );
-            }
+
+            this.OnBeforeDeposit?.Invoke( amount );
+
             if ( !this.TryAdd( amount ) ) {
                 return false;
             }
-            var onAfterDeposit = this.OnAfterDeposit;
-            if ( onAfterDeposit != null ) {
-                onAfterDeposit( amount );
-            }
+
+            this.OnAfterDeposit?.Invoke( amount );
             return true;
         }
 
@@ -326,5 +325,11 @@ namespace Librainian.Measurement.Currency.BTC {
             }
             return this.TryWithdraw( wallet.Balance );
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this._access.Dispose(); }
+
     }
 }

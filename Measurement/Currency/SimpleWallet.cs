@@ -27,8 +27,9 @@ namespace Librainian.Measurement.Currency {
     using BTC;
     using Controls;
     using JetBrains.Annotations;
+    using Magic;
+    using Maths;
     using Newtonsoft.Json;
-    using Threading;
     using Time;
 
     /// <summary>
@@ -39,7 +40,7 @@ namespace Librainian.Measurement.Currency {
     /// </remarks>
     [DebuggerDisplay( "{ToString(),nq}" )]
     [JsonObject]
-    public class SimpleWallet : ISimpleWallet, IEquatable<SimpleWallet> {
+    public class SimpleWallet : ABetterClassDispose,ISimpleWallet, IEquatable<SimpleWallet> {
 
         [NotNull]
         private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
@@ -157,7 +158,7 @@ namespace Librainian.Measurement.Currency {
             }
         }
 
-        public Boolean TryAdd( [NotNull] SimpleWallet wallet, Boolean sanitize = true ) {
+        public Boolean TryAdd( SimpleWallet wallet, Boolean sanitize = true ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
@@ -277,11 +278,17 @@ namespace Librainian.Measurement.Currency {
             }
         }
 
-        public Boolean TryWithdraw( [NotNull] SimpleWallet wallet ) {
+        public Boolean TryWithdraw( SimpleWallet wallet ) {
             if ( wallet == null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
             return this.TryWithdraw( wallet.Balance );
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this._access.Dispose(); }
+
     }
 }

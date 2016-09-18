@@ -132,12 +132,15 @@ namespace Librainian.Maths.Numbers {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [NotNull] Percentage left, [NotNull] Percentage right ) {
-            if ( left == null ) {
-                throw new ArgumentNullException( nameof( left ) );
+        public static Boolean Equals( Percentage left, Percentage right ) {
+            if ( ReferenceEquals(left, right) ) {
+                return true;
             }
-            if ( right == null ) {
-                throw new ArgumentNullException( nameof( right ) );
+            if ( ReferenceEquals( left,null ) ) {
+                return false;
+            }
+            if ( ReferenceEquals( null, right) ) {
+                return false;
             }
             return left.Quotient == right.Quotient;
         }
@@ -148,9 +151,6 @@ namespace Librainian.Maths.Numbers {
 
         public static implicit operator Percentage( Double value ) => new Percentage( value );
 
-        //public static implicit operator  System.Decimal( Percentage special ) {
-        //    return (  System.Decimal )special.Value;
-        //}
         public static Percentage operator +( Percentage left, Percentage right ) => Combine( left, right );
 
         public static Percentage Parse( [NotNull] String value ) {
@@ -183,10 +183,7 @@ namespace Librainian.Maths.Numbers {
             return this.Quotient.CompareTo( other.Quotient );
         }
 
-        public Boolean Equals( [NotNull] Percentage other ) {
-            if ( other == null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
+        public Boolean Equals( Percentage other ) {
             return Equals( this, other );
         }
 

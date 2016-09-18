@@ -23,7 +23,6 @@ namespace Librainian.Maths.Numbers {
     using System;
     using System.Threading;
     using Newtonsoft.Json;
-    using Threading;
 
     /// <summary>
     ///     <para>Restricts the value to between 0.0 and 1.0.</para>

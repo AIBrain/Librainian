@@ -64,14 +64,10 @@ namespace Librainian.Measurement {
                 }
             }
 
-            if ( !runFor.HasValue ) {
-                runFor = Seconds.One;
-            }
-
             var rounds = 0UL;
 
             var stopwatch = Stopwatch.StartNew();
-            while ( stopwatch.Elapsed < runFor.Value ) {
+            while ( stopwatch.Elapsed < (runFor ?? Seconds.One) ) {
                 try {
                     method.Invoke();
                     rounds++;

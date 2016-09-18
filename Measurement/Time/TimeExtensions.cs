@@ -154,6 +154,7 @@ namespace Librainian.Measurement.Time {
         //    var rhs = new Minutes( milliseconds: milliseconds ).Value;
         //    return lhs.CompareTo( rhs );
         //}
+
         /// <summary>
         ///     Return a quick estimation of the time remaining [on a download for example].
         /// </summary>
@@ -248,11 +249,8 @@ namespace Librainian.Measurement.Time {
             _averageDateTimePrecision = new Milliseconds( 0.To( Environment.ProcessorCount )
                                                            .Select( i => GetDateTimePrecision() )
                                                            .Average( span => span.TotalMilliseconds ) );
-            if ( _averageDateTimePrecision < Measurement.Time.Milliseconds.One ) {
-                _averageDateTimePrecision = Measurement.Time.Milliseconds.One;
-            }
-            $"Average datetime precision is {_averageDateTimePrecision.Value.Simpler()}.".WriteLine();
-            return _averageDateTimePrecision.Value;
+            $"Average datetime precision is {( _averageDateTimePrecision ?? Measurement.Time.Milliseconds.One ).Simpler()}.".WriteLine();
+            return _averageDateTimePrecision ?? Measurement.Time.Milliseconds.One;
         }
 
         public static TimeSpan GetDateTimePrecision() {
@@ -715,38 +713,38 @@ namespace Librainian.Measurement.Time {
             //}
             //else
             if ( timeSpan.Days > 1 ) {
-                sb.AppendFormat( " {0:R} days", timeSpan.Days );
+                sb.Append( $" {timeSpan.Days:R} days" );
             }
             else if ( timeSpan.Days == 1 ) {
-                sb.AppendFormat( " {0:R} day", timeSpan.Days );
+                sb.Append( $" {timeSpan.Days:R} day" );
             }
 
             if ( timeSpan.Hours > 1 ) {
-                sb.AppendFormat( " {0:n0} hours", timeSpan.Hours );
+                sb.Append( $" {timeSpan.Hours:n0} hours" );
             }
             else if ( timeSpan.Hours == 1 ) {
-                sb.AppendFormat( " {0} hour", timeSpan.Hours );
+                sb.Append( $" {timeSpan.Hours} hour" );
             }
 
             if ( timeSpan.Minutes > 1 ) {
-                sb.AppendFormat( " {0:n0} minutes", timeSpan.Minutes );
+                sb.Append( $" {timeSpan.Minutes:n0} minutes" );
             }
             else if ( timeSpan.Minutes == 1 ) {
-                sb.AppendFormat( " {0} minute", timeSpan.Minutes );
+                sb.Append( $" {timeSpan.Minutes} minute" );
             }
 
             if ( timeSpan.Seconds > 1 ) {
-                sb.AppendFormat( " {0:n0} seconds", timeSpan.Seconds );
+                sb.Append( $" {timeSpan.Seconds:n0} seconds" );
             }
             else if ( timeSpan.Seconds == 1 ) {
-                sb.AppendFormat( " {0} second", timeSpan.Seconds );
+                sb.Append( $" {timeSpan.Seconds} second" );
             }
 
             if ( timeSpan.Milliseconds > 1 ) {
-                sb.AppendFormat( " {0:n0} milliseconds", timeSpan.Milliseconds );
+                sb.Append( $" {timeSpan.Milliseconds:n0} milliseconds" );
             }
             else if ( timeSpan.Milliseconds == 1 ) {
-                sb.AppendFormat( " {0} millisecond", timeSpan.Milliseconds );
+                sb.Append( $" {timeSpan.Milliseconds} millisecond" );
             }
 
             if ( String.IsNullOrEmpty( sb.ToString()
@@ -890,13 +888,13 @@ namespace Librainian.Measurement.Time {
 
         public static String ToPath( this DateTime dateTime ) {
             var sb = new StringBuilder( String.Empty, 24 );
-            sb.AppendFormat( "{0:D}/", dateTime.Year );
-            sb.AppendFormat( "{0:D}/", dateTime.Month );
-            sb.AppendFormat( "{0:D}/", dateTime.Day );
-            sb.AppendFormat( "{0:D}/", dateTime.Hour );
-            sb.AppendFormat( "{0:D}/", dateTime.Minute );
-            sb.AppendFormat( "{0:D}/", dateTime.Second );
-            sb.AppendFormat( "{0:D}/", dateTime.Millisecond );
+            sb.Append( $"{dateTime.Year:D}/" );
+            sb.Append( $"{dateTime.Month:D}/" );
+            sb.Append( $"{dateTime.Day:D}/" );
+            sb.Append( $"{dateTime.Hour:D}/" );
+            sb.Append( $"{dateTime.Minute:D}/" );
+            sb.Append( $"{dateTime.Second:D}/" );
+            sb.Append( $"{dateTime.Millisecond:D}/" );
             return sb.ToString();
         }
 

@@ -61,9 +61,6 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Days Zero = new Days( 0 );
 
-        static Days() {
-        }
-
         public Days( Decimal value ) {
             this.Value = value;
         }

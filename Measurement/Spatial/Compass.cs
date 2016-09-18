@@ -22,7 +22,7 @@ namespace Librainian.Measurement.Spatial {
     using System;
     using System.Runtime.Serialization;
     using FluentAssertions;
-    using Threading;
+    using Maths;
 
     /// <summary>small number, constrained to between 0 and 360, with wrapping</summary>
     [DataContract( IsReference = false )]

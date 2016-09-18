@@ -22,15 +22,15 @@ namespace Librainian.Measurement.Length {
 
     using System;
     using Newtonsoft.Json;
+    using Numerics;
 
     [JsonObject]
     public struct Millimeters {
 
-        /// <summary>About 584.9 million years.</summary>
-        public static readonly Millimeters MaxValue = new Millimeters( Decimal.MaxValue );
+        ///// <summary>.</summary>
+        //public static readonly Millimeters MaxValue = new Millimeters( Decimal.MaxValue );
 
-        /// <summary>About zero. :P</summary>
-        public static readonly Millimeters MinValue = new Millimeters( Decimal.MinValue );
+        //public static readonly Millimeters MinValue = new Millimeters( Decimal.MinValue );
 
         /// <summary>One <see cref="Millimeters" /> .</summary>
         public static readonly Millimeters One = new Millimeters( 1 );
@@ -39,28 +39,21 @@ namespace Librainian.Measurement.Length {
         public static readonly Millimeters Two = new Millimeters( 2 );
 
         [JsonProperty]
-        public readonly Decimal Value;
-
-        static Millimeters() {
-
-            //Assert.That( One < Centimeter.One );
-            //Assert.That( One < Inch.One );
-            //Assert.That( One < Feet.One );
-        }
+        public readonly BigRational Value;
 
         public Millimeters( Decimal millimeters ) {
             this.Value = millimeters;
         }
 
-        public Millimeters( Centimeters centimeters ) {
-            var val = centimeters.Value * Extensions.MillimetersInSingleCentimeter;
-            this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-        }
+        //public Millimeters( Centimeters centimeters ) {
+        //    var val = centimeters.Value * Extensions.MillimetersInSingleCentimeter;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
 
-        public Millimeters( Meters meters ) {
-            var val = meters.Value * Extensions.MillimetersInSingleMeter;
-            this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-        }
+        //public Millimeters( Meters meters ) {
+        //    var val = meters.Value * Extensions.MillimetersInSingleMeter;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
     }

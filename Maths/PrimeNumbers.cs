@@ -39,6 +39,7 @@ namespace Librainian.Maths {
             goto loop;
 
             // ReSharper disable FunctionNeverReturns
+            // ReSharper disable once IteratorNeverReturns
         }
 
         /// <summary>

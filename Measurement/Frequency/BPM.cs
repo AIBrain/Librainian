@@ -23,6 +23,7 @@ namespace Librainian.Measurement.Frequency {
     using System;
     using FluentAssertions;
     using Newtonsoft.Json;
+    using NUnit.Framework;
     using Time;
 
     /// <summary>BPM. Beats Per Minute</summary>
@@ -79,11 +80,6 @@ namespace Librainian.Measurement.Frequency {
         [JsonProperty]
         public readonly Decimal Value;
 
-        static Bpm() {
-            One.Should().BeLessThan( Two );
-            Two.Should().BeGreaterThan( One );
-        }
-
         public Bpm( Decimal bpm ) {
             this.Value = bpm;
         }
@@ -94,4 +90,16 @@ namespace Librainian.Measurement.Frequency {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
     }
+
+    [TestFixture]
+    public static class BPMTests {
+
+        [Test]
+        public static void TestBPM() {
+            Bpm.One.Should().BeLessThan( Bpm.Two );
+            Bpm.Two.Should().BeGreaterThan( Bpm.One );
+        }
+
+    }
+
 }

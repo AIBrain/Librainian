@@ -21,39 +21,34 @@
 namespace Librainian.Measurement.Time.Clocks {
 
     using System;
-    using System.Runtime.InteropServices;
+    using OperatingSystem;
 
     /// <summary>
     ///     Pulled from BenchmarkDotNet.Horology
     /// </summary>
     public class WindowsClock {
-        private static readonly Int64 frequency;
-        private static readonly Boolean isAvailable;
 
         static WindowsClock() {
             try {
                 Int64 counter;
-                isAvailable = QueryPerformanceFrequency( out frequency ) && QueryPerformanceCounter( out counter );
+                Int64 frequency;
+                IsAvailable = NativeMethods.QueryPerformanceFrequency( out frequency ) && NativeMethods.QueryPerformanceCounter( out counter );
+                Frequency = frequency;
             }
             catch ( Exception ) {
-                isAvailable = false;
+                IsAvailable = false;
             }
         }
 
-        public Int64 Frequency => frequency;
+        public static Int64 Frequency { get; }
 
-        public Boolean IsAvailable => isAvailable;
+        public static Boolean IsAvailable { get; }
 
-        public Int64 GetTimestamp() {
+        public static Int64 GetTimestamp() {
             Int64 value;
-            QueryPerformanceCounter( out value );
+            NativeMethods.QueryPerformanceCounter( out value );
             return value;
         }
 
-        [DllImport( "kernel32.dll" )]
-        private static extern Boolean QueryPerformanceCounter( out Int64 value );
-
-        [DllImport( "kernel32.dll" )]
-        private static extern Boolean QueryPerformanceFrequency( out Int64 value );
     }
 }

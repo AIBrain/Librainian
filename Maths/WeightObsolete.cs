@@ -24,7 +24,6 @@ namespace Librainian.Maths {
     using System.Threading;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
-    using Threading;
 
     /// <summary>
     ///     <para>A Double number, constrained between <see cref="MinValue" /> and <see cref="MaxValue" />.</para>

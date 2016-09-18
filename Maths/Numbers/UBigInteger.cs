@@ -170,22 +170,19 @@ namespace Librainian.Maths.Numbers {
             return this._internalValue.CompareTo( ( UBigInteger )obj );
         }
 
-        [Pure]
         public Int32 CompareTo( UBigInteger number ) => this._internalValue.CompareTo( number._internalValue );
 
-        [Pure]
+        // ReSharper disable once ImpureMethodCallOnReadonlyValueField
         public Int32 CompareTo( Int64 other ) => this._internalValue.CompareTo( other );
 
-        [Pure]
+        // ReSharper disable once ImpureMethodCallOnReadonlyValueField
         public Int32 CompareTo( UInt64 other ) => this._internalValue.CompareTo( other );
 
-        [Pure]
+        // ReSharper disable once ImpureMethodCallOnReadonlyValueField
         public Byte[] ToByteArray() => this._internalValue.ToByteArray();
 
-        [Pure]
         public override String ToString() => this._internalValue.ToString();
 
-        [Pure]
         public String ToString( String format ) => this._internalValue.ToString( format );
     }
 }

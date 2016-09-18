@@ -21,16 +21,16 @@
 namespace Librainian.Measurement.Length {
 
     using System;
+    using FluentAssertions;
     using Newtonsoft.Json;
+    using NUnit.Framework;
 
     [JsonObject]
     public struct Centimeters {
 
-        /// <summary>About 584.9 million years.</summary>
-        public static readonly Centimeters MaxValue = new Centimeters( centimeters: Decimal.MaxValue );
+        //public static readonly Centimeters MaxValue = new Centimeters( centimeters: Decimal.MaxValue );
 
-        /// <summary>About zero. :P</summary>
-        public static readonly Centimeters MinValue = new Centimeters( centimeters: Decimal.MinValue );
+        //public static readonly Centimeters MinValue = new Centimeters( centimeters: Decimal.MinValue );
 
         /// <summary>One <see cref="Centimeters" /> .</summary>
         public static readonly Centimeters One = new Centimeters( centimeters: 1 );
@@ -41,26 +41,31 @@ namespace Librainian.Measurement.Length {
         [JsonProperty]
         public readonly Decimal Value;
 
-        static Centimeters() {
-
-            //Assert.That( One < Inch.One );
-            //Assert.That( One < Feet.One );
-        }
-
         public Centimeters( Decimal centimeters ) {
             this.Value = centimeters;
         }
 
-        public Centimeters( Millimeters millimeters ) {
-            var val = millimeters.Value / Extensions.MillimetersInSingleCentimeter;
-            this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-        }
+        //public Centimeters( Millimeters millimeters ) {
+        //    var val = millimeters.Value / Extensions.MillimetersInSingleCentimeter;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
 
-        public Centimeters( Meters meters ) {
-            var val = meters.Value / Extensions.CentimetersinSingleMeter;
-            this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-        }
+        //public Centimeters( Meters meters ) {
+        //    var val = meters.Value / Extensions.CentimetersinSingleMeter;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
+    }
+
+    [TestFixture]
+    public static class CentimeterTests {
+
+        [Test]
+        public static void TestCentimeters() {
+            Centimeters.One.Value.Should().BeLessOrEqualTo( Centimeters.Two.Value );
+            Centimeters.Two.Should().Be( Centimeters.One );
+        }
+
     }
 }

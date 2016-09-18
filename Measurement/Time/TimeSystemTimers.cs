@@ -51,7 +51,10 @@ namespace Librainian.Measurement.Time {
                     Debug.WriteLine( $"System.Timer.TimerTest counted to {counter} in {howLong} ({millsPer})" );
                 }
             }
-            catch ( Exception ) { }
+            catch ( Exception ) {
+                // ignored
+            }
+
             return counter;
         }
 
@@ -77,7 +80,10 @@ namespace Librainian.Measurement.Time {
                     Debug.WriteLine( $"System.Threading.TimerTest counted to {_threadingCounter} in {howLong} ({millsPer})" );
                 }
             }
-            catch { }
+            catch {
+                // ignored
+            }
+
             return ( UInt64 )_threadingCounter;
         }
 
