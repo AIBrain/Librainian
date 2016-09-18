@@ -29,6 +29,7 @@ namespace Librainian.Collections {
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
     using JetBrains.Annotations;
+    using Magic;
     using Measurement.Time;
     using Newtonsoft.Json;
 
@@ -41,7 +42,7 @@ namespace Librainian.Collections {
     [Obsolete( "Use ConcurrentList instead." )]
     [JsonObject]
     [DebuggerDisplay( "Count={Count}" )]
-    public sealed class ParallelList<TType> : IList<TType> {
+    public sealed class ParallelList<TType> : ABetterClassDispose ,IList<TType> {
 
         /// <summary>
         ///     <para>Provide a dataflow block to process messages in a serial fashion.</para>
@@ -160,11 +161,13 @@ namespace Librainian.Collections {
         }
 
         public TType this[ Int32 index ] {
+            [CanBeNull]
             get {
-                if ( index < 0 ) {
-                    throw new IndexOutOfRangeException();
+                if ( index > 0 && index < this._list.Count ) {
+                    return this.Read( () => this._list[ index ] );
                 }
-                return this.Read( () => this._list[ index ] );
+
+                return default ( TType );
             }
 
             set {
@@ -420,7 +423,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="array"></param>
         /// <param name="arrayIndex"></param>
-        public void CopyTo( [NotNull] TType[] array, Int32 arrayIndex ) {
+        public void CopyTo( TType[] array, Int32 arrayIndex ) {
             if ( array == null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
@@ -645,5 +648,13 @@ namespace Librainian.Collections {
             }
             return default( TFuncResult );
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this._readerWriter.Dispose();
+            this._slims.Dispose();
+        }
+
     }
 }

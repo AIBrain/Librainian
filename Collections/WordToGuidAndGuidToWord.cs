@@ -66,6 +66,7 @@ namespace Librainian.Collections {
 
         public IEnumerable<String> EachWord => this._words.Keys;
 
+        [JsonIgnore]
         public Boolean IsDirty {
             get; set;
         }

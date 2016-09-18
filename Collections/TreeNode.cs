@@ -22,10 +22,11 @@ namespace Librainian.Collections {
 
     using System;
     using JetBrains.Annotations;
+    using Magic;
 
     /// <summary>http: //dvanderboom.wordpress.com/2008/03/15/treet-implementing-a-non-binary-tree-in-c/</summary>
     /// <typeparam name="T"></typeparam>
-    public class TreeNode<T> : IDisposable {
+    public class TreeNode<T> : ABetterClassDispose {
         private TreeNode<T> _parent;
         private T _value;
 
@@ -109,7 +110,10 @@ namespace Librainian.Collections {
             }
         }
 
-        public void Dispose() {
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
             this.CheckDisposed();
             this.OnDisposing();
 

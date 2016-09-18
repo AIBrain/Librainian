@@ -68,9 +68,9 @@ namespace Librainian.Controls {
         public static Color Blend( this Color thisColor, Color blendToColor, Double blendToPercent ) {
             blendToPercent = ( 1 - blendToPercent ).ForceBounds( 0, 1 );
 
-            var r = ( Byte )( ( thisColor.R * blendToPercent ) + blendToColor.R * ( 1 - blendToPercent ) );
-            var g = ( Byte )( ( thisColor.G * blendToPercent ) + blendToColor.G * ( 1 - blendToPercent ) );
-            var b = ( Byte )( ( thisColor.B * blendToPercent ) + blendToColor.B * ( 1 - blendToPercent ) );
+            var r = ( Byte )( thisColor.R * blendToPercent + blendToColor.R * ( 1 - blendToPercent ) );
+            var g = ( Byte )( thisColor.G * blendToPercent + blendToColor.G * ( 1 - blendToPercent ) );
+            var b = ( Byte )( thisColor.B * blendToPercent + blendToColor.B * ( 1 - blendToPercent ) );
 
             return Color.FromArgb( r, g, b );
         }
@@ -253,7 +253,7 @@ namespace Librainian.Controls {
                 control.BackColor = foreColor;
                 control.Refresh();
             } );
-            return spanOff.Value.CreateTimer( () => control.OnThread( () => {
+            return ( spanOff ?? Milliseconds.One ).CreateTimer( () => control.OnThread( () => {
                 control.ResetForeColor();
                 control.ResetBackColor();
                 control.Refresh();
@@ -383,10 +383,15 @@ namespace Librainian.Controls {
                 return;
             }
             if ( control.InvokeRequired ) {
-                if ( refresh ) {
-                    action += control.Refresh; //BUG does this work like this?
+                control.Invoke( action );
+                if ( !refresh ) {
+                    return;
                 }
-                control.BeginInvoke( action );
+                if ( control.IsDisposed ) {
+                    return;
+                }
+                action = control.Refresh;
+                control.Invoke( action );
             }
             else {
                 if ( control.IsDisposed ) {
@@ -429,9 +434,9 @@ namespace Librainian.Controls {
         }
 
         public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
-            transparentPercent = 255 - ( transparentPercent.ForceBounds( 0, 1 ) * 255 );
+            transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
 
-            return Color.FromArgb( thisColor.ToArgb() + ( ( Int32 )transparentPercent * 0x1000000 ) );
+            return Color.FromArgb( thisColor.ToArgb() + ( Int32 )transparentPercent * 0x1000000 );
         }
 
         public static async Task Marquee( [CanBeNull] this Control control, TimeSpan timeSpan, [CanBeNull] String message ) {
@@ -515,12 +520,7 @@ namespace Librainian.Controls {
             if ( null == action ) {
                 return;
             }
-            control.InvokeIfRequired( () => {
-                action();
-                if ( refresh ) {
-                    control.Refresh();
-                }
-            } );
+            control.InvokeIfRequired( action, refresh );
         }
 
         /// <summary>
@@ -536,9 +536,7 @@ namespace Librainian.Controls {
                 return;
             }
             var parent = control.GetCurrentParent() as Control;
-            if ( null != parent ) {
-                parent.OnThread( action );
-            }
+            parent?.OnThread( action );
         }
 
         public static void Output( this WebBrowser browser, String message ) {
@@ -573,10 +571,8 @@ namespace Librainian.Controls {
             if ( control == null ) {
                 throw new ArgumentNullException( nameof( control ) );
             }
-            if ( !delay.HasValue ) {
-                delay = Milliseconds.One;
-            }
-            return delay.Value.CreateTimer( () => control.InvokeIfRequired( () => {
+
+            return (delay ?? Milliseconds.One ).CreateTimer( () => control.InvokeIfRequired( () => {
                 control.PerformClick();
                 afterDelay?.Invoke();
             } ) ).AndStart();
@@ -606,10 +602,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="value"></param>
         public static void Reset( [CanBeNull] this ProgressBar control, Int32? value = null ) {
-            if ( null == control ) {
-                return;
-            }
-            control.Value( value ?? control.Minimum() );
+            control?.Value( value ?? control.Minimum() );
         }
 
         /// <summary>Just changes the cursor to the <see cref="Cursors.Default" />.</summary>
@@ -650,10 +643,7 @@ namespace Librainian.Controls {
         /// <summary>Safely set the <see cref="Control.Text" /> of a control across threads.</summary>
         /// <remarks></remarks>
         public static void Size( [CanBeNull] this Form form, Size size ) {
-            if ( null == form ) {
-                return;
-            }
-            form.InvokeIfRequired( () => {
+            form?.InvokeIfRequired( () => {
                 if ( form.IsDisposed ) {
                     return;
                 }
@@ -691,10 +681,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="value"></param>
         public static void Step( [CanBeNull] this ProgressBar control, Int32 value ) {
-            if ( null == control ) {
-                return;
-            }
-            control.OnThread( () => {
+            control?.OnThread( () => {
                 if ( control.IsDisposed ) {
                     return;
                 }
@@ -709,10 +696,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="value"></param>
         public static void Style( [CanBeNull] this ProgressBar control, ProgressBarStyle value ) {
-            if ( null == control ) {
-                return;
-            }
-            control.OnThread( () => {
+            control?.OnThread( () => {
                 if ( control.IsDisposed ) {
                     return;
                 }
@@ -843,7 +827,7 @@ namespace Librainian.Controls {
         }
 
         public static Int32 ToRGB( this Color thisColor ) {
-            return ( thisColor.ToArgb() & 0xFFFFFF );
+            return thisColor.ToArgb() & 0xFFFFFF;
         }
 
         /// <summary>
@@ -942,10 +926,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="value"></param>
         public static void Value( [CanBeNull] this ProgressBar control, Int32 value ) {
-            if ( null == control ) {
-                return;
-            }
-            control.OnThread( () => {
+            control?.OnThread( () => {
                 if ( control.IsDisposed ) {
                     return;
                 }

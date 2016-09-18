@@ -19,10 +19,10 @@ namespace Librainian.Collections {
         public static void AddNameThreadSafetyTest() {
 
             var list = new ConcurrentList<String>();
-            var threads = new List<Thread>();
+            //var threads = new List<Thread>();
 
             foreach ( var thread in 1.To( Environment.ProcessorCount * ScaleCPUUsed ).Select( i => new Thread( () => AddManyProducts( list ) ) ) ) {
-                threads.Add( thread );
+                //threads.Add( thread );
                 thread.Start();
                 thread.Join();
             }
@@ -97,16 +97,16 @@ namespace Librainian.Collections {
         public static void ThreadSafetyTestAddAndRemoves() {
 
             var list1 = new ConcurrentList<String>();
-            var threads = new List<Thread>();
+            //var threads = new List<Thread>();
 
             foreach ( var thread in 1.To( Environment.ProcessorCount * ScaleCPUUsed ).Select( i => new Thread( () => AddManyProductsRemoveOdds( list1 ) ) ) ) {
-                threads.Add( thread );
+                //threads.Add( thread );
                 thread.Start();
                 thread.Join();
             }
 
 
-            Assert.AreEqual( ( NamesToAdd / 2 ) * Environment.ProcessorCount * ScaleCPUUsed, list1.Count );
+            Assert.AreEqual( NamesToAdd / 2 * Environment.ProcessorCount * ScaleCPUUsed, list1.Count );
         }
 
         private static void AddManyProducts( ICollection<String> list ) {

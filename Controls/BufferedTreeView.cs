@@ -21,8 +21,8 @@
 namespace Librainian.Controls {
 
     using System;
-    using System.Runtime.InteropServices;
     using System.Windows.Forms;
+    using OperatingSystem;
 
     public class BufferedTreeView : TreeView {
         private const Int32 TVM_GETEXTENDEDSTYLE = 0x1100 + 45;
@@ -33,11 +33,9 @@ namespace Librainian.Controls {
         private const Int32 TVS_EX_DOUBLEBUFFER = 0x0004;
 
         protected override void OnHandleCreated( EventArgs e ) {
-            SendMessage( this.Handle, TVM_SETEXTENDEDSTYLE, ( IntPtr )TVS_EX_DOUBLEBUFFER, ( IntPtr )TVS_EX_DOUBLEBUFFER );
+            NativeMethods.SendMessage( this.Handle, TVM_SETEXTENDEDSTYLE, ( IntPtr )TVS_EX_DOUBLEBUFFER, ( IntPtr )TVS_EX_DOUBLEBUFFER );
             base.OnHandleCreated( e );
         }
 
-        [DllImport( "user32.dll" )]
-        private static extern IntPtr SendMessage( IntPtr hWnd, Int32 msg, IntPtr wp, IntPtr lp );
     }
 }

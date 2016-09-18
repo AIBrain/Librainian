@@ -56,7 +56,9 @@ namespace Librainian.Collections {
                 if ( ret.Next == null ) {
                     throw new IndexOutOfRangeException( "Stack is empty" );
                 }
+#pragma warning disable 420
             } while ( Interlocked.CompareExchange( ref _head, ret.Next, ret ) != ret );
+#pragma warning restore 420
             return ret.Item;
         }
 
@@ -67,7 +69,9 @@ namespace Librainian.Collections {
             do {
                 tmp = _head;
                 nodeNew.Next = tmp;
+#pragma warning disable 420
             } while ( Interlocked.CompareExchange( ref _head, nodeNew, tmp ) != tmp );
+#pragma warning restore 420
         }
     }
 

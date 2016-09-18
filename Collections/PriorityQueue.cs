@@ -30,7 +30,7 @@ namespace Librainian.Collections {
     using Newtonsoft.Json;
 
     /// <summary>The highest priority is the highest</summary>
-    [JsonObject( MemberSerialization.Fields )]
+    [JsonObject]
     public class PriorityQueue<TValue> : IEnumerable<KeyValuePair<Single, TValue>> {
 
         [JsonProperty]
@@ -189,15 +189,10 @@ namespace Librainian.Collections {
             }
         }
 
-        //public Boolean TryRemove( TValue value ) {
-        //    PriorityTime dummy;
-        //    return this.Dictionary.TryRemove( value, out dummy );
-        //}
-
-        //public ICollection<PriorityTime> Values() => this.Dictionary.Values;
         [CanBeNull]
         public TValue PullNext() {
-            throw new NotImplementedException();
+            var highest = this.Dictionary.OrderByDescending( pair => pair.Key ).FirstOrDefault();
+            return highest.Value;
         }
 
     }

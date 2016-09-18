@@ -24,8 +24,9 @@ namespace Librainian.Collections {
     using System.Collections.Concurrent;
     using System.Linq;
     using System.Threading;
+    using Magic;
 
-    public class TrainingQueue {
+    public class TrainingQueue : ABetterClassDispose {
         public readonly ConcurrentQueue<TrainingQueueItem> Items = new ConcurrentQueue<TrainingQueueItem>();
 
         private readonly ManualResetEvent _bob = new ManualResetEvent( false );
@@ -74,5 +75,11 @@ namespace Librainian.Collections {
 
             public override String ToString() => $"{this.Question} -> {this.Answer}";
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this._bob.Dispose(); }
+
     }
 }

@@ -26,8 +26,8 @@ namespace Librainian.Collections {
     using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
+    using Maths;
     using Newtonsoft.Json;
-    using Threading;
 
     /// <summary>Just a simple thread safe collection. Doesn't scale well because of the locks.</summary>
     /// <typeparam name="T"></typeparam>

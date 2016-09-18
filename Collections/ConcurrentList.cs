@@ -31,6 +31,7 @@ namespace Librainian.Collections {
     using System.Threading.Tasks;
     using FluentAssertions;
     using JetBrains.Annotations;
+    using Magic;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -43,9 +44,9 @@ namespace Librainian.Collections {
     /// <copyright>
     ///     Rick@AIBrain.org
     /// </copyright>
-    [JsonObject(  )]
+    [JsonObject()]
     [DebuggerDisplay( "Count={Count}" )]
-    public class ConcurrentList<TType> : IList<TType>, IEquatable<IEnumerable<TType>> {
+    public class ConcurrentList<TType> : ABetterClassDispose, IList<TType>, IEquatable<IEnumerable<TType>> {
 
         /// <summary>
         ///     Create an empty list with different timeout values.
@@ -92,7 +93,9 @@ namespace Librainian.Collections {
         public TimeSpan? TimeoutForWrites { get; set; } = TimeSpan.FromMinutes( 1 );
 
         [JsonIgnore]
-        private ConcurrentQueue<TType> InputBuffer { get; set; }
+        private ConcurrentQueue<TType> InputBuffer {
+            get; set;
+        }
 
         /// <summary> threadsafe item counter (so we don't have to enter & exit the readerwriter). </summary>
         private ThreadLocal<Int32> ItemCounter { get; set; } = new ThreadLocal<Int32>( () => 0, trackAllValues: true );
@@ -120,11 +123,11 @@ namespace Librainian.Collections {
         public TType this[ Int32 index ] {
             [CanBeNull]
             get {
-                if ( index < 0 ) {
-                    throw new IndexOutOfRangeException( $"index {index} is out of range" );
+                if ( index >= 0 && this.TheList.Count <= index ) {
+                    return this.Read( () => this.TheList[ index ] );
                 }
 
-                return this.Read( () => this.TheList[ index ] );
+                return default( TType );
             }
 
             set {
@@ -483,6 +486,14 @@ namespace Librainian.Collections {
             } );
         }
 
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
+            this.ReaderWriter?.Dispose();
+            this.ItemCounter?.Dispose();
+        }
+
         private void AnItemHasBeenAdded() {
             this.ItemCounter.Value++;
         }
@@ -512,7 +523,7 @@ namespace Librainian.Collections {
             if ( null == this.ItemCounter ) {
                 this.ItemCounter = new ThreadLocal<Int32>( () => 0, trackAllValues: true );
             }
-            
+
             this.ItemCounter.Value += this.TheList.Count;
         }
 
@@ -540,7 +551,7 @@ namespace Librainian.Collections {
 
             this.CatchUp();
 
-            if ( !this.ReaderWriter.TryEnterUpgradeableReadLock( this.TimeoutForReads.Value ) ) {
+            if ( !this.ReaderWriter.TryEnterUpgradeableReadLock( this.TimeoutForReads ?? TimeSpan.FromMinutes( 1 ) ) ) {
                 return default( TFuncResult );
             }
 
@@ -570,7 +581,7 @@ namespace Librainian.Collections {
                 return default( TFuncResult );
             }
 
-            if ( !this.ReaderWriter.TryEnterWriteLock( this.TimeoutForWrites.Value ) ) {
+            if ( !this.ReaderWriter.TryEnterWriteLock( this.TimeoutForWrites ?? TimeSpan.FromMinutes( 1 ) ) ) {
                 return default( TFuncResult );
             }
 

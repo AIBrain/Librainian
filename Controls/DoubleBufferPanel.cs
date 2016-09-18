@@ -22,7 +22,7 @@ namespace Librainian.Controls {
 
     using System.Windows.Forms;
 
-    public class DoubleBufferPanel : Panel {
+    public sealed class DoubleBufferPanel : Panel {
 
         public DoubleBufferPanel() {
 

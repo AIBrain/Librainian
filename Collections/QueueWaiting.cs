@@ -26,22 +26,18 @@ namespace Librainian.Collections {
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+    using Magic;
+    using Measurement.Time;
 
-    public class QueueWaiting<T> : IEnumerable<T> where T : class {
-        private static readonly TimeSpan OneSecond = TimeSpan.FromSeconds( 1 );
-
-        public QueueWaiting() {
-            this.Queue = new ConcurrentQueue<T>();
-            this.Wait = new AutoResetEvent( false );
-        }
+    public class QueueWaiting<T> : ABetterClassDispose, IEnumerable<T> where T : class {
 
         private ConcurrentQueue<T> Queue {
             get;
-        }
+        } = new ConcurrentQueue<T>();
 
         private AutoResetEvent Wait {
             get;
-        }
+        } = new AutoResetEvent( false );
 
         /// <summary>Adds the data to the queue.</summary>
         /// <param name="item"></param>
@@ -114,13 +110,17 @@ namespace Librainian.Collections {
         ///     </list>
         /// </summary>
         public void Stall( TimeSpan? timeToStall = null ) {
-            if ( null == timeToStall ) {
-                timeToStall = OneSecond;
-            }
             if ( this.Any() || ( null == this.Wait ) ) {
                 return;
             }
-            this.Wait.WaitOne( timeout: timeToStall.Value );
+            this.Wait.WaitOne( timeout: timeToStall ?? Seconds.One );
+        }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
+            this.Wait.Dispose();
         }
     }
 }

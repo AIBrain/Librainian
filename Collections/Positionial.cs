@@ -27,7 +27,7 @@ namespace Librainian.Collections {
         Lowest,
 
         /// <summary>
-        /// Randomly between <see cref="Lowest"/> and <see cref="Middle>"/>
+        /// Randomly between <see cref="Lowest"/> and <see cref="Middle"/>.
         /// </summary>
         [EnumMember( Value = nameof( Lowish ) )]
         Lowish,

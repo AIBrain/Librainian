@@ -79,9 +79,9 @@ namespace Librainian.Collections {
             }
         }
 
-        Boolean ICollection.IsSynchronized => false;
+        public Boolean IsSynchronized => false;
 
-        Object ICollection.SyncRoot {
+        public Object SyncRoot {
             get {
                 throw new NotSupportedException();
             }
@@ -200,7 +200,7 @@ namespace Librainian.Collections {
             return list;
         }
 
-        Boolean IProducerConsumerCollection<T>.TryAdd( T item ) {
+        public Boolean TryAdd( T item ) {
             this.Enqueue( item );
             return true;
         }

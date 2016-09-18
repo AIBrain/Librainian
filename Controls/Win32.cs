@@ -26,8 +26,8 @@ namespace Librainian.Controls {
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using JetBrains.Annotations;
+    using Maths;
     using Measurement.Frequency;
-    using Threading;
 
     public enum Speed {
         Slow,
@@ -49,9 +49,6 @@ namespace Librainian.Controls {
 
         //disabled button status
         public const Int32 SC_MINIMIZE = 0xF020;
-
-        [DllImport( "User32.Dll" )]
-        public static extern Boolean ClientToScreen( IntPtr hWnd, ref POINT point );
 
         public static Task MoveCursor( [NotNull] this Form form, Int32 x, Int32 y, TimeSpan speed ) {
             if ( form == null ) {
@@ -106,9 +103,6 @@ namespace Librainian.Controls {
                 }
             } );
         }
-
-        [DllImport( "User32.Dll" )]
-        public static extern Int64 SetCursorPos( Int32 x, Int32 y );
 
         [StructLayout( LayoutKind.Sequential )]
         public struct POINT {

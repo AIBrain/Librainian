@@ -20,6 +20,9 @@
 
 namespace Librainian.Collections {
 
+    using System;
+    using System.Collections.Concurrent;
+
     public enum ShufflingType {
 
         /// <summary>This one is works best with smaller lists and more iterations.</summary>
