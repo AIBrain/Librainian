@@ -47,7 +47,6 @@ namespace Librainian.Extensions {
         // the rest of the type.
         /// <summary>Ensures that 'type' follows the rules for immutability</summary>
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
-        [SuppressMessage( "Microsoft.Design", "CA1002:DoNotExposeGenericLists" )]
         public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable<Type> whiteList ) {
             if ( type == null ) {
                 throw new ArgumentNullException( nameof( type ) );
@@ -99,7 +98,6 @@ namespace Librainian.Extensions {
         ///     Ensures that all types in 'assemblies' that are marked [Immutable] follow the rules for immutability.
         /// </summary>
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
-        [SuppressMessage( "Microsoft.Design", "CA1002:DoNotExposeGenericLists" )]
         public static void VerifyTypesAreImmutable( IEnumerable<Assembly> assemblies, params Type[] whiteList ) {
             var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type ) select type;
 
@@ -138,9 +136,9 @@ namespace Librainian.Extensions {
             return ( immutableAttribute != null ) && immutableAttribute.OnFaith;
         }
 
-        [SuppressMessage( "Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable" )]
-        [SuppressMessage( "Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors" )]
+        [SuppressMessage( "Microsoft.Usage", "CA2240:ImplementISerializableCorrectly" )]
         [JsonObject]
+        [Serializable]
         public class ImmutableFailureException : Exception {
             public readonly Type Type;
 
@@ -157,6 +155,7 @@ namespace Librainian.Extensions {
         }
 
         [JsonObject]
+        [Serializable]
         private class MutableBaseException : ImmutableFailureException {
 
             internal MutableBaseException( Type type, Exception inner ) : base( type, FormatMessage( type ), inner ) {
@@ -165,11 +164,11 @@ namespace Librainian.Extensions {
             protected MutableBaseException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
             }
 
-            [SuppressMessage( "Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object)" )]
             private static String FormatMessage( Type type ) => $"'{type}' is mutable because its base type ('[{type.BaseType}]') is mutable.";
         }
 
         [JsonObject]
+        [Serializable]
         private class MutableFieldException : ImmutableFailureException {
 
             internal MutableFieldException( FieldInfo fieldInfo, Exception inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) {
@@ -183,6 +182,7 @@ namespace Librainian.Extensions {
         }
 
         [JsonObject]
+        [Serializable]
         private class WritableFieldException : ImmutableFailureException {
 
             internal WritableFieldException( FieldInfo fieldInfo ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ) ) {
@@ -191,7 +191,6 @@ namespace Librainian.Extensions {
             protected WritableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
             }
 
-            [SuppressMessage( "Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object)" )]
             private static String FormatMessage( FieldInfo fieldInfo ) => $"'{fieldInfo.DeclaringType}' is mutable because field '{fieldInfo.Name}' is not marked 'readonly'.";
         }
     }

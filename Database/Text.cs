@@ -79,6 +79,7 @@ namespace Librainian.Database {
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         public DataTable GetWorksheet( String worksheet ) {
             using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
                 using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) ) {

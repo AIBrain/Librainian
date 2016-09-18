@@ -55,12 +55,12 @@ namespace Librainian.Database.MMF {
         }
 
         private static void BytesToObjectCode( StringBuilder sb, String typeFullName ) {
-            sb.AppendFormat( "public unsafe {0} BytesToObject( byte[] bytes )", typeFullName );
+            sb.Append( $"public unsafe {typeFullName} BytesToObject( byte[] bytes )" );
             sb.Append( "{" );
             sb.Append( @"
                 fixed (byte* srcPtr = &bytes[0])
                 {" );
-            sb.AppendFormat( "return *({0}*)srcPtr;", typeFullName );
+            sb.Append( $"return *({typeFullName}*)srcPtr;" );
             sb.Append( "}}" );
         }
 
@@ -90,7 +90,7 @@ namespace Librainian.Database.MMF {
 
             var interfaceType = typeof( ISerializeDeserialize<T> );
 
-            sb.AppendFormat( "public class UnsafeConverter : {0}.ISerializeDeserialize<{1}>", interfaceType.Namespace, typeFullName );
+            sb.Append( $"public class UnsafeConverter : {interfaceType.Namespace}.ISerializeDeserialize<{typeFullName}>" );
             sb.Append( "{" );
             sb.AppendFormat( "public Boolean CanSerializeType(){{return true;}}" );
 
@@ -123,16 +123,16 @@ namespace Librainian.Database.MMF {
         private void MovePointers( StringBuilder sb ) {
             var modifer = this._addCount / this._ptrSize;
             if ( modifer >= this._ptrSize ) {
-                sb.AppendFormat( "dest += {0};", this._addCount );
-                sb.AppendFormat( "src += {0};", this._addCount );
+                sb.Append( $"dest += {this._addCount};" );
+                sb.Append( $"src += {this._addCount};" );
                 this._addCount = 0;
             }
         }
 
         private void ObjectToBytesCode( StringBuilder sb, String typeFullName ) {
-            sb.AppendFormat( "public unsafe byte[] ObjectToBytes({0} srcObject)", typeFullName );
+            sb.Append( $"public unsafe byte[] ObjectToBytes({typeFullName} srcObject)" );
             sb.Append( "{" );
-            sb.AppendFormat( "byte[] buffer = new byte[{0}];", this._size );
+            sb.Append( $"byte[] buffer = new byte[{this._size}];" );
             sb.Append( @"
                 fixed (byte* destPtr = &buffer[0])
                 {

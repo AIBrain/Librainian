@@ -95,7 +95,7 @@ namespace Librainian.Database {
             return table;
         }
 
-        public static IList<T> ToList<T>( this DataTable table ) {
+        public static IEnumerable< T > ToList<T>( this DataTable table ) {
             var properties = GetPropertiesForType<T>();
             IList<T> result = new List<T>();
 
@@ -227,7 +227,7 @@ namespace Librainian.Database {
             }
         }
 
-        private static T CreateItemFromRow<T>( DataRow row, IList<PropertyInfo> properties ) {
+        private static T CreateItemFromRow<T>( DataRow row, IEnumerable< PropertyInfo > properties ) {
 
             //T item = new T();
             var item = Activator.CreateInstance<T>();

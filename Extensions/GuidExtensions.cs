@@ -260,10 +260,10 @@ namespace Librainian.Extensions {
             [FieldOffset( 0 )]
             public readonly UInt64 lowest;
 
-            [FieldOffset( 4 )]
+            [FieldOffset( sizeof(UInt64) )]
             public readonly UInt64 center;
 
-            [FieldOffset( 8 )] //8+8=16 == sizeof(Guid)
+            [FieldOffset( sizeof( UInt64 )+ sizeof( UInt64 ) )] //8+8=16 == sizeof(Guid)
             public readonly UInt64 highest;
 
             public GuidMergerUInt64( UInt64 most, UInt64 middle, UInt64 least ) {

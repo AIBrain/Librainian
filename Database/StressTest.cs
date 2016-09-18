@@ -50,7 +50,7 @@ namespace Librainian.Database {
         /// <param name="database"></param>
         /// <param name="multithread"></param>
         /// <returns></returns>
-        public static UInt64 PerformDatabaseCounting( [NotNull] Database database, Boolean multithread = false ) {
+        public static UInt64 PerformDatabaseCounting( [NotNull] IDatabase database, Boolean multithread = false ) {
             if ( database == null ) {
                 throw new ArgumentNullException( nameof( database ) );
             }
@@ -61,7 +61,7 @@ namespace Librainian.Database {
             var stopwatch = StopWatch.StartNew();
             var counter = 0UL;
             do {
-                if ( database.OpenAndCloseConnection( $"select {counter};" ) ) {
+                if ( database.ExecuteNonQuery( $"select {counter};" ) ) {
                     counter++;
                 }
                 if ( stopwatch.Elapsed >= forHowLong ) {

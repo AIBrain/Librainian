@@ -30,7 +30,7 @@ namespace Librainian.Database {
     using JetBrains.Annotations;
     using Magic;
 
-    public class LocalDb : BetterDisposableClass {
+    public class LocalDb : ABetterClassDispose {
 
         /// <summary></summary>
         /// <param name="databaseName"></param>
@@ -38,6 +38,7 @@ namespace Librainian.Database {
         /// <param name="timeoutForReads"></param>
         /// <param name="timeoutForWrites"></param>
         // ReSharper disable once NotNullMemberIsNotInitialized
+        [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         public LocalDb( [NotNull] String databaseName, [CanBeNull] Folder databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) {
             if ( String.IsNullOrWhiteSpace( databaseName ) ) {
                 throw new ArgumentNullException( nameof( databaseName ) );
@@ -67,16 +68,16 @@ namespace Librainian.Database {
             "Building SQL connection string...".Info();
 
             this.DatabaseMdf = new Document( this.DatabaseLocation, $"{this.DatabaseName}.mdf" );
-            this.DatabaseLog = new Document( this.DatabaseLocation, $"{this.DatabaseName}_log.ldf" );
+            this.DatabaseLog = new Document( this.DatabaseLocation, $"{this.DatabaseName}_log.ldf" );   //TODO does localdb even use a log file?
+
+            this.ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog=master;Integrated Security=True;";
 
             if ( !this.DatabaseMdf.Exists() ) {
-                this.ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog=master;Integrated Security=True;";
                 using ( var connection = new SqlConnection( this.ConnectionString ) ) {
                     connection.Open();
                     var command = connection.CreateCommand();
                     command.CommandText = String.Format( "CREATE DATABASE {0} ON (NAME = N'{0}', FILENAME = '{1}')", this.DatabaseName, this.DatabaseMdf.FullPathWithFileName );
                     command.ExecuteNonQuery();
-                    connection.Close();
                 }
             }
 
@@ -150,10 +151,10 @@ namespace Librainian.Database {
             }
         }
 
-        protected override void CleanUpManagedResources() {
+        protected override void DisposeManaged() {
             this.DetachDatabaseAsync().Wait( ReadTimeout + WriteTimeout );
-            base.CleanUpManagedResources();
         }
+
     }
 
     ///// <summary>

@@ -27,7 +27,9 @@ namespace Librainian.Database.MMF {
     using Measurement.Time;
 
     public class Factory<T> {
+        // ReSharper disable once StaticMemberInGenericType
         private static readonly HashSet<Type> CompiledUnsafeSerializer = new HashSet<Type>();
+
         private static readonly Dictionary<Type, ISerializeDeserialize<T>> DictionaryCache = new Dictionary<Type, ISerializeDeserialize<T>>();
 
         public ISerializeDeserialize<T> GetSerializer() {

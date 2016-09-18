@@ -83,11 +83,13 @@ namespace Librainian.Database {
             return null;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         [CanBeNull]
         public DataTable GetWorksheet( String worksheet ) {
             try {
                 using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-                    using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) ) {
+                    using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) { SelectCommand= new OleDbCommand(worksheet)} ) {
+                        
                         var ws = new DataTable( worksheet );
                         adaptor.FillSchema( ws, SchemaType.Source );
                         adaptor.Fill( ws );

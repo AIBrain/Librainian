@@ -148,7 +148,7 @@ namespace Librainian.Extensions {
                 Directory.CreateDirectory( junctionPoint );
             }
 
-            using ( var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericWrite ) ) {
+            using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Write ) ) {
                 var targetDirBytes = Encoding.Unicode.GetBytes( NonInterpretedPathPrefix + Path.GetFullPath( targetDir ) );
 
                 var reparseDataBuffer = new ReparseDataBuffer { ReparseTag = IOReparseTagMountPoint, ReparseDataLength = ( UInt16 )( targetDirBytes.Length + 12 ), SubstituteNameOffset = 0, SubstituteNameLength = ( UInt16 )targetDirBytes.Length, PrintNameOffset = ( UInt16 )( targetDirBytes.Length + 2 ), PrintNameLength = 0, PathBuffer = new Byte[ 0x3ff0 ] };
@@ -162,7 +162,7 @@ namespace Librainian.Extensions {
                     Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
 
                     Int32 bytesReturned;
-                    var result = NativeWin32.DeviceIoControl( handle.DangerousGetHandle(), FsctlSetReparsePoint, inBuffer, targetDirBytes.Length + 20, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero );
+                    var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlSetReparsePoint, inBuffer, targetDirBytes.Length + 20, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero );
 
                     if ( !result ) {
                         ThrowLastWin32Error( "Unable to create junction point." );
@@ -189,7 +189,7 @@ namespace Librainian.Extensions {
                 return;
             }
 
-            using ( var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericWrite ) ) {
+            using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Write) ) {
                 var reparseDataBuffer = new ReparseDataBuffer { ReparseTag = IOReparseTagMountPoint, ReparseDataLength = 0, PathBuffer = new Byte[ 0x3ff0 ] };
 
                 var inBufferSize = Marshal.SizeOf( reparseDataBuffer );
@@ -198,7 +198,7 @@ namespace Librainian.Extensions {
                     Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
 
                     Int32 bytesReturned;
-                    var result = NativeWin32.DeviceIoControl( handle.DangerousGetHandle(), FsctlDeleteReparsePoint, inBuffer, 8, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero );
+                    var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlDeleteReparsePoint, inBuffer, 8, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero );
 
                     if ( !result ) {
                         ThrowLastWin32Error( "Unable to delete junction point." );
@@ -230,7 +230,7 @@ namespace Librainian.Extensions {
                 return false;
             }
 
-            using ( var handle = OpenReparsePoint( path, EFileAccess.GenericRead ) ) {
+            using ( var handle = OpenReparsePoint( path, FileAccess.Read) ) {
                 var target = InternalGetTarget( handle );
                 return target != null;
             }
@@ -245,7 +245,7 @@ namespace Librainian.Extensions {
         ///     some other error occurs
         /// </exception>
         public static String GetTarget( String junctionPoint ) {
-            using ( var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericRead ) ) {
+            using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Read ) ) {
                 var target = InternalGetTarget( handle );
                 if ( target == null ) {
                     throw new IOException( "Path is not a junction point." );
@@ -261,7 +261,7 @@ namespace Librainian.Extensions {
 
             try {
                 Int32 bytesReturned;
-                var result = NativeWin32.DeviceIoControl( handle.DangerousGetHandle(), FsctlGetReparsePoint, IntPtr.Zero, 0, outBuffer, outBufferSize, out bytesReturned, IntPtr.Zero );
+                var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlGetReparsePoint, IntPtr.Zero, 0, outBuffer, outBufferSize, out bytesReturned, IntPtr.Zero );
 
                 if ( !result ) {
                     var error = Marshal.GetLastWin32Error();
@@ -291,13 +291,14 @@ namespace Librainian.Extensions {
             }
         }
 
-        private static SafeFileHandle OpenReparsePoint( String reparsePoint, EFileAccess accessMode ) {
-            var bob = NativeWin32.CreateFile( reparsePoint, accessMode, EFileShare.Read | EFileShare.Write | EFileShare.Delete, IntPtr.Zero, ECreationDisposition.OpenExisting, EFileAttributes.BackupSemantics | EFileAttributes.OpenReparsePoint, IntPtr.Zero );
-            var reparsePointHandle = new SafeFileHandle( bob, true );
+        private static SafeFileHandle OpenReparsePoint( String reparsePoint, FileAccess accessMode ) {
+            var bob = NativeMethods.CreateFile( reparsePoint, accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open, FileAttributes.Archive | FileAttributes.ReparsePoint, IntPtr.Zero );
 
             if ( Marshal.GetLastWin32Error() != 0 ) {
                 ThrowLastWin32Error( "Unable to open reparse point." );
             }
+
+            var reparsePointHandle = new SafeFileHandle( bob.DangerousGetHandle(), true );
 
             return reparsePointHandle;
         }

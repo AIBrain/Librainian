@@ -27,8 +27,9 @@ namespace Librainian.Database.MMF {
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Text;
+    using Magic;
 
-    public class MemMapCache<T> {
+    public class MemMapCache<T> : ABetterClassDispose {
         private const String Delim = "[!@#]";
         private readonly Dictionary<String, DateTime> _keyExpirations;
 
@@ -37,6 +38,13 @@ namespace Librainian.Database.MMF {
         private BinaryFormatter _formatter;
         private NetworkStream _networkStream;
         private TcpClient _tcpClient;
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
+            this._tcpClient?.Dispose();
+        }
 
         public MemMapCache() {
             this.Encoding = Encoding.ASCII;
@@ -51,15 +59,15 @@ namespace Librainian.Database.MMF {
         }
 
         public Boolean CacheHitAlwaysMiss {
-            get; set;
+            get;
         }
 
         public Int64 ChunkSize {
-            get; set;
+            get;
         }
 
         public Encoding Encoding {
-            get; set;
+            get;
         }
 
         public Boolean IsConnected => this._tcpClient.Connected;
@@ -67,11 +75,11 @@ namespace Librainian.Database.MMF {
         public static Int32 MaxKeyLength => 4096 - 32;
 
         public Int32 Port {
-            get; set;
+            get;
         }
 
         public String Server {
-            get; protected set;
+            get;
         }
 
         //ideal for Unit Testing of classes that depend upon this Library.
@@ -98,7 +106,6 @@ namespace Librainian.Database.MMF {
                 using ( var memoryMappedFile = MemoryMappedFile.OpenExisting( key ) ) {
                     if ( this._keyExpirations.ContainsKey( key ) ) {
                         if ( DateTime.UtcNow >= this._keyExpirations[ key ] ) {
-                            memoryMappedFile.Dispose();
                             this._keyExpirations.Remove( key );
                             return default( T );
                         }
@@ -213,5 +220,8 @@ namespace Librainian.Database.MMF {
 
             return obj;
         }
+
+
+
     }
 }

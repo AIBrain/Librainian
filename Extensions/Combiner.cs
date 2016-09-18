@@ -81,9 +81,12 @@ namespace Librainian.Extensions {
         public static IEnumerable<IEnumerable<T>> Combine<T>( this IEnumerable<IEnumerable<T>> groupAs, IEnumerable<IEnumerable<T>> groupBs ) {
             var found = false;
 
+            var bs = groupBs as IEnumerable< T >[] ?? groupBs.ToArray();
+
             foreach ( var groupA in groupAs ) {
                 found = true;
-                foreach ( var groupB in groupBs ) {
+                foreach ( var groupB in bs ) {
+                    // ReSharper disable once PossibleMultipleEnumeration
                     yield return groupA.Append( groupB );
                 }
             }
@@ -91,7 +94,7 @@ namespace Librainian.Extensions {
             if ( found ) {
                 yield break;
             }
-            foreach ( var groupB in groupBs ) {
+            foreach ( var groupB in bs ) {
                 yield return groupB;
             }
         }
@@ -101,10 +104,12 @@ namespace Librainian.Extensions {
 
             foreach ( var bGroup in b ) {
                 found = true;
+                // ReSharper disable once PossibleMultipleEnumeration
                 yield return a.Append( bGroup );
             }
 
             if ( !found ) {
+                // ReSharper disable once PossibleMultipleEnumeration
                 yield return a;
             }
         }
@@ -114,10 +119,12 @@ namespace Librainian.Extensions {
 
             foreach ( var aGroup in a ) {
                 found = true;
+                // ReSharper disable once PossibleMultipleEnumeration
                 yield return aGroup.Append( b );
             }
 
             if ( !found ) {
+                // ReSharper disable once PossibleMultipleEnumeration
                 yield return b;
             }
         }

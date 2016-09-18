@@ -22,6 +22,7 @@ namespace Librainian.Database.MMF {
 
     using System;
     using System.IO;
+    using System.Runtime.Serialization;
     using Newtonsoft.Json;
 
     /// <summary>Exception class thrown by the Library</summary>
@@ -30,7 +31,9 @@ namespace Librainian.Database.MMF {
     ///     mapping classes It wraps the error message and the underlying Win32 error code that caused
     ///     the error.
     /// </remarks>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2240:ImplementISerializableCorrectly" )]
     [JsonObject]
+    [Serializable]
     public class FileMapIOException : IOException {
 
         // construction
@@ -44,7 +47,7 @@ namespace Librainian.Database.MMF {
         public FileMapIOException( String message, Exception innerException ) : base( message, innerException ) {
         }
 
-        // properties
+        protected FileMapIOException( SerializationInfo info, StreamingContext context ) : base( info, context ) { }
 
         public override String Message {
             get {

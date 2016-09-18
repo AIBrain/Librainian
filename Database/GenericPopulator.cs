@@ -26,9 +26,9 @@ namespace Librainian.Database {
     using System.Data.SqlClient;
     using System.Linq.Expressions;
 
-    public sealed class GenericPopulator<T> {
+    public static class GenericPopulator<T> {
 
-        public List<T> CreateList( SqlDataReader reader ) {
+        public static List<T> CreateList( SqlDataReader reader ) {
             var results = new List<T>();
             var readRow = GetReader( reader );
 
