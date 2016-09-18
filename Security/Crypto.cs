@@ -26,7 +26,7 @@ namespace Librainian.Security {
     using System.Text;
 
     public static class Crypto {
-        private static readonly Byte[] Salt = Encoding.ASCII.GetBytes( "evatuewot8evtet8e8paaa40aqta" );
+        private static readonly Byte[] Salt = Encoding.ASCII.GetBytes( "evatuewot8evtet8e8paaa40aqtab60w489uvmw" );
 
         /// <summary>
         ///     Decrypt the given string. Assumes the string was encrypted using EncryptStringAES(),
@@ -55,25 +55,22 @@ namespace Librainian.Security {
 
                 // Create the streams used for decryption.
                 var bytes = Convert.FromBase64String( cipherText );
-                using ( var msDecrypt = new MemoryStream( bytes ) ) {
+                var msDecrypt = new MemoryStream( bytes );
 
-                    // Create a RijndaelManaged object with the specified key and IV.
-                    aesAlg = new RijndaelManaged();
-                    aesAlg.Key = key.GetBytes( aesAlg.KeySize / 8 );
+                // Create a RijndaelManaged object with the specified key and IV.
+                aesAlg = new RijndaelManaged();
+                aesAlg.Key = key.GetBytes( aesAlg.KeySize / 8 );
 
-                    // Get the initialization vector from the encrypted stream
-                    aesAlg.IV = msDecrypt.ReadByteArray();
+                // Get the initialization vector from the encrypted stream
+                aesAlg.IV = msDecrypt.ReadByteArray();
 
-                    // Create a decrytor to perform the stream transform.
-                    var decryptor = aesAlg.CreateDecryptor( aesAlg.Key, aesAlg.IV );
-                    using ( var csDecrypt = new CryptoStream( msDecrypt, decryptor, CryptoStreamMode.Read ) ) {
-                        using ( var srDecrypt = new StreamReader( csDecrypt ) ) {
+                // Create a decrytor to perform the stream transform.
+                var decryptor = aesAlg.CreateDecryptor( aesAlg.Key, aesAlg.IV );
+                using ( var srDecrypt = new StreamReader( new CryptoStream( msDecrypt, decryptor, CryptoStreamMode.Read ) ) ) {
 
-                            // Read the decrypted bytes from the decrypting stream and place them in
-                            // a string.
-                            plaintext = srDecrypt.ReadToEnd();
-                        }
-                    }
+                    // Read the decrypted bytes from the decrypting stream and place them in
+                    // a string.
+                    plaintext = srDecrypt.ReadToEnd();
                 }
             }
             finally {
@@ -91,7 +88,7 @@ namespace Librainian.Security {
         /// </summary>
         /// <param name="plainText">The text to encrypt.</param>
         /// <param name="sharedSecret">A password used to generate a key for encryption.</param>
-        public static String EncryptStringAES( String plainText, String sharedSecret ) {
+        public static String EncryptStringAES( this String plainText, String sharedSecret ) {
             if ( String.IsNullOrEmpty( plainText ) ) {
                 throw new ArgumentNullException( nameof( plainText ) );
             }
@@ -115,20 +112,21 @@ namespace Librainian.Security {
                 var encryptor = aesAlg.CreateEncryptor( aesAlg.Key, aesAlg.IV );
 
                 // Create the streams used for encryption.
-                using ( var msEncrypt = new MemoryStream() ) {
+                var msEncrypt = new MemoryStream();
 
-                    // prepend the IV
-                    msEncrypt.Write( BitConverter.GetBytes( aesAlg.IV.Length ), 0, sizeof( Int32 ) );
-                    msEncrypt.Write( aesAlg.IV, 0, aesAlg.IV.Length );
-                    using ( var csEncrypt = new CryptoStream( msEncrypt, encryptor, CryptoStreamMode.Write ) ) {
-                        using ( var swEncrypt = new StreamWriter( csEncrypt ) ) {
+                // prepend the IV
+                msEncrypt.Write( BitConverter.GetBytes( aesAlg.IV.Length ), 0, sizeof( Int32 ) );
+                msEncrypt.Write( aesAlg.IV, 0, aesAlg.IV.Length );
 
-                            //Write all data to the stream.
-                            swEncrypt.Write( plainText );
-                        }
-                    }
-                    outStr = Convert.ToBase64String( msEncrypt.ToArray() );
+                var csEncrypt = new CryptoStream( msEncrypt, encryptor, CryptoStreamMode.Write );
+                using ( var swEncrypt = new StreamWriter( csEncrypt ) ) {
+
+                    //Write all data to the stream.
+                    swEncrypt.Write( plainText );
                 }
+
+                outStr = Convert.ToBase64String( msEncrypt.ToArray() );
+
             }
             finally {
 

@@ -30,6 +30,7 @@ namespace Librainian.Persistence {
     /// <summary></summary>
     /// <seealso cref="http://stackoverflow.com/a/4857322/956364" />
     [JsonObject]
+    [Serializable]
     public class DynamicContext : DynamicObject, ISerializable {
         private readonly Dictionary<String, Object> _dynamicContext = new Dictionary<String, Object>();
 

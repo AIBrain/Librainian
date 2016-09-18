@@ -101,9 +101,7 @@ namespace Librainian.Persistence {
                 return new Document( destinationFile );
             }
 
-            using ( var file = File.Create( destinationFile ) ) {
-                file.Close();
-            }
+            using ( File.Create( destinationFile ) ) { }
             return new Document( destinationFile );
         }
     }

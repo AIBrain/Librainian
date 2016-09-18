@@ -24,7 +24,7 @@ namespace Librainian.Security {
     using System.IO;
     using System.Security.Cryptography;
     using System.Text;
-    using Threading;
+    using Maths;
 
     /// <summary>
     ///     This work (Modern Encryption of a String C#, by James Tuley), identified by James Tuley, is
@@ -109,19 +109,18 @@ namespace Librainian.Security {
                     Array.Copy( encryptedMessage, nonSecretPayloadLength, iv, 0, iv.Length );
 
                     using ( var decrypter = aes.CreateDecryptor( cryptKey, iv ) ) {
-                        using ( var plainTextStream = new MemoryStream() ) {
-                            using ( var decrypterStream = new CryptoStream( plainTextStream, decrypter, CryptoStreamMode.Write ) ) {
-                                using ( var binaryWriter = new BinaryWriter( decrypterStream ) ) {
+                        var plainTextStream = new MemoryStream();
+                        var decrypterStream = new CryptoStream( plainTextStream, decrypter, CryptoStreamMode.Write );
+                        using ( var binaryWriter = new BinaryWriter( decrypterStream ) ) {
 
-                                    //Decrypt Cipher Text from Message
-                                    binaryWriter.Write( encryptedMessage, nonSecretPayloadLength + iv.Length, encryptedMessage.Length - nonSecretPayloadLength - iv.Length - sentTag.Length );
-                                }
-                            }
-
-                            //Return Plain Text
-                            return plainTextStream.ToArray();
+                            //Decrypt Cipher Text from Message
+                            binaryWriter.Write( encryptedMessage, nonSecretPayloadLength + iv.Length, encryptedMessage.Length - nonSecretPayloadLength - iv.Length - sentTag.Length );
                         }
+
+                        //Return Plain Text
+                        return plainTextStream.ToArray();
                     }
+
                 }
             }
         }
@@ -219,7 +218,7 @@ namespace Librainian.Security {
         ///     Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize +
         ///     HMac-Tag(32)) * 1.33 Base64
         /// </remarks>
-        public static Byte[] SimpleEncrypt( Byte[] secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[] nonSecretPayload = null ) {
+        public static Byte[] SimpleEncrypt( this Byte[] secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[] nonSecretPayload = null ) {
 
             //User Error Checks
             if ( ( cryptKey == null ) || ( cryptKey.Length != KeyBitSize / 8 ) ) {
@@ -247,43 +246,39 @@ namespace Librainian.Security {
                 iv = aes.IV;
 
                 using ( var encrypter = aes.CreateEncryptor( cryptKey, iv ) ) {
-                    using ( var cipherStream = new MemoryStream() ) {
-                        using ( var cryptoStream = new CryptoStream( cipherStream, encrypter, CryptoStreamMode.Write ) ) {
-                            using ( var binaryWriter = new BinaryWriter( cryptoStream ) ) {
-
-                                //Encrypt Data
-                                binaryWriter.Write( secretMessage );
-                            }
-                        }
-
-                        cipherText = cipherStream.ToArray();
+                    var cipherStream = new MemoryStream();
+                    using ( var binaryWriter = new BinaryWriter( new CryptoStream( cipherStream, encrypter, CryptoStreamMode.Write ) ) ) {
+                        binaryWriter.Write( secretMessage );
                     }
+
+                    cipherText = cipherStream.ToArray();
+
                 }
             }
 
             //Assemble encrypted message and add authentication
             using ( var hmac = new HMACSHA256( authKey ) ) {
-                using ( var encryptedStream = new MemoryStream() ) {
-                    using ( var binaryWriter = new BinaryWriter( encryptedStream ) ) {
+                var encryptedStream = new MemoryStream();
+                using ( var binaryWriter = new BinaryWriter( encryptedStream ) ) {
 
-                        //Prepend non-secret payload if any
-                        binaryWriter.Write( nonSecretPayload );
+                    //Prepend non-secret payload if any
+                    binaryWriter.Write( nonSecretPayload );
 
-                        //Prepend IV
-                        binaryWriter.Write( iv );
+                    //Prepend IV
+                    binaryWriter.Write( iv );
 
-                        //Write Ciphertext
-                        binaryWriter.Write( cipherText );
-                        binaryWriter.Flush();
+                    //Write Ciphertext
+                    binaryWriter.Write( cipherText );
+                    binaryWriter.Flush();   //why?
 
-                        //Authenticate all data
-                        var tag = hmac.ComputeHash( encryptedStream.ToArray() );
+                    //Authenticate all data
+                    var tag = hmac.ComputeHash( encryptedStream.ToArray() );
 
-                        //Postpend tag
-                        binaryWriter.Write( tag );
-                    }
-                    return encryptedStream.ToArray();
+                    //Postpend tag
+                    binaryWriter.Write( tag );
                 }
+                return encryptedStream.ToArray();
+
             }
         }
 
@@ -304,7 +299,7 @@ namespace Librainian.Security {
             }
 
             var plainText = Encoding.UTF8.GetBytes( secretMessage );
-            var cipherText = SimpleEncrypt( plainText, cryptKey, authKey, nonSecretPayload );
+            var cipherText = plainText.SimpleEncrypt( cryptKey, authKey, nonSecretPayload );
             return Convert.ToBase64String( cipherText );
         }
 
@@ -388,7 +383,7 @@ namespace Librainian.Security {
                 Array.Copy( salt, 0, payload, payloadIndex, salt.Length );
             }
 
-            return SimpleEncrypt( secretMessage, cryptKey, authKey, payload );
+            return secretMessage.SimpleEncrypt( cryptKey, authKey, payload );
         }
     }
 }

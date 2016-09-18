@@ -257,12 +257,11 @@ namespace Librainian.Persistence {
         public String AsJSON() {
             var tempDocument = Document.GetTempDocument();
 
-            using ( var writer = File.CreateText( tempDocument.FullPathWithFileName ) ) {
-                using ( JsonWriter jw = new JsonTextWriter( writer ) ) {
-                    jw.Formatting = Formatting.Indented;
-                    var serializer = new JsonSerializer();
-                    serializer.Serialize( jw, this.Data );
-                }
+            var writer = File.CreateText( tempDocument.FullPathWithFileName );
+            using ( JsonWriter jw = new JsonTextWriter( writer ) ) {
+                jw.Formatting = Formatting.Indented;
+                var serializer = new JsonSerializer();
+                serializer.Serialize( jw, this.Data );
             }
 
             var text = File.ReadAllText( tempDocument.FullPathWithFileName );

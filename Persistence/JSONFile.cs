@@ -45,8 +45,8 @@ namespace Librainian.Persistence {
         /// <param name="document"></param>
         public JSONFile( Document document ) : this() {
             this.Document = document;
-            if ( !this.Document.Folder.Exists() ) {
-                this.Document.Folder.Create();
+            if ( !this.Document.Folder().Exists() ) {
+                this.Document.Folder().Create();
             }
             this.Read().Wait();
         }

@@ -30,6 +30,7 @@ namespace Librainian.Persistence {
     using FileSystem;
     using FluentAssertions;
     using JetBrains.Annotations;
+    using Maths;
     using Measurement.Time;
     using Microsoft.Database.Isam.Config;
     using Microsoft.Isam.Esent.Collections.Generic;
@@ -37,7 +38,6 @@ namespace Librainian.Persistence {
     using Newtonsoft.Json;
     using OperatingSystem.Compression;
     using Parsing;
-    using Threading;
 
     /// <summary>
     ///     <para>
@@ -456,7 +456,10 @@ namespace Librainian.Persistence {
                     return true;
                 }
             }
-            catch ( Exception ) { }
+            catch ( Exception ) {
+                // ignored
+            }
+
             return false;
         }
     }

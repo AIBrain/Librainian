@@ -167,16 +167,17 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( nameof( stream ) );
             }
 
-            using ( var cs = new ProgressStream( stream ) ) {
-                if ( feedback != null ) {
-                    cs.ProgressChanged += feedback;
-                }
+            var cs = new ProgressStream( stream );
 
-                using ( var bs = new BufferedStream( stream: cs, bufferSize: 16384 ) ) {
-                    var formatter = new NetDataContractSerializer();
-                    return formatter.Deserialize( bs ) as TSource;
-                }
+            if ( feedback != null ) {
+                cs.ProgressChanged += feedback;
             }
+
+            using ( var bs = new BufferedStream( stream: cs, bufferSize: 16384 ) ) {
+                var formatter = new NetDataContractSerializer();
+                return formatter.Deserialize( bs ) as TSource;
+            }
+
         }
 
         public static Boolean DeserializeDictionary<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> toDictionary, Folder folder, String calledWhat, [CanBeNull] IProgress<Single> progress = null, String extension = ".xml" ) where TKey : IComparable<TKey> {
@@ -327,10 +328,8 @@ namespace Librainian.Persistence {
                     try {
                         using ( var isfs = new IsolatedStorageFileStream( fileName, FileMode.Open, FileAccess.Read, isf ) ) {
 
-                            //var serializer = new DataContractSerializer( typeof( T ) );
                             var serializer = new NetDataContractSerializer();
                             var obj = serializer.ReadObject( isfs ) as T;
-                            isfs.Close();
                             return obj;
                         }
                     }
@@ -400,24 +399,23 @@ namespace Librainian.Persistence {
                         }
 
                         try {
-                            using ( var fileStream = new IsolatedStorageFileStream( path: fileName, mode: FileMode.Open, access: FileAccess.Read, isf: isolatedStorageFile ) ) {
-                                var ext = Path.GetExtension( path: fileName );
-                                var useCompression = ext.EndsWith( value: "Z", ignoreCase: true, culture: null );
+                            var fileStream = new IsolatedStorageFileStream( path: fileName, mode: FileMode.Open, access: FileAccess.Read, isf: isolatedStorageFile );
+                            var ext = Path.GetExtension( path: fileName );
+                            var useCompression = ext.EndsWith( value: "Z", ignoreCase: true, culture: null );
 
-                                if ( useCompression ) {
-                                    using ( var decompress = new GZipStream( stream: fileStream, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                        obj = Deserialize<TSource>( stream: decompress, feedback: feedback );
-                                    }
+                            if ( useCompression ) {
+                                using ( var decompress = new GZipStream( stream: fileStream, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
+                                    obj = Deserialize<TSource>( stream: decompress, feedback: feedback );
                                 }
-                                else {
-
-                                    //obj = Deserialize<TSource>( stream: isfs, feedback: feedback );
-                                    var serializer = new NetDataContractSerializer();
-                                    obj = serializer.Deserialize( fileStream ) as TSource;
-                                }
-                                fileStream.Close();
-                                return obj != default( TSource );
                             }
+                            else {
+
+                                //obj = Deserialize<TSource>( stream: isfs, feedback: feedback );
+                                var serializer = new NetDataContractSerializer();
+                                obj = serializer.Deserialize( fileStream ) as TSource;
+                            }
+                            return obj != default( TSource );
+
                         }
                         catch ( InvalidOperationException exception ) {
                             exception.More();
@@ -465,7 +463,7 @@ namespace Librainian.Persistence {
                 if ( IsolatedStorageFile.IsEnabled && !String.IsNullOrWhiteSpace( fullPathAndFileName ) ) {
                     using ( var snag = new FileSingleton( "IsolatedStorageFile.GetMachineStoreForDomain()" ) ) {
                         using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
-                            snag.Dispose();
+
                             var dir = Path.GetDirectoryName( fullPathAndFileName ) ?? String.Empty;
 
                             if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) {
@@ -474,24 +472,21 @@ namespace Librainian.Persistence {
 
                             if ( isf.FileExists( fullPathAndFileName ) && FileCanBeRead( isf, fullPathAndFileName ) ) {
                                 try {
-                                    using ( var isfs = new IsolatedStorageFileStream( path: fullPathAndFileName, mode: FileMode.Open, access: FileAccess.Read, isf: isf ) ) {
-                                        var ext = Path.GetExtension( path: fullPathAndFileName );
-                                        var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( value: "Z", ignoreCase: true, culture: null );
+                                    var isfs = new IsolatedStorageFileStream( path: fullPathAndFileName, mode: FileMode.Open, access: FileAccess.Read, isf: isf );
+                                    var ext = Path.GetExtension( path: fullPathAndFileName );
+                                    var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( value: "Z", ignoreCase: true, culture: null );
 
-                                        TSource result;
-                                        if ( useCompression ) {
-                                            using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                                result = Deserialize<TSource>( stream: decompress, feedback: feedback );
-                                            }
+                                    TSource result;
+                                    if ( useCompression ) {
+                                        using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
+                                            result = Deserialize<TSource>( stream: decompress, feedback: feedback );
                                         }
-                                        else {
-                                            result = Deserialize<TSource>( stream: isfs, feedback: feedback );
-                                        }
-                                        if ( onLoad != null ) {
-                                            onLoad( result );
-                                        }
-                                        return true;
                                     }
+                                    else {
+                                        result = Deserialize<TSource>( stream: isfs, feedback: feedback );
+                                    }
+                                    onLoad?.Invoke( result );
+                                    return true;
                                 }
                                 catch ( InvalidOperationException exception ) {
                                     exception.More();
@@ -532,15 +527,19 @@ namespace Librainian.Persistence {
             }
 
             try {
-                using ( var textReader = File.OpenText( document.FullPathWithFileName ) ) {
-                    using ( var jsonReader = new JsonTextReader( textReader ) ) {
-                        var serializer = new JsonSerializer();
+                var textReader = File.OpenText( document.FullPathWithFileName );
+                using ( var jsonReader = new JsonTextReader( textReader ) ) {
 
-                        var obj = serializer.Deserialize<TType>( jsonReader );
+                    var serializer = new JsonSerializer();
 
-                        return obj;
-                    }
+                    var obj = serializer.Deserialize<TType>( jsonReader );
+
+                    return obj;
                 }
+
+            }
+            catch ( JsonSerializationException ) {
+                return default( TType );
             }
             catch ( Exception ) {
                 return default( TType );
@@ -571,16 +570,15 @@ namespace Librainian.Persistence {
 
                         if ( isf.FileExists( fileName ) && FileCanBeRead( isf, fileName ) ) {
                             try {
-                                using ( var isfs = new IsolatedStorageFileStream( path: fileName, mode: FileMode.Open, access: FileAccess.Read, isf: isf ) ) {
-                                    var ext = Path.GetExtension( path: fileName );
-                                    var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( value: "Z", ignoreCase: true, culture: null );
+                                var isfs = new IsolatedStorageFileStream( path: fileName, mode: FileMode.Open, access: FileAccess.Read, isf: isf );
+                                var ext = Path.GetExtension( path: fileName );
+                                var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( value: "Z", ignoreCase: true, culture: null );
 
-                                    if ( !useCompression ) {
-                                        return Deserialize<TSource>( stream: isfs, feedback: feedback );
-                                    }
-                                    using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                        return Deserialize<TSource>( stream: decompress, feedback: feedback );
-                                    }
+                                if ( !useCompression ) {
+                                    return Deserialize<TSource>( stream: isfs, feedback: feedback );
+                                }
+                                using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
+                                    return Deserialize<TSource>( stream: decompress, feedback: feedback );
                                 }
                             }
                             catch ( InvalidOperationException exception ) {
@@ -652,25 +650,25 @@ namespace Librainian.Persistence {
                     }
 
                     try {
-                        using ( var isfs = new IsolatedStorageFileStream( path: fileName, mode: FileMode.Open, access: FileAccess.Read, isf: isf ) ) {
+                        var isfs = new IsolatedStorageFileStream( path: fileName, mode: FileMode.Open, access: FileAccess.Read, isf: isf );
 
-                            //var serializer = new DataContractSerializer( typeof ( T ) );
-                            var serializer = new NetDataContractSerializer();
+                        //var serializer = new DataContractSerializer( typeof ( T ) );
+                        var serializer = new NetDataContractSerializer();
 
-                            var ext = Path.GetExtension( path: fileName );
-                            var useCompression = ext.EndsWith( value: "Z", ignoreCase: true, culture: null );
+                        var ext = Path.GetExtension( path: fileName );
+                        var useCompression = ext.EndsWith( value: "Z", ignoreCase: true, culture: null );
 
-                            if ( useCompression ) {
-                                using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                    obj = ( T )serializer.ReadObject( stream: decompress );
-                                }
+                        if ( useCompression ) {
+                            using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
+                                obj = ( T )serializer.ReadObject( stream: decompress );
                             }
-                            else {
-                                obj = ( T )serializer.ReadObject( stream: isfs );
-                            }
-
-                            return !Equals( obj, default( T ) );
                         }
+                        else {
+                            obj = ( T )serializer.ReadObject( stream: isfs );
+                        }
+
+                        return !Equals( obj, default( T ) );
+
                     }
                     catch ( InvalidOperationException exception ) {
                         exception.More();
@@ -697,15 +695,15 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     Persist the object <paramref name="obj" /> to a JSON text file.
+        ///     Persist the <paramref name="object" /> to a JSON text file.
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
-        /// <param name="obj"></param>
+        /// <param name="object"></param>
         /// <param name="document"></param>
         /// <param name="overwrite"></param>
         /// <param name="formatting"></param>
         /// <returns></returns>
-        public static Boolean Save<TKey>( this TKey obj, Document document, Boolean overwrite = true, Formatting formatting = Formatting.Indented ) {
+        public static Boolean Save<TKey>( this TKey @object, Document document, Boolean overwrite = true, Formatting formatting = Formatting.Indented ) {
             if ( document == null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
@@ -714,16 +712,15 @@ namespace Librainian.Persistence {
                 document.Delete();
             }
 
-            using ( var snag = new FileSingleton( document.Info ) ) {
+            using ( var snag = new FileSingleton( document.Info() ) ) {
                 snag.Snagged.Should().BeTrue();
-                using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
-                    using ( JsonWriter jw = new JsonTextWriter( writer ) ) {
-                        jw.Formatting = formatting;
+                var writer = File.AppendText( document.FullPathWithFileName );
+                using ( JsonWriter jw = new JsonTextWriter( writer ) ) {
+                    jw.Formatting = formatting;
 
-                        //see also http://stackoverflow.com/a/8711702/956364
-                        var serializer = new JsonSerializer { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All };
-                        serializer.Serialize( jw, obj );
-                    }
+                    //see also http://stackoverflow.com/a/8711702/956364
+                    var serializer = new JsonSerializer { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All };
+                    serializer.Serialize( jw, @object );
                 }
             }
 
@@ -802,7 +799,6 @@ namespace Librainian.Persistence {
 
                 using ( var snag = new FileSingleton( "IsolatedStorageFile.GetMachineStoreForDomain()" ) ) {
                     using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
-                        snag.Dispose();
 
                         try {
                             var dir = Path.GetDirectoryName( fileName ) ?? String.Empty;
@@ -825,34 +821,23 @@ namespace Librainian.Persistence {
 
                         try {
                             var isfs = new IsolatedStorageFileStream( fileName, isf.FileExists( path: fileName ) ? FileMode.Truncate : FileMode.CreateNew, FileAccess.Write, isf );
-                            using ( isfs ) {
 
-                                //var serializer = new DataContractSerializer( typeof( TSource ) );
+                            var context = new StreamingContext( StreamingContextStates.All );
 
-                                var context = new StreamingContext( StreamingContextStates.All );
+                            var serializer = new NetDataContractSerializer( context: context, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false, assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null /*surrogateSelector*/ );
 
-                                //var surrogateSelector = new SurrogateSelector();
+                            var extension = Path.GetExtension( path: fileName );
+                            var useCompression = !String.IsNullOrWhiteSpace( extension ) && extension.EndsWith( value: "Z", ignoreCase: true, culture: null );
 
-                                //if we ever need to add in surrogates..
-                                //var timeronSerializationSurrogate = new TimeronSerializationSurrogate();
-                                //surrogateSelector.AddSurrogate( typeof( Timeron ), context, timeronSerializationSurrogate );
-
-                                var serializer = new NetDataContractSerializer( context: context, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false, assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null /*surrogateSelector*/ );
-
-                                var extension = Path.GetExtension( path: fileName );
-                                var useCompression = !String.IsNullOrWhiteSpace( extension ) && extension.EndsWith( value: "Z", ignoreCase: true, culture: null );
-
-                                if ( useCompression ) {
-                                    using ( var compress = new GZipStream( isfs, CompressionMode.Compress, leaveOpen: true ) ) {
-                                        serializer.Serialize( compress, objectToSerialize );
-                                    }
+                            if ( useCompression ) {
+                                using ( var compress = new GZipStream( isfs, CompressionMode.Compress, leaveOpen: true ) ) {
+                                    serializer.Serialize( compress, objectToSerialize );
                                 }
-                                else {
-                                    serializer.Serialize( isfs, objectToSerialize );
-                                }
-                                isfs.Close();
-                                return true;
                             }
+                            else {
+                                serializer.Serialize( isfs, objectToSerialize );
+                            }
+                            return true;
                         }
                         catch ( InvalidDataContractException exception ) {
                             exception.More();
@@ -927,25 +912,26 @@ namespace Librainian.Persistence {
                         }
 
                         try {
-                            using ( var isfs = new IsolatedStorageFileStream( fileName, FileMode.Create, FileAccess.Write, isf ) ) {
+                            var isfs = new IsolatedStorageFileStream( fileName, FileMode.Create, FileAccess.Write, isf );
 
-                                //var serializer = new DataContractSerializer( typeof ( T ) );
-                                var serializer = new NetDataContractSerializer();
+                            //var serializer = new DataContractSerializer( typeof ( T ) );
+                            var serializer = new NetDataContractSerializer();
 
-                                var ext = Path.GetExtension( path: fileName );
-                                var useCompression = ext.EndsWith( value: "Z", ignoreCase: true, culture: null );
+                            var ext = Path.GetExtension( path: fileName );
+                            var useCompression = ext.EndsWith( value: "Z", ignoreCase: true, culture: null );
 
-                                if ( useCompression ) {
-                                    using ( var compress = new GZipStream( isfs, CompressionMode.Compress, leaveOpen: true ) ) {
-                                        serializer.WriteObject( compress, obj );
-                                    }
+                            if ( useCompression ) {
+                                using ( var compress = new GZipStream( isfs, CompressionMode.Compress, leaveOpen: true ) ) {
+                                    serializer.WriteObject( compress, obj );
                                 }
-                                else {
-                                    serializer.WriteObject( isfs, obj );
-                                }
-                                isfs.Close();
-                                return true;
                             }
+                            else {
+                                serializer.WriteObject( isfs, obj );
+                                isfs.Close();
+                            }
+
+                            return true;
+
                         }
                         catch ( InvalidDataContractException exception ) {
                             exception.More();
@@ -1084,8 +1070,6 @@ namespace Librainian.Persistence {
                         }
 
                         using ( writer ) {
-                            writer.Flush();
-                            writer.Close();
                         }
                         fileName = $"{hereNow}.xml"; //let the file name change over time so we don't have bigHuge monolithic files.
                         document = new Document( folder, fileName );
@@ -1098,8 +1082,6 @@ namespace Librainian.Persistence {
                 }
 
                 using ( writer ) {
-                    writer.Flush();
-                    writer.Close();
                 }
 
                 stopwatch.Stop();
@@ -1187,7 +1169,7 @@ namespace Librainian.Persistence {
 
         /// <summary>
         ///     Attempts to serialize this object to an NTFS alternate stream with the index of <paramref name="attribute" />.
-        ///     Use <see cref="TryGet{TSource}." /> to load an object.
+        ///     Use <see cref="TryGet{TSource}" /> to load an object.
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
         /// <param name="objectToSerialize"></param>

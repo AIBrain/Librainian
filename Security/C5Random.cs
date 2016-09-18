@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/C5Random.cs" was last cleaned by Rick on 2016/06/18 at 10:56 PM
+// "Librainian/C5Random.cs" was last cleaned by Rick on 2016/08/06 at 9:41 PM
 
 namespace Librainian.Security {
 
@@ -52,11 +52,7 @@ namespace Librainian.Security {
     ///         on 2003-04-03.
     ///     </para>
     /// </summary>
-    /// <remarks>Modified by Rick to be threadsafe. I hope.</remarks>
-    public class C5Random : Random {
-        private readonly ThreadLocal<UInt32> _c = new ThreadLocal<UInt32>( () => 362436, false );
-        private readonly ThreadLocal<UInt32> _i = new ThreadLocal<UInt32>( () => 15, false );
-        private readonly ThreadLocal<UInt32[]> _q = new ThreadLocal<UInt32[]>( () => new UInt32[ 16 ], false );
+    public sealed class C5Random : Random, IDisposable {
 
         /// <summary>Create a random number generator seed by system time.</summary>
         public C5Random() : this( DateTime.Now.Ticks ) { }
@@ -75,10 +71,10 @@ namespace Librainian.Security {
                 j ^= j << 13;
                 j ^= j >> 17;
                 j ^= j << 5;
-                this._q.Value[ i ] = j;
+                this.Q.Value[ i ] = j;
             }
 
-            this._q.Value[ 15 ] = ( UInt32 )( seed ^ ( seed >> 32 ) );
+            this.Q.Value[ 15 ] = ( UInt32 )( seed ^ ( seed >> 32 ) );
         }
 
         /// <summary>Create a random number generator with a specified internal start state.</summary>
@@ -93,7 +89,24 @@ namespace Librainian.Security {
             if ( q.Length > 16 ) {
                 throw new ArgumentException( "Q must have length 16, was " + q.Length );
             }
-            Array.Copy( q, this._q.Value, this._q.Value.Length );
+
+            Array.Copy( q, this.Q.Value, this.Q.Value.Length );
+        }
+
+        private ThreadLocal< UInt32 > C { get; } = new ThreadLocal<UInt32>( () => 362436, false );
+
+        private ThreadLocal<UInt32> I { get; } = new ThreadLocal<UInt32>( () => 15, false );
+
+        private ThreadLocal<UInt32[]> Q { get; } = new ThreadLocal<UInt32[]>( () => new UInt32[ 16 ], false );
+
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<Q>k__BackingField" )]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<I>k__BackingField" )]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<C>k__BackingField" )]
+        public void Dispose() {
+            this.C.Dispose();
+            this.I.Dispose();
+            this.Q.Dispose();
         }
 
         /// <summary>Get a new random System.Int32 value</summary>
@@ -127,10 +140,11 @@ namespace Librainian.Security {
 
         /// <summary>Fill a array of byte with random bytes</summary>
         /// <param name="buffer">The array to fill</param>
-        public override void NextBytes( [NotNull] Byte[] buffer ) {
+        public override void NextBytes( Byte[] buffer ) {
             if ( buffer == null ) {
                 throw new ArgumentNullException( nameof( buffer ) );
             }
+
             for ( Int32 i = 0, length = buffer.Length; i < length; i++ ) {
                 buffer[ i ] = ( Byte )this.Cmwc();
             }
@@ -148,17 +162,18 @@ namespace Librainian.Security {
             const UInt64 a = 487198574UL;
             const UInt32 r = 0xfffffffe;
 
-            this._i.Value = ( this._i.Value + 1 ) & 15;
-            var t = a * this._q.Value[ this._i.Value ] + this._c.Value;
-            this._c.Value = ( UInt32 )( t >> 32 );
-            var x = ( UInt32 )( t + this._c.Value );
-            if ( x >= this._c.Value ) {
-                return this._q.Value[ this._i.Value ] = r - x;
+            this.I.Value = ( this.I.Value + 1 ) & 15;
+            var t = a * this.Q.Value[ this.I.Value ] + this.C.Value;
+            this.C.Value = ( UInt32 )( t >> 32 );
+            var x = ( UInt32 )( t + this.C.Value );
+            if ( x >= this.C.Value ) {
+                return this.Q.Value[ this.I.Value ] = r - x;
             }
-            x++;
-            this._c.Value++;
 
-            return this._q.Value[ this._i.Value ] = r - x;
+            x++;
+            this.C.Value++;
+
+            return this.Q.Value[ this.I.Value ] = r - x;
         }
     }
 }
