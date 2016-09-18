@@ -25,9 +25,9 @@ namespace Librainian.Graphics.DDD {
     using System.Drawing;
     using System.Runtime.CompilerServices;
     using Extensions;
+    using Maths;
     using Maths.Ranges;
     using Newtonsoft.Json;
-    using Threading;
     using static Maths.MathHashing;
 
     /// <summary>

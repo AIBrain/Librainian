@@ -22,29 +22,20 @@ namespace Librainian.Measurement.Length {
 
     using System;
     using Newtonsoft.Json;
+    using Numerics;
 
     public struct Meters {
 
-        /// <summary>About 584.9 million years.</summary>
         public static readonly Meters MaxValue = new Meters( meters: Decimal.MaxValue );
 
-        /// <summary>About zero. :P</summary>
         public static readonly Meters MinValue = new Meters( meters: Decimal.MinValue );
 
-        /// <summary>One <see cref="Meters" /> .</summary>
         public static readonly Meters One = new Meters( meters: 1 );
 
-        /// <summary>Two <see cref="Meters" /> .</summary>
         public static readonly Meters Two = new Meters( meters: 2 );
 
         [JsonProperty]
-        public readonly Decimal Value;
-
-        static Meters() {
-
-            //Assert.That( One < Inch.One );
-            //Assert.That( One < Feet.One );
-        }
+        public readonly BigRational Value;
 
         public Meters( Decimal meters ) {
             this.Value = meters;

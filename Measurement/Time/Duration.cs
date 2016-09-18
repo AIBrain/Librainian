@@ -100,17 +100,17 @@ namespace Librainian.Measurement.Time {
             this.totalMicroseconds = ( Double )total;
         }
 
-        public Double Days => ( this.Hours / Measurement.Time.Hours.InOneDay ) % Measurement.Time.Hours.InOneDay;
+        public Double Days => this.Hours / Measurement.Time.Hours.InOneDay % Measurement.Time.Hours.InOneDay;
 
-        public Double Hours => ( Byte )( ( this.Minutes / Measurement.Time.Minutes.InOneHour ) % Measurement.Time.Minutes.InOneHour );
+        public Double Hours => ( Byte )( this.Minutes / Measurement.Time.Minutes.InOneHour % Measurement.Time.Minutes.InOneHour );
 
         public Double Microseconds => this.totalMicroseconds;
 
-        public Double Milliseconds => ( UInt16 )( ( this.Microseconds / Measurement.Time.Microseconds.InOneMillisecond ) % Measurement.Time.Microseconds.InOneMillisecond );
+        public Double Milliseconds => ( UInt16 )( this.Microseconds / Measurement.Time.Microseconds.InOneMillisecond % Measurement.Time.Microseconds.InOneMillisecond );
 
-        public Double Minutes => ( Byte )( ( this.Seconds / Measurement.Time.Seconds.InOneMinute ) % Measurement.Time.Seconds.InOneMinute );
+        public Double Minutes => ( Byte )( this.Seconds / Measurement.Time.Seconds.InOneMinute % Measurement.Time.Seconds.InOneMinute );
 
-        public Double Seconds => ( Byte )( ( this.Milliseconds / Measurement.Time.Milliseconds.InOneSecond ) % Measurement.Time.Milliseconds.InOneSecond );
+        public Double Seconds => ( Byte )( this.Milliseconds / Measurement.Time.Milliseconds.InOneSecond % Measurement.Time.Milliseconds.InOneSecond );
 
         public Double TotalDays => this.TotalHours / Measurement.Time.Hours.InOneDay;
 
@@ -128,9 +128,9 @@ namespace Librainian.Measurement.Time {
 
         public Double TotalYears => this.TotalDays / Measurement.Time.Days.InOneCommonYear;
 
-        public Double Weeks => ( this.Days / Measurement.Time.Days.InOneWeek ) % Measurement.Time.Days.InOneWeek;
+        public Double Weeks => this.Days / Measurement.Time.Days.InOneWeek % Measurement.Time.Days.InOneWeek;
 
-        public Double Years => ( this.Days / Measurement.Time.Days.InOneCommonYear ) % Measurement.Time.Days.InOneCommonYear;
+        public Double Years => this.Days / Measurement.Time.Days.InOneCommonYear % Measurement.Time.Days.InOneCommonYear;
 
         [JsonProperty]
 

@@ -39,36 +39,40 @@ namespace Librainian.Graphics.Imaging {
     /// </summary>
     [Immutable]
     [JsonObject]
-    [StructLayout( LayoutKind.Explicit )]
+    [StructLayout( LayoutKind.Sequential )]
     public struct Pixel : IEquatable<Pixel> {
 
         [JsonProperty]
-        [FieldOffset( 0 )]
+        //[FieldOffset( 0 )]
         public readonly Byte Checksum;
 
         [JsonProperty]
-        [FieldOffset( sizeof( Byte ) + 0 * sizeof( Byte ) )]
+        //[FieldOffset( sizeof( Byte ) + 0 * sizeof( Byte ) )]
         public readonly Byte Alpha;
 
         [JsonProperty]
-        [FieldOffset( sizeof( Byte ) + 1 * sizeof( Byte ) )]
+        //[FieldOffset( sizeof( Byte ) + 1 * sizeof( Byte ) )]
         public readonly Byte Red;
 
         [JsonProperty]
-        [FieldOffset( sizeof( Byte ) + 2 * sizeof( Byte ) )]
+        //[FieldOffset( sizeof( Byte ) + 2 * sizeof( Byte ) )]
         public readonly Byte Green;
 
         [JsonProperty]
-        [FieldOffset( sizeof( Byte ) + 3 * sizeof( Byte ) )]
+        //[FieldOffset( sizeof( Byte ) + 3 * sizeof( Byte ) )]
         public readonly Byte Blue;
 
         [JsonProperty]
-        [FieldOffset( sizeof( Byte ) + 4 * sizeof( Byte ) )]
+        //[FieldOffset( sizeof( Byte ) + 4 * sizeof( Byte ) )]
         public readonly UInt32 X;
 
         [JsonProperty]
-        [FieldOffset( sizeof( Byte ) + 4 * sizeof( Byte ) + sizeof( UInt32 ) )]
+        //[FieldOffset( sizeof( Byte ) + 4 * sizeof( Byte ) + sizeof( UInt32 ) )]
         public readonly UInt32 Y;
+
+        public static Byte Hash( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y) {
+            return ( Byte )MathHashing.GetHashCodes( alpha, red, green, blue, x, y );
+        }
 
         public Pixel( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y ) {
             this.Alpha = alpha;
@@ -77,7 +81,7 @@ namespace Librainian.Graphics.Imaging {
             this.Blue = blue;
             this.X = x;
             this.Y = y;
-            this.Checksum = ( Byte )MathHashing.GetHashCodes( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
+            this.Checksum = Hash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
         }
 
         public Pixel( Color color, UInt32 x, UInt32 y ) {
@@ -87,7 +91,7 @@ namespace Librainian.Graphics.Imaging {
             this.Blue = color.B;
             this.X = x;
             this.Y = y;
-            this.Checksum = ( Byte )MathHashing.GetHashCodes( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
+            this.Checksum = Hash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
         }
 
         //public static explicit operator Pixel( Color pixel ) => new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
@@ -132,7 +136,6 @@ namespace Librainian.Graphics.Imaging {
             return streamWriter.WriteLineAsync( this.ToString() );
         }
 
-        [CanBeNull]
         public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader reader, [NotNull] StreamWriter errors ) {
             if ( reader == null ) {
                 throw new ArgumentNullException( nameof( reader ) );
@@ -145,85 +148,85 @@ namespace Librainian.Graphics.Imaging {
             line = line.Trim();
 
             if ( String.IsNullOrWhiteSpace( line ) ) {
-                await errors.WriteLineAsync( "Blank input line" );
+                await errors.WriteLineAsync( "Blank input line" ).ConfigureAwait(false);
                 return null;
             }
 
             var openParent = line.IndexOf( "(", StringComparison.OrdinalIgnoreCase );
             if ( openParent <= -1 ) {
-                await errors.WriteLineAsync( $"Unable to find a '(' in {line}" );
+                await errors.WriteLineAsync( $"Unable to find a '(' in {line}" ).ConfigureAwait( false );
                 return null;
             }
 
             Byte checksum;
             if ( !Byte.TryParse( line.Substring( 0, openParent ), out checksum ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" );
+                await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).ConfigureAwait( false );
                 return null;
             }
 
             var closeParent = line.IndexOf( ")", StringComparison.OrdinalIgnoreCase );
             if ( closeParent == -1 ) {
-                await errors.WriteLineAsync( $"Unable to find a ')' in {line}" );
+                await errors.WriteLineAsync( $"Unable to find a ')' in {line}" ).ConfigureAwait( false );
                 return null;
             }
 
             var argb = line.Substring( openParent + 1, closeParent - openParent ).Split( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
             if ( argb.Length != 4 ) {
-                await errors.WriteLineAsync( $"Unable to parse Color from {line}" );
+                await errors.WriteLineAsync( $"Unable to parse Color from {line}" ).ConfigureAwait( false );
                 return null;
             }
 
             Byte alpha;
             if ( !Byte.TryParse( argb[ 0 ], out alpha ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Alpha from {line}" );
+                await errors.WriteLineAsync( $"Unable to parse Alpha from {line}" ).ConfigureAwait( false );
                 return null;
             }
 
             Byte red;
             if ( !Byte.TryParse( argb[ 1 ], out red ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Red from {line}" );
+                await errors.WriteLineAsync( $"Unable to parse Red from {line}" ).ConfigureAwait( false );
                 return null;
             }
 
             Byte green;
             if ( !Byte.TryParse( argb[ 2 ], out green ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Green from {line}" );
+                await errors.WriteLineAsync( $"Unable to parse Green from {line}" ).ConfigureAwait( false );
                 return null;
             }
 
             Byte blue;
             if ( !Byte.TryParse( argb[ 3 ], out blue ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Blue from {line}" );
+                await errors.WriteLineAsync( $"Unable to parse Blue from {line}" ).ConfigureAwait( false );
                 return null;
             }
 
             var at = line.IndexOf( "@", StringComparison.OrdinalIgnoreCase );
             if ( at == -1 ) {
-                await errors.WriteLineAsync( $"Unable to find an '@' in {line}" );
+                await errors.WriteLineAsync( $"Unable to find an '@' in {line}" ).ConfigureAwait( false );
                 return null;
             }
 
             var xandy = line.Substring( at + 1 ).Split( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
             if ( xandy.Length != 2 ) {
-                await errors.WriteLineAsync( $"Unable to parse X & Y from {line}" );
+                await errors.WriteLineAsync( $"Unable to parse X & Y from {line}" ).ConfigureAwait( false );
                 return null;
             }
 
             UInt32 x;
             if ( !UInt32.TryParse( xandy[ 0 ], out x ) ) {
-                await errors.WriteLineAsync( $"Unable to parse X from {line}" );
+                await errors.WriteLineAsync( $"Unable to parse X from {line}" ).ConfigureAwait( false );
                 return null;
             }
 
             UInt32 y;
             if ( !UInt32.TryParse( xandy[ 0 ], out y ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Y from {line}" );
+                await errors.WriteLineAsync( $"Unable to parse Y from {line}" ).ConfigureAwait( false );
                 return null;
             }
 
             var pixel = new Pixel( alpha, red, green, blue, x, y );
             if ( pixel.Checksum != checksum ) {
-                await errors.WriteLineAsync( $"Warning checksums do not match! Expected {checksum}, but got {pixel.Checksum}" );
+                await errors.WriteLineAsync( $"Warning checksums do not match! Expected {checksum}, but got {pixel.Checksum}" ).ConfigureAwait( false );
             }
 
             return pixel;

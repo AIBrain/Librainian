@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Word.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+// "Librainian/Word.cs" was last cleaned by Rick on 2016/08/26 at 10:14 AM
 
 namespace Librainian.Linguistics {
 
@@ -27,38 +27,48 @@ namespace Librainian.Linguistics {
     using System.Linq;
     using Collections;
     using Extensions;
-    using FluentAssertions;
     using JetBrains.Annotations;
-    using Maths;
     using Newtonsoft.Json;
+    using NUnit.Framework;
+
+    [TestFixture]
+    public static class WordTests {
+
+        [Test]
+        public static void TestWordStuff() {
+
+            //Word.Level.Should().BeGreaterThan( Character.Level );
+        }
+    }
 
     /// <summary>
-    ///     A <see cref="Word" /> is a sequence of <see cref="Character" /> .
+    ///     A <see cref="Word" /> is a sequence of <see cref="char" /> .
     /// </summary>
     /// <seealso cref="Sentence"></seealso>
     [JsonObject]
     [Immutable]
     [DebuggerDisplay( "{ToString()}" )]
-    public class Word : IEquatable<Word>, IEnumerable<Character>, IComparable<Word> {
-        public const UInt64 Level = Character.Level << 1;
-
-        [NotNull]
-        [JsonProperty]
-        private readonly List<Character> _tokens = new List<Character>();
-
-        static Word() {
-            Level.Should().BeGreaterThan( Character.Level );
-        }
+    [Serializable]
+    public class Word : IEquatable<Word>, IEnumerable<Char>, IComparable<Word> {
 
         public Word( [CanBeNull] String word ) {
             if ( String.IsNullOrEmpty( word ) ) {
                 word = String.Empty;
             }
-            this._tokens.AddRange( word.Select( character => new Character( character ) ) );
-            this._tokens.Fix();
+            this.Chars.AddRange( word.Select( character => character ) );
+            this.Chars.Fix();
         }
 
-        public static implicit operator String( Word word ) => word._tokens.ToStrings( "" );
+        private Word() {
+        }
+
+        public static Word Empty { get; } = new Word();
+
+        [NotNull]
+        [JsonProperty]
+        private List<Char> Chars { get; } = new List<Char>();
+
+        public static implicit operator String( Word word ) => word.Chars.ToStrings( "" );
 
         /// <summary>
         ///     Compares the current instance with another object of the same type and returns an integer that indicates whether
@@ -79,21 +89,22 @@ namespace Librainian.Linguistics {
             if ( ReferenceEquals( other, null ) ) {
                 return false;
             }
+
             return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
 
-        public IEnumerator<Character> GetEnumerator() => this._tokens.GetEnumerator();
+        public IEnumerator<Char> GetEnumerator() => this.Chars.GetEnumerator();
 
         public override Int32 GetHashCode() {
-            return MathHashing.GetHashCodes( this._tokens );
+            return this.Chars.GetHashCode();
         }
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        public IEnumerable<Tuple<UInt64, String>> Possibles() {
-            return this._tokens.Select( character => new Tuple<UInt64, String>( Level, character.ToString() ) );
+        public Char[][] Possibles() {
+            return this.Chars.ToArray().FastPowerSet();
         }
 
-        public override String ToString() => this._tokens.ToStrings( "" );
+        public override String ToString() => this.Chars.ToStrings( "" );
     }
 }

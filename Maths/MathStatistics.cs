@@ -27,7 +27,6 @@ namespace Librainian.Maths {
     using JetBrains.Annotations;
     using Measurement.Time;
     using Numerics;
-    using Threading;
 
     public static class MathStatistics {
 

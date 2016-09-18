@@ -34,9 +34,7 @@ namespace Librainian.Maths {
         public static Countable<String> Countable { get; } = new Countable<String>( readTimeout: Seconds.One, writeTimeout: Seconds.One );
 
         //[OneTimeSetUp]
-        public static void Setup() {
-            ;
-        }
+        public static void Setup() { }
 
         //[OneTimeTearDown]
         public static void TearDown() {

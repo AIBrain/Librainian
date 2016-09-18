@@ -30,7 +30,6 @@ namespace Librainian.Graphics.DDD {
     using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
-    using Threading;
 
     /// <summary>
     ///     A 3D point; with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> <see cref="long"/> integers.

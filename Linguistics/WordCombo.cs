@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/WordCombo.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+// "Librainian/WordCombo.cs" was last cleaned by Rick on 2016/08/26 at 10:14 AM
 
 namespace Librainian.Linguistics {
 

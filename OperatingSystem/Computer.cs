@@ -28,15 +28,16 @@ namespace Librainian.OperatingSystem {
     using System.Net.NetworkInformation;
     using System.Numerics;
     using System.Runtime;
-    using System.Runtime.InteropServices;
     using System.Text;
     using FluentAssertions;
     using JetBrains.Annotations;
     using Maths;
     using Measurement.Time;
     using Microsoft.VisualBasic.Devices;
+    using NUnit.Framework;
 
     public static class Computer {
+
         private static List<PerformanceCounter> _utilizationCounters;
 
         static Computer() {
@@ -57,9 +58,10 @@ namespace Librainian.OperatingSystem {
                         foreach ( var result in searcher.Get() ) {
                             var mem = ( UInt64 )result[ "Capacity" ];
                             total += mem;
-                            sb.AppendFormat( "{0}:{1}MB, ", result[ "DeviceLocator" ], mem / 1024 / 1024 );
+                            sb.Append( $"{result[ "DeviceLocator" ]}:{mem / 1024 / 1024}MB, " );
                         }
-                        sb.AppendFormat( " Total: {0:0,000}MB", total / 1024 / 1024 );
+
+                        sb.Append( $" Total: {total / 1024 / 1024:0,000}MB" );
                         return sb.ToString();
                     }
                 }
@@ -100,9 +102,6 @@ namespace Librainian.OperatingSystem {
 
         public static Boolean CanAllocateMemory( this BigInteger bytes ) {
             try {
-                if ( bytes <= 1 ) {
-                    return true;
-                }
                 var megabytes = bytes / MathConstants.OneMegaByteBi;
 
                 if ( megabytes <= BigInteger.Zero ) {
@@ -119,6 +118,9 @@ namespace Librainian.OperatingSystem {
                 }
             }
             catch ( ArgumentOutOfRangeException ) {
+                return false;
+            }
+            catch ( InsufficientMemoryException ) {
                 return false;
             }
             catch ( OutOfMemoryException ) {
@@ -179,8 +181,9 @@ namespace Librainian.OperatingSystem {
                 using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_Processor" ) ) {
                     var sb = new StringBuilder();
                     foreach ( var result in searcher.Get() ) {
-                        sb.AppendFormat( "{0} with {1} cores", result[ "Name" ], result[ "NumberOfCores" ] );
+                        sb.Append( $"{result[ "Name" ]} with {result[ "NumberOfCores" ]} cores" );
                     }
+
                     return sb.ToString();
                 }
             }
@@ -214,9 +217,6 @@ namespace Librainian.OperatingSystem {
         public static void Hibernate( TimeSpan? delay = null ) {
             Process.Start( "shutdown", !delay.HasValue ? "/h" : $"/h /t {( Int32 )delay.Value.TotalSeconds}" );
         }
-
-        [DllImport( "user32" )]
-        public static extern void LockWorkStation();
 
         public static void Logoff( TimeSpan? delay = null ) {
             Process.Start( "shutdown", !delay.HasValue ? "/l" : $"/l /t {( Int32 )delay.Value.TotalSeconds}" );
@@ -262,6 +262,147 @@ namespace Librainian.OperatingSystem {
             public static void High() => At( 14917, TimeExtensions.GetAverageDateTimePrecision() );
 
             public static void Low() => At( 440, TimeExtensions.GetAverageDateTimePrecision() );
+
+        }
+
+        public static class SATScores {
+
+            public static Lazy<ManagementObjectSearcher> Searcher { get; } = new Lazy<ManagementObjectSearcher>( () => new ManagementObjectSearcher( "root\\CIMV2", "SELECT * FROM Win32_WinSAT" ) );
+
+            public static Single? CPU() {
+                try {
+                    foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
+                        Single result;
+                        if ( Single.TryParse( queryObj[ "CPUScore" ].ToString(), out result ) ) {
+                            return result;
+                        }
+                    }
+                }
+                catch ( ManagementException exception ) {
+                    exception.More();
+                }
+                return null;
+            }
+
+            public static Single? D3D() {
+                try {
+                    foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
+                        Single result;
+                        if ( Single.TryParse( queryObj[ "D3DScore" ].ToString(), out result ) ) {
+                            return result;
+                        }
+                    }
+                }
+                catch ( ManagementException exception ) {
+                    exception.More();
+                }
+                return null;
+            }
+
+            public static Single? Disk() {
+                try {
+                    foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
+                        Single result;
+                        if ( Single.TryParse( queryObj[ "DiskScore" ].ToString(), out result ) ) {
+                            return result;
+                        }
+                    }
+                }
+                catch ( ManagementException exception ) {
+                    exception.More();
+                }
+                return null;
+            }
+
+            public static Single? Graphics() {
+                try {
+                    foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
+                        Single result;
+                        if ( Single.TryParse( queryObj[ "GraphicsScore" ].ToString(), out result ) ) {
+                            return result;
+                        }
+                    }
+                }
+                catch ( ManagementException exception ) {
+                    exception.More();
+                }
+                return null;
+            }
+
+            public static Single? Memory() {
+                try {
+                    foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
+                        Single result;
+                        if ( Single.TryParse( queryObj[ "MemoryScore" ].ToString(), out result ) ) {
+                            return result;
+                        }
+                    }
+                }
+                catch ( ManagementException exception ) {
+                    exception.More();
+                }
+                return null;
+            }
+
+            public static Object TimeTaken() {
+                try {
+                    foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
+                        return queryObj[ "TimeTaken" ];
+                    }
+                }
+                catch ( ManagementException exception ) {
+                    exception.More();
+                }
+                return null;
+            }
+
+            public static Int32? WinSAT_AssessmentState() {
+                try {
+                    foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
+                        Int32 result;
+                        if ( Int32.TryParse( queryObj[ "WinSATAssessmentState" ] .ToString(), out result) ) {
+                            return result;
+                        }
+                    }
+                }
+                catch ( ManagementException exception ) {
+                    exception.More();
+                }
+                return null;
+            }
+
+            public static Single? WinSPRLevel() {
+                try {
+                    foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
+                        Single result;
+                        if ( Single.TryParse( queryObj[ "WinSPRLevel" ].ToString() , out result) ) {
+                            return result;
+                        }
+                    }
+                }
+                catch ( ManagementException exception ) {
+                    exception.More();
+                }
+                return null;
+            }
         }
     }
+
+    [TestFixture]
+    public static class ComputerTests {
+
+        [Test]
+        public static void TestScores() {
+            Debug.WriteLine( Computer.SATScores.CPU() );
+            Debug.WriteLine( Computer.SATScores.D3D() );
+            Debug.WriteLine( Computer.SATScores.Disk() );
+            Debug.WriteLine( Computer.SATScores.Graphics() );
+            Debug.WriteLine( Computer.SATScores.Memory() );
+            Debug.WriteLine( Computer.SATScores.TimeTaken() );
+            Debug.WriteLine( Computer.SATScores.WinSAT_AssessmentState() );
+            Debug.WriteLine( Computer.SATScores.WinSPRLevel() );
+        }
+
+    }
+
 }

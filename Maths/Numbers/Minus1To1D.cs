@@ -22,7 +22,6 @@ namespace Librainian.Maths.Numbers {
 
     using System;
     using Newtonsoft.Json;
-    using Threading;
 
     /// <summary>Restricts the value to between -1.0 and 1.0</summary>
     [JsonObject]

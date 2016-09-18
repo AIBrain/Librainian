@@ -28,7 +28,6 @@ namespace Librainian.Graphics.DDD {
     using Maths;
     using Maths.Ranges;
     using Newtonsoft.Json;
-    using Threading;
 
     /// <summary>
     ///     A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> .

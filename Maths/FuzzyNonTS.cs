@@ -22,7 +22,6 @@ namespace Librainian.Maths {
 
     using System;
     using Newtonsoft.Json;
-    using Threading;
 
     /// <summary>A Double number, constrained between 0 and 1. Not thread safe!</summary>
     [JsonObject]

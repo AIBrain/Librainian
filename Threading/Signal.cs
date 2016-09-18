@@ -22,9 +22,10 @@ namespace Librainian.Threading {
 
     using System;
     using System.Threading;
+    using Magic;
 
-    public class Signal : IDisposable {
-        public readonly ManualResetEvent Event;
+    public class Signal : ABetterClassDispose {
+        public readonly ManualResetEvent Event = new ManualResetEvent( false );
 
         private Object _lockobject = new Object();
 
@@ -33,18 +34,20 @@ namespace Librainian.Threading {
         /// <summary>Sets the ManualResetEvent to nonsignaled.</summary>
         public Signal() {
             this._signalcount = 0;
-            this.Event = new ManualResetEvent( false );
             this.Reset();
         }
 
-        ~Signal() {
-            this.Event?.Dispose();
-            this._lockobject = null;
-        }
+        //~Signal() {
+        //    this.Event?.Dispose();
+        //    this._lockobject = null;
+        //}
 
         public Boolean IsSignaled => Interlocked.Read( ref this._signalcount ) > 0;
 
-        public void Dispose() => this.Event?.Dispose();
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this.Event.Dispose(); }
 
         public void Lower() {
             Interlocked.Add( ref this._signalcount, -1 );

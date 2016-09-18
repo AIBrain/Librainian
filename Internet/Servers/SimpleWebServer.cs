@@ -30,6 +30,7 @@ namespace Librainian.Internet.Servers {
     using System.Threading.Tasks;
     using FluentAssertions;
     using JetBrains.Annotations;
+    using Magic;
 
     /// <summary></summary>
     /// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>
@@ -42,7 +43,7 @@ namespace Librainian.Internet.Servers {
     ///     web page", DateTime.Now); }
     /// </example>
     [UsedImplicitly]
-    public class SimpleWebServer : IDisposable {
+    public class SimpleWebServer : ABetterClassDispose {
 
         /// <summary></summary>
         [NotNull]
@@ -105,12 +106,11 @@ namespace Librainian.Internet.Servers {
         public String NotReadyBecause {
             get; private set;
         }
-
+        
         /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting
-        ///     unmanaged resources.
+        /// Dispose any disposable members.
         /// </summary>
-        public void Dispose() => this.Stop();
+        protected override void DisposeManaged() { this.Stop(); }
 
         /// <summary>Start the http listener.</summary>
         /// <param name="cancellationToken"></param>

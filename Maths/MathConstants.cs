@@ -55,9 +55,6 @@ namespace Librainian.Maths {
 
         public static readonly BigRational MinusOneOverTwo = new BigRational( -1, 2 );
 
-        /// <summary>
-        ///     Just cast down to int
-        /// </summary>
         public static readonly BigInteger OneMegaByteBi = new BigInteger( OneMegaByte );
 
         public static readonly BigRational OneOverTwo = new BigRational( 1, 2 );

@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Noun.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+// "Librainian/Noun.cs" was last cleaned by Rick on 2016/08/26 at 10:14 AM
 
 namespace Librainian.Linguistics.PoS {
 
@@ -40,22 +40,11 @@ namespace Librainian.Linguistics.PoS {
         ///     otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public Boolean Equals( ITaggedWord other ) {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///     Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
-        /// <returns>
-        ///     true if the current object is equal to the <paramref name="other" /> parameter;
-        ///     otherwise, false.
-        /// </returns>
-        /// <param name="other">An object to compare with this object.</param>
         public Boolean Equals( Noun other ) {
             if ( ReferenceEquals( other, null ) ) {
                 return false;
             }
+
             return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
     }

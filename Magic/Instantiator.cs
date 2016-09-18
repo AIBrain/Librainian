@@ -28,9 +28,7 @@ namespace Librainian.Magic {
     /// <typeparam name="TInstance"></typeparam>
     /// <example>
     ///     Cat myCat = Instantiator
-    ///     <Cat>
-    ///         .New("furry",
-    ///         isCute: true);
+    ///     Cat.New("furry", isCute: true);
     /// </example>
     public static class Instantiator<TInstance> {
 

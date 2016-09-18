@@ -24,7 +24,6 @@ namespace Librainian.Maths.Numbers {
     using System.Diagnostics;
     using Extensions;
     using Newtonsoft.Json;
-    using Threading;
 
     /// <summary>
     ///     Restricts the value to between 0.0 and 1.0

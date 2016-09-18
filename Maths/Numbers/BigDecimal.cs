@@ -22,6 +22,7 @@ namespace Librainian.Maths.Numbers {
 
     using System;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Numerics;
     using Extensions;
     using JetBrains.Annotations;
@@ -540,7 +541,7 @@ namespace Librainian.Maths.Numbers {
 
         Single IConvertible.ToSingle( IFormatProvider provider ) => Convert.ToSingle( this );
 
-        String IConvertible.ToString( IFormatProvider provider ) => Convert.ToString( this );
+        String IConvertible.ToString( IFormatProvider provider ) => Convert.ToString( this, CultureInfo.CurrentCulture );
 
         Object IConvertible.ToType( Type conversionType, IFormatProvider provider ) {
             var scaleDivisor = BigInteger.Pow( new BigInteger( 10 ), this.Exponent );
@@ -582,8 +583,8 @@ namespace Librainian.Maths.Numbers {
         //public static explicit operator Int32( BigDecimal value ) {
         //    return ( Int32 )( value.Mantissa * BigInteger.Pow( 10, value.Exponent ) );
         //}
-        [Pure]
         public Byte[] ToByteArray() {
+            // ReSharper disable once ImpureMethodCallOnReadonlyValueField
             var unscaledValue = this.Significand.ToByteArray();
             var scale = BitConverter.GetBytes( this.Exponent );
 

@@ -126,7 +126,9 @@ namespace Librainian.OperatingSystem {
         public static IEnumerable<String> EnumerateApplications() {
 
             // get the speakers (1st render + multimedia) device
-            var deviceEnumerator = ( new MMDeviceEnumerator() ) as IMMDeviceEnumerator;
+
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            var deviceEnumerator = new MMDeviceEnumerator() as IMMDeviceEnumerator;
             if ( deviceEnumerator == null ) {
                 yield break;
             }
@@ -187,7 +189,9 @@ namespace Librainian.OperatingSystem {
         public static ISimpleAudioVolume GetVolumeObject( String name ) {
 
             // get the speakers (1st render + multimedia) device
-            var deviceEnumerator = ( new MMDeviceEnumerator() ) as IMMDeviceEnumerator;
+
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            var deviceEnumerator = new MMDeviceEnumerator() as IMMDeviceEnumerator;
             if ( deviceEnumerator == null ) {
                 return null;
             }
@@ -215,6 +219,8 @@ namespace Librainian.OperatingSystem {
                 String dn;
                 ctl.GetDisplayName( out dn );
                 if ( String.Compare( name, dn, StringComparison.OrdinalIgnoreCase ) == 0 ) {
+
+                    // ReSharper disable once SuspiciousTypeConversion.Global
                     volumeControl = ctl as ISimpleAudioVolume;
                     break;
                 }

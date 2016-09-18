@@ -25,7 +25,6 @@ namespace Librainian.Maths {
     using JetBrains.Annotations;
     using Newtonsoft.Json;
     using Numbers;
-    using Threading;
 
     public enum LowMiddleHigh {
         Low,
@@ -40,6 +39,9 @@ namespace Librainian.Maths {
     /// </summary>
     [JsonObject]
     public struct Fuzzy : ICloneable {
+
+        public static readonly Fuzzy Empty = default(Fuzzy);
+
         public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
 
         /// <summary>
@@ -85,24 +87,38 @@ namespace Librainian.Maths {
             }
 
             set {
-                var correctedvalue = value;
                 if ( value > MaxValue ) {
-                    correctedvalue = MaxValue;
+                    value = MaxValue;
                 }
                 else if ( value < MinValue ) {
-                    correctedvalue = MinValue;
+                    value = MinValue;
                 }
-                this._value.Value = correctedvalue;
+                this._value.Value = value;
             }
         }
 
-        public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2.0D;
+        public static Double Combine( Double lhs, Double rhs ) {
+            if ( !lhs.IsNumber()  ) {
+                throw new ArgumentOutOfRangeException( nameof( lhs ) );
+            }
+            if ( !rhs.IsNumber() ) {
+                throw new ArgumentOutOfRangeException( nameof( rhs ) );
+            }
+
+            return ( lhs + rhs ) / 2D;
+        }
 
         public static Fuzzy Parse( [CanBeNull] String value ) {
             if ( String.IsNullOrWhiteSpace( value ) ) {
                 throw new ArgumentNullException( nameof( value ) );
             }
-            return new Fuzzy( Double.Parse( value ) );
+
+            Double result;
+            if ( Double.TryParse( value, out result ) ) {
+                return new Fuzzy( result );
+            }
+
+            return Empty;
         }
 
         public void AdjustTowardsMax() => this.Value = ( this.Value + MaxValue ) / 2D;
@@ -158,11 +174,11 @@ namespace Librainian.Maths {
         //public static implicit operator Double( Fuzzy special ) {
         //    return special.Value;
         //}
-        //public static Fuzzy Combine( Fuzzy value1, Fuzzy value2 ) { return new Fuzzy( ( value1 + value2 ) / 2D ); }
+        //public static Fuzzy Combine( Fuzzy lhs, Fuzzy rhs ) { return new Fuzzy( ( lhs + rhs ) / 2D ); }
 
-        //public static Fuzzy Combine( Fuzzy value1, Double value2 ) { return new Fuzzy( ( value1 + value2 ) / 2D ); }
+        //public static Fuzzy Combine( Fuzzy lhs, Double rhs ) { return new Fuzzy( ( lhs + rhs ) / 2D ); }
 
-        //public static Fuzzy Combine( Double value1, Fuzzy value2 ) { return new Fuzzy( ( value1 + value2 ) / 2D ); }
+        //public static Fuzzy Combine( Double lhs, Fuzzy rhs ) { return new Fuzzy( ( lhs + rhs ) / 2D ); }
         public override String ToString() => $"{this.Value:R}";
     }
 }

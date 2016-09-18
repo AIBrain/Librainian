@@ -30,6 +30,7 @@ namespace Librainian.Graphics {
     using Imaging;
     using Maths;
     using Moving;
+    using OperatingSystem;
 
     public static class GraphicsExtensions {
         public static RAMP DefaultRamp;
@@ -47,15 +48,9 @@ namespace Librainian.Graphics {
             return ms;
         }
 
-        [DllImport( "user32.dll" )]
-        public static extern IntPtr GetDC( IntPtr hWnd );
-
-        [DllImport( "gdi32.dll" )]
-        public static extern Boolean GetDeviceGammaRamp( IntPtr hDC, ref RAMP lpRamp );
-
         public static RAMP GetGamma() {
             var ramp = new RAMP();
-            if ( GetDeviceGammaRamp( GetDC( IntPtr.Zero ), ref ramp ) ) {
+            if ( NativeMethods.GetDeviceGammaRamp( NativeMethods.GetDC( IntPtr.Zero ), ref ramp ) ) {
                 GotGamma = true;
                 return ramp;
             }
@@ -68,15 +63,12 @@ namespace Librainian.Graphics {
         /// <exception cref="InvalidOperationException"></exception>
         public static void ResetGamma() {
             if ( GotGamma ) {
-                SetDeviceGammaRamp( GetDC( IntPtr.Zero ), ref DefaultRamp );
+                NativeMethods.SetDeviceGammaRamp( NativeMethods.GetDC( IntPtr.Zero ), ref DefaultRamp );
             }
             else {
                 throw new InvalidOperationException( "Unable to obtain Gamma setting on this device." );
             }
         }
-
-        [DllImport( "gdi32.dll" )]
-        public static extern Boolean SetDeviceGammaRamp( IntPtr hDC, ref RAMP lpRamp );
 
         public static void SetGamma( Int32 gamma ) {
             if ( gamma.Between( 1, 256 ) ) {
@@ -89,7 +81,8 @@ namespace Librainian.Graphics {
                     }
                     ramp.Red[ i ] = ramp.Blue[ i ] = ramp.Green[ i ] = ( UInt16 )iArrayValue;
                 }
-                SetDeviceGammaRamp( GetDC( IntPtr.Zero ), ref ramp );
+
+                NativeMethods.SetDeviceGammaRamp( NativeMethods.GetDC( IntPtr.Zero ), ref ramp );
             }
         }
 

@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Sentence.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+// "Librainian/Sentence.cs" was last cleaned by Rick on 2016/08/26 at 10:14 AM
 
 namespace Librainian.Linguistics {
 
@@ -27,9 +27,7 @@ namespace Librainian.Linguistics {
     using System.Linq;
     using Collections;
     using Extensions;
-    using FluentAssertions;
     using JetBrains.Annotations;
-    using Maths;
     using Newtonsoft.Json;
     using Parsing;
 
@@ -39,23 +37,13 @@ namespace Librainian.Linguistics {
     /// <seealso cref="http://wikipedia.org/wiki/Sentence_(linguistics)"></seealso>
     /// <seealso cref="Paragraph"></seealso>
     [JsonObject]
+    [Immutable]
     [DebuggerDisplay( "{ToString()}" )]
+    [Serializable]
     public sealed class Sentence : IEquatable<Sentence>, IEnumerable<Word>, IComparable<Sentence> {
 
         /// <summary></summary>
-        public const UInt64 Level = Word.Level << 1;
-
-        /// <summary></summary>
         public static readonly Sentence EndOfLine = new Sentence( "\0" );
-
-        /// <summary></summary>
-        [NotNull]
-        [JsonProperty]
-        private readonly List<Word> _tokens = new List<Word>();
-
-        static Sentence() {
-            Level.Should().BeGreaterThan( Word.Level );
-        }
 
         /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
         /// <param name="sentence"></param>
@@ -67,47 +55,57 @@ namespace Librainian.Linguistics {
             if ( words == null ) {
                 throw new ArgumentNullException( nameof( words ) );
             }
-            this._tokens.AddRange( words );
-            this._tokens.Fix();
+
+            this.Words.AddRange( words.Where( word => word != null ) );
+            this.Words.Fix();
         }
 
-        public static implicit operator String( Sentence sentence ) {
-            return sentence != null ? sentence._tokens.ToStrings( " " ) : String.Empty;
+        private Sentence() {
         }
+
+        public static Sentence Empty { get; } = new Sentence();
+
+        /// <summary></summary>
+        [NotNull]
+        [JsonProperty]
+        private List<Word> Words { get; } = new List<Word>();
+
+        //public static implicit operator String( Sentence sentence ) {return sentence != null ? sentence.Words.ToStrings( " " ) : String.Empty;}
 
         public Int32 CompareTo( Sentence other ) {
             return String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
         }
 
-        public Boolean Equals( [NotNull] Sentence other ) {
+        public Boolean Equals( Sentence other ) {
             if ( other == null ) {
-                throw new ArgumentNullException( nameof( other ) );
+                return false;
             }
+
             return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
 
-        public IEnumerator<Word> GetEnumerator() => this._tokens.GetEnumerator();
+        public IEnumerator<Word> GetEnumerator() => this.Words.GetEnumerator();
 
         public override Int32 GetHashCode() {
-            return MathHashing.GetHashCodes( this._tokens );
+            return this.Words.GetHashCode();
         }
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public IEnumerable<Sentence> Possibles() {
-            return this._tokens.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
+            return this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
         }
 
-        [NotNull]
-        public Word TakeFirst() {
-            try {
-                return this._tokens.TakeFirst() ?? new Word( String.Empty );
-            }
-            finally {
-                this._tokens.Fix();
-            }
-        }
+        //[NotNull]
+        //public Word TakeFirst() {
+        //    try {
+        //        return this.Words.TakeFirst() ?? new Word( String.Empty );
+        //    }
+        //    finally {
+        //        this.Words.Fix();
+        //    }
+        //}
 
-        public override String ToString() => this._tokens.ToStrings( " " );
+        public override String ToString() => this.Words.ToStrings( " " );
     }
 }

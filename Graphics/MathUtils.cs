@@ -302,6 +302,7 @@ namespace Librainian.Graphics {
         ///     be false.
         /// </summary>
         /// <param name="visual"></param>
+        /// <param name="viewport"></param>
         /// <param name="success"></param>
         /// <returns></returns>
         public static Matrix3D TryTransformTo2DAncestor( DependencyObject visual, out Viewport3DVisual viewport, out Boolean success ) {
@@ -322,6 +323,7 @@ namespace Librainian.Graphics {
         ///     be coincident and nothing will render. In this case success will be false.
         /// </summary>
         /// <param name="visual"></param>
+        /// <param name="viewport"></param>
         /// <param name="success"></param>
         /// <returns></returns>
         public static Matrix3D TryTransformToCameraSpace( DependencyObject visual, out Viewport3DVisual viewport, out Boolean success ) {

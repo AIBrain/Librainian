@@ -25,7 +25,6 @@ namespace Librainian.Measurement.Time {
     using System.Linq;
     using Maths;
     using Newtonsoft.Json;
-    using Threading;
 
     /// <summary>Represents a Single range with minimum and maximum values</summary>
     [JsonObject]

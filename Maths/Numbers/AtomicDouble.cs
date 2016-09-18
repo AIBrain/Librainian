@@ -41,7 +41,7 @@ namespace Librainian.Maths.Numbers {
 
         public Double Value {
             get {
-                return Interlocked.Exchange( ref this._value, this._value ); //todo buggy use of Exchange ?
+                return Interlocked.Exchange( ref this._value, this._value ); //TODO BUG correct use of Exchange here?
             }
 
             set {

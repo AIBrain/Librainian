@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/UDC.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+// "Librainian/UDC.cs" was last cleaned by Rick on 2016/08/26 at 10:30 AM
 
 namespace Librainian.Linguistics {
 
@@ -30,18 +30,22 @@ namespace Librainian.Linguistics {
     ///     539. 120.2 Symmetries of quantum physics
     ///     539. 120.224 Reflection in time and space
     /// </example>
-    public class Udc {
+    public class UDC {
 
-        //TODO Should a Book be aware of its own UDC?
-
-        public static readonly Udc Unknown = new Udc( String.Empty );
-
-        public Udc( String notation ) {
+        public UDC( String notation ) {
             this.Notation = notation;
         }
 
+        public static UDC Unknown { get; } = new UDC( String.Empty );
+
         public String Notation {
-            get; private set;
+            get;
+        }
+
+        /// <summary>Serves as the default hash function. </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() {
+            return this.Notation.GetHashCode();
         }
     }
 }

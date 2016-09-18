@@ -1643,17 +1643,17 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary>
-        ///     Creates an enumerable that iterates the range [fromInclusive, toExclusive).
-        /// </summary>
-        /// <param name="fromInclusive">The lower bound, inclusive.</param>
-        /// <param name="toExclusive">The upper bound, exclusive.</param>
-        /// <returns>The enumerable of the range.</returns>
-        public static IEnumerable<BigInteger> To( this BigInteger fromInclusive, BigInteger toExclusive ) {
-            for ( var i = fromInclusive; i < toExclusive; i++ ) {
-                yield return i;
-            }
-        }
+        ///// <summary>
+        /////     Creates an enumerable that iterates the range [fromInclusive, toExclusive).
+        ///// </summary>
+        ///// <param name="fromInclusive">The lower bound, inclusive.</param>
+        ///// <param name="toExclusive">The upper bound, exclusive.</param>
+        ///// <returns>The enumerable of the range.</returns>
+        //public static IEnumerable<BigInteger> To( this BigInteger fromInclusive, BigInteger toExclusive ) {
+        //    for ( var i = fromInclusive; i < toExclusive; i++ ) {
+        //        yield return i;
+        //    }
+        //}
 
         /// <summary>
         ///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
@@ -1784,11 +1784,13 @@ namespace Librainian.Maths {
             }
 
             if ( @from > to ) {
+                // ReSharper disable once PossibleInvalidOperationException
                 for ( var dateTime = @from; dateTime >= to; dateTime -= step.Value ) {
                     yield return dateTime;
                 }
             }
             else {
+                // ReSharper disable once PossibleInvalidOperationException
                 for ( var dateTime = @from; dateTime <= to; dateTime += step.Value ) {
                     yield return dateTime;
                 }
@@ -1826,6 +1828,11 @@ namespace Librainian.Maths {
             for ( var i = 0; i < count; i++ ) {
                 yield return start + i;
             }
+        }
+
+        public static UInt64? ToUInt64( this String text ) {
+            UInt64 result;
+            return UInt64.TryParse( text, out result ) ? ( UInt64? )result : null;
         }
 
         public static String ToHex( this IEnumerable<Byte> input ) {

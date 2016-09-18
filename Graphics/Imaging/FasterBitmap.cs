@@ -25,7 +25,7 @@ namespace Librainian.Graphics.Imaging {
     using System.Drawing.Imaging;
     using Magic;
 
-    public unsafe class FasterBitmap : BetterDisposableClass {
+    public unsafe class FasterBitmap : ABetterClassDispose {
         private readonly Rectangle _bounds;
 
         private readonly Bitmap _workingBitmap;
@@ -94,19 +94,17 @@ namespace Librainian.Graphics.Imaging {
             this.IsLocked = false;
         }
 
-        protected override void CleanUpManagedResources() {
+        protected override void DisposeManaged() {
             if ( this.IsLocked ) {
                 this.UnlockImage();
             }
-            base.CleanUpManagedResources();
         }
 
         private struct PixelData {
             public Byte Alpha;
-
-            public Byte Blue;
-            public Byte Green;
             public Byte Red;
+            public Byte Green;
+            public Byte Blue;
 
             public override String ToString() {
                 return $"({this.Alpha}, {this.Red}, {this.Green}, {this.Blue})";

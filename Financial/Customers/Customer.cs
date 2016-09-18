@@ -23,10 +23,11 @@ namespace Librainian.Financial.Customers {
     using System;
     using Containers.Accounts;
     using Containers.Wallets;
+    using Magic;
     using Newtonsoft.Json;
 
     [JsonObject]
-    public class Customer : ICustomer {
+    public class Customer : ABetterClassDispose,ICustomer {
 
         public Customer( Guid customerID ) {
             this.Wallet = new Wallet( customerID );
@@ -48,5 +49,15 @@ namespace Librainian.Financial.Customers {
         public Wallet Wallet {
             get;
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
+            this.Wallet.Dispose();
+            this.CheckingAccount.Dispose();
+            this.SavingsAccount.Dispose();
+        }
+
     }
 }

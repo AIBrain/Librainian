@@ -24,6 +24,7 @@ namespace Librainian.Graphics.Imaging {
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using LanguageExt;
 
     /// <summary>
     ///     Untested.

@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Log.cs" was last cleaned by Rick on 2016/06/18 at 10:58 PM
+// "Librainian/Log.cs" was last cleaned by Rick on 2016/08/03 at 4:10 PM
 
 namespace Librainian {
 
@@ -38,10 +38,15 @@ namespace Librainian {
 
     public enum LoggingLevel {
         Critical = 0,
+
         Error = 1,
+
         Warning = 2,
+
         Info = 3,
+
         Verbose = 4,
+
         Debug = 5
     }
 
@@ -77,6 +82,7 @@ namespace Librainian {
             if ( condition ) {
                 return;
             }
+
             if ( !String.IsNullOrEmpty( message ) ) {
                 Debug.WriteLine( message );
             }
@@ -90,6 +96,7 @@ namespace Librainian {
             if ( !condition ) {
                 return;
             }
+
             if ( !String.IsNullOrEmpty( message ) ) {
                 Debug.WriteLine( message );
             }
@@ -194,12 +201,12 @@ namespace Librainian {
         [DebuggerStepThrough]
         public static void More( [NotNull] this Exception exception, [CanBeNull] [CallerMemberName] String method = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] Int32 sourceLineNumber = 0 ) {
             var message = new StringBuilder();
-            message.AppendFormat( " [Exception: {0}]\r\n", exception.Message );
-            message.AppendFormat( " [In: {0}]\r\n", exception.Source );
-            message.AppendFormat( " [When: {0}]\r\n", DateTime.Now );
-            message.AppendFormat( " [Msg: {0}]\r\n", exception.Message );
-            message.AppendFormat( " [Source: {0}]\r\n", sourceFilePath );
-            message.AppendFormat( " [Line: {0}]\r\n", sourceLineNumber );
+            message.Append( $" [Exception: {exception.Message}]\r\n" );
+            message.Append( $" [In: {exception.Source}]\r\n" );
+            message.Append( $" [When: {DateTime.Now}]\r\n" );
+            message.Append( $" [Msg: {exception.Message}]\r\n" );
+            message.Append( $" [Source: {sourceFilePath}]\r\n" );
+            message.Append( $" [Line: {sourceLineNumber}]\r\n" );
             ConsoleListener.Fail( method, message.ToString() );
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
@@ -210,6 +217,7 @@ namespace Librainian {
             if ( !HasConsoleBeenAllocated ) {
                 return;
             }
+
             "Shutting down".WriteColor( ConsoleColor.White, ConsoleColor.Blue );
             if ( linger ) {
                 var stopwatch = StopWatch.StartNew();
@@ -217,14 +225,16 @@ namespace Librainian {
                     Thread.Sleep( Hertz.OneHundredTwenty );
                     ".".WriteColor( ConsoleColor.White, ConsoleColor.Blue );
                 }
+
                 stopwatch.Stop();
             }
-            NativeWin32.FreeConsole();
+
+            NativeMethods.FreeConsole();
         }
 
         public static Boolean Startup() {
             try {
-                HasConsoleBeenAllocated = NativeWin32.AllocConsole();
+                HasConsoleBeenAllocated = NativeMethods.AllocConsole();
 
                 Debug.Listeners.Add( ConsoleListener );
 
@@ -242,6 +252,7 @@ namespace Librainian {
             catch ( Exception exception ) {
                 exception.More();
             }
+
             return false;
         }
 

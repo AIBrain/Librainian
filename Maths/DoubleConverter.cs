@@ -80,7 +80,7 @@ namespace Librainian.Maths {
                 exponent++;
             }
 
-            /// Construct a new System.Decimal expansion with the mantissa
+            // Construct a new System.Decimal expansion with the mantissa
             var ad = new ArbitraryDecimal( mantissa );
 
             // If the exponent is less than 0, we need to repeatedly divide by 2 - which is the
@@ -106,13 +106,13 @@ namespace Librainian.Maths {
             return ad.ToString();
         }
 
-        /// <summary>Private class used for manipulating
+        /// <summary>Private class used for manipulating</summary>
         private class ArbitraryDecimal {
 
             /// <summary>How many digits are *after* the System.Decimal point</summary>
             private Int32 _decimalPoint;
 
-            /// <summary>Digits in the System.Decimal expansion, one byte per digit
+            /// <summary>Digits in the System.Decimal expansion, one byte per digit</summary>
             private Byte[] _digits;
 
             /// <summary>

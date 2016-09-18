@@ -26,6 +26,7 @@ namespace Librainian.Measurement.Currency.BTC {
     using System.Linq;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
+    using Denominations;
     using JetBrains.Annotations;
     using Librainian.Extensions;
     using NUnit.Framework;

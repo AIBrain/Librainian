@@ -27,6 +27,7 @@ namespace Librainian.Measurement.Length {
     using JetBrains.Annotations;
     using Newtonsoft.Json;
     using Numerics;
+    using NUnit.Framework;
     using Parsing;
 
     /// <summary>
@@ -41,30 +42,30 @@ namespace Librainian.Measurement.Length {
     public struct Feet : IComparable<Feet>, IQuantityOfDistance {
 
         /// <summary>60</summary>
-        public const Byte InOneYard = 60;
+        public const Byte InOneYard = 3;
 
-        /// <summary><see cref="Five" /><see cref="Feet" />.</summary>
+        /// <summary><see cref="Five" /> .</summary>
         public static readonly Feet Five = new Feet( 5 );
 
-        /// <summary><see cref="One" /><see cref="Feet" />.</summary>
+        /// <summary><see cref="One" /> .</summary>
         public static readonly Feet One = new Feet( 1 );
 
-        /// <summary><see cref="Seven" /><see cref="Feet" />.</summary>
+        /// <summary><see cref="Seven" /> .</summary>
         public static readonly Feet Seven = new Feet( 7 );
 
-        /// <summary><see cref="Ten" /><see cref="Feet" />.</summary>
+        /// <summary><see cref="Ten" /> .</summary>
         public static readonly Feet Ten = new Feet( 10 );
 
-        /// <summary><see cref="Thirteen" /><see cref="Feet" />.</summary>
+        /// <summary><see cref="Thirteen" /> .</summary>
         public static readonly Feet Thirteen = new Feet( 13 );
 
-        /// <summary><see cref="Thirty" /><see cref="Feet" />.</summary>
+        /// <summary><see cref="Thirty" /> .</summary>
         public static readonly Feet Thirty = new Feet( 30 );
 
-        /// <summary><see cref="Three" /><see cref="Feet" />.</summary>
+        /// <summary><see cref="Three" /> .</summary>
         public static readonly Feet Three = new Feet( 3 );
 
-        /// <summary><see cref="Two" /><see cref="Feet" />.</summary>
+        /// <summary><see cref="Two" /> .</summary>
         public static readonly Feet Two = new Feet( 2 );
 
         /// <summary></summary>
@@ -72,15 +73,6 @@ namespace Librainian.Measurement.Length {
 
         [JsonProperty]
         public readonly BigRational Value;
-
-        static Feet() {
-            Zero.Should().BeLessThan( One );
-            One.Should().BeGreaterThan( Zero );
-            One.Should().Be( One );
-
-            //One.Should().BeLessThan( Yards.One );
-            //One.Should().BeGreaterThan( Inches.One );
-        }
 
         public Feet( BigRational value ) {
             this.Value = value;
@@ -98,9 +90,6 @@ namespace Librainian.Measurement.Length {
 
         public static Feet Combine( Feet left, BigInteger seconds ) => new Feet( ( BigInteger )left.Value + seconds );
 
-        //public static Feet Combine( Feet left, Feet right ) {
-        //    return Combine( ( Feet ) left, right.Value );
-        //}
         /// <summary>
         ///     <para>static equality test</para>
         /// </summary>
@@ -147,6 +136,24 @@ namespace Librainian.Measurement.Length {
             throw new NotImplementedException();
         }
 
-        public override String ToString() => $"{this.Value} {this.Value.PluralOf( "second" )}";
+        public override String ToString() => $"{this.Value} {this.Value.PluralOf( "foot" )}";
+
     }
+
+    [TestFixture]
+    public static class TestFeets {
+
+        [Test]
+        public static void TestFeet() {
+            Feet.Zero.Should().BeLessThan( Feet.One );
+            Feet.One.Should().BeGreaterThan( Feet.Zero );
+            Feet.One.Should().Be( Feet.One );
+
+            //TODO
+            //One.Should().BeLessThan( Yards.One );
+            //One.Should().BeGreaterThan( Inches.One );
+        }
+
+    }
+
 }

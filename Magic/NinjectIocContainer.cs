@@ -30,7 +30,7 @@ namespace Librainian.Magic {
     using Ninject.Activation.Caching;
     using Ninject.Modules;
 
-    public sealed class NinjectIocContainer : IIocContainer {
+    public sealed class NinjectIocContainer : ABetterClassDispose ,IIocContainer {
 
         // ReSharper disable once NotNullMemberIsNotInitialized
         public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
@@ -117,5 +117,11 @@ namespace Librainian.Magic {
             }
             return tryGet;
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this.Kernel.Dispose(); }
+
     }
 }

@@ -108,67 +108,64 @@ namespace Librainian.Graphics {
         /// <summary>
         ///     Gets the inverse of this matrix. If the matrix is singular, this method will throw an exception
         /// </summary>
-        /// <value>The inverse</value>
-        public Matrix3X3 Inverse {
-            get {
+        /// <returns>The inverse</returns>
+        public Matrix3X3 Inverse() {
+            // Taken from http://everything2.com/index.pl?node_id=1271704
+            //                                                  a b c
+            //In general, the inverse matrix of a 3X3 matrix    d e f
+            //                                                  g h i
 
-                // Taken from http://everything2.com/index.pl?node_id=1271704
-                //                                                  a b c
-                //In general, the inverse matrix of a 3X3 matrix    d e f
-                //                                                  g h i
+            //is
 
-                //is
+            // 1 (ei-fh) (bi-ch) (bf-ce)
+            // ----------------------------- x (fg-di) (ai-cg) (cd-af) a(ei-fh) - b(di-fg) +
+            // c(dh-eg) (dh-eg) (bg-ah) (ae-bd)
 
-                // 1 (ei-fh) (bi-ch) (bf-ce)
-                // ----------------------------- x (fg-di) (ai-cg) (cd-af) a(ei-fh) - b(di-fg) +
-                // c(dh-eg) (dh-eg) (bg-ah) (ae-bd)
+            // Get coeffs
+            var a = this._coeffs[ _M11 ];
+            var b = this._coeffs[ _M12 ];
+            var c = this._coeffs[ _M13 ];
+            var d = this._coeffs[ _M21 ];
+            var e = this._coeffs[ _M22 ];
+            var f = this._coeffs[ _M23 ];
+            var g = this._coeffs[ _M31 ];
+            var h = this._coeffs[ _M32 ];
+            var i = this._coeffs[ _M33 ];
 
-                // Get coeffs
-                var a = _coeffs[ _M11 ];
-                var b = _coeffs[ _M12 ];
-                var c = _coeffs[ _M13 ];
-                var d = _coeffs[ _M21 ];
-                var e = _coeffs[ _M22 ];
-                var f = _coeffs[ _M23 ];
-                var g = _coeffs[ _M31 ];
-                var h = _coeffs[ _M32 ];
-                var i = _coeffs[ _M33 ];
+            //// Compute often used components
+            var ei = e * i;
+            var fh = f * h;
+            var di = d * i;
+            var fg = f * g;
+            var dh = d * h;
+            var eg = e * g;
+            var bi = b * i;
+            var ch = c * h;
+            var ai = a * i;
+            var cg = c * g;
+            var cd = c * d;
+            var bg = b * g;
+            var ah = a * h;
+            var ae = a * e;
+            var bd = b * d;
+            var bf = b * f;
+            var ce = c * e;
+            var cf = c * d;
+            var af = a * f;
 
-                //// Compute often used components
-                var ei = e * i;
-                var fh = f * h;
-                var di = d * i;
-                var fg = f * g;
-                var dh = d * h;
-                var eg = e * g;
-                var bi = b * i;
-                var ch = c * h;
-                var ai = a * i;
-                var cg = c * g;
-                var cd = c * d;
-                var bg = b * g;
-                var ah = a * h;
-                var ae = a * e;
-                var bd = b * d;
-                var bf = b * f;
-                var ce = c * e;
-                var cf = c * d;
-                var af = a * f;
+            // Construct the matrix using these components
+            var tempMat = new Matrix3X3( ei - fh, ch - bi, bf - ce, fg - di, ai - cg, cd - af, dh - eg, bg - ah, ae - bd );
 
-                // Construct the matrix using these components
-                var tempMat = new Matrix3X3( ei - fh, ch - bi, bf - ce, fg - di, ai - cg, cd - af, dh - eg, bg - ah, ae - bd );
+            // Compute the determinant
 
-                // Compute the determinant
-
-                if ( Determinant.Near( 0.0 ) ) {
-                    throw new Exception( "Unable to invert the matrix as it is singular" );
-                }
-
-                // Scale the matrix by 1/determinant
-                tempMat.Scale( 1.0 / Determinant );
-
-                return tempMat;
+            if ( this.Determinant.Near( 0.0 ) ) {
+                throw new Exception( "Unable to invert the matrix as it is singular" );
             }
+
+            // Scale the matrix by 1/determinant
+            tempMat.Scale( 1.0 / this.Determinant );
+
+            return tempMat;
         }
 
         /// <summary>

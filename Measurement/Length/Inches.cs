@@ -22,15 +22,14 @@ namespace Librainian.Measurement.Length {
 
     using System;
     using Newtonsoft.Json;
+    using Numerics;
 
     [JsonObject]
     public struct Inches {
 
-        /// <summary>About 584.9 million years.</summary>
-        public static readonly Inches MaxValue = new Inches( inches: Decimal.MaxValue );
+        //public static readonly Inches MaxValue = new Inches( inches: Decimal.MaxValue );
 
-        /// <summary>About zero. :P</summary>
-        public static readonly Inches MinValue = new Inches( inches: Decimal.MinValue );
+        //public static readonly Inches MinValue = new Inches( inches: Decimal.MinValue );
 
         /// <summary>One <see cref="Inches" /> .</summary>
         public static readonly Inches One = new Inches( inches: 1 );
@@ -39,27 +38,21 @@ namespace Librainian.Measurement.Length {
         public static readonly Inches Two = new Inches( inches: 2 );
 
         [JsonProperty]
-        public readonly Decimal Value;
-
-        static Inches() {
-
-            //Assert.That( One < Inch.One );
-            //Assert.That( One < Feet.One );
-        }
+        public readonly BigRational Value;
 
         public Inches( Decimal inches ) {
             this.Value = inches;
         }
 
-        public Inches( Millimeters millimeters ) {
-            var val = millimeters.Value / Extensions.MillimetersInSingleInch;
-            this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-        }
+        //public Inches( Millimeters millimeters ) {
+        //    var val = millimeters.Value / Extensions.MillimetersInSingleInch;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
 
-        public Inches( Centimeters centimeters ) {
-            var val = centimeters.Value / Extensions.CentimetersinSingleMeter;
-            this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-        }
+        //public Inches( Centimeters centimeters ) {
+        //    var val = centimeters.Value * 2.54;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
     }

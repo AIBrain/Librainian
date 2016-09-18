@@ -41,7 +41,7 @@ namespace Librainian.Maths.Numbers {
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     [JsonObject]
-    public class Countable<TKey> : BetterDisposableClass, IEnumerable<Tuple<TKey, BigInteger>> {
+    public class Countable<TKey> : ABetterClassDispose, IEnumerable<Tuple<TKey, BigInteger>> {
         private volatile Boolean _isReadOnly;
 
         public Countable() : this( Minutes.One, Minutes.One ) {
@@ -248,10 +248,6 @@ namespace Librainian.Maths.Numbers {
             return !this.IsReadOnly;
         }
 
-        protected override void CleanUpManagedResources() {
-            this.Trim();
-        }
-
         private static Byte Hash( TKey key ) {
             var hash = key.GetHashCodeByte();
             return hash;
@@ -279,5 +275,8 @@ namespace Librainian.Maths.Numbers {
         private IEnumerable<Byte> GetUsedBuckets() {
             return this.Dictionary.Keys.Select( Hash );
         }
+
+        protected override void DisposeManaged() { this.Trim(); }
+
     }
 }

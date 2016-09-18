@@ -27,8 +27,8 @@ namespace Librainian.Graphics.Imaging {
     using Newtonsoft.Json;
 
     [JsonObject]
-    [StructLayout( LayoutKind.Explicit )]
-    public class Frame : IEquatable<Frame> {
+    [StructLayout( LayoutKind.Sequential )]
+    public struct Frame : IEquatable<Frame> {
         public static readonly String DefaultHeader = "EFGFrame";
 
         /// <summary>Checksum of the page (guard against corruption).</summary>
@@ -37,27 +37,27 @@ namespace Librainian.Graphics.Imaging {
         ///     overflows and timeouts.
         /// </remarks>
         [JsonProperty]
-        [FieldOffset( sizeof( UInt64 ) * 1 )]
+        //[FieldOffset( sizeof( UInt64 ) * 1 )]
         public UInt64 Checksum;
 
         /// <summary>How many milliseconds to display this frame?</summary>
         [JsonProperty]
-        [FieldOffset( sizeof( UInt64 ) * 3 )]
+        //[FieldOffset( sizeof( UInt64 ) * 3 )]
         public UInt64 Delay;
 
         /// <summary></summary>
         [JsonProperty]
-        [FieldOffset( sizeof( UInt64 ) * 0 )]
+        //[FieldOffset( sizeof( UInt64 ) * 0 )]
         public UInt64 Identity;
 
         /// <summary>How many lines should be in this frame?</summary>
         [JsonProperty]
-        [FieldOffset( sizeof( UInt64 ) * 2 )]
+        //[FieldOffset( sizeof( UInt64 ) * 2 )]
         public UInt64 LineCount;
 
         /// <summary>An array of <see cref="Line" />.</summary>
         [JsonProperty]
-        [FieldOffset( sizeof( UInt64 ) * 4 )]
+        //[FieldOffset( sizeof( UInt64 ) * 4 )]
         public Line[] Lines;
 
         /// <summary>
@@ -76,9 +76,9 @@ namespace Librainian.Graphics.Imaging {
         /// <returns></returns>
         [Pure]
         public static Boolean Equal( Frame left, Frame right ) {
-            if ( ( left == null ) || ( right == null ) ) {
-                return false;
-            }
+            //if ( ( left == null ) || ( right == null ) ) {
+            //    return false;
+            //}
 
             if ( left.Checksum != right.Checksum ) {
                 return false;

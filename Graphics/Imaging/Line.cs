@@ -31,24 +31,24 @@ namespace Librainian.Graphics.Imaging {
 
     /// <summary>A horizontal line of <see cref="Pixel" />.</summary>
     [JsonObject]
-    [StructLayout( LayoutKind.Explicit )]
+    [StructLayout( LayoutKind.Sequential )]
     public class Line : IEquatable<Line>, IEnumerable<Pixel>, IEqualityComparer<Line> {
 
         /// <summary>Checksum of the pixels (to guard against corruption).</summary>
         /// <remarks>Should include the <see cref="Count" /> to prevent buffer overflows.</remarks>
         [JsonProperty]
-        [FieldOffset( 0 )]
+        //[FieldOffset( 0 )]
         public UInt64 Checksum;
 
         /// <summary>How many pixels should be in this line?</summary>
         [JsonProperty]
-        [FieldOffset( sizeof( UInt64 ) * 1 )]
+        //[FieldOffset( sizeof( UInt64 ) * 1 )]
         public UInt64 Count;
 
         /// <summary>An array of pixels</summary>
         /// <remarks>I'd prefer a list instead of an array.</remarks>
         [JsonProperty]
-        [FieldOffset( sizeof( UInt64 ) * 2 )]
+        //[FieldOffset( sizeof( UInt64 ) * 2 )]
         [NotNull]
         public Pixel[] Pixels;
 
@@ -98,9 +98,7 @@ namespace Librainian.Graphics.Imaging {
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>Determines whether the specified objects are equal.</summary>
-        /// <returns>true if the specified objects are equal; otherwise, false.</returns>
-        /// <param name="x">The first object of type <paramref name="T" /> to compare.</param>
-        /// <param name="y">The second object of type <paramref name="T" /> to compare.</param>
+        /// <returns>true if the specified objects are equal.</returns>
         public Boolean Equals( Line x, Line y ) => Equal( x, y );
 
         /// <summary>Returns a hash code for the specified object.</summary>
