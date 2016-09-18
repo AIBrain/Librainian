@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Windows.cs" was last cleaned by Rick on 2016/06/18 at 10:57 PM
+// "Librainian/Windows.cs" was last cleaned by Rick on 2016/08/18 at 9:25 AM
 
 namespace Librainian.Security {
 
@@ -29,13 +29,11 @@ namespace Librainian.Security {
         /// <summary>Determine if the current user is in the role of <see cref="WindowsBuiltInRole" />.</summary>
         /// <param name="role"></param>
         /// <returns></returns>
-        public static Boolean IsUserInRole( WindowsBuiltInRole role ) {
+        public static Boolean IsUserInRole( this WindowsBuiltInRole role ) {
             try {
                 using ( var windowsIdentity = WindowsIdentity.GetCurrent() ) {
-                    if ( windowsIdentity != null ) {
-                        var windowsPrincipal = new WindowsPrincipal( windowsIdentity );
-                        return windowsPrincipal.IsInRole( role );
-                    }
+                    var windowsPrincipal = new WindowsPrincipal( windowsIdentity );
+                    return windowsPrincipal.IsInRole( role );
                 }
             }
             catch ( SecurityException ) { }

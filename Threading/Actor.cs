@@ -26,11 +26,12 @@ namespace Librainian.Threading {
     using System.Threading;
     using FluentAssertions;
     using JetBrains.Annotations;
+    using Magic;
 
     /// <summary>Fluent Actor test class.</summary>
     /// <copyright>Rick@AIBrain.org 2014</copyright>
     /// <remarks>Don't use this class, was just an idea...</remarks>
-    public class Actor {
+    public class Actor : ABetterClassDispose {
         internal readonly BlockingCollection<Player> Actions = new BlockingCollection<Player>();
 
         [NotNull]
@@ -134,5 +135,11 @@ namespace Librainian.Threading {
 
             //would events be okay here? are either Action or Events serializable?
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this.Actions.Dispose(); }
+
     }
 }

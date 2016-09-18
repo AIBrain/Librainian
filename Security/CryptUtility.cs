@@ -21,6 +21,7 @@
 namespace Librainian.Security {
 
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.IO;
@@ -64,17 +65,19 @@ namespace Librainian.Security {
         }
 
         /// <summary>Extracts an hidden message from a bitmap</summary>
-        /// <param name="bitmap">The carrier bitmap</param>
-        /// <param name="keyStream">The key used for hiding the message</param>
+        /// <param name="keys"></param>
         /// <param name="messageStream">Empty stream to receive the message</param>
+        /// <param name="imageFiles"></param>
+        /// <param name="splitBytes"></param>
         public static void ExtractMessageFromBitmap( CarrierImage[] imageFiles, FilePasswordPair[] keys, ref Stream messageStream, Boolean splitBytes ) {
             HideOrExtract( ref messageStream, imageFiles, keys, splitBytes, true );
         }
 
         /// <summary>Hides a message in a bitmap</summary>
         /// <param name="messageStream">The message to hide</param>
-        /// <param name="bitmap">The carrier bitmap</param>
-        /// <param name="keyStream">The key to use</param>
+        /// <param name="imageFiles"></param>
+        /// <param name="keys"></param>
+        /// <param name="splitBytes"></param>
         public static void HideMessageInBitmap( Stream messageStream, CarrierImage[] imageFiles, FilePasswordPair[] keys, Boolean splitBytes ) {
             HideOrExtract( ref messageStream, imageFiles, keys, splitBytes, false );
 
@@ -116,11 +119,11 @@ namespace Librainian.Security {
         /// <summary>Combines all key files and passwords into one key stream</summary>
         /// <param name="keys">The keys to combine</param>
         /// <returns>The resulting key stream</returns>
-        private static MemoryStream GetKeyStream( FilePasswordPair[] keys ) {
+        private static MemoryStream GetKeyStream( IReadOnlyList< FilePasswordPair > keys ) {
 
             //Xor the keys an their passwords
-            var keyStreams = new MemoryStream[ keys.Length ];
-            for ( var n = 0; n < keys.Length; n++ ) {
+            var keyStreams = new MemoryStream[ keys.Count ];
+            for ( var n = 0; n < keys.Count; n++ ) {
                 keyStreams[ n ] = CreateKeyStream( keys[ n ] );
             }
 
@@ -279,9 +282,11 @@ namespace Librainian.Security {
         ///     A stream containing the message (extract==false) or an empty stream (extract==true)
         /// </param>
         /// <param name="messageLength">Expected length of the message</param>
+        /// <param name="aviWriter"></param>
         /// <param name="imageFiles">CarrierImages describing the bitmaps</param>
-        /// <param name="bitmaps">The bitmaps</param>
+        /// <param name="bitmapInfo"></param>
         /// <param name="extract">Hide the message (false) or extract it (true)</param>
+        /// <param name="aviReader"></param>
         private static void HideBytes( Stream keyStream, Stream messageStream, Int64 messageLength, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, BitmapInfo bitmapInfo, Boolean extract ) {
 
             //Color component to hide the next byte in (0-R, 1-G, 2-B)
@@ -367,14 +372,13 @@ namespace Librainian.Security {
         ///     If exctract is false, the message to hide - otherwise an empty stream to receive the
         ///     extracted message
         /// </param>
-        /// <param name="bitmap">The carrier bitmap</param>
-        /// <param name="keyStream">
-        ///     The key specifying the unchanged pixels between two hidden bytes
-        /// </param>
+        /// <param name="splitBytes"></param>
         /// <param name="extract">
         ///     Extract a hidden message (true), or hide a message in a clean carrier bitmap (false)
         /// </param>
-        private static void HideOrExtract( ref Stream messageStream, CarrierImage[] imageFiles, FilePasswordPair[] keys, Boolean splitBytes, Boolean extract ) {
+        /// <param name="imageFiles"></param>
+        /// <param name="keys"></param>
+        private static void HideOrExtract( ref Stream messageStream, CarrierImage[] imageFiles, IReadOnlyList< FilePasswordPair > keys, Boolean splitBytes, Boolean extract ) {
             var aviWriter = new AviWriter();
             var aviReader = new AviReader();
 
@@ -535,7 +539,7 @@ namespace Librainian.Security {
                     }
 
                     var fileName = Application.ExecutablePath;
-                    var index = fileName.LastIndexOf( "\\" ) + 1;
+                    var index = fileName.LastIndexOf( "\\", StringComparison.Ordinal ) + 1;
                     fileName = fileName.Substring( 0, index ) + TempFileName;
 
                     aviReader.ExportBitmap( 0, fileName );
@@ -546,10 +550,10 @@ namespace Librainian.Security {
                         bitmapInfo.MessageBytesToHide = imageFile.AviMessageBytesToHide[ 0 ];
                     }
                 }
-                catch ( Exception ex ) {
+                catch ( Exception ) {
                     aviReader.Close();
                     aviWriter.Close();
-                    throw ex;
+                    throw;
                 }
             }
             else {
@@ -621,7 +625,7 @@ namespace Librainian.Security {
                         aviWriter.Close();
 
                         //Delete temporary file
-                        bitmapInfo.Bitmap.Dispose();
+                        //bitmapInfo.Bitmap.Dispose();      //BUG memory leak?
                         File.Delete( bitmapInfo.SourceFileName );
                     }
                     else {

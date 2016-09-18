@@ -21,17 +21,32 @@
 namespace Librainian.Threading {
 
     using System;
+    using System.Runtime.Serialization;
 
     /// <summary>Thrown when the actor fails.</summary>
     /// <seealso cref="Actor" />
+    [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2240:ImplementISerializableCorrectly" )]
+    [Serializable]
     public class ActorException : Exception {
 
         public ActorException( String because ) {
             this.Reason = because;
         }
 
+        protected ActorException( SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+
         public String Reason {
-            get; private set;
+            get;
         }
+
+        //[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
+        //public override void GetObjectData( SerializationInfo info, StreamingContext context ) {
+        //    if ( info == null ) {
+        //        throw new ArgumentNullException( nameof( info ) );
+        //    }
+
+        //    //info.AddValue( "Text", _Text );
+        //    //TODO
+        //}
     }
 }

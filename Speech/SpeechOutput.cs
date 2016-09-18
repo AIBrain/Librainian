@@ -18,6 +18,9 @@
 //
 // "Librainian/SpeechOutput.cs" was last cleaned by Rick on 2016/06/18 at 10:57 PM
 
+using System;
+
+[assembly: CLSCompliant( false )]
 namespace Librainian.Speech {
 
     using System;

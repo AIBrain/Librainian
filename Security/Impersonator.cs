@@ -25,10 +25,11 @@ namespace Librainian.Security {
     using System.Runtime.InteropServices;
     using System.Security.Principal;
     using Magic;
+    using OperatingSystem;
 
     /// <summary>
     /// </summary>
-    public class Impersonator : BetterDisposableClass {
+    public class Impersonator : ABetterClassDispose {
         private const Int32 Logon32LogonInteractive = 2;
 
         private const Int32 Logon32ProviderDefault = 0;
@@ -39,52 +40,39 @@ namespace Librainian.Security {
             this.ImpersonateValidUser( userName, domainName, password );
         }
 
-        protected override void CleanUpManagedResources() {
+        protected override void DisposeManaged() {
             this._impersonationContext?.Undo();
-            base.CleanUpManagedResources();
         }
-
-        [DllImport( "kernel32.dll", CharSet = CharSet.Auto )]
-        private static extern Boolean CloseHandle( IntPtr handle );
-
-        [DllImport( "advapi32.dll", CharSet = CharSet.Auto, SetLastError = true )]
-        private static extern Int32 DuplicateToken( IntPtr hToken, Int32 impersonationLevel, ref IntPtr hNewToken );
-
-        [DllImport( "advapi32.dll", SetLastError = true )]
-        private static extern Int32 LogonUser( String lpszUserName, String lpszDomain, String lpszPassword, Int32 dwLogonType, Int32 dwLogonProvider, ref IntPtr phToken );
-
-        [DllImport( "advapi32.dll", CharSet = CharSet.Auto, SetLastError = true )]
-        private static extern Boolean RevertToSelf();
 
         private void ImpersonateValidUser( String userName, String domain, String password ) {
             var token = IntPtr.Zero;
             var tokenDuplicate = IntPtr.Zero;
 
             try {
-                if ( RevertToSelf() ) {
-                    if ( LogonUser( userName, domain, password, Logon32LogonInteractive, Logon32ProviderDefault, ref token ) != 0 ) {
-                        if ( DuplicateToken( token, 2, ref tokenDuplicate ) != 0 ) {
+                if ( !NativeMethods.RevertToSelf() ) {
+                    throw new Win32Exception( Marshal.GetLastWin32Error() );
+                }
+                else {
+                    if ( NativeMethods.LogonUser( userName, domain, password, Logon32LogonInteractive, Logon32ProviderDefault, ref token ) == 0 ) {
+                        throw new Win32Exception( Marshal.GetLastWin32Error() );
+                    }
+                    else {
+                        if ( NativeMethods.DuplicateToken( token, 2, ref tokenDuplicate ) == 0 ) {
+                            throw new Win32Exception( Marshal.GetLastWin32Error() );
+                        }
+                        else {
                             var tempWindowsIdentity = new WindowsIdentity( userToken: tokenDuplicate );
                             this._impersonationContext = tempWindowsIdentity.Impersonate();
                         }
-                        else {
-                            throw new Win32Exception( Marshal.GetLastWin32Error() );
-                        }
                     }
-                    else {
-                        throw new Win32Exception( Marshal.GetLastWin32Error() );
-                    }
-                }
-                else {
-                    throw new Win32Exception( Marshal.GetLastWin32Error() );
                 }
             }
             finally {
                 if ( token != IntPtr.Zero ) {
-                    CloseHandle( token );
+                   NativeMethods.CloseHandle( token );
                 }
                 if ( tokenDuplicate != IntPtr.Zero ) {
-                    CloseHandle( tokenDuplicate );
+                    NativeMethods.CloseHandle( tokenDuplicate );
                 }
             }
         }

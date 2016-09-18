@@ -22,6 +22,7 @@ namespace Librainian.Speech {
 
     using System;
     using System.Globalization;
+    using System.Linq;
     using System.Speech.Recognition;
     using Collections;
     using Parsing;
@@ -93,7 +94,8 @@ namespace Librainian.Speech {
         /// <param name="action"></param>
         public void OnRecognizeSentence( Action<String> action ) {
             RecognitionEngine.Value.SpeechRecognized += ( s, args ) => {
-                var sentence = args.Result.Words.ToStrings( ParsingExtensions.Singlespace, "." );
+                var words = args.Result.Words.Select( unit => unit.Text ).ToList();
+                var sentence = words.ToStrings( ParsingExtensions.Singlespace, "." );
                 action( sentence );
             };
         }

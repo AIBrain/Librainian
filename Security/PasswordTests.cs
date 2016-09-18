@@ -5,7 +5,6 @@
     using Maths;
     using NUnit.Framework;
     using Parsing;
-    using Threading;
 
     [TestFixture]
     public static class PasswordTests {
