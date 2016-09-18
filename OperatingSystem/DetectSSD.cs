@@ -36,28 +36,28 @@ namespace Librainian.OperatingSystem {
         public static Boolean? IncursSeekPenalty( this Byte diskNumber ) {
             var sDrive = @"\\.\PhysicalDrive" + diskNumber;
 
-            var hDrive = NativeWin32.CreateFileW( sDrive, 0, // No access to drive
-                                                  NativeWin32.FILE_SHARE_READ | NativeWin32.FILE_SHARE_WRITE, IntPtr.Zero, NativeWin32.OPEN_EXISTING, NativeWin32.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
+            var hDrive = NativeMethods.CreateFileW( sDrive, 0, // No access to drive
+                                                  NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OPEN_EXISTING, NativeMethods.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
 
             if ( hDrive == null || hDrive.IsInvalid ) {
-                //Debug.WriteLine( "CreateFile failed. " + NativeWin32.GetErrorMessage( Marshal.GetLastWin32Error() ) );
+                //Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
                 return null;
             }
 
-            var IOCTL_STORAGE_QUERY_PROPERTY = NativeWin32.CTL_CODE( NativeWin32.IOCTL_STORAGE_BASE, 0x500, NativeWin32.METHOD_BUFFERED, NativeWin32.FILE_ANY_ACCESS ); // From winioctl.h
+            var IOCTL_STORAGE_QUERY_PROPERTY = CTL_CODE( NativeMethods.IOCTL_STORAGE_BASE, 0x500, NativeMethods.METHOD_BUFFERED, NativeMethods.FILE_ANY_ACCESS ); // From winioctl.h
 
-            var query_seek_penalty = new NativeWin32.STORAGE_PROPERTY_QUERY { PropertyId = NativeWin32.StorageDeviceSeekPenaltyProperty, QueryType = NativeWin32.PropertyStandardQuery };
+            var query_seek_penalty = new NativeMethods.STORAGE_PROPERTY_QUERY { PropertyId = NativeMethods.StorageDeviceSeekPenaltyProperty, QueryType = NativeMethods.PropertyStandardQuery };
 
-            var query_seek_penalty_desc = new NativeWin32.DEVICE_SEEK_PENALTY_DESCRIPTOR();
+            var query_seek_penalty_desc = new NativeMethods.DEVICE_SEEK_PENALTY_DESCRIPTOR();
 
             UInt32 returned_query_seek_penalty_size;
 
-            var query_seek_penalty_result = NativeWin32.DeviceIoControl( hDrive, IOCTL_STORAGE_QUERY_PROPERTY, ref query_seek_penalty, ( UInt32 )Marshal.SizeOf( query_seek_penalty ), ref query_seek_penalty_desc, ( UInt32 )Marshal.SizeOf( query_seek_penalty_desc ), out returned_query_seek_penalty_size, IntPtr.Zero );
+            var querySeekPenaltyResult = NativeMethods.DeviceIoControl( hDrive, IOCTL_STORAGE_QUERY_PROPERTY, ref query_seek_penalty, ( UInt32 )Marshal.SizeOf( query_seek_penalty ), ref query_seek_penalty_desc, ( UInt32 )Marshal.SizeOf( query_seek_penalty_desc ), out returned_query_seek_penalty_size, IntPtr.Zero );
 
             hDrive.Close();
 
-            if ( !query_seek_penalty_result ) {
-                //Debug.WriteLine( "DeviceIoControl failed: " + NativeWin32.GetErrorMessage( Marshal.GetLastWin32Error() ) );
+            if ( !querySeekPenaltyResult ) {
+                //Debug.WriteLine( "DeviceIoControl failed: " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
                 return null;
             }
 
@@ -68,46 +68,46 @@ namespace Librainian.OperatingSystem {
         ///     Method for nominal media rotation rate (Administrative privilege is required)
         /// </summary>
         /// <param name="diskNumber"></param>
-        public static Boolean? IsARotateDevice( this Byte diskNumber ) {
+        public static Boolean? IsRotateDevice( this Byte diskNumber ) {
             var sDrive = @"\\.\PhysicalDrive" + diskNumber;
 
-            var hDrive = NativeWin32.CreateFileW( sDrive, NativeWin32.GENERIC_READ | NativeWin32.GENERIC_WRITE, // Administrative privilege is required
-                                                  NativeWin32.FILE_SHARE_READ | NativeWin32.FILE_SHARE_WRITE, IntPtr.Zero, NativeWin32.OPEN_EXISTING, NativeWin32.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
+            var hDrive = NativeMethods.CreateFileW( sDrive, NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE, // Administrative privilege is required
+                                                  NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OPEN_EXISTING, NativeMethods.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
 
             if ( hDrive == null || hDrive.IsInvalid ) {
-                //Debug.WriteLine( "CreateFile failed. " + NativeWin32.GetErrorMessage( Marshal.GetLastWin32Error() ) );
+                //Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
                 return null;
             }
 
-            var IOCTL_ATA_PASS_THROUGH = NativeWin32.CTL_CODE( NativeWin32.IOCTL_SCSI_BASE, 0x040b, NativeWin32.METHOD_BUFFERED, NativeWin32.FILE_READ_ACCESS | NativeWin32.FILE_WRITE_ACCESS ); // From ntddscsi.h
+            var ioctlAtaPassThrough = CTL_CODE( NativeMethods.IOCTL_SCSI_BASE, 0x040b, NativeMethods.METHOD_BUFFERED, NativeMethods.FILE_READ_ACCESS | NativeMethods.FILE_WRITE_ACCESS ); // From ntddscsi.h
 
-            var idQuery = new NativeWin32.ATAIdentifyDeviceQuery { data = new UInt16[ 256 ] };
+            var idQuery = new NativeMethods.ATAIdentifyDeviceQuery { data = new UInt16[ 256 ] };
 
             idQuery.header.Length = ( UInt16 )Marshal.SizeOf( idQuery.header );
-            idQuery.header.AtaFlags = ( UInt16 )NativeWin32.ATA_FLAGS_DATA_IN;
+            idQuery.header.AtaFlags = ( UInt16 )NativeMethods.ATA_FLAGS_DATA_IN;
             idQuery.header.DataTransferLength = ( UInt32 )( idQuery.data.Length * 2 ); // Size of "data" in bytes
             idQuery.header.TimeOutValue = 3; // Sec
-            idQuery.header.DataBufferOffset = Marshal.OffsetOf( typeof( NativeWin32.ATAIdentifyDeviceQuery ), "data" );
+            idQuery.header.DataBufferOffset = Marshal.OffsetOf( typeof( NativeMethods.ATAIdentifyDeviceQuery ), "data" );
             idQuery.header.PreviousTaskFile = new Byte[ 8 ];
             idQuery.header.CurrentTaskFile = new Byte[ 8 ];
             idQuery.header.CurrentTaskFile[ 6 ] = 0xec; // ATA IDENTIFY DEVICE
 
             UInt32 retvalSize;
 
-            var result = NativeWin32.DeviceIoControl( hDrive, IOCTL_ATA_PASS_THROUGH, ref idQuery, ( UInt32 )Marshal.SizeOf( idQuery ), ref idQuery, ( UInt32 )Marshal.SizeOf( idQuery ), out retvalSize, IntPtr.Zero );
+            var result = NativeMethods.DeviceIoControl( hDrive, ioctlAtaPassThrough, ref idQuery, ( UInt32 )Marshal.SizeOf( idQuery ), ref idQuery, ( UInt32 )Marshal.SizeOf( idQuery ), out retvalSize, IntPtr.Zero );
 
             hDrive.Close();
 
-            if ( result == false ) {
-                //Debug.WriteLine( "DeviceIoControl failed. " + NativeWin32.GetErrorMessage( Marshal.GetLastWin32Error() ) );
+            if ( !result ) {
+                //Debug.WriteLine( "DeviceIoControl failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
                 return null;
             }
 
             // Word index of nominal media rotation rate
             const Int32 kNominalMediaRotRateWordIndex = 217;
-            const Int32 NonRotateDevice = 1;
+            const Int32 nonRotateDevice = 1;
 
-            if ( idQuery.data[ kNominalMediaRotRateWordIndex ] == NonRotateDevice ) {
+            if ( idQuery.data[ kNominalMediaRotRateWordIndex ] == nonRotateDevice ) {
                 //Debug.WriteLine( $"The disk #{diskNumber} is a NON-ROTATE device." );
                 return false;
             }
@@ -117,16 +117,39 @@ namespace Librainian.OperatingSystem {
         }
 
         public static Boolean? IsDiskSSD( this Byte diskNumber ) {
+
+            //test 1
             var incursSeekPenalty = diskNumber.IncursSeekPenalty();
-            var isARotateDevice = diskNumber.IsARotateDevice();
-            return incursSeekPenalty != null && !incursSeekPenalty.Value && isARotateDevice != null && !isARotateDevice.Value;
+            if ( incursSeekPenalty != null && !incursSeekPenalty.Value ) {
+                return true;
+            }
+
+            //test 2 (must be admin)
+            var isARotateDevice = diskNumber.IsRotateDevice();
+            if ( isARotateDevice != null && !isARotateDevice.Value ) {
+                return true;
+            }
+
+
+            return null;    //could not determine
         }
 
         [Test]
         public static void Test_Search_For_SSD() {
             foreach ( var disk in Byte.MinValue.To( 10 ) ) {
-                Debug.WriteLine( $"Disk {disk}: SeekPenalty={disk.IncursSeekPenalty()} rotates={disk.IsARotateDevice()}, so IsSSD={disk.IsDiskSSD()}\r\n" );
+                var isp = disk.IncursSeekPenalty();
+                if ( isp.HasValue && !isp.Value ) {
+                    Debug.WriteLine( $"Disk {disk} is an SSD." );
+                }
+                else {
+                    Debug.WriteLine( $"Disk {disk} is not an SSD." );
+                }
             }
         }
+
+        private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) {
+            return deviceType << 16 | access << 14 | function << 2 | method;
+        }
+
     }
 }

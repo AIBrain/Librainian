@@ -21,6 +21,7 @@
 namespace Librainian.OperatingSystem.FileHistory {
 
     using System;
+    using System.Globalization;
     using FileSystem;
     using FluentAssertions;
     using Magic;
@@ -37,7 +38,7 @@ namespace Librainian.OperatingSystem.FileHistory {
             DateTime result;
 
             //if ( !DateTime.TryParseExact(example , "yyyy/MM/dd hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AllowWhiteSpaces, out result ) ) {
-            if ( !DateTime.TryParse( example.ToString(), out result ) ) {
+            if ( !DateTime.TryParse( example.ToString( CultureInfo.CurrentCulture ), out result ) ) {
                 throw new InvalidOperationException();
             }
 

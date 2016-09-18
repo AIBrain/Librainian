@@ -24,8 +24,9 @@ namespace Librainian.Threading {
     using System.Collections.Concurrent;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
+    using Magic;
 
-    public class Pipeline<TInput, TOutput> {
+    public class Pipeline<TInput, TOutput> : ABetterClassDispose {
 
         /// <summary>the function to use</summary>
         private readonly Func<TInput, TOutput> _pipelineFunction;
@@ -88,5 +89,11 @@ namespace Librainian.Threading {
                 get; set;
             }
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this._valueQueue.Dispose(); }
+
     }
 }

@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/FileSingleton.cs" was last cleaned by Rick on 2016/06/18 at 10:57 PM
+// "Librainian/FileSingleton.cs" was last cleaned by Rick on 2016/08/06 at 10:30 PM
 
 namespace Librainian.Threading {
 
@@ -25,6 +25,7 @@ namespace Librainian.Threading {
     using System.Threading;
     using FluentAssertions;
     using JetBrains.Annotations;
+    using Magic;
     using Measurement.Time;
     using Security;
 
@@ -32,7 +33,7 @@ namespace Librainian.Threading {
     ///     Uses a named semaphore to allow only ONE of name.
     /// </summary>
     /// <example>using ( new FileSingleton( anyName ) ) { DoCode(); }</example>
-    public class FileSingleton : IDisposable {
+    public class FileSingleton : ABetterClassDispose {
 
         /// <summary>
         ///     Uses a named semaphore to allow only ONE of <paramref name="id" />.
@@ -159,13 +160,6 @@ namespace Librainian.Threading {
         private FileSingleton() {
         }
 
-        /// <summary>
-        ///     Finalizer that could be called by the GC.
-        /// </summary>
-        ~FileSingleton() {
-            this.Dispose( calledByUser: false );
-        }
-
         public Boolean Snagged {
             get; private set;
         }
@@ -176,40 +170,21 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     Immediately releases all resources owned by the object.
+        ///     Dispose any disposable members.
         /// </summary>
-        public void Dispose() {
-            this.Dispose( calledByUser: true );
-            GC.SuppressFinalize( this );
-        }
-
-        /// <summary>
-        ///     Immediately releases all resources owned by the object.
-        /// </summary>
-        /// <param name="calledByUser">
-        ///     If true, the object is being disposed explicitely and can still access the other managed
-        ///     objects it is referencing.
-        /// </param>
-        private void Dispose( Boolean calledByUser ) {
-            if ( calledByUser ) {
-                /*Release any unmanaged here.*/
+        protected override void DisposeManaged() {
+            if ( !this.Snagged ) {
+                return;
             }
 
-            try {
-                if ( this.Snagged ) {
-                    var semaphore = this.Semaphore;
-                    if ( null != semaphore ) {
-                        using ( semaphore ) {
-                            semaphore.Release();
-                        }
-                    }
-                }
+            var semaphore = this.Semaphore;
+            if ( null == semaphore ) {
+                return;
             }
-            finally {
+
+            using ( semaphore ) {
+                semaphore.Release();
                 this.Snagged = false;
-            }
-
-            using ( this.Semaphore ) {
             }
         }
     }

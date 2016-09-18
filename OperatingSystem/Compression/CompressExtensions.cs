@@ -41,12 +41,13 @@ namespace Librainian.OperatingSystem.Compression {
             if ( data == null ) {
                 throw new ArgumentNullException( nameof( data ) );
             }
-            using ( var output = new MemoryStream() ) {
-                using ( var compress = new GZipStream( output, compressionLevel ) ) {
-                    compress.Write( data, 0, data.Length );
-                }
-                return output.ToArray();
+
+            var output = new MemoryStream();
+            using ( var compress = new GZipStream( output, compressionLevel ) ) {
+                compress.Write( data, 0, data.Length );
             }
+            return output.ToArray();
+
         }
 
         /// <summary>
@@ -141,13 +142,12 @@ namespace Librainian.OperatingSystem.Compression {
         /// <returns></returns>
         public static String FromCompressedBase64( this String text ) {
             var buffer = Convert.FromBase64String( text );
-            using ( var streamIn = new MemoryStream( buffer ) ) {
-                using ( var streamOut = new MemoryStream() ) {
-                    using ( var gs = new GZipStream( streamIn, CompressionMode.Decompress ) ) {
-                        gs.CopyTo( streamOut );
-                    }
-                    return Encoding.Unicode.GetString( streamOut.ToArray() );
+            using ( var streamOut = new MemoryStream() ) {
+                var streamIn = new MemoryStream( buffer );
+                using ( var gs = new GZipStream( streamIn, CompressionMode.Decompress ) ) {
+                    gs.CopyTo( streamOut );
                 }
+                return Encoding.Unicode.GetString( streamOut.ToArray() );
             }
         }
 
@@ -159,13 +159,13 @@ namespace Librainian.OperatingSystem.Compression {
         public static String ToCompressedBase64( this String text ) {
             var buffer = Encoding.Unicode.GetBytes( text );
             using ( var streamIn = new MemoryStream( buffer: buffer ) ) {
-                using ( var streamOut = new MemoryStream() ) {
-                    using ( var zipStream = new GZipStream( stream: streamOut, compressionLevel: CompressionLevel.Optimal ) ) {
-                        streamIn.CopyTo( zipStream );
-                    }
-                    return Convert.ToBase64String( streamOut.ToArray() );
+                var streamOut = new MemoryStream();
+                using ( var zipStream = new GZipStream( stream: streamOut, compressionLevel: CompressionLevel.Optimal ) ) {
+                    streamIn.CopyTo( zipStream );
                 }
+                return Convert.ToBase64String( streamOut.ToArray() );
             }
         }
     }
+
 }

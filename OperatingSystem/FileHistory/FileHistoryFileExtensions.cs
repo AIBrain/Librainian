@@ -43,12 +43,12 @@ namespace Librainian.OperatingSystem.FileHistory {
             }
 
             filename = null;
-            folder = original.Folder;
+            folder = original.Folder();
             when = null;
 
             var extension = Path.GetExtension( original.FullPathWithFileName ).Trim();
 
-            var value = Path.GetFileNameWithoutExtension( original.FileName ).Trim();
+            var value = Path.GetFileNameWithoutExtension( original.FileName() ).Trim();
 
             var posA = value.LastIndexOf( '(' );
             var posB = value.LastIndexOf( "UTC)", StringComparison.Ordinal );

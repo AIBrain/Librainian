@@ -83,31 +83,32 @@ namespace Librainian.Threading.RandomOrg {
                                                 this._ints.Add( Convert.ToInt32( s, inbase ) );
                                             }
                                         }
+                                        // ReSharper disable once EmptyGeneralCatchClause
                                         catch { }
                                     }
                                 }
                                 else {
-                                    throw new Exception( "The base must be 2, 8, 10, or 16." );
+                                    throw new ArgumentOutOfRangeException( nameof(inbase) ,"The base must be 2, 8, 10, or 16." );
                                 }
                             }
                             else {
-                                throw new Exception( "The column count must be between 1 and 1000000000." );
+                                throw new ArgumentOutOfRangeException( nameof(col) ,"The column count must be between 1 and 1000000000." );
                             }
                         }
                         else {
-                            throw new Exception( "The random number upper bound must be greater than the lower bound." );
+                            throw new ArgumentOutOfRangeException( nameof(min) ,"The random number upper bound must be greater than the lower bound." );
                         }
                     }
                     else {
-                        throw new Exception( "The random number upper bound must be between -1000000000 and 1000000000." );
+                        throw new ArgumentOutOfRangeException( nameof(max), "The random number upper bound must be between -1000000000 and 1000000000." );
                     }
                 }
                 else {
-                    throw new Exception( "The random number lower bound must be between -1000000000 and 1000000000." );
+                    throw new ArgumentOutOfRangeException( nameof(min), "The random number lower bound must be between -1000000000 and 1000000000." );
                 }
             }
             else {
-                throw new Exception( "The number of random numbers to generate must be between 1 and 10000." );
+                throw new ArgumentOutOfRangeException( nameof(num), "The number of random numbers to generate must be between 1 and 10000." );
             }
         }
     }

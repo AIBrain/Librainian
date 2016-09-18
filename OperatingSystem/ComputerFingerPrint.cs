@@ -25,7 +25,7 @@ namespace Librainian.OperatingSystem {
     using WMI;
 
     /// <summary>
-    ///     Generates a n*16 byte Unique Identification code of a computer
+    ///     Generates a n*16 byte Unique Identification code (hash) of a computer
     ///     Example: 4876-8DB5-EE85-69D3-FE52-8CF7-395D-2EA9
     /// </summary>
     public static class ComputerFingerPrint {
@@ -62,7 +62,12 @@ namespace Librainian.OperatingSystem {
 
         //BIOS Identifier
         private static String BiosId() {
-            return WMIExtensions.Identifier( "Win32_BIOS", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_BIOS", "SMBIOSBIOSVersion" ) + WMIExtensions.Identifier( "Win32_BIOS", "IdentificationCode" ) + WMIExtensions.Identifier( "Win32_BIOS", "SerialNumber" ) + WMIExtensions.Identifier( "Win32_BIOS", "ReleaseDate" ) + WMIExtensions.Identifier( "Win32_BIOS", "Version" );
+            return WMIExtensions.Identifier( "Win32_BIOS", "Manufacturer" )
+                + WMIExtensions.Identifier( "Win32_BIOS", "SMBIOSBIOSVersion" )
+                + WMIExtensions.Identifier( "Win32_BIOS", "IdentificationCode" )
+                + WMIExtensions.Identifier( "Win32_BIOS", "SerialNumber" )
+                + WMIExtensions.Identifier( "Win32_BIOS", "ReleaseDate" )
+                + WMIExtensions.Identifier( "Win32_BIOS", "Version" );
         }
 
         private static String CPUID() {

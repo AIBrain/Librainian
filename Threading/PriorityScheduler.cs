@@ -32,7 +32,7 @@ namespace Librainian.Threading {
     ///     priority is BelowNormal }, null, TaskCreationOptions.None, PriorityScheduler.BelowNormal);
     /// </example>
     /// <seealso cref="http://stackoverflow.com/questions/3836584/lowering-priority-of-task-factory-startnew-thread" />
-    public class PriorityScheduler : TaskScheduler {
+    public class PriorityScheduler : TaskScheduler, IDisposable {
         public static PriorityScheduler AboveNormal = new PriorityScheduler( ThreadPriority.AboveNormal );
         public static PriorityScheduler BelowNormal = new PriorityScheduler( ThreadPriority.BelowNormal );
         public static PriorityScheduler Lowest = new PriorityScheduler( ThreadPriority.Lowest );
@@ -71,5 +71,16 @@ namespace Librainian.Threading {
         }
 
         protected override Boolean TryExecuteTaskInline( Task task, Boolean taskWasPreviouslyQueued ) => false;
+
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        public void Dispose() { this.Dispose( true ); }
+
+        protected virtual void Dispose( Boolean sdfsss ) {
+            if ( sdfsss ) {
+                this._tasks.Dispose();
+            }
+            GC.SuppressFinalize( this );
+        }
+
     }
 }

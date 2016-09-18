@@ -24,24 +24,25 @@ namespace Librainian.Threading {
     using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
+    using Magic;
     using Measurement.Time;
 
     /// <summary>
     ///     Usage: private readonly AsyncLock _lock = new AsyncLock(); using( var releaser = await
     ///     _lock.LockAsync() ) { /*...*/ }
     /// </summary>
-    public sealed class AsyncLock {
-        private readonly Task<IDisposable> _mReleaser;
+    public sealed class AsyncLock : ABetterClassDispose {
+        private readonly Task<IDisposable> _releaser;
 
-        private readonly SemaphoreSlim _mSemaphore = new SemaphoreSlim( initialCount: 1 );
+        private SemaphoreSlim Semaphore { get; } = new SemaphoreSlim( initialCount: 1 );
 
         public AsyncLock() {
-            this._mReleaser = Task.FromResult( ( IDisposable )new Releaser( this ) );
+            this._releaser = Task.FromResult( ( IDisposable )new Releaser( this ) );
         }
 
         public Task<IDisposable> LockAsync() {
-            var wait = this._mSemaphore.WaitAsync( Minutes.Ten );
-            return wait.IsCompleted ? this._mReleaser : wait.ContinueWith( ( _, state ) => ( IDisposable )state, this._mReleaser.Result, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default );
+            var wait = this.Semaphore.WaitAsync( Minutes.Ten );
+            return wait.IsCompleted ? this._releaser : wait.ContinueWith( ( _, state ) => ( IDisposable )state, this._releaser.Result, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default );
         }
 
         private sealed class Releaser : IDisposable {
@@ -52,13 +53,19 @@ namespace Librainian.Threading {
             }
 
             public void Dispose() {
-                if ( this._mToRelease._mSemaphore.CurrentCount == 0 ) {
-                    this._mToRelease._mSemaphore.Release();
+                if ( this._mToRelease.Semaphore.CurrentCount == 0 ) {
+                    this._mToRelease.Semaphore.Release();
                 }
                 else {
                     Debugger.Break();
                 }
             }
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this.Semaphore.Dispose(); }
+
     }
 }

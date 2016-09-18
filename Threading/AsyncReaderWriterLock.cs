@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/AsyncReaderWriterLock.cs" was last cleaned by Rick on 2016/06/18 at 10:57 PM
+// "Librainian/AsyncReaderWriterLock.cs" was last cleaned by Rick on 2016/08/06 at 11:57 AM
 
 namespace Librainian.Threading {
 
@@ -26,11 +26,17 @@ namespace Librainian.Threading {
 
     /// <summary></summary>
     public class AsyncReaderWriterLock {
+
         private readonly Task<Releaser> _readerReleaser;
+
         private readonly Queue<TaskCompletionSource<Releaser>> _waitingWriters = new Queue<TaskCompletionSource<Releaser>>();
+
         private readonly Task<Releaser> _writerReleaser;
+
         private Int32 _mReadersWaiting;
+
         private Int32 _mStatus;
+
         private TaskCompletionSource<Releaser> _mWaitingReader = new TaskCompletionSource<Releaser>();
 
         public AsyncReaderWriterLock() {
@@ -44,6 +50,7 @@ namespace Librainian.Threading {
                     ++this._mStatus;
                     return this._readerReleaser;
                 }
+
                 ++this._mReadersWaiting;
                 return this._mWaitingReader.Task.ContinueWith( t => t.Result );
             }
@@ -60,9 +67,7 @@ namespace Librainian.Threading {
                 }
             }
 
-            if ( toWake != null ) {
-                toWake.SetResult( new Releaser( this, true ) );
-            }
+            toWake?.SetResult( new Releaser( this, true ) );
         }
 
         public Task<Releaser> WriterLockAsync() {
@@ -71,6 +76,7 @@ namespace Librainian.Threading {
                     this._mStatus = -1;
                     return this._writerReleaser;
                 }
+
                 var waiter = new TaskCompletionSource<Releaser>();
                 this._waitingWriters.Enqueue( waiter );
                 return waiter.Task;
@@ -97,9 +103,7 @@ namespace Librainian.Threading {
                 }
             }
 
-            if ( toWake != null ) {
-                toWake.SetResult( result: new Releaser( toRelease: this, writer: toWakeIsWriter ) );
-            }
+            toWake?.SetResult( result: new Releaser( toRelease: this, writer: toWakeIsWriter ) );
         }
     }
 }

@@ -24,7 +24,6 @@ namespace Librainian.OperatingSystem.Compression {
     using System.Diagnostics;
     using Maths;
     using NUnit.Framework;
-    using Threading;
 
     [TestFixture]
     public static class RandomnessTest {

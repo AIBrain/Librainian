@@ -818,12 +818,9 @@ namespace Librainian.Threading {
             try {
                 if ( null != action ) {
                     if ( timeAction ) {
-                        if ( null == andTookLongerThan ) {
-                            andTookLongerThan = Milliseconds.ThreeHundredThirtyThree;
-                        }
                         var stopwatch = Stopwatch.StartNew();
                         action();
-                        if ( stopwatch.Elapsed > andTookLongerThan.Value ) {
+                        if ( stopwatch.Elapsed > ( andTookLongerThan ?? Milliseconds.ThreeHundredThirtyThree ) ) {
                             $"{callerMemberName} took {stopwatch.Elapsed.Simpler()}.".WriteLine();
                         }
                     }

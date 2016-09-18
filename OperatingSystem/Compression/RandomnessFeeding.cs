@@ -32,7 +32,7 @@ namespace Librainian.OperatingSystem.Compression {
     using Magic;
     using Numerics;
 
-    public class RandomnessFeeding : BetterDisposableClass {
+    public class RandomnessFeeding : ABetterClassDispose {
 
         public RandomnessFeeding() {
             this.HowManyBytesAsCompressed = BigInteger.Zero;
@@ -77,17 +77,18 @@ namespace Librainian.OperatingSystem.Compression {
         /// <returns></returns>
         public Double GetCurrentCompressionRatio() {
             var d = ( Double )new BigRational( this.HowManyBytesAsCompressed, this.HowManyBytesFed );
-            return 1 - d;
+            return 1 - d;   // BUG ?
         }
 
         public void Report() => Debug.WriteLine( $"Current compression is now {this.GetCurrentCompressionRatio():P4}" );
 
-        protected override void CleanUpManagedResources() {
+        protected override void DisposeManaged() {
             using ( this.GZipStream ) {
             }
 
             using ( this.NullStream ) {
             }
         }
+
     }
 }

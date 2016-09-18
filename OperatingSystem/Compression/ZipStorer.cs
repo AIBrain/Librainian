@@ -27,12 +27,13 @@ namespace Librainian.OperatingSystem.Compression {
     using System.Linq;
     using System.Text;
     using JetBrains.Annotations;
+    using Magic;
 
     /// <summary>
-    ///     Unique class for compression/decompression file. Represents a Zip file.
+    ///     Class for compression/decompression file. Represents a Zip file.
     /// </summary>
     /// <seealso cref="http://zipstorer.codeplex.com/" />
-    public class ZipStorer : IDisposable {
+    public class ZipStorer : ABetterClassDispose {
 
         /// <summary>
         ///     True if UTF8 encoding for filename and comments, false if default (CP 437)
@@ -328,11 +329,9 @@ namespace Librainian.OperatingSystem.Compression {
         }
 
         /// <summary>
-        ///     Closes the Zip file stream
+        /// Dispose any disposable members. Closes the Zip file stream.
         /// </summary>
-        public void Dispose() {
-            this.Close();
-        }
+        protected override void DisposeManaged() { this.Close(); }
 
         /// <summary>
         ///     Copy the contents of a stored file into a physical file
@@ -535,7 +534,9 @@ namespace Librainian.OperatingSystem.Compression {
                     }
                 } while ( this._zipFileStream.Position > 0 );
             }
-            catch { }
+            catch {
+                // ignored
+            }
 
             return false;
         }
