@@ -491,7 +491,7 @@ namespace Librainian.Graphics {
             var xMat = new Matrix3X3( a, b, c, d, e, f, g, h, n );
 
             // Invert X
-            var xInv = xMat.Inverse;
+            var xInv = xMat.Inverse();
 
             // Perform the multiplication to get the transform
             uMat.Multiply( xInv );
@@ -533,7 +533,7 @@ namespace Librainian.Graphics {
             if ( document == null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
-            return document.Info.ImageCreationBestGuess( oldestDate, youngestDate );
+            return document.Info().ImageCreationBestGuess( oldestDate, youngestDate );
         }
 
         [CanBeNull]
@@ -662,7 +662,9 @@ namespace Librainian.Graphics {
                     //}
                 }
             }
-            catch ( Exception ) { }
+            catch ( Exception ) {
+                // ignored
+            }
 
             //if ( Debugger.IsAttached ) {
             //    Debugger.Break();

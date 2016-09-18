@@ -18,12 +18,13 @@
 //
 // "Librainian/SpatialExtensions.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
 
+using System.Numerics;
+
 namespace Librainian.Measurement.Spatial {
 
     using System;
     using System.Windows;
     using System.Windows.Media.Media3D;
-    using AForge.Math;
     using JetBrains.Annotations;
 
     public static class SpatialExtensions {

@@ -34,7 +34,6 @@ namespace Librainian.Persistence {
     using Measurement.Time;
     using Microsoft.Database.Isam.Config;
     using Microsoft.Isam.Esent.Collections.Generic;
-    using Microsoft.Isam.Esent.Interop.Windows81;
     using Newtonsoft.Json;
     using OperatingSystem.Compression;
     using Parsing;
@@ -93,7 +92,8 @@ namespace Librainian.Persistence {
                     throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
                 }
 
-                var customConfig = new DatabaseConfig { CreatePathIfNotExist = true, EnableShrinkDatabase = ShrinkDatabaseGrbit.On, DefragmentSequentialBTrees = true };
+                var customConfig = new DatabaseConfig { CreatePathIfNotExist = true, DefragmentSequentialBTrees = true };
+
                 this.Dictionary = new PersistentDictionary<TKey, String>( this.Folder.FullName, customConfig );
 
                 if ( testForReadWriteAccess && !this.TestForReadWriteAccess() ) {
