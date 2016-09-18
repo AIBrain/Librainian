@@ -33,6 +33,6 @@ namespace Librainian.Extensions {
         public SafeSearchHandle() : base( true ) {
         }
 
-        protected override Boolean ReleaseHandle() => NativeWin32.FindClose( this.handle );
+        protected override Boolean ReleaseHandle() => NativeMethods.FindClose( this.handle );
     }
 }

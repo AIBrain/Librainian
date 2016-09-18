@@ -30,6 +30,7 @@ namespace Librainian.Extensions {
     using NUnit.Framework;
 
     [JsonObject]
+    [Serializable]
     public sealed class DerivedSerializableExceptionWithAdditionalCustomProperty : SerializableExceptionWithCustomProperties {
 
         public DerivedSerializableExceptionWithAdditionalCustomProperty() {

@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Document.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
+// "Librainian/Document.cs" was last cleaned by Rick on 2016/08/06 at 11:19 PM
 
 namespace Librainian.FileSystem {
 
@@ -35,7 +35,6 @@ namespace Librainian.FileSystem {
     using System.Windows.Forms;
     using Extensions;
     using JetBrains.Annotations;
-    using Magic;
     using Maths;
     using Maths.Numbers;
     using Measurement.Time;
@@ -56,7 +55,7 @@ namespace Librainian.FileSystem {
     [Immutable]
     [DebuggerDisplay( "{ToString(),nq}" )]
     [JsonObject]
-    public class Document : BetterDisposableClass, IEquatable<Document>, IEnumerable<Byte>, IComparable<Document> {
+    public class Document : IEquatable<Document>, IEnumerable<Byte>, IComparable<Document> {
 
         public Document( [NotNull] String fullPath, String filename ) : this( Path.Combine( fullPath, filename ) ) {
         }
@@ -102,7 +101,7 @@ namespace Librainian.FileSystem {
         public Document( [NotNull] Folder folder, String filename ) : this( folder.FullName, filename ) {
         }
 
-        public Document( Folder folder, Document document ) : this( Path.Combine( folder.FullName, document.FileName ) ) {
+        public Document( Folder folder, Document document ) : this( Path.Combine( folder.FullName, document.FileName() ) ) {
         }
 
         /// <summary>
@@ -116,7 +115,7 @@ namespace Librainian.FileSystem {
                 throw new ArgumentNullException( nameof( internetAddress ) );
             }
 
-            var tempFolder = Folder.GetTempFolder();
+            var tempFolder = Librainian.FileSystem.Folder.GetTempFolder();
             if ( null == tempFolder ) {
                 throw new DirectoryNotFoundException( "Unable to find user's temp folder." );
             }
@@ -136,26 +135,26 @@ namespace Librainian.FileSystem {
         // ReSharper disable once NotNullMemberIsNotInitialized
         private Document() {
             throw new NotImplementedException();
-        } //-V3073
+        }
 
         /// <summary>
         ///     <para>Returns the extension of the <see cref="FileName" />, including the prefix ".".</para>
         /// </summary>
-        [NotNull]
-        public String Extension => Path.GetExtension( this.FullPathWithFileName ).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
+        [ NotNull ]
+        public String Extension() => Path.GetExtension( this.FullPathWithFileName ).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
 
         /// <summary>
         ///     <para>Just the file's name, including the extension.</para>
         /// </summary>
         /// <seealso cref="Path.GetFileName" />
-        [NotNull]
-        public String FileName => Path.GetFileName( this.FullPathWithFileName );
+        [ NotNull ]
+        public String FileName() => Path.GetFileName( this.FullPathWithFileName );
 
         /// <summary>
         ///     <para>The <see cref="Folder" /> this <see cref="Document" /> is stored.</para>
         /// </summary>
-        [NotNull]
-        public Folder Folder => new Folder( this.Info.Directory );
+        [ NotNull ]
+        public Folder Folder() => new Folder( this.Info().Directory );
 
         /// <summary>
         ///     <para>The <see cref="Folder" /> combined with the <see cref="FileName" />.</para>
@@ -166,22 +165,8 @@ namespace Librainian.FileSystem {
             get;
         }
 
-        [NotNull]
-        public FileInfo Info => new FileInfo( this.FullPathWithFileName );
-
-        /// <summary>
-        ///     <para>Just the file's name, including the extension.</para>
-        /// </summary>
-        /// <seealso cref="Path.GetFileNameWithoutExtension" />
-        [NotNull]
-        public String Name => this.FileName;
-
-        /// <summary>
-        ///     <para>Gets the current size of the <see cref="Document" />.</para>
-        /// </summary>
-        /// <seealso cref="GetLength" />
-        [CanBeNull]
-        public UInt64? Size => this.GetLength();
+        [ NotNull ]
+        public FileInfo Info() => new FileInfo( this.FullPathWithFileName );
 
         /// <summary>
         ///     <para>Static case sensitive comparison of the file names and file sizes for equality.</para>
@@ -197,7 +182,8 @@ namespace Librainian.FileSystem {
             if ( ReferenceEquals( left, null ) || ReferenceEquals( right, null ) ) {
                 return false;
             }
-            return ( left.Size == right.Size ) && left.FullPathWithFileName.Same( right.FullPathWithFileName );
+
+            return ( left.Size() == right.Size() ) && left.FullPathWithFileName.Same( right.FullPathWithFileName );
         }
 
         /// <summary>
@@ -216,13 +202,14 @@ namespace Librainian.FileSystem {
                     extension = extension.Substring( 1 );
                 }
             }
+
             if ( String.IsNullOrWhiteSpace( extension ) ) {
                 extension = Guid.NewGuid().ToString();
             }
-            return new Document( Folder.GetTempFolder(), Guid.NewGuid() + "." + extension.Trim() );
+            return new Document( Librainian.FileSystem.Folder.GetTempFolder(), Guid.NewGuid() + "." + extension.Trim() );
         }
 
-        public static implicit operator FileInfo( Document document ) => document.Info;
+        public static implicit operator FileInfo( Document document ) => document.Info();
 
         /// <summary>
         ///     <para>Compares the file names (case insensitive) and file sizes for inequality.</para>
@@ -246,7 +233,7 @@ namespace Librainian.FileSystem {
         /// </summary>
         /// <param name="text"></param>
         public void AppendText( String text ) {
-            if ( !this.Folder.Create() ) {
+            if ( !this.Folder().Create() ) {
                 throw new DirectoryNotFoundException( this.FullPathWithFileName );
             }
 
@@ -254,14 +241,12 @@ namespace Librainian.FileSystem {
                 using ( var writer = File.AppendText( this.FullPathWithFileName ) ) {
                     writer.WriteLine( text );
                     writer.Flush();
-                    writer.Close();
                 }
             }
             else {
                 using ( var writer = File.CreateText( this.FullPathWithFileName ) ) {
                     writer.WriteLine( text );
                     writer.Flush();
-                    writer.Close();
                 }
             }
         }
@@ -291,10 +276,9 @@ namespace Librainian.FileSystem {
                     if ( b == -1 ) {
                         yield break;
                     }
+
                     yield return ( Byte )b;
                 }
-
-                stream.Close();
             }
         }
 
@@ -346,14 +330,14 @@ namespace Librainian.FileSystem {
 
         [CanBeNull]
         public String Crc32() {
-            if ( !this.Folder.Exists() ) {
+            if ( !this.Folder().Exists() ) {
                 return null;
             }
             if ( !this.Exists() ) {
                 return null;
             }
 
-            var size = this.Size;
+            var size = this.Size();
             if ( !size.HasValue ) {
                 return null;
             }
@@ -361,31 +345,29 @@ namespace Librainian.FileSystem {
             try {
                 var crc32 = new Crc32( ( UInt32 )size.Value, ( UInt32 )size.Value ); //HACK why not use size?
 
-                var hash = String.Empty;
                 using ( var fileStream = File.Open( this.FullPathWithFileName, FileMode.Open, FileAccess.Read, FileShare.Read ) ) {
-                    hash = crc32.ComputeHash( fileStream ).Aggregate( hash, ( current, b ) => current + b.ToString( "x2" ).ToLower() );
-                    fileStream.Close();
+                    return crc32.ComputeHash( fileStream ).Aggregate( String.Empty, ( current, b ) => current + b.ToString( "x2" ).ToLower() );
                 }
-                return hash;
             }
             catch ( FileNotFoundException ) { }
             catch ( DirectoryNotFoundException ) { }
             catch ( PathTooLongException ) { }
             catch ( IOException ) { }
             catch ( UnauthorizedAccessException ) { }
+
             return null;
         }
 
         [CanBeNull]
         public String Crc64() {
-            if ( !this.Folder.Exists() ) {
+            if ( !this.Folder().Exists() ) {
                 return null;
             }
             if ( !this.Exists() ) {
                 return null;
             }
 
-            var size = this.Size;
+            var size = this.Size();
             if ( !size.HasValue ) {
                 return null;
             }
@@ -393,18 +375,16 @@ namespace Librainian.FileSystem {
             try {
                 var crc64 = new Crc64( polynomial: size.Value, seed: size.Value ); //HACK why not use size?
 
-                var hash = String.Empty;
                 using ( var fileStream = File.Open( this.FullPathWithFileName, FileMode.Open, FileAccess.Read, FileShare.Read ) ) {
-                    hash = crc64.ComputeHash( fileStream ).Aggregate( hash, ( current, b ) => current + b.ToString( "x2" ).ToLower() );
-                    fileStream.Close();
+                    return crc64.ComputeHash( fileStream ).Aggregate( String.Empty, ( current, b ) => current + b.ToString( "x2" ).ToLower() );
                 }
-                return hash;
             }
             catch ( FileNotFoundException ) { }
             catch ( DirectoryNotFoundException ) { }
             catch ( PathTooLongException ) { }
             catch ( IOException ) { }
             catch ( UnauthorizedAccessException ) { }
+
             return null;
         }
 
@@ -420,8 +400,8 @@ namespace Librainian.FileSystem {
                     return true;
                 }
 
-                if ( this.Info.IsReadOnly ) {
-                    this.Info.IsReadOnly = false;
+                if ( this.Info().IsReadOnly ) {
+                    this.Info().IsReadOnly = false;
                 }
 
                 if ( this.Exists() ) {
@@ -438,6 +418,7 @@ namespace Librainian.FileSystem {
                     goto TryAgain;
                 }
             }
+
             return !this.Exists();
         }
 
@@ -451,6 +432,7 @@ namespace Librainian.FileSystem {
                 exception.More();
             }
             catch ( SecurityException ) { }
+
             return false;
         }
 
@@ -464,8 +446,7 @@ namespace Librainian.FileSystem {
 
         /// <summary>
         ///     <para>
-        ///         To compare the contents of two <see cref="Document" /> use
-        ///         <see cref="IOExtensions.SameContent(Document,Document)" />.
+        ///         To compare the contents of two <see cref="Document" /> use SameContent( Document,Document).
         ///     </para>
         /// </summary>
         /// <param name="obj"></param>
@@ -476,7 +457,7 @@ namespace Librainian.FileSystem {
         ///     Returns true if the <see cref="Document" /> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public Boolean Exists() => this.Info.Exists;
+        public Boolean Exists() => this.Info().Exists;
 
         /// <summary>
         ///     Returns an enumerator that iterates through the collection.
@@ -500,7 +481,7 @@ namespace Librainian.FileSystem {
         public UInt64? GetLength() {
             try {
                 if ( this.Exists() ) {
-                    return ( UInt64 )this.Info.Length;
+                    return ( UInt64 )this.Info().Length;
                 }
             }
             catch ( FileNotFoundException exception ) {
@@ -509,6 +490,7 @@ namespace Librainian.FileSystem {
             catch ( IOException exception ) {
                 exception.More();
             }
+
             return null;
         }
 
@@ -531,16 +513,28 @@ namespace Librainian.FileSystem {
         public async Task<Process> Launch( String arguments = null, String verb = "runas" ) {
             return await Task.Run( () => {
                 try {
-                    var info = new ProcessStartInfo( this.FullPathWithFileName ) { Arguments = arguments ?? String.Empty, UseShellExecute = false, Verb = verb };
+                    var info = new ProcessStartInfo( this.FullPathWithFileName ) {
+                        Arguments = arguments ?? String.Empty,
+                        UseShellExecute = false,
+                        Verb = verb
+                    };
 
                     return Process.Start( info );
                 }
                 catch ( Exception exception ) {
                     exception.More();
                 }
+
                 return null;
             } );
         }
+
+        /// <summary>
+        ///     <para>Just the file's name, including the extension.</para>
+        /// </summary>
+        /// <seealso cref="Path.GetFileNameWithoutExtension" />
+        [NotNull]
+        public String Name() => this.FileName();
 
         /// <summary>
         ///     Reads the entire file into a <see cref="String" />.
@@ -594,6 +588,33 @@ namespace Librainian.FileSystem {
             return ( ll.Value == rl.Value ) && this.AsByteArray().SequenceEqual( right.AsByteArray() );
         }
 
+        public void SetCreationTime( DateTime when, CancellationToken cancellationToken ) {
+            IOExtensions.Try( () => {
+                if ( !Exists() ) {
+                    return false;
+                }
+
+                Info().IsReadOnly = false;
+                return !Info().IsReadOnly;
+            }, Seconds.Thirty, cancellationToken );
+
+            IOExtensions.Try( () => {
+                if ( !Exists() ) {
+                    return false;
+                }
+
+                File.SetCreationTime( path: FullPathWithFileName, creationTime: when );
+                return true;
+            }, Seconds.Thirty, cancellationToken );
+        }
+
+        /// <summary>
+        ///     <para>Gets the current size of the <see cref="Document" />.</para>
+        /// </summary>
+        /// <seealso cref="GetLength" />
+        [CanBeNull]
+        public UInt64? Size() => this.GetLength();
+
         /// <summary>
         ///     Returns a string that represents the current object.
         /// </summary>
@@ -613,6 +634,7 @@ namespace Librainian.FileSystem {
                 if ( !this.Exists() ) {
                     return true;
                 }
+
                 File.Delete( path: this.FullPathWithFileName );
                 return !File.Exists( this.FullPathWithFileName );
             }
@@ -631,34 +653,8 @@ namespace Librainian.FileSystem {
             finally {
                 stopwatch.Stop();
             }
+
             return null;
         }
-
-        protected override void CleanUpManagedResources() {
-            base.CleanUpManagedResources();
-        }
-
-        protected override void CleanUpNativeResources() {
-            base.CleanUpNativeResources();
-        }
-
-        public void SetCreationTime( DateTime when, CancellationToken cancellationToken ) {
-            IOExtensions.Try( () => {
-                if ( !Exists() ) {
-                    return false;
-                }
-                Info.IsReadOnly = false;
-                return !Info.IsReadOnly;
-            }, Seconds.Thirty, cancellationToken );
-
-            IOExtensions.Try( () => {
-                if ( !Exists() ) {
-                    return false;
-                }
-                File.SetCreationTime( path: FullPathWithFileName, creationTime: when );
-                return true;
-            }, Seconds.Thirty, cancellationToken );
-        }
-
     }
 }

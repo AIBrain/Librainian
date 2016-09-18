@@ -22,5 +22,5 @@ namespace Librainian.Extensions {
 
     using System;
 
-    public delegate void PopulateProgressDelegateError( Object sender, PopulateProgressEventArgs args );
+    public delegate void PopulateProgressDelegateError( Object sender, PopulateProgressEventArgs e );
 }
