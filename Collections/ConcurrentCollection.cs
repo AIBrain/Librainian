@@ -27,7 +27,7 @@ namespace Librainian.Collections {
     using System.Linq;
     using System.Runtime.Serialization;
     using System.Threading;
-    using Threading;
+    using Maths;
 
     public class ConcurrentCollection<T> : IProducerConsumerCollection<T> {
         private const Int32 BackoffMaxYields = 8;
@@ -57,15 +57,15 @@ namespace Librainian.Collections {
             }
         }
 
-        Boolean ICollection.IsSynchronized => false;
+        public Boolean IsSynchronized => false;
 
-        Object ICollection.SyncRoot {
+        public Object SyncRoot {
             get {
                 throw new NotSupportedException( "ConcurrentCollection_SyncRoot_NotSupported" );
             }
         }
 
-        public Boolean IsEmpty => this._mHead == null;
+        public Boolean IsEmpty() => this._mHead == null;
 
         public void Clear() => this._mHead = null;
 
@@ -82,7 +82,7 @@ namespace Librainian.Collections {
             if ( array == null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
-            if ( array as T[] == null ) {
+            if ( !(array is T[]) ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
             this.ToList().CopyTo( ( T[] )array, index );
@@ -90,12 +90,12 @@ namespace Librainian.Collections {
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        Boolean IProducerConsumerCollection<T>.TryAdd( T item ) {
+        public Boolean TryAdd( T item ) {
             this.Push( item );
             return true;
         }
 
-        Boolean IProducerConsumerCollection<T>.TryTake( out T item ) => this.TryPop( out item );
+        public Boolean TryTake( out T item ) => this.TryPop( out item );
 
         public void Push( T item ) {
             var node = new Node( item ) { MNext = this._mHead };

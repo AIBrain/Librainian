@@ -94,7 +94,11 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( nameof( @this ), "AnyRelationship called on a null IEnumerable<T>." );
             }
 
-            return @this.Select( ( a, aIndex ) => @this.Skip( aIndex + 1 ).Any( b => relationshipFunc( a, b ) || relationshipFunc( b, a ) ) ).Any( value => value );
+            // ReSharper disable once PossibleMultipleEnumeration
+            return @this.Select( ( a, aIndex ) => {
+                                     // ReSharper disable once PossibleMultipleEnumeration
+                                     return @this.Skip( aIndex + 1 ).Any( b => relationshipFunc( a, b ) || relationshipFunc( b, a ) );
+                                 } ).Any( value => value );
         }
 
         /// <summary>
@@ -277,7 +281,11 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( nameof( @this ), "CountRelationship called on a null IEnumerable<T>." );
             }
 
-            return @this.Select( ( a, aIndex ) => @this.Skip( aIndex + 1 ).Any( b => relationshipFunc( a, b ) || relationshipFunc( b, a ) ) ).Count( value => value );
+            // ReSharper disable once PossibleMultipleEnumeration
+            return @this.Select( ( a, aIndex ) => {
+                                     // ReSharper disable once PossibleMultipleEnumeration
+                                     return @this.Skip( aIndex + 1 ).Any( b => relationshipFunc( a, b ) || relationshipFunc( b, a ) );
+                                 } ).Count( value => value );
         }
 
         /// <summary>
@@ -325,7 +333,9 @@ namespace Librainian.Collections {
             }
 
             var aIndex = 0;
+            // ReSharper disable once PossibleMultipleEnumeration
             foreach ( var a in @this ) {
+                // ReSharper disable once PossibleMultipleEnumeration
                 foreach ( var b in @this.Skip( ++aIndex ).Where( b => relationshipFunc( a, b ) || relationshipFunc( b, a ) ) ) {
                     return new KeyValuePair<T, T>( a, b );
                 }
@@ -360,6 +370,15 @@ namespace Librainian.Collections {
             }
         }
 
+        public static IEnumerable<T> SideEffects<T>( [ NotNull ] this IEnumerable<T> items, Action<T> perfomAction ) {
+            if ( items == null )
+                throw new ArgumentNullException( nameof( items ) );
+
+            foreach ( var item in items ) {
+                perfomAction?.Invoke( item );
+                yield return item;
+            }
+        }
         /// <summary>
         ///     http://blogs.msdn.com/b/pfxteam/archive/2012/02/04/10264111.aspx
         /// </summary>
@@ -505,14 +524,14 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     <para>A list containing <see cref="Boolean.True" /> then <see cref="Boolean.False" />.</para>
+        ///     <para>An infinite list.</para>
         /// </summary>
         public static IEnumerable<Boolean> Infinitely( this Boolean value ) {
             do {
                 yield return value;
             } while ( true );
 
-            // ReSharper disable once FunctionNeverReturns
+            // ReSharper disable once IteratorNeverReturns
         }
 
         /// <summary>
@@ -521,13 +540,7 @@ namespace Librainian.Collections {
         /// <typeparam name="T">The type of objects to enumerate.</typeparam>
         /// <param name="source">The IEnumerable to check if empty.</param>
         /// <returns>True if the <paramref name="source" /> is null or empty; otherwise false.</returns>
-        public static Boolean IsEmpty<T>( this IEnumerable<T> source ) {
-            if ( source == null ) {
-                return true;
-            }
-
-            return !source.Any();
-        }
+        public static Boolean IsEmpty<T>( this IEnumerable<T> source ) { return null == source || !source.Any(); }
 
         public static UInt64 LongSum( this IEnumerable<Int32> collection ) => collection.Aggregate( 0UL, ( current, u ) => current + ( UInt64 )u );
 
@@ -943,6 +956,7 @@ namespace Librainian.Collections {
                     var b = 0.Next( itemCount );
                     array.Swap( a, b );
                 } while ( iterations.Any() );
+                // ReSharper disable once RedundantJumpStatement
                 goto AllDone;
             }
 
@@ -1230,7 +1244,9 @@ namespace Librainian.Collections {
             }
 
             var aIndex = 0;
+            // ReSharper disable once PossibleMultipleEnumeration
             foreach ( var a in @this ) {
+                // ReSharper disable once PossibleMultipleEnumeration
                 foreach ( var b in @this.Skip( ++aIndex ).Where( b => relationshipFunc( a, b ) || relationshipFunc( b, a ) ) ) {
                     yield return new KeyValuePair<T, T>( a, b );
                 }

@@ -28,16 +28,14 @@ namespace Librainian.Collections {
 
     /// <summary>Represents a thread-safe blocking, first-in, first-out collection of objects.</summary>
     /// <typeparam name="T">Specifies the type of elements in the queue.</typeparam>
-    public class ConcurrentBlockingQueue<T> : BetterDisposableClass {
+    public class ConcurrentBlockingQueue<T> : ABetterClassDispose {
         private readonly ConcurrentQueue<T> _queue = new ConcurrentQueue<T>();
         private readonly AutoResetEvent _workEvent = new AutoResetEvent( false );
         private Boolean _isCompleteAdding;
-        private Boolean _isDisposed;
 
         /// <summary>Adds the item to the queue.</summary>
         /// <param name="item">The item to be added.</param>
         public void Add( T item ) {
-            this.CheckDisposed();
 
             // queue must not be marked as completed adding
             if ( this._isCompleteAdding ) {
@@ -59,7 +57,6 @@ namespace Librainian.Collections {
         ///     is empty.
         /// </remarks>
         public void CompleteAdding() {
-            this.CheckDisposed();
 
             // mark complete
             this._isCompleteAdding = true;
@@ -96,20 +93,10 @@ namespace Librainian.Collections {
             } while ( this._workEvent.WaitOne() );
         }
 
-        protected override void CleanUpManagedResources() {
-            if ( this._isDisposed ) {
-                return;
-            }
-            using ( this._workEvent ) {
-                this._isDisposed = true;
-            }
-            base.CleanUpManagedResources();
+        
+
+        protected override void DisposeManaged() {
         }
 
-        private void CheckDisposed() {
-            if ( this._isDisposed ) {
-                throw new ObjectDisposedException( "ConcurrentBlockingQueue" );
-            }
-        }
     }
 }

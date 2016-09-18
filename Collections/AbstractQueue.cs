@@ -21,6 +21,7 @@
 namespace Librainian.Collections {
 
     using System;
+    using System.Collections.Generic;
     using Newtonsoft.Json;
 
     /// <summary>
