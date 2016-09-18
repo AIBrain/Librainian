@@ -56,6 +56,17 @@ namespace Librainian.Collections {
         public virtual Int32 Count => this.Count();
 
         /// <summary>
+        ///     Gets a value indicating whether access to the
+        ///     <see cref="T:System.Collections.ICollection" /> is synchronized (thread safe).
+        /// </summary>
+        /// <returns>
+        ///     true if access to the <see cref="T:System.Collections.ICollection" /> is synchronized
+        ///     (thread safe); otherwise, false.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        Boolean ICollection.IsSynchronized => this.IsSynchronized;
+
+        /// <summary>
         ///     Gets an object that can be used to synchronize access to the
         ///     <see cref="T:System.Collections.ICollection" /> .
         /// </summary>
@@ -75,17 +86,6 @@ namespace Librainian.Collections {
         ///     implementation always return true;
         /// </returns>
         public virtual Boolean IsReadOnly => true;
-
-        /// <summary>
-        ///     Gets a value indicating whether access to the
-        ///     <see cref="T:System.Collections.ICollection" /> is synchronized (thread safe).
-        /// </summary>
-        /// <returns>
-        ///     true if access to the <see cref="T:System.Collections.ICollection" /> is synchronized
-        ///     (thread safe); otherwise, false.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
-        Boolean ICollection.IsSynchronized => this.IsSynchronized;
 
         /// <summary>
         ///     Gets a value indicating whether access to the <see cref="ICollection" /> is synchronized
@@ -151,7 +151,7 @@ namespace Librainian.Collections {
             if ( collection == null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
-            if ( collection == this ) {
+            if ( ReferenceEquals( collection, this ) ) {
                 throw new ArgumentException( "Cannot add to itself.", nameof( collection ) );
             }
             return this.DoAddRange( collection );
