@@ -89,9 +89,14 @@ namespace Librainian.Persistence {
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose() {
-            this.Write().Wait( Minutes.One );
-            this.Document.Dispose();
+        public void Dispose() { this.Dispose( true ); }
+
+        protected virtual void Dispose( Boolean releaseManaged ) {
+            if ( releaseManaged ) {
+                this.Write().Wait( Minutes.One );
+            }
+
+            GC.SuppressFinalize( this );
         }
 
         public Task<Boolean> Read( CancellationToken cancellationToken = default( CancellationToken ) ) {
@@ -157,8 +162,8 @@ namespace Librainian.Persistence {
             var document = this.Document;
 
             return Task.Run( () => {
-                if ( !document.Folder.Exists() ) {
-                    document.Folder.Create();
+                if ( !document.Folder().Exists() ) {
+                    document.Folder().Create();
                 }
 
                 if ( document.Exists() ) {

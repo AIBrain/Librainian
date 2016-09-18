@@ -35,7 +35,15 @@ namespace Librainian.Persistence {
     ///     Persist a dictionary to and from a JSON formatted text document.
     /// </summary>
     [JsonObject]
-    public class ConcurrentListFile<TValue> : ConcurrentList<TValue>, IDisposable {
+    public class ConcurrentListFile<TValue> : ConcurrentList<TValue> {
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
+            this.Write().Wait();
+            base.DisposeManaged();
+        }
 
         /// <summary>
         ///     Persist a dictionary to and from a JSON formatted text document.
@@ -82,13 +90,6 @@ namespace Librainian.Persistence {
             get; set;
         }
 
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose() {
-            this.Write().Wait();
-            this.Document.Dispose();
-        }
 
         public async Task<Boolean> Read( CancellationToken cancellationToken = default( CancellationToken ) ) {
             if ( !this.Document.Exists() ) {
@@ -138,8 +139,8 @@ namespace Librainian.Persistence {
             var document = this.Document;
 
             return Task.Run( () => {
-                if ( !document.Folder.Exists() ) {
-                    document.Folder.Create();
+                if ( !document.Folder().Exists() ) {
+                    document.Folder().Create();
                 }
 
                 if ( document.Exists() ) {

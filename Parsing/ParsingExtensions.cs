@@ -79,28 +79,29 @@ namespace Librainian.Parsing {
         /// </summary>
         public const String Uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        public static readonly String[] OrdinalSuffixes = { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
+        public static String[] OrdinalSuffixes { get; } = { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
 
-        public static readonly Regex RegexByWordBreak = new Regex( pattern: @"(?=\S*(?<=\w))\b", options: RegexOptions.Compiled | RegexOptions.Singleline );
+        public static Regex RegexByWordBreak { get; } = new Regex( pattern: @"(?=\S*(?<=\w))\b", options: RegexOptions.Compiled | RegexOptions.Singleline );
 
-        public static readonly Regex RegexJustDigits = new Regex( @"\D+", RegexOptions.Compiled );
+        public static Regex RegexJustDigits { get; } = new Regex( @"\D+", RegexOptions.Compiled );
 
-        public static readonly Char[] SpaceSplitBy = { Singlespace[ 0 ] };
-
-        /// <summary>
-        /// </summary>
-        public static readonly String[] TensMap = { "zero", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
+        public static Char[] SpaceSplitBy { get; } = { Singlespace[ 0 ] };
 
         /// <summary>
         /// </summary>
-        public static readonly String[] UnitsMap = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
+        public static String[] TensMap { get; } = { "zero", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
+
+        /// <summary>
+        /// </summary>
+        public static String[] UnitsMap { get; } = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
 
         /// <summary>
         ///     The set of characters that are unreserved in RFC 2396 but are NOT unreserved in RFC 3986.
         /// </summary>
-        public static readonly String[] UriRfc3986CharsToEscape = { "!", "*", "'", "(", ")" };
+        // ReSharper disable once ReturnTypeCanBeEnumerable.Global
+        public static String[] UriRfc3986CharsToEscape { get; } = { "!", "*", "'", "(", ")" };
 
-        public static readonly String[] Vowels = "A,AI,AU,E,EA,EE,I,IA,IO,O,OA,OI,OO,OU,U".Split( ',' );
+        public static String[] Vowels { get; } = "A,AI,AU,E,EA,EE,I,IA,IO,O,OA,OI,OO,OU,U".Split( ',' );
 
         public static String AllLetters { get; } = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).OrderBy( c => c ).ToArray() );
 
@@ -110,13 +111,13 @@ namespace Librainian.Parsing {
         [NotNull]
         public static String AllUppercaseLetters { get; } = new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() );
 
-        [ NotNull ]
-        public static String EnglishAlphabetUppercase { get; } = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        public static String[] Consonants { get; } = "B,C,CH,CL,D,F,FF,G,GH,GL,J,K,L,LL,M,MN,N,P,PH,PS,R,RH,S,SC,SH,SK,ST,T,TH,V,W,X,Y,Z".Split( ',' );
 
-        [ NotNull ]
+        [NotNull]
         public static String EnglishAlphabetLowercase { get; } = "abcdefghijklmnopqrstuvwxyz";
 
-        public static String[] Consonants { get; } = "B,C,CH,CL,D,F,FF,G,GH,GL,J,K,L,LL,M,MN,N,P,PH,PS,R,RH,S,SC,SH,SK,ST,T,TH,V,W,X,Y,Z".Split( ',' );
+        [NotNull]
+        public static String EnglishAlphabetUppercase { get; } = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         [NotNull]
         public static Lazy<PluralizationService> LazyPluralizationService { get; } = new Lazy<PluralizationService>( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );
@@ -452,7 +453,14 @@ namespace Librainian.Parsing {
             return source.SequenceEqual( compare );
         }
 
-        public static String FirstSentence( this String paragraph ) => paragraph.ToSentences().FirstOrDefault();
+        [NotNull]
+        public static String FirstSentence( this String text ) {
+            if ( text.IsNullOrWhiteSpace() ) {
+                return String.Empty;
+            }
+            var sentences = text.ToSentences().FirstOrDefault();
+            return sentences?.ToString() ?? String.Empty;
+        }
 
         public static String FirstWord( this String sentence ) => sentence.ToWords().FirstOrDefault() ?? String.Empty;
 
@@ -577,6 +585,11 @@ namespace Librainian.Parsing {
 
         public static String InOutputFormat( this String indexed ) => $"{indexed}-|";
 
+        // .NET Char class already provides an static IsDigit method however it behaves differently depending on if char is a Latin or not.
+        public static Boolean IsDigit( this Char c ) {
+            return c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9';
+        }
+
         public static Boolean IsJustNumbers( [CanBeNull] this String text ) {
             if ( null == text ) {
                 return false;
@@ -657,7 +670,7 @@ namespace Librainian.Parsing {
 
         /// <summary>
         ///     <para>Case insensitive String comparison.</para>
-        ///     <para>( true example: cAt == CaT )</para>
+        ///     <para>( for example: cAt == CaT is true )</para>
         ///     <para>
         ///         <see cref="StringComparison.InvariantCultureIgnoreCase" />
         ///     </para>
@@ -852,8 +865,8 @@ namespace Librainian.Parsing {
             var pluralized = LazyPluralizationService.Value.Pluralize( singular );
             PluralCache[ singular ] = pluralized;
             return pluralized;
-        } 
-        
+        }
+
         /// <summary>
         ///     Crude attempt at pluralizing a <paramref name="number" />.
         /// </summary>
@@ -1097,11 +1110,6 @@ namespace Librainian.Parsing {
         /// <param name="compare"></param>
         /// <returns></returns>
         public static Boolean Same( this String source, String compare ) => ( source ?? String.Empty ).Equals( compare ?? String.Empty, StringComparison.InvariantCulture );
-
-        // .NET Char class already provides an static IsDigit method however it behaves differently depending on if char is a Latin or not.
-        public static Boolean IsDigit( this Char c ) {
-            return c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9';
-        }
 
         /// <summary>
         ///     Compute a Similarity between two strings. <br />
@@ -1448,7 +1456,7 @@ namespace Librainian.Parsing {
             if ( endIndex < 0 || endIndex > @this.Length ) {
                 throw new ArgumentOutOfRangeException( nameof( endIndex ) );
             }
-            return @this.Substring( ( @this.Length - endIndex ) - length, @this.Length - endIndex );
+            return @this.Substring( @this.Length - endIndex - length, @this.Length - endIndex );
         }
 
         [Test]
@@ -1529,8 +1537,11 @@ namespace Librainian.Parsing {
 
             //clean it up some
             paragraph = paragraph.Replace( "\t", Singlespace );
-            paragraph = paragraph.Replace( "\r\n", Environment.NewLine );
+            do {
+                paragraph = paragraph.Replace( Doublespace, Singlespace );
+            } while ( paragraph.Contains( Doublespace ) );
             paragraph = paragraph.Replace( "\n\n", Environment.NewLine );
+            paragraph = paragraph.Replace( "\r\n", Environment.NewLine );
             paragraph = paragraph.Replace( "\r", Environment.NewLine );
             paragraph = paragraph.Replace( "\n", Environment.NewLine );
 
@@ -1732,7 +1743,7 @@ namespace Librainian.Parsing {
             var prevWord = words.FirstOrDefault();
             sb.Append( prevWord );
             foreach ( var cur in words.Where( cur => !cur.Equals( prevWord ) ) ) {
-                sb.AppendFormat( " {0}", cur );
+                sb.Append( $" {cur}" );
             }
 
             //for ( int idx = 1; idx < words.Count(); idx++ ) {

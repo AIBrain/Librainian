@@ -178,7 +178,7 @@ namespace Librainian.OperatingSystem {
                 try {
                     var proc = new ProcessStartInfo {
                         UseShellExecute = false,
-                        WorkingDirectory = filename.Folder.FullName,
+                        WorkingDirectory = filename.Folder().FullName,
                         FileName = filename.FullPathWithFileName,
                         Verb = elevate ? null : "runas", //demand elevated permissions
                         Arguments = arguments,
@@ -307,7 +307,9 @@ namespace Librainian.OperatingSystem {
             try {
                 return await Task.Run( () => {
                     using ( var service = new ServiceController( serviceName ) ) {
-                        service.Start();
+                        if ( service.Status != ServiceControllerStatus.Running ) {
+                            service.Start();
+                        }
                         service.WaitForStatus( ServiceControllerStatus.Running, timeout );
                         return service.Status == ServiceControllerStatus.Running;
                     }
@@ -352,7 +354,7 @@ namespace Librainian.OperatingSystem {
 
                     var proc = new ProcessStartInfo {
                         UseShellExecute = false,
-                        WorkingDirectory = IrfanView64.Value.Folder.FullName,
+                        WorkingDirectory = IrfanView64.Value.Folder().FullName,
                         FileName = IrfanView64.Value.FullPathWithFileName,
 
                         //Verb = "runas", //demand elevated permissions

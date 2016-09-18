@@ -24,19 +24,25 @@ namespace Librainian.Persistence {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Magic;
     using Measurement.Time;
     using Threading;
 
-    public sealed class DeserializeReportStats {
+    public sealed class DeserializeReportStats : ABetterClassDispose {
         public readonly TimeSpan Timing;
         private readonly ThreadLocal<Int64> _gains = new ThreadLocal<Int64>( trackAllValues: true );
 
         private readonly ThreadLocal<Int64> _losses = new ThreadLocal<Int64>( trackAllValues: true );
 
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
+            this._gains.Dispose();
+            this._losses.Dispose();
+        }
+
         public DeserializeReportStats( Action<DeserializeReportStats> handler, TimeSpan? timing = null ) {
-            if ( !timing.HasValue ) {
-                timing = Milliseconds.ThreeHundredThirtyThree;
-            }
             this._gains.Values.Clear();
             this._gains.Value = 0;
 
@@ -45,7 +51,7 @@ namespace Librainian.Persistence {
 
             this.Total = 0;
             this.Handler = handler;
-            this.Timing = timing.Value;
+            this.Timing = timing ?? Milliseconds.ThreeHundredThirtyThree;
         }
 
         public Boolean Enabled {
@@ -91,5 +97,7 @@ namespace Librainian.Persistence {
                 await this.Timing.Then( job: this.Report ); //TODO is this correct?
             }
         }
+
+
     }
 }

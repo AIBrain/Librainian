@@ -36,7 +36,9 @@ namespace Librainian.OperatingSystem.WMI {
                     try {
                         return managementObject[ wmiProperty ].ToString();
                     }
-                    catch { }
+                    catch {
+                        // ignored
+                    }
                 }
             }
             return String.Empty;
@@ -51,9 +53,10 @@ namespace Librainian.OperatingSystem.WMI {
                         if ( managementObject != null ) {
                             return managementObject[ wmiProperty ].ToString();
                         }
-                        break;
                     }
-                    catch { }
+                    catch {
+                        // ignored
+                    }
                 }
             }
             return String.Empty;

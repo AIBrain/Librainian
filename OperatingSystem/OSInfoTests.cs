@@ -28,13 +28,13 @@ namespace Librainian.OperatingSystem {
 
         [Test]
         public static void TestVersions() {
-            Debug.WriteLine( $"Server: {OSInfo.IsServer()}" );
-            Debug.WriteLine( $"Version Major: {OSInfo.WinMajorVersion()}" );
-            Debug.WriteLine( $"Version Minor: {OSInfo.WinMinorVersion()}" );
-            Debug.WriteLine( $"Build Major: {OSInfo.BuildMajor()}" );
-            Debug.WriteLine( $"Build Minor: {OSInfo.BuildMinor()}" );
-            Debug.WriteLine( $"BuildBranch: {OSInfo.BuildBranch()}" );
-            Debug.WriteLine( $"Release ID: {OSInfo.ReleaseID()}" );
+            Debug.WriteLine( $"Server: {Info.IsServer()}" );
+            Debug.WriteLine( $"Version Major: {Info.VersionMajor()}" );
+            Debug.WriteLine( $"Version Minor: {Info.VersionMinor()}" );
+            Debug.WriteLine( $"Build Major: {Info.BuildMajor()}" );
+            Debug.WriteLine( $"Build Minor: {Info.BuildMinor()}" );
+            Debug.WriteLine( $"BuildBranch: {Info.BuildBranch()}" );
+            Debug.WriteLine( $"Release ID: {Info.ReleaseId()}" );
         }
 
     }
