@@ -23,7 +23,11 @@ namespace Librainian.FileSystem {
     using System;
     using System.ComponentModel;
     using System.Net;
+    using System.Net.NetworkInformation;
     using System.Runtime.InteropServices;
+    using System.Threading;
+    using Measurement.Time;
+    using OperatingSystem;
 
     public enum ResourceDisplaytype {
         Generic = 0x0,
@@ -55,17 +59,65 @@ namespace Librainian.FileSystem {
         Reserved = 8
     }
 
-    [StructLayout( LayoutKind.Sequential )]
+    [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public class NetResource {
+        [MarshalAs( UnmanagedType.LPWStr )]
         public String Comment;
+
         public ResourceDisplaytype DisplayType;
+
+        [MarshalAs( UnmanagedType.LPWStr )]
         public String LocalName;
+
+        [MarshalAs( UnmanagedType.LPWStr )]
         public String Provider;
+
+        [MarshalAs( UnmanagedType.LPWStr )]
         public String RemoteName;
+
         public ResourceType ResourceType;
         public ResourceScope Scope;
         public Int32 Usage;
     }
+
+    public enum ResourceDisplayType {
+        RESOURCEDISPLAYTYPE_GENERIC,
+        RESOURCEDISPLAYTYPE_DOMAIN,
+        RESOURCEDISPLAYTYPE_SERVER,
+        RESOURCEDISPLAYTYPE_SHARE,
+        RESOURCEDISPLAYTYPE_FILE,
+        RESOURCEDISPLAYTYPE_GROUP,
+        RESOURCEDISPLAYTYPE_NETWORK,
+        RESOURCEDISPLAYTYPE_ROOT,
+        RESOURCEDISPLAYTYPE_SHAREADMIN,
+        RESOURCEDISPLAYTYPE_DIRECTORY,
+        RESOURCEDISPLAYTYPE_TREE,
+        RESOURCEDISPLAYTYPE_NDSCONTAINER
+    };
+
+    public enum ResourceUsage {
+        RESOURCEUSAGE_CONNECTABLE = 0x00000001,
+        RESOURCEUSAGE_CONTAINER = 0x00000002,
+        RESOURCEUSAGE_NOLOCALDEVICE = 0x00000004,
+        RESOURCEUSAGE_SIBLING = 0x00000008,
+        RESOURCEUSAGE_ATTACHED = 0x00000010,
+        RESOURCEUSAGE_ALL = RESOURCEUSAGE_CONNECTABLE | RESOURCEUSAGE_CONTAINER | RESOURCEUSAGE_ATTACHED,
+       };
+
+
+    [StructLayout( LayoutKind.Sequential )]
+    public class NETRESOURCE {
+        public ResourceScope dwScope = 0;
+        public ResourceType dwType = 0;
+        public ResourceDisplayType dwDisplayType = 0;
+        public ResourceUsage dwUsage = 0;
+        public String lpLocalName = null;
+        public String lpRemoteName = null;
+        public String lpComment = null;
+        public String lpProvider = null;
+    };
+
+
 
     public class NetworkConnection : IDisposable {
 
@@ -76,7 +128,7 @@ namespace Librainian.FileSystem {
 
             var userName = String.IsNullOrEmpty( credentials.Domain ) ? credentials.UserName : $@"{credentials.Domain}\{credentials.UserName}";
 
-            var result = WNetAddConnection2( netResource, credentials.Password, userName, 0 );
+            var result = NativeMethods.WNetAddConnection2( ref netResource, credentials.Password, userName, 0 );
 
             if ( result != 0 ) {
                 throw new Win32Exception( result, "Error connecting to remote share" );
@@ -97,13 +149,18 @@ namespace Librainian.FileSystem {
         }
 
         protected virtual void Dispose( Boolean disposing ) {
-            WNetCancelConnection2( this.NetworkName, 0, true );
+            NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
         }
 
-        [DllImport( "mpr.dll" )]
-        private static extern Int32 WNetAddConnection2( NetResource netResource, String password, String username, Int32 flags );
+        public static Boolean IsNetworkConnected( Int32 retries = 3 ) {
+            var counter = retries;
+            while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
+                --counter;
+                $"Network disconnected. Waiting {Seconds.One}. {counter} retries left...".WriteLine();
+                Thread.Sleep( Seconds.One );
+            }
+            return NetworkInterface.GetIsNetworkAvailable();
+        }
 
-        [DllImport( "mpr.dll" )]
-        private static extern Int32 WNetCancelConnection2( String name, Int32 flags, Boolean force );
     }
 }

@@ -31,7 +31,6 @@ namespace Librainian.FileSystem {
     using System.Windows.Forms;
     using Extensions;
     using JetBrains.Annotations;
-    using Magic;
     using Newtonsoft.Json;
     using NUnit.Framework;
     using OperatingSystem;
@@ -60,7 +59,7 @@ namespace Librainian.FileSystem {
     [DebuggerDisplay( "{ToString()}" )]
     [JsonObject(MemberSerialization.Fields)]
     [Immutable]
-    public class Folder : BetterDisposableClass, IEquatable<Folder> {
+    public class Folder : IEquatable<Folder> {
 
         /// <summary>
         /// </summary>
@@ -206,7 +205,9 @@ namespace Librainian.FileSystem {
         ///     <para>Static comparison of the folder names (case sensitive) for equality.</para>
         ///     <para>
         ///         To compare the path of two <see cref="Folder" /> use
+#pragma warning disable 1574
         ///         <seealso cref="IOExtensions.SameContent(Folder,Folder)" /> .
+#pragma warning restore 1574
         ///     </para>
         /// </summary>
         /// <param name="left"></param>
@@ -435,7 +436,7 @@ namespace Librainian.FileSystem {
         /// <returns></returns>
         public String ToCompactFormat() {
             var sb = new StringBuilder();
-            NativeWin32.PathCompactPathEx( sb, this.FullName, this.FullName.Length, 0 ); //TODO untested. //HACK may be buggy on extensions also
+            NativeMethods.PathCompactPathEx( sb, this.FullName, this.FullName.Length, 0 ); //TODO untested. //HACK may be buggy on extensions also
             return sb.ToString();
         }
 
@@ -445,12 +446,5 @@ namespace Librainian.FileSystem {
         /// <returns>A String that represents the current object.</returns>
         public override String ToString() => this.FullName;
 
-        protected override void CleanUpManagedResources() {
-            base.CleanUpManagedResources();
-        }
-
-        protected override void CleanUpNativeResources() {
-            base.CleanUpNativeResources();
-        }
     }
 }

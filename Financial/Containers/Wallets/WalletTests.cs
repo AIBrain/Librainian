@@ -21,8 +21,8 @@
 namespace Librainian.Financial.Containers.Wallets {
 
     using FluentAssertions;
+    using Maths;
     using NUnit.Framework;
-    using Threading;
 
     [TestFixture]
     public static class WalletTests {

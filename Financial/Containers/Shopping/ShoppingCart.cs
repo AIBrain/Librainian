@@ -26,11 +26,12 @@ namespace Librainian.Financial.Containers.Shopping {
     using System.Linq;
     using Collections;
     using JetBrains.Annotations;
+    using Magic;
     using Maths;
     using Newtonsoft.Json;
 
     [JsonObject]
-    public class ShoppingCart {
+    public class ShoppingCart : ABetterClassDispose {
 
         [JsonProperty]
         private ConcurrentList<ShoppingItem> Items { get; } = new ConcurrentList<ShoppingItem>();
@@ -84,5 +85,11 @@ namespace Librainian.Financial.Containers.Shopping {
             }
             return items;
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this.Items.Dispose(); }
+
     }
 }

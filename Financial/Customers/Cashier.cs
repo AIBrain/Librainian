@@ -22,8 +22,9 @@ namespace Librainian.Financial.Customers {
 
     using System;
     using Containers.Wallets;
+    using Magic;
 
-    public class Cashier : IPerson {
+    public class Cashier : ABetterClassDispose ,IPerson {
 
         public Cashier( Guid cashierID ) {
             this.Wallet = new Wallet( cashierID );
@@ -32,5 +33,11 @@ namespace Librainian.Financial.Customers {
         public Wallet Wallet {
             get;
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this.Wallet.Dispose(); }
+
     }
 }

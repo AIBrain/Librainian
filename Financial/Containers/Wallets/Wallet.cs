@@ -30,7 +30,9 @@ namespace Librainian.Financial.Containers.Wallets {
     using Currency.BankNotes;
     using Currency.Coins;
     using JetBrains.Annotations;
+    using Magic;
     using Maths;
+    using Measurement.Currency;
     using Newtonsoft.Json;
     using NUnit.Framework;
 
@@ -43,7 +45,7 @@ namespace Librainian.Financial.Containers.Wallets {
     /// <seealso cref="Measurement.Currency.BTC.SimpleBitcoinWallet" />
     [JsonObject]
     [DebuggerDisplay( "{ToString(),nq}" )]
-    public class Wallet : IEnumerable<KeyValuePair<IDenomination, UInt64>> {
+    public class Wallet : ABetterClassDispose ,IEnumerable<KeyValuePair<IDenomination, UInt64>> {
 
         public Wallet( Guid id ) {
             this.ID = id;
@@ -414,5 +416,11 @@ namespace Librainian.Financial.Containers.Wallets {
                 this.Statistics.AllTimeDeposited += bankNote.FaceValue * quantity;
             }
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this.Statistics.Dispose(); }
+
     }
 }

@@ -25,6 +25,7 @@ namespace Librainian.Financial.Containers.Wallets {
     using Newtonsoft.Json;
 
     [JsonObject]
+    [Serializable]
     public class WalletException : InvalidOperationException {
 
         public WalletException( String message ) : base( message ) {

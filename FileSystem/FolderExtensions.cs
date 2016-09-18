@@ -89,7 +89,7 @@ namespace Librainian.FileSystem {
                         statistics.SourceDocumentCRC64 = sourceDocument.Crc64();
                     }
 
-                    var destinationDocument = new Document( destinationFolder, sourceDocument.FileName );
+                    var destinationDocument = new Document( destinationFolder, sourceDocument.FileName() );
 
                     if ( overwriteDestinationDocuments && destinationDocument.Exists() ) {
                         destinationDocument.Delete();
@@ -107,7 +107,7 @@ namespace Librainian.FileSystem {
                         return;
                     }
 
-                    statistics.BytesCopied = destinationDocument.Size ?? 0;
+                    statistics.BytesCopied = destinationDocument.Size() ?? 0;
                     if ( crc ) {
                         statistics.BytesCopied *= 2;
                     }

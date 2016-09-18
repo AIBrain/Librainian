@@ -16,7 +16,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/IOExtensions.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
+// "Librainian/IOExtensions.cs" was last cleaned by Rick on 2016/08/03 at 8:51 PM
 
 namespace Librainian.FileSystem {
 
@@ -29,7 +29,6 @@ namespace Librainian.FileSystem {
     using System.IO;
     using System.Linq;
     using System.Management;
-    using System.Runtime.InteropServices;
     using System.Security;
     using System.Security.AccessControl;
     using System.Security.Principal;
@@ -86,9 +85,11 @@ namespace Librainian.FileSystem {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( nameof( fileInfo ) );
             }
+
             if ( String.IsNullOrWhiteSpace( fileInfo.FullName ) || String.IsNullOrWhiteSpace( text ) ) {
                 return;
             }
+
             try {
 
                 //using ( var str = new StreamWriter( fileInfo.FullName, true, Encoding.Unicode ) ) { return str.WriteLineAsync( text ); }
@@ -156,6 +157,7 @@ namespace Librainian.FileSystem {
                         if ( b == -1 ) {
                             yield break;
                         }
+
                         yield return ( Byte )b;
                     } while ( true );
                 }
@@ -193,6 +195,7 @@ namespace Librainian.FileSystem {
                         if ( b == -1 ) {
                             yield break;
                         }
+
                         yield return ( Byte )b;
                     } while ( true );
                 }
@@ -204,7 +207,11 @@ namespace Librainian.FileSystem {
         /// </summary>
         [CanBeNull]
         public static Folder AskUserForStorageFolder( String hint ) {
-            var folderBrowserDialog = new FolderBrowserDialog { ShowNewFolderButton = true, Description = $"Please direct me to a storage folder for {hint}.", RootFolder = Environment.SpecialFolder.MyComputer };
+            var folderBrowserDialog = new FolderBrowserDialog {
+                ShowNewFolderButton = true,
+                Description = $"Please direct me to a storage folder for {hint}.",
+                RootFolder = Environment.SpecialFolder.MyComputer
+            };
 
             var owner = WindowWrapper.CreateWindowWrapper( Process.GetCurrentProcess().MainWindowHandle );
 
@@ -213,6 +220,7 @@ namespace Librainian.FileSystem {
             if ( ( dialog != DialogResult.OK ) || folderBrowserDialog.SelectedPath.IsNullOrWhiteSpace() ) {
                 return null;
             }
+
             return new Folder( folderBrowserDialog.SelectedPath );
         }
 
@@ -255,6 +263,7 @@ namespace Librainian.FileSystem {
             if ( fileInfo == null ) {
                 throw new ArgumentNullException( nameof( fileInfo ) );
             }
+
             if ( !fileInfo.Exists ) {
                 fileInfo.Refresh(); //check one more time
                 if ( !fileInfo.Exists ) {
@@ -276,6 +285,7 @@ namespace Librainian.FileSystem {
                     var high = buffered.ReadByte();
                     if ( high == -1 ) {
                         yield return ( ( Byte )low ).CombineBytes( high: 0 );
+
                         yield break;
                     }
 
@@ -296,9 +306,10 @@ namespace Librainian.FileSystem {
             if ( null == target ) {
                 yield break;
             }
+
             var searchPath = Path.Combine( target.FullName, searchPattern );
-            NativeWin32.Win32FindData findData;
-            using ( var hFindFile = NativeWin32.FindFirstFile( searchPath, out findData ) ) {
+            NativeMethods.Win32FindData findData;
+            using ( var hFindFile = NativeMethods.FindFirstFile( searchPath, out findData ) ) {
                 do {
                     if ( hFindFile.IsInvalid ) {
                         break;
@@ -340,9 +351,10 @@ namespace Librainian.FileSystem {
                             foreach ( var info in subInfo.BetterEnumerateDirectories( searchPattern ) ) {
                                 yield return info;
                             }
+
                             break;
                     }
-                } while ( NativeWin32.FindNextFile( hFindFile, out findData ) );
+                } while ( NativeMethods.FindNextFile( hFindFile, out findData ) );
             }
         }
 
@@ -358,8 +370,8 @@ namespace Librainian.FileSystem {
             //    yield break;
             //}
             var searchPath = Path.Combine( target.FullName, searchPattern );
-            NativeWin32.Win32FindData findData;
-            using ( var hFindFile = NativeWin32.FindFirstFile( searchPath, out findData ) ) {
+            NativeMethods.Win32FindData findData;
+            using ( var hFindFile = NativeMethods.FindFirstFile( searchPath, out findData ) ) {
                 do {
 
                     //Application.DoEvents();
@@ -381,17 +393,22 @@ namespace Librainian.FileSystem {
 
                     var newfName = Path.Combine( target.FullName, findData.cFileName );
                     yield return new FileInfo( newfName );
-                } while ( NativeWin32.FindNextFile( hFindFile, out findData ) );
+                } while ( NativeMethods.FindNextFile( hFindFile, out findData ) );
             }
         }
 
         [CanBeNull]
         public static DirectoryInfo ChooseDirectoryDialog( this Environment.SpecialFolder startFolder, String path, String description = "Please select a folder." ) {
-            using ( var folderDialog = new FolderBrowserDialog { Description = description, RootFolder = Environment.SpecialFolder.MyComputer, ShowNewFolderButton = false } ) {
+            using ( var folderDialog = new FolderBrowserDialog {
+                Description = description,
+                RootFolder = Environment.SpecialFolder.MyComputer,
+                ShowNewFolderButton = false
+            } ) {
                 if ( folderDialog.ShowDialog() == DialogResult.OK ) {
                     return new DirectoryInfo( folderDialog.SelectedPath );
                 }
             }
+
             return null;
         }
 
@@ -412,6 +429,7 @@ namespace Librainian.FileSystem {
             if ( !target.CanWrite ) {
                 throw new Exception( $"Cannot write to {nameof( target )}" );
             }
+
             const Int32 size = 0xffff;
             var buffer = new Byte[ size ];
             Int32 bytesRead;
@@ -454,6 +472,7 @@ namespace Librainian.FileSystem {
             if ( directoryInfo == null ) {
                 throw new ArgumentNullException( nameof( directoryInfo ) );
             }
+
             try {
                 Assert.False( String.IsNullOrWhiteSpace( directoryInfo.FullName ) );
                 directoryInfo.Refresh();
@@ -483,6 +502,7 @@ namespace Librainian.FileSystem {
                 exception.More();
                 return null;
             }
+
             return directoryInfo;
         }
 
@@ -537,18 +557,21 @@ namespace Librainian.FileSystem {
             if ( startingFolder == null ) {
                 throw new ArgumentNullException( nameof( startingFolder ) );
             }
+
             try {
                 var searchPatterns = fileSearchPatterns as IList<String> ?? fileSearchPatterns.ToList();
                 searchPatterns.AsParallel().ForAll( searchPattern => {
                     if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
                         return;
                     }
+
                     try {
                         var folders = startingFolder.BetterEnumerateDirectories( "*" /*, SearchOption.TopDirectoryOnly*/ );
                         folders.AsParallel().ForAll( folder => {
                             if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
                                 return;
                             }
+
                             try {
                                 onEachDirectory?.Invoke( folder );
                             }
@@ -582,6 +605,7 @@ namespace Librainian.FileSystem {
                                     if ( ex is SecurityException ) {
                                         return true;
                                     }
+
                                     ex.More();
                                     return false;
                                 } );
@@ -608,6 +632,7 @@ namespace Librainian.FileSystem {
                             if ( ex is SecurityException ) {
                                 return true;
                             }
+
                             ex.More();
                             return false;
                         } );
@@ -632,6 +657,7 @@ namespace Librainian.FileSystem {
                     if ( ex is SecurityException ) {
                         return true;
                     }
+
                     ex.More();
                     return false;
                 } );
@@ -654,7 +680,7 @@ namespace Librainian.FileSystem {
                 }
             }
             UInt32 hosize;
-            var losize = NativeWin32.GetCompressedFileSizeW( info.FullName, out hosize );
+            var losize = NativeMethods.GetCompressedFileSizeW( info.FullName, out hosize );
             var size = ( hosize << 32 ) | losize;
             return ( size + clusterSize - 1 ) / clusterSize * clusterSize;
         }
@@ -674,14 +700,15 @@ namespace Librainian.FileSystem {
             UInt32 bytesPerSector = 0;
             if ( info.Directory != null ) {
                 UInt32 dummy;
-                var result = NativeWin32.GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
+                var result = NativeMethods.GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullName, lpSectorsPerCluster: out sectorsPerCluster, lpBytesPerSector: out bytesPerSector, lpNumberOfFreeClusters: out dummy, lpTotalNumberOfClusters: out dummy );
                 if ( result == 0 ) {
                     throw new Win32Exception();
                 }
             }
+
             var clusterSize = sectorsPerCluster * bytesPerSector;
             UInt32 sizeHigh;
-            var losize = NativeWin32.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out sizeHigh );
+            var losize = NativeMethods.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out sizeHigh );
             var size = ( sizeHigh << 32 ) | losize;
             return ( size + clusterSize - 1 ) / clusterSize * clusterSize;
         }
@@ -700,15 +727,18 @@ namespace Librainian.FileSystem {
             if ( !Directory.Exists( path ) ) {
                 return String.Empty;
             }
+
             var dir = new DirectoryInfo( path );
             if ( !dir.Exists ) {
                 return String.Empty;
             }
+
             var files = Directory.EnumerateFiles( path: dir.FullName, searchPattern: searchPattern, searchOption: searchOption );
             var pickedfile = files.OrderBy( r => Randem.Next() ).FirstOrDefault();
             if ( ( pickedfile != null ) && File.Exists( pickedfile ) ) {
                 return new FileInfo( pickedfile ).FullName;
             }
+
             return String.Empty;
         }
 
@@ -726,6 +756,7 @@ namespace Librainian.FileSystem {
             if ( foldersFound == null ) {
                 throw new ArgumentNullException( nameof( foldersFound ) );
             }
+
             try {
                 if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
                     return false;
@@ -769,6 +800,7 @@ namespace Librainian.FileSystem {
             catch ( Exception exception ) {
                 exception.More();
             }
+
             return false;
         }
 
@@ -832,25 +864,27 @@ namespace Librainian.FileSystem {
         }
 
         [Pure]
-        public static Boolean IsDirectory( this NativeWin32.Win32FindData data ) => ( data.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory;
+        public static Boolean IsDirectory( this NativeMethods.Win32FindData data ) => ( data.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory;
 
         [Pure]
-        public static Boolean IsFile( this NativeWin32.Win32FindData data ) => !IsDirectory( data );
+        public static Boolean IsFile( this NativeMethods.Win32FindData data ) => !IsDirectory( data );
 
         [Pure]
-        public static Boolean IsIgnoreFolder( this NativeWin32.Win32FindData data ) => data.cFileName.EndsLike( "$RECYCLE.BIN" ) || data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" ) || SystemFolders.Contains( new Folder( data.cFileName ) );
+        public static Boolean IsIgnoreFolder( this NativeMethods.Win32FindData data ) => data.cFileName.EndsLike( "$RECYCLE.BIN" ) || data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" ) || SystemFolders.Contains( new Folder( data.cFileName ) );
 
         [Pure]
-        public static Boolean IsParentOrCurrent( this NativeWin32.Win32FindData data ) => ( data.cFileName == "." ) || ( data.cFileName == ".." );
+        public static Boolean IsParentOrCurrent( this NativeMethods.Win32FindData data ) => ( data.cFileName == "." ) || ( data.cFileName == ".." );
 
         [Pure]
         public static Boolean IsProtected( [NotNull] this FileSystemInfo fileSystemInfo ) {
             if ( fileSystemInfo == null ) {
                 throw new ArgumentNullException( nameof( fileSystemInfo ) );
             }
+
             if ( !fileSystemInfo.Exists ) {
                 return false;
             }
+
             DirectorySecurity ds;
             try {
                 ds = new DirectorySecurity( fileSystemInfo.FullName, AccessControlSections.Access );
@@ -862,10 +896,8 @@ namespace Librainian.FileSystem {
             if ( !ds.AreAccessRulesProtected ) {
                 return false;
             }
+
             using ( var windowsIdentity = WindowsIdentity.GetCurrent() ) {
-                if ( windowsIdentity == null ) {
-                    return false;
-                }
                 var windowsPrincipal = new WindowsPrincipal( windowsIdentity );
                 var isProtected = !windowsPrincipal.IsInRole( WindowsBuiltInRole.Administrator ); // Not running as admin
                 return isProtected;
@@ -873,10 +905,7 @@ namespace Librainian.FileSystem {
         }
 
         [Pure]
-        public static Boolean IsReparsePoint( this NativeWin32.Win32FindData data ) => ( data.dwFileAttributes & FileAttributes.ReparsePoint ) == FileAttributes.ReparsePoint;
-
-        [DllImport( "user32.dll", SetLastError = true )]
-        public static extern Boolean LockWorkStation();
+        public static Boolean IsReparsePoint( this NativeMethods.Win32FindData data ) => ( data.dwFileAttributes & FileAttributes.ReparsePoint ) == FileAttributes.ReparsePoint;
 
         /// <summary>
         ///     Opens a folder with Explorer.exe
@@ -886,6 +915,7 @@ namespace Librainian.FileSystem {
             if ( null == folder ) {
                 return;
             }
+
             if ( !folder.Exists ) {
                 folder.Refresh();
                 if ( !folder.Exists ) {
@@ -917,6 +947,7 @@ namespace Librainian.FileSystem {
             if ( info.Directory == null ) {
                 throw new NullReferenceException( "info.directory" );
             }
+
             var now = Convert.ToString( value: DateTime.UtcNow.ToBinary(), toBase: 16 );
             var formatted = $"{Path.GetFileNameWithoutExtension( info.Name )} {now}{newExtension ?? info.Extension}";
             var path = Path.Combine( info.Directory.FullName, formatted );
@@ -940,15 +971,13 @@ namespace Librainian.FileSystem {
             if ( !bufferSize.HasValue ) {
                 bufferSize = 4096;
             }
-            if ( !retryDelay.HasValue ) {
-                retryDelay = Seconds.One;
-            }
 
             while ( fileMissingRetries.HasValue && ( fileMissingRetries.Value > 0 ) ) {
                 if ( File.Exists( filePath ) ) {
                     break;
                 }
-                await Task.Delay( retryDelay.Value );
+
+                await Task.Delay( retryDelay ?? Seconds.One );
                 fileMissingRetries--;
             }
 
@@ -970,6 +999,7 @@ namespace Librainian.FileSystem {
                     exception.More();
                 }
             }
+
             return String.Empty;
         }
 
@@ -1003,8 +1033,8 @@ namespace Librainian.FileSystem {
                 return false;
             }
 
-            var lba = left.AsByteArray().ToArray();
-            var rba = right.AsByteArray().ToArray();
+            var lba = left.AsByteArray();//.ToArray();
+            var rba = right.AsByteArray();//.ToArray();
 
             return lba.SequenceEqual( rba );
         }
@@ -1104,11 +1134,13 @@ namespace Librainian.FileSystem {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( nameof( fileSearchPatterns ) );
             }
+
             try {
                 DriveInfo.GetDrives().AsParallel().WithDegreeOfParallelism( 26 ).WithExecutionMode( ParallelExecutionMode.ForceParallelism ).ForAll( drive => {
                     if ( !drive.IsReady || ( drive.DriveType == DriveType.NoRootDirectory ) || !drive.RootDirectory.Exists ) {
                         return;
                     }
+
                     $"Scanning [{drive.VolumeLabel}]".WriteLine();
                     drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
                 } );
@@ -1131,6 +1163,7 @@ namespace Librainian.FileSystem {
                     if ( ex is SecurityException ) {
                         return true;
                     }
+
                     ex.More();
                     return false;
                 } );
@@ -1145,6 +1178,7 @@ namespace Librainian.FileSystem {
                         if ( null == outParams ) {
                             return false;
                         }
+
                         var result = Convert.ToUInt32( outParams.Properties[ "ReturnValue" ].Value );
                         return result == 0;
                     }
@@ -1153,6 +1187,7 @@ namespace Librainian.FileSystem {
             catch ( ManagementException exception ) {
                 exception.More();
             }
+
             return false;
         }
 
@@ -1168,6 +1203,7 @@ namespace Librainian.FileSystem {
             catch ( Exception exception ) {
                 exception.More();
             }
+
             return false;
         }
 
@@ -1180,7 +1216,7 @@ namespace Librainian.FileSystem {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( document.FileName );
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( document.FileName() );
 
             TryAgain:
 
@@ -1221,7 +1257,7 @@ namespace Librainian.FileSystem {
                 }
             }
 
-            return $"{fileNameWithoutExtension}{document.Extension}";
+            return $"{fileNameWithoutExtension}{document.Extension()}";
         }
 
         public static ManagementPath ToManagementPath( this DirectoryInfo systemPath ) {
@@ -1229,6 +1265,7 @@ namespace Librainian.FileSystem {
             while ( fullPath.EndsWith( @"\", StringComparison.Ordinal ) ) {
                 fullPath = fullPath.Substring( 0, fullPath.Length - 1 );
             }
+
             fullPath = "Win32_Directory.Name=\"" + fullPath.Replace( "\\", "\\\\" ) + "\"";
             var managed = new ManagementPath( fullPath );
             return managed;
@@ -1238,6 +1275,7 @@ namespace Librainian.FileSystem {
             if ( directoryInfo == null ) {
                 throw new ArgumentNullException( nameof( directoryInfo ) );
             }
+
             return directoryInfo.ToString().Split( Path.DirectorySeparatorChar );
         }
 
@@ -1262,6 +1300,7 @@ namespace Librainian.FileSystem {
             if ( token.IsCancellationRequested ) {
                 return default( TResult );
             }
+
             try {
                 Application.DoEvents();
                 return ioFunction();
@@ -1272,6 +1311,7 @@ namespace Librainian.FileSystem {
                     Thread.CurrentThread.Fraggle( Seconds.One );
                     goto TryAgain;
                 }
+
                 return default( TResult );
             }
         }
@@ -1302,6 +1342,7 @@ namespace Librainian.FileSystem {
                     goto TryAgain;
                 }
             }
+
             return memoryStream;
         }
 
@@ -1312,10 +1353,12 @@ namespace Librainian.FileSystem {
                 if ( String.IsNullOrWhiteSpace( path ) ) {
                     return false;
                 }
+
                 path = path.Trim();
                 if ( String.IsNullOrWhiteSpace( path ) ) {
                     return false;
                 }
+
                 if ( Uri.TryCreate( path, UriKind.Absolute, out uri ) ) {
                     directoryInfo = new DirectoryInfo( uri.LocalPath );
                     return true;
@@ -1329,6 +1372,7 @@ namespace Librainian.FileSystem {
             catch ( SecurityException ) { }
             catch ( PathTooLongException ) { }
             catch ( InvalidOperationException ) { }
+
             return false;
         }
 
@@ -1344,6 +1388,7 @@ namespace Librainian.FileSystem {
             if ( folder == null ) {
                 throw new ArgumentNullException( nameof( folder ) );
             }
+
             try {
                 var randomFileName = Guid.NewGuid().ToString();
                 if ( String.IsNullOrWhiteSpace( extension ) ) {
@@ -1391,6 +1436,7 @@ namespace Librainian.FileSystem {
 
                 // IOExcception is thrown if the file is in use by another process.
             }
+
             return null;
         }
 
@@ -1410,11 +1456,13 @@ namespace Librainian.FileSystem {
                 if ( !bePatient ) {
                     return null;
                 }
+
                 if ( !Thread.Yield() ) {
                     Thread.Sleep( 0 );
                 }
                 goto TryAgain;
             }
+
             return null;
         }
 
@@ -1429,6 +1477,7 @@ namespace Librainian.FileSystem {
 
                 // IOExcception is thrown if the file is in use by another process.
             }
+
             return null;
         }
 
@@ -1436,6 +1485,7 @@ namespace Librainian.FileSystem {
             if ( info == null ) {
                 throw new ArgumentNullException( nameof( info ) );
             }
+
             if ( !info.Exists ) {
                 info.Refresh();
                 if ( !info.Exists ) {
@@ -1453,7 +1503,7 @@ namespace Librainian.FileSystem {
                     if ( fileStream.SafeFileHandle != null ) {
                         fileStream.SafeFileHandle.DangerousAddRef( success: ref success );
 
-                        var result = NativeWin32.DeviceIoControl( fileStream.SafeFileHandle.DangerousGetHandle(), FsctlSetCompression, ref compressionFormatDefault, sizeof( Int16 ), IntPtr.Zero, nOutBufferSize: 0, lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
+                        var result = NativeMethods.DeviceIoControl( fileStream.SafeFileHandle.DangerousGetHandle(), FsctlSetCompression, ref compressionFormatDefault, sizeof( Int16 ), IntPtr.Zero, nOutBufferSize: 0, lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
                     }
                 }
                 finally {
@@ -1487,6 +1537,67 @@ namespace Librainian.FileSystem {
             return info;
         }
 
+        //    return false;
+        //    }
+        //        exception.More();
+        //    catch ( Exception exception ) {
+        //    }
+        //        }
+
+        //            return true;
+        //            notifier.Show( toast );
+
+        //            // Send the toast.
+        //            toast.SuppressPopup = !popup;
+        //            // center without producing a popup.
+
+        //            // Set SuppressPopup = true on the toast in order to send it directly to action
+        //            var toast = CreateTextOnlyToast( header, body, longDuration );
+        //        if ( notifier.Setting == NotificationSetting.Enabled ) {
+        //    try {
+        //    var notifier = ToastNotificationManager.CreateToastNotifier( applicationId );
+        //public static Boolean TryToast( this String applicationId, String header, String body, Boolean longDuration = false, Boolean popup = true ) {
+        ///// <returns></returns>
+        ///// <param name="popup"></param>
+        ///// <param name="longDuration"></param>
+        ///// <param name="body"></param>
+        ///// <param name="header"></param>
+        ///// <param name="applicationId"></param>
+        ///// </summary>
+        /////     Where does this method belong?
+
+        ///// <summary>
+        //}
+        //    return new ToastNotification( xml );
+
+        //    // Create the actual toast object using this toast specification.
+        //    }
+        //        toastNode?.SetAttribute( "duration", "long" );
+        //        var toastNode = xml.SelectSingleNode( "/toast" ) as XmlElement;
+        //        // Set the duration on the toast
+
+        //    if ( longDuration ) {
+        //    textElements[ 1 ].AppendChild( xml.CreateTextNode( body ) );
+        //    textElements[ 0 ].AppendChild( xml.CreateTextNode( heading ) );
+        //    // treated as header text, and will be bold.
+
+        //    // Set the text on the toast. The first line of text in the ToastText02 template is
+        //    var textElements = xml.GetElementsByTagName( "text" );
+
+        //    //Find the text component of the content
+        //    var xml = ToastNotificationManager.GetTemplateContent( ToastTemplateType.ToastText02 );
+        //    // can change the text.
+        //    // Using the ToastText02 toast template. Retrieve the content part of the toast so we
+        //public static ToastNotification CreateTextOnlyToast( this String heading, String body, Boolean longDuration = false ) {
+        ///// </remarks>
+        /////     (http://msdn.microsoft.com/en-us/Library/windows/apps/hh761494.aspx)
+        /////     Note: All toast templates available in the Toast Template Catalog
+        ///// <remarks>
+        ///// <returns></returns>
+        ///// <param name="longDuration"></param>
+        ///// <param name="body"></param>
+        ///// <param name="heading"></param>
+
         /*
                 public static DateTime? GetProperteryAsDateTime( [CanBeNull] this PropertyItem item ) {
                     if ( null == item ) {
@@ -1514,67 +1625,6 @@ namespace Librainian.FileSystem {
                     return null;
                 }
         */
-        ///// <param name="heading"></param>
-        ///// <param name="body"></param>
-        ///// <param name="longDuration"></param>
-        ///// <returns></returns>
-        ///// <remarks>
-        /////     Note: All toast templates available in the Toast Template Catalog
-        /////     (http://msdn.microsoft.com/en-us/Library/windows/apps/hh761494.aspx)
-        ///// </remarks>
-        //public static ToastNotification CreateTextOnlyToast( this String heading, String body, Boolean longDuration = false ) {
-        //    // Using the ToastText02 toast template. Retrieve the content part of the toast so we
-        //    // can change the text.
-        //    var xml = ToastNotificationManager.GetTemplateContent( ToastTemplateType.ToastText02 );
-
-        //    //Find the text component of the content
-        //    var textElements = xml.GetElementsByTagName( "text" );
-
-        //    // Set the text on the toast. The first line of text in the ToastText02 template is
-        //    // treated as header text, and will be bold.
-        //    textElements[ 0 ].AppendChild( xml.CreateTextNode( heading ) );
-        //    textElements[ 1 ].AppendChild( xml.CreateTextNode( body ) );
-
-        //    if ( longDuration ) {
-        //        // Set the duration on the toast
-        //        var toastNode = xml.SelectSingleNode( "/toast" ) as XmlElement;
-        //        toastNode?.SetAttribute( "duration", "long" );
-        //    }
-
-        //    // Create the actual toast object using this toast specification.
-        //    return new ToastNotification( xml );
-        //}
-
-        ///// <summary>
-        /////     Where does this method belong?
-        ///// </summary>
-        ///// <param name="applicationId"></param>
-        ///// <param name="header"></param>
-        ///// <param name="body"></param>
-        ///// <param name="longDuration"></param>
-        ///// <param name="popup"></param>
-        ///// <returns></returns>
-        //public static Boolean TryToast( this String applicationId, String header, String body, Boolean longDuration = false, Boolean popup = true ) {
-        //    var notifier = ToastNotificationManager.CreateToastNotifier( applicationId );
-        //    try {
-        //        if ( notifier.Setting == NotificationSetting.Enabled ) {
-        //            var toast = CreateTextOnlyToast( header, body, longDuration );
-
-        //            // Set SuppressPopup = true on the toast in order to send it directly to action
-        //            // center without producing a popup.
-        //            toast.SuppressPopup = !popup;
-
-        //            // Send the toast.
-        //            notifier.Show( toast );
-
-        //            return true;
-        //        }
-        //    }
-        //    catch ( Exception exception ) {
-        //        exception.More();
-        //    }
-
-        //    return false;
 
         //}
         ///// </summary>

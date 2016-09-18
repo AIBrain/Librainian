@@ -23,6 +23,7 @@ namespace Librainian.FileSystem {
     using System;
     using System.Collections;
     using System.Diagnostics;
+    using System.IO;
     using System.Runtime.InteropServices;
     using OperatingSystem;
 
@@ -71,10 +72,10 @@ namespace Librainian.FileSystem {
 
                 const Int32 q = 1024 * 1024 * 64; // 1024 bytes == 1k * 1024 == 1 meg * 64 == 64 megs
 
-                UInt32 size = 0;
+                Int32 size;
                 pAlloc = Marshal.AllocHGlobal( q );
                 var pDest = pAlloc;
-                var fResult = DeviceIoControl( hFile, FSConstants.FsctlGetRetrievalPointers, p, ( UInt32 )Marshal.SizeOf( i64 ), pDest, q, ref size, IntPtr.Zero );
+                var fResult = NativeMethods.DeviceIoControl( hFile, FSConstants.FsctlGetRetrievalPointers, p, Marshal.SizeOf( i64 ), pDest, q, out size, IntPtr.Zero );
 
                 if ( !fResult ) {
                     throw new Exception( Marshal.GetLastWin32Error().ToString() );
@@ -119,7 +120,7 @@ namespace Librainian.FileSystem {
                 return retVal;
             }
             finally {
-                NativeWin32.CloseHandle( hFile );
+                NativeMethods.CloseHandle( hFile );
 
                 // ReSharper disable once RedundantAssignment
                 hFile = IntPtr.Zero;
@@ -151,13 +152,13 @@ namespace Librainian.FileSystem {
                 // alloc off more than enough for my machine 64 megs == 67108864 bytes == 536870912
                 // bits == cluster count NTFS 4k clusters == 2147483648 k of storage == 2097152 megs
                 // == 2048 gig disk storage
-                const UInt32 q = 1024 * 1024 * 64; // 1024 bytes == 1k * 1024 == 1 meg * 64 == 64 megs
+                const Int32 q = 1024 * 1024 * 64; // 1024 bytes == 1k * 1024 == 1 meg * 64 == 64 megs
 
-                UInt32 size = 0;
-                pAlloc = Marshal.AllocHGlobal( ( Int32 )q );
+                Int32 size;
+                pAlloc = Marshal.AllocHGlobal( q );
                 var pDest = pAlloc;
 
-                var result = DeviceIoControl( hDevice, FSConstants.FsctlGetVolumeBitmap, p, ( UInt32 )Marshal.SizeOf( i64 ), pDest, q, ref size, IntPtr.Zero );
+                var result = NativeMethods.DeviceIoControl( hDevice, FSConstants.FsctlGetVolumeBitmap, p, Marshal.SizeOf( i64 ), pDest, q, out size, IntPtr.Zero );
 
                 if ( !result ) {
                     throw new Exception( Marshal.GetLastWin32Error().ToString() );
@@ -195,7 +196,7 @@ namespace Librainian.FileSystem {
                 return retVal;
             }
             finally {
-                NativeWin32.CloseHandle( hDevice );
+                NativeMethods.CloseHandle( hDevice );
 
                 // ReSharper disable once RedundantAssignment
                 hDevice = IntPtr.Zero;
@@ -228,53 +229,57 @@ namespace Librainian.FileSystem {
                 var handle = GCHandle.Alloc( mfd, GCHandleType.Pinned );
                 var p = handle.AddrOfPinnedObject();
                 var bufSize = ( UInt32 )Marshal.SizeOf( mfd );
-                UInt32 size = 0;
+                UInt32 size;
 
-                var fResult = DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, // no output data from this FSCTL
-                                               0, ref size, IntPtr.Zero );
-
-                handle.Free();
-
+                var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, /* no output data from this FSCTL*/ 0, out size, IntPtr.Zero );
                 if ( !fResult ) {
                     throw new Exception( Marshal.GetLastWin32Error().ToString() );
                 }
+                handle.Free();
+
             }
             finally {
-                NativeWin32.CloseHandle( hVol );
-                NativeWin32.CloseHandle( hFile );
+                NativeMethods.CloseHandle( hVol );
+                NativeMethods.CloseHandle( hFile );
             }
         }
 
         public static IntPtr OpenFile( String path ) {
-            var hFile = NativeWin32.CreateFile( path, FileReadAttributes | FileWriteAttributes, FileShareRead | FileShareWrite, IntPtr.Zero, OpenExisting, 0, IntPtr.Zero );
-            if ( ( Int32 )hFile == -1 ) {
+            var hFile = NativeMethods.CreateFile( path, FileAccess.ReadWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
+            if ( hFile.IsInvalid ) {
                 throw new Exception( Marshal.GetLastWin32Error().ToString() );
             }
-            return hFile;
+            return hFile.DangerousGetHandle();
         }
 
         public static IntPtr OpenVolume( String deviceName ) {
-            var hDevice = NativeWin32.CreateFile( @"\\.\" + deviceName, GenericRead | GenericWrite, FileShareWrite, IntPtr.Zero, OpenExisting, 0, IntPtr.Zero );
-            if ( ( Int32 )hDevice == -1 ) {
+            var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName, FileAccess.ReadWrite, FileShare.Write, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
+            if ( hDevice.IsInvalid ) {
                 throw new Exception( Marshal.GetLastWin32Error().ToString() );
             }
-            return hDevice;
+            return hDevice.DangerousGetHandle();
         }
 
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        private static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, [Out] IntPtr lpOutBuffer, UInt32 nOutBufferSize, ref UInt32 lpBytesReturned, IntPtr lpOverlapped );
 
         /// <summary>
         ///     input structure for use in MoveFile
         /// </summary>
         private struct MoveFileData {
+#pragma warning disable 414
             public Int32 ClusterCount;
+#pragma warning restore 414
 
+#pragma warning disable 414
             public IntPtr HFile;
+#pragma warning restore 414
 
+#pragma warning disable 414
             public Int64 StartingLcn;
+#pragma warning restore 414
 
+#pragma warning disable 414
             public Int64 StartingVcn;
+#pragma warning restore 414
         }
     }
 }

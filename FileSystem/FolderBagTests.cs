@@ -38,7 +38,7 @@ namespace Librainian.FileSystem {
             var watch = StopWatch.StartNew();
             var pathTree = new FolderBag();
 
-            foreach ( var drive in Drive.GetDrives().Where( drive => drive.Info.IsReady ).Take( 1 ) ) {
+            foreach ( var drive in Drive.GetDrives().Where( drive => drive.Info.IsReady && drive.RootDirectory.StartsWith( "C" ) ).Take( 1 ) ) {
                 var root = new Folder( drive.DriveLetter + ":" + Path.DirectorySeparatorChar );
                 foreach ( var folder in root.BetterGetFolders() ) {
                     pathTree.FoundAnotherFolder( folder );
@@ -49,12 +49,11 @@ namespace Librainian.FileSystem {
             watch.Stop();
 
             counter.Should().Be( allPaths.LongCount() );
-            var foldersPerMill = counter / watch.ElapsedMilliseconds;
-            Console.WriteLine( "Found & stored " + counter + " paths in " + foldersPerMill.ToString( "F2" ) + " folders per millisecond." );
+            Console.WriteLine( $"Found & stored {counter} folders in {watch.Elapsed.Simpler()}." );
 
             var temp = Document.GetTempDocument();
             pathTree.Save( temp, formatting: Formatting.None );
-            File.WriteAllLines( temp.Folder.FullName + @"\alllines.txt", allPaths.Select( folder => folder.FullName ) );
+            File.WriteAllLines( temp.Folder().FullName + @"\allLines.txt", allPaths.Select( folder => folder.FullName ) );
         }
     }
 }

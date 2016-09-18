@@ -165,31 +165,33 @@ namespace Librainian.FileSystem {
             strOperation = strOperation.Trim();
 
             Int32 resultEnableDisableNetworkAdapter;
-            var crtNetworkAdapter = new ManagementObject();
+            ManagementObject crtNetworkAdapter;
 
-            try {
-                var networkAdapters = WMIExtensions.WmiQuery( $"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}" );
-                foreach ( var networkAdapter in from ManagementBaseObject o in networkAdapters select o as ManagementObject ) {
-                    crtNetworkAdapter = networkAdapter;
-                }
+            using ( crtNetworkAdapter = new ManagementObject() ) {
 
-                crtNetworkAdapter?.InvokeMethod( strOperation, null );
+                try {
+                    var networkAdapters = WMIExtensions.WmiQuery( $"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}" );
+                    foreach ( var networkAdapter in from ManagementBaseObject o in networkAdapters select o as ManagementObject ) {
+                        crtNetworkAdapter = networkAdapter;
+                    }
 
-                Task.Delay( Milliseconds.OneHundred ).Wait();
-                while ( this.GetNetEnabled() != ( strOperation.Equals( "Enable", StringComparison.OrdinalIgnoreCase ) ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled ) ) {
+                    crtNetworkAdapter?.InvokeMethod( strOperation, null );
+
                     Task.Delay( Milliseconds.OneHundred ).Wait();
+                    while ( this.GetNetEnabled() != ( strOperation.Equals( "Enable", StringComparison.OrdinalIgnoreCase ) ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled ) ) {
+                        Task.Delay( Milliseconds.OneHundred ).Wait();
+                    }
+
+                    resultEnableDisableNetworkAdapter = ( Int32 )EnumEnableDisableResult.Success;
+                }
+                catch ( NullReferenceException ) {
+
+                    // If there is a NullReferenceException, the result of the enable or disable network
+                    // adapter operation will be fail
+                    resultEnableDisableNetworkAdapter = ( Int32 )EnumEnableDisableResult.Fail;
                 }
 
-                resultEnableDisableNetworkAdapter = ( Int32 )EnumEnableDisableResult.Success;
             }
-            catch ( NullReferenceException ) {
-
-                // If there is a NullReferenceException, the result of the enable or disable network
-                // adapter operation will be fail
-                resultEnableDisableNetworkAdapter = ( Int32 )EnumEnableDisableResult.Fail;
-            }
-
-            crtNetworkAdapter?.Dispose();
 
             return resultEnableDisableNetworkAdapter;
         }

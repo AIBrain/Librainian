@@ -23,10 +23,11 @@ namespace Librainian.Financial.Containers.Wallets {
     using System;
     using System.Threading;
     using JetBrains.Annotations;
+    using Magic;
     using Newtonsoft.Json;
 
     [JsonObject]
-    public class WalletStatistics {
+    public class WalletStatistics : ABetterClassDispose {
 
         [NotNull]
         private readonly ReaderWriterLockSlim _depositLock;
@@ -102,5 +103,14 @@ namespace Librainian.Financial.Containers.Wallets {
             this.AllTimeDeposited = Decimal.Zero;
             this.AllTimeWithdrawn = Decimal.Zero;
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
+            this._depositLock.Dispose();
+            this._withwrawLock.Dispose();
+        }
+
     }
 }
