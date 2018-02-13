@@ -65,6 +65,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -73,6 +76,8 @@
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -367,7 +372,6 @@
     <Compile Include="Database\MMF\ValueTypeCheck.cs" />
     <Compile Include="Database\DatabaseExtensions.cs" />
     <Compile Include="Database\Database.cs" />
-    <Compile Include="DiagnosticTests.cs" />
     <Compile Include="Extensions\BigNullStream.cs" />
     <Compile Include="Extensions\BooleanPredicateBuilder.cs" />
     <Compile Include="Extensions\ReflectionHelper.cs" />
@@ -742,7 +746,9 @@
     <Content Include="x64\libtesseract304.dll" />
     <Content Include="x86\liblept172.dll" />
     <Content Include="x86\libtesseract304.dll" />
-    <None Include="FodyWeavers.xml" />
+    <None Include="FodyWeavers.xml">
+      <SubType>Designer</SubType>
+    </None>
     <EmbeddedResource Include="md5sum.exe" />
   </ItemGroup>
   <ItemGroup>
@@ -766,6 +772,62 @@
       <DependentUpon>MultiBrowserForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AForge.Math">
+      <Version>2.2.5</Version>
+    </PackageReference>
+    <PackageReference Include="BigRationalLibrary">
+      <Version>1.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="CodeFluentRuntimeClient">
+      <Version>1.0.0.844</Version>
+    </PackageReference>
+    <PackageReference Include="Costura.Fody">
+      <Version>1.6.2</Version>
+    </PackageReference>
+    <PackageReference Include="FluentAssertions">
+      <Version>5.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Fody">
+      <Version>2.4.1</Version>
+    </PackageReference>
+    <PackageReference Include="FSharp.Core">
+      <Version>4.3.4</Version>
+    </PackageReference>
+    <PackageReference Include="JetBrains.Annotations">
+      <Version>11.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="LanguageExt.Core">
+      <Version>2.1.32</Version>
+    </PackageReference>
+    <PackageReference Include="MathNet.Numerics.FSharp">
+      <Version>4.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Database.Collections.Generic">
+      <Version>1.9.4</Version>
+    </PackageReference>
+    <PackageReference Include="Mono.Security">
+      <Version>3.2.3</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>10.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Ninject">
+      <Version>3.3.4</Version>
+    </PackageReference>
+    <PackageReference Include="NUnit">
+      <Version>3.9.0</Version>
+    </PackageReference>
+    <PackageReference Include="RandomNameGeneratorLibrary">
+      <Version>1.2.2</Version>
+    </PackageReference>
+    <PackageReference Include="xunit">
+      <Version>2.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="xunit.extensibility.core">
+      <Version>2.3.1</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -18,8 +18,7 @@
 // 
 // "Librainian Tests/MyClass.cs" was last cleaned by Rick on 2016/02/02 at 10:10 PM
 
-namespace LibrainianTests {
-
+namespace Tests {
     using System;
     using System.IO;
     using System.Runtime.CompilerServices;
@@ -31,9 +30,9 @@ namespace LibrainianTests {
     [ Serializable ]
     public class MyClass : ISerializable {
 
-        public MyClass() => Trace();
+        public MyClass() => this.Trace();
 
-        protected MyClass( SerializationInfo info, StreamingContext context ) => Trace();
+        protected MyClass( SerializationInfo info, StreamingContext context ) => this.Trace();
 
         /// <summary>
         ///     Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data needed to serialize the
@@ -45,21 +44,21 @@ namespace LibrainianTests {
         ///     serialization.
         /// </param>
         /// <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
-        public void GetObjectData( SerializationInfo info, StreamingContext context ) => Trace();
+        public void GetObjectData( SerializationInfo info, StreamingContext context ) => this.Trace();
 
         private void Trace( [CallerMemberName] String caller = null ) => Console.WriteLine( $"Trace {caller}: {this.GetType().Name}" );
 
         [OnDeserializing]
-        internal void OnDeserializingMethod( StreamingContext context ) => Trace();
+        internal void OnDeserializingMethod( StreamingContext context ) => this.Trace();
 
         [OnDeserialized]
-        internal void OnDeserializedMethod( StreamingContext context ) => Trace();
+        internal void OnDeserializedMethod( StreamingContext context ) => this.Trace();
 
         [OnSerializing]
-        internal void OnSerializingMethod( StreamingContext context ) => Trace();
+        internal void OnSerializingMethod( StreamingContext context ) => this.Trace();
 
         [OnSerialized]
-        internal void OnSerializedMethod( StreamingContext context ) => Trace();
+        internal void OnSerializedMethod( StreamingContext context ) => this.Trace();
 
         [ Test ]
         public static void SerializeAndDeserializeTest() {

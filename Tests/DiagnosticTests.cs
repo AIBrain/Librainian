@@ -18,21 +18,21 @@
 //
 // "Librainian/DiagnosticTests.cs" was last cleaned by Rick on 2016/06/18 at 10:58 PM
 
-namespace Librainian {
-
+namespace Tests {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Collections;
     using FluentAssertions;
     using JetBrains.Annotations;
-    using Maths;
-    using Measurement.Time;
-    using Measurement.Time.Clocks;
+    using Librainian;
+    using Librainian.Collections;
+    using Librainian.Maths;
+    using Librainian.Measurement.Time;
+    using Librainian.Measurement.Time.Clocks;
+    using Librainian.Parsing;
+    using Librainian.Threading;
     using NUnit.Framework;
-    using Parsing;
-    using Threading;
 
     [TestFixture]
     public static class DiagnosticTests {

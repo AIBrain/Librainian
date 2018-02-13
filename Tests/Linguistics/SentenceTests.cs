@@ -1,5 +1,4 @@
-﻿namespace LibrainianTests.Linguistics {
-
+﻿namespace Tests.Linguistics {
     using System;
     using System.Linq;
     using FluentAssertions;
@@ -11,7 +10,6 @@
 
         public const String Sample = "the quick brown fox jumped over the lazy dog";
 
-        [Test]
         public static Sentence SampleLengthTest() {
             var sentence = new Sentence( Sample );
             sentence.LongCount()

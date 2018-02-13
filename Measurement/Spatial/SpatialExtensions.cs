@@ -23,8 +23,8 @@ namespace Librainian.Measurement.Spatial {
     using System;
     using System.Windows;
     using System.Windows.Media.Media3D;
-    using AForge.Math;
     using JetBrains.Annotations;
+    using Vector3 = System.Numerics.Vector3;
 
     public static class SpatialExtensions {
         public const Single TwoPi = ( Single )( Math.PI * 2 );

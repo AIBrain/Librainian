@@ -44,7 +44,6 @@ namespace Librainian.FileSystem {
 	using Parsing;
 	using Security;
 	using Threading;
-	using Xunit.Should;
 	using Computer = Microsoft.VisualBasic.Devices.Computer;
 
 	/// <summary>
@@ -107,7 +106,7 @@ namespace Librainian.FileSystem {
 		public Document( [NotNull] Folder baseFolder, UInt64 index ) {
 			var path = IndexToPath( baseFolder: baseFolder, index: index );
 			this.Info = new FileInfo( path );
-			this.Info.Exists.ShouldBeTrue();
+			//TODO this.Info.Exists.ShouldBeTrue();
 		}
 
 		public Document( Folder folder, Document document ) : this( Path.Combine( folder.FullName, document.FileName() ) ) {
