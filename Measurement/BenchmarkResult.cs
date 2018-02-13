@@ -27,7 +27,7 @@ namespace Librainian.Measurement {
     /// <summary>
     ///     Represents the result of a benchmarking session.
     /// </summary>
-    [DebuggerDisplay( "{ToString()}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     public struct BenchmarkResult {
 
         public BenchmarkResult( Int64 roundsRan, TimeSpan averageTime, TimeSpan totalTime ) {
@@ -70,8 +70,7 @@ namespace Librainian.Measurement {
         /// <returns>
         ///     A <see cref="T:System.String" /> containing a fully qualified type name.
         /// </returns>
-        public override String ToString() {
-            return this.TotalTime.Simpler();
-        }
+        public override String ToString() => this.TotalTime.Simpler();
+
     }
 }

@@ -72,10 +72,9 @@ namespace Librainian.FileSystem {
 
                 const Int32 q = 1024 * 1024 * 64; // 1024 bytes == 1k * 1024 == 1 meg * 64 == 64 megs
 
-                Int32 size;
-                pAlloc = Marshal.AllocHGlobal( q );
-                var pDest = pAlloc;
-                var fResult = NativeMethods.DeviceIoControl( hFile, FSConstants.FsctlGetRetrievalPointers, p, Marshal.SizeOf( i64 ), pDest, q, out size, IntPtr.Zero );
+				pAlloc = Marshal.AllocHGlobal( q );
+				var pDest = pAlloc;
+                var fResult = NativeMethods.DeviceIoControl( hFile, FSConstants.FsctlGetRetrievalPointers, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
 
                 if ( !fResult ) {
                     throw new Exception( Marshal.GetLastWin32Error().ToString() );
@@ -154,11 +153,10 @@ namespace Librainian.FileSystem {
                 // == 2048 gig disk storage
                 const Int32 q = 1024 * 1024 * 64; // 1024 bytes == 1k * 1024 == 1 meg * 64 == 64 megs
 
-                Int32 size;
-                pAlloc = Marshal.AllocHGlobal( q );
-                var pDest = pAlloc;
+				pAlloc = Marshal.AllocHGlobal( q );
+				var pDest = pAlloc;
 
-                var result = NativeMethods.DeviceIoControl( hDevice, FSConstants.FsctlGetVolumeBitmap, p, Marshal.SizeOf( i64 ), pDest, q, out size, IntPtr.Zero );
+                var result = NativeMethods.DeviceIoControl( hDevice, FSConstants.FsctlGetVolumeBitmap, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
 
                 if ( !result ) {
                     throw new Exception( Marshal.GetLastWin32Error().ToString() );
@@ -229,10 +227,9 @@ namespace Librainian.FileSystem {
                 var handle = GCHandle.Alloc( mfd, GCHandleType.Pinned );
                 var p = handle.AddrOfPinnedObject();
                 var bufSize = ( UInt32 )Marshal.SizeOf( mfd );
-                UInt32 size;
 
-                var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, /* no output data from this FSCTL*/ 0, out size, IntPtr.Zero );
-                if ( !fResult ) {
+				var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, /* no output data from this FSCTL*/ 0, out var size, IntPtr.Zero );
+				if ( !fResult ) {
                     throw new Exception( Marshal.GetLastWin32Error().ToString() );
                 }
                 handle.Free();

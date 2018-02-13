@@ -80,11 +80,9 @@ namespace Librainian.Measurement.Frequency {
         [JsonProperty]
         public readonly Decimal Value;
 
-        public Bpm( Decimal bpm ) {
-            this.Value = bpm;
-        }
+        public Bpm( Decimal bpm ) => this.Value = bpm;
 
-        public static implicit operator TimeSpan( Bpm bpm ) => TimeSpan.FromMilliseconds( ( Double )bpm.Value / Seconds.InOneMinute );
+	    public static implicit operator TimeSpan( Bpm bpm ) => TimeSpan.FromMilliseconds( ( Double )bpm.Value / Seconds.InOneMinute );
 
         public Int32 CompareTo( Bpm other ) => this.Value.CompareTo( other.Value );
 

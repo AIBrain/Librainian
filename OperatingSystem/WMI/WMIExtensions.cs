@@ -29,8 +29,7 @@ namespace Librainian.OperatingSystem.WMI {
             using ( var managementClass = new ManagementClass( wmiClass ) ) {
                 var instances = managementClass.GetInstances();
                 foreach ( var baseObject in instances ) {
-                    var managementObject = baseObject as ManagementObject;
-                    if ( managementObject == null || ( managementObject[ wmiMustBeTrue ].ToString() != "True" ) ) {
+	                if ( !( baseObject is ManagementObject managementObject ) || managementObject[ wmiMustBeTrue ].ToString() != "True" ) {
                         continue;
                     }
                     try {
@@ -49,8 +48,7 @@ namespace Librainian.OperatingSystem.WMI {
                 var instances = managementClass.GetInstances();
                 foreach ( var baseObject in instances ) {
                     try {
-                        var managementObject = baseObject as ManagementObject;
-                        if ( managementObject != null ) {
+	                    if ( baseObject is ManagementObject managementObject ) {
                             return managementObject[ wmiProperty ].ToString();
                         }
                     }

@@ -39,43 +39,31 @@ namespace Librainian.Threading.RandomOrg {
         private readonly List<Int32> _ints = new List<Int32>();
         private Int32 _index;
 
-        public IntegerGenerator() {
-            this.Init( NumMax, Min, Max, ColDefault, BaseDefault );
-        }
+		public IntegerGenerator() => this.Init( NumMax, Min, Max, ColDefault, BaseDefault );
 
-        public IntegerGenerator( Int32 num ) {
-            this.Init( num, Min, Max, ColDefault, BaseDefault );
-        }
+		public IntegerGenerator( Int32 num ) => this.Init( num, Min, Max, ColDefault, BaseDefault );
 
-        public IntegerGenerator( Int32 num, Int32 min ) {
-            this.Init( num, min, Max, ColDefault, BaseDefault );
-        }
+		public IntegerGenerator( Int32 num, Int32 min ) => this.Init( num, min, Max, ColDefault, BaseDefault );
 
-        public IntegerGenerator( Int32 num, Int32 min, Int32 max ) {
-            this.Init( num, min, max, ColDefault, BaseDefault );
-        }
+		public IntegerGenerator( Int32 num, Int32 min, Int32 max ) => this.Init( num, min, max, ColDefault, BaseDefault );
 
-        public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col ) {
-            this.Init( num, min, max, col, BaseDefault );
-        }
+		public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col ) => this.Init( num, min, max, col, BaseDefault );
 
-        public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase ) {
-            this.Init( num, min, max, col, inbase );
-        }
+		public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase ) => this.Init( num, min, max, col, inbase );
 
-        public Int32 Get() {
+		public Int32 Get() {
             this._index++;
             this._index %= this._ints.Count;
             return this._ints[ this._index ];
         }
 
         private void Init( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase ) {
-            if ( ( num >= NumMin ) && ( num <= NumMax ) ) {
+            if ( num >= IntegerGenerator.NumMin && num <= IntegerGenerator.NumMax ) {
                 if ( min >= Min ) {
                     if ( max <= Max ) {
                         if ( max > min ) {
-                            if ( ( col > 0 ) && ( col <= ColMax ) ) {
-                                if ( ( inbase == 2 ) || ( inbase == 8 ) || ( inbase == 10 ) || ( inbase == 16 ) ) {
+                            if ( col > 0 && col <= IntegerGenerator.ColMax ) {
+                                if ( inbase == 2 || inbase == 8 || inbase == 10 || inbase == 16 ) {
                                     var toParse = $"http://www.random.org/integers/?num={num}&min={min}&max={max}&col={col}&base={inbase}&format=plain&rnd=new".GetWebPage();
                                     foreach ( var s in Regex.Split( toParse, @"\D" ) ) {
                                         try {

@@ -29,11 +29,9 @@ namespace Librainian.Threading {
     [Serializable]
     public class ActorException : Exception {
 
-        public ActorException( String because ) {
-            this.Reason = because;
-        }
+        public ActorException( String because ) => this.Reason = because;
 
-        protected ActorException( SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+	    protected ActorException( SerializationInfo info, StreamingContext context ) : base( info, context ) { }
 
         public String Reason {
             get;

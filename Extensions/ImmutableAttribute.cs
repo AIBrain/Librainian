@@ -133,7 +133,7 @@ namespace Librainian.Extensions {
 
             // override all checks on this type if [ImmutableAttribute(OnFaith=true)] is set
             var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>( type );
-            return ( immutableAttribute != null ) && immutableAttribute.OnFaith;
+            return immutableAttribute != null && immutableAttribute.OnFaith;
         }
 
         [SuppressMessage( "Microsoft.Usage", "CA2240:ImplementISerializableCorrectly" )]
@@ -142,15 +142,11 @@ namespace Librainian.Extensions {
         public class ImmutableFailureException : Exception {
             public readonly Type Type;
 
-            internal ImmutableFailureException( Type type, String message, Exception inner ) : base( message, inner ) {
-                this.Type = type;
-            }
+            internal ImmutableFailureException( Type type, String message, Exception inner ) : base( message, inner ) => this.Type = type;
 
-            internal ImmutableFailureException( Type type, String message ) : base( message ) {
-                this.Type = type;
-            }
+	        internal ImmutableFailureException( Type type, String message ) : base( message ) => this.Type = type;
 
-            protected ImmutableFailureException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
+	        protected ImmutableFailureException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
             }
         }
 

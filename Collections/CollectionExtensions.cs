@@ -24,9 +24,11 @@ namespace Librainian.Collections {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Data;
     using System.Diagnostics;
     using System.Linq;
     using System.Numerics;
+    using System.Reflection;
     using System.Threading.Tasks;
     using FluentAssertions;
     using JetBrains.Annotations;
@@ -36,10 +38,10 @@ namespace Librainian.Collections {
 
     public static class CollectionExtensions {
 
-        /// <summary>
-        ///     <para>A list containing <see cref="bool.False" /> then <see cref="bool.True" />.</para>
-        /// </summary>
-        public static readonly Lazy<List<Boolean>> FalseThenTrue = new Lazy<List<Boolean>>( () => new List<Boolean>( new[] { false, true } ) );
+		/// <summary>
+		///     <para>A list containing <see cref="Boolean.False" /> then <see cref="Boolean.True" />.</para>
+		/// </summary>
+		public static readonly Lazy<List<Boolean>> FalseThenTrue = new Lazy<List<Boolean>>( () => new List<Boolean>( new[] { false, true } ) );
 
         /// <summary>
         ///     <para>A list containing <see cref="Boolean.True" /> then <see cref="Boolean.False" />.</para>
@@ -95,9 +97,10 @@ namespace Librainian.Collections {
             }
 
             // ReSharper disable once PossibleMultipleEnumeration
-            return @this.Select( ( a, aIndex ) => {
+	        var enumerable = @this as T[] ?? @this.ToArray();
+	        return enumerable.Select( ( a, aIndex ) => {
                                      // ReSharper disable once PossibleMultipleEnumeration
-                                     return @this.Skip( aIndex + 1 ).Any( b => relationshipFunc( a, b ) || relationshipFunc( b, a ) );
+                                     return enumerable.Skip( aIndex + 1 ).Any( b => ( relationshipFunc?.Invoke( a, b ) ?? default ) || ( relationshipFunc?.Invoke( b, a ) ?? default ) );
                                  } ).Any( value => value );
         }
 
@@ -163,9 +166,8 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( nameof( bag ) );
             }
             do {
-                T result;
-                bag.TryTake( out result );
-            } while ( !bag.IsEmpty );
+				bag.TryTake( out var result );
+			} while ( !bag.IsEmpty );
         }
 
         public static Byte[] CloneByteArray( this Byte[] bytes ) {
@@ -282,16 +284,18 @@ namespace Librainian.Collections {
             }
 
             // ReSharper disable once PossibleMultipleEnumeration
-            return @this.Select( ( a, aIndex ) => {
+	        var enumerable = @this as T[] ?? @this.ToArray();
+	        return enumerable.Select( ( a, aIndex ) => {
                                      // ReSharper disable once PossibleMultipleEnumeration
-                                     return @this.Skip( aIndex + 1 ).Any( b => relationshipFunc( a, b ) || relationshipFunc( b, a ) );
+                                     return enumerable.Skip( aIndex + 1 ).Any( b => ( relationshipFunc?.Invoke( a, b ) ?? default ) || ( relationshipFunc?.Invoke( b, a ) ?? default ) );
                                  } ).Count( value => value );
         }
 
-        /// <summary>
-        ///     Returns duplicate items found in the <see cref="sequence" /> .
-        /// </summary>
-        public static HashSet<T> Duplicates<T>( this IEnumerable<T> sequence ) {
+		/// <summary>
+		///     Returns duplicate items found in the <see cref="sequence" /> .
+		/// </summary>
+		/// <param name="sequence">todo: describe sequence parameter on Duplicates</param>
+		public static HashSet<T> Duplicates<T>( this IEnumerable<T> sequence ) {
             if ( null == sequence ) {
                 throw new ArgumentNullException( nameof( sequence ) );
             }
@@ -366,17 +370,19 @@ namespace Librainian.Collections {
             }
 
             foreach ( var item in items ) {
+	            //action.Invoke( item );	//is either way better?
                 action( item );
             }
         }
 
         public static IEnumerable<T> SideEffects<T>( [ NotNull ] this IEnumerable<T> items, Action<T> perfomAction ) {
-            if ( items == null )
-                throw new ArgumentNullException( nameof( items ) );
+	        if ( items == null ) {
+		        throw new ArgumentNullException( nameof( items ) );
+	        }
 
-            foreach ( var item in items ) {
-                perfomAction?.Invoke( item );
-                yield return item;
+	        foreach ( var item in items ) {
+				perfomAction?.Invoke( item );
+				yield return item;
             }
         }
         /// <summary>
@@ -389,15 +395,17 @@ namespace Librainian.Collections {
         /// <param name="generator"></param>
         /// <param name="added"></param>
         /// <returns></returns>
-        public static TValue GetOrAdd<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dict, TKey key, Func<TKey, TValue> generator, out Boolean added ) {
-            while ( true ) {
-                TValue value;
-                if ( dict.TryGetValue( key, out value ) ) {
-                    added = false;
-                    return value;
-                }
+        public static TValue GetOrAdd<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dict, TKey key, [ NotNull ] Func<TKey, TValue> generator, out Boolean added ) {
+	        if ( generator == null ) {
+		        throw new ArgumentNullException( nameof( generator ) );
+	        }
+	        while ( true ) {
+				if ( dict.TryGetValue( key, out var value ) ) {
+					added = false;
+					return value;
+				}
 
-                value = generator( key );
+				value = generator( key );
                 if ( !dict.TryAdd( key, value ) ) {
                     continue;
                 }
@@ -406,7 +414,7 @@ namespace Librainian.Collections {
             }
         }
 
-        public static Boolean Has<T>( [NotNull] this Enum type, T value ) where T : struct {
+	    public static Boolean Has<T>( [NotNull] this Enum type, T value ) where T : struct {
             if ( type == null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
@@ -430,11 +438,9 @@ namespace Librainian.Collections {
             return items.Contains( value );
         }
 
-        public static Int32 IndexOf<T>( this T[] @this, T item ) {
-            return Array.IndexOf( @this, item );
-        }
+        public static Int32 IndexOf<T>( this T[] @this, T item ) => Array.IndexOf( @this, item );
 
-        /// <summary>
+	    /// <summary>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
@@ -523,10 +529,11 @@ namespace Librainian.Collections {
             return -1;
         }
 
-        /// <summary>
-        ///     <para>An infinite list.</para>
-        /// </summary>
-        public static IEnumerable<Boolean> Infinitely( this Boolean value ) {
+		/// <summary>
+		///     <para>An infinite list.</para>
+		/// </summary>
+		/// <param name="value">todo: describe value parameter on Infinitely</param>
+		public static IEnumerable<Boolean> Infinitely( this Boolean value ) {
             do {
                 yield return value;
             } while ( true );
@@ -540,9 +547,9 @@ namespace Librainian.Collections {
         /// <typeparam name="T">The type of objects to enumerate.</typeparam>
         /// <param name="source">The IEnumerable to check if empty.</param>
         /// <returns>True if the <paramref name="source" /> is null or empty; otherwise false.</returns>
-        public static Boolean IsEmpty<T>( this IEnumerable<T> source ) { return null == source || !source.Any(); }
+        public static Boolean IsEmpty<T>( this IEnumerable<T> source ) => null == source || !source.Any();
 
-        public static UInt64 LongSum( this IEnumerable<Int32> collection ) => collection.Aggregate( 0UL, ( current, u ) => current + ( UInt64 )u );
+	    public static UInt64 LongSum( this IEnumerable<Int32> collection ) => collection.Aggregate( 0UL, ( current, u ) => current + ( UInt64 )u );
 
         /// <summary>
         /// </summary>
@@ -671,9 +678,8 @@ namespace Librainian.Collections {
             if ( collection == null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
-            T result;
-            return collection.TryTake( out result ) ? result : default( T );
-        }
+			return collection.TryTake( out var result ) ? result : default;
+		}
 
         public static T Remove<T>( [NotNull] this Enum type, T value ) where T : struct {
             if ( type == null ) {
@@ -702,11 +708,10 @@ namespace Librainian.Collections {
             var removed = 0;
 
             while ( collection.Contains( specificItem ) ) {
-                T temp;
-                if ( !collection.TryTake( out temp ) ) {
-                    continue;
-                }
-                if ( Equals( temp, default( T ) ) || Equals( temp, specificItem ) ) {
+				if ( !collection.TryTake( out var temp ) ) {
+					continue;
+				}
+				if ( Equals( temp, default ) || Equals( temp, specificItem ) ) {
                     removed += 1;
                     continue;
                 }
@@ -723,11 +728,10 @@ namespace Librainian.Collections {
             }
             var removed = 0;
             while ( collection.Any() ) {
-                T result;
-                while ( collection.TryTake( out result ) ) {
-                    removed++;
-                }
-            }
+				while ( collection.TryTake( out var result ) ) {
+					removed++;
+				}
+			}
             return removed;
         }
 
@@ -735,11 +739,10 @@ namespace Librainian.Collections {
             if ( collection == null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
-            T result;
-            while ( collection.TryTake( out result ) ) {
-                yield return result;
-            }
-        }
+			while ( collection.TryTake( out var result ) ) {
+				yield return result;
+			}
+		}
 
         /// <summary>
         ///     <para>Shuffle an array[] in <paramref name="iterations" />.</para>
@@ -753,9 +756,11 @@ namespace Librainian.Collections {
             if ( array == null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
+
             if ( iterations < 1 ) {
                 iterations = 1;
             }
+
             if ( array.Length < 1 ) {
                 return; //nothing to shuffle
             }
@@ -907,9 +912,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     Fast shuffle. Not guaranteed or tested to be the fastest, but it should shuffle *well* in reasonable time.
-        /// <para><paramref name="forHowLong"/> takes precendence over <paramref name="iterations"/>.</para>
-        /// <para><paramref name="orUntilCancelled"/>takes precendence over <paramref name="forHowLong"/>.</para>
+        ///     Fast shuffle. Not guaranteed or tested to be the fastest, but it *should* shuffle *well enough* in reasonable time.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
@@ -956,8 +959,6 @@ namespace Librainian.Collections {
                     var b = 0.Next( itemCount );
                     array.Swap( a, b );
                 } while ( iterations.Any() );
-                // ReSharper disable once RedundantJumpStatement
-                goto AllDone;
             }
 
             AllDone:
@@ -966,7 +967,7 @@ namespace Librainian.Collections {
             list.Count.Should().Be( itemCount );
         }
 
-        public static void ShuffleByRandomThenByRandom<T>( ref List<T> list, Int32 iterations = 1 ) {
+		public static void ShuffleByRandomThenByRandom<T>( ref List<T> list, Int32 iterations = 1 ) {
             while ( iterations.Any() ) {
                 iterations--;
                 var copy = list.AsParallel().OrderBy( o => Randem.Next() ).ThenBy( o => Randem.Next() ).ToList();
@@ -1018,7 +1019,7 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( nameof( list ) );
             }
             if ( list.Count <= 0 ) {
-                item = default( TType );
+                item = default;
                 return false;
             }
             item = list[ 0 ];
@@ -1038,7 +1039,7 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( nameof( list ) );
             }
             if ( list.Count <= 0 ) {
-                return default( TType );
+                return default;
             }
             var item = list[ 0 ];
             list.RemoveAt( 0 );
@@ -1058,7 +1059,7 @@ namespace Librainian.Collections {
             }
             var index = list.Count - 1;
             if ( index < 0 ) {
-                item = default( TType );
+                item = default;
                 return false;
             }
             item = list[ index ];
@@ -1135,11 +1136,9 @@ namespace Librainian.Collections {
                 }
         */
 
-        public static String ToStrings( this IEnumerable<Object> enumerable, Char c ) {
-            return ToStrings( enumerable, new String( new[] { c } ) );
-        }
+        public static String ToStrings( this IEnumerable<Object> enumerable, Char c ) => ToStrings( enumerable, new String( new[] { c } ) );
 
-        /// <summary>
+	    /// <summary>
         ///     <para>
         ///         Returns a String with the <paramref name="separator" /> between each item of an <paramref name="enumerable" />.
         ///     </para>
@@ -1161,7 +1160,7 @@ namespace Librainian.Collections {
             String result;
             var list = enumerable as IList<T> ?? enumerable.ToList();
 
-            if ( String.IsNullOrEmpty( atTheEnd ) || ( list.Count <= 2 ) ) {
+            if ( String.IsNullOrEmpty( atTheEnd ) || list.Count <= 2 ) {
                 result = String.Join( separator, list );
             }
             else {
@@ -1170,11 +1169,10 @@ namespace Librainian.Collections {
                     list.RemoveAt( 0 );
                 }
                 result += separator;
-                T item;
-                if ( list.TakeFirst( out item ) ) {
-                    result += item;
-                }
-                result += atTheEnd;
+				if ( list.TakeFirst( out var item ) ) {
+					result += item;
+				}
+				result += atTheEnd;
                 if ( list.TakeFirst( out item ) ) {
                     result += item;
                 }
@@ -1217,9 +1215,8 @@ namespace Librainian.Collections {
             if ( dictionary == null ) {
                 throw new ArgumentNullException( nameof( dictionary ) );
             }
-            TValue dummy;
-            dictionary.TryRemove( key, out dummy ); //HACK
-            dictionary.TryAdd( key, value );
+			dictionary.TryRemove( key, out var dummy ); //HACK
+			dictionary.TryAdd( key, value );
 
             //var wtf = default( TValue );
             //dictionary.TryUpdate( key, value, wtf );  //BUG I don't understand the whole if-same-then-replace-semantics. If we're going to replace the value, then why do we care what the current value is anyway?
@@ -1238,12 +1235,15 @@ namespace Librainian.Collections {
         ///     An enumeration of all combinations of items that satisfy the <paramref name="relationshipFunc" />.
         ///     Each combination will only be returned once (e.g. <c>[a, b]</c> but not <c>[b, a]</c>).
         /// </returns>
-        public static IEnumerable<KeyValuePair<T, T>> WhereRelationship<T>( this IEnumerable<T> @this, Func<T, T, Boolean> relationshipFunc ) {
+        public static IEnumerable<KeyValuePair<T, T>> WhereRelationship<T>( this IEnumerable<T> @this, [ NotNull ] Func<T, T, Boolean> relationshipFunc ) {
             if ( @this == null ) {
                 throw new ArgumentNullException( nameof( @this ), "WhereRelationship called on a null IEnumerable<T>." );
             }
+	        if ( relationshipFunc == null ) {
+		        throw new ArgumentNullException( nameof( relationshipFunc ) );
+	        }
 
-            var aIndex = 0;
+	        var aIndex = 0;
             // ReSharper disable once PossibleMultipleEnumeration
             foreach ( var a in @this ) {
                 // ReSharper disable once PossibleMultipleEnumeration
@@ -1251,6 +1251,50 @@ namespace Librainian.Collections {
                     yield return new KeyValuePair<T, T>( a, b );
                 }
             }
+        }
+
+        /// <summary>
+        /// Untested.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static DataTable ToDataTable<T>( this IEnumerable<T> list )
+        {
+            var dt = new DataTable();
+
+            if ( list != null ) {
+
+                PropertyInfo[] columns = null;
+
+                foreach ( var record in list ) {
+                    if ( columns == null ) {
+                        columns = record.GetType().GetProperties();
+                        foreach ( var GetProperty in columns ) {
+                            var IcolType = GetProperty.PropertyType;
+
+                            if ( IcolType.IsGenericType && IcolType.GetGenericTypeDefinition() == typeof( Nullable<> ) ) {
+                                IcolType = IcolType.GetGenericArguments()[ 0 ];
+                            }
+
+                            dt.Columns.Add( new DataColumn( GetProperty.Name, IcolType ) );
+                        }
+                    }
+
+                    var dr = dt.NewRow();
+                    foreach ( var p in columns ) {
+                        if ( p.GetValue( record, null ) == null ) {
+                            dr[ p.Name ] = DBNull.Value;
+                        }
+                        else {
+                            dr[ p.Name ] = p.GetValue( record, null );
+                        }
+                    }
+                    dt.Rows.Add( dr );
+                }
+            }
+
+            return dt;
         }
     }
 }

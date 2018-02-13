@@ -106,9 +106,8 @@ namespace Librainian.Graphics.Imaging {
             public Byte Green;
             public Byte Blue;
 
-            public override String ToString() {
-                return $"({this.Alpha}, {this.Red}, {this.Green}, {this.Blue})";
-            }
+            public override String ToString() => $"({this.Alpha}, {this.Red}, {this.Green}, {this.Blue})";
+
         }
     }
 }

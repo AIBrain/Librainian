@@ -2,10 +2,10 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
+// or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified sections of source code borrowed from other projects retain their original
+// license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
 //  PayPal: paypal@aibrain.org
@@ -28,11 +28,9 @@ namespace Librainian.Financial.Containers.Accounts {
     [JsonObject]
     public class CheckingAccount : BankAccount {
 
-        public CheckingAccount( Guid id ) : base( id ) {
-            this.Ledger = new Ledger();
-        }
+        public CheckingAccount( Guid id ) : base( id ) => this.Ledger = new Ledger();
 
-        [JsonProperty]
+	    [JsonProperty]
         public Ledger Ledger {
             get;
         }

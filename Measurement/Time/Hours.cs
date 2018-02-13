@@ -31,7 +31,7 @@ namespace Librainian.Measurement.Time {
     using Parsing;
 
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct Hours : IComparable<Hours>, IQuantityOfTime {
 
@@ -69,23 +69,15 @@ namespace Librainian.Measurement.Time {
         /// <see cref="http://www.wolframalpha.com/input/?i=converts+1+month+to+hours" />
         public static BigInteger InOneMonth = 730;
 
-        public Hours( Decimal value ) {
-            this.Value = value;
-        }
+        public Hours( Decimal value ) => this.Value = value;
 
-        public Hours( BigRational value ) {
-            this.Value = value;
-        }
+	    public Hours( BigRational value ) => this.Value = value;
 
-        public Hours( Int64 value ) {
-            this.Value = value;
-        }
+	    public Hours( Int64 value ) => this.Value = value;
 
-        public Hours( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Hours( BigInteger value ) => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -151,10 +143,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Hours other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Hours && this.Equals( ( Hours )obj );
+            return obj is Hours hours && this.Equals( hours );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();

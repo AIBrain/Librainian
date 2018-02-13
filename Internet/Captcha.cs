@@ -56,11 +56,9 @@ namespace Librainian.Internet {
         }
 
         public CaptchaStatus Status {
-            get {
-                return this._status;
-            }
+            get => this._status;
 
-            set {
+	        set {
                 if ( !Equals( this._status, value ) ) {
                     this.StatusHistory.TryAdd( DateTime.Now, value );
                 }

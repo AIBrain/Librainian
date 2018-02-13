@@ -31,9 +31,7 @@ namespace Librainian.FileSystem.Physical {
 
         protected internal SortedDictionary<String, String> LogicalDrives { get; } = new SortedDictionary<String, String>();
 
-        protected override Device CreateDevice( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index, Int32 disknum = -1 ) {
-            return new Volume( deviceClass, deviceInfoData, path, index );
-        }
+        protected override Device CreateDevice( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index, Int32 disknum = -1 ) => new Volume( deviceClass, deviceInfoData, path, index );
 
     }
 

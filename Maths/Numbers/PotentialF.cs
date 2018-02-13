@@ -56,11 +56,9 @@ namespace Librainian.Maths.Numbers {
 
         /// <summary>Initializes with <paramref name="initialValue" />.</summary>
         /// <param name="initialValue"></param>
-        public PotentialF( Single initialValue ) {
-            this.Value = initialValue;
-        }
+        public PotentialF( Single initialValue ) => this.Value = initialValue;
 
-        public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min: min, max: max ) ) {
+	    public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min: min, max: max ) ) {
         }
 
         /// <summary>
@@ -72,13 +70,9 @@ namespace Librainian.Maths.Numbers {
         ///     </para>
         /// </remarks>
         public Single Value {
-            get {
-                return Thread.VolatileRead( ref this._value );
-            }
+            get => Thread.VolatileRead( ref this._value );
 
-            private set {
-                Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : ( value <= MinValue ? MinValue : value ) );
-            }
+	        private set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : ( value <= MinValue ? MinValue : value ) );
         }
 
         public static implicit operator Single( PotentialF special ) => special.Value;

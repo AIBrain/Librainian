@@ -34,43 +34,27 @@ namespace Librainian.Graphics.DD {
         }
 
         public Single X1 {
-            get {
-                return this.P1.X;
-            }
+            get => this.P1.X;
 
-            set {
-                this.P1.X = value;
-            }
+	        set => this.P1.X = value;
         }
 
         public Single X2 {
-            get {
-                return this.P2.X;
-            }
+            get => this.P2.X;
 
-            set {
-                this.P2.X = value;
-            }
+	        set => this.P2.X = value;
         }
 
         public Single Y1 {
-            get {
-                return this.P1.Y;
-            }
+            get => this.P1.Y;
 
-            set {
-                this.P1.Y = value;
-            }
+	        set => this.P1.Y = value;
         }
 
         public Single Y2 {
-            get {
-                return this.P2.Y;
-            }
+            get => this.P2.Y;
 
-            set {
-                this.P2.Y = value;
-            }
+	        set => this.P2.Y = value;
         }
     }
 }

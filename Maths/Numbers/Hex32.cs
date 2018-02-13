@@ -41,152 +41,121 @@ namespace Librainian.Maths.Numbers {
         ///     Initializes a new instance of the <see cref="Hex32" /> struct.
         /// </summary>
         /// <param name="i">The i.</param>
-        public Hex32( Int32 i ) {
-            this.Value = i;
-        }
+        public Hex32( Int32 i ) => this.Value = i;
 
-        /// <summary>
+	    /// <summary>
         ///     Hex32s the specified i.
         /// </summary>
         /// <param name="i">The i.</param>
         /// <returns></returns>
-        public static implicit operator Hex32( Int32 i ) {
-            return new Hex32( i );
-        }
+        public static implicit operator Hex32( Int32 i ) => new Hex32( i );
 
-        /// <summary>
+	    /// <summary>
         ///     Int32s the specified h.
         /// </summary>
         /// <param name="h">The h.</param>
         /// <returns></returns>
-        public static implicit operator Int32( Hex32 h ) {
-            return h.Value;
-        }
+        public static implicit operator Int32( Hex32 h ) => h.Value;
 
-        /// <summary>
+	    /// <summary>
         ///     -s the specified h1.
         /// </summary>
         /// <param name="h1">The h1.</param>
         /// <param name="h2">The h2.</param>
         /// <returns></returns>
-        public static Hex32 operator -( Hex32 h1, Hex32 h2 ) {
-            return new Hex32( h1.Value - h2.Value );
-        }
+        public static Hex32 operator -( Hex32 h1, Hex32 h2 ) => new Hex32( h1.Value - h2.Value );
 
-        /// <summary>
+	    /// <summary>
         ///     Checks if h1 is not equal to h2
         /// </summary>
         /// <param name="h1">The h1.</param>
         /// <param name="h2">The h2.</param>
         /// <returns></returns>
-        public static Boolean operator !=( Hex32 h1, Hex32 h2 ) {
-            return !h1.Equals( h2 );
-        }
+        public static Boolean operator !=( Hex32 h1, Hex32 h2 ) => !h1.Equals( h2 );
 
-        /// <summary>
+	    /// <summary>
         ///     *s the specified h1.
         /// </summary>
         /// <param name="h1">The h1.</param>
         /// <param name="h2">The h2.</param>
         /// <returns></returns>
-        public static Hex32 operator *( Hex32 h1, Hex32 h2 ) {
-            return new Hex32( h1.Value * h2.Value );
-        }
+        public static Hex32 operator *( Hex32 h1, Hex32 h2 ) => new Hex32( h1.Value * h2.Value );
 
-        /// <summary>
+	    /// <summary>
         ///     /s the specified h1.
         /// </summary>
         /// <param name="h1">The h1.</param>
         /// <param name="h2">The h2.</param>
         /// <returns></returns>
-        public static Hex32 operator /( Hex32 h1, Hex32 h2 ) {
-            return new Hex32( h1.Value / h2.Value );
-        }
+        public static Hex32 operator /( Hex32 h1, Hex32 h2 ) => new Hex32( h1.Value / h2.Value );
 
-        /// <summary>
+	    /// <summary>
         ///     +s the specified h1.
         /// </summary>
         /// <param name="h1">The h1.</param>
         /// <param name="h2">The h2.</param>
         /// <returns></returns>
-        public static Hex32 operator +( Hex32 h1, Hex32 h2 ) {
-            return new Hex32( h1.Value + h2.Value );
-        }
+        public static Hex32 operator +( Hex32 h1, Hex32 h2 ) => new Hex32( h1.Value + h2.Value );
 
-        /// <summary>
+	    /// <summary>
         ///     Checks if h1 is smaller than h2
         /// </summary>
         /// <param name="h1">The h1.</param>
         /// <param name="h2">The h2.</param>
         /// <returns></returns>
-        public static Boolean operator <( Hex32 h1, Hex32 h2 ) {
-            return h1.CompareTo( h2 ) < 0;
-        }
+        public static Boolean operator <( Hex32 h1, Hex32 h2 ) => h1.CompareTo( h2 ) < 0;
 
-        /// <summary>
+	    /// <summary>
         ///     Checks if h1 is equal to h2
         /// </summary>
         /// <param name="h1">The h1.</param>
         /// <param name="h2">The h2.</param>
         /// <returns></returns>
-        public static Boolean operator ==( Hex32 h1, Hex32 h2 ) {
-            return h1.Equals( h2 );
-        }
+        public static Boolean operator ==( Hex32 h1, Hex32 h2 ) => h1.Equals( h2 );
 
-        /// <summary>
+	    /// <summary>
         ///     Checks if h1 is greater then h2
         /// </summary>
         /// <param name="h1">The h1.</param>
         /// <param name="h2">The h2.</param>
         /// <returns></returns>
-        public static Boolean operator >( Hex32 h1, Hex32 h2 ) {
-            return h1.CompareTo( h2 ) > 0;
-        }
+        public static Boolean operator >( Hex32 h1, Hex32 h2 ) => h1.CompareTo( h2 ) > 0;
 
-        public Int32 CompareTo( Hex32 other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+	    public Int32 CompareTo( Hex32 other ) => this.Value.CompareTo( other.Value );
 
-        /// <summary>
+	    /// <summary>
         ///     Determines whether the specified <see cref="System.Object" /> is equal to this instance.
         /// </summary>
         /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
         /// <returns>
         ///     <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override Boolean Equals( Object obj ) {
-            return obj is Hex32 && this.Equals( ( Hex32 )obj );
-        }
+        public override Boolean Equals( Object obj ) => obj is Hex32 && this.Equals( ( Hex32 )obj );
 
-        /// <summary>
+	    /// <summary>
         ///     Gibt an, ob das aktuelle Objekt einem anderen Objekt des gleichen Typs entspricht.
         /// </summary>
         /// <param name="other">Ein Objekt, das mit diesem Objekt verglichen werden soll.</param>
         /// <returns>
         ///     true, wenn das aktuelle Objekt gleich dem <paramref name="other" />-Parameter ist, andernfalls false.
         /// </returns>
-        public Boolean Equals( Hex32 other ) {
-            return this.Value.Equals( other.Value );
-        }
+        public Boolean Equals( Hex32 other ) => this.Value.Equals( other.Value );
 
-        /// <summary>
+	    /// <summary>
         ///     Returns a hash code for this instance.
         /// </summary>
         /// <returns>
         ///     A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
-        public override Int32 GetHashCode() {
-            return this.Value * 0x00010000 + this.Value;
-        }
+        public override Int32 GetHashCode() => this.Value * 0x00010000 + this.Value;
 
-        /// <summary>
+	    /// <summary>
         ///     Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
         /// <returns>
         ///     A <see cref="System.String" /> that represents this instance.
         /// </returns>
-        public override String ToString() {
-            return "0x" + this.Value.ToString( "X" );
-        }
+        public override String ToString() => "0x" + this.Value.ToString( "X" );
+
     }
 }

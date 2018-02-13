@@ -37,7 +37,7 @@ namespace Librainian.Maths.Numbers {
         private readonly UInt64 _part4; // parts are big-endian
 
         public UInt256( Byte[] value ) {
-            if ( ( value.Length > 32 ) && !( ( value.Length == 33 ) && ( value[ 32 ] == 0 ) ) ) {
+            if ( value.Length > 32 && !( value.Length == 33 && value[ 32 ] == 0 ) ) {
                 throw new ArgumentOutOfRangeException();
             }
 
@@ -47,9 +47,9 @@ namespace Librainian.Maths.Numbers {
 
             // convert parts and store
             this._part1 = value.ToUInt64( 24 );
-            this._part2 = value.ToUInt64( 16 );
-            this._part3 = value.ToUInt64( 8 );
-            this._part4 = value.ToUInt64( 0 );
+            this._part2 = value.ToUInt64(  16 );
+            this._part3 = value.ToUInt64(  8 );
+            this._part4 = value.ToUInt64(  0 );
 
             this._hashCode = this._part1.GetHashMerge( this._part2.GetHashMerge( this._part3.GetHashMerge( this._part4 ) ) );
         }
@@ -90,9 +90,8 @@ namespace Librainian.Maths.Numbers {
         public static UInt256 Zero { get; } = new UInt256( new Byte[ 0 ] );
 
         public static UInt256 DivRem( UInt256 dividend, UInt256 divisor, out UInt256 remainder ) {
-            BigInteger remainderBigInt;
-            var result = new UInt256( BigInteger.DivRem( dividend.ToBigInteger(), divisor.ToBigInteger(), out remainderBigInt ) );
-            remainder = new UInt256( remainderBigInt );
+			var result = new UInt256( BigInteger.DivRem( dividend.ToBigInteger(), divisor.ToBigInteger(), out var remainderBigInt ) );
+			remainder = new UInt256( remainderBigInt );
             return result;
         }
 
@@ -148,13 +147,13 @@ namespace Librainian.Maths.Numbers {
             if ( left._part1 < right._part1 ) {
                 return true;
             }
-            if ( ( left._part1 == right._part1 ) && ( left._part2 < right._part2 ) ) {
+            if ( left._part1 == right._part1 && left._part2 < right._part2 ) {
                 return true;
             }
-            if ( ( left._part1 == right._part1 ) && ( left._part2 == right._part2 ) && ( left._part3 < right._part3 ) ) {
+            if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 < right._part3 ) {
                 return true;
             }
-            if ( ( left._part1 == right._part1 ) && ( left._part2 == right._part2 ) && ( left._part3 == right._part3 ) && ( left._part4 < right._part4 ) ) {
+            if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 < right._part4 ) {
                 return true;
             }
 
@@ -165,32 +164,32 @@ namespace Librainian.Maths.Numbers {
             if ( left._part1 < right._part1 ) {
                 return true;
             }
-            if ( ( left._part1 == right._part1 ) && ( left._part2 < right._part2 ) ) {
+            if ( left._part1 == right._part1 && left._part2 < right._part2 ) {
                 return true;
             }
-            if ( ( left._part1 == right._part1 ) && ( left._part2 == right._part2 ) && ( left._part3 < right._part3 ) ) {
+            if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 < right._part3 ) {
                 return true;
             }
-            if ( ( left._part1 == right._part1 ) && ( left._part2 == right._part2 ) && ( left._part3 == right._part3 ) && ( left._part4 < right._part4 ) ) {
+            if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 < right._part4 ) {
                 return true;
             }
 
             return left == right;
         }
 
-        public static Boolean operator ==( UInt256 left, UInt256 right ) => ( left._part1 == right._part1 ) && ( left._part2 == right._part2 ) && ( left._part3 == right._part3 ) && ( left._part4 == right._part4 );
+        public static Boolean operator ==( UInt256 left, UInt256 right ) => left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 == right._part4;
 
         public static Boolean operator >( UInt256 left, UInt256 right ) {
             if ( left._part1 > right._part1 ) {
                 return true;
             }
-            if ( ( left._part1 == right._part1 ) && ( left._part2 > right._part2 ) ) {
+            if ( left._part1 == right._part1 && left._part2 > right._part2 ) {
                 return true;
             }
-            if ( ( left._part1 == right._part1 ) && ( left._part2 == right._part2 ) && ( left._part3 > right._part3 ) ) {
+            if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 > right._part3 ) {
                 return true;
             }
-            if ( ( left._part1 == right._part1 ) && ( left._part2 == right._part2 ) && ( left._part3 == right._part3 ) && ( left._part4 > right._part4 ) ) {
+            if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 > right._part4 ) {
                 return true;
             }
 
@@ -201,13 +200,13 @@ namespace Librainian.Maths.Numbers {
             if ( left._part1 > right._part1 ) {
                 return true;
             }
-            if ( ( left._part1 == right._part1 ) && ( left._part2 > right._part2 ) ) {
+            if ( left._part1 == right._part1 && left._part2 > right._part2 ) {
                 return true;
             }
-            if ( ( left._part1 == right._part1 ) && ( left._part2 == right._part2 ) && ( left._part3 > right._part3 ) ) {
+            if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 > right._part3 ) {
                 return true;
             }
-            if ( ( left._part1 == right._part1 ) && ( left._part2 == right._part2 ) && ( left._part3 == right._part3 ) && ( left._part4 > right._part4 ) ) {
+            if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 > right._part4 ) {
                 return true;
             }
 
@@ -246,7 +245,7 @@ namespace Librainian.Maths.Numbers {
             }
 
             var other = ( UInt256 )obj;
-            return ( other._part1 == this._part1 ) && ( other._part2 == this._part2 ) && ( other._part3 == this._part3 ) && ( other._part4 == this._part4 );
+            return other._part1 == this._part1 && other._part2 == this._part2 && other._part3 == this._part3 && other._part4 == this._part4;
         }
 
         [Pure]

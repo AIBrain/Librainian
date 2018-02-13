@@ -28,13 +28,19 @@ namespace Librainian.FileSystem {
     public class DefragExtensions {
 
         /// <summary>
-        ///     The function starts the Defrag.Exe and waits for if to finish It ensures the process is
+        ///     The function starts the Defrag.Exe and waits for it to finish. It ensures the process is
         ///     run with lower priority and the spawned process DfrgNtfs is given 'Idle' priority
         /// </summary>
         /// <param name="drive">Drive to defrag - format is "c:" for example</param>
         private static String Defrag( Drive drive ) {
             var path = Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "defrag.exe" );
-            var info = new ProcessStartInfo { FileName = path, Arguments = "{" + drive + "}  /O", UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true };
+            var info = new ProcessStartInfo {
+                FileName = path,
+                Arguments = String.Format( "{{{0}}} /O /V /M " + Environment.ProcessorCount, drive ),
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true
+            };
 
             var defrag = Process.Start( info );
 

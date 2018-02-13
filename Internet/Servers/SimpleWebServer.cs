@@ -70,7 +70,7 @@ namespace Librainian.Internet.Servers {
             }
 
             prefixes.Should().NotBeNullOrEmpty( "URI prefixes are required, for example http://localhost:8080/index/. " );
-            if ( ( prefixes == null ) || !prefixes.Any() ) {
+            if ( prefixes == null || !prefixes.Any() ) {
                 this.ImNotReady( because: "URI prefixes are required." );
                 return;
             }
@@ -106,17 +106,17 @@ namespace Librainian.Internet.Servers {
         public String NotReadyBecause {
             get; private set;
         }
-        
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() { this.Stop(); }
 
-        /// <summary>Start the http listener.</summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <seealso cref="Stop" />
-        public Task Run( CancellationToken cancellationToken ) => Task.Run( async () => {
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this.Stop();
+
+		/// <summary>Start the http listener.</summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		/// <seealso cref="Stop" />
+		public Task Run( CancellationToken cancellationToken ) => Task.Run( async () => {
             "Webserver running...".Info();
             try {
                 while ( this._httpListener.IsListening ) {

@@ -136,10 +136,10 @@ namespace Librainian.Maths.Numbers {
             if ( ReferenceEquals(left, right) ) {
                 return true;
             }
-            if ( ReferenceEquals( left,null ) ) {
+            if ( left is null ) {
                 return false;
             }
-            if ( ReferenceEquals( null, right) ) {
+            if ( right is null ) {
                 return false;
             }
             return left.Quotient == right.Quotient;
@@ -164,11 +164,10 @@ namespace Librainian.Maths.Numbers {
             if ( numberString == null ) {
                 throw new ArgumentNullException( nameof( numberString ) );
             }
-            Double value;
-            if ( !Double.TryParse( numberString, out value ) ) {
-                value = Double.NaN;
-            }
-            result = new Percentage( value );
+			if ( !Double.TryParse( numberString, out var value ) ) {
+				value = Double.NaN;
+			}
+			result = new Percentage( value );
             return !Double.IsNaN( value );
         }
 
@@ -183,10 +182,8 @@ namespace Librainian.Maths.Numbers {
             return this.Quotient.CompareTo( other.Quotient );
         }
 
-        public Boolean Equals( Percentage other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Percentage other ) => Equals( this, other );
 
-        public override String ToString() => $"{this.Quotient}";
+	    public override String ToString() => $"{this.Quotient}";
     }
 }

@@ -195,9 +195,9 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<PingReply>( userToken );
 
             // Register a handler that will transfer completion results to the TCS Task
-            PingCompletedEventHandler handler = null;
-            handler = ( sender, e ) => EapCommon.HandleCompletion( tcs, e, () => e.Reply, () => ping.PingCompleted -= handler );
-            ping.PingCompleted += handler;
+	        void Handler( Object sender, PingCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Reply, () => ping.PingCompleted -= Handler );
+
+	        ping.PingCompleted += Handler;
 
             // Try to start the async operation. If starting it fails (due to parameter validation)
             // unregister the handler before allowing the exception to propagate.
@@ -205,7 +205,7 @@ namespace Librainian.Internet {
                 sendAsync( tcs );
             }
             catch ( Exception exc ) {
-                ping.PingCompleted -= handler;
+                ping.PingCompleted -= Handler;
                 tcs.TrySetException( exc );
             }
 

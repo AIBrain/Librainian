@@ -47,6 +47,14 @@ namespace Librainian.Graphics.Imaging {
         public readonly Byte Checksum;
 
         [JsonProperty]
+        //[FieldOffset( sizeof( Byte ) + 4 * sizeof( Byte ) )]
+        public readonly UInt32 X;
+
+        [JsonProperty]
+        //[FieldOffset( sizeof( Byte ) + 4 * sizeof( Byte ) + sizeof( UInt32 ) )]
+        public readonly UInt32 Y;
+
+        [JsonProperty]
         //[FieldOffset( sizeof( Byte ) + 0 * sizeof( Byte ) )]
         public readonly Byte Alpha;
 
@@ -62,19 +70,20 @@ namespace Librainian.Graphics.Imaging {
         //[FieldOffset( sizeof( Byte ) + 3 * sizeof( Byte ) )]
         public readonly Byte Blue;
 
-        [JsonProperty]
-        //[FieldOffset( sizeof( Byte ) + 4 * sizeof( Byte ) )]
-        public readonly UInt32 X;
+        public static Byte Hash( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y) => ( Byte )MathHashing.GetHashCodes( alpha, red, green, blue, x, y );
+        public static Byte Hash( UInt32 x, UInt32 y, Byte alpha, Byte red, Byte green, Byte blue) => ( Byte )MathHashing.GetHashCodes( x, y, alpha, red, green, blue);
 
-        [JsonProperty]
-        //[FieldOffset( sizeof( Byte ) + 4 * sizeof( Byte ) + sizeof( UInt32 ) )]
-        public readonly UInt32 Y;
-
-        public static Byte Hash( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y) {
-            return ( Byte )MathHashing.GetHashCodes( alpha, red, green, blue, x, y );
+	    public Pixel( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y ) {
+            this.Alpha = alpha;
+            this.Red = red;
+            this.Green = green;
+            this.Blue = blue;
+            this.X = x;
+            this.Y = y;
+            this.Checksum = Hash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
         }
 
-        public Pixel( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y ) {
+	    public Pixel( UInt32 x, UInt32 y, Byte alpha, Byte red, Byte green, Byte blue ) {
             this.Alpha = alpha;
             this.Red = red;
             this.Green = green;
@@ -123,11 +132,9 @@ namespace Librainian.Graphics.Imaging {
         /// </summary>
         /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
         [Pure]
-        public override Int32 GetHashCode() {
-            return this.Checksum + this.Alpha + this.Red + this.Green + this.Blue;
-        }
+        public override Int32 GetHashCode() => this.Checksum + this.Alpha + this.Red + this.Green + this.Blue;
 
-        public override String ToString() => $"{this.Checksum}({this.Alpha},{this.Red},{this.Green},{this.Blue})@{this.X},{this.Y}";
+	    public override String ToString() => $"{this.Checksum}({this.Alpha},{this.Red},{this.Green},{this.Blue})@{this.X},{this.Y}";
 
         public Task WriteToStreamAsync( [NotNull] StreamWriter streamWriter ) {
             if ( streamWriter == null ) {
@@ -158,13 +165,12 @@ namespace Librainian.Graphics.Imaging {
                 return null;
             }
 
-            Byte checksum;
-            if ( !Byte.TryParse( line.Substring( 0, openParent ), out checksum ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).ConfigureAwait( false );
-                return null;
-            }
+			if ( !Byte.TryParse( line.Substring( 0, openParent ), out var checksum ) ) {
+				await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).ConfigureAwait( false );
+				return null;
+			}
 
-            var closeParent = line.IndexOf( ")", StringComparison.OrdinalIgnoreCase );
+			var closeParent = line.IndexOf( ")", StringComparison.OrdinalIgnoreCase );
             if ( closeParent == -1 ) {
                 await errors.WriteLineAsync( $"Unable to find a ')' in {line}" ).ConfigureAwait( false );
                 return null;
@@ -176,31 +182,27 @@ namespace Librainian.Graphics.Imaging {
                 return null;
             }
 
-            Byte alpha;
-            if ( !Byte.TryParse( argb[ 0 ], out alpha ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Alpha from {line}" ).ConfigureAwait( false );
-                return null;
-            }
+			if ( !Byte.TryParse( argb[ 0 ], out var alpha ) ) {
+				await errors.WriteLineAsync( $"Unable to parse Alpha from {line}" ).ConfigureAwait( false );
+				return null;
+			}
 
-            Byte red;
-            if ( !Byte.TryParse( argb[ 1 ], out red ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Red from {line}" ).ConfigureAwait( false );
-                return null;
-            }
+			if ( !Byte.TryParse( argb[ 1 ], out var red ) ) {
+				await errors.WriteLineAsync( $"Unable to parse Red from {line}" ).ConfigureAwait( false );
+				return null;
+			}
 
-            Byte green;
-            if ( !Byte.TryParse( argb[ 2 ], out green ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Green from {line}" ).ConfigureAwait( false );
-                return null;
-            }
+			if ( !Byte.TryParse( argb[ 2 ], out var green ) ) {
+				await errors.WriteLineAsync( $"Unable to parse Green from {line}" ).ConfigureAwait( false );
+				return null;
+			}
 
-            Byte blue;
-            if ( !Byte.TryParse( argb[ 3 ], out blue ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Blue from {line}" ).ConfigureAwait( false );
-                return null;
-            }
+			if ( !Byte.TryParse( argb[ 3 ], out var blue ) ) {
+				await errors.WriteLineAsync( $"Unable to parse Blue from {line}" ).ConfigureAwait( false );
+				return null;
+			}
 
-            var at = line.IndexOf( "@", StringComparison.OrdinalIgnoreCase );
+			var at = line.IndexOf( "@", StringComparison.OrdinalIgnoreCase );
             if ( at == -1 ) {
                 await errors.WriteLineAsync( $"Unable to find an '@' in {line}" ).ConfigureAwait( false );
                 return null;
@@ -212,19 +214,17 @@ namespace Librainian.Graphics.Imaging {
                 return null;
             }
 
-            UInt32 x;
-            if ( !UInt32.TryParse( xandy[ 0 ], out x ) ) {
-                await errors.WriteLineAsync( $"Unable to parse X from {line}" ).ConfigureAwait( false );
-                return null;
-            }
+			if ( !UInt32.TryParse( xandy[ 0 ], out var x ) ) {
+				await errors.WriteLineAsync( $"Unable to parse X from {line}" ).ConfigureAwait( false );
+				return null;
+			}
 
-            UInt32 y;
-            if ( !UInt32.TryParse( xandy[ 0 ], out y ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Y from {line}" ).ConfigureAwait( false );
-                return null;
-            }
+			if ( !UInt32.TryParse( xandy[ 0 ], out var y ) ) {
+				await errors.WriteLineAsync( $"Unable to parse Y from {line}" ).ConfigureAwait( false );
+				return null;
+			}
 
-            var pixel = new Pixel( alpha, red, green, blue, x, y );
+			var pixel = new Pixel( alpha, red, green, blue, x, y );
             if ( pixel.Checksum != checksum ) {
                 await errors.WriteLineAsync( $"Warning checksums do not match! Expected {checksum}, but got {pixel.Checksum}" ).ConfigureAwait( false );
             }

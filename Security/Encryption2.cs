@@ -52,8 +52,7 @@ namespace Librainian.Security {
                 Array.Reverse( encryptedBytes );
                 arrayList.AddRange( rsaCryptoServiceProvider.Decrypt( encryptedBytes, true ) );
             }
-            var ba = arrayList.ToArray( typeof( Byte ) ) as Byte[];
-            return ba == null ? String.Empty : Encoding.UTF32.GetString( ba );
+	        return !( arrayList.ToArray( typeof( Byte ) ) is Byte[] ba ) ? String.Empty : Encoding.UTF32.GetString( ba );
         }
 
         public static String EncryptString( [NotNull] this String inputString, Int32 dwKeySize, [NotNull] String xmlString ) {

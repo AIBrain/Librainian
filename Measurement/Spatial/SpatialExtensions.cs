@@ -18,13 +18,12 @@
 //
 // "Librainian/SpatialExtensions.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
 
-using System.Numerics;
-
 namespace Librainian.Measurement.Spatial {
 
     using System;
     using System.Windows;
     using System.Windows.Media.Media3D;
+    using AForge.Math;
     using JetBrains.Annotations;
 
     public static class SpatialExtensions {
@@ -45,9 +44,9 @@ namespace Librainian.Measurement.Spatial {
         /// </remarks>
         /// <returns></returns>
         public static Single CompassAngleLerp( this Single from, Single to, Single portion ) {
-            var dif = To180Angle( to - @from );
+            var dif = To180Angle( to - from );
             dif *= Clamp01( portion );
-            return To360Angle( @from + dif );
+            return To360Angle( from + dif );
         }
 
         public static Single DegreesToRadians( Single degrees ) => degrees * Degrees.DegreesToRadiansFactor;
@@ -62,8 +61,6 @@ namespace Librainian.Measurement.Spatial {
             return angle;
         }
 
-        //public const Single RadiansToDegrees = ( float ) ( 180.0 / Math.PI );
-        //public const Single DegreesToRadians = ( float )( Math.PI / 180.0 );
         public static GeoLocation FindPointAtDistanceFrom( this GeoLocationF startPoint, Double initialBearingRadians, Double distanceKilometres ) {
             const Double radiusEarthKilometres = 6371.01;
             var distRatio = distanceKilometres / radiusEarthKilometres;

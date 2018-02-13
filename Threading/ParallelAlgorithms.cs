@@ -175,10 +175,10 @@ namespace Librainian.Threading {
             if ( numColumns <= 0 ) {
                 throw new ArgumentOutOfRangeException( nameof( numColumns ) );
             }
-            if ( ( numBlocksPerRow <= 0 ) || ( numBlocksPerRow > numRows ) ) {
+            if ( numBlocksPerRow <= 0 || numBlocksPerRow > numRows ) {
                 throw new ArgumentOutOfRangeException( nameof( numBlocksPerRow ) );
             }
-            if ( ( numBlocksPerColumn <= 0 ) || ( numBlocksPerColumn > numColumns ) ) {
+            if ( numBlocksPerColumn <= 0 || numBlocksPerColumn > numColumns ) {
                 throw new ArgumentOutOfRangeException( nameof( numBlocksPerColumn ) );
             }
             if ( processBlock == null ) {
@@ -237,19 +237,19 @@ namespace Librainian.Threading {
 
                     // Create a task with the appropriate dependencies.
                     Task curTask;
-                    if ( ( row == 0 ) && ( column == 0 ) ) {
+                    if ( row == 0 && column == 0 ) {
 
                         // Upper-left task kicks everything off, having no dependencies
                         curTask = Task.Run( () => processRowColumnCell( j, i ) );
                     }
-                    else if ( ( row == 0 ) || ( column == 0 ) ) {
+                    else if ( row == 0 || column == 0 ) {
 
                         // Tasks in the left-most column depend only on the task above them, and
                         // tasks in the top row depend only on the task to their left
                         var antecedent = column == 0 ? prevTaskRow[ 0 ] : prevTaskInCurrentRow;
 
-                        // ReSharper disable once PossibleNullReferenceException
-                        curTask = antecedent.ContinueWith( p => {
+                        
+                        curTask = antecedent?.ContinueWith( p => {
                             p.Wait(); // Necessary only to propagate exceptions
                             processRowColumnCell( j, i );
                         } );

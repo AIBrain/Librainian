@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Time {
     using Numerics;
     using Parsing;
 
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
     public struct Milliseconds : IComparable<Milliseconds>, IQuantityOfTime {
@@ -125,27 +125,17 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Milliseconds Zero = new Milliseconds( 0 );
 
-        public Milliseconds( Decimal value ) {
-            this.Value = value;
-        }
+        public Milliseconds( Decimal value ) => this.Value = value;
 
-        public Milliseconds( BigRational value ) {
-            this.Value = value;
-        }
+	    public Milliseconds( BigRational value ) => this.Value = value;
 
-        public Milliseconds( Int64 value ) {
-            this.Value = value;
-        }
+	    public Milliseconds( Int64 value ) => this.Value = value;
 
-        public Milliseconds( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Milliseconds( BigInteger value ) => this.Value = value;
 
-        public Milliseconds( Double value ) {
-            this.Value = value;
-        }
+	    public Milliseconds( Double value ) => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -208,10 +198,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Milliseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Milliseconds && this.Equals( ( Milliseconds )obj );
+            return obj is Milliseconds milliseconds && this.Equals( milliseconds );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
@@ -219,11 +209,9 @@ namespace Librainian.Measurement.Time {
         public Microseconds ToMicroseconds() => new Microseconds( this.Value * Microseconds.InOneMillisecond );
 
         [Pure]
-        public PlanckTimes ToPlanckTimes() {
-            return new PlanckTimes( PlanckTimes.InOneMillisecond * this.Value );
-        }
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMillisecond * this.Value );
 
-        [Pure]
+	    [Pure]
         public Seconds ToSeconds() => new Seconds( this.Value / InOneSecond );
 
         [Pure]

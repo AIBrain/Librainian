@@ -65,10 +65,10 @@ data33   =   3
         public static INIFile Ini;
         public static JSONFile Json;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public static void Setup() {
-            Json = Ioc.Container.Get<JSONFile>();
-            Ini = Ioc.Container.Get<INIFile>();
+            Json = IoC.Container.Get<JSONFile>();
+            Ini = IoC.Container.Get<INIFile>();
         }
 
         [Test]

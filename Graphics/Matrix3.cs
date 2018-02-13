@@ -29,7 +29,7 @@ namespace Librainian.Graphics {
         }
 
         public Matrix3( Single[,] matrix ) : base( matrix ) {
-            if ( ( this.Rows != 3 ) || ( this.Cols != 3 ) ) {
+            if ( this.Rows != 3 || this.Cols != 3 ) {
                 throw new ArgumentException();
             }
         }

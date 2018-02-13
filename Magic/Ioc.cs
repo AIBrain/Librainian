@@ -26,7 +26,7 @@ namespace Librainian.Magic {
     /// <summary>
     ///     <para>Any sufficiently advanced technology is indistinguishable from magic.</para>
     /// </summary>
-    public static class Ioc {
+    public static class IoC {
 
         /// <summary>
         /// </summary>
@@ -42,16 +42,9 @@ namespace Librainian.Magic {
         /// </summary>
         [NotNull]
         public static IIocContainer Container {
-            get {
-                if ( _container != null ) {
-                    return _container;
-                }
-                return _container = new NinjectIocContainer();
-            }
+            get => StealthMode.Value;
 
-            set {
-                _container = value;
-            }
+	        set => _container = value;
         }
 
     }

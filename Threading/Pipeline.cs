@@ -34,23 +34,19 @@ namespace Librainian.Threading {
         /// <summary>queue based blocking collection</summary>
         private BlockingCollection<ValueCallBackWrapper> _valueQueue;
 
-        public Pipeline( [NotNull] Func<TInput, TOutput> function ) {
-            if ( function == null ) {
-                throw new ArgumentNullException( nameof( function ) );
-            }
-            this._pipelineFunction = function;
-        }
+        public Pipeline( [NotNull] Func<TInput, TOutput> function ) => this._pipelineFunction = function ?? throw new ArgumentNullException( nameof( function ) );
 
-        public Pipeline<TInput, TNewOutput> AddFunction<TNewOutput>( [NotNull] Func<TOutput, TNewOutput> newfunction ) {
+	    public Pipeline<TInput, TNewOutput> AddFunction<TNewOutput>( [NotNull] Func<TOutput, TNewOutput> newfunction ) {
 
             // create a composite function
             if ( newfunction == null ) {
                 throw new ArgumentNullException( nameof( newfunction ) );
             }
-            Func<TInput, TNewOutput> compositeFunction = inputValue => newfunction( this._pipelineFunction( inputValue ) );
 
-            // return a new pipeline around the composite function
-            return new Pipeline<TInput, TNewOutput>( compositeFunction );
+	        TNewOutput CompositeFunction( TInput inputValue ) => newfunction( this._pipelineFunction( inputValue ) );
+
+	        // return a new pipeline around the composite function
+            return new Pipeline<TInput, TNewOutput>( CompositeFunction );
         }
 
         public void AddValue( TInput value, [NotNull] Action<TInput, TOutput> callback ) {
@@ -90,10 +86,10 @@ namespace Librainian.Threading {
             }
         }
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() { this._valueQueue.Dispose(); }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this._valueQueue.Dispose();
 
-    }
+	}
 }

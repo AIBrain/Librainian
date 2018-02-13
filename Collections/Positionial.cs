@@ -22,7 +22,7 @@ namespace Librainian.Collections {
 
     using System.Runtime.Serialization;
 
-    public enum Positionial : byte {
+    public enum Positionial : System.Byte {
         [EnumMember( Value = nameof( Lowest ) )]
         Lowest,
 

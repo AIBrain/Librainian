@@ -26,14 +26,9 @@ namespace Librainian.OperatingSystem.Streams {
     public abstract class ContainerStream : Stream {
         protected readonly Stream Stream;
 
-        protected ContainerStream( Stream stream ) {
-            if ( null == stream ) {
-                throw new ArgumentNullException( nameof( stream ) );
-            }
-            this.Stream = stream;
-        }
+        protected ContainerStream( Stream stream ) => this.Stream = stream ?? throw new ArgumentNullException( nameof( stream ) );
 
-        public override Boolean CanRead => this.Stream.CanRead;
+	    public override Boolean CanRead => this.Stream.CanRead;
 
         public override Boolean CanSeek => this.Stream.CanSeek;
 
@@ -42,16 +37,9 @@ namespace Librainian.OperatingSystem.Streams {
         public override Int64 Length => this.Stream.Length;
 
         public override Int64 Position {
-            get {
+            get => this.Stream.Position;
 
-                //var str = this._stream as IsolatedStorageFileStream;
-                //if ( null != str ) { return str.Position; }
-                return this.Stream.Position;
-            }
-
-            set {
-                this.Stream.Position = value;
-            }
+	        set => this.Stream.Position = value;
         }
 
         protected Stream ContainedStream => this.Stream;

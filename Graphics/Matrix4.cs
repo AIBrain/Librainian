@@ -30,7 +30,7 @@ namespace Librainian.Graphics {
         }
 
         public Matrix4( Single[,] matrix ) : base( matrix ) {
-            if ( ( this.Rows != 4 ) || ( this.Cols != 4 ) ) {
+            if ( this.Rows != 4 || this.Cols != 4 ) {
                 throw new ArgumentException();
             }
         }

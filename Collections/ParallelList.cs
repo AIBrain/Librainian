@@ -41,7 +41,9 @@ namespace Librainian.Collections {
     /// <copyright>Rick@AIBrain.org 2014</copyright>
     [Obsolete( "Use ConcurrentList instead." )]
     [JsonObject]
-    [DebuggerDisplay( "Count={Count}" )]
+#pragma warning disable IDE0009 // Member access should be qualified.
+    [DebuggerDisplay( "Count={" + nameof( Count ) + "}" )]
+#pragma warning restore IDE0009 // Member access should be qualified.
     public sealed class ParallelList<TType> : ABetterClassDispose ,IList<TType> {
 
         /// <summary>
@@ -124,7 +126,7 @@ namespace Librainian.Collections {
 
         /// <summary></summary>
         /// <seealso cref="CatchUp" />
-        public Boolean AnyWritesPending => ( 0 == this.CountOfItemsWaitingToBeAdded ) && ( 0 == this.CountOfItemsWaitingToBeChanged ) && ( 0 == this.CountOfItemsWaitingToBeInserted );
+        public Boolean AnyWritesPending => 0 == this.CountOfItemsWaitingToBeAdded && 0 == this.CountOfItemsWaitingToBeChanged && 0 == this.CountOfItemsWaitingToBeInserted;
 
         /// <summary>
         ///     <para>Count of items currently in this <see cref="ParallelList{TType}" />.</para>
@@ -167,7 +169,7 @@ namespace Librainian.Collections {
                     return this.Read( () => this._list[ index ] );
                 }
 
-                return default ( TType );
+                return default;
             }
 
             set {
@@ -225,7 +227,7 @@ namespace Librainian.Collections {
             } ) );
         }
 
-        public Boolean AddAndWait( TType item, CancellationToken cancellationToken = default( CancellationToken ), TimeSpan timeout = default( TimeSpan ) ) {
+        public Boolean AddAndWait( TType item, CancellationToken cancellationToken = default, TimeSpan timeout = default ) {
 
             //var slim = new ManualResetEventSlim( initialState: false );
             this._slims.Value.Reset();
@@ -233,10 +235,10 @@ namespace Librainian.Collections {
             this.Add( item: item, afterAdd: () => this._slims.Value.Set() );
 
             try {
-                if ( ( default( TimeSpan ) != timeout ) && ( default( CancellationToken ) != cancellationToken ) ) {
+                if ( default != timeout && default != cancellationToken ) {
                     return this._slims.Value.Wait( timeout, cancellationToken );
                 }
-                if ( default( TimeSpan ) != timeout ) {
+                if ( default != timeout ) {
                     return this._actionBlock.Completion.Wait( timeout: timeout );
                 }
                 this._slims.Value.Wait( cancellationToken );
@@ -296,8 +298,8 @@ namespace Librainian.Collections {
         /// <param name="timeout"></param>
         /// <param name="cancellationToken"></param>
         /// <returns>Returns true if list is caught up. (No write operations pending)</returns>
-        public Boolean CatchUp( Span timeout = default( Span ), CancellationToken cancellationToken = default( CancellationToken ) ) {
-            if ( timeout == default( Span ) ) {
+        public Boolean CatchUp( Span timeout = default, CancellationToken cancellationToken = default ) {
+            if ( timeout == default ) {
                 timeout = this.TimeoutForWrites;
             }
             var interval = Milliseconds.Hertz111;
@@ -374,17 +376,17 @@ namespace Librainian.Collections {
         ///     Returns <see cref="Boolean.True" /> if the Task completed execution within the allotted
         ///     time or has already waited.
         /// </returns>
-        public Boolean CompleteAndWait( CancellationToken cancellationToken = default( CancellationToken ), TimeSpan timeout = default( TimeSpan ) ) {
+        public Boolean CompleteAndWait( CancellationToken cancellationToken = default, TimeSpan timeout = default ) {
             try {
                 this.Complete();
 
-                if ( ( default( TimeSpan ) != timeout ) && ( default( CancellationToken ) != cancellationToken ) ) {
+                if ( default != timeout && default != cancellationToken ) {
                     return this._actionBlock.Completion.Wait( millisecondsTimeout: ( Int32 )timeout.TotalMilliseconds, cancellationToken: cancellationToken );
                 }
-                if ( default( TimeSpan ) != timeout ) {
+                if ( default != timeout ) {
                     return this._actionBlock.Completion.Wait( timeout: timeout );
                 }
-                if ( default( CancellationToken ) != cancellationToken ) {
+                if ( default != cancellationToken ) {
                     try {
                         this._actionBlock.Completion.Wait( cancellationToken: cancellationToken );
                     }
@@ -567,7 +569,7 @@ namespace Librainian.Collections {
         /// <summary>Blocks and waits.</summary>
         /// <param name="timeout"></param>
         /// <param name="cancellationToken"></param>
-        public void Wait( Span timeout = default( Span ), CancellationToken cancellationToken = default( CancellationToken ) ) => this.CatchUp( timeout, cancellationToken );
+        public void Wait( Span timeout = default, CancellationToken cancellationToken = default ) => this.CatchUp( timeout, cancellationToken );
 
         private void AnItemHasBeenAdded() {
             this._waitingToBeAddedCounter.Value--;
@@ -591,12 +593,12 @@ namespace Librainian.Collections {
         /// <param name="func"></param>
         /// <returns></returns>
         private TFuncResult Read<TFuncResult>( Func<TFuncResult> func ) {
-            if ( !this.AllowModifications && ( func != null ) ) {
+            if ( !this.AllowModifications && func != null ) {
                 return func(); //list has been marked to not allow any more modifications, go ahead and perform the read function.
             }
 
             if ( !this._readerWriter.TryEnterUpgradeableReadLock( this.TimeoutForReads ) ) {
-                return default( TFuncResult );
+                return default;
             }
             try {
                 if ( func != null ) {
@@ -607,7 +609,7 @@ namespace Librainian.Collections {
                 this._readerWriter.ExitUpgradeableReadLock();
             }
 
-            return default( TFuncResult );
+            return default;
         }
 
         private void RequestToAddAnItem() => this._waitingToBeAddedCounter.Value++;
@@ -628,15 +630,15 @@ namespace Librainian.Collections {
         /// <seealso cref="CatchUp" />
         private TFuncResult Write<TFuncResult>( Func<TFuncResult> func, Boolean ignoreAllowModificationsCheck = false ) {
             if ( !ignoreAllowModificationsCheck ) {
-                if ( !this.AllowModifications && ( func != null ) ) {
-                    return default( TFuncResult );
+                if ( !this.AllowModifications && func != null ) {
+                    return default;
                 }
             }
 
             //BUG what if we want a clone of the list, but it has been marked as !this.AllowModifications
 
             if ( !this._readerWriter.TryEnterWriteLock( this.TimeoutForWrites ) ) {
-                return default( TFuncResult );
+                return default;
             }
             try {
                 if ( func != null ) {
@@ -646,7 +648,7 @@ namespace Librainian.Collections {
             finally {
                 this._readerWriter.ExitWriteLock();
             }
-            return default( TFuncResult );
+            return default;
         }
 
         /// <summary>

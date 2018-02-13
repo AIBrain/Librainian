@@ -34,14 +34,14 @@ namespace Librainian.Graphics.DDD {
     /// </summary>
     /// <remarks>Coded towards speed.</remarks>
     [Immutable]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject( MemberSerialization.Fields )]
     public struct CoordinateU64 : IEquatable<CoordinateU64>, IComparable<CoordinateU64> {
 
         /// <summary>The smallest value a <see cref="CoordinateU64" /> will hold.</summary>
         public const UInt64 Minimum = 1 + UInt64.MinValue; //TODO why is this not Zero ?
 
-        public static readonly CoordinateU64 Empty = default( CoordinateU64 );
+        public static readonly CoordinateU64 Empty;
 
         /// <summary>The largest value a <see cref="CoordinateU64" /> will hold.</summary>
         /// <remarks>the cuberoot of <see cref="UInt64.MaxValue" /> split into x*y*z.</remarks>
@@ -99,7 +99,7 @@ namespace Librainian.Graphics.DDD {
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
         /// <returns></returns>
-        public static Boolean Equals( CoordinateU64 lhs, CoordinateU64 rhs ) => ( lhs.X == rhs.X ) && ( lhs.Y == rhs.Y ) && ( lhs.Z == rhs.Z );
+        public static Boolean Equals( CoordinateU64 lhs, CoordinateU64 rhs ) => lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
 
         public static implicit operator Point( CoordinateU64 coordinate ) => new Point( x: ( Int32 )coordinate.X, y: ( Int32 )coordinate.Y );
 
@@ -151,10 +151,10 @@ namespace Librainian.Graphics.DDD {
         public Boolean Equals( CoordinateU64 other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is CoordinateU64 && Equals( this, ( CoordinateU64 )obj );
+            return obj is CoordinateU64 u64 && Equals( this, u64 );
         }
 
         /// <summary>

@@ -26,10 +26,10 @@ namespace Librainian.Maths {
 
     public static class MathConstants {
 
-        /// <summary>
-        ///     <para>Return the smallest possible value above <see cref="decimal.Zero" /> for a <see cref="decimal" />.</para>
-        /// </summary>
-        public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
+		/// <summary>
+		///     <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="Decimal" />.</para>
+		/// </summary>
+		public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
 
         public const Boolean No = false;
 
@@ -37,7 +37,7 @@ namespace Librainian.Maths {
 
         public const Boolean Off = false;
 
-        public const Boolean On = true;
+        public const Boolean On = !Off;
 
         public const UInt64 OneGigaByte = OneMegaByte * OneKiloByte;
 
@@ -47,7 +47,11 @@ namespace Librainian.Maths {
 
         public const UInt64 OneTeraByte = OneGigaByte * OneKiloByte;
 
-        public const Boolean Yes = true;
+        public const Boolean Yes = !No;
+
+	    public const Single NegativeOne = -1.0f;
+
+	    public const Single NegativeOneHalf = -0.5f;
 
         public static readonly BigRational DecimalMaxValueAsBigRational = Decimal.MaxValue;
 

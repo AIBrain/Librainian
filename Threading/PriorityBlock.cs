@@ -56,7 +56,7 @@ namespace Librainian.Threading {
         }
 
         public Task TheDoctorsTask {
-            get; private set;
+            get;
         }
 
         public void Add( [NotNull] OneJob oneJob ) {
@@ -85,12 +85,11 @@ namespace Librainian.Threading {
             while ( !this.CancellationToken.IsCancellationRequested ) {
                 await Task.WhenAny( this.Input.OutputAvailableAsync( this.CancellationToken ) );
 
-                OneJob item;
-                if ( !this.Input.TryReceive( null, out item ) ) {
-                    continue; //Hello? Hello? Hmm. No one is there. Go back to waiting.
-                }
+				if ( !this.Input.TryReceive( null, out var item ) ) {
+					continue; //Hello? Hello? Hmm. No one is there. Go back to waiting.
+				}
 
-                var highest = this._jobs.OrderByDescending( job => job.Priority ).FirstOrDefault();
+				var highest = this._jobs.OrderByDescending( job => job.Priority ).FirstOrDefault();
                 if ( null == highest ) {
                     continue;
                 }

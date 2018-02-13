@@ -39,22 +39,16 @@ namespace Librainian.Maths.Numbers {
         private Double _value;
 
         /// <summary>Initialize the value to a random value between -1 and 1.</summary>
-        public Minus1To1Ts() {
-            this.Value = Rand.NextDouble() - Rand.NextDouble();
-        }
+        public Minus1To1Ts() => this.Value = Rand.NextDouble() - Rand.NextDouble();
 
-        /// <summary>Initialize the value to between -1 and 1.</summary>
+	    /// <summary>Initialize the value to between -1 and 1.</summary>
         /// <param name="value"></param>
-        public Minus1To1Ts( Double value ) {
-            this.Value = value;
-        }
+        public Minus1To1Ts( Double value ) => this.Value = value;
 
-        public Double Value {
-            get {
-                return Interlocked.CompareExchange( ref this._value, this._value, NaNValue );
-            }
+	    public Double Value {
+            get => Interlocked.CompareExchange( ref this._value, this._value, NaNValue );
 
-            set {
+	        set {
                 if ( value > MaxValue ) {
                     value = MaxValue;
                 }

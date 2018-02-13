@@ -34,18 +34,18 @@ namespace Librainian.Collections {
     /// <value>Version 1.7</value>
     /// <remarks>TODO replace locks with AsyncLocks</remarks>
     [JsonObject]
-    [DebuggerDisplay( "Count={Count}" )]
+#pragma warning disable IDE0009 // Member access should be qualified.
+    [DebuggerDisplay( "Count={" + nameof( Count ) + "}" )]
+#pragma warning restore IDE0009 // Member access should be qualified.
     public sealed class ThreadSafeList<T> : IList<T> {
 
         /// <summary>TODO replace the locks with a ReaderWriterLockSlim</summary>
         [JsonProperty]
         private readonly List<T> _items = new List<T>();
 
-        public ThreadSafeList( IEnumerable<T> items = null ) {
-            this.AddRange( items );
-        }
+		public ThreadSafeList( IEnumerable<T> items = null ) => this.AddRange( items );
 
-        public Int32 Count {
+		public Int32 Count {
             get {
                 lock ( this._items ) {
                     return this._items.Count;
@@ -293,7 +293,7 @@ namespace Librainian.Collections {
                     return true;
                 }
             }
-            item = default( T );
+            item = default;
             return false;
         }
 
@@ -311,8 +311,8 @@ namespace Librainian.Collections {
                     return true;
                 }
             }
-            item = default( T );
-            rest = default( List<T> );
+            item = default;
+            rest = default;
             return false;
         }
     }

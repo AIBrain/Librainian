@@ -32,9 +32,13 @@ namespace Librainian.Collections {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Magic;
+    using Maths;
+    using Measurement.Time;
+    using Microsoft.FSharp.Core;
     using Newtonsoft.Json;
+    using Threading;
 
-    /// <summary>
+	/// <summary>
     ///     <para>A thread safe list. Uses a <see cref="ConcurrentQueue{T}" /> to buffer adds.</para>
     /// </summary>
     /// <typeparam name="TType"></typeparam>
@@ -44,8 +48,10 @@ namespace Librainian.Collections {
     /// <copyright>
     ///     Rick@AIBrain.org
     /// </copyright>
-    [JsonObject()]
-    [DebuggerDisplay( "Count={Count}" )]
+    [JsonObject]
+#pragma warning disable IDE0009 // Member access should be qualified.
+    [DebuggerDisplay( "Count={" + nameof( Count ) + "}" )]
+#pragma warning restore IDE0009 // Member access should be qualified.
     public class ConcurrentList<TType> : ABetterClassDispose, IList<TType>, IEquatable<IEnumerable<TType>> {
 
         /// <summary>
@@ -67,19 +73,57 @@ namespace Librainian.Collections {
             }
         }
 
-        //public ConcurrentList() {}
+		/// <summary>
+		/// Harker's shuffle version. Untested!
+		/// </summary>
+		/// <typeparam name="TType"></typeparam>
+		/// <param name="iterations"></param>
+		/// <param name="howLong"></param>
+		/// <param name="orUntilCancelled"></param>
+		[Experimental("Untested")]
+		public UInt32 Shuffle( Int32 iterations = 1, TimeSpan? howLong = null, SimpleCancel orUntilCancelled = null ) {
 
-        /// <summary>
-        ///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
-        /// </summary>
-        [JsonIgnore]
-        public Int32 Count {
-            get {
-                return this.ItemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
-            }
-        }
+			var stopWatch = StopWatch.StartNew();
 
-        /// <summary>
+			if ( orUntilCancelled == null ) {
+				orUntilCancelled = new SimpleCancel();
+			}
+
+			var counter = 0U;
+		    var itemCount = this.Count;
+
+			if ( iterations < 1 ) {
+				iterations = 1;
+			}
+
+			iterations *= itemCount;
+
+			do {
+				var a = 0.Next( itemCount );
+				var b = 0.Next( itemCount );
+				var temp = this[ a ];
+				this[ a ] = this[ b ];
+				this[ b ] = temp;
+				--iterations;
+				counter++;
+				if ( howLong.HasValue && stopWatch.Elapsed > howLong.Value ) {
+					orUntilCancelled.RequestCancel();
+				}
+				if ( !iterations.Any() ) {
+					orUntilCancelled.RequestCancel();
+				}
+			} while ( !orUntilCancelled.HaveAnyCancellationsBeenRequested() );
+
+			return counter;
+		}
+
+		/// <summary>
+		///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
+		/// </summary>
+		[JsonIgnore]
+        public Int32 Count => this.ItemCounter.Values.Aggregate( 0, ( current, variable ) => current + variable );
+
+	    /// <summary>
         /// </summary>
         /// <seealso cref="AllowModifications" />
         public Boolean IsReadOnly {
@@ -127,7 +171,7 @@ namespace Librainian.Collections {
                     return this.Read( () => this.TheList[ index ] );
                 }
 
-                return default( TType );
+                return default;
             }
 
             set {
@@ -156,10 +200,10 @@ namespace Librainian.Collections {
             if ( ReferenceEquals( lhs, rhs ) ) {
                 return true;
             }
-            if ( ReferenceEquals( lhs, null ) ) {
+            if ( lhs is null ) {
                 return false;
             }
-            if ( ReferenceEquals( null, rhs ) ) {
+            if ( rhs is null ) {
                 return false;
             }
 
@@ -203,17 +247,15 @@ namespace Librainian.Collections {
             } );
         }
 
-        public Boolean AddAndWait( TType item ) {
-            return this.Add( item: item, afterAdd: this.CatchUp );
-        }
+        public Boolean AddAndWait( TType item ) => this.Add( item: item, afterAdd: this.CatchUp );
 
-        public async Task<Boolean> AddAsync( TType item, Action afterAdd = null ) => await Task.Run( () => this.TryAdd( item: item, afterAdd: afterAdd ) );
+	    public async Task<Boolean> AddAsync( TType item, Action afterAdd = null ) => await Task.Run( () => this.TryAdd( item: item, afterAdd: afterAdd ) );
 
         /// <summary>
         ///     Add a collection of items.
         /// </summary>
         /// <param name="items"></param>
-        /// <param name="useParallelism">Enables parallelization of the <paramref name="items" />.</param>
+        /// <param name="useParallelism">Enables parallelization of the <paramref name="items" /> No guarantee of the final order of items.</param>
         /// <param name="afterEachAdd"><see cref="Action" /> to perform after each add.</param>
         /// <param name="afterRangeAdded"><see cref="Action" /> to perform after range added.</param>
         /// <exception cref="ArgumentNullException"></exception>
@@ -271,18 +313,41 @@ namespace Librainian.Collections {
             try {
                 this.ReaderWriter.EnterWriteLock();
 
-                TType bob;
-                while ( this.InputBuffer.TryDequeue( out bob ) ) {
-                    this.TheList.Add( bob );
-                    this.AnItemHasBeenAdded();
-                }
-            }
+				while ( this.InputBuffer.TryDequeue( out var bob ) ) {
+					this.TheList.Add( bob );
+					this.AnItemHasBeenAdded();
+				}
+			}
             finally {
                 this.ReaderWriter.ExitWriteLock();
             }
         }
 
-        /// <summary>
+	    public Boolean TryCatchup( TimeSpan timeout) {
+		    if ( !AnyWritesPending() ) {
+			    return true;
+		    }
+
+		    var gotLock = false;
+		    try {
+			    if ( !this.ReaderWriter.TryEnterWriteLock( timeout ) ) {
+				    return false;
+			    }
+			    gotLock = true;
+			    while ( this.InputBuffer.TryDequeue( out var bob ) ) {
+				    this.TheList.Add( bob );
+				    this.AnItemHasBeenAdded();
+			    }
+			    return true;
+		    }
+		    finally {
+			    if ( gotLock ) {
+				    this.ReaderWriter.ExitWriteLock();
+			    }
+			}
+		}
+
+	    /// <summary>
         ///     Mark this <see cref="ConcurrentList{TType}" /> to be cleared.
         /// </summary>
         public void Clear() {
@@ -303,7 +368,7 @@ namespace Librainian.Collections {
         ///     </para>
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<TType> Clone() => this.Read( func: () => this.TheList.ToList() );
+        public IEnumerable<TType> Clone() => this.Read( () => this.TheList.ToList() );
 
         /// <summary>
         ///     Signal that this <see cref="ConcurrentList{TType}" /> will not be modified any more.
@@ -314,7 +379,7 @@ namespace Librainian.Collections {
         public void Complete() {
             try {
                 this.CatchUp();
-                this.Fix();
+                this.FixCapacity();
             }
             finally {
                 this.IsReadOnly = true;
@@ -347,28 +412,24 @@ namespace Librainian.Collections {
             } );
         }
 
-        public Boolean Equals( IEnumerable<TType> other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( IEnumerable<TType> other ) => Equals( this, other );
 
-        /// <summary>
-        ///     The <seealso cref="List{T}.Capacity" /> is resized down to the <seealso cref="List{T}.Count" />.
-        /// </summary>
-        public void Fix() {
-            this.Write( () => {
-                this.TheList.Capacity = this.TheList.Count;
-                return true;
-            } );
-        }
+		/// <summary>
+		///     The <seealso cref="List{T}.Capacity" /> is resized down to the <seealso cref="List{T}.Count" />.
+		/// </summary>
+		public void FixCapacity() => this.Write( () => {
+			this.TheList.Capacity = this.TheList.Count;
+			return true;
+		} );
 
-        /// <summary>
-        ///     <para>
-        ///         Returns an enumerator that iterates through a <see cref="Clone" /> of this
-        ///         <see cref="ConcurrentList{TType}" /> .
-        ///     </para>
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<TType> GetEnumerator() => this.Clone().GetEnumerator();  //is this the proper way?
+		/// <summary>
+		///     <para>
+		///         Returns an enumerator that iterates through a <see cref="Clone" /> of this
+		///         <see cref="ConcurrentList{TType}" /> .
+		///     </para>
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerator<TType> GetEnumerator() => this.Clone().GetEnumerator();  //is this the proper way?
 
         IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator();    //is this the proper way?
 
@@ -494,11 +555,9 @@ namespace Librainian.Collections {
             this.ItemCounter?.Dispose();
         }
 
-        private void AnItemHasBeenAdded() {
-            this.ItemCounter.Value++;
-        }
+	private void AnItemHasBeenAdded() => this.ItemCounter.Value++;
 
-        private void AnItemHasBeenRemoved( [CanBeNull] Action action = null ) {
+		private void AnItemHasBeenRemoved( [CanBeNull] Action action = null ) {
             this.ItemCounter.Value--;
             action?.Invoke();
         }
@@ -545,14 +604,14 @@ namespace Librainian.Collections {
         /// <returns></returns>
         [CanBeNull]
         private TFuncResult Read<TFuncResult>( Func<TFuncResult> func ) {
-            if ( !this.AllowModifications() && ( func != null ) ) {
+            if ( !this.AllowModifications() && func != null ) {
                 return func(); //list has been marked to not allow any more modifications, go ahead and perform the read function.
             }
 
             this.CatchUp();
 
             if ( !this.ReaderWriter.TryEnterUpgradeableReadLock( this.TimeoutForReads ?? TimeSpan.FromMinutes( 1 ) ) ) {
-                return default( TFuncResult );
+                return default;
             }
 
             try {
@@ -564,7 +623,7 @@ namespace Librainian.Collections {
                 this.ReaderWriter.ExitUpgradeableReadLock();
             }
 
-            return default( TFuncResult );
+            return default;
         }
 
         /// <summary>
@@ -578,11 +637,11 @@ namespace Librainian.Collections {
         [CanBeNull]
         private TFuncResult Write<TFuncResult>( [CanBeNull] Func<TFuncResult> func, Boolean ignoreAllowModificationsCheck = false ) {
             if ( !ignoreAllowModificationsCheck && !this.AllowModifications() && func != null ) {
-                return default( TFuncResult );
+                return default;
             }
 
             if ( !this.ReaderWriter.TryEnterWriteLock( this.TimeoutForWrites ?? TimeSpan.FromMinutes( 1 ) ) ) {
-                return default( TFuncResult );
+                return default;
             }
 
             try {
@@ -594,7 +653,7 @@ namespace Librainian.Collections {
                 this.ReaderWriter.ExitWriteLock();
             }
 
-            return default( TFuncResult );
+            return default;
         }
     }
 }

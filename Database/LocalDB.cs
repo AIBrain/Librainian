@@ -48,13 +48,7 @@ namespace Librainian.Database {
                 databaseLocation = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
             }
 
-            if ( databaseLocation == null ) {
-
-                //-V3022
-                throw new ArgumentNullException( nameof( databaseLocation ) );
-            }
-
-            this.ReadTimeout = timeoutForReads.GetValueOrDefault( TimeSpan.FromMinutes( 1 ) );
+	        this.ReadTimeout = timeoutForReads.GetValueOrDefault( TimeSpan.FromMinutes( 1 ) );
             this.WriteTimeout = timeoutForWrites.GetValueOrDefault( TimeSpan.FromMinutes( 1 ) );
 
             this.DatabaseName = databaseName;
@@ -83,6 +77,7 @@ namespace Librainian.Database {
 
             this.ConnectionString = $@"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog={this.DatabaseName};AttachDBFileName={this.DatabaseMdf.FullPathWithFileName};";
 
+	        // ReSharper disable once UseObjectOrCollectionInitializer
             this.Connection = new SqlConnection( this.ConnectionString );
             this.Connection.InfoMessage += ( sender, args ) => args.Message.Info();
             this.Connection.StateChange += ( sender, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info();
@@ -151,11 +146,9 @@ namespace Librainian.Database {
             }
         }
 
-        protected override void DisposeManaged() {
-            this.DetachDatabaseAsync().Wait( ReadTimeout + WriteTimeout );
-        }
+		protected override void DisposeManaged() => this.DetachDatabaseAsync().Wait( this.ReadTimeout + this.WriteTimeout );
 
-    }
+	}
 
     ///// <summary>
     /////     work in progress. reiventing the same damn wheel. again."

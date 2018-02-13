@@ -23,11 +23,9 @@ namespace Librainian.Magic {
     public class ChainElement {
         private readonly ChainElement _next;
 
-        protected ChainElement( ChainElement next ) {
-            this._next = next;
-        }
+        protected ChainElement( ChainElement next ) => this._next = next;
 
-        protected ChainElement() {
+	    protected ChainElement() {
         }
 
         public T As<T>( T defaultValue ) where T : class {
@@ -35,11 +33,7 @@ namespace Librainian.Magic {
                 return this as T;
             }
 
-            if ( this._next != null ) {
-                return this._next.As( defaultValue );
-            }
-
-            return defaultValue;
+            return this._next != null ? this._next.As( defaultValue ) : defaultValue;
         }
     }
 }

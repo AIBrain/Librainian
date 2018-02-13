@@ -34,7 +34,7 @@ namespace Librainian.Linguistics {
     /// </summary>
     [JsonObject]
     [Immutable]
-    [DebuggerDisplay( "{ToString()}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public sealed class Book : IEquatable<Book>, IEnumerable<KeyValuePair<Int32, Page>> {
 
@@ -77,42 +77,33 @@ namespace Librainian.Linguistics {
             if ( ReferenceEquals( lhs, rhs ) ) {
                 return true;
             }
-            if ( ReferenceEquals( lhs, null ) ) {
+            if ( lhs is null ) {
                 return false;
             }
-            if ( ReferenceEquals( null, rhs ) ) {
+            if ( rhs is null ) {
                 return false;
             }
 
             return lhs.SequenceEqual( rhs ); //no authors??
         }
 
-        public Boolean Equals( [CanBeNull] Book other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( [CanBeNull] Book other ) => Equals( this, other );
 
-        public IEnumerable<Author> GetAuthors() => this.Authors;
+	    public IEnumerable<Author> GetAuthors() => this.Authors;
 
         /// <summary>Returns an enumerator that iterates through the collection.</summary>
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-        public IEnumerator<KeyValuePair<Int32, Page>> GetEnumerator() {
-            return this.Pages.GetEnumerator();
-        }
+        public IEnumerator<KeyValuePair<Int32, Page>> GetEnumerator() => this.Pages.GetEnumerator();
 
-        /// <summary>Serves as the default hash function. </summary>
+	    /// <summary>Serves as the default hash function. </summary>
         /// <returns>A hash code for the current object.</returns>
-        public override Int32 GetHashCode() {
-            return this.Pages.GetHashCode();
-        }
+        public override Int32 GetHashCode() => this.Pages.GetHashCode();
 
-        public IEnumerable<KeyValuePair<Int32, Page>> GetPages() {
-            return this.Pages;
-        }
+	    public IEnumerable<KeyValuePair<Int32, Page>> GetPages() => this.Pages;
 
-        /// <summary>Returns an enumerator that iterates through a collection.</summary>
+	    /// <summary>Returns an enumerator that iterates through a collection.</summary>
         /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return ( ( IEnumerable )this.Pages ).GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Pages ).GetEnumerator();
+
     }
 }

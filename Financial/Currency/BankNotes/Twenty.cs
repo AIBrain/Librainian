@@ -23,7 +23,7 @@ namespace Librainian.Financial.Currency.BankNotes {
     using System;
     using System.Diagnostics;
 
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public sealed class Twenty : IBankNote {
 
         public Decimal FaceValue => 20.00M;

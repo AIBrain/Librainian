@@ -148,24 +148,28 @@ namespace Librainian.Measurement.Time.Clocks {
             switch ( granularity ) {
                 case Granularity.Milliseconds:
 
+		            // ReSharper disable once UseObjectOrCollectionInitializer
                     this._timer = new Timer( interval: ( Double )Milliseconds.One.Value ) { AutoReset = true };
                     this._timer.Elapsed += this.OnMillisecondElapsed;
                     break;
 
                 case Granularity.Seconds:
 
+		            // ReSharper disable once UseObjectOrCollectionInitializer
                     this._timer = new Timer( interval: ( Double )Seconds.One.Value ) { AutoReset = true };
                     this._timer.Elapsed += this.OnSecondElapsed;
                     break;
 
                 case Granularity.Minutes:
 
+		            // ReSharper disable once UseObjectOrCollectionInitializer
                     this._timer = new Timer( interval: ( Double )Minutes.One.Value ) { AutoReset = true };
                     this._timer.Elapsed += this.OnMinuteElapsed;
                     break;
 
                 case Granularity.Hours:
 
+		            // ReSharper disable once UseObjectOrCollectionInitializer
                     this._timer = new Timer( interval: ( Double )Hours.One.Value ) { AutoReset = true };
                     this._timer.Elapsed += this.OnHourElapsed;
                     break;
@@ -188,20 +192,18 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         private void OnHourElapsed( Object sender, ElapsedEventArgs e ) {
-            Boolean ticked;
 
-            this.Hour = this.Hour.Next( out ticked );
-            if ( !ticked ) {
+			this.Hour = this.Hour.Next( out var ticked );
+			if ( !ticked ) {
                 return;
             }
             this.OnHourTick?.Invoke( this.Hour );
         }
 
         private void OnMillisecondElapsed( Object sender, ElapsedEventArgs e ) {
-            Boolean ticked;
 
-            this.Millisecond = this.Millisecond.Next( out ticked );
-            if ( !ticked ) {
+			this.Millisecond = this.Millisecond.Next( out var ticked );
+			if ( !ticked ) {
                 return;
             }
             this.OnMillisecondTick?.Invoke();
@@ -210,10 +212,9 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         private void OnMinuteElapsed( Object sender, ElapsedEventArgs e ) {
-            Boolean ticked;
 
-            this.Minute = this.Minute.Next( out ticked );
-            if ( !ticked ) {
+			this.Minute = this.Minute.Next( out var ticked );
+			if ( !ticked ) {
                 return;
             }
             this.OnMinuteTick?.Invoke();
@@ -222,10 +223,9 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         private void OnSecondElapsed( Object sender, ElapsedEventArgs e ) {
-            Boolean ticked;
 
-            this.Second = this.Second.Next( out ticked );
-            if ( !ticked ) {
+			this.Second = this.Second.Next( out var ticked );
+			if ( !ticked ) {
                 return;
             }
             this.OnSecondTick?.Invoke();

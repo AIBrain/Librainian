@@ -30,14 +30,9 @@ namespace Librainian.Collections {
     public class CollectionDebugView<T> {
         private readonly ICollection<T> _collection;
 
-        public CollectionDebugView( ICollection<T> collection ) {
-            if ( collection == null ) {
-                throw new ArgumentNullException( nameof( collection ) );
-            }
-            this._collection = collection;
-        }
+        public CollectionDebugView( ICollection<T> collection ) => this._collection = collection ?? throw new ArgumentNullException( nameof( collection ) );
 
-        [DebuggerBrowsable( DebuggerBrowsableState.RootHidden )]
+	    [DebuggerBrowsable( DebuggerBrowsableState.RootHidden )]
         public T[] Items {
             get {
                 var array = new T[ this._collection.Count ];

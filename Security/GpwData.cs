@@ -21,11 +21,9 @@
             get;
         }
 
-        public static Int16 Get( Int32 i1, Int32 i2, Int32 i3 ) {
-            return Tris[ i1 * 26 * 26 + i2 * 26 + i3 ];
-        }
+        public static Int16 Get( Int32 i1, Int32 i2, Int32 i3 ) => Tris[ i1 * 26 * 26 + i2 * 26 + i3 ];
 
-        static GpwData() {
+	    static GpwData() {
             Int32 c1;
             Sigma = 0;
             for ( c1 = 0; c1 < 26; c1++ ) {

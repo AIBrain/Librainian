@@ -21,22 +21,18 @@
 namespace Librainian.Threading {
 
     using System;
+    using System.Runtime.CompilerServices;
 
     public class VolatileBoolean {
+
         private volatile Boolean _value;
 
         public Boolean Value {
-            get {
-                return this._value;
-            }
+            [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+            get => this._value;
 
-            set {
-                this._value = value;
-            }
+            [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+	        set => this._value = value;
         }
-
-        public void SetValue( Boolean value ) {
-            this.Value = value;
-        }
-    }
+	}
 }

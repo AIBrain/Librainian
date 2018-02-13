@@ -28,7 +28,7 @@ namespace Librainian.Extensions {
         private const String FileSizeFormat = "fs";
 
         public String Format( String format, Object arg, IFormatProvider formatProvider ) {
-            if ( ( format == null ) || !format.StartsWith( FileSizeFormat ) ) {
+            if ( format == null || !format.StartsWith( FileSizeFormat ) ) {
                 return DefaultFormat( format, arg, formatProvider );
             }
 

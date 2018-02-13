@@ -39,8 +39,7 @@ namespace Librainian.FileSystem {
 
         private const UInt32 MethodNeither = 3;
 
-        private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) {
-            return ( deviceType << 16 ) | ( access << 14 ) | ( function << 2 ) | method;
-        }
+        private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) => ( deviceType << 16 ) | ( access << 14 ) | ( function << 2 ) | method;
+
     }
 }

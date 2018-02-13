@@ -68,7 +68,7 @@ namespace Librainian.Measurement.Time.FluentTime {
 
         public DateTimeOffset After( DateTimeOffset dateTime ) => this.AddTo( dateTime );
 
-        public Boolean Equals( VariableTimeSpan other ) => ( this._months == other._months ) && ( this._years == other._years ) && ( this._timeSpan == other._timeSpan );
+        public Boolean Equals( VariableTimeSpan other ) => this._months == other._months && this._years == other._years && this._timeSpan == other._timeSpan;
 
         public override Boolean Equals( Object obj ) {
             if ( !( obj is VariableTimeSpan ) ) {

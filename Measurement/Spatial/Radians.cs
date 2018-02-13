@@ -28,7 +28,7 @@ namespace Librainian.Measurement.Spatial {
 
     /// <summary>The radian is the standard unit of angular measure.</summary>
     /// <seealso cref="http://wikipedia.org/wiki/Radian" />
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
     public struct Radians : IComparable<Radians> {
@@ -44,16 +44,12 @@ namespace Librainian.Measurement.Spatial {
         [JsonProperty]
         private Single _value;
 
-        public Radians( Single value ) : this() {
-            this.Value = value;
-        }
+        public Radians( Single value ) : this() => this.Value = value;
 
-        public Single Value {
-            get {
-                return this._value;
-            }
+	    public Single Value {
+            get => this._value;
 
-            set {
+	        set {
                 while ( value < MinimumValue ) {
                     value += MaximumValue;
                 }
@@ -111,10 +107,10 @@ namespace Librainian.Measurement.Spatial {
         public Boolean Equals( Radians other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Radians && Equals( this, ( Radians )obj );
+            return obj is Radians radians && Equals( this, radians );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();

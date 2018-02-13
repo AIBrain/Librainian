@@ -86,69 +86,68 @@ namespace Librainian.Collections {
         ///     This implementation repeatedly calls the <see cref="Poll" /> moethod until it returns <c>false</c>.
         /// </remarks>
         public override void Clear() {
-            T element;
-            while ( this.Poll( out element ) ) {
-            }
-        }
+			while ( this.Poll( out var element ) ) {
+			}
+		}
 
-        /// <summary>
-        ///     Removes all available elements from this queue and invoke the given
-        ///     <paramref name="action" /> on each element in order.
-        /// </summary>
-        /// <remarks>
-        ///     This operation may be more efficient than repeatedly polling this queue. A failure
-        ///     encountered while attempting to invoke the <paramref name="action" /> on the elements
-        ///     may result in elements being neither, either or both in the queue or processed when the
-        ///     associated exception is thrown.
-        ///     <example>
-        ///         Drain to a non-generic list.
-        ///         <code language="c#">
-        /// IList c = ...;
-        /// int count = Drain(delegate(T e) {c.Add(e);});
-        /// </code>
-        ///     </example>
-        /// </remarks>
-        /// <param name="action">The action to performe on each element.</param>
-        /// <returns>The number of elements processed.</returns>
-        /// <exception cref="System.InvalidOperationException">
-        ///     If the queue cannot be drained at this time.
-        /// </exception>
-        /// <exception cref="System.ArgumentNullException">
-        ///     If the specified action is <see langword="null" />.
-        /// </exception>
-        /// <seealso cref="IQueue{T}.Drain(Action{T}, int)" />
-        public virtual Int32 Drain( Action<T> action ) => this.Drain( action, null );
+		/// <summary>
+		///     Removes all available elements from this queue and invoke the given
+		///     <paramref name="action" /> on each element in order.
+		/// </summary>
+		/// <remarks>
+		///     This operation may be more efficient than repeatedly polling this queue. A failure
+		///     encountered while attempting to invoke the <paramref name="action" /> on the elements
+		///     may result in elements being neither, either or both in the queue or processed when the
+		///     associated exception is thrown.
+		///     <example>
+		///         Drain to a non-generic list.
+		///         <code language="c#">
+		/// IList c = ...;
+		/// int count = Drain(delegate(T e) {c.Add(e);});
+		/// </code>
+		///     </example>
+		/// </remarks>
+		/// <param name="action">The action to performe on each element.</param>
+		/// <returns>The number of elements processed.</returns>
+		/// <exception cref="System.InvalidOperationException">
+		///     If the queue cannot be drained at this time.
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		///     If the specified action is <see langword="null" />.
+		/// </exception>
+		/// <seealso cref="IQueue{T}.Drain(Action{T}, Int32)" />
+		public virtual Int32 Drain( Action<T> action ) => this.Drain( action, null );
 
-        /// <summary>
-        ///     Removes all elements that pass the given <paramref name="criteria" /> from this queue
-        ///     and invoke the given <paramref name="action" /> on each element in order.
-        /// </summary>
-        /// <remarks>
-        ///     This operation may be more efficient than repeatedly polling this queue. A failure
-        ///     encountered while attempting to invoke the <paramref name="action" /> on the elements
-        ///     may result in elements being neither, either or both in the queue or processed when the
-        ///     associated exception is thrown.
-        ///     <example>
-        ///         Drain to a non-generic list.
-        ///         <code language="c#">
-        /// IList c = ...;
-        /// int count = Drain(delegate(T e) {c.Add(e);});
-        /// </code>
-        ///     </example>
-        /// </remarks>
-        /// <param name="action">The action to performe on each element.</param>
-        /// <param name="criteria">
-        ///     The criteria to select the elements. <c>null</c> selects any element.
-        /// </param>
-        /// <returns>The number of elements processed.</returns>
-        /// <exception cref="System.InvalidOperationException">
-        ///     If the queue cannot be drained at this time.
-        /// </exception>
-        /// <exception cref="System.ArgumentNullException">
-        ///     If the specified action is <see langword="null" />.
-        /// </exception>
-        /// <seealso cref="IQueue{T}.Drain(Action{T}, int)" />
-        public virtual Int32 Drain( Action<T> action, Predicate<T> criteria ) {
+		/// <summary>
+		///     Removes all elements that pass the given <paramref name="criteria" /> from this queue
+		///     and invoke the given <paramref name="action" /> on each element in order.
+		/// </summary>
+		/// <remarks>
+		///     This operation may be more efficient than repeatedly polling this queue. A failure
+		///     encountered while attempting to invoke the <paramref name="action" /> on the elements
+		///     may result in elements being neither, either or both in the queue or processed when the
+		///     associated exception is thrown.
+		///     <example>
+		///         Drain to a non-generic list.
+		///         <code language="c#">
+		/// IList c = ...;
+		/// int count = Drain(delegate(T e) {c.Add(e);});
+		/// </code>
+		///     </example>
+		/// </remarks>
+		/// <param name="action">The action to performe on each element.</param>
+		/// <param name="criteria">
+		///     The criteria to select the elements. <c>null</c> selects any element.
+		/// </param>
+		/// <returns>The number of elements processed.</returns>
+		/// <exception cref="System.InvalidOperationException">
+		///     If the queue cannot be drained at this time.
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		///     If the specified action is <see langword="null" />.
+		/// </exception>
+		/// <seealso cref="IQueue{T}.Drain(Action{T}, Int32)" />
+		public virtual Int32 Drain( Action<T> action, Predicate<T> criteria ) {
             if ( action == null ) {
                 throw new ArgumentNullException( nameof( action ) );
             }
@@ -221,11 +220,10 @@ namespace Librainian.Collections {
         /// <returns>The head of this queue.</returns>
         /// <exception cref="InvalidOperationException">If this queue is empty.</exception>
         public virtual T Element() {
-            T element;
-            if ( this.Peek( out element ) ) {
-                return element;
-            }
-            throw new InvalidOperationException( "Queue is empty." );
+			if ( this.Peek( out var element ) ) {
+				return element;
+			}
+			throw new InvalidOperationException( "Queue is empty." );
         }
 
         /// <summary>
@@ -266,28 +264,28 @@ namespace Librainian.Collections {
         /// <returns>The head of this queue</returns>
         /// <exception cref="InvalidOperationException">If this queue is empty.</exception>
         public virtual T Remove() {
-            T element;
-            if ( this.Poll( out element ) ) {
+	        if ( this.Poll( out var element ) ) {
                 return element;
             }
             throw new InvalidOperationException( "Queue is empty." );
         }
 
-        /// <summary>
-        ///     Does the real work for the <see cref="AbstractQueue{T}.Drain(System.Action{T})" /> and
-        ///     <see cref="AbstractQueue{T}.Drain(System.Action{T},Predicate{T})" />.
-        /// </summary>
-        protected internal virtual Int32 DoDrain( Action<T> action, Predicate<T> criteria ) => this.DoDrain( action, Int32.MaxValue, criteria );
+		/// <summary>
+		///     Does the real work for the <see cref="AbstractQueue{T}.Drain(System.Action{T})" /> and
+		///     <see cref="AbstractQueue{T}.Drain(System.Action{T},Predicate{T})" />.
+		/// </summary>
+		/// <param name="action">todo: describe action parameter on DoDrain</param>
+		/// <param name="criteria">todo: describe criteria parameter on DoDrain</param>
+		protected internal virtual Int32 DoDrain( Action<T> action, Predicate<T> criteria ) => this.DoDrain( action, Int32.MaxValue, criteria );
 
-        /// <summary>
-        ///     Does the real work for all drain methods. Caller must guarantee the
-        ///     <paramref name="action" /> is not <c>null</c> and <paramref name="maxElements" /> is
-        ///     greater then zero (0).
-        /// </summary>
-        /// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
-        /// <seealso cref="IQueue{T}.Drain(System.Action{T}, int)" />
-        /// <seealso cref="IQueue{T}.Drain(System.Action{T}, Predicate{T})" />
-        /// <seealso cref="IQueue{T}.Drain(System.Action{T}, int, Predicate{T})" />
-        protected internal abstract Int32 DoDrain( Action<T> action, Int32 maxElements, Predicate<T> criteria );
+		/// <summary>
+		///     Does the real work for all drain methods. Caller must guarantee the
+		///     <paramref name="action" /> is not <c>null</c> and <paramref name="maxElements" /> is
+		///     greater then zero (0).
+		/// </summary>
+		/// <param name="action">todo: describe action parameter on DoDrain</param>
+		/// <param name="maxElements">todo: describe maxElements parameter on DoDrain</param>
+		/// <param name="criteria">todo: describe criteria parameter on DoDrain</param>
+		protected internal abstract Int32 DoDrain( Action<T> action, Int32 maxElements, Predicate<T> criteria );
     }
 }

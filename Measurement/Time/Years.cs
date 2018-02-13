@@ -31,7 +31,7 @@ namespace Librainian.Measurement.Time {
     using Parsing;
 
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct Years : IComparable<Years>, IQuantityOfTime {
 
@@ -53,23 +53,15 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Years Zero = new Years( 0 );
 
-        public Years( Decimal value ) {
-            this.Value = value;
-        }
+        public Years( Decimal value ) => this.Value = value;
 
-        public Years( BigRational value ) {
-            this.Value = value;
-        }
+	    public Years( BigRational value ) => this.Value = value;
 
-        public Years( Int64 value ) {
-            this.Value = value;
-        }
+	    public Years( Int64 value ) => this.Value = value;
 
-        public Years( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Years( BigInteger value ) => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -117,10 +109,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Years other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Years && this.Equals( ( Years )obj );
+            return obj is Years years && this.Equals( years );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();

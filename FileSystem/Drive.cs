@@ -24,7 +24,7 @@ namespace Librainian.FileSystem {
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Numerics;
+
     using Extensions;
     using FluentAssertions;
     using JetBrains.Annotations;
@@ -50,20 +50,15 @@ namespace Librainian.FileSystem {
         public Drive( String fullpath ) : this( fullpath[ 0 ] ) {
         }
 
-        public Drive( [NotNull] DriveInfo info ) : this( new Folder( info.RootDirectory ) ) {
-            if ( info == null ) {
-                throw new ArgumentNullException( nameof( info ) );
-            }
-            this.Info = info;
-        }
+        public Drive( [NotNull] DriveInfo info ) : this( new Folder( info.RootDirectory ) ) => this.Info = info ?? throw new ArgumentNullException( nameof( info ) );
 
-        public Drive( Char driveLetter ) {
+	    public Drive( Char driveLetter ) {
             this.DriveLetter = Char.ToUpper( driveLetter );
 
             this.DriveLetter.Should().BeGreaterOrEqualTo( 'A' );
             this.DriveLetter.Should().BeLessOrEqualTo( 'Z' );
 
-            if ( ( this.DriveLetter < 'A' ) || ( this.DriveLetter > 'Z' ) ) {
+            if ( this.DriveLetter < 'A' || this.DriveLetter > 'Z' ) {
                 throw new ArgumentOutOfRangeException( nameof( driveLetter ), driveLetter, $"The specified drive \"{driveLetter}\" is outside of the range A through Z." );
             }
 
@@ -79,23 +74,16 @@ namespace Librainian.FileSystem {
 
         public String RootDirectory => this.Info.RootDirectory.Name;
 
-        public static IEnumerable<Drive> GetDrives() {
-            return DriveInfo.GetDrives().Select( drive => new Drive( drive ) );
-        }
+		public static IEnumerable<Drive> GetDrives() => DriveInfo.GetDrives().Select( drive => new Drive( drive ) );
 
-        /// <summary>
-        /// </summary>
-        /// <returns></returns>
-        public Boolean Exists() => this.Info.IsReady && !String.IsNullOrWhiteSpace( this.Info.Name );
+		/// <summary>
+		/// </summary>
+		/// <returns></returns>
+		public Boolean Exists() => this.Info.IsReady && !String.IsNullOrWhiteSpace( this.Info.Name );
 
-        public BigInteger FreeSpace() {
-            if ( this.Info.IsReady ) {
-                return this.Info.AvailableFreeSpace;
-            }
-            return BigInteger.Zero;
-        }
+        public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 )this.Info.AvailableFreeSpace : 0;
 
-        public IEnumerable<Folder> GetFolders( String searchPattern = "*" ) {
+	    public IEnumerable<Folder> GetFolders( String searchPattern = "*" ) {
             var root = new Folder( this.Info.RootDirectory );
             return root.BetterGetFolders( searchPattern );
         }

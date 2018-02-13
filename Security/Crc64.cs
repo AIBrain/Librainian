@@ -81,7 +81,7 @@ namespace Librainian.Security {
         }
 
         private static UInt64[] InitializeTable( UInt64 polynomial ) {
-            if ( ( polynomial == Crc64Iso.Iso3309Polynomial ) && ( Crc64Iso.Table != null ) ) {
+            if ( polynomial == Crc64Iso.Iso3309Polynomial && Crc64Iso.Table != null ) {
                 return Crc64Iso.Table;
             }
 

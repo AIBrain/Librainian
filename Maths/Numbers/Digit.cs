@@ -33,7 +33,7 @@ namespace Librainian.Maths.Numbers {
         public const Byte Minimum = 0;
 
         public Digit( SByte value ) {
-            if ( ( value < Minimum ) || ( value > Maximum ) ) {
+            if ( value < Digit.Minimum || value > Digit.Maximum ) {
                 throw new ArgumentOutOfRangeException( nameof( value ), "Out of range" );
             }
             this.Value = ( Byte )value;

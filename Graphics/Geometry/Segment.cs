@@ -27,7 +27,7 @@ namespace Librainian.Graphics.Geometry {
     using Newtonsoft.Json;
 
     [Immutable]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject( MemberSerialization.Fields )]
     public class Segment {
         public static Segment Empty;

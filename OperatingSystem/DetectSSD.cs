@@ -50,11 +50,10 @@ namespace Librainian.OperatingSystem {
 
             var query_seek_penalty_desc = new NativeMethods.DEVICE_SEEK_PENALTY_DESCRIPTOR();
 
-            UInt32 returned_query_seek_penalty_size;
 
-            var querySeekPenaltyResult = NativeMethods.DeviceIoControl( hDrive, IOCTL_STORAGE_QUERY_PROPERTY, ref query_seek_penalty, ( UInt32 )Marshal.SizeOf( query_seek_penalty ), ref query_seek_penalty_desc, ( UInt32 )Marshal.SizeOf( query_seek_penalty_desc ), out returned_query_seek_penalty_size, IntPtr.Zero );
+			var querySeekPenaltyResult = NativeMethods.DeviceIoControl( hDrive, IOCTL_STORAGE_QUERY_PROPERTY, ref query_seek_penalty, ( UInt32 )Marshal.SizeOf( query_seek_penalty ), ref query_seek_penalty_desc, ( UInt32 )Marshal.SizeOf( query_seek_penalty_desc ), out var returned_query_seek_penalty_size, IntPtr.Zero );
 
-            hDrive.Close();
+			hDrive.Close();
 
             if ( !querySeekPenaltyResult ) {
                 //Debug.WriteLine( "DeviceIoControl failed: " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
@@ -92,11 +91,10 @@ namespace Librainian.OperatingSystem {
             idQuery.header.CurrentTaskFile = new Byte[ 8 ];
             idQuery.header.CurrentTaskFile[ 6 ] = 0xec; // ATA IDENTIFY DEVICE
 
-            UInt32 retvalSize;
 
-            var result = NativeMethods.DeviceIoControl( hDrive, ioctlAtaPassThrough, ref idQuery, ( UInt32 )Marshal.SizeOf( idQuery ), ref idQuery, ( UInt32 )Marshal.SizeOf( idQuery ), out retvalSize, IntPtr.Zero );
+			var result = NativeMethods.DeviceIoControl( hDrive, ioctlAtaPassThrough, ref idQuery, ( UInt32 )Marshal.SizeOf( idQuery ), ref idQuery, ( UInt32 )Marshal.SizeOf( idQuery ), out var retvalSize, IntPtr.Zero );
 
-            hDrive.Close();
+			hDrive.Close();
 
             if ( !result ) {
                 //Debug.WriteLine( "DeviceIoControl failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
@@ -147,9 +145,7 @@ namespace Librainian.OperatingSystem {
             }
         }
 
-        private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) {
-            return deviceType << 16 | access << 14 | function << 2 | method;
-        }
+        private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) => ( deviceType << 16 ) | ( access << 14 ) | ( function << 2 ) | method;
 
     }
 }

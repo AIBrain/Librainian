@@ -48,7 +48,7 @@ namespace Librainian.OperatingSystem.Compression {
 
             while ( counter-- > 0 ) {
                 Debug.WriteLine( $"Generating {bufferLength} bytes of data.." );
-                randem.Value.NextBytes( buffer );
+                randem.Value.Value.NextBytes( buffer );
 
                 Debug.WriteLine( $"Feeding {bufferLength} bytes of data into compressor..." );
                 var before = RandomnessFeeding.HowManyBytesFed;

@@ -33,9 +33,8 @@ namespace Librainian.Database.MMF {
         private static readonly Dictionary<Type, ISerializeDeserialize<T>> DictionaryCache = new Dictionary<Type, ISerializeDeserialize<T>>();
 
         public ISerializeDeserialize<T> GetSerializer() {
-            ISerializeDeserialize<T> result;
-            var objectType = typeof( T );
-            if ( !DictionaryCache.TryGetValue( objectType, out result ) ) {
+			var objectType = typeof( T );
+			if ( !DictionaryCache.TryGetValue( objectType, out var result ) ) {
                 DictionaryCache[ objectType ] = result = PickOptimalSerializer();
             }
             Debug.WriteLine( $"{typeof( T )} uses {result.GetType()}" );
@@ -119,7 +118,7 @@ namespace Librainian.Database.MMF {
 
         private static IEnumerable<Type> GetListOfGenericSerializers() {
             var interfaceGenricType = typeof( ISerializeDeserialize<T> );
-            var serializers = from assembly in AppDomain.CurrentDomain.GetAssemblies() from genericType in assembly.GetTypes() from interfaceType in genericType.GetInterfaces().Where( iType => ( iType.Name == interfaceGenricType.Name ) && genericType.IsGenericTypeDefinition ) select genericType;
+            var serializers = from assembly in AppDomain.CurrentDomain.GetAssemblies() from genericType in assembly.GetTypes() from interfaceType in genericType.GetInterfaces().Where( iType => iType.Name == interfaceGenricType.Name && genericType.IsGenericTypeDefinition ) select genericType;
             return serializers; //.ToList();
         }
 

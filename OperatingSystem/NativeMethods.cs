@@ -182,7 +182,7 @@ namespace Librainian.OperatingSystem {
         }
 
         [Flags]
-        public enum Sv101Types : uint {
+        public enum Sv101Types : UInt32 {
             SvTypeWorkstation = 0x00000001,
 
             SvTypeServer = 0x00000002,
@@ -363,17 +363,21 @@ namespace Librainian.OperatingSystem {
         [DllImport( "user32.dll" )]
         internal static extern Int32 EnableMenuItem( this IntPtr tMenu, Int32 targetItem, Int32 targetStatus );
 
-        /// <summary>
-        ///     Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, or
-        ///     FindFirstStreamW function.
-        /// </summary>
-        /// <param name="hFindFile">The file search handle.</param>
-        /// <returns>
-        ///     If the function succeeds, the return value is nonzero. If the function fails, the return
-        ///     value is zero.
-        /// </returns>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa364413%28VS.85%29.aspx" />
-        [DllImport( "kernel32.dll", SetLastError = true )]
+	    [DllImport( "kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi )]
+	    [return: MarshalAs( UnmanagedType.Bool )]
+	    internal static extern Boolean IsWow64Process( [In] IntPtr process, [Out] out Boolean wow64Process );
+
+		/// <summary>
+		///     Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, or
+		///     FindFirstStreamW function.
+		/// </summary>
+		/// <param name="hFindFile">The file search handle.</param>
+		/// <returns>
+		///     If the function succeeds, the return value is nonzero. If the function fails, the return
+		///     value is zero.
+		/// </returns>
+		/// <see cref="http://msdn.microsoft.com/en-us/Library/aa364413%28VS.85%29.aspx" />
+		[DllImport( "kernel32.dll", SetLastError = true )]
         internal static extern Boolean FindClose( IntPtr hFindFile );
 
         /// <summary>
@@ -746,14 +750,11 @@ namespace Librainian.OperatingSystem {
             ///     use only when QuadPart cannot be passed
             /// </summary>
             /// <returns></returns>
-            public Int64 ToInt64() {
-                return ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
-            }
+            public Int64 ToInt64() => ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
 
-            // just for demonstration
-            internal static LargeInteger FromInt64( Int64 value ) {
-                return new LargeInteger { Low = ( Int32 )value, High = ( Int32 )( value >> 32 ) };
-            }
+	        // just for demonstration
+            internal static LargeInteger FromInt64( Int64 value ) => new LargeInteger { Low = ( Int32 )value, High = ( Int32 )( value >> 32 ) };
+
         }
 
         [StructLayout( LayoutKind.Sequential )]
@@ -930,7 +931,7 @@ namespace Librainian.OperatingSystem {
 
 
         [Flags]
-        public enum AllocationType : uint {
+        public enum AllocationType : UInt32 {
 
             COMMIT = 0x1000,
 
@@ -948,7 +949,7 @@ namespace Librainian.OperatingSystem {
         }
 
         [Flags]
-        public enum MemoryProtection : uint {
+        public enum MemoryProtection : UInt32 {
 
             EXECUTE = 0x10,
 

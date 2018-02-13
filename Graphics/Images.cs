@@ -444,7 +444,7 @@ namespace Librainian.Graphics {
         }
 
         public static Matrix3X2 ComputeForwardTransform( IList<Point> baselineLocations, IList<Point> registerLocations ) {
-            if ( ( baselineLocations.Count < 3 ) || ( registerLocations.Count < 3 ) ) {
+            if ( baselineLocations.Count < 3 || registerLocations.Count < 3 ) {
                 throw new Exception( "Unable to compute the forward transform. A minimum of 3 control point pairs are required." );
             }
 
@@ -516,12 +516,11 @@ namespace Librainian.Graphics {
                 return null;
             }
 
-            DateTime result;
-            if ( DateTime.TryParse( value, out result ) ) {
-                return result;
-            }
+			if ( DateTime.TryParse( value, out var result ) ) {
+				return result;
+			}
 
-            if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result ) ) {
+			if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result ) ) {
                 return result;
             }
 
@@ -533,7 +532,7 @@ namespace Librainian.Graphics {
             if ( document == null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
-            return document.Info().ImageCreationBestGuess( oldestDate, youngestDate );
+            return document.Info.ImageCreationBestGuess( oldestDate, youngestDate );
         }
 
         [CanBeNull]
@@ -547,14 +546,13 @@ namespace Librainian.Graphics {
 
                 var bestGuesses = new List<DateTime>();
 
-                DateTime? imageCreationBestGuess;
-                if ( info.InternalImageGetDateTime( out imageCreationBestGuess ) ) {
-                    if ( imageCreationBestGuess.HasValue ) {
-                        bestGuesses.Add( imageCreationBestGuess.Value );
-                    }
-                }
+				if ( info.InternalImageGetDateTime( out var imageCreationBestGuess ) ) {
+					if ( imageCreationBestGuess.HasValue ) {
+						bestGuesses.Add( imageCreationBestGuess.Value );
+					}
+				}
 
-                bestGuesses.RemoveAll( time => !time.Between( oldestDate, youngestDate ) );
+				bestGuesses.RemoveAll( time => !time.Between( oldestDate, youngestDate ) );
 
                 if ( bestGuesses.Any() ) {
 #if DEBUG
@@ -743,17 +741,15 @@ namespace Librainian.Graphics {
         /// <param name="byYears"></param>
         /// <returns></returns>
         /// <remarks>Any time travelers in the house?</remarks>
-        public static Boolean IsDateNotTooNew( this DateTime dateTime, Int32 byYears = 5 ) {
-            return dateTime.Year <= DateTime.UtcNow.AddYears( byYears ).Year;
-        }
+        public static Boolean IsDateNotTooNew( this DateTime dateTime, Int32 byYears = 5 ) => dateTime.Year <= DateTime.UtcNow.AddYears( byYears ).Year;
 
-        /// <summary>
+	    /// <summary>
         /// </summary>
         /// <param name="fileA"></param>
         /// <param name="fileB"></param>
         /// <returns></returns>
         public static async Task<Boolean> IsSameImage( [CanBeNull] this Document fileA, [CanBeNull] Document fileB ) {
-            if ( ( null == fileA ) || ( null == fileB ) ) {
+            if ( null == fileA || null == fileB ) {
                 return false;
             }
 
@@ -765,12 +761,12 @@ namespace Librainian.Graphics {
                 var imageA = await Task.Run( () => Image.FromFile( fileA.FullPathWithFileName ) );
                 var imageB = await Task.Run( () => Image.FromFile( fileB.FullPathWithFileName ) );
 
-                if ( ( imageA.Width < imageB.Width ) && ( imageA.Height < imageB.Height ) ) {
+                if ( imageA.Width < imageB.Width && imageA.Height < imageB.Height ) {
 
                     // ReSharper disable once RedundantAssignment
                     imageA = ResizeImage( imageA, imageB.Size ); //resize because B is larger
                 }
-                else if ( ( imageA.Width > imageB.Width ) && ( imageA.Height > imageB.Height ) ) {
+                else if ( imageA.Width > imageB.Width && imageA.Height > imageB.Height ) {
 
                     // ReSharper disable once RedundantAssignment
                     imageB = ResizeImage( imageB, imageA.Size ); //resize because A is larger

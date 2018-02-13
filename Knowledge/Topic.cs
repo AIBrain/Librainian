@@ -36,10 +36,10 @@ namespace Librainian.Knowledge {
             get; private set;
         }
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() { this.Facts.Dispose(); }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this.Facts.Dispose();
 
-    }
+	}
 }

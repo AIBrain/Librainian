@@ -42,11 +42,9 @@ namespace Librainian.Financial.Containers.Shopping {
             if ( category == ItemType.Invalid ) {
                 throw new ArgumentNullException( nameof( category ) );
             }
-            if ( itemID == null ) {
-                throw new ArgumentNullException( nameof( itemID ) );
-            }
-            this.Category = category;
-            this.ItemID = itemID;
+
+	        this.Category = category;
+            this.ItemID = itemID ?? throw new ArgumentNullException( nameof( itemID ) );
         }
 
         public ItemType Category {
@@ -93,13 +91,10 @@ namespace Librainian.Financial.Containers.Shopping {
         ///     Serves as the default hash function.
         /// </summary>
         /// <returns>A hash code for the current object.</returns>
-        public override Int32 GetHashCode() {
-            return this.Category.GetHashCode();
-        }
+        public override Int32 GetHashCode() => this.Category.GetHashCode();
 
-        public Boolean IsValidData() {
-            return this.Category != ItemType.Invalid && !this.ItemID.IsNullOrWhiteSpace();
-        }
+	    public Boolean IsValidData() => this.Category != ItemType.Invalid && !this.ItemID.IsNullOrWhiteSpace();
+
     }
 
     public class TaxableShoppingItem : ShoppingItem {

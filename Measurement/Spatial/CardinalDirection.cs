@@ -20,7 +20,7 @@
 
 namespace Librainian.Measurement.Spatial {
 
-    public enum CardinalDirection : uint {
+    public enum CardinalDirection : System.UInt32 {
 
         /// <summary>0 (is equal to 360)</summary>
         North = 0,

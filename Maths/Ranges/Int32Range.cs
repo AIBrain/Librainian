@@ -65,7 +65,7 @@ namespace Librainian.Maths.Ranges {
         /// <returns>
         ///     <b>True</b> if the specified value is inside this range or <b>false</b> otherwise.
         /// </returns>
-        public Boolean IsInside( Int32 x ) => ( this.Min <= x ) && ( x <= this.Max );
+        public Boolean IsInside( Int32 x ) => this.Min <= x && x <= this.Max;
 
         /// <summary>Check if the specified range overlaps with this range</summary>
         /// <param name="range">Range to check for overlapping</param>

@@ -20,17 +20,9 @@ namespace Librainian.FileSystem.Physical {
         private Device _parent;
 
         internal Device( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index, Int32 disknum = -1 ) {
-            if ( deviceClass == null ) {
-                throw new ArgumentNullException( nameof( deviceClass ) );
-            }
-
-            if ( deviceInfoData == null ) {
-                throw new ArgumentNullException( nameof( deviceInfoData ) );
-            }
-
-            this.DeviceClass = deviceClass;
+	        this.DeviceClass = deviceClass ?? throw new ArgumentNullException( nameof( deviceClass ) );
             this.Path = path; // may be null
-            this.DeviceInfoData = deviceInfoData;
+            this.DeviceInfoData = deviceInfoData ?? throw new ArgumentNullException( nameof( deviceInfoData ) );
             this.Index = index;
             this.DiskNumber = disknum;
         }
@@ -71,8 +63,7 @@ namespace Librainian.FileSystem.Physical {
         /// <param name="obj">An object to compare with this instance.</param>
         /// <returns>A 32-bit signed integer that indicates the relative order of the comparands.</returns>
         public virtual Int32 CompareTo( Object obj ) {
-            var device = obj as Device;
-            if ( device == null ) {
+	        if ( !( obj is Device device ) ) {
                 throw new ArgumentException();
             }
 
@@ -94,9 +85,8 @@ namespace Librainian.FileSystem.Physical {
                 else {
                     var sb = new StringBuilder( 1024 );
 
-                    NativeMethods.PNP_VETO_TYPE veto;
-                    var hr = NativeMethods.CM_Request_Device_Eject( device.GetInstanceHandle(), out veto, sb, sb.Capacity, 0 );
-                    if ( hr != 0 ) {
+					var hr = NativeMethods.CM_Request_Device_Eject( device.GetInstanceHandle(), out var veto, sb, sb.Capacity, 0 );
+					if ( hr != 0 ) {
                         throw new Win32Exception( hr );
                     }
 
@@ -126,18 +116,14 @@ namespace Librainian.FileSystem.Physical {
         /// <summary>
         ///     Gets the device's class Guid as a string.
         /// </summary>
-        public String GetClassGuid() {
-            return this._classGuid ?? ( this._classGuid = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASSGUID, null ) );
-        }
+        public String GetClassGuid() => this._classGuid ?? ( this._classGuid = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASSGUID, null ) );
 
-        /// <summary>
+	    /// <summary>
         ///     Gets the device's description.
         /// </summary>
-        public String GetDescription() {
-            return this._description ?? ( this._description = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_DEVICEDESC, null ) );
-        }
+        public String GetDescription() => this._description ?? ( this._description = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_DEVICEDESC, null ) );
 
-        /// <summary>
+	    /// <summary>
         ///     Gets the device's friendly name.
         /// </summary>
         public String GetFriendlyName() => this._friendlyName ?? ( this._friendlyName = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_FRIENDLYNAME, null ) );

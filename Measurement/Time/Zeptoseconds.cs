@@ -34,7 +34,7 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Zeptosecond" />
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct Zeptoseconds : IComparable<Zeptoseconds>, IQuantityOfTime {
 
@@ -87,23 +87,15 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Zeptoseconds Zero = new Zeptoseconds( 0 );
 
-        public Zeptoseconds( Decimal value ) {
-            this.Value = value;
-        }
+        public Zeptoseconds( Decimal value ) => this.Value = value;
 
-        public Zeptoseconds( BigRational value ) {
-            this.Value = value;
-        }
+	    public Zeptoseconds( BigRational value ) => this.Value = value;
 
-        public Zeptoseconds( Int64 value ) {
-            this.Value = value;
-        }
+	    public Zeptoseconds( Int64 value ) => this.Value = value;
 
-        public Zeptoseconds( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Zeptoseconds( BigInteger value ) => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -165,10 +157,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Zeptoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Zeptoseconds && this.Equals( ( Zeptoseconds )obj );
+            return obj is Zeptoseconds zeptoseconds && this.Equals( zeptoseconds );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();

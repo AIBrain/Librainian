@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Time {
     using Numerics;
     using Parsing;
 
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
     public struct Nanoseconds : IComparable<Nanoseconds>, IQuantityOfTime {
@@ -110,23 +110,15 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Nanoseconds Zero = new Nanoseconds( value: 0 );
 
-        public Nanoseconds( Decimal value ) {
-            this.Value = value;
-        }
+        public Nanoseconds( Decimal value ) => this.Value = value;
 
-        public Nanoseconds( BigRational value ) {
-            this.Value = value;
-        }
+	    public Nanoseconds( BigRational value ) => this.Value = value;
 
-        public Nanoseconds( Int64 value ) {
-            this.Value = value;
-        }
+	    public Nanoseconds( Int64 value ) => this.Value = value;
 
-        public Nanoseconds( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Nanoseconds( BigInteger value ) => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -180,10 +172,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Nanoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Nanoseconds && this.Equals( ( Nanoseconds )obj );
+            return obj is Nanoseconds nanoseconds && this.Equals( nanoseconds );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();

@@ -111,43 +111,41 @@ namespace Librainian.Collections {
         /// <filterpriority>2</filterpriority>
         protected virtual Object SyncRoot => null;
 
-        /// <summary>
-        ///     Adds an item to the <see cref="ICollection{T}" />. This implementation always throw
-        ///     <see cref="NotSupportedException" /> .
-        /// </summary>
-        /// <param name="item">The object to add to the <see cref="ICollection{T}" />.</param>
-        /// <exception cref="NotSupportedException">
-        ///     The <see cref="ICollection{T}" /> is read-only. This implementation always throw this exception.
-        /// </exception>
-        public virtual void Add( T item ) {
-            throw new NotSupportedException();
-        }
+		/// <summary>
+		///     Adds an item to the <see cref="ICollection{T}" />. This implementation always throw
+		///     <see cref="NotSupportedException" /> .
+		/// </summary>
+		/// <param name="item">The object to add to the <see cref="ICollection{T}" />.</param>
+		/// <exception cref="NotSupportedException">
+		///     The <see cref="ICollection{T}" /> is read-only. This implementation always throw this exception.
+		/// </exception>
+		public virtual void Add( T item ) => throw new NotSupportedException();
 
-        /// <summary>
-        ///     Adds all of the elements in the supplied <paramref name="collection" /> to this collection.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         Attempts to <see cref="AddRange" /> of a collection to itself result in
-        ///         <see cref="ArgumentException" /> . Further, the behavior of this operation is undefined
-        ///         if the specified collection is modified while the operation is in progress.
-        ///     </para>
-        ///     <para>
-        ///         This implementation iterates over the specified collection, and adds each element
-        ///         returned by the iterator to this collection, in turn. An exception encountered while
-        ///         trying to add an element may result in only some of the elements having been
-        ///         successfully added when the associated exception is thrown.
-        ///     </para>
-        /// </remarks>
-        /// <param name="collection">
-        ///     The collection containing the elements to be added to this collection.
-        /// </param>
-        /// <returns><c>true</c> if this collection is modified, else <c>false</c>.</returns>
-        /// <exception cref="System.ArgumentNullException">
-        ///     If the supplied <paramref name="collection" /> is <see langword="null" />.
-        /// </exception>
-        /// <exception cref="System.ArgumentException">If the collection is the current collection.</exception>
-        public virtual Boolean AddRange( IEnumerable<T> collection ) {
+		/// <summary>
+		///     Adds all of the elements in the supplied <paramref name="collection" /> to this collection.
+		/// </summary>
+		/// <remarks>
+		///     <para>
+		///         Attempts to <see cref="AddRange" /> of a collection to itself result in
+		///         <see cref="ArgumentException" /> . Further, the behavior of this operation is undefined
+		///         if the specified collection is modified while the operation is in progress.
+		///     </para>
+		///     <para>
+		///         This implementation iterates over the specified collection, and adds each element
+		///         returned by the iterator to this collection, in turn. An exception encountered while
+		///         trying to add an element may result in only some of the elements having been
+		///         successfully added when the associated exception is thrown.
+		///     </para>
+		/// </remarks>
+		/// <param name="collection">
+		///     The collection containing the elements to be added to this collection.
+		/// </param>
+		/// <returns><c>true</c> if this collection is modified, else <c>false</c>.</returns>
+		/// <exception cref="System.ArgumentNullException">
+		///     If the supplied <paramref name="collection" /> is <see langword="null" />.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">If the collection is the current collection.</exception>
+		public virtual Boolean AddRange( IEnumerable<T> collection ) {
             if ( collection == null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
@@ -157,51 +155,49 @@ namespace Librainian.Collections {
             return this.DoAddRange( collection );
         }
 
-        /// <summary>
-        ///     Removes all items from the <see cref="ICollection{T}" />. This implementation always
-        ///     throw <see cref="NotSupportedException" />.
-        /// </summary>
-        /// <exception cref="NotSupportedException">
-        ///     The <see cref="ICollection{T}" /> is read-only. This implementation always throw exception.
-        /// </exception>
-        public virtual void Clear() {
-            throw new NotSupportedException();
-        }
+		/// <summary>
+		///     Removes all items from the <see cref="ICollection{T}" />. This implementation always
+		///     throw <see cref="NotSupportedException" />.
+		/// </summary>
+		/// <exception cref="NotSupportedException">
+		///     The <see cref="ICollection{T}" /> is read-only. This implementation always throw exception.
+		/// </exception>
+		public virtual void Clear() => throw new NotSupportedException();
 
-        /// <summary>
-        ///     Determines whether the <see cref="ICollection{T}" /> contains a specific value. This
-        ///     implementation searches the element by iterating through the enumerator returned by
-        ///     <see cref="GetEnumerator()" /> method.
-        /// </summary>
-        /// <returns>
-        ///     true if item is found in the <see cref="ICollection{T}" />; otherwise, false.
-        /// </returns>
-        /// <param name="item">The object to locate in the <see cref="ICollection{T}" />.</param>
-        public virtual Boolean Contains( T item ) => Enumerable.Contains( this, item );
+		/// <summary>
+		///     Determines whether the <see cref="ICollection{T}" /> contains a specific value. This
+		///     implementation searches the element by iterating through the enumerator returned by
+		///     <see cref="GetEnumerator()" /> method.
+		/// </summary>
+		/// <returns>
+		///     true if item is found in the <see cref="ICollection{T}" />; otherwise, false.
+		/// </returns>
+		/// <param name="item">The object to locate in the <see cref="ICollection{T}" />.</param>
+		public virtual Boolean Contains( T item ) => Enumerable.Contains( this, item );
 
-        /// <summary>
-        ///     Copies the elements of the <see cref="ICollection{T}" /> to an <see cref="Array" />,
-        ///     starting at a particular <see cref="Array" /> index.
-        /// </summary>
-        /// <remarks>
-        ///     This method is intentionally sealed. Subclass should override
-        ///     <see cref="DoCopyTo(T[], int, Boolean)" /> instead.
-        /// </remarks>
-        /// <param name="array">
-        ///     The one-dimensional <see cref="Array" /> that is the destination of the elements copied
-        ///     from <see cref="ICollection{T}" />. The <see cref="Array" /> must have zero-based indexing.
-        /// </param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
-        /// <exception cref="ArgumentOutOfRangeException">arrayIndex is less than 0.</exception>
-        /// <exception cref="ArgumentNullException">array is null.</exception>
-        /// <exception cref="ArgumentException">
-        ///     array is multidimensional. <br />-or- <br /> arrayIndex is equal to or greater than the
-        ///     length of array. <br />-or- <br /> The number of elements in the source
-        ///     <see cref="ICollection{T}" /> is greater than the available space from arrayIndex to the
-        ///     end of the destination array. <br />-or- <br /> Type T cannot be cast automatically to
-        ///     the type of the destination array.
-        /// </exception>
-        public void CopyTo( T[] array, Int32 arrayIndex ) {
+		/// <summary>
+		///     Copies the elements of the <see cref="ICollection{T}" /> to an <see cref="Array" />,
+		///     starting at a particular <see cref="Array" /> index.
+		/// </summary>
+		/// <remarks>
+		///     This method is intentionally sealed. Subclass should override
+		///     <see cref="DoCopyTo(T[], Int32, Boolean)" /> instead.
+		/// </remarks>
+		/// <param name="array">
+		///     The one-dimensional <see cref="Array" /> that is the destination of the elements copied
+		///     from <see cref="ICollection{T}" />. The <see cref="Array" /> must have zero-based indexing.
+		/// </param>
+		/// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+		/// <exception cref="ArgumentOutOfRangeException">arrayIndex is less than 0.</exception>
+		/// <exception cref="ArgumentNullException">array is null.</exception>
+		/// <exception cref="ArgumentException">
+		///     array is multidimensional. <br />-or- <br /> arrayIndex is equal to or greater than the
+		///     length of array. <br />-or- <br /> The number of elements in the source
+		///     <see cref="ICollection{T}" /> is greater than the available space from arrayIndex to the
+		///     end of the destination array. <br />-or- <br /> Type T cannot be cast automatically to
+		///     the type of the destination array.
+		/// </exception>
+		public void CopyTo( T[] array, Int32 arrayIndex ) {
             if ( array == null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
@@ -287,11 +283,9 @@ namespace Librainian.Collections {
         ///     When the <see cref="ICollection{T}" /> is read-only. This implementation always throw
         ///     this exception.
         /// </exception>
-        public virtual Boolean Remove( T item ) {
-            throw new NotSupportedException();
-        }
+        public virtual Boolean Remove( T item ) => throw new NotSupportedException();
 
-        /// <summary>
+	    /// <summary>
         ///     Returns an array containing all of the elements in this collection, in proper sequence;
         ///     the runtime type of the returned array is that of the specified array. If the collection
         ///     fits in the specified array, it is returned therein. Otherwise, a new array is allocated
@@ -350,11 +344,11 @@ namespace Librainian.Collections {
         /// <returns>An array containing all of the elements in this collection.</returns>
         public virtual T[] ToArray() => this.DoCopyTo( null, 0, true );
 
-        /// <summary>Returns a <see cref="String" /> that represents the current <see cref="object" />.</summary>
-        /// <remarks>This implementation list out all the elements separated by comma.</remarks>
-        /// <returns>A <see cref="String" /> that represents the current <see cref="object" />.</returns>
-        /// <filterpriority>2</filterpriority>
-        public override String ToString() {
+		/// <summary>Returns a <see cref="String" /> that represents the current <see cref="Object" />.</summary>
+		/// <remarks>This implementation list out all the elements separated by comma.</remarks>
+		/// <returns>A <see cref="String" /> that represents the current <see cref="Object" />.</returns>
+		/// <filterpriority>2</filterpriority>
+		public override String ToString() {
             var sb = new StringBuilder();
             sb.Append( this.GetType().Name ).Append( "(" );
             var first = true;
@@ -368,18 +362,18 @@ namespace Librainian.Collections {
             return sb.Append( ")" ).ToString();
         }
 
-        /// <summary>Ensures the returned array has capacity specified by <paramref name="length" />.</summary>
-        /// <remarks>
-        ///     If <typeparamref name="T" /> is <see cref="object" /> but array is actually
-        ///     <c>String[]</c>, the returned array is always <c>String[]</c>.
-        /// </remarks>
-        /// <param name="array">The source array.</param>
-        /// <param name="length">Expected length of array.</param>
-        /// <returns>
-        ///     <paramref name="array" /> itself if <c>array.Length &gt;= length</c>. Otherwise a new
-        ///     array of same type of <paramref name="array" /> of given <paramref name="length" />.
-        /// </returns>
-        protected static T[] EnsureCapacity( T[] array, Int32 length ) {
+		/// <summary>Ensures the returned array has capacity specified by <paramref name="length" />.</summary>
+		/// <remarks>
+		///     If <typeparamref name="T" /> is <see cref="Object" /> but array is actually
+		///     <c>String[]</c>, the returned array is always <c>String[]</c>.
+		/// </remarks>
+		/// <param name="array">The source array.</param>
+		/// <param name="length">Expected length of array.</param>
+		/// <returns>
+		///     <paramref name="array" /> itself if <c>array.Length &gt;= length</c>. Otherwise a new
+		///     array of same type of <paramref name="array" /> of given <paramref name="length" />.
+		/// </returns>
+		protected static T[] EnsureCapacity( T[] array, Int32 length ) {
             if ( array == null ) {
                 return new T[ length ];
             }
@@ -388,7 +382,7 @@ namespace Librainian.Collections {
             }
 
             // new T[size] won't work here when targetArray is subtype of T.
-            return ( T[] )Array.CreateInstance( array.GetType().GetElementType(), length );
+            return ( T[] )Array.CreateInstance( array.GetType().GetElementType() ?? throw new InvalidOperationException(), length );
         }
 
         /// <summary>
@@ -433,24 +427,24 @@ namespace Librainian.Collections {
             return modified;
         }
 
-        /// <summary>
-        ///     Does the actual work of copying to array. Subclass is recommended to override this
-        ///     method instead of <see cref="CopyTo(T[], int)" /> method, which does all necessary
-        ///     parameter checking and raises proper exception before calling this method.
-        /// </summary>
-        /// <param name="array">
-        ///     The one-dimensional <see cref="Array" /> that is the destination of the elements copied
-        ///     from <see cref="ICollection{T}" />. The <see cref="Array" /> must have zero-based indexing.
-        /// </param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
-        /// <param name="ensureCapacity">If is <c>true</c>, calls <see cref="EnsureCapacity" /></param>
-        /// <returns>
-        ///     A new array of same runtime type as <paramref name="array" /> if
-        ///     <paramref name="array" /> is too small to hold all elements and
-        ///     <paramref name="ensureCapacity" /> is <c>false</c>. Otherwise the
-        ///     <paramref name="array" /> instance itself.
-        /// </returns>
-        protected virtual T[] DoCopyTo( T[] array, Int32 arrayIndex, Boolean ensureCapacity ) {
+		/// <summary>
+		///     Does the actual work of copying to array. Subclass is recommended to override this
+		///     method instead of <see cref="CopyTo(T[], Int32)" /> method, which does all necessary
+		///     parameter checking and raises proper exception before calling this method.
+		/// </summary>
+		/// <param name="array">
+		///     The one-dimensional <see cref="Array" /> that is the destination of the elements copied
+		///     from <see cref="ICollection{T}" />. The <see cref="Array" /> must have zero-based indexing.
+		/// </param>
+		/// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+		/// <param name="ensureCapacity">If is <c>true</c>, calls <see cref="EnsureCapacity" /></param>
+		/// <returns>
+		///     A new array of same runtime type as <paramref name="array" /> if
+		///     <paramref name="array" /> is too small to hold all elements and
+		///     <paramref name="ensureCapacity" /> is <c>false</c>. Otherwise the
+		///     <paramref name="array" /> instance itself.
+		/// </returns>
+		protected virtual T[] DoCopyTo( T[] array, Int32 arrayIndex, Boolean ensureCapacity ) {
             if ( ensureCapacity ) {
                 array = EnsureCapacity( array, this.Count );
             }

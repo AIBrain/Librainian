@@ -54,13 +54,10 @@ namespace Librainian.Graphics.Imaging {
 
         /// <summary>Construct a <see cref="Line" /> from an array of <see cref="Pixel" />.</summary>
         /// <param name="pixels"></param>
-        public Line( [NotNull] Pixel[] pixels ) {
-            if ( pixels == null ) {
-                throw new ArgumentNullException( nameof( pixels ) );
-            }
-            this.Pixels = pixels.ToArray();
+        public Line( [ NotNull ] Pixel[] pixels ) {
+	        this.Pixels = pixels.ToArray();
             this.Count = ( UInt64 )this.Pixels.LongLength;
-            this.Checksum = CalculateChecksumAsync( Pixels ).Result;
+            this.Checksum = CalculateChecksumAsync( this.Pixels ).Result;
         }
 
         /// <summary>Returns the zero-based <see cref="Pixel" /> or null if not found.</summary>
@@ -77,7 +74,7 @@ namespace Librainian.Graphics.Imaging {
 
             set {
                 var pixels = this.Pixels;
-                if ( value.HasValue && ( index <= this.Count ) ) {
+                if ( value.HasValue && index <= this.Count ) {
                     pixels[ index ] = value.Value;
                 }
             }
@@ -136,7 +133,7 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equal( [CanBeNull] Line left, [CanBeNull] Line right ) {
-            if ( ( left == null ) || ( right == null ) ) {
+            if ( left == null || right == null ) {
                 return false;
             }
 

@@ -212,5 +212,4 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
-/.vs/Librainian/v15/Server/sqlite3/db.lock
 /.vs/Librainian/v15/Server/sqlite3

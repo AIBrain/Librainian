@@ -63,20 +63,16 @@ namespace Librainian.Extensions {
         /// <typeparam name="T"></typeparam>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public static IEnumerable<T> GetAllItems<T>( this Enum value ) {
-            return from Object item in Enum.GetValues( typeof( T ) ) select ( T )item;
-        }
+        public static IEnumerable<T> GetAllItems<T>( this Enum value ) => from Object item in Enum.GetValues( typeof( T ) ) select ( T )item;
 
-        /// <summary>
+	    /// <summary>
         ///     Gets all items for an enum type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static IEnumerable<T> GetAllItems<T>() where T : struct {
-            return Enum.GetValues( typeof( T ) ).Cast<T>();
-        }
+        public static IEnumerable<T> GetAllItems<T>() where T : struct => Enum.GetValues( typeof( T ) ).Cast<T>();
 
-        /// <summary>
+	    /// <summary>
         ///     Gets all combined items from an enum value.
         /// </summary>
         /// <typeparam name="T"></typeparam>

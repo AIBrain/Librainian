@@ -19,8 +19,9 @@
 // "Librainian/CopyProgressCallbackReason.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.FileSystem {
+	using System;
 
-    public enum CopyProgressCallbackReason : uint {
+	public enum CopyProgressCallbackReason : UInt32 {
         CallbackChunkFinished = 0x00000000,
 
         CallbackStreamSwitch = 0x00000001

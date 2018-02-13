@@ -32,11 +32,9 @@ namespace Librainian.Speech {
 
     public class SpeechOutput {
 
-        public SpeechOutput( VoiceGender gender = VoiceGender.Female, VoiceAge age = VoiceAge.Teen ) {
-            this.Synthesizer.Value.SelectVoiceByHints( gender, age );
-        }
+		public SpeechOutput( VoiceGender gender = VoiceGender.Female, VoiceAge age = VoiceAge.Teen ) => this.Synthesizer.Value.SelectVoiceByHints( gender, age );
 
-        [NotNull]
+		[NotNull]
         public Lazy<SpeechSynthesizer> Synthesizer {
             get;
         } = new Lazy<SpeechSynthesizer>( () => {
@@ -50,31 +48,27 @@ namespace Librainian.Speech {
                     return;
                 }
 
-                if ( Synthesizer.Value == null ) {
+                if ( this.Synthesizer.Value == null ) {
                     return;
                 }
 
-                Synthesizer.Value.SpeakStarted += ( sender, e ) => speechFeedbackEvent( e );
-                Synthesizer.Value.SpeakStarted += ( sender, e ) => speechFeedbackEvent( e );
-                Synthesizer.Value.SpeakProgress += ( sender, e ) => speechFeedbackEvent( e );
-                Synthesizer.Value.PhonemeReached += ( sender, e ) => speechFeedbackEvent( e );
-                Synthesizer.Value.SpeakCompleted += ( sender, e ) => speechFeedbackEvent( e );
-                Synthesizer.Value.StateChanged += ( sender, e ) => speechFeedbackEvent( e );
+				this.Synthesizer.Value.SpeakStarted += ( sender, e ) => speechFeedbackEvent( e );
+				this.Synthesizer.Value.SpeakStarted += ( sender, e ) => speechFeedbackEvent( e );
+				this.Synthesizer.Value.SpeakProgress += ( sender, e ) => speechFeedbackEvent( e );
+				this.Synthesizer.Value.PhonemeReached += ( sender, e ) => speechFeedbackEvent( e );
+				this.Synthesizer.Value.SpeakCompleted += ( sender, e ) => speechFeedbackEvent( e );
+				this.Synthesizer.Value.StateChanged += ( sender, e ) => speechFeedbackEvent( e );
             }
             catch ( Exception exception ) {
                 exception.More();
             }
         }
 
-        public IEnumerable<InstalledVoice> GetVoices() {
-            return Synthesizer.Value.GetInstalledVoices();
-        }
+        public IEnumerable<InstalledVoice> GetVoices() => this.Synthesizer.Value.GetInstalledVoices();
 
-        public Boolean IsTalking() {
-            return Synthesizer.Value.State == SynthesizerState.Speaking;
-        }
+	    public Boolean IsTalking() => this.Synthesizer.Value.State == SynthesizerState.Speaking;
 
-        /// <summary>
+	    /// <summary>
         ///     Start speaking ASAP Start speaking (optionally interrupting anything already being said).
         /// </summary>
         /// <param name="interruptTalking"></param>
@@ -130,19 +124,17 @@ namespace Librainian.Speech {
                 prompt.AppendTextWithHint( message, sayAs );
                 prompt.EndStyle();
 
-                Synthesizer.Value.SpeakAsync( prompt );
+				this.Synthesizer.Value.SpeakAsync( prompt );
             }
             catch ( Exception exception ) {
                 exception.More();
             }
         }
 
-        public void StopTalking() {
-            Synthesizer.Value.SpeakAsyncCancelAll();
-        }
+		public void StopTalking() => this.Synthesizer.Value.SpeakAsyncCancelAll();
 
-        /// <summary>Pumps message loop while Talking</summary>
-        public void Wait() {
+		/// <summary>Pumps message loop while Talking</summary>
+		public void Wait() {
             while ( IsTalking() ) {
                 Thread.Yield();
                 Application.DoEvents();

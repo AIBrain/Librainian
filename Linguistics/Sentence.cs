@@ -38,7 +38,7 @@ namespace Librainian.Linguistics {
     /// <seealso cref="Paragraph"></seealso>
     [JsonObject]
     [Immutable]
-    [DebuggerDisplay( "{ToString()}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public sealed class Sentence : IEquatable<Sentence>, IEnumerable<Word>, IComparable<Sentence> {
 
@@ -72,11 +72,9 @@ namespace Librainian.Linguistics {
 
         //public static implicit operator String( Sentence sentence ) {return sentence != null ? sentence.Words.ToStrings( " " ) : String.Empty;}
 
-        public Int32 CompareTo( Sentence other ) {
-            return String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
-        }
+        public Int32 CompareTo( Sentence other ) => String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
 
-        public Boolean Equals( Sentence other ) {
+	    public Boolean Equals( Sentence other ) {
             if ( other == null ) {
                 return false;
             }
@@ -86,26 +84,22 @@ namespace Librainian.Linguistics {
 
         public IEnumerator<Word> GetEnumerator() => this.Words.GetEnumerator();
 
-        public override Int32 GetHashCode() {
-            return this.Words.GetHashCode();
-        }
+        public override Int32 GetHashCode() => this.Words.GetHashCode();
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+	    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        public IEnumerable<Sentence> Possibles() {
-            return this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
-        }
+		public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
 
-        //[NotNull]
-        //public Word TakeFirst() {
-        //    try {
-        //        return this.Words.TakeFirst() ?? new Word( String.Empty );
-        //    }
-        //    finally {
-        //        this.Words.Fix();
-        //    }
-        //}
+		//[NotNull]
+		//public Word TakeFirst() {
+		//    try {
+		//        return this.Words.TakeFirst() ?? new Word( String.Empty );
+		//    }
+		//    finally {
+		//        this.Words.Fix();
+		//    }
+		//}
 
-        public override String ToString() => this.Words.ToStrings( " " );
+		public override String ToString() => this.Words.ToStrings( " " );
     }
 }

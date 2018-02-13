@@ -136,10 +136,10 @@ namespace Librainian.Threading {
             //would events be okay here? are either Action or Events serializable?
         }
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() { this.Actions.Dispose(); }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this.Actions.Dispose();
 
-    }
+	}
 }

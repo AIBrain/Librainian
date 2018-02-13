@@ -60,14 +60,14 @@ namespace Librainian.Internet {
                 throw new ArgumentNullException( nameof( request ) );
             }
 
-            var reader = await DoRequestAsync( request );
-            var response = await reader.ReadToEndAsync();
+            var reader = await DoRequestAsync( request ).ConfigureAwait( false ); ;
+            var response = await reader.ReadToEndAsync().ConfigureAwait( false ); ;
             return JsonConvert.DeserializeObject<T>( response );
         }
 
         public static async Task<T> DoRequestJsonAsync<T>( Uri uri ) {
-            var reader = await DoRequestAsync( uri );
-            var response = await reader.ReadToEndAsync();
+            var reader = await DoRequestAsync( uri ).ConfigureAwait(false);
+            var response = await reader.ReadToEndAsync().ConfigureAwait( false );
             return JsonConvert.DeserializeObject<T>( response );
         }
 

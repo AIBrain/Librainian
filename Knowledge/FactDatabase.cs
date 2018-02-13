@@ -107,7 +107,7 @@ namespace Librainian.Knowledge {
                 }
 
                 if ( !this.KnbFiles.Any() ) {
-                    searchPatterns.SearchAllDrives( onFindFile: file => this.AddFile( dataFile: new Document( file ) ), cancellation: new SimpleCancel() );
+                    searchPatterns.SearchAllDrives( onFindFile: file => this.AddFile( dataFile: new Document( file ) ), cancellation: cancellation );
                 }
                 return $"Found {this.KnbFiles.Count} KNB files";
             }

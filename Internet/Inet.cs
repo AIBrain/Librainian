@@ -32,11 +32,9 @@ namespace Librainian.Internet {
             // The downloaded resource ends up in the variable named content.
             var content = new MemoryStream();
 
-            var webReq = WebRequest.Create( url ) as HttpWebRequest;
-
-            // Send the request to the Internet resource and wait for the response. ReSharper
+	        // Send the request to the Internet resource and wait for the response. ReSharper
             // disable once PossibleNullReferenceException
-            if ( webReq == null ) {
+            if ( !( WebRequest.Create( url ) is HttpWebRequest webReq ) ) {
                 return content.ToArray();
             }
             using ( var response = await webReq.GetResponseAsync() )

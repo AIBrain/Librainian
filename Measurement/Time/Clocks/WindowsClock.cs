@@ -30,10 +30,8 @@ namespace Librainian.Measurement.Time.Clocks {
 
         static WindowsClock() {
             try {
-                Int64 counter;
-                Int64 frequency;
-                IsAvailable = NativeMethods.QueryPerformanceFrequency( out frequency ) && NativeMethods.QueryPerformanceCounter( out counter );
-                Frequency = frequency;
+				IsAvailable = NativeMethods.QueryPerformanceFrequency( out var frequency ) && NativeMethods.QueryPerformanceCounter( out var counter );
+				Frequency = frequency;
             }
             catch ( Exception ) {
                 IsAvailable = false;
@@ -45,9 +43,8 @@ namespace Librainian.Measurement.Time.Clocks {
         public static Boolean IsAvailable { get; }
 
         public static Int64 GetTimestamp() {
-            Int64 value;
-            NativeMethods.QueryPerformanceCounter( out value );
-            return value;
+			NativeMethods.QueryPerformanceCounter( out var value );
+			return value;
         }
 
     }

@@ -29,43 +29,29 @@ namespace Librainian.Measurement.Time {
     [TestFixture]
     public static class TimeTests {
 
-        [Test]
-        public static void DayTest() {
-            Day.MaximumValue.Should().BeGreaterThan( Day.MinimumValue );
-        }
+		[Test]
+		public static void DayTest() => Day.MaximumValue.Should().BeGreaterThan( Day.MinimumValue );
 
-        [Test]
-        public static void HourTest() {
-            Hour.MaximumValue.Should().BeGreaterThan( Hour.MinimumValue );
-        }
+		[Test]
+		public static void HourTest() => Hour.MaximumValue.Should().BeGreaterThan( Hour.MinimumValue );
 
-        [Test]
-        public static void MicrosecondTest() {
-            Microsecond.MaximumValue.Should().BeGreaterThan( Microsecond.MinimumValue );
-        }
+		[Test]
+		public static void MicrosecondTest() => Microsecond.MaximumValue.Should().BeGreaterThan( Microsecond.MinimumValue );
 
-        [Test]
-        public static void MillisecondTest() {
-            Millisecond.MaximumValue.Should().BeGreaterThan( Millisecond.MinimumValue );
-        }
+		[Test]
+		public static void MillisecondTest() => Millisecond.MaximumValue.Should().BeGreaterThan( Millisecond.MinimumValue );
 
-        [Test]
-        public static void MinuteTest() {
-            Minute.MaximumValue.Should().BeGreaterThan( Minute.MinimumValue );
-        }
+		[Test]
+		public static void MinuteTest() => Minute.MaximumValue.Should().BeGreaterThan( Minute.MinimumValue );
 
-        [Test]
-        public static void MonthTest() {
-            Month.Maximum.Should().BeGreaterThan( Month.Minimum );
-        }
+		[Test]
+		public static void MonthTest() => Month.Maximum.Should().BeGreaterThan( Month.Minimum );
 
-        [Test]
-        public static void SecondTest() {
-            Second.MaximumValue.Should().BeGreaterThan( Second.MinimumValue );
-        }
+		[Test]
+		public static void SecondTest() => Second.MaximumValue.Should().BeGreaterThan( Second.MinimumValue );
 
-        //[OneTimeSetUp]
-        public static void Setup() {
+		//[OneTimeSetUp]
+		public static void Setup() {
         }
 
         [Test]
@@ -243,12 +229,10 @@ namespace Librainian.Measurement.Time {
             }
         }
 
-        [Test]
-        public static void TestTimes() {
-            UniversalDateTime.Now.Should().BeGreaterThan( UniversalDateTime.Unix );
-        }
+		[Test]
+		public static void TestTimes() => UniversalDateTime.Now.Should().BeGreaterThan( UniversalDateTime.Unix );
 
-        [Test]
+		[Test]
         public static void TestWeeks() {
             Weeks.Zero.Should().BeLessThan( Weeks.One );
             Weeks.One.Should().BeGreaterThan( Weeks.Zero );

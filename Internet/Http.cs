@@ -27,6 +27,7 @@ namespace Librainian.Internet {
     using System.Net.Cache;
     using System.Threading;
     using System.Windows.Forms;
+    using JetBrains.Annotations;
 
     public class Http {
         /*
@@ -51,11 +52,9 @@ namespace Librainian.Internet {
         private static readonly Object Synch = new Object();
         private static Hashtable _urls;
 
-        static Http() {
-            Urls = new Hashtable( 100 );
-        }
+        static Http() => Urls = new Hashtable( 100 );
 
-        private static Hashtable Urls {
+	    private static Hashtable Urls {
             get {
                 lock ( Synch ) {
                     return _urls;
@@ -92,54 +91,56 @@ namespace Librainian.Internet {
             request.KeepAlive = true;
             request.SendChunked = true;
 
-            var response = request.GetResponse() as HttpWebResponse;
-            if ( ( response != null ) && ( response.StatusCode == HttpStatusCode.OK ) ) {
-                var respstrm = response.GetResponseStream();
-                if ( respstrm != null ) {
-                    var document = new StreamReader( respstrm ).ReadToEnd();
+			if ( request.GetResponse() is HttpWebResponse response && response.StatusCode == HttpStatusCode.OK ) {
+				var respstrm = response.GetResponseStream();
+				if ( respstrm != null ) {
+					var document = new StreamReader( respstrm ).ReadToEnd();
 
-                    if ( Urls.ContainsKey( request.RequestUri ) ) {
-                        Urls[ request.RequestUri ] = document;
-                    }
-                    else {
-                        Urls.Add( request.RequestUri, document );
-                    }
+					if ( Urls.ContainsKey( request.RequestUri ) ) {
+						Urls[ request.RequestUri ] = document;
+					}
+					else {
+						Urls.Add( request.RequestUri, document );
+					}
 
-                    if ( !response.ResponseUri.AbsoluteUri.Equals( request.RequestUri.AbsoluteUri ) ) {
-                        if ( Urls.ContainsKey( response.ResponseUri ) ) {
-                            Urls[ response.ResponseUri ] = document;
-                        }
-                        else {
-                            Urls.Add( response.ResponseUri, document );
-                        }
-                    }
+					if ( !response.ResponseUri.AbsoluteUri.Equals( request.RequestUri.AbsoluteUri ) ) {
+						if ( Urls.ContainsKey( response.ResponseUri ) ) {
+							Urls[ response.ResponseUri ] = document;
+						}
+						else {
+							Urls.Add( response.ResponseUri, document );
+						}
+					}
 
-                    return document;
-                }
-                return String.Empty;
-            }
+					return document;
+				}
+				return String.Empty;
+			}
 
-            return String.Empty;
+			return String.Empty;
         }
 
+        [CanBeNull]
         public static IAsyncResult GetAsync( String url ) => GetAsync( new Uri( url ) );
 
+        [CanBeNull]
         public static IAsyncResult GetAsync( Uri uri ) {
             uri.IsWellFormedOriginalString().BreakIfFalse();
             if ( !uri.IsWellFormedOriginalString() ) {
                 return null;
             }
 
-            var request = WebRequest.Create( uri ) as HttpWebRequest;
 
-            // ReSharper disable once PossibleNullReferenceException
-            request.AllowAutoRedirect = true;
-            request.UserAgent = "AIBrain Engine";
-            request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );
-            request.KeepAlive = true;
-            request.SendChunked = true;
+            if ( WebRequest.Create( uri ) is HttpWebRequest request ) {
+                request.AllowAutoRedirect = true;
+                request.UserAgent = "AIBrain Engine";
+                request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );
+                request.KeepAlive = true;
+                request.SendChunked = true;
+                return request.BeginGetResponse( GetAsynchCallback, request );
+            }
 
-            return request.BeginGetResponse( GetAsynchCallback, request );
+            return null;
         }
 
         /// <summary>
@@ -161,7 +162,7 @@ namespace Librainian.Internet {
 
             var request = ( HttpWebRequest )WebRequest.Create( uri );
             request.AllowAutoRedirect = true;
-            request.UserAgent = "AIBrain Engine v2009.03";
+            request.UserAgent = "AIBrain Engine v" + DateTime.Now.Year + "." + DateTime.Now.Month;
             request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );
             request.KeepAlive = true;
             request.SendChunked = true;

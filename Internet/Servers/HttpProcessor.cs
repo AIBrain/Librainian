@@ -170,11 +170,10 @@ namespace Librainian.Internet.Servers {
                 }
                 try {
                     if ( this.TcpClient != null ) {
-                        IPAddress remoteAddress;
-                        if ( IPAddress.TryParse( this.RemoteIpAddress, out remoteAddress ) && ( remoteAddress.AddressFamily == AddressFamily.InterNetwork ) ) {
-                            this._remoteIpAddressBytes = remoteAddress.GetAddressBytes();
-                        }
-                    }
+						if ( IPAddress.TryParse( this.RemoteIpAddress, out var remoteAddress ) && remoteAddress.AddressFamily == AddressFamily.InterNetwork ) {
+							this._remoteIpAddressBytes = remoteAddress.GetAddressBytes();
+						}
+					}
                 }
                 catch ( Exception ex ) {
                     SimpleHttpLogger.Log( ex );
@@ -193,10 +192,10 @@ namespace Librainian.Internet.Servers {
                 return httpProcessor._isLanConnection == 1;
             }
             var remoteBytes = httpProcessor.RemoteIpAddressBytes;
-            if ( ( remoteBytes == null ) || ( remoteBytes.Length != 4 ) ) {
+            if ( remoteBytes == null || remoteBytes.Length != 4 ) {
                 httpProcessor._isLanConnection = 0;
             }
-            else if ( ( remoteBytes[ 0 ] == 127 ) && ( remoteBytes[ 1 ] == 0 ) && ( remoteBytes[ 2 ] == 0 ) && ( remoteBytes[ 3 ] == 1 ) ) {
+            else if ( remoteBytes[ 0 ] == 127 && remoteBytes[ 1 ] == 0 && remoteBytes[ 2 ] == 0 && remoteBytes[ 3 ] == 1 ) {
                 httpProcessor._isLanConnection = 1;
             }
             else {
@@ -281,11 +280,10 @@ namespace Librainian.Internet.Servers {
         /// <returns>The value of the header, or null if the header did not exist.</returns>
         public String GetHeaderValue( String name, String defaultValue = null ) {
             name = name.ToLower();
-            String value;
-            if ( !this.HttpHeaders.TryGetValue( name, out value ) ) {
-                value = defaultValue;
-            }
-            return value;
+			if ( !this.HttpHeaders.TryGetValue( name, out var value ) ) {
+				value = defaultValue;
+			}
+			return value;
         }
 
         /// <summary>
@@ -316,7 +314,7 @@ namespace Librainian.Internet.Servers {
         /// </returns>
         public Boolean GetPostBoolParam( String key ) {
             var param = this.GetPostParam( key );
-            if ( ( param == "1" ) || ( param.ToLower() == "true" ) ) {
+            if ( param == "1" || param.ToLower() == "true" ) {
                 return true;
             }
             return false;
@@ -332,11 +330,10 @@ namespace Librainian.Internet.Servers {
             if ( key == null ) {
                 return defaultValue;
             }
-            Double value;
-            if ( Double.TryParse( this.GetPostParam( key.ToLower() ), out value ) ) {
-                return value;
-            }
-            return defaultValue;
+			if ( Double.TryParse( this.GetPostParam( key.ToLower() ), out var value ) ) {
+				return value;
+			}
+			return defaultValue;
         }
 
         /// <summary>Returns the value of a parameter sent via POST with MIME type "application/x-www-form-urlencoded".</summary>
@@ -349,11 +346,10 @@ namespace Librainian.Internet.Servers {
             if ( key == null ) {
                 return defaultValue;
             }
-            Int32 value;
-            if ( Int32.TryParse( this.GetPostParam( key.ToLower() ), out value ) ) {
-                return value;
-            }
-            return defaultValue;
+			if ( Int32.TryParse( this.GetPostParam( key.ToLower() ), out var value ) ) {
+				return value;
+			}
+			return defaultValue;
         }
 
         /// <summary>Returns the value of a parameter sent via POST with MIME type "application/x-www-form-urlencoded".</summary>
@@ -365,11 +361,10 @@ namespace Librainian.Internet.Servers {
             if ( key == null ) {
                 return "";
             }
-            String value;
-            if ( this.PostParams.TryGetValue( key.ToLower(), out value ) ) {
-                return value;
-            }
-            return "";
+			if ( this.PostParams.TryGetValue( key.ToLower(), out var value ) ) {
+				return value;
+			}
+			return "";
         }
 
         /// <summary>
@@ -383,7 +378,7 @@ namespace Librainian.Internet.Servers {
         /// </returns>
         public Boolean GetQsBoolParam( String key ) {
             var param = this.GetQsParam( key );
-            if ( ( param == "1" ) || ( param.ToLower() == "true" ) ) {
+            if ( param == "1" || param.ToLower() == "true" ) {
                 return true;
             }
             return false;
@@ -401,9 +396,8 @@ namespace Librainian.Internet.Servers {
             if ( key == null ) {
                 return defaultValue;
             }
-            Double value;
-            return Double.TryParse( this.GetQsParam( key.ToLower() ), out value ) ? value : defaultValue;
-        }
+			return Double.TryParse( this.GetQsParam( key.ToLower() ), out var value ) ? value : defaultValue;
+		}
 
         /// <summary>
         ///     Returns the value of the Query String parameter with the specified key.
@@ -417,11 +411,10 @@ namespace Librainian.Internet.Servers {
             if ( key == null ) {
                 return defaultValue;
             }
-            Int32 value;
-            if ( Int32.TryParse( this.GetQsParam( key.ToLower() ), out value ) ) {
-                return value;
-            }
-            return defaultValue;
+			if ( Int32.TryParse( this.GetQsParam( key.ToLower() ), out var value ) ) {
+				return value;
+			}
+			return defaultValue;
         }
 
         /// <summary>
@@ -435,11 +428,10 @@ namespace Librainian.Internet.Servers {
             if ( key == null ) {
                 return "";
             }
-            String value;
-            if ( this.QueryString.TryGetValue( key.ToLower(), out value ) ) {
-                return value;
-            }
-            return "";
+			if ( this.QueryString.TryGetValue( key.ToLower(), out var value ) ) {
+				return value;
+			}
+			return "";
         }
 
         /// <summary>
@@ -631,14 +623,13 @@ namespace Librainian.Internet.Servers {
                         if ( !preserveKeyCharacterCase ) {
                             key = key.ToLower();
                         }
-                        String existingValue;
-                        if ( arguments.TryGetValue( key, out existingValue ) ) {
-                            arguments[ key ] += "," + HttpUtility.UrlDecode( argument[ 1 ] );
-                        }
-                        else {
-                            arguments[ key ] = HttpUtility.UrlDecode( argument[ 1 ] );
-                        }
-                    }
+						if ( arguments.TryGetValue( key, out var existingValue ) ) {
+							arguments[ key ] += "," + HttpUtility.UrlDecode( argument[ 1 ] );
+						}
+						else {
+							arguments[ key ] = HttpUtility.UrlDecode( argument[ 1 ] );
+						}
+					}
                 }
             }
             if ( hash != null ) {
@@ -675,30 +666,29 @@ namespace Librainian.Internet.Servers {
                 var ms = new MemoryStream();
                 var contentLengthStr = this.GetHeaderValue( "Content-Length" );
                 if ( !String.IsNullOrWhiteSpace( contentLengthStr ) ) {
-                    Int32 contentLen;
-                    if ( Int32.TryParse( contentLengthStr, out contentLen ) ) {
-                        if ( contentLen > MaxPostSize ) {
-                            this.WriteFailure( "413 Request Entity Too Large", "Request Too Large" );
-                            SimpleHttpLogger.LogVerbose( "POST Content-Length(" + contentLen + ") too big for this simple Server.  Server can handle up to " + MaxPostSize );
-                            return;
-                        }
-                        var buf = new Byte[ BufSize ];
-                        var toRead = contentLen;
-                        while ( toRead > 0 ) {
-                            var numread = this._inputStream.Read( buf, 0, Math.Min( BufSize, toRead ) );
-                            if ( numread == 0 ) {
-                                if ( toRead == 0 ) {
-                                    break;
-                                }
-                                SimpleHttpLogger.LogVerbose( "client disconnected during post" );
-                                return;
-                            }
-                            toRead -= numread;
-                            ms.Write( buf, 0, numread );
-                        }
-                        ms.Seek( 0, SeekOrigin.Begin );
-                    }
-                }
+					if ( Int32.TryParse( contentLengthStr, out var contentLen ) ) {
+						if ( contentLen > MaxPostSize ) {
+							this.WriteFailure( "413 Request Entity Too Large", "Request Too Large" );
+							SimpleHttpLogger.LogVerbose( "POST Content-Length(" + contentLen + ") too big for this simple Server.  Server can handle up to " + MaxPostSize );
+							return;
+						}
+						var buf = new Byte[ BufSize ];
+						var toRead = contentLen;
+						while ( toRead > 0 ) {
+							var numread = this._inputStream.Read( buf, 0, Math.Min( BufSize, toRead ) );
+							if ( numread == 0 ) {
+								if ( toRead == 0 ) {
+									break;
+								}
+								SimpleHttpLogger.LogVerbose( "client disconnected during post" );
+								return;
+							}
+							toRead -= numread;
+							ms.Write( buf, 0, numread );
+						}
+						ms.Seek( 0, SeekOrigin.Begin );
+					}
+				}
                 else {
                     this.WriteFailure( "411 Length Required", "The request did not specify the length of its content." );
                     SimpleHttpLogger.LogVerbose( "The request did not specify the length of its content.  This Server requires that all POST requests include a Content-Length header." );
@@ -706,7 +696,7 @@ namespace Librainian.Internet.Servers {
                 }
 
                 var contentType = this.GetHeaderValue( "Content-Type" );
-                if ( ( contentType != null ) && contentType.Contains( "application/x-www-form-urlencoded" ) ) {
+                if ( contentType != null && contentType.Contains( "application/x-www-form-urlencoded" ) ) {
                     var sr = new StreamReader( ms );
                     var all = sr.ReadToEnd();
                     sr.Close();
@@ -763,7 +753,7 @@ namespace Librainian.Internet.Servers {
                 }
                 var name = line.Substring( 0, separator );
                 var pos = separator + 1;
-                while ( ( pos < line.Length ) && ( line[ pos ] == ' ' ) ) {
+                while ( pos < line.Length && line[ pos ] == ' ' ) {
                     pos++; // strip any spaces
                 }
 

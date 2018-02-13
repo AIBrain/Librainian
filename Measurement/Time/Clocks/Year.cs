@@ -31,11 +31,9 @@ namespace Librainian.Measurement.Time.Clocks {
     public struct Year : IComparable<Year>, IClockPart {
         public static readonly Year Zero = new Year( 0 );
 
-        public Year( BigInteger value ) : this() {
-            this.Value = value;
-        }
+        public Year( BigInteger value ) : this() => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigInteger Value {
             get;
         }
@@ -46,16 +44,11 @@ namespace Librainian.Measurement.Time.Clocks {
 
         public static Boolean operator >( Year left, Year right ) => left.Value > right.Value;
 
-        public Int32 CompareTo( Year other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public Int32 CompareTo( Year other ) => this.Value.CompareTo( other.Value );
 
-        public Year Next() {
-            return new Year( this.Value + 1 );
-        }
+	    public Year Next() => new Year( this.Value + 1 );
 
-        public Year Previous() {
-            return new Year( this.Value - 1 );
-        }
+	    public Year Previous() => new Year( this.Value - 1 );
+
     }
 }

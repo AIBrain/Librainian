@@ -38,31 +38,28 @@ namespace Librainian.Collections {
         [NotNull]
         private ConcurrentBag<TValue> Collection { get; } = new ConcurrentBag<TValue>();
 
-        public void Add( TValue item ) {
-            this.Collection.Add( item );
-        }
+		public void Add( TValue item ) => this.Collection.Add( item );
 
-        /// <summary>
-        ///     Removes the first <paramref name="item" /> found.
-        /// </summary>
-        /// <param name="item"></param>
-        public void Remove( TValue item ) {
+		/// <summary>
+		///     Removes the first <paramref name="item" /> found.
+		/// </summary>
+		/// <param name="item"></param>
+		public void Remove( TValue item ) {
             var right = new ConcurrentBag<TValue>();
 
 #if DEBUG
-            var before = this.Collection.Count( guid1 => Equals( guid1, item ) );
+            var before = this.Collection.Count( value => Equals( value, item ) );
 #endif
 
             foreach ( var source in this.Collection.TakeWhile( source => !Equals( source, item ) ) ) {
                 right.Add( source );
             }
 
-            TValue result;
-            while ( right.TryTake( out result ) ) {
-                this.Collection.Add( result );
-            }
+			while ( right.TryTake( out var result ) ) {
+				this.Collection.Add( result );
+			}
 #if DEBUG
-            var after = this.Collection.Count( guid1 => Equals( guid1, item ) );
+			var after = this.Collection.Count( value => Equals( value, item ) );
             before.Should().BeGreaterOrEqualTo( after );
 #endif
         }

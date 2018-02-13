@@ -48,9 +48,9 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Byte[]>( address );
 
             // Setup the callback event handler
-            DownloadDataCompletedEventHandler handler = null;
-            handler = ( sender, e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.DownloadDataCompleted -= handler );
-            webClient.DownloadDataCompleted += handler;
+	        void Handler( Object sender, DownloadDataCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.DownloadDataCompleted -= Handler );
+
+	        webClient.DownloadDataCompleted += Handler;
 
             // Start the async work
             try {
@@ -60,7 +60,7 @@ namespace Librainian.Internet {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
                 // cancel the created task
-                webClient.DownloadDataCompleted -= handler;
+                webClient.DownloadDataCompleted -= Handler;
                 tcs.TrySetException( exc );
             }
 
@@ -86,9 +86,9 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Object>( address );
 
             // Setup the callback event handler
-            AsyncCompletedEventHandler handler = null;
-            handler = ( sender, e ) => EapCommon.HandleCompletion( tcs, e, () => null, () => webClient.DownloadFileCompleted -= handler );
-            webClient.DownloadFileCompleted += handler;
+	        void Handler( Object sender, AsyncCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => null, () => webClient.DownloadFileCompleted -= Handler );
+
+	        webClient.DownloadFileCompleted += Handler;
 
             // Start the async work
             try {
@@ -98,7 +98,7 @@ namespace Librainian.Internet {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
                 // cancel the created task
-                webClient.DownloadFileCompleted -= handler;
+                webClient.DownloadFileCompleted -= Handler;
                 tcs.TrySetException( exc );
             }
 
@@ -122,9 +122,9 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<String>( address );
 
             // Setup the callback event handler
-            DownloadStringCompletedEventHandler handler = null;
-            handler = ( sender, e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.DownloadStringCompleted -= handler );
-            webClient.DownloadStringCompleted += handler;
+	        void Handler( Object sender, DownloadStringCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.DownloadStringCompleted -= Handler );
+
+	        webClient.DownloadStringCompleted += Handler;
 
             // Start the async work
             try {
@@ -134,7 +134,7 @@ namespace Librainian.Internet {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
                 // cancel the created task
-                webClient.DownloadStringCompleted -= handler;
+                webClient.DownloadStringCompleted -= Handler;
                 tcs.TrySetException( exc );
             }
 
@@ -158,9 +158,9 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Stream>( address );
 
             // Setup the callback event handler
-            OpenReadCompletedEventHandler handler = null;
-            handler = ( sender, e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.OpenReadCompleted -= handler );
-            webClient.OpenReadCompleted += handler;
+	        void Handler( Object sender, OpenReadCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.OpenReadCompleted -= Handler );
+
+	        webClient.OpenReadCompleted += Handler;
 
             // Start the async work
             try {
@@ -170,7 +170,7 @@ namespace Librainian.Internet {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
                 // cancel the created task
-                webClient.OpenReadCompleted -= handler;
+                webClient.OpenReadCompleted -= Handler;
                 tcs.TrySetException( exc );
             }
 
@@ -196,9 +196,9 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Stream>( address );
 
             // Setup the callback event handler
-            OpenWriteCompletedEventHandler handler = null;
-            handler = ( sender, e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.OpenWriteCompleted -= handler );
-            webClient.OpenWriteCompleted += handler;
+	        void Handler( Object sender, OpenWriteCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.OpenWriteCompleted -= Handler );
+
+	        webClient.OpenWriteCompleted += Handler;
 
             // Start the async work
             try {
@@ -208,7 +208,7 @@ namespace Librainian.Internet {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
                 // cancel the created task
-                webClient.OpenWriteCompleted -= handler;
+                webClient.OpenWriteCompleted -= Handler;
                 tcs.TrySetException( exc );
             }
 
@@ -236,9 +236,9 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Byte[]>( address );
 
             // Setup the callback event handler
-            UploadDataCompletedEventHandler handler = null;
-            handler = ( sender, e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.UploadDataCompleted -= handler );
-            webClient.UploadDataCompleted += handler;
+	        void Handler( Object sender, UploadDataCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.UploadDataCompleted -= Handler );
+
+	        webClient.UploadDataCompleted += Handler;
 
             // Start the async work
             try {
@@ -248,7 +248,7 @@ namespace Librainian.Internet {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
                 // cancel the created task
-                webClient.UploadDataCompleted -= handler;
+                webClient.UploadDataCompleted -= Handler;
                 tcs.TrySetException( exc );
             }
 
@@ -276,9 +276,9 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Byte[]>( address );
 
             // Setup the callback event handler
-            UploadFileCompletedEventHandler handler = null;
-            handler = ( sender, e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.UploadFileCompleted -= handler );
-            webClient.UploadFileCompleted += handler;
+	        void Handler( Object sender, UploadFileCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.UploadFileCompleted -= Handler );
+
+	        webClient.UploadFileCompleted += Handler;
 
             // Start the async work
             try {
@@ -288,7 +288,7 @@ namespace Librainian.Internet {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
                 // cancel the created task
-                webClient.UploadFileCompleted -= handler;
+                webClient.UploadFileCompleted -= Handler;
                 tcs.TrySetException( exc );
             }
 
@@ -316,9 +316,9 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<String>( address );
 
             // Setup the callback event handler
-            UploadStringCompletedEventHandler handler = null;
-            handler = ( sender, e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.UploadStringCompleted -= handler );
-            webClient.UploadStringCompleted += handler;
+	        void Handler( Object sender, UploadStringCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.UploadStringCompleted -= Handler );
+
+	        webClient.UploadStringCompleted += Handler;
 
             // Start the async work
             try {
@@ -328,7 +328,7 @@ namespace Librainian.Internet {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
                 // cancel the created task
-                webClient.UploadStringCompleted -= handler;
+                webClient.UploadStringCompleted -= Handler;
                 tcs.TrySetException( exc );
             }
 

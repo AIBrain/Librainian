@@ -54,11 +54,9 @@ namespace Librainian.Graphics {
         //===========================================================================================================
         public static Point3D Convert2DPoint( Point pointToConvert, Visual3D sphere, TranslateTransform3D cameraPosition ) // transform world matrix
         {
-            Boolean success;
-            Viewport3DVisual viewport;
-            var screenTransform = TryTransformTo2DAncestor( sphere, out viewport, out success );
+			var screenTransform = TryTransformTo2DAncestor( sphere, out var viewport, out var success );
 
-            var pointInWorld = new Point3D();
+			var pointInWorld = new Point3D();
             if ( screenTransform.HasInverse ) {
 
                 //Matrix3D reverseTransform = screenTransform;
@@ -80,9 +78,8 @@ namespace Librainian.Graphics {
 
         //FIXME: Should be replaced with method below
         public static Point Convert3DPoint( Point3D p3D, Viewport3D vp ) {
-            Boolean transformationResultOk;
-            var vp3Dv = VisualTreeHelper.GetParent( vp.Children[ 0 ] ) as Viewport3DVisual;
-            var m = TryWorldToViewportTransform( vp3Dv, out transformationResultOk );
+			var vp3Dv = VisualTreeHelper.GetParent( vp.Children[ 0 ] ) as Viewport3DVisual;
+			var m = TryWorldToViewportTransform( vp3Dv, out var transformationResultOk );
             if ( !transformationResultOk ) {
                 return new Point( 0, 0 );
             }
@@ -92,9 +89,8 @@ namespace Librainian.Graphics {
         }
 
         public static Point Convert3DPoint( Point3D p3D, DependencyObject dependencyObject ) {
-            Boolean transformationResultOk;
-            var vp3Dv = VisualTreeHelper.GetParent( dependencyObject ) as Viewport3DVisual;
-            var m = TryWorldToViewportTransform( vp3Dv, out transformationResultOk );
+			var vp3Dv = VisualTreeHelper.GetParent( dependencyObject ) as Viewport3DVisual;
+			var m = TryWorldToViewportTransform( vp3Dv, out var transformationResultOk );
             if ( !transformationResultOk ) {
                 return new Point( 0, 0 );
             }
@@ -144,21 +140,15 @@ namespace Librainian.Graphics {
                 throw new ArgumentNullException( nameof( camera ) );
             }
 
-            var perspectiveCamera = camera as PerspectiveCamera;
+			if ( camera is PerspectiveCamera perspectiveCamera ) {
+				return GetProjectionMatrix( perspectiveCamera, aspectRatio );
+			}
 
-            if ( perspectiveCamera != null ) {
-                return GetProjectionMatrix( perspectiveCamera, aspectRatio );
-            }
+			if ( camera is OrthographicCamera orthographicCamera ) {
+				return GetProjectionMatrix( orthographicCamera, aspectRatio );
+			}
 
-            var orthographicCamera = camera as OrthographicCamera;
-
-            if ( orthographicCamera != null ) {
-                return GetProjectionMatrix( orthographicCamera, aspectRatio );
-            }
-
-            var matrixCamera = camera as MatrixCamera;
-
-            if ( matrixCamera != null ) {
+			if ( camera is MatrixCamera matrixCamera ) {
                 return matrixCamera.ProjectionMatrix;
             }
 
@@ -183,19 +173,17 @@ namespace Librainian.Graphics {
                 throw new ArgumentNullException( nameof( camera ) );
             }
 
-            var projectionCamera = camera as ProjectionCamera;
 
-            if ( projectionCamera != null ) {
-                return GetViewMatrix( projectionCamera );
-            }
+			if ( camera is ProjectionCamera projectionCamera ) {
+				return GetViewMatrix( projectionCamera );
+			}
 
-            var matrixCamera = camera as MatrixCamera;
 
-            if ( matrixCamera != null ) {
-                return matrixCamera.ViewMatrix;
-            }
+			if ( camera is MatrixCamera matrixCamera ) {
+				return matrixCamera.ViewMatrix;
+			}
 
-            throw new ArgumentException( $"Unsupported camera type '{camera.GetType().FullName}'.", nameof( camera ) );
+			throw new ArgumentException( $"Unsupported camera type '{camera.GetType().FullName}'.", nameof( camera ) );
         }
 
         public static Point3D MultiplyPoints( Point3D point1, Point3D point2 ) => new Point3D( point1.X * point2.X, point1.Y * point2.Y, point1.Z * point2.Z );
@@ -208,13 +196,12 @@ namespace Librainian.Graphics {
         /// <param name="viewPort">An instance of Viewport3D</param>
         /// <returns>The corresponding 2D point or null if it could not be calculated</returns>
         public static Point Point3DToScreen2D( Point3D point3D, Viewport3D viewPort ) {
-            Boolean bOk;
 
-            // We need a Viewport3DVisual but we only have a Viewport3D.
-            var vpv = VisualTreeHelper.GetParent( viewPort.Children[ 0 ] ) as Viewport3DVisual;
+			// We need a Viewport3DVisual but we only have a Viewport3D.
+			var vpv = VisualTreeHelper.GetParent( viewPort.Children[ 0 ] ) as Viewport3DVisual;
 
-            // Get the world to viewport transform matrix
-            var m = TryWorldToViewportTransform( vpv, out bOk );
+			// Get the world to viewport transform matrix
+			var m = TryWorldToViewportTransform( vpv, out var bOk );
 
             if ( bOk ) {
 

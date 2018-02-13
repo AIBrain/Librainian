@@ -29,11 +29,9 @@ namespace Librainian.Database.MMF {
     internal class ValueTypeCheck {
         private readonly Type _type;
 
-        public ValueTypeCheck( Type objectType ) {
-            this._type = objectType;
-        }
+        public ValueTypeCheck( Type objectType ) => this._type = objectType;
 
-        internal Boolean OnlyValueTypes() => this._type.IsPrimitive || ( this.PropertySizesAreDefined() && this.FieldSizesAreDefined() );
+	    internal Boolean OnlyValueTypes() => this._type.IsPrimitive || this.PropertySizesAreDefined() && this.FieldSizesAreDefined();
 
         private static Boolean HasMarshalDefinedSize( MemberInfo info ) {
             var customAttributes = info.GetCustomAttributes( typeof( MarshalAsAttribute ), true );

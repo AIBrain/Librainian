@@ -28,12 +28,10 @@ namespace Librainian.Knowledge {
     /// </summary>
     public class Domain {
 
-        public Domain( String label ) {
-            this.Label = label;
-        }
+        public Domain( String label ) => this.Label = label;
 
-        public String Label {
-            get; private set;
-        }
+	    public String Label {
+            get;
+	    }
     }
 }

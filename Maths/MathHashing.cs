@@ -30,6 +30,28 @@ namespace Librainian.Maths {
     public static class MathHashing {
 
         /// <summary>
+        /// Takes one Int32, returns one Uint64.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static UInt64 Deterministic( this UInt64 index ) {
+            var translate64 = new Translate64 { UnsignedValue = index };
+
+            var bufferA = new Byte[ sizeof( Int32 ) ];
+            new Random( translate64.SignedLow ).NextBytes( bufferA );
+            var a = Convert.ToInt32( bufferA );
+
+            var bufferB = new Byte[ sizeof( Int32 ) ];
+            new Random( a ).NextBytes( bufferB );
+            var b = Convert.ToInt32( bufferB );
+
+            translate64.SignedLow = a;
+            translate64.SignedHigh = b;
+
+            return translate64.UnsignedValue;
+        }
+
+        /// <summary>
         ///     Returns argument increased to the nearest number divisible by 16
         /// </summary>
         public static Int32 Align16( this Int32 i ) {
@@ -92,32 +114,20 @@ namespace Librainian.Maths {
             return fileInfo.AsByteArray().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
         }
 
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2 ) {
-            return ( ( h1 << 5 ) + h1 ) ^ h2;
-        }
+        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2 ) => ( ( h1 << 5 ) + h1 ) ^ h2;
 
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3 ) {
-            return CombineHashCodes( h1, h2 ).CombineHashCodes( h3 );
-        }
+	    public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3 ) => CombineHashCodes( h1, h2 ).CombineHashCodes( h3 );
 
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4 ) {
-            return CombineHashCodes( h1, h2 ).CombineHashCodes( h3.CombineHashCodes( h4 ) );
-        }
+	    public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4 ) => CombineHashCodes( h1, h2 ).CombineHashCodes( h3.CombineHashCodes( h4 ) );
 
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5 ) {
-            return h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5 );
-        }
+	    public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5 ) => h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5 );
 
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6 ) {
-            return h1.CombineHashCodes( h2, h3 ).CombineHashCodes( h4.CombineHashCodes( h5, h6 ) );
-        }
+	    public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6 ) => h1.CombineHashCodes( h2, h3 ).CombineHashCodes( h4.CombineHashCodes( h5, h6 ) );
 
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6, Int32 h7 ) {
-            return h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5.CombineHashCodes( h6, h7 ) );
-        }
+	    public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6, Int32 h7 ) => h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5.CombineHashCodes( h6, h7 ) );
 
-        public static Byte GetHashCodeByte<TLeft>( this TLeft objectA, Byte maximum = Byte.MaxValue ) {
-            if ( Equals( objectA, default( TLeft ) ) ) {
+	    public static Byte GetHashCodeByte<TLeft>( this TLeft objectA, Byte maximum = Byte.MaxValue ) {
+            if ( Equals( objectA, default ) ) {
                 return 0;
             }
             unchecked {
@@ -150,20 +160,20 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary>
-        ///     Returns a combined <see cref="object.GetHashCode" /> based on
-        ///     <paramref name="objectA" /> and <paramref name="objectB" />.
-        /// </summary>
-        /// <typeparam name="TLeft"></typeparam>
-        /// <typeparam name="TRight"></typeparam>
-        /// <param name="objectA"></param>
-        /// <param name="objectB"></param>
-        /// <returns></returns>
-        public static UInt64 GetHashCodes<TLeft, TRight>( this TLeft objectA, TRight objectB ) {
-            if ( Equals( objectA, default( TLeft ) ) ) {
+		/// <summary>
+		///     Returns a combined <see cref="Object.GetHashCode" /> based on
+		///     <paramref name="objectA" /> and <paramref name="objectB" />.
+		/// </summary>
+		/// <typeparam name="TLeft"></typeparam>
+		/// <typeparam name="TRight"></typeparam>
+		/// <param name="objectA"></param>
+		/// <param name="objectB"></param>
+		/// <returns></returns>
+		public static UInt64 GetHashCodes<TLeft, TRight>( this TLeft objectA, TRight objectB ) {
+            if ( Equals( objectA, default ) ) {
                 return 0;
             }
-            if ( Equals( objectB, default( TRight ) ) ) {
+            if ( Equals( objectB, default ) ) {
                 return 0;
             }
             var bob = new Translate64( objectA.GetHashCode(), objectB.GetHashCode() );
@@ -171,7 +181,7 @@ namespace Librainian.Maths {
         }
 
         public static UInt16 GetHashCodeUInt16<TLeft>( this TLeft objectA, UInt16 maximum = UInt16.MaxValue ) {
-            if ( Equals( objectA, default( TLeft ) ) ) {
+            if ( Equals( objectA, default ) ) {
                 return 0;
             }
             unchecked {
@@ -181,7 +191,7 @@ namespace Librainian.Maths {
         }
 
         public static UInt32 GetHashCodeUInt32<TLeft>( this TLeft objectA, UInt32 maximum = UInt32.MaxValue ) {
-            if ( Equals( objectA, default( TLeft ) ) ) {
+            if ( Equals( objectA, default ) ) {
                 return 0;
             }
             unchecked {
@@ -191,7 +201,7 @@ namespace Librainian.Maths {
         }
 
         public static UInt64 GetHashCodeUInt64<TLeft>( this TLeft objectA, UInt64 maximum = UInt64.MaxValue ) {
-            if ( Equals( objectA, default( TLeft ) ) ) {
+            if ( Equals( objectA, default ) ) {
                 return 0;
             }
             unchecked {
@@ -200,21 +210,21 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary>
-        ///     Returns a combined <see cref="object.GetHashCode" /> based on
-        ///     <paramref name="objectA" /> and <paramref name="objectB" />.
-        /// </summary>
-        /// <typeparam name="TLeft"></typeparam>
-        /// <typeparam name="TRight"></typeparam>
-        /// <param name="objectA"></param>
-        /// <param name="objectB"></param>
-        /// <returns></returns>
-        [Pure]
+		/// <summary>
+		///     Returns a combined <see cref="Object.GetHashCode" /> based on
+		///     <paramref name="objectA" /> and <paramref name="objectB" />.
+		/// </summary>
+		/// <typeparam name="TLeft"></typeparam>
+		/// <typeparam name="TRight"></typeparam>
+		/// <param name="objectA"></param>
+		/// <param name="objectB"></param>
+		/// <returns></returns>
+		[Pure]
         public static Int32 GetHashMerge<TLeft, TRight>( this TLeft objectA, TRight objectB ) {
-            if ( Equals( objectA, default( TLeft ) ) ) {
+            if ( Equals( objectA, default ) ) {
                 return 0;
             }
-            if ( Equals( objectB, default( TRight ) ) ) {
+            if ( Equals( objectB, default ) ) {
                 return 0;
             }
             unchecked {

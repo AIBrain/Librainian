@@ -41,7 +41,7 @@ namespace Librainian.Linguistics.PoS {
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         public Boolean Equals( Noun other ) {
-            if ( ReferenceEquals( other, null ) ) {
+            if ( other is null ) {
                 return false;
             }
 

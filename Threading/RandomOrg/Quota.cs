@@ -28,14 +28,9 @@ namespace Librainian.Threading.RandomOrg {
         public const Int64 Error = Int64.MinValue;
         private const String Unexpected = "Error: unexpected data.";
 
-        public static Int64 Check() {
-            Int64 result;
-            return Int64.TryParse( "http://www.random.org/quota/?format=plain".GetWebPage(), out result ) ? result : Error;
-        }
+        public static Int64 Check() => Int64.TryParse( "http://www.random.org/quota/?format=plain".GetWebPage(), out var result ) ? result : Error;
 
-        public static Int64 Check( IPAddress ip ) {
-            Int64 result;
-            return Int64.TryParse( $"http://www.random.org/quota/?ip={ip}&format=plain".GetWebPage(), out result ) ? result : Error;
-        }
+	    public static Int64 Check( IPAddress ip ) => Int64.TryParse( $"http://www.random.org/quota/?ip={ip}&format=plain".GetWebPage(), out var result ) ? result : Error;
+
     }
 }

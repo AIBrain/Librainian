@@ -45,7 +45,7 @@ namespace Librainian.Measurement.Time {
     ///     Pulled from Microsoft's Stopwatch() source. Wanted to see how it works.
     ///     Made my changes to it. Needs some unit tests.
     /// </summary>
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public class StopWatch : IComparable<StopWatch>, IComparable<TimeSpan> {
         public const Int64 TicksPerMicrosecond = 10;
@@ -61,11 +61,9 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         private Int64 _startTimeStamp;
 
-        public StopWatch() {
-            this.Reset();
-        }
+		public StopWatch() => this.Reset();
 
-        public TimeSpan Elapsed => new TimeSpan( ticks: this.GetElapsedTicks() );
+		public TimeSpan Elapsed => new TimeSpan( ticks: this.GetElapsedTicks() );
 
         public Int64 ElapsedMicroseconds => this.GetElapsedTicks() / TicksPerMicrosecond;
 
@@ -74,33 +72,21 @@ namespace Librainian.Measurement.Time {
         public Int64 ElapsedTicks => this.GetElapsedTicks();
 
         public Int64 EndTimeStamp {
-            get {
-                return Interlocked.Read( ref this._endTimeStamp );
-            }
+            get => Interlocked.Read( ref this._endTimeStamp );
 
-            private set {
-                Interlocked.Exchange( ref this._endTimeStamp, value );
-            }
+	        private set => Interlocked.Exchange( ref this._endTimeStamp, value );
         }
 
         public Boolean IsRunning {
-            get {
-                return this._isRunning;
-            }
+            get => this._isRunning;
 
-            private set {
-                this._isRunning = value;
-            }
+	        private set => this._isRunning = value;
         }
 
         public Int64 StartTimeStamp {
-            get {
-                return Interlocked.Read( ref this._startTimeStamp );
-            }
+            get => Interlocked.Read( ref this._startTimeStamp );
 
-            private set {
-                Interlocked.Exchange( ref this._startTimeStamp, value );
-            }
+	        private set => Interlocked.Exchange( ref this._startTimeStamp, value );
         }
 
         public static implicit operator TimeSpan( StopWatch stopWatch ) => TimeSpan.FromMilliseconds( value: stopWatch.ElapsedMilliseconds );
@@ -122,11 +108,9 @@ namespace Librainian.Measurement.Time {
         ///     <paramref name="other" /> in the sort order.
         /// </returns>
         /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo( StopWatch other ) {
-            return this.GetElapsedTicks().CompareTo( other.GetElapsedTicks() );
-        }
+        public Int32 CompareTo( StopWatch other ) => this.GetElapsedTicks().CompareTo( other.GetElapsedTicks() );
 
-        /// <summary>
+	    /// <summary>
         ///     Compares the current instance with another object of the same type and returns an integer that indicates whether
         ///     the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
         /// </summary>
@@ -137,18 +121,14 @@ namespace Librainian.Measurement.Time {
         ///     <paramref name="other" /> in the sort order.
         /// </returns>
         /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo( TimeSpan other ) {
-            return this.Elapsed.CompareTo( other );
-        }
+        public Int32 CompareTo( TimeSpan other ) => this.Elapsed.CompareTo( other );
 
-        public void Pause() {
-            throw new NotImplementedException();
-        }
+		public void Pause() => throw new NotImplementedException();
 
-        /// <summary>
-        ///     Stops the stopwatch and resets all the values to default.
-        /// </summary>
-        public void Reset() {
+		/// <summary>
+		///     Stops the stopwatch and resets all the values to default.
+		/// </summary>
+		public void Reset() {
             this.IsRunning = false;
             this.StartTimeStamp = 0;
             this.EndTimeStamp = 0;
@@ -185,11 +165,9 @@ namespace Librainian.Measurement.Time {
         /// <returns>
         ///     A string that represents the current object.
         /// </returns>
-        public override String ToString() {
-            return this.Elapsed.ToString( "g" );
-        }
+        public override String ToString() => this.Elapsed.ToString( "g" );
 
-        [Pure]
+	    [Pure]
         private Int64 GetElapsedTicks() {
             if ( this.IsRunning ) {
                 return DateTime.UtcNow.Ticks - this.StartTimeStamp;

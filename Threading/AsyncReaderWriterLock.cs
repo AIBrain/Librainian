@@ -46,7 +46,7 @@ namespace Librainian.Threading {
 
         public Task<Releaser> ReaderLockAsync() {
             lock ( this._waitingWriters ) {
-                if ( ( this._mStatus >= 0 ) && ( this._waitingWriters.Count == 0 ) ) {
+                if ( this._mStatus >= 0 && this._waitingWriters.Count == 0 ) {
                     ++this._mStatus;
                     return this._readerReleaser;
                 }
@@ -61,7 +61,7 @@ namespace Librainian.Threading {
 
             lock ( this._waitingWriters ) {
                 --this._mStatus;
-                if ( ( this._mStatus == 0 ) && ( this._waitingWriters.Count > 0 ) ) {
+                if ( this._mStatus == 0 && this._waitingWriters.Count > 0 ) {
                     this._mStatus = -1;
                     toWake = this._waitingWriters.Dequeue();
                 }

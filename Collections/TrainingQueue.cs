@@ -31,12 +31,10 @@ namespace Librainian.Collections {
 
         private readonly ManualResetEvent _bob = new ManualResetEvent( false );
 
-        //public readonly ConcurrentStack<TrainingQueueItem> Items = new ConcurrentStack<TrainingQueueItem>();
-        public TrainingQueue() {
-            this._bob.Reset();
-        }
+		//public readonly ConcurrentStack<TrainingQueueItem> Items = new ConcurrentStack<TrainingQueueItem>();
+		public TrainingQueue() => this._bob.Reset();
 
-        public TrainingQueueItem Dequeue() => this.Items.Remove();
+		public TrainingQueueItem Dequeue() => this.Items.Remove();
 
         public void Enqueue( TrainingQueueItem train ) {
             this.Items.Add( train );
@@ -76,10 +74,10 @@ namespace Librainian.Collections {
             public override String ToString() => $"{this.Question} -> {this.Answer}";
         }
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() { this._bob.Dispose(); }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this._bob.Dispose();
 
-    }
+	}
 }

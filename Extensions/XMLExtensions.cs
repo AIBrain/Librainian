@@ -37,8 +37,7 @@ namespace Librainian.Extensions {
                     if ( reader.Name != elementName ) {
                         continue;
                     }
-                    var el = XNode.ReadFrom( reader ) as XElement;
-                    if ( el != null ) {
+	                if ( XNode.ReadFrom( reader ) is XElement el ) {
                         yield return el;
                     }
                 }

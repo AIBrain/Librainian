@@ -51,43 +51,25 @@ namespace Librainian.Measurement.Time {
 
         public const Double MicsPerYear = MicsPerDay * Measurement.Time.Days.InOneCommonYear;
 
-        public Duration( Microseconds microseconds ) {
-            this.totalMicroseconds = ( Double )microseconds.Value * MicsPerMicrosecond;
-        }
+        public Duration( Microseconds microseconds ) => this.totalMicroseconds = ( Double )microseconds.Value * MicsPerMicrosecond;
 
-        public Duration( Milliseconds milliseconds ) {
-            this.totalMicroseconds = ( Double )milliseconds.Value * MicsPerMillisecond;
-        }
+	    public Duration( Milliseconds milliseconds ) => this.totalMicroseconds = ( Double )milliseconds.Value * MicsPerMillisecond;
 
-        public Duration( Seconds seconds ) {
-            this.totalMicroseconds = ( Double )seconds.Value * MicsPerSecond;
-        }
+	    public Duration( Seconds seconds ) => this.totalMicroseconds = ( Double )seconds.Value * MicsPerSecond;
 
-        public Duration( Minutes minutes ) {
-            this.totalMicroseconds = ( Double )minutes.Value * MicsPerMinute;
-        }
+	    public Duration( Minutes minutes ) => this.totalMicroseconds = ( Double )minutes.Value * MicsPerMinute;
 
-        public Duration( Hours hours ) {
-            this.totalMicroseconds = ( Double )hours.Value * MicsPerHour;
-        }
+	    public Duration( Hours hours ) => this.totalMicroseconds = ( Double )hours.Value * MicsPerHour;
 
-        public Duration( Days days ) {
-            this.totalMicroseconds = ( Double )days.Value * MicsPerDay;
-        }
+	    public Duration( Days days ) => this.totalMicroseconds = ( Double )days.Value * MicsPerDay;
 
-        public Duration( Weeks weeks ) {
-            this.totalMicroseconds = ( Double )weeks.Value * MicsPerWeek;
-        }
+	    public Duration( Weeks weeks ) => this.totalMicroseconds = ( Double )weeks.Value * MicsPerWeek;
 
-        public Duration( Years years ) {
-            this.totalMicroseconds = ( Double )years.Value * MicsPerYear;
-        }
+	    public Duration( Years years ) => this.totalMicroseconds = ( Double )years.Value * MicsPerYear;
 
-        public Duration( Int64 ticks ) {
-            this.totalMicroseconds = ticks / 10.0;
-        }
+	    public Duration( Int64 ticks ) => this.totalMicroseconds = ticks / 10.0;
 
-        public Duration( TimeSpan time ) : this( ticks: time.Ticks ) {
+	    public Duration( TimeSpan time ) : this( ticks: time.Ticks ) {
         }
 
         public Duration( [NotNull] params TimeSpan[] times ) {
@@ -139,72 +121,47 @@ namespace Librainian.Measurement.Time {
             get;
         }
 
-        public static Duration FromDays( Double value ) {
-            return new Duration( new Days( value ) );
-        }
+        public static Duration FromDays( Double value ) => new Duration( new Days( value ) );
 
-        public static Duration FromHours( Double value ) {
-            return new Duration( new Hours( value ) );
-        }
+	    public static Duration FromHours( Double value ) => new Duration( new Hours( value ) );
 
-        public static Duration FromMicroseconds( Double value ) {
-            return new Duration( new Microseconds( value ) );
-        }
+	    public static Duration FromMicroseconds( Double value ) => new Duration( new Microseconds( value ) );
 
-        public static Duration FromMilliseconds( Double value ) {
-            return new Duration( new Milliseconds( value ) );
-        }
+	    public static Duration FromMilliseconds( Double value ) => new Duration( new Milliseconds( value ) );
 
-        public static Duration FromMinutes( Double value ) {
-            return new Duration( new Minutes( value ) );
-        }
+	    public static Duration FromMinutes( Double value ) => new Duration( new Minutes( value ) );
 
-        public static Duration FromSeconds( Double value ) {
-            return new Duration( new Seconds( value ) );
-        }
+	    public static Duration FromSeconds( Double value ) => new Duration( new Seconds( value ) );
 
-        public static Duration FromTicks( Int64 value ) {
-            return new Duration( ticks: value );
-        }
+	    public static Duration FromTicks( Int64 value ) => new Duration( ticks: value );
 
-        public static Duration FromWeeks( Double value ) {
-            return new Duration( new Weeks( value ) );
-        }
+	    public static Duration FromWeeks( Double value ) => new Duration( new Weeks( value ) );
 
-        public static Duration FromYears( Double value ) {
-            return new Duration( new Years( value ) );
-        }
+	    public static Duration FromYears( Double value ) => new Duration( new Years( value ) );
 
-        /// <summary>
+	    /// <summary>
         ///     <para>Compares <see cref="totalMicroseconds" /></para>
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Int32 CompareTo( Duration other ) {
-            return this.totalMicroseconds.CompareTo( other.totalMicroseconds );
-        }
+        public Int32 CompareTo( Duration other ) => this.totalMicroseconds.CompareTo( other.totalMicroseconds );
 
-        /// <summary>
+	    /// <summary>
         ///     <para>Compares <see cref="TotalMilliseconds" /></para>
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Int32 CompareTo( TimeSpan other ) {
-            return this.TotalMilliseconds.CompareTo( other.TotalMilliseconds );
-        }
+        public Int32 CompareTo( TimeSpan other ) => this.TotalMilliseconds.CompareTo( other.TotalMilliseconds );
 
-        /// <summary>
+	    /// <summary>
         ///     Returns the hash code for this instance.
         /// </summary>
         /// <returns>
         ///     A 32-bit signed integer that is the hash code for this instance.
         /// </returns>
-        public override Int32 GetHashCode() {
-            return this.totalMicroseconds.GetHashCode();
-        }
+        public override Int32 GetHashCode() => this.totalMicroseconds.GetHashCode();
 
-        public override String ToString() {
-            return this.Simpler();
-        }
+	    public override String ToString() => this.Simpler();
+
     }
 }

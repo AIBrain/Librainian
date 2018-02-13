@@ -31,7 +31,7 @@ namespace Librainian.Measurement.Physics {
     /// <summary>Units of mass and energy in ElectronVolts.</summary>
     /// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
     /// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct ElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
         public const Decimal InOneElectronVolt = 1E0m;
@@ -66,23 +66,15 @@ namespace Librainian.Measurement.Physics {
         public static readonly ElectronVolts Zero = new ElectronVolts( 0 );
         public readonly Decimal Value;
 
-        public ElectronVolts( Decimal value ) : this() {
-            this.Value = value;
-        }
+        public ElectronVolts( Decimal value ) : this() => this.Value = value;
 
-        public ElectronVolts( MegaElectronVolts megaElectronVolts ) {
-            this.Value = megaElectronVolts.ToElectronVolts().Value;
-        }
+	    public ElectronVolts( MegaElectronVolts megaElectronVolts ) => this.Value = megaElectronVolts.ToElectronVolts().Value;
 
-        public ElectronVolts( BigRational aBigFraction ) {
-            this.Value = ( Decimal )aBigFraction;
-        }
+	    public ElectronVolts( BigRational aBigFraction ) => this.Value = ( Decimal )aBigFraction;
 
-        public ElectronVolts( GigaElectronVolts gigaElectronVolts ) {
-            this.Value = gigaElectronVolts.ToElectronVolts().Value;
-        }
+	    public ElectronVolts( GigaElectronVolts gigaElectronVolts ) => this.Value = gigaElectronVolts.ToElectronVolts().Value;
 
-        public static implicit operator ElectronVolts( MegaElectronVolts megaElectronVolts ) => megaElectronVolts.ToElectronVolts();
+	    public static implicit operator ElectronVolts( MegaElectronVolts megaElectronVolts ) => megaElectronVolts.ToElectronVolts();
 
         public static implicit operator ElectronVolts( GigaElectronVolts gigaElectronVolts ) => gigaElectronVolts.ToElectronVolts();
 
@@ -156,10 +148,8 @@ namespace Librainian.Measurement.Physics {
         /// <returns>
         ///     A <see cref="T:System.String" /> containing a fully qualified type name.
         /// </returns>
-        public override String ToString() {
-            return $"{this.Value} eV";
-        }
+        public override String ToString() => $"{this.Value} eV";
 
-        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
+	    public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
     }
 }

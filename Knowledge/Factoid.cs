@@ -29,10 +29,7 @@ namespace Librainian.Knowledge {
     public class Factoid {
 
         public Factoid( [NotNull] String description, Percentage truthiness ) {
-            if ( description == null ) {
-                throw new ArgumentNullException( nameof( description ) );
-            }
-            this.Description = description;
+	        this.Description = description ?? throw new ArgumentNullException( nameof( description ) );
             this.Truthiness = truthiness;
         }
 

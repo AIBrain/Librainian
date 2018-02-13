@@ -149,101 +149,81 @@ namespace Librainian.Maths {
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000f.OneIn();</example>
-        public static Single OneIn( this Single possible ) {
-            return 1f / possible;
-        }
+        public static Single OneIn( this Single possible ) => 1f / possible;
 
-        /// <summary>
+	    /// <summary>
         ///     One in <paramref name="possible" />
         /// </summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn( this Double possible ) {
-            return 1d / possible;
-        }
+        public static Double OneIn( this Double possible ) => 1d / possible;
 
-        /// <summary>
+	    /// <summary>
         ///     One in <paramref name="possible" />
         /// </summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn( this UInt64 possible ) {
-            return 1d / possible;
-        }
+        public static Double OneIn( this UInt64 possible ) => 1d / possible;
 
-        /// <summary>
+	    /// <summary>
         ///     One in <paramref name="possible" />
         /// </summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn( this Int64 possible ) {
-            return 1d / possible;
-        }
+        public static Double OneIn( this Int64 possible ) => 1d / possible;
 
-        /// <summary>
+	    /// <summary>
         ///     One in <paramref name="possible" />
         /// </summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn( this UInt32 possible ) {
-            return 1d / possible;
-        }
+        public static Double OneIn( this UInt32 possible ) => 1d / possible;
 
-        /// <summary>
+	    /// <summary>
         ///     One in <paramref name="possible" />
         /// </summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn( this Int32 possible ) {
-            return 1d / possible;
-        }
+        public static Double OneIn( this Int32 possible ) => 1d / possible;
 
-        /// <summary>
+	    /// <summary>
         ///     One in <paramref name="possible" />
         /// </summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn( this UInt16 possible ) {
-            return 1d / possible;
-        }
+        public static Double OneIn( this UInt16 possible ) => 1d / possible;
 
-        /// <summary>
+	    /// <summary>
         ///     One in <paramref name="possible" />
         /// </summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn( this Int16 possible ) {
-            return 1d / possible;
-        }
+        public static Double OneIn( this Int16 possible ) => 1d / possible;
 
-        /// <summary>
+	    /// <summary>
         ///     One in <paramref name="possible" />
         /// </summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn( this Byte possible ) {
-            return 1d / possible;
-        }
+        public static Double OneIn( this Byte possible ) => 1d / possible;
 
-        /// <summary>
+	    /// <summary>
         ///     One in <paramref name="possible" />
         /// </summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn( this SByte possible ) {
-            return 1d / possible;
-        }
+        public static Double OneIn( this SByte possible ) => 1d / possible;
 
-        public static Int32 Percent( this Int32 x, Single percent ) => ( Int32 )( x * percent / 100.0f );
+	    public static Int32 Percent( this Int32 x, Single percent ) => ( Int32 )( x * percent / 100.0f );
 
         public static Single Percent( this Single x, Single percent ) => x * percent / 100.0f;
 

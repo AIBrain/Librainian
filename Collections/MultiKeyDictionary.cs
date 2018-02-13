@@ -35,23 +35,21 @@ namespace Librainian.Collections {
 
         public TV this[ TL subKey ] {
             get {
-                TV item;
-                if ( this.TryGetValue( subKey, out item ) ) {
-                    return item;
-                }
+				if ( this.TryGetValue( subKey, out var item ) ) {
+					return item;
+				}
 
-                throw new KeyNotFoundException( $"sub key not found: {subKey}" );
+				throw new KeyNotFoundException( $"sub key not found: {subKey}" );
             }
         }
 
         public new TV this[ TK primaryKey ] {
             get {
-                TV item;
-                if ( this.TryGetValue( primaryKey, out item ) ) {
-                    return item;
-                }
+				if ( this.TryGetValue( primaryKey, out var item ) ) {
+					return item;
+				}
 
-                throw new KeyNotFoundException( $"primary key not found: {primaryKey}" );
+				throw new KeyNotFoundException( $"primary key not found: {primaryKey}" );
             }
         }
 
@@ -84,44 +82,29 @@ namespace Librainian.Collections {
 
         public TV[] CloneValues() => this.Values.ToArray();
 
-        public Boolean ContainsKey( TL subKey ) {
-            TV val;
+        public Boolean ContainsKey( TL subKey ) => this.TryGetValue( subKey, out var val );
 
-            return this.TryGetValue( subKey, out val );
-        }
+	    public new Boolean ContainsKey( TK primaryKey ) => this.TryGetValue( primaryKey, out var val );
 
-        public new Boolean ContainsKey( TK primaryKey ) {
-            TV val;
+	    public void Remove( TK primaryKey ) {
+			this.SubDictionary.TryRemove( key: this.PrimaryToSubkeyMapping[ primaryKey ], value: out var kvalue );
 
-            return this.TryGetValue( primaryKey, out val );
-        }
+			this.PrimaryToSubkeyMapping.TryRemove( key: primaryKey, value: out var lvalue );
 
-        public void Remove( TK primaryKey ) {
-            TK kvalue;
-            this.SubDictionary.TryRemove( key: this.PrimaryToSubkeyMapping[ primaryKey ], value: out kvalue );
-
-            TL lvalue;
-            this.PrimaryToSubkeyMapping.TryRemove( key: primaryKey, value: out lvalue );
-
-            TV value;
-            this.TryRemove( primaryKey, out value );
-        }
+			this.TryRemove( primaryKey, out var value );
+		}
 
         public void Remove( TL subKey ) {
-            TV value;
-            this.TryRemove( this.SubDictionary[ subKey ], out value );
-            TL lvalue;
-            this.PrimaryToSubkeyMapping.TryRemove( key: this.SubDictionary[ subKey ], value: out lvalue );
-            TK kvalue;
-            this.SubDictionary.TryRemove( key: subKey, value: out kvalue );
-        }
+			this.TryRemove( this.SubDictionary[ subKey ], out var value );
+			this.PrimaryToSubkeyMapping.TryRemove( key: this.SubDictionary[ subKey ], value: out var lvalue );
+			this.SubDictionary.TryRemove( key: subKey, value: out var kvalue );
+		}
 
         public Boolean TryGetValue( TL subKey, out TV val ) {
-            val = default( TV );
+            val = default;
 
-            TK ep;
-            return this.SubDictionary.TryGetValue( subKey, out ep ) && this.TryGetValue( ep, out val );
-        }
+			return this.SubDictionary.TryGetValue( subKey, out var ep ) && this.TryGetValue( ep, out val );
+		}
 
         public new Boolean TryGetValue( TK primaryKey, out TV val ) => base.TryGetValue( primaryKey, out val );
     }

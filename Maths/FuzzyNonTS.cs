@@ -39,20 +39,14 @@ namespace Librainian.Maths {
         [JsonProperty]
         private Double _value;
 
-        public FuzzyNonTs( Double value ) {
-            this.Value = value;
-        }
+        public FuzzyNonTs( Double value ) => this.Value = value;
 
-        public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) {
-            this.Randomize( lmh );
-        }
+		public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
 
-        public Double Value {
-            get {
-                return this._value;
-            }
+		public Double Value {
+            get => this._value;
 
-            set {
+	        set {
                 var correctedvalue = value;
                 if ( value > MaxValue ) {
                     correctedvalue = MaxValue;
@@ -74,9 +68,9 @@ namespace Librainian.Maths {
 
         public static implicit operator Double( FuzzyNonTs special ) => special.Value;
 
-        public static Boolean IsFalser( FuzzyNonTs special ) => ( null != special ) && ( special.Value <= Falser.Value );
+        public static Boolean IsFalser( FuzzyNonTs special ) => null != special && special.Value <= FuzzyNonTs.Falser.Value;
 
-        public static Boolean IsTruer( FuzzyNonTs special ) => ( null != special ) && ( special.Value >= Truer.Value );
+        public static Boolean IsTruer( FuzzyNonTs special ) => null != special && special.Value >= FuzzyNonTs.Truer.Value;
 
         public static Boolean IsUndecided( FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
 

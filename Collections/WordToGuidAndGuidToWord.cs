@@ -44,17 +44,15 @@ namespace Librainian.Collections {
             if ( baseCollectionName == null ) {
                 throw new ArgumentNullException( nameof( baseCollectionName ) );
             }
-            if ( baseCollectionNameExt == null ) {
-                throw new ArgumentNullException( nameof( baseCollectionNameExt ) );
-            }
-            this.IsDirty = false;
+
+			this.IsDirty = false;
             this._baseCollectionNameExt = String.Empty;
 
             if ( !String.IsNullOrEmpty( baseCollectionName ) ) {
                 this._baseCollectionName = baseCollectionName;
             }
 
-            this._baseCollectionNameExt = baseCollectionNameExt;
+            this._baseCollectionNameExt = baseCollectionNameExt ?? throw new ArgumentNullException( nameof( baseCollectionNameExt ) );
             if ( String.IsNullOrEmpty( this._baseCollectionNameExt ) ) {
                 this._baseCollectionNameExt = "xml";
             }
@@ -75,15 +73,13 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         public Guid this[ String key ] {
-            get {
-                return String.IsNullOrEmpty( key ) ? Guid.Empty : this._words[ key ];
-            }
+            get => String.IsNullOrEmpty( key ) ? Guid.Empty : this._words[ key ];
 
-            set {
+	        set {
                 if ( String.IsNullOrEmpty( key ) ) {
                     return;
                 }
-                if ( this._words.ContainsKey( key ) && ( value == this._words[ key ] ) ) {
+                if ( this._words.ContainsKey( key ) && value == this._words[ key ] ) {
                     return;
                 }
                 this._words[ key ] = value;
@@ -97,30 +93,26 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         public String this[ Guid key ] {
-            get {
-                return Guid.Empty.Equals( key ) ? String.Empty : this._guids[ key ];
-            }
+            get => Guid.Empty.Equals( key ) ? String.Empty : this._guids[ key ];
 
-            set {
+	        set {
                 if ( Guid.Empty.Equals( key ) ) {
                     return;
                 }
 
                 //Are they removing the guid from both lists?
                 if ( String.IsNullOrEmpty( value ) ) {
-                    String oldstringfortheguid;
-                    this._guids.TryRemove( key, out oldstringfortheguid );
+					this._guids.TryRemove( key, out var oldstringfortheguid );
 
-                    if ( String.IsNullOrEmpty( oldstringfortheguid ) ) {
+					if ( String.IsNullOrEmpty( oldstringfortheguid ) ) {
                         return;
                     }
-                    Guid oldguid;
-                    this._words.TryRemove( oldstringfortheguid, out oldguid );
-                    oldguid.Equals( key ).BreakIfFalse();
+					this._words.TryRemove( oldstringfortheguid, out var oldguid );
+					oldguid.Equals( key ).BreakIfFalse();
                     this.IsDirty = true;
                 }
                 else {
-                    if ( this._guids.ContainsKey( key ) && ( value == this._guids[ key ] ) ) {
+                    if ( this._guids.ContainsKey( key ) && value == this._guids[ key ] ) {
                         return;
                     }
                     this._guids[ key ] = value;

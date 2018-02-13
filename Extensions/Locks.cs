@@ -122,7 +122,7 @@ namespace Librainian.Extensions {
 
             public void Dispose() {
                 var slim = this._readerWriterLockSlim;
-                if ( ( slim != null ) && slim.IsReadLockHeld ) {
+                if ( slim != null && slim.IsReadLockHeld ) {
                     slim.ExitReadLock();
                 }
                 this._readerWriterLockSlim = null; //don't hold a ref to the lock anymore.
@@ -139,7 +139,7 @@ namespace Librainian.Extensions {
 
             public void Dispose() {
                 var slim = this._readerWriterLockSlim;
-                if ( ( slim != null ) && slim.IsUpgradeableReadLockHeld ) {
+                if ( slim != null && slim.IsUpgradeableReadLockHeld ) {
                     slim.ExitUpgradeableReadLock();
                 }
                 this._readerWriterLockSlim = null; //don't hold a ref to the lock anymore.
@@ -156,7 +156,7 @@ namespace Librainian.Extensions {
 
             public void Dispose() {
                 var slim = this._readerWriterLockSlim;
-                if ( ( slim != null ) && slim.IsWriteLockHeld ) {
+                if ( slim != null && slim.IsWriteLockHeld ) {
                     slim.ExitWriteLock();
                 }
                 this._readerWriterLockSlim = null; //don't hold a ref to the lock anymore.

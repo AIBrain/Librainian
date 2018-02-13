@@ -43,21 +43,15 @@ namespace Librainian.Maths.Numbers {
 
         /// <summary>Initializes and constrain the value to stay between 0.0 and 1.0.</summary>
         /// <param name="value"></param>
-        public PercentageNonTs( Double value ) {
-            this.Value = value;
-        }
+        public PercentageNonTs( Double value ) => this.Value = value;
 
-        public PercentageNonTs( Double min, Double max ) : this( Randem.NextDouble( min: min, max: max ) ) {
+	    public PercentageNonTs( Double min, Double max ) : this( Randem.NextDouble( min: min, max: max ) ) {
         }
 
         public Double Value {
-            get {
-                return Thread.VolatileRead( ref this._value );
-            }
+            get => Thread.VolatileRead( ref this._value );
 
-            set {
-                Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : ( value <= MinValue ? MinValue : value ) );
-            }
+	        set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : ( value <= MinValue ? MinValue : value ) );
         }
 
         public static implicit operator Double( PercentageNonTs special ) => special.Value;

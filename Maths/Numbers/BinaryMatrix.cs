@@ -28,18 +28,14 @@ namespace Librainian.Maths.Numbers {
     /// <summary>
     ///     Based from Hamming code found at http://maciejlis.com/hamming-code-algorithm-c-sharp/
     /// </summary>
-    [DebuggerDisplay( "{ToString()}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     public class BinaryMatrix {
 
-        public BinaryMatrix( Boolean[,] matrix ) {
-            this.Matrix = matrix;
-        }
+        public BinaryMatrix( Boolean[,] matrix ) => this.Matrix = matrix;
 
-        public BinaryMatrix( Int32 rowsAmount, Int32 columsAmount ) {
-            this.Matrix = new Boolean[ rowsAmount, columsAmount ];
-        }
+	    public BinaryMatrix( Int32 rowsAmount, Int32 columsAmount ) => this.Matrix = new Boolean[ rowsAmount, columsAmount ];
 
-        public Int32 ColumnAmount => this.Matrix.GetLength( 1 );
+	    public Int32 ColumnAmount => this.Matrix.GetLength( 1 );
 
         [NotNull]
         public Boolean[,] Matrix {
@@ -48,11 +44,9 @@ namespace Librainian.Maths.Numbers {
 
         public Int32 RowAmount => this.Matrix.GetLength( 0 );
 
-        public Boolean Get( Int32 row, Int32 column ) {
-            return this.Matrix[ row, column ];
-        }
+        public Boolean Get( Int32 row, Int32 column ) => this.Matrix[ row, column ];
 
-        public Binary GetColumn( Int32 index ) {
+	    public Binary GetColumn( Int32 index ) {
             var column = new Boolean[ this.RowAmount ];
             for ( var y = 0; y < this.RowAmount; y++ ) {
                 column[ y ] = this.Matrix[ y, index ];
@@ -70,11 +64,9 @@ namespace Librainian.Maths.Numbers {
             return new Binary( row );
         }
 
-        public void Set( Int32 row, Int32 column, Boolean value ) {
-            this.Matrix[ row, column ] = value;
-        }
+		public void Set( Int32 row, Int32 column, Boolean value ) => this.Matrix[ row, column ] = value;
 
-        public override String ToString() {
+		public override String ToString() {
             var stringBuilder = new StringBuilder( this.Matrix.Length );
             for ( var y = 0; y < this.RowAmount; y++ ) {
                 for ( var x = 0; x < this.ColumnAmount; x++ ) {

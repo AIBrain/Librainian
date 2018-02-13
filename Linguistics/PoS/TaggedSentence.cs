@@ -38,6 +38,7 @@ namespace Librainian.Linguistics.PoS {
             if ( words == null ) {
                 throw new ArgumentNullException( nameof( words ) );
             }
+	        this.Tokens.AddRange( words.Where( word => null != word ).Select( word => word ) );
         }
 
         [Pure]

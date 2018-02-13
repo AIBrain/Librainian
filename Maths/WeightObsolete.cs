@@ -44,22 +44,16 @@ namespace Librainian.Maths {
         private Double _value;
 
         /// <summary>Initializes to a random number between 0.0 and 0.50D</summary>
-        public WeightObsolete() {
-            this.Value = Randem.NextDouble() * 0.25 + Randem.NextDouble() * 0.25;
-        }
+        public WeightObsolete() => this.Value = Randem.NextDouble() * 0.25 + Randem.NextDouble() * 0.25;
 
-        /// <summary>A Double number, constrained between <see cref="MinValue" /> and <see cref="MaxValue" />.</summary>
+	    /// <summary>A Double number, constrained between <see cref="MinValue" /> and <see cref="MaxValue" />.</summary>
         /// <param name="value"></param>
-        public WeightObsolete( Double value ) {
-            this.Value = value;
-        }
+        public WeightObsolete( Double value ) => this.Value = value;
 
-        public Double Value {
-            get {
-                return Interlocked.Exchange( ref this._value, this._value );
-            }
+	    public Double Value {
+            get => Interlocked.Exchange( ref this._value, this._value );
 
-            set {
+	        set {
                 var correctedvalue = value;
                 if ( value >= MaxValue ) {
                     correctedvalue = MaxValue;

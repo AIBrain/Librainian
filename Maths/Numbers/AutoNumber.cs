@@ -24,24 +24,22 @@ namespace Librainian.Maths.Numbers {
     using System.Threading;
     using Newtonsoft.Json;
 
-    /// <summary>
-    ///     An automatically incrementing Identity class. ( <see cref="Identity" /> is
-    ///     <see cref="ulong" /> )
-    /// </summary>
-    [JsonObject]
+	/// <summary>
+	///     An automatically incrementing Identity class. ( <see cref="Identity" /> is
+	///     <see cref="UInt64" /> )
+	/// </summary>
+	[JsonObject]
     public sealed class AutoNumber {
 
         [JsonProperty]
         private Int64 _identity;
 
-        /// <summary>Initialize the Identity with the specified seed value.</summary>
-        /// <param name="seed"></param>
-        public AutoNumber( UInt64 seed = UInt64.MinValue ) {
-            this.Reseed( seed );
-        }
+		/// <summary>Initialize the Identity with the specified seed value.</summary>
+		/// <param name="seed"></param>
+		public AutoNumber( UInt64 seed = UInt64.MinValue ) => this.Reseed( seed );
 
-        /// <summary>The current value of the AutoNumber</summary>
-        public UInt64 Identity => ( UInt64 )Interlocked.Read( ref this._identity );
+		/// <summary>The current value of the AutoNumber</summary>
+		public UInt64 Identity => ( UInt64 )Interlocked.Read( ref this._identity );
 
         public void Ensure( UInt64 atLeast ) {
             if ( this.Identity < atLeast ) {

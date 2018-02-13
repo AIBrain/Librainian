@@ -38,7 +38,7 @@ namespace Librainian.Linguistics {
     /// <seealso cref="Page"></seealso>
     [JsonObject]
     [Immutable]
-    [DebuggerDisplay( "{ToString()}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public sealed class Paragraph : IEquatable<Paragraph>, IEnumerable<Sentence> {
 
@@ -67,7 +67,7 @@ namespace Librainian.Linguistics {
         public static implicit operator String( Paragraph paragraph ) => paragraph.ToString();
 
         public Boolean Equals( [CanBeNull] Paragraph other ) {
-            if ( ReferenceEquals( other, null ) ) {
+            if ( other is null ) {
                 return false;
             }
 
@@ -78,11 +78,9 @@ namespace Librainian.Linguistics {
 
         /// <summary>Serves as the default hash function. </summary>
         /// <returns>A hash code for the current object.</returns>
-        public override Int32 GetHashCode() {
-            return this.Sentences.GetHashCode();
-        }
+        public override Int32 GetHashCode() => this.Sentences.GetHashCode();
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+	    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public override String ToString() {
             var sb = new StringBuilder();

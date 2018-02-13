@@ -41,11 +41,9 @@ namespace Librainian.Threading {
         private readonly BlockingCollection<Task> _tasks = new BlockingCollection<Task>();
         private Thread[] _threads;
 
-        public PriorityScheduler( ThreadPriority priority ) {
-            this._priority = priority;
-        }
+        public PriorityScheduler( ThreadPriority priority ) => this._priority = priority;
 
-        public override Int32 MaximumConcurrencyLevel => this._maximumConcurrencyLevel;
+	    public override Int32 MaximumConcurrencyLevel => this._maximumConcurrencyLevel;
 
         protected override IEnumerable<Task> GetScheduledTasks() => this._tasks;
 
@@ -72,10 +70,10 @@ namespace Librainian.Threading {
 
         protected override Boolean TryExecuteTaskInline( Task task, Boolean taskWasPreviouslyQueued ) => false;
 
-        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-        public void Dispose() { this.Dispose( true ); }
+		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+		public void Dispose() => this.Dispose( true );
 
-        protected virtual void Dispose( Boolean sdfsss ) {
+		protected virtual void Dispose( Boolean sdfsss ) {
             if ( sdfsss ) {
                 this._tasks.Dispose();
             }

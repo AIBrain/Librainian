@@ -28,7 +28,6 @@ namespace Librainian.Threading {
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
-    using System.Security.Cryptography;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
@@ -85,10 +84,7 @@ namespace Librainian.Threading {
 
         public static readonly Boolean IsRunningFromNUnit = AppDomain.CurrentDomain.GetAssemblies().Any( assembly => assembly.FullName.ToLowerInvariant().StartsWith( "nunit.framework" ) );
 
-        [NotNull]
-        public static ThreadLocal<SHA256Managed> ThreadLocalSHA256Managed { get; } = new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
-
-        /// <summary>Only allow a delegate to run X times.</summary>
+	    /// <summary>Only allow a delegate to run X times.</summary>
         /// <param name="action"></param>
         /// <param name="callsAllowed"></param>
         /// <returns></returns>
@@ -150,16 +146,15 @@ namespace Librainian.Threading {
         /// <param name="obj"></param>
         /// <returns></returns>
         public static UInt64 CalcSizeInBytes<T>( this T obj ) {
-            if ( Equals( obj, default( T ) ) ) {
+            if ( Equals( obj, default ) ) {
                 return 0;
             }
 
-            UInt64 sizeInBytes;
-            if ( obj.GetSizeOfPrimitives( out sizeInBytes ) ) {
-                return sizeInBytes;
-            }
+			if ( obj.GetSizeOfPrimitives( out var sizeInBytes ) ) {
+				return sizeInBytes;
+			}
 
-            var fields = obj.GetType().GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
+			var fields = obj.GetType().GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
             foreach ( var field in fields ) {
 
                 //UInt64 localsize;
@@ -183,8 +178,7 @@ namespace Librainian.Threading {
                 //ObjectActivator compiled = ( ObjectActivator )lambda.Compile();
 
                 if ( field.FieldType.IsSubclassOf( typeof( IList ) ) ) {
-                    var list = value as IList;
-                    if ( list == null ) {
+	                if ( !( value is IList list ) ) {
                         continue;
                     }
                     sizeInBytes = list.Cast<Object>().Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
@@ -193,8 +187,7 @@ namespace Librainian.Threading {
                 }
 
                 if ( field.FieldType.IsSubclassOf( typeof( IDictionary ) ) ) {
-                    var dictionary = value as IDictionary;
-                    if ( dictionary != null ) {
+	                if ( value is IDictionary dictionary ) {
                         foreach ( var key in dictionary.Keys ) {
                             sizeInBytes += key.CalcSizeInBytes(); //TODO could optimize this out of the loop
                             sizeInBytes += dictionary[ key ].CalcSizeInBytes();
@@ -204,11 +197,10 @@ namespace Librainian.Threading {
                 }
 
                 if ( field.FieldType.IsSubclassOf( typeof( IEnumerable ) ) ) {
-                    var enumerable = value as IEnumerable;
-                    if ( enumerable != null ) {
-                        sizeInBytes = enumerable.Cast<Object>().Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
-                    }
-                    continue;
+					if ( value is IEnumerable enumerable ) {
+						sizeInBytes = enumerable.Cast<Object>().Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
+					}
+					continue;
                 }
 
                 if ( field.FieldType.IsArray ) {
@@ -287,8 +279,7 @@ namespace Librainian.Threading {
         }
 
         public static Int32 GetMaximumActiveWorkerThreads() {
-            Int32 maxWorkerThreads, maxPortThreads;
-            ThreadPool.GetMaxThreads( workerThreads: out maxWorkerThreads, completionPortThreads: out maxPortThreads );
+			ThreadPool.GetMaxThreads( workerThreads: out var maxWorkerThreads, completionPortThreads: out var maxPortThreads );
             return maxPortThreads;
         }
 
@@ -370,11 +361,9 @@ namespace Librainian.Threading {
             return false; //unknown type
         }
 
-        public static Boolean IsNotRunning( this Task task ) {
-            return task.IsCompleted || task.IsCanceled || task.IsFaulted;
-        }
+        public static Boolean IsNotRunning( this Task task ) => task.IsCompleted || task.IsCanceled || task.IsFaulted;
 
-        /// <summary>returns Marshal.SizeOf( typeof( T ) );</summary>
+	    /// <summary>returns Marshal.SizeOf( typeof( T ) );</summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -463,7 +452,7 @@ namespace Librainian.Threading {
             if ( !Equals( output, null ) && !String.IsNullOrWhiteSpace( description ) ) {
                 output( description );
             }
-            var notnull = tasks.Where( task => !Equals( task, default( Action ) ) );
+            var notnull = tasks.Where( task => !Equals( task, default ) );
             if ( inParallel ) {
                 var result = Parallel.ForEach( notnull, task => task() );
                 return result.IsCompleted;

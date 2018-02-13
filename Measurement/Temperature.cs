@@ -36,11 +36,9 @@ namespace Librainian.Measurement {
         ///     <see cref="Temperature" /> in <see cref="Temperature.Celsius" />, with properties in <see cref="Fahrenheit" /> and
         ///     <see cref="Kelvin" />.
         /// </summary>
-        public Temperature( Single celsius ) {
-            this.Celsius = celsius;
-        }
+        public Temperature( Single celsius ) => this.Celsius = celsius;
 
-        /// <summary>
+	    /// <summary>
         ///     no no.
         /// </summary>
         private Temperature() {

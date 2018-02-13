@@ -61,11 +61,9 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <returns></returns>
         public static implicit operator Byte( Minute value ) => value.Value;
 
-        public static implicit operator Minute( Byte value ) {
-            return new Minute( value );
-        }
+        public static implicit operator Minute( Byte value ) => new Minute( value );
 
-        /// <summary>Provide the next minute.</summary>
+	    /// <summary>Provide the next minute.</summary>
         public Minute Next( out Boolean tocked ) {
             tocked = false;
             var next = this.Value + 1;

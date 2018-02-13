@@ -42,20 +42,16 @@ namespace Librainian.Extensions {
         public DerivedSerializableExceptionWithAdditionalCustomProperty( String message, Exception innerException ) : base( message, innerException ) {
         }
 
-        public DerivedSerializableExceptionWithAdditionalCustomProperty( String message, String username, String resourceName, IList<String> validationErrors ) : base( message, resourceName, validationErrors ) {
-            this.Username = username;
-        }
+        public DerivedSerializableExceptionWithAdditionalCustomProperty( String message, String username, String resourceName, IList<String> validationErrors ) : base( message, resourceName, validationErrors ) => this.Username = username;
 
-        public DerivedSerializableExceptionWithAdditionalCustomProperty( String message, String username, String resourceName, IList<String> validationErrors, Exception innerException ) : base( message, resourceName, validationErrors, innerException ) {
-            this.Username = username;
-        }
+	    public DerivedSerializableExceptionWithAdditionalCustomProperty( String message, String username, String resourceName, IList<String> validationErrors, Exception innerException ) : base( message, resourceName, validationErrors, innerException ) => this.Username = username;
 
-        [SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
+	    [SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
 
         // Serialization constructor is private, as this class is sealed
-        private DerivedSerializableExceptionWithAdditionalCustomProperty( SerializationInfo info, StreamingContext context ) : base( info, context ) { this.Username = info.GetString( "Username" ); }
+        private DerivedSerializableExceptionWithAdditionalCustomProperty( SerializationInfo info, StreamingContext context ) : base( info, context ) => this.Username = info.GetString( "Username" );
 
-        public String Username {
+	    public String Username {
             get;
         }
 

@@ -78,8 +78,7 @@ namespace Librainian.AmazedSaint {
                 exp.Add( new XAttribute( a.Key, a.Value.InternalValue ) );
             }
 
-            var s = elastic.InternalContent as String;
-            if ( s != null ) {
+	        if ( elastic.InternalContent is String s ) {
                 exp.Add( new XText( s ) );
             }
 

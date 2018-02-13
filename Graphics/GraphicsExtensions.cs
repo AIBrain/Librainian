@@ -35,13 +35,11 @@ namespace Librainian.Graphics {
     public static class GraphicsExtensions {
         public static RAMP DefaultRamp;
 
-        private static Boolean GotGamma;
+        private static Boolean _gotGamma;
 
-        static GraphicsExtensions() {
-            DefaultRamp = GetGamma();
-        }
+        static GraphicsExtensions() => DefaultRamp = GetGamma();
 
-        public static Stream EfvToStream() {
+	    public static Stream EfvToStream() {
             var ms = new MemoryStream();
 
             //TODO
@@ -51,7 +49,7 @@ namespace Librainian.Graphics {
         public static RAMP GetGamma() {
             var ramp = new RAMP();
             if ( NativeMethods.GetDeviceGammaRamp( NativeMethods.GetDC( IntPtr.Zero ), ref ramp ) ) {
-                GotGamma = true;
+                GraphicsExtensions._gotGamma = true;
                 return ramp;
             }
             throw new InvalidOperationException( "Unable to obtain Gamma setting." );
@@ -62,7 +60,7 @@ namespace Librainian.Graphics {
         /// </summary>
         /// <exception cref="InvalidOperationException"></exception>
         public static void ResetGamma() {
-            if ( GotGamma ) {
+            if ( GraphicsExtensions._gotGamma ) {
                 NativeMethods.SetDeviceGammaRamp( NativeMethods.GetDC( IntPtr.Zero ), ref DefaultRamp );
             }
             else {

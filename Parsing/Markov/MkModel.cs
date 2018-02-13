@@ -36,15 +36,11 @@ namespace Librainian.Parsing.Markov {
         public readonly String Name;
         private readonly ConcurrentDictionary<String, List<String>> _markovChains = new ConcurrentDictionary<String, List<String>>();
 
-        public MkModel() {
-            throw new NotImplementedException();
-        }
+        public MkModel() => throw new NotImplementedException();
 
-        public MkModel( String name ) {
-            this.Name = name;
-        }
+	    public MkModel( String name ) => this.Name = name;
 
-        public String GenerateRandomCorpus( Int32 numberOfWords ) {
+	    public String GenerateRandomCorpus( Int32 numberOfWords ) {
             if ( !this._markovChains.Any() ) {
                 return String.Empty;
             }

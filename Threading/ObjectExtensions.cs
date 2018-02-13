@@ -35,15 +35,11 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="originalObject"></param>
         /// <returns></returns>
-        public static Object Copy( this Object originalObject ) {
-            return InternalCopy( originalObject, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
-        }
+        public static Object Copy( this Object originalObject ) => InternalCopy( originalObject, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
 
-        public static T Copy<T>( this T original ) {
-            return ( T )Copy( ( Object )original );
-        }
+	    public static T Copy<T>( this T original ) => ( T )Copy( ( Object )original );
 
-        public static Boolean IsPrimitive( this Type type ) {
+	    public static Boolean IsPrimitive( this Type type ) {
             if ( type == typeof( String ) ) {
                 return true;
             }
@@ -52,7 +48,7 @@ namespace Librainian.Threading {
 
         private static void CopyFields( Object originalObject, IDictionary<Object, Object> visited, Object cloneObject, Type typeToReflect, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy, Func<FieldInfo, Boolean> filter = null ) {
             foreach ( var fieldInfo in typeToReflect.GetFields( bindingFlags ) ) {
-                if ( ( filter != null ) && ( filter( fieldInfo ) == false ) ) {
+                if ( filter != null && filter( fieldInfo ) == false ) {
                     continue;
                 }
                 if ( IsPrimitive( fieldInfo.FieldType ) ) {

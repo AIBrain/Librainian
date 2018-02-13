@@ -52,11 +52,9 @@ namespace Librainian.Graphics.Moving {
         [JsonProperty]
         public ConcurrentDictionary<UInt64, Pixelyx> Pixels = new ConcurrentDictionary<UInt64, Pixelyx>();
 
-        public Efv() {
-            this.Checksum = UInt64.MaxValue; //an unlikely hash
-        }
+        public Efv() => this.Checksum = UInt64.MaxValue;
 
-        /// <summary>Checksum guard</summary>
+	    /// <summary>Checksum guard</summary>
         [JsonProperty]
         public UInt64 Checksum {
             get; set;
@@ -88,7 +86,7 @@ namespace Librainian.Graphics.Moving {
 
         public Int32 CalculateChecksum() {
             var sum = 0;
-            foreach ( var pixelyx in Pixels ) {
+            foreach ( var pixelyx in this.Pixels ) {
                 unchecked {
                     sum += pixelyx.GetHashCode();
                 }
@@ -103,12 +101,9 @@ namespace Librainian.Graphics.Moving {
         } );
 
         [CanBeNull]
-        public Pixelyx Get( UInt64 index ) {
-            Pixelyx pixelyx;
-            return this.Pixels.TryGetValue( index, out pixelyx ) ? pixelyx : null;
-        }
+        public Pixelyx Get( UInt64 index ) => this.Pixels.TryGetValue( index, out var pixelyx ) ? pixelyx : null;
 
-        [CanBeNull]
+	    [CanBeNull]
         public Pixelyx Get( UInt16 x, UInt16 y ) {
             if ( x == 0 ) {
                 throw new ArgumentException( "x" );

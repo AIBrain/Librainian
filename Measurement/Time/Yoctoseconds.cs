@@ -34,7 +34,7 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Yoctosecond" />
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct Yoctoseconds : IComparable<Yoctoseconds>, IQuantityOfTime {
 
@@ -87,23 +87,15 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Yoctoseconds Zero = new Yoctoseconds( 0 );
 
-        public Yoctoseconds( Decimal value ) {
-            this.Value = value;
-        }
+        public Yoctoseconds( Decimal value ) => this.Value = value;
 
-        public Yoctoseconds( BigRational value ) {
-            this.Value = value;
-        }
+	    public Yoctoseconds( BigRational value ) => this.Value = value;
 
-        public Yoctoseconds( Int64 value ) {
-            this.Value = value;
-        }
+	    public Yoctoseconds( Int64 value ) => this.Value = value;
 
-        public Yoctoseconds( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Yoctoseconds( BigInteger value ) => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -161,10 +153,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Yoctoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Yoctoseconds && this.Equals( ( Yoctoseconds )obj );
+            return obj is Yoctoseconds yoctoseconds && this.Equals( yoctoseconds );
         }
 
         [Pure]

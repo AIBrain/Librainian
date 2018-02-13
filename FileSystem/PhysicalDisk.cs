@@ -48,10 +48,8 @@ namespace Librainian.FileSystem {
 
             // Loop through each object (disk) retrieved by WMI
             foreach ( var o in mosDisks.Get() ) {
-                var moDisk = o as ManagementObject;
-
-                // Add the HDD to the list (use the Model field as the item's caption)
-                if ( moDisk != null ) {
+	            // Add the HDD to the list (use the Model field as the item's caption)
+                if ( o is ManagementObject moDisk ) {
                     return moDisk[ "Model" ].ToString();
                 }
             }

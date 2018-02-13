@@ -29,7 +29,7 @@ namespace Librainian.Measurement.Frequency {
 
     /// <summary>http: //wikipedia.org/wiki/Frequency</summary>
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class Hertz {
 
         /// <summary>Fifteen <see cref="Hertz" /> s.</summary>

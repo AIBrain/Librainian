@@ -26,8 +26,7 @@ namespace Librainian.Knowledge {
     public class SentenceOfThings {
         public LinkedList<Thing> Things;
 
-        public SentenceOfThings() {
-            this.Things = new LinkedList<Thing>();
-        }
+        public SentenceOfThings() => this.Things = new LinkedList<Thing>();
+
     }
 }

@@ -46,8 +46,7 @@ namespace Librainian.Financial.Containers.Wallets {
             return 0 == coins.LongCount( coin => this.Deposit( coin, 1 ) != 1 );
         }
 
-        public Decimal RunningTotal() {
-            return this.Total();
-        }
+        public Decimal RunningTotal() => this.Total();
+
     }
 }

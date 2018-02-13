@@ -34,6 +34,7 @@ namespace Librainian.Persistence {
     using Measurement.Time;
     using Microsoft.Database.Isam.Config;
     using Microsoft.Isam.Esent.Collections.Generic;
+    using Microsoft.Isam.Esent.Interop.Windows81;
     using Newtonsoft.Json;
     using OperatingSystem.Compression;
     using Parsing;
@@ -45,7 +46,7 @@ namespace Librainian.Persistence {
     ///     </para>
     /// </summary>
     /// <seealso cref="http://managedesent.codeplex.com/wikipage?title=PersistentDictionaryDocumentation" />
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public sealed class PersistTable<TKey, TValue> : IDictionary<TKey, TValue>, IDisposable where TKey : IComparable<TKey> {
 
@@ -83,17 +84,13 @@ namespace Librainian.Persistence {
         // ReSharper disable once NotNullMemberIsNotInitialized
         public PersistTable( [CanBeNull] Folder folder, Boolean testForReadWriteAccess = false ) {
             try {
-                if ( folder == null ) {
-                    throw new ArgumentNullException( nameof( folder ) );
-                }
-                this.Folder = folder;
+	            this.Folder = folder ?? throw new ArgumentNullException( nameof( folder ) );
 
                 if ( !this.Folder.Create() ) {
                     throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
                 }
 
-                var customConfig = new DatabaseConfig { CreatePathIfNotExist = true, DefragmentSequentialBTrees = true };
-
+                var customConfig = new DatabaseConfig { CreatePathIfNotExist = true, EnableShrinkDatabase = ShrinkDatabaseGrbit.On, DefragmentSequentialBTrees = true };
                 this.Dictionary = new PersistentDictionary<TKey, String>( this.Folder.FullName, customConfig );
 
                 if ( testForReadWriteAccess && !this.TestForReadWriteAccess() ) {
@@ -115,15 +112,9 @@ namespace Librainian.Persistence {
         ///     No path given?
         /// </summary>
         // ReSharper disable once NotNullMemberIsNotInitialized
-        private PersistTable() {
-            throw new NotImplementedException();
+        private PersistTable() => throw new NotImplementedException();
 
-            //var name = Types.Name( () => this );
-
-            //TODO Use the programdata\thisapp.exe type of path.
-        }
-
-        /// <summary>
+	    /// <summary>
         ///     Gets the number of elements contained in the
         ///     <see cref="T:System.Collections.Generic.ICollection`1" /> .
         /// </summary>
@@ -191,22 +182,21 @@ namespace Librainian.Persistence {
         public TValue this[ [CanBeNull] TKey key ] {
             [CanBeNull]
             get {
-                if ( Equals( default( TKey ), key ) ) {
-                    return default( TValue );
+                if ( Equals( default, key ) ) {
+                    return default;
                 }
 
-                String storedValue;
 
-                // ReSharper disable once AssignNullToNotNullAttribute
-                if ( !this.Dictionary.TryGetValue( key, out storedValue ) ) {
-                    return default( TValue );
-                }
-                var valueFromStore = storedValue.FromCompressedBase64().FromJSON<TValue>();
+				// ReSharper disable once AssignNullToNotNullAttribute
+				if ( !this.Dictionary.TryGetValue( key, out var storedValue ) ) {
+					return default;
+				}
+				var valueFromStore = storedValue.FromCompressedBase64().FromJSON<TValue>();
                 return valueFromStore;
             }
 
             set {
-                if ( Equals( default( TKey ), value ) ) {
+                if ( Equals( default, value ) ) {
                     return;
                 }
 
@@ -281,43 +271,39 @@ namespace Librainian.Persistence {
         /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> is null.</exception>
         public Boolean ContainsKey( TKey key ) => this.Dictionary.ContainsKey( key );
 
-        /// <summary>
-        ///     Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to
-        ///     an <see cref="T:System.Array" /> , starting at a particular
-        ///     <see cref="T:System.Array" /> index.
-        /// </summary>
-        /// <param name="array">
-        ///     The one-dimensional <see cref="T:System.Array" /> that is the destination of the
-        ///     elements copied from <see cref="T:System.Collections.Generic.ICollection`1" /> . The
-        ///     <see cref="T:System.Array" /> must have zero-based indexing.
-        /// </param>
-        /// <param name="arrayIndex">
-        ///     The zero-based index in <paramref name="array" /> at which copying begins.
-        /// </param>
-        /// <exception cref="T:System.ArgumentNullException">
-        ///     <paramref name="array" /> is null.
-        /// </exception>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
-        ///     <paramref name="arrayIndex" /> is less than 0.
-        /// </exception>
-        /// <exception cref="T:System.ArgumentException">
-        ///     The number of elements in the source
-        ///     <see cref="T:System.Collections.Generic.ICollection`1" /> is greater than the available
-        ///     space from <paramref name="arrayIndex" /> to the end of the destination
-        ///     <paramref name="array" /> .
-        /// </exception>
-        public void CopyTo( KeyValuePair<TKey, TValue>[] array, Int32 arrayIndex ) {
-            throw new NotImplementedException();
+		/// <summary>
+		///     Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to
+		///     an <see cref="T:System.Array" /> , starting at a particular
+		///     <see cref="T:System.Array" /> index.
+		/// </summary>
+		/// <param name="array">
+		///     The one-dimensional <see cref="T:System.Array" /> that is the destination of the
+		///     elements copied from <see cref="T:System.Collections.Generic.ICollection`1" /> . The
+		///     <see cref="T:System.Array" /> must have zero-based indexing.
+		/// </param>
+		/// <param name="arrayIndex">
+		///     The zero-based index in <paramref name="array" /> at which copying begins.
+		/// </param>
+		/// <exception cref="T:System.ArgumentNullException">
+		///     <paramref name="array" /> is null.
+		/// </exception>
+		/// <exception cref="T:System.ArgumentOutOfRangeException">
+		///     <paramref name="arrayIndex" /> is less than 0.
+		/// </exception>
+		/// <exception cref="T:System.ArgumentException">
+		///     The number of elements in the source
+		///     <see cref="T:System.Collections.Generic.ICollection`1" /> is greater than the available
+		///     space from <paramref name="arrayIndex" /> to the end of the destination
+		///     <paramref name="array" /> .
+		/// </exception>
+		public void CopyTo( KeyValuePair<TKey, TValue>[] array, Int32 arrayIndex ) => throw new NotImplementedException();//this.Dictionary.CopyTo( array, arrayIndex ); ??
 
-            //this.Dictionary.CopyTo( array, arrayIndex ); ??
-        }
-
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting
-        ///     unmanaged resources.
-        /// </summary>
-        public void Dispose() {
-            using ( Dictionary ) {
+		/// <summary>
+		///     Performs application-defined tasks associated with freeing, releasing, or resetting
+		///     unmanaged resources.
+		/// </summary>
+		public void Dispose() {
+            using ( this.Dictionary ) {
                 this.Dictionary.Dispose();
             }
             this.IsDisposed = true;
@@ -352,29 +338,27 @@ namespace Librainian.Persistence {
             Log.Exit();
         }
 
-        /// <summary>
-        ///     All <see cref="KeyValuePair{TKey,TValue }" /> , with the <see cref="TValue" /> deserialized.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<KeyValuePair<TKey, TValue>> Items() {
-            return this.Dictionary.Select( pair => new KeyValuePair<TKey, TValue>( pair.Key, pair.Value.FromCompressedBase64().FromJSON<TValue>() ) );
-        }
+		/// <summary>
+		///     All <see cref="KeyValuePair{TKey,TValue }" /> , with the <see cref="TValue" /> deserialized.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<KeyValuePair<TKey, TValue>> Items() => this.Dictionary.Select( pair => new KeyValuePair<TKey, TValue>( pair.Key, pair.Value.FromCompressedBase64().FromJSON<TValue>() ) );
 
-        /// <summary>
-        ///     Removes the element with the specified key from the
-        ///     <see cref="T:System.Collections.Generic.IDictionary`2" /> .
-        /// </summary>
-        /// <returns>
-        ///     true if the element is successfully removed; otherwise, false. This method also returns
-        ///     false if <paramref name="key" /> was not found in the original
-        ///     <see cref="T:System.Collections.Generic.IDictionary`2" /> .
-        /// </returns>
-        /// <param name="key">The key of the element to remove.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> is null.</exception>
-        /// <exception cref="T:System.NotSupportedException">
-        ///     The <see cref="T:System.Collections.Generic.IDictionary`2" /> is read-only.
-        /// </exception>
-        public Boolean Remove( TKey key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
+		/// <summary>
+		///     Removes the element with the specified key from the
+		///     <see cref="T:System.Collections.Generic.IDictionary`2" /> .
+		/// </summary>
+		/// <returns>
+		///     true if the element is successfully removed; otherwise, false. This method also returns
+		///     false if <paramref name="key" /> was not found in the original
+		///     <see cref="T:System.Collections.Generic.IDictionary`2" /> .
+		/// </returns>
+		/// <param name="key">The key of the element to remove.</param>
+		/// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> is null.</exception>
+		/// <exception cref="T:System.NotSupportedException">
+		///     The <see cref="T:System.Collections.Generic.IDictionary`2" /> is read-only.
+		/// </exception>
+		public Boolean Remove( TKey key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
 
         /// <summary>
         ///     Removes the first occurrence of a specific object from the
@@ -404,11 +388,9 @@ namespace Librainian.Persistence {
         /// <returns>
         ///     A string that represents the current object.
         /// </returns>
-        public override String ToString() {
-            return $"{this.Count} items";
-        }
+        public override String ToString() => $"{this.Count} items";
 
-        public void TryAdd( TKey key, TValue value ) {
+	    public void TryAdd( TKey key, TValue value ) {
             if ( !this.Dictionary.ContainsKey( key ) ) {
                 this[ key ] = value;
             }
@@ -430,13 +412,12 @@ namespace Librainian.Persistence {
         /// </param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> is null.</exception>
         public Boolean TryGetValue( TKey key, out TValue value ) {
-            value = default( TValue );
+            value = default;
 
-            String storedValue;
-            if ( !this.Dictionary.TryGetValue( key, out storedValue ) ) {
-                return false;
-            }
-            value = storedValue.FromCompressedBase64().FromJSON<TValue>();
+			if ( !this.Dictionary.TryGetValue( key, out var storedValue ) ) {
+				return false;
+			}
+			value = storedValue.FromCompressedBase64().FromJSON<TValue>();
             return true;
         }
 
@@ -448,14 +429,13 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         private Boolean TestForReadWriteAccess() {
             try {
-                Document document;
-                if ( this.Folder.TryGetTempDocument( out document ) ) {
-                    var text = Randem.NextString( length: 64, lowers: true, uppers: true, numbers: true, symbols: true );
-                    document.AppendText( text );
-                    document.TryDeleting( Seconds.Seven );
-                    return true;
-                }
-            }
+				if ( this.Folder.TryGetTempDocument( out var document ) ) {
+					var text = Randem.NextString( length: 64, lowers: true, uppers: true, numbers: true, symbols: true );
+					document.AppendText( text );
+					document.TryDeleting( Seconds.Seven );
+					return true;
+				}
+			}
             catch ( Exception ) {
                 // ignored
             }

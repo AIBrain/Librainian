@@ -53,7 +53,7 @@ namespace Librainian.FileSystem {
 
             var temp = Document.GetTempDocument();
             pathTree.Save( temp, formatting: Formatting.None );
-            File.WriteAllLines( temp.Folder().FullName + @"\allLines.txt", allPaths.Select( folder => folder.FullName ) );
+            File.WriteAllLines( temp.Folder + @"\allLines.txt", allPaths.Select( folder => folder.FullName ) );
         }
     }
 }

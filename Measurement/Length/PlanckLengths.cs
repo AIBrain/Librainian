@@ -29,7 +29,7 @@ namespace Librainian.Measurement.Length {
 
     /// <summary></summary>
     /// <seealso cref="http://en.wikipedia.org/wiki/Plank_length" />
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public struct PlanckLengths : IComparable<PlanckLengths> {
 
@@ -45,11 +45,9 @@ namespace Librainian.Measurement.Length {
         [JsonProperty]
         public readonly BigInteger Value;
 
-        public PlanckLengths( BigInteger planckLengths ) : this() {
-            this.Value = planckLengths;
-        }
+        public PlanckLengths( BigInteger planckLengths ) : this() => this.Value = planckLengths;
 
-        public Int32 CompareTo( PlanckLengths other ) => this.Value.CompareTo( other.Value );
+	    public Int32 CompareTo( PlanckLengths other ) => this.Value.CompareTo( other.Value );
 
         //public static Boolean operator >( PlanckUnits lhs, Minutes rhs ) {
         //    return lhs.Comparison( rhs ) > 0;

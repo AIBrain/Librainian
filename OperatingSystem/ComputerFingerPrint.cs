@@ -61,16 +61,14 @@ namespace Librainian.OperatingSystem {
         //Return a hardware identifier
 
         //BIOS Identifier
-        private static String BiosId() {
-            return WMIExtensions.Identifier( "Win32_BIOS", "Manufacturer" )
-                + WMIExtensions.Identifier( "Win32_BIOS", "SMBIOSBIOSVersion" )
-                + WMIExtensions.Identifier( "Win32_BIOS", "IdentificationCode" )
-                + WMIExtensions.Identifier( "Win32_BIOS", "SerialNumber" )
-                + WMIExtensions.Identifier( "Win32_BIOS", "ReleaseDate" )
-                + WMIExtensions.Identifier( "Win32_BIOS", "Version" );
-        }
+        private static String BiosId() => WMIExtensions.Identifier( "Win32_BIOS", "Manufacturer" )
+										  + WMIExtensions.Identifier( "Win32_BIOS", "SMBIOSBIOSVersion" )
+										  + WMIExtensions.Identifier( "Win32_BIOS", "IdentificationCode" )
+										  + WMIExtensions.Identifier( "Win32_BIOS", "SerialNumber" )
+										  + WMIExtensions.Identifier( "Win32_BIOS", "ReleaseDate" )
+										  + WMIExtensions.Identifier( "Win32_BIOS", "Version" );
 
-        private static String CPUID() {
+	    private static String CPUID() {
 
             //Uses first CPU identifier available in order of preference
             //Don't get all identifiers, as it is very time consuming
@@ -94,23 +92,16 @@ namespace Librainian.OperatingSystem {
         }
 
         //Main physical hard drive ID
-        private static String DiskId() {
-            return WMIExtensions.Identifier( "Win32_DiskDrive", "Model" ) + WMIExtensions.Identifier( "Win32_DiskDrive", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_DiskDrive", "Signature" ) + WMIExtensions.Identifier( "Win32_DiskDrive", "TotalHeads" );
-        }
+        private static String DiskId() => WMIExtensions.Identifier( "Win32_DiskDrive", "Model" ) + WMIExtensions.Identifier( "Win32_DiskDrive", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_DiskDrive", "Signature" ) + WMIExtensions.Identifier( "Win32_DiskDrive", "TotalHeads" );
 
-        //First enabled network card ID
-        private static String MacId() {
-            return WMIExtensions.Identifier( "Win32_NetworkAdapterConfiguration", "MACAddress", "IPEnabled" );
-        }
+	    //First enabled network card ID
+        private static String MacId() => WMIExtensions.Identifier( "Win32_NetworkAdapterConfiguration", "MACAddress", "IPEnabled" );
 
-        //Motherboard ID
-        private static String MotherboardId() {
-            return WMIExtensions.Identifier( "Win32_BaseBoard", "Model" ) + WMIExtensions.Identifier( "Win32_BaseBoard", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_BaseBoard", "Name" ) + WMIExtensions.Identifier( "Win32_BaseBoard", "SerialNumber" );
-        }
+	    //Motherboard ID
+        private static String MotherboardId() => WMIExtensions.Identifier( "Win32_BaseBoard", "Model" ) + WMIExtensions.Identifier( "Win32_BaseBoard", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_BaseBoard", "Name" ) + WMIExtensions.Identifier( "Win32_BaseBoard", "SerialNumber" );
 
-        //Primary video controller ID
-        private static String VideoId() {
-            return WMIExtensions.Identifier( "Win32_VideoController", "DriverVersion" ) + WMIExtensions.Identifier( "Win32_VideoController", "Name" );
-        }
+	    //Primary video controller ID
+        private static String VideoId() => WMIExtensions.Identifier( "Win32_VideoController", "DriverVersion" ) + WMIExtensions.Identifier( "Win32_VideoController", "Name" );
+
     }
 }

@@ -26,18 +26,16 @@ namespace Librainian.Knowledge {
     /// <example>For example (rdf:type Morris Cat) means "Morris is a type of Cat"</example>
     public class TypeOrClass {
 
-        public TypeOrClass( String label ) {
-            this.Label = String.IsNullOrWhiteSpace( label ) ? Guid.NewGuid().ToString() : label;
-        }
+        public TypeOrClass( String label ) => this.Label = String.IsNullOrWhiteSpace( label ) ? Guid.NewGuid().ToString() : label;
 
-        public Domain Domain {
+	    public Domain Domain {
             get; private set;
         }
 
         /// <summary>The name of this type (All X are T).</summary>
         /// <example>Cat. Canine. Mammal</example>
         public String Label {
-            get; private set;
+            get;
         }
     }
 }

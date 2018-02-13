@@ -28,7 +28,7 @@ namespace Librainian.Measurement.Physics {
     /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
     /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
     /// <see cref="http://wikipedia.org/wiki/Mega-" />
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct MegaElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
         public const Decimal InOneElectronVolt = 1E-6m;
@@ -57,23 +57,15 @@ namespace Librainian.Measurement.Physics {
 
         public readonly Decimal Value;
 
-        public MegaElectronVolts( Decimal units ) : this() {
-            this.Value = units;
-        }
+        public MegaElectronVolts( Decimal units ) : this() => this.Value = units;
 
-        public MegaElectronVolts( Double units ) : this() {
-            this.Value = ( Decimal )units;
-        }
+	    public MegaElectronVolts( Double units ) : this() => this.Value = ( Decimal )units;
 
-        public MegaElectronVolts( GigaElectronVolts gigaElectronVolts ) {
-            this.Value = gigaElectronVolts.ToMegaElectronVolts().Value;
-        }
+	    public MegaElectronVolts( GigaElectronVolts gigaElectronVolts ) => this.Value = gigaElectronVolts.ToMegaElectronVolts().Value;
 
-        public MegaElectronVolts( KiloElectronVolts kiloElectronVolts ) {
-            this.Value = kiloElectronVolts.ToMegaElectronVolts().Value;
-        }
+	    public MegaElectronVolts( KiloElectronVolts kiloElectronVolts ) => this.Value = kiloElectronVolts.ToMegaElectronVolts().Value;
 
-        public static MegaElectronVolts operator +( MegaElectronVolts left, MegaElectronVolts right ) => new MegaElectronVolts( left.Value + right.Value );
+	    public static MegaElectronVolts operator +( MegaElectronVolts left, MegaElectronVolts right ) => new MegaElectronVolts( left.Value + right.Value );
 
         public static GigaElectronVolts operator +( MegaElectronVolts megaElectronVolts, GigaElectronVolts gigaElectronVolts ) => megaElectronVolts.ToGigaElectronVolts() + gigaElectronVolts;
 
@@ -99,10 +91,8 @@ namespace Librainian.Measurement.Physics {
 
         public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * InOneMilliElectronVolt );
 
-        public override String ToString() {
-            return $"{this.Value} MeV";
-        }
+        public override String ToString() => $"{this.Value} MeV";
 
-        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
+	    public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
     }
 }

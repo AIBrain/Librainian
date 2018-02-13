@@ -63,7 +63,7 @@ namespace Librainian.Maths.Ranges {
         ///     <b>True</b> if the specified value is inside this range or <b>false</b> otherwise.
         /// </returns>
         [Pure]
-        public Boolean IsInside( Decimal x ) => ( this.Min <= x ) && ( x <= this.Max );
+        public Boolean IsInside( Decimal x ) => this.Min <= x && x <= this.Max;
 
         /// <summary>Check if the specified range is inside this range</summary>
         /// <param name="range">Range to check</param>

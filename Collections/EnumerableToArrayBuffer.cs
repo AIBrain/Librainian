@@ -57,7 +57,7 @@ namespace Librainian.Collections {
 
         /// <summary>Caller to guarantee items.Length &gt; index &gt;= 0</summary>
         internal void CopyTo( T[] items, Int32 index ) {
-            if ( ( this._collection != null ) && ( this._collection.Count > 0 ) ) {
+            if ( this._collection != null && this._collection.Count > 0 ) {
                 this._collection.CopyTo( items, index );
             }
             else if ( this._count > 0 ) {
@@ -79,13 +79,11 @@ namespace Librainian.Collections {
                 Array.Copy( this._items, 0, destinationArray, 0, this._count );
                 return destinationArray;
             }
-            var list = this._collection as List<T>;
-            if ( list != null ) {
+	        if ( this._collection is List< T > list ) {
                 return list.ToArray();
             }
 
-            var ac = this._collection as AbstractCollection<T>;
-            if ( ac != null ) {
+	        if ( this._collection is AbstractCollection< T > ac ) {
                 return ac.ToArray();
             }
 

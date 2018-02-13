@@ -30,9 +30,8 @@ namespace Librainian.Measurement.Time {
 
         static HighResolutionDateTime() {
             try {
-                Int64 filetime;
-                NativeMethods.GetSystemTimePreciseAsFileTime( out filetime );
-                IsAvailable = true;
+				NativeMethods.GetSystemTimePreciseAsFileTime( out var filetime );
+				IsAvailable = true;
             }
             catch ( EntryPointNotFoundException ) {
 
@@ -50,9 +49,8 @@ namespace Librainian.Measurement.Time {
                 if ( !IsAvailable ) {
                     throw new InvalidOperationException( "High resolution clock is not available." );
                 }
-                Int64 filetime;
-                NativeMethods.GetSystemTimePreciseAsFileTime( out filetime );
-                return DateTime.FromFileTimeUtc( filetime );
+				NativeMethods.GetSystemTimePreciseAsFileTime( out var filetime );
+				return DateTime.FromFileTimeUtc( filetime );
             }
         }
 

@@ -94,7 +94,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <summary>
         ///     Compression method enumeration
         /// </summary>
-        public enum Compression : ushort {
+        public enum Compression : UInt16 {
 
             /// <summary>
             ///     Uncompressed storage
@@ -328,19 +328,19 @@ namespace Librainian.OperatingSystem.Compression {
             this._zipFileStream = null;
         }
 
-        /// <summary>
-        /// Dispose any disposable members. Closes the Zip file stream.
-        /// </summary>
-        protected override void DisposeManaged() { this.Close(); }
+		/// <summary>
+		/// Dispose any disposable members. Closes the Zip file stream.
+		/// </summary>
+		protected override void DisposeManaged() => this.Close();
 
-        /// <summary>
-        ///     Copy the contents of a stored file into a physical file
-        /// </summary>
-        /// <param name="zfe">Entry information of file to extract</param>
-        /// <param name="filename">Name of file to store uncompressed data</param>
-        /// <returns>True if success, false if not.</returns>
-        /// <remarks>Unique compression methods are Store and Deflate</remarks>
-        public Boolean ExtractFile( ZipFileEntry zfe, [NotNull] String filename ) {
+		/// <summary>
+		///     Copy the contents of a stored file into a physical file
+		/// </summary>
+		/// <param name="zfe">Entry information of file to extract</param>
+		/// <param name="filename">Name of file to store uncompressed data</param>
+		/// <returns>True if success, false if not.</returns>
+		/// <remarks>Unique compression methods are Store and Deflate</remarks>
+		public Boolean ExtractFile( ZipFileEntry zfe, [NotNull] String filename ) {
             if ( filename == null ) {
                 throw new ArgumentNullException( nameof( filename ) );
             }
@@ -348,7 +348,7 @@ namespace Librainian.OperatingSystem.Compression {
             // Make sure the parent directory exists
             var path = Path.GetDirectoryName( filename );
 
-            if ( path != null && !Directory.Exists( path ) ) {
+            if ( !Directory.Exists( path ) ) {
                 Directory.CreateDirectory( path );
             }
 
@@ -464,15 +464,11 @@ namespace Librainian.OperatingSystem.Compression {
             return result;
         }
 
-        private static UInt32 DateTimeToDosTime( DateTime dt ) {
-            return ( UInt32 )( ( dt.Second / 2 ) | ( dt.Minute << 5 ) | ( dt.Hour << 11 ) | ( dt.Day << 16 ) | ( dt.Month << 21 ) | ( ( dt.Year - 1980 ) << 25 ) );
-        }
+        private static UInt32 DateTimeToDosTime( DateTime dt ) => ( UInt32 )( ( dt.Second / 2 ) | ( dt.Minute << 5 ) | ( dt.Hour << 11 ) | ( dt.Day << 16 ) | ( dt.Month << 21 ) | ( ( dt.Year - 1980 ) << 25 ) );
 
-        private static DateTime DosTimeToDateTime( UInt32 dt ) {
-            return new DateTime( ( Int32 )( dt >> 25 ) + 1980, ( Int32 )( dt >> 21 ) & 15, ( Int32 )( dt >> 16 ) & 31, ( Int32 )( dt >> 11 ) & 31, ( Int32 )( dt >> 5 ) & 63, ( Int32 )( dt & 31 ) * 2 );
-        }
+	    private static DateTime DosTimeToDateTime( UInt32 dt ) => new DateTime( ( Int32 )( dt >> 25 ) + 1980, ( Int32 )( dt >> 21 ) & 15, ( Int32 )( dt >> 16 ) & 31, ( Int32 )( dt >> 11 ) & 31, ( Int32 )( dt >> 5 ) & 63, ( Int32 )( dt & 31 ) * 2 );
 
-        // Replaces backslashes with slashes to store in zip header
+	    // Replaces backslashes with slashes to store in zip header
         private static String NormalizedFilename( String _filename ) {
             var filename = _filename.Replace( '\\', '/' );
 
@@ -721,9 +717,8 @@ namespace Librainian.OperatingSystem.Compression {
             ///     Overridden method
             /// </summary>
             /// <returns>Filename in Zip</returns>
-            public override String ToString() {
-                return this.FilenameInZip;
-            }
+            public override String ToString() => this.FilenameInZip;
+
         }
 
         /* Local file header:

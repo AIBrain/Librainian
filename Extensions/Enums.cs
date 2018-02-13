@@ -43,12 +43,11 @@ namespace Librainian.Extensions {
         private static readonly Dictionary<Int32, T> Values = All.ToDictionary( k => Convert.ToInt32( k ) );
 
         public static T? CastOrNull( Int32 value ) {
-            T foundValue;
-            if ( Values.TryGetValue( value, out foundValue ) ) {
-                return foundValue;
-            }
+			if ( Values.TryGetValue( value, out var foundValue ) ) {
+				return foundValue;
+			}
 
-            return null;
+			return null;
         }
 
         /// <summary>Gets all items for an enum type.</summary>
@@ -62,9 +61,8 @@ namespace Librainian.Extensions {
         }
 
         public static String GetName( T value ) {
-            String name;
-            Names.TryGetValue( value, out name );
-            return name;
+			Names.TryGetValue( value, out var name );
+			return name;
         }
 
         public static String[] GetNames() => Names.Values.ToArray();
@@ -78,11 +76,10 @@ namespace Librainian.Extensions {
         public static Boolean IsDefined( Int32 value ) => Values.Keys.Contains( value );
 
         public static T Parse( String value ) {
-            T parsed;
-            if ( !SensitiveNames.TryGetValue( value, out parsed ) ) {
-                throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) );
-            }
-            return parsed;
+			if ( !SensitiveNames.TryGetValue( value, out var parsed ) ) {
+				throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) );
+			}
+			return parsed;
         }
 
         public static T Parse( String value, Boolean ignoreCase ) {
@@ -90,11 +87,10 @@ namespace Librainian.Extensions {
                 return Parse( value );
             }
 
-            T parsed;
-            if ( !InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out parsed ) ) {
-                throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) );
-            }
-            return parsed;
+			if ( !InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var parsed ) ) {
+				throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) );
+			}
+			return parsed;
         }
 
         public static T? ParseOrNull( String value ) {
@@ -102,12 +98,11 @@ namespace Librainian.Extensions {
                 return null;
             }
 
-            T foundValue;
-            if ( SensitiveNames.TryGetValue( value, out foundValue ) ) {
-                return foundValue;
-            }
+			if ( SensitiveNames.TryGetValue( value, out var foundValue ) ) {
+				return foundValue;
+			}
 
-            return null;
+			return null;
         }
 
         public static T? ParseOrNull( String value, Boolean ignoreCase ) {
@@ -119,20 +114,18 @@ namespace Librainian.Extensions {
                 return null;
             }
 
-            T foundValue;
-            if ( InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out foundValue ) ) {
-                return foundValue;
-            }
+			if ( InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var foundValue ) ) {
+				return foundValue;
+			}
 
-            return null;
+			return null;
         }
 
         public static T SetFlags( IEnumerable<T> flags ) {
             var combined = flags.Aggregate( default( Int32 ), ( current, flag ) => current | Convert.ToInt32( flag ) );
 
-            T result;
-            return Values.TryGetValue( combined, out result ) ? result : default( T );
-        }
+			return Values.TryGetValue( combined, out var result ) ? result : default;
+		}
 
         public static Boolean TryParse( String value, out T returnValue ) => SensitiveNames.TryGetValue( value, out returnValue );
 

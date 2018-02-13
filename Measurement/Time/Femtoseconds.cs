@@ -33,7 +33,7 @@ namespace Librainian.Measurement.Time {
     /// <summary>
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Femtosecond" />
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
     public struct Femtoseconds : IComparable<Femtoseconds>, IQuantityOfTime {
@@ -113,23 +113,15 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Femtoseconds Zero = new Femtoseconds( value: 0 );
 
-        public Femtoseconds( Decimal value ) {
-            this.Value = value;
-        }
+        public Femtoseconds( Decimal value ) => this.Value = value;
 
-        public Femtoseconds( BigRational value ) {
-            this.Value = value;
-        }
+	    public Femtoseconds( BigRational value ) => this.Value = value;
 
-        public Femtoseconds( Int64 value ) {
-            this.Value = value;
-        }
+	    public Femtoseconds( Int64 value ) => this.Value = value;
 
-        public Femtoseconds( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Femtoseconds( BigInteger value ) => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -175,10 +167,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Femtoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( [CanBeNull] Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Femtoseconds && this.Equals( ( Femtoseconds )obj );
+            return obj is Femtoseconds femtoseconds && this.Equals( femtoseconds );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();

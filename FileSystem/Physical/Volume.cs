@@ -23,8 +23,7 @@ namespace Librainian.FileSystem.Physical {
         /// <param name="obj">An object to compare with this instance.</param>
         /// <returns>A 32-bit signed integer that indicates the relative order of the comparands.</returns>
         public override Int32 CompareTo( Object obj ) {
-            var device = obj as Volume;
-            if ( device == null ) {
+	        if ( !( obj is Volume device ) ) {
                 throw new ArgumentException();
             }
 

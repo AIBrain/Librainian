@@ -31,7 +31,7 @@ namespace Librainian.Maths.Numbers {
     /// <summary>
     ///     Based from Hamming code found at http://maciejlis.com/hamming-code-algorithm-c-sharp/
     /// </summary>
-    [DebuggerDisplay( "{ToString()}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     public class Binary : IEnumerable<Boolean> {
 
         public Binary( IReadOnlyCollection<Boolean> booleans ) {
@@ -56,13 +56,9 @@ namespace Librainian.Maths.Numbers {
         public Int32 Length => this.Booleans.Count;
 
         public Boolean this[ Int32 index ] {
-            get {
-                return this.Booleans[ index ];
-            }
+            get => this.Booleans[ index ];
 
-            set {
-                this.Booleans[ index ] = value;
-            }
+	        set => this.Booleans[ index ] = value;
         }
 
         public static Binary Concatenate( Binary a, Binary b ) {
@@ -118,23 +114,15 @@ namespace Librainian.Maths.Numbers {
             return new Binary( result );
         }
 
-        public Int32 CountOnes() {
-            return this.Booleans.Count( bit => bit );
-        }
+		public Int32 CountOnes() => this.Booleans.Count( bit => bit );
 
-        public Int32 CountZeroes() {
-            return this.Booleans.Count( bit => !bit );
-        }
+		public Int32 CountZeroes() => this.Booleans.Count( bit => !bit );
 
-        public IEnumerator<Boolean> GetEnumerator() {
-            return this.Booleans.GetEnumerator();
-        }
+		public IEnumerator<Boolean> GetEnumerator() => this.Booleans.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.Booleans.GetEnumerator();
-        }
+	    IEnumerator IEnumerable.GetEnumerator() => this.Booleans.GetEnumerator();
 
-        public override String ToString() {
+	    public override String ToString() {
             var stringBuilder = new StringBuilder( this.Length );
             foreach ( var bit in this.Booleans ) {
                 stringBuilder.Append( bit ? '1' : '0' );

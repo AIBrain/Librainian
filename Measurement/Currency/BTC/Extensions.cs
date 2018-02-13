@@ -101,13 +101,13 @@ namespace Librainian.Measurement.Currency.BTC {
             var result = left.ToDictionary<ICoin, ICoin, UInt64>( denomination => denomination, denomination => 0 );
 
             leftOverAmount += amount;
-            while ( ( leftOverAmount > Decimal.Zero ) && left.Any() ) {
+            while ( leftOverAmount > Decimal.Zero && left.Any() ) {
                 var coin = left.OrderByDescending( denomination => denomination.FaceValue ).First();
 
                 var chunks = ( UInt64 )( leftOverAmount / coin.FaceValue );
 
                 if ( chunks > Decimal.Zero ) {
-                    result[ coin ] += chunks;
+                    result[coin] += chunks;
                     leftOverAmount -= chunks * coin.FaceValue;
                 }
                 left.Remove( coin );
@@ -153,10 +153,12 @@ namespace Librainian.Measurement.Currency.BTC {
             }
             btc = btc.Sanitize();
 
-            //var wallet = new SimpleBitcoinWallet( btc );
-            //Console.WriteLine( wallet.Formatted );
-
-            var list = new List<String> { new SimpleBitcoinWallet( btc ).ToString().TrimEnd( '0' ).TrimEnd( '.' ), $"{btc.TomBtc():N6}".TrimEnd( '0' ).TrimEnd( '.' ) + " m" + coinSuffix, $"{btc.ToμBtc():N4}".TrimEnd( '0' ).TrimEnd( '.' ) + " μ" + coinSuffix, $"{btc.ToSatoshi():N0}" + " sat" };
+            var list = new List<String> {
+                new SimpleBitcoinWallet( btc ).ToString().TrimEnd( '0' ).TrimEnd( '.' ),
+                $"{btc.TomBTC():N6}".TrimEnd( '0' ).TrimEnd( '.' ) + " m" + coinSuffix,
+                $"{btc.ToμBtc():N4}".TrimEnd( '0' ).TrimEnd( '.' ) + " μ" + coinSuffix,
+                $"{btc.ToSatoshi():N0}" + " sat"
+            };
 
             //as btc
 
@@ -192,7 +194,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="target"></param>
         [NotNull]
         public static Task<ConcurrentDictionary<ICoin, UInt64>> StartTransfer( [CanBeNull] this CoinWallet source, [CanBeNull] CoinWallet target ) => Task.Run( () => {
-            if ( ( null == source ) || ( null == target ) ) {
+            if ( null == source || null == target ) {
                 return new ConcurrentDictionary<ICoin, UInt64>();
             }
 
@@ -205,7 +207,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public static Decimal ToBTC( this Int64 satoshi ) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
 
-        public static Decimal TomBtc( this Decimal btc ) => btc * SimpleBitcoinWallet.MBtcInOneBtc;
+        public static Decimal TomBTC( this Decimal btc ) => btc * SimpleBitcoinWallet.mBTCInOneBTC;
 
         public static Int64 ToSatoshi( this Decimal btc ) => ( Int64 )( btc * SimpleBitcoinWallet.SatoshiInOneBtc );
 
@@ -245,7 +247,7 @@ namespace Librainian.Measurement.Currency.BTC {
             if ( target == null ) {
                 throw new ArgumentNullException( nameof( target ) );
             }
-            return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) && ( target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value ) > 0 );
+            return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) && target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value ) > 0;
         }
 
         /// <summary>
@@ -276,13 +278,13 @@ namespace Librainian.Measurement.Currency.BTC {
             var result = left.ToDictionary<ICoin, ICoin, UInt64>( denomination => denomination, denomination => 0 );
 
             leftOverAmount += amount;
-            while ( ( leftOverAmount > Decimal.Zero ) && left.Any() ) {
+            while ( leftOverAmount > Decimal.Zero && left.Any() ) {
                 var coin = left.OrderBy( denomination => denomination.FaceValue ).First();
 
                 var chunks = ( UInt64 )( leftOverAmount / coin.FaceValue );
 
                 if ( chunks > Decimal.Zero ) {
-                    result[ coin ] += chunks;
+                    result[coin] += chunks;
                     leftOverAmount -= chunks * coin.FaceValue;
                 }
                 left.Remove( coin );

@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Time {
     using Numerics;
     using Parsing;
 
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
     public struct Attoseconds : IComparable<Attoseconds>, IQuantityOfTime {
@@ -151,23 +151,15 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Attoseconds Zero = new Attoseconds( 0 );
 
-        public Attoseconds( Decimal value ) {
-            this.Value = value;
-        }
+        public Attoseconds( Decimal value ) => this.Value = value;
 
-        public Attoseconds( BigRational value ) {
-            this.Value = value;
-        }
+	    public Attoseconds( BigRational value ) => this.Value = value;
 
-        public Attoseconds( Int64 value ) {
-            this.Value = value;
-        }
+	    public Attoseconds( Int64 value ) => this.Value = value;
 
-        public Attoseconds( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Attoseconds( BigInteger value ) => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -212,10 +204,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Attoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( [CanBeNull] Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Attoseconds && this.Equals( ( Attoseconds )obj );
+            return obj is Attoseconds attoseconds && this.Equals( attoseconds );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();

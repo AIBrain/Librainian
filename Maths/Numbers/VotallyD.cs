@@ -30,7 +30,7 @@ namespace Librainian.Maths.Numbers {
     ///     <para>Keep track of votes for candidate A and candidate B.</para>
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class VotallyD : ICloneable {
 
         /// <summary>No vote for either.</summary>
@@ -50,23 +50,15 @@ namespace Librainian.Maths.Numbers {
         }
 
         public Double A {
-            get {
-                return Thread.VolatileRead( ref this._aVotes );
-            }
+            get => Thread.VolatileRead( ref this._aVotes );
 
-            private set {
-                Thread.VolatileWrite( ref this._aVotes, value );
-            }
+	        private set => Thread.VolatileWrite( ref this._aVotes, value );
         }
 
         public Double B {
-            get {
-                return Thread.VolatileRead( ref this._bVotes );
-            }
+            get => Thread.VolatileRead( ref this._bVotes );
 
-            private set {
-                Thread.VolatileWrite( ref this._bVotes, value );
-            }
+	        private set => Thread.VolatileWrite( ref this._bVotes, value );
         }
 
         public Double ChanceB {
@@ -80,9 +72,9 @@ namespace Librainian.Maths.Numbers {
 
         public Boolean IsBWinning => this.B > this.A;
 
-        public Boolean IsLandslideA => this.IsAWinning && ( this.A > this.HalfOfVotes() );
+        public Boolean IsLandslideA => this.IsAWinning && this.A > this.HalfOfVotes();
 
-        public Boolean IsProtiguous => this.IsTied() && ( this.Votes > 1 );
+        public Boolean IsProtiguous => this.IsTied() && this.Votes > 1;
 
         /// <summary>
         ///     <see cref="A" /> + <see cref="B" />
@@ -131,11 +123,9 @@ namespace Librainian.Maths.Numbers {
 
         public VotallyD Clone() => new VotallyD( votesForA: this.A, votesForB: this.B );
 
-        Object ICloneable.Clone() {
-            return this.Clone();
-        }
+        Object ICloneable.Clone() => this.Clone();
 
-        public Boolean IsTied() => this.A.Near( this.B );
+	    public Boolean IsTied() => this.A.Near( this.B );
 
         public override String ToString() => $"A has {this.ChanceA():P1} and B has {this.ChanceB:P1} of {this.Votes:F1} votes.";
 

@@ -85,18 +85,9 @@ namespace Librainian.Graphics {
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
         /// <returns></returns>
-        public static Boolean Equals( Point3Di lhs, Point3Di rhs ) {
+        public static Boolean Equals( Point3Di lhs, Point3Di rhs ) => lhs.ApproximatelyEquals( rhs );
 
-            //if ( Object.Equals( default( Point3Di ), lhs ) && Object.Equals( default( Point3Di ), rhs ) ) {
-            //    return true;
-            //}
-            //if ( Object.Equals( default( Point3Di ), lhs ) || Object.Equals( default( Point3Di ), rhs ) ) {
-            //    return false;
-            //}
-            return lhs.ApproximatelyEquals( rhs );
-        }
-
-        /// <summary>Determines whether the specified Point3D instances are unequal.</summary>
+	    /// <summary>Determines whether the specified Point3D instances are unequal.</summary>
         /// <param name="a">The first Point3D instance to compare.</param>
         /// <param name="b">The second Point3D instance to compare.</param>
         /// <returns>True if the Point3D instances are unequal; false otherwise.</returns>
@@ -122,7 +113,7 @@ namespace Librainian.Graphics {
         /// </remarks>
         /// <param name="other">A Point3D structure to compare to this instance.</param>
         /// <returns>True if the X,Y,Z components are approximately equal; false otherwise.</returns>
-        public Boolean ApproximatelyEquals( Point3Di other ) => ( Math.Abs( this.X - other.X ) <= Tolerance ) && ( Math.Abs( this.Y - other.Y ) <= Tolerance ) && ( Math.Abs( this.Z - other.Z ) <= Tolerance );
+        public Boolean ApproximatelyEquals( Point3Di other ) => Math.Abs( this.X - other.X ) <= Point3Di.Tolerance && Math.Abs( this.Y - other.Y ) <= Point3Di.Tolerance && Math.Abs( this.Z - other.Z ) <= Point3Di.Tolerance;
 
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified object.

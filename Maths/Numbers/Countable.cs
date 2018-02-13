@@ -54,13 +54,9 @@ namespace Librainian.Maths.Numbers {
 
         [JsonProperty]
         public Boolean IsReadOnly {
-            get {
-                return this._isReadOnly;
-            }
+            get => this._isReadOnly;
 
-            private set {
-                this._isReadOnly = value;
-            }
+	        private set => this._isReadOnly = value;
         }
 
         [JsonProperty]
@@ -95,16 +91,15 @@ namespace Librainian.Maths.Numbers {
                 var bucket = this.Bucket( key );
                 try {
                     if ( bucket.TryEnterReadLock( this.ReadTimeout ) ) {
-                        BigInteger result;
-                        return this.Dictionary.TryGetValue( key, out result ) ? result : default( BigInteger );
-                    }
+						return this.Dictionary.TryGetValue( key, out var result ) ? result : default;
+					}
                 }
                 finally {
                     if ( bucket.IsReadLockHeld ) {
                         bucket.ExitReadLock();
                     }
                 }
-                return default( BigInteger );
+                return default;
             }
 
             set {
@@ -141,11 +136,9 @@ namespace Librainian.Maths.Numbers {
             return result.IsCompleted;
         }
 
-        public Boolean Add( TKey key ) {
-            return this.Add( key, BigInteger.One );
-        }
+        public Boolean Add( TKey key ) => this.Add( key, BigInteger.One );
 
-        public Boolean Add( TKey key, BigInteger amount ) {
+	    public Boolean Add( TKey key, BigInteger amount ) {
             if ( this.IsReadOnly ) {
                 return false;
             }
@@ -186,21 +179,17 @@ namespace Librainian.Maths.Numbers {
         /// <returns>
         ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
         /// </returns>
-        public IEnumerator GetEnumerator() {
-            return this.Dictionary.GetEnumerator();
-        }
+        public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
 
-        /// <summary>
+	    /// <summary>
         ///     Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>
         ///     An enumerator that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator<Tuple<TKey, BigInteger>> IEnumerable<Tuple<TKey, BigInteger>>.GetEnumerator() {
-            return ( IEnumerator<Tuple<TKey, BigInteger>> )this.GetEnumerator();
-        }
+        IEnumerator<Tuple<TKey, BigInteger>> IEnumerable<Tuple<TKey, BigInteger>>.GetEnumerator() => ( IEnumerator<Tuple<TKey, BigInteger>> )this.GetEnumerator();
 
-        public Boolean Subtract( TKey key, BigInteger amount ) {
+	    public Boolean Subtract( TKey key, BigInteger amount ) {
             if ( this.IsReadOnly ) {
                 return false;
             }
@@ -223,26 +212,21 @@ namespace Librainian.Maths.Numbers {
             return false;
         }
 
-        /// <summary>
-        ///     Return the sum of all values.
-        /// </summary>
-        /// <returns></returns>
-        public BigInteger Sum() {
-            return this.Dictionary.Aggregate( BigInteger.Zero, ( current, pair ) => current + pair.Value );
-        }
+		/// <summary>
+		///     Return the sum of all values.
+		/// </summary>
+		/// <returns></returns>
+		public BigInteger Sum() => this.Dictionary.Aggregate( BigInteger.Zero, ( current, pair ) => current + pair.Value );
 
-        public void Trim() {
-            Parallel.ForEach( this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ), ThreadingExtensions.CPUIntensive, pair => {
-                BigInteger dummy;
-                this.Dictionary.TryRemove( pair.Key, out dummy );
-            } );
-        }
+		public void Trim() => Parallel.ForEach( this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ), ThreadingExtensions.CPUIntensive, pair => {
+			this.Dictionary.TryRemove( pair.Key, out var dummy );
+		} );
 
-        /// <summary>
-        ///     Mark that this container will now become UnReadOnly/immutable. Allow more adds and subtracts.
-        /// </summary>
-        /// <returns></returns>
-        public Boolean UnComplete() {
+		/// <summary>
+		///     Mark that this container will now become UnReadOnly/immutable. Allow more adds and subtracts.
+		/// </summary>
+		/// <returns></returns>
+		public Boolean UnComplete() {
             this.IsReadOnly = false;
             this.Trim();
             return !this.IsReadOnly;
@@ -259,8 +243,7 @@ namespace Librainian.Maths.Numbers {
 
             TryAgain:
 
-            ReaderWriterLockSlim bucket;
-            if ( this.Buckets.TryGetValue( hash, out bucket ) ) {
+            if ( this.Buckets.TryGetValue( hash, out var bucket ) ) {
                 return bucket;
             }
 
@@ -272,11 +255,9 @@ namespace Librainian.Maths.Numbers {
             goto TryAgain;
         }
 
-        private IEnumerable<Byte> GetUsedBuckets() {
-            return this.Dictionary.Keys.Select( Hash );
-        }
+        private IEnumerable<Byte> GetUsedBuckets() => this.Dictionary.Keys.Select( Hash );
 
-        protected override void DisposeManaged() { this.Trim(); }
+		protected override void DisposeManaged() => this.Trim();
 
-    }
+	}
 }

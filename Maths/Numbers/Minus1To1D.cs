@@ -46,13 +46,9 @@ namespace Librainian.Maths.Numbers {
         }
 
         public Double Value {
-            get {
-                return this._value;
-            }
+            get => this._value;
 
-            set {
-                this._value = value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value );
-            }
+	        set => this._value = value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value );
         }
 
         /// <summary>

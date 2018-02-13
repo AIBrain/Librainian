@@ -38,11 +38,9 @@ namespace Librainian.Collections {
         private readonly T[] _mArray;
 
         /// <summary>Create a new list.</summary>
-        public ImmutableList() {
-            this._mArray = new T[ 0 ];
-        }
+        public ImmutableList() => this._mArray = new T[ 0 ];
 
-        /// <summary>Create a new list, copying elements from the specified array.</summary>
+	    /// <summary>Create a new list, copying elements from the specified array.</summary>
         /// <param name="arrayToCopy">An array whose contents will be copied.</param>
         public ImmutableList( [NotNull] T[] arrayToCopy ) {
             if ( arrayToCopy == null ) {
@@ -54,14 +52,9 @@ namespace Librainian.Collections {
 
         /// <summary>Create a new list, copying elements from the specified enumerable.</summary>
         /// <param name="enumerableToCopy">An enumerable whose contents will be copied.</param>
-        public ImmutableList( [NotNull] IEnumerable<T> enumerableToCopy ) {
-            if ( enumerableToCopy == null ) {
-                throw new ArgumentNullException( nameof( enumerableToCopy ) );
-            }
-            this._mArray = enumerableToCopy.ToArray();
-        }
+        public ImmutableList(  IEnumerable<T> enumerableToCopy ) => this._mArray = enumerableToCopy.ToArray();
 
-        /// <summary>Retrieves the immutable count of the list.</summary>
+	    /// <summary>Retrieves the immutable count of the list.</summary>
         public Int32 Count => this._mArray.Length;
 
         /// <summary>
@@ -76,14 +69,10 @@ namespace Librainian.Collections {
         /// <param name="index">The index to access.</param>
         /// <returns>The element at the specified index.</returns>
         public T this[ Int32 index ] {
-            get {
-                return this._mArray[ index ];
-            }
+            get => this._mArray[ index ];
 
-            // ReSharper disable once ValueParameterNotUsed
-            set {
-                ThrowMutableException( "CopyAndSet" );
-            }
+	        // ReSharper disable once ValueParameterNotUsed
+            set => ThrowMutableException( "CopyAndSet" );
         }
 
         /// <summary>Checks whether the specified item is contained in the list.</summary>
@@ -186,13 +175,11 @@ namespace Librainian.Collections {
         /// <returns>The index of the item, or -1 if it was not found.</returns>
         public Int32 IndexOf( T item ) => Array.IndexOf( this._mArray, item );
 
-        /// <summary>
-        ///     A helper method used below when a mutable method is accessed. Several operations on the
-        ///     collections interfaces IList&lt;T&gt; and ICollection&lt;T&gt; are mutable, so we cannot
-        ///     support them. We offer immutable versions of each.
-        /// </summary>
-        private static void ThrowMutableException( String copyMethod ) {
-            throw new InvalidOperationException( $"Cannot mutate an immutable list; see copying method ‘{copyMethod}’" );
-        }
-    }
+		/// <summary>
+		///     A helper method used below when a mutable method is accessed. Several operations on the
+		///     collections interfaces IList&lt;T&gt; and ICollection&lt;T&gt; are mutable, so we cannot
+		///     support them. We offer immutable versions of each.
+		/// </summary>
+		private static void ThrowMutableException( String copyMethod ) => throw new InvalidOperationException( $"Cannot mutate an immutable list; see copying method ‘{copyMethod}’" );
+	}
 }

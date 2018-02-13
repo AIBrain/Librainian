@@ -39,14 +39,12 @@ namespace Librainian.Database.MMF {
         private NetworkStream _networkStream;
         private TcpClient _tcpClient;
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() {
-            this._tcpClient?.Dispose();
-        }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this._tcpClient?.Dispose();
 
-        public MemMapCache() {
+		public MemMapCache() {
             this.Encoding = Encoding.ASCII;
             this.ChunkSize = 1024 * 1024 * 30;
 
@@ -95,11 +93,11 @@ namespace Librainian.Database.MMF {
 
         public T Get( String key ) {
             if ( !this.IsConnected ) {
-                return default( T );
+                return default;
             }
 
             if ( this.CacheHitAlwaysMiss ) {
-                return default( T );
+                return default;
             }
 
             try {
@@ -107,7 +105,7 @@ namespace Librainian.Database.MMF {
                     if ( this._keyExpirations.ContainsKey( key ) ) {
                         if ( DateTime.UtcNow >= this._keyExpirations[ key ] ) {
                             this._keyExpirations.Remove( key );
-                            return default( T );
+                            return default;
                         }
                     }
 
@@ -120,14 +118,14 @@ namespace Librainian.Database.MMF {
             catch ( SerializationException ) {
 
                 //throw;
-                return default( T );
+                return default;
             }
             catch ( Exception ) {
                 if ( this._keyExpirations.ContainsKey( key ) ) {
                     this._keyExpirations.Remove( key );
                 }
 
-                return default( T );
+                return default;
             }
         }
 

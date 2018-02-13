@@ -51,11 +51,9 @@ namespace Librainian.Extensions {
         ///     </a>
         ///     .
         /// </remarks>
-        public static Guid Create( Guid namespaceId, String name ) {
-            return Create( namespaceId, name, 5 );
-        }
+        public static Guid Create( Guid namespaceId, String name ) => Create( namespaceId, name, 5 );
 
-        /// <summary>Creates a name-based UUID using the algorithm from RFC 4122 §4.3.</summary>
+	    /// <summary>Creates a name-based UUID using the algorithm from RFC 4122 §4.3.</summary>
         /// <param name="namespaceId">The ID of the namespace.</param>
         /// <param name="name">The name (within that namespace).</param>
         /// <param name="version">
@@ -75,7 +73,7 @@ namespace Librainian.Extensions {
             if ( name == null ) {
                 throw new ArgumentNullException( nameof( name ) );
             }
-            if ( ( version != 3 ) && ( version != 5 ) ) {
+            if ( version != 3 && version != 5 ) {
                 throw new ArgumentOutOfRangeException( nameof( version ), "version must be either 3 or 5." );
             }
 

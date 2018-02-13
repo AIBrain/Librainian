@@ -81,9 +81,7 @@ namespace Librainian.Controls {
                 }
             }
 
-            get {
-                return this._myOffset;
-            }
+            get => this._myOffset;
         }
 
         /// <summary>

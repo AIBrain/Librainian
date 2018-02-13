@@ -28,7 +28,7 @@ namespace Librainian.Measurement.Physics {
     /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
     /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
     /// <see cref="http://wikipedia.org/wiki/Giga-" />
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct GigaElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
         public const Decimal InOneElectronVolt = 1E-9m;
@@ -58,15 +58,11 @@ namespace Librainian.Measurement.Physics {
         /// <summary></summary>
         public readonly Decimal Value;
 
-        public GigaElectronVolts( Decimal units ) : this() {
-            this.Value = units;
-        }
+        public GigaElectronVolts( Decimal units ) : this() => this.Value = units;
 
-        public GigaElectronVolts( MegaElectronVolts megaElectronVolts ) : this() {
-            this.Value = megaElectronVolts.ToGigaElectronVolts().Value;
-        }
+	    public GigaElectronVolts( MegaElectronVolts megaElectronVolts ) : this() => this.Value = megaElectronVolts.ToGigaElectronVolts().Value;
 
-        public static GigaElectronVolts operator *( GigaElectronVolts left, Decimal right ) => new GigaElectronVolts( left.Value * right );
+	    public static GigaElectronVolts operator *( GigaElectronVolts left, Decimal right ) => new GigaElectronVolts( left.Value * right );
 
         public static GigaElectronVolts operator *( Decimal left, GigaElectronVolts right ) => new GigaElectronVolts( left * right.Value );
 
@@ -102,10 +98,8 @@ namespace Librainian.Measurement.Physics {
         /// <returns>
         ///     A <see cref="T:System.String" /> containing a fully qualified type name.
         /// </returns>
-        public override String ToString() {
-            return $"{this.Value} GeV";
-        }
+        public override String ToString() => $"{this.Value} GeV";
 
-        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
+	    public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
     }
 }

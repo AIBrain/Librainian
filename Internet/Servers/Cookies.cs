@@ -40,7 +40,7 @@ namespace Librainian.Internet.Servers {
             if ( str == null ) {
                 return cookies;
             }
-            str = HttpUtility.UrlDecode( str ) ?? String.Empty;
+            str = HttpUtility.UrlDecode( str );
             var parts = str.Split( ';' );
             foreach ( var s in parts ) {
                 var idxEquals = s.IndexOf( '=' );
@@ -79,12 +79,9 @@ namespace Librainian.Internet.Servers {
         /// </summary>
         /// <param name="name">The name of the cookie.</param>
         /// <returns></returns>
-        public Cookie Get( String name ) {
-            Cookie cookie;
-            return this._cookieCollection.TryGetValue( name, out cookie ) ? cookie : null;
-        }
+        public Cookie Get( String name ) => this._cookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
 
-        /// <summary>
+	    /// <summary>
         ///     Gets the value of the cookie with the specified name. If the cookie is not found, an
         ///     empty String is returned;
         /// </summary>

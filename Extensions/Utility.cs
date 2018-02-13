@@ -76,21 +76,17 @@ namespace Librainian.Extensions {
             }
         }
 
-        //    Console.SetCursorPosition( left: Console.WindowWidth - ( text.Length + 1 ), top: 0 );
-        //    Console.Write( text );
-        //    Console.SetCursorPosition( left: oldLeft, top: oldTop );
-        //}
+		//    Console.SetCursorPosition( left: Console.WindowWidth - ( text.Length + 1 ), top: 0 );
+		//    Console.Write( text );
+		//    Console.SetCursorPosition( left: oldLeft, top: oldTop );
+		//}
 
-        public static void OnSet<T>( this EventHandler<T> @event, Object sender, T e ) where T : EventArgs {
-            throw new NotImplementedException();
+		public static void OnSet<T>( this EventHandler<T> @event, Object sender, T e ) where T : EventArgs => throw new NotImplementedException();//if ( @event != null ) { @event( sender, e ); }
 
-            //if ( @event != null ) { @event( sender, e ); }
-        }
+		//    return false;
+		//}
 
-        //    return false;
-        //}
-
-        public static void Spin( String text ) {
+		public static void Spin( String text ) {
             var oldTop = Console.CursorTop;
             var oldLeft = Console.CursorLeft;
             Console.Write( text );
@@ -166,7 +162,7 @@ namespace Librainian.Extensions {
 
         public static void WriteColor( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black, params Object[] parms ) {
             lock ( ConsoleOutputSynch ) {
-                if ( ( null == parms ) || !parms.Any() ) {
+                if ( null == parms || !parms.Any() ) {
 
                     //text.WriteLine();
                     var oldFore = Console.ForegroundColor;

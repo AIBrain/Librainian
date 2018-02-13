@@ -93,11 +93,9 @@ namespace Librainian.Measurement.Time {
             get;
         }
 
-        public static explicit operator Time( DateTime dateTime ) {
-            return new Time( ( Byte )dateTime.Hour, ( Byte )dateTime.Minute, ( Byte )dateTime.Second, ( UInt16 )dateTime.Millisecond );
-        }
+        public static explicit operator Time( DateTime dateTime ) => new Time( ( Byte )dateTime.Hour, ( Byte )dateTime.Minute, ( Byte )dateTime.Second, ( UInt16 )dateTime.Millisecond );
 
-        /// <summary>
+	    /// <summary>
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>

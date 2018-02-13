@@ -32,34 +32,29 @@ namespace Librainian.Extensions {
         public static ConditionalWeakTable<Object, Storage> WeakResults { get; } = new ConditionalWeakTable<Object, Storage>();
 
         // Since is not possible to implicitly make a Func<T,U> out of a method group, let's use the source as a function type inference.
-        public static TResult ApplyMemoized<TSource, TResult, TParam>( this TSource source, Func<TSource, TParam, TResult> selector, TParam param ) {
-            return selector.AsWeakMemoized( source )( param );
-        }
+        public static TResult ApplyMemoized<TSource, TResult, TParam>( this TSource source, Func<TSource, TParam, TResult> selector, TParam param ) => selector.AsWeakMemoized( source )( param );
 
-        public static Func<TParam, TResult> AsWeakMemoized<TSource, TResult, TParam>( this Func<TSource, TParam, TResult> selector, TSource source ) {
-            return param => {
+		public static Func<TParam, TResult> AsWeakMemoized<TSource, TResult, TParam>( this Func<TSource, TParam, TResult> selector, TSource source ) => param => {
 
-                // Get the dictionary that associates delegates to a parameter, on the specified source
-                var values = WeakResults.GetOrCreateValue( source );
+			// Get the dictionary that associates delegates to a parameter, on the specified source
+			var values = WeakResults.GetOrCreateValue( source );
 
-                Object res;
 
-                var key = new {
-                    selector,
-                    param
-                };
+			var key = new {
+				selector,
+				param
+			};
 
-                // Get the result for the combination source/selector/param
-                var cached = values.TryGetValue( key, out res );
+			// Get the result for the combination source/selector/param
+			var cached = values.TryGetValue( key, out var res );
 
-                if ( !cached ) {
-                    res = selector( source, param );
+			if ( !cached ) {
+				res = selector( source, param );
 
-                    values[ key ] = res;
-                }
+				values[ key ] = res;
+			}
 
-                return ( TResult )res;
-            };
-        }
-    }
+			return ( TResult )res;
+		};
+	}
 }

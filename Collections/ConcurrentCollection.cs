@@ -59,13 +59,9 @@ namespace Librainian.Collections {
 
         public Boolean IsSynchronized => false;
 
-        public Object SyncRoot {
-            get {
-                throw new NotSupportedException( "ConcurrentCollection_SyncRoot_NotSupported" );
-            }
-        }
+        public Object SyncRoot => throw new NotSupportedException( "ConcurrentCollection_SyncRoot_NotSupported" );
 
-        public Boolean IsEmpty() => this._mHead == null;
+	    public Boolean IsEmpty() => this._mHead == null;
 
         public void Clear() => this._mHead = null;
 
@@ -140,7 +136,7 @@ namespace Librainian.Collections {
         public Boolean TryPeek( out T result ) {
             var node = this._mHead;
             if ( node == null ) {
-                result = default( T );
+                result = default;
                 return false;
             }
             result = node.MValue;
@@ -158,7 +154,7 @@ namespace Librainian.Collections {
                 return true;
             }
 
-            result = default( T );
+            result = default;
             return false;
         }
 
@@ -174,9 +170,8 @@ namespace Librainian.Collections {
             if ( count == 0 ) {
                 return 0;
             }
-            Node poppedHead;
-            var nodesCount = this.TryPopCore( count, out poppedHead );
-            if ( nodesCount <= 0 ) {
+			var nodesCount = this.TryPopCore( count, out var poppedHead );
+			if ( nodesCount <= 0 ) {
                 return nodesCount;
             }
             CopyRemovedItems( poppedHead, items, startIndex, nodesCount );
@@ -205,7 +200,7 @@ namespace Librainian.Collections {
                 throw new ArgumentOutOfRangeException( nameof( count ), "ConcurrentStack_PushPopRange_CountOutOfRange" );
             }
             var length = items.Count;
-            if ( ( startIndex >= length ) || ( startIndex < 0 ) ) {
+            if ( startIndex >= length || startIndex < 0 ) {
                 throw new ArgumentOutOfRangeException( nameof( startIndex ), "ConcurrentStack_PushPopRange_StartOutOfRange" );
             }
             if ( length - count < startIndex ) {
@@ -256,12 +251,11 @@ namespace Librainian.Collections {
         }
 
         private Boolean TryPopCore( out T result ) {
-            Node poppedHead;
-            if ( this.TryPopCore( 1, out poppedHead ) == 1 ) {
-                result = poppedHead.MValue;
-                return true;
-            }
-            result = default( T );
+			if ( this.TryPopCore( 1, out var poppedHead ) == 1 ) {
+				result = poppedHead.MValue;
+				return true;
+			}
+			result = default;
             return false;
         }
 
@@ -278,7 +272,7 @@ namespace Librainian.Collections {
                     break;
                 }
                 var node = comparand;
-                for ( num2 = 1; ( num2 < count ) && ( node.MNext != null ); ++num2 ) {
+                for ( num2 = 1; num2 < count && node.MNext != null; ++num2 ) {
                     node = node.MNext;
                 }
                 var mHead = this._mHead;

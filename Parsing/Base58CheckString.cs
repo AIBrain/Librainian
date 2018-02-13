@@ -46,9 +46,7 @@ namespace Librainian.Parsing {
             }
         }
 
-        public static Byte[] ToByteArray( String s ) {
-            Byte b;
-            return ToByteArray( s, out b );
-        }
+        public static Byte[] ToByteArray( String s ) => ToByteArray( s, out var b );
+
     }
 }

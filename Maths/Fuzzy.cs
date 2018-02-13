@@ -40,7 +40,7 @@ namespace Librainian.Maths {
     [JsonObject]
     public struct Fuzzy : ICloneable {
 
-        public static readonly Fuzzy Empty = default(Fuzzy);
+        public static readonly Fuzzy Empty;
 
         public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
 
@@ -69,6 +69,7 @@ namespace Librainian.Maths {
         //private static readonly Fuzzy Falser = Fuzzy.Combine( Undecided, MinValue );
         //private static readonly Fuzzy UndecidedUpper = Combine( Undecided, Truer);
         //private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
+
         /// <summary>
         ///     Initializes a random number between 0 and 1
         /// </summary>
@@ -82,11 +83,9 @@ namespace Librainian.Maths {
         }
 
         public Double Value {
-            get {
-                return this._value;
-            }
+            get => this._value;
 
-            set {
+	        set {
                 if ( value > MaxValue ) {
                     value = MaxValue;
                 }
@@ -113,12 +112,11 @@ namespace Librainian.Maths {
                 throw new ArgumentNullException( nameof( value ) );
             }
 
-            Double result;
-            if ( Double.TryParse( value, out result ) ) {
-                return new Fuzzy( result );
-            }
+			if ( Double.TryParse( value, out var result ) ) {
+				return new Fuzzy( result );
+			}
 
-            return Empty;
+			return Empty;
         }
 
         public void AdjustTowardsMax() => this.Value = ( this.Value + MaxValue ) / 2D;
@@ -148,19 +146,19 @@ namespace Librainian.Maths {
                         case LowMiddleHigh.Low:
                             do {
                                 this.Value = Randem.NextDouble( 0.0D, 0.25D );
-                            } while ( ( this.Value < MinValue ) || ( this.Value > 0.25D ) );
+                            } while ( this.Value < Fuzzy.MinValue || this.Value > 0.25D );
                             break;
 
                         case LowMiddleHigh.Middle:
                             do {
                                 this.Value = Randem.NextDouble( 0.25D, 0.75D );
-                            } while ( ( this.Value < 0.25D ) || ( this.Value > 0.75D ) );
+                            } while ( this.Value < 0.25D || this.Value > 0.75D );
                             break;
 
                         case LowMiddleHigh.High:
                             do {
                                 this.Value = Randem.NextDouble();
-                            } while ( ( this.Value < 0.75D ) || ( this.Value > MaxValue ) );
+                            } while ( this.Value < 0.75D || this.Value > Fuzzy.MaxValue );
                             break;
 
                         default:
@@ -171,14 +169,6 @@ namespace Librainian.Maths {
             }
         }
 
-        //public static implicit operator Double( Fuzzy special ) {
-        //    return special.Value;
-        //}
-        //public static Fuzzy Combine( Fuzzy lhs, Fuzzy rhs ) { return new Fuzzy( ( lhs + rhs ) / 2D ); }
-
-        //public static Fuzzy Combine( Fuzzy lhs, Double rhs ) { return new Fuzzy( ( lhs + rhs ) / 2D ); }
-
-        //public static Fuzzy Combine( Double lhs, Fuzzy rhs ) { return new Fuzzy( ( lhs + rhs ) / 2D ); }
         public override String ToString() => $"{this.Value:R}";
     }
 }

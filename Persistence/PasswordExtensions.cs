@@ -72,8 +72,7 @@ namespace Librainian.Persistence {
         public static String Settings( this Environment.SpecialFolder specialFolder, String key ) {
             try {
                 var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPathWithFileName );
-                var settings = configFile.AppSettings.Settings;
-                return null != settings[ key ] ? settings[ key ].Value : null;
+                return configFile.AppSettings.Settings[ key ]?.Value;
             }
             catch ( ConfigurationErrorsException exception ) {
                 exception.More();

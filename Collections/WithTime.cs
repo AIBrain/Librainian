@@ -26,11 +26,9 @@ namespace Librainian.Collections {
     [JsonObject]
     public class WithTime<T> {
 
-        public WithTime( T item ) {
-            this.Item = item;
-        }
+        public WithTime( T item ) => this.Item = item;
 
-        [JsonProperty]
+	    [JsonProperty]
         public T Item {
             get;
         }

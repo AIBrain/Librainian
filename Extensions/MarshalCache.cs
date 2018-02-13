@@ -90,8 +90,7 @@
                     // Check if its a fixed-size-buffer. Eg; fixed byte Pad[50];
                     var attr = field.GetCustomAttributes( typeof( FixedBufferAttribute ), false );
                     if ( attr.Length > 0 ) {
-                        var fba = attr[ 0 ] as FixedBufferAttribute;
-                        if ( fba != null ) {
+	                    if ( attr[ 0 ] is FixedBufferAttribute fba ) {
                             totalSize += GetSizeOf( fba.ElementType ) * fba.Length;
                         }
                     }

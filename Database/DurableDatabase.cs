@@ -35,7 +35,7 @@ namespace Librainian.Database {
     using Maths;
     using Parsing;
 
-    public sealed class DurableDatabase : ABetterClassDispose, IDatabase {
+    public class DurableDatabase : ABetterClassDispose, IDatabase {
 
         /// <summary>
         /// A database connection attempts to stay connected in the event of an unwanted disconnect.
@@ -47,6 +47,7 @@ namespace Librainian.Database {
             this.Retries = retries;
             this.ConnectionString = connectionString;
             this.SqlConnections = new ThreadLocal<SqlConnection>( () => {
+																	  // ReSharper disable once UseObjectOrCollectionInitializer
                 var connection = new SqlConnection( this.ConnectionString );
                 connection.StateChange += this.SqlConnection_StateChange;
                 return connection;
@@ -73,13 +74,20 @@ namespace Librainian.Database {
             get;
         }
 
-        private SqlConnection OpenConnection() {
+	    [ CanBeNull ]
+	    private SqlConnection OpenConnection() {
             if ( this.SqlConnections.Value.State == ConnectionState.Open ) {
                 return this.SqlConnections.Value;
             }
 
-            this.SqlConnections.Value.Open();
-            return this.SqlConnections.Value;
+			try {
+				this.SqlConnections.Value.Open();
+				return this.SqlConnections.Value;
+			}
+			catch ( Exception exception) {
+				exception.More();
+			}
+	        return null;
         }
 
         /// <summary>
@@ -401,19 +409,18 @@ namespace Librainian.Database {
                     }
 
                     var scalar = command.ExecuteScalar();
-                    if ( ( null == scalar ) || Convert.IsDBNull( scalar ) ) {
-                        return default( TResult );
+                    if ( null == scalar || Convert.IsDBNull( scalar ) ) {
+                        return default;
                     }
-                    if ( scalar is TResult ) {
-                        return ( TResult )scalar;
-                    }
-
-                    TResult result;
-                    if ( scalar.TryCast( out result ) ) {
-                        return result;
+                    if ( scalar is TResult result1 ) {
+                        return result1;
                     }
 
-                    return ( TResult )Convert.ChangeType( scalar, typeof( TResult ) );
+					if ( scalar.TryCast<TResult>( out var result ) ) {
+						return result;
+					}
+
+					return ( TResult )Convert.ChangeType( scalar, typeof( TResult ) );
                 }
             }
             catch ( SqlException exception ) {
@@ -423,7 +430,7 @@ namespace Librainian.Database {
                 exception.More();
             }
 
-            return default( TResult );
+            return default;
         }
 
         /// <summary>
@@ -460,23 +467,22 @@ namespace Librainian.Database {
                         throw;
                     }
 
-                    if ( ( null == scalar ) || Convert.IsDBNull( scalar ) ) {
-                        return default( TResult );
-                    }
-                    if ( scalar is TResult ) {
-                        return ( TResult )scalar;
+                    if ( null == scalar || Convert.IsDBNull( scalar ) ) {
+                        return default;
                     }
 
-                    TResult result;
-                    if ( scalar.TryCast( out result ) ) {
-                        return result;
-                    }
+					if ( scalar is TResult scalarAsync ) {
+						return scalarAsync;
+					}
 
-                    return ( TResult )Convert.ChangeType( scalar, typeof( TResult ) );
+					if ( scalar.TryCast<TResult>( out var result ) ) {
+						return result;
+					}
+
+					return ( TResult )Convert.ChangeType( scalar, typeof( TResult ) );
                 }
             }
             catch ( InvalidCastException exception ) {
-
                 //TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
                 exception.More();
             }
@@ -484,7 +490,7 @@ namespace Librainian.Database {
                 exception.More();
             }
 
-            return default( TResult );
+            return default;
         }
 
         /// <summary>
@@ -573,8 +579,7 @@ namespace Librainian.Database {
                 return false;
             }
 
-            var connection = sender as SqlConnection;
-            if ( null == connection ) {
+	        if ( !( sender is SqlConnection connection ) ) {
                 return false;
             }
 

@@ -33,13 +33,9 @@ namespace Librainian.Threading {
         private readonly CancellationToken _cancellationToken;
 
         private AbandonableTask( CancellationToken cancellationToken, Action beginWork, Action blockingWork, Action<Task> afterComplete ) {
-            if ( blockingWork == null ) {
-                throw new ArgumentNullException( nameof( blockingWork ) );
-            }
-
-            this._cancellationToken = cancellationToken;
+	        this._cancellationToken = cancellationToken;
             this._beginWork = beginWork;
-            this._blockingWork = blockingWork;
+            this._blockingWork = blockingWork ?? throw new ArgumentNullException( nameof( blockingWork ) );
             this._afterComplete = afterComplete;
         }
 

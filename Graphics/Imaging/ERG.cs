@@ -61,9 +61,7 @@ namespace Librainian.Graphics.Imaging {
         [JsonProperty]
         public readonly ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
 
-        public Erg() {
-            this.Checksum = UInt64.MaxValue; //an unlikely hash
-        }
+        public Erg() => this.Checksum = UInt64.MaxValue;
 
         /// <summary>
         ///     Checksum of all pages
@@ -96,7 +94,15 @@ namespace Librainian.Graphics.Imaging {
             }
         } );
 
-        public async Task<Boolean> TryAdd( Document document, TimeSpan delay, CancellationToken cancellationToken ) => await this.TryAdd( new Bitmap( document.FullPathWithFileName ), delay, cancellationToken ).ConfigureAwait(false);
+        public async Task<Boolean> TryAdd( Document document, TimeSpan delay, CancellationToken cancellationToken ) {
+            try {
+                return await this.TryAdd( new Bitmap( document.FullPathWithFileName ), delay, cancellationToken ).ConfigureAwait( false );
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+            return false;
+        }
 
         public async Task<Boolean> TryAdd( [CanBeNull] Bitmap bitmap, TimeSpan timeout, CancellationToken cancellationToken ) {
             if ( bitmap == null ) {

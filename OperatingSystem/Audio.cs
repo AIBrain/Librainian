@@ -128,38 +128,30 @@ namespace Librainian.OperatingSystem {
             // get the speakers (1st render + multimedia) device
 
             // ReSharper disable once SuspiciousTypeConversion.Global
-            var deviceEnumerator = new MMDeviceEnumerator() as IMMDeviceEnumerator;
-            if ( deviceEnumerator == null ) {
+	        if ( !( new MMDeviceEnumerator() is IMMDeviceEnumerator deviceEnumerator ) ) {
                 yield break;
             }
-            IMMDevice speakers;
-            deviceEnumerator.GetDefaultAudioEndpoint( EDataFlow.eRender, ERole.eMultimedia, out speakers );
+			deviceEnumerator.GetDefaultAudioEndpoint( EDataFlow.eRender, ERole.eMultimedia, out var speakers );
 
-            // activate the session manager. we need the enumerator
-            var IID_IAudioSessionManager2 = typeof( IAudioSessionManager2 ).GUID;
-            Object o;
-            speakers.Activate( ref IID_IAudioSessionManager2, 0, IntPtr.Zero, out o );
-            var mgr = o as IAudioSessionManager2;
+			// activate the session manager. we need the enumerator
+			var IID_IAudioSessionManager2 = typeof( IAudioSessionManager2 ).GUID;
+			speakers.Activate( ref IID_IAudioSessionManager2, 0, IntPtr.Zero, out var o );
 
-            // enumerate sessions for on this device
-            if ( mgr != null ) {
-                IAudioSessionEnumerator sessionEnumerator;
-                mgr.GetSessionEnumerator( out sessionEnumerator );
-                Int32 count;
-                sessionEnumerator.GetCount( out count );
+			// enumerate sessions for on this device
+			if ( o is IAudioSessionManager2 mgr ) {
+				mgr.GetSessionEnumerator( out var sessionEnumerator );
+				sessionEnumerator.GetCount( out var count );
 
-                for ( var i = 0; i < count; i++ ) {
-                    IAudioSessionControl ctl;
-                    sessionEnumerator.GetSession( i, out ctl );
-                    String dn;
-                    ctl.GetDisplayName( out dn );
-                    yield return dn;
-                    Marshal.ReleaseComObject( ctl );
-                }
-                Marshal.ReleaseComObject( sessionEnumerator );
-                Marshal.ReleaseComObject( mgr );
-            }
-            Marshal.ReleaseComObject( speakers );
+				for ( var i = 0; i < count; i++ ) {
+					sessionEnumerator.GetSession( i, out var ctl );
+					ctl.GetDisplayName( out var dn );
+					yield return dn;
+					Marshal.ReleaseComObject( ctl );
+				}
+				Marshal.ReleaseComObject( sessionEnumerator );
+				Marshal.ReleaseComObject( mgr );
+			}
+			Marshal.ReleaseComObject( speakers );
             Marshal.ReleaseComObject( deviceEnumerator );
         }
 
@@ -169,9 +161,8 @@ namespace Librainian.OperatingSystem {
                 return null;
             }
 
-            Boolean mute;
-            volume.GetMute( out mute );
-            return mute;
+			volume.GetMute( out var mute );
+			return mute;
         }
 
         public static Single? GetApplicationVolume( String name ) {
@@ -180,9 +171,8 @@ namespace Librainian.OperatingSystem {
                 return null;
             }
 
-            Single level;
-            volume.GetMasterVolume( out level );
-            return level * 100;
+			volume.GetMasterVolume( out var level );
+			return level * 100;
         }
 
         [CanBeNull]
@@ -191,34 +181,27 @@ namespace Librainian.OperatingSystem {
             // get the speakers (1st render + multimedia) device
 
             // ReSharper disable once SuspiciousTypeConversion.Global
-            var deviceEnumerator = new MMDeviceEnumerator() as IMMDeviceEnumerator;
-            if ( deviceEnumerator == null ) {
+	        if ( !( new MMDeviceEnumerator() is IMMDeviceEnumerator deviceEnumerator ) ) {
                 return null;
             }
-            IMMDevice speakers;
-            deviceEnumerator.GetDefaultAudioEndpoint( EDataFlow.eRender, ERole.eMultimedia, out speakers );
+			deviceEnumerator.GetDefaultAudioEndpoint( EDataFlow.eRender, ERole.eMultimedia, out var speakers );
 
-            // activate the session manager. we need the enumerator
-            var iidIAudioSessionManager2 = typeof( IAudioSessionManager2 ).GUID;
-            Object o;
-            speakers.Activate( ref iidIAudioSessionManager2, 0, IntPtr.Zero, out o );
-            var mgr = ( IAudioSessionManager2 )o;
+			// activate the session manager. we need the enumerator
+			var iidIAudioSessionManager2 = typeof( IAudioSessionManager2 ).GUID;
+			speakers.Activate( ref iidIAudioSessionManager2, 0, IntPtr.Zero, out var o );
+			var mgr = ( IAudioSessionManager2 )o;
 
-            // enumerate sessions for on this device
-            IAudioSessionEnumerator sessionEnumerator;
-            mgr.GetSessionEnumerator( out sessionEnumerator );
-            Int32 count;
-            sessionEnumerator.GetCount( out count );
+			// enumerate sessions for on this device
+			mgr.GetSessionEnumerator( out var sessionEnumerator );
+			sessionEnumerator.GetCount( out var count );
 
-            // search for an audio session with the required name
-            // NOTE: we could also use the process id instead of the app name (with IAudioSessionControl2)
-            ISimpleAudioVolume volumeControl = null;
+			// search for an audio session with the required name
+			// NOTE: we could also use the process id instead of the app name (with IAudioSessionControl2)
+			ISimpleAudioVolume volumeControl = null;
             for ( var i = 0; i < count; i++ ) {
-                IAudioSessionControl ctl;
-                sessionEnumerator.GetSession( i, out ctl );
-                String dn;
-                ctl.GetDisplayName( out dn );
-                if ( String.Compare( name, dn, StringComparison.OrdinalIgnoreCase ) == 0 ) {
+				sessionEnumerator.GetSession( i, out var ctl );
+				ctl.GetDisplayName( out var dn );
+				if ( String.Compare( name, dn, StringComparison.OrdinalIgnoreCase ) == 0 ) {
 
                     // ReSharper disable once SuspiciousTypeConversion.Global
                     volumeControl = ctl as ISimpleAudioVolume;

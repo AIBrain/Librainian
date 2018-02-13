@@ -30,19 +30,13 @@ namespace Librainian.Knowledge {
     public class Thing {
 
         public Thing( [NotNull] String label, [NotNull] Domain domain ) {
-            if ( label == null ) {
-                throw new ArgumentNullException( nameof( label ) );
-            }
-            if ( domain == null ) {
-                throw new ArgumentNullException( nameof( domain ) );
-            }
-            this.Label = label;
-            this.Domain = domain;
+	        this.Label = label ?? throw new ArgumentNullException( nameof( label ) );
+            this.Domain = domain ?? throw new ArgumentNullException( nameof( domain ) );
             this.SubClassesOf = new ConcurrentDictionary<TypeOrClass, Percentage>();
         }
 
         public Domain Domain {
-            get; private set;
+            get;
         }
 
         public ConcurrentDictionary<TypeOrClass, Percentage> HasTheseSubClasses {
@@ -50,7 +44,7 @@ namespace Librainian.Knowledge {
         }
 
         public String Label {
-            get; private set;
+            get;
         }
 
         /// <summary>
@@ -58,7 +52,7 @@ namespace Librainian.Knowledge {
         ///     percentage of Trueness (determined so far, updated when we have new info)
         /// </summary>
         public ConcurrentDictionary<TypeOrClass, Percentage> SubClassesOf {
-            get; private set;
+            get;
         }
     }
 }

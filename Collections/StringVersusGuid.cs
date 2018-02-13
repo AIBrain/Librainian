@@ -51,11 +51,10 @@ namespace Librainian.Collections {
         public Guid this[ String key ] {
             get {
                 if ( !String.IsNullOrEmpty( key ) ) {
-                    Guid result;
-                    if ( this.Words.TryGetValue( key, out result ) ) {
-                        return result;
-                    }
-                    var newValue = Guid.NewGuid();
+					if ( this.Words.TryGetValue( key, out var result ) ) {
+						return result;
+					}
+					var newValue = Guid.NewGuid();
                     this[ key ] = newValue;
                     return newValue;
                 }
@@ -76,11 +75,9 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         public String this[ Guid key ] {
-            get {
-                return Guid.Empty.Equals( key ) ? String.Empty : this.Guids[ key ];
-            }
+            get => Guid.Empty.Equals( key ) ? String.Empty : this.Guids[ key ];
 
-            set {
+	        set {
                 if ( Guid.Empty.Equals( key ) ) {
                     return;
                 }
@@ -107,16 +104,13 @@ namespace Librainian.Collections {
             if ( String.IsNullOrEmpty( daword ) ) {
                 return false;
             }
-            Guid value;
-            return this.Words.TryGetValue( key: daword, value: out value );
-        }
+			return this.Words.TryGetValue( key: daword, value: out var value );
+		}
 
         /// <summary>Returns true if the guid is contained in the collection.</summary>
         /// <param name="daguid"></param>
         /// <returns></returns>
-        public Boolean Contains( Guid daguid ) {
-            String value;
-            return this.Guids.TryGetValue( key: daguid, value: out value );
-        }
+        public Boolean Contains( Guid daguid ) => this.Guids.TryGetValue( key: daguid, value: out var value );
+
     }
 }

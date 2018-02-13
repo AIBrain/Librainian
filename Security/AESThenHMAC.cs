@@ -64,15 +64,15 @@ namespace Librainian.Security {
         public static Byte[] SimpleDecrypt( Byte[] encryptedMessage, Byte[] cryptKey, Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
 
             //Basic Usage Error Checks
-            if ( ( cryptKey == null ) || ( cryptKey.Length != KeyBitSize / 8 ) ) {
+            if ( cryptKey == null || cryptKey.Length != AESThenHmac.KeyBitSize / 8 ) {
                 throw new ArgumentException( $"CryptKey needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
             }
 
-            if ( ( authKey == null ) || ( authKey.Length != KeyBitSize / 8 ) ) {
+            if ( authKey == null || authKey.Length != AESThenHmac.KeyBitSize / 8 ) {
                 throw new ArgumentException( $"AuthKey needs to be {KeyBitSize} bit!", nameof( authKey ) );
             }
 
-            if ( ( encryptedMessage == null ) || ( encryptedMessage.Length == 0 ) ) {
+            if ( encryptedMessage == null || encryptedMessage.Length == 0 ) {
                 throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
 
@@ -177,11 +177,11 @@ namespace Librainian.Security {
         public static Byte[] SimpleDecryptWithPassword( Byte[] encryptedMessage, String password, Int32 nonSecretPayloadLength = 0 ) {
 
             //User Error Checks
-            if ( String.IsNullOrWhiteSpace( password ) || ( password.Length < MinPasswordLength ) ) {
+            if ( String.IsNullOrWhiteSpace( password ) || password.Length < AESThenHmac.MinPasswordLength ) {
                 throw new ArgumentException( $"Must have a password of at least {MinPasswordLength} characters!", nameof( password ) );
             }
 
-            if ( ( encryptedMessage == null ) || ( encryptedMessage.Length == 0 ) ) {
+            if ( encryptedMessage == null || encryptedMessage.Length == 0 ) {
                 throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
 
@@ -221,15 +221,15 @@ namespace Librainian.Security {
         public static Byte[] SimpleEncrypt( this Byte[] secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[] nonSecretPayload = null ) {
 
             //User Error Checks
-            if ( ( cryptKey == null ) || ( cryptKey.Length != KeyBitSize / 8 ) ) {
+            if ( cryptKey == null || cryptKey.Length != AESThenHmac.KeyBitSize / 8 ) {
                 throw new ArgumentException( $"Key needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
             }
 
-            if ( ( authKey == null ) || ( authKey.Length != KeyBitSize / 8 ) ) {
+            if ( authKey == null || authKey.Length != AESThenHmac.KeyBitSize / 8 ) {
                 throw new ArgumentException( $"Key needs to be {KeyBitSize} bit!", nameof( authKey ) );
             }
 
-            if ( ( secretMessage == null ) || ( secretMessage.Length < 1 ) ) {
+            if ( secretMessage == null || secretMessage.Length < 1 ) {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 
@@ -343,11 +343,11 @@ namespace Librainian.Security {
             nonSecretPayload = nonSecretPayload ?? new Byte[] { };
 
             //User Error Checks
-            if ( String.IsNullOrWhiteSpace( password ) || ( password.Length < MinPasswordLength ) ) {
+            if ( String.IsNullOrWhiteSpace( password ) || password.Length < AESThenHmac.MinPasswordLength ) {
                 throw new ArgumentException( $"Must have a password of at least {MinPasswordLength} characters!", nameof( password ) );
             }
 
-            if ( ( secretMessage == null ) || ( secretMessage.Length == 0 ) ) {
+            if ( secretMessage == null || secretMessage.Length == 0 ) {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 

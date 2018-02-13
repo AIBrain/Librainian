@@ -30,12 +30,11 @@ namespace Librainian.Extensions {
         public static Func<TKey, TResult> Memoize<TKey, TResult>( this Func<TKey, TResult> f ) {
             var d = new ConcurrentDictionary<TKey, TResult>();
             return a => {
-                TResult value;
-                if ( !d.TryGetValue( a, out value ) ) {
-                    value = f( a );
-                    d.TryAdd( a, value );
-                }
-                return value;
+				if ( !d.TryGetValue( a, out var value ) ) {
+					value = f( a );
+					d.TryAdd( a, value );
+				}
+				return value;
             };
         }
 

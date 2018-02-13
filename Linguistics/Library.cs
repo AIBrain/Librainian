@@ -33,15 +33,13 @@ namespace Librainian.Linguistics {
     ///     <para>A <see cref="Library" /> is a cluster of <see cref="Book" />s.</para>
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( "{ToString()}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public sealed class Library : IEquatable<Library>, IEnumerable<KeyValuePair<UDC, Book>> {
 
-        public Library( [NotNull] UDC udc, [NotNull] Book book ) {
-            this.Add( udc, book );
-        }
+		public Library( [NotNull] UDC udc, [NotNull] Book book ) => this.Add( udc, book );
 
-        [NotNull]
+		[NotNull]
         [JsonProperty]
         private ConcurrentDictionary<UDC, Book> Books { get; } = new ConcurrentDictionary<UDC, Book>();
 
@@ -55,10 +53,10 @@ namespace Librainian.Linguistics {
             if ( ReferenceEquals( lhs, rhs ) ) {
                 return true;
             }
-            if ( ReferenceEquals( lhs, null ) ) {
+            if ( lhs is null ) {
                 return false;
             }
-            if ( ReferenceEquals( null, rhs ) ) {
+            if ( rhs is null ) {
                 return false;
             }
 
@@ -77,26 +75,19 @@ namespace Librainian.Linguistics {
             return true;
         }
 
-        public Boolean Equals( [CanBeNull] Library other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( [CanBeNull] Library other ) => Equals( this, other );
 
-        /// <summary>Returns an enumerator that iterates through the collection.</summary>
+	    /// <summary>Returns an enumerator that iterates through the collection.</summary>
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-        public IEnumerator<KeyValuePair<UDC, Book>> GetEnumerator() {
-            return this.Books.GetEnumerator();
-        }
+        public IEnumerator<KeyValuePair<UDC, Book>> GetEnumerator() => this.Books.GetEnumerator();
 
-        /// <summary>Serves as the default hash function. </summary>
+	    /// <summary>Serves as the default hash function. </summary>
         /// <returns>A hash code for the current object.</returns>
-        public override Int32 GetHashCode() {
-            return this.Books.GetHashCode();
-        }
+        public override Int32 GetHashCode() => this.Books.GetHashCode();
 
-        /// <summary>Returns an enumerator that iterates through a collection.</summary>
+	    /// <summary>Returns an enumerator that iterates through a collection.</summary>
         /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return ( ( IEnumerable )this.Books ).GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Books ).GetEnumerator();
+
     }
 }

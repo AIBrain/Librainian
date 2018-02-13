@@ -36,11 +36,9 @@ namespace Librainian.Collections {
         private SingleLinkNode<T> _tail;
 
         /// <summary>Default constructor.</summary>
-        public LockfreeQueue() {
-            this._tail = this._head;
-        }
+        public LockfreeQueue() => this._tail = this._head;
 
-        public LockfreeQueue( IEnumerable<T> items ) : this() {
+	    public LockfreeQueue( IEnumerable<T> items ) : this() {
             foreach ( var item in items ) {
                 this.Enqueue( item );
             }
@@ -58,7 +56,7 @@ namespace Librainian.Collections {
                 var tempNode = currentNode;
                 currentNode = currentNode.Next;
 
-                tempNode.Item = default( T );
+                tempNode.Item = default;
                 tempNode.Next = null;
             }
 
@@ -70,13 +68,12 @@ namespace Librainian.Collections {
         /// <summary>Removes and returns the object at the beginning of the queue.</summary>
         /// <returns>the object that is removed from the beginning of the queue</returns>
         public T Dequeue() {
-            T result;
 
-            if ( !this.TryDequeue( out result ) ) {
-                throw new InvalidOperationException( "the queue is empty" );
-            }
+			if ( !this.TryDequeue( out var result ) ) {
+				throw new InvalidOperationException( "the queue is empty" );
+			}
 
-            return result;
+			return result;
         }
 
         /// <summary>Adds an object to the end of the queue.</summary>
@@ -125,9 +122,8 @@ namespace Librainian.Collections {
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public T TryDequeue() {
-            T item;
-            this.TryDequeue( out item );
-            return item;
+			this.TryDequeue( out var item );
+			return item;
         }
 
         /// <summary>Removes and returns the object at the beginning of the queue.</summary>
@@ -139,7 +135,7 @@ namespace Librainian.Collections {
         ///     true if an object from removed from the beginning of the queue; false if the queue is empty
         /// </returns>
         public Boolean TryDequeue( out T item ) {
-            item = default( T );
+            item = default;
 
             var haveAdvancedHead = false;
             while ( !haveAdvancedHead ) {

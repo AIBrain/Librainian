@@ -36,11 +36,9 @@ namespace Librainian.Extensions {
         public override Int64 Length => this._length;
 
         public override Int64 Position {
-            get {
-                return this._position;
-            }
+            get => this._position;
 
-            set {
+	        set {
                 this._position = value;
                 if ( this._position > this._length ) {
                     this._length = this._position;
@@ -48,18 +46,14 @@ namespace Librainian.Extensions {
             }
         }
 
-        public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state ) {
-            throw new NotImplementedException( "This stream doesn't support reading." );
+        public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state ) => throw new NotImplementedException( "This stream doesn't support reading." );
+
+	    public override void Flush() {
         }
 
-        public override void Flush() {
-        }
+        public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) => throw new NotImplementedException( "This stream doesn't support reading." );
 
-        public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) {
-            throw new NotImplementedException( "This stream doesn't support reading." );
-        }
-
-        public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
+	    public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
             var newPosition = this.Position;
 
             switch ( origin ) {

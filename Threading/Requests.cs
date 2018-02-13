@@ -29,20 +29,13 @@ namespace Librainian.Threading {
     public class Requests {
         private Int64 _requests;
 
-        public Boolean Any() {
-            return Interlocked.Read( ref _requests ) > 0;
-        }
+        public Boolean Any() => Interlocked.Read( ref this._requests ) > 0;
 
-        public Int64 Count() {
-            return Interlocked.Read( ref _requests );
-        }
+	    public Int64 Count() => Interlocked.Read( ref this._requests );
 
-        public Int64 MakeRequest( Int64 amount = 1 ) {
-            return Interlocked.Add( ref _requests, amount );
-        }
+	    public Int64 MakeRequest( Int64 amount = 1 ) => Interlocked.Add( ref this._requests, amount );
 
-        public Int64 UndoRequest( Int64 amount = 1 ) {
-            return Interlocked.Add( ref _requests, -amount );
-        }
+	    public Int64 UndoRequest( Int64 amount = 1 ) => Interlocked.Add( ref this._requests, -amount );
+
     }
 }

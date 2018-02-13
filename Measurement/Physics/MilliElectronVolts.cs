@@ -31,7 +31,7 @@ namespace Librainian.Measurement.Physics {
     /// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
     /// <seealso cref="http://wikipedia.org/wiki/Milli-" />
     /// <seealso cref="http://wikipedia.org/wiki/Electronvolt" />
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct MilliElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
         public const Decimal InOneElectronVolt = 1E3m;
@@ -56,11 +56,9 @@ namespace Librainian.Measurement.Physics {
 
         public readonly Decimal Value;
 
-        public MilliElectronVolts( Decimal units ) : this() {
-            this.Value = units;
-        }
+        public MilliElectronVolts( Decimal units ) : this() => this.Value = units;
 
-        public static implicit operator ElectronVolts( MilliElectronVolts milliElectronVolts ) => milliElectronVolts.ToElectronVolts();
+	    public static implicit operator ElectronVolts( MilliElectronVolts milliElectronVolts ) => milliElectronVolts.ToElectronVolts();
 
         public static Boolean operator <( MilliElectronVolts left, MilliElectronVolts right ) => left.Value.CompareTo( right.Value ) < 0;
 
@@ -91,10 +89,8 @@ namespace Librainian.Measurement.Physics {
 
         public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * InOneMilliElectronVolt );
 
-        public override String ToString() {
-            return $"{this.Value} meV";
-        }
+        public override String ToString() => $"{this.Value} meV";
 
-        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
+	    public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
     }
 }

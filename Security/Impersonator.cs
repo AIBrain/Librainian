@@ -36,15 +36,11 @@ namespace Librainian.Security {
 
         private WindowsImpersonationContext _impersonationContext;
 
-        public Impersonator( String userName, String domainName, String password ) {
-            this.ImpersonateValidUser( userName, domainName, password );
-        }
+		public Impersonator( String userName, String domainName, String password ) => this.ImpersonateValidUser( userName, domainName, password );
 
-        protected override void DisposeManaged() {
-            this._impersonationContext?.Undo();
-        }
+		protected override void DisposeManaged() => this._impersonationContext?.Undo();
 
-        private void ImpersonateValidUser( String userName, String domain, String password ) {
+		private void ImpersonateValidUser( String userName, String domain, String password ) {
             var token = IntPtr.Zero;
             var tokenDuplicate = IntPtr.Zero;
 

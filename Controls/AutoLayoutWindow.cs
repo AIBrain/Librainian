@@ -28,11 +28,9 @@ namespace Librainian.Controls {
         private readonly ConcurrentBag<Label> _labels = new ConcurrentBag<Label>();
         private readonly ConcurrentQueue<String> _messages = new ConcurrentQueue<String>();
 
-        public AutoLayoutWindow() {
-            this.InitializeComponent();
-        }
+		public AutoLayoutWindow() => this.InitializeComponent();
 
-        public Boolean Add( String message ) {
+		public Boolean Add( String message ) {
             try {
                 this._messages.Enqueue( message );
 

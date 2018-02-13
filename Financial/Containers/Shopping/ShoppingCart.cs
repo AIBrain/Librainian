@@ -36,11 +36,9 @@ namespace Librainian.Financial.Containers.Shopping {
         [JsonProperty]
         private ConcurrentList<ShoppingItem> Items { get; } = new ConcurrentList<ShoppingItem>();
 
-        public Boolean AddItem( [CanBeNull] ShoppingItem item ) {
-            return item != null && this.Items.TryAdd( item );
-        }
+        public Boolean AddItem( [CanBeNull] ShoppingItem item ) => item != null && this.Items.TryAdd( item );
 
-        public UInt32 AddItems( params ShoppingItem[] items ) {
+	    public UInt32 AddItems( params ShoppingItem[] items ) {
             UInt32 added = 0;
             if ( null == items ) {
                 return added;
@@ -71,13 +69,11 @@ namespace Librainian.Financial.Containers.Shopping {
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Boolean RemoveItem( [CanBeNull] ShoppingItem item ) {
-            return this.Items.Remove( item );
-        }
+        public Boolean RemoveItem( [CanBeNull] ShoppingItem item ) => this.Items.Remove( item );
 
-        public IEnumerable<KeyValuePair<ShoppingItem, Int32>> RunningList() {
+	    public IEnumerable<KeyValuePair<ShoppingItem, Int32>> RunningList() {
             var items = new ConcurrentDictionary<ShoppingItem, Int32>();
-            foreach ( var shoppingItem in Items ) {
+            foreach ( var shoppingItem in this.Items ) {
                 if ( !items.ContainsKey( shoppingItem ) ) {
                     items.TryAdd( shoppingItem, 0 );
                 }
@@ -86,10 +82,10 @@ namespace Librainian.Financial.Containers.Shopping {
             return items;
         }
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() { this.Items.Dispose(); }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this.Items.Dispose();
 
-    }
+	}
 }

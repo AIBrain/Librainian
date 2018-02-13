@@ -28,21 +28,21 @@ namespace Librainian.FileSystem {
         /// <summary>
         ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.
         /// </summary>
-        public static String ToFileSize( this Decimal @bytes ) => String.Format( FormatProvider, "{0:fs}", @bytes );
+        public static String ToFileSize( this Decimal bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
 
         /// <summary>
         ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.
         /// </summary>
-        public static String ToFileSize( this UInt64 @bytes ) => String.Format( FormatProvider, "{0:fs}", @bytes );
+        public static String ToFileSize( this UInt64 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
 
         /// <summary>
         ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.
         /// </summary>
-        public static String ToFileSize( this Int64 @bytes ) => String.Format( FormatProvider, "{0:fs}", @bytes );
+        public static String ToFileSize( this Int64 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
 
         /// <summary>
         ///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.
         /// </summary>
-        public static String ToFileSize( this Int32 @bytes ) => String.Format( FormatProvider, "{0:fs}", @bytes );
+        public static String ToFileSize( this Int32 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
     }
 }

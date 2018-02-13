@@ -50,10 +50,7 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <param name="document"></param>
         public ConcurrentListFile( [NotNull] Document document ) {
-            if ( document == null ) {
-                throw new ArgumentNullException( nameof( document ) );
-            }
-            this.Document = document;
+			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
             this.Read().Wait();
         }
 
@@ -78,11 +75,9 @@ namespace Librainian.Persistence {
         ///     disallow constructor without a document/filename
         /// </summary>
         // ReSharper disable once NotNullMemberIsNotInitialized
-        private ConcurrentListFile() {
-            throw new NotImplementedException();
-        }
+        private ConcurrentListFile() => throw new NotImplementedException();
 
-        /// <summary>
+	    /// <summary>
         /// </summary>
         [JsonProperty]
         [NotNull]
@@ -91,7 +86,7 @@ namespace Librainian.Persistence {
         }
 
 
-        public async Task<Boolean> Read( CancellationToken cancellationToken = default( CancellationToken ) ) {
+        public async Task<Boolean> Read( CancellationToken cancellationToken = default ) {
             if ( !this.Document.Exists() ) {
                 return false;
             }
@@ -126,21 +121,19 @@ namespace Librainian.Persistence {
         /// <returns>
         ///     A string that represents the current object.
         /// </returns>
-        public override String ToString() {
-            return $"{this.Count} items";
-        }
+        public override String ToString() => $"{this.Count} items";
 
-        /// <summary>
+	    /// <summary>
         ///     Saves the data to the <see cref="Document" />.
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task<Boolean> Write( CancellationToken cancellationToken = default( CancellationToken ) ) {
+        public Task<Boolean> Write( CancellationToken cancellationToken = default ) {
             var document = this.Document;
 
             return Task.Run( () => {
-                if ( !document.Folder().Exists() ) {
-                    document.Folder().Create();
+                if ( !document.Folder.Exists() ) {
+                    document.Folder.Create();
                 }
 
                 if ( document.Exists() ) {

@@ -1,25 +1,24 @@
-﻿// Copyright 2016 Rick@AIBrain.org.
-//
+﻿// Copyright 2018 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
-//
+// 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-//
+// 
 // Donations and royalties can be paid via
 //  PayPal: paypal@aibrain.org
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
+// 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/MathExtensions.cs" was last cleaned by Rick on 2016/07/08 at 8:30 AM
+// 
+// "Librainian/MathExtensions.cs" was last cleaned by Rick on 2018/02/03 at 1:08 AM
 
 namespace Librainian.Maths {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -40,6 +39,21 @@ namespace Librainian.Maths {
     using Parsing;
 
     public static class MathExtensions {
+        [StructLayout( layoutKind: LayoutKind.Explicit )]
+        public struct DecimalTo {
+            [FieldOffset( offset: 0 )]
+            public Decimal Decimal;
+
+            [FieldOffset( offset: 0 )]
+            public Guid Guid;
+
+            [FieldOffset( offset: 0 )]
+            public FourBytes Bytes;
+        }
+
+        public delegate Int32 FibonacciCalculator( Int32 n );
+
+        private const Int32 MaxBits = 32; // you may want to pass this and use generics to allow more or less bits
 
         /// <summary>
         ///     Table used for reversing bits.
@@ -51,7 +65,7 @@ namespace Librainian.Maths {
         /// </summary>
         private static readonly UInt32[] FibonacciLookup = { 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269, 2178309, 3524578, 5702887, 9227465, 14930352, 24157817, 39088169, 63245986, 102334155, 165580141, 267914296, 433494437, 701408733, 1134903170, 1836311903, 2971215073 };
 
-        public delegate Int32 FibonacciCalculator( Int32 n );
+        private static readonly Byte[] RGBRGB565565 = { 5, 6, 5, 5, 6, 5 }; // make some common formats like this
 
         /// <summary>
         ///     <para>Add <paramref name="tax" /> of <paramref name="number" /> to <paramref name="number" />.</para>
@@ -92,7 +106,7 @@ namespace Librainian.Maths {
         /// <param name="right"></param>
         /// <param name="overflowed"></param>
         public static UBigInteger AddWithoutOverFlow( this UInt64 left, UInt64 right, out Boolean overflowed ) {
-            var result = new UBigInteger( left ) + new UBigInteger( right );
+            var result = new UBigInteger( value: left ) + new UBigInteger( value: right );
             overflowed = result >= UInt64.MaxValue;
             return result;
         }
@@ -105,7 +119,7 @@ namespace Librainian.Maths {
         /// <param name="overflowed"></param>
         /// <returns></returns>
         public static BigInteger AddWithoutOverFlow( this UInt64 left, Int64 right, out Boolean overflowed ) {
-            var result = new BigInteger( left ) + new BigInteger( right );
+            var result = new BigInteger( value: left ) + new BigInteger( value: right );
             overflowed = result >= UInt64.MaxValue;
             return result;
         }
@@ -117,7 +131,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this Int16 number ) => number >= 1;
 
         /// <summary>
@@ -127,7 +141,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this Int32 number ) => number >= 1;
 
         /// <summary>
@@ -137,7 +151,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this Int64 number ) => number >= 1;
 
         /// <summary>
@@ -147,7 +161,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this UInt16 number ) => number >= 1;
 
         /// <summary>
@@ -157,7 +171,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this UInt32 number ) => number >= 1;
 
         /// <summary>
@@ -167,7 +181,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this UInt64 number ) => number >= 1;
 
         /// <summary>
@@ -177,7 +191,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this Decimal number ) => number >= 1;
 
         /// <summary>
@@ -187,7 +201,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this Double number ) => number >= 1;
 
         /// <summary>
@@ -204,10 +218,11 @@ namespace Librainian.Maths {
         /// <example>5. Between(10, 6) == false</example>
         /// <example>5. Between(5, 5)) == true</example>
         public static Boolean Between<T>( this T target, T startInclusive, T endInclusive ) where T : IComparable {
-            if ( startInclusive.CompareTo( endInclusive ) == 1 ) {
-                return ( target.CompareTo( startInclusive ) <= 0 ) && ( target.CompareTo( endInclusive ) >= 0 );
+            if ( startInclusive.CompareTo( obj: endInclusive ) == 1 ) {
+                return target.CompareTo( obj: startInclusive ) <= 0 && target.CompareTo( obj: endInclusive ) >= 0;
             }
-            return ( target.CompareTo( startInclusive ) >= 0 ) && ( target.CompareTo( endInclusive ) <= 0 );
+
+            return target.CompareTo( obj: startInclusive ) >= 0 && target.CompareTo( obj: endInclusive ) <= 0;
         }
 
         /// <summary>
@@ -219,12 +234,14 @@ namespace Librainian.Maths {
         /// <param name="max">The maximum value of the <typeparamref name="T" /> that can be returned.</param>
         /// <returns>The equivalent to: <c>this &lt; min ? min : this &gt; max ? max : this</c>.</returns>
         public static T Clamp<T>( this T @this, T min, T max ) where T : IComparable<T> {
-            if ( @this.CompareTo( min ) < 0 ) {
+            if ( @this.CompareTo( other: min ) < 0 ) {
                 return min;
             }
-            if ( @this.CompareTo( max ) > 0 ) {
+
+            if ( @this.CompareTo( other: max ) > 0 ) {
                 return max;
             }
+
             return @this;
         }
 
@@ -243,7 +260,7 @@ namespace Librainian.Maths {
         /// <param name="low"></param>
         /// <param name="high"></param>
         /// <returns></returns>
-        public static UInt16 CombineBytes( this Byte low, Byte high ) => BitConverter.ToUInt16( BitConverter.IsLittleEndian ? new[] { high, low } : new[] { low, high }, 0 );
+        public static UInt16 CombineBytes( this Byte low, Byte high ) => BitConverter.ToUInt16( value: BitConverter.IsLittleEndian ? new[] { high, low } : new[] { low, high }, startIndex: 0 );
 
         /// <summary>
         ///     Combine two bytes into one <see cref="UInt16" /> with little endianess.
@@ -264,16 +281,16 @@ namespace Librainian.Maths {
         public static UInt16 CombineTwoBytesLittleEndianess( this Byte low, Byte high ) => ( UInt16 )( low + ( high << 8 ) );
 
         public static Byte[] Concat( this Byte[] first, Byte[] second ) {
-            var buffer = new Byte[ first.Length + second.Length ];
-            Buffer.BlockCopy( first, 0, buffer, 0, first.Length );
-            Buffer.BlockCopy( second, 0, buffer, first.Length, second.Length );
+            var buffer = new Byte[first.Length + second.Length];
+            Buffer.BlockCopy( src: first, srcOffset: 0, dst: buffer, dstOffset: 0, count: first.Length );
+            Buffer.BlockCopy( src: second, srcOffset: 0, dst: buffer, dstOffset: first.Length, count: second.Length );
             return buffer;
         }
 
         public static Byte[] Concat( this Byte[] first, Byte second ) {
-            var buffer = new Byte[ first.Length + 1 ];
-            Buffer.BlockCopy( first, 0, buffer, 0, first.Length );
-            buffer[ buffer.Length - 1 ] = second;
+            var buffer = new Byte[first.Length + 1];
+            Buffer.BlockCopy( src: first, srcOffset: 0, dst: buffer, dstOffset: 0, count: first.Length );
+            buffer[buffer.Length - 1] = second;
             return buffer;
         }
 
@@ -293,28 +310,29 @@ namespace Librainian.Maths {
         /// <returns></returns>
         /// <seealso cref="http://github.com/mkadlec/ConvertBigIntToBcd/blob/master/ConvertBigIntToBcd.cs" />
         public static Byte[] ConvertBigIntToBcd( this Int64 numberToConvert, Int32 howManyBytes ) {
-            var convertedNumber = new Byte[ howManyBytes ];
+            var convertedNumber = new Byte[howManyBytes];
             var strNumber = numberToConvert.ToString();
             var currentNumber = String.Empty;
 
             for ( var i = 0; i < howManyBytes; i++ ) {
-                convertedNumber[ i ] = 0xff;
+                convertedNumber[i] = 0xff;
             }
 
             for ( var i = 0; i < strNumber.Length; i++ ) {
-                currentNumber += strNumber[ i ];
+                currentNumber += strNumber[index: i];
 
-                if ( ( i == strNumber.Length - 1 ) && ( i % 2 == 0 ) ) {
-                    convertedNumber[ i / 2 ] = 0xf;
-                    convertedNumber[ i / 2 ] |= ( Byte )( ( Int32.Parse( currentNumber ) % 10 ) << 4 );
+                if ( i == strNumber.Length - 1 && i % 2 == 0 ) {
+                    convertedNumber[i / 2] = 0xf;
+                    convertedNumber[i / 2] |= ( Byte )( ( Int32.Parse( s: currentNumber ) % 10 ) << 4 );
                 }
 
                 if ( i % 2 == 0 ) {
                     continue;
                 }
-                var value = Int32.Parse( currentNumber );
-                convertedNumber[ ( i - 1 ) / 2 ] = ( Byte )( value % 10 );
-                convertedNumber[ ( i - 1 ) / 2 ] |= ( Byte )( ( value / 10 ) << 4 );
+
+                var value = Int32.Parse( s: currentNumber );
+                convertedNumber[( i - 1 ) / 2] = ( Byte )( value % 10 );
+                convertedNumber[( i - 1 ) / 2] |= ( Byte )( ( value / 10 ) << 4 );
                 currentNumber = String.Empty;
             }
 
@@ -433,9 +451,9 @@ namespace Librainian.Maths {
             return i;
         }
 
-        public static Double Crop( this Double x ) => Math.Truncate( x * 100.0D ) / 100.0D;
+        public static Double Crop( this Double x ) => Math.Truncate( d: x * 100.0D ) / 100.0D;
 
-        public static Single Crop( this Single x ) => ( Single )( Math.Truncate( x * 100.0f ) / 100.0f );
+        public static Single Crop( this Single x ) => ( Single )( Math.Truncate( d: x * 100.0f ) / 100.0f );
 
         public static Single Cubed( this Single number ) => number * number * number;
 
@@ -444,30 +462,30 @@ namespace Librainian.Maths {
         public static Decimal Cubed( this Decimal number ) => number * number * number;
 
         public static String Decimal2Packed( this Decimal d ) {
-            var output = new Boolean[ 10 ];
-            var input = new Boolean[ 12 ];
+            var output = new Boolean[10];
+            var input = new Boolean[12];
 
             for ( var i = 0; i < 3; i++ ) {
-                var a = ( Int32 )( ( Int32 )d / Math.Pow( 10, i ) ) % 10;
+                var a = ( Int32 )( ( Int32 )d / Math.Pow( x: 10, y: i ) ) % 10;
                 for ( var j = 0; j < 4; j++ ) {
-                    input[ j + i * 4 ] = ( a & ( 1 << j ) ) != 0;
+                    input[j + i * 4] = ( a & ( 1 << j ) ) != 0;
                 }
             }
 
-            output[ 0 ] = input[ 0 ];
-            output[ 1 ] = input[ 7 ] | ( input[ 11 ] & input[ 3 ] ) | ( !input[ 11 ] & input[ 1 ] );
-            output[ 2 ] = input[ 11 ] | ( input[ 7 ] & input[ 3 ] ) | ( !input[ 7 ] & input[ 2 ] );
-            output[ 3 ] = input[ 11 ] | input[ 7 ] | input[ 3 ];
-            output[ 4 ] = input[ 4 ];
-            output[ 5 ] = input[ 5 ] | ( !input[ 11 ] & input[ 7 ] & input[ 1 ] ) | ( input[ 11 ] & input[ 3 ] );
-            output[ 6 ] = ( input[ 6 ] & ( !input[ 11 ] | !input[ 3 ] ) ) | ( !input[ 11 ] & input[ 7 ] & input[ 2 ] ) | ( input[ 7 ] & input[ 3 ] );
-            output[ 7 ] = input[ 8 ];
-            output[ 8 ] = input[ 9 ] | ( input[ 11 ] & input[ 1 ] ) | ( input[ 11 ] & input[ 5 ] & input[ 3 ] );
-            output[ 9 ] = input[ 10 ] | ( input[ 11 ] & input[ 2 ] ) | ( input[ 11 ] & input[ 6 ] & input[ 3 ] );
+            output[0] = input[0];
+            output[1] = input[7] | ( input[11] & input[3] ) | ( !input[11] & input[1] );
+            output[2] = input[11] | ( input[7] & input[3] ) | ( !input[7] & input[2] );
+            output[3] = input[11] | input[7] | input[3];
+            output[4] = input[4];
+            output[5] = input[5] | ( !input[11] & input[7] & input[1] ) | ( input[11] & input[3] );
+            output[6] = ( input[6] & ( !input[11] | !input[3] ) ) | ( !input[11] & input[7] & input[2] ) | ( input[7] & input[3] );
+            output[7] = input[8];
+            output[8] = input[9] | ( input[11] & input[1] ) | ( input[11] & input[5] & input[3] );
+            output[9] = input[10] | ( input[11] & input[2] ) | ( input[11] & input[6] & input[3] );
 
             var sb = new StringBuilder();
             for ( var i = 9; i >= 0; i-- ) {
-                sb.Append( output[ i ] ? '1' : '0' );
+                sb.Append( value: output[i] ? '1' : '0' );
             }
 
             return sb.ToString();
@@ -483,7 +501,6 @@ namespace Librainian.Maths {
         public static Decimal Epsilon( this Decimal number ) => MathConstants.EpsilonDecimal;
 
         public static Double Erf( this Double x ) {
-
             // constants
             const Double a1 = 0.254829592;
             const Double a2 = -0.284496736;
@@ -494,11 +511,11 @@ namespace Librainian.Maths {
 
             // Save the sign of x
             var sign = x < 0 ? -1 : 1;
-            x = Math.Abs( x );
+            x = Math.Abs( value: x );
 
             // A&S formula 7.1.26
             var t = 1.0 / ( 1.0 + p * x );
-            var y = 1.0 - ( ( ( ( a5 * t + a4 ) * t + a3 ) * t + a2 ) * t + a1 ) * t * Math.Exp( -x * x );
+            var y = 1.0 - ( ( ( ( a5 * t + a4 ) * t + a3 ) * t + a2 ) * t + a1 ) * t * Math.Exp( d: -x * x );
 
             return sign * y;
         }
@@ -523,9 +540,7 @@ namespace Librainian.Maths {
             }
         }
 
-        public static UInt32 FibonacciSequence( this UInt32 n ) {
-            return FibonacciLookup[ n ];
-        }
+        public static UInt32 FibonacciSequence( this UInt32 n ) => FibonacciLookup[n];
 
         [DebuggerStepThrough]
         [Pure]
@@ -541,9 +556,7 @@ namespace Librainian.Maths {
             return result < 1.0 ? 1 : ( Int32 )result;
         }
 
-        public static Double ForceBounds( this Double thisDouble, Double minLimit, Double maxLimit ) {
-            return Math.Max( Math.Min( thisDouble, maxLimit ), minLimit );
-        }
+        public static Double ForceBounds( this Double thisDouble, Double minLimit, Double maxLimit ) => Math.Max( val1: Math.Min( val1: thisDouble, val2: maxLimit ), val2: minLimit );
 
         [DebuggerStepThrough]
         [Pure]
@@ -576,6 +589,7 @@ namespace Librainian.Maths {
                 if ( y == 0 ) {
                     return x;
                 }
+
                 var x1 = x;
                 x = y;
                 y = x1 % y;
@@ -594,6 +608,7 @@ namespace Librainian.Maths {
                 if ( y == 0 ) {
                     return x;
                 }
+
                 var x1 = x;
                 x = y;
                 y = x1 % y;
@@ -638,7 +653,7 @@ namespace Librainian.Maths {
         ///     Greatest Common Divisor for int
         /// </summary>
         /// <remarks>
-        ///     More like the ancient greek Euclid originally devised it Uses a while loop with subtraction.
+        ///     More like the ancient greek Euclid originally devised. It uses a while loop with subtraction.
         /// </remarks>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -652,6 +667,7 @@ namespace Librainian.Maths {
                     y = y - x;
                 }
             }
+
             return x;
         }
 
@@ -659,7 +675,7 @@ namespace Librainian.Maths {
         ///     Greatest Common Divisor for long
         /// </summary>
         /// <remarks>
-        ///     More like the ancient greek Euclid originally devised it Uses a while loop with subtraction.
+        ///     More like the ancient greek Euclid originally devised. It uses a while loop with subtraction.
         /// </remarks>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -673,6 +689,7 @@ namespace Librainian.Maths {
                     y = y - x;
                 }
             }
+
             return x;
         }
 
@@ -690,13 +707,12 @@ namespace Librainian.Maths {
 
         [DebuggerStepThrough]
         [Pure]
-        public static TimeSpan Half( this TimeSpan timeSpan ) => TimeSpan.FromTicks( timeSpan.Ticks.Half() );
+        public static TimeSpan Half( this TimeSpan timeSpan ) => TimeSpan.FromTicks( value: timeSpan.Ticks.Half() );
 
         [DebuggerStepThrough]
         [Pure]
         public static Int32 Half( this Int32 number ) => ( Int32 )( number / 2.0f );
 
-        //BUG is this correct? or do we need todo TotalMilliseconds?
         [DebuggerStepThrough]
         [Pure]
         public static Int16 Half( this Int16 number ) => ( Int16 )( number / 2.0f );
@@ -772,9 +788,10 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         public static BigRational IfLessThanZeroThenZero( this BigRational? number ) {
-            if ( !number.HasValue || ( number <= BigRational.Zero ) ) {
+            if ( !number.HasValue || number <= BigRational.Zero ) {
                 return BigRational.Zero;
             }
+
             return number.Value;
         }
 
@@ -793,19 +810,21 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         public static Boolean IsNumber( this Single value ) {
-            if ( Single.IsNaN( value ) ) {
+            if ( Single.IsNaN( f: value ) ) {
                 return false;
             }
-            return !Single.IsInfinity( value );
+
+            return !Single.IsInfinity( f: value );
         }
 
         [DebuggerStepThrough]
         [Pure]
         public static Boolean IsNumber( this Double value ) {
-            if ( Double.IsNaN( value ) ) {
+            if ( Double.IsNaN( d: value ) ) {
                 return false;
             }
-            return !Double.IsInfinity( value );
+
+            return !Double.IsInfinity( d: value );
         }
 
         [DebuggerStepThrough]
@@ -870,11 +889,13 @@ namespace Librainian.Maths {
             if ( n < 0 ) {
                 throw new ArgumentOutOfRangeException();
             }
+
             if ( n <= 254 ) {
-                return MathConstants.Logfactorialtable[ n ];
+                return MathConstants.Logfactorialtable[n];
             }
+
             var x = n + 1d;
-            return ( x - 0.5 ) * Math.Log( x ) - x + 0.5 * Math.Log( 2 * Math.PI ) + 1.0 / ( 12.0 * x );
+            return ( x - 0.5 ) * Math.Log( d: x ) - x + 0.5 * Math.Log( d: 2 * Math.PI ) + 1.0 / ( 12.0 * x );
         }
 
         /// <summary>
@@ -886,39 +907,38 @@ namespace Librainian.Maths {
         [Pure]
         public static Double LogOnePlusX( this Double x ) {
             if ( x <= -1.0 ) {
-                throw new ArgumentOutOfRangeException( nameof( x ), $"Invalid input argument: {x}" );
+                throw new ArgumentOutOfRangeException( paramName: nameof( x ), message: $"Invalid input argument: {x}" );
             }
 
-            if ( Math.Abs( x ) > 1e-4 ) {
-
+            if ( Math.Abs( value: x ) > 1e-4 ) {
                 // x is large enough that the obvious evaluation is OK
-                return Math.Log( 1.0 + x );
+                return Math.Log( d: 1.0 + x );
             }
 
-            // Use Taylor approx. log(1 + x) = x - x^2/2 with error roughly x^3/3 Since |x| < 10^-4,
+            // Use Taylor approx. log(1 + x) = x - x^2/2 with error roughly x^3/3 since |x| < 10^-4,
             // |x|^3 < 10^-12, relative error less than 10^-8
             return ( -0.5 * x + 1.0 ) * x;
         }
 
         [DebuggerStepThrough]
         [Pure]
-        public static Boolean Near( this Double number, Double target ) => Math.Abs( number - target ) <= Double.Epsilon;
+        public static Boolean Near( this Double number, Double target ) => Math.Abs( value: number - target ) <= Double.Epsilon;
 
         [DebuggerStepThrough]
         [Pure]
-        public static Boolean Near( this Single number, Single target ) => Math.Abs( number - target ) <= Single.Epsilon;
+        public static Boolean Near( this Single number, Single target ) => Math.Abs( value: number - target ) <= Single.Epsilon;
 
         [DebuggerStepThrough]
         [Pure]
-        public static Boolean Near( this Point here, Point there ) => here.X.Near( there.X ) && here.Y.Near( there.Y );
+        public static Boolean Near( this Point here, Point there ) => here.X.Near( target: there.X ) && here.Y.Near( target: there.Y );
 
         [DebuggerStepThrough]
         [Pure]
-        public static Boolean Near( this Point3D here, Point3D there ) => here.X.Near( there.X ) && here.Y.Near( there.Y ) && here.Z.Near( there.Z );
+        public static Boolean Near( this Point3D here, Point3D there ) => here.X.Near( target: there.X ) && here.Y.Near( target: there.Y ) && here.Z.Near( target: there.Z );
 
         [DebuggerStepThrough]
         [Pure]
-        public static Boolean Near( this Decimal number, Decimal target ) => Math.Abs( number - target ) <= MathConstants.EpsilonDecimal;
+        public static Boolean Near( this Decimal number, Decimal target ) => Math.Abs( value: number - target ) <= MathConstants.EpsilonDecimal;
 
         [DebuggerStepThrough]
         [Pure]
@@ -927,6 +947,7 @@ namespace Librainian.Maths {
             if ( difference < BigRational.Zero ) {
                 difference = -difference;
             }
+
             return difference <= MathConstants.EpsilonDecimal;
         }
 
@@ -954,16 +975,16 @@ namespace Librainian.Maths {
 
         [DebuggerStepThrough]
         [Pure]
-        public static Double Nested( this Double x ) => Math.Sqrt( x * 100.0 ) / 100.0d;
+        public static Double Nested( this Double x ) => Math.Sqrt( d: x * 100.0 ) / 100.0d;
 
         [DebuggerStepThrough]
         [Pure]
-        public static Single Nested( this Single x ) => ( Single )( Math.Sqrt( x * 100.0 ) / 100.0f );
+        public static Single Nested( this Single x ) => ( Single )( Math.Sqrt( d: x * 100.0 ) / 100.0f );
 
         [Obsolete]
         [DebuggerStepThrough]
         [Pure]
-        public static Int32 Nested( this Int32 x ) => ( Int32 )Math.Sqrt( x );
+        public static Int32 Nested( this Int32 x ) => ( Int32 )Math.Sqrt( d: x );
 
         /// <summary>
         ///     Remove all the trailing zeros from the decimal
@@ -972,9 +993,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [DebuggerStepThrough]
         [Pure]
-        public static Decimal Normalize( this Decimal value ) {
-            return value / 1.000000000000000000000000000000000m;
-        }
+        public static Decimal Normalize( this Decimal value ) => value / 1.000000000000000000000000000000000m;
 
         /// <summary>
         /// </summary>
@@ -988,12 +1007,14 @@ namespace Librainian.Maths {
             if ( n == 1 ) {
                 return baseValue;
             }
+
             Decimal deltaX;
             var x = 0.1M;
             do {
-                deltaX = ( baseValue / x.Pow( n - 1 ) - x ) / n;
+                deltaX = ( baseValue / x.Pow( n: n - 1 ) - x ) / n;
                 x += deltaX;
-            } while ( Math.Abs( deltaX ) > 0 );
+            } while ( Math.Abs( value: deltaX ) > 0 );
+
             return x;
         }
 
@@ -1029,6 +1050,7 @@ namespace Librainian.Maths {
             for ( i = 0; value != 0; value >>= 1 ) {
                 i += value & 1;
             }
+
             return i % 2 == 1;
         }
 
@@ -1044,6 +1066,7 @@ namespace Librainian.Maths {
             for ( i = 0; value != 0; value >>= 1 ) {
                 i += value & 1;
             }
+
             return i % 2 == 1;
         }
 
@@ -1059,6 +1082,7 @@ namespace Librainian.Maths {
             for ( i = 0; value != 0; value >>= 1 ) {
                 i += value & 1;
             }
+
             return i % 2 == 1;
         }
 
@@ -1074,6 +1098,7 @@ namespace Librainian.Maths {
             for ( i = 0; value != 0; value >>= 1 ) {
                 i += value & 1;
             }
+
             return i % 2 == 1;
         }
 
@@ -1089,6 +1114,7 @@ namespace Librainian.Maths {
             for ( i = 0; value != 0; value >>= 1 ) {
                 i += value & 1;
             }
+
             return i % 2 == 1;
         }
 
@@ -1104,6 +1130,7 @@ namespace Librainian.Maths {
             for ( i = 0; value != 0; value >>= 1 ) {
                 i += value & 1;
             }
+
             return i % 2 == 1;
         }
 
@@ -1119,6 +1146,7 @@ namespace Librainian.Maths {
             for ( i = 0; value != 0; value >>= 1 ) {
                 i += value & 1;
             }
+
             return i % 2 == 1;
         }
 
@@ -1134,7 +1162,6 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         public static Double Phi( this Double x ) {
-
             // constants
             const Double a1 = 0.254829592;
             const Double a2 = -0.284496736;
@@ -1145,11 +1172,11 @@ namespace Librainian.Maths {
 
             // Save the sign of x
             var sign = x < 0 ? -1 : 1;
-            x = Math.Abs( x ) / Math.Sqrt( 2.0 );
+            x = Math.Abs( value: x ) / Math.Sqrt( d: 2.0 );
 
             // A&S formula 7.1.26
             var t = 1.0 / ( 1.0 + p * x );
-            var y = 1.0 - ( ( ( ( a5 * t + a4 ) * t + a3 ) * t + a2 ) * t + a1 ) * t * Math.Exp( -x * x );
+            var y = 1.0 - ( ( ( ( a5 * t + a4 ) * t + a3 ) * t + a2 ) * t + a1 ) * t * Math.Exp( d: -x * x );
 
             return 0.5 * ( 1.0 + sign * y );
         }
@@ -1160,6 +1187,7 @@ namespace Librainian.Maths {
             for ( var i = 0; i < n - 1; i++ ) {
                 baseValue *= baseValue;
             }
+
             return baseValue;
         }
 
@@ -1174,14 +1202,15 @@ namespace Librainian.Maths {
         [Pure]
         public static Decimal Pow( this Decimal x, UInt32 n ) {
             var a = 1m;
-            var e = new BitArray( BitConverter.GetBytes( n ) );
+            var e = new BitArray( bytes: BitConverter.GetBytes( value: n ) );
 
             for ( var i = e.Count - 1; i >= 0; --i ) {
                 a *= a;
-                if ( e[ i ] ) {
+                if ( e[index: i] ) {
                     a *= x;
                 }
             }
+
             return a;
         }
 
@@ -1192,15 +1221,17 @@ namespace Librainian.Maths {
             while ( candidate <= max ) {
                 var candidate1 = candidate;
                 var candidate2 = candidate;
-                if ( found.TakeWhile( prime => prime * prime <= candidate1 )
-                          .All( prime => candidate2 % prime != 0 ) ) {
-                    found.Add( candidate );
+                if ( found.TakeWhile( prime => prime * prime <= candidate1 ).All( prime => candidate2 % prime != 0 ) ) {
+                    found.Add( item: candidate );
                     yield return candidate;
                 }
+
                 candidate += 2;
             }
         }
 
+        [DebuggerStepThrough]
+        [Pure]
         public static Decimal Quarter( this Decimal number ) => number / 4.0m;
 
         /// <summary>
@@ -1208,41 +1239,24 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
+        [DebuggerStepThrough]
+        [Pure]
         public static Byte ReverseBits( this Byte source ) => ( Byte )( ( ( ( ( source * 0x0802 ) & 0x22110 ) | ( ( source * 0x8020 ) & 0x88440 ) ) * 0x10101 ) >> 16 );
 
-        //    return reverser.Decimal;
-        //}
         /// <summary>
         ///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
         /// </summary>
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
-        public static Int32 ReverseBits( this Int32 source ) => ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) | ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) | BitReverseTable256[ ( source >> 24 ) & 0xff ];
+        public static Int32 ReverseBits( this Int32 source ) => ( BitReverseTable256[source & 0xff] << 24 ) | ( BitReverseTable256[( source >> 8 ) & 0xff] << 16 ) | ( BitReverseTable256[( source >> 16 ) & 0xff] << 8 ) | BitReverseTable256[( source >> 24 ) & 0xff];
 
-        //    reverser.Bytes.A = copy.P;
-        //    reverser.Bytes.B = copy.O;
-        //    reverser.Bytes.C = copy.N;
-        //    reverser.Bytes.D = copy.M;
-        //    reverser.Bytes.E = copy.L;
-        //    reverser.Bytes.F = copy.K;
-        //    reverser.Bytes.G = copy.J;
-        //    reverser.Bytes.H = copy.I;
-        //    reverser.Bytes.I = copy.H;
-        //    reverser.Bytes.J = copy.G;
-        //    reverser.Bytes.K = copy.F;
-        //    reverser.Bytes.L = copy.E;
-        //    reverser.Bytes.M = copy.D;
-        //    reverser.Bytes.N = copy.C;
-        //    reverser.Bytes.O = copy.B;
-        //    reverser.Bytes.P = copy.A;
         /// <summary>
         ///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
         /// </summary>
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
-        public static UInt32 ReverseBits( this UInt32 source ) => ( UInt32 )( ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) | ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) | BitReverseTable256[ ( source >> 24 ) & 0xff ] );
+        public static UInt32 ReverseBits( this UInt32 source ) => ( UInt32 )( ( BitReverseTable256[source & 0xff] << 24 ) | ( BitReverseTable256[( source >> 8 ) & 0xff] << 16 ) | ( BitReverseTable256[( source >> 16 ) & 0xff] << 8 ) | BitReverseTable256[( source >> 24 ) & 0xff] );
 
-        //    var copy = reverser.Bytes;
         /// <summary>
         ///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
         /// </summary>
@@ -1255,9 +1269,6 @@ namespace Librainian.Maths {
             return ( UInt16 )( ( source >> 8 ) | ( source << 8 ) );
         }
 
-        //    DecimalReverser reverser;
-        //    reverser.Bytes = new SixteenBytes();
-        //    reverser.Decimal = original;
         /// <summary>
         ///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
         /// </summary>
@@ -1270,31 +1281,22 @@ namespace Librainian.Maths {
             return ( Int16 )( ( source >> 8 ) | ( source << 8 ) );
         }
 
-        //    var bob = Decimal.GetBits( original );
-        //    BitArray jane = new BitArray( bob );
-        public static Double Root( this Double x, Double root ) => Math.Pow( x, 1.0 / root );
+        public static Double Root( this Double x, Double root ) => Math.Pow( x: x, y: 1.0 / root );
 
-        ///// <summary>
-        ///// Reverse the <see cref="Byte" /> order in a decimal and return the new number.
-        ///// </summary>
-        ///// <param name="original"></param>
-        ///// <returns></returns>
-        ///// Update: this is so wrong. Units test ftw!
-        //public static Decimal Reverse( this Decimal original ) {
-        public static Double Root( this Decimal x, Decimal root ) => Math.Pow( ( Double )x, ( Double )( 1.0m / root ) );
+        public static Double Root( this Decimal x, Decimal root ) => Math.Pow( x: ( Double )x, y: ( Double )( 1.0m / root ) );
 
         /// <summary>
         ///     Truncate, don't round. Just chop it off.
         /// </summary>
         /// <param name="number"></param>
         /// <param name="decimalPlaces"></param>
-        /// <returns></returns>
+        /// <returns>Bitcoin ftw!</returns>
         public static Decimal Sanitize( this Decimal number, UInt16 decimalPlaces = 8 ) {
-            number *= ( Decimal )Math.Pow( 10, decimalPlaces );
+            number *= ( Decimal )Math.Pow( x: 10, y: decimalPlaces );
 
             number = ( UInt64 )number; //Truncate, don't round. Just chop it off.
 
-            number *= ( Decimal )Math.Pow( 10, -decimalPlaces );
+            number *= ( Decimal )Math.Pow( x: 10, y: -decimalPlaces );
 
             return number;
         }
@@ -1304,7 +1306,9 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Double Sigmoid0To1( this Double value ) => 1.0D / ( 1.0D + Math.Exp( -value ) );
+        [DebuggerStepThrough]
+        [Pure]
+        public static Double Sigmoid0To1( this Double value ) => 1.0D / ( 1.0D + Math.Exp( d: -value ) );
 
         /// <summary>
         ///     Smooths a value to between -1 and 1.
@@ -1312,16 +1316,19 @@ namespace Librainian.Maths {
         /// <param name="value"></param>
         /// <returns></returns>
         /// <seealso cref="http://www.wolframalpha.com/input/?i=1+-+%28+2+%2F+%281+%2B+Exp%28+v+%29+%29+%29%2C+v+from+-10+to+10" />
-        public static Double SigmoidNeg1To1( this Double value ) => 1.0D - 2.0D / ( 1.0D + Math.Exp( value ) );
+        [DebuggerStepThrough]
+        [Pure]
+        public static Double SigmoidNeg1To1( this Double value ) => 1.0D - 2.0D / ( 1.0D + Math.Exp( d: value ) );
 
         public static Double Slope( [NotNull] this List<TimeProgression> data ) {
             if ( data == null ) {
-                throw new ArgumentNullException( nameof( data ) );
+                throw new ArgumentNullException( paramName: nameof( data ) );
             }
+
             var averageX = data.Average( d => d.MillisecondsPassed );
             var averageY = data.Average( d => d.Progress );
 
-            return data.Sum( d => ( d.MillisecondsPassed - averageX ) * ( d.Progress - averageY ) ) / data.Sum( d => Math.Pow( d.MillisecondsPassed - averageX, 2 ) );
+            return data.Sum( d => ( d.MillisecondsPassed - averageX ) * ( d.Progress - averageY ) ) / data.Sum( d => Math.Pow( x: d.MillisecondsPassed - averageX, y: 2 ) );
         }
 
         /// <summary>
@@ -1330,9 +1337,8 @@ namespace Librainian.Maths {
         /// <param name="value"></param>
         /// <returns></returns>
         public static Tuple<Decimal, Decimal> Split( this Decimal value ) {
-            var parts = value.ToString( "R" )
-                             .Split( '.' );
-            var result = new Tuple<Decimal, Decimal>( Decimal.Parse( parts[ 0 ] ), Decimal.Parse( "0." + parts[ 1 ] ) );
+            var parts = value.ToString( "R" ).Split( '.' );
+            var result = new Tuple<Decimal, Decimal>( item1: Decimal.Parse( s: parts[0] ), item2: Decimal.Parse( s: "0." + parts[1] ) );
             return result;
         }
 
@@ -1342,9 +1348,8 @@ namespace Librainian.Maths {
         /// <param name="value"></param>
         /// <returns></returns>
         public static Tuple<Double, Double> Split( this Double value ) {
-            var parts = value.ToString( "R" )
-                             .Split( '.' );
-            return new Tuple<Double, Double>( Double.Parse( parts[ 0 ] ), Double.Parse( "0." + parts[ 1 ] ) );
+            var parts = value.ToString( "R" ).Split( '.' );
+            return new Tuple<Double, Double>( item1: Double.Parse( s: parts[0] ), item2: Double.Parse( s: "0." + parts[1] ) );
         }
 
         /// <summary>
@@ -1359,38 +1364,36 @@ namespace Librainian.Maths {
             low = ( UInt32 )( value & UInt32.MaxValue );
         }
 
+        [DebuggerStepThrough]
+        [Pure]
         public static Single Squared( this Single number ) => number * number;
 
+        [DebuggerStepThrough]
+        [Pure]
         public static Double Squared( this Double number ) => number * number;
 
+        [DebuggerStepThrough]
+        [Pure]
         public static Decimal Squared( this Decimal number ) => number * number;
 
         public static Double SquareRootOfProducts( this IEnumerable<Double> data ) {
-            var sorted = new List<Double>( data.Where( d => Math.Abs( d ) >= Double.Epsilon )
-                                                 .OrderBy( d => d ) );
+            var sorted = new List<Double>( collection: data.Where( d => Math.Abs( value: d ) >= Double.Epsilon ).OrderBy( d => d ) );
 
             var aggregate = BigRational.One;
 
             while ( sorted.Any() ) {
-                Double smallest;
-                sorted.TakeFirst( out smallest );
-                smallest.Should()
-                        .NotBe( Double.NaN );
-                smallest.Should()
-                        .NotBe( Double.NegativeInfinity );
-                smallest.Should()
-                        .NotBe( Double.PositiveInfinity );
+                sorted.TakeFirst( item: out var smallest );
+                smallest.Should().NotBe( unexpected: Double.NaN );
+                smallest.Should().NotBe( unexpected: Double.NegativeInfinity );
+                smallest.Should().NotBe( unexpected: Double.PositiveInfinity );
 
-                Double largest;
-                if ( !sorted.TakeLast( out largest ) ) {
+                if ( !sorted.TakeLast( item: out var largest ) ) {
                     largest = 1;
                 }
-                largest.Should()
-                       .NotBe( Double.NaN );
-                largest.Should()
-                       .NotBe( Double.NegativeInfinity );
-                largest.Should()
-                       .NotBe( Double.PositiveInfinity );
+
+                largest.Should().NotBe( unexpected: Double.NaN );
+                largest.Should().NotBe( unexpected: Double.NegativeInfinity );
+                largest.Should().NotBe( unexpected: Double.PositiveInfinity );
 
                 aggregate = aggregate * smallest;
                 aggregate = aggregate * largest;
@@ -1401,12 +1404,12 @@ namespace Librainian.Maths {
             }
 
             //foreach ( Double d in data ) {aggregate = aggregate * d;}
-            return Math.Sqrt( ( Double )aggregate );
+            return Math.Sqrt( d: ( Double )aggregate );
         }
 
         public static Decimal SquareRootOfProducts( this IEnumerable<Decimal> data ) {
-            var aggregate = data.Aggregate( 1.0m, ( current, d ) => current * d );
-            return ( Decimal )Math.Sqrt( ( Double )aggregate );
+            var aggregate = data.Aggregate( seed: 1.0m, func: ( current, d ) => current * d );
+            return ( Decimal )Math.Sqrt( d: ( Double )aggregate );
         }
 
         /// <summary>
@@ -1431,10 +1434,11 @@ namespace Librainian.Maths {
         /// <param name="left"></param>
         /// <param name="right"></param>
         public static UInt64 SubtractWithoutUnderFlow( this UInt64 left, UInt64 right ) {
-            var integer = new UBigInteger( left ) - new UBigInteger( right );
-            if ( integer < new UBigInteger( UInt64.MinValue ) ) {
+            var integer = new UBigInteger( value: left ) - new UBigInteger( value: right );
+            if ( integer < new UBigInteger( value: UInt64.MinValue ) ) {
                 return UInt64.MinValue;
             }
+
             return ( UInt64 )integer;
         }
 
@@ -1443,7 +1447,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="bigIntegers"></param>
         /// <returns></returns>
-        public static BigInteger Sum( [NotNull] this IEnumerable<BigInteger> bigIntegers ) => bigIntegers.Aggregate( BigInteger.Zero, ( current, bigInteger ) => current + bigInteger );
+        public static BigInteger Sum( [NotNull] this IEnumerable<BigInteger> bigIntegers ) => bigIntegers.Aggregate( seed: BigInteger.Zero, func: ( current, bigInteger ) => current + bigInteger );
 
         public static void Swap<T>( ref T arg1, ref T arg2 ) {
             var temp = arg1;
@@ -1463,7 +1467,7 @@ namespace Librainian.Maths {
         public static Double ThreeQuarters( this Double x ) => 3.0d * x / 4.0d;
 
         [Pure]
-        public static TimeSpan Thrice( this TimeSpan timeSpan ) => TimeSpan.FromTicks( timeSpan.Ticks.Thrice() );
+        public static TimeSpan Thrice( this TimeSpan timeSpan ) => TimeSpan.FromTicks( value: timeSpan.Ticks.Thrice() );
 
         public static Int64 Thrice( this Int64 number ) => number * 3L;
 
@@ -1520,7 +1524,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         public static IEnumerable<UInt64> To( this Int32 start, UInt64 end, UInt64 step = 1 ) {
             if ( start < 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
+                throw new ArgumentOutOfRangeException( paramName: nameof( start ), message: "'low' must be equal to or greater than zero." );
             }
 
             if ( step == 0UL ) {
@@ -1556,7 +1560,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         public static IEnumerable<Int32> To( this Int32 start, Int32 end, Int32 step = 1 ) {
             if ( start < 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
+                throw new ArgumentOutOfRangeException( paramName: nameof( start ), message: "'low' must be equal to or greater than zero." );
             }
 
             if ( step == 0 ) {
@@ -1595,8 +1599,8 @@ namespace Librainian.Maths {
                 step = 1UL;
             }
 
-            if ( @from <= end ) {
-                for ( var ul = @from; ul <= end; ul += step ) {
+            if ( from <= end ) {
+                for ( var ul = from; ul <= end; ul += step ) {
                     yield return ul;
                     if ( ul == UInt64.MaxValue ) {
                         yield break;
@@ -1604,7 +1608,7 @@ namespace Librainian.Maths {
                 }
             }
             else {
-                for ( var ul = @from; ul >= end; ul -= step ) {
+                for ( var ul = from; ul >= end; ul -= step ) {
                     yield return ul;
                     if ( ul == UInt64.MinValue ) {
                         yield break;
@@ -1625,8 +1629,8 @@ namespace Librainian.Maths {
                 step = 1L;
             }
 
-            if ( @from <= end ) {
-                for ( var ul = @from; ul <= end; ul += step ) {
+            if ( from <= end ) {
+                for ( var ul = from; ul <= end; ul += step ) {
                     yield return ul;
                     if ( ul == Int64.MaxValue ) {
                         yield break;
@@ -1634,7 +1638,7 @@ namespace Librainian.Maths {
                 }
             }
             else {
-                for ( var ul = @from; ul >= end; ul -= step ) {
+                for ( var ul = from; ul >= end; ul -= step ) {
                     yield return ul;
                     if ( ul == Int64.MinValue ) {
                         yield break;
@@ -1667,13 +1671,13 @@ namespace Librainian.Maths {
                 step = 1UL;
             }
 
-            if ( @from <= to ) {
-                for ( var ul = @from; ul <= to; ul += step ) {
+            if ( from <= to ) {
+                for ( var ul = from; ul <= to; ul += step ) {
                     yield return ul;
                 }
             }
             else {
-                for ( var ul = @from; ul >= to; ul -= step ) {
+                for ( var ul = from; ul >= to; ul -= step ) {
                     yield return ul;
                 }
             }
@@ -1691,7 +1695,7 @@ namespace Librainian.Maths {
                 step = 1UL;
             }
 
-            BigInteger reFrom = @from;
+            BigInteger reFrom = from;
 
             if ( reFrom <= to ) {
                 for ( var ul = reFrom; ul <= to; ul += step ) {
@@ -1731,17 +1735,6 @@ namespace Librainian.Maths {
             }
         }
 
-        //    if ( reFrom <= to ) {
-        //        for ( var ul = reFrom; ul <= to; ul += step ) {
-        //            yield return ul;
-        //        }
-        //    }
-        //    else {
-        //        for ( var ul = reFrom; ul >= to; ul -= step ) {
-        //            yield return ul;
-        //        }
-        //    }
-        //}
         /// <summary>
         ///     Return each <see cref="DateTime" /> between <paramref name="from" /> and
         ///     <paramref name="to" />, stepped by a <see cref="TimeSpan" /> ( <paramref name="step" />).
@@ -1756,14 +1749,14 @@ namespace Librainian.Maths {
         ///     TimeSpan.FromMinutes( 1 ) ); foreach ( var dateTime in minutes ) { Console.WriteLine(
         ///     dateTime ); }
         /// </example>
-        public static IEnumerable<DateTime> To( this DateTime @from, DateTime @to, TimeSpan? step = null ) {
+        public static IEnumerable<DateTime> To( this DateTime from, DateTime to, TimeSpan? step = null ) {
             if ( !step.HasValue ) {
                 TimeSpan diff;
-                if ( @from > to ) {
-                    diff = @from - @from;
+                if ( from > to ) {
+                    diff = from - from;
                 }
                 else {
-                    diff = to - @from;
+                    diff = to - from;
                 }
 
                 if ( diff.TotalDays > 1 ) {
@@ -1783,15 +1776,21 @@ namespace Librainian.Maths {
                 }
             }
 
-            if ( @from > to ) {
-                // ReSharper disable once PossibleInvalidOperationException
-                for ( var dateTime = @from; dateTime >= to; dateTime -= step.Value ) {
+            if ( from > to ) {
+                if ( !step.HasValue ) {
+                    yield break;
+                }
+
+                for ( var dateTime = from; dateTime >= to; dateTime -= step.Value ) {
                     yield return dateTime;
                 }
             }
             else {
-                // ReSharper disable once PossibleInvalidOperationException
-                for ( var dateTime = @from; dateTime <= to; dateTime += step.Value ) {
+                if ( !step.HasValue ) {
+                    yield break;
+                }
+
+                for ( var dateTime = from; dateTime <= to; dateTime += step.Value ) {
                     yield return dateTime;
                 }
             }
@@ -1811,18 +1810,6 @@ namespace Librainian.Maths {
             }
         }
 
-        ///// <summary>
-        /////     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
-        ///// </summary>
-        ///// <param name="start"></param>
-        ///// <param name="to"></param>
-        ///// <param name="step"></param>
-        ///// <returns></returns>
-        ///// <remarks>A !huge! number will act like an infinite loop.</remarks>
-        //public static IEnumerable< BigInteger > To( this int start, BigInteger to, UInt64 step = 1 ) {
-        //    if ( step == 0UL ) {
-        //        step = 1UL;
-        //    }
         public static IEnumerable<Decimal> To( this Decimal start, Decimal end ) {
             var count = end - start + 1;
             for ( var i = 0; i < count; i++ ) {
@@ -1830,70 +1817,24 @@ namespace Librainian.Maths {
             }
         }
 
-        public static UInt64? ToUInt64( this String text ) {
-            UInt64 result;
-            return UInt64.TryParse( text, out result ) ? ( UInt64? )result : null;
-        }
+        public static UInt64? ToUInt64( this String text ) => UInt64.TryParse( s: text, result: out var result ) ? ( UInt64? )result : null;
 
         public static String ToHex( this IEnumerable<Byte> input ) {
             if ( input == null ) {
-                throw new ArgumentNullException( nameof( input ) );
+                throw new ArgumentNullException( paramName: nameof( input ) );
             }
+
             return input.Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
         }
 
-        //    //if ( value.Exponent < 0 ) {
-        //    //	var scaleDivisor = BigInteger.Pow( 10, -value.Exponent );
-        //    //	var scaledValue = BigInteger.Multiply( value.Mantissa, scaleDivisor );
-        //    //	return scaledValue;
-        //    //}
-        //    //else {
-        //    //	var scaleDivisor = BigInteger.Pow( 10, value.Exponent );
-        //    //	var scaledValue = BigInteger.Divide( value.Mantissa, scaleDivisor );
-        //    //	return scaledValue;
-        //    //}
-        //}
-        public static String ToHex( this UInt32 value ) => BitConverter.GetBytes( value )
-                                                                       .Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
+        public static String ToHex( this UInt32 value ) => BitConverter.GetBytes( value: value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
 
-        ///// <summary>
-        ///// <para>Convert most of a <see cref="BigDecimal" /> into a <see cref="BigInteger" /></para>
-        ///// </summary>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public static BigInteger ToBigInteger( this BigDecimal value ) {
-        //    var asString = value.ToString();
-        //    var portion = asString.Split( '.' )[ 0 ];
-        //    return BigInteger.Parse( portion );
-        public static String ToHex( this UInt64 value ) => BitConverter.GetBytes( value )
-                                                                       .Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
+        public static String ToHex( this UInt64 value ) => BitConverter.GetBytes( value: value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
 
-        ///// <summary>
-        ///// Convert from <see cref="BigInteger" /> into a <see cref="clojure.lang.BigInteger" />.
-        ///// </summary>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public static clojure.lang.BigInteger ToBigInteger( this BigInteger value ) {
-        //    var result = clojure.lang.BigInteger.Parse( value.ToString() );
-        //    return result;
-        //}
-        public static String ToHexNumberString( this IEnumerable<Byte> value ) {
-            return Bits.ToString( value.Reverse()
-                                       .ToArray() )
-                       .Replace( "-", "" )
-                       .ToLower();
-        }
 
-        ///// <summary>
-        ///// Convert from <see cref="clojure.lang.BigInteger" /> into a <see cref="BigInteger" />.
-        ///// </summary>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public static BigInteger ToBigInteger( this clojure.lang.BigInteger value ) {
-        //    var result = BigInteger.Parse( value.ToString() );
-        //    return result;
-        //}
-        public static String ToHexNumberString( this UInt256 value ) => ToHexNumberString( value.ToByteArray() );
+        public static String ToHexNumberString( this IEnumerable<Byte> value ) => Bits.ToString( value: value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
+
+        public static String ToHexNumberString( this UInt256 value ) => value.ToByteArray().ToHexNumberString();
 
         /// <summary>
         ///     <see
@@ -1907,60 +1848,63 @@ namespace Librainian.Maths {
             if ( minDigits < 1 ) {
                 minDigits = 1;
             }
+
             if ( number == 0 ) {
-                return new String( '0', minDigits );
+                return new String( c: '0', count: minDigits );
             }
+
             var s = "";
-            if ( ( @base < 2 ) || ( @base > MathConstants.NumberBaseChars.Length ) ) {
+            if ( @base < 2 || @base > MathConstants.NumberBaseChars.Length ) {
                 return s;
             }
+
             var neg = false;
-            if ( ( @base == 10 ) && ( number < 0 ) ) {
+            if ( @base == 10 && number < 0 ) {
                 neg = true;
                 number = -number;
             }
+
             var n = ( UInt32 )number;
             var b = ( UInt32 )@base;
             while ( ( n > 0 ) | ( minDigits-- > 0 ) ) {
-                s = MathConstants.NumberBaseChars[ ( Int32 )( n % b ) ] + s;
+                s = MathConstants.NumberBaseChars[index: ( Int32 )( n % b )] + s;
                 n /= b;
             }
+
             if ( neg ) {
                 s = "-" + s;
             }
 
-            //return s;
             return s;
         }
 
-        ///// <summary>
-        ///// Create a BigDecimal from a String representation
-        ///// </summary>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public static BigDecimal ToBigDecimal( this String value ) {
-        //    var cha = value.ToCharArray();
-        //    clojure.lang.BigDecimal answer;
-        //    clojure.lang.BigDecimal.TryParse( cha, out answer );
-        //    var bigDecimal = clojure.lang.BigDecimal.Parse( cha, 0, value.Length );
-        //    return bigDecimal.ToBigDecimal();
-        //}
-        //[CanBeNull]
-        //public static String ToScientificString( BigDecimal value ) {
-        //    var bob = new clojure.lang.BigDecimal( value.Significand.ToBigInteger(), value.Exponent );
-        //    return bob.ToScientificString();
-        //}
+        public static UInt32 PackBitFields( UInt16[] values, Byte[] bitFields ) {
+            UInt32 retVal = values[0]; //we set the first value right away
+            for ( var f = 1; f < values.Length; f++ ) {
+                retVal <<= bitFields[f]; //we shift the previous value
+                retVal += values[f]; //and add our current value //on some processors | (pipe) will be faster here
+            }
+
+            return retVal;
+        }
+
+        public static UInt16[] GetBitFields( UInt32 packedBits, Byte[] bitFields ) {
+            var fields = bitFields.Length - 1; // number of fields to unpack
+            var retArr = new UInt16[fields + 1]; // init return array
+            var curPos = 0; // current field bit position (start)
+            for ( var f = fields; f >= 0; f-- ) // loop from last
+            {
+                var lastEnd = curPos; // position where last field ended
+                curPos += bitFields[f]; // we get where the current value starts
+                var leftShift = MaxBits - curPos; // we figure how much left shift we gotta apply for the other numbers to overflow into oblivion
+                retArr[f] = ( UInt16 )( ( packedBits << leftShift ) >> ( leftShift + lastEnd ) ); // we do magic
+            }
+
+            return retArr;
+        }
+
         public static Int64 Truncate( this Single number ) => ( Int64 )number;
 
-        ///// <summary>
-        ///// Convert from <see cref="clojure.lang.BigDecimal" /> into a <see cref="BigDecimal" />.
-        ///// </summary>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public static BigDecimal ToBigDecimal( this clojure.lang.BigDecimal value ) {
-        //    var result = new BigDecimal( significand: value.Coefficient.ToBigInteger(), exponent: value.Exponent );
-        //    return result;
-        //}
         public static Int64 Truncate( this Double number ) => ( Int64 )number;
 
         /// <summary>
@@ -1982,8 +1926,7 @@ namespace Librainian.Maths {
                 return false;
             }
 
-            var parts = numberString.Split( '/' )
-                                    .ToList();
+            var parts = numberString.Split( '/' ).ToList();
             if ( parts.Count != 2 ) {
                 return false;
             }
@@ -1993,27 +1936,23 @@ namespace Librainian.Maths {
                 return false;
             }
 
-            // ReSharper disable once PossibleNullReferenceException
             top = top.Trim();
 
             var bottom = parts.TakeLast();
-            if ( String.IsNullOrWhiteSpace( bottom ) ) {
+            if ( String.IsNullOrWhiteSpace( value: bottom ) ) {
                 return false;
             }
 
-            parts.Should()
-                 .BeEmpty();
+            parts.Should().BeEmpty();
             if ( parts.Count > 0 ) {
                 return false;
             }
 
-            BigInteger numerator;
-            BigInteger.TryParse( top, out numerator );
+            BigInteger.TryParse( value: top, result: out var numerator );
 
-            BigInteger denominator;
-            BigInteger.TryParse( bottom, out denominator );
+            BigInteger.TryParse( value: bottom, result: out var denominator );
 
-            result = new BigRational( numerator, denominator );
+            result = new BigRational( numerator: numerator, denominator: denominator );
 
             return true;
         }
@@ -2023,17 +1962,17 @@ namespace Librainian.Maths {
             if ( !theString.Contains( "." ) ) {
                 theString += ".0";
             }
+
             var split = theString.Split( '.' );
-            split.Should()
-                 .HaveCount( expected: 2, because: "otherwise invalid" );
+            split.Should().HaveCount( expected: 2, because: "otherwise invalid" );
 
             afterDecimalPoint = BigInteger.Zero;
 
-            return BigInteger.TryParse( split[ 0 ], out beforeDecimalPoint ) && BigInteger.TryParse( split[ 1 ], out afterDecimalPoint );
+            return BigInteger.TryParse( value: split[0], result: out beforeDecimalPoint ) && BigInteger.TryParse( value: split[1], result: out afterDecimalPoint );
         }
 
         [Pure]
-        public static TimeSpan Twice( this TimeSpan timeSpan ) => TimeSpan.FromTicks( timeSpan.Ticks.Twice() );
+        public static TimeSpan Twice( this TimeSpan timeSpan ) => TimeSpan.FromTicks( value: timeSpan.Ticks.Twice() );
 
         public static Single Twice( this Single x ) => x * 2.0f;
 
@@ -2043,53 +1982,20 @@ namespace Librainian.Maths {
 
         public static Int64 Twice( this Int64 number ) => number * 2L;
 
-        [StructLayout( LayoutKind.Explicit )]
-        public struct DecimalTo {
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        public static UInt64 RotateLeft( this UInt64 original, Int32 bits ) => ( original << bits ) | ( original >> ( 64 - bits ) );
 
-            [FieldOffset( 0 )]
-            public Decimal Decimal;
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        public static UInt64 RotateRight( this UInt64 original, Int32 bits ) => ( original >> bits ) | ( original << ( 64 - bits ) );
 
-            [FieldOffset( 0 )]
-            public Guid Guid;
-
-            [FieldOffset( 0 )]
-            public FourBytes Bytes;
-        }
-
-        //}
-        //    return String.Format( CultureInfo.InvariantCulture, formatString, @this ).Snip( ',' );
-
-        //    var formatString = "{0:n" + numDecimalPlaces + "}";
-        //        throw new ArgumentException( "Number of decimal places must be positive.", nameof( numDecimalPlaces ) );
-        //    if ( numDecimalPlaces < 0 )
-        //public static String ToString( this Single @this, Int32 numDecimalPlaces ) {
-        ///// <returns>A string that represents the target float.</returns>
-        ///// <param name="numDecimalPlaces">The number of decimal places to display.</param>
-        ///// <param name="this">The extended float.</param>
-        ///// </summary>
-        ///// Converts the target float in to a string with the specified number of decimal places.
-        ///// <summary>
-        /*
-                public static String Pluralize( this String value, int count ) {
-                    if ( count == 1 ) {
-                        return value;
-                    }
-                    return Pluralizer.Instance.Pluralize(
-                        .CreateService( new CultureInfo( "en-US" ) )
-                        .Pluralize( value );
-                }
-        */
-
-        /*
-                public static T Max<T>( T value, params T[] values ) where T : IComparable<T> {
-                    var max = value;
-                    foreach ( var other in values ) {
-                        if ( max.CompareTo( other ) < 0 ) {
-                            max = other;
-                        }
-                    }
-                    return max;
-                }
-        */
+        /// <summary>
+        ///     untested
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <param name="pos"></param>
+        /// <returns></returns>
+        /// <remarks>fixed ( Byte* pbyte = &amp;bb[pos] ) { return *( ( UInt64* )pbyte ); }</remarks>
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        public static UInt64 ToUInt64( this Byte[] bytes, Int32 pos ) => ( UInt64 )( bytes[pos++] | ( bytes[pos++] << 8 ) | ( bytes[pos++] << 16 ) | ( bytes[pos] << 24 ) );
     }
 }

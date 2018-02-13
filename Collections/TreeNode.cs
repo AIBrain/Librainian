@@ -37,11 +37,8 @@ namespace Librainian.Collections {
         }
 
         public TreeNode( T value, [NotNull] TreeNode<T> parent ) {
-            if ( parent == null ) {
-                throw new ArgumentNullException( nameof( parent ) );
-            }
-            this.Value = value;
-            this.Parent = parent;
+	        this.Value = value;
+            this.Parent = parent ?? throw new ArgumentNullException( nameof( parent ) );
             this.Children = new TreeNodeList<T>( this );
         }
 
@@ -58,11 +55,9 @@ namespace Librainian.Collections {
         }
 
         public TreeNode<T> Parent {
-            get {
-                return this._parent;
-            }
+            get => this._parent;
 
-            set {
+	        set {
                 if ( value == this._parent ) {
                     return;
                 }
@@ -91,11 +86,9 @@ namespace Librainian.Collections {
         }
 
         public T Value {
-            get {
-                return this._value;
-            }
+            get => this._value;
 
-            set {
+	        set {
                 this._value = value;
 
                 if ( this._value is ITreeNodeAware<T> ) {
@@ -137,8 +130,6 @@ namespace Librainian.Collections {
             this.IsDisposed = true;
         }
 
-        protected void OnDisposing() {
-            this.Disposing?.Invoke( this, EventArgs.Empty );
-        }
-    }
+		protected void OnDisposing() => this.Disposing?.Invoke( this, EventArgs.Empty );
+	}
 }

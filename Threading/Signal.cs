@@ -44,12 +44,12 @@ namespace Librainian.Threading {
 
         public Boolean IsSignaled => Interlocked.Read( ref this._signalcount ) > 0;
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() { this.Event.Dispose(); }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this.Event.Dispose();
 
-        public void Lower() {
+		public void Lower() {
             Interlocked.Add( ref this._signalcount, -1 );
             this.Event.Reset();
         }

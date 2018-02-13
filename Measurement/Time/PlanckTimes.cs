@@ -44,7 +44,7 @@ namespace Librainian.Measurement.Time {
     ///     </para>
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Planck_time" />
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public struct PlanckTimes : IComparable<PlanckTimes>, IQuantityOfTime {
 
@@ -109,11 +109,9 @@ namespace Librainian.Measurement.Time {
         public PlanckTimes( BigRational value ) : this( value.GetWholePart() ) {
         }
 
-        public PlanckTimes( BigInteger value ) {
-            this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
-        }
+        public PlanckTimes( BigInteger value ) => this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
 
-        public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes().Value ) {
+	    public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes().Value ) {
         }
 
         public PlanckTimes( Years years ) : this( years.ToPlanckTimes().Value ) {
@@ -172,10 +170,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( PlanckTimes other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is PlanckTimes && this.Equals( ( PlanckTimes )obj );
+            return obj is PlanckTimes times && this.Equals( times );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();

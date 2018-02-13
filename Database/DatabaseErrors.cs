@@ -16,7 +16,7 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/Class1.cs" was last cleaned by Rick on 2016/09/14 at 4:04 AM
+// "Librainian/MMF.cs" was last cleaned by Rick on 2016/09/14 at 4:04 AM
 namespace Librainian.Database {
 
     using System;

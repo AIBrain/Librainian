@@ -30,21 +30,18 @@ namespace Librainian.Measurement.Currency.BTC {
     public class Bitcoins : ICurrency {
 
         /// <summary>Example new <see cref="Bitcoins" />(123.4567).BTC == 123.0000</summary>
-        public readonly Decimal Btc;
+        public Decimal Btc { get; }
 
         /// <summary>
         ///     Example new <see cref="Bitcoins" />(123.45674564645634). <see cref="Satoshis" /> == 0.4567
         /// </summary>
         /// <remarks>lemOn91: "100 satoshis = 1uBTC. 1000 uBTC = 1mBTC. 1000 mBTC = 1BTC"</remarks>
         /// <remarks>The amount is in satoshis! 1 BTC = 100000000 satoshis.</remarks>
-        public readonly Decimal Satoshis;
+        public Decimal Satoshis { get; }
 
-        //public readonly Decimal Value;
-
-        public Bitcoins( Decimal satoshis ) {
-            //this.Value = value;
-            this.Btc = Math.Truncate( satoshis );
-            this.Satoshis = satoshis - this.Btc;
+        public Bitcoins( Decimal btc ) {
+            this.Btc = btc;
+            this.Satoshis = this.Btc * SimpleBitcoinWallet.SatoshiInOneBtc;
         }
     }
 }

@@ -29,14 +29,9 @@ namespace Librainian.Collections {
     public class TreeNodeList<T> : List<TreeNode<T>> {
         public readonly TreeNode<T> Parent;
 
-        public TreeNodeList( [NotNull] TreeNode<T> parent ) {
-            if ( parent == null ) {
-                throw new ArgumentNullException( nameof( parent ) );
-            }
-            this.Parent = parent;
-        }
+        public TreeNodeList( [NotNull] TreeNode<T> parent ) => this.Parent = parent ?? throw new ArgumentNullException( nameof( parent ) );
 
-        public TreeNode<T> Add( T value ) => this.Add( new TreeNode<T>( value ) );
+	    public TreeNode<T> Add( T value ) => this.Add( new TreeNode<T>( value ) );
 
         public new TreeNode<T> Add( [NotNull] TreeNode<T> node ) {
             if ( node == null ) {

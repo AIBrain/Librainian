@@ -37,104 +37,99 @@ namespace Librainian.Collections {
         [NotNull]
         private ConcurrentDictionary<Single, TValue> Dictionary { get; } = new ConcurrentDictionary<Single, TValue>( Environment.ProcessorCount, 1 );
 
-        //public PriorityTime this[ TValue key ] {
-        //    get {
-        //        PriorityTime result;
-        //        if ( !this.Dictionary.TryGetValue( key, out result ) ) {
-        //            result = new PriorityTime();
-        //        }
-        //        return result;
-        //    }
+		//public PriorityTime this[ TValue key ] {
+		//    get {
+		//        PriorityTime result;
+		//        if ( !this.Dictionary.TryGetValue( key, out result ) ) {
+		//            result = new PriorityTime();
+		//        }
+		//        return result;
+		//    }
 
-        //    set {
-        //        this.Dictionary.AddOrUpdate( key: key, addValue: value, updateValueFactory: ( s, n ) => n );
-        //    }
-        //}
+		//    set {
+		//        this.Dictionary.AddOrUpdate( key: key, addValue: value, updateValueFactory: ( s, n ) => n );
+		//    }
+		//}
 
-        ///// <summary>
-        /////     Calls the
-        /////     <see
-        /////         cref="ConcurrentDictionary{TKey,TValue}.AddOrUpdate(TKey,System.Func{TKey,TValue},System.Func{TKey,TValue,TValue})" />
-        /////     method.
-        ///// </summary>
-        ///// <param name="item"></param>
-        ///// <param name="priorityTime"></param>
-        //public void Add( TValue item, PriorityTime priorityTime ) {
-        //    this.Dictionary.AddOrUpdate( item, priorityTime, ( o, f ) => priorityTime );
-        //}
+		///// <summary>
+		/////     Calls the
+		/////     <see
+		/////         cref="ConcurrentDictionary{TKey,TValue}.AddOrUpdate(TKey,System.Func{TKey,TValue},System.Func{TKey,TValue,TValue})" />
+		/////     method.
+		///// </summary>
+		///// <param name="item"></param>
+		///// <param name="priorityTime"></param>
+		//public void Add( TValue item, PriorityTime priorityTime ) {
+		//    this.Dictionary.AddOrUpdate( item, priorityTime, ( o, f ) => priorityTime );
+		//}
 
-        /// <summary>Inject the specified priority.</summary>
-        /// <param name="item"></param>
-        /// <param name="priority"></param>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public void Add( TValue item, Single priority ) {
-            //while ( this.Dictionary.ContainsKey( priority ) ) {
-            //    priority += MathConstants.EpsilonSingle;
-            //}
-            this.Dictionary[ priority ] = item;
-        }
+		/// <summary>Inject the specified priority.</summary>
+		/// <param name="item"></param>
+		/// <param name="priority"></param>
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public void Add( TValue item, Single priority ) =>
+			//while ( this.Dictionary.ContainsKey( priority ) ) {
+			//    priority += MathConstants.EpsilonSingle;
+			//}
+			this.Dictionary[ priority ] = item;
 
-        ///// <param name="item"></param>
-        ///// <param name="positionial"></param>
-        //public void Add( TValue item, Positionial positionial ) {
+		///// <param name="item"></param>
+		///// <param name="positionial"></param>
+		//public void Add( TValue item, Positionial positionial ) {
 
-        //    if ( this.Dictionary.IsEmpty ) {
-        //        this.Add( item, Randem.NextSingle(0,1) );
-        //        this.ReNormalize();
-        //        return;
-        //    }
+		//    if ( this.Dictionary.IsEmpty ) {
+		//        this.Add( item, Randem.NextSingle(0,1) );
+		//        this.ReNormalize();
+		//        return;
+		//    }
 
-        //    Single priority;
-        //    switch ( positionial ) {
-        //        case Positionial.Highest: {
-        //                priority = this.Dictionary.Max( pair => pair.Key ) + MathConstants.EpsilonSingle;
-        //                break;
-        //            }
-        //        case Positionial.Highish: {
-        //                priority = Randem.NextSingle( this.Dictionary.Average( pair => pair.Key ), this.Dictionary.Max( pair => pair.Key ) ) + MathConstants.EpsilonSingle;
-        //                break;
-        //            }
-        //        case Positionial.Middle: {
-        //                priority = this.Dictionary.Average( pair => pair.Key ) + MathConstants.EpsilonSingle;
-        //                break;
-        //            }
-        //        case Positionial.Lowish: {
-        //                priority = Randem.NextSingle( this.Dictionary.Min( pair => pair.Key ), this.Dictionary.Average( pair => pair.Key ) ) - MathConstants.EpsilonSingle;
-        //                break;
-        //            }
-        //        case Positionial.Lowest: {
-        //                priority = this.Dictionary.Min( pair => pair.Key ) - MathConstants.EpsilonSingle;
-        //                break;
-        //            }
-        //        default:
-        //            throw new ArgumentOutOfRangeException( nameof( positionial ) );
-        //    }
+		//    Single priority;
+		//    switch ( positionial ) {
+		//        case Positionial.Highest: {
+		//                priority = this.Dictionary.Max( pair => pair.Key ) + MathConstants.EpsilonSingle;
+		//                break;
+		//            }
+		//        case Positionial.Highish: {
+		//                priority = Randem.NextSingle( this.Dictionary.Average( pair => pair.Key ), this.Dictionary.Max( pair => pair.Key ) ) + MathConstants.EpsilonSingle;
+		//                break;
+		//            }
+		//        case Positionial.Middle: {
+		//                priority = this.Dictionary.Average( pair => pair.Key ) + MathConstants.EpsilonSingle;
+		//                break;
+		//            }
+		//        case Positionial.Lowish: {
+		//                priority = Randem.NextSingle( this.Dictionary.Min( pair => pair.Key ), this.Dictionary.Average( pair => pair.Key ) ) - MathConstants.EpsilonSingle;
+		//                break;
+		//            }
+		//        case Positionial.Lowest: {
+		//                priority = this.Dictionary.Min( pair => pair.Key ) - MathConstants.EpsilonSingle;
+		//                break;
+		//            }
+		//        default:
+		//            throw new ArgumentOutOfRangeException( nameof( positionial ) );
+		//    }
 
-        //    this.Add( item, priority );
-        //    this.ReNormalize();
-        //}
+		//    this.Add( item, priority );
+		//    this.ReNormalize();
+		//}
 
-        /// <summary>
-        /// Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        /// An enumerator that can be used to iterate through the collection.
-        /// </returns>
-        IEnumerator<KeyValuePair<Single, TValue>> IEnumerable<KeyValuePair<Single, TValue>>.GetEnumerator() {
-            return this.Dictionary.GetEnumerator();
-        }
+		/// <summary>
+		/// Returns an enumerator that iterates through the collection.
+		/// </summary>
+		/// <returns>
+		/// An enumerator that can be used to iterate through the collection.
+		/// </returns>
+		IEnumerator<KeyValuePair<Single, TValue>> IEnumerable<KeyValuePair<Single, TValue>>.GetEnumerator() => this.Dictionary.GetEnumerator();
 
-        /// <summary>
+	    /// <summary>
         ///     Returns an enumerator that iterates through a collection.
         /// </summary>
         /// <returns>
         ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
         /// </returns>
-        public IEnumerator GetEnumerator() {
-            return this.Dictionary.GetEnumerator();
-        }
+        public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
 
-        //[CanBeNull]
+	    //[CanBeNull]
         //public TValue Highest() => this.Dictionary.OrderByDescending( pair => pair.Value.Priority )
         //                                       .ThenBy( pair => pair.Value.Time )
         //                                       .Select( pair => pair.Key )
@@ -183,9 +178,8 @@ namespace Librainian.Collections {
                 if ( Math.Abs( key - newPriority ) < Single.Epsilon ) {
                     continue;
                 }
-                TValue value;
-                this.Dictionary.TryRemove( key, out value );
-                this.Add( value, newPriority );
+				this.Dictionary.TryRemove( key, out var value );
+				this.Add( value, newPriority );
             }
         }
 

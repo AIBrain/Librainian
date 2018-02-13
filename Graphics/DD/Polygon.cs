@@ -27,24 +27,18 @@ namespace Librainian.Graphics.DD {
 
     public struct Polygon : IEnumerable<PointF> {
 
-        public Polygon( PointF[] points ) : this() {
-            this.Points = points;
-        }
+        public Polygon( PointF[] points ) : this() => this.Points = points;
 
-        public Int32 Length => this.Points.Length;
+	    public Int32 Length => this.Points.Length;
 
         public PointF[] Points {
             get; set;
         }
 
         public PointF this[ Int32 index ] {
-            get {
-                return this.Points[ index ];
-            }
+            get => this.Points[ index ];
 
-            set {
-                this.Points[ index ] = value;
-            }
+	        set => this.Points[ index ] = value;
         }
 
         public static implicit operator PointF[] ( Polygon polygon ) => polygon.Points;

@@ -46,7 +46,7 @@ namespace Librainian.Maths.Numbers {
     /// <seealso cref="http://stackoverflow.com/a/13813535/956364" />
     /// <seealso cref="http://gist.github.com/nberardi/2667136" />
     [Immutable]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Obsolete( "Use BigRational instead." )]
     public struct BigDecimal : IComparable, IComparable<BigDecimal>, IConvertible, /*IFormattable,*/ IEquatable<BigDecimal> {
 
@@ -94,7 +94,7 @@ namespace Librainian.Maths.Numbers {
             //TODO
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            while ( ( exponent > 0 ) && ( this.Significand % 10 == 0 ) ) {
+            while ( exponent > 0 && this.Significand % 10 == 0 ) {
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 if ( this.Significand == 0 ) {
@@ -449,7 +449,7 @@ namespace Librainian.Maths.Numbers {
         }
 
         public Int32 CompareTo( [CanBeNull] Object obj ) {
-            if ( ReferenceEquals( obj, null ) || !( obj is BigDecimal ) ) {
+            if ( obj is null || !( obj is BigDecimal ) ) {
                 throw new ArgumentException();
             }
             return this.CompareTo( ( BigDecimal )obj );
@@ -466,10 +466,10 @@ namespace Librainian.Maths.Numbers {
 
         [Pure]
         public override Boolean Equals( [CanBeNull] Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is BigDecimal && Equals( this, ( BigDecimal )obj );
+            return obj is BigDecimal @decimal && Equals( this, @decimal );
         }
 
         ///// <summary>
@@ -517,17 +517,11 @@ namespace Librainian.Maths.Numbers {
 
         Byte IConvertible.ToByte( IFormatProvider provider ) => Convert.ToByte( this );
 
-        Char IConvertible.ToChar( IFormatProvider provider ) {
-            throw new InvalidCastException( "Cannot cast BigDecimal to Char" );
-        }
+        Char IConvertible.ToChar( IFormatProvider provider ) => throw new InvalidCastException( "Cannot cast BigDecimal to Char" );
 
-        DateTime IConvertible.ToDateTime( IFormatProvider provider ) {
+	    DateTime IConvertible.ToDateTime( IFormatProvider provider ) => throw new InvalidCastException( "Cannot cast BigDecimal to DateTime" );
 
-            //TODO use a span -> plancks -> UDT (universaldatetime)
-            throw new InvalidCastException( "Cannot cast BigDecimal to DateTime" );
-        }
-
-        Decimal IConvertible.ToDecimal( IFormatProvider provider ) => Convert.ToDecimal( this );
+	    Decimal IConvertible.ToDecimal( IFormatProvider provider ) => Convert.ToDecimal( this );
 
         Double IConvertible.ToDouble( IFormatProvider provider ) => Convert.ToDouble( this );
 
@@ -556,7 +550,7 @@ namespace Librainian.Maths.Numbers {
             var rightOfDecimal = ( Decimal )remainder / ( Decimal )scaleDivisor;
 
             var value = leftOfDecimal + rightOfDecimal;
-            return Convert.ChangeType( value, conversionType );
+            return Convert.ChangeType( value, conversionType ) ?? throw new InvalidOperationException();
         }
 
         UInt16 IConvertible.ToUInt16( IFormatProvider provider ) => Convert.ToUInt16( this );

@@ -95,11 +95,13 @@ namespace Librainian.Internet {
 
         public static IEnumerable<UriLinkItem> ParseLinks( Uri baseUri, String webpage ) {
 
-            // ReSharper disable LoopCanBeConvertedToQuery
-            foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
+			// ReSharper disable LoopCanBeConvertedToQuery
+#pragma warning disable IDE0007 // Use implicit type
+			foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
+#pragma warning restore IDE0007 // Use implicit type
 
-                // ReSharper restore LoopCanBeConvertedToQuery
-                var value = match.Groups[ 1 ].Value;
+				// ReSharper restore LoopCanBeConvertedToQuery
+				var value = match.Groups[ 1 ].Value;
                 var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
 
                 var i = new UriLinkItem { Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ), Href = new Uri( baseUri: baseUri, relativeUri: m2.Success ? m2.Groups[ 1 ].Value : String.Empty ) };
@@ -162,12 +164,11 @@ namespace Librainian.Internet {
             if ( this.DownloadInProgress ) {
                 return;
             }
-            Uri address;
-            if ( !this._urls.TryDequeue( result: out address ) ) {
-                return;
-            }
+			if ( !this._urls.TryDequeue( result: out var address ) ) {
+				return;
+			}
 
-            this.DownloadInProgress = true;
+			this.DownloadInProgress = true;
             $"Surf(): Starting download: {address.AbsoluteUri}".WriteLine();
             this._webclient.DownloadStringAsync( address: address, userToken: address );
         } ).ContinueWith( t => {
@@ -176,12 +177,10 @@ namespace Librainian.Internet {
             }
         } );
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() {
-            this._downloadInProgressAccess.Dispose();
-        }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this._downloadInProgressAccess.Dispose();
 
-    }
+	}
 }

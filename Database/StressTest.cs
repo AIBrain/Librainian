@@ -21,7 +21,7 @@
 namespace Librainian.Database {
 
     using System;
-    using System.Data.SqlClient;
+    using System.Data;
     using JetBrains.Annotations;
     using Measurement.Time;
 
@@ -44,26 +44,25 @@ namespace Librainian.Database {
             return counter;
         }
 
-        /// <summary>
-        ///     How many <see cref="SqlConnection" /> can this computer open and close in one second?
-        /// </summary>
-        /// <param name="database"></param>
-        /// <param name="multithread"></param>
-        /// <returns></returns>
-        public static UInt64 PerformDatabaseCounting( [NotNull] IDatabase database, Boolean multithread = false ) {
+		/// <summary>
+		///     How high can this database count in one second?
+		/// </summary>
+		/// <param name="database"></param>
+		/// <param name="forHowLong"></param>
+		/// <param name="multithread"></param>
+		/// <returns></returns>
+		public static UInt64 PerformDatabaseCounting( [NotNull] IDatabase database, out TimeSpan forHowLong, Boolean multithread = false ) {
             if ( database == null ) {
                 throw new ArgumentNullException( nameof( database ) );
             }
             if ( multithread ) {
                 throw new NotImplementedException( "yet" );
             }
-            TimeSpan forHowLong = Seconds.One;
+            forHowLong = Seconds.One;
             var stopwatch = StopWatch.StartNew();
             var counter = 0UL;
             do {
-                if ( database.ExecuteNonQuery( $"select {counter};" ) ) {
-                    counter++;
-                }
+	            counter = database.ExecuteScalar<UInt64>( $"select {counter} + cast(1 as bigint)  as [Result];", CommandType.Text );
                 if ( stopwatch.Elapsed >= forHowLong ) {
                     break;
                 }

@@ -78,7 +78,7 @@ namespace Librainian.FileSystem {
             var currentNode = new Node( pathParts[ 0 ] );
 
             var existingNode = this.Roots.Find( node => Node.Equals( node, currentNode ) ); // look for an existing root node
-            if ( !Node.Equals( existingNode, default( Node ) ) ) {
+            if ( !Node.Equals( existingNode, default ) ) {
 
                 // use existing node
                 currentNode = existingNode;
@@ -92,7 +92,7 @@ namespace Librainian.FileSystem {
             foreach ( var pathPart in pathParts.Skip( 1 ) ) {
                 var nextNode = new Node( pathPart ) { Parent = currentNode };
                 existingNode = currentNode.SubFolders.Find( node => Node.Equals( node, nextNode ) );
-                if ( !Node.Equals( existingNode, default( Node ) ) ) {
+                if ( !Node.Equals( existingNode, default ) ) {
                     nextNode = existingNode; // already there? don't need to add it.
                 }
                 else {
@@ -135,19 +135,15 @@ namespace Librainian.FileSystem {
         /// <returns>
         ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        [JsonObject]
-        [DebuggerDisplay( "{ToString()}" )]
+	    [JsonObject]
+        [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
         public class Node : IEquatable<Node>, IComparable<Node> {
 
-            public Node( String data ) {
-                this.Data = data;
-            }
+            public Node( String data ) => this.Data = data;
 
-            [JsonProperty]
+	        [JsonProperty]
             public String Data {
                 get;
             }
@@ -178,15 +174,11 @@ namespace Librainian.FileSystem {
                 return String.Equals( lhs.Data, rhs.Data, StringComparison.Ordinal );
             }
 
-            public Int32 CompareTo( Node other ) {
-                return String.Compare( this.Data, other.Data, StringComparison.Ordinal );
-            }
+            public Int32 CompareTo( Node other ) => String.Compare( this.Data, other.Data, StringComparison.Ordinal );
 
-            public Boolean Equals( Node other ) {
-                return Equals( this, other );
-            }
+		    public Boolean Equals( Node other ) => Equals( this, other );
 
-            //public override Boolean Equals( Object obj ) {
+		    //public override Boolean Equals( Object obj ) {
             //    var bob = obj as Node;
             //    if ( null == bob ) {
             //        return false;
@@ -194,13 +186,10 @@ namespace Librainian.FileSystem {
             //    return Equals( this, bob );
             //}
 
-            public override Int32 GetHashCode() {
-                return this.Data.GetHashCode();
-            }
+            public override Int32 GetHashCode() => this.Data.GetHashCode();
 
-            public override String ToString() {
-                return this.Data;
-            }
+		    public override String ToString() => this.Data;
+
         }
     }
 }

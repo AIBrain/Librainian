@@ -1,4 +1,4 @@
-﻿// Copyright 2016 Rick@AIBrain.org.
+﻿// Copyright 2017 Rick@AIBrain.org.
 // 
 // This notice must be kept visible in the source.
 // 
@@ -16,96 +16,74 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/BetterDisposableClass.cs" was last cleaned by Rick on 2016/08/06 at 7:06 AM
+// "Librainian/ABetterClassDispose.cs" was last cleaned by Rick on 2017/12/24 at 8:30 AM
 
 namespace Librainian.Magic {
+	using System;
+	using System.Diagnostics;
 
-    using System;
+	/// <summary>
+	///     <para>A better class for implementing the <see cref="IDisposable" /> pattern.</para>
+	///     <para>Implement <see cref="DisposeManaged" /> and <see cref="DisposeNative" />.</para>
+	/// </summary>
+	/// <remarks>ABCD hehe. Written by Rick Harker</remarks>
+	public class ABetterClassDispose : IDisposable {
+		public Boolean HasDisposedManaged { get; private set; }
+		public Boolean HasDisposedNative { get; private set; }
 
-    /// <summary>
-    /// <para>A better class for implementing <see cref="IDisposable"/>.</para>
-    /// Override <see cref="DisposeNative"/> as needed.
-    /// </summary>
-    /// <remarks>ABCD hehe</remarks>
-    public abstract class ABetterClassDispose : IDisposable {
+		public void Dispose() {
+			this.Dispose( disposing: true );
+			GC.SuppressFinalize( obj: this );
+		}
 
-        protected virtual void Dispose( Boolean disposeManaged ) {
-            if ( disposeManaged ) {
-                try {
-                    this.DisposeManaged();
-                }
-                catch ( Exception exception ) {
-                    exception.More();
-                }
-            }
-            try {
-                this.DisposeNative();
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
-        }
+		protected virtual void Dispose( Boolean disposing ) {
+			if ( !disposing ) {
+				return;
+			}
 
-        public void Dispose() {
-            this.Dispose( true );
-            GC.SuppressFinalize( this );
-        }
+			if ( !this.HasDisposedManaged ) {
+				try {
+					this.DisposeManaged();
+				}
+#pragma warning disable 168
+				catch ( Exception exception ) {
+#pragma warning restore 168
+					if ( Debugger.IsAttached ) {
+						Debugger.Break();
+					}
+				}
+				finally {
+					this.HasDisposedManaged = true;
+				}
+			}
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected abstract void DisposeManaged();
+			if ( !this.HasDisposedNative ) {
+				try {
+					this.DisposeNative();
+				}
+#pragma warning disable 168
+				catch ( Exception exception ) {
+#pragma warning restore 168
+					if ( Debugger.IsAttached ) {
+						Debugger.Break();
+					}
+				}
+				finally {
+					this.HasDisposedNative = true;
+				}
+			}
+		}
 
-        /// <summary>
-        /// Dispose of COM objects, Handles, etc...
-        /// </summary>
-        protected virtual void DisposeNative() {
-        }
+		/// <summary>
+		///     Dispose any disposable managed fields or properties.
+		/// </summary>
+		protected virtual void DisposeManaged() { }
 
-        ~ABetterClassDispose() { this.Dispose( false ); }
+		/// <summary>
+		///     Dispose of COM objects, Handles, etc. Then set those objects to null.
+		/// </summary>
+		protected virtual void DisposeNative() { }
 
-    }
-
-    ///// <summary>Hopefully, a more useful <see cref="IDisposable" /> pattern.</summary>
-    //[ JsonObject ]
-    //public abstract class BetterDisposableClass : IDisposable {
-
-    //    private Boolean IsDisposedOfManaged { get; set; }
-
-    //    private Boolean IsDisposedOfNative { get; set; }
-
-    //    public void Dispose() {
-    //        try {
-    //            if ( this.IsDisposedOfManaged ) {
-    //                return;
-    //            }
-
-    //            this.CleanUpManagedResources();
-    //            this.IsDisposedOfManaged = true;
-    //        }
-    //        catch ( Exception exception ) {
-    //            exception.More();
-    //        }
-    //        finally {
-    //            try {
-    //                if ( !IsDisposedOfNative ) {
-    //                    this.CleanUpNativeResources();
-    //                    this.IsDisposedOfNative = true;
-    //                    GC.SuppressFinalize( this );
-    //                }
-    //            }
-    //            catch ( Exception exception ) {
-    //                exception.More();
-    //            }
-    //        }
-    //    }
-
-    //    ~BetterDisposableClass() { this.Dispose(); }
-
-    //    protected virtual void CleanUpManagedResources() { }
-
-    //    protected virtual void CleanUpNativeResources() { }
-
-    //}
-
+		~ABetterClassDispose() => this.Dispose( disposing: false );
+	}
 }

@@ -23,7 +23,7 @@ namespace Librainian.Financial.Currency.Coins {
     using System;
     using System.Diagnostics;
 
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public sealed class Dime : ICoin {
 
         public Decimal FaceValue => 0.10M;

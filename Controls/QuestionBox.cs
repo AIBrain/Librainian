@@ -64,11 +64,9 @@ namespace Librainian.Controls {
             this.Close();
         }
 
-        private void Question_FormClosed( Object sender, FormClosedEventArgs e ) {
-            this.Response = this.textBoxInput.Text.Trim();
-        }
+		private void Question_FormClosed( Object sender, FormClosedEventArgs e ) => this.Response = this.textBoxInput.Text.Trim();
 
-        private void QuestionBox_Load( Object sender, EventArgs e ) {
+		private void QuestionBox_Load( Object sender, EventArgs e ) {
             this.Visible( true ); //fix per http://stackoverflow.com/a/18619181/956364
             this.richTextBoxQuestion.Focus(); //BUG not working under unit test
         }

@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Length {
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Foot_(unit)" />
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public struct Feet : IComparable<Feet>, IQuantityOfDistance {
 
         /// <summary>60</summary>
@@ -74,19 +74,13 @@ namespace Librainian.Measurement.Length {
         [JsonProperty]
         public readonly BigRational Value;
 
-        public Feet( BigRational value ) {
-            this.Value = value;
-        }
+        public Feet( BigRational value ) => this.Value = value;
 
-        public Feet( Int64 value ) {
-            this.Value = value;
-        }
+	    public Feet( Int64 value ) => this.Value = value;
 
-        public Feet( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Feet( BigInteger value ) => this.Value = value;
 
-        public static Feet Combine( Feet left, BigRational feet ) => new Feet( left.Value + feet );
+	    public static Feet Combine( Feet left, BigRational feet ) => new Feet( left.Value + feet );
 
         public static Feet Combine( Feet left, BigInteger seconds ) => new Feet( ( BigInteger )left.Value + seconds );
 
@@ -123,20 +117,18 @@ namespace Librainian.Measurement.Length {
         public Boolean Equals( Feet other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Feet && this.Equals( ( Feet )obj );
+            return obj is Feet feet && this.Equals( feet );
         }
 
         [Pure]
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        public BigRational ToMeters() {
-            throw new NotImplementedException();
-        }
+        public BigRational ToMeters() => throw new NotImplementedException();
 
-        public override String ToString() => $"{this.Value} {this.Value.PluralOf( "foot" )}";
+	    public override String ToString() => $"{this.Value} {this.Value.PluralOf( "foot" )}";
 
     }
 

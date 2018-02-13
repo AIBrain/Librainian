@@ -31,6 +31,7 @@ namespace Librainian.Security {
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using FileSystem;
     using JetBrains.Annotations;
     using Maths;
     using Mono.Math;
@@ -51,28 +52,26 @@ namespace Librainian.Security {
 
         public static Byte[] Entropy { get; } = Encoding.UTF32.GetBytes( $"{EntropyPhrase1} {EntropyPhrase2} {EntropyPhrase3}" );
 
-        public static ThreadLocal<MD5> Md5S { get; } = new ThreadLocal<MD5>( MD5.Create );
+        public static ThreadLocal< MD5 > Md5S { get; } = new ThreadLocal< MD5 >( MD5.Create );
 
         /// <summary>Provide to each thread its own <see cref="SHA256Managed" />.</summary>
-        public static ThreadLocal<SHA256Managed> SHA256Local { get; } = new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
+        public static ThreadLocal< SHA256Managed > SHA256Local { get; } = new ThreadLocal< SHA256Managed >( valueFactory: () => new SHA256Managed(), trackAllValues: false );
 
         /// <summary>Provide to each thread its own <see cref="SHA256Managed" />.</summary>
-        public static ThreadLocal<SHA384Managed> SHA384Local { get; } = new ThreadLocal<SHA384Managed>( valueFactory: () => new SHA384Managed(), trackAllValues: false );
+        public static ThreadLocal< SHA384Managed > SHA384Local { get; } = new ThreadLocal< SHA384Managed >( valueFactory: () => new SHA384Managed(), trackAllValues: false );
 
         /// <summary>Provide to each thread its own <see cref="SHA256Managed" />.</summary>
-        public static ThreadLocal<SHA512Managed> SHA512Local { get; } = new ThreadLocal<SHA512Managed>( valueFactory: () => new SHA512Managed(), trackAllValues: false );
+        public static ThreadLocal< SHA512Managed > SHA512Local { get; } = new ThreadLocal< SHA512Managed >( valueFactory: () => new SHA512Managed(), trackAllValues: false );
 
-        public static Task<Byte[]> ComputeMD5Hash( String filename ) {
-            return Task.Run( () => {
-                var md5Hasher = Md5S.Value;
+		public static Task< Byte[] > ComputeMD5Hash( String filename ) => Task.Run( () => {
+			var md5Hasher = Md5S.Value;
 
-                using ( var fs = new FileStream( filename, FileMode.Open, FileAccess.Read, FileShare.Read ) ) {
-                    return md5Hasher.ComputeHash( fs );
-                }
-            } );
-        }
+			using ( var fs = new FileStream( filename, FileMode.Open, FileAccess.Read, FileShare.Read ) ) {
+				return md5Hasher.ComputeHash( fs );
+			}
+		} );
 
-        [NotNull]
+		[NotNull]
         public static SecureString DecryptString( this String encryptedData ) {
             try {
                 var decryptedData = ProtectedData.Unprotect( encryptedData: Convert.FromBase64String( encryptedData ), optionalEntropy: Entropy, scope: DataProtectionScope.CurrentUser );
@@ -212,7 +211,7 @@ namespace Librainian.Security {
             }
         }
 
-        public static String GetHexString( this IReadOnlyList<Byte> bt ) {
+        public static String GetHexString( this IReadOnlyList< Byte > bt ) {
             var s = String.Empty;
             for ( var i = 0; i < bt.Count; i++ ) {
                 var b = bt[ i ];
@@ -231,7 +230,7 @@ namespace Librainian.Security {
                 else {
                     s += n1.ToString();
                 }
-                if ( ( i + 1 != bt.Count ) && ( ( i + 1 ) % 2 == 0 ) ) {
+                if ( i + 1 != bt.Count && ( i + 1 ) % 2 == 0 ) {
                     s += "-";
                 }
             }
@@ -362,6 +361,247 @@ namespace Librainian.Security {
                 numArray[ i ] = ( Byte )( s[ i ] & '\u007F' );
             }
             return numArray;
+        }
+
+        public static Boolean TryComputeMd5ForFile( [CanBeNull] this Document document, [CanBeNull] out String md5 ) {
+            md5 = null;
+            try {
+                if ( document == null || !File.Exists( "md5sum.exe" ) || !document.Exists() ) {
+                    return false;
+                }
+
+                var p = new Process {
+                    StartInfo = {
+                        FileName = "md5sum.exe",
+                        Arguments = $"\"{document.FullPathWithFileName}\"",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true
+                    }
+                };
+                p.Start();
+                p.WaitForExit();
+                var output = p.StandardOutput.ReadToEnd();
+                md5 = output.Split( ' ' )[ 0 ].Substring( 1 ).ToUpper();
+                return !String.IsNullOrWhiteSpace( md5 ) && md5.Length == 32;
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        ///     Attempt to decrypt an encrypted version of the file with the given key and salt.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="output"></param>
+        /// <param name="key">Must be between 1 and 32767 bytes.</param>
+        /// <param name="reportProgress"></param>
+        /// <param name="exceptions">List of exceptions encountered.</param>
+        /// <param name="salt"></param>
+        /// <param name="reportEveryXBytes"></param>
+        /// <returns>Returns true if all is successful</returns>
+        public static Boolean TryDecryptFile( [CanBeNull] this Document input, [CanBeNull] Document output, [CanBeNull] String key, Int32 salt, UInt64? reportEveryXBytes, Action<Single> reportProgress, [NotNull] out List<Exception> exceptions ) {
+            exceptions = new List<Exception>( 1 );
+
+            if ( input == null ) {
+                exceptions.Add( new ArgumentNullException( nameof( input ) ) );
+                return false;
+            }
+
+            if ( !input.Exists() ) {
+                exceptions.Add( new FileNotFoundException( $"The input file {input.FullPathWithFileName} is not found." ) );
+                return false;
+            }
+
+            var inputFileSize = ( Single? )input.Size();
+            if ( !inputFileSize.HasValue || inputFileSize.Value <= 0 ) {
+                exceptions.Add( new FileNotFoundException( $"The input file {input.FullPathWithFileName} is empty." ) );
+                return false;
+            }
+
+
+            if ( output == null ) {
+                exceptions.Add( new ArgumentNullException( nameof( output ) ) );
+                return false;
+            }
+
+            if ( output.Exists() ) {
+                exceptions.Add( new IOException( $"The output file {output.FullPathWithFileName} already exists." ) );
+                return false;
+            }
+
+            if ( key == null ) {
+                exceptions.Add( new ArgumentNullException( nameof( key ) ) );
+                return false;
+            }
+
+            if ( !key.Length.Between( 1, Int16.MaxValue ) ) {
+                exceptions.Add( new ArgumentOutOfRangeException( nameof( key ) ) );
+                return false;
+            }
+
+            try {
+                DeriveBytes rgb = new Rfc2898DeriveBytes( key, Encoding.Unicode.GetBytes( salt.ToString() ) );
+
+                if ( !output.Folder.Create() ) {
+                    exceptions.Add( new IOException( $"Unable to write to {output.FullPathWithFileName} because folder {output.Folder.FullName} does not exist." ) );
+                    return false;
+                }
+
+                using ( var aes = new AesCryptoServiceProvider() ) {
+                    aes.BlockSize = 128;
+                    aes.KeySize = 256;
+                    aes.Key = rgb.GetBytes( aes.KeySize >> 3 );
+                    aes.IV = rgb.GetBytes( aes.BlockSize >> 3 );
+                    aes.Mode = CipherMode.CBC;
+
+                    using ( var outputStream = new FileStream( output.FullPathWithFileName, FileMode.Create, FileAccess.Write ) ) {
+                        using ( var decryptor = aes.CreateDecryptor() ) {
+
+                            var inputStream = new FileStream( input.FullPathWithFileName, FileMode.Open, FileAccess.Read );
+                            using ( var cs = new CryptoStream( inputStream, decryptor, CryptoStreamMode.Read ) ) {
+                                Int32 data;
+                                while ( ( data = cs.ReadByte() ) != -1 ) {
+                                    if ( null != reportEveryXBytes && null != reportProgress ) {
+                                        var position = ( UInt64 )inputStream.Position;
+                                        if ( position % reportEveryXBytes.Value == 0 ) {
+                                            var progress = position / inputFileSize;
+                                            reportProgress( progress.Value );
+                                        }
+                                    }
+                                    outputStream.WriteByte( ( Byte )data );
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                return output.Exists();
+            }
+            catch ( AggregateException exceptionss ) {
+                exceptions.AddRange( exceptionss.InnerExceptions );
+                return false;
+            }
+            catch ( Exception exception ) {
+                exceptions.Add( exception );
+                return false;
+            }
+        }
+
+        /// <summary>
+        ///     Create an encrypted version of the given file with the given key and salt.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="output"></param>
+        /// <param name="key">Must be between 1 and 32767 bytes.</param>
+        /// <param name="salt"></param>
+        /// <param name="reportEveryXBytes"></param>
+        /// <param name="reportProgress">Reports progress every X bytes</param>
+        /// <param name="exceptions">List of exceptions encountered.</param>
+        /// <returns>Returns true if all is successful</returns>
+        public static Boolean TryEncryptFile( [CanBeNull] this Document input, [CanBeNull] Document output, [CanBeNull] String key, Int32 salt, UInt64? reportEveryXBytes, Action<Single> reportProgress, [NotNull] out List<Exception> exceptions ) {
+            exceptions = new List<Exception>( 1 );
+
+            if ( input == null ) {
+                exceptions.Add( new ArgumentNullException( nameof( input ) ) );
+                return false;
+            }
+
+            if ( !input.Exists() ) {
+                exceptions.Add( new FileNotFoundException( $"The input file {input.FullPathWithFileName} is not found." ) );
+                return false;
+            }
+
+            var inputFileSize = ( Single? )input.Size();
+            if ( !inputFileSize.HasValue || inputFileSize.Value <= 0 ) {
+                exceptions.Add( new FileNotFoundException( $"The input file {input.FullPathWithFileName} is empty." ) );
+                return false;
+            }
+
+            if ( output == null ) {
+                exceptions.Add( new ArgumentNullException( nameof( output ) ) );
+                return false;
+            }
+
+            if ( output.Exists() ) {
+                exceptions.Add( new IOException( $"The output file {output.FullPathWithFileName} already exists." ) );
+                return false;
+            }
+
+            if ( key == null ) {
+                exceptions.Add( new ArgumentNullException( nameof( key ) ) );
+                return false;
+            }
+
+            if ( !key.Length.Between( 1, Int16.MaxValue ) ) {
+                exceptions.Add( new ArgumentOutOfRangeException( nameof( key ) ) );
+                return false;
+            }
+
+            try {
+                var rgb = new Rfc2898DeriveBytes( key, Encoding.Unicode.GetBytes( salt.ToString() ) );
+
+                if ( !output.Folder.Create() ) {
+                    exceptions.Add( new IOException( $"Unable to write to {output.FullPathWithFileName} because folder {output.Folder.FullName} does not exist." ) );
+                    return false;
+                }
+
+                using ( var aes = new AesCryptoServiceProvider() ) {
+                    aes.BlockSize = 128;
+                    aes.KeySize = 256;
+                    aes.Key = rgb.GetBytes( aes.KeySize >> 3 );
+                    aes.IV = rgb.GetBytes( aes.BlockSize >> 3 );
+                    aes.Mode = CipherMode.CBC;
+
+                    var outputStream = new FileStream( output.FullPathWithFileName, FileMode.Create, FileAccess.Write );
+                    if ( !outputStream.CanWrite ) {
+                        exceptions.Add( new IOException( $"Unable to write to {output.FullPathWithFileName}." ) );
+                        return false;
+                    }
+
+                    using ( var encryptor = aes.CreateEncryptor() ) {
+                        using ( var cryptoStream = new CryptoStream( outputStream, encryptor, CryptoStreamMode.Write ) ) {
+                            using ( var inputStream = new FileStream( input.FullPathWithFileName, FileMode.Open, FileAccess.Read ) ) {
+                                if ( !inputStream.CanRead || !inputStream.CanSeek ) {
+                                    exceptions.Add( new IOException( $"Unable to read from {input.FullPathWithFileName}." ) );
+                                    return false;
+                                }
+
+                                inputStream.Seek( 0, SeekOrigin.Begin );
+                                Int32 data;
+
+                                //TODO put a 64k buffer here instead of byte-by-byte
+                                while ( ( data = inputStream.ReadByte() ) != -1 ) {
+                                    if ( null != reportEveryXBytes && null != reportProgress ) {
+                                        var position = ( UInt64 )inputStream.Position;
+                                        if ( position % reportEveryXBytes.Value == 0 ) {
+                                            var progress = position / inputFileSize;
+                                            reportProgress( progress.Value );
+                                        }
+                                    }
+                                    cryptoStream.WriteByte( ( Byte )data );
+                                }
+
+                            }
+
+                        }
+                    }
+
+                }
+
+                return output.Exists();
+            }
+            catch ( AggregateException exceptionss ) {
+                exceptions.AddRange( exceptionss.InnerExceptions );
+                return false;
+            }
+            catch ( Exception exception ) {
+                exceptions.Add( exception );
+                return false;
+            }
         }
     }
 

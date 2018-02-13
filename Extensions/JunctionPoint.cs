@@ -28,7 +28,7 @@ namespace Librainian.Extensions {
     using OperatingSystem;
 
     [Flags]
-    public enum EFileShare : uint {
+    public enum EFileShare : UInt32 {
         None = 0x00000000,
         Read = 0x00000001,
         Write = 0x00000002,
@@ -76,7 +76,7 @@ namespace Librainian.Extensions {
         /// </summary>
         private const String NonInterpretedPathPrefix = @"\??\";
 
-        public enum ECreationDisposition : uint {
+        public enum ECreationDisposition : UInt32 {
             New = 1,
             CreateAlways = 2,
             OpenExisting = 3,
@@ -85,7 +85,7 @@ namespace Librainian.Extensions {
         }
 
         [Flags]
-        public enum EFileAccess : uint {
+        public enum EFileAccess : UInt32 {
             GenericRead = 0x80000000,
             GenericWrite = 0x40000000,
             GenericExecute = 0x20000000,
@@ -93,7 +93,7 @@ namespace Librainian.Extensions {
         }
 
         [Flags]
-        public enum EFileAttributes : uint {
+        public enum EFileAttributes : UInt32 {
             Readonly = 0x00000001,
             Hidden = 0x00000002,
             System = 0x00000004,
@@ -161,10 +161,9 @@ namespace Librainian.Extensions {
                 try {
                     Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
 
-                    Int32 bytesReturned;
-                    var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlSetReparsePoint, inBuffer, targetDirBytes.Length + 20, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero );
+					var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlSetReparsePoint, inBuffer, targetDirBytes.Length + 20, IntPtr.Zero, 0, out var bytesReturned, IntPtr.Zero );
 
-                    if ( !result ) {
+					if ( !result ) {
                         ThrowLastWin32Error( "Unable to create junction point." );
                     }
                 }
@@ -197,10 +196,9 @@ namespace Librainian.Extensions {
                 try {
                     Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
 
-                    Int32 bytesReturned;
-                    var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlDeleteReparsePoint, inBuffer, 8, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero );
+					var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlDeleteReparsePoint, inBuffer, 8, IntPtr.Zero, 0, out var bytesReturned, IntPtr.Zero );
 
-                    if ( !result ) {
+					if ( !result ) {
                         ThrowLastWin32Error( "Unable to delete junction point." );
                     }
                 }
@@ -260,10 +258,9 @@ namespace Librainian.Extensions {
             var outBuffer = Marshal.AllocHGlobal( outBufferSize );
 
             try {
-                Int32 bytesReturned;
-                var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlGetReparsePoint, IntPtr.Zero, 0, outBuffer, outBufferSize, out bytesReturned, IntPtr.Zero );
+				var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlGetReparsePoint, IntPtr.Zero, 0, outBuffer, outBufferSize, out var bytesReturned, IntPtr.Zero );
 
-                if ( !result ) {
+				if ( !result ) {
                     var error = Marshal.GetLastWin32Error();
                     if ( error == ErrorNotAReparsePoint ) {
                         return null;
@@ -303,11 +300,9 @@ namespace Librainian.Extensions {
             return reparsePointHandle;
         }
 
-        private static void ThrowLastWin32Error( String message ) {
-            throw new IOException( message, Marshal.GetExceptionForHR( Marshal.GetHRForLastWin32Error() ) );
-        }
+		private static void ThrowLastWin32Error( String message ) => throw new IOException( message, Marshal.GetExceptionForHR( Marshal.GetHRForLastWin32Error() ) );
 
-        [StructLayout( LayoutKind.Sequential )]
+		[StructLayout( LayoutKind.Sequential )]
         private struct ReparseDataBuffer {
 
             /// <summary>Reparse point tag. Must be a Microsoft reparse point tag.</summary>

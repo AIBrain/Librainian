@@ -25,7 +25,6 @@ namespace Librainian.Parsing {
     using System.IO;
     using System.Linq;
     using System.Threading;
-    using Collections;
     using JetBrains.Annotations;
     using Magic;
     using Newtonsoft.Json;
@@ -43,11 +42,9 @@ namespace Librainian.Parsing {
         [JsonProperty]
         private String _inputBuffer = String.Empty;
 
-        public ContinuousSentence( [CanBeNull] String startingInput = null ) {
-            this.CurrentBuffer = startingInput ?? String.Empty;
-        }
+        public ContinuousSentence( [CanBeNull] String startingInput = null ) => this.CurrentBuffer = startingInput ?? String.Empty;
 
-        public static IEnumerable<String> EndOfUSEnglishSentences { get; } = new[] { ".", "?", "!" };
+	    public static IEnumerable<String> EndOfUSEnglishSentences { get; } = new[] { ".", "?", "!" };
 
         public String CurrentBuffer {
             get {

@@ -52,11 +52,11 @@ namespace Librainian.Graphics.DD {
         public static Intersection IntersectionOf( PointF point, Line line ) {
             var bottomY = Math.Min( line.Y1, line.Y2 );
             var topY = Math.Max( line.Y1, line.Y2 );
-            var heightIsRight = ( point.Y >= bottomY ) && ( point.Y <= topY );
+            var heightIsRight = point.Y >= bottomY && point.Y <= topY;
 
             //Vertical line, slope is divideByZero error!
             if ( Math.Abs( line.X1 - line.X2 ) < Single.Epsilon ) {
-                if ( ( Math.Abs( point.X - line.X1 ) < Single.Epsilon ) && heightIsRight ) {
+                if ( Math.Abs( point.X - line.X1 ) < Single.Epsilon && heightIsRight ) {
                     return Intersection.Tangent;
                 }
                 return Intersection.None;
@@ -69,14 +69,14 @@ namespace Librainian.Graphics.DD {
         public static Intersection IntersectionOf( Line line1, Line line2 ) {
 
             // Fail if either line segment is zero-length.
-            if ( ( ( Math.Abs( line1.X1 - line1.X2 ) < Single.Epsilon ) && ( Math.Abs( line1.Y1 - line1.Y2 ) < Single.Epsilon ) ) || ( ( Math.Abs( line2.X1 - line2.X2 ) < Single.Epsilon ) && ( Math.Abs( line2.Y1 - line2.Y2 ) < Single.Epsilon ) ) ) {
+            if ( Math.Abs( line1.X1 - line1.X2 ) < Single.Epsilon && Math.Abs( line1.Y1 - line1.Y2 ) < Single.Epsilon || Math.Abs( line2.X1 - line2.X2 ) < Single.Epsilon && Math.Abs( line2.Y1 - line2.Y2 ) < Single.Epsilon ) {
                 return Intersection.None;
             }
 
-            if ( ( ( Math.Abs( line1.X1 - line2.X1 ) < Single.Epsilon ) && ( Math.Abs( line1.Y1 - line2.Y1 ) < Single.Epsilon ) ) || ( ( Math.Abs( line1.X2 - line2.X1 ) < Single.Epsilon ) && ( Math.Abs( line1.Y2 - line2.Y1 ) < Single.Epsilon ) ) ) {
+            if ( Math.Abs( line1.X1 - line2.X1 ) < Single.Epsilon && Math.Abs( line1.Y1 - line2.Y1 ) < Single.Epsilon || Math.Abs( line1.X2 - line2.X1 ) < Single.Epsilon && Math.Abs( line1.Y2 - line2.Y1 ) < Single.Epsilon ) {
                 return Intersection.Intersection;
             }
-            if ( ( ( Math.Abs( line1.X1 - line2.X2 ) < Single.Epsilon ) && ( Math.Abs( line1.Y1 - line2.Y2 ) < Single.Epsilon ) ) || ( ( Math.Abs( line1.X2 - line2.X2 ) < Single.Epsilon ) && ( Math.Abs( line1.Y2 - line2.Y2 ) < Single.Epsilon ) ) ) {
+            if ( Math.Abs( line1.X1 - line2.X2 ) < Single.Epsilon && Math.Abs( line1.Y1 - line2.Y2 ) < Single.Epsilon || Math.Abs( line1.X2 - line2.X2 ) < Single.Epsilon && Math.Abs( line1.Y2 - line2.Y2 ) < Single.Epsilon ) {
                 return Intersection.Intersection;
             }
 
@@ -102,7 +102,7 @@ namespace Librainian.Graphics.DD {
             line2.X2 = ( Single )newX;
 
             // Fail if segment C-D doesn't cross line A-B.
-            if ( ( ( line2.Y1 < 0 ) && ( line2.Y2 < 0 ) ) || ( ( line2.Y1 >= 0 ) && ( line2.Y2 >= 0 ) ) ) {
+            if ( line2.Y1 < 0 && line2.Y2 < 0 || line2.Y1 >= 0 && line2.Y2 >= 0 ) {
                 return Intersection.None;
             }
 
@@ -110,7 +110,7 @@ namespace Librainian.Graphics.DD {
             Double posAb = line2.X2 + ( line2.X1 - line2.X2 ) * line2.Y2 / ( line2.Y2 - line2.Y1 );
 
             // Fail if segment C-D crosses line A-B outside of segment A-B.
-            if ( ( posAb < 0 ) || ( posAb > distAb ) ) {
+            if ( posAb < 0 || posAb > distAb ) {
                 return Intersection.None;
             }
 
@@ -124,7 +124,7 @@ namespace Librainian.Graphics.DD {
                     return Intersection.None;
 
                 case 1:
-                    if ( ( Math.Abs( polygon[ 0 ].X - point.X ) < Single.Epsilon ) && ( Math.Abs( polygon[ 0 ].Y - point.Y ) < Single.Epsilon ) ) {
+                    if ( Math.Abs( polygon[ 0 ].X - point.X ) < Single.Epsilon && Math.Abs( polygon[ 0 ].Y - point.Y ) < Single.Epsilon ) {
                         return Intersection.Tangent;
                     }
                     return Intersection.None;
@@ -151,7 +151,7 @@ namespace Librainian.Graphics.DD {
                         if ( point.X <= Math.Max( p1.X, p2.X ) ) {
                             if ( Math.Abs( p1.Y - p2.Y ) > Single.Epsilon ) {
                                 Double xinters = ( point.Y - p1.Y ) * ( p2.X - p1.X ) / ( p2.Y - p1.Y ) + p1.X;
-                                if ( ( Math.Abs( p1.X - p2.X ) < Single.Epsilon ) || ( point.X <= xinters ) ) {
+                                if ( Math.Abs( p1.X - p2.X ) < Single.Epsilon || point.X <= xinters ) {
                                     counter++;
                                 }
                             }

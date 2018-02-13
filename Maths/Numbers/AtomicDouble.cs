@@ -35,35 +35,23 @@ namespace Librainian.Maths.Numbers {
         [JsonProperty]
         private Double _value;
 
-        public AtomicDouble( Double value ) : this() {
-            this.Value = value;
-        }
+        public AtomicDouble( Double value ) : this() => this.Value = value;
 
-        public Double Value {
-            get {
-                return Interlocked.Exchange( ref this._value, this._value ); //TODO BUG correct use of Exchange here?
-            }
+	    public Double Value {
+            get => Interlocked.Exchange( ref this._value, this._value );
 
-            set {
-                Interlocked.Exchange( ref this._value, value );
-            }
+	        set => Interlocked.Exchange( ref this._value, value );
         }
 
         public static implicit operator Double( AtomicDouble special ) => special.Value;
 
-        public static AtomicDouble operator -( AtomicDouble a1, AtomicDouble a2 ) {
-            return new AtomicDouble( a1.Value - a2.Value );
-        }
+        public static AtomicDouble operator -( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value - a2.Value );
 
-        public static AtomicDouble operator *( AtomicDouble a1, AtomicDouble a2 ) {
-            return new AtomicDouble( a1.Value * a2.Value );
-        }
+	    public static AtomicDouble operator *( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value * a2.Value );
 
-        public static AtomicDouble operator +( AtomicDouble a1, AtomicDouble a2 ) {
-            return new AtomicDouble( a1.Value + a2.Value );
-        }
+	    public static AtomicDouble operator +( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value + a2.Value );
 
-        public static AtomicDouble operator ++( AtomicDouble a1 ) {
+	    public static AtomicDouble operator ++( AtomicDouble a1 ) {
             a1.Value++;
             return a1;
         }

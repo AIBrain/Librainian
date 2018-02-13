@@ -26,6 +26,7 @@ namespace Librainian.FileSystem {
     using System.IO;
     using System.Linq;
     using System.Security.Permissions;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
@@ -37,17 +38,31 @@ namespace Librainian.FileSystem {
     public static class FolderExtensions {
         public static readonly Char[] InvalidPathChars = Path.GetInvalidPathChars();
 
-        public static String CleanupForFolder( this String foldername ) {
-            foldername = foldername ?? String.Empty;
+        public static String CleanupForFolder( [ NotNull ] this String foldername ) {
+            if ( String.IsNullOrWhiteSpace( value: foldername ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", paramName: nameof(foldername) );
+            }
 
-            do {
-                var idx = foldername.IndexOfAny( InvalidPathChars );
-                if ( idx >= 0 ) {
+            var sb = new StringBuilder( foldername.Length, UInt16.MaxValue / 2 );
+            foreach ( var c in foldername ) {
+                if ( !InvalidPathChars.Contains( c) ) {
+                    sb.Append( c );
+                }
+            }
+
+            /*
+            var idx = foldername.IndexOfAny( InvalidPathChars );
+
+			while ( idx.Any() ) {
+                if ( idx.Any() ) {
                     foldername = foldername.Remove( idx, 1 );
                 }
-            } while ( foldername.IndexOfAny( InvalidPathChars ) >= 0 );
-
+				idx = foldername.IndexOfAny( InvalidPathChars );
+			}
             return foldername.Trim();
+            */
+
+            return sb.ToString().Trim();
         }
 
         /// <summary>

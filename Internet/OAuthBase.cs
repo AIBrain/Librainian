@@ -87,7 +87,7 @@ namespace Librainian.Internet {
                     result.Append( symbol );
                 }
                 else {
-                    result.Append( $"{'%'}{$"{( Int32 )symbol:X2}"}" );
+                    result.Append( $"{'%'}{( Int32 )symbol:X2}" );
                 }
             }
 
@@ -98,13 +98,9 @@ namespace Librainian.Internet {
         ///     Generate a nonce
         /// </summary>
         /// <returns></returns>
-        public virtual String GenerateNonce() {
+        public virtual String GenerateNonce() => this.Random.Next( 123400, 9999999 ).ToString();
 
-            // Just a simple implementation of a random number between 123400 and 9999999
-            return this.Random.Next( 123400, 9999999 ).ToString();
-        }
-
-        /// <summary>
+	    /// <summary>
         ///     Generates a signature using the HMAC-SHA1 algorithm
         /// </summary>
         /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
@@ -118,11 +114,9 @@ namespace Librainian.Internet {
         /// <param name="normalizedUrl"></param>
         /// <param name="normalizedRequestParameters"></param>
         /// <returns>A base64 string of the hash value</returns>
-        public String GenerateSignature( Uri url, String consumerKey, String consumerSecret, String token, String tokenSecret, String httpMethod, String timeStamp, String nonce, out String normalizedUrl, out String normalizedRequestParameters ) {
-            return this.GenerateSignature( url, consumerKey, consumerSecret, token, tokenSecret, httpMethod, timeStamp, nonce, SignatureTypes.Hmacsha1, out normalizedUrl, out normalizedRequestParameters );
-        }
+        public String GenerateSignature( Uri url, String consumerKey, String consumerSecret, String token, String tokenSecret, String httpMethod, String timeStamp, String nonce, out String normalizedUrl, out String normalizedRequestParameters ) => this.GenerateSignature( url, consumerKey, consumerSecret, token, tokenSecret, httpMethod, timeStamp, nonce, SignatureTypes.Hmacsha1, out normalizedUrl, out normalizedRequestParameters );
 
-        /// <summary>
+	    /// <summary>
         ///     Generates a signature using the specified signatureType
         /// </summary>
         /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
@@ -213,7 +207,7 @@ namespace Librainian.Internet {
             parameters.Sort( new QueryParameterComparer() );
 
             normalizedUrl = $"{url.Scheme}://{url.Host}";
-            if ( !( ( ( url.Scheme == "http" ) && ( url.Port == 80 ) ) || ( ( url.Scheme == "https" ) && ( url.Port == 443 ) ) ) ) {
+            if ( !( url.Scheme == "http" && url.Port == 80 || url.Scheme == "https" && url.Port == 443 ) ) {
                 normalizedUrl += $":{url.Port}";
             }
             normalizedUrl += url.AbsolutePath;
@@ -236,11 +230,9 @@ namespace Librainian.Internet {
         ///     a key it should be set prior to calling this method
         /// </param>
         /// <returns>A base64 string of the hash value</returns>
-        public String GenerateSignatureUsingHash( String signatureBase, HashAlgorithm hash ) {
-            return this.ComputeHash( hash, signatureBase );
-        }
+        public String GenerateSignatureUsingHash( String signatureBase, HashAlgorithm hash ) => this.ComputeHash( hash, signatureBase );
 
-        /// <summary>
+	    /// <summary>
         ///     Generate the timestamp for the signature
         /// </summary>
         /// <returns></returns>
@@ -346,9 +338,8 @@ namespace Librainian.Internet {
         /// </summary>
         protected class QueryParameterComparer : IComparer<QueryParameter> {
 
-            public Int32 Compare( QueryParameter x, QueryParameter y ) {
-                return x.Name == y.Name ? String.CompareOrdinal( x.Value, y.Value ) : String.CompareOrdinal( x.Name, y.Name );
-            }
+            public Int32 Compare( QueryParameter x, QueryParameter y ) => x?.Name == y?.Name ? String.CompareOrdinal( x?.Value, y?.Value ) : String.CompareOrdinal( x?.Name, y?.Name );
+
         }
     }
 }

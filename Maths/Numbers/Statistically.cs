@@ -36,11 +36,9 @@ namespace Librainian.Maths.Numbers {
 
         public static Statistically Undecided = new Statistically( 0.5, 0.5 );
 
-        public Statistically( Double ups = 0d, Double downs = 0d ) {
-            Reset( statistically: this, newUps: ups, newDowns: downs );
-        }
+		public Statistically( Double ups = 0d, Double downs = 0d ) => Reset( statistically: this, newUps: ups, newDowns: downs );
 
-        [JsonProperty]
+		[JsonProperty]
         public Double Downs {
             get; private set;
         }

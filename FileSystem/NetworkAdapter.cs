@@ -122,21 +122,21 @@ namespace Librainian.FileSystem {
         ///     The ProductName of the NetworkAdapter
         /// </summary>
         public String Name {
-            get; private set;
+            get;
         }
 
         /// <summary>
         ///     The Net Connection Status Value
         /// </summary>
         public Int32 NetConnectionStatus {
-            get; private set;
+            get;
         }
 
         /// <summary>
         ///     The NetEnabled status of the NetworkAdapter
         /// </summary>
         public Int32 NetEnabled {
-            get; private set;
+            get;
         }
 
         /// <summary>

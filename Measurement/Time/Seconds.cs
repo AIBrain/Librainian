@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Time {
     ///     </para>
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct Seconds : IComparable<Seconds>, IQuantityOfTime {
 
@@ -93,23 +93,15 @@ namespace Librainian.Measurement.Time {
         /// <summary></summary>
         public static readonly Seconds Zero = new Seconds( 0 );
 
-        public Seconds( Decimal value ) {
-            this.Value = value;
-        }
+        public Seconds( Decimal value ) => this.Value = value;
 
-        public Seconds( BigRational value ) {
-            this.Value = value;
-        }
+	    public Seconds( BigRational value ) => this.Value = value;
 
-        public Seconds( Int64 value ) {
-            this.Value = value;
-        }
+	    public Seconds( Int64 value ) => this.Value = value;
 
-        public Seconds( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Seconds( BigInteger value ) => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -175,10 +167,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Seconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Seconds && this.Equals( ( Seconds )obj );
+            return obj is Seconds seconds && this.Equals( seconds );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
@@ -195,17 +187,9 @@ namespace Librainian.Measurement.Time {
         public Minutes ToMinutes() => new Minutes( value: this.Value / InOneMinute );
 
         [Pure]
-        public PlanckTimes ToPlanckTimes() {
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneSecond * this.Value );
 
-            //var seconds = new BigDecimal( this.Value ); //avoid overflow?
-            //seconds *= PlanckTimes.InOneSecond;
-
-            //return ( BigInteger )seconds; //gets truncated here. oh well.
-
-            return new PlanckTimes( PlanckTimes.InOneSecond * this.Value );
-        }
-
-        [Pure]
+	    [Pure]
         public Seconds ToSeconds() => this;
 
         [Pure]

@@ -20,24 +20,22 @@
 
 namespace Librainian.Financial.Customers {
 
-    using System;
-    using Containers.Wallets;
-    using Magic;
+	using System;
+	using Containers.Wallets;
+	using Magic;
 
-    public class Cashier : ABetterClassDispose ,IPerson {
+	public class Cashier : ABetterClassDispose, IPerson {
 
-        public Cashier( Guid cashierID ) {
-            this.Wallet = new Wallet( cashierID );
-        }
+		public Cashier( Guid cashierID ) => this.Wallet = new Wallet( cashierID );
 
-        public Wallet Wallet {
-            get;
-        }
+		public Wallet Wallet {
+			get;
+		}
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() { this.Wallet.Dispose(); }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this.Wallet.Dispose();
 
-    }
+	}
 }

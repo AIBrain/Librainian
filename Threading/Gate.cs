@@ -36,11 +36,9 @@ namespace Librainian.Threading {
         ///     Initializes a new instance of the Gate class.
         /// </summary>
         /// <param name="openOrClosed">Defaults to <see cref="OpenOrClosed.Closed" />.</param>
-        public Gate( OpenOrClosed openOrClosed = OpenOrClosed.Closed ) {
-            this._value = ( Int32 )openOrClosed;
-        }
+        public Gate( OpenOrClosed openOrClosed = OpenOrClosed.Closed ) => this._value = ( Int32 )openOrClosed;
 
-        /// <summary>
+	    /// <summary>
         ///     Initializes a new instance of the Gate class in the closed state.
         /// </summary>
         public Gate() {

@@ -57,50 +57,30 @@ namespace Librainian.Collections {
         Boolean IList.IsReadOnly => true;
 
         Object IList.this[ Int32 index ] {
-            get {
-                return this._getValueForIndex( index );
-            }
+            get => this._getValueForIndex( index );
 
-            set {
-                throw new NotSupportedException();
-            }
+	        set => throw new NotSupportedException();
         }
 
         T IList<T>.this[ Int32 index ] {
-            get {
-                return this._getValueForIndex( index );
-            }
+            get => this._getValueForIndex( index );
 
-            set {
-                throw new NotSupportedException();
-            }
+	        set => throw new NotSupportedException();
         }
 
-        void ICollection.CopyTo( Array array, Int32 index ) {
-            throw new NotSupportedException();
-        }
+		void ICollection.CopyTo( Array array, Int32 index ) => throw new NotSupportedException();
 
-        void ICollection<T>.Add( T item ) {
-            throw new NotSupportedException();
-        }
+		void ICollection<T>.Add( T item ) => throw new NotSupportedException();
 
-        void ICollection<T>.Clear() {
-            throw new NotSupportedException();
-        }
+		void ICollection<T>.Clear() => throw new NotSupportedException();
 
-        Boolean ICollection<T>.Contains( T item ) {
-            throw new NotSupportedException();
-        }
+		Boolean ICollection<T>.Contains( T item ) => throw new NotSupportedException();
 
-        void ICollection<T>.CopyTo( T[] array, Int32 arrayIndex ) {
-            throw new NotSupportedException();
-        }
+		void ICollection<T>.CopyTo( T[] array, Int32 arrayIndex ) => throw new NotSupportedException();
 
-        Boolean ICollection<T>.Remove( T item ) {
-            throw new NotSupportedException();
-        }
+		Boolean ICollection<T>.Remove( T item ) => throw new NotSupportedException();
 
-        IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable<T> )this ).GetEnumerator();
+	    IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable<T> )this ).GetEnumerator();
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator() {
             for ( var i = 0; i < this._count; i++ ) {
@@ -108,44 +88,24 @@ namespace Librainian.Collections {
             }
         }
 
-        Int32 IList.Add( Object value ) {
-            throw new NotSupportedException();
-        }
+        Int32 IList.Add( Object value ) => throw new NotSupportedException();
 
-        void IList.Clear() {
-            throw new NotSupportedException();
-        }
+		void IList.Clear() => throw new NotSupportedException();
 
-        Boolean IList.Contains( Object value ) {
-            throw new NotSupportedException();
-        }
+		Boolean IList.Contains( Object value ) => throw new NotSupportedException();
 
-        Int32 IList.IndexOf( Object value ) {
-            throw new NotSupportedException();
-        }
+	    Int32 IList.IndexOf( Object value ) => throw new NotSupportedException();
 
-        void IList.Insert( Int32 index, Object value ) {
-            throw new NotSupportedException();
-        }
+		void IList.Insert( Int32 index, Object value ) => throw new NotSupportedException();
 
-        void IList.Remove( Object value ) {
-            throw new NotSupportedException();
-        }
+		void IList.Remove( Object value ) => throw new NotSupportedException();
 
-        void IList.RemoveAt( Int32 index ) {
-            throw new NotSupportedException();
-        }
+		void IList.RemoveAt( Int32 index ) => throw new NotSupportedException();
 
-        Int32 IList<T>.IndexOf( T item ) {
-            throw new NotSupportedException();
-        }
+		Int32 IList<T>.IndexOf( T item ) => throw new NotSupportedException();
 
-        void IList<T>.Insert( Int32 index, T item ) {
-            throw new NotSupportedException();
-        }
+		void IList<T>.Insert( Int32 index, T item ) => throw new NotSupportedException();
 
-        void IList<T>.RemoveAt( Int32 index ) {
-            throw new NotSupportedException();
-        }
-    }
+		void IList<T>.RemoveAt( Int32 index ) => throw new NotSupportedException();
+	}
 }

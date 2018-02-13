@@ -45,16 +45,12 @@ namespace Librainian.Measurement.Spatial {
         /// ctor with <paramref name="degrees"/>.
         /// </summary>
         /// <param name="degrees"></param>
-        public Compass( Single degrees ) {
-            this.Degrees = degrees;
-        }
+        public Compass( Single degrees ) => this.Degrees = degrees;
 
-        public Single Degrees {
-            get {
-                return this._degrees;
-            }
+	    public Single Degrees {
+            get => this._degrees;
 
-            set {
+	        set {
                 if ( Single.IsNaN( value ) ) {
                     throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" );
                 }

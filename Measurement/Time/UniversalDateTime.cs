@@ -125,11 +125,9 @@ namespace Librainian.Measurement.Time {
         /// <returns>
         ///     A <see cref="T:System.String" /> containing a fully qualified type name.
         /// </returns>
-        public override String ToString() {
-            return this.Value.ToString();
-        }
+        public override String ToString() => this.Value.ToString();
 
-        private static UniversalDateTime Combine( UniversalDateTime left, BigInteger value ) => new UniversalDateTime( left.Value + value );
+	    private static UniversalDateTime Combine( UniversalDateTime left, BigInteger value ) => new UniversalDateTime( left.Value + value );
 
         private static UniversalDateTime Combine( UniversalDateTime left, UniversalDateTime right ) => Combine( left, right.Value );
     }

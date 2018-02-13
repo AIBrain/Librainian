@@ -41,11 +41,9 @@ namespace Librainian.Measurement.Length {
         [JsonProperty]
         public readonly Decimal Value;
 
-        public Centimeters( Decimal centimeters ) {
-            this.Value = centimeters;
-        }
+        public Centimeters( Decimal centimeters ) => this.Value = centimeters;
 
-        //public Centimeters( Millimeters millimeters ) {
+	    //public Centimeters( Millimeters millimeters ) {
         //    var val = millimeters.Value / Extensions.MillimetersInSingleCentimeter;
         //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
         //}

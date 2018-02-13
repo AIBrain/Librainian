@@ -8,7 +8,7 @@ namespace Librainian.FileSystem {
     /// 
     /// </summary>
     // ReSharper disable once InconsistentNaming
-    [DebuggerDisplay("{ToString(),nq}")]
+    [DebuggerDisplay("{" + nameof( ToString ) + "(),nq}")]
     public class Win32DiskPartition {
         public UInt16? Access;
         public UInt16? Availability;
@@ -45,7 +45,7 @@ namespace Librainian.FileSystem {
         public String SystemName;
         public String Type;
 
-        public override String ToString() { return this.Name; }
+        public override String ToString() => this.Name;
 
     }
 

@@ -41,13 +41,13 @@ namespace Librainian.Linguistics {
         }
     }
 
-    /// <summary>
-    ///     A <see cref="Word" /> is a sequence of <see cref="char" /> .
-    /// </summary>
-    /// <seealso cref="Sentence"></seealso>
-    [JsonObject]
+	/// <summary>
+	///     A <see cref="Word" /> is a sequence of <see cref="Char" /> .
+	/// </summary>
+	/// <seealso cref="Sentence"></seealso>
+	[JsonObject]
     [Immutable]
-    [DebuggerDisplay( "{ToString()}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public class Word : IEquatable<Word>, IEnumerable<Char>, IComparable<Word> {
 
@@ -81,12 +81,10 @@ namespace Librainian.Linguistics {
         ///     <paramref name="other" /> in the sort order.
         /// </returns>
         /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo( Word other ) {
-            return String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
-        }
+        public Int32 CompareTo( Word other ) => String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
 
-        public Boolean Equals( [CanBeNull] Word other ) {
-            if ( ReferenceEquals( other, null ) ) {
+		public Boolean Equals( [CanBeNull] Word other ) {
+            if ( other is null ) {
                 return false;
             }
 
@@ -95,16 +93,12 @@ namespace Librainian.Linguistics {
 
         public IEnumerator<Char> GetEnumerator() => this.Chars.GetEnumerator();
 
-        public override Int32 GetHashCode() {
-            return this.Chars.GetHashCode();
-        }
+        public override Int32 GetHashCode() => this.Chars.GetHashCode();
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        public Char[][] Possibles() {
-            return this.Chars.ToArray().FastPowerSet();
-        }
+        public Char[][] Possibles() => this.Chars.ToArray().FastPowerSet();
 
-        public override String ToString() => this.Chars.ToStrings( "" );
+		public override String ToString() => this.Chars.ToStrings( "" );
     }
 }

@@ -37,20 +37,14 @@ namespace Librainian.Threading {
         internal WaitNode _nextWaitNode;
         internal Boolean Waiting = true;
 
-        public WaitNode() {
-            this._owner = Thread.CurrentThread;
-        }
+        public WaitNode() => this._owner = Thread.CurrentThread;
 
-        internal virtual Boolean IsWaiting => this.Waiting;
+	    internal virtual Boolean IsWaiting => this.Waiting;
 
         internal virtual WaitNode NextWaitNode {
-            get {
-                return this._nextWaitNode;
-            }
+            get => this._nextWaitNode;
 
-            set {
-                this._nextWaitNode = value;
-            }
+	        set => this._nextWaitNode = value;
         }
 
         internal virtual Thread Owner => this._owner;

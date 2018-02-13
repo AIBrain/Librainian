@@ -32,11 +32,9 @@ namespace Librainian.Magic {
     /// </example>
     public static class Instantiator<TInstance> {
 
-        static Instantiator() {
-            Debug.Assert( typeof( TInstance ).IsValueType || ( typeof( TInstance ).IsClass && !typeof( TInstance ).IsAbstract ), String.Concat( "The type ", typeof( TInstance ).Name, " is not constructable." ) );
-        }
+		static Instantiator() => Debug.Assert( typeof( TInstance ).IsValueType || typeof( TInstance ).IsClass && !typeof( TInstance ).IsAbstract, String.Concat( "The type ", typeof( TInstance ).Name, " is not constructable." ) );
 
-        public static TInstance New() => InstantiatorImpl.CtorFunc();
+		public static TInstance New() => InstantiatorImpl.CtorFunc();
 
         public static TInstance New<TA>( TA valueA ) => InstantiatorImpl<TA>.CtorFunc( valueA );
 

@@ -55,10 +55,9 @@ namespace Librainian.Misc {
                 mciSendString( "status wave length", lengthBuf, lengthBuf.Capacity, IntPtr.Zero );
                 mciSendString( "close wave", null, 0, IntPtr.Zero );
 
-                Int32 length;
-                Int32.TryParse( lengthBuf.ToString(), out length );
+				Int32.TryParse( lengthBuf.ToString(), out var length );
 
-                return length;
+				return length;
             }
 
         }

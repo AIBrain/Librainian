@@ -29,14 +29,12 @@ namespace Librainian.FileSystem {
     public class PathSplitter {
 
         public PathSplitter( String fullpathandfilename ) {
-            this.Parts = new List<String>();
             this.FileName = Path.GetFileName( fullpathandfilename );
             this.OriginalPath = Path.GetDirectoryName( fullpathandfilename );
-            var originalPath = this.OriginalPath;
-            if ( originalPath == null ) {
+            if ( default == this.OriginalPath ) {
                 return;
             }
-            var strings = originalPath.Split( new[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries );
+            var strings = this.OriginalPath.Split( new[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries );
             this.Parts.AddRange( strings );
         }
 
@@ -61,7 +59,7 @@ namespace Librainian.FileSystem {
         [NotNull]
         private List<String> Parts {
             get;
-        }
+        } = new List<String>(3);
 
         public Boolean InsertRoot( [NotNull] String path ) {
             if ( path == null ) {
@@ -84,7 +82,7 @@ namespace Librainian.FileSystem {
         }
 
         public Boolean SubstituteDrive( Char c ) {
-            if ( ( this.Parts[ 0 ].Length != 2 ) && this.Parts[ 0 ].EndsWith( ":", StringComparison.Ordinal ) ) {
+            if ( this.Parts[ 0 ].Length != 2 && this.Parts[ 0 ].EndsWith( ":", StringComparison.Ordinal ) ) {
                 return false;
             }
             this.Parts[ 0 ] = new String( new[] { c } ) + ":";

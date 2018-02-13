@@ -148,11 +148,9 @@ namespace Librainian.FileSystem {
             GC.SuppressFinalize( this );
         }
 
-        protected virtual void Dispose( Boolean disposing ) {
-            NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
-        }
+		protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
 
-        public static Boolean IsNetworkConnected( Int32 retries = 3 ) {
+		public static Boolean IsNetworkConnected( Int32 retries = 3 ) {
             var counter = retries;
             while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
                 --counter;

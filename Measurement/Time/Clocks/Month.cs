@@ -57,11 +57,9 @@ namespace Librainian.Measurement.Time.Clocks {
             get;
         }
 
-        public Int32 CompareTo( Month other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public Int32 CompareTo( Month other ) => this.Value.CompareTo( other.Value );
 
-        /// <summary>
+	    /// <summary>
         ///     Provide the next <see cref="Month" />.
         /// </summary>
         /// <param name="tocked"></param>

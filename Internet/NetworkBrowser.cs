@@ -154,13 +154,12 @@ namespace Librainian.Internet {
 
             do {
 
-                // Buffer to store the available servers Filled by the NetServerEnum function
-                IntPtr buf;
+				// Buffer to store the available servers Filled by the NetServerEnum function
 
-                var ret = NativeMethods.NetServerEnum( servername: null, level: 101, bufptr: out buf, prefmaxlen: -1, entriesread: ref entriesread, totalentries: ref totalentries, servertype: serverType, domain: null, resumeHandle: IntPtr.Zero );
+				var ret = NativeMethods.NetServerEnum( servername: null, level: 101, bufptr: out var buf, prefmaxlen: -1, entriesread: ref entriesread, totalentries: ref totalentries, servertype: serverType, domain: null, resumeHandle: IntPtr.Zero );
 
-                // if the function returned any data, fill the tree view
-                if ( ( ret == NativeMethods.ErrorSuccess ) || ( ret == NativeMethods.ErrorMoreData ) || ( entriesread > 0 ) ) {
+				// if the function returned any data, fill the tree view
+				if ( ret == NativeMethods.ErrorSuccess || ret == NativeMethods.ErrorMoreData || entriesread > 0 ) {
                     var ptr = buf;
 
                     for ( var i = 0; i < entriesread; i++ ) {
@@ -179,7 +178,7 @@ namespace Librainian.Internet {
 
                 // free the buffer
                 NativeMethods.NetApiBufferFree( buf );
-            } while ( ( entriesread < totalentries ) && ( entriesread != 0 ) );
+            } while ( entriesread < totalentries && entriesread != 0 );
 
             return alServers;
         }

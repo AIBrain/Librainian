@@ -32,7 +32,7 @@ namespace Librainian.OperatingSystem.Streams {
         private DateTime _lastProgressUpdate = DateTime.UtcNow.AddSeconds( -1 );
 
         public ProgressStream( Stream stream ) : base( stream: stream ) {
-            if ( stream.CanRead && stream.CanSeek && ( stream.Length > 0 ) ) {
+            if ( stream.CanRead && stream.CanSeek && stream.Length > 0 ) {
                 return;
             }
             if ( Debugger.IsAttached ) {
@@ -49,7 +49,7 @@ namespace Librainian.OperatingSystem.Streams {
             var amountRead = this.Stream.Read( buffer, offset, count );
 
             var newProgress = ( Int32 )( 1024.0 * ( this.Position / ( Double )this.Length ) );
-            if ( ( newProgress <= this._lastProgress ) || ( DateTime.UtcNow - this._lastProgressUpdate < Hertz.Sixty ) ) {
+            if ( newProgress <= this._lastProgress || DateTime.UtcNow - this._lastProgressUpdate < Hertz.Sixty ) {
                 return amountRead;
             }
             this._lastProgressUpdate = DateTime.UtcNow;

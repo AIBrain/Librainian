@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Currency {
     /// <remarks>
     ///     TODO add in support for automatic persisting
     /// </remarks>
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public class SimpleWallet : ABetterClassDispose,ISimpleWallet, IEquatable<SimpleWallet> {
 
@@ -57,9 +57,9 @@ namespace Librainian.Measurement.Currency {
 
         /// <summary>Initialize the wallet with the specified <paramref name="balance" />.</summary>
         /// <param name="balance"></param>
-        public SimpleWallet( Decimal balance ) : this() { this._balance = balance.Sanitize(); }
+        public SimpleWallet( Decimal balance ) : this() => this._balance = balance.Sanitize();
 
-        public Decimal Balance {
+	    public Decimal Balance {
             get {
                 try {
                     return this._access.TryEnterReadLock( this.Timeout ) ? this._balance : Decimal.Zero;
@@ -115,7 +115,7 @@ namespace Librainian.Measurement.Currency {
             if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
-            if ( ( null == left ) || ( null == right ) ) {
+            if ( null == left || null == right ) {
                 return false;
             }
 
@@ -285,10 +285,10 @@ namespace Librainian.Measurement.Currency {
             return this.TryWithdraw( wallet.Balance );
         }
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() { this._access.Dispose(); }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this._access.Dispose();
 
-    }
+	}
 }

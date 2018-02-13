@@ -67,13 +67,9 @@ namespace Librainian.Measurement.Time.Clocks {
 
         [JsonProperty]
         public Boolean IsPaused {
-            get {
-                return this._isPaused;
-            }
+            get => this._isPaused;
 
-            private set {
-                this._isPaused = value;
-            }
+	        private set => this._isPaused = value;
         }
 
         /// <summary>
@@ -161,15 +157,11 @@ namespace Librainian.Measurement.Time.Clocks {
             }
         }
 
-        public Date Date() {
-            return new Date( this.Year, this.Month, this.Day );
-        }
+        public Date Date() => new Date( this.Year, this.Month, this.Day );
 
-        public DateAndTime DateAndTime() {
-            return new DateAndTime( this.Date(), this.Time() );
-        }
+	    public DateAndTime DateAndTime() => new DateAndTime( this.Date(), this.Time() );
 
-        public Boolean IsAm() => !this.IsPm();
+	    public Boolean IsAm() => !this.IsPm();
 
         public Boolean IsPm() => this.Hour >= 12;
 
@@ -205,14 +197,11 @@ namespace Librainian.Measurement.Time.Clocks {
             }
         }
 
-        public Time Time() {
-            return new Time( this.Hour, this.Minute, this.Second, this.Millisecond );
-        }
+        public Time Time() => new Time( this.Hour, this.Minute, this.Second, this.Millisecond );
 
-        private Boolean DaysTocked( Boolean fireEvents ) {
-            Boolean tocked;
-            this.Day = this.Day.Next( out tocked );
-            if ( !tocked ) {
+	    private Boolean DaysTocked( Boolean fireEvents ) {
+			this.Day = this.Day.Next( out var tocked );
+			if ( !tocked ) {
                 return false;
             }
             try {
@@ -227,9 +216,8 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         private Boolean HoursTocked( Boolean fireEvents ) {
-            Boolean tocked;
-            this.Hour = this.Hour.Next( out tocked );
-            if ( !tocked ) {
+			this.Hour = this.Hour.Next( out var tocked );
+			if ( !tocked ) {
                 return false;
             }
             try {
@@ -244,9 +232,8 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         private Boolean MillisecondsTocked( Boolean fireEvents ) {
-            Boolean tocked;
-            this.Millisecond = this.Millisecond.Next( out tocked );
-            if ( !tocked ) {
+			this.Millisecond = this.Millisecond.Next( out var tocked );
+			if ( !tocked ) {
                 return false;
             }
             try {
@@ -261,9 +248,8 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         private Boolean MinutesTocked( Boolean fireEvents ) {
-            Boolean tocked;
-            this.Minute = this.Minute.Next( out tocked );
-            if ( !tocked ) {
+			this.Minute = this.Minute.Next( out var tocked );
+			if ( !tocked ) {
                 return false;
             }
             try {
@@ -278,9 +264,8 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         private Boolean MonthsTocked( Boolean fireEvents ) {
-            Boolean tocked;
-            this.Month = this.Month.Next( out tocked );
-            if ( !tocked ) {
+			this.Month = this.Month.Next( out var tocked );
+			if ( !tocked ) {
                 return false;
             }
             try {
@@ -308,9 +293,8 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         private Boolean SecondsTocked( Boolean fireEvents ) {
-            Boolean tocked;
-            this.Second = this.Second.Next( out tocked );
-            if ( !tocked ) {
+			this.Second = this.Second.Next( out var tocked );
+			if ( !tocked ) {
                 return false;
             }
             try {

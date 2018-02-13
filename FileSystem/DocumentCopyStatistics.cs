@@ -26,7 +26,7 @@ namespace Librainian.FileSystem {
     using Maths;
     using Newtonsoft.Json;
 
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public class DocumentCopyStatistics {
 
@@ -97,8 +97,7 @@ namespace Librainian.FileSystem {
         /// <returns>
         ///     A string that represents the current object.
         /// </returns>
-        public override String ToString() {
-            return $"{this.SourceDocument?.FileName()} copied to {this.DestinationDocument?.Folder()} @ {this.MegabytesPerSecond()}MB/s";
-        }
+        public override String ToString() => $"{this.SourceDocument?.FileName()} copied to {this.DestinationDocument.Folder} @ {this.MegabytesPerSecond()}MB/s";
+
     }
 }

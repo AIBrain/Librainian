@@ -60,11 +60,10 @@ namespace Librainian.Internet {
 
         public static void AddSiteToScrape( String url, Action<WebSite> responseaction ) {
             try {
-                Uri uri;
-                if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out uri ) ) {
-                    AddSiteToScrape( uri, responseaction );
-                }
-            }
+				if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out var uri ) ) {
+					AddSiteToScrape( uri, responseaction );
+				}
+			}
             catch ( Exception exception ) {
                 exception.More();
             }

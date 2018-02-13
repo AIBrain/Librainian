@@ -45,18 +45,17 @@ namespace Librainian.Internet {
         }
 
         public ActionBlock<String> StringsToDownload {
-            get; private set;
+            get;
         }
 
         //public void
 
         private void StartDownloadingString( String address ) {
-            Uri uri;
-            if ( Uri.TryCreate( address, UriKind.Absolute, out uri ) ) {
-                var webclient = WebClients.Value;
-                var stringTaskAsync = webclient.DownloadStringTaskAsync( uri );
-                stringTaskAsync.ContinueWith( task => this.DownloadedStrings.TryPost( new Tuple<Uri, String>( uri, stringTaskAsync.Result ) ), continuationOptions: TaskContinuationOptions.OnlyOnRanToCompletion );
-            }
-        }
+			if ( Uri.TryCreate( address, UriKind.Absolute, out var uri ) ) {
+				var webclient = WebClients.Value;
+				var stringTaskAsync = webclient.DownloadStringTaskAsync( uri );
+				stringTaskAsync.ContinueWith( task => this.DownloadedStrings.TryPost( new Tuple<Uri, String>( uri, stringTaskAsync.Result ) ), continuationOptions: TaskContinuationOptions.OnlyOnRanToCompletion );
+			}
+		}
     }
 }

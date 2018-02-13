@@ -49,59 +49,63 @@ namespace Librainian.Measurement.Time {
                 end = temp;
             }
 
-            {
-                this.Years = end.Year - start.Year;
+	        {
+		        this.Years = end.Year - start.Year;
 
-                if ( this.Years > 0 )
-                    if ( end.Month < start.Month ) {
-                        this.Years--;
-                    }
-                    else if ( end.Month == start.Month ) {
-                        if ( end.Day >= start.Day ) {
-                            if ( end.Day == start.Day )
-                                if ( end.Hour < start.Hour ) {
-                                    this.Years--;
-                                }
-                                else if ( end.Hour == start.Hour ) {
-                                    if ( end.Minute >= start.Minute ) {
-                                        if ( end.Minute == start.Minute && end.Second < start.Second )
-                                            this.Years--;
-                                    }
-                                    else {
-                                        this.Years--;
-                                    }
-                                }
-                        }
-                        else {
-                            this.Years--;
-                        }
-                    }
-            }
+		        if ( this.Years <= 0 ) { }
+		        else if ( end.Month < start.Month ) {
+			        this.Years--;
+		        }
+		        else if ( end.Month == start.Month ) {
+			        if ( end.Day >= start.Day ) {
+				        if ( end.Day != start.Day ) { }
+				        else if ( end.Hour < start.Hour ) {
+					        this.Years--;
+				        }
+				        else if ( end.Hour == start.Hour ) {
+					        if ( end.Minute >= start.Minute ) {
+						        if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
+						        else {
+							        this.Years--;
+						        }
+					        }
+					        else {
+						        this.Years--;
+					        }
+				        }
+			        }
+			        else {
+				        this.Years--;
+			        }
+		        }
+	        }
             {
                 this.Months = end.Month - start.Month;
 
-                if ( end.Month < start.Month || ( end.Month <= start.Month && this.Years > 1 ) ) {
+                if ( end.Month < start.Month || end.Month <= start.Month && this.Years > 1 ) {
                     this.Months = 12 - start.Month + end.Month;
                 }
 
-                if ( this.Months > 0 )
-                    if ( end.Day < start.Day ) {
-                        this.Months--;
-                    }
-                    else if ( end.Day == start.Day ) {
-                        if ( end.Hour < start.Hour ) {
-                            this.Months--;
-                        }
-                        else if ( end.Hour == start.Hour ) {
-                            if ( end.Minute >= start.Minute ) {
-                                if ( end.Minute == start.Minute && end.Second < start.Second )
-                                    this.Months--;
-                            }
-                            else {
-                                this.Months--;
-                            }
-                        }
-                    }
+	            if ( this.Months <= 0 ) { }
+	            else if ( end.Day < start.Day ) {
+		            this.Months--;
+	            }
+	            else if ( end.Day == start.Day ) {
+		            if ( end.Hour < start.Hour ) {
+			            this.Months--;
+		            }
+		            else if ( end.Hour == start.Hour ) {
+			            if ( end.Minute >= start.Minute ) {
+				            if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
+				            else {
+					            this.Months--;
+				            }
+			            }
+			            else {
+				            this.Months--;
+			            }
+		            }
+	            }
             }
             {
                 this.Days = end.Day - start.Day;
@@ -141,14 +145,16 @@ namespace Librainian.Measurement.Time {
                     this.Hours = 24 - start.Hour + end.Hour;
                 }
 
-                if ( this.Hours > 0 )
-                    if ( end.Minute >= start.Minute ) {
-                        if ( end.Minute == start.Minute && end.Second < start.Second )
-                            this.Hours--;
-                    }
-                    else {
-                        this.Hours--;
-                    }
+	            if ( this.Hours <= 0 ) { }
+	            else if ( end.Minute >= start.Minute ) {
+		            if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
+		            else {
+			            this.Hours--;
+		            }
+	            }
+	            else {
+		            this.Hours--;
+	            }
             }
             {
                 this.Minutes = end.Minute - start.Minute;
@@ -157,8 +163,10 @@ namespace Librainian.Measurement.Time {
                     this.Minutes = 60 - start.Minute + end.Minute;
                 }
 
-                if ( this.Minutes > 0 && end.Second < start.Second )
-                    this.Minutes--;
+	            if ( this.Minutes <= 0 || end.Second >= start.Second ) { }
+	            else {
+		            this.Minutes--;
+	            }
             }
             {
                 this.Seconds = end.Second - start.Second;
@@ -231,15 +239,11 @@ namespace Librainian.Measurement.Time {
         /// <param name="end">The end date</param>
         /// <param name="excludeEndDate">If true, the difference is exclusive of the end date</param>
         /// <returns></returns>
-        public static Int64 GetDifference( DateInterval interval, DateTime start, DateTime end, Boolean excludeEndDate = false ) {
-            return CalculateDifference( interval, start, end, excludeEndDate );
-        }
+        public static Int64 GetDifference( DateInterval interval, DateTime start, DateTime end, Boolean excludeEndDate = false ) => CalculateDifference( interval, start, end, excludeEndDate );
 
-        public static Int64 GetDifference( DateInterval interval, DateTimeOffset start, DateTimeOffset end, Boolean excludeEndDate = false ) {
-            return CalculateDifference( interval, start.DateTime, end.DateTime, excludeEndDate );
-        }
+	    public static Int64 GetDifference( DateInterval interval, DateTimeOffset start, DateTimeOffset end, Boolean excludeEndDate = false ) => CalculateDifference( interval, start.DateTime, end.DateTime, excludeEndDate );
 
-        public static Int64 GetDifferenceInDays( DateTime start, DateSpan span, Boolean excludeEndDate = true ) {
+	    public static Int64 GetDifferenceInDays( DateTime start, DateSpan span, Boolean excludeEndDate = true ) {
             var sum = 0;
 
             if ( span.Years > 0 ) {

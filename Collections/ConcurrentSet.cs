@@ -36,21 +36,17 @@ namespace Librainian.Collections {
 
         /// <summary></summary>
         [JsonProperty]
-        private readonly ConcurrentDictionary<T, Object> _dictionary = new ConcurrentDictionary<T, Object>( Environment.ProcessorCount, 3 );
+        private readonly ConcurrentDictionary<T, Object> _dictionary = new ConcurrentDictionary<T, Object>( Environment.ProcessorCount, 7 );
 
         public ConcurrentSet() {
         }
 
-        public ConcurrentSet( params T[] items ) {
-            this.UnionWith( items );
-        }
+		public ConcurrentSet( params T[] items ) => this.UnionWith( items );
 
-        public ConcurrentSet( IEnumerable<T> items ) {
-            this.UnionWith( items );
-        }
+		public ConcurrentSet( IEnumerable<T> items ) => this.UnionWith( items );
 
-        /// <summary>Gets the number of elements in the set.</summary>
-        public Int32 Count => this._dictionary.Count;
+		/// <summary>Gets the number of elements in the set.</summary>
+		public Int32 Count => this._dictionary.Count;
 
         /// <summary>Gets a value that indicates if the set is empty.</summary>
         public Boolean IsEmpty => this._dictionary.IsEmpty;
@@ -81,7 +77,7 @@ namespace Librainian.Collections {
                 return true;
             }
 
-            item = default ( T );
+            item = default;
             return false;
         }
 
@@ -96,9 +92,9 @@ namespace Librainian.Collections {
         //         return true;
         //     }
         //}
-        public Boolean Contains( T item ) => this._dictionary.ContainsKey( item );
+        public Boolean Contains( T item ) => item != null && this._dictionary.ContainsKey( item );
 
-        /// <summary>
+	    /// <summary>
         ///     Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to
         ///     an <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.
         /// </summary>
@@ -150,7 +146,7 @@ namespace Librainian.Collections {
         /// </exception>
         /// <exception cref="ArgumentException"></exception>
         void ICollection<T>.Add( T item ) {
-            if ( !this.Add( item ) ) {
+            if ( item != null && !this.Add( item ) ) {
                 throw new ArgumentException( "Item already exists in set." );
             }
         }
@@ -188,7 +184,7 @@ namespace Librainian.Collections {
         /// </exception>
         public Boolean IsProperSubsetOf( IEnumerable<T> other ) {
             var enumerable = other as IList<T> ?? other.ToArray();
-            return ( this.Count != enumerable.Count ) && this.IsSubsetOf( enumerable );
+            return this.Count != enumerable.Count && this.IsSubsetOf( enumerable );
         }
 
         /// <summary>
@@ -204,7 +200,7 @@ namespace Librainian.Collections {
         /// </exception>
         public Boolean IsProperSupersetOf( IEnumerable<T> other ) {
             var enumerable = other as IList<T> ?? other.ToArray();
-            return ( this.Count != enumerable.Count ) && this.IsSupersetOf( enumerable );
+            return this.Count != enumerable.Count && this.IsSupersetOf( enumerable );
         }
 
         /// <summary>Determines whether a set is a subset of a specified collection.</summary>
@@ -269,7 +265,7 @@ namespace Librainian.Collections {
         /// </exception>
         public Boolean SetEquals( IEnumerable<T> other ) {
             var enumerable = other as IList<T> ?? other.ToArray();
-            return ( this.Count == enumerable.Count ) && enumerable.AsParallel().All( this.Contains );
+            return this.Count == enumerable.Count && enumerable.AsParallel().All( this.Contains );
         }
 
         /// <summary>
@@ -280,11 +276,9 @@ namespace Librainian.Collections {
         /// <exception cref="T:System.ArgumentNullException">
         ///     <paramref name="other" /> is null.
         /// </exception>
-        public void SymmetricExceptWith( IEnumerable<T> other ) {
-            throw new NotImplementedException();
-        }
+        public void SymmetricExceptWith( IEnumerable<T> other ) => throw new NotImplementedException();
 
-        /// <summary>
+	    /// <summary>
         /// Returns a copy of the keys to an array.
         /// </summary>
         /// <returns></returns>
@@ -293,17 +287,11 @@ namespace Librainian.Collections {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public Boolean TryAdd( T item ) => this._dictionary.TryAdd( item, null );
 
-        public Boolean TryGet( T item ) {
-            Object dummy;
-            return this._dictionary.TryGetValue( item, out dummy );
-        }
+        public Boolean TryGet( T item ) => this._dictionary.TryGetValue( item, out var dummy );
 
-        public Boolean TryRemove( T item ) {
-            Object donotcare;
-            return this._dictionary.TryRemove( item, out donotcare );
-        }
+	    public Boolean TryRemove( T item ) => this._dictionary.TryRemove( item, out var donotcare );
 
-        /// <summary>
+	    /// <summary>
         ///     Modifies the current set so that it contains all elements that are present in both the
         ///     current set and in the specified collection.
         /// </summary>

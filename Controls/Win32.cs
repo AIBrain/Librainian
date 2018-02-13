@@ -63,7 +63,7 @@ namespace Librainian.Controls {
                 var cy = Cursor.Position.Y;
 
                 while ( true ) {
-                    if ( ( Cursor.Position.X == x ) && ( Cursor.Position.Y == y ) ) {
+                    if ( Cursor.Position.X == x && Cursor.Position.Y == y ) {
                         break;
                     }
                     if ( Randem.NextBoolean() ) {

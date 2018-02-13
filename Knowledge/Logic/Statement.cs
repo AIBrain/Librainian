@@ -31,8 +31,7 @@ namespace Librainian.Knowledge.Logic {
     public class Statement {
         public readonly Sentence Sentence;
 
-        public Statement( String sentence ) {
-            this.Sentence = new Sentence( sentence );
-        }
+        public Statement( String sentence ) => this.Sentence = new Sentence( sentence );
+
     }
 }

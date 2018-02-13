@@ -143,11 +143,12 @@ namespace Librainian.OperatingSystem.Compression {
         public static String FromCompressedBase64( this String text ) {
             var buffer = Convert.FromBase64String( text );
             using ( var streamOut = new MemoryStream() ) {
-                var streamIn = new MemoryStream( buffer );
-                using ( var gs = new GZipStream( streamIn, CompressionMode.Decompress ) ) {
-                    gs.CopyTo( streamOut );
-                }
-                return Encoding.Unicode.GetString( streamOut.ToArray() );
+	            using ( var streamIn = new MemoryStream( buffer ) ) {
+		            using ( var gs = new GZipStream( streamIn, CompressionMode.Decompress ) ) {
+			            gs.CopyTo( streamOut );
+		            }
+	            }
+	            return Encoding.Unicode.GetString( streamOut.ToArray() );
             }
         }
 
@@ -159,11 +160,12 @@ namespace Librainian.OperatingSystem.Compression {
         public static String ToCompressedBase64( this String text ) {
             var buffer = Encoding.Unicode.GetBytes( text );
             using ( var streamIn = new MemoryStream( buffer: buffer ) ) {
-                var streamOut = new MemoryStream();
-                using ( var zipStream = new GZipStream( stream: streamOut, compressionLevel: CompressionLevel.Optimal ) ) {
-                    streamIn.CopyTo( zipStream );
-                }
-                return Convert.ToBase64String( streamOut.ToArray() );
+	            using ( var streamOut = new MemoryStream() ) {
+		            using ( var zipStream = new GZipStream( stream: streamOut, compressionLevel: CompressionLevel.Fastest ) ) {
+			            streamIn.CopyTo( zipStream );
+		            }
+		            return Convert.ToBase64String( streamOut.ToArray() );
+	            }
             }
         }
     }

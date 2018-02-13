@@ -28,30 +28,21 @@ namespace Librainian.Measurement.Currency.BTC {
     public class Hash {
         public readonly Byte[] HashBytes;
 
-        public Hash( Byte[] b ) {
-            this.HashBytes = b;
+        public Hash( Byte[] b ) => this.HashBytes = b;
+
+	    public Byte this[ Int32 i ] {
+            get => this.HashBytes[ i ];
+
+	        set => this.HashBytes[ i ] = value;
         }
 
-        public Byte this[ Int32 i ] {
-            get {
-                return this.HashBytes[ i ];
-            }
+        public static implicit operator Byte[] ( Hash hash ) => hash.HashBytes;
 
-            set {
-                this.HashBytes[ i ] = value;
-            }
-        }
+        public static implicit operator Hash( Byte[] bytes ) => new Hash( bytes );
 
-        public static implicit operator Byte[] ( Hash h ) => h.HashBytes;
+        public override Boolean Equals( Object obj ) => obj is Hash hash1 && this.HashBytes.SequenceEqual( hash1.HashBytes );
 
-        public static implicit operator Hash( Byte[] b ) => new Hash( b );
-
-        public override Boolean Equals( Object h ) {
-            var hash1 = h as Hash;
-            return ( hash1 != null ) && this.HashBytes.SequenceEqual( hash1.HashBytes );
-        }
-
-        public override Int32 GetHashCode() {
+	    public override Int32 GetHashCode() {
             if ( this.HashBytes.Length >= 4 ) {
                 return ( this.HashBytes[ 0 ] << 24 ) | ( this.HashBytes[ 1 ] << 16 ) | ( this.HashBytes[ 2 ] << 8 ) | ( this.HashBytes[ 3 ] << 0 );
             }

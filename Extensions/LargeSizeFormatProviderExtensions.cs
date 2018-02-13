@@ -29,15 +29,15 @@ namespace Librainian.Extensions {
         private static readonly LargeSizeFormatProvider FormatProvider = new LargeSizeFormatProvider();
 
         /// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
-        public static String ToLargeSize( this Decimal @bytes ) => String.Format( FormatProvider, "{0:fs}", @bytes );
+        public static String ToLargeSize( this Decimal bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
 
         /// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
-        public static String ToLargeSize( this UInt64 @bytes ) => String.Format( FormatProvider, "{0:fs}", @bytes );
+        public static String ToLargeSize( this UInt64 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
 
         /// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
-        public static String ToLargeSize( this Int64 @bytes ) => String.Format( FormatProvider, "{0:fs}", @bytes );
+        public static String ToLargeSize( this Int64 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
 
         /// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
-        public static String ToLargeSize( this Int32 @bytes ) => String.Format( FormatProvider, "{0:fs}", @bytes );
+        public static String ToLargeSize( this Int32 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
     }
 }

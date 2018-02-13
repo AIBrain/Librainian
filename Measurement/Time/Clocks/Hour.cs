@@ -66,11 +66,9 @@ namespace Librainian.Measurement.Time.Clocks {
 
         public static implicit operator Byte( Hour value ) => value.Value;
 
-        public static implicit operator Hour( Byte value ) {
-            return new Hour( value );
-        }
+        public static implicit operator Hour( Byte value ) => new Hour( value );
 
-        /// <summary>
+	    /// <summary>
         ///     Provide the next <see cref="Hour" />.
         /// </summary>
         public Hour Next( out Boolean tocked ) {

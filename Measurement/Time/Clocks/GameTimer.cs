@@ -53,23 +53,17 @@ namespace Librainian.Measurement.Time.Clocks {
         private DateTime _lastUpdate = DateTime.UtcNow;
 
         public GameTimer( [NotNull] IProgress<ReportBack> progress ) {
-            if ( progress == null ) {
-                throw new ArgumentNullException( nameof( progress ), "Progress must not be null." );
-            }
-            this.Progress = progress;
+	        this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ), "Progress must not be null." );
+	        // ReSharper disable once UseObjectOrCollectionInitializer
             this.Timer = new Timer( interval: this.UpdateRate ) { AutoReset = false };
             this.Timer.Elapsed += this.OnTimerElapsed;
             this.Resume();
         }
 
         public UInt64 Counter {
-            get {
-                return Thread.VolatileRead( ref this._counter );
-            }
+            get => Thread.VolatileRead( ref this._counter );
 
-            private set {
-                Thread.VolatileWrite( ref this._counter, value );
-            }
+	        private set => Thread.VolatileWrite( ref this._counter, value );
         }
 
         /// <summary>
@@ -84,13 +78,9 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         public Boolean IsPaused {
-            get {
-                return this._isPaused;
-            }
+            get => this._isPaused;
 
-            private set {
-                this._isPaused = value;
-            }
+	        private set => this._isPaused = value;
         }
 
         /// <summary>
@@ -150,11 +140,9 @@ namespace Librainian.Measurement.Time.Clocks {
 
         private Double UpdateRate { get; } = ( Double )Fps.Sixty.Value;
 
-        public Boolean IsRunningSlow() {
-            return this.LastElapsed.TotalMilliseconds > 70;
-        }
+        public Boolean IsRunningSlow() => this.LastElapsed.TotalMilliseconds > 70;
 
-        public Boolean Pause() {
+	    public Boolean Pause() {
             this.Timer.Stop();
             this.IsPaused = true;
             return this.IsPaused;
@@ -170,11 +158,9 @@ namespace Librainian.Measurement.Time.Clocks {
         ///     Total time passed since timer was started.
         /// </summary>
         /// <returns></returns>
-        public Span TotalElapsed() {
-            return new Span( milliseconds: this.Counter / this.UpdateRate );
-        }
+        public Span TotalElapsed() => new Span( milliseconds: this.Counter / this.UpdateRate );
 
-        private void OnTimerElapsed( Object sender, ElapsedEventArgs elapsedEventArgs ) {
+	    private void OnTimerElapsed( Object sender, ElapsedEventArgs elapsedEventArgs ) {
             try {
                 this.Pause();
                 this.Counter++;

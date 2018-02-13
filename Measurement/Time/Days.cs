@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Time {
     using Parsing;
 
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public struct Days : IComparable<Days>, IQuantityOfTime {
 
         /// <summary>
@@ -48,36 +48,34 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Days One = new Days( 1 );
 
-        /// <summary>
-        /// </summary>
-        public static readonly Days Ten = new Days( 10 );
+		/// <summary>
+		/// Ten <see cref="Days" /> .
+		/// </summary>
+		public static readonly Days Ten = new Days( 10 );
 
-        /// <summary>
-        /// </summary>
-        public static readonly Days Thousand = new Days( 1000 );
+		/// <summary>
+		/// Seven <see cref="Days" /> .
+		/// </summary>
+		public static readonly Days Seven = new Days( 7 );
+
+		/// <summary>
+		/// </summary>
+		public static readonly Days Thousand = new Days( 1000 );
 
         /// <summary>
         ///     Zero <see cref="Days" />
         /// </summary>
         public static readonly Days Zero = new Days( 0 );
 
-        public Days( Decimal value ) {
-            this.Value = value;
-        }
+        public Days( Decimal value ) => this.Value = value;
 
-        public Days( BigRational value ) {
-            this.Value = value;
-        }
+	    public Days( BigRational value ) => this.Value = value;
 
-        public Days( Int64 value ) {
-            this.Value = value;
-        }
+	    public Days( Int64 value ) => this.Value = value;
 
-        public Days( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Days( BigInteger value ) => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -144,10 +142,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Days other ) => Equals( this.Value, other.Value );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Days && this.Equals( ( Days )obj );
+            return obj is Days days && this.Equals( days );
         }
 
         [Pure]

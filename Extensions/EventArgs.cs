@@ -27,8 +27,7 @@ namespace Librainian.Extensions {
     public class EventArgs<T> : EventArgs {
         public T Value;
 
-        public EventArgs( T value ) {
-            this.Value = value;
-        }
+        public EventArgs( T value ) => this.Value = value;
+
     }
 }

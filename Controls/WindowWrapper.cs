@@ -25,11 +25,9 @@ namespace Librainian.Controls {
 
     public class WindowWrapper : IWin32Window {
 
-        private WindowWrapper( IntPtr handle ) {
-            this.Handle = handle;
-        }
+        private WindowWrapper( IntPtr handle ) => this.Handle = handle;
 
-        public IntPtr Handle {
+	    public IntPtr Handle {
             get;
         }
 

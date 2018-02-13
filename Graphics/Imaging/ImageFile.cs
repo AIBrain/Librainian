@@ -24,9 +24,8 @@ namespace Librainian.Graphics.Imaging {
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using LanguageExt;
 
-    /// <summary>
+	/// <summary>
     ///     Untested.
     ///     Pulled from http://www.dreamincode.net/forums/topic/286802-detect-partially-corrupted-image/
     /// </summary>
@@ -51,7 +50,6 @@ namespace Librainian.Graphics.Imaging {
             this.Filename = filename.Trim();
             var fliTmp = new FileInfo( this.Filename );
 
-            // check file exists...
             if ( File.Exists( this.Filename ) ) {
                 this.FileType = Types.FileUnrecognized; // default if found
 

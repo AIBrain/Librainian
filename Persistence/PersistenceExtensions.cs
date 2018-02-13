@@ -18,7 +18,8 @@
 //
 // "Librainian/PersistenceExtensions.cs" was last cleaned by Rick on 2016/06/18 at 10:56 PM
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence
+{
 
     using System;
     using System.Collections.Concurrent;
@@ -35,6 +36,7 @@ namespace Librainian.Persistence {
     using System.ServiceModel;
     using System.Text;
     using System.Threading;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
     using System.Xml;
     using CodeFluent.Runtime.BinaryServices;
@@ -52,7 +54,8 @@ namespace Librainian.Persistence {
     using Threading;
     using Formatting = Newtonsoft.Json.Formatting;
 
-    public static class PersistenceExtensions {
+    public static class PersistenceExtensions
+    {
 
         public static readonly Lazy<Document> DataDocument = new Lazy<Document>( () => {
             var document = new Document( DataFolder.Value, Application.ExecutablePath + ".data" );
@@ -78,9 +81,6 @@ namespace Librainian.Persistence {
             return folder;
         } );
 
-        [NotNull]
-        internal static readonly ThreadLocal<JsonSerializer> JSONSerializers = new ThreadLocal<JsonSerializer>( () => new JsonSerializer { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All } );
-
         ///// <summary>
         /////   Attempts to Add() the specified filename into the collection.
         ///// </summary>
@@ -104,8 +104,8 @@ namespace Librainian.Persistence {
         //    }
         //    return false;
         //}
-        [NotNull]
-        internal static readonly ThreadLocal<NetDataContractSerializer> Serializers = new ThreadLocal<NetDataContractSerializer>( () => new NetDataContractSerializer( context: StreamingContexts.Value, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false, assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null ) );
+        [ NotNull ]
+        public static readonly ThreadLocal< NetDataContractSerializer > Serializers = new ThreadLocal< NetDataContractSerializer >( () => new NetDataContractSerializer( context: StreamingContexts.Value, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false, assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null ), true );
 
         ///// <summary>
         /////   Attempts to Add() the specified filename into the collection.
@@ -130,7 +130,7 @@ namespace Librainian.Persistence {
         //    }
         //    return false;
         //}
-        internal static readonly ThreadLocal<StreamingContext> StreamingContexts = new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ) );
+        public static readonly ThreadLocal<StreamingContext> StreamingContexts = new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ), true );
 
         public static JsonSerializerSettings Jss {
             get;
@@ -159,7 +159,7 @@ namespace Librainian.Persistence {
             catch ( SerializationException exception ) {
                 exception.More();
             }
-            return default( TType );
+            return default;
         }
 
         public static TSource Deserialize<TSource>( Stream stream, ProgressChangedEventHandler feedback = null ) where TSource : class {
@@ -204,7 +204,7 @@ namespace Librainian.Persistence {
 
                 foreach ( var document in documents ) {
                     var length = document.GetLength();
-                    if ( ( length != null ) && ( length.Value < 1 ) ) {
+                    if ( length != null && length.Value < 1 ) {
                         document.Delete();
                         continue;
                     }
@@ -216,7 +216,7 @@ namespace Librainian.Persistence {
                             try {
                                 var tuple = line.Deserialize<Tuple<TKey, TValue>>();
                                 if ( tuple != null ) {
-                                    toDictionary[ tuple.Item1 ] = tuple.Item2;
+                                    toDictionary[tuple.Item1] = tuple.Item2;
                                 }
                             }
                             catch ( Exception lineexception ) {
@@ -357,7 +357,7 @@ namespace Librainian.Persistence {
             if ( fileName == null ) {
                 throw new ArgumentNullException( nameof( fileName ) );
             }
-            obj = default( TSource );
+            obj = default;
             try {
                 if ( IsolatedStorageFile.IsEnabled && !String.IsNullOrWhiteSpace( fileName ) ) {
                     using ( var isolatedStorageFile = IsolatedStorageFile.GetMachineStoreForDomain() ) {
@@ -511,6 +511,13 @@ namespace Librainian.Persistence {
             return false;
         }
 
+        [NotNull]
+        public static readonly ThreadLocal<JsonSerializer> JsonSerializers = new ThreadLocal<JsonSerializer>( () => new JsonSerializer {
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            PreserveReferencesHandling = PreserveReferencesHandling.All
+        }, true );
+
+
         /// <summary>
         ///     Return an object loaded from a JSON text file.
         /// </summary>
@@ -522,29 +529,59 @@ namespace Librainian.Persistence {
             if ( document == null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
+
             if ( !document.Exists() ) {
-                return default( TType );
+                return default;
             }
 
             try {
                 var textReader = File.OpenText( document.FullPathWithFileName );
                 using ( var jsonReader = new JsonTextReader( textReader ) ) {
-
-                    var serializer = new JsonSerializer();
-
-                    var obj = serializer.Deserialize<TType>( jsonReader );
-
+                    var obj = JsonSerializers.Value.Deserialize<TType>( jsonReader );
                     return obj;
                 }
 
             }
-            catch ( JsonSerializationException ) {
-                return default( TType );
+            catch ( Exception exception ) {
+                exception.More();
             }
-            catch ( Exception ) {
-                return default( TType );
-            }
+
+            return default;
         }
+
+        /// <summary>
+        ///     Return an object loaded from a JSON text file (async).
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        public static Task<TType> LoadJSONAsync<TType>( [NotNull] this Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( nameof( document ) );
+            }
+
+            if ( !document.Exists() ) {
+                return default;
+            }
+
+            return Task.Run( () => {
+                try {
+                    var textReader = File.OpenText( document.FullPathWithFileName );
+                    //var s = await textReader.ReadToEndAsync();    //TODO
+                    using ( var jsonReader = new JsonTextReader( textReader ) ) {
+                        var obj = JsonSerializers.Value.Deserialize< TType >( jsonReader );
+                        return obj;
+                    }
+                }
+                catch ( Exception exception ) {
+                    exception.More();
+                }
+
+                return default;
+            } );
+        }
+
+
 
         /// <summary>Deserialize from an IsolatedStorageFile.</summary>
         /// <param name="fileName" />
@@ -609,7 +646,7 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         [Obsolete]
         public static Boolean LoadValue<T>( out T obj, String fileName ) where T : struct {
-            obj = default( T );
+            obj = default;
             try {
                 if ( String.IsNullOrEmpty( fileName ) ) {
                     return false;
@@ -667,7 +704,7 @@ namespace Librainian.Persistence {
                             obj = ( T )serializer.ReadObject( stream: isfs );
                         }
 
-                        return !Equals( obj, default( T ) );
+                        return !Equals( obj, default );
 
                     }
                     catch ( InvalidOperationException exception ) {
@@ -703,7 +740,7 @@ namespace Librainian.Persistence {
         /// <param name="overwrite"></param>
         /// <param name="formatting"></param>
         /// <returns></returns>
-        public static Boolean Save<TKey>( this TKey @object, Document document, Boolean overwrite = true, Formatting formatting = Formatting.Indented ) {
+        public static Boolean Save<TKey>( this TKey @object, Document document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
             if ( document == null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
@@ -712,7 +749,7 @@ namespace Librainian.Persistence {
                 document.Delete();
             }
 
-            using ( var snag = new FileSingleton( document.Info() ) ) {
+            using ( var snag = new FileSingleton( document.Info ) ) {
                 snag.Snagged.Should().BeTrue();
                 var writer = File.AppendText( document.FullPathWithFileName );
                 using ( JsonWriter jw = new JsonTextWriter( writer ) ) {
@@ -982,7 +1019,7 @@ namespace Librainian.Persistence {
         /// </exception>
         [CanBeNull]
         public static String Serialize<TType>( [NotNull] this TType obj ) {
-            if ( Equals( obj, default( TType ) ) ) {
+            if ( Equals( obj, default ) ) {
                 throw new ArgumentNullException( nameof( obj ) );
             }
             try {
@@ -1106,18 +1143,7 @@ namespace Librainian.Persistence {
         /// <param name="obj"></param>
         /// <param name="formatting"></param>
         /// <returns></returns>
-        public static String ToJSON<TKey>( this TKey obj, Formatting formatting = Formatting.None ) {
-
-            //var sb = new StringBuilder();
-            //using ( var stringWriter = new StringWriter( sb ) ) {
-            //JSONSerializers.Value.Formatting = formatting;
-            var json = JsonConvert.SerializeObject( obj, formatting, Jss );
-            return json;
-
-            //JSONSerializers.Value.Serialize( stringWriter, obj, typeof(TKey) );
-            //return stringWriter.ToString();
-            //}
-        }
+        public static String ToJSON<TKey>( this TKey obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( obj, formatting, Jss );
 
         /// <summary>
         ///     <para>
@@ -1135,7 +1161,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( nameof( attribute ) );
             }
 
-            value = default( TSource );
+            value = default;
 
             try {
                 if ( location.IsNullOrWhiteSpace() ) {
@@ -1247,7 +1273,8 @@ namespace Librainian.Persistence {
             return false;
         }
 
-        private class MyContractResolver : DefaultContractResolver {
+        private class MyContractResolver : DefaultContractResolver
+        {
 
             protected override IList<JsonProperty> CreateProperties( Type type, MemberSerialization memberSerialization ) {
                 var list = base.CreateProperties( type, memberSerialization );

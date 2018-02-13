@@ -58,11 +58,9 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <returns></returns>
         public static explicit operator Int16( Microsecond value ) => ( Int16 )value.Value;
 
-        public static implicit operator Microsecond( UInt16 value ) {
-            return new Microsecond( value );
-        }
+        public static implicit operator Microsecond( UInt16 value ) => new Microsecond( value );
 
-        public static implicit operator UInt16( Microsecond value ) => value.Value;
+	    public static implicit operator UInt16( Microsecond value ) => value.Value;
 
         /// <summary>Provide the next <see cref="Microsecond" />.</summary>
         public Microsecond Next( out Boolean ticked ) {

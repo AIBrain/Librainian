@@ -20,7 +20,7 @@
 
 namespace Librainian.FileSystem {
 
-    public enum CopyProgressResult : uint {
+    public enum CopyProgressResult : System.UInt32 {
         ProgressContinue = 0,
 
         ProgressCancel = 1,

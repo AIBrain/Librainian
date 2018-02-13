@@ -94,7 +94,7 @@ namespace Librainian.FileSystem {
         }
 
         private static UInt32[] InitializeTable( UInt32 polynomial ) {
-            if ( ( polynomial == DefaultPolynomial ) && ( _defaultTable != null ) ) {
+            if ( polynomial == Crc32.DefaultPolynomial && Crc32._defaultTable != null ) {
                 return _defaultTable;
             }
 

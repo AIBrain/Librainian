@@ -30,11 +30,9 @@ namespace Librainian.Internet.Servers {
         private readonly AutoResetEvent _listenForNextRequest = new AutoResetEvent( false );
         private readonly HttpListener _httpListener;
 
-        protected WebServer() {
-            _httpListener = new HttpListener();
-        }
+        protected WebServer() => _httpListener = new HttpListener();
 
-        public Boolean IsRunning {
+	    public Boolean IsRunning {
             get; private set;
         }
 
@@ -43,18 +41,18 @@ namespace Librainian.Internet.Servers {
         }
 
         public void Start() {
-            if ( String.IsNullOrEmpty( Prefix ) ) {
+            if ( String.IsNullOrEmpty( this.Prefix ) ) {
                 throw new InvalidOperationException( "Specify prefix" );
             }
-            _httpListener.Prefixes.Clear();
-            _httpListener.Prefixes.Add( Prefix );
-            _httpListener.Start();
-            ThreadPool.QueueUserWorkItem( Listen );
+			this._httpListener.Prefixes.Clear();
+			this._httpListener.Prefixes.Add( this.Prefix );
+			this._httpListener.Start();
+            ThreadPool.QueueUserWorkItem( this.Listen );
         }
 
         internal void Stop() {
-            _httpListener.Stop();
-            IsRunning = false;
+			this._httpListener.Stop();
+			this.IsRunning = false;
         }
 
         private static void ListenerCallback( IAsyncResult ar ) {
@@ -64,16 +62,16 @@ namespace Librainian.Internet.Servers {
 
         // Loop here to begin processing of new requests.
         private void Listen( Object state ) {
-            while ( _httpListener.IsListening ) {
-                _httpListener.BeginGetContext( ListenerCallback, _httpListener );
+            while ( this._httpListener.IsListening ) {
+				this._httpListener.BeginGetContext( ListenerCallback, this._httpListener );
                 this._listenForNextRequest.WaitOne();
             }
         }
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() { this._listenForNextRequest?.Dispose(); }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this._listenForNextRequest?.Dispose();
 
-    }
+	}
 }

@@ -46,38 +46,28 @@ namespace Librainian.Extensions {
         private PopulateProgressDelegateError _populateError;
         private PopulateProgressDelegate _populateEventOk;
 
-        static RegistryServer() {
-            Instance = new RegistryServer();
-        }
+        static RegistryServer() => Instance = new RegistryServer();
 
-        private RegistryServer() {
+	    private RegistryServer() {
         }
 
         public static event PopulateProgressDelegate PopulateProgress {
-            add {
-                Instance._populateEventOk += value;
-            }
+            add => Instance._populateEventOk += value;
 
-            // ReSharper disable DelegateSubtraction
-            remove {
-                Instance._populateEventOk -= value;
-            }
+	        // ReSharper disable DelegateSubtraction
+            remove => Instance._populateEventOk -= value;
 
-            // ReSharper restore DelegateSubtraction
+	        // ReSharper restore DelegateSubtraction
         }
 
         //void IInitializable.Initialize() { Initialize(); }
         public static event PopulateProgressDelegateError PopulateProgressItemError {
-            add {
-                Instance._populateError += value;
-            }
+            add => Instance._populateError += value;
 
-            // ReSharper disable DelegateSubtraction
-            remove {
-                Instance._populateError -= value;
-            }
+	        // ReSharper disable DelegateSubtraction
+            remove => Instance._populateError -= value;
 
-            // ReSharper restore DelegateSubtraction
+	        // ReSharper restore DelegateSubtraction
         }
 
         public static Int64 Count {
@@ -110,7 +100,7 @@ namespace Librainian.Extensions {
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public Boolean Equals( RegistryKey x, RegistryKey y ) => ( x.Name != null ) && ( y.Name != null ) && ( x.Name == y.Name );
+        public Boolean Equals( RegistryKey x, RegistryKey y ) => x.Name != null && y.Name != null && x.Name == y.Name;
 
         public IEnumerator<RegistryKey> GetEnumerator() {
             if ( !this._isInitialized ) {
@@ -136,12 +126,11 @@ namespace Librainian.Extensions {
                 yield break;
             }
 
-            RegistryKey subItemRoot;
 
-            if ( !TryOpenSubKey( startkeyIn, nodeKey, out subItemRoot ) ) {
-                yield break;
-            }
-            yield return subItemRoot;
+			if ( !TryOpenSubKey( startkeyIn, nodeKey, out var subItemRoot ) ) {
+				yield break;
+			}
+			yield return subItemRoot;
 
             foreach ( var sub in subItemRoot.GetSubKeyNames().SelectMany( s => GetAllSubkeys( subItemRoot, s ) ) ) {
                 yield return sub;
@@ -159,11 +148,9 @@ namespace Librainian.Extensions {
             Instance._isInitialized = true;
         }
 
-        private static void InvokePopulateProgressItemError( PopulateProgressEventArgs args ) {
-            Instance._populateError?.Invoke( Instance, args );
-        }
+		private static void InvokePopulateProgressItemError( PopulateProgressEventArgs args ) => Instance._populateError?.Invoke( Instance, args );
 
-        private static Boolean TryOpenSubKey( RegistryKey startFrom, String name, out RegistryKey itemOut ) {
+		private static Boolean TryOpenSubKey( RegistryKey startFrom, String name, out RegistryKey itemOut ) {
             var bIsOk = false;
             itemOut = null;
 

@@ -41,7 +41,7 @@ namespace Librainian.Collections {
         /// <returns>Returns the DateTime the data was queued.</returns>
         public DateTime Add( T item ) {
             if ( null == item ) {
-                return default( DateTime );
+                return default;
             }
             this.Queue.Enqueue( new WithTime<T>( item: item ) );
 
@@ -79,9 +79,7 @@ namespace Librainian.Collections {
 
         /// <summary>Returns the next Object in the <see cref="Queue" /> or null.</summary>
         /// <returns></returns>
-        public WithTime<T> Pull() {
-            WithTime<T> temp;
-            return this.Queue.TryDequeue( out temp ) ? temp : default( WithTime<T> );
-        }
+        public WithTime<T> Pull() => this.Queue.TryDequeue( out var temp ) ? temp : default;
+
     }
 }

@@ -110,12 +110,9 @@ namespace Librainian.Misc {
             this = Parse( g );
         }
 
-        public static Bitten Parse( String input ) {
-            Guid result;
-            return Guid.TryParse( input, out result ) ? new Bitten( result.ToByteArray().Skip( 8 ).ToList() ) : Empty;
-        }
+        public static Bitten Parse( String input ) => Guid.TryParse( input, out var result ) ? new Bitten( result.ToByteArray().Skip( 8 ).ToList() ) : Empty;
 
-        // Returns an unsigned byte array containing the GUID.
+	    // Returns an unsigned byte array containing the GUID.
         public Byte[] ToByteArray() {
             var g = new Byte[ 8 ];
 
@@ -235,7 +232,7 @@ namespace Librainian.Misc {
         //}
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
             if ( obj.GetType() != typeof( Bitten ) ) {

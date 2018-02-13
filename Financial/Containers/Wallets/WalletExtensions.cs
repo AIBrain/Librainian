@@ -58,17 +58,15 @@ namespace Librainian.Financial.Containers.Wallets {
             if ( wallet == null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
-            var bankNote = message.Denomination as IBankNote;
-            if ( null != bankNote ) {
-                return wallet.Deposit( bankNote, message.Quantity );
-            }
+			if ( message.Denomination is IBankNote bankNote ) {
+				return wallet.Deposit( bankNote, message.Quantity );
+			}
 
-            var coin = message.Denomination as ICoin;
-            if ( null != coin ) {
-                return wallet.Deposit( coin, message.Quantity ) > Decimal.Zero;
-            }
+			if ( message.Denomination is ICoin coin ) {
+				return wallet.Deposit( coin, message.Quantity ) > Decimal.Zero;
+			}
 
-            throw new NotImplementedException( $"Unknown denomination {message.Denomination}" );
+			throw new NotImplementedException( $"Unknown denomination {message.Denomination}" );
         }
 
         /// <summary>
@@ -151,7 +149,7 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <param name="target"></param>
         [NotNull]
         public static Task<ConcurrentDictionary<IDenomination, UInt64>> StartTransfer( [CanBeNull] this Wallet source, [CanBeNull] Wallet target ) => Task.Run( () => {
-            if ( ( null == source ) || ( null == target ) ) {
+            if ( null == source || null == target ) {
                 return new ConcurrentDictionary<IDenomination, UInt64>();
             }
 
@@ -174,7 +172,7 @@ namespace Librainian.Financial.Containers.Wallets {
 
             leftOverAmount += amount;
 
-            while ( ( leftOverAmount > Decimal.Zero ) && denominations.Any() ) {
+            while ( leftOverAmount > Decimal.Zero && denominations.Any() ) {
                 var highestBill = denominations.OrderByDescending( denomination => denomination.FaceValue ).First();
 
                 var chunks = ( UInt64 )( leftOverAmount / highestBill.FaceValue );

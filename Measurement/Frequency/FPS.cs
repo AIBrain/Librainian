@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Frequency {
     /// </summary>
     /// <seealso cref="http://en.wikipedia.org/wiki/Frame_rate" />
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public struct Fps {
 
         [JsonProperty]

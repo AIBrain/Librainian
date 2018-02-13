@@ -31,12 +31,12 @@ namespace Librainian.Graphics.DDD {
     using Maths;
     using Newtonsoft.Json;
 
-    /// <summary>
-    ///     A 3D point; with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> <see cref="long"/> integers.
-    /// </summary>
-    /// <remarks>Code towards speed.</remarks>
-    [Immutable]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+	/// <summary>
+	///     A 3D point; with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> <see cref="Int64"/> integers.
+	/// </summary>
+	/// <remarks>Code towards speed.</remarks>
+	[Immutable]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject( MemberSerialization.Fields )]
     public class Coordinate64 : IEquatable<Coordinate64>, IComparable<Coordinate64> {
 
@@ -124,10 +124,10 @@ namespace Librainian.Graphics.DDD {
             if ( ReferenceEquals( lhs, rhs ) ) {
                 return true;
             }
-            if ( ReferenceEquals( lhs, null ) ) {
+            if ( lhs is null ) {
                 return false;
             }
-            if ( ReferenceEquals( null, rhs ) ) {
+            if ( rhs is null ) {
                 return false;
             }
             return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
@@ -179,11 +179,9 @@ namespace Librainian.Graphics.DDD {
         ///     Calculates the distance between this <see cref="Coordinate64" /> and another <see cref="Coordinate64" />.
         /// </summary>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public Int64 Distance( Coordinate64 to ) {
-            return Distance( this, to );
-        }
+        public Int64 Distance( Coordinate64 to ) => Distance( this, to );
 
-        /// <summary>Calls the static comparison.</summary>
+		/// <summary>Calls the static comparison.</summary>
         /// <param name="other"></param>
         /// <returns></returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -191,10 +189,10 @@ namespace Librainian.Graphics.DDD {
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Coordinate64 && Equals( this, ( Coordinate64 )obj );
+            return obj is Coordinate64 coordinate64 && Equals( this, coordinate64 );
         }
 
         /// <summary>precomputed hash of <see cref="X" />, <see cref="Y" />, and <see cref="Z" />.</summary>

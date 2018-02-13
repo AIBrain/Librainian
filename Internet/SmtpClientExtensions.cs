@@ -21,6 +21,7 @@
 namespace Librainian.Internet {
 
     using System;
+    using System.ComponentModel;
     using System.Net.Mail;
     using System.Threading.Tasks;
 
@@ -47,7 +48,7 @@ namespace Librainian.Internet {
         /// <param name="body">A String that contains the message body.</param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A Task that represents the asynchronous send.</returns>
-        public static Task SendTask( this SmtpClient smtpClient, String from, String recipients, String subject, String body, Object userToken ) => SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( @from, recipients, subject, body, tcs ) );
+        public static Task SendTask( this SmtpClient smtpClient, String from, String recipients, String subject, String body, Object userToken ) => SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( from, recipients, subject, body, tcs ) );
 
         /// <summary>The core implementation of SendTask.</summary>
         /// <param name="smtpClient">The client.</param>
@@ -69,9 +70,9 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Object>( userToken );
 
             // Register a handler that will transfer completion results to the TCS Task
-            SendCompletedEventHandler handler = null;
-            handler = ( sender, e ) => EapCommon.HandleCompletion( tcs, e, () => null, () => smtpClient.SendCompleted -= handler );
-            smtpClient.SendCompleted += handler;
+	        void Handler( Object sender, AsyncCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => null, () => smtpClient.SendCompleted -= Handler );
+
+	        smtpClient.SendCompleted += Handler;
 
             // Try to start the async operation. If starting it fails (due to parameter validation)
             // unregister the handler before allowing the exception to propagate.
@@ -79,7 +80,7 @@ namespace Librainian.Internet {
                 sendAsync( tcs );
             }
             catch ( Exception exc ) {
-                smtpClient.SendCompleted -= handler;
+                smtpClient.SendCompleted -= Handler;
                 tcs.TrySetException( exc );
             }
 

@@ -40,15 +40,13 @@ namespace Librainian.OperatingSystem {
 
         private static List<PerformanceCounter> _utilizationCounters;
 
-        static Computer() {
-            InitCounters();
-        }
+		static Computer() => InitCounters();
 
-        /// <summary>
-        /// </summary>
-        /// <remarks>http: //msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx</remarks>
-        /// <returns></returns>
-        public static String RAM {
+		/// <summary>
+		/// </summary>
+		/// <remarks>http: //msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx</remarks>
+		/// <returns></returns>
+		public static String RAM {
             get {
                 try {
                     using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_PhysicalMemory" ) ) {
@@ -96,11 +94,9 @@ namespace Librainian.OperatingSystem {
 
         private static ManagementObjectSearcher PerfFormattedDataManagementObjectSearcher { get; } = new ManagementObjectSearcher( "select * from Win32_PerfFormattedData_PerfOS_Processor" );
 
-        public static void AbortShutdown() {
-            Process.Start( "shutdown", "/a" );
-        }
+		public static void AbortShutdown() => Process.Start( "shutdown", "/a" );
 
-        public static Boolean CanAllocateMemory( this BigInteger bytes ) {
+		public static Boolean CanAllocateMemory( this BigInteger bytes ) {
             try {
                 var megabytes = bytes / MathConstants.OneMegaByteBi;
 
@@ -214,37 +210,25 @@ namespace Librainian.OperatingSystem {
 
         public static IEnumerable<String> GetWorkingMacAddresses() => from nic in NetworkInterface.GetAllNetworkInterfaces() where nic.OperationalStatus == OperationalStatus.Up select nic.GetPhysicalAddress().ToString();
 
-        public static void Hibernate( TimeSpan? delay = null ) {
-            Process.Start( "shutdown", !delay.HasValue ? "/h" : $"/h /t {( Int32 )delay.Value.TotalSeconds}" );
-        }
+		public static void Hibernate( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/h" : $"/h /t {( Int32 )delay.Value.TotalSeconds}" );
 
-        public static void Logoff( TimeSpan? delay = null ) {
-            Process.Start( "shutdown", !delay.HasValue ? "/l" : $"/l /t {( Int32 )delay.Value.TotalSeconds}" );
-        }
+		public static void Logoff( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/l" : $"/l /t {( Int32 )delay.Value.TotalSeconds}" );
 
-        /// <summary>
-        ///     Send a reboot request.
-        /// </summary>
-        public static void Restart( TimeSpan? delay = null ) {
-            Process.Start( "shutdown", !delay.HasValue ? "/r" : $"/r /t {( Int32 )delay.Value.TotalSeconds}" );
-        }
+		/// <summary>
+		///     Send a reboot request.
+		/// </summary>
+		public static void Restart( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/r" : $"/r /t {( Int32 )delay.Value.TotalSeconds}" );
 
-        public static void RestartFast( TimeSpan? delay = null ) {
-            Process.Start( "shutdown", !delay.HasValue ? "/hybrid /s" : $"/hybrid /s /t {( Int32 )delay.Value.TotalSeconds}" );
-        }
+		public static void RestartFast( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/hybrid /s" : $"/hybrid /s /t {( Int32 )delay.Value.TotalSeconds}" );
 
-        public static void Shutdown( TimeSpan? delay = null ) {
-            Process.Start( "shutdown", !delay.HasValue ? "/s" : $"/s /t {( Int32 )delay.Value.TotalSeconds}" );
-        }
+		public static void Shutdown( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/s" : $"/s /t {( Int32 )delay.Value.TotalSeconds}" );
 
-        /// <summary>
-        ///     Turn off the local computer with no time-out or warning.
-        /// </summary>
-        public static void ShutdownNow() {
-            Process.Start( "shutdown", "/p" );
-        }
+		/// <summary>
+		///     Turn off the local computer with no time-out or warning.
+		/// </summary>
+		public static void ShutdownNow() => Process.Start( "shutdown", "/p" );
 
-        private static Int32 GetFreeProcessors() => _utilizationCounters.Count( pc => pc.NextValue() <= 0.50f );
+		private static Int32 GetFreeProcessors() => _utilizationCounters.Count( pc => pc.NextValue() <= 0.50f );
 
         private static void InitCounters() {
 
@@ -272,11 +256,10 @@ namespace Librainian.OperatingSystem {
             public static Single? CPU() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        Single result;
-                        if ( Single.TryParse( queryObj[ "CPUScore" ].ToString(), out result ) ) {
-                            return result;
-                        }
-                    }
+						if ( Single.TryParse( queryObj[ "CPUScore" ].ToString(), out var result ) ) {
+							return result;
+						}
+					}
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -287,11 +270,10 @@ namespace Librainian.OperatingSystem {
             public static Single? D3D() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        Single result;
-                        if ( Single.TryParse( queryObj[ "D3DScore" ].ToString(), out result ) ) {
-                            return result;
-                        }
-                    }
+						if ( Single.TryParse( queryObj[ "D3DScore" ].ToString(), out var result ) ) {
+							return result;
+						}
+					}
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -302,11 +284,10 @@ namespace Librainian.OperatingSystem {
             public static Single? Disk() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        Single result;
-                        if ( Single.TryParse( queryObj[ "DiskScore" ].ToString(), out result ) ) {
-                            return result;
-                        }
-                    }
+						if ( Single.TryParse( queryObj[ "DiskScore" ].ToString(), out var result ) ) {
+							return result;
+						}
+					}
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -317,11 +298,10 @@ namespace Librainian.OperatingSystem {
             public static Single? Graphics() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        Single result;
-                        if ( Single.TryParse( queryObj[ "GraphicsScore" ].ToString(), out result ) ) {
-                            return result;
-                        }
-                    }
+						if ( Single.TryParse( queryObj[ "GraphicsScore" ].ToString(), out var result ) ) {
+							return result;
+						}
+					}
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -332,11 +312,10 @@ namespace Librainian.OperatingSystem {
             public static Single? Memory() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        Single result;
-                        if ( Single.TryParse( queryObj[ "MemoryScore" ].ToString(), out result ) ) {
-                            return result;
-                        }
-                    }
+						if ( Single.TryParse( queryObj[ "MemoryScore" ].ToString(), out var result ) ) {
+							return result;
+						}
+					}
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -359,11 +338,10 @@ namespace Librainian.OperatingSystem {
             public static Int32? WinSAT_AssessmentState() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        Int32 result;
-                        if ( Int32.TryParse( queryObj[ "WinSATAssessmentState" ] .ToString(), out result) ) {
-                            return result;
-                        }
-                    }
+						if ( Int32.TryParse( queryObj[ "WinSATAssessmentState" ].ToString(), out var result ) ) {
+							return result;
+						}
+					}
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -374,11 +352,10 @@ namespace Librainian.OperatingSystem {
             public static Single? WinSPRLevel() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        Single result;
-                        if ( Single.TryParse( queryObj[ "WinSPRLevel" ].ToString() , out result) ) {
-                            return result;
-                        }
-                    }
+						if ( Single.TryParse( queryObj[ "WinSPRLevel" ].ToString(), out var result ) ) {
+							return result;
+						}
+					}
                 }
                 catch ( ManagementException exception ) {
                     exception.More();

@@ -31,11 +31,9 @@ namespace Librainian.Graphics.Manipulation {
     public static class ManipulationExtensions {
 
         [CanBeNull]
-        public static Bitmap LoadAndResize( this String document, Single multiplier ) {
-            return LoadAndResize( new Document( document ), multiplier );
-        }
+        public static Bitmap LoadAndResize( this String document, Single multiplier ) => LoadAndResize( new Document( document ), multiplier );
 
-        [CanBeNull]
+	    [CanBeNull]
         public static Bitmap LoadAndResize( Document document, Single multiplier ) {
             if ( !multiplier.IsNumber() ) {
                 return null;
@@ -93,8 +91,8 @@ namespace Librainian.Graphics.Manipulation {
             }
 
             // look at every pixel in the rectangle while making sure we're within the image bounds
-            for ( var xx = rectangle.X; ( xx < rectangle.X + rectangle.Width ) && ( xx < image.Width ); xx += pixelateSize ) {
-                for ( var yy = rectangle.Y; ( yy < rectangle.Y + rectangle.Height ) && ( yy < image.Height ); yy += pixelateSize ) {
+            for ( var xx = rectangle.X; xx < rectangle.X + rectangle.Width && xx < image.Width; xx += pixelateSize ) {
+                for ( var yy = rectangle.Y; yy < rectangle.Y + rectangle.Height && yy < image.Height; yy += pixelateSize ) {
                     var offsetX = pixelateSize / 2;
                     var offsetY = pixelateSize / 2;
 
@@ -110,8 +108,8 @@ namespace Librainian.Graphics.Manipulation {
                     var pixel = pixelated.GetPixel( xx + offsetX, yy + offsetY );
 
                     // for each pixel in the pixelate size, set it to the center color
-                    for ( var x = xx; ( x < xx + pixelateSize ) && ( x < image.Width ); x++ ) {
-                        for ( var y = yy; ( y < yy + pixelateSize ) && ( y < image.Height ); y++ ) {
+                    for ( var x = xx; x < xx + pixelateSize && x < image.Width; x++ ) {
+                        for ( var y = yy; y < yy + pixelateSize && y < image.Height; y++ ) {
                             pixelated.SetPixel( x, y, pixel );
                         }
                     }

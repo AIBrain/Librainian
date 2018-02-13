@@ -40,11 +40,9 @@ namespace Librainian.Database {
         /// </summary>
         /// <param name="connectionString"></param>
         /// <exception cref="InvalidOperationException"></exception>
-        public Database( String connectionString ) {
-            this._connectionString = connectionString;
-        }
+        public Database( String connectionString ) => this._connectionString = connectionString;
 
-        /// <summary>
+	    /// <summary>
         ///     Opens and then closes a <see cref="SqlConnection" />.
         /// </summary>
         /// <returns></returns>
@@ -297,16 +295,15 @@ namespace Librainian.Database {
 
                         var scalar = command.ExecuteScalar();
                         if ( null == scalar || Convert.IsDBNull( scalar ) ) {
-                            return default( TResult );
+                            return default;
                         }
-                        if ( scalar is TResult ) {
-                            return ( TResult )scalar;
+                        if ( scalar is TResult executeScalar ) {
+                            return executeScalar;
                         }
-                        TResult result;
-                        if ( scalar.TryCast( out result ) ) {
-                            return result;
-                        }
-                        return ( TResult )Convert.ChangeType( scalar, typeof( TResult ) );
+						if ( scalar.TryCast<TResult>( out var result ) ) {
+							return result;
+						}
+						return ( TResult )Convert.ChangeType( scalar, typeof( TResult ) );
                     }
                 }
             }
@@ -316,7 +313,7 @@ namespace Librainian.Database {
             catch ( DbException exception ) {
                 exception.More();
             }
-            return default( TResult );
+            return default;
         }
 
         /// <summary>
@@ -344,7 +341,7 @@ namespace Librainian.Database {
 
                         var result = await task;
                         if ( result == DBNull.Value ) {
-                            return default( TResult );
+                            return default;
                         }
                         return ( TResult )result;
                     }
@@ -358,7 +355,7 @@ namespace Librainian.Database {
             catch ( SqlException exception ) {
                 exception.More();
             }
-            return default( TResult );
+            return default;
         }
 
         /// <summary>

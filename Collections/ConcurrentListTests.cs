@@ -13,7 +13,7 @@ namespace Librainian.Collections {
     public static class ConcurrentListTests {
 
         private const Int32 NamesToAdd = 1024;
-        private const Int32 ScaleCPUUsed = 10;
+        private const Int32 ScaleCPUUsed = 1;
 
         [Test]
         public static void AddNameThreadSafetyTest() {

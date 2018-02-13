@@ -35,23 +35,16 @@ namespace Librainian.OperatingSystem.FileHistory {
         public static void RunTests() {
             var example = DateTime.Parse( "2015/09/04 16:15:01" );
 
-            DateTime result;
 
-            //if ( !DateTime.TryParseExact(example , "yyyy/MM/dd hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AllowWhiteSpaces, out result ) ) {
-            if ( !DateTime.TryParse( example.ToString( CultureInfo.CurrentCulture ), out result ) ) {
-                throw new InvalidOperationException();
-            }
+			//if ( !DateTime.TryParseExact(example , "yyyy/MM/dd hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AllowWhiteSpaces, out result ) ) {
+			if ( !DateTime.TryParse( example.ToString( CultureInfo.CurrentCulture ), out var result ) ) {
+				throw new InvalidOperationException();
+			}
+			if ( !new Document( Example ).TryParse( out var folder, out var filename, out var when ) ) {
+				throw new InvalidCastException();
+			}
+		}
 
-            Folder folder;
-            String filename;
-            DateTime? when;
-            if ( !new Document( Example ).TryParse( out folder, out filename, out when ) ) {
-                throw new InvalidCastException();
-            }
-        }
-
-        public static void TestForNullNess() {
-            Example.Should().ThrowIfNull();
-        }
-    }
+		public static void TestForNullNess() => Example.Should().ThrowIfNull();
+	}
 }

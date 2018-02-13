@@ -51,7 +51,7 @@ namespace Librainian.Extensions {
 
         public static String HtmlEncode( this String input ) => HttpUtility.HtmlEncode( input );
 
-        public static Boolean IsNameOnlyQueryString( this String res ) => !String.IsNullOrEmpty( res ) && ( res[ 0 ] == '?' );
+        public static Boolean IsNameOnlyQueryString( this String res ) => !String.IsNullOrEmpty( res ) && res[ 0 ] == '?';
 
         public static String UrlDecode( this String input ) => HttpUtility.UrlDecode( input );
 

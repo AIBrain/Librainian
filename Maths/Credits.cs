@@ -30,7 +30,7 @@ namespace Librainian.Maths {
     ///     <para>Keep count of credits, current and lifetime.</para>
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class Credits {
 
         /// <summary>No credits.</summary>
@@ -50,23 +50,15 @@ namespace Librainian.Maths {
         }
 
         public UInt64 CurrentCredits {
-            get {
-                return Thread.VolatileRead( ref this._currentCredits );
-            }
+            get => Thread.VolatileRead( ref this._currentCredits );
 
-            private set {
-                Thread.VolatileWrite( ref this._currentCredits, value );
-            }
+	        private set => Thread.VolatileWrite( ref this._currentCredits, value );
         }
 
         public UInt64 LifetimeCredits {
-            get {
-                return Thread.VolatileRead( ref this._lifetimeCredits );
-            }
+            get => Thread.VolatileRead( ref this._lifetimeCredits );
 
-            private set {
-                Thread.VolatileWrite( ref this._lifetimeCredits, value );
-            }
+	        private set => Thread.VolatileWrite( ref this._lifetimeCredits, value );
         }
 
         public static Credits Combine( [NotNull] Credits left, [NotNull] Credits right ) {

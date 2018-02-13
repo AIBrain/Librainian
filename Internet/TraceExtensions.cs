@@ -36,15 +36,14 @@ namespace Librainian.Internet {
         /// <param name="maxHops">Max hops to be returned.</param>
         /// <param name="timeout"></param>
         public IEnumerable<TracertEntry> Tracert( String ipAddress, Int32 maxHops, Int32 timeout ) {
-            IPAddress address;
 
-            // Ensure that the argument address is valid.
-            if ( !IPAddress.TryParse( ipAddress, out address ) ) {
-                throw new ArgumentException( $"{ipAddress} is not a valid IP address." );
-            }
+			// Ensure that the argument address is valid.
+			if ( !IPAddress.TryParse( ipAddress, out var address ) ) {
+				throw new ArgumentException( $"{ipAddress} is not a valid IP address." );
+			}
 
-            // Max hops should be at least one or else there won't be any data to return.
-            if ( maxHops < 1 ) {
+			// Max hops should be at least one or else there won't be any data to return.
+			if ( maxHops < 1 ) {
                 throw new ArgumentException( "Max hops can't be lower than 1." );
             }
 

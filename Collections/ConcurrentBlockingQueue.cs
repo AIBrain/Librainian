@@ -75,14 +75,13 @@ namespace Librainian.Collections {
         public IEnumerable<T> GetConsumingEnumerable() {
             do {
 
-                // dequeue and yield as many items as are available
-                T value;
-                while ( this._queue.TryDequeue( out value ) ) {
-                    yield return value;
-                }
+				// dequeue and yield as many items as are available
+				while ( this._queue.TryDequeue( out var value ) ) {
+					yield return value;
+				}
 
-                // once the queue is empty, check if adding is completed and return if so
-                if ( this._isCompleteAdding && ( this._queue.Count == 0 ) ) {
+				// once the queue is empty, check if adding is completed and return if so
+				if ( this._isCompleteAdding && this._queue.Count == 0 ) {
 
                     // ensure all other consuming enumerables are unblocked when complete
                     this._workEvent.Set();

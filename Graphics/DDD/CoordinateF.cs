@@ -35,7 +35,7 @@ namespace Librainian.Graphics.DDD {
     /// </summary>
     /// <remarks>Code towards speed.</remarks>
     [Immutable]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject( MemberSerialization.Fields )]
     public class CoordinateF : IEquatable<CoordinateF>, IComparable<CoordinateF> {
 
@@ -60,7 +60,7 @@ namespace Librainian.Graphics.DDD {
             this.SquareLength = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
         }
 
-        public static CoordinateF Empty { get; } = default( CoordinateF );
+        public static CoordinateF Empty { get; }
 
         public static CoordinateF One { get; } = new CoordinateF( x: 1, y: 1, z: 1 );
 
@@ -97,12 +97,12 @@ namespace Librainian.Graphics.DDD {
         }
 
         public Double DistanceTo( CoordinateF to ) {
-            if ( to == default( CoordinateF ) ) {
+            if ( to == default ) {
                 return 0;   //BUG ?
             }
-            var dx = X - to.X;
-            var dy = Y - to.Y;
-            var dz = Z - to.Z;
+            var dx = this.X - to.X;
+            var dy = this.Y - to.Y;
+            var dz = this.Z - to.Z;
             return Math.Sqrt( dx * dx + dy * dy + dz * dz );
         }
 
@@ -117,10 +117,10 @@ namespace Librainian.Graphics.DDD {
             if ( ReferenceEquals( lhs, rhs ) ) {
                 return true;
             }
-            if ( ReferenceEquals( lhs, null ) ) {
+            if ( lhs is null ) {
                 return false;
             }
-            if ( ReferenceEquals( null, rhs ) ) {
+            if ( rhs is null ) {
                 return false;
             }
             if ( lhs.X < rhs.X ) {
@@ -176,10 +176,10 @@ namespace Librainian.Graphics.DDD {
         public Boolean Equals( CoordinateF other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is CoordinateF && Equals( this, ( CoordinateF )obj );
+            return obj is CoordinateF f && Equals( this, f );
         }
 
         public override Int32 GetHashCode() => GetHashCodes( this.X, this.Y, this.Z );

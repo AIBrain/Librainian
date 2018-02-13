@@ -31,7 +31,7 @@ namespace Librainian.Maths.Numbers {
     ///     <para>threadsafe, keep integer count of Yes or No votes.</para>
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class VotallyI {
 
         /// <summary>No vote for either.</summary>
@@ -49,25 +49,17 @@ namespace Librainian.Maths.Numbers {
         }
 
         public UInt64 No {
-            get {
-                return Thread.VolatileRead( ref this._votesNo );
-            }
+            get => Thread.VolatileRead( ref this._votesNo );
 
-            private set {
-                Thread.VolatileWrite( ref this._votesNo, value );
-            }
+	        private set => Thread.VolatileWrite( ref this._votesNo, value );
         }
 
         public UInt64 Votes => this.Yes + this.No;
 
         public UInt64 Yes {
-            get {
-                return Thread.VolatileRead( ref this._votesYes );
-            }
+            get => Thread.VolatileRead( ref this._votesYes );
 
-            private set {
-                Thread.VolatileWrite( ref this._votesYes, value );
-            }
+	        private set => Thread.VolatileWrite( ref this._votesYes, value );
         }
 
         /// <summary>
@@ -128,17 +120,17 @@ namespace Librainian.Maths.Numbers {
 
         public UInt64 HalfOfVotes() => this.Votes / 2;
 
-        public Boolean IsLandslideNo() => this.IsNoWinning() && ( this.No > this.HalfOfVotes() );
+        public Boolean IsLandslideNo() => this.IsNoWinning() && this.No > this.HalfOfVotes();
 
-        public Boolean IsLandslideYes() => this.IsYesWinning() && ( this.Yes > this.HalfOfVotes() );
+        public Boolean IsLandslideYes() => this.IsYesWinning() && this.Yes > this.HalfOfVotes();
 
-        public Boolean IsNoWinning() => ( this.No > this.Yes ) && ( this.Yes > 1 ) && ( this.No > 1 );
+        public Boolean IsNoWinning() => this.No > this.Yes && this.Yes > 1 && this.No > 1;
 
-        public Boolean IsProtiguous() => this.IsTied() && ( this.Votes >= 2 );
+        public Boolean IsProtiguous() => this.IsTied() && this.Votes >= 2;
 
         public Boolean IsTied() => this.Yes == this.No;
 
-        public Boolean IsYesWinning() => ( this.Yes > this.No ) && ( this.Yes > 1 ) && ( this.No > 1 );
+        public Boolean IsYesWinning() => this.Yes > this.No && this.Yes > 1 && this.No > 1;
 
         public override String ToString() => $"{this.ChanceYes():P1} yes vs {this.ChanceNo():p1} no of {this.Votes} votes.";
 

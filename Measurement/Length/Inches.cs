@@ -40,11 +40,9 @@ namespace Librainian.Measurement.Length {
         [JsonProperty]
         public readonly BigRational Value;
 
-        public Inches( Decimal inches ) {
-            this.Value = inches;
-        }
+        public Inches( Decimal inches ) => this.Value = inches;
 
-        //public Inches( Millimeters millimeters ) {
+	    //public Inches( Millimeters millimeters ) {
         //    var val = millimeters.Value / Extensions.MillimetersInSingleInch;
         //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
         //}

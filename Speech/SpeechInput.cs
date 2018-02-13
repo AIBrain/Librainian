@@ -29,32 +29,30 @@ namespace Librainian.Speech {
 
     public class SpeechInput {
 
-        public SpeechInput() {
-            this.RecognitionEngine = new Lazy<SpeechRecognitionEngine>( () => {
-                var speechRecognitionEngine = new SpeechRecognitionEngine( CultureInfo.CurrentCulture );
+		public SpeechInput() => this.RecognitionEngine = new Lazy<SpeechRecognitionEngine>( () => {
+			var speechRecognitionEngine = new SpeechRecognitionEngine( CultureInfo.CurrentCulture );
 
-                try {
-                    speechRecognitionEngine.LoadGrammar( this.Grammar.Value );
-                }
-                catch ( InvalidOperationException ) { }
+			try {
+				speechRecognitionEngine.LoadGrammar( this.Grammar.Value );
+			}
+			catch ( InvalidOperationException ) { }
 
-                try {
-                    speechRecognitionEngine.SetInputToDefaultAudioDevice();
-                }
-                catch ( InvalidOperationException ) {
-                    "Warning: No microphone found.".Warning();
-                }
+			try {
+				speechRecognitionEngine.SetInputToDefaultAudioDevice();
+			}
+			catch ( InvalidOperationException ) {
+				"Warning: No microphone found.".Warning();
+			}
 
-                try {
-                    speechRecognitionEngine.RecognizeAsync( RecognizeMode.Multiple );
-                }
-                catch ( InvalidOperationException ) { }
+			try {
+				speechRecognitionEngine.RecognizeAsync( RecognizeMode.Multiple );
+			}
+			catch ( InvalidOperationException ) { }
 
-                return speechRecognitionEngine;
-            }, isThreadSafe: true );
-        }
+			return speechRecognitionEngine;
+		}, isThreadSafe: true );
 
-        public Lazy<Grammar> Grammar {
+		public Lazy<Grammar> Grammar {
             get;
         } = new Lazy<Grammar>( () => {
             var grammar = new DictationGrammar { Enabled = true };
@@ -88,18 +86,16 @@ namespace Librainian.Speech {
             this.RecognitionEngine.Value.SpeechRecognized += ( sender, args ) => speechRecognized?.Invoke( args );
         }
 
-        /// <summary>
-        ///     <seealso cref="AttachEvent" />
-        /// </summary>
-        /// <param name="action"></param>
-        public void OnRecognizeSentence( Action<String> action ) {
-            RecognitionEngine.Value.SpeechRecognized += ( s, args ) => {
-                var words = args.Result.Words.Select( unit => unit.Text ).ToList();
-                var sentence = words.ToStrings( ParsingExtensions.Singlespace, "." );
-                action( sentence );
-            };
-        }
+		/// <summary>
+		///     <seealso cref="AttachEvent" />
+		/// </summary>
+		/// <param name="action"></param>
+		public void OnRecognizeSentence( Action<String> action ) => this.RecognitionEngine.Value.SpeechRecognized += ( s, args ) => {
+			var words = args.Result.Words.Select( unit => unit.Text ).ToList();
+			var sentence = words.ToStrings( ParsingExtensions.Singlespace, "." );
+			action( sentence );
+		};
 
-        public void Stop() => this.RecognitionEngine.Value.RecognizeAsyncCancel();
+		public void Stop() => this.RecognitionEngine.Value.RecognizeAsyncCancel();
     }
 }

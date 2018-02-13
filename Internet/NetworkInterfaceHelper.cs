@@ -32,11 +32,9 @@ namespace Librainian.Internet {
     /// </summary>
     public static class NetworkInterfaceHelper {
 
-        static NetworkInterfaceHelper() {
-            NetworkInterfaces = NetworkInterface.GetAllNetworkInterfaces().ToDictionary( o => o.Id );
-        }
+		static NetworkInterfaceHelper() => NetworkInterfaces = NetworkInterface.GetAllNetworkInterfaces().ToDictionary( o => o.Id );
 
-        public static IDictionary<String, NetworkInterface> NetworkInterfaces {
+		public static IDictionary<String, NetworkInterface> NetworkInterfaces {
             get;
         }
 
@@ -44,10 +42,9 @@ namespace Librainian.Internet {
             var byteArray1 = address.GetAddressBytes();
 
             var ipaddr = BitConverter.ToUInt32( byteArray1, 0 );
-            UInt32 interfaceIndex;
-            var error = NativeMethods.GetBestInterface( ipaddr, out interfaceIndex );
+			var error = NativeMethods.GetBestInterface( ipaddr, out var interfaceIndex );
 
-            if ( error != 0 ) {
+			if ( error != 0 ) {
                 throw new InvalidOperationException( $"Error while calling GetBestInterface(). Error={error}" );
             }
 

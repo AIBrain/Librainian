@@ -32,11 +32,9 @@ namespace Librainian.Linguistics {
     /// </example>
     public class UDC {
 
-        public UDC( String notation ) {
-            this.Notation = notation;
-        }
+        public UDC( String notation ) => this.Notation = notation;
 
-        public static UDC Unknown { get; } = new UDC( String.Empty );
+	    public static UDC Unknown { get; } = new UDC( String.Empty );
 
         public String Notation {
             get;
@@ -44,8 +42,7 @@ namespace Librainian.Linguistics {
 
         /// <summary>Serves as the default hash function. </summary>
         /// <returns>A hash code for the current object.</returns>
-        public override Int32 GetHashCode() {
-            return this.Notation.GetHashCode();
-        }
+        public override Int32 GetHashCode() => this.Notation.GetHashCode();
+
     }
 }

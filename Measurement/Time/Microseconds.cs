@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Time {
     using Numerics;
     using Parsing;
 
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
     public struct Microseconds : IComparable<Microseconds>, IQuantityOfTime {
@@ -110,23 +110,15 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Microseconds Zero = new Microseconds( 0 );
 
-        public Microseconds( Decimal value ) {
-            this.Value = value;
-        }
+        public Microseconds( Decimal value ) => this.Value = value;
 
-        public Microseconds( BigRational value ) {
-            this.Value = value;
-        }
+	    public Microseconds( BigRational value ) => this.Value = value;
 
-        public Microseconds( Int64 value ) {
-            this.Value = value;
-        }
+	    public Microseconds( Int64 value ) => this.Value = value;
 
-        public Microseconds( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Microseconds( BigInteger value ) => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -180,10 +172,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Microseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Microseconds && this.Equals( ( Microseconds )obj );
+            return obj is Microseconds microseconds && this.Equals( microseconds );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();

@@ -47,13 +47,14 @@ namespace Librainian.Threading {
             Flush();
         }
 
-        /// <summary>Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer" />.</summary>
-        /// <param name="message">A message to write.</param>
-        /// <PermissionSet>
-        ///     <IPermission
-        ///         class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-        ///         version="1" Unrestricted="true" />
-        /// </PermissionSet>
+		/// <summary>Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer" />.</summary>
+		/// <param name="message">A message to write.</param>
+		/// <PermissionSet>
+		///     <IPermission
+		///         class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+		///         version="1" Unrestricted="true" />
+		/// </PermissionSet>
+		[DebuggerStepThrough]
         public override void Write( String message ) {
             Console.Write( message );
             Flush();
@@ -71,9 +72,8 @@ namespace Librainian.Threading {
         ///         class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
         ///         version="1" Unrestricted="true" />
         /// </PermissionSet>
+        [DebuggerStepThrough]
         public override void WriteLine( String message ) {
-
-            //Write( HeaderTimeThread() );
             Console.WriteLine( message );
             Flush();
         }

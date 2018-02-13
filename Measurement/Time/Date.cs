@@ -109,12 +109,9 @@ namespace Librainian.Measurement.Time {
         //public Date( long year, long month, long day )
         //    : this( year: new Year( year ), month: new Month( month ), day: new Day( day ) ) {
         //}
-        public static implicit operator DateTime? ( Date date ) {
-            DateTime? dateTime;
-            return TimeExtensions.TryConvertToDateTime( date, out dateTime ) ? dateTime : default( DateTime );
-        }
+        public static implicit operator DateTime? ( Date date ) => TimeExtensions.TryConvertToDateTime( date, out var dateTime ) ? dateTime : default;
 
-        public static Boolean operator <( Date left, Date right ) => left.ToSpan().TotalPlanckTimes < right.ToSpan().TotalPlanckTimes;
+	    public static Boolean operator <( Date left, Date right ) => left.ToSpan().TotalPlanckTimes < right.ToSpan().TotalPlanckTimes;
 
         public static Boolean operator <=( Date left, Date right ) => left.ToSpan().TotalPlanckTimes.Value <= right.ToSpan().TotalPlanckTimes.Value;
 

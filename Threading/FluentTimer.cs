@@ -117,18 +117,15 @@ namespace Librainian.Threading {
             if ( null == timer ) {
                 return;
             }
-            DateTime value;
-            Timers.TryRemove( timer, out value );
-            using ( timer ) {
+			Timers.TryRemove( timer, out var value );
+			using ( timer ) {
                 timer.Stop();
             }
         }
 
-        public static IEnumerable<KeyValuePair<Timer, DateTime>> GetTimers() {
-            return Timers;
-        }
+        public static IEnumerable<KeyValuePair<Timer, DateTime>> GetTimers() => Timers;
 
-        /// <summary>
+	    /// <summary>
         ///     <para>Make the <paramref name="timer" /> fire only once.</para>
         /// </summary>
         /// <param name="timer"></param>

@@ -37,11 +37,9 @@ namespace Librainian.Database.MMF {
     public class FileMapIOException : IOException {
 
         // construction
-        public FileMapIOException( Int32 error ) {
-            this.Win32ErrorCode = error;
-        }
+        public FileMapIOException( Int32 error ) => this.Win32ErrorCode = error;
 
-        public FileMapIOException( String message ) : base( message ) {
+	    public FileMapIOException( String message ) : base( message ) {
         }
 
         public FileMapIOException( String message, Exception innerException ) : base( message, innerException ) {

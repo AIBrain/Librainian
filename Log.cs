@@ -57,11 +57,9 @@ namespace Librainian {
     public static class Log {
         private static readonly ConsoleListenerWithTimePrefix ConsoleListener;
 
-        static Log() {
-            ConsoleListener = new ConsoleListenerWithTimePrefix();
-        }
+        static Log() => ConsoleListener = new ConsoleListenerWithTimePrefix();
 
-        public static Boolean HasConsoleBeenAllocated {
+	    public static Boolean HasConsoleBeenAllocated {
             get; private set;
         }
 
@@ -137,7 +135,7 @@ namespace Librainian {
         }
 
         [DebuggerStepThrough]
-        public static void Finalized( [CallerMemberName] String method = "" ) => $"{"Finalized"}: {method ?? String.Empty}".WriteLine();
+        public static void Finalized( [CallerMemberName] String method = "" ) => $"Finalized: {method ?? String.Empty}".WriteLine();
 
         /// <summary>
         ///     Gets the number of frames in the <see cref="StackTrace" />
@@ -207,7 +205,10 @@ namespace Librainian {
             message.Append( $" [Msg: {exception.Message}]\r\n" );
             message.Append( $" [Source: {sourceFilePath}]\r\n" );
             message.Append( $" [Line: {sourceLineNumber}]\r\n" );
-            ConsoleListener.Fail( method, message.ToString() );
+            if ( method != null ) {
+                ConsoleListener.Fail( method, message.ToString() );
+            }
+
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
             }
@@ -221,7 +222,7 @@ namespace Librainian {
             "Shutting down".WriteColor( ConsoleColor.White, ConsoleColor.Blue );
             if ( linger ) {
                 var stopwatch = StopWatch.StartNew();
-                while ( stopwatch.Elapsed < Milliseconds.FiveHundred ) {
+                while ( stopwatch.Elapsed < Seconds.One ) {
                     Thread.Sleep( Hertz.OneHundredTwenty );
                     ".".WriteColor( ConsoleColor.White, ConsoleColor.Blue );
                 }

@@ -193,13 +193,10 @@ namespace Librainian.FileSystem.Physical {
             if ( devData == null ) {
                 throw new ArgumentNullException( nameof( devData ) );
             }
+			const Int32 propertyBufferSize = 1024;
 
-            UInt32 propertyRegDataType;
-            UInt32 requiredSize;
-            const Int32 propertyBufferSize = 1024;
-
-            var propertyBuffer = new Byte[ propertyBufferSize ];
-            if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out propertyRegDataType, propertyBuffer, propertyBufferSize, out requiredSize ) ) {
+			var propertyBuffer = new Byte[ propertyBufferSize ];
+            if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize, out var requiredSize ) ) {
                 //Marshal.FreeHGlobal( propertyBuffer );
                 var error = Marshal.GetLastWin32Error();
                 if ( error != NativeMethods.ERROR_INVALID_DATA ) {
@@ -218,14 +215,11 @@ namespace Librainian.FileSystem.Physical {
             if ( devData == null ) {
                 throw new ArgumentNullException( nameof( devData ) );
             }
+			var propertyBufferSize = ( UInt32 )Marshal.SizeOf( typeof( UInt32 ) );
 
-            UInt32 propertyRegDataType;
-            UInt32 requiredSize;
-            var propertyBufferSize = ( UInt32 )Marshal.SizeOf( typeof( UInt32 ) );
-
-            //var propertyBuffer = Marshal.AllocHGlobal( propertyBufferSize );
-            var propertyBuffer = new Byte[ propertyBufferSize ];
-            if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out propertyRegDataType, propertyBuffer, propertyBufferSize, out requiredSize ) ) {
+			//var propertyBuffer = Marshal.AllocHGlobal( propertyBufferSize );
+			var propertyBuffer = new Byte[ propertyBufferSize ];
+            if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize, out var requiredSize ) ) {
                 //Marshal.FreeHGlobal( propertyBuffer );
                 var error = Marshal.GetLastWin32Error();
                 if ( error != NativeMethods.ERROR_INVALID_DATA ) {
@@ -245,13 +239,10 @@ namespace Librainian.FileSystem.Physical {
             if ( devData == null ) {
                 throw new ArgumentNullException( nameof( devData ) );
             }
+			var propertyBufferSize = ( UInt32 )Marshal.SizeOf( typeof( Guid ) );
 
-            UInt32 propertyRegDataType;
-            UInt32 requiredSize;
-            var propertyBufferSize = ( UInt32 )Marshal.SizeOf( typeof( Guid ) );
-
-            var propertyBuffer = new Byte[ propertyBufferSize ];
-            if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out propertyRegDataType, propertyBuffer, propertyBufferSize, out requiredSize ) ) {
+			var propertyBuffer = new Byte[ propertyBufferSize ];
+            if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize, out var requiredSize ) ) {
                 //Marshal.FreeHGlobal( propertyBuffer );
                 var error = Marshal.GetLastWin32Error();
                 if ( error != NativeMethods.ERROR_INVALID_DATA ) {
@@ -268,9 +259,7 @@ namespace Librainian.FileSystem.Physical {
             //return value;
         }
 
-        protected virtual Device CreateDevice( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index, Int32 disknum = -1 ) {
-            return new Device( deviceClass, deviceInfoData, path, index, disknum );
-        }
+        protected virtual Device CreateDevice( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index, Int32 disknum = -1 ) => new Device( deviceClass, deviceInfoData, path, index, disknum );
 
     }
 

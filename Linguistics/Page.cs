@@ -35,7 +35,7 @@ namespace Librainian.Linguistics {
     /// <seealso cref="Book"></seealso>
     [JsonObject]
     [Immutable]
-    [DebuggerDisplay( "{ToString()}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public sealed class Page : IEquatable<Page>, IEnumerable<Paragraph> {
 
@@ -57,7 +57,7 @@ namespace Librainian.Linguistics {
         private List<Paragraph> Paragraphs { get; } = new List<Paragraph>();
 
         public Boolean Equals( [CanBeNull] Page other ) {
-            if ( ReferenceEquals( other, null ) ) {
+            if ( other is null ) {
                 return false;
             }
 
@@ -68,10 +68,8 @@ namespace Librainian.Linguistics {
 
         /// <summary>Serves as the default hash function. </summary>
         /// <returns>A hash code for the current object.</returns>
-        public override Int32 GetHashCode() {
-            return this.Paragraphs.GetHashCode();
-        }
+        public override Int32 GetHashCode() => this.Paragraphs.GetHashCode();
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+	    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

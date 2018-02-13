@@ -64,21 +64,19 @@ namespace Librainian.Security {
             return resultStream;
         }
 
-        /// <summary>Extracts an hidden message from a bitmap</summary>
-        /// <param name="keys"></param>
-        /// <param name="messageStream">Empty stream to receive the message</param>
-        /// <param name="imageFiles"></param>
-        /// <param name="splitBytes"></param>
-        public static void ExtractMessageFromBitmap( CarrierImage[] imageFiles, FilePasswordPair[] keys, ref Stream messageStream, Boolean splitBytes ) {
-            HideOrExtract( ref messageStream, imageFiles, keys, splitBytes, true );
-        }
+		/// <summary>Extracts an hidden message from a bitmap</summary>
+		/// <param name="keys"></param>
+		/// <param name="messageStream">Empty stream to receive the message</param>
+		/// <param name="imageFiles"></param>
+		/// <param name="splitBytes"></param>
+		public static void ExtractMessageFromBitmap( CarrierImage[] imageFiles, FilePasswordPair[] keys, ref Stream messageStream, Boolean splitBytes ) => HideOrExtract( ref messageStream, imageFiles, keys, splitBytes, true );
 
-        /// <summary>Hides a message in a bitmap</summary>
-        /// <param name="messageStream">The message to hide</param>
-        /// <param name="imageFiles"></param>
-        /// <param name="keys"></param>
-        /// <param name="splitBytes"></param>
-        public static void HideMessageInBitmap( Stream messageStream, CarrierImage[] imageFiles, FilePasswordPair[] keys, Boolean splitBytes ) {
+		/// <summary>Hides a message in a bitmap</summary>
+		/// <param name="messageStream">The message to hide</param>
+		/// <param name="imageFiles"></param>
+		/// <param name="keys"></param>
+		/// <param name="splitBytes"></param>
+		public static void HideMessageInBitmap( Stream messageStream, CarrierImage[] imageFiles, FilePasswordPair[] keys, Boolean splitBytes ) {
             HideOrExtract( ref messageStream, imageFiles, keys, splitBytes, false );
 
             // ReSharper disable once RedundantAssignment
@@ -89,11 +87,9 @@ namespace Librainian.Security {
         /// <param name="b">The byte value</param>
         /// <param name="position">The position of the bit</param>
         /// <returns>The value of the bit</returns>
-        private static Boolean GetBit( Byte b, Byte position ) {
-            return ( b & ( Byte )( 1 << position ) ) != 0;
-        }
+        private static Boolean GetBit( Byte b, Byte position ) => ( b & ( Byte )( 1 << position ) ) != 0;
 
-        /// <summary>Return one component of a color</summary>
+	    /// <summary>Return one component of a color</summary>
         /// <param name="pixelColor">The Color</param>
         /// <param name="colorComponent">The component to return (0-R, 1-G, 2-B)</param>
         /// <returns>The requested component</returns>

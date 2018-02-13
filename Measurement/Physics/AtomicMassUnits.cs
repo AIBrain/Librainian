@@ -31,7 +31,7 @@ namespace Librainian.Measurement.Physics {
     /// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
     /// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
     /// <seealso cref="http://www.wolframalpha.com/input/?i=1+unified+atomic+mass+units+convert+to+electronvolts" />
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct AtomicMassUnits : IComparable<ElectronVolts>, IComparable<AtomicMassUnits> {
 
@@ -71,15 +71,11 @@ namespace Librainian.Measurement.Physics {
         /// <summary></summary>
         public readonly Decimal Value;
 
-        public AtomicMassUnits( Decimal value ) : this() {
-            this.Value = value;
-        }
+        public AtomicMassUnits( Decimal value ) : this() => this.Value = value;
 
-        public AtomicMassUnits( BigRational aBigFraction ) {
-            this.Value = ( Decimal )aBigFraction;
-        }
+	    public AtomicMassUnits( BigRational aBigFraction ) => this.Value = ( Decimal )aBigFraction;
 
-        public static AtomicMassUnits operator -( AtomicMassUnits electronVolts ) => new AtomicMassUnits( -electronVolts.Value );
+	    public static AtomicMassUnits operator -( AtomicMassUnits electronVolts ) => new AtomicMassUnits( -electronVolts.Value );
 
         //public static implicit operator AtomicMassUnits( GigaElectronVolts gigaElectronVolts ) {
         //    return gigaElectronVolts.ToElectronVolts();
@@ -163,10 +159,8 @@ namespace Librainian.Measurement.Physics {
         /// <returns>
         ///     A <see cref="T:System.String" /> containing a fully qualified type name.
         /// </returns>
-        public override String ToString() {
-            return $"{this.Value} u";
-        }
+        public override String ToString() => $"{this.Value} u";
 
-        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
+	    public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
     }
 }

@@ -67,10 +67,10 @@ namespace Librainian.Internet.Servers {
             this.SecurePort = httpsPort;
             this._sslCertificate = cert;
 
-            if ( ( this.Port > 65535 ) || ( this.Port < -1 ) ) {
+            if ( this.Port > 65535 || this.Port < -1 ) {
                 this.Port = -1;
             }
-            if ( ( this.SecurePort > 65535 ) || ( this.SecurePort < -1 ) ) {
+            if ( this.SecurePort > 65535 || this.SecurePort < -1 ) {
                 this.SecurePort = -1;
             }
 
@@ -141,7 +141,7 @@ namespace Librainian.Internet.Servers {
             stopwatch.Start();
             if ( timeToWait > 0 ) {
                 try {
-                    if ( ( this._thrHttp != null ) && this._thrHttp.IsAlive ) {
+                    if ( this._thrHttp != null && this._thrHttp.IsAlive ) {
                         this._thrHttp.Join( timeToWait );
                     }
                 }
@@ -153,7 +153,7 @@ namespace Librainian.Internet.Servers {
             timeToWait = timeoutMilliseconds - ( Int32 )stopwatch.ElapsedMilliseconds;
             if ( timeToWait > 0 ) {
                 try {
-                    if ( ( this._thrHttps != null ) && this._thrHttps.IsAlive ) {
+                    if ( this._thrHttps != null && this._thrHttps.IsAlive ) {
                         this._thrHttps.Join( timeToWait );
                     }
                 }
@@ -248,8 +248,7 @@ namespace Librainian.Internet.Servers {
                         var innerLastError = DateTime.Now;
                         try {
                             var s = listener.AcceptTcpClient();
-                            Int32 workerThreads, completionPortThreads;
-                            ThreadPool.GetAvailableThreads( out workerThreads, out completionPortThreads );
+							ThreadPool.GetAvailableThreads( out var workerThreads, out var completionPortThreads );
 
                             // Here is where we could enforce a minimum number of free pool threads,
                             // if we wanted to ensure better performance.
@@ -269,7 +268,7 @@ namespace Librainian.Internet.Servers {
                             throw ;
                         }
                         catch ( Exception ex ) {
-                            if ( ( DateTime.Now.Hour != innerLastError.Hour ) || ( DateTime.Now.DayOfYear != innerLastError.DayOfYear ) ) {
+                            if ( DateTime.Now.Hour != innerLastError.Hour || DateTime.Now.DayOfYear != innerLastError.DayOfYear ) {
 
                                 // ReSharper disable once RedundantAssignment
                                 innerLastError = DateTime.Now;
@@ -287,7 +286,7 @@ namespace Librainian.Internet.Servers {
                     this.StopRequested = true;
                 }
                 catch ( Exception ex ) {
-                    if ( ( DateTime.Now.DayOfYear != lastError.DayOfYear ) || ( DateTime.Now.Year != lastError.Year ) ) {
+                    if ( DateTime.Now.DayOfYear != lastError.DayOfYear || DateTime.Now.Year != lastError.Year ) {
                         lastError = DateTime.Now;
                         errorCount = 0;
                     }

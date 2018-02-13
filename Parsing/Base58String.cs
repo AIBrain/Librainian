@@ -40,7 +40,7 @@ namespace Librainian.Parsing {
             }
 
             // Add 1s for leading 0x00 bytes
-            for ( var i = 0; ( i < b.Length ) && ( b[ i ] == 0x00 ); i++ ) {
+            for ( var i = 0; i < b.Length && b[ i ] == 0x00; i++ ) {
                 sb.Insert( 0, '1' );
             }
             return sb.ToString();

@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Time {
     using Parsing;
 
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public struct Weeks : IComparable<Weeks>, IQuantityOfTime {
 
         /// <summary>
@@ -61,23 +61,15 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Weeks Zero = new Weeks( 0 );
 
-        public Weeks( Decimal weeks ) {
-            this.Value = weeks;
-        }
+        public Weeks( Decimal weeks ) => this.Value = weeks;
 
-        public Weeks( BigRational weeks ) {
-            this.Value = weeks;
-        }
+	    public Weeks( BigRational weeks ) => this.Value = weeks;
 
-        public Weeks( Int64 value ) {
-            this.Value = value;
-        }
+	    public Weeks( Int64 value ) => this.Value = value;
 
-        public Weeks( BigInteger value ) {
-            this.Value = value;
-        }
+	    public Weeks( BigInteger value ) => this.Value = value;
 
-        [JsonProperty]
+	    [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -138,10 +130,10 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Weeks other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Weeks && this.Equals( ( Weeks )obj );
+            return obj is Weeks weeks && this.Equals( weeks );
         }
 
         [Pure]

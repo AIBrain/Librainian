@@ -71,7 +71,7 @@ namespace Librainian.Security {
 
                             // check if the whole process has finished
                             // we can say that it's finished when 8 zeros are added
-                            if ( ( state == State.FillingWithZeros ) && ( zeros == 8 ) ) {
+                            if ( state == State.FillingWithZeros && zeros == 8 ) {
 
                                 // apply the last pixel on the image
                                 // even if only a part of its elements have been affected

@@ -32,7 +32,7 @@ namespace Librainian.Collections {
 
         public BlockingQueue() {
             this._lockObj = new Object();
-            this._head = this._tail = new Node( default( T ), null );
+            this._head = this._tail = new Node( default, null );
         }
 
         public T Dequeue() {

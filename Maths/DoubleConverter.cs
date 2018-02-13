@@ -191,7 +191,7 @@ namespace Librainian.Maths {
                     }
                 }
 
-                if ( ( first == 0 ) && ( last == this._digits.Length - 1 ) ) {
+                if ( first == 0 && last == this._digits.Length - 1 ) {
                     return;
                 }
 

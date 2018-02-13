@@ -1,25 +1,24 @@
-﻿// Copyright 2016 Rick@AIBrain.org.
-//
+﻿// Copyright 2018 Rick@AIBrain.org.
+// 
 // This notice must be kept visible in the source.
-//
+// 
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-//
+// 
 // Donations and royalties can be paid via
 //  PayPal: paypal@aibrain.org
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
+// 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
+// 
 // Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/Volatiles.cs" was last cleaned by Rick on 2016/06/18 at 10:57 PM
+// 
+// "Librainian/Volatiles.cs" was last cleaned by Rick on 2018/01/31 at 6:05 PM
 
 namespace Librainian.Threading {
-
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -33,26 +32,20 @@ namespace Librainian.Threading {
     /// </summary>
     /// <seealso cref="http://github.com/disruptor-net/Disruptor-net/blob/master/Atomic/Volatile.cs" date="Dec 30, 2011" />
     public static class Volatiles {
-
-        /// <summary>Size of a cache line in bytes</summary>
-        private const Int32 CacheLineSize = 64;
-
         /// <summary>An integer value that may be updated atomically</summary>
         public struct Integer {
             private Int32 _value;
 
             /// <summary>Create a new <see cref="Integer" /> with the given initial value.</summary>
             /// <param name="value">Initial value</param>
-            public Integer( Int32 value ) {
-                this._value = value;
-            }
+            public Integer( Int32 value ) => this._value = value;
 
             /// <summary>
             ///     Atomically add the given value to the current value and return the sum
             /// </summary>
             /// <param name="delta">The value to be added</param>
             /// <returns>The sum of the current value and the given value</returns>
-            public Int32 AtomicAddAndGet( Int32 delta ) => Interlocked.Add( ref this._value, delta );
+            public Int32 AtomicAddAndGet( Int32 delta ) => Interlocked.Add( location1: ref this._value, value: delta );
 
             /// <summary>
             ///     Atomically set the value to the given updated value if the current value equals the comparand
@@ -60,22 +53,20 @@ namespace Librainian.Threading {
             /// <param name="newValue">The new value</param>
             /// <param name="comparand">The comparand (expected value)</param>
             /// <returns></returns>
-            public Boolean AtomicCompareExchange( Int32 newValue, Int32 comparand ) {
-                return Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
-            }
+            public Boolean AtomicCompareExchange( Int32 newValue, Int32 comparand ) => Interlocked.CompareExchange( location1: ref this._value, value: newValue, comparand: comparand ) == comparand;
 
             /// <summary>Atomically increment the current value and return the new value</summary>
             /// <returns>The decremented value.</returns>
-            public Int32 AtomicDecrementAndGet() => Interlocked.Decrement( ref this._value );
+            public Int32 AtomicDecrementAndGet() => Interlocked.Decrement( location: ref this._value );
 
             /// <summary>Atomically set the value to the given updated value</summary>
             /// <param name="newValue">The new value</param>
             /// <returns>The original value</returns>
-            public Int32 AtomicExchange( Int32 newValue ) => Interlocked.Exchange( ref this._value, newValue );
+            public Int32 AtomicExchange( Int32 newValue ) => Interlocked.Exchange( location1: ref this._value, value: newValue );
 
             /// <summary>Atomically increment the current value and return the new value</summary>
             /// <returns>The incremented value.</returns>
-            public Int32 AtomicIncrementAndGet() => Interlocked.Increment( ref this._value );
+            public Int32 AtomicIncrementAndGet() => Interlocked.Increment( location: ref this._value );
 
             /// <summary>Read the value applying acquire fence semantic</summary>
             /// <returns>The current value</returns>
@@ -89,7 +80,7 @@ namespace Librainian.Threading {
             ///     Read the value applying a compiler only fence, no CPU fence is applied
             /// </summary>
             /// <returns>The current value</returns>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public Int32 ReadCompilerOnlyFence() => this._value;
 
             /// <summary>Read the value applying full fence semantic</summary>
@@ -115,7 +106,7 @@ namespace Librainian.Threading {
             ///     Write the value applying a compiler fence only, no CPU fence is applied
             /// </summary>
             /// <param name="newValue">The new value</param>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public void WriteCompilerOnlyFence( Int32 newValue ) => this._value = newValue;
 
             /// <summary>Write the value applying full fence semantic</summary>
@@ -143,16 +134,14 @@ namespace Librainian.Threading {
 
             /// <summary>Create a new <see cref="Long" /> with the given initial value.</summary>
             /// <param name="value">Initial value</param>
-            public Long( Int64 value ) {
-                this._value = value;
-            }
+            public Long( Int64 value ) => this._value = value;
 
             /// <summary>
             ///     Atomically add the given value to the current value and return the sum
             /// </summary>
             /// <param name="delta">The value to be added</param>
             /// <returns>The sum of the current value and the given value</returns>
-            public Int64 AtomicAddAndGet( Int64 delta ) => Interlocked.Add( ref this._value, delta );
+            public Int64 AtomicAddAndGet( Int64 delta ) => Interlocked.Add( location1: ref this._value, value: delta );
 
             /// <summary>
             ///     Atomically set the value to the given updated value if the current value equals the comparand
@@ -160,20 +149,20 @@ namespace Librainian.Threading {
             /// <param name="newValue">The new value</param>
             /// <param name="comparand">The comparand (expected value)</param>
             /// <returns></returns>
-            public Boolean AtomicCompareExchange( Int64 newValue, Int64 comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
+            public Boolean AtomicCompareExchange( Int64 newValue, Int64 comparand ) => Interlocked.CompareExchange( location1: ref this._value, value: newValue, comparand: comparand ) == comparand;
 
             /// <summary>Atomically increment the current value and return the new value</summary>
             /// <returns>The decremented value.</returns>
-            public Int64 AtomicDecrementAndGet() => Interlocked.Decrement( ref this._value );
+            public Int64 AtomicDecrementAndGet() => Interlocked.Decrement( location: ref this._value );
 
             /// <summary>Atomically set the value to the given updated value</summary>
             /// <param name="newValue">The new value</param>
             /// <returns>The original value</returns>
-            public Int64 AtomicExchange( Int64 newValue ) => Interlocked.Exchange( ref this._value, newValue );
+            public Int64 AtomicExchange( Int64 newValue ) => Interlocked.Exchange( location1: ref this._value, value: newValue );
 
             /// <summary>Atomically increment the current value and return the new value</summary>
             /// <returns>The incremented value.</returns>
-            public Int64 AtomicIncrementAndGet() => Interlocked.Increment( ref this._value );
+            public Int64 AtomicIncrementAndGet() => Interlocked.Increment( location: ref this._value );
 
             /// <summary>Read the value applying acquire fence semantic</summary>
             /// <returns>The current value</returns>
@@ -187,7 +176,7 @@ namespace Librainian.Threading {
             ///     Read the value applying a compiler only fence, no CPU fence is applied
             /// </summary>
             /// <returns>The current value</returns>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public Int64 ReadCompilerOnlyFence() => this._value;
 
             /// <summary>Read the value applying full fence semantic</summary>
@@ -212,7 +201,7 @@ namespace Librainian.Threading {
             ///     Write the value applying a compiler fence only, no CPU fence is applied
             /// </summary>
             /// <param name="newValue">The new value</param>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public void WriteCompilerOnlyFence( Int64 newValue ) => this._value = newValue;
 
             /// <summary>Write the value applying full fence semantic</summary>
@@ -355,11 +344,10 @@ namespace Librainian.Threading {
         ///     A boolean value that may be updated atomically and is guaranteed to live on its own
         ///     cache line (to prevent false sharing)
         /// </summary>
-        [StructLayout( LayoutKind.Explicit, Size = CacheLineSize * 2 )]
+        [ StructLayout( layoutKind: LayoutKind.Explicit, Size = CacheLineSize * 2 ) ]
         public struct PaddedBoolean {
-
             // Boolean stored as an int, CAS not available on Boolean
-            [FieldOffset( CacheLineSize )]
+            [ FieldOffset( offset: CacheLineSize ) ]
             private Int32 _value;
 
             private const Int32 False = 0;
@@ -369,18 +357,16 @@ namespace Librainian.Threading {
             ///     Create a new <see cref="PaddedBoolean" /> with the given initial value.
             /// </summary>
             /// <param name="value">Initial value</param>
-            public PaddedBoolean( Boolean value ) {
-                this._value = value ? True : False;
-            }
+            public PaddedBoolean( Boolean value ) => this._value = value ? True : False;
 
             /// <summary>Read the value without applying any fence</summary>
             /// <returns>The current value</returns>
-            public Boolean ReadUnfenced() => ToBool( this._value );
+            public Boolean ReadUnfenced() => ToBool( value: this._value );
 
             /// <summary>Read the value applying acquire fence semantic</summary>
             /// <returns>The current value</returns>
             public Boolean ReadAcquireFence() {
-                var value = ToBool( this._value );
+                var value = ToBool( value: this._value );
                 Thread.MemoryBarrier();
                 return value;
             }
@@ -388,7 +374,7 @@ namespace Librainian.Threading {
             /// <summary>Read the value applying full fence semantic</summary>
             /// <returns>The current value</returns>
             public Boolean ReadFullFence() {
-                var value = ToBool( this._value );
+                var value = ToBool( value: this._value );
                 Thread.MemoryBarrier();
                 return value;
             }
@@ -397,13 +383,13 @@ namespace Librainian.Threading {
             ///     Read the value applying a compiler only fence, no CPU fence is applied
             /// </summary>
             /// <returns>The current value</returns>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
-            public Boolean ReadCompilerOnlyFence() => ToBool( this._value );
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
+            public Boolean ReadCompilerOnlyFence() => ToBool( value: this._value );
 
             /// <summary>Write the value applying release fence semantic</summary>
             /// <param name="newValue">The new value</param>
             public void WriteReleaseFence( Boolean newValue ) {
-                var newValueInt = ToInt( newValue );
+                var newValueInt = ToInt( value: newValue );
                 Thread.MemoryBarrier();
                 this._value = newValueInt;
             }
@@ -411,7 +397,7 @@ namespace Librainian.Threading {
             /// <summary>Write the value applying full fence semantic</summary>
             /// <param name="newValue">The new value</param>
             public void WriteFullFence( Boolean newValue ) {
-                var newValueInt = ToInt( newValue );
+                var newValueInt = ToInt( value: newValue );
                 Thread.MemoryBarrier();
                 this._value = newValueInt;
             }
@@ -420,12 +406,12 @@ namespace Librainian.Threading {
             ///     Write the value applying a compiler fence only, no CPU fence is applied
             /// </summary>
             /// <param name="newValue">The new value</param>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( Boolean newValue ) => this._value = ToInt( newValue );
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
+            public void WriteCompilerOnlyFence( Boolean newValue ) => this._value = ToInt( value: newValue );
 
             /// <summary>Write without applying any fence</summary>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( Boolean newValue ) => this._value = ToInt( newValue );
+            public void WriteUnfenced( Boolean newValue ) => this._value = ToInt( value: newValue );
 
             /// <summary>
             ///     Atomically set the value to the given updated value if the current value equals the comparand
@@ -434,19 +420,19 @@ namespace Librainian.Threading {
             /// <param name="comparand">The comparand (expected value)</param>
             /// <returns></returns>
             public Boolean AtomicCompareExchange( Boolean newValue, Boolean comparand ) {
-                var newValueInt = ToInt( newValue );
-                var comparandInt = ToInt( comparand );
+                var newValueInt = ToInt( value: newValue );
+                var comparandInt = ToInt( value: comparand );
 
-                return Interlocked.CompareExchange( ref this._value, newValueInt, comparandInt ) == comparandInt;
+                return Interlocked.CompareExchange( location1: ref this._value, value: newValueInt, comparand: comparandInt ) == comparandInt;
             }
 
             /// <summary>Atomically set the value to the given updated value</summary>
             /// <param name="newValue">The new value</param>
             /// <returns>The original value</returns>
             public Boolean AtomicExchange( Boolean newValue ) {
-                var newValueInt = ToInt( newValue );
-                var originalValue = Interlocked.Exchange( ref this._value, newValueInt );
-                return ToBool( originalValue );
+                var newValueInt = ToInt( value: newValue );
+                var originalValue = Interlocked.Exchange( location1: ref this._value, value: newValueInt );
+                return ToBool( value: originalValue );
             }
 
             /// <summary>Returns the String representation of the current value.</summary>
@@ -457,8 +443,8 @@ namespace Librainian.Threading {
             }
 
             private static Boolean ToBool( Int32 value ) {
-                if ( ( value != False ) && ( value != True ) ) {
-                    throw new ArgumentOutOfRangeException( nameof( value ) );
+                if ( value != False && value != True ) {
+                    throw new ArgumentOutOfRangeException( paramName: nameof(value) );
                 }
 
                 return value == True;
@@ -471,19 +457,16 @@ namespace Librainian.Threading {
         ///     An integer value that may be updated atomically and is guaranteed to live on its own
         ///     cache line (to prevent false sharing)
         /// </summary>
-        [StructLayout( LayoutKind.Explicit, Size = CacheLineSize * 2 )]
+        [ StructLayout( layoutKind: LayoutKind.Explicit, Size = CacheLineSize * 2 ) ]
         public struct PaddedInteger {
-
-            [FieldOffset( CacheLineSize )]
+            [ FieldOffset( offset: CacheLineSize ) ]
             private Int32 _value;
 
             /// <summary>
             ///     Create a new <see cref="PaddedInteger" /> with the given initial value.
             /// </summary>
             /// <param name="value">Initial value</param>
-            public PaddedInteger( Int32 value ) {
-                this._value = value;
-            }
+            public PaddedInteger( Int32 value ) => this._value = value;
 
             /// <summary>Read the value without applying any fence</summary>
             /// <returns>The current value</returns>
@@ -509,7 +492,7 @@ namespace Librainian.Threading {
             ///     Read the value applying a compiler only fence, no CPU fence is applied
             /// </summary>
             /// <returns>The current value</returns>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public Int32 ReadCompilerOnlyFence() => this._value;
 
             /// <summary>Write the value applying release fence semantic</summary>
@@ -530,7 +513,7 @@ namespace Librainian.Threading {
             ///     Write the value applying a compiler fence only, no CPU fence is applied
             /// </summary>
             /// <param name="newValue">The new value</param>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public void WriteCompilerOnlyFence( Int32 newValue ) => this._value = newValue;
 
             /// <summary>Write without applying any fence</summary>
@@ -543,27 +526,27 @@ namespace Librainian.Threading {
             /// <param name="newValue">The new value</param>
             /// <param name="comparand">The comparand (expected value)</param>
             /// <returns></returns>
-            public Boolean AtomicCompareExchange( Int32 newValue, Int32 comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
+            public Boolean AtomicCompareExchange( Int32 newValue, Int32 comparand ) => Interlocked.CompareExchange( location1: ref this._value, value: newValue, comparand: comparand ) == comparand;
 
             /// <summary>Atomically set the value to the given updated value</summary>
             /// <param name="newValue">The new value</param>
             /// <returns>The original value</returns>
-            public Int32 AtomicExchange( Int32 newValue ) => Interlocked.Exchange( ref this._value, newValue );
+            public Int32 AtomicExchange( Int32 newValue ) => Interlocked.Exchange( location1: ref this._value, value: newValue );
 
             /// <summary>
             ///     Atomically add the given value to the current value and return the sum
             /// </summary>
             /// <param name="delta">The value to be added</param>
             /// <returns>The sum of the current value and the given value</returns>
-            public Int32 AtomicAddAndGet( Int32 delta ) => Interlocked.Add( ref this._value, delta );
+            public Int32 AtomicAddAndGet( Int32 delta ) => Interlocked.Add( location1: ref this._value, value: delta );
 
             /// <summary>Atomically increment the current value and return the new value</summary>
             /// <returns>The incremented value.</returns>
-            public Int32 AtomicIncrementAndGet() => Interlocked.Increment( ref this._value );
+            public Int32 AtomicIncrementAndGet() => Interlocked.Increment( location: ref this._value );
 
             /// <summary>Atomically increment the current value and return the new value</summary>
             /// <returns>The decremented value.</returns>
-            public Int32 AtomicDecrementAndGet() => Interlocked.Decrement( ref this._value );
+            public Int32 AtomicDecrementAndGet() => Interlocked.Decrement( location: ref this._value );
 
             /// <summary>Returns the String representation of the current value.</summary>
             /// <returns>the String representation of the current value.</returns>
@@ -577,17 +560,14 @@ namespace Librainian.Threading {
         ///     A long value that may be updated atomically and is guaranteed to live on its own cache
         ///     line (to prevent false sharing)
         /// </summary>
-        [StructLayout( LayoutKind.Explicit, Size = CacheLineSize * 2 )]
+        [ StructLayout( layoutKind: LayoutKind.Explicit, Size = CacheLineSize * 2 ) ]
         public struct PaddedLong {
-
-            [FieldOffset( CacheLineSize )]
+            [ FieldOffset( offset: CacheLineSize ) ]
             private Int64 _value;
 
             /// <summary>Create a new <see cref="PaddedLong" /> with the given initial value.</summary>
             /// <param name="value">Initial value</param>
-            public PaddedLong( Int64 value ) {
-                this._value = value;
-            }
+            public PaddedLong( Int64 value ) => this._value = value;
 
             /// <summary>Read the value without applying any fence</summary>
             /// <returns>The current value</returns>
@@ -612,7 +592,7 @@ namespace Librainian.Threading {
             ///     Read the value applying a compiler only fence, no CPU fence is applied
             /// </summary>
             /// <returns>The current value</returns>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public Int64 ReadCompilerOnlyFence() => this._value;
 
             /// <summary>Write the value applying release fence semantic</summary>
@@ -633,7 +613,7 @@ namespace Librainian.Threading {
             ///     Write the value applying a compiler fence only, no CPU fence is applied
             /// </summary>
             /// <param name="newValue">The new value</param>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public void WriteCompilerOnlyFence( Int64 newValue ) => this._value = newValue;
 
             /// <summary>Write without applying any fence</summary>
@@ -646,27 +626,27 @@ namespace Librainian.Threading {
             /// <param name="newValue">The new value</param>
             /// <param name="comparand">The comparand (expected value)</param>
             /// <returns></returns>
-            public Boolean AtomicCompareExchange( Int64 newValue, Int64 comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
+            public Boolean AtomicCompareExchange( Int64 newValue, Int64 comparand ) => Interlocked.CompareExchange( location1: ref this._value, value: newValue, comparand: comparand ) == comparand;
 
             /// <summary>Atomically set the value to the given updated value</summary>
             /// <param name="newValue">The new value</param>
             /// <returns>The original value</returns>
-            public Int64 AtomicExchange( Int64 newValue ) => Interlocked.Exchange( ref this._value, newValue );
+            public Int64 AtomicExchange( Int64 newValue ) => Interlocked.Exchange( location1: ref this._value, value: newValue );
 
             /// <summary>
             ///     Atomically add the given value to the current value and return the sum
             /// </summary>
             /// <param name="delta">The value to be added</param>
             /// <returns>The sum of the current value and the given value</returns>
-            public Int64 AtomicAddAndGet( Int64 delta ) => Interlocked.Add( ref this._value, delta );
+            public Int64 AtomicAddAndGet( Int64 delta ) => Interlocked.Add( location1: ref this._value, value: delta );
 
             /// <summary>Atomically increment the current value and return the new value</summary>
             /// <returns>The incremented value.</returns>
-            public Int64 AtomicIncrementAndGet() => Interlocked.Increment( ref this._value );
+            public Int64 AtomicIncrementAndGet() => Interlocked.Increment( location: ref this._value );
 
             /// <summary>Atomically increment the current value and return the new value</summary>
             /// <returns>The decremented value.</returns>
-            public Int64 AtomicDecrementAndGet() => Interlocked.Decrement( ref this._value );
+            public Int64 AtomicDecrementAndGet() => Interlocked.Decrement( location: ref this._value );
 
             /// <summary>Returns the String representation of the current value.</summary>
             /// <returns>the String representation of the current value.</returns>
@@ -677,16 +657,14 @@ namespace Librainian.Threading {
         }
 
         /// <summary>A reference that may be updated atomically</summary>
-        public struct Reference<T> where T : class {
+        public struct Reference< T > where T : class {
             private T _value;
 
             /// <summary>
             ///     Create a new <see cref="Reference{T}" /> with the given initial value.
             /// </summary>
             /// <param name="value">Initial value</param>
-            public Reference( T value ) {
-                this._value = value;
-            }
+            public Reference( T value ) => this._value = value;
 
             /// <summary>
             ///     Atomically set the value to the given updated value if the current value equals the comparand
@@ -694,12 +672,12 @@ namespace Librainian.Threading {
             /// <param name="newValue">The new value</param>
             /// <param name="comparand">The comparand (expected value)</param>
             /// <returns></returns>
-            public Boolean AtomicCompareExchange( T newValue, T comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
+            public Boolean AtomicCompareExchange( T newValue, T comparand ) => Interlocked.CompareExchange( location1: ref this._value, value: newValue, comparand: comparand ) == comparand;
 
             /// <summary>Atomically set the value to the given updated value</summary>
             /// <param name="newValue">The new value</param>
             /// <returns>The original value</returns>
-            public T AtomicExchange( T newValue ) => Interlocked.Exchange( ref this._value, newValue );
+            public T AtomicExchange( T newValue ) => Interlocked.Exchange( location1: ref this._value, value: newValue );
 
             /// <summary>Read the value applying acquire fence semantic</summary>
             /// <returns>The current value</returns>
@@ -713,7 +691,7 @@ namespace Librainian.Threading {
             ///     Read the value applying a compiler only fence, no CPU fence is applied
             /// </summary>
             /// <returns>The current value</returns>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public T ReadCompilerOnlyFence() => this._value;
 
             /// <summary>Read the value applying full fence semantic</summary>
@@ -739,7 +717,7 @@ namespace Librainian.Threading {
             ///     Write the value applying a compiler fence only, no CPU fence is applied
             /// </summary>
             /// <param name="newValue">The new value</param>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public void WriteCompilerOnlyFence( T newValue ) => this._value = newValue;
 
             /// <summary>Write the value applying full fence semantic</summary>
@@ -771,7 +749,7 @@ namespace Librainian.Threading {
             /// <param name="length">Length of the array</param>
             public BooleanArray( Int32 length ) {
                 if ( length <= 0 ) {
-                    throw new ArgumentOutOfRangeException( nameof( length ) );
+                    throw new ArgumentOutOfRangeException( paramName: nameof(length) );
                 }
 
                 this._array = new Int32[ length ];
@@ -782,13 +760,7 @@ namespace Librainian.Threading {
             ///     copied from, the given array.
             /// </summary>
             /// <param name="array"></param>
-            public BooleanArray( IEnumerable<Boolean> array ) {
-                if ( array == null ) {
-                    throw new ArgumentNullException( nameof( array ) );
-                }
-
-                this._array = array.Select( ToInt ).ToArray();
-            }
+            public BooleanArray( IEnumerable< Boolean > array ) => this._array = array?.Select( selector: ToInt ).ToArray() ?? throw new ArgumentNullException( paramName: nameof(array) );
 
             /// <summary>Length of the array</summary>
             public Int32 Length => this._array.Length;
@@ -801,9 +773,9 @@ namespace Librainian.Threading {
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
             public Boolean AtomicCompareExchange( Int32 index, Boolean newValue, Boolean comparand ) {
-                var newValueInt = ToInt( newValue );
-                var comparandInt = ToInt( comparand );
-                return Interlocked.CompareExchange( ref this._array[ index ], newValueInt, comparandInt ) == comparandInt;
+                var newValueInt = ToInt( value: newValue );
+                var comparandInt = ToInt( value: comparand );
+                return Interlocked.CompareExchange( location1: ref this._array[ index ], value: newValueInt, comparand: comparandInt ) == comparandInt;
             }
 
             /// <summary>Atomically set the value to the given updated value</summary>
@@ -811,8 +783,8 @@ namespace Librainian.Threading {
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
             public Boolean AtomicExchange( Int32 index, Boolean newValue ) {
-                var result = Interlocked.Exchange( ref this._array[ index ], ToInt( newValue ) );
-                return ToBool( result );
+                var result = Interlocked.Exchange( location1: ref this._array[ index ], value: ToInt( value: newValue ) );
+                return ToBool( value: result );
             }
 
             /// <summary>Read the value applying acquire fence semantic</summary>
@@ -821,7 +793,7 @@ namespace Librainian.Threading {
             public Boolean ReadAcquireFence( Int32 index ) {
                 var value = this._array[ index ];
                 Thread.MemoryBarrier();
-                return ToBool( value );
+                return ToBool( value: value );
             }
 
             /// <summary>
@@ -829,8 +801,8 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="index">The element index</param>
             /// <returns>The current value</returns>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
-            public Boolean ReadCompilerOnlyFence( Int32 index ) => ToBool( this._array[ index ] );
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
+            public Boolean ReadCompilerOnlyFence( Int32 index ) => ToBool( value: this._array[ index ] );
 
             /// <summary>Read the value applying full fence semantic</summary>
             /// <param name="index">The element index</param>
@@ -838,27 +810,27 @@ namespace Librainian.Threading {
             public Boolean ReadFullFence( Int32 index ) {
                 var value = this._array[ index ];
                 Thread.MemoryBarrier();
-                return ToBool( value );
+                return ToBool( value: value );
             }
 
             /// <summary>Read the value without applying any fence</summary>
             /// <param name="index">The index of the element.</param>
             /// <returns>The current value.</returns>
-            public Boolean ReadUnfenced( Int32 index ) => ToBool( this._array[ index ] );
+            public Boolean ReadUnfenced( Int32 index ) => ToBool( value: this._array[ index ] );
 
             /// <summary>
             ///     Write the value applying a compiler fence only, no CPU fence is applied
             /// </summary>
             /// <param name="index">The element index</param>
             /// <param name="newValue">The new value</param>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( Int32 index, Boolean newValue ) => this._array[ index ] = ToInt( newValue );
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
+            public void WriteCompilerOnlyFence( Int32 index, Boolean newValue ) => this._array[ index ] = ToInt( value: newValue );
 
             /// <summary>Write the value applying full fence semantic</summary>
             /// <param name="index">The element index</param>
             /// <param name="newValue">The new value</param>
             public void WriteFullFence( Int32 index, Boolean newValue ) {
-                this._array[ index ] = ToInt( newValue );
+                this._array[ index ] = ToInt( value: newValue );
                 Thread.MemoryBarrier();
             }
 
@@ -866,18 +838,18 @@ namespace Librainian.Threading {
             /// <param name="index">The element index</param>
             /// <param name="newValue">The new value</param>
             public void WriteReleaseFence( Int32 index, Boolean newValue ) {
-                this._array[ index ] = ToInt( newValue );
+                this._array[ index ] = ToInt( value: newValue );
                 Thread.MemoryBarrier();
             }
 
             /// <summary>Write without applying any fence</summary>
             /// <param name="index">The index.</param>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( Int32 index, Boolean newValue ) => this._array[ index ] = ToInt( newValue );
+            public void WriteUnfenced( Int32 index, Boolean newValue ) => this._array[ index ] = ToInt( value: newValue );
 
             private static Boolean ToBool( Int32 value ) {
-                if ( ( value != False ) && ( value != True ) ) {
-                    throw new ArgumentOutOfRangeException( nameof( value ) );
+                if ( value != False && value != True ) {
+                    throw new ArgumentOutOfRangeException( paramName: nameof(value) );
                 }
 
                 return value == True;
@@ -886,7 +858,7 @@ namespace Librainian.Threading {
             private static Int32 ToInt( Boolean value ) => value ? True : False;
         }
 
-        /// <summary>An <see cref="int" /> array that may be updated atomically</summary>
+        /// <summary>An <see cref="Int32" /> array that may be updated atomically</summary>
         public class IntegerArray {
             private readonly Int32[] _array;
 
@@ -894,7 +866,7 @@ namespace Librainian.Threading {
             /// <param name="length">Length of the array</param>
             public IntegerArray( Int32 length ) {
                 if ( length <= 0 ) {
-                    throw new ArgumentOutOfRangeException( nameof( length ) );
+                    throw new ArgumentOutOfRangeException( paramName: nameof(length) );
                 }
 
                 this._array = new Int32[ length ];
@@ -907,11 +879,11 @@ namespace Librainian.Threading {
             /// <param name="array"></param>
             public IntegerArray( Int32[] array ) {
                 if ( array == null ) {
-                    throw new ArgumentNullException( nameof( array ) );
+                    throw new ArgumentNullException( paramName: nameof(array) );
                 }
 
                 this._array = new Int32[ array.Length ];
-                array.CopyTo( this._array, 0 );
+                array.CopyTo( array: this._array, index: 0 );
             }
 
             /// <summary>Length of the array</summary>
@@ -923,7 +895,7 @@ namespace Librainian.Threading {
             /// <param name="delta">The value to be added</param>
             /// <param name="index">The index.</param>
             /// <returns>The sum of the current value and the given value</returns>
-            public Int32 AtomicAddAndGet( Int32 index, Int32 delta ) => Interlocked.Add( ref this._array[ index ], delta );
+            public Int32 AtomicAddAndGet( Int32 index, Int32 delta ) => Interlocked.Add( location1: ref this._array[ index ], value: delta );
 
             /// <summary>
             ///     Atomically set the value to the given updated value if the current value equals the comparand
@@ -932,23 +904,23 @@ namespace Librainian.Threading {
             /// <param name="comparand">The comparand (expected value)</param>
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
-            public Boolean AtomicCompareExchange( Int32 index, Int32 newValue, Int32 comparand ) => Interlocked.CompareExchange( ref this._array[ index ], newValue, comparand ) == comparand;
+            public Boolean AtomicCompareExchange( Int32 index, Int32 newValue, Int32 comparand ) => Interlocked.CompareExchange( location1: ref this._array[ index ], value: newValue, comparand: comparand ) == comparand;
 
             /// <summary>Atomically increment the current value and return the new value</summary>
             /// <param name="index">The index.</param>
             /// <returns>The decremented value.</returns>
-            public Int32 AtomicDecrementAndGet( Int32 index ) => Interlocked.Decrement( ref this._array[ index ] );
+            public Int32 AtomicDecrementAndGet( Int32 index ) => Interlocked.Decrement( location: ref this._array[ index ] );
 
             /// <summary>Atomically set the value to the given updated value</summary>
             /// <param name="newValue">The new value</param>
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
-            public Int32 AtomicExchange( Int32 index, Int32 newValue ) => Interlocked.Exchange( ref this._array[ index ], newValue );
+            public Int32 AtomicExchange( Int32 index, Int32 newValue ) => Interlocked.Exchange( location1: ref this._array[ index ], value: newValue );
 
             /// <summary>Atomically increment the current value and return the new value</summary>
             /// <param name="index">The index.</param>
             /// <returns>The incremented value.</returns>
-            public Int32 AtomicIncrementAndGet( Int32 index ) => Interlocked.Increment( ref this._array[ index ] );
+            public Int32 AtomicIncrementAndGet( Int32 index ) => Interlocked.Increment( location: ref this._array[ index ] );
 
             /// <summary>Read the value applying acquire fence semantic</summary>
             /// <param name="index">The element index</param>
@@ -964,7 +936,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="index">The element index</param>
             /// <returns>The current value</returns>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public Int32 ReadCompilerOnlyFence( Int32 index ) => this._array[ index ];
 
             /// <summary>Read the value applying full fence semantic</summary>
@@ -986,7 +958,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="index">The element index</param>
             /// <param name="newValue">The new value</param>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public void WriteCompilerOnlyFence( Int32 index, Int32 newValue ) => this._array[ index ] = newValue;
 
             /// <summary>Write the value applying full fence semantic</summary>
@@ -1011,7 +983,7 @@ namespace Librainian.Threading {
             public void WriteUnfenced( Int32 index, Int32 newValue ) => this._array[ index ] = newValue;
         }
 
-        /// <summary>A <see cref="long" /> array that may be updated atomically</summary>
+        /// <summary>A <see cref="Int64" /> array that may be updated atomically</summary>
         public class LongArray {
             private readonly Int64[] _array;
 
@@ -1019,7 +991,7 @@ namespace Librainian.Threading {
             /// <param name="length">Length of the array</param>
             public LongArray( Int32 length ) {
                 if ( length <= 0 ) {
-                    throw new ArgumentOutOfRangeException( nameof( length ) );
+                    throw new ArgumentOutOfRangeException( paramName: nameof(length) );
                 }
 
                 this._array = new Int64[ length ];
@@ -1032,11 +1004,11 @@ namespace Librainian.Threading {
             /// <param name="array"></param>
             public LongArray( Int64[] array ) {
                 if ( array == null ) {
-                    throw new ArgumentNullException( nameof( array ) );
+                    throw new ArgumentNullException( paramName: nameof(array) );
                 }
 
                 this._array = new Int64[ array.Length ];
-                array.CopyTo( this._array, 0 );
+                array.CopyTo( array: this._array, index: 0 );
             }
 
             /// <summary>Length of the array</summary>
@@ -1048,7 +1020,7 @@ namespace Librainian.Threading {
             /// <param name="delta">The value to be added</param>
             /// <param name="index">The index.</param>
             /// <returns>The sum of the current value and the given value</returns>
-            public Int64 AtomicAddAndGet( Int32 index, Int64 delta ) => Interlocked.Add( ref this._array[ index ], delta );
+            public Int64 AtomicAddAndGet( Int32 index, Int64 delta ) => Interlocked.Add( location1: ref this._array[ index ], value: delta );
 
             /// <summary>
             ///     Atomically set the value to the given updated value if the current value equals the comparand
@@ -1057,23 +1029,23 @@ namespace Librainian.Threading {
             /// <param name="comparand">The comparand (expected value)</param>
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
-            public Boolean AtomicCompareExchange( Int32 index, Int64 newValue, Int64 comparand ) => Interlocked.CompareExchange( ref this._array[ index ], newValue, comparand ) == comparand;
+            public Boolean AtomicCompareExchange( Int32 index, Int64 newValue, Int64 comparand ) => Interlocked.CompareExchange( location1: ref this._array[ index ], value: newValue, comparand: comparand ) == comparand;
 
             /// <summary>Atomically increment the current value and return the new value</summary>
             /// <param name="index">The index.</param>
             /// <returns>The decremented value.</returns>
-            public Int64 AtomicDecrementAndGet( Int32 index ) => Interlocked.Decrement( ref this._array[ index ] );
+            public Int64 AtomicDecrementAndGet( Int32 index ) => Interlocked.Decrement( location: ref this._array[ index ] );
 
             /// <summary>Atomically set the value to the given updated value</summary>
             /// <param name="newValue">The new value</param>
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
-            public Int64 AtomicExchange( Int32 index, Int64 newValue ) => Interlocked.Exchange( ref this._array[ index ], newValue );
+            public Int64 AtomicExchange( Int32 index, Int64 newValue ) => Interlocked.Exchange( location1: ref this._array[ index ], value: newValue );
 
             /// <summary>Atomically increment the current value and return the new value</summary>
             /// <param name="index">The index.</param>
             /// <returns>The incremented value.</returns>
-            public Int64 AtomicIncrementAndGet( Int32 index ) => Interlocked.Increment( ref this._array[ index ] );
+            public Int64 AtomicIncrementAndGet( Int32 index ) => Interlocked.Increment( location: ref this._array[ index ] );
 
             /// <summary>Read the value applying acquire fence semantic</summary>
             /// <param name="index">The element index</param>
@@ -1089,7 +1061,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="index">The element index</param>
             /// <returns>The current value</returns>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public Int64 ReadCompilerOnlyFence( Int32 index ) => this._array[ index ];
 
             /// <summary>Read the value applying full fence semantic</summary>
@@ -1111,7 +1083,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="index">The element index</param>
             /// <param name="newValue">The new value</param>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public void WriteCompilerOnlyFence( Int32 index, Int64 newValue ) => this._array[ index ] = newValue;
 
             /// <summary>Write the value applying full fence semantic</summary>
@@ -1137,14 +1109,14 @@ namespace Librainian.Threading {
         }
 
         /// <summary>A reference array that may be updated atomically</summary>
-        public class ReferenceArray<T> where T : class {
+        public class ReferenceArray< T > where T : class {
             private readonly T[] _array;
 
             /// <summary>Create a new <see cref="ReferenceArray{T}" /> of a given length</summary>
             /// <param name="length">Length of the array</param>
             public ReferenceArray( Int32 length ) {
                 if ( length <= 0 ) {
-                    throw new ArgumentOutOfRangeException( nameof( length ) );
+                    throw new ArgumentOutOfRangeException( paramName: nameof(length) );
                 }
 
                 this._array = new T[ length ];
@@ -1155,13 +1127,7 @@ namespace Librainian.Threading {
             ///     elements copied from, the given array.
             /// </summary>
             /// <param name="array"></param>
-            public ReferenceArray( IEnumerable<T> array ) {
-                if ( array == null ) {
-                    throw new ArgumentNullException( nameof( array ) );
-                }
-
-                this._array = array.ToArray();
-            }
+            public ReferenceArray( IEnumerable< T > array ) => this._array = array?.ToArray() ?? throw new ArgumentNullException( paramName: nameof(array) );
 
             /// <summary>Length of the array</summary>
             public Int32 Length => this._array.Length;
@@ -1173,14 +1139,14 @@ namespace Librainian.Threading {
             /// <param name="comparand">The comparand (expected value)</param>
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
-            public Boolean AtomicCompareExchange( Int32 index, T newValue, T comparand ) => Interlocked.CompareExchange( ref this._array[ index ], newValue, comparand ) == comparand;
+            public Boolean AtomicCompareExchange( Int32 index, T newValue, T comparand ) => Interlocked.CompareExchange( location1: ref this._array[ index ], value: newValue, comparand: comparand ) == comparand;
 
             /// <summary>Atomically set the value to the given updated value</summary>
             /// <param name="newValue">The new value</param>
             /// <param name="index">The index.</param>
             /// <returns>The original value</returns>
             public T AtomicExchange( Int32 index, T newValue ) {
-                var result = Interlocked.Exchange( ref this._array[ index ], newValue );
+                var result = Interlocked.Exchange( location1: ref this._array[ index ], value: newValue );
                 return result;
             }
 
@@ -1198,7 +1164,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="index">The element index</param>
             /// <returns>The current value</returns>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public T ReadCompilerOnlyFence( Int32 index ) => this._array[ index ];
 
             /// <summary>Read the value applying full fence semantic</summary>
@@ -1220,7 +1186,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="index">The element index</param>
             /// <param name="newValue">The new value</param>
-            [MethodImpl( MethodImplOptions.NoOptimization )]
+            [ MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization ) ]
             public void WriteCompilerOnlyFence( Int32 index, T newValue ) => this._array[ index ] = newValue;
 
             /// <summary>Write the value applying full fence semantic</summary>
@@ -1244,5 +1210,8 @@ namespace Librainian.Threading {
             /// <param name="newValue">The new value</param>
             public void WriteUnfenced( Int32 index, T newValue ) => this._array[ index ] = newValue;
         }
+
+        /// <summary>Size of a cache line in bytes</summary>
+        private const Int32 CacheLineSize = 64;
     }
 }

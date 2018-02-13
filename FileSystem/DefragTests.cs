@@ -55,12 +55,10 @@ namespace Librainian.FileSystem {
             File.Copy( SourceDocument.FullPathWithFileName, TargetDocument.FullPathWithFileName );
         }
 
-        //[OneTimeTearDown]
-        public static void TearDown() {
-            TargetDocument.Delete();
-        }
+		//[OneTimeTearDown]
+		public static void TearDown() => TargetDocument.Delete();
 
-        [Test]
+		[Test]
         public static void Test_something() {
 
             //var bob = new Document( new Uri("http://www.google.com/") );

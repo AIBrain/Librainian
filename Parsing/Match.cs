@@ -49,15 +49,11 @@ namespace Librainian.Parsing {
         private sealed class ContextImpl : OpenMatchContext<T, TResult> {
             private readonly ReadOnlyCollection<MatchExpression> _matches;
 
-            public ContextImpl() {
-                this._matches = Enumerable.Empty<MatchExpression>().ToList().AsReadOnly();
-            }
+            public ContextImpl() => this._matches = Enumerable.Empty<MatchExpression>().ToList().AsReadOnly();
 
-            public ContextImpl( ContextImpl baseContext, MatchExpression newExpr ) {
-                this._matches = baseContext._matches.ConcatSingle( newExpr ).ToList().AsReadOnly();
-            }
+	        public ContextImpl( ContextImpl baseContext, MatchExpression newExpr ) => this._matches = baseContext._matches.ConcatSingle( newExpr ).ToList().AsReadOnly();
 
-            public Func<T, TResult> Compile() => value => this._matches.First( expr => expr.Matches( value ) ).Evaluate( value );
+	        public Func<T, TResult> Compile() => value => this._matches.First( expr => expr.Matches( value ) ).Evaluate( value );
 
             public override OpenMatchContext<T, TResult> Guard( Func<T, Boolean> failWhen, Func<T, TResult> failWith ) => new ContextImpl( this, new MatchExpression( failWhen, failWith ) );
 

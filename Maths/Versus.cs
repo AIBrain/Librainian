@@ -30,7 +30,7 @@ namespace Librainian.Maths {
     ///     <para>Keep count of Success or Failure counts (threadsafe).</para>
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class Versus {
 
         /// <summary>One failure.</summary>
@@ -56,23 +56,15 @@ namespace Librainian.Maths {
         }
 
         public Int64 Failures {
-            get {
-                return Thread.VolatileRead( ref this._failures );
-            }
+            get => Thread.VolatileRead( ref this._failures );
 
-            private set {
-                Thread.VolatileWrite( ref this._failures, value );
-            }
+	        private set => Thread.VolatileWrite( ref this._failures, value );
         }
 
         public Int64 Successes {
-            get {
-                return Thread.VolatileRead( ref this._successes );
-            }
+            get => Thread.VolatileRead( ref this._successes );
 
-            private set {
-                Thread.VolatileWrite( ref this._successes, value );
-            }
+	        private set => Thread.VolatileWrite( ref this._successes, value );
         }
 
         public Int64 Total => this.Successes + this.Failures;

@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Spatial {
     ///     A degree is a measurement of plane angle, representing 1⁄360 of a full rotation.
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Degree_(angle)" />
-    [DebuggerDisplay( "{ToString(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
     public struct Degrees : IComparable<Degrees> {
@@ -54,21 +54,17 @@ namespace Librainian.Measurement.Spatial {
         [JsonProperty]
         private volatile Single _value;
 
-        public Degrees( Single value ) : this() {
-            this.Value = value;
-        }
+        public Degrees( Single value ) : this() => this.Value = value;
 
-        //public Boolean SetValue( Single degrees ) {
+	    //public Boolean SetValue( Single degrees ) {
         //    this.Value = degrees;
         //    return true;
         //}
 
         public Single Value {
-            get {
-                return this._value;
-            }
+            get => this._value;
 
-            set {
+	        set {
                 while ( value < MinimumValue ) {
                     value += MaximumValue;  //BUG use math instead, is this even correct?
                 }
@@ -124,10 +120,10 @@ namespace Librainian.Measurement.Spatial {
         public Boolean Equals( Degrees other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return false;
             }
-            return obj is Degrees && Equals( this, ( Degrees )obj );
+            return obj is Degrees degrees && Equals( this, degrees );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();

@@ -60,13 +60,15 @@ namespace Librainian.Security {
 
                 sum = 0;
 
-                for ( c3 = 0; c3 < 26; c3++ )
-                    sum += GpwData.Get( c1, c2, c3 );
+                for ( c3 = 0; c3 < 26; c3++ ) {
+					sum += GpwData.Get( c1, c2, c3 );
+				}
 
-                if ( sum == 0 )
-                    break;
+				if ( sum == 0 ) {
+					break;
+				}
 
-                weightedRandom = ( Int64 )( Randem.NextDouble() * sum );
+				weightedRandom = ( Int64 )( Randem.NextDouble() * sum );
 
                 sum = 0;
 

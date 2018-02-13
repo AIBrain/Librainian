@@ -77,12 +77,9 @@ namespace Librainian.Collections {
         ///     Pulls out the next <see cref="T" /> in the <see cref="Queue" /> or null.
         /// </summary>
         /// <returns></returns>
-        public T Next() {
-            T temp;
-            return this.Queue.TryDequeue( out temp ) ? temp : default( T );
-        }
+        public T Next() => this.Queue.TryDequeue( out var temp ) ? temp : default;
 
-        /// <summary>Does a Dequeue for each item in the <see cref="Queue" /> ?or null?</summary>
+	    /// <summary>Does a Dequeue for each item in the <see cref="Queue" /> ?or null?</summary>
         /// <returns></returns>
         public IEnumerable<T> NextAll() => this.Queue.Select( o => this.Next() ).Where( o => default( T ) != o );
 
@@ -110,17 +107,15 @@ namespace Librainian.Collections {
         ///     </list>
         /// </summary>
         public void Stall( TimeSpan? timeToStall = null ) {
-            if ( this.Any() || ( null == this.Wait ) ) {
+            if ( this.Any() || null == this.Wait ) {
                 return;
             }
             this.Wait.WaitOne( timeout: timeToStall ?? Seconds.One );
         }
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() {
-            this.Wait.Dispose();
-        }
-    }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this.Wait.Dispose();
+	}
 }

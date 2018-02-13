@@ -31,12 +31,10 @@ namespace Librainian.Measurement.Time.Clocks {
         private UInt64 _elapsed;
         private UInt64 _startTimeStamp;
 
-        public MillisecondStopWatch() {
-            Reset();
-        }
+		public MillisecondStopWatch() => Reset();
 
-        /// <summary></summary>
-        public Span Elapsed => new Span( milliseconds: GetElapsedDateTimeTicks() / TicksPerMillisecond );
+		/// <summary></summary>
+		public Span Elapsed => new Span( milliseconds: GetElapsedDateTimeTicks() / TicksPerMillisecond );
 
         /// <summary></summary>
         public Boolean IsRunning {
@@ -50,36 +48,36 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         public void Reset() {
-            _elapsed = 0;
-            _startTimeStamp = 0;
-            IsRunning = false;
+			this._elapsed = 0;
+			this._startTimeStamp = 0;
+			this.IsRunning = false;
         }
 
         public void Start() {
-            if ( IsRunning ) {
+            if ( this.IsRunning ) {
                 return;
             }
-            _startTimeStamp = GetTimestamp();
-            IsRunning = true;
+			this._startTimeStamp = GetTimestamp();
+			this.IsRunning = true;
         }
 
         public void Stop() {
-            if ( !IsRunning ) {
+            if ( !this.IsRunning ) {
                 return;
             }
-            var ticks = GetTimestamp() - _startTimeStamp;
-            _elapsed += ticks;
-            IsRunning = false;
+            var ticks = GetTimestamp() - this._startTimeStamp;
+			this._elapsed += ticks;
+			this.IsRunning = false;
         }
 
         private static UInt64 GetTimestamp() => ( UInt64 )DateTime.UtcNow.Ticks;
 
         private UInt64 GetElapsedDateTimeTicks() {
-            var elapsed = _elapsed;
-            if ( !IsRunning ) {
+            var elapsed = this._elapsed;
+            if ( !this.IsRunning ) {
                 return elapsed;
             }
-            var ticks = GetTimestamp() - _startTimeStamp;
+            var ticks = GetTimestamp() - this._startTimeStamp;
             elapsed += ticks;
             return elapsed;
         }

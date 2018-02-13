@@ -32,24 +32,12 @@ namespace Librainian.Maths.Numbers {
         [JsonProperty]
         private Int64 _value;
 
-        public AtomicInt( Int32 value = 0 ) {
-            this.Value = value;
-        }
+        public AtomicInt( Int32 value = 0 ) => this.Value = value;
 
-        public Int32 Value {
-            get {
+	    public Int32 Value {
+            get => ( Int32 )Interlocked.Read( ref this._value );
 
-                // this page says to use the CompareExchange
-                // http://msdn.microsoft.com/query/dev10.query?appId=Dev10IDEF1&l=EN-US&k=k(SYSTEM.THREADING.INTERLOCKED.READ);k(TargetFrameworkMoniker-%22.NETFRAMEWORK%2cVERSION%3dV4.0%22);k(DevLang-CSHARP)&rd=true
-                //return Interlocked.CompareExchange( ref this._value, 0, 0);
-                return ( Int32 )Interlocked.Read( ref this._value );
-
-                //return Interlocked.Exchange( ref this._value, this._value );
-            }
-
-            set {
-                Interlocked.Exchange( ref this._value, value );
-            }
+	        set => Interlocked.Exchange( ref this._value, value );
         }
 
         //public long Increment( long byAmount ) {

@@ -82,7 +82,7 @@ namespace {name}
                 var compiledAssembly = compilerResult.CompiledAssembly;
                 var type = compiledAssembly.GetType( $"{name}.EvalClass" );
                 var method = type.GetMethod( "Eval" );
-                return ( Func<T, TResult> )Delegate.CreateDelegate( typeof( Func<T, TResult> ), method );
+                return ( Func<T, TResult> )Delegate.CreateDelegate( typeof( Func<T, TResult> ), method ?? throw new InvalidOperationException() );
             }
         }
 

@@ -109,15 +109,11 @@ namespace Librainian.Measurement.Time {
             get; set;
         }
 
-        public Boolean HasLaunched() {
-            return this._hasLaunched;
-        }
+        public Boolean HasLaunched() => this._hasLaunched;
 
-        public Boolean IsRunning() {
-            return this._isRunning;
-        }
+	    public Boolean IsRunning() => this._isRunning;
 
-        public TimeSpan Remaining() {
+	    public TimeSpan Remaining() {
             if ( this.IsRunning() ) {
                 return this.Countdown.Subtract( DateTime.UtcNow - this.WhenStarted );
             }

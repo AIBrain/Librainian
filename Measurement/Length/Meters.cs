@@ -37,11 +37,9 @@ namespace Librainian.Measurement.Length {
         [JsonProperty]
         public readonly BigRational Value;
 
-        public Meters( Decimal meters ) {
-            this.Value = meters;
-        }
+        public Meters( Decimal meters ) => this.Value = meters;
 
-        public Meters( Millimeters millimeters ) {
+	    public Meters( Millimeters millimeters ) {
             var val = millimeters.Value / Extensions.MillimetersInSingleCentimeter;
             this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
         }

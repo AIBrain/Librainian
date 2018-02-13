@@ -24,7 +24,6 @@ namespace Librainian.Extensions {
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -41,11 +40,9 @@ namespace Librainian.Extensions {
 
         public static Boolean CanAssignValue( this PropertyInfo p, Object value ) => value == null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
 
-        public static IList<T> Clone<T>( this IEnumerable<T> listToClone ) where T : ICloneable {
-            return listToClone.Select( item => ( T )item.Clone() ).ToList();
-        }
+		public static IList<T> Clone<T>( this IEnumerable<T> listToClone ) where T : ICloneable => listToClone.Select( item => ( T )item.Clone() ).ToList();
 
-        public static void CopyField<TSource>( this TSource source, TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
+		public static void CopyField<TSource>( this TSource source, TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( field == null ) {
                 throw new ArgumentNullException( nameof( field ) );
             }
@@ -163,10 +160,10 @@ namespace Librainian.Extensions {
             if ( ReferenceEquals( source, destination ) ) {
                 return true;
             }
-            if ( Equals( source, default( TSource ) ) ) {
+            if ( Equals( source, default ) ) {
                 return false;
             }
-            if ( Equals( destination, default( TSource ) ) ) {
+            if ( Equals( destination, default ) ) {
                 return false;
             }
 
@@ -201,26 +198,25 @@ namespace Librainian.Extensions {
         }
 
         public static IEnumerable<T> GetEnumerableOfType<T>( params Object[] constructorArgs ) where T : class, IComparable<T> {
-            IList<Type> list;
-            if ( !EnumerableOfTypeCache.TryGetValue( typeof( T ), out list ) ) {
-                list = Assembly.GetAssembly( typeof( T ) ).GetTypes().ToList();
-                EnumerableOfTypeCache[ typeof( T ) ] = list;
-            }
+			if ( !EnumerableOfTypeCache.TryGetValue( typeof( T ), out var list ) ) {
+				list = Assembly.GetAssembly( typeof( T ) ).GetTypes().ToList();
+				EnumerableOfTypeCache[ typeof( T ) ] = list;
+			}
 
-            if ( null == list ) {
+			if ( null == list ) {
                 yield break;
             }
 
             foreach ( var myType in list.Where( myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf( typeof( T ) ) ) ) {
-                if ( ( null == constructorArgs ) || !constructorArgs.Any() ) {
-                    var declaredCtor = myType.GetConstructors();
-
-                    foreach ( var parms in from constructorInfo in declaredCtor select constructorInfo.GetParameters() into parms from parameterInfo in parms.Where( parameterInfo => parameterInfo.ParameterType == typeof( Guid ) ) select parms ) {
-                        yield return Activator.CreateInstance( myType, Guid.NewGuid() ) as T;
-                    }
+                if ( null != constructorArgs && constructorArgs.Any() ) {
+                    yield return ( T )Activator.CreateInstance( myType, constructorArgs );
                 }
                 else {
-                    yield return ( T )Activator.CreateInstance( myType, constructorArgs );
+                    var declaredCtor = myType.GetConstructors();
+
+                    foreach ( var _ in declaredCtor.Select( constructorInfo => constructorInfo.GetParameters() ).SelectMany( parms => parms.Where( parameterInfo => parameterInfo.ParameterType == typeof( Guid ) ), ( parms, parameterInfo ) => parms ) ) {
+                        yield return Activator.CreateInstance( myType, Guid.NewGuid() ) as T;
+                    }
                 }
             }
         }
@@ -235,24 +231,22 @@ namespace Librainian.Extensions {
             return baseType.Assembly.GetTypes().Where( type => type.IsAssignableFrom( baseType ) && type.IsSealed );
         }
 
-        /// <summary>
-        ///     Get all <see cref="Type" /> from <see cref="AppDomain.CurrentDomain" /> that should be
-        ///     able to be created via <see cref="Activator.CreateInstance(Type,BindingFlags,Binder,object[],CultureInfo) " />.
-        /// </summary>
-        /// <param name="baseType"></param>
-        /// <returns></returns>
-        public static IEnumerable<Type> GetTypesDerivedFrom( [CanBeNull] this Type baseType ) {
+		/// <summary>
+		///     Get all <see cref="Type" /> from <see cref="AppDomain.CurrentDomain" /> that should be
+		///     able to be created via <see cref="Activator.CreateInstance(Type,BindingFlags,Binder,global::System.Object[],CultureInfo) " />.
+		/// </summary>
+		/// <param name="baseType"></param>
+		/// <returns></returns>
+		public static IEnumerable<Type> GetTypesDerivedFrom( [CanBeNull] this Type baseType ) {
             if ( baseType == null ) {
                 throw new ArgumentNullException( nameof( baseType ) );
             }
             return CurrentDomainGetAssemblies.Value.SelectMany( assembly => assembly.GetTypes(), ( assembly, type ) => type ).Where( arg => baseType.IsAssignableFrom( arg ) && arg.IsClass && !arg.IsAbstract );
         }
 
-        public static Boolean HasDefaultConstructor( this Type t ) {
-            return t.IsValueType || ( t.GetConstructor( Type.EmptyTypes ) != null );
-        }
+        public static Boolean HasDefaultConstructor( this Type t ) => t.IsValueType || t.GetConstructor( Type.EmptyTypes ) != null;
 
-        /// <summary>
+	    /// <summary>
         ///     Returns whether or not objects of this type can be copied byte-for-byte in to another part of the system memory
         ///     without
         ///     potential segmentation faults (i.e. the type contains no managed references such as <see cref="String" />s). This
@@ -271,14 +265,14 @@ namespace Librainian.Extensions {
 
         public static Boolean IsNullable( this PropertyInfo p ) => p.PropertyType.IsNullable();
 
-        public static Boolean IsNullable( this Type t ) => !t.IsValueType || ( Nullable.GetUnderlyingType( t ) != null );
+        public static Boolean IsNullable( this Type t ) => !t.IsValueType || Nullable.GetUnderlyingType( t ) != null;
 
-        /// <summary>
-        ///     Ascertains if the given type is a numeric type (e.g. <see cref="int" />).
-        /// </summary>
-        /// <param name="this">The extended Type.</param>
-        /// <returns>True if the type represents a numeric type, false if not.</returns>
-        public static Boolean IsNumeric( this Type @this ) {
+		/// <summary>
+		///     Ascertains if the given type is a numeric type (e.g. <see cref="Int32" />).
+		/// </summary>
+		/// <param name="this">The extended Type.</param>
+		/// <returns>True if the type represents a numeric type, false if not.</returns>
+		public static Boolean IsNumeric( this Type @this ) {
             if ( @this == null ) {
                 throw new ArgumentNullException( nameof( @this ), "IsNumeric called on a null Type." );
             }
@@ -293,7 +287,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         public static Boolean IsSubclassOfRawGeneric( this Type type, Type generic ) {
             while ( type != typeof( Object ) ) {
-                var cur = ( type != null ) && type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+                var cur = type != null && type.IsGenericType ? type.GetGenericTypeDefinition() : type;
                 if ( generic == cur ) {
                     return true;
                 }
@@ -306,8 +300,7 @@ namespace Librainian.Extensions {
             if ( null == sourceValue ) {
                 return false;
             }
-            var destAsDictionary = field.GetValue( destination ) as IDictionary;
-            if ( null == destAsDictionary ) {
+	        if ( !( field.GetValue( destination ) is IDictionary destAsDictionary ) ) {
                 return false;
             }
             foreach ( var key in sourceValue.Keys ) {
@@ -334,8 +327,10 @@ namespace Librainian.Extensions {
                 throw new ArgumentNullException( nameof( type ) );
             }
             var localType = type; // create a local copy to prevent adverse effects of closure
-            Func<Object> func = () => Activator.CreateInstance( localType ); // curry the localType
-            return func;
+
+	        Object Func() => Activator.CreateInstance( localType );
+
+	        return Func;
         }
 
         public static Func<Object> NewInstanceByLambda( [NotNull] this Type type ) {
@@ -416,7 +411,7 @@ namespace Librainian.Extensions {
 
             // If the type is nullable and the result should be null, set a null value.
             if ( type.IsNullable() && ( value == null || value == DBNull.Value ) ) {
-                result = default( T );
+                result = default;
                 return true;
             }
 
@@ -443,7 +438,7 @@ namespace Librainian.Extensions {
                 return true;
             }
             catch ( Exception ) {
-                result = default( T );
+                result = default;
                 return false;
             }
         }

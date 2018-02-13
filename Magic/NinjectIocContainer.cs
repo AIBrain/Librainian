@@ -78,14 +78,13 @@ namespace Librainian.Magic {
         [DebuggerStepThrough]
         public TType Get<TType>() {
             var tryGet = this.Kernel.TryGet<TType>();
-            if ( !Equals( default( TType ), tryGet ) ) {
-                return tryGet;
-            }
-            tryGet = this.Kernel.TryGet<TType>(); //HACK wtf, why would it work at the second time?
-            if ( Equals( default( TType ), tryGet ) ) {
-                throw new NullReferenceException( "Unable to Get() class " + typeof( TType ).FullName );
-            }
-            return tryGet;
+	        if ( Equals( default, tryGet ) ) {
+		        tryGet = this.Kernel.TryGet< TType >(); //HACK why would it work at the second time?
+		        if ( Equals( default, tryGet ) ) {
+			        throw new NullReferenceException( "Unable to TryGet() class " + typeof( TType ).FullName );
+		        }
+	        }
+	        return tryGet;
         }
 
         public void Inject( Object item ) => this.Kernel.Inject( item );
@@ -112,16 +111,16 @@ namespace Librainian.Magic {
         [DebuggerStepThrough]
         public TType TryGet<TType>() {
             var tryGet = this.Kernel.TryGet<TType>();
-            if ( Equals( default( TType ), tryGet ) ) {
+            if ( Equals( default, tryGet ) ) {
                 tryGet = this.Kernel.TryGet<TType>(); //HACK wtf??
             }
             return tryGet;
         }
 
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() { this.Kernel.Dispose(); }
+		/// <summary>
+		/// Dispose any disposable members.
+		/// </summary>
+		protected override void DisposeManaged() => this.Kernel.Dispose();
 
-    }
+	}
 }
