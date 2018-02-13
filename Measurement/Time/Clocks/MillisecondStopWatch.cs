@@ -1,30 +1,28 @@
-﻿#region License & Information
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Class1.cs" was last cleaned by Rick on 2014/11/30 at 2:50 PM
-#endregion
+//
+// "Librainian/MillisecondStopWatch.cs" was last cleaned by Rick on 2016/06/18 at 10:54 PM
 
 namespace Librainian.Measurement.Time.Clocks {
+
     using System;
 
-    /// <summary>
-    ///     Use with WindowsCE and Silverlight which don't have Stopwatch
-    /// </summary>
+    /// <summary>Use with WindowsCE and Silverlight which don't have Stopwatch</summary>
     /// <remarks>
     ///     Based on <seealso cref="http://github.com/amibar/SmartThreadPool/blob/master/SmartThreadPool/Stopwatch.cs" />
     /// </remarks>
@@ -37,26 +35,18 @@ namespace Librainian.Measurement.Time.Clocks {
             Reset();
         }
 
-        /// <summary>
-        /// </summary>
-        public Span Elapsed { get { return new Span( milliseconds: GetElapsedDateTimeTicks() / TicksPerMillisecond ); } }
+        /// <summary></summary>
+        public Span Elapsed => new Span( milliseconds: GetElapsedDateTimeTicks() / TicksPerMillisecond );
 
-        /// <summary>
-        /// </summary>
-        public bool IsRunning { get; private set; }
-
-        private UInt64 GetElapsedDateTimeTicks() {
-            var elapsed = _elapsed;
-            if ( !IsRunning ) {
-                return elapsed;
-            }
-            var ticks = GetTimestamp() - _startTimeStamp;
-            elapsed += ticks;
-            return elapsed;
+        /// <summary></summary>
+        public Boolean IsRunning {
+            get; private set;
         }
 
-        private static UInt64 GetTimestamp() {
-            return ( UInt64 ) DateTime.UtcNow.Ticks;
+        public static MillisecondStopWatch StartNew() {
+            var stopwatch = new MillisecondStopWatch();
+            stopwatch.Start();
+            return stopwatch;
         }
 
         public void Reset() {
@@ -73,12 +63,6 @@ namespace Librainian.Measurement.Time.Clocks {
             IsRunning = true;
         }
 
-        public static MillisecondStopWatch StartNew() {
-            var stopwatch = new MillisecondStopWatch();
-            stopwatch.Start();
-            return stopwatch;
-        }
-
         public void Stop() {
             if ( !IsRunning ) {
                 return;
@@ -86,6 +70,18 @@ namespace Librainian.Measurement.Time.Clocks {
             var ticks = GetTimestamp() - _startTimeStamp;
             _elapsed += ticks;
             IsRunning = false;
+        }
+
+        private static UInt64 GetTimestamp() => ( UInt64 )DateTime.UtcNow.Ticks;
+
+        private UInt64 GetElapsedDateTimeTicks() {
+            var elapsed = _elapsed;
+            if ( !IsRunning ) {
+                return elapsed;
+            }
+            var ticks = GetTimestamp() - _startTimeStamp;
+            elapsed += ticks;
+            return elapsed;
         }
     }
 }

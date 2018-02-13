@@ -1,109 +1,235 @@
-#region License & Information
-
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Pixel.cs" was last cleaned by Rick on 2014/11/16 at 3:43 PM
-
-#endregion License & Information
+// "Librainian/Pixel.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.Graphics.Imaging {
 
     using System;
     using System.Drawing;
+    using System.IO;
     using System.Runtime.InteropServices;
-    using System.Runtime.Serialization;
+    using System.Threading.Tasks;
+    using Extensions;
+    using JetBrains.Annotations;
     using Maths;
+    using Newtonsoft.Json;
 
     /// <summary>
-    ///     A simple pixel with <see cref="Red" />, <see cref="Green" />, and <see cref="Blue" /> values.
+    ///     <para>
+    ///         A simple pixel with <see cref="Checksum" />, <see cref="Alpha" />, <see cref="Red" />, <see cref="Green" />,
+    ///         <see cref="Blue" />, and <see cref="X" /> & <see cref="Y" /> values.
+    ///     </para>
+    ///     <remarks>Thoroughly untested.</remarks>
     /// </summary>
-    [DataContract]
-    [Serializable]
-    [StructLayout( LayoutKind.Explicit )]
+    [Immutable]
+    [JsonObject]
+    [StructLayout( LayoutKind.Sequential )]
     public struct Pixel : IEquatable<Pixel> {
 
-        [DataMember]
-        [FieldOffset( 0 )]
+        [JsonProperty]
+        //[FieldOffset( 0 )]
+        public readonly Byte Checksum;
+
+        [JsonProperty]
+        //[FieldOffset( sizeof( Byte ) + 0 * sizeof( Byte ) )]
         public readonly Byte Alpha;
 
-        [DataMember]
-        [FieldOffset( 1 )]
+        [JsonProperty]
+        //[FieldOffset( sizeof( Byte ) + 1 * sizeof( Byte ) )]
         public readonly Byte Red;
 
-        [DataMember]
-        [FieldOffset( 2 )]
+        [JsonProperty]
+        //[FieldOffset( sizeof( Byte ) + 2 * sizeof( Byte ) )]
         public readonly Byte Green;
 
-        [DataMember]
-        [FieldOffset( 3 )]
+        [JsonProperty]
+        //[FieldOffset( sizeof( Byte ) + 3 * sizeof( Byte ) )]
         public readonly Byte Blue;
 
-        private Pixel( Byte alpha, Byte red, Byte green, Byte blue ) {
+        [JsonProperty]
+        //[FieldOffset( sizeof( Byte ) + 4 * sizeof( Byte ) )]
+        public readonly UInt32 X;
+
+        [JsonProperty]
+        //[FieldOffset( sizeof( Byte ) + 4 * sizeof( Byte ) + sizeof( UInt32 ) )]
+        public readonly UInt32 Y;
+
+        public static Byte Hash( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y) {
+            return ( Byte )MathHashing.GetHashCodes( alpha, red, green, blue, x, y );
+        }
+
+        public Pixel( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y ) {
             this.Alpha = alpha;
             this.Red = red;
             this.Green = green;
             this.Blue = blue;
+            this.X = x;
+            this.Y = y;
+            this.Checksum = Hash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
         }
 
-        public static explicit operator Pixel( Color pixel ) {
-            return new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
+        public Pixel( Color color, UInt32 x, UInt32 y ) {
+            this.Alpha = color.A;
+            this.Red = color.R;
+            this.Green = color.G;
+            this.Blue = color.B;
+            this.X = x;
+            this.Y = y;
+            this.Checksum = Hash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
         }
 
-        public static implicit operator Color( Pixel pixel ) {
-            return Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
-        }
+        //public static explicit operator Pixel( Color pixel ) => new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
 
-        public static explicit operator Byte[]( Pixel pixel ) {
-            return new[] { pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue };
-        }
+        public static implicit operator Color( Pixel pixel ) => Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
+
+        public static explicit operator Byte[] ( Pixel pixel ) => new[] { pixel.Checksum, pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue };
 
         /// <summary>
-        /// Static comparison type.
+        ///     Static comparison.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equal( Pixel left, Pixel right ) {
-            return left.Alpha == right.Alpha
-                && left.Red == right.Red
-                && left.Green == right.Green
-                && left.Blue == right.Blue;
-        }
+        public static Boolean Equal( Pixel left, Pixel right ) => left.Checksum == right.Checksum && left.Alpha == right.Alpha && left.Red == right.Red && left.Green == right.Green && left.Blue == right.Blue && left.X == right.X && left.Y == right.Y;
 
         /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
+        ///     Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <returns>
-        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
+        ///     true if the current object is equal to the <paramref name="other" /> parameter;
+        ///     otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public bool Equals( Pixel other ) {
-            return Equal( this, other );
-        }
+        public Boolean Equals( Pixel other ) => Equal( this, other );
 
         /// <summary>
-        /// Returns the hash code for this instance.
+        ///     Returns the hash code for this instance.
         /// </summary>
-        /// <returns>
-        /// A 32-bit signed integer that is the hash code for this instance.
-        /// </returns>
-        public override int GetHashCode() {
-            return this.Green.GetHashMerge( this.Blue.GetHashMerge( this.Red.GetHashMerge( this.Alpha ) ) );
+        /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
+        [Pure]
+        public override Int32 GetHashCode() {
+            return this.Checksum + this.Alpha + this.Red + this.Green + this.Blue;
+        }
+
+        public override String ToString() => $"{this.Checksum}({this.Alpha},{this.Red},{this.Green},{this.Blue})@{this.X},{this.Y}";
+
+        public Task WriteToStreamAsync( [NotNull] StreamWriter streamWriter ) {
+            if ( streamWriter == null ) {
+                throw new ArgumentNullException( nameof( streamWriter ) );
+            }
+            return streamWriter.WriteLineAsync( this.ToString() );
+        }
+
+        public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader reader, [NotNull] StreamWriter errors ) {
+            if ( reader == null ) {
+                throw new ArgumentNullException( nameof( reader ) );
+            }
+            if ( errors == null ) {
+                throw new ArgumentNullException( nameof( errors ) );
+            }
+
+            var line = await reader.ReadLineAsync() ?? String.Empty;
+            line = line.Trim();
+
+            if ( String.IsNullOrWhiteSpace( line ) ) {
+                await errors.WriteLineAsync( "Blank input line" ).ConfigureAwait(false);
+                return null;
+            }
+
+            var openParent = line.IndexOf( "(", StringComparison.OrdinalIgnoreCase );
+            if ( openParent <= -1 ) {
+                await errors.WriteLineAsync( $"Unable to find a '(' in {line}" ).ConfigureAwait( false );
+                return null;
+            }
+
+            Byte checksum;
+            if ( !Byte.TryParse( line.Substring( 0, openParent ), out checksum ) ) {
+                await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).ConfigureAwait( false );
+                return null;
+            }
+
+            var closeParent = line.IndexOf( ")", StringComparison.OrdinalIgnoreCase );
+            if ( closeParent == -1 ) {
+                await errors.WriteLineAsync( $"Unable to find a ')' in {line}" ).ConfigureAwait( false );
+                return null;
+            }
+
+            var argb = line.Substring( openParent + 1, closeParent - openParent ).Split( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
+            if ( argb.Length != 4 ) {
+                await errors.WriteLineAsync( $"Unable to parse Color from {line}" ).ConfigureAwait( false );
+                return null;
+            }
+
+            Byte alpha;
+            if ( !Byte.TryParse( argb[ 0 ], out alpha ) ) {
+                await errors.WriteLineAsync( $"Unable to parse Alpha from {line}" ).ConfigureAwait( false );
+                return null;
+            }
+
+            Byte red;
+            if ( !Byte.TryParse( argb[ 1 ], out red ) ) {
+                await errors.WriteLineAsync( $"Unable to parse Red from {line}" ).ConfigureAwait( false );
+                return null;
+            }
+
+            Byte green;
+            if ( !Byte.TryParse( argb[ 2 ], out green ) ) {
+                await errors.WriteLineAsync( $"Unable to parse Green from {line}" ).ConfigureAwait( false );
+                return null;
+            }
+
+            Byte blue;
+            if ( !Byte.TryParse( argb[ 3 ], out blue ) ) {
+                await errors.WriteLineAsync( $"Unable to parse Blue from {line}" ).ConfigureAwait( false );
+                return null;
+            }
+
+            var at = line.IndexOf( "@", StringComparison.OrdinalIgnoreCase );
+            if ( at == -1 ) {
+                await errors.WriteLineAsync( $"Unable to find an '@' in {line}" ).ConfigureAwait( false );
+                return null;
+            }
+
+            var xandy = line.Substring( at + 1 ).Split( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
+            if ( xandy.Length != 2 ) {
+                await errors.WriteLineAsync( $"Unable to parse X & Y from {line}" ).ConfigureAwait( false );
+                return null;
+            }
+
+            UInt32 x;
+            if ( !UInt32.TryParse( xandy[ 0 ], out x ) ) {
+                await errors.WriteLineAsync( $"Unable to parse X from {line}" ).ConfigureAwait( false );
+                return null;
+            }
+
+            UInt32 y;
+            if ( !UInt32.TryParse( xandy[ 0 ], out y ) ) {
+                await errors.WriteLineAsync( $"Unable to parse Y from {line}" ).ConfigureAwait( false );
+                return null;
+            }
+
+            var pixel = new Pixel( alpha, red, green, blue, x, y );
+            if ( pixel.Checksum != checksum ) {
+                await errors.WriteLineAsync( $"Warning checksums do not match! Expected {checksum}, but got {pixel.Checksum}" ).ConfigureAwait( false );
+            }
+
+            return pixel;
         }
     }
 }

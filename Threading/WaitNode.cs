@@ -1,26 +1,28 @@
-#region License & Information
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
-// "Librainian/WaitNode.cs" was last cleaned by Rick on 2014/08/11 at 12:41 AM
-#endregion
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/WaitNode.cs" was last cleaned by Rick on 2016/06/18 at 10:58 PM
 
 namespace Librainian.Threading {
+
     using System;
     using System.Threading;
-    using Annotations;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     The wait node used by implementations of <see cref="Collections.IWaitQueue" />.
@@ -33,52 +35,86 @@ namespace Librainian.Threading {
     {
         internal readonly Thread _owner;
         internal WaitNode _nextWaitNode;
-        internal Boolean _waiting = true;
+        internal Boolean Waiting = true;
 
         public WaitNode() {
             this._owner = Thread.CurrentThread;
         }
 
-        internal virtual Thread Owner { get { return this._owner; } }
+        internal virtual Boolean IsWaiting => this.Waiting;
 
-        internal virtual Boolean IsWaiting { get { return this._waiting; } }
-
-        internal virtual WaitNode NextWaitNode { get { return this._nextWaitNode; } set { this._nextWaitNode = value; } }
-
-        public virtual Boolean Signal( [NotNull] IQueuedSync sync ) {
-            if ( sync == null ) {
-                throw new ArgumentNullException( "sync" );
+        internal virtual WaitNode NextWaitNode {
+            get {
+                return this._nextWaitNode;
             }
+
+            set {
+                this._nextWaitNode = value;
+            }
+        }
+
+        internal virtual Thread Owner => this._owner;
+
+        public virtual Boolean DoTimedWait( IQueuedSync sync, TimeSpan duration ) {
             lock ( this ) {
-                var signalled = this._waiting;
-                if ( signalled ) {
-                    this._waiting = false;
-                    Monitor.Pulse( this );
-                    sync.TakeOver( this );
+                if ( sync.Recheck( this ) || !this.Waiting ) {
+                    return true;
                 }
-                return signalled;
+                if ( duration.Ticks <= 0 ) {
+                    this.Waiting = false;
+                    return false;
+                }
+                var deadline = DateTime.UtcNow.Add( duration );
+                try {
+                    for ( ;;) {
+                        Monitor.Wait( this, duration );
+                        if ( !this.Waiting ) // definitely signalled
+                        {
+                            return true;
+                        }
+                        duration = deadline.Subtract( DateTime.UtcNow );
+                        if ( duration.Ticks <= 0 ) // time out
+                        {
+                            this.Waiting = false;
+                            return false;
+                        }
+                    }
+                }
+                catch ( ThreadInterruptedException ) {
+                    if ( this.Waiting ) // no notification
+                    {
+                        this.Waiting = false; // invalidate for the signaller
+                        throw;
+                    }
+
+                    // thread was interrupted after it was notified
+                    Thread.CurrentThread.Interrupt();
+                    return true;
+                }
             }
         }
 
         public virtual void DoWait( [NotNull] IQueuedSync sync ) {
             if ( sync == null ) {
-                throw new ArgumentNullException( "sync" );
+                throw new ArgumentNullException( nameof( sync ) );
             }
             lock ( this ) {
                 if ( sync.Recheck( this ) ) {
                     return;
                 }
                 try {
-                    while ( this._waiting ) {
+                    while ( this.Waiting ) {
                         Monitor.Wait( this );
                     }
                 }
                 catch ( ThreadInterruptedException ) {
-                    if ( this._waiting ) {
+                    if ( this.Waiting ) {
+
                         // no notification
-                        this._waiting = false; // invalidate for the signaller
+                        this.Waiting = false; // invalidate for the signaller
                         throw;
                     }
+
                     // thread was interrupted after it was notified
                     Thread.CurrentThread.Interrupt();
                 }
@@ -89,14 +125,15 @@ namespace Librainian.Threading {
             lock ( this ) {
                 if ( !sync.Recheck( this ) ) {
                     var wasInterrupted = false;
-                    while ( this._waiting ) {
+                    while ( this.Waiting ) {
                         try {
                             Monitor.Wait( this );
                         }
                         catch ( ThreadInterruptedException ) {
                             wasInterrupted = true;
-                            // no need to notify; if we were signalled, we
-                            // must be not waiting, and we'll act like signalled
+
+                            // no need to notify; if we were signalled, we must be not waiting, and
+                            // we'll act like signalled
                         }
                     }
                     if ( wasInterrupted ) {
@@ -106,41 +143,18 @@ namespace Librainian.Threading {
             }
         }
 
-        public virtual Boolean DoTimedWait( IQueuedSync sync, TimeSpan duration ) {
+        public virtual Boolean Signal( [NotNull] IQueuedSync sync ) {
+            if ( sync == null ) {
+                throw new ArgumentNullException( nameof( sync ) );
+            }
             lock ( this ) {
-                if ( sync.Recheck( this ) || !this._waiting ) {
-                    return true;
+                var signalled = this.Waiting;
+                if ( signalled ) {
+                    this.Waiting = false;
+                    Monitor.Pulse( this );
+                    sync.TakeOver( this );
                 }
-                if ( duration.Ticks <= 0 ) {
-                    this._waiting = false;
-                    return false;
-                }
-                var deadline = DateTime.UtcNow.Add( duration );
-                try {
-                    for ( ;; ) {
-                        Monitor.Wait( this, duration );
-                        if ( !this._waiting ) // definitely signalled
-                        {
-                            return true;
-                        }
-                        duration = deadline.Subtract( DateTime.UtcNow );
-                        if ( duration.Ticks <= 0 ) // time out
-                        {
-                            this._waiting = false;
-                            return false;
-                        }
-                    }
-                }
-                catch ( ThreadInterruptedException ) {
-                    if ( this._waiting ) // no notification
-                    {
-                        this._waiting = false; // invalidate for the signaller
-                        throw;
-                    }
-                    // thread was interrupted after it was notified
-                    Thread.CurrentThread.Interrupt();
-                    return true;
-                }
+                return signalled;
             }
         }
     }

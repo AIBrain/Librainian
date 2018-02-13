@@ -1,56 +1,53 @@
-﻿#region License & Information
-
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/SimpleWallet.cs" was last cleaned by Rick on 2014/09/26 at 11:55 AM
-
-#endregion License & Information
+// "Librainian/SimpleWallet.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
 
 namespace Librainian.Measurement.Currency {
 
     using System;
     using System.Diagnostics;
-    using System.Runtime.Serialization;
     using System.Threading;
     using System.Windows.Forms;
-    using Annotations;
     using BTC;
     using Controls;
-    using Threading;
+    using JetBrains.Annotations;
+    using Magic;
+    using Maths;
+    using Newtonsoft.Json;
     using Time;
 
     /// <summary>
-    ///     A very simple, thread-safe,  Decimal-based wallet. 8 points past decimal dot.
+    ///     A very simple, thread-safe, Decimal-based wallet. 8 points past decimal dot.
     /// </summary>
     /// <remarks>
     ///     TODO add in support for automatic persisting
     /// </remarks>
-    [DebuggerDisplay( "{Formatted,nq}" )]
-    [Serializable]
-    [DataContract( IsReference = true )]
-    public class SimpleWallet : ISimpleWallet, IEquatable<SimpleWallet> {
+    [DebuggerDisplay( "{ToString(),nq}" )]
+    [JsonObject]
+    public class SimpleWallet : ABetterClassDispose,ISimpleWallet, IEquatable<SimpleWallet> {
 
         [NotNull]
         private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-        private readonly int _hashcode;
+        private readonly Int32 _hashcode;
 
-        [DataMember]
+        [JsonProperty]
         private Decimal _balance;
 
         public SimpleWallet() {
@@ -58,14 +55,9 @@ namespace Librainian.Measurement.Currency {
             this._hashcode = Randem.NextInt32();
         }
 
-        /// <summary>
-        ///     Initialize the wallet with the specified <paramref name="balance" />.
-        /// </summary>
+        /// <summary>Initialize the wallet with the specified <paramref name="balance" />.</summary>
         /// <param name="balance"></param>
-        public SimpleWallet( Decimal balance )
-            : this() {
-            this._balance = balance.Sanitize();
-        }
+        public SimpleWallet( Decimal balance ) : this() { this._balance = balance.Sanitize(); }
 
         public Decimal Balance {
             get {
@@ -80,48 +72,35 @@ namespace Librainian.Measurement.Currency {
             }
         }
 
-        public String Formatted {
-            get {
-                return this.ToString();
-            }
-        }
-
         public Label LabelToFlashOnChanges {
-            get;
-            set;
+            get; set;
         }
 
         public Action<Decimal> OnAfterDeposit {
-            get;
-            set;
+            get; set;
         }
 
         public Action<Decimal> OnAfterWithdraw {
-            get;
-            set;
+            get; set;
         }
 
         public Action<Decimal> OnAnyUpdate {
-            get;
-            set;
+            get; set;
         }
 
         public Action<Decimal> OnBeforeDeposit {
-            get;
-            set;
+            get; set;
         }
 
         public Action<Decimal> OnBeforeWithdraw {
-            get;
-            set;
+            get; set;
         }
 
         /// <summary>
         ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
         /// </summary>
         public TimeSpan Timeout {
-            get;
-            set;
+            get; set;
         }
 
         /// <summary>
@@ -136,7 +115,7 @@ namespace Librainian.Measurement.Currency {
             if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
-            if ( null == left || null == right ) {
+            if ( ( null == left ) || ( null == right ) ) {
                 return false;
             }
 
@@ -144,25 +123,18 @@ namespace Librainian.Measurement.Currency {
         }
 
         /// <summary>
-        ///     Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.
+        ///     Indicates whether the current wallet has the same balance as the
+        ///     <paramref name="other" /> wallet.
         /// </summary>
         /// <param name="other">Annother to compare with this wallet.</param>
-        public bool Equals( SimpleWallet other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( SimpleWallet other ) => Equals( this, other );
 
         [Pure]
-        public override int GetHashCode() {
-            return this._hashcode;
-        }
+        public override Int32 GetHashCode() => this._hashcode;
 
-        public override String ToString() {
-            return String.Format( "{0}", this.Balance.ToString( "F8" ) );
-        }
+        public override String ToString() => $"{this.Balance.ToString( "F8" )}";
 
-        /// <summary>
-        ///     Add any (+-)amount directly to the balance.
-        /// </summary>
+        /// <summary>Add any (+-)amount directly to the balance.</summary>
         /// <param name="amount"></param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
@@ -182,23 +154,18 @@ namespace Librainian.Measurement.Currency {
                 if ( this._access.IsWriteLockHeld ) {
                     this._access.ExitWriteLock();
                 }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
-        public Boolean TryAdd( [NotNull] SimpleWallet wallet, Boolean sanitize = true ) {
+        public Boolean TryAdd( SimpleWallet wallet, Boolean sanitize = true ) {
             if ( wallet == null ) {
-                throw new ArgumentNullException( "wallet" );
+                throw new ArgumentNullException( nameof( wallet ) );
             }
             return this.TryAdd( wallet.Balance, sanitize );
         }
 
-        /// <summary>
-        ///     Attempt to deposit amoount (larger than zero) to the <see cref="Balance" />.
-        /// </summary>
+        /// <summary>Attempt to deposit amoount (larger than zero) to the <see cref="Balance" />.</summary>
         /// <param name="amount"></param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
@@ -209,17 +176,11 @@ namespace Librainian.Measurement.Currency {
             if ( amount <= Decimal.Zero ) {
                 return false;
             }
-            var onBeforeDeposit = this.OnBeforeDeposit;
-            if ( onBeforeDeposit != null ) {
-                onBeforeDeposit( amount );
-            }
+            this.OnBeforeDeposit?.Invoke( amount );
             if ( !this.TryAdd( amount ) ) {
                 return false;
             }
-            var onAfterDeposit = this.OnAfterDeposit;
-            if ( onAfterDeposit != null ) {
-                onAfterDeposit( amount );
-            }
+            this.OnAfterDeposit?.Invoke( amount );
             return true;
         }
 
@@ -251,14 +212,8 @@ namespace Librainian.Measurement.Currency {
                     intoWallet.TryDeposit( amount: withdrewAmount.Value, sanitize: false );
                 }
 
-                var onWithdraw = this.OnAfterWithdraw;
-                if ( onWithdraw != null ) {
-                    onWithdraw( amount );
-                }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                this.OnAfterWithdraw?.Invoke( amount );
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
@@ -283,16 +238,11 @@ namespace Librainian.Measurement.Currency {
                 if ( this._access.IsWriteLockHeld ) {
                     this._access.ExitWriteLock();
                 }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
-        public void TryUpdateBalance( SimpleWallet simpleWallet ) {
-            this.TryUpdateBalance( simpleWallet.Balance );
-        }
+        public void TryUpdateBalance( SimpleWallet simpleWallet ) => this.TryUpdateBalance( simpleWallet.Balance );
 
         /// <summary>
         ///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
@@ -323,22 +273,22 @@ namespace Librainian.Measurement.Currency {
                 if ( this._access.IsWriteLockHeld ) {
                     this._access.ExitWriteLock();
                 }
-                var onWithdraw = this.OnAfterWithdraw;
-                if ( onWithdraw != null ) {
-                    onWithdraw( amount );
-                }
-                var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                this.OnAfterWithdraw?.Invoke( amount );
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
-        public Boolean TryWithdraw( [NotNull] SimpleWallet wallet ) {
+        public Boolean TryWithdraw( SimpleWallet wallet ) {
             if ( wallet == null ) {
-                throw new ArgumentNullException( "wallet" );
+                throw new ArgumentNullException( nameof( wallet ) );
             }
             return this.TryWithdraw( wallet.Balance );
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this._access.Dispose(); }
+
     }
 }

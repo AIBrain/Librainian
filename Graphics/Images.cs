@@ -1,27 +1,25 @@
-﻿#region License & Information
-
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Images.cs" was last cleaned by Rick on 2014/08/24 at 6:51 AM
-
-#endregion License & Information
+// "Librainian/Images.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.Graphics {
+
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -36,453 +34,37 @@ namespace Librainian.Graphics {
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Windows.Media.Imaging;
-    using Annotations;
-    using IO;
+    using FileSystem;
+    using JetBrains.Annotations;
+    using Maths;
     using Measurement.Time;
-    using Microsoft.VisualStudio.TestTools.UITesting;
     using Parsing;
-    using Threading;
+
+    //using Microsoft.VisualStudio.TestTools.UITesting;
 
     public static class Images {
-
-        public static Matrix3X2 ComputeForwardTransform( IList<Point> baselineLocations, IList<Point> registerLocations ) {
-            if ( baselineLocations.Count < 3 || registerLocations.Count < 3 ) {
-                throw new Exception( "Unable to compute the forward transform. A minimum of 3 control point pairs are required." );
-            }
-
-            if ( baselineLocations.Count != registerLocations.Count ) {
-                throw new Exception( "Unable to compute the forward transform. The number of control point pairs in baseline and registration results must be equal." );
-            }
-
-            // To compute 
-            //    Transform = ((X^T * X)^-1 * X^T)U = (X^T * X)^-1 (X^T * U)
-
-            //    X^T * X =
-            //    [ Sum(x_i^2)   Sum(x_i*y_i) Sum(x_i) ]
-            //    [ Sum(x_i*y_i) Sum(y_i^2)   Sum(y_i) ]
-            //    [ Sum(x_i)     Sum(y_i)     Sum(1)=n ]
-
-            //    X^T * U =
-            //    [ Sum(x_i*u_i) Sum(x_i*v_i) ]
-            //    [ Sum(y_i*u_i) Sum(y_i*v_i) ]
-            //    [ Sum(u_i)     Sum(v_i) ]
-
-            IList<Point> xy = baselineLocations;
-            IList<Point> uv = registerLocations;
-
-            double a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, n = xy.Count;
-            double p = 0, q = 0, r = 0, s = 0, t = 0, u = 0;
-
-            for ( int i = 0 ; i < n ; i++ ) {
-                // Compute sum of squares for X^T * X
-                a += xy[ i ].X * xy[ i ].X;
-                b += xy[ i ].X * xy[ i ].Y;
-                c += xy[ i ].X;
-                d += xy[ i ].X * xy[ i ].Y;
-                e += xy[ i ].Y * xy[ i ].Y;
-                f += xy[ i ].Y;
-                g += xy[ i ].X;
-                h += xy[ i ].Y;
-
-                // Compute sum of squares for X^T * U
-                p += xy[ i ].X * uv[ i ].X;
-                q += xy[ i ].X * uv[ i ].Y;
-                r += xy[ i ].Y * uv[ i ].X;
-                s += xy[ i ].Y * uv[ i ].Y;
-                t += uv[ i ].X;
-                u += uv[ i ].Y;
-            }
-
-            // Create matrices from the coefficients
-            Matrix3X2 uMat = new Matrix3X2( p, q, r, s, t, u );
-            Matrix3X3 xMat = new Matrix3X3( a, b, c, d, e, f, g, h, n );
-
-            // Invert X
-            Matrix3X3 xInv = xMat.Inverse;
-
-            // Perform the multiplication to get the transform
-            uMat.Multiply( xInv );
-
-            // Matrix uMat now holds the image registration transform to go from the current result to baseline
-            return uMat;
-        }
-
-        [CanBeNull]
-        public static DateTime? GetProperteryAsDateTime( [CanBeNull] this PropertyItem item ) {
-            if ( null == item ) {
-                return null;
-            }
-
-            var value = Encoding.ASCII.GetString( item.Value );
-            if ( value.EndsWith( "\0", StringComparison.Ordinal ) ) {
-                value = value.Replace( "\0", String.Empty );
-            }
-
-            if ( value == "0000:00:00 00:00:00" ) {
-                return null;
-            }
-
-            DateTime result;
-            if ( DateTime.TryParse( value, out result ) ) {
-                return result;
-            }
-
-            if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result ) ) {
-                return result;
-            }
-
-            return null;
-        }
-
-        [CanBeNull]
-        public static DateTime? ImageCreationBestGuess( [CanBeNull] this Document document ) {
-            if ( document == null ) {
-                throw new ArgumentNullException( "document" );
-            }
-            return ImageCreationBestGuess( new FileInfo( document.FullPathWithFileName ) );
-        }
-
-        /// <summary>
-        /// Returns true if the date is 'recent' enough.
-        /// </summary>
-        /// <param name="dateTime"></param>
-        /// <returns></returns>
-        public static Boolean IsDateRecentEnough( this DateTime? dateTime ) {
-            if ( !dateTime.HasValue ) {
-                return false;
-            }
-            if ( dateTime.Value.Year > 1825 ) {
-                return true;
-            }
-            return false;
-        }
-
-        [CanBeNull]
-        public static DateTime? ImageCreationBestGuess( [CanBeNull] this FileSystemInfo info ) {
-            if ( info == null ) {
-                throw new ArgumentNullException( "info" );
-            }
-
-            DateTime? imageCreationBestGuess;
-            if ( InternalImageGetDateTime( info, out imageCreationBestGuess ) ) {
-                return imageCreationBestGuess;
-            }
-
-            try {
-                //try a variety of parsing the dates and times from the file's name.
-
-                //example 1, "blahblahblah_20040823_173454" == "August 23th, 2004 at 5:34pm"
-                var justName = Path.GetFileNameWithoutExtension( info.FullName );
-
-                var mostlyDigits = String.Empty;
-                foreach ( var c in justName ) {
-                    if ( Char.IsDigit( c ) /*|| c == '\\' || c == '-' || c == '/'*/ ) {
-                        mostlyDigits += c;
-                    }
-                    else {
-                        mostlyDigits += ParsingExtensions.Singlespace;
-                    }
-                }
-                mostlyDigits = mostlyDigits.Trim();
-
-                #region Year, Month, Day formats as in digits == "20040823 173454" == "August 23th, 2004 at 5:34pm"
-
-                var patternsYMD = new[] { "yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyy dd MM", "MMddyy HHmmss", "yyyyMMdd", "yyyy MM dd" };
-
-                foreach ( var pattern in patternsYMD ) {
-                    DateTime bestGuess;
-                    if ( !DateTime.TryParseExact( mostlyDigits.Sub( pattern.Length ), pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
-                        continue;
-                    }
-                    if ( IsDateRecentEnough( bestGuess ) ) {
-                        return bestGuess;
-                    }
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
-                }
-                #endregion
-
-                #region Day, Month, Year formats as in digits == "23082004 173454" == "August 23th, 2004 at 5:34pm"
-
-                var patternsDMY = new[] { "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy" };
-
-                foreach ( var pattern in patternsDMY ) {
-                    DateTime bestGuess;
-                    if ( !DateTime.TryParseExact( mostlyDigits.Sub( pattern.Length ), pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
-                        continue;
-                    }
-                    if ( IsDateRecentEnough( bestGuess ) ) {
-                        return bestGuess;
-                    }
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
-                }
-                #endregion
-
-                // per http://stackoverflow.com/q/51224/956364
-                const string pattern1 = @"^((((0[13578])|([13578])|(1[02]))[\/](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[\/](([1-9])|([0-2][0-9])|(30)))|((2|02)[\/](([1-9])|([0-2][0-9]))))[\/]\d{4}$|^\d{4}$";
-                var regs1 = Regex.Matches( justName, pattern1, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five );
-                foreach ( var reg in regs1 ) {
-                    DateTime bestGuess;
-                    if ( !DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
-                        continue;
-                    }
-                    if ( IsDateRecentEnough( bestGuess ) ) {
-                        return bestGuess;
-                    }
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
-                }
-
-                //per http://stackoverflow.com/a/669758/956364
-                const string pattern2 = @"^(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$";
-                var regs2 = Regex.Matches( justName, pattern2, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five );
-                foreach ( var reg in regs2 ) {
-                    DateTime bestGuess;
-                    if ( !DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
-                        continue;
-                    }
-                    if ( IsDateRecentEnough( bestGuess ) ) {
-                        return bestGuess;
-                    }
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
-                }
-            }
-            catch ( Exception ) {
-            }
-
-            var lastWriteTime = File.GetLastWriteTime( info.FullName );
-            if ( lastWriteTime <= DateTime.UtcNow && IsDateRecentEnough( lastWriteTime ) ) {
-                return lastWriteTime;
-            }
-
-            var creationTime = File.GetCreationTime( info.FullName );
-            if ( creationTime <= DateTime.UtcNow && IsDateRecentEnough( creationTime ) ) {
-                return creationTime;
-            }
-
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// if the image file contains a 'valid' date, use that.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="bestGuess"></param>
-        /// <returns></returns>
-        private static bool InternalImageGetDateTime( FileSystemInfo info, out DateTime? bestGuess ) {
-            bestGuess = null;
-            try {
-                using ( var image = Image.FromFile( filename: info.FullName, useEmbeddedColorManagement: false ) ) {
-                    if ( image.PropertyIdList.Contains( PropertyList.DateTimeDigitized ) ) {
-                        var asDateTime = image.GetPropertyItem( PropertyList.DateTimeDigitized ).GetProperteryAsDateTime();
-                        if ( asDateTime.HasValue && IsDateRecentEnough( asDateTime ) ) {
-                            {
-                                bestGuess = asDateTime.Value;
-                                return true;
-                            }
-                        }
-                    }
-
-                    if ( image.PropertyIdList.Contains( PropertyList.DateTimeOriginal ) ) {
-                        var asDateTime = image.GetPropertyItem( PropertyList.DateTimeOriginal ).GetProperteryAsDateTime();
-                        if ( asDateTime.HasValue && IsDateRecentEnough( asDateTime ) ) {
-                            {
-                                bestGuess = asDateTime.Value;
-                                return true;
-                            }
-                        }
-                    }
-
-                    if ( image.PropertyIdList.Contains( PropertyList.PropertyTagDateTime ) ) {
-                        var asDateTime = image.GetPropertyItem( PropertyList.PropertyTagDateTime ).GetProperteryAsDateTime();
-                        if ( asDateTime.HasValue && IsDateRecentEnough( asDateTime ) ) {
-                            {
-                                bestGuess = asDateTime.Value;
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            catch ( Exception ) {
-                /*swallow*/
-            }
-            return false;
-        }
-
-        /// <summary>
-        ///     <para>Returns true if the file could be loaded as an image.</para>
-        ///     <para>
-        ///         Uses
-        ///         <see
-        ///             cref="BitmapImage" />
-        ///         first, and then
-        ///     </para>
-        ///     <para><see cref="Image.FromFile(String)" /> next.</para>
-        /// </summary>
-        /// <param name="document"></param>
-        /// <returns></returns>
-        public static Boolean IsaValidImage( [NotNull] this Document document ) {
-            if ( document == null ) {
-                throw new ArgumentNullException( "document" );
-            }
-            return IsaValidImage( new FileInfo( document.FullPathWithFileName ) );
-        }
-
-        public static async Task<Boolean> IsSameImage( [CanBeNull] this Document fileA, [CanBeNull]  Document fileB ) {
-            if ( null == fileA || null == fileB ) {
-                return false;
-            }
-
-            if ( !fileA.Exists() || !fileB.Exists() ) {
-                return false;
-            }
-
-            try {
-                var imageA = await Task.Run( () => Image.FromFile( fileA.FullPathWithFileName ) );
-                var imageB = await Task.Run( () => Image.FromFile( fileB.FullPathWithFileName ) );
-
-
-                if ( imageA.Width < imageB.Width && imageA.Height < imageB.Height ) {
-                    imageA = ResizeImage( imageA, imageB.Size ); //resize because B is larger
-                }
-                else if ( imageA.Width > imageB.Width && imageA.Height > imageB.Height ) {
-                    imageB = ResizeImage( imageB, imageA.Size ); //resize because A is larger
-                }
-
-                return ImageComparer.Compare( imageA, imageB );
-            }
-            catch ( OutOfMemoryException ) {
-            }
-            catch ( InvalidOperationException ) {
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        ///     <para>Returns true if the file could be loaded as an image.</para>
-        ///     <para>
-        ///         Uses
-        ///         <see
-        ///             cref="BitmapImage" />
-        ///         first, and then
-        ///     </para>
-        ///     <para><see cref="Image.FromFile(String)" /> next.</para>
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        public static Boolean IsaValidImage( [CanBeNull] this FileInfo file ) {
-            if ( null == file ) {
-                return false;
-            }
-            try {
-                var isImageGood = true; //HACK safe assumption?
-
-                try {
-                    var bitmapImage = new BitmapImage();
-                    bitmapImage.DecodeFailed += ( sender, args ) => isImageGood = false;
-                    bitmapImage.DownloadFailed += ( sender, args ) => isImageGood = false;
-                    bitmapImage.DownloadCompleted += ( sender, args ) => isImageGood = true;
-                    bitmapImage.BeginInit();
-                    bitmapImage.UriSource = new Uri( file.FullName );
-                    bitmapImage.EndInit();
-                    if ( bitmapImage.Width <= 0 ) {
-                        return false;
-                    }
-                    if ( bitmapImage.Height <= 0 ) {
-                        return false;
-                    }
-                }
-                catch ( Exception ) {
-                    return false;
-                }
-
-                if ( !isImageGood ) {
-                    return false;
-                }
-
-                using ( Image.FromFile( file.FullName ) ) {
-                    return true;
-                }
-            }
-            catch ( ExternalException ) {
-            }
-            catch ( InvalidOperationException ) {
-            }
-            catch ( FileNotFoundException ) {
-            }
-            catch ( NotSupportedException ) {
-            }
-            catch ( OutOfMemoryException ) {
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
-            return false;
-        }
-
-        public static Image ResizeImage( [NotNull] this Image imgToResize, Size size ) {
-            if ( imgToResize == null ) {
-                throw new ArgumentNullException( "imgToResize" );
-            }
-
-            var sourceWidth = imgToResize.Width;
-            var sourceHeight = imgToResize.Height;
-
-            var nPercentW = ( size.Width / ( Single )sourceWidth );
-            var nPercentH = ( size.Height / ( Single )sourceHeight );
-
-            var nPercent = nPercentH < nPercentW ? nPercentH : nPercentW;
-
-            var destWidth = ( int )( sourceWidth * nPercent );
-            var destHeight = ( int )( sourceHeight * nPercent );
-
-            using ( var bitmap = new Bitmap( width: destWidth, height: destHeight ) ) {
-                using ( var g = Graphics.FromImage( image: bitmap ) ) {
-                    g.SmoothingMode = SmoothingMode.HighQuality;
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-                    g.DrawImage( image: imgToResize, x: 0, y: 0, width: destWidth, height: destHeight );
-                }
-                return bitmap;
-            }
-        }
 
         public static class FileNameExtension {
 
             /// <summary>
             ///     <para>.tif</para>
             /// </summary>
-            /// <seealso cref="http://wikipedia.org/wiki/TIFF"/>
-            public static String Tiff {
-                get {
-                    return ".tif";
-                }
-            }
+            /// <seealso cref="http://wikipedia.org/wiki/TIFF" />
+            public static String Tiff => ".tif";
         }
 
         public static class PropertyList {
-            public const int PropertyTagDateTime = 0x132;
-            public const int DateTimeOriginal = 36867;
-            public const int DateTimeDigitized = 36868;
+            public const Int32 DateTimeDigitized = 0x9004;
+            public const Int32 DateTimeOriginal = 0x9003;
+            public const Int32 PropertyTagDateTime = 0x132;
         }
 
         /// <summary>
-        /// <para>Exif 2.2 Standard (reference: <see cref="http://www.exiv2.org/tags.html"/>)</para>
+        ///     <para>Exif 2.2 Standard (reference: <see cref="http://www.exiv2.org/tags.html" />)</para>
         /// </summary>
-        /// Pulled from project "ExifOrganizer" @ <seealso cref="http://github.com/RiJo/ExifOrganizer/blob/master/MetaParser/Parsers/ExifParser.cs"/>
-        public enum ExifId : int {
+        /// Pulled from project "ExifOrganizer" @
+        /// <seealso cref="http://github.com/RiJo/ExifOrganizer/blob/master/MetaParser/Parsers/ExifParser.cs" />
+        public enum ExifId {
             ImageProcessingSoftware = 0x000b, // The name and version of the software used to post-process the picture.
             ImageNewSubfileType = 0x00fe, // A general indication of the kind of data contained in this subfile.
             ImageSubfileType = 0x00ff, // A general indication of the kind of data contained in this subfile. This field is deprecated. The NewSubfileType field should be used instead.
@@ -526,7 +108,7 @@ namespace Librainian.Graphics {
             ImageTileLength = 0x0143, // The tile length (height) in pixels. This is the number of rows in each tile.
             ImageTileOffsets = 0x0144, // For each tile, the byte offset of that tile, as compressed and stored on disk. The offset is specified with respect to the beginning of the TIFF file. Note that this implies that each tile has a location independent of the locations of other tiles.
             ImageTileByteCounts = 0x0145, // For each tile, the number of (compressed) bytes in that tile. See TileOffsets for a description of how the byte counts are ordered.
-            ImageSubIFDs = 0x014a, // Defined by Adobe Corporation to enable TIFF Trees within a TIFF file.
+            ImageSubIfDs = 0x014a, // Defined by Adobe Corporation to enable TIFF Trees within a TIFF file.
             ImageInkSet = 0x014c, // The set of inks used in a separated (PhotometricInterpretation=5) Image
             ImageInkNames = 0x014d, // The name of each ink used in a separated (PhotometricInterpretation=5) Image
             ImageNumberOfInks = 0x014e, // The number of inks. Usually equal to SamplesPerPixel, unless there are extra samples.
@@ -541,17 +123,17 @@ namespace Librainian.Graphics {
             ImageXClipPathUnits = 0x0158, // The number of units that span the width of the image, in terms of integer ClipPath coordinates.
             ImageYClipPathUnits = 0x0159, // The number of units that span the height of the image, in terms of integer ClipPath coordinates.
             ImageIndexed = 0x015a, // Indexed images are images where the 'pixels' do not represent color values, but rather an index (usually 8-bit) into a separate color table, the ColorMap.
-            ImageJPEGTables = 0x015b, // This optional tag may be used to encode the JPEG quantization andHuffman tables for subsequent use by the JPEG decompression process.
-            ImageOPIProxy = 0x015f, // OPIProxy gives information concerning whether this image is a low-resolution proxy of a high-resolution image (Adobe OPI).
-            ImageJPEGProc = 0x0200, // This field indicates the process used to produce the compressed data
-            ImageJPEGInterchangeFormat = 0x0201, // The offset to the start byte (SOI) of JPEG compressed thumbnail data. This is not used for primary image JPEG data.
-            ImageJPEGInterchangeFormatLength = 0x0202, // The number of bytes of JPEG compressed thumbnail data. This is not used for primary image JPEG data. JPEG thumbnails are not divided but are recorded as a continuous JPEG bitstream from SOI to EOI. Appn and COM markers should not be recorded. Compressed thumbnails must be recorded in no more than 64 Kbytes, including all other data to be recorded in APP1.
-            ImageJPEGRestartInterval = 0x0203, // This Field indicates the length of the restart interval used in the compressed image data.
-            ImageJPEGLosslessPredictors = 0x0205, // This Field points to a list of lossless predictor-selection values, one per component.
-            ImageJPEGPointTransforms = 0x0206, // This Field points to a list of point transform values, one per component.
-            ImageJPEGQTables = 0x0207, // This Field points to a list of offsets to the quantization tables, one per component.
-            ImageJPEGDCTables = 0x0208, // This Field points to a list of offsets to the DC Huffman tables or the lossless Huffman tables, one per component.
-            ImageJPEGACTables = 0x0209, // This Field points to a list of offsets to the Huffman AC tables, one per component.
+            ImageJpegTables = 0x015b, // This optional tag may be used to encode the JPEG quantization andHuffman tables for subsequent use by the JPEG decompression process.
+            ImageOpiProxy = 0x015f, // OPIProxy gives information concerning whether this image is a low-resolution proxy of a high-resolution image (Adobe OPI).
+            ImageJpegProc = 0x0200, // This field indicates the process used to produce the compressed data
+            ImageJpegInterchangeFormat = 0x0201, // The offset to the start byte (SOI) of JPEG compressed thumbnail data. This is not used for primary image JPEG data.
+            ImageJpegInterchangeFormatLength = 0x0202, // The number of bytes of JPEG compressed thumbnail data. This is not used for primary image JPEG data. JPEG thumbnails are not divided but are recorded as a continuous JPEG bitstream from SOI to EOI. Appn and COM markers should not be recorded. Compressed thumbnails must be recorded in no more than 64 Kbytes, including all other data to be recorded in APP1.
+            ImageJpegRestartInterval = 0x0203, // This Field indicates the length of the restart interval used in the compressed image data.
+            ImageJpegLosslessPredictors = 0x0205, // This Field points to a list of lossless predictor-selection values, one per component.
+            ImageJpegPointTransforms = 0x0206, // This Field points to a list of point transform values, one per component.
+            ImageJpegqTables = 0x0207, // This Field points to a list of offsets to the quantization tables, one per component.
+            ImageJpegdcTables = 0x0208, // This Field points to a list of offsets to the DC Huffman tables or the lossless Huffman tables, one per component.
+            ImageJpegacTables = 0x0209, // This Field points to a list of offsets to the Huffman AC tables, one per component.
             ImageYCbCrCoefficients = 0x0211, // The matrix coefficients for transformation from RGB to YCbCr image data. No default is given in TIFF; but here the value given in Appendix E, "Color Space Guidelines", is used as the default. The color space is declared in a color space information tag, with the default being the value that gives the optimal image characteristics Interoperability this condition.
             ImageYCbCrSubSampling = 0x0212, // The sampling ratio of chrominance components in relation to the luminance component. In JPEG compressed data a JPEG marker is used instead of this tag.
             ImageYCbCrPositioning = 0x0213, // The position of chrominance components in relation to the luminance component. This field is designated only for JPEG compressed data or uncompressed YCbCr data. The TIFF default is 1 (centered); but when Y:Cb:Cr = 4:2:2 it is recommended in this standard that 2 (co-sited) be used to record data, in order to improve the image quality when viewed on TV systems. When this field does not exist, the reader shall assume the TIFF default. In the case of Y:Cb:Cr = 4:2:0, the TIFF default (centered) is recommended. If the reader does not have the capability of supporting both kinds of <YCbCrPositioning>, it shall follow the TIFF default regardless of the value in this field. It is preferable that readers be able to support both centered and co-sited positioning.
@@ -560,21 +142,21 @@ namespace Librainian.Graphics {
             ImageRating = 0x4746, // Rating tag used by Windows
             ImageRatingPercent = 0x4749, // Rating tag used by Windows, value in percent
             ImageImageID = 0x800d, // ImageID is the full pathname of the original, high-resolution image, or any other identifying string that uniquely identifies the original image (Adobe OPI).
-            ImageCFARepeatPatternDim = 0x828d, // Contains two values representing the minimum rows and columns to define the repeating patterns of the color filter array
-            ImageCFAPattern = 0x828e, // Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used. It does not apply to all sensing methods
+            ImageCfaRepeatPatternDim = 0x828d, // Contains two values representing the minimum rows and columns to define the repeating patterns of the color filter array
+            ImageCfaPattern = 0x828e, // Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used. It does not apply to all sensing methods
             ImageBatteryLevel = 0x828f, // Contains a value of the battery level as a fraction or string
             ImageCopyright = 0x8298, // Copyright information. In this standard the tag is used to indicate both the photographer and editor copyrights. It is the copyright notice of the person or organization claiming rights to the Image The Interoperability copyright statement including date and rights should be written in this field; e.g., "Copyright, John Smith, 19xx. All rights reserved.". In this standard the field records both the photographer and editor copyrights, with each recorded in a separate part of the statement. When there is a clear distinction between the photographer and editor copyrights, these are to be written in the order of photographer followed by editor copyright, separated by NULL (in this case since the statement also ends with a NULL, there are two NULL codes). When only the photographer copyright is given, it is terminated by one NULL code . When only the editor copyright is given, the photographer copyright part consists of one space followed by a terminating NULL code, then the editor copyright is given. When the field is left blank, it is treated as unknown.
             ImageExposureTime = 0x829a, // Exposure time, given in seconds.
             ImageFNumber = 0x829d, // The F number.
-            ImageIPTCNAA = 0x83bb, // Contains an IPTC/NAA record
+            ImageIptcnaa = 0x83bb, // Contains an IPTC/NAA record
             ImageImageResources = 0x8649, // Contains information embedded by the Adobe Photoshop application
             ImageExifTag = 0x8769, // A pointer to the Exif IFD. Interoperability, Exif IFD has the same structure as that of the IFD specified in TIFF. ordinarily, however, it does not contain image data as in the case of TIFF.
             ImageInterColorProfile = 0x8773, // Contains an InterColor Consortium (ICC) format color space characterization/profile
             ImageExposureProgram = 0x8822, // The class of the program used by the camera to set exposure when the picture is taken.
             ImageSpectralSensitivity = 0x8824, // Indicates the spectral sensitivity of each channel of the camera used.
-            ImageGPSTag = 0x8825, // A pointer to the GPS Info IFD. The Interoperability structure of the GPS Info IFD, like that of Exif IFD, has no image data.
-            ImageISOSpeedRatings = 0x8827, // Indicates the ISO Speed and ISO Latitude of the camera or input device as specified in ISO 12232.
-            ImageOECF = 0x8828, // Indicates the Opto-Electric Conversion Function (OECF) specified in ISO 14524.
+            ImageGpsTag = 0x8825, // A pointer to the GPS Info IFD. The Interoperability structure of the GPS Info IFD, like that of Exif IFD, has no image data.
+            ImageIsoSpeedRatings = 0x8827, // Indicates the ISO Speed and ISO Latitude of the camera or input device as specified in ISO 12232.
+            ImageOecf = 0x8828, // Indicates the Opto-Electric Conversion Function (OECF) specified in ISO 14524.
             ImageInterlace = 0x8829, // Indicates the field number of multifield images.
             ImageTimeZoneOffset = 0x882a, // This optional tag encodes the time zone of the camera clock (relativeto Greenwich Mean Time) used to create the DataTimeOriginal tag-valuewhen the picture was taken. It may also contain the time zone offsetof the clock used to create the DateTime tag-value when the image wasmodified.
             ImageSelfTimerMode = 0x882b, // Number of seconds image capture was delayed from button press.
@@ -601,20 +183,20 @@ namespace Librainian.Graphics {
             ImageImageHistory = 0x9213, // Record of what has been done to the Image
             ImageSubjectLocation = 0x9214, // Indicates the location and area of the main subject in the overall scene.
             ImageExposureIndex = 0x9215, // Encodes the camera exposure index setting when image was captured.
-            ImageTIFFEPStandardID = 0x9216, // Contains four ASCII characters representing the TIFF/EP standard version of a TIFF/EP file, eg '1', '0', '0', '0'
+            ImageTiffepStandardID = 0x9216, // Contains four ASCII characters representing the TIFF/EP standard version of a TIFF/EP file, eg '1', '0', '0', '0'
             ImageSensingMethod = 0x9217, // Type of image sensor.
-            ImageXPTitle = 0x9c9b, // Title tag used by Windows, encoded in UCS2
-            ImageXPComment = 0x9c9c, // Comment tag used by Windows, encoded in UCS2
-            ImageXPAuthor = 0x9c9d, // Author tag used by Windows, encoded in UCS2
-            ImageXPKeywords = 0x9c9e, // Keywords tag used by Windows, encoded in UCS2
-            ImageXPSubject = 0x9c9f, // Subject tag used by Windows, encoded in UCS2
+            ImageXpTitle = 0x9c9b, // Title tag used by Windows, encoded in UCS2
+            ImageXpComment = 0x9c9c, // Comment tag used by Windows, encoded in UCS2
+            ImageXpAuthor = 0x9c9d, // Author tag used by Windows, encoded in UCS2
+            ImageXpKeywords = 0x9c9e, // Keywords tag used by Windows, encoded in UCS2
+            ImageXpSubject = 0x9c9f, // Subject tag used by Windows, encoded in UCS2
             ImagePrintImageMatching = 0xc4a5, // Print Image Matching, description needed.
-            ImageDNGVersion = 0xc612, // This tag encodes the DNG four-tier version number. For files compliant with version 1.1.0.0 of the DNG specification, this tag should contain the bytes: 1, 1, 0, 0.
-            ImageDNGBackwardVersion = 0xc613, // This tag specifies the oldest version of the Digital Negative specification for which a file is compatible. Readers shouldnot attempt to read a file if this tag specifies a version number that is higher than the version number of the specification the reader was based on. In addition to checking the version tags, readers should, for all tags, check the types, counts, and values, to verify it is able to correctly read the file.
+            ImageDngVersion = 0xc612, // This tag encodes the DNG four-tier version number. For files compliant with version 1.1.0.0 of the DNG specification, this tag should contain the bytes: 1, 1, 0, 0.
+            ImageDngBackwardVersion = 0xc613, // This tag specifies the oldest version of the Digital Negative specification for which a file is compatible. Readers shouldnot attempt to read a file if this tag specifies a version number that is higher than the version number of the specification the reader was based on. In addition to checking the version tags, readers should, for all tags, check the types, counts, and values, to verify it is able to correctly read the file.
             ImageUniqueCameraModel = 0xc614, // Defines a unique, non-localized name for the camera model that created the image in the raw file. This name should include the manufacturer's name to avoid conflicts, and should not be localized, even if the camera name itself is localized for different markets (see LocalizedCameraModel). This string may be used by reader software to index into per-model preferences and replacement profiles.
             ImageLocalizedCameraModel = 0xc615, // Similar to the UniqueCameraModel field, except the name can be localized for different markets to match the localization of the camera name.
-            ImageCFAPlaneColor = 0xc616, // Provides a mapping between the values in the CFAPattern tag and the plane numbers in LinearRaw space. This is a required tag for non-RGB CFA images.
-            ImageCFALayout = 0xc617, // Describes the spatial layout of the CFA.
+            ImageCfaPlaneColor = 0xc616, // Provides a mapping between the values in the CFAPattern tag and the plane numbers in LinearRaw space. This is a required tag for non-RGB CFA images.
+            ImageCfaLayout = 0xc617, // Describes the spatial layout of the CFA.
             ImageLinearizationTable = 0xc618, // Describes a lookup table that maps stored values into linear values. This tag is typically used to increase compression ratios by storing the raw data in a non-linear, more visually uniform space with fewer total encoding levels. If SamplesPerPixel is not equal to one, this single table applies to all the samples for each pixel.
             ImageBlackLevelRepeatDim = 0xc619, // Specifies repeat pattern size for the BlackLevel tag.
             ImageBlackLevel = 0xc61a, // Specifies the zero light (a.k.a. thermal black or black current) encoding level, as a repeating pattern. The origin of this pattern is the top-left corner of the ActiveArea rectangle. The values are stored in row-column-sample scan order.
@@ -632,7 +214,7 @@ namespace Librainian.Graphics {
             ImageReductionMatrix2 = 0xc626, // ReductionMatrix2 defines a dimensionality reduction matrix for use as the first stage in converting color camera native space values to XYZ values, under the second calibration illuminant. This tag may only be used if ColorPlanes is greater than 3. The matrix is stored in row scan order.
             ImageAnalogBalance = 0xc627, // Normally the stored raw values are not white balanced, since any digital white balancing will reduce the dynamic range of the final image if the user decides to later adjust the white balance; however, if camera hardware is capable of white balancing the color channels before the signal is digitized, it can improve the dynamic range of the final Image AnalogBalance defines the gain, either analog (recommended) or digital (not recommended) that has been applied the stored raw values.
             ImageAsShotNeutral = 0xc628, // Specifies the selected white balance at time of capture, encoded as the coordinates of a perfectly neutral color in linear reference space values. The inclusion of this tag precludes the inclusion of the AsShotWhiteXY tag.
-            ImageAsShotWhiteXY = 0xc629, // Specifies the selected white balance at time of capture, encoded as x-y chromaticity coordinates. The inclusion of this tag precludes the inclusion of the AsShotNeutral tag.
+            ImageAsShotWhiteXy = 0xc629, // Specifies the selected white balance at time of capture, encoded as x-y chromaticity coordinates. The inclusion of this tag precludes the inclusion of the AsShotNeutral tag.
             ImageBaselineExposure = 0xc62a, // Camera models vary in the trade-off they make between highlight headroom and shadow noise. Some leave a significant amount of highlight headroom during a normal exposure. This allows significant negative exposure compensation to be applied during raw conversion, but also means normal exposures will contain more shadow noise. Other models leave less headroom during normal exposures. This allows for less negative exposure compensation, but results in lower shadow noise for normal exposures. Because of these differences, a raw converter needs to vary the zero point of its exposure compensation control from model to model. BaselineExposure specifies by how much (in EV units) to move the zero point. Positive values result in brighter default results, while negative values result in darker default results.
             ImageBaselineNoise = 0xc62b, // Specifies the relative noise level of the camera model at a baseline ISO value of 100, compared to a reference camera model. Since noise levels tend to vary approximately with the square root of the ISO value, a raw converter can use this value, combined with the current ISO, to estimate the relative noise level of the current Image
             ImageBaselineSharpness = 0xc62c, // Specifies the relative amount of sharpening required for this camera model, compared to a reference camera model. Camera models vary in the strengths of their anti-aliasing filters. Cameras with weak or no filters require less sharpening than cameras with strong anti-aliasing filters.
@@ -643,7 +225,7 @@ namespace Librainian.Graphics {
             ImageChromaBlurRadius = 0xc631, // ChromaBlurRadius provides a hint to the DNG reader about how much chroma blur should be applied to the Image If this tag is omitted, the reader will use its default amount of chroma blurring. Normally this tag is only included for non-CFA images, since the amount of chroma blur required for mosaic images is highly dependent on the de-mosaic algorithm, in which case the DNG reader's default value is likely optimized for its particular de-mosaic algorithm.
             ImageAntiAliasStrength = 0xc632, // Provides a hint to the DNG reader about how strong the camera's anti-alias filter is. A value of 0.0 means no anti-alias filter (i.e., the camera is prone to aliasing artifacts with some subjects), while a value of 1.0 means a strong anti-alias filter (i.e., the camera almost never has aliasing artifacts).
             ImageShadowScale = 0xc633, // This tag is used by Adobe Camera Raw to control the sensitivity of its 'Shadows' slider.
-            ImageDNGPrivateData = 0xc634, // Provides a way for camera manufacturers to store private data in the DNG file for use by their own raw converters, and to have that data preserved by programs that edit DNG files.
+            ImageDngPrivateData = 0xc634, // Provides a way for camera manufacturers to store private data in the DNG file for use by their own raw converters, and to have that data preserved by programs that edit DNG files.
             ImageMakerNoteSafety = 0xc635, // MakerNoteSafety lets the DNG reader know whether the EXIF MakerNote tag is safe to preserve along with the rest of the EXIF data. File browsers and other image management software processing an image with a preserved MakerNote should be aware that any thumbnail image embedded in the MakerNote may be stale, and may not reflect the current state of the full size Image
             ImageCalibrationIlluminant1 = 0xc65a, // The illuminant used for the first set of color calibration tags (ColorMatrix1, CameraCalibration1, ReductionMatrix1). The legal values for this tag are the same as the legal values for the LightSource EXIF tag.
             ImageCalibrationIlluminant2 = 0xc65b, // The illuminant used for an optional second set of color calibration tags (ColorMatrix2, CameraCalibration2, ReductionMatrix2). The legal values for this tag are the same as the legal values for the CalibrationIlluminant1 tag; however, if both are included, neither is allowed to have a value of 0 (unknown).
@@ -653,9 +235,9 @@ namespace Librainian.Graphics {
             ImageOriginalRawFileData = 0xc68c, // If the DNG file was converted from a non-DNG raw file, then this tag contains the compressed contents of that original raw file. The contents of this tag always use the big-endian byte order. The tag contains a sequence of data blocks. Future versions of the DNG specification may define additional data blocks, so DNG readers should ignore extra bytes when parsing this tag. DNG readers should also detect the case where data blocks are missing from the end of the sequence, and should assume a default value for all the missing blocks. There are no padding or alignment bytes between data blocks.
             ImageActiveArea = 0xc68d, // This rectangle defines the active (non-masked) pixels of the sensor. The order of the rectangle coordinates is: top, left, bottom, right.
             ImageMaskedAreas = 0xc68e, // This tag contains a list of non-overlapping rectangle coordinates of fully masked pixels, which can be optionally used by DNG readers to measure the black encoding level. The order of each rectangle's coordinates is: top, left, bottom, right. If the raw image data has already had its black encoding level subtracted, then this tag should not be used, since the masked pixels are no longer useful.
-            ImageAsShotICCProfile = 0xc68f, // This tag contains an ICC profile that, in conjunction with the AsShotPreProfileMatrix tag, provides the camera manufacturer with a way to specify a default color rendering from camera color space coordinates (linear reference values) into the ICC profile connection space. The ICC profile connection space is an output referred colorimetric space, whereas the other color calibration tags in DNG specify a conversion into a scene referred colorimetric space. This means that the rendering in this profile should include any desired tone and gamut mapping needed to convert between scene referred values and output referred values.
+            ImageAsShotIccProfile = 0xc68f, // This tag contains an ICC profile that, in conjunction with the AsShotPreProfileMatrix tag, provides the camera manufacturer with a way to specify a default color rendering from camera color space coordinates (linear reference values) into the ICC profile connection space. The ICC profile connection space is an output referred colorimetric space, whereas the other color calibration tags in DNG specify a conversion into a scene referred colorimetric space. This means that the rendering in this profile should include any desired tone and gamut mapping needed to convert between scene referred values and output referred values.
             ImageAsShotPreProfileMatrix = 0xc690, // This tag is used in conjunction with the AsShotICCProfile tag. It specifies a matrix that should be applied to the camera color space coordinates before processing the values through the ICC profile specified in the AsShotICCProfile tag. The matrix is stored in the row scan order. If ColorPlanes is greater than three, then this matrix can (but is not required to) reduce the dimensionality of the color data down to three components, in which case the AsShotICCProfile should have three rather than ColorPlanes input components.
-            ImageCurrentICCProfile = 0xc691, // This tag is used in conjunction with the CurrentPreProfileMatrix tag. The CurrentICCProfile and CurrentPreProfileMatrix tags have the same purpose and usage as the AsShotICCProfile and AsShotPreProfileMatrix tag pair, except they are for use by raw file editors rather than camera manufacturers.
+            ImageCurrentIccProfile = 0xc691, // This tag is used in conjunction with the CurrentPreProfileMatrix tag. The CurrentICCProfile and CurrentPreProfileMatrix tags have the same purpose and usage as the AsShotICCProfile and AsShotPreProfileMatrix tag pair, except they are for use by raw file editors rather than camera manufacturers.
             ImageCurrentPreProfileMatrix = 0xc692, // This tag is used in conjunction with the CurrentICCProfile tag. The CurrentICCProfile and CurrentPreProfileMatrix tags have the same purpose and usage as the AsShotICCProfile and AsShotPreProfileMatrix tag pair, except they are for use by raw file editors rather than camera manufacturers.
             ImageColorimetricReference = 0xc6bf, // The DNG color model documents a transform between camera colors and CIE XYZ values. This tag describes the colorimetric reference for the CIE XYZ values. 0 = The XYZ values are scene-referred. 1 = The XYZ values are output-referred, using the ICC profile perceptual dynamic range. This tag allows output-referred data to be stored in DNG files and still processed correctly by DNG readers.
             ImageCameraCalibrationSignature = 0xc6f3, // A UTF-8 encoded string associated with the CameraCalibration1 and CameraCalibration2 tags. The CameraCalibration1 and CameraCalibration2 tags should only be used in the DNG color transform if the string stored in the CameraCalibrationSignature tag exactly matches the string stored in the ProfileCalibrationSignature tag for the selected camera profile.
@@ -691,14 +273,14 @@ namespace Librainian.Graphics {
             PhotoFNumber = 0x829d, // The F number.
             PhotoExposureProgram = 0x8822, // The class of the program used by the camera to set exposure when the picture is taken.
             PhotoSpectralSensitivity = 0x8824, // Indicates the spectral sensitivity of each channel of the camera used. The tag value is an ASCII string compatible with the standard developed by the ASTM Technical Committee.
-            PhotoISOSpeedRatings = 0x8827, // Indicates the ISO Speed and ISO Latitude of the camera or input device as specified in ISO 12232.
-            PhotoOECF = 0x8828, // Indicates the Opto-Electoric Conversion Function (OECF) specified in ISO 14524. <OECF> is the relationship between the camera optical input and the image values.
+            PhotoIsoSpeedRatings = 0x8827, // Indicates the ISO Speed and ISO Latitude of the camera or input device as specified in ISO 12232.
+            PhotoOecf = 0x8828, // Indicates the Opto-Electoric Conversion Function (OECF) specified in ISO 14524. <OECF> is the relationship between the camera optical input and the image values.
             PhotoSensitivityType = 0x8830, // The SensitivityType tag indicates PhotographicSensitivity tag. which one of the parameters of ISO12232 is the Although it is an optional tag, it should be recorded when a PhotographicSensitivity tag is recorded. Value = 4, 5, 6, or 7 may be used in case that the values of plural parameters are the same.
             PhotoStandardOutputSensitivity = 0x8831, // This tag indicates the standard output sensitivity value of a camera or input device defined in ISO 12232. When recording this tag, the PhotographicSensitivity and SensitivityType tags shall also be recorded.
             PhotoRecommendedExposureIndex = 0x8832, // This tag indicates the recommended exposure index value of a camera or input device defined in ISO 12232. When recording this tag, the PhotographicSensitivity and SensitivityType tags shall also be recorded.
-            PhotoISOSpeed = 0x8833, // This tag indicates the ISO speed value of a camera or input device that is defined in ISO 12232. When recording this tag, the PhotographicSensitivity and SensitivityType tags shall also be recorded.
-            PhotoISOSpeedLatitudeyyy = 0x8834, // This tag indicates the ISO speed latitude yyy value of a camera or input device that is defined in ISO 12232. However, this tag shall not be recorded without ISOSpeed and ISOSpeedLatitudezzz.
-            PhotoISOSpeedLatitudezzz = 0x8835, // This tag indicates the ISO speed latitude zzz value of a camera or input device that is defined in ISO 12232. However, this tag shall not be recorded without ISOSpeed and ISOSpeedLatitudeyyy.
+            PhotoIsoSpeed = 0x8833, // This tag indicates the ISO speed value of a camera or input device that is defined in ISO 12232. When recording this tag, the PhotographicSensitivity and SensitivityType tags shall also be recorded.
+            PhotoIsoSpeedLatitudeyyy = 0x8834, // This tag indicates the ISO speed latitude yyy value of a camera or input device that is defined in ISO 12232. However, this tag shall not be recorded without ISOSpeed and ISOSpeedLatitudezzz.
+            PhotoIsoSpeedLatitudezzz = 0x8835, // This tag indicates the ISO speed latitude zzz value of a camera or input device that is defined in ISO 12232. However, this tag shall not be recorded without ISOSpeed and ISOSpeedLatitudeyyy.
             PhotoExifVersion = 0x9000, // The version of this standard supported. Nonexistence of this field is taken to mean nonconformance to the standard.
             PhotoDateTimeOriginal = 0x9003, // The date and time when the original image data was generated. For a digital still camera the date and time the picture was taken are recorded.
             PhotoDateTimeDigitized = 0x9004, // The date and time when the image was stored as digital data.
@@ -736,12 +318,12 @@ namespace Librainian.Graphics {
             PhotoSensingMethod = 0xa217, // Indicates the image sensor type on the camera or input device.
             PhotoFileSource = 0xa300, // Indicates the image source. If a DSC recorded the image, this tag value of this tag always be set to 3, indicating that the image was recorded on a DSC.
             PhotoSceneType = 0xa301, // Indicates the type of scene. If a DSC recorded the image, this tag value must always be set to 1, indicating that the image was directly photographed.
-            PhotoCFAPattern = 0xa302, // Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used. It does not apply to all sensing methods.
+            PhotoCfaPattern = 0xa302, // Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used. It does not apply to all sensing methods.
             PhotoCustomRendered = 0xa401, // This tag indicates the use of special processing on image data, such as rendering geared to output. When special processing is performed, the reader is expected to disable or minimize any further processing.
             PhotoExposureMode = 0xa402, // This tag indicates the exposure mode set when the image was shot. In auto-bracketing mode, the camera shoots a series of frames of the same scene at different exposure settings.
             PhotoWhiteBalance = 0xa403, // This tag indicates the white balance mode set when the image was shot.
             PhotoDigitalZoomRatio = 0xa404, // This tag indicates the digital zoom ratio when the image was shot. If the numerator of the recorded value is 0, this indicates that digital zoom was not used.
-            PhotoFocalLengthIn35mmFilm = 0xa405, // This tag indicates the equivalent focal length assuming a 35mm film camera, in mm. A value of 0 means the focal length is unknown. Note that this tag differs from the <FocalLength> tag.
+            PhotoFocalLengthIn35MmFilm = 0xa405, // This tag indicates the equivalent focal length assuming a 35mm film camera, in mm. A value of 0 means the focal length is unknown. Note that this tag differs from the <FocalLength> tag.
             PhotoSceneCaptureType = 0xa406, // This tag indicates the type of scene that was shot. It can also be used to record the mode in which the image was shot. Note that this differs from the <SceneType> tag.
             PhotoGainControl = 0xa407, // This tag indicates the degree of overall image gain adjustment.
             PhotoContrast = 0xa408, // This tag indicates the direction of contrast processing applied by the camera when the image was shot.
@@ -761,37 +343,37 @@ namespace Librainian.Graphics {
             IopRelatedImageFileFormat = 0x1000, // File format of image file
             IopRelatedImageWidth = 0x1001, // Image width
             IopRelatedImageLength = 0x1002, // Image height
-            GPSVersionID = 0x0000, // Indicates the version of <GPSInfoIFD>. The version is given as 2.0.0.0. This tag is mandatory when <GPSInfo> tag is present. (Note: The <GPSVersionID> tag is given in bytes, unlike the <ExifVersion> tag. When the version is 2.0.0.0, the tag value is 02000000.H).
-            GPSLatitudeRef = 0x0001, // Indicates whether the latitude is north or south latitude. The ASCII value 'N' indicates north latitude, and 'S' is south latitude.
-            GPSLatitude = 0x0002, // Indicates the latitude. The latitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. When degrees, minutes and seconds are expressed, the format is dd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format is dd/1,mmmm/100,0/1.
-            GPSLongitudeRef = 0x0003, // Indicates whether the longitude is east or west longitude. ASCII 'E' indicates east longitude, and 'W' is west longitude.
-            GPSLongitude = 0x0004, // Indicates the longitude. The longitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. When degrees, minutes and seconds are expressed, the format is ddd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format is ddd/1,mmmm/100,0/1.
-            GPSAltitudeRef = 0x0005, // Indicates the altitude used as the reference altitude. If the reference is sea level and the altitude is above sea level, 0 is given. If the altitude is below sea level, a value of 1 is given and the altitude is indicated as an absolute value in the GSPAltitude tag. The reference unit is meters. Note that this tag is BYTE type, unlike other reference tags.
-            GPSAltitude = 0x0006, // Indicates the altitude based on the reference in GPSAltitudeRef. Altitude is expressed as one RATIONAL value. The reference unit is meters.
-            GPSTimeStamp = 0x0007, // Indicates the time as UTC (Coordinated Universal Time). <TimeStamp> is expressed as three RATIONAL values giving the hour, minute, and second (atomic clock).
-            GPSSatellites = 0x0008, // Indicates the GPS satellites used for measurements. This tag can be used to describe the number of satellites, their ID number, angle of elevation, azimuth, SNR and other information in ASCII notation. The format is not specified. If the GPS receiver is incapable of taking measurements, value of the tag is set to NULL.
-            GPSStatus = 0x0009, // Indicates the status of the GPS receiver when the image is recorded. "A" means measurement is in progress, and "V" means the measurement is Interoperability.
-            GPSMeasureMode = 0x000a, // Indicates the GPS measurement mode. "2" means two-dimensional measurement and "3" means three-dimensional measurement is in progress.
-            GPSDOP = 0x000b, // Indicates the GPS DOP (data degree of precision). An HDOP value is written during two-dimensional measurement, and PDOP during three-dimensional measurement.
-            GPSSpeedRef = 0x000c, // Indicates the unit used to express the GPS receiver speed of movement. "K" "M" and "N" represents kilometers per hour, miles per hour, and knots.
-            GPSSpeed = 0x000d, // Indicates the speed of GPS receiver movement.
-            GPSTrackRef = 0x000e, // Indicates the reference for giving the direction of GPS receiver movement. "T" denotes true direction and "M" is magnetic direction.
-            GPSTrack = 0x000f, // Indicates the direction of GPS receiver movement. The range of values is from 0.00 to 359.99.
-            GPSImgDirectionRef = 0x0010, // Indicates the reference for giving the direction of the image when it is captured. "T" denotes true direction and "M" is magnetic direction.
-            GPSImgDirection = 0x0011, // Indicates the direction of the image when it was captured. The range of values is from 0.00 to 359.99.
-            GPSMapDatum = 0x0012, // Indicates the geodetic survey data used by the GPS receiver. If the survey data is restricted to Japan, the value of this tag is "TOKYO" or "WGS-84".
-            GPSDestLatitudeRef = 0x0013, // Indicates whether the latitude of the destination point is north or south latitude. The ASCII value "N" indicates north latitude, and "S" is south latitude.
-            GPSDestLatitude = 0x0014, // Indicates the latitude of the destination point. The latitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. If latitude is expressed as degrees, minutes and seconds, a typical format would be dd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format would be dd/1,mmmm/100,0/1.
-            GPSDestLongitudeRef = 0x0015, // Indicates whether the longitude of the destination point is east or west longitude. ASCII "E" indicates east longitude, and "W" is west longitude.
-            GPSDestLongitude = 0x0016, // Indicates the longitude of the destination point. The longitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. If longitude is expressed as degrees, minutes and seconds, a typical format would be ddd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format would be ddd/1,mmmm/100,0/1.
-            GPSDestBearingRef = 0x0017, // Indicates the reference used for giving the bearing to the destination point. "T" denotes true direction and "M" is magnetic direction.
-            GPSDestBearing = 0x0018, // Indicates the bearing to the destination point. The range of values is from 0.00 to 359.99.
-            GPSDestDistanceRef = 0x0019, // Indicates the unit used to express the distance to the destination point. "K", "M" and "N" represent kilometers, miles and knots.
-            GPSDestDistance = 0x001a, // Indicates the distance to the destination point.
-            GPSProcessingMethod = 0x001b, // A character string recording the name of the method used for location finding. The first byte indicates the character code used, and this is followed by the name of the method.
-            GPSAreaInformation = 0x001c, // A character string recording the name of the GPS area. The first byte indicates the character code used, and this is followed by the name of the GPS area.
-            GPSDateStamp = 0x001d, // A character string recording date and time information relative to UTC (Coordinated Universal Time). The format is "YYYY:MM:DD.".
-            GPSDifferential = 0x001e, // Indicates whether differential correction is applied to the GPS receiver.
+            GpsVersionID = 0x0000, // Indicates the version of <GPSInfoIFD>. The version is given as 2.0.0.0. This tag is mandatory when <GPSInfo> tag is present. (Note: The <GPSVersionID> tag is given in bytes, unlike the <ExifVersion> tag. When the version is 2.0.0.0, the tag value is 02000000.H).
+            GpsLatitudeRef = 0x0001, // Indicates whether the latitude is north or south latitude. The ASCII value 'N' indicates north latitude, and 'S' is south latitude.
+            GpsLatitude = 0x0002, // Indicates the latitude. The latitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. When degrees, minutes and seconds are expressed, the format is dd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format is dd/1,mmmm/100,0/1.
+            GpsLongitudeRef = 0x0003, // Indicates whether the longitude is east or west longitude. ASCII 'E' indicates east longitude, and 'W' is west longitude.
+            GpsLongitude = 0x0004, // Indicates the longitude. The longitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. When degrees, minutes and seconds are expressed, the format is ddd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format is ddd/1,mmmm/100,0/1.
+            GpsAltitudeRef = 0x0005, // Indicates the altitude used as the reference altitude. If the reference is sea level and the altitude is above sea level, 0 is given. If the altitude is below sea level, a value of 1 is given and the altitude is indicated as an absolute value in the GSPAltitude tag. The reference unit is meters. Note that this tag is BYTE type, unlike other reference tags.
+            GpsAltitude = 0x0006, // Indicates the altitude based on the reference in GPSAltitudeRef. Altitude is expressed as one RATIONAL value. The reference unit is meters.
+            GpsTimeStamp = 0x0007, // Indicates the time as UTC (Coordinated Universal Time). <TimeStamp> is expressed as three RATIONAL values giving the hour, minute, and second (atomic clock).
+            GpsSatellites = 0x0008, // Indicates the GPS satellites used for measurements. This tag can be used to describe the number of satellites, their ID number, angle of elevation, azimuth, SNR and other information in ASCII notation. The format is not specified. If the GPS receiver is incapable of taking measurements, value of the tag is set to NULL.
+            GpsStatus = 0x0009, // Indicates the status of the GPS receiver when the image is recorded. "A" means measurement is in progress, and "V" means the measurement is Interoperability.
+            GpsMeasureMode = 0x000a, // Indicates the GPS measurement mode. "2" means two-dimensional measurement and "3" means three-dimensional measurement is in progress.
+            Gpsdop = 0x000b, // Indicates the GPS DOP (data degree of precision). An HDOP value is written during two-dimensional measurement, and PDOP during three-dimensional measurement.
+            GpsSpeedRef = 0x000c, // Indicates the unit used to express the GPS receiver speed of movement. "K" "M" and "N" represents kilometers per hour, miles per hour, and knots.
+            GpsSpeed = 0x000d, // Indicates the speed of GPS receiver movement.
+            GpsTrackRef = 0x000e, // Indicates the reference for giving the direction of GPS receiver movement. "T" denotes true direction and "M" is magnetic direction.
+            GpsTrack = 0x000f, // Indicates the direction of GPS receiver movement. The range of values is from 0.00 to 359.99.
+            GpsImgDirectionRef = 0x0010, // Indicates the reference for giving the direction of the image when it is captured. "T" denotes true direction and "M" is magnetic direction.
+            GpsImgDirection = 0x0011, // Indicates the direction of the image when it was captured. The range of values is from 0.00 to 359.99.
+            GpsMapDatum = 0x0012, // Indicates the geodetic survey data used by the GPS receiver. If the survey data is restricted to Japan, the value of this tag is "TOKYO" or "WGS-84".
+            GpsDestLatitudeRef = 0x0013, // Indicates whether the latitude of the destination point is north or south latitude. The ASCII value "N" indicates north latitude, and "S" is south latitude.
+            GpsDestLatitude = 0x0014, // Indicates the latitude of the destination point. The latitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. If latitude is expressed as degrees, minutes and seconds, a typical format would be dd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format would be dd/1,mmmm/100,0/1.
+            GpsDestLongitudeRef = 0x0015, // Indicates whether the longitude of the destination point is east or west longitude. ASCII "E" indicates east longitude, and "W" is west longitude.
+            GpsDestLongitude = 0x0016, // Indicates the longitude of the destination point. The longitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. If longitude is expressed as degrees, minutes and seconds, a typical format would be ddd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format would be ddd/1,mmmm/100,0/1.
+            GpsDestBearingRef = 0x0017, // Indicates the reference used for giving the bearing to the destination point. "T" denotes true direction and "M" is magnetic direction.
+            GpsDestBearing = 0x0018, // Indicates the bearing to the destination point. The range of values is from 0.00 to 359.99.
+            GpsDestDistanceRef = 0x0019, // Indicates the unit used to express the distance to the destination point. "K", "M" and "N" represent kilometers, miles and knots.
+            GpsDestDistance = 0x001a, // Indicates the distance to the destination point.
+            GpsProcessingMethod = 0x001b, // A character string recording the name of the method used for location finding. The first byte indicates the character code used, and this is followed by the name of the method.
+            GpsAreaInformation = 0x001c, // A character string recording the name of the GPS area. The first byte indicates the character code used, and this is followed by the name of the GPS area.
+            GpsDateStamp = 0x001d, // A character string recording date and time information relative to UTC (Coordinated Universal Time). The format is "YYYY:MM:DD.".
+            GpsDifferential = 0x001e, // Indicates whether differential correction is applied to the GPS receiver.
 
             // Missing
             ThumbnailImageHeight = 0x5021,
@@ -854,11 +436,436 @@ namespace Librainian.Graphics {
             ColorTransferFunction = 0x501A,
             GridSize = 0x5011,
             HalftoneDegree = 0x500C,
-            HalftoneLPI = 0x500A,
-            HalftoneLPIUnit = 0x500B,
+            HalftoneLpi = 0x500A,
+            HalftoneLpiUnit = 0x500B,
             HalftoneMisc = 0x500E,
             HalftoneScreen = 0x500F,
-            HalftoneShape = 0x500D,
+            HalftoneShape = 0x500D
+        }
+
+        public static Matrix3X2 ComputeForwardTransform( IList<Point> baselineLocations, IList<Point> registerLocations ) {
+            if ( ( baselineLocations.Count < 3 ) || ( registerLocations.Count < 3 ) ) {
+                throw new Exception( "Unable to compute the forward transform. A minimum of 3 control point pairs are required." );
+            }
+
+            if ( baselineLocations.Count != registerLocations.Count ) {
+                throw new Exception( "Unable to compute the forward transform. The number of control point pairs in baseline and registration results must be equal." );
+            }
+
+            // To compute Transform = ((X^T * X)^-1 * X^T)U = (X^T * X)^-1 (X^T * U)
+
+            // X^T * X = [ Sum(x_i^2) Sum(x_i*y_i) Sum(x_i) ] [ Sum(x_i*y_i) Sum(y_i^2) Sum(y_i) ] [
+            // Sum(x_i) Sum(y_i) Sum(1)=n ]
+
+            // X^T * U = [ Sum(x_i*u_i) Sum(x_i*v_i) ] [ Sum(y_i*u_i) Sum(y_i*v_i) ] [ Sum(u_i)
+            // Sum(v_i) ]
+            var xy = baselineLocations;
+            var uv = registerLocations;
+
+            Double a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, n = xy.Count;
+            Double p = 0, q = 0, r = 0, s = 0, t = 0, u = 0;
+
+            for ( var i = 0; i < n; i++ ) {
+
+                // Compute sum of squares for X^T * X
+                a += xy[ i ].X * xy[ i ].X;
+                b += xy[ i ].X * xy[ i ].Y;
+                c += xy[ i ].X;
+                d += xy[ i ].X * xy[ i ].Y;
+                e += xy[ i ].Y * xy[ i ].Y;
+                f += xy[ i ].Y;
+                g += xy[ i ].X;
+                h += xy[ i ].Y;
+
+                // Compute sum of squares for X^T * U
+                p += xy[ i ].X * uv[ i ].X;
+                q += xy[ i ].X * uv[ i ].Y;
+                r += xy[ i ].Y * uv[ i ].X;
+                s += xy[ i ].Y * uv[ i ].Y;
+                t += uv[ i ].X;
+                u += uv[ i ].Y;
+            }
+
+            // Create matrices from the coefficients
+            var uMat = new Matrix3X2( p, q, r, s, t, u );
+            var xMat = new Matrix3X3( a, b, c, d, e, f, g, h, n );
+
+            // Invert X
+            var xInv = xMat.Inverse();
+
+            // Perform the multiplication to get the transform
+            uMat.Multiply( xInv );
+
+            // Matrix uMat now holds the image registration transform to go from the current result
+            // to baseline
+            return uMat;
+        }
+
+        [CanBeNull]
+        public static DateTime? GetProperteryAsDateTime( [CanBeNull] this PropertyItem item ) {
+            if ( null == item ) {
+                return null;
+            }
+
+            var value = Encoding.ASCII.GetString( item.Value );
+            if ( value.EndsWith( "\0", StringComparison.Ordinal ) ) {
+                value = value.Replace( "\0", String.Empty );
+            }
+
+            if ( value == "0000:00:00 00:00:00" ) {
+                return null;
+            }
+
+            DateTime result;
+            if ( DateTime.TryParse( value, out result ) ) {
+                return result;
+            }
+
+            if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result ) ) {
+                return result;
+            }
+
+            return null;
+        }
+
+        [CanBeNull]
+        public static DateTime? ImageCreationBestGuess( [CanBeNull] this Document document, DateTime oldestDate, DateTime youngestDate ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( nameof( document ) );
+            }
+            return document.Info().ImageCreationBestGuess( oldestDate, youngestDate );
+        }
+
+        [CanBeNull]
+        public static DateTime? ImageCreationBestGuess( [CanBeNull] this FileSystemInfo info, DateTime oldestDate, DateTime youngestDate ) {
+            if ( info == null ) {
+                throw new ArgumentNullException( nameof( info ) );
+            }
+
+            try {
+                var justName = Path.GetFileNameWithoutExtension( info.FullName );
+
+                var bestGuesses = new List<DateTime>();
+
+                DateTime? imageCreationBestGuess;
+                if ( info.InternalImageGetDateTime( out imageCreationBestGuess ) ) {
+                    if ( imageCreationBestGuess.HasValue ) {
+                        bestGuesses.Add( imageCreationBestGuess.Value );
+                    }
+                }
+
+                bestGuesses.RemoveAll( time => !time.Between( oldestDate, youngestDate ) );
+
+                if ( bestGuesses.Any() ) {
+#if DEBUG
+                    if ( justName.StartsWith( "2015" ) && bestGuesses.Min()
+                                                                   .Year != 2015 ) {
+                        Debugger.Break();
+                    }
+                    if ( justName.StartsWith( "2016" ) && bestGuesses.Min()
+                                                                   .Year != 2016 ) {
+                        Debugger.Break();
+                    }
+#endif
+
+                    return bestGuesses.Min();
+                }
+
+                //try a variety of parsing the dates and times from the file's name.
+
+                //TODO: parse "IMG_20150429_165652963( 2 ).jpg" correctly
+
+                //example 1, "blahblahblah_20040823_173454" == "August 23rd, 2010 at 10:34am"
+
+                var mostlyDigits = new StringBuilder( justName.Length );
+                foreach ( var c in justName ) {
+                    if ( Char.IsDigit( c ) ) {
+                        mostlyDigits.Append( c );
+                    }
+                    else {
+                        mostlyDigits.Append( ParsingExtensions.Singlespace );
+                    }
+                }
+                var digits = mostlyDigits.ToString().Trim();
+
+                var patternsYmd = new[] { "yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyy dd MM", "MMddyy HHmmss", "yyyyMMdd", "yyyy MM dd", "yyyyMMdd" };
+
+                DateTime bestGuess;
+
+                foreach ( var pattern in patternsYmd ) {
+                    if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
+                        if ( pattern == "yyyyMMdd HHmmss" && bestGuess.Between( oldestDate, youngestDate ) ) {
+                            return bestGuess;
+                        }
+                        if ( pattern == "yyyyMMdd" && bestGuess.Between( oldestDate, youngestDate ) ) {
+                            return bestGuess;
+                        }
+                        bestGuesses.Add( bestGuess );
+                    }
+                }
+
+                var patternsDmy = new[] { "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy" };
+
+                foreach ( var pattern in patternsDmy ) {
+                    if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
+                        bestGuesses.Add( bestGuess );
+                    }
+                }
+
+                // per http://stackoverflow.com/q/51224/956364
+                const String pattern1 = @"^((((0[13578])|([13578])|(1[02]))[\/](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[\/](([1-9])|([0-2][0-9])|(30)))|((2|02)[\/](([1-9])|([0-2][0-9]))))[\/]\d{4}$|^\d{4}$";
+                foreach ( var reg in Regex.Matches( justName, pattern1, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five ) ) {
+                    if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
+                        bestGuesses.Add( bestGuess );
+                    }
+                }
+
+                //per http://stackoverflow.com/a/669758/956364
+                const String pattern2 = @"^(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$";
+                foreach ( var reg in Regex.Matches( justName, pattern2, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five ) ) {
+                    if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
+                        bestGuesses.Add( bestGuess );
+                    }
+                }
+
+                bestGuesses.RemoveAll( time => !time.Between( oldestDate, youngestDate ) );
+
+                if ( !bestGuesses.Any() ) {
+                    bestGuesses.Add( File.GetLastWriteTime( info.FullName ) );
+                    bestGuesses.Add( File.GetCreationTime( info.FullName ) );
+                }
+
+                if ( bestGuesses.Any() ) {
+#if DEBUG
+                    if ( justName.StartsWith( "2015" ) && bestGuesses.Min().Year != 2015 ) {
+                        Debugger.Break();
+                    }
+                    if ( justName.StartsWith( "2016" ) && bestGuesses.Min().Year != 2016 ) {
+                        Debugger.Break();
+                    }
+#endif
+
+                    return bestGuesses.Min();
+
+                    //try {
+                    //    //return the most recent date, just before Now()
+                    //    return bestGuesses.Where( time => time < DateTime.Now ).Max();
+                    //}
+                    //catch ( Exception ) {
+                    //}
+
+                    //try {
+                    //    //return the most recent date, just after Now()
+                    //    return bestGuesses.Where( time => time > DateTime.Now ).Min();
+                    //}
+                    //catch ( Exception ) {
+                    //}
+                }
+            }
+            catch ( Exception ) {
+                // ignored
+            }
+
+            //if ( Debugger.IsAttached ) {
+            //    Debugger.Break();
+            //}
+
+            return null;
+        }
+
+        /// <summary>
+        ///     <para>Returns true if the file could be loaded as an image.</para>
+        ///     <para>Uses <see cref="BitmapImage" /> first, and then</para>
+        ///     <para><see cref="Image.FromFile(String)" /> next.</para>
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        public static Boolean IsaValidImage( [NotNull] this Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( nameof( document ) );
+            }
+            var info = new FileInfo( document.FullPathWithFileName );
+            return info.IsaValidImage();
+        }
+
+        [CanBeNull]
+        public static BitmapImage BitmapFromUri( this Uri source ) {
+            try {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = source;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+                return bitmap;
+            }
+            catch ( IOException ) { }
+            catch ( FileFormatException ) { }
+            catch ( NotSupportedException ) { }
+            return null;
+        }
+
+        /// <summary>
+        ///     <para>Returns true if the file could be loaded as an image.</para>
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public static Boolean IsaValidImage( [CanBeNull] this FileInfo file ) {
+            if ( null == file ) {
+                return false;
+            }
+            try {
+                //if ( null != BitmapFromUri( new Uri( file.FullName ) ) ) { return true; }
+
+                using ( Image.FromFile( file.FullName ) ) {
+                    return true;
+                }
+            }
+            catch ( NotSupportedException ) { }
+            catch ( OutOfMemoryException ) { }
+            catch ( ExternalException ) { }
+            catch ( InvalidOperationException ) { }
+            catch ( FileNotFoundException ) { }
+            catch ( IOException ) { }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+            return false;
+        }
+
+        /// <summary>Returns true if the date is 'recent' enough.</summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static Boolean IsDateRecentEnough( this DateTime dateTime ) => dateTime.Year >= 1825;
+
+        /// <summary>Returns true if the date is 'old' enough.</summary>
+        /// <param name="dateTime"></param>
+        /// <param name="byYears"></param>
+        /// <returns></returns>
+        /// <remarks>Any time travelers in the house?</remarks>
+        public static Boolean IsDateNotTooNew( this DateTime dateTime, Int32 byYears = 5 ) {
+            return dateTime.Year <= DateTime.UtcNow.AddYears( byYears ).Year;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="fileA"></param>
+        /// <param name="fileB"></param>
+        /// <returns></returns>
+        public static async Task<Boolean> IsSameImage( [CanBeNull] this Document fileA, [CanBeNull] Document fileB ) {
+            if ( ( null == fileA ) || ( null == fileB ) ) {
+                return false;
+            }
+
+            if ( !fileA.Exists() || !fileB.Exists() ) {
+                return false;
+            }
+
+            try {
+                var imageA = await Task.Run( () => Image.FromFile( fileA.FullPathWithFileName ) );
+                var imageB = await Task.Run( () => Image.FromFile( fileB.FullPathWithFileName ) );
+
+                if ( ( imageA.Width < imageB.Width ) && ( imageA.Height < imageB.Height ) ) {
+
+                    // ReSharper disable once RedundantAssignment
+                    imageA = ResizeImage( imageA, imageB.Size ); //resize because B is larger
+                }
+                else if ( ( imageA.Width > imageB.Width ) && ( imageA.Height > imageB.Height ) ) {
+
+                    // ReSharper disable once RedundantAssignment
+                    imageB = ResizeImage( imageB, imageA.Size ); //resize because A is larger
+                }
+
+                //TODO find ImageComparer again
+                throw new NotImplementedException();
+
+                //TODO find ImageComparer again
+                //return ImageComparer.Compare( imageA, imageB );
+            }
+            catch ( OutOfMemoryException ) { }
+            catch ( InvalidOperationException ) { }
+
+            return false;
+        }
+
+        public static Image ResizeImage( [NotNull] this Image imgToResize, Size size ) {
+            if ( imgToResize == null ) {
+                throw new ArgumentNullException( nameof( imgToResize ) );
+            }
+
+            var sourceWidth = imgToResize.Width;
+            var sourceHeight = imgToResize.Height;
+
+            var nPercentW = size.Width / ( Single )sourceWidth;
+            var nPercentH = size.Height / ( Single )sourceHeight;
+
+            var nPercent = nPercentH < nPercentW ? nPercentH : nPercentW;
+
+            var destWidth = ( Int32 )( sourceWidth * nPercent );
+            var destHeight = ( Int32 )( sourceHeight * nPercent );
+
+            using ( var bitmap = new Bitmap( width: destWidth, height: destHeight ) ) {
+                using ( var g = Graphics.FromImage( image: bitmap ) ) {
+                    g.SmoothingMode = SmoothingMode.HighQuality;
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                    g.DrawImage( image: imgToResize, x: 0, y: 0, width: destWidth, height: destHeight );
+                }
+                return bitmap;
+            }
+        }
+
+        /// <summary>if the image file contains a 'valid' date, use that.</summary>
+        /// <param name="info"></param>
+        /// <param name="bestGuess"></param>
+        /// <returns></returns>
+        private static Boolean InternalImageGetDateTime( [NotNull] this FileSystemInfo info, out DateTime? bestGuess ) {
+            if ( info == null ) {
+                throw new ArgumentNullException( nameof( info ) );
+            }
+            bestGuess = null;
+            try {
+                info.Refresh();
+                if ( !info.Exists ) {
+                    return false;
+                }
+
+                using ( var image = Image.FromFile( filename: info.FullName, useEmbeddedColorManagement: false ) ) {
+                    if ( image.PropertyIdList.Contains( PropertyList.DateTimeOriginal ) ) {
+                        var asDateTime = image.GetPropertyItem( PropertyList.DateTimeOriginal ).GetProperteryAsDateTime();
+                        if ( asDateTime.HasValue && asDateTime.Value.IsDateRecentEnough() && asDateTime.Value.IsDateNotTooNew() ) {
+                            {
+                                bestGuess = asDateTime.Value;
+                                return true;
+                            }
+                        }
+                    }
+
+                    if ( image.PropertyIdList.Contains( PropertyList.DateTimeDigitized ) ) {
+                        var asDateTime = image.GetPropertyItem( PropertyList.DateTimeDigitized ).GetProperteryAsDateTime();
+                        if ( asDateTime.HasValue && asDateTime.Value.IsDateRecentEnough() && asDateTime.Value.IsDateNotTooNew() ) {
+                            {
+                                bestGuess = asDateTime.Value;
+                                return true;
+                            }
+                        }
+                    }
+
+                    //if ( image.PropertyIdList.Contains( PropertyList.PropertyTagDateTime ) ) {
+                    //    var asDateTime = image.GetPropertyItem( PropertyList.PropertyTagDateTime ).GetProperteryAsDateTime();
+                    //    if ( asDateTime.HasValue && asDateTime.Value.IsDateRecentEnough() && asDateTime.Value.IsDateNotTooNew() ) {
+                    //        {
+                    //            bestGuess = asDateTime.Value;
+                    //            return true;
+                    //        }
+                    //    }
+                    //}
+                }
+            }
+            catch ( Exception ) {
+                /*swallow*/
+            }
+            return false;
         }
     }
 }

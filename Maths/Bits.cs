@@ -1,64 +1,59 @@
-﻿namespace Librainian.Maths {
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
+// This notice must be kept visible in the source.
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Bits.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
+
+namespace Librainian.Maths {
+
     using System;
     using System.Linq;
+    using Numbers;
 
     public static class Bits {
-        private static readonly bool IsLE = BitConverter.IsLittleEndian;
 
-        public static byte[] GetBytes( Int16 value ) {
-            return Order( BitConverter.GetBytes( value ) );
-        }
+        public static Boolean IsLittleEndian { get; } = BitConverter.IsLittleEndian;
 
-        public static byte[] GetBytes( UInt16 value ) {
-            return Order( BitConverter.GetBytes( value ) );
-        }
+        public static Byte[] GetBytes( this Int16 value ) => Order( BitConverter.GetBytes( value ) );
 
-        public static byte[] GetBytes( Int32 value ) {
-            return Order( BitConverter.GetBytes( value ) );
-        }
+        public static Byte[] GetBytes( this UInt16 value ) => Order( BitConverter.GetBytes( value ) );
 
-        public static byte[] GetBytes( UInt32 value ) {
-            return Order( BitConverter.GetBytes( value ) );
-        }
+        public static Byte[] GetBytes( this Int32 value ) => Order( BitConverter.GetBytes( value ) );
 
-        public static byte[] GetBytes( Int64 value ) {
-            return Order( BitConverter.GetBytes( value ) );
-        }
+        public static Byte[] GetBytes( this UInt32 value ) => Order( BitConverter.GetBytes( value ) );
 
-        public static byte[] GetBytes( UInt64 value ) {
-            return Order( BitConverter.GetBytes( value ) );
-        }
+        public static Byte[] GetBytes( this Int64 value ) => Order( BitConverter.GetBytes( value ) );
 
-        public static byte[] GetBytes( UInt256 value ) {
-            return value.ToByteArray();
-        }
+        public static Byte[] GetBytes( this UInt64 value ) => Order( BitConverter.GetBytes( value ) );
 
-        public static string ToString( byte[] value, int startIndex = 0 ) {
-            return BitConverter.ToString( Order( value ), startIndex );
-        }
+        public static Byte[] GetBytes( this UInt256 value ) => value.ToByteArray();
 
-        public static UInt16 ToUInt16( byte[] value, int startIndex = 0 ) {
-            return BitConverter.ToUInt16( Order( value ), startIndex );
-        }
+        public static Byte[] Order( this Byte[] value ) => IsLittleEndian ? value : value.Reverse().ToArray();
 
-        public static Int32 ToInt32( byte[] value, int startIndex = 0 ) {
-            return BitConverter.ToInt32( Order( value ), startIndex );
-        }
+        public static Int32 ToInt32( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToInt32( Order( value ), startIndex );
 
-        public static UInt32 ToUInt32( byte[] value, int startIndex = 0 ) {
-            return BitConverter.ToUInt32( Order( value ), startIndex );
-        }
+        public static String ToString( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToString( Order( value ), startIndex );
 
-        public static UInt64 ToUInt64( byte[] value, int startIndex = 0 ) {
-            return BitConverter.ToUInt64( Order( value ), startIndex );
-        }
+        public static UInt16 ToUInt16( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt16( Order( value ), startIndex );
 
-        public static UInt256 ToUInt256( byte[] value ) {
-            return new UInt256( value );
-        }
+        public static UInt256 ToUInt256( this Byte[] value ) => new UInt256( value );
 
-        public static byte[] Order( byte[] value ) {
-            return IsLE ? value : value.Reverse().ToArray();
-        }
+        public static UInt32 ToUInt32( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt32( Order( value ), startIndex );
+
+        public static UInt64 ToUInt64( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt64( Order( value ), startIndex );
     }
 }

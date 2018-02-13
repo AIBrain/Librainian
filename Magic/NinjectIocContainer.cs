@@ -1,66 +1,54 @@
-#region License & Information
-
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/NinjectIocContainer.cs" was last cleaned by Rick on 2014/08/18 at 2:45 AM
-
-#endregion License & Information
+// "Librainian/NinjectIocContainer.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Magic {
 
     using System;
     using System.Diagnostics;
-    using System.Linq;
-    using Annotations;
     using Collections;
+    using Extensions;
     using FluentAssertions;
+    using JetBrains.Annotations;
     using Ninject;
     using Ninject.Activation.Caching;
     using Ninject.Modules;
-    using Threading;
 
-    public sealed class NinjectIocContainer : IIocContainer {
+    public sealed class NinjectIocContainer : ABetterClassDispose ,IIocContainer {
 
-        //public NinjectIocContainer() {
-        //this.Kernel.Should().BeNull();
-        //this.Kernel = new StandardKernel();
-        //this.Kernel.Should().NotBeNull();
-        //if ( null == this.Kernel ) {
-        //    throw new InvalidOperationException();
-        //}
-        //}
-
+        // ReSharper disable once NotNullMemberIsNotInitialized
         public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
             if ( modules == null ) {
-                throw new ArgumentNullException( "modules" );
+                throw new ArgumentNullException( nameof( modules ) );
             }
             this.Kernel.Should().BeNull();
-            ( "Loading magic kernel..." ).WriteLine();
+            "Loading IoC kernel...".WriteColor( ConsoleColor.White, ConsoleColor.Blue );
             this.Kernel = new StandardKernel( modules );
             this.Kernel.Should().NotBeNull();
             if ( null == this.Kernel ) {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException( "Unable to load kernel!" );
             }
+            "done.".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
         }
 
         public IKernel Kernel {
             get;
-            set;
         }
 
         //public object Get( Type type ) {
@@ -81,32 +69,59 @@ namespace Librainian.Magic {
         //    return result;
         //}
 
-        public void Inject( object item ) {
-            this.Kernel.Inject( item );
-        }
-
+        /// <summary>
+        ///     Returns a new instance of the given type or throws NullReferenceException.
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="NullReferenceException"></exception>
         [DebuggerStepThrough]
-        public T TryGet<T>() {
-            var tryGet = this.Kernel.TryGet<T>();
-            if ( Equals( default( T ), tryGet ) ) {
-                tryGet = this.Kernel.TryGet<T>();   //HACK wtf??
+        public TType Get<TType>() {
+            var tryGet = this.Kernel.TryGet<TType>();
+            if ( !Equals( default( TType ), tryGet ) ) {
+                return tryGet;
+            }
+            tryGet = this.Kernel.TryGet<TType>(); //HACK wtf, why would it work at the second time?
+            if ( Equals( default( TType ), tryGet ) ) {
+                throw new NullReferenceException( "Unable to Get() class " + typeof( TType ).FullName );
             }
             return tryGet;
         }
 
-        /// <summary>
-        ///     Warning!
-        /// </summary>
+        public void Inject( Object item ) => this.Kernel.Inject( item );
+
+        /// <summary>Warning!</summary>
         public void ResetKernel() {
             this.Kernel.Should().NotBeNull();
             this.Kernel.GetModules().ForEach( module => this.Kernel.Unload( module.Name ) );
             this.Kernel.Components.Get<ICache>().Clear();
             this.Kernel.Should().NotBeNull();
 
-            Log.Before( "Ninject is loading assemblies..." );
+            //Log.Before( "Ninject is loading assemblies..." );
             this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
-            Log.After( String.Format( "loaded {0} assemblies.", this.Kernel.GetModules().Count() ) );
-            String.Format( "{0}", this.Kernel.GetModules().ToStrings() ).WriteLine();
+
+            //Log.After( $"loaded {this.Kernel.GetModules().Count()} assemblies." );
+            $"{this.Kernel.GetModules().ToStrings()}".WriteLine();
         }
+
+        /// <summary>
+        ///     Re
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <returns></returns>
+        [DebuggerStepThrough]
+        public TType TryGet<TType>() {
+            var tryGet = this.Kernel.TryGet<TType>();
+            if ( Equals( default( TType ), tryGet ) ) {
+                tryGet = this.Kernel.TryGet<TType>(); //HACK wtf??
+            }
+            return tryGet;
+        }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() { this.Kernel.Dispose(); }
+
     }
 }

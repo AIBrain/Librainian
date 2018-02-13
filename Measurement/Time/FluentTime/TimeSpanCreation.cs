@@ -1,267 +1,156 @@
-
+// Copyright 2016 Rick@AIBrain.org.
+//
+// This notice must be kept visible in the source.
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/TimeSpanCreation.cs" was last cleaned by Rick on 2016/06/18 at 10:54 PM
 
 namespace Librainian.Measurement.Time.FluentTime {
+
     using System;
 
-    /// <summary>
-    /// Copyright 2011 ThoughtWorks, Inc. See LICENSE.txt for licensing info.
-    /// </summary>
+    /// <summary>Copyright 2011 ThoughtWorks, Inc. See LICENSE.txt for licensing info.</summary>
     public static class TimeSpanCreation {
 
-        public static TimeSpan Day( this double i ) {
-            return Days( i );
-        }
+        public static TimeSpan Day( this Double i ) => Days( i );
 
-        public static TimeSpan Day( this double i, TimeSpan otherTime ) {
-            return Days( i, otherTime );
-        }
+        public static TimeSpan Day( this Double i, TimeSpan otherTime ) => Days( i, otherTime );
 
-        public static TimeSpan Day( this int i ) {
-            return Day( ( double )i );
-        }
+        public static TimeSpan Day( this Int32 i ) => Day( ( Double )i );
 
-        public static TimeSpan Day( this int i, TimeSpan otherTime ) {
-            return Days( ( double )i, otherTime );
-        }
+        public static TimeSpan Day( this Int32 i, TimeSpan otherTime ) => Days( ( Double )i, otherTime );
 
-        public static TimeSpan Days( this double i ) {
-            return TimeSpan.FromDays( i );
-        }
+        public static TimeSpan Days( this Double i ) => TimeSpan.FromDays( i );
 
-        public static TimeSpan Days( this double i, TimeSpan otherTime ) {
-            return Days( i ) + otherTime;
-        }
+        public static TimeSpan Days( this Double i, TimeSpan otherTime ) => Days( i ) + otherTime;
 
-        public static TimeSpan Days( this int i ) {
-            return Days( ( double )i );
-        }
+        public static TimeSpan Days( this Int32 i ) => Days( ( Double )i );
 
-        public static TimeSpan Days( this int i, TimeSpan otherTime ) {
-            return Days( ( double )i, otherTime );
-        }
+        public static TimeSpan Days( this Int32 i, TimeSpan otherTime ) => Days( ( Double )i, otherTime );
 
-        public static TimeSpan Hour( this double i ) {
-            return Hours( i );
-        }
+        public static TimeSpan Hour( this Double i ) => Hours( i );
 
-        public static TimeSpan Hour( this double i, TimeSpan otherTime ) {
-            return Hours( i, otherTime );
-        }
+        public static TimeSpan Hour( this Double i, TimeSpan otherTime ) => Hours( i, otherTime );
 
-        public static TimeSpan Hour( this int i ) {
-            return Hour( ( double )i );
-        }
+        public static TimeSpan Hour( this Int32 i ) => Hour( ( Double )i );
 
-        public static TimeSpan Hour( this int i, TimeSpan otherTime ) {
-            return Hours( ( double )i, otherTime );
-        }
+        public static TimeSpan Hour( this Int32 i, TimeSpan otherTime ) => Hours( ( Double )i, otherTime );
 
-        public static TimeSpan Hours( this double i ) {
-            return TimeSpan.FromHours( i );
-        }
+        public static TimeSpan Hours( this Double i ) => TimeSpan.FromHours( i );
 
-        public static TimeSpan Hours( this double i, TimeSpan otherTime ) {
-            return Hours( i ) + otherTime;
-        }
+        public static TimeSpan Hours( this Double i, TimeSpan otherTime ) => Hours( i ) + otherTime;
 
-        public static TimeSpan Hours( this int i ) {
-            return Hours( ( double )i );
-        }
+        public static TimeSpan Hours( this Int32 i ) => Hours( ( Double )i );
 
-        public static TimeSpan Hours( this int i, TimeSpan otherTime ) {
-            return Hours( ( double )i, otherTime );
-        }
+        public static TimeSpan Hours( this Int32 i, TimeSpan otherTime ) => Hours( ( Double )i, otherTime );
 
-        public static TimeSpan Millisecond( this double i ) {
-            return Milliseconds( i );
-        }
+        public static TimeSpan Millisecond( this Double i ) => Milliseconds( i );
 
-        public static TimeSpan Millisecond( this double i, TimeSpan otherTime ) {
-            return Milliseconds( i, otherTime );
-        }
+        public static TimeSpan Millisecond( this Double i, TimeSpan otherTime ) => Milliseconds( i, otherTime );
 
-        public static TimeSpan Millisecond( this int i ) {
-            return Millisecond( ( double )i );
-        }
+        public static TimeSpan Millisecond( this Int32 i ) => Millisecond( ( Double )i );
 
-        public static TimeSpan Millisecond( this int i, TimeSpan otherTime ) {
-            return Milliseconds( ( double )i, otherTime );
-        }
+        public static TimeSpan Millisecond( this Int32 i, TimeSpan otherTime ) => Milliseconds( ( Double )i, otherTime );
 
-        public static TimeSpan Milliseconds( this double i ) {
-            return new TimeSpan( ( long )( TimeSpan.TicksPerMillisecond * i ) );
-        }
+        public static TimeSpan Milliseconds( this Double i ) => new TimeSpan( ( Int64 )( TimeSpan.TicksPerMillisecond * i ) );
 
-        public static TimeSpan Milliseconds( this double i, TimeSpan otherTime ) {
-            return Milliseconds( i ) + otherTime;
-        }
+        public static TimeSpan Milliseconds( this Double i, TimeSpan otherTime ) => Milliseconds( i ) + otherTime;
 
-        public static TimeSpan Milliseconds( this int i ) {
-            return Milliseconds( ( double )i );
-        }
+        public static TimeSpan Milliseconds( this Int32 i ) => Milliseconds( ( Double )i );
 
-        public static TimeSpan Milliseconds( this int i, TimeSpan otherTime ) {
-            return Milliseconds( ( double )i, otherTime );
-        }
+        public static TimeSpan Milliseconds( this Int32 i, TimeSpan otherTime ) => Milliseconds( ( Double )i, otherTime );
 
-        public static TimeSpan Minute( this double i ) {
-            return Minutes( i );
-        }
+        public static TimeSpan Minute( this Double i ) => Minutes( i );
 
-        public static TimeSpan Minute( this double i, TimeSpan otherTime ) {
-            return Minutes( i, otherTime );
-        }
+        public static TimeSpan Minute( this Double i, TimeSpan otherTime ) => Minutes( i, otherTime );
 
-        public static TimeSpan Minute( this int i ) {
-            return Minute( ( double )i );
-        }
+        public static TimeSpan Minute( this Int32 i ) => Minute( ( Double )i );
 
-        public static TimeSpan Minute( this int i, TimeSpan otherTime ) {
-            return Minutes( ( double )i, otherTime );
-        }
+        public static TimeSpan Minute( this Int32 i, TimeSpan otherTime ) => Minutes( ( Double )i, otherTime );
 
-        public static TimeSpan Minutes( this double i ) {
-            return TimeSpan.FromMinutes( i );
-        }
+        public static TimeSpan Minutes( this Double i ) => TimeSpan.FromMinutes( i );
 
-        public static TimeSpan Minutes( this double i, TimeSpan otherTime ) {
-            return Minutes( i ) + otherTime;
-        }
+        public static TimeSpan Minutes( this Double i, TimeSpan otherTime ) => Minutes( i ) + otherTime;
 
-        public static TimeSpan Minutes( this int i ) {
-            return Minutes( ( double )i );
-        }
+        public static TimeSpan Minutes( this Int32 i ) => Minutes( ( Double )i );
 
-        public static TimeSpan Minutes( this int i, TimeSpan otherTime ) {
-            return Minutes( ( double )i, otherTime );
-        }
+        public static TimeSpan Minutes( this Int32 i, TimeSpan otherTime ) => Minutes( ( Double )i, otherTime );
 
-        public static VariableTimeSpan Month( this int m ) {
-            return Months( m );
-        }
+        public static VariableTimeSpan Month( this Int32 m ) => Months( m );
 
-        public static VariableTimeSpan Month( this int m, VariableTimeSpan otherTime ) {
-            return Months( m ) + otherTime;
-        }
+        public static VariableTimeSpan Month( this Int32 m, VariableTimeSpan otherTime ) => Months( m ) + otherTime;
 
-        public static VariableTimeSpan Months( this int m ) {
-            return new VariableTimeSpan( 0, m );
-        }
+        public static VariableTimeSpan Months( this Int32 m ) => new VariableTimeSpan( 0, m );
 
-        public static VariableTimeSpan Months( this int m, VariableTimeSpan otherTime ) {
-            return Months( m ) + otherTime;
-        }
+        public static VariableTimeSpan Months( this Int32 m, VariableTimeSpan otherTime ) => Months( m ) + otherTime;
 
-        public static TimeSpan Second( this double i ) {
-            return Seconds( i );
-        }
+        public static TimeSpan Second( this Double i ) => Seconds( i );
 
-        public static TimeSpan Second( this double i, TimeSpan otherTime ) {
-            return Seconds( i, otherTime );
-        }
+        public static TimeSpan Second( this Double i, TimeSpan otherTime ) => Seconds( i, otherTime );
 
-        public static TimeSpan Second( this int i ) {
-            return Second( ( double )i );
-        }
+        public static TimeSpan Second( this Int32 i ) => Second( ( Double )i );
 
-        public static TimeSpan Second( this int i, TimeSpan otherTime ) {
-            return Seconds( ( double )i, otherTime );
-        }
+        public static TimeSpan Second( this Int32 i, TimeSpan otherTime ) => Seconds( ( Double )i, otherTime );
 
-        public static TimeSpan Seconds( this double i ) {
-            return TimeSpan.FromSeconds( i );
-        }
+        public static TimeSpan Seconds( this Double i ) => TimeSpan.FromSeconds( i );
 
-        public static TimeSpan Seconds( this double i, TimeSpan otherTime ) {
-            return Seconds( i ) + otherTime;
-        }
+        public static TimeSpan Seconds( this Double i, TimeSpan otherTime ) => Seconds( i ) + otherTime;
 
-        public static TimeSpan Seconds( this int i ) {
-            return Seconds( ( double )i );
-        }
+        public static TimeSpan Seconds( this Int32 i ) => Seconds( ( Double )i );
 
-        public static TimeSpan Seconds( this int i, TimeSpan otherTime ) {
-            return Seconds( ( double )i, otherTime );
-        }
+        public static TimeSpan Seconds( this Int32 i, TimeSpan otherTime ) => Seconds( ( Double )i, otherTime );
 
-        public static TimeSpan Tick( this long i ) {
-            return Ticks( i );
-        }
+        public static TimeSpan Tick( this Int64 i ) => Ticks( i );
 
-        public static TimeSpan Tick( this long i, TimeSpan otherTime ) {
-            return Ticks( i, otherTime );
-        }
+        public static TimeSpan Tick( this Int64 i, TimeSpan otherTime ) => Ticks( i, otherTime );
 
-        public static TimeSpan Tick( this int i ) {
-            return Tick( ( long )i );
-        }
+        public static TimeSpan Tick( this Int32 i ) => Tick( ( Int64 )i );
 
-        public static TimeSpan Tick( this int i, TimeSpan otherTime ) {
-            return Ticks( i, otherTime );
-        }
+        public static TimeSpan Tick( this Int32 i, TimeSpan otherTime ) => Ticks( i, otherTime );
 
-        public static TimeSpan Ticks( this long i ) {
-            return TimeSpan.FromTicks( i );
-        }
+        public static TimeSpan Ticks( this Int64 i ) => TimeSpan.FromTicks( i );
 
-        public static TimeSpan Ticks( this long i, TimeSpan otherTime ) {
-            return Ticks( i ) + otherTime;
-        }
+        public static TimeSpan Ticks( this Int64 i, TimeSpan otherTime ) => Ticks( i ) + otherTime;
 
-        public static TimeSpan Ticks( this int i ) {
-            return Ticks( ( long )i );
-        }
+        public static TimeSpan Ticks( this Int32 i ) => Ticks( ( Int64 )i );
 
-        public static TimeSpan Ticks( this int i, TimeSpan otherTime ) {
-            return Ticks( ( long )i, otherTime );
-        }
+        public static TimeSpan Ticks( this Int32 i, TimeSpan otherTime ) => Ticks( ( Int64 )i, otherTime );
 
-        public static TimeSpan Week( this double i ) {
-            return Weeks( i );
-        }
+        public static TimeSpan Week( this Double i ) => Weeks( i );
 
-        public static TimeSpan Week( this double i, TimeSpan otherTime ) {
-            return Weeks( i, otherTime );
-        }
+        public static TimeSpan Week( this Double i, TimeSpan otherTime ) => Weeks( i, otherTime );
 
-        public static TimeSpan Week( this int i ) {
-            return Week( ( double )i );
-        }
+        public static TimeSpan Week( this Int32 i ) => Week( ( Double )i );
 
-        public static TimeSpan Week( this int i, TimeSpan otherTime ) {
-            return Weeks( ( double )i, otherTime );
-        }
+        public static TimeSpan Week( this Int32 i, TimeSpan otherTime ) => Weeks( ( Double )i, otherTime );
 
-        public static TimeSpan Weeks( this double i ) {
-            return TimeSpan.FromDays( i * 7 );
-        }
+        public static TimeSpan Weeks( this Double i ) => TimeSpan.FromDays( i * 7 );
 
-        public static TimeSpan Weeks( this double i, TimeSpan otherTime ) {
-            return Weeks( i ) + otherTime;
-        }
+        public static TimeSpan Weeks( this Double i, TimeSpan otherTime ) => Weeks( i ) + otherTime;
 
-        public static TimeSpan Weeks( this int i ) {
-            return Weeks( ( double )i );
-        }
+        public static TimeSpan Weeks( this Int32 i ) => Weeks( ( Double )i );
 
-        public static TimeSpan Weeks( this int i, TimeSpan otherTime ) {
-            return Weeks( ( double )i, otherTime );
-        }
+        public static TimeSpan Weeks( this Int32 i, TimeSpan otherTime ) => Weeks( ( Double )i, otherTime );
 
-        public static VariableTimeSpan Year( this int y ) {
-            return Years( y );
-        }
+        public static VariableTimeSpan Year( this Int32 y ) => Years( y );
 
-        public static VariableTimeSpan Year( this int y, VariableTimeSpan otherTime ) {
-            return Years( y ) + otherTime;
-        }
+        public static VariableTimeSpan Year( this Int32 y, VariableTimeSpan otherTime ) => Years( y ) + otherTime;
 
-        public static VariableTimeSpan Years( this int y ) {
-            return new VariableTimeSpan( y, 0 );
-        }
+        public static VariableTimeSpan Years( this Int32 y ) => new VariableTimeSpan( y, 0 );
 
-        public static VariableTimeSpan Years( this int y, VariableTimeSpan otherTime ) {
-            return Years( y ) + otherTime;
-        }
+        public static VariableTimeSpan Years( this Int32 y, VariableTimeSpan otherTime ) => Years( y ) + otherTime;
     }
 }

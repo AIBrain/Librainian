@@ -1,39 +1,37 @@
-#region License & Information
-
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Microseconds.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
-
-#endregion License & Information
+// "Librainian/Microseconds.cs" was last cleaned by Rick on 2016/06/18 at 10:54 PM
 
 namespace Librainian.Measurement.Time {
 
     using System;
     using System.Diagnostics;
     using System.Numerics;
-    using System.Runtime.Serialization;
-    using Annotations;
-    using FluentAssertions;
-    using Librainian.Extensions;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Maths;
+    using Newtonsoft.Json;
+    using Numerics;
+    using Parsing;
 
-    [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    [Serializable]
+    [DebuggerDisplay( "{ToString(),nq}" )]
+    [JsonObject]
     [Immutable]
     public struct Microseconds : IComparable<Microseconds>, IQuantityOfTime {
 
@@ -43,17 +41,17 @@ namespace Librainian.Measurement.Time {
         public const UInt16 InOneMillisecond = 1000;
 
         /// <summary>
-        ///     Ten <see cref="Microseconds" />s.
+        ///     Ten <see cref="Microseconds" /> s.
         /// </summary>
         public static readonly Microseconds Fifteen = new Microseconds( 15 );
 
         /// <summary>
-        ///     Five <see cref="Microseconds" />s.
+        ///     Five <see cref="Microseconds" /> s.
         /// </summary>
         public static readonly Microseconds Five = new Microseconds( 5 );
 
         /// <summary>
-        ///     Five Hundred <see cref="Microseconds" />s.
+        ///     Five Hundred <see cref="Microseconds" /> s.
         /// </summary>
         public static readonly Microseconds FiveHundred = new Microseconds( 500 );
 
@@ -73,12 +71,12 @@ namespace Librainian.Measurement.Time {
         public static readonly Microseconds Sixteen = new Microseconds( 16 );
 
         /// <summary>
-        ///     Ten <see cref="Microseconds" />s.
+        ///     Ten <see cref="Microseconds" /> s.
         /// </summary>
         public static readonly Microseconds Ten = new Microseconds( 10 );
 
         /// <summary>
-        ///     Three <see cref="Microseconds" />s.
+        ///     Three <see cref="Microseconds" /> s.
         /// </summary>
         public static readonly Microseconds Three = new Microseconds( 3 );
 
@@ -88,7 +86,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Microseconds ThreeHundredThirtyThree = new Microseconds( 333 );
 
         /// <summary>
-        ///     Two <see cref="Microseconds" />s.
+        ///     Two <see cref="Microseconds" /> s.
         /// </summary>
         public static readonly Microseconds Two = new Microseconds( 2 );
 
@@ -112,48 +110,32 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Microseconds Zero = new Microseconds( 0 );
 
-        [DataMember]
-        public readonly Decimal Value;
-
-        static Microseconds() {
-            Zero.Should().BeLessThan( One );
-            One.Should().BeGreaterThan( Zero );
-            One.Should().Be( One );
-            One.Should().BeLessThan( Milliseconds.One );
-            One.Should().BeGreaterThan( Nanoseconds.One );
-        }
-
         public Microseconds( Decimal value ) {
             this.Value = value;
         }
 
-        public Microseconds( long value ) {
+        public Microseconds( BigRational value ) {
+            this.Value = value;
+        }
+
+        public Microseconds( Int64 value ) {
             this.Value = value;
         }
 
         public Microseconds( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
-        [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
+        [JsonProperty]
+        public BigRational Value {
+            get;
         }
 
-        public static Microseconds Combine( Microseconds left, Microseconds right ) {
-            return Combine( left, right.Value );
-        }
+        public static Microseconds Combine( Microseconds left, Microseconds right ) => Combine( left, right.Value );
 
-        public static Microseconds Combine( Microseconds left, Decimal microseconds ) {
-            return new Microseconds( left.Value + microseconds );
-        }
+        public static Microseconds Combine( Microseconds left, BigRational microseconds ) => new Microseconds( left.Value + microseconds );
 
-        public static Microseconds Combine( Microseconds left, BigInteger microseconds ) {
-            return new Microseconds( ( BigInteger )left.Value + microseconds );
-        }
+        public static Microseconds Combine( Microseconds left, BigInteger microseconds ) => new Microseconds( left.Value + microseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -161,106 +143,68 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Microseconds left, Microseconds right ) {
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Microseconds left, Microseconds right ) => left.Value == right.Value;
 
-        public static implicit operator Milliseconds( Microseconds microseconds ) {
-            return microseconds.ToMilliseconds();
-        }
+        public static implicit operator Milliseconds( Microseconds microseconds ) => microseconds.ToMilliseconds();
 
-        public static implicit operator Nanoseconds( Microseconds microseconds ) {
-            return microseconds.ToNanoseconds();
-        }
+        public static implicit operator Nanoseconds( Microseconds microseconds ) => microseconds.ToNanoseconds();
 
-        public static implicit operator TimeSpan( Microseconds microseconds ) {
-            return TimeSpan.FromMilliseconds( value: ( Double )microseconds.Value );
-        }
+        public static implicit operator TimeSpan( Microseconds microseconds ) => TimeSpan.FromMilliseconds( value: ( Double )microseconds.Value );
 
-        public static Microseconds operator -( Microseconds milliseconds ) {
-            return new Microseconds( milliseconds.Value * -1 );
-        }
+        public static Microseconds operator -( Microseconds milliseconds ) => new Microseconds( milliseconds.Value * -1 );
 
-        public static Microseconds operator -( Microseconds left, Microseconds right ) {
-            return Combine( left, -right );
-        }
+        public static Microseconds operator -( Microseconds left, Microseconds right ) => Combine( left, -right );
 
-        public static Microseconds operator -( Microseconds left, Decimal microseconds ) {
-            return Combine( left, -microseconds );
-        }
+        public static Microseconds operator -( Microseconds left, Decimal microseconds ) => Combine( left, -microseconds );
 
-        public static Boolean operator !=( Microseconds left, Microseconds right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Microseconds left, Microseconds right ) => !Equals( left, right );
 
-        public static Microseconds operator +( Microseconds left, Microseconds right ) {
-            return Combine( left, right );
-        }
+        public static Microseconds operator +( Microseconds left, Microseconds right ) => Combine( left, right );
 
-        public static Microseconds operator +( Microseconds left, Decimal microseconds ) {
-            return Combine( left, microseconds );
-        }
+        public static Microseconds operator +( Microseconds left, Decimal microseconds ) => Combine( left, microseconds );
 
-        public static Microseconds operator +( Microseconds left, BigInteger microseconds ) {
-            return Combine( left, microseconds );
-        }
+        public static Microseconds operator +( Microseconds left, BigInteger microseconds ) => Combine( left, microseconds );
 
-        public static Boolean operator <( Microseconds left, Microseconds right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Microseconds left, Microseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Microseconds left, Milliseconds right ) {
-            return ( Milliseconds )left < right;
-        }
+        public static Boolean operator <( Microseconds left, Milliseconds right ) => ( Milliseconds )left < right;
 
-        public static Boolean operator ==( Microseconds left, Microseconds right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Microseconds left, Microseconds right ) => Equals( left, right );
 
-        public static Boolean operator >( Microseconds left, Microseconds right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Microseconds left, Microseconds right ) => left.Value > right.Value;
 
-        public static Boolean operator >( Microseconds left, Milliseconds right ) {
-            return ( Milliseconds )left > right;
-        }
+        public static Boolean operator >( Microseconds left, Milliseconds right ) => ( Milliseconds )left > right;
 
-        public int CompareTo( Microseconds other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public Int32 CompareTo( Microseconds other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Microseconds other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Microseconds other ) => Equals( this, other );
 
-        public override Boolean Equals( object obj ) {
+        public override Boolean Equals( Object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
             return obj is Microseconds && this.Equals( ( Microseconds )obj );
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         [Pure]
-        public Milliseconds ToMilliseconds() {
-            return new Milliseconds( this.Value / InOneMillisecond );
-        }
-
-        public Nanoseconds ToNanoseconds() {
-            return new Nanoseconds( this.Value * Nanoseconds.InOneMicrosecond );
-        }
+        public Milliseconds ToMilliseconds() => new Milliseconds( this.Value / InOneMillisecond );
 
         [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneMicrosecond, new BigInteger( this.Value ) );
-        }
+        public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value * Nanoseconds.InOneMicrosecond );
+
+        [Pure]
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMicrosecond * this.Value );
 
         [Pure]
         public override String ToString() {
-            return String.Format( "{0} µs", this.Value );
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.GetWholePart();
+                return $"{whole} {whole.PluralOf( "µs" )}";
+            }
+            var dec = ( Decimal )this.Value;
+            return $"{dec} {dec.PluralOf( "µs" )}";
         }
     }
 }

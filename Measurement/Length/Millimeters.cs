@@ -1,84 +1,60 @@
-#region License & Information
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
-// "Librainian/Millimeters.cs" was last cleaned by Rick on 2014/08/11 at 12:39 AM
-#endregion
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Millimeters.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
 
 namespace Librainian.Measurement.Length {
+
     using System;
-    using System.Runtime.Serialization;
+    using Newtonsoft.Json;
+    using Numerics;
 
-    [DataContract( IsReference = true )]
+    [JsonObject]
     public struct Millimeters {
-        /// <summary>
-        ///     One <see cref="Millimeters" /> .
-        /// </summary>
-        public static readonly Millimeters One = new Millimeters(  1 );
 
-        /// <summary>
-        ///     Two <see cref="Millimeters" /> .
-        /// </summary>
-        public static readonly Millimeters Two = new Millimeters(  2 );
+        ///// <summary>.</summary>
+        //public static readonly Millimeters MaxValue = new Millimeters( Decimal.MaxValue );
 
-        /// <summary>
-        ///     About zero. :P
-        /// </summary>
-        public static readonly Millimeters MinValue = new Millimeters( Decimal.MinValue );
+        //public static readonly Millimeters MinValue = new Millimeters( Decimal.MinValue );
 
-        /// <summary>
-        ///     About 584.9 million years.
-        /// </summary>
-        public static readonly Millimeters MaxValue = new Millimeters( Decimal.MaxValue );
+        /// <summary>One <see cref="Millimeters" /> .</summary>
+        public static readonly Millimeters One = new Millimeters( 1 );
 
-        [DataMember] public readonly  Decimal Value;
+        /// <summary>Two <see cref="Millimeters" /> .</summary>
+        public static readonly Millimeters Two = new Millimeters( 2 );
 
-        static Millimeters() {
-            //Assert.That( One < Centimeter.One );
-            //Assert.That( One < Inch.One );
-            //Assert.That( One < Feet.One );
-        }
+        [JsonProperty]
+        public readonly BigRational Value;
 
-        public Millimeters(Decimal millimeters ) {
+        public Millimeters( Decimal millimeters ) {
             this.Value = millimeters;
         }
 
-        public Millimeters( Centimeters centimeters ) {
-            var val = centimeters.Value*Extensions.MillimetersInSingleCentimeter;
-            this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-        }
-
-        public Millimeters( Meters meters ) {
-            var val = meters.Value*Extensions.MillimetersInSingleMeter;
-            this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-        }
-
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
-
-        //public static Boolean operator <( Millimeter lhs, Second rhs ) { return lhs.Comparison( rhs ) < 0; }
-
-        //public static Boolean operator >( Millimeter lhs, Second rhs ) { return lhs.Comparison( rhs ) > 0; }
-
-        //public static Boolean operator <( Millimeter lhs, Minute rhs ) { return lhs.Comparison( rhs ) < 0; }
-
-        //public static Boolean operator >( Millimeter lhs, Minute rhs ) { return lhs.Comparison( rhs ) > 0; } 
-
-        //public static implicit operator TimeSpan( Millimeter milliseconds ) {
-        //    return TimeSpan.FromMilliseconds( value: milliseconds.Value );
+        //public Millimeters( Centimeters centimeters ) {
+        //    var val = centimeters.Value * Extensions.MillimetersInSingleCentimeter;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
         //}
+
+        //public Millimeters( Meters meters ) {
+        //    var val = meters.Value * Extensions.MillimetersInSingleMeter;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
+
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
     }
 }

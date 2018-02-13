@@ -1,3 +1,5 @@
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
 //
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
@@ -5,17 +7,16 @@
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin: 1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Library.cs" was last cleaned by Rick on 2014/10/21 at 5:02 AM
+// "Librainian/Library.cs" was last cleaned by Rick on 2016/08/26 at 10:19 AM
 
 namespace Librainian.Linguistics {
 
@@ -23,54 +24,79 @@ namespace Librainian.Linguistics {
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
-    using System.Runtime.Serialization;
-    using Annotations;
-    using FluentAssertions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     /// <summary>
-    /// <para>A <see cref="Library" /> is a cluster of <see cref="Book" /> .</para>
+    ///     <para>A <see cref="Library" /> is a cluster of <see cref="Book" />s.</para>
     /// </summary>
-    [DataContract( IsReference = true )]
-    public sealed class Library : IEquatable<Library>, IEnumerable<Book> {
-
-        /// <summary>
-        /// </summary>
-        public const UInt64 Level = Book.Level << 1;
-
-        [NotNull]
-        [DataMember]
-        private readonly ConcurrentDictionary<UDC, Book> _tokens = new ConcurrentDictionary<UDC, Book>();
-
-        static Library() {
-            Level.Should().BeGreaterThan( Book.Level );
-        }
+    [JsonObject]
+    [DebuggerDisplay( "{ToString()}" )]
+    [Serializable]
+    public sealed class Library : IEquatable<Library>, IEnumerable<KeyValuePair<UDC, Book>> {
 
         public Library( [NotNull] UDC udc, [NotNull] Book book ) {
             this.Add( udc, book );
         }
 
-        public Boolean Add( [NotNull] UDC udc, [NotNull] Book book ) {
-            if ( book == null ) {
-                throw new ArgumentNullException( "book" );
+        [NotNull]
+        [JsonProperty]
+        private ConcurrentDictionary<UDC, Book> Books { get; } = new ConcurrentDictionary<UDC, Book>();
+
+        /// <summary>
+        /// Static equality test
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
+        public static Boolean Equals( Library lhs, Library rhs ) {
+            if ( ReferenceEquals( lhs, rhs ) ) {
+                return true;
             }
-            this._tokens.TryAdd( udc, book );
+            if ( ReferenceEquals( lhs, null ) ) {
+                return false;
+            }
+            if ( ReferenceEquals( null, rhs ) ) {
+                return false;
+            }
+
+            return lhs.OrderBy( pair => pair.Key ).SequenceEqual( rhs.OrderBy( pair => pair.Key ) );
+        }
+
+        public Boolean Add( [ NotNull ] UDC udc, [NotNull] Book book ) {
+            if ( udc == null ) {
+                throw new ArgumentNullException( nameof( udc ) );
+            }
+            if ( book == null ) {
+                throw new ArgumentNullException( nameof( book ) );
+            }
+
+            this.Books.TryAdd( udc, book );
             return true;
         }
 
         public Boolean Equals( [CanBeNull] Library other ) {
-            if ( ReferenceEquals( other, null ) ) {
-                return false;
-            }
-            return ReferenceEquals( this, other ) || this.SequenceEqual( other );
+            return Equals( this, other );
         }
 
-        public IEnumerator<Book> GetEnumerator() {
-            return this._tokens.Values.GetEnumerator(); //TODO
+        /// <summary>Returns an enumerator that iterates through the collection.</summary>
+        /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+        public IEnumerator<KeyValuePair<UDC, Book>> GetEnumerator() {
+            return this.Books.GetEnumerator();
         }
 
+        /// <summary>Serves as the default hash function. </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() {
+            return this.Books.GetHashCode();
+        }
+
+        /// <summary>Returns an enumerator that iterates through a collection.</summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
+            return ( ( IEnumerable )this.Books ).GetEnumerator();
         }
     }
 }

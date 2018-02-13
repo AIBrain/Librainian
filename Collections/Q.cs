@@ -1,23 +1,25 @@
-#region License & Information
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
-// "Librainian/Q.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
-#endregion
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Q.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Collections {
+
     using System;
     using System.Collections;
     using System.Collections.Concurrent;
@@ -27,27 +29,34 @@ namespace Librainian.Collections {
     using System.Runtime.Serialization;
     using System.Security.Permissions;
     using System.Threading;
+    using Newtonsoft.Json;
 
     [ComVisible( false )]
-    [DebuggerDisplay( "Count = {Count}" )]
-    [Serializable]
+    [DebuggerDisplay( "Count={Count}" )]
+    [JsonObject]
     [HostProtection( SecurityAction.LinkDemand, ExternalThreading = true, Synchronization = true )]
-    public class Q< T > : IProducerConsumerCollection< T > {
-        [NonSerialized] private Segment _head;
+    public class Q<T> : IProducerConsumerCollection<T> {
 
-        [NonSerialized] private Segment _tail;
+        [NonSerialized]
+        private Segment _head;
 
         private T[] _serializationArray;
 
-        public Q() {
-            this._head = this._tail = new Segment( 0L );
-        }
+        [NonSerialized]
+        private Segment _tail;
 
-        public Q( IEnumerable< T > collection ) {
-            if ( collection == null ) {
-                throw new ArgumentNullException( "collection" );
+        public Int32 Count {
+            get {
+                Segment head;
+                Segment tail;
+                Int32 headLow;
+                Int32 tailHigh;
+                this.GetHeadTailPositions( out head, out tail, out headLow, out tailHigh );
+                if ( head == tail ) {
+                    return tailHigh - headLow + 1;
+                }
+                return 32 - headLow + 32 * ( Int32 )( tail.Index - head.Index - 1L ) + tailHigh + 1;
             }
-            this.InitializeFromCollection( collection );
         }
 
         public Boolean IsEmpty {
@@ -70,59 +79,30 @@ namespace Librainian.Collections {
             }
         }
 
-        public int Count {
+        public Boolean IsSynchronized => false;
+
+        public Object SyncRoot {
             get {
-                Segment head;
-                Segment tail;
-                int headLow;
-                int tailHigh;
-                this.GetHeadTailPositions( out head, out tail, out headLow, out tailHigh );
-                if ( head == tail ) {
-                    return tailHigh - headLow + 1;
-                }
-                return 32 - headLow + 32*( int ) ( tail._index - head._index - 1L ) + ( tailHigh + 1 );
+                throw new NotSupportedException();
             }
         }
 
-        Boolean ICollection.IsSynchronized { get { return false; } }
+        public Q() {
+            this._head = this._tail = new Segment( 0L );
+        }
 
-        object ICollection.SyncRoot { get { throw new NotSupportedException(); } }
+        public Q( IEnumerable<T> collection ) {
+            if ( collection == null ) {
+                throw new ArgumentNullException( nameof( collection ) );
+            }
+            this.InitializeFromCollection( collection );
+        }
 
-        public void CopyTo( T[] array, int index ) {
+        public void CopyTo( T[] array, Int32 index ) {
             if ( array == null ) {
-                throw new ArgumentNullException( "array" );
+                throw new ArgumentNullException( nameof( array ) );
             }
             this.ToList().CopyTo( array, index );
-        }
-
-        // ReSharper restore RemoveToList.1
-        public IEnumerator< T > GetEnumerator() {
-            return this.ToList().GetEnumerator();
-        }
-
-        void ICollection.CopyTo( Array array, int index ) {
-            if ( array == null ) {
-                throw new ArgumentNullException( "array" );
-            }
-            this.ToArray().CopyTo( array, index );
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
-
-        Boolean IProducerConsumerCollection< T >.TryAdd( T item ) {
-            this.Enqueue( item );
-            return true;
-        }
-
-        // ReSharper disable RemoveToList.1
-        public T[] ToArray() {
-            return this.ToList().ToArray();
-        }
-
-        public Boolean TryTake( out T item ) {
-            return this.TryDequeue( out item );
         }
 
         public void Enqueue( T item ) {
@@ -130,6 +110,10 @@ namespace Librainian.Collections {
                 Thread.Yield();
             }
         }
+
+        public IEnumerator<T> GetEnumerator() => this.ToList().GetEnumerator();
+
+        public T[] ToArray() => this.ToList().ToArray();
 
         public Boolean TryDequeue( out T result ) {
             while ( !this.IsEmpty ) {
@@ -151,12 +135,23 @@ namespace Librainian.Collections {
             return false;
         }
 
-        private void GetHeadTailPositions( out Segment head, out Segment tail, out int headLow, out int tailHigh ) {
+        public Boolean TryTake( out T item ) => this.TryDequeue( out item );
+
+        void ICollection.CopyTo( Array array, Int32 index ) {
+            if ( array == null ) {
+                throw new ArgumentNullException( nameof( array ) );
+            }
+            this.ToArray().CopyTo( array, index );
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        private void GetHeadTailPositions( out Segment head, out Segment tail, out Int32 headLow, out Int32 tailHigh ) {
             head = this._head;
             tail = this._tail;
             headLow = head.Low;
             tailHigh = tail.High;
-            while ( head != this._head || tail != this._tail || ( headLow != head.Low || tailHigh != tail.High ) || head._index > tail._index ) {
+            while ( ( head != this._head ) || ( tail != this._tail ) || ( headLow != head.Low ) || ( tailHigh != tail.High ) || ( head.Index > tail.Index ) ) {
                 Thread.Yield();
                 head = this._head;
                 tail = this._tail;
@@ -165,7 +160,7 @@ namespace Librainian.Collections {
             }
         }
 
-        private void InitializeFromCollection( IEnumerable< T > collection ) {
+        private void InitializeFromCollection( IEnumerable<T> collection ) {
             this._head = this._tail = new Segment( 0L );
             var num = 0;
             foreach ( var obj in collection ) {
@@ -186,20 +181,18 @@ namespace Librainian.Collections {
         }
 
         [OnSerializing]
-        private void OnSerializing( StreamingContext context ) {
-            this._serializationArray = this.ToArray();
-        }
+        private void OnSerializing( StreamingContext context ) => this._serializationArray = this.ToArray();
 
-        private List< T > ToList() {
+        private List<T> ToList() {
             Segment head;
             Segment tail;
-            int headLow;
-            int tailHigh;
+            Int32 headLow;
+            Int32 tailHigh;
             this.GetHeadTailPositions( head: out head, tail: out tail, headLow: out headLow, tailHigh: out tailHigh );
             if ( head == tail ) {
                 return head.ToList( headLow, tailHigh );
             }
-            var list = new List< T >( head.ToList( headLow, 31 ) );
+            var list = new List<T>( head.ToList( headLow, 31 ) );
             for ( var next = head.Next; next != tail; next = next.Next ) {
                 list.AddRange( next.ToList( 0, 31 ) );
             }
@@ -207,30 +200,34 @@ namespace Librainian.Collections {
             return list;
         }
 
+        public Boolean TryAdd( T item ) {
+            this.Enqueue( item );
+            return true;
+        }
+
         private sealed class Segment {
             private readonly T[] _array;
-            internal readonly long _index;
-            private readonly int[] _state;
+            private readonly Int32[] _state;
+            internal readonly Int64 Index;
+            private Int32 _high;
+            private Int32 _low;
             public Segment Next;
-            private int _high;
 
-            private int _low;
-
-            internal Segment( long index ) {
-                this._array = new T[32];
-                this._state = new int[32];
+            internal Segment( Int64 index ) {
+                this._array = new T[ 32 ];
+                this._state = new Int32[ 32 ];
                 this._high = -1;
-                this._index = index;
+                this.Index = index;
             }
 
-            public int High { get { return Math.Min( this._high, 31 ); } }
+            public Int32 High => Math.Min( this._high, 31 );
 
-            public Boolean IsEmpty { get { return this.Low > this.High; } }
+            public Boolean IsEmpty => this.Low > this.High;
 
-            public int Low { get { return Math.Min( this._low, 32 ); } }
+            public Int32 Low => Math.Min( this._low, 32 );
 
-            public List< T > ToList( int start, int end ) {
-                var list = new List< T >();
+            public List<T> ToList( Int32 start, Int32 end ) {
+                var list = new List<T>();
 
                 for ( var index = start; index <= end; ++index ) {
                     while ( this._state[ index ] == 0 ) {
@@ -308,13 +305,13 @@ namespace Librainian.Collections {
             }
 
             public Segment UnsafeGrow() {
-                var segment = new Segment( this._index + 1L );
+                var segment = new Segment( this.Index + 1L );
                 this.Next = segment;
                 return segment;
             }
 
             private void Grow( out Segment tail ) {
-                this.Next = new Segment( this._index + 1L );
+                this.Next = new Segment( this.Index + 1L );
                 tail = this.Next;
             }
         }

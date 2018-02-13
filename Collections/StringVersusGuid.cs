@@ -1,65 +1,51 @@
-#region License & Information
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
-// "Librainian/StringVersusGuid.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
-#endregion
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/StringVersusGuid.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Collections {
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Runtime.Serialization;
+    using Newtonsoft.Json;
     using Parsing;
-    using Threading;
 
-    /// <summary>
-    ///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
-    /// </summary>
+    /// <summary>Contains Words and their guids. Persisted to and from storage? Thread-safe?</summary>
     /// <remarks>i can see places where the tables are locked independantly.. could cause issues??</remarks>
-    [DataContract( IsReference = true )]
+    [JsonObject]
     public class StringVersusGuid {
-        /// <summary>
-        /// </summary>
+
+        public IEnumerable<Guid> EachGuid => this.Guids.Keys;
+
+        public IEnumerable<String> EachWord => this.Words.Keys;
+
+        /// <summary></summary>
         /// <remarks>Two dictionaries for speed, one class to rule them all.</remarks>
-        [DataMember]
-        [OptionalField]
-        public readonly ConcurrentDictionary<Guid, String> Guids = new ConcurrentDictionary<Guid, String>();
+        [JsonProperty]
+        public ConcurrentDictionary<Guid, String> Guids { get; } = new ConcurrentDictionary<Guid, String>();
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <remarks>Two dictionaries for speed, one class to rule them all.</remarks>
-        [DataMember]
-        [OptionalField]
-        public readonly ConcurrentDictionary<String, Guid> Words = new ConcurrentDictionary<String, Guid>();
+        [JsonProperty]
+        public ConcurrentDictionary<String, Guid> Words { get; } = new ConcurrentDictionary<String, Guid>();
 
-        public IEnumerable<Guid> EachGuid {
-            get {
-                return this.Guids.Keys;
-            }
-        }
-
-        public IEnumerable<String> EachWord {
-            get {
-                return this.Words.Keys;
-            }
-        }
-
-        /// <summary>
-        ///     Get or set the guid for this word.
-        /// </summary>
+        /// <summary>Get or set the guid for this word.</summary>
         /// <param name="key"></param>
         /// <returns></returns>
         public Guid this[ String key ] {
@@ -86,9 +72,7 @@ namespace Librainian.Collections {
             }
         }
 
-        /// <summary>
-        ///     Get or set the word for this guid.
-        /// </summary>
+        /// <summary>Get or set the word for this guid.</summary>
         /// <param name="key"></param>
         /// <returns></returns>
         public String this[ Guid key ] {
@@ -105,14 +89,18 @@ namespace Librainian.Collections {
             }
         }
 
+        public static void InternalTest( StringVersusGuid stringVersusGuid ) {
+            var guid = new Guid( @"bddc4fac-20b9-4365-97bf-c98e84697012" );
+            stringVersusGuid[ "AIBrain" ] = guid;
+            stringVersusGuid[ guid ].Same( "AIBrain" ).BreakIfFalse();
+        }
+
         public void Clear() {
             this.Words.Clear();
             this.Guids.Clear();
         }
 
-        /// <summary>
-        ///     Returns true if the word is contained in the collections.
-        /// </summary>
+        /// <summary>Returns true if the word is contained in the collections.</summary>
         /// <param name="daword"></param>
         /// <returns></returns>
         public Boolean Contains( String daword ) {
@@ -123,20 +111,12 @@ namespace Librainian.Collections {
             return this.Words.TryGetValue( key: daword, value: out value );
         }
 
-        /// <summary>
-        ///     Returns true if the guid is contained in the collection.
-        /// </summary>
+        /// <summary>Returns true if the guid is contained in the collection.</summary>
         /// <param name="daguid"></param>
         /// <returns></returns>
         public Boolean Contains( Guid daguid ) {
             String value;
             return this.Guids.TryGetValue( key: daguid, value: out value );
-        }
-
-        public static void InternalTest( StringVersusGuid stringVersusGuid ) {
-            var guid = new Guid( @"bddc4fac-20b9-4365-97bf-c98e84697012" );
-            stringVersusGuid[ "AIBrain" ] = guid;
-            stringVersusGuid[ guid ].Same( "AIBrain" ).BreakIfFalse();
         }
     }
 }

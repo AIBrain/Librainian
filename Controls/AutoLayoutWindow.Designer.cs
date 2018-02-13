@@ -1,12 +1,13 @@
 ﻿namespace Librainian.Controls {
     using System;
+    using System.ComponentModel;
     using System.Windows.Forms;
 
     partial class AutoLayoutWindow {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.

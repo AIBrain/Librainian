@@ -1,25 +1,22 @@
-﻿#region License & Information
-
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Inet.cs" was last cleaned by Rick on 2014/08/19 at 1:27 PM
-
-#endregion License & Information
+// "Librainian/Inet.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Internet {
 
@@ -30,16 +27,18 @@ namespace Librainian.Internet {
 
     public static class Inet {
 
-        private static async Task<byte[]> GetURLContentsAsync( String url ) {
+        private static async Task<Byte[]> GetUrlContentsAsync( String url ) {
 
             // The downloaded resource ends up in the variable named content.
             var content = new MemoryStream();
 
             var webReq = WebRequest.Create( url ) as HttpWebRequest;
 
-            // Send the request to the Internet resource and wait for
-            // the response.
-            // ReSharper disable once PossibleNullReferenceException
+            // Send the request to the Internet resource and wait for the response. ReSharper
+            // disable once PossibleNullReferenceException
+            if ( webReq == null ) {
+                return content.ToArray();
+            }
             using ( var response = await webReq.GetResponseAsync() )
 
             // The previous statement abbreviates the following two statements.

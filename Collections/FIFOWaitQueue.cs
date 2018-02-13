@@ -1,27 +1,29 @@
-#region License & Information
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
-// "Librainian/FIFOWaitQueue.cs" was last cleaned by Rick on 2014/08/11 at 12:36 AM
-#endregion
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/FIFOWaitQueue.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Collections {
+
     using System;
     using System.Collections.Generic;
     using System.Threading;
-    using Annotations;
+    using Newtonsoft.Json;
     using Threading;
 
     /// <summary>
@@ -32,16 +34,18 @@ namespace Librainian.Collections {
     /// <author>Doug Lea</author>
     /// <author>Griffin Caprio (.NET)</author>
     /// <author>Kenneth Xu</author>
-    [Serializable]
-    [UsedImplicitly]
-    internal class FIFOWaitQueue : IWaitQueue {
-        [NonSerialized] protected WaitNode Head;
+    [JsonObject]
+    internal class FifoWaitQueue : IWaitQueue {
 
-        [NonSerialized] protected WaitNode Tail;
+        [NonSerialized]
+        protected WaitNode Head;
 
-        public Boolean HasNodes { get { return this.Head != null; } }
+        [NonSerialized]
+        protected WaitNode Tail;
 
-        public int Length {
+        public Boolean HasNodes => this.Head != null;
+
+        public Int32 Length {
             get {
                 var count = 0;
                 var node = this.Head;
@@ -55,9 +59,9 @@ namespace Librainian.Collections {
             }
         }
 
-        public ICollection< Thread > WaitingThreads {
+        public ICollection<Thread> WaitingThreads {
             get {
-                IList< Thread > list = new List< Thread >();
+                var list = new List<Thread>();
                 var node = this.Head;
                 while ( node != null ) {
                     if ( node.IsWaiting ) {
@@ -95,23 +99,14 @@ namespace Librainian.Collections {
 
         public Boolean IsWaiting( Thread thread ) {
             if ( thread == null ) {
-                throw new ArgumentNullException( "thread" );
+                throw new ArgumentNullException( nameof( thread ) );
             }
             for ( var node = this.Head; node != null; node = node.NextWaitNode ) {
-                if ( node.IsWaiting && node.Owner == thread ) {
+                if ( node.IsWaiting && ( node.Owner == thread ) ) {
                     return true;
                 }
             }
             return false;
         }
-
-        // In backport 3.1 but not used.
-        //public void PutBack(WaitNode w)
-        //{
-        //    w.NextWaitNode = _head;
-        //    _head = w;
-        //    if (_tail == null)
-        //        _tail = w;
-        //}
     }
 }

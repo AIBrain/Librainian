@@ -1,39 +1,84 @@
-#region License & Information
+// Copyright 2015 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
+//
+// Donations and royalties can be paid via
 // PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
 // Usage of the source code or compiled binaries is AS-IS.
 // I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Compass.cs" was last cleaned by Rick on 2014/09/29 at 12:30 PM
-#endregion
+//
+// "Fantasy Core/Compass.cs" was last cleaned by Rick on 2016/01/03 at 12:25 AM
 
 namespace Librainian.Measurement.Spatial {
+
     using System;
     using System.Runtime.Serialization;
+    using FluentAssertions;
+    using Maths;
 
-    [ DataContract( IsReference = true ) ]
+    /// <summary>small number, constrained to between 0 and 360, with wrapping</summary>
+    [DataContract( IsReference = false )]
     public class Compass {
 
-        public Degrees Value { get; set; }
+        
+        private volatile Single _degrees;
+
+        public const Single Maximum = 360;
+
+        public const Single Minimum = 0;
 
         /// <summary>
-        /// Clockwise from a top-down view.
+        /// Init with a random direction
         /// </summary>
-        /// <param name="byAmount"></param>
-        /// <returns></returns>
-        public Boolean RotateRight( Single byAmount = 1 ) {
+        public Compass() : this( Randem.NextSingle( Minimum, Maximum ) ) {
+        }
+
+        /// <summary>
+        /// ctor with <paramref name="degrees"/>.
+        /// </summary>
+        /// <param name="degrees"></param>
+        public Compass( Single degrees ) {
+            this.Degrees = degrees;
+        }
+
+        public Single Degrees {
+            get {
+                return this._degrees;
+            }
+
+            set {
+                if ( Single.IsNaN( value ) ) {
+                    throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" );
+                }
+                if ( Single.IsInfinity( value ) ) {
+                    throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" );
+                }
+
+                while ( value < Minimum ) {
+                    value += Maximum;
+                }
+                while ( value > Maximum ) {
+                    value -= Maximum;
+                }
+
+                value.Should()
+                     .BeGreaterOrEqualTo( Minimum );
+                value.Should()
+                     .BeLessOrEqualTo( Maximum );
+
+                this._degrees = value;
+            }
+        }
+
+        public Boolean RotateLeft( Single byAmount = ( Single )Math.PI ) {
             if ( Single.IsNaN( byAmount ) ) {
                 return false;
             }
@@ -41,21 +86,25 @@ namespace Librainian.Measurement.Spatial {
                 return false;
             }
 
-            this.Value += byAmount;
+            //TODO would a Lerp here make turning smoother?
+            this.Degrees -= byAmount;
 
             return true;
         }
 
-
-        public Boolean RotateLeft( Single byAmount = 1 ) {
+        /// <summary>Clockwise from a top-down view.</summary>
+        /// <param name="byAmount"></param>
+        /// <returns></returns>
+        public Boolean RotateRight( Single byAmount = ( Single )Math.PI ) {
             if ( Single.IsNaN( byAmount ) ) {
                 return false;
             }
             if ( Single.IsInfinity( byAmount ) ) {
                 return false;
             }
-            
-            this.Value -= byAmount;
+
+            //TODO would a Lerp here make turning smoother?
+            this.Degrees += byAmount;
 
             return true;
         }

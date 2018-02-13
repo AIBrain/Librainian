@@ -1,39 +1,37 @@
-#region License & Information
-
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Attoseconds.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
-
-#endregion License & Information
+// "Librainian/Attoseconds.cs" was last cleaned by Rick on 2016/06/18 at 10:54 PM
 
 namespace Librainian.Measurement.Time {
 
     using System;
     using System.Diagnostics;
     using System.Numerics;
-    using System.Runtime.Serialization;
-    using Annotations;
-    using FluentAssertions;
-    using Librainian.Extensions;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Maths;
+    using Newtonsoft.Json;
+    using Numerics;
+    using Parsing;
 
-    [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    [Serializable]
+    [DebuggerDisplay( "{ToString(),nq}" )]
+    [JsonObject]
     [Immutable]
     public struct Attoseconds : IComparable<Attoseconds>, IQuantityOfTime {
 
@@ -44,17 +42,17 @@ namespace Librainian.Measurement.Time {
         public const UInt16 InOneFemtosecond = 1000;
 
         /// <summary>
-        ///     Ten <see cref="Attoseconds" />s.
+        ///     Ten <see cref="Attoseconds" /> s.
         /// </summary>
         public static readonly Attoseconds Fifteen = new Attoseconds( 15 );
 
         /// <summary>
-        ///     Five <see cref="Attoseconds" />s.
+        ///     Five <see cref="Attoseconds" /> s.
         /// </summary>
         public static readonly Attoseconds Five = new Attoseconds( 5 );
 
         /// <summary>
-        ///     Five Hundred <see cref="Attoseconds" />s.
+        ///     Five Hundred <see cref="Attoseconds" /> s.
         /// </summary>
         public static readonly Attoseconds FiveHundred = new Attoseconds( 500 );
 
@@ -92,12 +90,12 @@ namespace Librainian.Measurement.Time {
         public static readonly Attoseconds SixtySeven = new Attoseconds( 67 );
 
         /// <summary>
-        ///     Ten <see cref="Attoseconds" />s.
+        ///     Ten <see cref="Attoseconds" /> s.
         /// </summary>
         public static readonly Attoseconds Ten = new Attoseconds( 10 );
 
         /// <summary>
-        ///     Three <see cref="Attoseconds" />s.
+        ///     Three <see cref="Attoseconds" /> s.
         /// </summary>
         public static readonly Attoseconds Three = new Attoseconds( 3 );
 
@@ -125,7 +123,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Attoseconds TwentyFour = new Attoseconds( 24 );
 
         /// <summary>
-        ///     Two <see cref="Attoseconds" />s.
+        ///     Two <see cref="Attoseconds" /> s.
         /// </summary>
         public static readonly Attoseconds Two = new Attoseconds( 2 );
 
@@ -153,46 +151,30 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Attoseconds Zero = new Attoseconds( 0 );
 
-        /// <summary>
-        /// </summary>
-        [DataMember]
-        public readonly Decimal Value;
-
         public Attoseconds( Decimal value ) {
             this.Value = value;
         }
 
-        public Attoseconds( long value ) {
+        public Attoseconds( BigRational value ) {
+            this.Value = value;
+        }
+
+        public Attoseconds( Int64 value ) {
             this.Value = value;
         }
 
         public Attoseconds( BigInteger value ) {
-            value.Should().BeInRange( Constants.MinimumUsefulDecimal, Constants.MaximumUsefulDecimal );
-
-            if ( value < Constants.MinimumUsefulDecimal ) {
-                throw new OverflowException( Constants.ValueIsTooLow );
-            }
-
-            if ( value > Constants.MaximumUsefulDecimal ) {
-                throw new OverflowException( Constants.ValueIsTooHigh );
-            }
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
-        [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
+        [JsonProperty]
+        public BigRational Value {
+            get;
         }
 
-        public static Attoseconds Combine( Attoseconds left, Attoseconds right ) {
-            return new Attoseconds( left.Value + right.Value );
-        }
+        public static Attoseconds Combine( Attoseconds left, Attoseconds right ) => new Attoseconds( left.Value + right.Value );
 
-        public static Attoseconds Combine( Attoseconds left, Decimal attoseconds ) {
-            return new Attoseconds( left.Value + attoseconds );
-        }
+        public static Attoseconds Combine( Attoseconds left, Decimal attoseconds ) => new Attoseconds( left.Value + attoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -200,90 +182,68 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Attoseconds left, Attoseconds right ) {
-            return left.Value == right.Value;
+        public static Boolean Equals( Attoseconds left, Attoseconds right ) => left.Value == right.Value;
+
+        public static implicit operator Femtoseconds( Attoseconds attoseconds ) => attoseconds.ToFemtoseconds();
+
+        public static implicit operator Span( Attoseconds attoseconds ) {
+            var plancks = attoseconds.ToPlanckTimes();
+            return new Span( plancks );
         }
 
-        public static implicit operator Femtoseconds( Attoseconds attoseconds ) {
-            return attoseconds.ToFemtoseconds();
-        }
+        public static implicit operator Zeptoseconds( Attoseconds attoseconds ) => attoseconds.ToZeptoseconds();
 
-        public static implicit operator Zeptoseconds( Attoseconds attoseconds ) {
-            return attoseconds.ToZeptoseconds();
-        }
+        public static Attoseconds operator -( Attoseconds left, Decimal attoseconds ) => Combine( left, -attoseconds );
 
-        public static Attoseconds operator -( Attoseconds left, Decimal attoseconds ) {
-            return Combine( left, -attoseconds );
-        }
+        public static Boolean operator !=( Attoseconds left, Attoseconds right ) => !Equals( left, right );
 
-        public static Boolean operator !=( Attoseconds left, Attoseconds right ) {
-            return !Equals( left, right );
-        }
+        public static Attoseconds operator +( Attoseconds left, Attoseconds right ) => Combine( left, right );
 
-        public static Attoseconds operator +( Attoseconds left, Attoseconds right ) {
-            return Combine( left, right );
-        }
+        public static Attoseconds operator +( Attoseconds left, Decimal attoseconds ) => Combine( left, attoseconds );
 
-        public static Attoseconds operator +( Attoseconds left, Decimal attoseconds ) {
-            return Combine( left, attoseconds );
-        }
+        public static Boolean operator <( Attoseconds left, Attoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Attoseconds left, Attoseconds right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator ==( Attoseconds left, Attoseconds right ) => Equals( left, right );
 
-        public static Boolean operator ==( Attoseconds left, Attoseconds right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator >( Attoseconds left, Attoseconds right ) => left.Value > right.Value;
 
-        public static Boolean operator >( Attoseconds left, Attoseconds right ) {
-            return left.Value > right.Value;
-        }
+        public Int32 CompareTo( Attoseconds other ) => this.Value.CompareTo( other.Value );
 
-        public int CompareTo( Attoseconds other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public Boolean Equals( Attoseconds other ) => Equals( this, other );
 
-        public Boolean Equals( Attoseconds other ) {
-            return Equals( this, other );
-        }
-
-        public override Boolean Equals( [CanBeNull] object obj ) {
+        public override Boolean Equals( [CanBeNull] Object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
             return obj is Attoseconds && this.Equals( ( Attoseconds )obj );
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         /// <summary>
         ///     Convert to a larger unit.
         /// </summary>
         /// <returns></returns>
         [Pure]
-        public Femtoseconds ToFemtoseconds() {
-            return new Femtoseconds( this.Value / InOneFemtosecond );
-        }
+        public Femtoseconds ToFemtoseconds() => new Femtoseconds( this.Value / InOneFemtosecond );
 
         [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneAttosecond, new BigInteger( this.Value ) );
-        }
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneAttosecond * this.Value );
 
         [Pure]
         public override String ToString() {
-            return String.Format( "{0} as", this.Value );
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.GetWholePart();
+                return $"{whole} {whole.PluralOf( "as" )}";
+            }
+            var dec = ( Decimal )this.Value;
+            return $"{dec} {dec.PluralOf( "as" )}";
         }
 
         /// <summary>
         ///     Convert to a smaller unit.
         /// </summary>
         /// <returns></returns>
-        public Zeptoseconds ToZeptoseconds() {
-            return new Zeptoseconds( this.Value * Zeptoseconds.InOneAttosecond );
-        }
+        public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( this.Value * Zeptoseconds.InOneAttosecond );
     }
 }

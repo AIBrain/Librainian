@@ -1,28 +1,31 @@
-﻿#region License & Information
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/MagicExtensions.cs" was last cleaned by Rick on 2014/10/21 at 10:36 PM
-#endregion
+//
+// "Librainian/MagicExtensions.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Magic {
+
     using System;
     using System.Reactive;
+    using System.Reactive.Disposables;
     using System.Reactive.Linq;
+    using System.Reactive.Subjects;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     <para>Any sufficiently advanced technology is indistinguishable from magic.</para>
@@ -30,25 +33,69 @@ namespace Librainian.Magic {
     /// <seealso cref="http://wikipedia.org/wiki/Clarke's_three_laws" />
     public static class MagicExtensions {
 
-        /// <summary>
-        /// 
-        /// </summary>
+        /// <summary></summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="observable"></param>
         /// <returns></returns>
-        /// <seealso cref="http://haacked.com/archive/2012/10/08/writing-a-continueafter-method-for-rx.aspx/"/>
-        public static IObservable< Unit > AsCompletion< T >( this IObservable< T > observable ) {
-            return Observable.Create< Unit >( observer => {
-                                                  Action onCompleted = () => {
-                                                                           observer.OnNext( Unit.Default );
-                                                                           observer.OnCompleted();
-                                                                       };
-                                                  return observable.Subscribe( _ => { }, observer.OnError, onCompleted );
-                                              } );
+        /// <seealso cref="http://haacked.com/archive/2012/10/08/writing-a-continueafter-method-for-rx.aspx/" />
+        public static IObservable<Unit> AsCompletion<T>( this IObservable<T> observable ) => Observable.Create<Unit>( observer => {
+            Action onCompleted = () => {
+                observer.OnNext( Unit.Default );
+                observer.OnCompleted();
+            };
+            return observable.Subscribe( _ => {
+            }, observer.OnError, onCompleted );
+        } );
+
+        public static IObservable<TRet> ContinueAfter<T, TRet>( this IObservable<T> observable, Func<IObservable<TRet>> selector ) => observable.AsCompletion().SelectMany( _ => selector() );
+
+        /// <summary>
+        ///     http://stackoverflow.com/a/7642198
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="pauser"></param>
+        /// <returns></returns>
+        public static IObservable<T> Pausable<T>( this IObservable<T> source, IObservable<Boolean> pauser ) {
+            return Observable.Create<T>( o => {
+                var paused = new SerialDisposable();
+                var subscription = source.Publish( ps => {
+                    var values = new ReplaySubject<T>();
+                    Func<Boolean, IObservable<T>> switcher = b => {
+                        if ( b ) {
+                            values.Dispose();
+                            values = new ReplaySubject<T>();
+                            paused.Disposable = ps.Subscribe( values );
+                            return Observable.Empty<T>();
+                        }
+                        return values.Concat( ps );
+                    };
+
+                    return pauser.StartWith( false ).DistinctUntilChanged().Select( p => switcher( p ) ).Switch();
+                } ).Subscribe( o );
+                return new CompositeDisposable( subscription, paused );
+            } );
         }
 
-        public static IObservable< TRet > ContinueAfter< T, TRet >( this IObservable< T > observable, Func< IObservable< TRet > > selector ) {
-            return observable.AsCompletion().SelectMany( _ => selector() );
+        /// <summary>
+        ///     If <paramref name="b" /> is <see cref="Boolean.True" /> then perform the <paramref name="action" />.
+        /// </summary>
+        /// <param name="b"></param>
+        /// <param name="action"></param>
+        public static void Then( this Boolean b, Action action ) {
+            if ( b ) {
+                action?.Invoke();
+            }
+        }
+
+        /// <summary></summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="obj"></param>
+        // ReSharper disable once UnusedParameter.Local
+        public static void ThrowIfNull<TKey>( [CanBeNull] this TKey obj ) {
+            if ( null == obj ) {
+                throw new ArgumentNullException();
+            }
         }
     }
 }

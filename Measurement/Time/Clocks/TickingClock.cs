@@ -1,32 +1,29 @@
-﻿#region License & Information
-
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/TickingClock.cs" was last cleaned by Rick on 2014/09/02 at 11:25 AM
-
-#endregion License & Information
+// "Librainian/TickingClock.cs" was last cleaned by Rick on 2016/06/18 at 10:54 PM
 
 namespace Librainian.Measurement.Time.Clocks {
 
     using System;
-    using System.Runtime.Serialization;
     using System.Timers;
-    using Annotations;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     <para>Starts a forward-ticking clock at the given time with settable events.</para>
@@ -47,7 +44,7 @@ namespace Librainian.Measurement.Time.Clocks {
     ///         </para>
     ///     </para>
     /// </summary>
-    [DataContract( IsReference = true )]
+    [JsonObject]
     public class TickingClock : IStandardClock {
 
         /// <summary>
@@ -56,22 +53,25 @@ namespace Librainian.Measurement.Time.Clocks {
         private Timer _timer;
 
         public TickingClock( DateTime time, Granularity granularity = Granularity.Seconds ) {
-            this.Hour = new Hour( ( byte )time.Hour );
-            this.Minute = new Minute( ( byte )time.Minute );
-            this.Second = new Second( ( byte )time.Second );
-            this.Millisecond = new Millisecond( ( UInt16 )time.Millisecond );
+            this.Hour = ( Byte )time.Hour;
+            this.Minute = ( Byte )time.Minute;
+            this.Second = ( Byte )time.Second;
+            this.Millisecond = ( UInt16 )time.Millisecond;
+            this.Microsecond = 0; //TODO can we get using DateTime.Ticks vs StopWatch.TicksPer/Frequency stuff?
             this.ResetTimer( granularity );
         }
 
         public TickingClock( Time time, Granularity granularity = Granularity.Seconds ) {
-            this.Hour = new Hour( time.Hour );
-            this.Minute = new Minute( time.Minute );
-            this.Second = new Second( time.Second );
-            this.Millisecond = new Millisecond( time.Millisecond );
+            this.Hour = time.Hour;
+            this.Minute = time.Minute;
+            this.Second = time.Second;
+            this.Millisecond = time.Millisecond;
+            this.Microsecond = time.Microsecond;
             this.ResetTimer( granularity );
         }
 
         public enum Granularity {
+            Microseconds,
             Milliseconds,
             Seconds,
             Minutes,
@@ -80,83 +80,64 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>
         /// </summary>
-        [DataMember]
+        [JsonProperty]
         public Hour Hour {
-            get;
-            private set;
+            get; private set;
+        }
+
+        [JsonProperty]
+        public UInt16 Microsecond {
+            get; private set;
         }
 
         /// <summary>
         /// </summary>
-        [DataMember]
+        [JsonProperty]
         public Millisecond Millisecond {
-            get;
-            private set;
+            get; private set;
         }
 
         /// <summary>
         /// </summary>
-        [DataMember]
+        [JsonProperty]
         public Minute Minute {
-            get;
-            private set;
+            get; private set;
         }
 
         [CanBeNull]
+        [JsonProperty]
         public Action<Hour> OnHourTick {
-            get;
-            set;
+            get; set;
         }
 
         [CanBeNull]
+        [JsonProperty]
         public Action OnMillisecondTick {
-            get;
-            set;
+            get; set;
         }
 
         [CanBeNull]
+        [JsonProperty]
         public Action OnMinuteTick {
-            get;
-            set;
+            get; set;
         }
 
         [CanBeNull]
+        [JsonProperty]
         public Action OnSecondTick {
-            get;
-            set;
+            get; set;
         }
 
         /// <summary>
         /// </summary>
-        [DataMember]
+        [JsonProperty]
         public Second Second {
-            get;
-            private set;
+            get; private set;
         }
 
-        public Time GetTime() {
-            try {
-                var timer = this._timer;
-                if ( timer != null ) {
-                    timer.Stop(); //stop the timer so the seconds don't tick while we get the values.
-                }
-                return new Time( hour: this.Hour.Value, minute: this.Minute.Value, second: this.Second.Value );
-            }
-            finally {
-                var timer = this._timer;
-                if ( timer != null ) {
-                    timer.Start();
-                }
-            }
-        }
+        public Boolean IsAm() => !this.IsPm();
 
-        public Boolean IsAM() {
-            return !this.IsPM();
-        }
-
-        public Boolean IsPM() {
-            return this.Hour.Value >= 12;
-        }
+        public Boolean IsPm() => this.Hour.Value >= 12;
 
         public void ResetTimer( Granularity granularity ) {
             if ( null != this._timer ) {
@@ -166,94 +147,88 @@ namespace Librainian.Measurement.Time.Clocks {
             }
             switch ( granularity ) {
                 case Granularity.Milliseconds:
-                    this._timer = new Timer( interval: ( Double )Milliseconds.One ) {
-                        AutoReset = true
-                    };
+
+                    this._timer = new Timer( interval: ( Double )Milliseconds.One.Value ) { AutoReset = true };
                     this._timer.Elapsed += this.OnMillisecondElapsed;
                     break;
 
                 case Granularity.Seconds:
-                    this._timer = new Timer( interval: ( Double )Seconds.One.Value ) {
-                        AutoReset = true
-                    };
+
+                    this._timer = new Timer( interval: ( Double )Seconds.One.Value ) { AutoReset = true };
                     this._timer.Elapsed += this.OnSecondElapsed;
                     break;
 
                 case Granularity.Minutes:
-                    this._timer = new Timer( interval: ( Double )Minutes.One.Value ) {
-                        AutoReset = true
-                    };
+
+                    this._timer = new Timer( interval: ( Double )Minutes.One.Value ) { AutoReset = true };
                     this._timer.Elapsed += this.OnMinuteElapsed;
                     break;
 
                 case Granularity.Hours:
-                    this._timer = new Timer( interval: ( Double )Hours.One.Value ) {
-                        AutoReset = true
-                    };
+
+                    this._timer = new Timer( interval: ( Double )Hours.One.Value ) { AutoReset = true };
                     this._timer.Elapsed += this.OnHourElapsed;
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException( "granularity" );
+                    throw new ArgumentOutOfRangeException( nameof( granularity ) );
             }
 
             this._timer.Start();
         }
 
-        private void OnHourElapsed( object sender, ElapsedEventArgs e ) {
+        public Time Time() {
+            try {
+                this._timer?.Stop(); //stop the timer so the seconds don't tick while we get the values.
+                return new Time( hour: this.Hour.Value, minute: this.Minute.Value, second: this.Second.Value );
+            }
+            finally {
+                this._timer?.Start();
+            }
+        }
+
+        private void OnHourElapsed( Object sender, ElapsedEventArgs e ) {
             Boolean ticked;
 
             this.Hour = this.Hour.Next( out ticked );
             if ( !ticked ) {
                 return;
             }
-            var onHourTick = this.OnHourTick;
-            if ( onHourTick != null ) {
-                onHourTick( this.Hour );
-            }
+            this.OnHourTick?.Invoke( this.Hour );
         }
 
-        private void OnMillisecondElapsed( object sender, ElapsedEventArgs e ) {
+        private void OnMillisecondElapsed( Object sender, ElapsedEventArgs e ) {
             Boolean ticked;
 
             this.Millisecond = this.Millisecond.Next( out ticked );
             if ( !ticked ) {
                 return;
             }
-            var onMillisecondTick = this.OnMillisecondTick;
-            if ( onMillisecondTick != null ) {
-                onMillisecondTick();
-            }
+            this.OnMillisecondTick?.Invoke();
 
             this.OnSecondElapsed( sender, e );
         }
 
-        private void OnMinuteElapsed( object sender, ElapsedEventArgs e ) {
+        private void OnMinuteElapsed( Object sender, ElapsedEventArgs e ) {
             Boolean ticked;
 
             this.Minute = this.Minute.Next( out ticked );
             if ( !ticked ) {
                 return;
             }
-            var onMinuteTick = this.OnMinuteTick;
-            if ( onMinuteTick != null ) {
-                onMinuteTick();
-            }
+            this.OnMinuteTick?.Invoke();
 
             this.OnHourElapsed( sender, e );
         }
 
-        private void OnSecondElapsed( object sender, ElapsedEventArgs e ) {
+        private void OnSecondElapsed( Object sender, ElapsedEventArgs e ) {
             Boolean ticked;
 
             this.Second = this.Second.Next( out ticked );
             if ( !ticked ) {
                 return;
             }
-            var onSecondTick = this.OnSecondTick;
-            if ( onSecondTick != null ) {
-                onSecondTick();
-            }
+            this.OnSecondTick?.Invoke();
 
             this.OnMinuteElapsed( sender, e );
         }

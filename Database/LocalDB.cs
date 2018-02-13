@@ -1,232 +1,251 @@
-﻿#region License & Information
-
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/LocalDB.cs" was last cleaned by Rick on 2014/08/20 at 12:15 PM
-
-#endregion License & Information
+// "Librainian/LocalDB.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Database {
 
     using System;
-    using System.Collections.Concurrent;
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
-    using System.Data.SqlLocalDb;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using Annotations;
-    using Collections;
-    using IO;
-    using Persistence;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
+    using FileSystem;
+    using JetBrains.Annotations;
+    using Magic;
 
-    [Obsolete("work in progress. reiventing the same damn wheel.")]
-    public static class LocalDB {
+    public class LocalDb : ABetterClassDispose {
 
-        public static readonly ISqlLocalDbProvider Provider = new SqlLocalDbProvider();
-
-        [NotNull]
-        public static ISqlLocalDbInstance GetInstance( this String instanceName ) {
-            ISqlLocalDbInstance result;
-            if ( Instances.TryGetValue( instanceName, out result ) ) {
-                return result;
-            }
-            Instances[ instanceName ] = Provider.GetOrCreateInstance( instanceName );
-            result = Instances[ instanceName ];
-            result.Start();
-            return result;
-        }
-
-        [NotNull]
-        public static DbConnectionStringBuilder GetConnectionStringBuilder( this String instanceName ) {
-            DbConnectionStringBuilder result;
-            if ( Builders.TryGetValue( instanceName, out result ) ) {
-                return result;
+        /// <summary></summary>
+        /// <param name="databaseName"></param>
+        /// <param name="databaseLocation"></param>
+        /// <param name="timeoutForReads"></param>
+        /// <param name="timeoutForWrites"></param>
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
+        public LocalDb( [NotNull] String databaseName, [CanBeNull] Folder databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) {
+            if ( String.IsNullOrWhiteSpace( databaseName ) ) {
+                throw new ArgumentNullException( nameof( databaseName ) );
             }
 
-            Builders[ instanceName ] = GetInstance( instanceName ).CreateConnectionStringBuilder();
-
-            return Builders[ instanceName ];
-        }
-
-
-        public static readonly ConcurrentDictionary<String, ISqlLocalDbInstance> Instances = new ConcurrentDictionary<String, ISqlLocalDbInstance>();
-        public static readonly ConcurrentDictionary<String, ParallelList<Document>> InstanceFiles = new ConcurrentDictionary<String, ParallelList<Document>>();
-        public static readonly ConcurrentDictionary<String, DbConnectionStringBuilder> Builders = new ConcurrentDictionary<String, DbConnectionStringBuilder>();
-        public static readonly ConcurrentDictionary<String, Document> DataPointers = new ConcurrentDictionary<String, Document>();
-        public static readonly ConcurrentDictionary<String, Document> LogPointers = new ConcurrentDictionary<String, Document>();
-
-        static LocalDB() {
-            const string name = "Properties";
-            var instance = GetInstance( name );
-
-            var mdf = new Document( Path.Combine( PersistenceExtensions.DataFolder.Value.FullName, String.Format( "{0}.mdf", name ) ) );
-            var ldf = new Document( Path.Combine( PersistenceExtensions.DataFolder.Value.FullName, String.Format( "{0}.ldf", name ) ) );
-
-            var list = new[] { mdf, ldf }.ToList();
-            InstanceFiles[ "Properties" ].AddRange( list);
-
-            //Builders[ "Properties" ].SetPhysicalFileName( mdf );
-
-            instance.Start();
-        }
-
-
-        //[CanBeNull]
-        //public static ISqlLocalDbInstance Instance {
-        //    get {
-        //        return instance;
-        //    }
-        //    set {
-        //        value.Should().NotBeNull();
-        //        instance = value;
-        //        if ( null != instance ) {
-        //            instance.Start();
-        //            OutputFolder = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), DatabaseDirectory );
-        //            var mdfFilename = String.Format( "{0}.mdf", DatabaseName );
-        //            DatabaseMdfPath = Path.Combine( OutputFolder, mdfFilename );
-        //            DatabaseLogPath = Path.Combine( OutputFolder, String.Format( "{0}_log.ldf", DatabaseName ) );
-
-        //        }
-        //    }
-        //}
-
-        public static object DatabaseName {
-            get;
-            private set;
-        }
-
-        public static String OutputFolder {
-            get;
-            set;
-        }
-
-        private static Lazy<Folder> datebaseBaseFolder = new Lazy<Folder>();
-
-
-
-
-        //private static Lazy<ISqlLocalDbInstance> instanceLazy = new Lazy<ISqlLocalDbInstance>( () => Instance );
-
-        public static Boolean TryPut<TData>( String genericThingHere ) {
-            //send data to localdb?
-            //how?
-            return false;
-        }
-
-        public static Boolean TryGet<TData>( String genericThingHere, out TData result ) {
-            //get data from localdb?
-            //how?
-            result = default( TData );
-            return false;
-        }
-
-    }
-
-    public class LocalDb : IDisposable {
-        public const String DatabaseDirectory = "Data";
-
-        public LocalDb( String databaseName = null ) {
-            this.DatabaseName = String.IsNullOrWhiteSpace( databaseName ) ? Guid.NewGuid().ToString( "N" ) : databaseName;
-            this.CreateDatabase();
-        }
-
-        public String ConnectionStringName {
-            get;
-            private set;
-        }
-
-        public String DatabaseName {
-            get;
-            private set;
-        }
-
-        public String OutputFolder {
-            get;
-            private set;
-        }
-
-        public String DatabaseMdfPath {
-            get;
-            private set;
-        }
-
-        public String DatabaseLogPath {
-            get;
-            private set;
-        }
-
-        public void Dispose() {
-            this.DetachDatabase();
-        }
-
-        public IDbConnection OpenConnection() {
-            return new SqlConnection( this.ConnectionStringName );
-        }
-
-        private void CreateDatabase() {
-            this.OutputFolder = Path.Combine( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ), DatabaseDirectory );
-            var mdfFilename = String.Format( "{0}.mdf", this.DatabaseName );
-            this.DatabaseMdfPath = Path.Combine( this.OutputFolder, mdfFilename );
-            this.DatabaseLogPath = Path.Combine( this.OutputFolder, String.Format( "{0}_log.ldf", this.DatabaseName ) );
-
-            // Create Data Directory If It Doesn't Already Exist.
-            if ( !Directory.Exists( this.OutputFolder ) ) {
-                Directory.CreateDirectory( this.OutputFolder );
+            if ( databaseLocation == null ) {
+                databaseLocation = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
             }
 
-            // If the database does not already exist, create it.
-            var connectionString = String.Format( @"Data Source=(LocalDB)\v11.0;Initial Catalog=master;Integrated Security=True" );
-            using ( var connection = new SqlConnection( connectionString ) ) {
-                connection.Open();
-                var cmd = connection.CreateCommand();
-                this.DetachDatabase();
-                cmd.CommandText = String.Format( "CREATE DATABASE {0} ON (NAME = N'{0}', FILENAME = '{1}')", this.DatabaseName, this.DatabaseMdfPath );
-                cmd.ExecuteNonQuery();
+            if ( databaseLocation == null ) {
+
+                //-V3022
+                throw new ArgumentNullException( nameof( databaseLocation ) );
             }
 
-            // Open newly created, or old database.
-            this.ConnectionStringName = String.Format( @"Data Source=(LocalDB)\v11.0;AttachDBFileName={1};Initial Catalog={0};Integrated Security=True;", this.DatabaseName, this.DatabaseMdfPath );
-        }
+            this.ReadTimeout = timeoutForReads.GetValueOrDefault( TimeSpan.FromMinutes( 1 ) );
+            this.WriteTimeout = timeoutForWrites.GetValueOrDefault( TimeSpan.FromMinutes( 1 ) );
 
-        private void DetachDatabase() {
-            try {
-                var connectionString = String.Format( @"Data Source=(LocalDB)\v11.0;Initial Catalog=master;Integrated Security=True" );
-                using ( var connection = new SqlConnection( connectionString ) ) {
+            this.DatabaseName = databaseName;
+
+            this.DatabaseLocation = databaseLocation;
+            if ( !this.DatabaseLocation.Exists() ) {
+                this.DatabaseLocation.Create();
+                this.DatabaseLocation.Info.SetCompression( false );
+            }
+
+            "Building SQL connection string...".Info();
+
+            this.DatabaseMdf = new Document( this.DatabaseLocation, $"{this.DatabaseName}.mdf" );
+            this.DatabaseLog = new Document( this.DatabaseLocation, $"{this.DatabaseName}_log.ldf" );   //TODO does localdb even use a log file?
+
+            this.ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog=master;Integrated Security=True;";
+
+            if ( !this.DatabaseMdf.Exists() ) {
+                using ( var connection = new SqlConnection( this.ConnectionString ) ) {
                     connection.Open();
-                    var cmd = connection.CreateCommand();
-                    cmd.CommandText = String.Format( "ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; exec sp_detach_db '{0}'", this.DatabaseName );
-                    cmd.ExecuteNonQuery();
+                    var command = connection.CreateCommand();
+                    command.CommandText = String.Format( "CREATE DATABASE {0} ON (NAME = N'{0}', FILENAME = '{1}')", this.DatabaseName, this.DatabaseMdf.FullPathWithFileName );
+                    command.ExecuteNonQuery();
                 }
             }
-            catch {
-            }
-            //finally {
-            //wtf?
-            //if ( File.Exists( this.DatabaseMdfPath ) ) {
-            //    File.Delete( this.DatabaseMdfPath );
-            //}
-            //if ( File.Exists( this.DatabaseLogPath ) ) {
-            //    File.Delete( this.DatabaseLogPath );
-            //}
-            //}
+
+            this.ConnectionString = $@"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog={this.DatabaseName};AttachDBFileName={this.DatabaseMdf.FullPathWithFileName};";
+
+            this.Connection = new SqlConnection( this.ConnectionString );
+            this.Connection.InfoMessage += ( sender, args ) => args.Message.Info();
+            this.Connection.StateChange += ( sender, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info();
+            this.Connection.Disposed += ( sender, args ) => $"Disposing SQL connection {args}".Info();
+
+            $"Attempting connection to {this.DatabaseMdf}...".Info();
+            this.Connection.Open();
+            this.Connection.ServerVersion.Info();
+            this.Connection.Close();
         }
+
+        [NotNull]
+        public SqlConnection Connection {
+            get;
+        }
+
+        [NotNull]
+        public String ConnectionString {
+            get;
+        }
+
+        [NotNull]
+        public Folder DatabaseLocation {
+            get;
+        }
+
+        [NotNull]
+        public Document DatabaseLog {
+            get;
+        }
+
+        [NotNull]
+        public Document DatabaseMdf {
+            get;
+        }
+
+        [NotNull]
+        public String DatabaseName {
+            get;
+        }
+
+        public TimeSpan ReadTimeout {
+            get;
+        }
+
+        public TimeSpan WriteTimeout {
+            get;
+        }
+
+        public async Task DetachDatabaseAsync() {
+            try {
+                if ( this.Connection.State == ConnectionState.Closed ) {
+                    await this.Connection.OpenAsync();
+                }
+
+                using ( var cmd = this.Connection.CreateCommand() ) {
+                    cmd.CommandText = String.Format( "ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; exec sp_detach_db N'{0}'", this.DatabaseName );
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+            catch ( SqlException exception ) {
+                exception.More();
+            }
+            catch ( DbException exception ) {
+                exception.More();
+            }
+        }
+
+        protected override void DisposeManaged() {
+            this.DetachDatabaseAsync().Wait( ReadTimeout + WriteTimeout );
+        }
+
     }
+
+    ///// <summary>
+    /////     work in progress. reiventing the same damn wheel. again."
+    ///// </summary>
+    //public static class LocalDB {
+    // ///
+    // <summary>/// ///</summary>
+    // public static ISqlLocalDbProvider Provider { get; } = new SqlLocalDbProvider();
+
+    // /// <summary> /// /// </summary> private static Lazy<Folder> datebaseBaseFolder = new Lazy<Folder>();
+
+    // //public static readonly ConcurrentDictionary<String, Document> DataPointers = new
+    // ConcurrentDictionary<String, Document>(); //public static readonly
+    // ConcurrentDictionary<String, Document> LogPointers = new ConcurrentDictionary<String, Document>();
+
+    // static LocalDB() { //const string name = "Properties"; //var instance = GetInstance( name );
+    // //var mdf = new Document( Path.Combine( PersistenceExtensions.DataFolder.Value.FullName,
+    // String.Format( "{0}.mdf", name ) ) ); //var ldf = new Document( Path.Combine(
+    // PersistenceExtensions.DataFolder.Value.FullName, String.Format( "{0}.ldf", name ) ) );
+
+    // //var list = new[ ] { mdf, ldf }.ToList(); //InstanceFiles[ name ].AddRange( list );
+
+    // //Builders[ name ].SetPhysicalFileName( mdf.FullPathWithFileName );
+
+    // //instance.Start(); }
+
+    // ///
+    // <summary>/// Instance names in SQL Local DB are case-insensitive ///</summary>
+    // ///
+    // <param name="name"></param>
+    // ///
+    // <param name="where"></param>
+    // ///
+    // <returns></returns>
+    // public static Boolean Start( [CanBeNull] String name, Folder where ) { if (
+    // String.IsNullOrWhiteSpace( name ) ) { return false; }
+
+    // try { var localDbInstance = Provider.CreateInstance( name ); var connectionStringBuilder =
+    // localDbInstance.CreateConnectionStringBuilder();
+    // connectionStringBuilder.SetPhysicalFileName(); localDbInstance.Start();
+
+    // return true;
+
+    // } catch ( Exception) { return false; } }
+
+    // ///// <summary> ///// ///// </summary> //public static ConcurrentDictionary<string,
+    // ISqlLocalDbInstance> Instances { get; } //= new ConcurrentDictionary<String, ISqlLocalDbInstance>();
+
+    // ///// <summary> ///// ///// </summary> //public static
+    // ConcurrentSet<ConcurrentList<Document>> InstanceFiles { get; } //= new ConcurrentSet<ConcurrentList<Document>>();
+
+    // ///// <summary> ///// ///// </summary> //public static ConcurrentDictionary<string,
+    // DbConnectionStringBuilder> Builders { get; } //= new ConcurrentDictionary<String, DbConnectionStringBuilder>();
+
+    // //[CanBeNull] //public static ISqlLocalDbInstance Instance { // get { // return instance; //
+    // } // set { // value.Should().NotBeNull(); // instance = value; // if ( null != instance ) {
+    // // instance.Start(); // OutputFolder = Path.Combine( Path.GetDirectoryName(
+    // Assembly.GetExecutingAssembly().Location ), DatabaseDirectory ); // var mdfFilename =
+    // String.Format( "{0}.mdf", DatabaseName ); // DatabaseMdfPath = Path.Combine( OutputFolder,
+    // mdfFilename ); // DatabaseLogPath = Path.Combine( OutputFolder, String.Format( "{0}_log.ldf",
+    // DatabaseName ) );
+
+    // // } // } //}
+
+    // public static object DatabaseName { get; private set; } public static String OutputFolder {
+    // get; set; }
+
+    // [NotNull] public static ISqlLocalDbInstance GetInstance( this String instanceName ) {
+    // ISqlLocalDbInstance result; if ( Instances.TryGetValue( instanceName, out result ) ) { return
+    // result; } Instances[ instanceName ] = Provider.GetOrCreateInstance( instanceName ); result =
+    // Instances[ instanceName ]; result.Start(); return result; }
+
+    // [NotNull] public static DbConnectionStringBuilder GetConnectionStringBuilder( this String
+    // instanceName ) { DbConnectionStringBuilder result; if ( Builders.TryGetValue( instanceName,
+    // out result ) ) { return result; }
+
+    // Builders[ instanceName ] = GetInstance( instanceName ).CreateConnectionStringBuilder();
+
+    // return Builders[ instanceName ]; }
+
+    // //private static Lazy<ISqlLocalDbInstance> instanceLazy = new Lazy<ISqlLocalDbInstance>( ()
+    // => Instance );
+
+    // public static Boolean TryPut<TData>( String genericThingHere ) => false;
+
+    //	public static Boolean TryGet<TData>( String genericThingHere, out TData result ) {
+    //		//get data from localdb?
+    //		//how?
+    //		result = default(TData);
+    //		return false;
+    //	}
+    //}
 }

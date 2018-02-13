@@ -1,63 +1,60 @@
-﻿#region License & Information
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
-// "Librainian/Wiktionary.cs" was last cleaned by Rick on 2014/08/11 at 12:38 AM
-#endregion
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/Wiktionary.cs" was last cleaned by Rick on 2016/06/18 at 10:52 PM
 
 namespace Librainian.Internet.Wiki {
+
     using System;
     using System.Xml;
     using Parsing;
 
     public class Wiktionary {
-        private static DateTime lastWikiResponse = DateTime.MinValue;
+        private static DateTime _lastWikiResponse = DateTime.MinValue;
 
         static Wiktionary() {
             if ( DoesWikiRespond ) {
+
                 //AIBrain.Brain.BlackBoxClass.Diagnostic( String.Format( "Wiktionary responded at {0}.", LastWikiResponse ) );
             }
         }
 
-        /// <summary>
-        ///     Returns true if Wiki has responded within the past 15 minutes.
-        /// </summary>
+        /// <summary>Returns true if Wiki has responded within the past 15 minutes.</summary>
         public static Boolean DoesWikiRespond {
             get {
-                if ( ( DateTime.UtcNow - lastWikiResponse ).TotalMinutes <= 15 ) {
+                if ( ( DateTime.UtcNow - _lastWikiResponse ).TotalMinutes <= 15 ) {
                     return true;
                 }
-                var Response = Http.Get( String.Format( BaseQuery, "wiki" ) );
-                if ( Response.Contains( "Definition from Wiktionary" ) ) {
-                    lastWikiResponse = DateTime.UtcNow;
+                var response = Http.Get( String.Format( BaseQuery, "wiki" ) );
+                if ( response.Contains( "Definition from Wiktionary" ) ) {
+                    _lastWikiResponse = DateTime.UtcNow;
                     return true;
                 }
                 return false;
             }
         }
 
-        private static XmlDocument BaseXMLResponse { get { return "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc(); } }
+        /// <summary>Use String.Format to enter the search parameter.</summary>
+        private static String BaseQuery => @"http://en.wiktionary.org/wiki/Special:Search?search={0}&go=Go";
 
-        /// <summary>
-        ///     Use String.Format to enter the search parameter.
-        /// </summary>
-        private static String BaseQuery { get { return @"http://en.wiktionary.org/wiki/Special:Search?search={0}&go=Go"; } }
+        private static XmlDocument BaseXMLResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
 
-        /// <summary>
-        ///     Pull the HTML for the Wiktionary entry on the base word.
-        /// </summary>
+        /// <summary>Pull the HTML for the Wiktionary entry on the base word.</summary>
         /// <param name="baseWord"></param>
         /// <returns></returns>
         public static String Wiki( String baseWord ) {
@@ -72,20 +69,9 @@ namespace Librainian.Internet.Wiki {
             if ( !wiki.Contains( "Definition from Wiktionary" ) ) {
                 return String.Empty;
             }
-            lastWikiResponse = DateTime.UtcNow;
+            _lastWikiResponse = DateTime.UtcNow;
 
             return wiki;
         }
-
-        /*
-        public static String Lookup( String BaseWord ) {
-            var wiki = Wiki( BaseWord );
-            if ( String.IsNullOrEmpty( wiki ) ) {
-                return String.Empty;
-            }
-
-            return String.Empty;
-        }
-        */
     }
 }

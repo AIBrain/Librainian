@@ -1,41 +1,44 @@
-#region License & Information
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
-// "Librainian/NullStream.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
-#endregion
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/NullStream.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
 
 namespace Librainian.Extensions {
+
     using System;
     using System.IO;
 
     public class NullStream : Stream {
-        private long _length;
+        private Int64 _length;
+        private Int64 _position;
 
-        private long _position;
+        public override Boolean CanRead => false;
 
-        public override Boolean CanRead { get { return false; } }
+        public override Boolean CanSeek => true;
 
-        public override Boolean CanSeek { get { return true; } }
+        public override Boolean CanWrite => true;
 
-        public override Boolean CanWrite { get { return true; } }
+        public override Int64 Length => this._length;
 
-        public override long Length { get { return this._length; } }
-
-        public override long Position {
-            get { return this._position; }
+        public override Int64 Position {
+            get {
+                return this._position;
+            }
 
             set {
                 this._position = value;
@@ -45,17 +48,18 @@ namespace Librainian.Extensions {
             }
         }
 
-        public override IAsyncResult BeginRead( byte[] buffer, int offset, int count, AsyncCallback callback, object state ) {
+        public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state ) {
             throw new NotImplementedException( "This stream doesn't support reading." );
         }
 
-        public override void Flush() { }
+        public override void Flush() {
+        }
 
-        public override int Read( byte[] buffer, int offset, int count ) {
+        public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) {
             throw new NotImplementedException( "This stream doesn't support reading." );
         }
 
-        public override long Seek( long offset, SeekOrigin origin ) {
+        public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
             var newPosition = this.Position;
 
             switch ( origin ) {
@@ -78,12 +82,8 @@ namespace Librainian.Extensions {
             return newPosition;
         }
 
-        public override void SetLength( long value ) {
-            this._length = value;
-        }
+        public override void SetLength( Int64 value ) => this._length = value;
 
-        public override void Write( byte[] buffer, int offset, int count ) {
-            this.Seek( count, SeekOrigin.Current );
-        }
+        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Seek( count, SeekOrigin.Current );
     }
 }

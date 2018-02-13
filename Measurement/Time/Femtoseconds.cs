@@ -1,42 +1,40 @@
-#region License & Information
-
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Femtoseconds.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
-
-#endregion License & Information
+// "Librainian/Femtoseconds.cs" was last cleaned by Rick on 2016/06/18 at 10:54 PM
 
 namespace Librainian.Measurement.Time {
 
     using System;
     using System.Diagnostics;
     using System.Numerics;
-    using System.Runtime.Serialization;
-    using Annotations;
-    using FluentAssertions;
-    using Librainian.Extensions;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Maths;
+    using Newtonsoft.Json;
+    using Numerics;
+    using Parsing;
 
     /// <summary>
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Femtosecond" />
-    [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
-    [Serializable]
+    [DebuggerDisplay( "{ToString(),nq}" )]
+    [JsonObject]
     [Immutable]
     public struct Femtoseconds : IComparable<Femtoseconds>, IQuantityOfTime {
 
@@ -46,17 +44,17 @@ namespace Librainian.Measurement.Time {
         public const UInt16 InOnePicosecond = 1000;
 
         /// <summary>
-        ///     Ten <see cref="Femtoseconds" />s.
+        ///     Ten <see cref="Femtoseconds" /> s.
         /// </summary>
         public static readonly Femtoseconds Fifteen = new Femtoseconds( value: 15 );
 
         /// <summary>
-        ///     Five <see cref="Femtoseconds" />s.
+        ///     Five <see cref="Femtoseconds" /> s.
         /// </summary>
         public static readonly Femtoseconds Five = new Femtoseconds( value: 5 );
 
         /// <summary>
-        ///     Five Hundred <see cref="Femtoseconds" />s.
+        ///     Five Hundred <see cref="Femtoseconds" /> s.
         /// </summary>
         public static readonly Femtoseconds FiveHundred = new Femtoseconds( value: 500 );
 
@@ -76,12 +74,12 @@ namespace Librainian.Measurement.Time {
         public static readonly Femtoseconds Sixteen = new Femtoseconds( value: 16 );
 
         /// <summary>
-        ///     Ten <see cref="Femtoseconds" />s.
+        ///     Ten <see cref="Femtoseconds" /> s.
         /// </summary>
         public static readonly Femtoseconds Ten = new Femtoseconds( value: 10 );
 
         /// <summary>
-        ///     Three <see cref="Femtoseconds" />s.
+        ///     Three <see cref="Femtoseconds" /> s.
         /// </summary>
         public static readonly Femtoseconds Three = new Femtoseconds( value: 3 );
 
@@ -91,7 +89,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Femtoseconds ThreeHundredThirtyThree = new Femtoseconds( value: 333 );
 
         /// <summary>
-        ///     Two <see cref="Femtoseconds" />s.
+        ///     Two <see cref="Femtoseconds" /> s.
         /// </summary>
         public static readonly Femtoseconds Two = new Femtoseconds( value: 2 );
 
@@ -115,44 +113,30 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Femtoseconds Zero = new Femtoseconds( value: 0 );
 
-        [DataMember]
-        public readonly Decimal Value;
-
-        static Femtoseconds() {
-            Zero.Should().BeLessThan( One );
-            One.Should().BeGreaterThan( Zero );
-            One.Should().Be( One );
-            One.Should().BeGreaterThan( Attoseconds.One );
-            One.Should().BeLessThan( Picoseconds.One );
-        }
-
         public Femtoseconds( Decimal value ) {
             this.Value = value;
         }
 
-        public Femtoseconds( long value ) {
+        public Femtoseconds( BigRational value ) {
+            this.Value = value;
+        }
+
+        public Femtoseconds( Int64 value ) {
             this.Value = value;
         }
 
         public Femtoseconds( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
-        [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
+        [JsonProperty]
+        public BigRational Value {
+            get;
         }
 
-        public static Femtoseconds Combine( Femtoseconds left, Femtoseconds right ) {
-            return Combine( left, right.Value );
-        }
+        public static Femtoseconds Combine( Femtoseconds left, Femtoseconds right ) => Combine( left, right.Value );
 
-        public static Femtoseconds Combine( Femtoseconds left, Decimal femtoseconds ) {
-            return new Femtoseconds( left.Value + femtoseconds );
-        }
+        public static Femtoseconds Combine( Femtoseconds left, BigRational femtoseconds ) => new Femtoseconds( left.Value + femtoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -160,103 +144,69 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Femtoseconds left, Femtoseconds right ) {
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Femtoseconds left, Femtoseconds right ) => left.Value == right.Value;
 
-        public static implicit operator Attoseconds( Femtoseconds femtoseconds ) {
-            return femtoseconds.ToAttoseconds();
-        }
+        public static implicit operator Attoseconds( Femtoseconds femtoseconds ) => femtoseconds.ToAttoseconds();
 
-        public static implicit operator Picoseconds( Femtoseconds femtoseconds ) {
-            return femtoseconds.ToPicoseconds();
-        }
+        public static implicit operator Picoseconds( Femtoseconds femtoseconds ) => femtoseconds.ToPicoseconds();
 
-        public static implicit operator Span( Femtoseconds femtoseconds ) {
-            var plancks = femtoseconds.ToPlanckTimes();
-            return new Span( plancks );
-        }
+        public static implicit operator Span( Femtoseconds femtoseconds ) => new Span( femtoseconds: femtoseconds );
 
-        public static Femtoseconds operator -( Femtoseconds femtoseconds ) {
-            return new Femtoseconds( femtoseconds.Value * -1 );
-        }
+        public static Femtoseconds operator -( Femtoseconds femtoseconds ) => new Femtoseconds( femtoseconds.Value * -1 );
 
-        public static Femtoseconds operator -( Femtoseconds left, Femtoseconds right ) {
-            return Combine( left, -right );
-        }
+        public static Femtoseconds operator -( Femtoseconds left, Femtoseconds right ) => Combine( left, -right );
 
-        public static Femtoseconds operator -( Femtoseconds left, Decimal femtoseconds ) {
-            return Combine( left, -femtoseconds );
-        }
+        public static Femtoseconds operator -( Femtoseconds left, Decimal femtoseconds ) => Combine( left, -femtoseconds );
 
-        public static Boolean operator !=( Femtoseconds left, Femtoseconds right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Femtoseconds left, Femtoseconds right ) => !Equals( left, right );
 
-        public static Femtoseconds operator +( Femtoseconds left, Femtoseconds right ) {
-            return Combine( left, right );
-        }
+        public static Femtoseconds operator +( Femtoseconds left, Femtoseconds right ) => Combine( left, right );
 
-        public static Femtoseconds operator +( Femtoseconds left, Decimal femtoseconds ) {
-            return Combine( left, femtoseconds );
-        }
+        public static Femtoseconds operator +( Femtoseconds left, Decimal femtoseconds ) => Combine( left, femtoseconds );
 
-        public static Boolean operator <( Femtoseconds left, Femtoseconds right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Femtoseconds left, Femtoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Femtoseconds left, Femtoseconds right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Femtoseconds left, Femtoseconds right ) => Equals( left, right );
 
-        public static Boolean operator >( Femtoseconds left, Femtoseconds right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Femtoseconds left, Femtoseconds right ) => left.Value > right.Value;
 
-        public int CompareTo( Femtoseconds other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public Int32 CompareTo( Femtoseconds other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Femtoseconds other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Femtoseconds other ) => Equals( this, other );
 
-        public override Boolean Equals( [CanBeNull] object obj ) {
+        public override Boolean Equals( [CanBeNull] Object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
             return obj is Femtoseconds && this.Equals( ( Femtoseconds )obj );
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         /// <summary>
         ///     Convert to a smaller unit.
         /// </summary>
         /// <returns></returns>
-        public Attoseconds ToAttoseconds() {
-            return new Attoseconds( this.Value * Attoseconds.InOneFemtosecond );
-        }
+        public Attoseconds ToAttoseconds() => new Attoseconds( this.Value * Attoseconds.InOneFemtosecond );
 
         /// <summary>
         ///     Convert to a larger unit.
         /// </summary>
         /// <returns></returns>
         [Pure]
-        public Picoseconds ToPicoseconds() {
-            return new Picoseconds( this.Value / InOnePicosecond );
-        }
+        public Picoseconds ToPicoseconds() => new Picoseconds( this.Value / InOnePicosecond );
 
         [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneFemtosecond, new BigInteger( this.Value ) );
-        }
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * PlanckTimes.InOneFemtosecond );
 
         [Pure]
         public override String ToString() {
-            return String.Format( "{0} fs", this.Value );
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.GetWholePart();
+                return $"{whole} {whole.PluralOf( "fs" )}";
+            }
+            var dec = ( Decimal )this.Value;
+            return $"{dec} {dec.PluralOf( "fs" )}";
         }
     }
 }

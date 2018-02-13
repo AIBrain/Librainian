@@ -1,39 +1,37 @@
-#region License & Information
-
+// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 //
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Hours.cs" was last cleaned by Rick on 2014/09/02 at 5:11 AM
-
-#endregion License & Information
+// "Librainian/Hours.cs" was last cleaned by Rick on 2016/06/18 at 10:54 PM
 
 namespace Librainian.Measurement.Time {
 
     using System;
     using System.Diagnostics;
     using System.Numerics;
-    using System.Runtime.Serialization;
-    using Annotations;
-    using FluentAssertions;
-    using Librainian.Extensions;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Maths;
+    using Newtonsoft.Json;
+    using Numerics;
     using Parsing;
 
-    [DataContract( IsReference = true )]
-    [DebuggerDisplay( "{DebuggerDisplay,nq}" )]
+    [JsonObject]
+    [DebuggerDisplay( "{ToString(),nq}" )]
     [Immutable]
     public struct Hours : IComparable<Hours>, IQuantityOfTime {
 
@@ -43,14 +41,14 @@ namespace Librainian.Measurement.Time {
         public const Byte InOneDay = 24;
 
         /// <summary>
-        ///     One <see cref="Hours" /> .
-        /// </summary>
-        public static readonly Hours One = new Hours( 1 );
-
-        /// <summary>
         ///     Eight <see cref="Hours" /> .
         /// </summary>
         public static readonly Hours Eight = new Hours( 8 );
+
+        /// <summary>
+        ///     One <see cref="Hours" /> .
+        /// </summary>
+        public static readonly Hours One = new Hours( 1 );
 
         /// <summary>
         /// </summary>
@@ -71,48 +69,32 @@ namespace Librainian.Measurement.Time {
         /// <see cref="http://www.wolframalpha.com/input/?i=converts+1+month+to+hours" />
         public static BigInteger InOneMonth = 730;
 
-        [DataMember]
-        public readonly Decimal Value;
-
-        static Hours() {
-            Zero.Should().BeLessThan( One );
-            One.Should().BeGreaterThan( Zero );
-            One.Should().Be( One );
-            One.Should().BeLessThan( Days.One );
-            One.Should().BeGreaterThan( Minutes.One );
-        }
-
         public Hours( Decimal value ) {
             this.Value = value;
         }
 
-        public Hours( long value ) {
+        public Hours( BigRational value ) {
+            this.Value = value;
+        }
+
+        public Hours( Int64 value ) {
             this.Value = value;
         }
 
         public Hours( BigInteger value ) {
-            value.ThrowIfOutOfDecimalRange();
-            this.Value = ( Decimal )value;
+            this.Value = value;
         }
 
-        [UsedImplicitly]
-        private String DebuggerDisplay {
-            get {
-                return this.ToString();
-            }
+        [JsonProperty]
+        public BigRational Value {
+            get;
         }
 
-        public static Hours Combine( Hours left, Hours right ) {
-            return Combine( left, right.Value );
-        }
+        public static Hours Combine( Hours left, Hours right ) => Combine( left, right.Value );
 
-        public static Hours Combine( Hours left, Decimal hours ) {
-            return new Hours( left.Value + hours );
-        }
+        public static Hours Combine( Hours left, BigRational hours ) => new Hours( left.Value + hours );
 
-        public static Hours Combine( Hours left, BigInteger hours ) {
-            return new Hours( ( BigInteger )left.Value + hours );
-        }
+        public static Hours Combine( Hours left, BigInteger hours ) => new Hours( ( BigInteger )left.Value + hours );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -120,120 +102,80 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Hours left, Hours right ) {
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Hours left, Hours right ) => left.Value == right.Value;
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="hours" /> to <see cref="Days" />.
         /// </summary>
         /// <param name="hours"></param>
         /// <returns></returns>
-        public static implicit operator Days( Hours hours ) {
-            return hours.ToDays();
-        }
+        public static implicit operator Days( Hours hours ) => hours.ToDays();
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="hours" /> to <see cref="Minutes" />.
         /// </summary>
         /// <param name="hours"></param>
         /// <returns></returns>
-        public static implicit operator Minutes( Hours hours ) {
-            return hours.ToMinutes();
-        }
+        public static implicit operator Minutes( Hours hours ) => hours.ToMinutes();
 
-        public static implicit operator Span( Hours hours ) {
-            return new Span( hours );
-        }
+        public static implicit operator Span( Hours hours ) => new Span( hours );
 
-        public static implicit operator TimeSpan( Hours hours ) {
-            return TimeSpan.FromHours( value: ( Double )hours.Value );
-        }
+        public static implicit operator TimeSpan( Hours hours ) => TimeSpan.FromHours( value: ( Double )hours.Value );
 
-        public static Hours operator -( Hours hours ) {
-            return new Hours( hours.Value * -1 );
-        }
+        public static Hours operator -( Hours hours ) => new Hours( hours.Value * -1 );
 
-        public static Hours operator -( Hours left, Hours right ) {
-            return Combine( left: left, right: -right );
-        }
+        public static Hours operator -( Hours left, Hours right ) => Combine( left: left, right: -right );
 
-        public static Hours operator -( Hours left, Decimal hours ) {
-            return Combine( left, -hours );
-        }
+        public static Hours operator -( Hours left, Decimal hours ) => Combine( left, -hours );
 
-        public static Boolean operator !=( Hours left, Hours right ) {
-            return !Equals( left, right );
-        }
+        public static Boolean operator !=( Hours left, Hours right ) => !Equals( left, right );
 
-        public static Hours operator +( Hours left, Hours right ) {
-            return Combine( left, right );
-        }
+        public static Hours operator +( Hours left, Hours right ) => Combine( left, right );
 
-        public static Hours operator +( Hours left, Decimal hours ) {
-            return Combine( left, hours );
-        }
+        public static Hours operator +( Hours left, Decimal hours ) => Combine( left, hours );
 
-        public static Hours operator +( Hours left, BigInteger hours ) {
-            return Combine( left, hours );
-        }
+        public static Hours operator +( Hours left, BigInteger hours ) => Combine( left, hours );
 
-        public static Boolean operator <( Hours left, Hours right ) {
-            return left.Value < right.Value;
-        }
+        public static Boolean operator <( Hours left, Hours right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Hours left, Minutes right ) {
-            return left < ( Hours )right;
-        }
+        public static Boolean operator <( Hours left, Minutes right ) => left < ( Hours )right;
 
-        public static Boolean operator ==( Hours left, Hours right ) {
-            return Equals( left, right );
-        }
+        public static Boolean operator ==( Hours left, Hours right ) => Equals( left, right );
 
-        public static Boolean operator >( Hours left, Minutes right ) {
-            return left > ( Hours )right;
-        }
+        public static Boolean operator >( Hours left, Minutes right ) => left > ( Hours )right;
 
-        public static Boolean operator >( Hours left, Hours right ) {
-            return left.Value > right.Value;
-        }
+        public static Boolean operator >( Hours left, Hours right ) => left.Value > right.Value;
 
-        public int CompareTo( Hours other ) {
-            return this.Value.CompareTo( other.Value );
-        }
+        public Int32 CompareTo( Hours other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Hours other ) {
-            return Equals( this, other );
-        }
+        public Boolean Equals( Hours other ) => Equals( this, other );
 
-        public override Boolean Equals( object obj ) {
+        public override Boolean Equals( Object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
                 return false;
             }
             return obj is Hours && this.Equals( ( Hours )obj );
         }
 
-        public override int GetHashCode() {
-            return this.Value.GetHashCode();
-        }
-
-        public Days ToDays() {
-            return new Days( this.Value / InOneDay );
-        }
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         [Pure]
-        public Minutes ToMinutes() {
-            return new Minutes( this.Value * Minutes.InOneHour );
-        }
+        public Days ToDays() => new Days( this.Value / InOneDay );
 
         [Pure]
-        public BigInteger ToPlanckTimes() {
-            return BigInteger.Multiply( PlanckTimes.InOneHour, new BigInteger( this.Value ) );
-        }
+        public Minutes ToMinutes() => new Minutes( this.Value * Minutes.InOneHour );
+
+        [Pure]
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneHour * this.Value );
 
         [Pure]
         public override String ToString() {
-            return String.Format( "{0} {1}", this.Value, this.Value.PluralOf( "hour" ) );
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.GetWholePart();
+                return $"{whole} {whole.PluralOf( "hour" )}";
+            }
+            var dec = ( Decimal )this.Value;
+            return $"{dec} {dec.PluralOf( "hour" )}";
         }
     }
 }

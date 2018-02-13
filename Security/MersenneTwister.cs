@@ -1,42 +1,46 @@
-﻿namespace Librainian.Security {
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
+// This notice must be kept visible in the source.
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/MersenneTwister.cs" was last cleaned by Rick on 2016/06/18 at 10:56 PM
+
+namespace Librainian.Security {
+
     using System;
 
-    /// <summary>
-    /// Mersenne Twister random number generator; from http://takel.jp/mt/MersenneTwister.cs
-    /// </summary>
-    class MersenneTwister : Random {
+    /// <summary>Mersenne Twister random number generator; from http://takel.jp/mt/MersenneTwister.cs</summary>
+    internal class MersenneTwister : Random {
         /* Period parameters */
-        private const int N = 624;
-        private const int M = 397;
-        private const uint MatrixA = 0x9908b0df; /* constant vector a */
-        private const uint UpperMask = 0x80000000; /* most significant w-r bits */
-        private const uint LowerMask = 0x7fffffff; /* least significant r bits */
-
+        private const UInt32 LowerMask = 0x7fffffff;
+        private const Int32 M = 397;
+        private const UInt32 MatrixA = 0x9908b0df;
+        private const Int32 N = 624;
+        /* constant vector a */
+        private const UInt32 TemperingMaskB = 0x9d2c5680;
+        private const UInt32 TemperingMaskC = 0xefc60000;
+        private const UInt32 UpperMask = 0x80000000; /* most significant w-r bits */
+        /* least significant r bits */
         /* Tempering parameters */
-        private const uint TemperingMaskB = 0x9d2c5680;
-        private const uint TemperingMaskC = 0xefc60000;
-
-        private static uint TEMPERING_SHIFT_U( uint y ) {
-            return ( y >> 11 );
-        }
-        private static uint TEMPERING_SHIFT_S( uint y ) {
-            return ( y << 7 );
-        }
-        private static uint TEMPERING_SHIFT_T( uint y ) {
-            return ( y << 15 );
-        }
-        private static uint TEMPERING_SHIFT_L( uint y ) {
-            return ( y >> 18 );
-        }
-
-        private readonly uint[] _mt = new uint[ N ]; /* the array for the state vector  */
-
-        private short _mti;
-
-        private static readonly uint[] Mag01 = { 0x0, MatrixA };
-
+        private static readonly UInt32[] Mag01 = { 0x0, MatrixA };
+        private readonly UInt32[] _mt = new UInt32[ N ]; /* the array for the state vector  */
+        private Int16 _mti;
         /* initializing the array with a NONZERO seed */
-        public MersenneTwister( uint seed ) {
+
+        public MersenneTwister( UInt32 seed ) {
             /* setting initial seeds to mt[N] using         */
             /* the generator Line 25 of Table 1 in          */
             /* [KNUTH 1981, The Art of Computer Programming */
@@ -47,19 +51,67 @@
             }
         }
 
-        /// <summary>
-        ///  a default initial seed is used 
-        /// </summary>
-        public MersenneTwister()
-            : this( 4357 ) {
+        /// <summary>a default initial seed is used</summary>
+        public MersenneTwister() : this( 4357 ) { }
+
+        public override Int32 Next() => this.Next( Int32.MaxValue );
+
+        public override Int32 Next( Int32 maxValue ) /* throws ArgumentOutOfRangeException */ {
+            if ( maxValue > 1 ) {
+                return ( Int32 )( this.NextDouble() * maxValue );
+            }
+            if ( maxValue < 0 ) {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            return 0;
         }
 
-        protected uint GenerateUInt() {
-            uint y;
+        public override Int32 Next( Int32 minValue, Int32 maxValue ) {
+            if ( maxValue < minValue ) {
+                throw new ArgumentOutOfRangeException();
+            }
+            if ( maxValue == minValue ) {
+                return minValue;
+            }
+            return this.Next( maxValue - minValue ) + minValue;
+        }
+
+        /// <summary></summary>
+        /// <param name="buffer"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public override void NextBytes( Byte[] buffer ) /* throws ArgumentNullException*/ {
+            if ( buffer == null ) {
+                throw new ArgumentNullException();
+            }
+
+            var bufLen = buffer.Length;
+
+            for ( var idx = 0; idx < bufLen; ++idx ) {
+                buffer[ idx ] = ( Byte )this.Next( 256 );
+            }
+        }
+
+        public override Double NextDouble() => ( Double )this.GenerateUInt() / ( ( UInt64 )UInt32.MaxValue + 1 );
+
+        public virtual UInt32 NextUInt() => this.GenerateUInt();
+
+        public virtual UInt32 NextUInt( UInt32 maxValue ) => ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / maxValue ) );
+
+        public virtual UInt32 NextUInt( UInt32 minValue, UInt32 maxValue ) /* throws ArgumentOutOfRangeException */ {
+            if ( minValue >= maxValue ) {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            return ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / ( maxValue - minValue ) ) + minValue );
+        }
+
+        protected UInt32 GenerateUInt() {
+            UInt32 y;
 
             /* mag01[x] = x * MATRIX_A  for x=0,1 */
             if ( this._mti >= N ) /* generate N words at one time */ {
-                short kk = 0;
+                Int16 kk = 0;
 
                 for ( ; kk < N - M; ++kk ) {
                     y = ( this._mt[ kk ] & UpperMask ) | ( this._mt[ kk + 1 ] & LowerMask );
@@ -86,69 +138,12 @@
             return y;
         }
 
-        public virtual uint NextUInt() {
-            return this.GenerateUInt();
-        }
+        private static UInt32 TEMPERING_SHIFT_L( UInt32 y ) => y >> 18;
 
-        public virtual uint NextUInt( uint maxValue ) {
-            return ( uint )( this.GenerateUInt() / ( ( Double )uint.MaxValue / maxValue ) );
-        }
+        private static UInt32 TEMPERING_SHIFT_S( UInt32 y ) => y << 7;
 
-        public virtual uint NextUInt( uint minValue, uint maxValue ) /* throws ArgumentOutOfRangeException */
-        {
-            if ( minValue >= maxValue ) {
-                throw new ArgumentOutOfRangeException();
-            }
+        private static UInt32 TEMPERING_SHIFT_T( UInt32 y ) => y << 15;
 
-            return ( uint )( this.GenerateUInt() / ( ( Double )uint.MaxValue / ( maxValue - minValue ) ) + minValue );
-        }
-
-        public override int Next() {
-            return this.Next( int.MaxValue );
-        }
-
-        public override int Next( int maxValue ) /* throws ArgumentOutOfRangeException */
-        {
-            if ( maxValue > 1 ) {
-                return ( int ) ( this.NextDouble()*maxValue );
-            }
-            if ( maxValue < 0 ) {
-                throw new ArgumentOutOfRangeException();
-            }
-
-            return 0;
-        }
-
-        public override int Next( int minValue, int maxValue ) {
-            if ( maxValue < minValue ) {
-                throw new ArgumentOutOfRangeException();
-            }
-            if ( maxValue == minValue ) {
-                return minValue;
-            }
-            return this.Next( maxValue - minValue ) + minValue;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public override void NextBytes( byte[] buffer ) /* throws ArgumentNullException*/
-        {
-            if ( buffer == null ) {
-                throw new ArgumentNullException();
-            }
-
-            var bufLen = buffer.Length;
-
-            for ( var idx = 0; idx < bufLen; ++idx ) {
-                buffer[ idx ] = ( byte )this.Next( 256 );
-            }
-        }
-
-        public override Double NextDouble() {
-            return ( Double )this.GenerateUInt() / ( ( ulong )uint.MaxValue + 1 );
-        }
+        private static UInt32 TEMPERING_SHIFT_U( UInt32 y ) => y >> 11;
     }
 }

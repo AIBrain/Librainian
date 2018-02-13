@@ -1,67 +1,73 @@
-﻿#region License & Information
+﻿// Copyright 2016 Rick@AIBrain.org.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified,
-// or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
-// 
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// bitcoin:1NzEsF7eegeEWDr5Vr9sSSgtUC4aL6axJu
-// litecoin:LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
-// Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
-// 
-// "Librainian/TreeNode.cs" was last cleaned by Rick on 2014/08/11 at 12:37 AM
-#endregion
+//
+// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// original license has been overwritten by the automatic formatting of this code. Any unmodified
+// sections of source code borrowed from other projects retain their original license and thanks
+// goes to the Authors.
+//
+// Donations and royalties can be paid via
+//  PayPal: paypal@aibrain.org
+//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//
+// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+//
+// Contact me by email if you have any questions or helpful criticism.
+//
+// "Librainian/TreeNode.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
 
 namespace Librainian.Collections {
-    using System;
-    using Annotations;
 
-    /// <summary>
-    ///     http: //dvanderboom.wordpress.com/2008/03/15/treet-implementing-a-non-binary-tree-in-c/
-    /// </summary>
+    using System;
+    using JetBrains.Annotations;
+    using Magic;
+
+    /// <summary>http: //dvanderboom.wordpress.com/2008/03/15/treet-implementing-a-non-binary-tree-in-c/</summary>
     /// <typeparam name="T"></typeparam>
-    public class TreeNode< T > : IDisposable {
-        private TreeTraversalType _disposeTraversal = TreeTraversalType.BottomUp;
-        private TreeNode< T > _parent;
+    public class TreeNode<T> : ABetterClassDispose {
+        private TreeNode<T> _parent;
         private T _value;
 
         public TreeNode( T value ) {
             this.Value = value;
             this.Parent = null;
-            this.Children = new TreeNodeList< T >( this );
+            this.Children = new TreeNodeList<T>( this );
         }
 
-        public TreeNode( T value, [NotNull] TreeNode< T > parent ) {
+        public TreeNode( T value, [NotNull] TreeNode<T> parent ) {
             if ( parent == null ) {
-                throw new ArgumentNullException( "parent" );
+                throw new ArgumentNullException( nameof( parent ) );
             }
             this.Value = value;
             this.Parent = parent;
-            this.Children = new TreeNodeList< T >( this );
+            this.Children = new TreeNodeList<T>( this );
         }
 
-        public TreeNodeList< T > Children { get; private set; }
+        public event EventHandler Disposing;
 
-        public TreeTraversalType DisposeTraversal { get { return this._disposeTraversal; } set { this._disposeTraversal = value; } }
+        public TreeNodeList<T> Children {
+            get;
+        }
 
-        public Boolean IsDisposed { get; private set; }
+        public TreeTraversalType DisposeTraversal { get; } = TreeTraversalType.BottomUp;
 
-        public TreeNode< T > Parent {
-            get { return this._parent; }
+        public Boolean IsDisposed {
+            get; private set;
+        }
+
+        public TreeNode<T> Parent {
+            get {
+                return this._parent;
+            }
 
             set {
                 if ( value == this._parent ) {
                     return;
                 }
 
-                if ( this._parent != null ) {
-                    this._parent.Children.Remove( this );
-                }
+                this._parent?.Children.Remove( this );
 
                 if ( value != null && !value.Children.Contains( this ) ) {
                     value.Children.Add( this );
@@ -71,8 +77,9 @@ namespace Librainian.Collections {
             }
         }
 
-        public TreeNode< T > Root {
+        public TreeNode<T> Root {
             get {
+
                 //return (Parent == null) ? this : Parent.Root;
 
                 var node = this;
@@ -84,18 +91,29 @@ namespace Librainian.Collections {
         }
 
         public T Value {
-            get { return this._value; }
+            get {
+                return this._value;
+            }
 
             set {
                 this._value = value;
 
-                if ( this._value is ITreeNodeAware< T > ) {
-                    ( this._value as ITreeNodeAware< T > ).Node = this;
+                if ( this._value is ITreeNodeAware<T> ) {
+                    ( this._value as ITreeNodeAware<T> ).Node = this;
                 }
             }
         }
 
-        public void Dispose() {
+        public void CheckDisposed() {
+            if ( this.IsDisposed ) {
+                throw new ObjectDisposedException( this.GetType().Name );
+            }
+        }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() {
             this.CheckDisposed();
             this.OnDisposing();
 
@@ -119,18 +137,8 @@ namespace Librainian.Collections {
             this.IsDisposed = true;
         }
 
-        public event EventHandler Disposing;
-
-        public void CheckDisposed() {
-            if ( this.IsDisposed ) {
-                throw new ObjectDisposedException( this.GetType().Name );
-            }
-        }
-
         protected void OnDisposing() {
-            if ( this.Disposing != null ) {
-                this.Disposing( this, EventArgs.Empty );
-            }
+            this.Disposing?.Invoke( this, EventArgs.Empty );
         }
     }
 }
