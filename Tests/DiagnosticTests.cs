@@ -18,7 +18,7 @@
 //
 // "Librainian/DiagnosticTests.cs" was last cleaned by Rick on 2016/06/18 at 10:58 PM
 
-namespace Tests {
+namespace LibrainianTests {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;

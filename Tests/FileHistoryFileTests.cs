@@ -17,7 +17,7 @@
 //  
 // "Librainian Tests/FileHistoryFileTests.cs" was last cleaned by Rick on 2015/11/13 at 11:30 PM
 
-namespace Tests {
+namespace LibrainianTests {
     using System;
     using System.Globalization;
     using FluentAssertions;

@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librainian", "Librainian.csproj", "{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibrainianTests", "Tests\LibrainianTests.csproj", "{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

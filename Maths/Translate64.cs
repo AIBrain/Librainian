@@ -16,7 +16,7 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/Translate64.cs" was last cleaned by Rick on 2018/02/08 at 3:01 AM
+// "Librainian/Translate64.cs" was last cleaned by Rick on 2018/02/23 at 6:14 PM
 
 namespace Librainian.Maths {
 	using System;
@@ -46,14 +46,31 @@ namespace Librainian.Maths {
 		[FieldOffset( offset: sizeof( Int32 ) )]
 		public Int32 SignedHigh;
 
-		public Translate64( Int32 signedHigh, Int32 signedLow ) : this() {
+		public Translate64( Int32 signedHigh, Int32 signedLow ) {
+			this.SignedValue = 0;
+			this.UnsignedLow = 0;
+			this.UnsignedHigh = 0;
 			this.UnsignedValue = UInt64.MaxValue;
 			this.SignedHigh = signedHigh;
 			this.SignedLow = signedLow;
 		}
 
-		public Translate64( UInt64 unsignedValue ) : this() => this.UnsignedValue = unsignedValue;
+		public Translate64( UInt64 unsignedValue ) {
+			this.SignedHigh = default;
+			this.SignedLow = default;
+			this.SignedValue = default;
+			this.UnsignedLow = default;
+			this.UnsignedHigh = default;
+			this.UnsignedValue = unsignedValue;
+		}
 
-		public Translate64( Int64 signedValue ) : this() => this.SignedValue = signedValue;
+		public Translate64( Int64 signedValue ) {
+			this.UnsignedValue = default;
+			this.UnsignedLow = default;
+			this.UnsignedHigh = default;
+			this.SignedLow = default;
+			this.SignedHigh = default;
+			this.SignedValue = signedValue;
+		}
 	}
 }

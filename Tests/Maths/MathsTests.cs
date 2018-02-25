@@ -18,7 +18,7 @@
 // 
 // "Librainian Tests/MathsTests.cs" was last cleaned by Rick on 2016/04/08 at 6:39 PM
 
-namespace Tests.Maths {
+namespace LibrainianTests.Maths {
     using System.Numerics;
     using FluentAssertions;
     using Librainian.Maths;

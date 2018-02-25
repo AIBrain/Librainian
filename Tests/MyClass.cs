@@ -18,7 +18,7 @@
 // 
 // "Librainian Tests/MyClass.cs" was last cleaned by Rick on 2016/02/02 at 10:10 PM
 
-namespace Tests {
+namespace LibrainianTests {
     using System;
     using System.IO;
     using System.Runtime.CompilerServices;

@@ -1,4 +1,4 @@
-﻿namespace Tests.Linguistics {
+﻿namespace LibrainianTests.Linguistics {
     using System;
     using System.Linq;
     using FluentAssertions;
