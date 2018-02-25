@@ -39,13 +39,13 @@ namespace Librainian.Extensions {
 	/// <remarks>I just love guids!</remarks>
 	public static class GuidExtensions {
 
-		[ StructLayout( layoutKind: LayoutKind.Explicit ) ]
+		[StructLayout( layoutKind: LayoutKind.Explicit )]
 		public struct DecimalGuidConverter {
 
-			[ FieldOffset( 0 ) ]
+			[FieldOffset( 0 )]
 			public Decimal Decimal;
 
-			[ FieldOffset( 0 ) ]
+			[FieldOffset( 0 )]
 			public Guid Guid;
 
 		}
@@ -53,29 +53,22 @@ namespace Librainian.Extensions {
 		/// <summary>
 		///     I don't think this works the way I originally intended. Don't use it.
 		/// </summary>
-		[ StructLayout( layoutKind: LayoutKind.Explicit ) ]
-		public struct GuidMergerUInt64 {
+		[StructLayout( layoutKind: LayoutKind.Explicit )]
+		public struct GuidUnionUInt64 {
 
-			[ FieldOffset( 0 ) ] // bytes 0..15 == 16 bytes
+			[FieldOffset( 0 )] // bytes 0..15 == 16 bytes
 			public Guid guid;
 
-			[ FieldOffset( 0 ) ]
-			public readonly UInt64 lowest;
+			[FieldOffset( 0 )]
+			public readonly UInt64 Low;
 
-			[ FieldOffset( offset: sizeof( UInt64 ) ) ]
-			public readonly UInt64 center;
+			[FieldOffset( sizeof( UInt64 ) )]
+			public readonly UInt64 High;
 
-			[ FieldOffset( offset: sizeof( UInt64 ) + sizeof( UInt64 ) ) ] //8+8=16 == sizeof(Guid)
-			public readonly UInt64 highest;
-
-			public GuidMergerUInt64( UInt64 most, UInt64 middle, UInt64 least ) {
+			public GuidUnionUInt64( UInt64 high, UInt64 low ) {
 				this.guid = Guid.Empty;
-				this.lowest = least;
-				this.highest = most;
-				this.center = middle;
-				if ( most != 0 || middle != 0 || least != 0 ) {
-					this.guid.Should().NotBeEmpty();
-				}
+				this.Low = low;
+				this.High = high;
 			}
 
 		}
@@ -95,9 +88,9 @@ namespace Librainian.Extensions {
 				return Guid.Empty;
 			}
 
-			var b = new Byte[ s.Count ];
+			var b = new Byte[s.Count];
 			for ( var i = 0; i < s.Count; i++ ) {
-				b[ i ] = Convert.ToByte( value: s[ i ] );
+				b[i] = Convert.ToByte( value: s[i] );
 			}
 
 			try {
@@ -134,7 +127,7 @@ namespace Librainian.Extensions {
 		/// <remarks>Original code at https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=94072</remarks>
 		public static Boolean IsGuid( this String s ) {
 			if ( s == null ) {
-				throw new ArgumentNullException( paramName: nameof(s) );
+				throw new ArgumentNullException( paramName: nameof( s ) );
 			}
 
 			var match = InGuidFormat.Match( input: s );
@@ -150,7 +143,7 @@ namespace Librainian.Extensions {
 		/// <returns></returns>
 		public static Guid Munge( this Guid left, Guid right ) {
 			const Int32 bytecount = 16;
-			var destByte = new Byte[ bytecount ];
+			var destByte = new Byte[bytecount];
 			var lhsBytes = left.ToByteArray();
 			var rhsBytes = right.ToByteArray();
 			Assert.AreEqual( expected: lhsBytes.Length, actual: destByte.Length );
@@ -158,7 +151,7 @@ namespace Librainian.Extensions {
 
 			for ( var i = 0; i < bytecount; i++ ) {
 				unchecked {
-					destByte[ i ] = ( Byte )( lhsBytes[ i ] ^ rhsBytes[ i ] );
+					destByte[i] = ( Byte )( lhsBytes[i] ^ rhsBytes[i] );
 				}
 			}
 
@@ -219,13 +212,13 @@ namespace Librainian.Extensions {
 				var year = BitConverter.ToInt32( value: bytes, startIndex: 0 );
 				var dayofYear = BitConverter.ToUInt16( value: bytes, startIndex: 4 );
 				var millisecond = BitConverter.ToUInt16( value: bytes, startIndex: 6 );
-				var dayofweek = ( DayOfWeek )bytes[ 8 ];
-				var day = bytes[ 9 ];
-				var hour = bytes[ 10 ];
-				var minute = bytes[ 11 ];
-				var second = bytes[ 12 ];
-				var month = bytes[ 13 ];
-				var kind = ( DateTimeKind )bytes[ 15 ];
+				var dayofweek = ( DayOfWeek )bytes[8];
+				var day = bytes[9];
+				var hour = bytes[10];
+				var minute = bytes[11];
+				var second = bytes[12];
+				var month = bytes[13];
+				var kind = ( DateTimeKind )bytes[15];
 				var result = new DateTime( year: year, month: month, day: day, hour: hour, minute: minute, second: second, millisecond: millisecond, kind: kind );
 				Assert.AreEqual( expected: result.DayOfYear, actual: dayofYear );
 				Assert.AreEqual( expected: result.DayOfWeek, actual: dayofweek );
@@ -305,12 +298,12 @@ namespace Librainian.Extensions {
 		/// <param name="leastImportantbits">   </param>
 		/// <returns></returns>
 		public static Guid ToGuid( this UInt64 mostImportantbits, UInt64 somewhatImportantbits, UInt64 leastImportantbits ) {
-			var guidMerger = new GuidMergerUInt64( most: mostImportantbits, middle: somewhatImportantbits, least: leastImportantbits );
+			var guidMerger = new GuidUnionUInt64( high: mostImportantbits, low: leastImportantbits );
 			return guidMerger.guid;
 		}
 
-		public static Guid ToGuid( this Tuple< UInt64, UInt64, UInt64 > tuple ) {
-			var guidMerger = new GuidMergerUInt64( most: tuple.Item1, middle: tuple.Item2, least: tuple.Item3 );
+		public static Guid ToGuid( this Tuple<UInt64, UInt64, UInt64> tuple ) {
+			var guidMerger = new GuidUnionUInt64( high: tuple.Item1, low: tuple.Item3 );
 			return guidMerger.guid;
 		}
 
@@ -324,9 +317,13 @@ namespace Librainian.Extensions {
 		/// <seealso cref="FromPath" />
 		public static DirectoryInfo ToPath( this Guid guid, Boolean reversed = false ) {
 			var a = guid.ToByteArray();
-			return new DirectoryInfo( path: reversed ? Path.Combine( a[ 15 ].ToString(), a[ 14 ].ToString(), a[ 13 ].ToString(), a[ 12 ].ToString(), a[ 11 ].ToString(), a[ 10 ].ToString(), a[ 9 ].ToString(), a[ 8 ].ToString(), a[ 7 ].ToString(), a[ 6 ].ToString(), a[ 5 ].ToString(), a[ 4 ].ToString(), a[ 3 ].ToString(), a[ 2 ].ToString(), a[ 1 ].ToString(), a[ 0 ].ToString() ) : Path.Combine( a[ 0 ].ToString(), a[ 1 ].ToString(), a[ 2 ].ToString(), a[ 3 ].ToString(), a[ 4 ].ToString(), a[ 5 ].ToString(), a[ 6 ].ToString(), a[ 7 ].ToString(), a[ 8 ].ToString(), a[ 9 ].ToString(), a[ 10 ].ToString(), a[ 11 ].ToString(), a[ 12 ].ToString(), a[ 13 ].ToString(), a[ 14 ].ToString(), a[ 15 ].ToString() ) );
+			if ( reversed ) {
+				var pathReversed = Path.Combine( a[ 15 ].ToString(), a[ 14 ].ToString(), a[ 13 ].ToString(), a[ 12 ].ToString(), a[ 11 ].ToString(), a[ 10 ].ToString(), a[ 9 ].ToString(), a[ 8 ].ToString(), a[ 7 ].ToString(), a[ 6 ].ToString(), a[ 5 ].ToString(), a[ 4 ].ToString(), a[ 3 ].ToString(), a[ 2 ].ToString(), a[ 1 ].ToString(), a[ 0 ].ToString() );
+				return new DirectoryInfo( path: pathReversed );
+			}
 
-			//return guid.ToString( "D" ).Substring( 0, 4 ).Aggregate( String.Empty, ( current, ch ) => current + ( ch + "/" ) );
+			var pathNormal = Path.Combine( a[ 0 ].ToString(), a[ 1 ].ToString(), a[ 2 ].ToString(), a[ 3 ].ToString(), a[ 4 ].ToString(), a[ 5 ].ToString(), a[ 6 ].ToString(), a[ 7 ].ToString(), a[ 8 ].ToString(), a[ 9 ].ToString(), a[ 10 ].ToString(), a[ 11 ].ToString(), a[ 12 ].ToString(), a[ 13 ].ToString(), a[ 14 ].ToString(), a[ 15 ].ToString() );
+			return new DirectoryInfo( path: pathNormal );
 		}
 
 		/// <summary>
