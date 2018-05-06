@@ -151,7 +151,7 @@ namespace Librainian.Persistence {
 			var document = this.Document;
 
 			return Task.Run( () => {
-								 if ( document == null ) {
+								 if ( document is null ) {
 									 return false;
 								 }
 								 if ( !document.Exists() ) {
@@ -160,7 +160,7 @@ namespace Librainian.Persistence {
 
 								 try {
 									 var data = document.LoadJSON< ConcurrentDictionary< String, ConcurrentDictionary< String, String > > >();
-									 if ( data == null ) {
+									 if ( data is null ) {
 										 return false;
 									 }
 
@@ -193,7 +193,7 @@ namespace Librainian.Persistence {
 
 		[ DebuggerStepThrough ]
 		public Boolean TryRemove( String section ) {
-			if ( section == null ) {
+			if ( section is null ) {
 				throw new ArgumentNullException( nameof( section ) );
 			}
 			return this.Data.TryRemove( section, out var dict );
@@ -201,7 +201,7 @@ namespace Librainian.Persistence {
 
 		[ DebuggerStepThrough ]
 		public Boolean TryRemove( String section, String key ) {
-			if ( section == null ) {
+			if ( section is null ) {
 				throw new ArgumentNullException( nameof( section ) );
 			}
 			if ( !this.Data.ContainsKey( section ) ) {
@@ -220,7 +220,7 @@ namespace Librainian.Persistence {
 			var document = this.Document;
 
 			return Task.Run( () => {
-								 if ( document == null ) {
+								 if ( document is null ) {
 									 return false;
 								 }
 

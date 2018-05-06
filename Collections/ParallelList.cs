@@ -426,7 +426,7 @@ namespace Librainian.Collections {
         /// <param name="array"></param>
         /// <param name="arrayIndex"></param>
         public void CopyTo( TType[] array, Int32 arrayIndex ) {
-            if ( array == null ) {
+            if ( array is null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
             this.Read( () => {

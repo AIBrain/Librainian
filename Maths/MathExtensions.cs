@@ -1321,7 +1321,7 @@ namespace Librainian.Maths {
         public static Double SigmoidNeg1To1( this Double value ) => 1.0D - 2.0D / ( 1.0D + Math.Exp( d: value ) );
 
         public static Double Slope( [NotNull] this List<TimeProgression> data ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( paramName: nameof( data ) );
             }
 
@@ -1820,7 +1820,7 @@ namespace Librainian.Maths {
         public static UInt64? ToUInt64( this String text ) => UInt64.TryParse( s: text, result: out var result ) ? ( UInt64? )result : null;
 
         public static String ToHex( this IEnumerable<Byte> input ) {
-            if ( input == null ) {
+            if ( input is null ) {
                 throw new ArgumentNullException( paramName: nameof( input ) );
             }
 

@@ -1,22 +1,19 @@
-// Copyright 2016 Rick@AIBrain.org.
+// Copyright 2018 Protiguous
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Crc64.cs" was last cleaned by Rick on 2016/06/18 at 10:56 PM
+// "Librainian/Crc64.cs" was last cleaned by Rick on 2018/05/06 at 2:22 PM
 
 namespace Librainian.Security {
 
@@ -35,7 +32,7 @@ namespace Librainian.Security {
         private UInt64 _hash;
 
         public Crc64( UInt64 polynomial, UInt64 seed = DefaultSeed ) {
-            this._table = InitializeTable( polynomial );
+            this._table = InitializeTable( polynomial: polynomial );
             this._seed = this._hash = seed;
         }
 
@@ -48,7 +45,7 @@ namespace Librainian.Security {
 
             for ( var i = start; i < size; i++ ) {
                 unchecked {
-                    crc = ( crc >> 8 ) ^ table[ ( buffer[ i ] ^ crc ) & 0xff ];
+                    crc = ( crc >> 8 ) ^ table[( buffer[index: i] ^ crc ) & 0xff];
                 }
             }
 
@@ -56,7 +53,7 @@ namespace Librainian.Security {
         }
 
         protected static UInt64[] CreateTable( UInt64 polynomial ) {
-            var createTable = new UInt64[ 256 ];
+            var createTable = new UInt64[256];
             for ( var i = 0; i < 256; ++i ) {
                 var entry = ( UInt64 )i;
                 for ( var j = 0; j < 8; ++j ) {
@@ -67,15 +64,17 @@ namespace Librainian.Security {
                         entry = entry >> 1;
                     }
                 }
-                createTable[ i ] = entry;
+
+                createTable[i] = entry;
             }
+
             return createTable;
         }
 
-        protected override void HashCore( Byte[] buffer, Int32 start, Int32 length ) => this._hash = CalculateHash( this._hash, this._table, buffer, start, length );
+        protected override void HashCore( Byte[] buffer, Int32 start, Int32 length ) => this._hash = CalculateHash( seed: this._hash, table: this._table, buffer: buffer, start: start, size: length );
 
         protected override Byte[] HashFinal() {
-            var hashBuffer = UInt64ToBigEndianBytes( this._hash );
+            var hashBuffer = UInt64ToBigEndianBytes( value: this._hash );
             this.HashValue = hashBuffer;
             return hashBuffer;
         }
@@ -85,7 +84,7 @@ namespace Librainian.Security {
                 return Crc64Iso.Table;
             }
 
-            var createTable = CreateTable( polynomial );
+            var createTable = CreateTable( polynomial: polynomial );
 
             if ( polynomial == Crc64Iso.Iso3309Polynomial ) {
                 Crc64Iso.Table = createTable;
@@ -95,10 +94,10 @@ namespace Librainian.Security {
         }
 
         private static Byte[] UInt64ToBigEndianBytes( UInt64 value ) {
-            var result = BitConverter.GetBytes( value );
+            var result = BitConverter.GetBytes( value: value );
 
             if ( BitConverter.IsLittleEndian ) {
-                Array.Reverse( result );
+                Array.Reverse( array: result );
             }
 
             return result;

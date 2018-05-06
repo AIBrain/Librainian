@@ -139,7 +139,7 @@ namespace Librainian.Persistence {
 
         [DebuggerStepThrough]
         public Boolean TryRemove( TKey key ) {
-            if ( key == null ) {
+            if ( key is null ) {
                 throw new ArgumentNullException( paramName: nameof( key ) );
             }
 

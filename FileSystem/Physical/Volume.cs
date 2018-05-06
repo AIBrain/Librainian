@@ -27,11 +27,11 @@ namespace Librainian.FileSystem.Physical {
                 throw new ArgumentException();
             }
 
-            if ( this.GetLogicalDrive() == null ) {
+            if ( this.GetLogicalDrive() is null ) {
                 return 1;
             }
 
-            if ( device.GetLogicalDrive() == null ) {
+            if ( device.GetLogicalDrive() is null ) {
                 return -1;
             }
 
@@ -81,7 +81,7 @@ namespace Librainian.FileSystem.Physical {
         ///     Gets a list of underlying disks for this volume.
         /// </summary>
         public IEnumerable<Device> GetDisks() {
-            if ( this.GetDiskNumbers() == null ) {
+            if ( this.GetDiskNumbers() is null ) {
                 yield break;
             }
 
@@ -112,7 +112,7 @@ namespace Librainian.FileSystem.Physical {
         ///     Gets a list of removable devices for this volume.
         /// </summary>
         public override IEnumerable<Device> GetRemovableDevices() {
-            if ( this.GetDisks() == null ) {
+            if ( this.GetDisks() is null ) {
                 foreach ( var removableDevice in base.GetRemovableDevices() ) {
                     yield return removableDevice;
                 }

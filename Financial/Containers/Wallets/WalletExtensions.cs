@@ -55,7 +55,7 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <remarks>Performs locks on the internal tables.</remarks>
         /// <returns>Returns the new quantity.</returns>
         public static Boolean Deposit( [NotNull] this Wallet wallet, TransactionMessage message ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
 			if ( message.Denomination is IBankNote bankNote ) {
@@ -76,7 +76,7 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <param name="bankNotes"></param>
         /// <param name="coins"></param>
         public static void Deposit( [NotNull] this Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IBankNote, UInt64>> bankNotes = null, IEnumerable<KeyValuePair<ICoin, UInt64>> coins = null ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
             bankNotes = bankNotes ?? Enumerable.Empty<KeyValuePair<IBankNote, UInt64>>();
@@ -91,14 +91,14 @@ namespace Librainian.Financial.Containers.Wallets {
         }
 
         public static void Fund( [NotNull] this Wallet wallet, [CanBeNull] params KeyValuePair<IDenomination, UInt64>[] sourceAmounts ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
             wallet.Fund( sourceAmounts.AsEnumerable() );
         }
 
         public static void Fund( [NotNull] this Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IDenomination, UInt64>> sourceAmounts ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
             if ( null == sourceAmounts ) {
@@ -115,7 +115,7 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <param name="amount"></param>
         /// <returns></returns>
         public static async Task<Decimal> Fund( [NotNull] this Wallet wallet, Decimal amount ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
             var leftOverFund = Decimal.Zero;
@@ -131,7 +131,7 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
         public static async Task StartDeposit( [NotNull] Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IDenomination, UInt64>> sourceAmounts ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
             sourceAmounts = sourceAmounts ?? Enumerable.Empty<KeyValuePair<IDenomination, UInt64>>();
@@ -189,10 +189,10 @@ namespace Librainian.Financial.Containers.Wallets {
         }
 
         public static IEnumerable<KeyValuePair<IDenomination, UInt64>> Transfer( [NotNull] this Wallet source, [NotNull] Wallet target ) {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
-            if ( target == null ) {
+            if ( target is null ) {
                 throw new ArgumentNullException( nameof( target ) );
             }
 
@@ -220,30 +220,30 @@ namespace Librainian.Financial.Containers.Wallets {
         }
 
         public static Boolean Transfer( [NotNull] this Wallet source, [NotNull] Wallet target, KeyValuePair<IDenomination, UInt64> denominationAndAmount ) {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
-            if ( target == null ) {
+            if ( target is null ) {
                 throw new ArgumentNullException( nameof( target ) );
             }
             return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) && target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value );
         }
 
         public static Boolean Transfer( [NotNull] this Wallet source, [NotNull] Wallet target, KeyValuePair<IBankNote, UInt64> denominationAndAmount ) {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
-            if ( target == null ) {
+            if ( target is null ) {
                 throw new ArgumentNullException( nameof( target ) );
             }
             return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) && target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value );
         }
 
         public static Boolean Transfer( [NotNull] this Wallet source, [NotNull] Wallet target, KeyValuePair<ICoin, UInt64> denominationAndAmount ) {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
-            if ( target == null ) {
+            if ( target is null ) {
                 throw new ArgumentNullException( nameof( target ) );
             }
             return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) && target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value ) > 0m;
@@ -256,7 +256,7 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
         public static Task Transfer( [NotNull] Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IDenomination, UInt64>> sourceAmounts ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
             var block = new ActionBlock<KeyValuePair<IDenomination, UInt64>>( pair => wallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeSensible );

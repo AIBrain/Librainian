@@ -71,7 +71,7 @@ namespace Librainian.Parsing {
         /// <summary>Append the <paramref name="text" /> to the current sentence buffer.</summary>
         /// <returns></returns>
         public ContinuousSentence Add( [CanBeNull] String text ) {
-            if ( text == null ) {
+            if ( text is null ) {
                 text = String.Empty;
             }
             this.CurrentBuffer += text;

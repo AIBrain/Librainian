@@ -43,7 +43,7 @@ namespace Librainian.Persistence {
             try {
                 var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPathWithFileName );
                 var settings = configFile.AppSettings.Settings;
-                if ( settings[ key ] == null ) {
+                if ( settings[ key ] is null ) {
                     settings.Add( key, value );
                 }
                 else {

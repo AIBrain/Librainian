@@ -40,7 +40,7 @@ namespace Librainian.Threading {
         }
 
         public static Task Start( CancellationToken cancellationToken, Action blockingWork, Action beginWork = null, Action<Task> afterComplete = null ) {
-            if ( blockingWork == null ) {
+            if ( blockingWork is null ) {
                 throw new ArgumentNullException( nameof( blockingWork ) );
             }
 

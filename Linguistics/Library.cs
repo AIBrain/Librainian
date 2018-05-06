@@ -64,10 +64,10 @@ namespace Librainian.Linguistics {
         }
 
         public Boolean Add( [ NotNull ] UDC udc, [NotNull] Book book ) {
-            if ( udc == null ) {
+            if ( udc is null ) {
                 throw new ArgumentNullException( nameof( udc ) );
             }
-            if ( book == null ) {
+            if ( book is null ) {
                 throw new ArgumentNullException( nameof( book ) );
             }
 

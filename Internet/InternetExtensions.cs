@@ -18,6 +18,8 @@
 //
 // "Librainian/InternetExtensions.cs" was last cleaned by Rick on 2016/08/15 at 4:59 PM
 
+using JetBrains.Annotations;
+
 namespace Librainian.Internet {
 
     using System;
@@ -34,17 +36,17 @@ namespace Librainian.Internet {
     public static class InternetExtensions {
 
         public static async Task<TextReader> DoRequestAsync( this WebRequest request ) {
-            if ( request == null ) {
+            if ( request is null ) {
                 throw new ArgumentNullException( nameof( request ) );
             }
 
-            var result = await Task.Factory.FromAsync( ( asyncCallback, state ) => ( ( HttpWebRequest )state ).BeginGetResponse( asyncCallback, state ), asyncResult => ( ( HttpWebRequest )asyncResult.AsyncState ).EndGetResponse( asyncResult ), request );
+            var result = await Task.Factory.FromAsync((asyncCallback, state) => ((HttpWebRequest) state).BeginGetResponse(asyncCallback, state), asyncResult => ((HttpWebRequest) asyncResult.AsyncState).EndGetResponse(asyncResult), request);
             var stream = result.GetResponseStream();
             return stream != null ? new StreamReader( stream ) : TextReader.Null;
         }
 
         public static async Task<TextReader> DoRequestAsync( this Uri uri ) {
-            if ( uri == null ) {
+            if ( uri is null ) {
                 throw new ArgumentNullException( nameof( uri ) );
             }
 
@@ -56,7 +58,7 @@ namespace Librainian.Internet {
         }
 
         public static async Task<T> DoRequestJsonAsync<T>( this WebRequest request ) {
-            if ( request == null ) {
+            if ( request is null ) {
                 throw new ArgumentNullException( nameof( request ) );
             }
 
@@ -93,6 +95,7 @@ namespace Librainian.Internet {
             return JObject.Parse( content );
         }
 
+        [CanBeNull]
         public static String GetWebPage( this String url ) {
             try {
                 var request = WebRequest.Create( url );
@@ -121,12 +124,12 @@ namespace Librainian.Internet {
             return null;
         }
 
-        public static async Task<String> GetWebPageAsync( this Uri url ) {
+        public static async Task<String> GetWebPageAsync( this Uri uri ) {
             try {
-                var request = WebRequest.Create( url );
+                var request = WebRequest.Create( uri );
                 request.Proxy = null;
                 request.Credentials = CredentialCache.DefaultCredentials;
-                using ( var response = await request.GetResponseAsync() ) {
+                using ( var response = await request.GetResponseAsync().ConfigureAwait(false) ) {
                     using ( var dataStream = response.GetResponseStream() ) {
                         if ( dataStream != null ) {
                             using ( var reader = new StreamReader( dataStream ) ) {
@@ -138,7 +141,7 @@ namespace Librainian.Internet {
                 }
             }
             catch {
-                $"Unable to connect to {url}.".Error();
+                $"Unable to connect to {uri}.".Error();
             }
 
             return null;

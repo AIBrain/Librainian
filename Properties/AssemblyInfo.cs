@@ -25,7 +25,7 @@ using System.Runtime.InteropServices;
 // Change these attribute values to modify the information associated with an assembly.
 
 [assembly: AssemblyTitle( "Librainian" )]
-[assembly: AssemblyDescription( "Collection of classes I use." )]
+[assembly: AssemblyDescription( "Collection of classes I use in my projects." )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "AIBrain.Org" )]
 [assembly: AssemblyProduct( "Librainian" )]
@@ -49,5 +49,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers by using the '*'
 // as shown below: [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion( "2016.09.02.113" )]
-[assembly: AssemblyFileVersion( "2016.09.02.113" )]
+[assembly: AssemblyVersion( "2018.03.31.128" )]
+[assembly: AssemblyFileVersion( "2018.03.31.128" )]

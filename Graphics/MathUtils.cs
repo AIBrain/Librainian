@@ -136,7 +136,7 @@ namespace Librainian.Graphics {
 
         /// <summary>Computes the effective projection matrix for the given camera.</summary>
         public static Matrix3D GetProjectionMatrix( Camera camera, Double aspectRatio ) {
-            if ( camera == null ) {
+            if ( camera is null ) {
                 throw new ArgumentNullException( nameof( camera ) );
             }
 
@@ -169,7 +169,7 @@ namespace Librainian.Graphics {
 
         /// <summary>Computes the effective view matrix for the given camera.</summary>
         public static Matrix3D GetViewMatrix( Camera camera ) {
-            if ( camera == null ) {
+            if ( camera is null ) {
                 throw new ArgumentNullException( nameof( camera ) );
             }
 
@@ -335,7 +335,7 @@ namespace Librainian.Graphics {
                 var result = Matrix3D.Identity;
                 var camera = visual.Camera;
 
-                if ( camera == null ) {
+                if ( camera is null ) {
                     return ZeroMatrix;
                 }
 
@@ -505,7 +505,7 @@ namespace Librainian.Graphics {
 
             viewport = visual as Viewport3DVisual;
 
-            if ( viewport == null ) {
+            if ( viewport is null ) {
                 if ( visual != null ) {
 
                     // In WPF 3D v1 the only possible configuration is a chain of ModelVisual3Ds

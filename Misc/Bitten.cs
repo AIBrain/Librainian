@@ -104,7 +104,7 @@ namespace Librainian.Misc {
         // The String must be of the form dddddddd-dddd-dddd-dddd-dddddddddddd. where d is a hex
         // digit. (That is 8 hex digits, followed by 4, then 4, then 4, then 12) such as: "CA761232-ED42-11CE-BACD-00AA0057B223"
         public Bitten( String g ) {
-            if ( g == null ) {
+            if ( g is null ) {
                 throw new ArgumentNullException( nameof( g ) );
             }
             this = Parse( g );

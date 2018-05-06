@@ -74,13 +74,13 @@ namespace Librainian.Collections {
         }
 
         public WaitNode Dequeue() {
-            if ( this.Head == null ) {
+            if ( this.Head is null ) {
                 return null;
             }
 
             var w = this.Head;
             this.Head = w.NextWaitNode;
-            if ( this.Head == null ) {
+            if ( this.Head is null ) {
                 this.Tail = null;
             }
             w.NextWaitNode = null;
@@ -88,7 +88,7 @@ namespace Librainian.Collections {
         }
 
         public void Enqueue( WaitNode w ) {
-            if ( this.Tail == null ) {
+            if ( this.Tail is null ) {
                 this.Head = this.Tail = w;
             }
             else {
@@ -98,7 +98,7 @@ namespace Librainian.Collections {
         }
 
         public Boolean IsWaiting( Thread thread ) {
-            if ( thread == null ) {
+            if ( thread is null ) {
                 throw new ArgumentNullException( nameof( thread ) );
             }
             for ( var node = this.Head; node != null; node = node.NextWaitNode ) {

@@ -43,7 +43,7 @@ namespace Librainian.Collections {
 	    /// <summary>Create a new list, copying elements from the specified array.</summary>
         /// <param name="arrayToCopy">An array whose contents will be copied.</param>
         public ImmutableList( [NotNull] T[] arrayToCopy ) {
-            if ( arrayToCopy == null ) {
+            if ( arrayToCopy is null ) {
                 throw new ArgumentNullException( nameof( arrayToCopy ) );
             }
             this._mArray = new T[ arrayToCopy.Length ];

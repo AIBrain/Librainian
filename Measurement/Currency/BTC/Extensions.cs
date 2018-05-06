@@ -44,7 +44,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="coinWallet"></param>
         /// <param name="coins"></param>
         public static void Deposit( [NotNull] this CoinWallet coinWallet, IEnumerable<KeyValuePair<ICoin, UInt64>> coins = null ) {
-            if ( coinWallet == null ) {
+            if ( coinWallet is null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
 
@@ -55,14 +55,14 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         public static void Fund( [NotNull] CoinWallet coinWallet, [CanBeNull] params KeyValuePair<ICoin, UInt64>[] sourceAmounts ) {
-            if ( coinWallet == null ) {
+            if ( coinWallet is null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
             Fund( coinWallet, sourceAmounts.AsEnumerable() );
         }
 
         public static void Fund( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts ) {
-            if ( coinWallet == null ) {
+            if ( coinWallet is null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
             if ( null == sourceAmounts ) {
@@ -80,7 +80,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="optimalAmountOfCoin"></param>
         /// <returns></returns>
         public static Decimal Fund( [NotNull] this CoinWallet coinWallet, Decimal amount, Boolean optimalAmountOfCoin = true ) {
-            if ( coinWallet == null ) {
+            if ( coinWallet is null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
             var leftOverFund = Decimal.Zero;
@@ -129,7 +129,7 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         public static String SimplerBTC( [NotNull] this SimpleBitcoinWallet wallet ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
             return wallet.Balance.SimplerBTC();
@@ -148,7 +148,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// </param>
         /// <returns></returns>
         public static String SimplerBTC( this Decimal btc, [NotNull] String coinSuffix = "BTC" ) {
-            if ( coinSuffix == null ) {
+            if ( coinSuffix is null ) {
                 throw new ArgumentNullException( nameof( coinSuffix ) );
             }
             btc = btc.Sanitize();
@@ -176,7 +176,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
         public static Task StartDeposit( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts ) {
-            if ( coinWallet == null ) {
+            if ( coinWallet is null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
             sourceAmounts = sourceAmounts ?? Enumerable.Empty<KeyValuePair<ICoin, UInt64>>();
@@ -219,10 +219,10 @@ namespace Librainian.Measurement.Currency.BTC {
         public static Decimal ToμBtc( this Decimal btc ) => btc * SimpleBitcoinWallet.ΜBtcInOneBtc;
 
         public static IEnumerable<KeyValuePair<ICoin, UInt64>> Transfer( [NotNull] this CoinWallet source, [NotNull] CoinWallet target ) {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
-            if ( target == null ) {
+            if ( target is null ) {
                 throw new ArgumentNullException( nameof( target ) );
             }
 
@@ -241,10 +241,10 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         public static Boolean Transfer( [NotNull] this CoinWallet source, [NotNull] CoinWallet target, KeyValuePair<ICoin, UInt64> denominationAndAmount ) {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
-            if ( target == null ) {
+            if ( target is null ) {
                 throw new ArgumentNullException( nameof( target ) );
             }
             return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) && target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value ) > 0;
@@ -257,7 +257,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
         public static Task Transfer( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts ) {
-            if ( coinWallet == null ) {
+            if ( coinWallet is null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
             var bsfasd = new ActionBlock<KeyValuePair<ICoin, UInt64>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeSensible );

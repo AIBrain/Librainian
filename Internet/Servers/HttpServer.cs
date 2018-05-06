@@ -79,7 +79,7 @@ namespace Librainian.Internet.Servers {
             }
 
             //if ( this.SecurePort > -1 ) {
-            //    if ( this._sslCertificate == null ) {
+            //    if ( this._sslCertificate is null ) {
             //        String exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
             //        FileInfo fiExe = new FileInfo( exePath );
             //        FileInfo fiCert = new FileInfo( fiExe.Directory.FullName + "\\SimpleHttpServer-SslCert.pfx" );

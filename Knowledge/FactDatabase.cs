@@ -46,7 +46,7 @@ namespace Librainian.Knowledge {
         public Int32 FilesFound;
 
         public Int32 AddFile( Document dataFile, ProgressChangedEventHandler feedback = null ) {
-            if ( dataFile == null ) {
+            if ( dataFile is null ) {
                 throw new ArgumentNullException( nameof( dataFile ) );
             }
 

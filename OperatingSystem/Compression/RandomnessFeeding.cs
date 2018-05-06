@@ -26,9 +26,9 @@ namespace Librainian.OperatingSystem.Compression {
     using System.IO.Compression;
     using System.Linq;
     using System.Numerics;
-    using Extensions;
     using FileSystem;
     using JetBrains.Annotations;
+    using Extensions;
     using Magic;
     using Numerics;
 
@@ -57,7 +57,7 @@ namespace Librainian.OperatingSystem.Compression {
         private NullStream NullStream { get; } = new NullStream();
 
         public void FeedItData( [NotNull] Byte[] data ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( nameof( data ) );
             }
             this.HowManyBytesFed += data.LongLength;

@@ -51,7 +51,7 @@ namespace Librainian.Controls {
         public const Int32 SC_MINIMIZE = 0xF020;
 
         public static Task MoveCursor( [NotNull] this Form form, Int32 x, Int32 y, TimeSpan speed ) {
-            if ( form == null ) {
+            if ( form is null ) {
                 throw new ArgumentNullException( nameof( form ) );
             }
 

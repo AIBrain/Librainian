@@ -40,7 +40,7 @@ namespace Librainian.Linguistics {
     public sealed class Page : IEquatable<Page>, IEnumerable<Paragraph> {
 
         public Page( [NotNull] IEnumerable<Paragraph> paragraphs ) {
-            if ( paragraphs == null ) {
+            if ( paragraphs is null ) {
                 throw new ArgumentNullException( nameof( paragraphs ) );
             }
 

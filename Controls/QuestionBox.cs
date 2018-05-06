@@ -36,7 +36,7 @@ namespace Librainian.Controls {
         /// <param name="question"></param>
         /// <param name="parent"></param>
         public QuestionBox( [NotNull] String question, Control parent = null ) {
-            if ( question == null ) {
+            if ( question is null ) {
                 throw new ArgumentNullException( nameof( question ) );
             }
             if ( parent != null ) {

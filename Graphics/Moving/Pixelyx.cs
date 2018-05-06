@@ -71,7 +71,7 @@ namespace Librainian.Graphics.Moving {
             this.X = x;
             this.Y = y;
             this.Timestamp = timestamp;
-            this.Checksum = MathHashing.GetHashCodes( this.Blue, this.Red, this.Alpha, this.Timestamp, this.X, this.Y );
+            this.Checksum = Hashing.GetHashCodes( this.Blue, this.Red, this.Alpha, this.Timestamp, this.X, this.Y );
         }
 
         /// <summary>

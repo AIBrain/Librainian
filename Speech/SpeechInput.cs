@@ -64,7 +64,7 @@ namespace Librainian.Speech {
         }
 
         public static Grammar CreateGrammars( params String[] phrases ) {
-            if ( phrases == null ) {
+            if ( phrases is null ) {
                 throw new ArgumentNullException( nameof( phrases ) );
             }
 

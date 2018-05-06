@@ -73,7 +73,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public Duration( [NotNull] params TimeSpan[] times ) {
-            if ( times == null ) {
+            if ( times is null ) {
                 throw new ArgumentNullException( nameof( times ) );
             }
 

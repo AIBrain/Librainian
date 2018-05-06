@@ -1,22 +1,19 @@
-﻿// Copyright 2016 Rick@AIBrain.org.
+﻿// Copyright 2018 Protiguous
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/SteganographyHelper.cs" was last cleaned by Rick on 2016/06/18 at 10:57 PM
+// "Librainian/SteganographyHelper.cs" was last cleaned by Rick on 2018/05/06 at 2:22 PM
 
 namespace Librainian.Security {
 
@@ -28,7 +25,7 @@ namespace Librainian.Security {
         public enum State {
             Hiding,
             FillingWithZeros
-        };
+        }
 
         public static Bitmap EmbedText( this Bitmap bmp, String text ) {
 
@@ -56,7 +53,7 @@ namespace Librainian.Security {
                 for ( var j = 0; j < bmp.Width; j++ ) {
 
                     // holds the pixel that is currently being processed
-                    var pixel = bmp.GetPixel( j, i );
+                    var pixel = bmp.GetPixel( x: j, y: i );
 
                     // now, clear the least significant bit (LSB) from each pixel element
                     var r = pixel.R - pixel.R % 2;
@@ -76,7 +73,7 @@ namespace Librainian.Security {
                                 // apply the last pixel on the image
                                 // even if only a part of its elements have been affected
                                 if ( ( pixelElementIndex - 1 ) % 3 < 2 ) {
-                                    bmp.SetPixel( j, i, Color.FromArgb( r, g, b ) );
+                                    bmp.SetPixel( x: j, y: i, color: Color.FromArgb( red: r, green: g, blue: b ) );
                                 }
 
                                 // return the bitmap with the text hidden in
@@ -92,7 +89,7 @@ namespace Librainian.Security {
                             else {
 
                                 // move to the next character and process again
-                                charValue = text[ charIndex++ ];
+                                charValue = text[index: charIndex++];
                             }
                         }
 
@@ -131,7 +128,7 @@ namespace Librainian.Security {
                                         charValue /= 2;
                                     }
 
-                                    bmp.SetPixel( j, i, Color.FromArgb( r, g, b ) );
+                                    bmp.SetPixel( x: j, y: i, color: Color.FromArgb( red: r, green: g, blue: b ) );
                                 }
                                 break;
                         }
@@ -162,7 +159,7 @@ namespace Librainian.Security {
 
                 // pass through each row
                 for ( var j = 0; j < bmp.Width; j++ ) {
-                    var pixel = bmp.GetPixel( j, i );
+                    var pixel = bmp.GetPixel( x: j, y: i );
 
                     // for each pixel, pass through its elements (RGB)
                     for ( var n = 0; n < 3; n++ ) {
@@ -195,7 +192,7 @@ namespace Librainian.Security {
                         if ( colorUnitIndex % 8 == 0 ) {
 
                             // reverse? of course, since each time the process happens on the right (for simplicity)
-                            charValue = ReverseBits( charValue );
+                            charValue = ReverseBits( n: charValue );
 
                             // can only be 0 if it is the stop character (the 8 zeros)
                             if ( charValue == 0 ) {

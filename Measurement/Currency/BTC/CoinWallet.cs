@@ -132,14 +132,14 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         public Boolean Contains( ICoin coin ) {
-            if ( coin == null ) {
+            if ( coin is null ) {
                 throw new ArgumentNullException( nameof( coin ) );
             }
             return this._coins.ContainsKey( coin );
         }
 
         public UInt64 Count( ICoin coin ) {
-            if ( coin == null ) {
+            if ( coin is null ) {
                 throw new ArgumentNullException( nameof( coin ) );
             }
             return this._coins.TryGetValue( coin, out var result ) ? result : UInt64.MinValue;
@@ -185,7 +185,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <returns></returns>
         /// <remarks>Locks the wallet.</remarks>
         public Boolean TryWithdraw( ICoin coin, UInt64 quantity ) {
-            if ( coin == null ) {
+            if ( coin is null ) {
                 throw new ArgumentNullException( nameof( coin ) );
             }
             if ( quantity <= 0 ) {

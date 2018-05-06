@@ -245,7 +245,7 @@ namespace Librainian.Extensions {
         public static String GetTarget( String junctionPoint ) {
             using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Read ) ) {
                 var target = InternalGetTarget( handle );
-                if ( target == null ) {
+                if ( target is null ) {
                     throw new IOException( "Path is not a junction point." );
                 }
 

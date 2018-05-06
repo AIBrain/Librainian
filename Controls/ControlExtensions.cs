@@ -213,7 +213,7 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value"></param>
 		public static void Enabled( this ToolStripProgressBar control, Boolean value ) {
-            if ( control?.ProgressBar == null ) {
+            if ( control?.ProgressBar is null ) {
                 return;
             }
             if ( control.ProgressBar.InvokeRequired ) {
@@ -256,7 +256,7 @@ namespace Librainian.Controls {
         }
 
         public static async Task FlashWhileBlank( this Control input, [NotNull] Control control ) {
-            if ( control == null ) {
+            if ( control is null ) {
                 throw new ArgumentNullException( nameof( control ) );
             }
             await Seconds.Five.Then( async () => {
@@ -362,10 +362,10 @@ namespace Librainian.Controls {
         /// <param name="refresh"></param>
         /// <seealso />
         public static void InvokeIfRequired( [NotNull] this Control control, [NotNull] Action action, Boolean refresh = true ) {
-            if ( control == null ) {
+            if ( control is null ) {
                 throw new ArgumentNullException( nameof( control ) );
             }
-            if ( action == null ) {
+            if ( action is null ) {
                 throw new ArgumentNullException( nameof( action ) );
             }
             if ( control.IsDisposed ) {
@@ -523,7 +523,7 @@ namespace Librainian.Controls {
         }
 
         public static void Output( this WebBrowser browser, String message ) {
-            if ( browser == null ) {
+            if ( browser is null ) {
                 return;
             }
             if ( browser.InvokeRequired ) {
@@ -551,7 +551,7 @@ namespace Librainian.Controls {
         /// <param name="afterDelay"></param>
         /// <returns></returns>
         public static Timer Push( [NotNull] this Button control, TimeSpan? delay = null, Action afterDelay = null ) {
-            if ( control == null ) {
+            if ( control is null ) {
                 throw new ArgumentNullException( nameof( control ) );
             }
 
@@ -567,7 +567,7 @@ namespace Librainian.Controls {
         public static void Redraw( [CanBeNull] this Control control ) => control?.InvokeIfRequired( control.Refresh );
 
         public static Boolean RemoveTags( this WebBrowser browser, String tagName, Int32 keepAtMost = 50 ) {
-            if ( browser?.Document == null ) {
+            if ( browser?.Document is null ) {
                 return false;
             }
             while ( null != browser.Document && browser.Document.GetElementsByTagName( tagName ).Count > keepAtMost ) {
@@ -590,7 +590,7 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <returns></returns>
 		public static void ResetCursor( [NotNull] this Control control ) {
-            if ( control == null ) {
+            if ( control is null ) {
                 throw new ArgumentNullException( nameof( control ) );
             }
             ThreadingExtensions.Wrap( () => control.OnThread( () => {
@@ -734,10 +734,10 @@ namespace Librainian.Controls {
 		} );
 
 		public static void TextAdd( [CanBeNull] this RichTextBox textBox, [CanBeNull] String message ) {
-            if ( textBox == null ) {
+            if ( textBox is null ) {
                 return;
             }
-            if ( message == null ) {
+            if ( message is null ) {
                 return;
             }
             var method = new Action( () => {
@@ -781,10 +781,10 @@ namespace Librainian.Controls {
         }
 
         public static void TextAdd( [NotNull] this RichTextBox textBox, [NotNull] String text, Color color ) {
-            if ( textBox == null ) {
+            if ( textBox is null ) {
                 throw new ArgumentNullException( nameof( textBox ) );
             }
-            if ( text == null ) {
+            if ( text is null ) {
                 throw new ArgumentNullException( nameof( text ) );
             }
             textBox.SelectionStart = textBox.TextLength;
@@ -953,11 +953,11 @@ namespace Librainian.Controls {
         }
 
         public static void LoadPosition( [ NotNull ] this Form form, [CanBeNull] JSONFile settings ) {
-            if ( form == null ) {
+            if ( form is null ) {
                 throw new ArgumentNullException( paramName: nameof(form) );
             }
 
-            if ( settings == null ) {
+            if ( settings is null ) {
                 throw new ArgumentNullException( nameof( settings ) );
             }
 
@@ -977,11 +977,11 @@ namespace Librainian.Controls {
         }
 
         public static void SavePosition( [ NotNull ] this Form form, [CanBeNull] JSONFile settings ) {
-            if ( form == null ) {
+            if ( form is null ) {
                 throw new ArgumentNullException( paramName: nameof(form) );
             }
 
-            if ( settings == null ) {
+            if ( settings is null ) {
                 throw new ArgumentNullException( nameof( settings ) );
             }
 

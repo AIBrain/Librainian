@@ -28,7 +28,7 @@ namespace Librainian.Extensions {
         private const String FileSizeFormat = "fs";
 
         public String Format( String format, Object arg, IFormatProvider formatProvider ) {
-            if ( format == null || !format.StartsWith( FileSizeFormat ) ) {
+            if ( format is null || !format.StartsWith( FileSizeFormat ) ) {
                 return DefaultFormat( format, arg, formatProvider );
             }
 
@@ -69,7 +69,7 @@ namespace Librainian.Extensions {
         }
 
         public Object GetFormat( [NotNull] Type formatType ) {
-            if ( formatType == null ) {
+            if ( formatType is null ) {
                 throw new ArgumentNullException( nameof( formatType ) );
             }
             return formatType == typeof( ICustomFormatter ) ? this : null;

@@ -38,7 +38,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="compressionLevel"></param>
         /// <returns></returns>
         public static Byte[] Compress( [NotNull] this Byte[] data, CompressionLevel compressionLevel = CompressionLevel.Optimal ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( nameof( data ) );
             }
 
@@ -56,17 +56,17 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="text"></param>
         /// <returns></returns>
         public static Byte[] Compress( [NotNull] this String text ) {
-            if ( text == null ) {
+            if ( text is null ) {
                 throw new ArgumentNullException( nameof( text ) );
             }
             return Compress( text, Encoding.Default );
         }
 
         public static Byte[] Compress( [NotNull] this String text, [NotNull] Encoding encoding ) {
-            if ( text == null ) {
+            if ( text is null ) {
                 throw new ArgumentNullException( nameof( text ) );
             }
-            if ( encoding == null ) {
+            if ( encoding is null ) {
                 throw new ArgumentNullException( nameof( encoding ) );
             }
             return encoding.GetBytes( text ).Compress();
@@ -90,7 +90,7 @@ namespace Librainian.OperatingSystem.Compression {
         }
 
         public static Byte[] Decompress( [NotNull] this Byte[] data ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( nameof( data ) );
             }
             using ( var decompress = new GZipStream( new MemoryStream( data ), CompressionMode.Decompress ) ) {
@@ -119,17 +119,17 @@ namespace Librainian.OperatingSystem.Compression {
         }
 
         public static String DecompressToString( [NotNull] this Byte[] data ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( nameof( data ) );
             }
             return DecompressToString( data, Encoding.Default );
         }
 
         public static String DecompressToString( [NotNull] this Byte[] data, [NotNull] Encoding encoding ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( nameof( data ) );
             }
-            if ( encoding == null ) {
+            if ( encoding is null ) {
                 throw new ArgumentNullException( nameof( encoding ) );
             }
             return encoding.GetString( data.Decompress() );

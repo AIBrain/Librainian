@@ -55,7 +55,7 @@ namespace Librainian.Maths.Numbers
 
         public UBigInteger( [NotNull] Byte[] bytes ) {
             // http: //stackoverflow.com/questions/5649190/byte-to-unsigned-biginteger
-            if ( bytes == null ) {
+            if ( bytes is null ) {
                 throw new ArgumentNullException( paramName: nameof( bytes ) );
             }
 
@@ -152,7 +152,7 @@ namespace Librainian.Maths.Numbers
         public static Boolean operator >=( UBigInteger left, UBigInteger right ) => left._internalValue >= right._internalValue;
 
         public static UBigInteger Parse( [NotNull] String number, NumberStyles style ) {
-            if ( number == null ) {
+            if ( number is null ) {
                 throw new ArgumentNullException( paramName: nameof( number ) );
             }
 
@@ -163,7 +163,7 @@ namespace Librainian.Maths.Numbers
 
         [Pure]
         public Int32 CompareTo( [NotNull] Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 throw new ArgumentNullException( paramName: nameof( obj ) );
             }
 

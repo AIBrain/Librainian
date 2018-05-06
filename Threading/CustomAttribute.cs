@@ -40,7 +40,7 @@ namespace Librainian.Threading {
 
         public CustomAttribute( [CallerMemberName] String membername = "" ) {
             var method = MethodsList.FirstOrDefault( m => m.Name == membername );
-            if ( method?.DeclaringType == null ) {
+            if ( method?.DeclaringType is null ) {
                 return; //Not suppose to happen, but safety comes first
             }
             this.FullMethodPath = method.DeclaringType.Name + membername; //Work it around any way you want it

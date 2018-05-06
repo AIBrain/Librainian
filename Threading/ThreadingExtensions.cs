@@ -373,7 +373,7 @@ namespace Librainian.Threading {
         /// <param name="obj"></param>
         /// <returns></returns>
         public static Int32 MarshalSizeOf( [NotNull] this Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 throw new ArgumentNullException( nameof( obj ) );
             }
             return Marshal.SizeOf( obj );
@@ -465,14 +465,14 @@ namespace Librainian.Threading {
 
         public static Task Then( [NotNull] this Task first, [NotNull] Action next ) {
 
-            //if ( next == null ) {
+            //if ( next is null ) {
             //    throw new ArgumentNullException( "next" );
             //}
 
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( nameof( first ) );
             }
-            if ( next == null ) {
+            if ( next is null ) {
                 throw new ArgumentNullException( nameof( next ) );
             }
             var tcs = new TaskCompletionSource<Object>(); //Tasks.FactorySooner.CreationOptions
@@ -502,10 +502,10 @@ namespace Librainian.Threading {
 
         [Obsolete( "use continuewith", true )]
         public static Task<T2> Then<T2>( this Task first, Func<Task<T2>> next ) {
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( nameof( first ) );
             }
-            if ( next == null ) {
+            if ( next is null ) {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
@@ -522,7 +522,7 @@ namespace Librainian.Threading {
                 else {
                     try {
                         var t = next();
-                        if ( t == null ) {
+                        if ( t is null ) {
                             tcs.TrySetCanceled();
                         }
                         else {
@@ -550,10 +550,10 @@ namespace Librainian.Threading {
         }
 
         public static Task Then<T1>( this Task<T1> first, Action<T1> next ) {
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( nameof( first ) );
             }
-            if ( next == null ) {
+            if ( next is null ) {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
@@ -583,10 +583,10 @@ namespace Librainian.Threading {
         }
 
         public static Task Then<T1>( this Task<T1> first, Func<T1, Task> next ) {
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( nameof( first ) );
             }
-            if ( next == null ) {
+            if ( next is null ) {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
@@ -603,7 +603,7 @@ namespace Librainian.Threading {
                 else {
                     try {
                         var t = next( first.Result );
-                        if ( t == null ) {
+                        if ( t is null ) {
                             tcs.TrySetCanceled();
                         }
                         else {
@@ -632,10 +632,10 @@ namespace Librainian.Threading {
         }
 
         public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, T2> next ) {
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( nameof( first ) );
             }
-            if ( next == null ) {
+            if ( next is null ) {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
@@ -663,10 +663,10 @@ namespace Librainian.Threading {
         }
 
         public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, Task<T2>> next ) {
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( nameof( first ) );
             }
-            if ( next == null ) {
+            if ( next is null ) {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
@@ -683,7 +683,7 @@ namespace Librainian.Threading {
                 else {
                     try {
                         var t = next( first.Result );
-                        if ( t == null ) {
+                        if ( t is null ) {
                             tcs.TrySetCanceled();
                         }
                         else {
@@ -773,7 +773,7 @@ namespace Librainian.Threading {
         /// <param name="selector"></param>
         /// <returns></returns>
         public static Task<T> Wrap<T>( [NotNull] this Func<T> selector ) {
-            if ( selector == null ) {
+            if ( selector is null ) {
                 throw new ArgumentNullException( nameof( selector ) );
             }
             return Task.Run( selector );
@@ -788,7 +788,7 @@ namespace Librainian.Threading {
         /// <param name="input"></param>
         /// <returns></returns>
         public static Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, TIn input ) {
-            if ( selector == null ) {
+            if ( selector is null ) {
                 throw new ArgumentNullException( nameof( selector ) );
             }
             return Task.Run( () => selector( input ) );
@@ -879,7 +879,7 @@ namespace Librainian.Threading {
                 /// <param name="next"></param>
                 /// <returns></returns>
                 public static void Then( this Action action, Action next ) {
-                    if ( action == null ) {
+                    if ( action is null ) {
                         throw new ArgumentNullException( "action" );
                     }
                     action.Spawn(); //does this even make sense?

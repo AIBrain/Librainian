@@ -1,22 +1,19 @@
-﻿// Copyright 2016 Rick@AIBrain.org.
+﻿// Copyright 2018 Protiguous
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/MersenneTwister.cs" was last cleaned by Rick on 2016/06/18 at 10:56 PM
+// "Librainian/MersenneTwister.cs" was last cleaned by Rick on 2018/05/06 at 2:22 PM
 
 namespace Librainian.Security {
 
@@ -28,15 +25,20 @@ namespace Librainian.Security {
         private const UInt32 LowerMask = 0x7fffffff;
         private const Int32 M = 397;
         private const UInt32 MatrixA = 0x9908b0df;
+
         private const Int32 N = 624;
+
         /* constant vector a */
         private const UInt32 TemperingMaskB = 0x9d2c5680;
         private const UInt32 TemperingMaskC = 0xefc60000;
+
         private const UInt32 UpperMask = 0x80000000; /* most significant w-r bits */
+
         /* least significant r bits */
         /* Tempering parameters */
         private static readonly UInt32[] Mag01 = { 0x0, MatrixA };
-        private readonly UInt32[] _mt = new UInt32[ N ]; /* the array for the state vector  */
+        private readonly UInt32[] _mt = new UInt32[N]; /* the array for the state vector  */
+
         private Int16 _mti;
         /* initializing the array with a NONZERO seed */
 
@@ -45,21 +47,22 @@ namespace Librainian.Security {
             /* the generator Line 25 of Table 1 in          */
             /* [KNUTH 1981, The Art of Computer Programming */
             /*    Vol. 2 (2nd Ed.), pp102]                  */
-            this._mt[ 0 ] = seed & 0xffffffffU;
+            this._mt[0] = seed & 0xffffffffU;
             for ( this._mti = 1; this._mti < N; ++this._mti ) {
-                this._mt[ this._mti ] = ( 69069 * this._mt[ this._mti - 1 ] ) & 0xffffffffU;
+                this._mt[this._mti] = ( 69069 * this._mt[this._mti - 1] ) & 0xffffffffU;
             }
         }
 
         /// <summary>a default initial seed is used</summary>
-        public MersenneTwister() : this( 4357 ) { }
+        public MersenneTwister() : this( seed: 4357 ) { }
 
-        public override Int32 Next() => this.Next( Int32.MaxValue );
+        public override Int32 Next() => this.Next( maxValue: Int32.MaxValue );
 
         public override Int32 Next( Int32 maxValue ) /* throws ArgumentOutOfRangeException */ {
             if ( maxValue > 1 ) {
                 return ( Int32 )( this.NextDouble() * maxValue );
             }
+
             if ( maxValue < 0 ) {
                 throw new ArgumentOutOfRangeException();
             }
@@ -71,24 +74,26 @@ namespace Librainian.Security {
             if ( maxValue < minValue ) {
                 throw new ArgumentOutOfRangeException();
             }
+
             if ( maxValue == minValue ) {
                 return minValue;
             }
-            return this.Next( maxValue - minValue ) + minValue;
+
+            return this.Next( maxValue: maxValue - minValue ) + minValue;
         }
 
         /// <summary></summary>
         /// <param name="buffer"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public override void NextBytes( Byte[] buffer ) /* throws ArgumentNullException*/ {
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException();
             }
 
             var bufLen = buffer.Length;
 
             for ( var idx = 0; idx < bufLen; ++idx ) {
-                buffer[ idx ] = ( Byte )this.Next( 256 );
+                buffer[idx] = ( Byte )this.Next( maxValue: 256 );
             }
         }
 
@@ -114,26 +119,26 @@ namespace Librainian.Security {
                 Int16 kk = 0;
 
                 for ( ; kk < N - M; ++kk ) {
-                    y = ( this._mt[ kk ] & UpperMask ) | ( this._mt[ kk + 1 ] & LowerMask );
-                    this._mt[ kk ] = this._mt[ kk + M ] ^ ( y >> 1 ) ^ Mag01[ y & 0x1 ];
+                    y = ( this._mt[kk] & UpperMask ) | ( this._mt[kk + 1] & LowerMask );
+                    this._mt[kk] = this._mt[kk + M] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
                 }
 
                 for ( ; kk < N - 1; ++kk ) {
-                    y = ( this._mt[ kk ] & UpperMask ) | ( this._mt[ kk + 1 ] & LowerMask );
-                    this._mt[ kk ] = this._mt[ kk + ( M - N ) ] ^ ( y >> 1 ) ^ Mag01[ y & 0x1 ];
+                    y = ( this._mt[kk] & UpperMask ) | ( this._mt[kk + 1] & LowerMask );
+                    this._mt[kk] = this._mt[kk + ( M - N )] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
                 }
 
-                y = ( this._mt[ N - 1 ] & UpperMask ) | ( this._mt[ 0 ] & LowerMask );
-                this._mt[ N - 1 ] = this._mt[ M - 1 ] ^ ( y >> 1 ) ^ Mag01[ y & 0x1 ];
+                y = ( this._mt[N - 1] & UpperMask ) | ( this._mt[0] & LowerMask );
+                this._mt[N - 1] = this._mt[M - 1] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
 
                 this._mti = 0;
             }
 
-            y = this._mt[ this._mti++ ];
-            y ^= TEMPERING_SHIFT_U( y );
-            y ^= TEMPERING_SHIFT_S( y ) & TemperingMaskB;
-            y ^= TEMPERING_SHIFT_T( y ) & TemperingMaskC;
-            y ^= TEMPERING_SHIFT_L( y );
+            y = this._mt[this._mti++];
+            y ^= TEMPERING_SHIFT_U( y: y );
+            y ^= TEMPERING_SHIFT_S( y: y ) & TemperingMaskB;
+            y ^= TEMPERING_SHIFT_T( y: y ) & TemperingMaskC;
+            y ^= TEMPERING_SHIFT_L( y: y );
 
             return y;
         }

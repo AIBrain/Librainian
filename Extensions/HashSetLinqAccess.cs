@@ -26,7 +26,8 @@ namespace Librainian.Extensions {
     /// <summary>
     ///     This extension method class will add a ToHashSet <typeparamref name="&gt;" /> in exactly the
     ///     same way it is provided by the others: ToList(), ToArray(), ToDictionary().. Now ToHashSet()
-    ///     is available
+    ///     is available.
+    /// UPDATE: These might be available in the newer Libraries.
     /// </summary>
     /// <seealso
     ///     cref="http://blogs.windowsclient.net/damonwildercarr/archive/2008/09/10/expose-new-linq-operations-from-the-screaming-hashset-lt-t-gt-collection.aspx" />
@@ -54,13 +55,13 @@ namespace Librainian.Extensions {
                 comparer = EqualityComparer<T>.Default;
             }
 
-            if ( fromEnumerable is HashSet<T> ) {
-                return fromEnumerable as HashSet<T>;
+            if ( fromEnumerable is HashSet<T> set ) {
+                return set;
             }
 
             return new HashSet<T>( fromEnumerable, comparer );
         }
 
-        public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable ) => ToHashSet( fromEnumerable, EqualityComparer<T>.Default );
+        //public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable ) => ToHashSet( fromEnumerable, EqualityComparer<T>.Default );
     }
 }

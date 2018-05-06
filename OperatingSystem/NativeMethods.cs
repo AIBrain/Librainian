@@ -29,10 +29,10 @@ namespace Librainian.OperatingSystem {
     using System.Text;
     using System.Threading;
     using Controls;
-    using Extensions;
     using FileSystem;
     using Graphics;
     using Graphics.Video;
+    using Extensions;
     using Microsoft.Win32.SafeHandles;
 
     public static class NativeMethods {

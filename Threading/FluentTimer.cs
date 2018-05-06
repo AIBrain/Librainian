@@ -44,7 +44,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static Timer AndStart( [NotNull] this Timer timer ) {
-            if ( timer == null ) {
+            if ( timer is null ) {
                 throw new ArgumentNullException( nameof( timer ) );
             }
             timer.Start();
@@ -55,7 +55,7 @@ namespace Librainian.Threading {
         /// <param name="timer"></param>
         /// <returns></returns>
         public static Timer AutoResetting( [NotNull] this Timer timer ) {
-            if ( timer == null ) {
+            if ( timer is null ) {
                 throw new ArgumentNullException( nameof( timer ) );
             }
             timer.AutoReset = true;
@@ -131,7 +131,7 @@ namespace Librainian.Threading {
         /// <param name="timer"></param>
         /// <returns></returns>
         public static Timer Once( [NotNull] this Timer timer ) {
-            if ( timer == null ) {
+            if ( timer is null ) {
                 throw new ArgumentNullException( nameof( timer ) );
             }
             timer.AutoReset = false;

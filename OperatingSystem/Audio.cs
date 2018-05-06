@@ -157,7 +157,7 @@ namespace Librainian.OperatingSystem {
 
         public static Boolean? GetApplicationMute( String name ) {
             var volume = GetVolumeObject( name );
-            if ( volume == null ) {
+            if ( volume is null ) {
                 return null;
             }
 
@@ -167,7 +167,7 @@ namespace Librainian.OperatingSystem {
 
         public static Single? GetApplicationVolume( String name ) {
             var volume = GetVolumeObject( name );
-            if ( volume == null ) {
+            if ( volume is null ) {
                 return null;
             }
 
@@ -218,7 +218,7 @@ namespace Librainian.OperatingSystem {
 
         public static void SetApplicationMute( String name, Boolean mute ) {
             var volume = GetVolumeObject( name );
-            if ( volume == null ) {
+            if ( volume is null ) {
                 return;
             }
 
@@ -228,7 +228,7 @@ namespace Librainian.OperatingSystem {
 
         public static void SetApplicationVolume( String name, Single level ) {
             var volume = GetVolumeObject( name );
-            if ( volume == null ) {
+            if ( volume is null ) {
                 return;
             }
 

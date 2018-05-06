@@ -37,7 +37,7 @@ namespace Librainian.Internet.Servers {
         /// <returns></returns>
         public static Cookies FromString( String str ) {
             var cookies = new Cookies();
-            if ( str == null ) {
+            if ( str is null ) {
                 return cookies;
             }
             str = HttpUtility.UrlDecode( str );
@@ -67,7 +67,7 @@ namespace Librainian.Internet.Servers {
         /// <param name="value">The cookie's value.</param>
         /// <param name="expireTime">The amount of time before the cookie should expire.</param>
         public void Add( String name, String value, TimeSpan expireTime ) {
-            if ( name == null ) {
+            if ( name is null ) {
                 return;
             }
             name = name.ToLower();
@@ -89,7 +89,7 @@ namespace Librainian.Internet.Servers {
         /// <returns></returns>
         public String GetValue( String name ) {
             var cookie = this.Get( name );
-            if ( cookie == null ) {
+            if ( cookie is null ) {
                 return "";
             }
             return cookie.Value;

@@ -63,12 +63,12 @@ namespace Librainian.Collections {
                 if ( !segment.IsEmpty ) {
                     return false;
                 }
-                if ( segment.Next == null ) {
+                if ( segment.Next is null ) {
                     return true;
                 }
 
                 for ( ; segment.IsEmpty; segment = this._head ) {
-                    if ( segment.Next == null ) {
+                    if ( segment.Next is null ) {
                         return true;
                     }
                     Thread.Yield();
@@ -84,14 +84,14 @@ namespace Librainian.Collections {
         public Q() => this._head = this._tail = new Segment( 0L );
 
         public Q( IEnumerable<T> collection ) {
-            if ( collection == null ) {
+            if ( collection is null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
             this.InitializeFromCollection( collection );
         }
 
         public void CopyTo( T[] array, Int32 index ) {
-            if ( array == null ) {
+            if ( array is null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
             this.ToList().CopyTo( array, index );
@@ -130,7 +130,7 @@ namespace Librainian.Collections {
         public Boolean TryTake( out T item ) => this.TryDequeue( out item );
 
         void ICollection.CopyTo( Array array, Int32 index ) {
-            if ( array == null ) {
+            if ( array is null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
             this.ToArray().CopyTo( array, index );
@@ -274,7 +274,7 @@ namespace Librainian.Collections {
                         }
                         result = this._array[low];
                         if ( low + 1 >= 32 ) {
-                            while ( this.Next == null ) {
+                            while ( this.Next is null ) {
                                 Thread.Yield();
                             }
                             head = this.Next;

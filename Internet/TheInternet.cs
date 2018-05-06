@@ -48,7 +48,7 @@ namespace Librainian.Internet {
 		/// <returns></returns>
 		[ItemCanBeNull]
 		public static async Task<Document> DownloadAsync( [NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne> reportProgress = null, VolatileBoolean inProgress = null, [CanBeNull] ICredentials credentials = null, [CanBeNull] Action<Uri, WebExceptionStatus> onWebException = null ) {
-			if ( address == null ) {
+			if ( address is null ) {
 				throw new ArgumentNullException( nameof( address ) );
 			}
 			try {

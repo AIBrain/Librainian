@@ -87,7 +87,7 @@ namespace Librainian.Persistence {
                 return;
             }
             var handler = this.Handler;
-            if ( handler == null ) {
+            if ( handler is null ) {
                 return;
             }
 

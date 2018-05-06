@@ -158,7 +158,7 @@ namespace Librainian.Threading {
 		///     Console.WriteLine("{0}: {1}", DateTime.Now, result); }
 		/// </example>
 		public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
-			if ( tasks == null ) {
+			if ( tasks is null ) {
 				throw new ArgumentNullException( paramName: nameof( tasks ) );
 			}
 
@@ -195,7 +195,7 @@ namespace Librainian.Threading {
 		///// <param name="delay"></param>
 		///// <param name="priority"></param>
 		//public static void Spawn( [NotNull] this Action job, Span? delay = null, Single priority ) {
-		//    if ( job == null ) {
+		//    if ( job is null ) {
 		//        throw new ArgumentNullException( "job" );
 		//    }
 		//    AddThenFireAndForget( job: job, delay: delay );
@@ -209,7 +209,7 @@ namespace Librainian.Threading {
 		/// <param name="job"></param>
 		/// <returns></returns>
 		public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
-			if ( job == null ) {
+			if ( job is null ) {
 				throw new ArgumentNullException( paramName: nameof( job ) );
 			}
 
@@ -225,7 +225,7 @@ namespace Librainian.Threading {
 		/// <param name="job"></param>
 		/// <returns></returns>
 		public static async Task Then( this Span delay, [NotNull] Action job ) {
-			if ( job == null ) {
+			if ( job is null ) {
 				throw new ArgumentNullException( paramName: nameof( job ) );
 			}
 
@@ -241,7 +241,7 @@ namespace Librainian.Threading {
 		/// <param name="job"></param>
 		/// <returns></returns>
 		public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
-			if ( job == null ) {
+			if ( job is null ) {
 				throw new ArgumentNullException( paramName: nameof( job ) );
 			}
 
@@ -257,7 +257,7 @@ namespace Librainian.Threading {
 		/// <param name="job"></param>
 		/// <returns></returns>
 		public static async Task Then( this Seconds delay, [NotNull] Action job ) {
-			if ( job == null ) {
+			if ( job is null ) {
 				throw new ArgumentNullException( paramName: nameof( job ) );
 			}
 
@@ -273,7 +273,7 @@ namespace Librainian.Threading {
 		/// <param name="job"></param>
 		/// <returns></returns>
 		public static async Task Then( this Minutes delay, [NotNull] Action job ) {
-			if ( job == null ) {
+			if ( job is null ) {
 				throw new ArgumentNullException( paramName: nameof( job ) );
 			}
 
@@ -347,7 +347,7 @@ namespace Librainian.Threading {
 		///// <param name="delay"> </param>
 		///// <returns> </returns>
 		//public static Task Start( Action job, TimeSpan? delay = null ) {
-		//    if ( job == null ) {
+		//    if ( job is null ) {
 		//        throw new ArgumentNullException( "job" );
 		//    }
 
@@ -364,7 +364,7 @@ namespace Librainian.Threading {
 		///// <returns> </returns>
 		//[Obsolete]
 		//public static async Task<Func<T>> Spawn<T>( this Func<T> func ) {
-		//    //if ( func == null ) {
+		//    //if ( func is null ) {
 		//    //    return default (T);
 		//    //}
 		//    await Task.Delay( TaskModerator );
@@ -378,7 +378,7 @@ namespace Librainian.Threading {
 		///// <returns> </returns>
 		//[Obsolete]
 		//public static Task Job( this  Action job ) {
-		//    if ( job == null ) {
+		//    if ( job is null ) {
 		//        throw new ArgumentNullException( "job" );
 		//    }
 		//    var task = Factory.StartNew( action: job );
@@ -395,7 +395,7 @@ namespace Librainian.Threading {
 		///// <param name="task"> </param>
 		///// <returns> </returns>
 		//public static async void Then( Action<Task> task, TimeSpan? delay = null ) {
-		//    if ( task == null ) {
+		//    if ( task is null ) {
 		//        throw new ArgumentNullException( "task" );
 		//    }
 		//    if ( !delay.HasValue ) {
@@ -412,7 +412,7 @@ namespace Librainian.Threading {
 		///// <param name="job"> </param>
 		///// <param name="delay"> </param>
 		//public static Task Then( this Action job, TimeSpan? delay = null ) {
-		//    if ( job == null ) {
+		//    if ( job is null ) {
 		//        throw new ArgumentNullException( "job" );
 		//    }
 		//    if ( !delay.HasValue ) { delay = Millisecond.TwoHundredEleven; }
@@ -504,7 +504,7 @@ namespace Librainian.Threading {
 		/// <param name="target"></param>
 		/// <param name="item"></param>
 		public static void TryPost<T>( this ITargetBlock<T> target, T item ) {
-			if ( target == null ) {
+			if ( target is null ) {
 #if DEBUG
 				throw new ArgumentNullException( paramName: nameof( target ) );
 #else
@@ -525,7 +525,7 @@ namespace Librainian.Threading {
 		/// <param name="item"></param>
 		/// <param name="delay"></param>
 		public static System.Timers.Timer TryPost<T>( this ITargetBlock<T> target, T item, TimeSpan delay ) {
-			if ( target == null ) {
+			if ( target is null ) {
 				throw new ArgumentNullException( paramName: nameof( target ) );
 			}
 
@@ -550,10 +550,10 @@ namespace Librainian.Threading {
 		/// <param name="action"></param>
 		/// <param name="condition"></param>
 		public static System.Timers.Timer When( this TimeSpan afterDelay, Func<Boolean> condition, Action action ) {
-			if ( condition == null ) {
+			if ( condition is null ) {
 				throw new ArgumentNullException( paramName: nameof( condition ) );
 			}
-			if ( action == null ) {
+			if ( action is null ) {
 				throw new ArgumentNullException( paramName: nameof( action ) );
 			}
 			try {

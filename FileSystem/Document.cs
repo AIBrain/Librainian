@@ -88,13 +88,13 @@ namespace Librainian.FileSystem {
 		}
 
 		public Document( [NotNull] FileSystemInfo info ) : this( info.FullName ) {
-			if ( info == null ) {
+			if ( info is null ) {
 				throw new ArgumentNullException( paramName: nameof( info ) );
 			}
 		}
 
 		public Document( [NotNull] Folder folder, [NotNull] String filename ) : this( folder.FullName, filename ) {
-			if ( folder == null ) {
+			if ( folder is null ) {
 				throw new ArgumentNullException( paramName: nameof( folder ) );
 			}
 
@@ -120,7 +120,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="WebException"></exception>
 		/// <exception cref="NotSupportedException"></exception>
 		public Document( [NotNull] Uri uri, Boolean download = true ) {
-			if ( uri == null ) {
+			if ( uri is null ) {
 				throw new ArgumentNullException( nameof( uri ) );
 			}
 
@@ -198,7 +198,7 @@ namespace Librainian.FileSystem {
 		public static implicit operator FileInfo( Document document ) => document.Info;
 
 		public static String IndexToPath( Folder baseFolder, UInt64 index ) {
-			if ( baseFolder == null ) {
+			if ( baseFolder is null ) {
 				throw new ArgumentNullException( paramName: nameof( baseFolder ) );
 			}
 
@@ -546,7 +546,7 @@ namespace Librainian.FileSystem {
 		/// <param name="destination"></param>
 		/// <returns></returns>
 		public Task<Boolean> Move( [NotNull] Document destination ) {
-			if ( destination == null || String.IsNullOrWhiteSpace( destination.FullPathWithFileName ) ) {
+			if ( destination is null || String.IsNullOrWhiteSpace( destination.FullPathWithFileName ) ) {
 				throw new ArgumentNullException( paramName: nameof( destination ) );
 			}
 			return Task.Run( () => {
@@ -608,7 +608,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		public Boolean SameContent( [CanBeNull] Document right ) {
-			if ( right == null ) {
+			if ( right is null ) {
 				return false;
 			}
 

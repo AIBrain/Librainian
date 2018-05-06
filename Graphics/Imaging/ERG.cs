@@ -90,7 +90,7 @@ namespace Librainian.Graphics.Imaging {
 
         public async Task<UInt64> CalculateChecksumAsync() => await Task.Run( () => {
             unchecked {
-                return ( UInt64 )MathHashing.GetHashCodes( this.Pixels );
+                return ( UInt64 )Hashing.GetHashCodes( this.Pixels );
             }
         } );
 
@@ -105,7 +105,7 @@ namespace Librainian.Graphics.Imaging {
         }
 
         public async Task<Boolean> TryAdd( [CanBeNull] Bitmap bitmap, TimeSpan timeout, CancellationToken cancellationToken ) {
-            if ( bitmap == null ) {
+            if ( bitmap is null ) {
                 return false;
             }
             var stopwatch = StopWatch.StartNew();

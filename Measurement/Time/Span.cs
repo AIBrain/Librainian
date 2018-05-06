@@ -40,7 +40,7 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     /// <seealso cref="http://wikipedia.org/wiki/Units_of_time" />
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    [JsonObject(MemberSerialization.Fields)]
+    [JsonObject( MemberSerialization.Fields )]
     [Immutable]
     public class Span : IEquatable<Span>, IComparable<Span>, IComparable<TimeSpan> {
         public static readonly Span Bytey = new Span( yoctoseconds: Byte.MaxValue, zeptoseconds: Byte.MaxValue, attoseconds: Byte.MaxValue, femtoseconds: Byte.MaxValue, picoseconds: Byte.MaxValue, nanoseconds: Byte.MaxValue, microseconds: Byte.MaxValue, milliseconds: Byte.MaxValue, seconds: Byte.MaxValue, minutes: Byte.MaxValue, hours: Byte.MaxValue, days: Byte.MaxValue, weeks: Byte.MaxValue, months: Byte.MaxValue, years: Byte.MaxValue );
@@ -495,23 +495,23 @@ namespace Librainian.Measurement.Time {
             return new Span( yoctoseconds: yoctoseconds, zeptoseconds: zeptoseconds, attoseconds: attoseconds, femtoseconds: femtoseconds, picoseconds: picoseconds, nanoseconds: nanoseconds, microseconds: microseconds, milliseconds: milliseconds, seconds: seconds, minutes: minutes, hours: hours, days: days, months: months, years: years );
         }
 
-		///// <summary>
-		///// </summary>
-		//public BigInteger TotalPlanckTimes => this.LazyTotal.Value.Value;
-		/// <summary>
-		///     <para>
-		///         Compares two <see cref="Span" /> values, returning an <see cref="Int32" /> that indicates
-		///         their relationship.
-		///     </para>
-		///     <para>Returns 1 if <paramref name="left" /> is larger.</para>
-		///     <para>Returns -1 if <paramref name="right" /> is larger.</para>
-		///     <para>Returns 0 if <paramref name="left" /> and <paramref name="right" /> are equal.</para>
-		///     <para>Static comparison function</para>
-		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		/// <returns></returns>
-		public static Int32 CompareTo( Span left, Span right ) {
+        ///// <summary>
+        ///// </summary>
+        //public BigInteger TotalPlanckTimes => this.LazyTotal.Value.Value;
+        /// <summary>
+        ///     <para>
+        ///         Compares two <see cref="Span" /> values, returning an <see cref="Int32" /> that indicates
+        ///         their relationship.
+        ///     </para>
+        ///     <para>Returns 1 if <paramref name="left" /> is larger.</para>
+        ///     <para>Returns -1 if <paramref name="right" /> is larger.</para>
+        ///     <para>Returns 0 if <paramref name="left" /> and <paramref name="right" /> are equal.</para>
+        ///     <para>Static comparison function</para>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Int32 CompareTo( Span left, Span right ) {
             var leftPlancks = left.TotalPlanckTimes;
             var rightPlancks = right.TotalPlanckTimes;
 
@@ -611,15 +611,15 @@ namespace Librainian.Measurement.Time {
                     return Zero;
                 }
 
-				if ( TimeSpan.TryParse( text, out var result ) ) {
-					return new Span( result ); //cheat and use the existing TimeSpan parsing code...
-				}
+                if ( TimeSpan.TryParse( text, out var result ) ) {
+                    return new Span( result ); //cheat and use the existing TimeSpan parsing code...
+                }
 
-				if ( text.IsJustNumbers( out var units ) ) {
-					return new Span( seconds: units ); //assume seconds given
-				}
+                if ( text.IsJustNumbers( out var units ) ) {
+                    return new Span( seconds: units ); //assume seconds given
+                }
 
-				if ( text.EndsWith( "milliseconds", StringComparison.InvariantCultureIgnoreCase ) ) {
+                if ( text.EndsWith( "milliseconds", StringComparison.InvariantCultureIgnoreCase ) ) {
                     text = text.Before( "milliseconds" );
                     if ( text.IsJustNumbers( out units ) ) {
                         return new Span( milliseconds: units );
@@ -741,7 +741,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
         /// <filterpriority>2</filterpriority>
-        public override Int32 GetHashCode() => MathHashing.GetHashCodes( this.Yoctoseconds,this.Zeptoseconds,this.Attoseconds, this.Femtoseconds, this.Picoseconds, this.Nanoseconds, this.Microseconds, this.Milliseconds, this.Seconds, this.Minutes, this.Hours, this.Days, this.Weeks, this.Months, this.Years );
+        public override Int32 GetHashCode() => Hashing.GetHashCodes( this.Yoctoseconds, this.Zeptoseconds, this.Attoseconds, this.Femtoseconds, this.Picoseconds, this.Nanoseconds, this.Microseconds, this.Milliseconds, this.Seconds, this.Minutes, this.Hours, this.Days, this.Weeks, this.Months, this.Years );
 
         /// <summary>
         ///     <para>
@@ -752,8 +752,6 @@ namespace Librainian.Measurement.Time {
             var span = new Span( this.TotalPlanckTimes );
             return ( BigInteger )span.Years.Value;
         }
-
-        Boolean IEquatable<Span>.Equals( Span other ) => this.Equals( obj: other );
 
         [Pure]
         public override String ToString() {
@@ -810,5 +808,7 @@ namespace Librainian.Measurement.Time {
 
             return bob.ToStrings( ", ", ", and " );
         }
+
+        Boolean IEquatable<Span>.Equals( Span other ) => this.Equals( obj: other );
     }
 }

@@ -184,7 +184,7 @@ namespace Librainian.AmazedSaint {
 		/// <param name="indexes">todo: describe indexes parameter on TryGetIndex</param>
 		/// <param name="result">todo: describe result parameter on TryGetIndex</param>
 		public override Boolean TryGetIndex( GetIndexBinder binder, Object[] indexes, out Object result ) {
-            if ( indexes.Length == 1 && indexes[ 0 ] == null ) {
+            if ( indexes.Length == 1 && indexes[ 0 ] is null ) {
                 result = this.ElasticProvider.Elements.ToList();
             }
             else if ( indexes.Length == 1 && indexes[ 0 ] is Int32 ) {

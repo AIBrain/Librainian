@@ -157,7 +157,7 @@ namespace Librainian.FileSystem.Physical {
                 yield return this;
             }
             else {
-                if ( this.GetParent() == null ) {
+                if ( this.GetParent() is null ) {
                     yield break;
                 }
                 foreach ( var device in this.GetParent().GetRemovableDevices() ) {

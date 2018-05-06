@@ -85,7 +85,7 @@ namespace Librainian.Collections {
 
 			var stopWatch = StopWatch.StartNew();
 
-			if ( orUntilCancelled == null ) {
+			if ( orUntilCancelled is null ) {
 				orUntilCancelled = new SimpleCancel();
 			}
 
@@ -306,7 +306,7 @@ namespace Librainian.Collections {
         ///     Blocks, transfers items from <see cref="InputBuffer" />, and then releases lock.
         /// </summary>
         public void CatchUp() {
-            if ( !AnyWritesPending() ) {
+            if ( !this.AnyWritesPending() ) {
                 return;
             }
 
@@ -324,7 +324,7 @@ namespace Librainian.Collections {
         }
 
 	    public Boolean TryCatchup( TimeSpan timeout) {
-		    if ( !AnyWritesPending() ) {
+		    if ( !this.AnyWritesPending() ) {
 			    return true;
 		    }
 
@@ -402,7 +402,7 @@ namespace Librainian.Collections {
         /// <param name="array"></param>
         /// <param name="arrayIndex"></param>
         public void CopyTo( TType[] array, Int32 arrayIndex ) {
-            if ( array == null ) {
+            if ( array is null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
 

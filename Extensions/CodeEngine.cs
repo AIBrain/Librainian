@@ -127,7 +127,7 @@ namespace Librainian.Extensions {
 
                 var loAssembly = this._compilerResults.CompiledAssembly;
                 var loObject = loAssembly.CreateInstance( "Coding.CodeEngine" );
-                if ( loObject == null ) {
+                if ( loObject is null ) {
                     if ( Debugger.IsAttached ) {
                         Debugger.Break();
                     }

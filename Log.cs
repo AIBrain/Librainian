@@ -53,13 +53,14 @@ namespace Librainian {
     /// <summary>
     ///     A class to help with exception handling and plain ol' simple time+logging to the Console.
     ///     <para>I feel like this is a rereinvented wheel..</para>
+    /// UPDATe: Can we use the NLOG nuget pagkage?
     /// </summary>
     public static class Log {
         private static readonly ConsoleListenerWithTimePrefix ConsoleListener;
 
         static Log() => ConsoleListener = new ConsoleListenerWithTimePrefix();
 
-	    public static Boolean HasConsoleBeenAllocated {
+        public static Boolean HasConsoleBeenAllocated {
             get; private set;
         }
 

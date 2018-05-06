@@ -53,7 +53,7 @@ namespace Librainian.Collections {
 
 			do {
 				ret = this._head;
-				if ( ret.Next == null ) {
+				if ( ret.Next is null ) {
 					throw new IndexOutOfRangeException( "Stack is empty" );
 				}
 #pragma warning disable 420
@@ -111,7 +111,7 @@ namespace Librainian.Collections {
 		public Int64 LongCount() => this.Count;
 
 		public void Push( T item ) {
-			if ( Object.Equals( default, item ) ) {
+			if ( Equals( default, item ) ) {
 				return;
 			}
 
@@ -143,7 +143,7 @@ namespace Librainian.Collections {
 #pragma warning restore 420
 			--this.Count;
 			result = ret.Item;
-			return !Object.Equals( result, default );
+			return !Equals( result, default );
 		}
 
 		/// <summary>Attempt two <see cref="TryPop" /></summary>

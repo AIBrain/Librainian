@@ -460,13 +460,13 @@ namespace Librainian.Database {
 		/// <param name="propertyName">The property name whose value is required</param>
 		/// <returns></returns>
 		public static String GetWmiPropertyValueForEngineService( [NotNull] String serviceName, [NotNull] String wmiNamespace, [NotNull] String propertyName ) {
-			if ( serviceName == null ) {
+			if ( serviceName is null ) {
 				throw new ArgumentNullException( paramName: nameof( serviceName ) );
 			}
-			if ( wmiNamespace == null ) {
+			if ( wmiNamespace is null ) {
 				throw new ArgumentNullException( paramName: nameof( wmiNamespace ) );
 			}
-			if ( propertyName == null ) {
+			if ( propertyName is null ) {
 				throw new ArgumentNullException( paramName: nameof( propertyName ) );
 			}
 			var query = $"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = '{propertyName}' and ServiceName = '{serviceName}'";

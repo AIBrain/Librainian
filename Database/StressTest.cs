@@ -52,7 +52,7 @@ namespace Librainian.Database {
 		/// <param name="multithread"></param>
 		/// <returns></returns>
 		public static UInt64 PerformDatabaseCounting( [NotNull] IDatabase database, out TimeSpan forHowLong, Boolean multithread = false ) {
-            if ( database == null ) {
+            if ( database is null ) {
                 throw new ArgumentNullException( nameof( database ) );
             }
             if ( multithread ) {

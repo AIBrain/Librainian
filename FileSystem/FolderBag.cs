@@ -66,7 +66,7 @@ namespace Librainian.FileSystem {
         }
 
         public void FoundAnotherFolder( [NotNull] Folder folder ) {
-            if ( folder == null ) {
+            if ( folder is null ) {
                 throw new ArgumentNullException( nameof( folder ) );
             }
 
@@ -168,7 +168,7 @@ namespace Librainian.FileSystem {
                 if ( ReferenceEquals( lhs, rhs ) ) {
                     return true;
                 }
-                if ( lhs == null || rhs == null ) {
+                if ( lhs is null || rhs is null ) {
                     return false;
                 }
                 return String.Equals( lhs.Data, rhs.Data, StringComparison.Ordinal );

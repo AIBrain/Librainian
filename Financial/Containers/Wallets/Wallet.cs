@@ -106,7 +106,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		}
 
 		public Boolean Contains( IBankNote bankNote ) {
-			if ( bankNote == null ) {
+			if ( bankNote is null ) {
 				throw new ArgumentNullException( nameof( bankNote ) );
 			}
 
@@ -114,7 +114,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		}
 
 		public Boolean Contains( ICoin coin ) {
-			if ( coin == null ) {
+			if ( coin is null ) {
 				throw new ArgumentNullException( nameof( coin ) );
 			}
 
@@ -123,7 +123,7 @@ namespace Librainian.Financial.Containers.Wallets {
 
 		//    await this.Messages.Completion;
 		public UInt64 Count( IBankNote bankNote ) {
-			if ( bankNote == null ) {
+			if ( bankNote is null ) {
 				throw new ArgumentNullException( nameof( bankNote ) );
 			}
 
@@ -135,7 +135,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		///// </summary>
 		//public async Task CatchUp() {
 		public UInt64 Count( ICoin coin ) {
-			if ( coin == null ) {
+			if ( coin is null ) {
 				throw new ArgumentNullException( nameof( coin ) );
 			}
 
@@ -151,7 +151,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
 		public Boolean Deposit( IDenomination denomination, UInt64 quantity, Guid? id = null ) {
-			if ( denomination == null ) {
+			if ( denomination is null ) {
 				throw new ArgumentNullException( nameof( denomination ) );
 			}
 			if ( !quantity.Any() ) {
@@ -281,7 +281,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
 		public Boolean TryWithdraw( IBankNote bankNote, UInt64 quantity ) {
-			if ( bankNote == null ) {
+			if ( bankNote is null ) {
 				return false;
 			}
 			if ( quantity <= 0 ) {
@@ -306,7 +306,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
 		public Boolean TryWithdraw( ICoin coin, UInt64 quantity ) {
-			if ( coin == null ) {
+			if ( coin is null ) {
 				throw new ArgumentNullException( nameof( coin ) );
 			}
 			if ( quantity <= 0 ) {

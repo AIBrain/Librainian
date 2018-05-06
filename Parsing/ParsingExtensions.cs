@@ -164,10 +164,10 @@ namespace Librainian.Parsing {
         public static String AddUnderscores( this String pascalCasedWord ) => Regex.Replace( Regex.Replace( Regex.Replace( pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1_$2" ), @"([a-z\d])([A-Z])", "$1_$2" ), @"[-\s]", "_" );
 
         public static String After( [NotNull] this String s, [NotNull] String splitter ) {
-            if ( s == null ) {
+            if ( s is null ) {
                 throw new ArgumentNullException( nameof( s ) );
             }
-            if ( splitter == null ) {
+            if ( splitter is null ) {
                 throw new ArgumentNullException( nameof( splitter ) );
             }
             return s.Substring( s.IndexOf( splitter, StringComparison.InvariantCulture ) + 1 ).TrimStart();
@@ -189,7 +189,7 @@ namespace Librainian.Parsing {
         /// <param name="index"></param>
         /// <returns></returns>
         public static String AsIndexed( [NotNull] this String word, Int32 index ) {
-            if ( word == null ) {
+            if ( word is null ) {
                 throw new ArgumentNullException( nameof( word ) );
             }
             return $"{word}.[{index}]";
@@ -229,17 +229,17 @@ namespace Librainian.Parsing {
         /// <param name="splitter"></param>
         /// <returns></returns>
         public static String Before( [NotNull] this String s, [NotNull] String splitter ) {
-            if ( s == null ) {
+            if ( s is null ) {
                 throw new ArgumentNullException( nameof( s ) );
             }
-            if ( splitter == null ) {
+            if ( splitter is null ) {
                 throw new ArgumentNullException( nameof( splitter ) );
             }
             return s.Substring( 0, s.IndexOf( splitter, StringComparison.InvariantCulture ) ).TrimEnd();
         }
 
         public static IEnumerable<T> ConcatSingle<T>( [NotNull] this IEnumerable<T> sequence, T element ) {
-            if ( sequence == null ) {
+            if ( sequence is null ) {
                 throw new ArgumentNullException( nameof( sequence ) );
             }
             foreach ( var item in sequence ) {
@@ -270,10 +270,10 @@ namespace Librainian.Parsing {
         ///     the strings
         /// </returns>
         public static Int32 DamerauLevenshteinDistance( [NotNull] this String source, [NotNull] String target, Int32 threshold ) {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
-            if ( target == null ) {
+            if ( target is null ) {
                 throw new ArgumentNullException( nameof( target ) );
             }
             var length1 = source.Length;
@@ -441,10 +441,10 @@ namespace Librainian.Parsing {
         }
 
         public static Boolean ExactMatch( [NotNull] this String source, [NotNull] String compare ) {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
-            if ( compare == null ) {
+            if ( compare is null ) {
                 throw new ArgumentNullException( nameof( compare ) );
             }
             if ( source.Length == 0 || compare.Length == 0 ) {
@@ -577,7 +577,7 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         [NotNull]
         public static String Humanize( [NotNull] this String word ) {
-            if ( word == null ) {
+            if ( word is null ) {
                 throw new ArgumentNullException( nameof( word ) );
             }
 
@@ -695,7 +695,7 @@ namespace Librainian.Parsing {
         /// <param name="bob"></param>
         /// <returns></returns>
         public static Int64 MemoryUsed( [NotNull] this Object bob ) {
-            if ( bob == null ) {
+            if ( bob is null ) {
                 throw new ArgumentNullException( nameof( bob ) );
             }
             try {
@@ -759,7 +759,7 @@ namespace Librainian.Parsing {
         /// <param name="singular"></param>
         /// <returns></returns>
         public static String PluralOf( this UInt64 number, [NotNull] String singular ) {
-            if ( singular == null ) {
+            if ( singular is null ) {
                 throw new ArgumentNullException( nameof( singular ) );
             }
             if ( 1 == number ) {
@@ -786,7 +786,7 @@ namespace Librainian.Parsing {
         /// <param name="singular"></param>
         /// <returns></returns>
         public static String PluralOf( this Double number, [NotNull] String singular ) {
-            if ( singular == null ) {
+            if ( singular is null ) {
                 throw new ArgumentNullException( nameof( singular ) );
             }
             if ( number.Near( 1 ) ) {
@@ -814,7 +814,7 @@ namespace Librainian.Parsing {
         /// <param name="singular"></param>
         /// <returns></returns>
         public static String PluralOf( this Single number, [NotNull] String singular ) {
-            if ( singular == null ) {
+            if ( singular is null ) {
                 throw new ArgumentNullException( nameof( singular ) );
             }
             if ( number.Near( 1 ) ) {
@@ -842,7 +842,7 @@ namespace Librainian.Parsing {
         /// <param name="singular"></param>
         /// <returns></returns>
         public static String PluralOf( this Decimal number, [NotNull] String singular ) {
-            if ( singular == null ) {
+            if ( singular is null ) {
                 throw new ArgumentNullException( nameof( singular ) );
             }
 
@@ -871,7 +871,7 @@ namespace Librainian.Parsing {
         /// <param name="singular"></param>
         /// <returns></returns>
         public static String PluralOf( this Int32 number, [NotNull] String singular ) {
-            if ( singular == null ) {
+            if ( singular is null ) {
                 throw new ArgumentNullException( nameof( singular ) );
             }
 
@@ -900,7 +900,7 @@ namespace Librainian.Parsing {
         /// <param name="singular"></param>
         /// <returns></returns>
         public static String PluralOf( this BigRational number, [NotNull] String singular ) {
-            if ( singular == null ) {
+            if ( singular is null ) {
                 throw new ArgumentNullException( nameof( singular ) );
             }
             if ( number == BigRational.One ) {
@@ -927,7 +927,7 @@ namespace Librainian.Parsing {
         /// <param name="singular"></param>
         /// <returns></returns>
         public static String PluralOf( this BigInteger number, [NotNull] String singular ) {
-            if ( singular == null ) {
+            if ( singular is null ) {
                 throw new ArgumentNullException( nameof( singular ) );
             }
             if ( BigInteger.One == number ) {
@@ -952,7 +952,7 @@ namespace Librainian.Parsing {
         public static String Quoted( [CanBeNull] this String s ) => $"\"{s}\"";
 
         public static String ReadToEnd( [NotNull] this MemoryStream ms ) {
-            if ( ms == null ) {
+            if ( ms is null ) {
                 throw new ArgumentNullException( nameof( ms ) );
             }
             ms.Seek( 0, SeekOrigin.Begin );
@@ -996,10 +996,10 @@ namespace Librainian.Parsing {
         ///     string. If n is 0, this method will return String.Empty.
         /// </returns>
         public static String Repeat( this String @this, Int32 repetitions, String separator = "" ) {
-            if ( @this == null ) {
+            if ( @this is null ) {
                 throw new ArgumentNullException( nameof( @this ), "Repeat called on a null string." );
             }
-            if ( separator == null ) {
+            if ( separator is null ) {
                 throw new ArgumentNullException( nameof( separator ) );
             }
             if ( repetitions < 0 ) {
@@ -1120,14 +1120,14 @@ namespace Librainian.Parsing {
         public static Double Similarity( [CanBeNull] this String source, [CanBeNull] String compare, [CanBeNull] ConcurrentQueue<String> matchReasons = null, TimeSpan? timeout = null ) {
             var similarity = new PotentialF( 0 );
 
-            if ( source == null && compare == null ) {
+            if ( source is null && compare is null ) {
                 similarity.Add( 1 );
                 goto noMoreTests;
             }
-            if ( source == null ) {
+            if ( source is null ) {
                 goto noMoreTests;
             }
-            if ( compare == null ) {
+            if ( compare is null ) {
                 goto noMoreTests;
             }
 
@@ -1278,7 +1278,7 @@ namespace Librainian.Parsing {
         }
 
         public static String Soundex( [NotNull] this String s, Int32 length = 4 ) {
-            if ( s == null ) {
+            if ( s is null ) {
                 throw new ArgumentNullException( nameof( s ) );
             }
             return FullSoundex( s ).PadRight( length, '0' ) // soundex is no shorter than
@@ -1296,17 +1296,17 @@ namespace Librainian.Parsing {
 		/// </param>
 		/// <returns>See: <see cref="String.Split(String[], StringSplitOptions)" />.</returns>
 		public static String[] Split( this String @this, String separator, StringSplitOptions splitOptions = StringSplitOptions.None ) {
-            if ( @this == null ) {
+            if ( @this is null ) {
                 throw new ArgumentNullException( nameof( @this ), "Split called on a null String." );
             }
-            if ( separator == null ) {
+            if ( separator is null ) {
                 throw new ArgumentNullException( nameof( separator ) );
             }
             return @this.Split( new[] { separator }, splitOptions );
         }
 
         public static IEnumerable<String> SplitToChunks( [NotNull] this String s, Int32 chunks ) {
-            if ( s == null ) {
+            if ( s is null ) {
                 throw new ArgumentNullException( nameof( s ) );
             }
             var res = Enumerable.Range( 0, s.Length ).Select( index => new {
@@ -1423,7 +1423,7 @@ namespace Librainian.Parsing {
 		///     negative).
 		/// </exception>
 		public static String SubstringFromEnd( this String @this, Int32 endIndex ) {
-            if ( @this == null ) {
+            if ( @this is null ) {
                 throw new ArgumentNullException( nameof( @this ), "SubstringFromEnd called on a null string." );
             }
             if ( endIndex < 0 || endIndex > @this.Length ) {
@@ -1448,7 +1448,7 @@ namespace Librainian.Parsing {
 		///     negative).
 		/// </exception>
 		public static String SubstringFromEnd( this String @this, Int32 endIndex, Int32 length ) {
-            if ( @this == null ) {
+            if ( @this is null ) {
                 throw new ArgumentNullException( nameof( @this ), "SubstringFromEnd called on a null string." );
             }
             if ( endIndex < 0 || endIndex > @this.Length ) {
@@ -1536,7 +1536,7 @@ namespace Librainian.Parsing {
 
         [NotNull]
         public static IEnumerable<Sentence> ToSentences( [CanBeNull] this String paragraph ) {
-            if ( paragraph == null ) {
+            if ( paragraph is null ) {
                 return Enumerable.Empty<Sentence>();
             }
 
@@ -1663,7 +1663,7 @@ namespace Librainian.Parsing {
 
             //AIBrain.Brain.BlackBoxClass.Diagnostic( new Regex( @"(\b\b)|(\$\d+\.\d+)" ).Split( sentence ) );
 
-            if ( sentence == null ) {
+            if ( sentence is null ) {
 
                 //throw new ArgumentNullException( nameof( sentence ) );
                 return new[] { String.Empty };
@@ -1720,7 +1720,7 @@ namespace Librainian.Parsing {
         /// <param name="maxLength">The maximum desired length of the string.</param>
         /// <returns>A string containing the first <c>Min(this.Length, maxLength)</c> characters from the extended string.</returns>
         public static String WithMaxLength( this String @this, Int32 maxLength ) {
-            if ( @this == null ) {
+            if ( @this is null ) {
                 throw new ArgumentNullException( nameof( @this ), "WithMaxLength called on a null string." );
             }
             return @this.Substring( 0, Math.Min( @this.Length, maxLength ) );
@@ -1769,7 +1769,7 @@ namespace Librainian.Parsing {
         /// <param name="input"></param>
         /// <returns></returns>
         public static Int32 WordCount( [NotNull] this String input ) {
-            if ( input == null ) {
+            if ( input is null ) {
                 throw new ArgumentNullException( nameof( input ) );
             }
             try {

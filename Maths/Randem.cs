@@ -1,24 +1,24 @@
 // Copyright 2018 Rick@AIBrain.org.
-// 
+//
 // This notice must be kept visible in the source.
-// 
+//
 // This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
-// 
+//
 // Donations and royalties can be paid via
 //  PayPal: paypal@aibrain.org
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/Randem.cs" was last cleaned by Rick on 2018/02/03 at 4:01 PM
+//
+// "Librainian/Randem.cs" was last cleaned by Rick on 2018/05/04 at 9:37 PM
 
 namespace Librainian.Maths {
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -53,56 +53,36 @@ namespace Librainian.Maths {
     using Threading.RandomOrg;
 
     public static class Randem {
-        public static class RandomDotOrg {
-            static RandomDotOrg() => Generator = new Lazy<IntegerGenerator>( () => new IntegerGenerator( num: 1 ) );
 
-            internal static Lazy<IntegerGenerator> Generator { get; }
-        }
-
-        internal static class TheFacebooks {
-            internal class FaceBookError {
-                [JsonProperty( "code" )]
-                public Int32 Code { get; set; }
-
-                [JsonProperty( "fbtrace_id" )]
-                public String FbtraceID { get; set; }
-
-                [JsonProperty( "message" )]
-                public String Message { get; set; }
-
-                [JsonProperty( "type" )]
-                public String Type { get; set; }
-            }
-
-            public class FaceBookRootObject {
-                [JsonProperty( "error" )]
-                internal FaceBookError Error { get; }
-            }
-
-            public static async Task<FaceBookRootObject> Get() {
-                var uri = new Uri( "http://graph.facebook.com/microsoft" );
-                var reader = await InternetExtensions.DoRequestJsonAsync<FaceBookRootObject>( uri: uri );
-                return reader; //;.Error.FbtraceID.GetHashCode();
-            }
-        }
-
-        private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<Byte[]>( () => new Byte[sizeof( Double )], trackAllValues: true );
+        /// <summary>
+        /// A Double-sized byte buffer per-thread.
+        /// </summary>
+        private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<Byte[]>( valueFactory: () => new Byte[sizeof( Double )], trackAllValues: true );
 
         /// <summary></summary>
         [NotNull]
         public static ConcurrentDictionary<Type, String[]> EnumDictionary { get; } = new ConcurrentDictionary<Type, String[]>();
 
-        public static Lazy<PersonNameGenerator> Names { get; } = new Lazy<PersonNameGenerator>( () => new PersonNameGenerator() );
+        /// <summary>A thread-local (threadsafe) <see cref="Random" />.</summary>
+        [NotNull]
+        public static Random Instance => ThreadSafeRandom.Value.Value;
+
+        [NotNull]
+        public static Lazy<PersonNameGenerator> Names { get; } = new Lazy<PersonNameGenerator>( valueFactory: () => new PersonNameGenerator() );
 
         /// <summary>
         ///     <para>More cryptographically strong than <see cref="Random" />.</para>
         /// </summary>
         [NotNull]
-        public static ThreadLocal<RandomNumberGenerator> RNG { get; } = new ThreadLocal<RandomNumberGenerator>( () => new RNGCryptoServiceProvider(), trackAllValues: true );
+        public static ThreadLocal<RandomNumberGenerator> RNG { get; } = new ThreadLocal<RandomNumberGenerator>( valueFactory: () => new RNGCryptoServiceProvider(), trackAllValues: true );
+
+        [NotNull]
+        public static ThreadLocal<Lazy<SHA256Managed>> ThreadLocalSHA256Managed { get; } =
+                    new ThreadLocal<Lazy<SHA256Managed>>( valueFactory: () => { return new Lazy<SHA256Managed>( valueFactory: () => new SHA256Managed() ); } );
 
         /// <summary>Provide to each thread its own <see cref="Random" /> with a random seed.</summary>
-        public static ThreadLocal<Lazy<Random>> ThreadSafeRandom { get; } = new ThreadLocal<Lazy<Random>>( () => {
-
+        [NotNull]
+        public static ThreadLocal<Lazy<Random>> ThreadSafeRandom { get; } = new ThreadLocal<Lazy<Random>>( valueFactory: () => {
             var hash = ThreadLocalSHA256Managed.Value.Value.ComputeHash( buffer: Guid.NewGuid().ToByteArray() );
 
             var seed = BitConverter.ToInt32( value: hash, startIndex: 0 );
@@ -110,17 +90,10 @@ namespace Librainian.Maths {
 
             Debug.WriteLine( message: $"Init random with seed {seed} on thread {Thread.CurrentThread.ManagedThreadId}." );
 
-            return new Lazy<Random>( () => new Random( seed ) );
+            return new Lazy<Random>( valueFactory: () => new Random( Seed: seed ) );
         }, trackAllValues: true );
 
-        /// <summary>A thread-local (threadsafe) <see cref="Random" />.</summary>
-        [NotNull]
-        public static Random Instance => ThreadSafeRandom.Value.Value;
-
         internal static ConcurrentStack<Int32> PollResponses { get; } = new ConcurrentStack<Int32>();
-
-        [NotNull]
-        public static ThreadLocal<Lazy<SHA256Managed>> ThreadLocalSHA256Managed { get; } = new ThreadLocal<Lazy<SHA256Managed>>( () => { return new Lazy<SHA256Managed>( () => new SHA256Managed() ); } );
 
         /// <summary>
         ///     Returns a decimal between 0 and 1.
@@ -343,6 +316,7 @@ namespace Librainian.Maths {
         }
 
         public static List<Int32> GenerateRandom( Int32 count, Int32 min, Int32 max ) {
+
             //  initialize set S to empty
             //  for J := N-M + 1 to N do
             //    T := RandInt(1, J)
@@ -358,6 +332,7 @@ namespace Librainian.Maths {
 
                  // max - min > 0 required to avoid overflow
                  count > max - min && max - min > 0 ) {
+
                 // need to use 64-bit to support big ranges (negative min, positive max)
                 throw new ArgumentOutOfRangeException( paramName: $"Range {min} to {max} ({( Int64 )max - min} values), or count {count} is illegal." );
             }
@@ -367,10 +342,12 @@ namespace Librainian.Maths {
 
             // start count values before max, and end at max
             for ( var top = max - count; top < max; top++ ) {
+
                 // May strike a duplicate.
                 // Need to add +1 to make inclusive generator
                 // +1 is safe even for MaxVal max value because top < max
                 if ( !candidates.Add( item: Instance.Next( minValue: min, maxValue: top + 1 ) ) ) {
+
                     // collision, add inclusive max.
                     // which could not possibly have been added before.
                     candidates.Add( item: top );
@@ -394,7 +371,7 @@ namespace Librainian.Maths {
         }
 
         public static Char GetChar( this RandomNumberGenerator rng ) {
-            if ( rng == null ) {
+            if ( rng is null ) {
                 throw new ArgumentNullException( paramName: nameof( rng ) );
             }
 
@@ -628,7 +605,9 @@ namespace Librainian.Maths {
         ///     <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<Byte> NextBytes( this Byte min, Byte max ) { yield return min.NextByte( max: max ); }
+        public static IEnumerable<Byte> NextBytes( this Byte min, Byte max ) {
+            yield return min.NextByte( max: max );
+        }
 
         /// <summary>
         ///     <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
@@ -648,7 +627,8 @@ namespace Librainian.Maths {
         /// <param name="lowEnd"></param>
         /// <param name="highEnd"></param>
         /// <returns></returns>
-        public static Color NextColor( Byte alpha = 255, Byte lowEnd = 0, Byte highEnd = 255 ) => Color.FromArgb( alpha: alpha, red: Next( minValue: lowEnd, maxValue: highEnd ), green: Next( minValue: lowEnd, maxValue: highEnd ), blue: Next( minValue: lowEnd, maxValue: highEnd ) );
+        public static Color NextColor( Byte alpha = 255, Byte lowEnd = 0, Byte highEnd = 255 ) =>
+            Color.FromArgb( alpha: alpha, red: Next( minValue: lowEnd, maxValue: highEnd ), green: Next( minValue: lowEnd, maxValue: highEnd ), blue: Next( minValue: lowEnd, maxValue: highEnd ) );
 
         public static DateTime NextDateTime( this DateTime value, TimeSpan timeSpan ) => value + new Milliseconds( value: timeSpan.TotalMilliseconds * Instance.NextDouble() );
 
@@ -862,7 +842,7 @@ namespace Librainian.Maths {
             var range = tpMax.Value - tpMin.Value;
 
             do {
-                var numberOfDigits = ( UInt16 )1.Next( maxValue: range.ToString( "R" ).Length );
+                var numberOfDigits = ( UInt16 )1.Next( maxValue: range.ToString( format: "R" ).Length );
 
                 var amount = numberOfDigits.NextBigIntegerPositive(); //BUG here
 
@@ -922,7 +902,7 @@ namespace Librainian.Maths {
                 return String.Empty;
             }
 
-            return new String( value: Enumerable.Range( start: 0, count: length ).Select( i => charPool[index: 0.Next( maxValue: charPool.Length )] ).ToArray() );
+            return new String( value: Enumerable.Range( start: 0, count: length ).Select( selector: i => charPool[index: 0.Next( maxValue: charPool.Length )] ).ToArray() );
         }
 
         /// <summary>
@@ -968,7 +948,10 @@ namespace Librainian.Maths {
         /// <param name="minMilliseconds"></param>
         /// <param name="maxMilliseconds"></param>
         /// <returns></returns>
-        public static TimeSpan NextTimeSpan( this Int32 minMilliseconds, Int32 maxMilliseconds ) => TimeSpan.FromMilliseconds( value: minMilliseconds > maxMilliseconds ? Instance.Next( minValue: maxMilliseconds, maxValue: minMilliseconds ) : Instance.Next( minValue: minMilliseconds, maxValue: maxMilliseconds ) );
+        public static TimeSpan NextTimeSpan( this Int32 minMilliseconds, Int32 maxMilliseconds ) =>
+            TimeSpan.FromMilliseconds( value: minMilliseconds > maxMilliseconds
+                ? Instance.Next( minValue: maxMilliseconds, maxValue: minMilliseconds )
+                : Instance.Next( minValue: minMilliseconds, maxValue: maxMilliseconds ) );
 
         public static UInt64 NextUInt64() {
             var buffer = new Byte[sizeof( UInt64 )];
@@ -994,6 +977,7 @@ namespace Librainian.Maths {
             Contract.Assert( condition: validityBound >= bound );
 
             while ( true ) {
+
                 //generate a uniformly random value in [0, 2^(buffer.Length * 8 - 1))
                 source.GetBytes( data: buffer );
                 buffer[buffer.Length - 1] &= 0x7F; //force sign bit to positive
@@ -1013,7 +997,9 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="charPool"></param>
         /// <returns></returns>
-        public static String Randomize( [CanBeNull] this String charPool ) => null == charPool ? String.Empty : charPool.OrderBy( r => Next() ).Aggregate( seed: String.Empty, func: ( current, c ) => current + c );
+        public static String Randomize( [CanBeNull] this String charPool ) {
+            return null == charPool ? String.Empty : charPool.OrderBy( keySelector: r => Next() ).Aggregate( seed: String.Empty, func: ( current, c ) => current + c );
+        }
 
         /// <summary>
         ///     <para>A list containing <see cref="Boolean.True" /> or <see cref="Boolean.False" />.</para>
@@ -1051,6 +1037,7 @@ namespace Librainian.Maths {
             var list = new List<Word>();
 
             if ( NextBoolean() ) {
+
                 //-V3003
                 avgWords += NextByte( min: 1, max: 3 );
             }
@@ -1078,8 +1065,9 @@ namespace Librainian.Maths {
         /// <param name="symbols"></param>
         /// <returns></returns>
         public static String RandomString( Int32 length = 10, Boolean lowerCase = true, Boolean upperCase = false, Boolean numbers = false, Boolean symbols = false ) {
-            var charPool = String.Concat( str0: lowerCase ? ParsingExtensions.AllLowercaseLetters : String.Empty, str1: upperCase ? ParsingExtensions.AllUppercaseLetters : String.Empty, str2: numbers ? ParsingExtensions.Numbers : String.Empty, str3: symbols ? ParsingExtensions.Symbols : String.Empty );
-            return new String( value: Enumerable.Range( start: 0, count: length ).Select( i => charPool[index: 0.Next( maxValue: charPool.Length )] ).ToArray() );
+            var charPool = String.Concat( str0: lowerCase ? ParsingExtensions.AllLowercaseLetters : String.Empty, str1: upperCase ? ParsingExtensions.AllUppercaseLetters : String.Empty,
+                str2: numbers ? ParsingExtensions.Numbers : String.Empty, str3: symbols ? ParsingExtensions.Symbols : String.Empty );
+            return new String( value: Enumerable.Range( start: 0, count: length ).Select( selector: i => charPool[index: 0.Next( maxValue: charPool.Length )] ).ToArray() );
         }
 
         public static Word RandomWord( Int32 avglength = 5, Boolean lowerCase = true, Boolean upperCase = true, Boolean numbers = false, Boolean symbols = false ) {
@@ -1094,9 +1082,11 @@ namespace Librainian.Maths {
 
             var timeout = Task.Delay( delay: timeoutSpan ?? Seconds.Seven, cancellationToken: cancellationToken );
 
-            var tasks = new List<Task> { timeout,
-                Task.Run( () => { PollResponses.Push( item: TheFacebooks.Get().Result.Error.FbtraceID.GetHashCode() ); }, cancellationToken: cancellationToken ),
-                Task.Run( () => { PollResponses.Push( item: RandomDotOrg.Generator.Value.Get() ); }, cancellationToken: cancellationToken ) };
+            var tasks = new List<Task> {
+                timeout,
+                Task.Run( action: () => { PollResponses.Push( item: TheFacebooks.Get().Result.Error.FbtraceID.GetHashCode() ); }, cancellationToken: cancellationToken ),
+                Task.Run( action: () => { PollResponses.Push( item: RandomDotOrg.Generator.Value.Get() ); }, cancellationToken: cancellationToken )
+            };
 
             var task = await Task.WhenAny( tasks: tasks );
 
@@ -1110,7 +1100,7 @@ namespace Librainian.Maths {
             }
 
             if ( seed.HasValue ) {
-                ThreadSafeRandom.Value = new Lazy< Random >( () => new Random( seed.Value ) );
+                ThreadSafeRandom.Value = new Lazy<Random>( valueFactory: () => new Random( Seed: seed.Value ) );
                 return true;
             }
 
@@ -1175,21 +1165,51 @@ namespace Librainian.Maths {
         /// <param name="range"></param>
         /// <returns></returns>
         private static String NextChar( [NotNull] this Char[] range ) {
-            if ( range == null ) {
+            if ( range is null ) {
                 throw new ArgumentNullException( paramName: nameof( range ) );
             }
 
             //TODO
             return range[0.Next( maxValue: range.Length )].ToString();
         }
-    }
 
-    internal static class Request {
-        public static WebRequest Create( String uri ) {
-            var request = WebRequest.Create( uri );
-            request.Proxy = null;
-            request.Credentials = CredentialCache.DefaultCredentials;
-            return request;
+        public static class RandomDotOrg {
+
+            static RandomDotOrg() {
+                Generator = new Lazy<IntegerGenerator>( valueFactory: () => new IntegerGenerator( num: 1 ) );
+            }
+
+            internal static Lazy<IntegerGenerator> Generator { get; }
+        }
+
+        internal static class TheFacebooks {
+
+            public static async Task<FaceBookRootObject> Get() {
+                var uri = new Uri( uriString: "http://graph.facebook.com/microsoft" );
+                var reader = await InternetExtensions.DoRequestJsonAsync<FaceBookRootObject>( uri: uri );
+                return reader; //;.Error.FbtraceID.GetHashCode();
+            }
+
+            public class FaceBookRootObject {
+
+                [JsonProperty( propertyName: "error" )]
+                internal FaceBookError Error { get; }
+            }
+
+            internal class FaceBookError {
+
+                [JsonProperty( propertyName: "code" )]
+                public Int32 Code { get; set; }
+
+                [JsonProperty( propertyName: "fbtrace_id" )]
+                public String FbtraceID { get; set; }
+
+                [JsonProperty( propertyName: "message" )]
+                public String Message { get; set; }
+
+                [JsonProperty( propertyName: "type" )]
+                public String Type { get; set; }
+            }
         }
     }
 
@@ -1201,34 +1221,42 @@ namespace Librainian.Maths {
             }
 
             if ( maxValue < minValue ) {
-                throw new ArgumentException( "max cannot be less than min" );
+                throw new ArgumentException( message: "max cannot be less than min" );
             }
 
-            if ( maxValue - minValue + 1 > Math.Pow( 10, 3 ) ) {
-                throw new ArgumentException( "Range requested cannot be larger than 10,000" );
+            if ( maxValue - minValue + 1 > Math.Pow( x: 10, y: 3 ) ) {
+                throw new ArgumentException( message: "Range requested cannot be larger than 10,000" );
             }
 
-            if ( minValue < -Math.Pow( 10, 8 ) || minValue > Math.Pow( 10, 8 ) ) {
-                throw new ArgumentException( "Value of min must be between -1e9 and 1e9", nameof( minValue ) );
+            if ( minValue < -Math.Pow( x: 10, y: 8 ) || minValue > Math.Pow( x: 10, y: 8 ) ) {
+                throw new ArgumentException( message: "Value of min must be between -1e9 and 1e9", paramName: nameof( minValue ) );
             }
 
-            if ( maxValue < -Math.Pow( 10, 8 ) || maxValue > Math.Pow( 10, 8 ) ) {
-                throw new ArgumentException( "Value of max must be between -1e9 and 1e9", nameof( maxValue ) );
+            if ( maxValue < -Math.Pow( x: 10, y: 8 ) || maxValue > Math.Pow( x: 10, y: 8 ) ) {
+                throw new ArgumentException( message: "Value of max must be between -1e9 and 1e9", paramName: nameof( maxValue ) );
             }
 
             var uri = $"http://www.random.org/sequences/?min={minValue}&max={maxValue}&col=1&base=10&format=plain&rnd=new";
 
-
-            using ( var response = await Request.Create( uri ).GetResponseAsync() ) {
+            using ( var response = await Request.Create( uri: uri ).GetResponseAsync() ) {
                 using ( var dataStream = response.GetResponseStream() ) {
-                    using ( var reader = new StreamReader( dataStream ) ) {
+                    using ( var reader = new StreamReader( stream: dataStream ) ) {
                         var responseFromServer = reader.ReadToEnd();
 
-                        return responseFromServer.Split( '\n' ).Where( n => n.Length > 0 ).Select( Int32.Parse );
+                        return responseFromServer.Split( '\n' ).Where( predicate: n => n.Length > 0 ).Select( selector: Int32.Parse );
                     }
                 }
             }
         }
+    }
 
+    internal static class Request {
+
+        public static WebRequest Create( String uri ) {
+            var request = WebRequest.Create( requestUriString: uri );
+            request.Proxy = null;
+            request.Credentials = CredentialCache.DefaultCredentials;
+            return request;
+        }
     }
 }

@@ -97,7 +97,7 @@ namespace Librainian.Measurement.Time {
 		public static DateTime At( this DateTime current, Int32 hour, Int32 minute, Int32 second, Int32 milliseconds ) => current.SetTime( hour, minute, second, milliseconds );
 
 		public static DateTime Average( [ NotNull ] this IEnumerable< DateTime > dates ) {
-			if ( dates == null ) {
+			if ( dates is null ) {
 				throw new ArgumentNullException( nameof(dates) );
 			}
 

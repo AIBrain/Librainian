@@ -62,10 +62,10 @@ namespace Librainian.Maths {
         }
 
         public static Credits Combine( [NotNull] Credits left, [NotNull] Credits right ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( nameof( left ) );
             }
-            if ( right == null ) {
+            if ( right is null ) {
                 throw new ArgumentNullException( nameof( right ) );
             }
             return new Credits( left.CurrentCredits + right.CurrentCredits, left.LifetimeCredits + right.LifetimeCredits );

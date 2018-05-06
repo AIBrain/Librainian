@@ -34,7 +34,7 @@ namespace Librainian.Magic {
 
         // ReSharper disable once NotNullMemberIsNotInitialized
         public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
-            if ( modules == null ) {
+            if ( modules is null ) {
                 throw new ArgumentNullException( nameof( modules ) );
             }
             this.Kernel.Should().BeNull();

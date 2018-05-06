@@ -38,7 +38,7 @@ namespace Librainian.Collections {
                 return;
             }
             foreach ( var local in source ) {
-                if ( array == null ) {
+                if ( array is null ) {
                     array = new T[ 4 ];
                 }
                 else if ( array.Length == length ) {
@@ -71,7 +71,7 @@ namespace Librainian.Collections {
                 return new T[ 0 ];
             }
             T[] destinationArray;
-            if ( this._collection == null ) {
+            if ( this._collection is null ) {
                 if ( this._items.Length == this._count ) {
                     return this._items;
                 }

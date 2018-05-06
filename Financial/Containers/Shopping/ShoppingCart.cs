@@ -50,7 +50,7 @@ namespace Librainian.Financial.Containers.Shopping {
         }
 
         public UInt32 AddItems( [CanBeNull] ShoppingItem item, UInt32 quantity ) {
-            if ( item == null ) {
+            if ( item is null ) {
                 return 0;
             }
 

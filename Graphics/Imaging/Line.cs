@@ -133,7 +133,7 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equal( [CanBeNull] Line left, [CanBeNull] Line right ) {
-            if ( left == null || right == null ) {
+            if ( left is null || right is null ) {
                 return false;
             }
 

@@ -76,7 +76,7 @@ namespace Librainian.Graphics.Imaging {
         /// <returns></returns>
         [Pure]
         public static Boolean Equal( Frame left, Frame right ) {
-            //if ( ( left == null ) || ( right == null ) ) {
+            //if ( ( left is null ) || ( right is null ) ) {
             //    return false;
             //}
 

@@ -32,7 +32,7 @@ namespace Librainian.Threading {
         }
 
         public void Dispose() {
-            if ( this._toRelease == null ) {
+            if ( this._toRelease is null ) {
                 return;
             }
             if ( this._writer ) {

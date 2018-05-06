@@ -39,7 +39,7 @@ namespace Librainian.OperatingSystem {
             var hDrive = NativeMethods.CreateFileW( sDrive, 0, // No access to drive
                                                   NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OPEN_EXISTING, NativeMethods.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
 
-            if ( hDrive == null || hDrive.IsInvalid ) {
+            if ( hDrive is null || hDrive.IsInvalid ) {
                 //Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
                 return null;
             }
@@ -73,7 +73,7 @@ namespace Librainian.OperatingSystem {
             var hDrive = NativeMethods.CreateFileW( sDrive, NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE, // Administrative privilege is required
                                                   NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OPEN_EXISTING, NativeMethods.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
 
-            if ( hDrive == null || hDrive.IsInvalid ) {
+            if ( hDrive is null || hDrive.IsInvalid ) {
                 //Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
                 return null;
             }

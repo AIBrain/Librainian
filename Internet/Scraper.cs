@@ -125,25 +125,24 @@ namespace Librainian.Internet {
 
         private static void RespCallback( IAsyncResult asynchronousResult ) {
             try {
-                if ( !( asynchronousResult.AsyncState is WebSite ) ) {
-                    return;
+                if ( asynchronousResult.AsyncState is WebSite web ) {
+                    var response = web.Request.EndGetResponse( asynchronousResult );
+                    var document = response.StringFromResponse();
+
+                    Debug.WriteLineIf( response.IsFromCache, $"from cache {web.Location}" );
+
+                    MAccess.EnterWriteLock();
+                    web.ResponseCount++;
+                    web.WhenResponseCame = DateTime.UtcNow;
+                    web.Document = document;
+                    if ( !web.Location.Equals( response.ResponseUri ) ) {
+                        web.Location = response.ResponseUri;
+
+                        //AddSiteToScrape( response.ResponseUri, web.ResponseAction );
+                    }
+
+                    MAccess.ExitWriteLock();
                 }
-                var web = asynchronousResult.AsyncState as WebSite;
-                var response = web.Request.EndGetResponse( asynchronousResult );
-                var document = response.StringFromResponse();
-
-                Debug.WriteLineIf( response.IsFromCache, $"from cache {web.Location}" );
-
-                MAccess.EnterWriteLock();
-                web.ResponseCount++;
-                web.WhenResponseCame = DateTime.UtcNow;
-                web.Document = document;
-                if ( !web.Location.Equals( response.ResponseUri ) ) {
-                    web.Location = response.ResponseUri;
-
-                    //AddSiteToScrape( response.ResponseUri, web.ResponseAction );
-                }
-                MAccess.ExitWriteLock();
 
                 //TODO
                 //if ( web.ResponseAction is Action<WebSite> ) {

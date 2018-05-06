@@ -54,7 +54,7 @@ namespace Librainian.Magic {
             }
 
             var ctorInfo = typeof( TInstance ).GetConstructor( argTypes );
-            if ( ctorInfo == null ) {
+            if ( ctorInfo is null ) {
                 throw new ArgumentException( String.Concat( "The type ", typeof( TInstance ).Name, " has no constructor with the argument type(s) ", String.Join( ", ", argTypes.Select( t => t.Name ).ToArray() ), "." ), nameof( argTypes ) );
             }
 

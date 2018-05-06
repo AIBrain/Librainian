@@ -1,26 +1,24 @@
-// Copyright 2016 Rick@AIBrain.org.
+// Copyright 2018 Protiguous
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/C5Random.cs" was last cleaned by Rick on 2016/08/06 at 9:41 PM
+// "Librainian/C5Random.cs" was last cleaned by Rick on 2018/05/06 at 2:22 PM
 
 namespace Librainian.Security {
 
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using JetBrains.Annotations;
 
@@ -55,14 +53,14 @@ namespace Librainian.Security {
     public sealed class C5Random : Random, IDisposable {
 
         /// <summary>Create a random number generator seed by system time.</summary>
-        public C5Random() : this( DateTime.Now.Ticks ) { }
+        public C5Random() : this( seed: DateTime.Now.Ticks ) { }
 
         /// <summary>Create a random number generator with a given seed</summary>
         /// <exception cref="ArgumentException">If seed is zero</exception>
         /// <param name="seed">The seed</param>
         public C5Random( Int64 seed ) {
             if ( seed == 0 ) {
-                throw new ArgumentException( "Seed must be non-zero" );
+                throw new ArgumentException( message: "Seed must be non-zero" );
             }
 
             var j = ( UInt32 )( seed & 0xFFFFFFFF );
@@ -71,10 +69,10 @@ namespace Librainian.Security {
                 j ^= j << 13;
                 j ^= j >> 17;
                 j ^= j << 5;
-                this.Q.Value[ i ] = j;
+                this.Q.Value[i] = j;
             }
 
-            this.Q.Value[ 15 ] = ( UInt32 )( seed ^ ( seed >> 32 ) );
+            this.Q.Value[15] = ( UInt32 )( seed ^ ( seed >> 32 ) );
         }
 
         /// <summary>Create a random number generator with a specified internal start state.</summary>
@@ -83,26 +81,27 @@ namespace Librainian.Security {
         ///     The start state. Must be a collection of random bits given by an array of exactly 16 uints.
         /// </param>
         public C5Random( [NotNull] UInt32[] q ) {
-            if ( q == null ) {
-                throw new ArgumentNullException( nameof( q ) );
-            }
-            if ( q.Length > 16 ) {
-                throw new ArgumentException( "Q must have length 16, was " + q.Length );
+            if ( q is null ) {
+                throw new ArgumentNullException( paramName: nameof( q ) );
             }
 
-            Array.Copy( q, this.Q.Value, this.Q.Value.Length );
+            if ( q.Length > 16 ) {
+                throw new ArgumentException( message: "Q must have length 16, was " + q.Length );
+            }
+
+            Array.Copy( sourceArray: q, destinationArray: this.Q.Value, length: this.Q.Value.Length );
         }
 
-        private ThreadLocal< UInt32 > C { get; } = new ThreadLocal<UInt32>( () => 362436, false );
+        private ThreadLocal<UInt32> C { get; } = new ThreadLocal<UInt32>( valueFactory: () => 362436, trackAllValues: false );
 
-        private ThreadLocal<UInt32> I { get; } = new ThreadLocal<UInt32>( () => 15, false );
+        private ThreadLocal<UInt32> I { get; } = new ThreadLocal<UInt32>( valueFactory: () => 15, trackAllValues: false );
 
-        private ThreadLocal<UInt32[]> Q { get; } = new ThreadLocal<UInt32[]>( () => new UInt32[ 16 ], false );
+        private ThreadLocal<UInt32[]> Q { get; } = new ThreadLocal<UInt32[]>( valueFactory: () => new UInt32[16], trackAllValues: false );
 
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<Q>k__BackingField" )]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<I>k__BackingField" )]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<C>k__BackingField" )]
+        [SuppressMessage( category: "Microsoft.Usage", checkId: "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<Q>k__BackingField" )]
+        [SuppressMessage( category: "Microsoft.Usage", checkId: "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<I>k__BackingField" )]
+        [SuppressMessage( category: "Microsoft.Usage", checkId: "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<C>k__BackingField" )]
         public void Dispose() {
             this.C.Dispose();
             this.I.Dispose();
@@ -120,7 +119,7 @@ namespace Librainian.Security {
         /// <returns></returns>
         public override Int32 Next( Int32 min, Int32 max ) {
             if ( min > max ) {
-                throw new ArgumentException( "min must be less than or equal to max" );
+                throw new ArgumentException( message: "min must be less than or equal to max" );
             }
 
             return min + ( Int32 )( this.Cmwc() / 4294967296.0 * ( max - min ) );
@@ -132,7 +131,7 @@ namespace Librainian.Security {
         /// <returns></returns>
         public override Int32 Next( Int32 max ) {
             if ( max < 0 ) {
-                throw new ArgumentException( "max must be non-negative" );
+                throw new ArgumentException( message: "max must be non-negative" );
             }
 
             return ( Int32 )( this.Cmwc() / 4294967296.0 * max );
@@ -141,12 +140,12 @@ namespace Librainian.Security {
         /// <summary>Fill a array of byte with random bytes</summary>
         /// <param name="buffer">The array to fill</param>
         public override void NextBytes( Byte[] buffer ) {
-            if ( buffer == null ) {
-                throw new ArgumentNullException( nameof( buffer ) );
+            if ( buffer is null ) {
+                throw new ArgumentNullException( paramName: nameof( buffer ) );
             }
 
             for ( Int32 i = 0, length = buffer.Length; i < length; i++ ) {
-                buffer[ i ] = ( Byte )this.Cmwc();
+                buffer[i] = ( Byte )this.Cmwc();
             }
         }
 
@@ -163,17 +162,17 @@ namespace Librainian.Security {
             const UInt32 r = 0xfffffffe;
 
             this.I.Value = ( this.I.Value + 1 ) & 15;
-            var t = a * this.Q.Value[ this.I.Value ] + this.C.Value;
+            var t = a * this.Q.Value[this.I.Value] + this.C.Value;
             this.C.Value = ( UInt32 )( t >> 32 );
             var x = ( UInt32 )( t + this.C.Value );
             if ( x >= this.C.Value ) {
-                return this.Q.Value[ this.I.Value ] = r - x;
+                return this.Q.Value[this.I.Value] = r - x;
             }
 
             x++;
             this.C.Value++;
 
-            return this.Q.Value[ this.I.Value ] = r - x;
+            return this.Q.Value[this.I.Value] = r - x;
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Librainian.Linguistics {
     public sealed class Book : IEquatable<Book>, IEnumerable<KeyValuePair<Int32, Page>> {
 
         public Book( [ItemCanBeNull] [NotNull] IEnumerable<Page> pages, [ItemCanBeNull] [CanBeNull] IEnumerable<Author> authors = null ) {
-            if ( pages == null ) {
+            if ( pages is null ) {
                 throw new ArgumentNullException( nameof( pages ) );
             }
 

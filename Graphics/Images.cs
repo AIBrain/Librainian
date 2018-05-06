@@ -529,7 +529,7 @@ namespace Librainian.Graphics {
 
         [CanBeNull]
         public static DateTime? ImageCreationBestGuess( [CanBeNull] this Document document, DateTime oldestDate, DateTime youngestDate ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
             return document.Info.ImageCreationBestGuess( oldestDate, youngestDate );
@@ -537,7 +537,7 @@ namespace Librainian.Graphics {
 
         [CanBeNull]
         public static DateTime? ImageCreationBestGuess( [CanBeNull] this FileSystemInfo info, DateTime oldestDate, DateTime youngestDate ) {
-            if ( info == null ) {
+            if ( info is null ) {
                 throw new ArgumentNullException( nameof( info ) );
             }
 
@@ -679,7 +679,7 @@ namespace Librainian.Graphics {
         /// <param name="document"></param>
         /// <returns></returns>
         public static Boolean IsaValidImage( [NotNull] this Document document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
             var info = new FileInfo( document.FullPathWithFileName );
@@ -785,7 +785,7 @@ namespace Librainian.Graphics {
         }
 
         public static Image ResizeImage( [NotNull] this Image imgToResize, Size size ) {
-            if ( imgToResize == null ) {
+            if ( imgToResize is null ) {
                 throw new ArgumentNullException( nameof( imgToResize ) );
             }
 
@@ -816,7 +816,7 @@ namespace Librainian.Graphics {
         /// <param name="bestGuess"></param>
         /// <returns></returns>
         private static Boolean InternalImageGetDateTime( [NotNull] this FileSystemInfo info, out DateTime? bestGuess ) {
-            if ( info == null ) {
+            if ( info is null ) {
                 throw new ArgumentNullException( nameof( info ) );
             }
             bestGuess = null;

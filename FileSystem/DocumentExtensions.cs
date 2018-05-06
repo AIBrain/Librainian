@@ -77,10 +77,10 @@ namespace Librainian.FileSystem {
 		/// <param name="eta"></param>
 		/// <returns></returns>
 		public static async Task< ResultCode > CloneAsync( [ NotNull ] this Document source, [ NotNull ] Document destination, Boolean overwriteDestination, Boolean deleteSource, IProgress< Single > progress = null, IProgress< TimeSpan > eta = null ) {
-			if ( source == null ) {
+			if ( source is null ) {
 				throw new ArgumentNullException( nameof(source) );
 			}
-			if ( destination == null ) {
+			if ( destination is null ) {
 				throw new ArgumentNullException( nameof(destination) );
 			}
 

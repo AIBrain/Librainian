@@ -135,7 +135,7 @@
 				format = "0.## " + format;
 			}
 
-			if ( provider == null ) {
+			if ( provider is null ) {
 				provider = CultureInfo.CurrentCulture;
 			}
 
@@ -172,7 +172,7 @@
 		}
 
 		public override Boolean Equals( Object value ) {
-			if ( value == null ) {
+			if ( value is null ) {
 				return false;
 			}
 

@@ -166,7 +166,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		public override Int32 GetHashCode() => this._hashcode;
 
 		public Int32 CompareTo( [ NotNull ] SimpleBitcoinWallet otherWallet ) {
-			if ( otherWallet == null ) {
+			if ( otherWallet is null ) {
 				throw new ArgumentNullException( paramName: nameof(otherWallet) );
 			}
 
@@ -205,7 +205,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		}
 
 		public Boolean TryAdd( [NotNull] SimpleBitcoinWallet wallet, Boolean sanitize = true ) {
-			if ( wallet == null ) {
+			if ( wallet is null ) {
 				throw new ArgumentNullException( paramName: nameof( wallet ) );
 			}
 
@@ -348,7 +348,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <param name="wallet"></param>
 		/// <returns></returns>
 		public Boolean TryWithdraw( [NotNull] SimpleBitcoinWallet wallet ) {
-			if ( wallet == null ) {
+			if ( wallet is null ) {
 				throw new ArgumentNullException( paramName: nameof( wallet ) );
 			}
 

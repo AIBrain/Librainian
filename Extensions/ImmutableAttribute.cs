@@ -48,14 +48,14 @@ namespace Librainian.Extensions {
         /// <summary>Ensures that 'type' follows the rules for immutability</summary>
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable<Type> whiteList ) {
-            if ( type == null ) {
+            if ( type is null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
-            if ( type.BaseType == null ) {
+            if ( type.BaseType is null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            if ( whiteList == null ) {
+            if ( whiteList is null ) {
                 throw new ArgumentNullException( nameof( whiteList ) );
             }
             var enumerable = whiteList as IList<Type> ?? whiteList.ToList();

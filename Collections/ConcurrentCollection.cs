@@ -41,7 +41,7 @@ namespace Librainian.Collections {
         }
 
         public ConcurrentCollection( IEnumerable<T> collection ) {
-            if ( collection == null ) {
+            if ( collection is null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
             this.InitializeFromCollection( collection );
@@ -66,7 +66,7 @@ namespace Librainian.Collections {
         public void Clear() => this._mHead = null;
 
         public void CopyTo( T[] array, Int32 index ) {
-            if ( array == null ) {
+            if ( array is null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
             this.ToList().CopyTo( array, index );
@@ -75,7 +75,7 @@ namespace Librainian.Collections {
         public IEnumerator<T> GetEnumerator() => GetEnumerator( this._mHead );
 
         void ICollection.CopyTo( Array array, Int32 index ) {
-            if ( array == null ) {
+            if ( array is null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
             if ( !(array is T[]) ) {
@@ -103,7 +103,7 @@ namespace Librainian.Collections {
         }
 
         public void PushRange( T[] items ) {
-            if ( items == null ) {
+            if ( items is null ) {
                 throw new ArgumentNullException( nameof( items ) );
             }
             this.PushRange( items, 0, items.Length );
@@ -135,7 +135,7 @@ namespace Librainian.Collections {
 
         public Boolean TryPeek( out T result ) {
             var node = this._mHead;
-            if ( node == null ) {
+            if ( node is null ) {
                 result = default;
                 return false;
             }
@@ -159,7 +159,7 @@ namespace Librainian.Collections {
         }
 
         public Int32 TryPopRange( T[] items ) {
-            if ( items == null ) {
+            if ( items is null ) {
                 throw new ArgumentNullException( nameof( items ) );
             }
             return this.TryPopRange( items, 0, items.Length );
@@ -193,7 +193,7 @@ namespace Librainian.Collections {
         }
 
         private static void ValidatePushPopRangeInput( ICollection<T> items, Int32 startIndex, Int32 count ) {
-            if ( items == null ) {
+            if ( items is null ) {
                 throw new ArgumentNullException( nameof( items ) );
             }
             if ( count < 0 ) {
@@ -218,7 +218,7 @@ namespace Librainian.Collections {
             Node node1 = null;
             Node node2 = null;
             foreach ( var node3 in this._mSerializationArray.Select( t => new Node( t ) ) ) {
-                if ( node1 == null ) {
+                if ( node1 is null ) {
                     node2 = node3;
                 }
                 else {
@@ -268,7 +268,7 @@ namespace Librainian.Collections {
             Int32 num2;
             while ( true ) {
                 comparand = this._mHead;
-                if ( comparand == null ) {
+                if ( comparand is null ) {
                     break;
                 }
                 var node = comparand;

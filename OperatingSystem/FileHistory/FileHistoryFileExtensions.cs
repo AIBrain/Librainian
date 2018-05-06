@@ -36,7 +36,7 @@ namespace Librainian.OperatingSystem.FileHistory {
         /// </param>
         /// <returns></returns>
         public static Boolean TryParse( [ NotNull ] this Document original, [ CanBeNull ] out Folder folder, [ CanBeNull ] out String filename, out DateTime? when ) {
-            if ( original == null ) {
+            if ( original is null ) {
                 throw new ArgumentNullException( paramName: nameof(original) );
             }
 

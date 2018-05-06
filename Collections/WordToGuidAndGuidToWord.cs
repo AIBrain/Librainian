@@ -41,7 +41,7 @@ namespace Librainian.Collections {
         private readonly ConcurrentDictionary<String, Guid> _words = new ConcurrentDictionary<String, Guid>();
 
         public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) {
-            if ( baseCollectionName == null ) {
+            if ( baseCollectionName is null ) {
                 throw new ArgumentNullException( nameof( baseCollectionName ) );
             }
 
@@ -134,7 +134,7 @@ namespace Librainian.Collections {
         /// <param name="theWord"></param>
         /// <returns></returns>
         public Boolean Contains( [NotNull] String theWord ) {
-            if ( theWord == null ) {
+            if ( theWord is null ) {
                 throw new ArgumentNullException( nameof( theWord ) );
             }
             return this._words.Keys.Contains( theWord ) && this._guids.Values.Contains( theWord );
@@ -146,7 +146,7 @@ namespace Librainian.Collections {
         public Boolean Contains( Guid theGuid ) => this._words.Values.Contains( theGuid ) && this._guids.Keys.Contains( theGuid );
 
         public Boolean Load() {
-            if ( this._baseCollectionName == null ) {
+            if ( this._baseCollectionName is null ) {
                 return false;
             }
 
@@ -154,7 +154,7 @@ namespace Librainian.Collections {
 
             //var filename = Path.ChangeExtension( this.BaseCollectionName, this.BaseCollectionNameExt );
             //var storage = Storage.Loader<ConcurrentDictionary<String, Guid>>( filename, source => Cloning.DeepClone( Source: source, Destination: this ) );
-            //if ( storage == null ) {
+            //if ( storage is null ) {
             //    return false;
             //}
             //var countBefore = this.Count;

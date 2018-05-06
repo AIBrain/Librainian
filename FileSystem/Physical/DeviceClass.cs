@@ -190,7 +190,7 @@ namespace Librainian.FileSystem.Physical {
         }
 
         internal String GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, String defaultValue ) {
-            if ( devData == null ) {
+            if ( devData is null ) {
                 throw new ArgumentNullException( nameof( devData ) );
             }
 			const Int32 propertyBufferSize = 1024;
@@ -212,7 +212,7 @@ namespace Librainian.FileSystem.Physical {
         }
 
         internal UInt32 GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, UInt32 defaultValue ) {
-            if ( devData == null ) {
+            if ( devData is null ) {
                 throw new ArgumentNullException( nameof( devData ) );
             }
 			var propertyBufferSize = ( UInt32 )Marshal.SizeOf( typeof( UInt32 ) );
@@ -236,7 +236,7 @@ namespace Librainian.FileSystem.Physical {
         }
 
         internal Guid GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, Guid defaultValue ) {
-            if ( devData == null ) {
+            if ( devData is null ) {
                 throw new ArgumentNullException( nameof( devData ) );
             }
 			var propertyBufferSize = ( UInt32 )Marshal.SizeOf( typeof( Guid ) );

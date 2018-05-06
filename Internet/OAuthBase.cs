@@ -171,11 +171,11 @@ namespace Librainian.Internet {
         /// <param name="normalizedRequestParameters"></param>
         /// <returns>The signature base</returns>
         public String GenerateSignatureBase( Uri url, String consumerKey, String token, String tokenSecret, String httpMethod, String timeStamp, String nonce, String signatureType, out String normalizedUrl, out String normalizedRequestParameters ) {
-            if ( token == null ) {
+            if ( token is null ) {
                 token = String.Empty;
             }
 
-            if ( tokenSecret == null ) {
+            if ( tokenSecret is null ) {
 
                 // ReSharper disable once RedundantAssignment
                 tokenSecret = String.Empty;
@@ -300,7 +300,7 @@ namespace Librainian.Internet {
         /// <param name="data">The data to hash</param>
         /// <returns>a Base64 string of the hash value</returns>
         private String ComputeHash( HashAlgorithm hashAlgorithm, String data ) {
-            if ( hashAlgorithm == null ) {
+            if ( hashAlgorithm is null ) {
                 throw new ArgumentNullException( nameof( hashAlgorithm ) );
             }
 

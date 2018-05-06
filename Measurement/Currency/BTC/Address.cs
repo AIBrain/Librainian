@@ -68,7 +68,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public Hash EitherHash {
             get {
-                if ( this._pubKeyHash == null && this._scriptHash == null ) {
+                if ( this._pubKeyHash is null && this._scriptHash is null ) {
                     this.CalcHash();
                 }
                 if ( this._pubKeyHash != null ) {
@@ -80,7 +80,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public Hash PubKeyHash {
             get {
-                if ( this._pubKeyHash == null && this.CalcHash() != Address.Pubkeyhash ) {
+                if ( this._pubKeyHash is null && this.CalcHash() != Address.Pubkeyhash ) {
                     throw new InvalidOperationException( "Address is not a public key hash." );
                 }
                 return this._pubKeyHash;
@@ -89,7 +89,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public Hash ScriptHash {
             get {
-                if ( this._pubKeyHash == null && this.CalcHash() != Address.Scripthash ) {
+                if ( this._pubKeyHash is null && this.CalcHash() != Address.Scripthash ) {
                     throw new InvalidOperationException( "Address is not a script hash." );
                 }
                 return this._scriptHash;
@@ -98,10 +98,10 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public Byte Type {
             get {
-                if ( this._type == null ) {
+                if ( this._type is null ) {
                     this.CalcHash();
                 }
-                if ( this._type == null ) {
+                if ( this._type is null ) {
                     throw new InvalidOperationException();
                 }
                 return this._type.Value;
@@ -112,7 +112,7 @@ namespace Librainian.Measurement.Currency.BTC {
             if ( !( obj is Address ) ) {
                 return false;
             }
-            if ( this.EitherHash == null || ( ( Address )obj ).EitherHash == null ) {
+            if ( this.EitherHash is null || ( ( Address )obj ).EitherHash is null ) {
                 return false;
             }
             return this.EitherHash.HashBytes.SequenceEqual( ( ( Address )obj ).EitherHash.HashBytes );
@@ -121,7 +121,7 @@ namespace Librainian.Measurement.Currency.BTC {
         public override Int32 GetHashCode() => this.EitherHash.GetHashCode();
 
         public override String ToString() {
-            if ( this._address == null ) {
+            if ( this._address is null ) {
                 this.CalcBase58();
             }
             return this._address;

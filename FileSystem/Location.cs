@@ -89,15 +89,15 @@ namespace Librainian.FileSystem {
         public Boolean Equals( Location other ) => other != null && this.Address == other.Address;
 
         public static Boolean Equals( [ CanBeNull ] Location left, [ CanBeNull ] Location right ) {
-            if ( left == null && right == null ) {
+            if ( left is null && right is null ) {
                 return true;
             }
 
-            if ( left != null && right == null ) {
+            if ( left != null && right is null ) {
                 return false;
             }
 
-            if ( left == null ) {
+            if ( left is null ) {
                 return false;
             }
 

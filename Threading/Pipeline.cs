@@ -39,7 +39,7 @@ namespace Librainian.Threading {
 	    public Pipeline<TInput, TNewOutput> AddFunction<TNewOutput>( [NotNull] Func<TOutput, TNewOutput> newfunction ) {
 
             // create a composite function
-            if ( newfunction == null ) {
+            if ( newfunction is null ) {
                 throw new ArgumentNullException( nameof( newfunction ) );
             }
 
@@ -52,7 +52,7 @@ namespace Librainian.Threading {
         public void AddValue( TInput value, [NotNull] Action<TInput, TOutput> callback ) {
 
             // add the value to the queue for processing
-            if ( callback == null ) {
+            if ( callback is null ) {
                 throw new ArgumentNullException( nameof( callback ) );
             }
             this._valueQueue.Add( new ValueCallBackWrapper { Value = value, Callback = callback } );

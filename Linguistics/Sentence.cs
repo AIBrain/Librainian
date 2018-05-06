@@ -52,7 +52,7 @@ namespace Librainian.Linguistics {
         /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
         /// <param name="words"></param>
         public Sentence( [NotNull] IEnumerable<Word> words ) {
-            if ( words == null ) {
+            if ( words is null ) {
                 throw new ArgumentNullException( nameof( words ) );
             }
 
@@ -75,7 +75,7 @@ namespace Librainian.Linguistics {
         public Int32 CompareTo( Sentence other ) => String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
 
 	    public Boolean Equals( Sentence other ) {
-            if ( other == null ) {
+            if ( other is null ) {
                 return false;
             }
 

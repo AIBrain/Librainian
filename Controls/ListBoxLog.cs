@@ -106,9 +106,9 @@ namespace Librainian.Controls {
 
 		public void LogLine( String message ) => this.LogLine( LoggingLevel.Debug, message );
 
-		public void LogLine( String format, params Object[] args ) => this.LogLine( LoggingLevel.Debug, format == null ? null : String.Format( format, args ) );
+		public void LogLine( String format, params Object[] args ) => this.LogLine( LoggingLevel.Debug, format is null ? null : String.Format( format, args ) );
 
-		public void LogLine( LoggingLevel loggingLevel, String format, params Object[] args ) => this.LogLine( loggingLevel, format == null ? null : String.Format( format, args ) );
+		public void LogLine( LoggingLevel loggingLevel, String format, params Object[] args ) => this.LogLine( loggingLevel, format is null ? null : String.Format( format, args ) );
 
 		public void LogLine( LoggingLevel loggingLevel, String message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
 
@@ -196,7 +196,7 @@ namespace Librainian.Controls {
         }
 
 	    protected override void DisposeManaged() {
-		    if ( this.Box == null ) {
+		    if ( this.Box is null ) {
 			    return;
 		    }
 

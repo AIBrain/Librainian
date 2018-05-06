@@ -154,14 +154,14 @@ namespace Librainian.Maths.Numbers {
         public static Percentage operator +( Percentage left, Percentage right ) => Combine( left, right );
 
         public static Percentage Parse( [NotNull] String value ) {
-            if ( value == null ) {
+            if ( value is null ) {
                 throw new ArgumentNullException( nameof( value ) );
             }
             return new Percentage( Double.Parse( value ) );
         }
 
         public static Boolean TryParse( [NotNull] String numberString, out Percentage result ) {
-            if ( numberString == null ) {
+            if ( numberString is null ) {
                 throw new ArgumentNullException( nameof( numberString ) );
             }
 			if ( !Double.TryParse( numberString, out var value ) ) {
@@ -176,7 +176,7 @@ namespace Librainian.Maths.Numbers {
 
         [Pure]
         public Int32 CompareTo( [NotNull] Percentage other ) {
-            if ( other == null ) {
+            if ( other is null ) {
                 throw new ArgumentNullException( nameof( other ) );
             }
             return this.Quotient.CompareTo( other.Quotient );

@@ -91,8 +91,8 @@ namespace Librainian.Collections {
 	        set {
                 this._value = value;
 
-                if ( this._value is ITreeNodeAware<T> ) {
-                    ( this._value as ITreeNodeAware<T> ).Node = this;
+                if ( this._value is ITreeNodeAware<T> aware) {
+                    aware.Node = this;
                 }
             }
         }
@@ -111,14 +111,14 @@ namespace Librainian.Collections {
             this.OnDisposing();
 
             // clean up contained objects (in Value property)
-            if ( this.Value is IDisposable ) {
+            if ( this.Value is IDisposable disposable ) {
                 if ( this.DisposeTraversal == TreeTraversalType.BottomUp ) {
                     foreach ( var node in this.Children ) {
                         node.Dispose();
                     }
                 }
 
-                ( this.Value as IDisposable ).Dispose();
+                disposable.Dispose();
 
                 if ( this.DisposeTraversal == TreeTraversalType.TopDown ) {
                     foreach ( var node in this.Children ) {

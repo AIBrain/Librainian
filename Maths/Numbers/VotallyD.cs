@@ -82,10 +82,10 @@ namespace Librainian.Maths.Numbers {
         public Double Votes => this.A + this.B;
 
         public static VotallyD Combine( [NotNull] VotallyD left, [NotNull] VotallyD right ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( nameof( left ) );
             }
-            if ( right == null ) {
+            if ( right is null ) {
                 throw new ArgumentNullException( nameof( right ) );
             }
             var result = left;

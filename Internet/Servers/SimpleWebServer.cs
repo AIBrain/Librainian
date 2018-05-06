@@ -70,13 +70,13 @@ namespace Librainian.Internet.Servers {
             }
 
             prefixes.Should().NotBeNullOrEmpty( "URI prefixes are required, for example http://localhost:8080/index/. " );
-            if ( prefixes == null || !prefixes.Any() ) {
+            if ( prefixes is null || !prefixes.Any() ) {
                 this.ImNotReady( because: "URI prefixes are required." );
                 return;
             }
 
             method.Should().NotBeNull( "A responder method is required" );
-            if ( method == null ) {
+            if ( method is null ) {
                 this.ImNotReady( because: "A responder method is required" );
                 return;
             }
@@ -123,11 +123,11 @@ namespace Librainian.Internet.Servers {
                     Debug.WriteLine( "Webserver listening.." );
                     await Task.Run( async () => {
                         var listenerContext = await this._httpListener.GetContextAsync(); // Waits for an incoming request as an asynchronous operation.
-                        if ( listenerContext == null ) {
+                        if ( listenerContext is null ) {
                             return;
                         }
                         var responderMethod = this._responderMethod;
-                        if ( responderMethod == null ) {
+                        if ( responderMethod is null ) {
 
                             //no responderMethod?!?
                             return;

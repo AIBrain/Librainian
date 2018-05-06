@@ -89,10 +89,10 @@ namespace Librainian.Persistence
         ///// <param name = "fileName"></param>
         ///// <returns></returns>
         //public static Boolean LoadCollection< T >( this IProducerConsumerCollection< T > collection, String fileName ) {
-        //    if ( collection == null ) {
+        //    if ( collection is null ) {
         //        throw new ArgumentNullException( "collection" );
         //    }
-        //    if ( fileName == null ) {
+        //    if ( fileName is null ) {
         //        throw new ArgumentNullException( "fileName" );
         //    }
         //    IProducerConsumerCollection< T > temp;
@@ -115,10 +115,10 @@ namespace Librainian.Persistence
         ///// <param name = "fileName"></param>
         ///// <returns></returns>
         //public static Boolean LoadCollection<T>( this ConcurrentSet<T> collection, String fileName ) where T : class {
-        //    if ( collection == null ) {
+        //    if ( collection is null ) {
         //        throw new ArgumentNullException( "collection" );
         //    }
-        //    if ( fileName == null ) {
+        //    if ( fileName is null ) {
         //        throw new ArgumentNullException( "fileName" );
         //    }
         //    ConcurrentSet<T> temp;
@@ -354,7 +354,7 @@ namespace Librainian.Persistence
         /// <returns></returns>
         [Obsolete]
         public static Boolean Load<TSource>( out TSource obj, [NotNull] String fileName, ProgressChangedEventHandler feedback = null ) where TSource : class {
-            if ( fileName == null ) {
+            if ( fileName is null ) {
                 throw new ArgumentNullException( nameof( fileName ) );
             }
             obj = default;
@@ -456,7 +456,7 @@ namespace Librainian.Persistence
         /// <param name="feedback"></param>
         /// <returns></returns>
         public static Boolean Loader<TSource>( [NotNull] this String fullPathAndFileName, [CanBeNull] Action<TSource> onLoad = null, ProgressChangedEventHandler feedback = null ) where TSource : class {
-            if ( fullPathAndFileName == null ) {
+            if ( fullPathAndFileName is null ) {
                 throw new ArgumentNullException( nameof( fullPathAndFileName ) );
             }
             try {
@@ -526,7 +526,7 @@ namespace Librainian.Persistence
         /// <returns></returns>
         [CanBeNull]
         public static TType LoadJSON<TType>( [NotNull] this Document document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
@@ -556,7 +556,7 @@ namespace Librainian.Persistence
         /// <param name="document"></param>
         /// <returns></returns>
         public static Task<TType> LoadJSONAsync<TType>( [NotNull] this Document document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
@@ -590,10 +590,10 @@ namespace Librainian.Persistence
         /// <returns></returns>
         [Obsolete]
         public static TSource LoadOrCreate<TSource>( [NotNull] String fileName, ProgressChangedEventHandler feedback = null, [NotNull] params Object[] parameters ) where TSource : class, new() {
-            if ( fileName == null ) {
+            if ( fileName is null ) {
                 throw new ArgumentNullException( nameof( fileName ) );
             }
-            if ( parameters == null ) {
+            if ( parameters is null ) {
                 throw new ArgumentNullException( nameof( parameters ) );
             }
             try {
@@ -741,7 +741,7 @@ namespace Librainian.Persistence
         /// <param name="formatting"></param>
         /// <returns></returns>
         public static Boolean Save<TKey>( this TKey @object, Document document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
@@ -775,7 +775,7 @@ namespace Librainian.Persistence
         /// <returns>Returns True if the object was saved.</returns>
         [Obsolete( "Not in use yet." )]
         public static Boolean SaveCollection<T>( this IProducerConsumerCollection<T> collection, String fileName ) {
-            if ( collection == null ) {
+            if ( collection is null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
             if ( String.IsNullOrWhiteSpace( fileName ) ) {
@@ -796,7 +796,7 @@ namespace Librainian.Persistence
         /// <returns>Returns True if the object was saved.</returns>
         [Obsolete( "Not in use yet." )]
         public static Boolean SaveCollection<T>( this ConcurrentList<T> collection, String fileName ) where T : class {
-            if ( collection == null ) {
+            if ( collection is null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
             if ( String.IsNullOrWhiteSpace( fileName ) ) {
@@ -825,7 +825,7 @@ namespace Librainian.Persistence
                 return false;
             }
 
-            if ( fileName == null ) {
+            if ( fileName is null ) {
                 throw new ArgumentNullException( nameof( fileName ) );
             }
 
@@ -917,7 +917,7 @@ namespace Librainian.Persistence
         /// <param name="fileName"></param>
         /// <returns>Returns True if the object was saved.</returns>
         public static Boolean SaveValue<TSource>( this TSource obj, [NotNull] String fileName ) where TSource : struct {
-            if ( fileName == null ) {
+            if ( fileName is null ) {
                 throw new ArgumentNullException( nameof( fileName ) );
             }
             try {
@@ -1157,7 +1157,7 @@ namespace Librainian.Persistence
         /// <param name="location"></param>
         /// <returns></returns>
         public static Boolean TryGet<TSource>( this String attribute, out TSource value, String location = null ) {
-            if ( attribute == null ) {
+            if ( attribute is null ) {
                 throw new ArgumentNullException( nameof( attribute ) );
             }
 

@@ -61,7 +61,7 @@ namespace Librainian.Threading {
         }
 
         private static Object InternalCopy( Object originalObject, IDictionary<Object, Object> visited ) {
-            if ( originalObject == null ) {
+            if ( originalObject is null ) {
                 return null;
             }
             var typeToReflect = originalObject.GetType();

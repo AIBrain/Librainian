@@ -151,9 +151,9 @@ namespace Librainian.Internet {
         }
 
         internal void webclient_DownloadStringCompleted( Object sender, DownloadStringCompletedEventArgs e ) {
-            if ( e.UserState is Uri ) {
-                String.Format( format: "Surf(): Download completed on {0}", arg0: e.UserState as Uri ).WriteLine();
-                this._pastUrls.Add( e.UserState as Uri );
+            if ( e.UserState is Uri userState) {
+                String.Format( format: "Surf(): Download completed on {0}", arg0: userState ).WriteLine();
+                this._pastUrls.Add( userState );
                 this.DownloadInProgress = false;
             }
             this.StartNextDownload();

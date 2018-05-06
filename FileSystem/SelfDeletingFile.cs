@@ -32,14 +32,14 @@ namespace Librainian.FileSystem {
         private readonly Document _document;
 
         public SelfDeletingFile( [ NotNull ] String filename ) {
-            if ( filename == null ) {
+            if ( filename is null ) {
                 throw new ArgumentNullException( paramName: nameof(filename) );
             }
             this._document = new Document( filename );
         }
 
         public SelfDeletingFile( [ NotNull ] Document filename ) {
-            if ( filename == null ) {
+            if ( filename is null ) {
                 throw new ArgumentNullException( paramName: nameof(filename) );
             }
             this._document = new Document( filename.FullPathWithFileName );

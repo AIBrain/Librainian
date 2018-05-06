@@ -243,7 +243,7 @@ namespace Librainian.Internet {
             }
 
             var tempresp = response.GetResponseStream();
-            if ( tempresp == null ) {
+            if ( tempresp is null ) {
                 return;
             }
             var document = new StreamReader( tempresp ).ReadToEnd();

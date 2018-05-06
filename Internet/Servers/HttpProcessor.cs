@@ -192,7 +192,7 @@ namespace Librainian.Internet.Servers {
                 return httpProcessor._isLanConnection == 1;
             }
             var remoteBytes = httpProcessor.RemoteIpAddressBytes;
-            if ( remoteBytes == null || remoteBytes.Length != 4 ) {
+            if ( remoteBytes is null || remoteBytes.Length != 4 ) {
                 httpProcessor._isLanConnection = 0;
             }
             else if ( remoteBytes[ 0 ] == 127 && remoteBytes[ 1 ] == 0 && remoteBytes[ 2 ] == 0 && remoteBytes[ 3 ] == 1 ) {
@@ -327,7 +327,7 @@ namespace Librainian.Internet.Servers {
         ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
         public Double GetPostDoubleParam( String key, Double defaultValue = 0 ) {
-            if ( key == null ) {
+            if ( key is null ) {
                 return defaultValue;
             }
 			if ( Double.TryParse( this.GetPostParam( key.ToLower() ), out var value ) ) {
@@ -343,7 +343,7 @@ namespace Librainian.Internet.Servers {
         ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
         public Int32 GetPostIntParam( String key, Int32 defaultValue = 0 ) {
-            if ( key == null ) {
+            if ( key is null ) {
                 return defaultValue;
             }
 			if ( Int32.TryParse( this.GetPostParam( key.ToLower() ), out var value ) ) {
@@ -358,7 +358,7 @@ namespace Librainian.Internet.Servers {
         ///     The value of the key, or empty String if the key does not exist or has no value.
         /// </returns>
         public String GetPostParam( String key ) {
-            if ( key == null ) {
+            if ( key is null ) {
                 return "";
             }
 			if ( this.PostParams.TryGetValue( key.ToLower(), out var value ) ) {
@@ -393,7 +393,7 @@ namespace Librainian.Internet.Servers {
         ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
         public Double GetQsDoubleParam( String key, Double defaultValue = 0 ) {
-            if ( key == null ) {
+            if ( key is null ) {
                 return defaultValue;
             }
 			return Double.TryParse( this.GetQsParam( key.ToLower() ), out var value ) ? value : defaultValue;
@@ -408,7 +408,7 @@ namespace Librainian.Internet.Servers {
         ///     The value of the key, or [defaultValue] if the key does not exist or has no suitable value.
         /// </returns>
         public Int32 GetQsIntParam( String key, Int32 defaultValue = 0 ) {
-            if ( key == null ) {
+            if ( key is null ) {
                 return defaultValue;
             }
 			if ( Int32.TryParse( this.GetQsParam( key.ToLower() ), out var value ) ) {
@@ -425,7 +425,7 @@ namespace Librainian.Internet.Servers {
         ///     The value of the key, or empty String if the key does not exist or has no value.
         /// </returns>
         public String GetQsParam( String key ) {
-            if ( key == null ) {
+            if ( key is null ) {
                 return "";
             }
 			if ( this.QueryString.TryGetValue( key.ToLower(), out var value ) ) {
@@ -452,7 +452,7 @@ namespace Librainian.Internet.Servers {
             this.OutputStream.WriteLine( "HTTP/1.1 " + code );
             this.OutputStream.WriteLine( "Connection: close" );
             this.OutputStream.WriteLine( "" );
-            if ( description == null ) {
+            if ( description is null ) {
                 this.OutputStream.WriteLine( code );
             }
             else if ( description != "" ) {

@@ -29,9 +29,9 @@ namespace Librainian.OperatingSystem {
 	using System.ServiceProcess;
 	using System.Threading.Tasks;
 	using Collections;
-	using Extensions;
 	using FileSystem;
 	using JetBrains.Annotations;
+	using Extensions;
 	using Measurement.Time;
 	using Parsing;
 	using TimeoutException = System.ServiceProcess.TimeoutException;
@@ -319,7 +319,7 @@ namespace Librainian.OperatingSystem {
 
 		[CanBeNull]
 		public static Task<Process> TryConvert_WithIrfanview( Document inDocument, Document outDocument ) => Task.Run( () => {
-			if ( IrfanView64 == null ) {
+			if ( IrfanView64 is null ) {
 				return null;
 			}
 			if ( !IrfanView64.Value.Exists() ) {

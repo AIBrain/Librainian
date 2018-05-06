@@ -39,7 +39,7 @@ namespace Librainian.FileSystem {
         }
 
         public PathSplitter( Document document ) : this( document.FullPathWithFileName ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
         }
@@ -62,7 +62,7 @@ namespace Librainian.FileSystem {
         } = new List<String>(3);
 
         public Boolean InsertRoot( [NotNull] String path ) {
-            if ( path == null ) {
+            if ( path is null ) {
                 throw new ArgumentNullException( nameof( path ) );
             }
             this.Parts.Insert( 1, path );

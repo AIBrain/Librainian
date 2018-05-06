@@ -28,7 +28,7 @@ namespace Librainian.Graphics.DDD {
     using Maths;
     using Maths.Ranges;
     using Newtonsoft.Json;
-    using static Maths.MathHashing;
+    using static Maths.Hashing;
 
     /// <summary>
     ///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="Single" />).</para>
@@ -94,16 +94,6 @@ namespace Librainian.Graphics.DDD {
             var num2 = lhs.Y - rhs.Y;
             var num3 = lhs.Z - rhs.Z;
             return ( Single )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
-        }
-
-        public Double DistanceTo( CoordinateF to ) {
-            if ( to == default ) {
-                return 0;   //BUG ?
-            }
-            var dx = this.X - to.X;
-            var dy = this.Y - to.Y;
-            var dz = this.Z - to.Z;
-            return Math.Sqrt( dx * dx + dy * dy + dz * dz );
         }
 
         /// <summary>
@@ -172,6 +162,16 @@ namespace Librainian.Graphics.DDD {
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         public Int32 CompareTo( CoordinateF other ) => this.SquareLength.CompareTo( other.SquareLength );
+
+        public Double DistanceTo( CoordinateF to ) {
+            if ( to == default ) {
+                return 0;   //BUG ?
+            }
+            var dx = this.X - to.X;
+            var dy = this.Y - to.Y;
+            var dz = this.Z - to.Z;
+            return Math.Sqrt( dx * dx + dy * dy + dz * dz );
+        }
 
         public Boolean Equals( CoordinateF other ) => Equals( this, other );
 

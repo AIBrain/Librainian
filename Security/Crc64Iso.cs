@@ -1,22 +1,19 @@
-// Copyright 2016 Rick@AIBrain.org.
+// Copyright 2018 Protiguous
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Crc64Iso.cs" was last cleaned by Rick on 2016/06/18 at 10:56 PM
+// "Librainian/Crc64Iso.cs" was last cleaned by Rick on 2018/05/06 at 2:22 PM
 
 namespace Librainian.Security {
 
@@ -31,20 +28,20 @@ namespace Librainian.Security {
         public const UInt64 Iso3309Polynomial = 0xD800000000000000;
         internal static UInt64[] Table;
 
-        public Crc64Iso() : base( Iso3309Polynomial ) {
+        public Crc64Iso() : base( polynomial: Iso3309Polynomial ) {
         }
 
-        public Crc64Iso( UInt64 seed ) : base( Iso3309Polynomial, seed ) {
+        public Crc64Iso( UInt64 seed ) : base( polynomial: Iso3309Polynomial, seed: seed ) {
         }
 
-        public static UInt64 Compute( Byte[] buffer ) => Compute( DefaultSeed, buffer );
+        public static UInt64 Compute( Byte[] buffer ) => Compute( seed: DefaultSeed, buffer: buffer );
 
         public static UInt64 Compute( UInt64 seed, Byte[] buffer ) {
-            if ( Table == null ) {
-                Table = CreateTable( Iso3309Polynomial );
+            if ( Table is null ) {
+                Table = CreateTable( polynomial: Iso3309Polynomial );
             }
 
-            return CalculateHash( seed, Table, buffer, 0, buffer.Length );
+            return CalculateHash( seed: seed, table: Table, buffer: buffer, start: 0, size: buffer.Length );
         }
     }
 }

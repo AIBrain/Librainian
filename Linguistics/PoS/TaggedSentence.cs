@@ -35,7 +35,7 @@ namespace Librainian.Linguistics.PoS {
         public readonly List<ITaggedWord> Tokens = new List<ITaggedWord>();
 
         public TaggedSentence( [NotNull] IEnumerable<ITaggedWord> words ) {
-            if ( words == null ) {
+            if ( words is null ) {
                 throw new ArgumentNullException( nameof( words ) );
             }
 	        this.Tokens.AddRange( words.Where( word => null != word ).Select( word => word ) );
@@ -54,7 +54,7 @@ namespace Librainian.Linguistics.PoS {
         /// <param name="other">An object to compare with this object.</param>
         [Pure]
         public Boolean Equals( TaggedSentence other ) {
-            if ( other == null ) {
+            if ( other is null ) {
                 return false;
             }
 

@@ -878,7 +878,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="array"></param>
             public IntegerArray( Int32[] array ) {
-                if ( array == null ) {
+                if ( array is null ) {
                     throw new ArgumentNullException( paramName: nameof(array) );
                 }
 
@@ -1003,7 +1003,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="array"></param>
             public LongArray( Int64[] array ) {
-                if ( array == null ) {
+                if ( array is null ) {
                     throw new ArgumentNullException( paramName: nameof(array) );
                 }
 

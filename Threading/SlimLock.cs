@@ -257,7 +257,7 @@ namespace Librainian.Threading {
             if ( IsRwEntryEmpty( this._rwc[ hash ] ) && !dontAllocate ) {
 
                 //No more entries in chain, so no more searching required.
-                if ( this._rwc[ hash ].Next == null ) {
+                if ( this._rwc[ hash ].Next is null ) {
                     this._rwc[ hash ].Threadid = id;
                     return this._rwc[ hash ];
                 }
@@ -273,7 +273,7 @@ namespace Librainian.Threading {
                     return temp;
                 }
 
-                if ( firstfound == null ) {
+                if ( firstfound is null ) {
                     if ( IsRwEntryEmpty( temp ) ) {
                         firstfound = temp;
                     }
@@ -286,7 +286,7 @@ namespace Librainian.Threading {
                 return null;
             }
 
-            if ( firstfound == null ) {
+            if ( firstfound is null ) {
                 temp = new ReaderWriterCount( this._fIsReentrant ) { Threadid = id, Next = this._rwc[ hash ].Next };
                 this._rwc[ hash ].Next = temp;
                 return temp;
@@ -295,7 +295,7 @@ namespace Librainian.Threading {
             return firstfound;
         }
 
-        private static Boolean IsRwEntryEmpty( ReaderWriterCount rwc ) => rwc.Threadid == -1 || rwc.Readercount == 0 && rwc.RecursiveCounts == null || rwc.Readercount == 0 && rwc.RecursiveCounts.Writercount == 0 && rwc.RecursiveCounts.Upgradecount == 0;
+        private static Boolean IsRwEntryEmpty( ReaderWriterCount rwc ) => rwc.Threadid == -1 || rwc.Readercount == 0 && rwc.RecursiveCounts is null || rwc.Readercount == 0 && rwc.RecursiveCounts.Writercount == 0 && rwc.RecursiveCounts.Upgradecount == 0;
 
         private void ExitMyLock() {
             Assert.That( this._myLock != 0, "Exiting spin lock that is not held" );
@@ -427,7 +427,7 @@ namespace Librainian.Threading {
                 }
 
                 // Drat, we need to wait. Mark that we have waiters and wait.
-                if ( this._readEvent == null ) // Create the needed event
+                if ( this._readEvent is null ) // Create the needed event
                 {
                     this.LazyCreateEvent( ref this._readEvent, false );
                     if ( IsRwHashEntryChanged( lrwc, id ) ) {
@@ -472,12 +472,12 @@ namespace Librainian.Threading {
         private void LazyCreateEvent( ref EventWaitHandle waitEvent, Boolean makeAutoResetEvent ) {
 #if DEBUG
             Assert.That( this.MyLockHeld );
-            Assert.That( waitEvent == null );
+            Assert.That( waitEvent is null );
 #endif
             this.ExitMyLock();
             var newEvent = makeAutoResetEvent ? ( EventWaitHandle )new AutoResetEvent( false ) : new ManualResetEvent( false );
             this.EnterMyLock();
-            if ( waitEvent == null ) {
+            if ( waitEvent is null ) {
                 waitEvent = newEvent;
             }
             else {
@@ -669,7 +669,7 @@ namespace Librainian.Threading {
 
                 Boolean retVal;
                 if ( upgradingToWrite ) {
-                    if ( this._waitUpgradeEvent == null ) // Create the needed event
+                    if ( this._waitUpgradeEvent is null ) // Create the needed event
                     {
                         this.LazyCreateEvent( ref this._waitUpgradeEvent, true );
                         continue; // since we left the lock, start over.
@@ -687,7 +687,7 @@ namespace Librainian.Threading {
                 else {
 
                     // Drat, we need to wait. Mark that we have waiters and wait.
-                    if ( this._writeEvent == null ) // create the needed event.
+                    if ( this._writeEvent is null ) // create the needed event.
                     {
                         this.LazyCreateEvent( ref this._writeEvent, true );
                         continue; // since we left the lock, start over.
@@ -829,7 +829,7 @@ namespace Librainian.Threading {
                 }
 
                 // Drat, we need to wait. Mark that we have waiters and wait.
-                if ( this._upgradeEvent == null ) // Create the needed event
+                if ( this._upgradeEvent is null ) // Create the needed event
                 {
                     this.LazyCreateEvent( ref this._upgradeEvent, true );
                     continue; // since we left the lock, start over.
@@ -867,7 +867,7 @@ namespace Librainian.Threading {
             var lrwc = this.GetThreadRwCount( id, true );
 
             if ( !this._fIsReentrant ) {
-                if ( lrwc == null ) {
+                if ( lrwc is null ) {
 
                     //You have to be holding the read lock to make this call.
                     this.ExitMyLock();
@@ -875,7 +875,7 @@ namespace Librainian.Threading {
                 }
             }
             else {
-                if ( lrwc == null || lrwc.Readercount < 1 ) {
+                if ( lrwc is null || lrwc.Readercount < 1 ) {
                     this.ExitMyLock();
                     throw new SynchronizationLockException();
                 }
@@ -987,7 +987,7 @@ namespace Librainian.Threading {
                 this.EnterMyLock();
                 var lrwc = this.GetThreadRwCount( id, false );
 
-                if ( lrwc == null ) {
+                if ( lrwc is null ) {
                     this.ExitMyLock();
                     throw new SynchronizationLockException();
                 }
@@ -1034,7 +1034,7 @@ namespace Librainian.Threading {
                 this.EnterMyLock();
                 var lrwc = this.GetThreadRwCount( id: id, dontAllocate: true );
 
-                if ( lrwc == null ) {
+                if ( lrwc is null ) {
                     this.ExitMyLock();
                     throw new SynchronizationLockException();
                 }

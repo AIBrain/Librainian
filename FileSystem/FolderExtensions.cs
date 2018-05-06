@@ -75,10 +75,10 @@ namespace Librainian.FileSystem {
         /// <param name="crc">Calculate the CRC64 of source and destination documents.</param>
         /// <returns></returns>
         public static IEnumerable<DocumentCopyStatistics> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder, IEnumerable<String> searchPatterns, Boolean overwriteDestinationDocuments = true, Boolean crc = true ) {
-            if ( sourceFolder == null ) {
+            if ( sourceFolder is null ) {
                 throw new ArgumentNullException( nameof( sourceFolder ) );
             }
-            if ( destinationFolder == null ) {
+            if ( destinationFolder is null ) {
                 throw new ArgumentNullException( nameof( destinationFolder ) );
             }
 
@@ -141,7 +141,7 @@ namespace Librainian.FileSystem {
         }
 
         public static IEnumerable<Folder> FindFolder( [NotNull] this String folderName ) {
-            if ( folderName == null ) {
+            if ( folderName is null ) {
                 throw new ArgumentNullException( nameof( folderName ) );
             }
 
@@ -191,7 +191,7 @@ namespace Librainian.FileSystem {
         /// <param name="info"></param>
         /// <returns></returns>
         public static IEnumerable<String> SplitPath( [NotNull] this DirectoryInfo info ) {
-            if ( info == null ) {
+            if ( info is null ) {
                 throw new ArgumentNullException( nameof( info ) );
             }
             return SplitPath( info.FullName );

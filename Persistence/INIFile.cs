@@ -139,7 +139,7 @@ namespace Librainian.Persistence {
 
 	    [DebuggerStepThrough]
         public static String EncodeSection( String section ) {
-            if ( section == null ) {
+            if ( section is null ) {
                 throw new ArgumentNullException( nameof( section ) );
             }
             return $"{SectionBegin}{section.Trim()}{SectionEnd}{Environment.NewLine}";
@@ -179,7 +179,7 @@ namespace Librainian.Persistence {
         }
 
         public Boolean Add( Document document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
             if ( !document.Exists() ) {
@@ -216,7 +216,7 @@ namespace Librainian.Persistence {
         }
 
         public Boolean Add( [NotNull] IEnumerable<String> lines ) {
-            if ( lines == null ) {
+            if ( lines is null ) {
                 throw new ArgumentNullException( nameof( lines ) );
             }
             var counter = 0;
@@ -279,7 +279,7 @@ namespace Librainian.Persistence {
         /// <param name="overwrite"></param>
         /// <returns></returns>
         public Boolean Save( Document document, Boolean overwrite = true ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
@@ -306,7 +306,7 @@ namespace Librainian.Persistence {
         /// <param name="overwrite"></param>
         /// <returns></returns>
         public async Task<Boolean> SaveAsync( Document document, Boolean overwrite = true ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
@@ -328,7 +328,7 @@ namespace Librainian.Persistence {
 
         [DebuggerStepThrough]
         public Boolean TryRemove( String section ) {
-            if ( section == null ) {
+            if ( section is null ) {
                 throw new ArgumentNullException( nameof( section ) );
             }
 			return this.Data.TryRemove( section, out var dict );
@@ -336,7 +336,7 @@ namespace Librainian.Persistence {
 
         [DebuggerStepThrough]
         public Boolean TryRemove( String section, String key ) {
-            if ( section == null ) {
+            if ( section is null ) {
                 throw new ArgumentNullException( nameof( section ) );
             }
             if ( !this.Data.ContainsKey( section ) ) {
@@ -346,10 +346,10 @@ namespace Librainian.Persistence {
 		}
 
         private Boolean WriteSection( Document document, String section ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
-            if ( section == null ) {
+            if ( section is null ) {
                 throw new ArgumentNullException( nameof( section ) );
             }
 
@@ -377,10 +377,10 @@ namespace Librainian.Persistence {
         }
 
         private async Task<Boolean> WriteSectionAsync( Document document, String section ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
-            if ( section == null ) {
+            if ( section is null ) {
                 throw new ArgumentNullException( nameof( section ) );
             }
 

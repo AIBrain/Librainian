@@ -86,7 +86,7 @@ namespace Librainian.Maths {
         }
 
         public static Double Intercept( [NotNull] this List<TimeProgression> data ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( nameof( data ) );
             }
             var slope = data.Slope();
@@ -309,7 +309,7 @@ namespace Librainian.Maths {
         }
 
         public static Double StandardDeviation( [NotNull] this IEnumerable<Double> values ) {
-            if ( values == null ) {
+            if ( values is null ) {
                 throw new ArgumentNullException( nameof( values ) );
             }
             var doubles = values as Double[] ?? values.ToArray();
@@ -318,7 +318,7 @@ namespace Librainian.Maths {
         }
 
         public static Decimal StandardDeviation( [NotNull] this IEnumerable<Decimal> values ) {
-            if ( values == null ) {
+            if ( values is null ) {
                 throw new ArgumentNullException( nameof( values ) );
             }
             var decimals = values as Decimal[] ?? values.ToArray();

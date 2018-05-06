@@ -60,7 +60,7 @@ namespace Librainian.Extensions {
         ///     //blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
         /// </summary>
         public static String UrlEncode( this String input ) {
-            if ( input == null ) {
+            if ( input is null ) {
                 throw new ArgumentNullException( nameof( input ) );
             }
 

@@ -34,7 +34,7 @@ namespace Librainian.Collections {
 	    public TreeNode<T> Add( T value ) => this.Add( new TreeNode<T>( value ) );
 
         public new TreeNode<T> Add( [NotNull] TreeNode<T> node ) {
-            if ( node == null ) {
+            if ( node is null ) {
                 throw new ArgumentNullException( nameof( node ) );
             }
             base.Add( node );

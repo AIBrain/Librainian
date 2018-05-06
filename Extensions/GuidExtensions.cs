@@ -126,7 +126,7 @@ namespace Librainian.Extensions {
 		/// <exception cref="ArgumentNullException">Thrown if <pararef name="s" /> is <see langword="null" />.</exception>
 		/// <remarks>Original code at https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=94072</remarks>
 		public static Boolean IsGuid( this String s ) {
-			if ( s == null ) {
+			if ( s is null ) {
 				throw new ArgumentNullException( paramName: nameof( s ) );
 			}
 
@@ -237,7 +237,7 @@ namespace Librainian.Extensions {
 			return converter.Decimal;
 		}
 
-		public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new Folder( fullPath: guid.ToPath( reversed: reversed ).FullName );
+		public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new Folder( fullPath: guid.ToPath( reversed: reversed ) );
 
 		public static Guid ToGuid( this Decimal number ) {
 			DecimalGuidConverter converter;
@@ -315,15 +315,14 @@ namespace Librainian.Extensions {
 		/// <param name="reversed">Return the reversed order of the <see cref="Guid" />.</param>
 		/// <returns></returns>
 		/// <seealso cref="FromPath" />
-		public static DirectoryInfo ToPath( this Guid guid, Boolean reversed = false ) {
+		public static String ToPath( this Guid guid, Boolean reversed = false ) {
 			var a = guid.ToByteArray();
 			if ( reversed ) {
-				var pathReversed = Path.Combine( a[ 15 ].ToString(), a[ 14 ].ToString(), a[ 13 ].ToString(), a[ 12 ].ToString(), a[ 11 ].ToString(), a[ 10 ].ToString(), a[ 9 ].ToString(), a[ 8 ].ToString(), a[ 7 ].ToString(), a[ 6 ].ToString(), a[ 5 ].ToString(), a[ 4 ].ToString(), a[ 3 ].ToString(), a[ 2 ].ToString(), a[ 1 ].ToString(), a[ 0 ].ToString() );
-				return new DirectoryInfo( path: pathReversed );
+				return Path.Combine( a[ 15 ].ToString(), a[ 14 ].ToString(), a[ 13 ].ToString(), a[ 12 ].ToString(), a[ 11 ].ToString(), a[ 10 ].ToString(), a[ 9 ].ToString(), a[ 8 ].ToString(), a[ 7 ].ToString(), a[ 6 ].ToString(), a[ 5 ].ToString(), a[ 4 ].ToString(), a[ 3 ].ToString(), a[ 2 ].ToString(), a[ 1 ].ToString(), a[ 0 ].ToString() );
 			}
 
 			var pathNormal = Path.Combine( a[ 0 ].ToString(), a[ 1 ].ToString(), a[ 2 ].ToString(), a[ 3 ].ToString(), a[ 4 ].ToString(), a[ 5 ].ToString(), a[ 6 ].ToString(), a[ 7 ].ToString(), a[ 8 ].ToString(), a[ 9 ].ToString(), a[ 10 ].ToString(), a[ 11 ].ToString(), a[ 12 ].ToString(), a[ 13 ].ToString(), a[ 14 ].ToString(), a[ 15 ].ToString() );
-			return new DirectoryInfo( path: pathNormal );
+			return pathNormal;
 		}
 
 		/// <summary>

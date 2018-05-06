@@ -70,7 +70,7 @@ namespace Librainian.Extensions {
         ///     .
         /// </remarks>
         public static Guid Create( Guid namespaceId, String name, Int32 version ) {
-            if ( name == null ) {
+            if ( name is null ) {
                 throw new ArgumentNullException( nameof( name ) );
             }
             if ( version != 3 && version != 5 ) {

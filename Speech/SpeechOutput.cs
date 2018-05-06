@@ -48,7 +48,7 @@ namespace Librainian.Speech {
                     return;
                 }
 
-                if ( this.Synthesizer.Value == null ) {
+                if ( this.Synthesizer.Value is null ) {
                     return;
                 }
 

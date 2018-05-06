@@ -72,7 +72,7 @@ namespace Librainian.Maths {
         public static implicit operator Double( WeightObsolete special ) => special.Value;
 
         public static WeightObsolete Parse( [NotNull] String value ) {
-            if ( value == null ) {
+            if ( value is null ) {
                 throw new ArgumentNullException( nameof( value ) );
             }
             return new WeightObsolete( Double.Parse( value ) );

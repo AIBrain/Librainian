@@ -92,7 +92,7 @@ namespace Librainian.Collections {
                 if ( this._tail != oldTail ) {
                     continue;
                 }
-                if ( oldTailNext == null ) {
+                if ( oldTailNext is null ) {
                     newNodeWasAdded = Interlocked.CompareExchange( ref this._tail.Next, newNode, null ) == null;
                 }
                 else {
@@ -110,7 +110,7 @@ namespace Librainian.Collections {
             var currentNode = this._head;
 
             do {
-                if ( currentNode.Item == null ) {
+                if ( currentNode.Item is null ) {
                     yield break;
                 }
                 yield return currentNode.Item;
@@ -149,7 +149,7 @@ namespace Librainian.Collections {
                 var oldHeadNext = this._head.Next;
 
                 if ( oldHead == oldTail ) {
-                    if ( oldHeadNext == null ) {
+                    if ( oldHeadNext is null ) {
                         return false;
                     }
 

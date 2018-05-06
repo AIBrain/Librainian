@@ -569,7 +569,7 @@ namespace Librainian.Maths.Numbers {
         ///// <param name="value"></param>
         ///// <returns></returns>
         //public static BigDecimal Parse([NotNull] String value) {
-        //    if ( value == null ) {
+        //    if ( value is null ) {
         //        throw new ArgumentNullException( nameof( value ) );
         //    }
         //    return value.ToBigDecimal();

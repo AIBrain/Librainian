@@ -1,22 +1,19 @@
-﻿// Copyright 2016 Rick@AIBrain.org.
+﻿// Copyright 2018 Protiguous
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/MemMapCache.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
+// "Librainian/MemMapCache.cs" was last cleaned by Rick on 2018/05/06 at 2:21 PM
 
 namespace Librainian.Database.MMF {
 
@@ -33,18 +30,11 @@ namespace Librainian.Database.MMF {
         private const String Delim = "[!@#]";
         private readonly Dictionary<String, DateTime> _keyExpirations;
 
-        //this is necessary because the lib still will hold refs to expired MMFs
-
         private BinaryFormatter _formatter;
         private NetworkStream _networkStream;
         private TcpClient _tcpClient;
 
-		/// <summary>
-		/// Dispose any disposable members.
-		/// </summary>
-		protected override void DisposeManaged() => this._tcpClient?.Dispose();
-
-		public MemMapCache() {
+        public MemMapCache() {
             this.Encoding = Encoding.ASCII;
             this.ChunkSize = 1024 * 1024 * 30;
 
@@ -56,41 +46,28 @@ namespace Librainian.Database.MMF {
             this._keyExpirations = new Dictionary<String, DateTime>();
         }
 
-        public Boolean CacheHitAlwaysMiss {
-            get;
-        }
+        public static Int32 MaxKeyLength => 4096 - 32;
 
-        public Int64 ChunkSize {
-            get;
-        }
+        public Boolean CacheHitAlwaysMiss { get; }
 
-        public Encoding Encoding {
-            get;
-        }
+        public Int64 ChunkSize { get; }
+
+        public Encoding Encoding { get; }
 
         public Boolean IsConnected => this._tcpClient.Connected;
 
-        public static Int32 MaxKeyLength => 4096 - 32;
+        public Int32 Port { get; }
 
-        public Int32 Port {
-            get;
-        }
-
-        public String Server {
-            get;
-        }
-
-        //ideal for Unit Testing of classes that depend upon this Library.
-
-        //32 bytes for datetime String... it's an overkill i know
+        public String Server { get; }
 
         public void Connect() {
             this._tcpClient = new TcpClient();
-            this._tcpClient.Connect( this.Server, this.Port );
+            this._tcpClient.Connect( hostname: this.Server, port: this.Port );
             this._networkStream = this._tcpClient.GetStream();
             this._formatter = new BinaryFormatter();
         }
 
+        //32 bytes for datetime String... it's an overkill i know
         public T Get( String key ) {
             if ( !this.IsConnected ) {
                 return default;
@@ -101,10 +78,10 @@ namespace Librainian.Database.MMF {
             }
 
             try {
-                using ( var memoryMappedFile = MemoryMappedFile.OpenExisting( key ) ) {
-                    if ( this._keyExpirations.ContainsKey( key ) ) {
-                        if ( DateTime.UtcNow >= this._keyExpirations[ key ] ) {
-                            this._keyExpirations.Remove( key );
+                using ( var memoryMappedFile = MemoryMappedFile.OpenExisting( mapName: key ) ) {
+                    if ( this._keyExpirations.ContainsKey( key: key ) ) {
+                        if ( DateTime.UtcNow >= this._keyExpirations[key: key] ) {
+                            this._keyExpirations.Remove( key: key );
                             return default;
                         }
                     }
@@ -121,24 +98,25 @@ namespace Librainian.Database.MMF {
                 return default;
             }
             catch ( Exception ) {
-                if ( this._keyExpirations.ContainsKey( key ) ) {
-                    this._keyExpirations.Remove( key );
+                if ( this._keyExpirations.ContainsKey( key: key ) ) {
+                    this._keyExpirations.Remove( key: key );
                 }
 
                 return default;
             }
         }
 
-        public void Set( String key, T obj ) => this.Set( key, obj, this.ChunkSize, DateTime.MaxValue );
+        //ideal for Unit Testing of classes that depend upon this Library.
+        public void Set( String key, T obj ) => this.Set( key: key, obj: obj, size: this.ChunkSize, expire: DateTime.MaxValue );
 
         public void Set( String key, T obj, Int64 size, DateTime expire ) {
             try {
-                if ( String.IsNullOrEmpty( key ) ) {
-                    throw new Exception( "The key can't be null or empty." );
+                if ( String.IsNullOrEmpty( value: key ) ) {
+                    throw new Exception( message: "The key can't be null or empty." );
                 }
 
                 if ( key.Length >= MaxKeyLength ) {
-                    throw new Exception( "The key has exceeded the maximum length." );
+                    throw new Exception( message: "The key has exceeded the maximum length." );
                 }
 
                 if ( !this.IsConnected ) {
@@ -147,22 +125,22 @@ namespace Librainian.Database.MMF {
 
                 expire = expire.ToUniversalTime();
 
-                if ( !this._keyExpirations.ContainsKey( key ) ) {
-                    this._keyExpirations.Add( key, expire );
+                if ( !this._keyExpirations.ContainsKey( key: key ) ) {
+                    this._keyExpirations.Add( key: key, value: expire );
                 }
                 else {
-                    this._keyExpirations[ key ] = expire;
+                    this._keyExpirations[key: key] = expire;
                 }
 
-                var mmf = MemoryMappedFile.CreateOrOpen( key, size );
+                var mmf = MemoryMappedFile.CreateOrOpen( mapName: key, capacity: size );
                 var vs = mmf.CreateViewStream();
-                this._formatter.Serialize( vs, obj );
+                this._formatter.Serialize( serializationStream: vs, graph: obj );
 
                 var cmd = "{0}{1}{2}";
-                cmd = String.Format( cmd, key, Delim, expire.ToString( "s" ) );
+                cmd = String.Format( format: cmd, arg0: key, arg1: Delim, arg2: expire.ToString( format: "s" ) );
 
-                var buf = this.Encoding.GetBytes( cmd );
-                this._networkStream.Write( buf, 0, buf.Length );
+                var buf = this.Encoding.GetBytes( s: cmd );
+                this._networkStream.Write( buffer: buf, offset: 0, size: buf.Length );
                 this._networkStream.Flush();
             }
             catch ( NotSupportedException exception ) {
@@ -177,49 +155,52 @@ namespace Librainian.Database.MMF {
             }
         }
 
-        public void Set( String key, T obj, DateTime expire ) => this.Set( key, obj, this.ChunkSize, expire );
+        public void Set( String key, T obj, DateTime expire ) => this.Set( key: key, obj: obj, size: this.ChunkSize, expire: expire );
 
         public void Set( String key, T obj, TimeSpan expire ) {
-            var expireDt = DateTime.Now.Add( expire );
-            this.Set( key, obj, this.ChunkSize, expireDt );
+            var expireDt = DateTime.Now.Add( value: expire );
+            this.Set( key: key, obj: obj, size: this.ChunkSize, expire: expireDt );
         }
 
-        public void Set( String key, T obj, Int64 size ) => this.Set( key, obj, size, DateTime.MaxValue );
+        public void Set( String key, T obj, Int64 size ) => this.Set( key: key, obj: obj, size: size, expire: DateTime.MaxValue );
 
-        public T TryGetThenSet( String key, Func<T> cacheMiss ) => this.TryGetThenSet( key, DateTime.MaxValue, cacheMiss );
+        public T TryGetThenSet( String key, Func<T> cacheMiss ) => this.TryGetThenSet( key: key, expire: DateTime.MaxValue, cacheMiss: cacheMiss );
 
         public T TryGetThenSet( String key, DateTime expire, Func<T> cacheMiss ) {
-            var obj = this.Get( key );
+            var obj = this.Get( key: key );
             if ( obj != null ) {
                 return obj;
             }
+
             obj = cacheMiss.Invoke();
-            this.Set( key, obj, expire );
+            this.Set( key: key, obj: obj, expire: expire );
 
             return obj;
         }
 
         public T TryGetThenSet( String key, TimeSpan expire, Func<T> cacheMiss ) {
-            var expireDt = DateTime.Now.Add( expire );
-            return this.TryGetThenSet( key, expireDt, cacheMiss );
+            var expireDt = DateTime.Now.Add( value: expire );
+            return this.TryGetThenSet( key: key, expire: expireDt, cacheMiss: cacheMiss );
         }
 
         public T TryGetThenSet( String key, Int64 size, TimeSpan expire, Func<T> cacheMiss ) {
-            var expireDt = DateTime.Now.Add( expire );
-            return this.TryGetThenSet( key, size, expireDt, cacheMiss );
+            var expireDt = DateTime.Now.Add( value: expire );
+            return this.TryGetThenSet( key: key, size: size, expire: expireDt, cacheMiss: cacheMiss );
         }
 
         public T TryGetThenSet( String key, Int64 size, DateTime expire, Func<T> cacheMiss ) {
-            var obj = this.Get( key );
+            var obj = this.Get( key: key );
             if ( obj == null ) {
                 obj = cacheMiss.Invoke();
-                this.Set( key, obj, size, expire );
+                this.Set( key: key, obj: obj, size: size, expire: expire );
             }
 
             return obj;
         }
 
-
-
+        /// <summary>
+        ///     Dispose any disposable members.
+        /// </summary>
+        protected override void DisposeManaged() => this._tcpClient?.Dispose();
     }
 }

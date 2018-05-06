@@ -38,12 +38,12 @@ namespace Librainian.Extensions {
 
         public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new ConcurrentDictionary<Type, IList<Type>>();
 
-        public static Boolean CanAssignValue( this PropertyInfo p, Object value ) => value == null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
+        public static Boolean CanAssignValue( this PropertyInfo p, Object value ) => value is null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
 
 		public static IList<T> Clone<T>( this IEnumerable<T> listToClone ) where T : ICloneable => listToClone.Select( item => ( T )item.Clone() ).ToList();
 
 		public static void CopyField<TSource>( this TSource source, TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
-            if ( field == null ) {
+            if ( field is null ) {
                 throw new ArgumentNullException( nameof( field ) );
             }
             try {
@@ -118,7 +118,7 @@ namespace Librainian.Extensions {
         }
 
         public static void CopyProperty<TSource>( this TSource source, TSource destination, [NotNull] PropertyInfo prop ) {
-            if ( prop == null ) {
+            if ( prop is null ) {
                 throw new ArgumentNullException( nameof( prop ) );
             }
             try {
@@ -225,7 +225,7 @@ namespace Librainian.Extensions {
         /// <param name="baseType"></param>
         /// <returns></returns>
         public static IEnumerable<Type> GetSealedClassesDerivedFrom( [CanBeNull] this Type baseType ) {
-            if ( baseType == null ) {
+            if ( baseType is null ) {
                 throw new ArgumentNullException( nameof( baseType ) );
             }
             return baseType.Assembly.GetTypes().Where( type => type.IsAssignableFrom( baseType ) && type.IsSealed );
@@ -238,7 +238,7 @@ namespace Librainian.Extensions {
 		/// <param name="baseType"></param>
 		/// <returns></returns>
 		public static IEnumerable<Type> GetTypesDerivedFrom( [CanBeNull] this Type baseType ) {
-            if ( baseType == null ) {
+            if ( baseType is null ) {
                 throw new ArgumentNullException( nameof( baseType ) );
             }
             return CurrentDomainGetAssemblies.Value.SelectMany( assembly => assembly.GetTypes(), ( assembly, type ) => type ).Where( arg => baseType.IsAssignableFrom( arg ) && arg.IsClass && !arg.IsAbstract );
@@ -256,7 +256,7 @@ namespace Librainian.Extensions {
         /// <param name="this">The extended Type.</param>
         /// <returns>True if the type can be copied (blitted), or false if not.</returns>
         public static Boolean IsBlittable( this Type @this ) {
-            if ( @this == null ) {
+            if ( @this is null ) {
                 throw new ArgumentNullException( nameof( @this ), "IsBlittable called on a null Type." );
             }
 
@@ -273,7 +273,7 @@ namespace Librainian.Extensions {
 		/// <param name="this">The extended Type.</param>
 		/// <returns>True if the type represents a numeric type, false if not.</returns>
 		public static Boolean IsNumeric( this Type @this ) {
-            if ( @this == null ) {
+            if ( @this is null ) {
                 throw new ArgumentNullException( nameof( @this ), "IsNumeric called on a null Type." );
             }
             return @this == typeof( Double ) || @this == typeof( Single ) || @this == typeof( Int64 ) || @this == typeof( Int16 ) || @this == typeof( Byte ) || @this == typeof( SByte ) || @this == typeof( UInt32 ) || @this == typeof( UInt64 ) || @this == typeof( UInt16 ) || @this == typeof( Decimal ) || @this == typeof( Int32 );
@@ -315,7 +315,7 @@ namespace Librainian.Extensions {
         }
 
         public static String Name<T>( [NotNull] this Expression<Func<T>> propertyExpression ) {
-            if ( propertyExpression == null ) {
+            if ( propertyExpression is null ) {
                 throw new ArgumentNullException( nameof( propertyExpression ) );
             }
             var memberExpression = propertyExpression.Body as MemberExpression;
@@ -323,7 +323,7 @@ namespace Librainian.Extensions {
         }
 
         public static Func<Object> NewInstanceByCreate( [NotNull] this Type type ) {
-            if ( type == null ) {
+            if ( type is null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
             var localType = type; // create a local copy to prevent adverse effects of closure
@@ -334,7 +334,7 @@ namespace Librainian.Extensions {
         }
 
         public static Func<Object> NewInstanceByLambda( [NotNull] this Type type ) {
-            if ( type == null ) {
+            if ( type is null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
             return Expression.Lambda<Func<Object>>( Expression.New( type ) ).Compile();
@@ -410,7 +410,7 @@ namespace Librainian.Extensions {
             var type = typeof( T );
 
             // If the type is nullable and the result should be null, set a null value.
-            if ( type.IsNullable() && ( value == null || value == DBNull.Value ) ) {
+            if ( type.IsNullable() && ( value is null || value == DBNull.Value ) ) {
                 result = default;
                 return true;
             }
@@ -478,7 +478,7 @@ namespace Librainian.Extensions {
         ///// <param name="item"></param>
         ///// <returns></returns>
         //public static string Name<T>( this T item ) where T : class {
-        //    if ( item == null ) {
+        //    if ( item is null ) {
         //        return string.Empty;
         //    }
         //    else {

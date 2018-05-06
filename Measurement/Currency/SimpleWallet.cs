@@ -159,7 +159,7 @@ namespace Librainian.Measurement.Currency {
         }
 
         public Boolean TryAdd( SimpleWallet wallet, Boolean sanitize = true ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
             return this.TryAdd( wallet.Balance, sanitize );
@@ -279,7 +279,7 @@ namespace Librainian.Measurement.Currency {
         }
 
         public Boolean TryWithdraw( SimpleWallet wallet ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
             return this.TryWithdraw( wallet.Balance );

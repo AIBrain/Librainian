@@ -44,7 +44,7 @@ namespace Librainian.Database {
                 throw new ArgumentNullException( nameof( databaseName ) );
             }
 
-            if ( databaseLocation == null ) {
+            if ( databaseLocation is null ) {
                 databaseLocation = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
             }
 

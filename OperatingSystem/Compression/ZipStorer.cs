@@ -320,7 +320,7 @@ namespace Librainian.OperatingSystem.Compression {
                 }
             }
 
-            if ( this._zipFileStream == null ) {
+            if ( this._zipFileStream is null ) {
                 return;
             }
             this._zipFileStream.Flush();
@@ -341,7 +341,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <returns>True if success, false if not.</returns>
 		/// <remarks>Unique compression methods are Store and Deflate</remarks>
 		public Boolean ExtractFile( ZipFileEntry zfe, [NotNull] String filename ) {
-            if ( filename == null ) {
+            if ( filename is null ) {
                 throw new ArgumentNullException( nameof( filename ) );
             }
 
@@ -426,7 +426,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// </summary>
         /// <returns>List of all entries in directory</returns>
         public List<ZipFileEntry> ReadCentralDir() {
-            if ( this._centralDirImage == null ) {
+            if ( this._centralDirImage is null ) {
                 throw new InvalidOperationException( "Central directory currently does not exist" );
             }
 

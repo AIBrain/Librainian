@@ -54,7 +54,7 @@ namespace Librainian.Graphics.Moving {
 
         public Efv() => this.Checksum = UInt64.MaxValue;
 
-	    /// <summary>Checksum guard</summary>
+        /// <summary>Checksum guard</summary>
         [JsonProperty]
         public UInt64 Checksum {
             get; set;
@@ -74,13 +74,13 @@ namespace Librainian.Graphics.Moving {
             var rgbMatchesJustNotTimestamp = this.Pixels.Where( pair => Pixelyx.Equal( pair.Value, pixelyx ) );
 
             foreach ( var pair in rgbMatchesJustNotTimestamp ) {
-                if ( null == this.Dopples[ pixelyx.Timestamp ] ) {
-                    this.Dopples[ pixelyx.Timestamp ] = new List<UInt64>();
+                if ( null == this.Dopples[pixelyx.Timestamp] ) {
+                    this.Dopples[pixelyx.Timestamp] = new List<UInt64>();
                 }
-                this.Dopples[ pixelyx.Timestamp ].Add( pair.Value.Timestamp );
+                this.Dopples[pixelyx.Timestamp].Add( pair.Value.Timestamp );
             }
 
-            this.Pixels[ pixelyx.Timestamp ] = pixelyx;
+            this.Pixels[pixelyx.Timestamp] = pixelyx;
             return true;
         }
 
@@ -96,14 +96,14 @@ namespace Librainian.Graphics.Moving {
 
         public async Task<UInt64> CalculateChecksumAsync() => await Task.Run( () => {
             unchecked {
-                return ( UInt64 )MathHashing.GetHashCodes( this.Pixels );
+                return ( UInt64 )Hashing.GetHashCodes( this.Pixels );
             }
         } );
 
         [CanBeNull]
         public Pixelyx Get( UInt64 index ) => this.Pixels.TryGetValue( index, out var pixelyx ) ? pixelyx : null;
 
-	    [CanBeNull]
+        [CanBeNull]
         public Pixelyx Get( UInt16 x, UInt16 y ) {
             if ( x == 0 ) {
                 throw new ArgumentException( "x" );

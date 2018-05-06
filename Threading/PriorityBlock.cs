@@ -60,7 +60,7 @@ namespace Librainian.Threading {
         }
 
         public void Add( [NotNull] OneJob oneJob ) {
-            if ( oneJob == null ) {
+            if ( oneJob is null ) {
                 throw new ArgumentNullException( nameof( oneJob ) );
             }
             this._jobs.Enqueue( oneJob );
@@ -68,7 +68,7 @@ namespace Librainian.Threading {
         }
 
         public void AddJobs( [NotNull] IEnumerable<OneJob> jobs ) {
-            if ( jobs == null ) {
+            if ( jobs is null ) {
                 throw new ArgumentNullException( nameof( jobs ) );
             }
             var enumerable = jobs as IList<OneJob> ?? jobs.ToList();

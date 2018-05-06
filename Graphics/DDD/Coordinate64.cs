@@ -31,15 +31,14 @@ namespace Librainian.Graphics.DDD {
     using Maths;
     using Newtonsoft.Json;
 
-	/// <summary>
-	///     A 3D point; with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> <see cref="Int64"/> integers.
-	/// </summary>
-	/// <remarks>Code towards speed.</remarks>
-	[Immutable]
+    /// <summary>
+    ///     A 3D point; with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> <see cref="Int64"/> integers.
+    /// </summary>
+    /// <remarks>Code towards speed.</remarks>
+    [Immutable]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject( MemberSerialization.Fields )]
     public class Coordinate64 : IEquatable<Coordinate64>, IComparable<Coordinate64> {
-
         public static readonly Coordinate64 Maximum = new Coordinate64( x: Int64.MaxValue, y: Int64.MaxValue, z: Int64.MaxValue );
 
         public static readonly Coordinate64 Minimum = new Coordinate64( x: Int64.MinValue, y: Int64.MinValue, z: Int64.MinValue );
@@ -66,6 +65,9 @@ namespace Librainian.Graphics.DDD {
 
         public static Coordinate64 Up = new Coordinate64( 0, 1, 0 );
 
+        [JsonProperty( "h" )]
+        private readonly Int32 _hashCode;
+
         /// <summary></summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -76,7 +78,7 @@ namespace Librainian.Graphics.DDD {
             this.Y = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, y ) );
             this.Z = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, z ) );
             this.Length = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
-            this._hashCode = MathHashing.GetHashCodes( this.X, this.Y, this.Z );
+            this._hashCode = Hashing.GetHashCodes( this.X, this.Y, this.Z );
         }
 
         [Column]
@@ -102,9 +104,6 @@ namespace Librainian.Graphics.DDD {
         public Int64 Z {
             get; private set;
         }
-
-        [JsonProperty( "h" )]
-        private readonly Int32 _hashCode;
 
         /// <summary>Calculates the distance between two <see cref="Coordinate64" />.</summary>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -181,7 +180,7 @@ namespace Librainian.Graphics.DDD {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public Int64 Distance( Coordinate64 to ) => Distance( this, to );
 
-		/// <summary>Calls the static comparison.</summary>
+        /// <summary>Calls the static comparison.</summary>
         /// <param name="other"></param>
         /// <returns></returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -197,8 +196,6 @@ namespace Librainian.Graphics.DDD {
 
         /// <summary>precomputed hash of <see cref="X" />, <see cref="Y" />, and <see cref="Z" />.</summary>
         public override Int32 GetHashCode() => this._hashCode;
-
-
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public override String ToString() => $"{this.X}, {this.Y}, {this.Z}";

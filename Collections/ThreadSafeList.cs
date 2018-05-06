@@ -136,7 +136,7 @@ namespace Librainian.Collections {
         ///     method.
         /// </param>
         public void ForAll( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
-            if ( action == null ) {
+            if ( action is null ) {
                 throw new ArgumentNullException( nameof( action ) );
             }
             var wrapper = new Action<T>( obj => {
@@ -201,7 +201,7 @@ namespace Librainian.Collections {
         ///     method.
         /// </param>
         public void ForEach( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
-            if ( action == null ) {
+            if ( action is null ) {
                 throw new ArgumentNullException( nameof( action ) );
             }
             var wrapper = new Action<T>( obj => {

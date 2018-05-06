@@ -146,7 +146,7 @@ namespace Librainian.Collections {
 		/// </exception>
 		/// <exception cref="System.ArgumentException">If the collection is the current collection.</exception>
 		public virtual Boolean AddRange( IEnumerable<T> collection ) {
-            if ( collection == null ) {
+            if ( collection is null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
             if ( ReferenceEquals( collection, this ) ) {
@@ -198,7 +198,7 @@ namespace Librainian.Collections {
 		///     the type of the destination array.
 		/// </exception>
 		public void CopyTo( T[] array, Int32 arrayIndex ) {
-            if ( array == null ) {
+            if ( array is null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
             if ( arrayIndex < array.GetLowerBound( 0 ) ) {
@@ -244,7 +244,7 @@ namespace Librainian.Collections {
         /// </exception>
         /// <filterpriority>2</filterpriority>
         void ICollection.CopyTo( Array array, Int32 index ) {
-            if ( array == null ) {
+            if ( array is null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
             if ( index < array.GetLowerBound( 0 ) ) {
@@ -324,7 +324,7 @@ namespace Librainian.Collections {
         ///     <typeparamref name="T" /> and the collection contains element that is not that derived type.
         /// </exception>
         public virtual T[] ToArray( T[] targetArray ) {
-            if ( targetArray == null ) {
+            if ( targetArray is null ) {
                 throw new ArgumentNullException( nameof( targetArray ) );
             }
             return this.DoCopyTo( targetArray, 0, true );
@@ -374,7 +374,7 @@ namespace Librainian.Collections {
 		///     array of same type of <paramref name="array" /> of given <paramref name="length" />.
 		/// </returns>
 		protected static T[] EnsureCapacity( T[] array, Int32 length ) {
-            if ( array == null ) {
+            if ( array is null ) {
                 return new T[ length ];
             }
             if ( array.Length >= length ) {

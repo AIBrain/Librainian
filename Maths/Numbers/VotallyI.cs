@@ -67,7 +67,7 @@ namespace Librainian.Maths.Numbers {
         /// </summary>
         /// <param name="right"></param>
         public void Add( [NotNull] VotallyI right ) {
-            if ( right == null ) {
+            if ( right is null ) {
                 throw new ArgumentNullException( nameof( right ) );
             }
             VoteYes( right.Yes );
@@ -75,10 +75,10 @@ namespace Librainian.Maths.Numbers {
         }
 
         public static VotallyI Combine( [NotNull] VotallyI left, [NotNull] VotallyI right ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( nameof( left ) );
             }
-            if ( right == null ) {
+            if ( right is null ) {
                 throw new ArgumentNullException( nameof( right ) );
             }
             var result = left;
