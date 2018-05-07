@@ -13,7 +13,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Crc64.cs" was last cleaned by Rick on 2018/05/06 at 2:22 PM
+// "Librainian/Crc64.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
 
 namespace Librainian.Security {
 

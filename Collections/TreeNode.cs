@@ -1,22 +1,17 @@
-﻿// Copyright 2016 Rick@AIBrain.org.
+﻿// Copyright 2018 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/TreeNode.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
+// "Librainian/TreeNode.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
 
 namespace Librainian.Collections {
 
@@ -24,7 +19,9 @@ namespace Librainian.Collections {
     using JetBrains.Annotations;
     using Magic;
 
-    /// <summary>http: //dvanderboom.wordpress.com/2008/03/15/treet-implementing-a-non-binary-tree-in-c/</summary>
+    /// <summary>
+    /// http: //dvanderboom.wordpress.com/2008/03/15/treet-implementing-a-non-binary-tree-in-c/
+    /// </summary>
     /// <typeparam name="T"></typeparam>
     public class TreeNode<T> : ABetterClassDispose {
         private TreeNode<T> _parent;
@@ -33,39 +30,35 @@ namespace Librainian.Collections {
         public TreeNode( T value ) {
             this.Value = value;
             this.Parent = null;
-            this.Children = new TreeNodeList<T>( this );
+            this.Children = new TreeNodeList<T>( parent: this );
         }
 
         public TreeNode( T value, [NotNull] TreeNode<T> parent ) {
-	        this.Value = value;
-            this.Parent = parent ?? throw new ArgumentNullException( nameof( parent ) );
-            this.Children = new TreeNodeList<T>( this );
+            this.Value = value;
+            this.Parent = parent ?? throw new ArgumentNullException( paramName: nameof( parent ) );
+            this.Children = new TreeNodeList<T>( parent: this );
         }
 
         public event EventHandler Disposing;
 
-        public TreeNodeList<T> Children {
-            get;
-        }
+        public TreeNodeList<T> Children { get; }
 
         public TreeTraversalType DisposeTraversal { get; } = TreeTraversalType.BottomUp;
 
-        public Boolean IsDisposed {
-            get; private set;
-        }
+        public Boolean IsDisposed { get; private set; }
 
         public TreeNode<T> Parent {
             get => this._parent;
 
-	        set {
+            set {
                 if ( value == this._parent ) {
                     return;
                 }
 
-                this._parent?.Children.Remove( this );
+                this._parent?.Children.Remove( item: this );
 
-                if ( value != null && !value.Children.Contains( this ) ) {
-                    value.Children.Add( this );
+                if ( value != null && !value.Children.Contains( item: this ) ) {
+                    value.Children.Add( node: this );
                 }
 
                 this._parent = value;
@@ -81,6 +74,7 @@ namespace Librainian.Collections {
                 while ( node.Parent != null ) {
                     node = node.Parent;
                 }
+
                 return node;
             }
         }
@@ -88,18 +82,12 @@ namespace Librainian.Collections {
         public T Value {
             get => this._value;
 
-	        set {
+            set {
                 this._value = value;
 
-                if ( this._value is ITreeNodeAware<T> aware) {
+                if ( this._value is ITreeNodeAware<T> aware ) {
                     aware.Node = this;
                 }
-            }
-        }
-
-        public void CheckDisposed() {
-            if ( this.IsDisposed ) {
-                throw new ObjectDisposedException( this.GetType().Name );
             }
         }
 
@@ -130,6 +118,12 @@ namespace Librainian.Collections {
             this.IsDisposed = true;
         }
 
-		protected void OnDisposing() => this.Disposing?.Invoke( this, EventArgs.Empty );
-	}
+        protected void OnDisposing() => this.Disposing?.Invoke( sender: this, e: EventArgs.Empty );
+
+        public void CheckDisposed() {
+            if ( this.IsDisposed ) {
+                throw new ObjectDisposedException( objectName: GetType().Name );
+            }
+        }
+    }
 }

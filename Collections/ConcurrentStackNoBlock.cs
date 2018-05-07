@@ -1,167 +1,159 @@
-// Copyright 2017 Rick@AIBrain.org.
-// 
+// Copyright 2018 Protiguous.
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
-// 
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-// 
+//
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/ConcurrentStackNoBlock.cs" was last cleaned by Rick on 2017/02/02 at 11:41 PM
+//
+// "Librainian/ConcurrentStackNoBlock.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
 
 namespace Librainian.Collections {
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Threading;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Threading;
 
-	public class ConcurrentNoBlockStackL< T > {
+    public class ConcurrentNoBlockStackL<T> {
+        private volatile Node _head;
 
-		internal sealed class Node {
+        public ConcurrentNoBlockStackL() => this._head = new Node( item: default, next: this._head );
 
-			internal T Item;
+        public T Pop() {
+            Node ret;
 
-			internal Node Next;
-
-			public Node() { }
-
-			public Node( T item, Node next ) {
-				this.Item = item;
-				this.Next = next;
-			}
-
-		}
-
-		private volatile Node _head;
-
-		public ConcurrentNoBlockStackL() => this._head = new Node( default, this._head );
-
-		public T Pop() {
-			Node ret;
-
-			do {
-				ret = this._head;
-				if ( ret.Next is null ) {
-					throw new IndexOutOfRangeException( "Stack is empty" );
-				}
+            do {
+                ret = this._head;
+                if ( ret.Next is null ) {
+                    throw new IndexOutOfRangeException( message: "Stack is empty" );
+                }
 #pragma warning disable 420
-			} while ( Interlocked.CompareExchange( ref this._head, ret.Next, ret ) != ret );
+            } while ( Interlocked.CompareExchange( location1: ref this._head, value: ret.Next, comparand: ret ) != ret );
 #pragma warning restore 420
-			return ret.Item;
-		}
+            return ret.Item;
+        }
 
-		public void Push( T item ) {
-			var nodeNew = new Node { Item = item };
+        public void Push( T item ) {
+            var nodeNew = new Node { Item = item };
 
-			Node tmp;
-			do {
-				tmp = this._head;
-				nodeNew.Next = tmp;
+            Node tmp;
+            do {
+                tmp = this._head;
+                nodeNew.Next = tmp;
 #pragma warning disable 420
-			} while ( Interlocked.CompareExchange( ref this._head, nodeNew, tmp ) != tmp );
+            } while ( Interlocked.CompareExchange( location1: ref this._head, value: nodeNew, comparand: tmp ) != tmp );
 #pragma warning restore 420
-		}
+        }
 
-	}
+        internal sealed class Node {
+            internal T Item;
 
-	/// <summary></summary>
-	/// <typeparam name="T"></typeparam>
-	/// <see cref="http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack" />
-	public class ConcurrentStackNoBlock< T > {
+            internal Node Next;
 
-		internal class Node {
+            public Node() { }
 
-			internal T Item;
+            public Node( T item, Node next ) {
+                this.Item = item;
+                this.Next = next;
+            }
+        }
+    }
 
-			internal Node Next;
+    /// <summary>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <see cref="http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack"/>
+    public class ConcurrentStackNoBlock<T> {
+        private Node _head;
 
-			public Node() { }
+        public ConcurrentStackNoBlock() => this._head = new Node( item: default, next: this._head );
 
-			public Node( T item, Node next ) {
-				this.Item = item;
-				this.Next = next;
-			}
+        public Int32 Count { get; private set; }
 
-		}
+        public void Add( T item ) => this.Push( item: item );
 
-		private Node _head;
+        public void Add( IEnumerable<T> items ) => Parallel.ForEach( source: items, parallelOptions: ThreadingExtensions.CPUIntensive, body: this.Push );
 
-		public ConcurrentStackNoBlock() => this._head = new Node( item: default, next: this._head );
+        public void Add( ParallelQuery<T> items ) => items.ForAll( action: this.Push );
 
-		public Int32 Count { get; private set; }
+        public Int64 LongCount() => this.Count;
 
-		public void Add( T item ) => this.Push( item );
+        public void Push( T item ) {
+            if ( Equals( default, item ) ) {
+                return;
+            }
 
-		public void Add( IEnumerable< T > items ) => Parallel.ForEach( items, ThreadingExtensions.CPUIntensive, this.Push );
+            var nodeNew = new Node { Item = item };
 
-		public void Add( ParallelQuery< T > items ) => items.ForAll( this.Push );
-
-		public Int64 LongCount() => this.Count;
-
-		public void Push( T item ) {
-			if ( Equals( default, item ) ) {
-				return;
-			}
-
-			var nodeNew = new Node { Item = item };
-
-			Node tmp;
-			do {
-				tmp = this._head;
-				nodeNew.Next = tmp;
+            Node tmp;
+            do {
+                tmp = this._head;
+                nodeNew.Next = tmp;
 #pragma warning disable 420
-			} while ( Interlocked.CompareExchange( ref this._head, nodeNew, tmp ) != tmp );
+            } while ( Interlocked.CompareExchange( location1: ref this._head, value: nodeNew, comparand: tmp ) != tmp );
 #pragma warning restore 420
-			++this.Count;
-		}
+            ++this.Count;
+        }
 
-		public Boolean TryPop( out T result ) {
-			result = default;
+        public Boolean TryPop( out T result ) {
+            result = default;
 
-			Node ret;
+            Node ret;
 
-			do {
-				ret = this._head;
-				if ( ret.Next == default( Node ) ) {
-					//throw new IndexOutOfRangeException( "Stack is empty" );
-					return false;
-				}
+            do {
+                ret = this._head;
+                if ( ret.Next == default( Node ) ) {
+
+                    //throw new IndexOutOfRangeException( "Stack is empty" );
+                    return false;
+                }
 #pragma warning disable 420
-			} while ( Interlocked.CompareExchange( ref this._head, ret.Next, ret ) != ret );
+            } while ( Interlocked.CompareExchange( location1: ref this._head, value: ret.Next, comparand: ret ) != ret );
 #pragma warning restore 420
-			--this.Count;
-			result = ret.Item;
-			return !Equals( result, default );
-		}
+            --this.Count;
+            result = ret.Item;
+            return !Equals( result, default );
+        }
 
-		/// <summary>Attempt two <see cref="TryPop" /></summary>
-		/// <param name="itemOne"></param>
-		/// <param name="itemTwo"></param>
-		/// <returns></returns>
-		public Boolean TryPopPop( out T itemOne, out T itemTwo ) {
-			if ( !this.TryPop( out itemOne ) ) {
-				itemTwo = default;
-				return false;
-			}
-			if ( !this.TryPop( out itemTwo ) ) {
-				this.Push( itemOne );
-				return false;
-			}
-			return true;
-		}
+        /// <summary>
+        /// Attempt two <see cref="TryPop"/>
+        /// </summary>
+        /// <param name="itemOne"></param>
+        /// <param name="itemTwo"></param>
+        /// <returns></returns>
+        public Boolean TryPopPop( out T itemOne, out T itemTwo ) {
+            if ( !this.TryPop( result: out itemOne ) ) {
+                itemTwo = default;
+                return false;
+            }
 
-	}
+            if ( !this.TryPop( result: out itemTwo ) ) {
+                this.Push( item: itemOne );
+                return false;
+            }
 
+            return true;
+        }
+
+        internal class Node {
+            internal T Item;
+
+            internal Node Next;
+
+            public Node() { }
+
+            public Node( T item, Node next ) {
+                this.Item = item;
+                this.Next = next;
+            }
+        }
+    }
 }

@@ -1,22 +1,17 @@
-// Copyright 2016 Rick@AIBrain.org.
+// Copyright 2018 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/BlockingQueue.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
+// "Librainian/BlockingQueue.cs" was last cleaned by Protiguous on 2018/05/06 at 9:30 PM
 
 namespace Librainian.Collections {
 
@@ -32,7 +27,7 @@ namespace Librainian.Collections {
 
         public BlockingQueue() {
             this._lockObj = new Object();
-            this._head = this._tail = new Node( default, null );
+            this._head = this._tail = new Node( item: default, next: null );
         }
 
         public T Dequeue() {
@@ -49,7 +44,7 @@ namespace Librainian.Collections {
         }
 
         public void Enqueue( T item ) {
-            var newNode = new Node( item, null );
+            var newNode = new Node( item: item, next: null );
 
             lock ( this._lockObj ) {
                 this._tail.Next = newNode;
@@ -63,8 +58,7 @@ namespace Librainian.Collections {
             internal T Item;
             internal Node Next;
 
-            public Node() {
-            }
+            public Node() { }
 
             public Node( T item, Node next ) {
                 this.Item = item;

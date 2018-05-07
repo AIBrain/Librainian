@@ -1,22 +1,22 @@
-// Copyright 2018 Rick@AIBrain.org.
+// Copyright 2018 Protiguous.
 // 
 // This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 // 
 // Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
+//  PayPal: paypal@Protiguous.com
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//  
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/ConcurrentDictionaryFile.cs" was last cleaned by Rick on 2018/02/03 at 4:26 PM
+// "Librainian/ConcurrentDictionaryFile.cs" was last cleaned by Protiguous on 2018/02/03 at 4:26 PM
 
 namespace Librainian.Persistence {
     using System;
@@ -91,7 +91,7 @@ namespace Librainian.Persistence {
                 this.Write().Wait( timeout: Minutes.One );
             }
 
-            GC.SuppressFinalize( obj: this );
+            GC.SuppressFinalize( this );
         }
 
         public async Task<(Boolean loaded, UInt64 bytesRead)> Load( CancellationToken cancellationToken = default ) {
@@ -106,7 +106,7 @@ namespace Librainian.Persistence {
                 try {
                     var data = await document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>();
                     if ( data != null ) {
-                        var result = Parallel.ForEach( source: data.Keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive, body: key => { this[key: key] = data[key: key]; } );
+                        var result = Parallel.ForEach( source: data.Keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive, body: key => { this[  key] = data[  key]; } );
                         return (result.IsCompleted, 0);
                     }
                 }
@@ -143,7 +143,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( paramName: nameof( key ) );
             }
 
-            return this.TryRemove( key: key, value: out var value );
+            return this.TryRemove(key, value: out var value );
         }
 
         /// <summary>

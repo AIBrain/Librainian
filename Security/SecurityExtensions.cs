@@ -13,7 +13,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/SecurityExtensions.cs" was last cleaned by Rick on 2018/05/06 at 2:22 PM
+// "Librainian/SecurityExtensions.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
 
 namespace Librainian.Security {
 
@@ -471,7 +471,7 @@ namespace Librainian.Security {
                                         var position = ( UInt64 )inputStream.Position;
                                         if ( position % reportEveryXBytes.Value == 0 ) {
                                             var progress = position / inputFileSize;
-                                            reportProgress( obj: progress.Value );
+                                            reportProgress( progress.Value );
                                         }
                                     }
 
@@ -583,7 +583,7 @@ namespace Librainian.Security {
                                         var position = ( UInt64 )inputStream.Position;
                                         if ( position % reportEveryXBytes.Value == 0 ) {
                                             var progress = position / inputFileSize;
-                                            reportProgress( obj: progress.Value );
+                                            reportProgress( progress.Value );
                                         }
                                     }
 

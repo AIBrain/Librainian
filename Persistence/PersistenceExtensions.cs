@@ -1,22 +1,22 @@
-﻿// Copyright 2016 Rick@AIBrain.org.
+﻿// Copyright 2016 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
+//  PayPal: paypal@Protiguous.com
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//  
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/PersistenceExtensions.cs" was last cleaned by Rick on 2016/06/18 at 10:56 PM
+// "Librainian/PersistenceExtensions.cs" was last cleaned by Protiguous on 2016/06/18 at 10:56 PM
 
 namespace Librainian.Persistence
 {
@@ -455,13 +455,14 @@ namespace Librainian.Persistence
         /// <param name="onLoad"></param>
         /// <param name="feedback"></param>
         /// <returns></returns>
+        [Obsolete("Use JSON methods")]
         public static Boolean Loader<TSource>( [NotNull] this String fullPathAndFileName, [CanBeNull] Action<TSource> onLoad = null, ProgressChangedEventHandler feedback = null ) where TSource : class {
             if ( fullPathAndFileName is null ) {
                 throw new ArgumentNullException( nameof( fullPathAndFileName ) );
             }
             try {
                 if ( IsolatedStorageFile.IsEnabled && !String.IsNullOrWhiteSpace( fullPathAndFileName ) ) {
-                    using ( var snag = new FileSingleton( "IsolatedStorageFile.GetMachineStoreForDomain()" ) ) {
+                    using ( var _ = new FileSingleton( "IsolatedStorageFile.GetMachineStoreForDomain()" ) ) {
                         using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
 
                             var dir = Path.GetDirectoryName( fullPathAndFileName ) ?? String.Empty;
@@ -751,13 +752,14 @@ namespace Librainian.Persistence
 
             using ( var snag = new FileSingleton( document.Info ) ) {
                 snag.Snagged.Should().BeTrue();
-                var writer = File.AppendText( document.FullPathWithFileName );
-                using ( JsonWriter jw = new JsonTextWriter( writer ) ) {
-                    jw.Formatting = formatting;
+                using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
+                    using ( JsonWriter jw = new JsonTextWriter( writer ) ) {
+                        jw.Formatting = formatting;
 
-                    //see also http://stackoverflow.com/a/8711702/956364
-                    var serializer = new JsonSerializer { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All };
-                    serializer.Serialize( jw, @object );
+                        //see also http://stackoverflow.com/a/8711702/956364
+                        var serializer = new JsonSerializer { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All };
+                        serializer.Serialize( jw, @object );
+                    }
                 }
             }
 
@@ -766,7 +768,7 @@ namespace Librainian.Persistence
 
         /// <summary>
         ///     Persist an object to an IsolatedStorageFile. <br /> Mark class with [DataContract(
-        ///     Namespace = "http://aibrain.org" )] <br /> Mark fields with [DataMember, OptionalField]
+        ///     Namespace = "http://Protiguous.com" )] <br /> Mark fields with [DataMember, OptionalField]
         ///     to serialize (both public and private). <br /> Properties have to have both the Getter
         ///     and the Setter. <br />
         /// </summary>
@@ -787,7 +789,7 @@ namespace Librainian.Persistence
 
         /// <summary>
         ///     Persist an object to an IsolatedStorageFile. <br /> Mark class with [DataContract(
-        ///     Namespace = "http://aibrain.org" )] <br /> Mark fields with [DataMember, OptionalField]
+        ///     Namespace = "http://Protiguous.com" )] <br /> Mark fields with [DataMember, OptionalField]
         ///     to serialize (both public and private). <br /> Properties have to have both the Getter
         ///     and the Setter. <br />
         /// </summary>
@@ -808,7 +810,7 @@ namespace Librainian.Persistence
 
         /// <summary>
         ///     Persist an object to an IsolatedStorageFile. <br /> Mark class with [DataContract(
-        ///     Namespace = "http://aibrain.org" )] <br /> Mark fields with [DataMember, OptionalField]
+        ///     Namespace = "http://Protiguous.com" )] <br /> Mark fields with [DataMember, OptionalField]
         ///     to serialize (both public and private). <br /> Properties have to have both the Getter
         ///     and the Setter. <br />
         /// </summary>
@@ -816,6 +818,7 @@ namespace Librainian.Persistence
         /// <param name="objectToSerialize"></param>
         /// <param name="fileName"></param>
         /// <returns>Returns True if the object was saved.</returns>
+        [Obsolete( "Use JSON methods" )]
         public static Boolean Saver<TSource>( [CanBeNull] this TSource objectToSerialize, [NotNull] String fileName ) where TSource : class {
 
             //TODO pass in a backup flag to save the newest copy with the backup time.
@@ -908,7 +911,7 @@ namespace Librainian.Persistence
 
         /// <summary>
         ///     Persist an object to an IsolatedStorageFile. <br /> Mark class with [DataContract(
-        ///     Namespace = "http://aibrain.org" )] <br /> Mark fields with [DataMember, OptionalField]
+        ///     Namespace = "http://Protiguous.com" )] <br /> Mark fields with [DataMember, OptionalField]
         ///     to serialize (both public and private). <br /> Fields cannot have JUST the Getter or the
         ///     Setter, has to have both. <br />
         /// </summary>

@@ -1,22 +1,22 @@
-﻿// Copyright 2016 Rick@AIBrain.org.
+﻿// Copyright 2016 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks goes
 // to the Authors.
 //
 // Donations and royalties can be paid via
-// PayPal: paypal@aibrain.org
+// PayPal: paypal@Protiguous.com
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// 
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/SimpleBitcoinWallet.cs" was last cleaned by Rick on 2016/06/18 at 10:53 PM
+// "Librainian/SimpleBitcoinWallet.cs" was last cleaned by Protiguous on 2016/06/18 at 10:53 PM
 
 namespace Librainian.Measurement.Currency.BTC {
 
@@ -155,7 +155,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] SimpleBitcoinWallet left, [CanBeNull] SimpleBitcoinWallet right ) => ReferenceEquals( objA: left, objB: right );
+		public static Boolean Equals( [CanBeNull] SimpleBitcoinWallet left, [CanBeNull] SimpleBitcoinWallet right ) => ReferenceEquals( left, right );
 
 		/// <summary>
 		/// Indicates whether the current wallet is the same as the <paramref name="otherWallet"/> wallet.
@@ -200,7 +200,7 @@ namespace Librainian.Measurement.Currency.BTC {
 					this._access.ExitWriteLock();
 				}
 
-				this.OnAnyUpdate?.Invoke( obj: amount );
+				this.OnAnyUpdate?.Invoke( amount );
 			}
 		}
 
@@ -227,13 +227,13 @@ namespace Librainian.Measurement.Currency.BTC {
 				return false;
 			}
 
-			this.OnBeforeDeposit?.Invoke( obj: amount );
+			this.OnBeforeDeposit?.Invoke( amount );
 
 			if ( !this.TryAdd( amount: amount ) ) {
 				return false;
 			}
 
-			this.OnAfterDeposit?.Invoke( obj: amount );
+			this.OnAfterDeposit?.Invoke( amount );
 			return true;
 		}
 
@@ -270,8 +270,8 @@ namespace Librainian.Measurement.Currency.BTC {
 					intoWallet.TryDeposit( amount: withdrewAmount.Value, sanitize: false );
 				}
 
-				this.OnAfterWithdraw?.Invoke( obj: amount );
-				this.OnAnyUpdate?.Invoke( obj: amount );
+				this.OnAfterWithdraw?.Invoke( amount );
+				this.OnAnyUpdate?.Invoke( amount );
 			}
 		}
 
@@ -297,7 +297,7 @@ namespace Librainian.Measurement.Currency.BTC {
 					this._access.ExitWriteLock();
 				}
 
-				this.OnAnyUpdate?.Invoke( obj: amount );
+				this.OnAnyUpdate?.Invoke( amount );
 			}
 		}
 
@@ -337,8 +337,8 @@ namespace Librainian.Measurement.Currency.BTC {
 					this._access.ExitWriteLock();
 				}
 
-				this.OnAfterWithdraw?.Invoke( obj: amount );
-				this.OnAnyUpdate?.Invoke( obj: amount );
+				this.OnAfterWithdraw?.Invoke( amount );
+				this.OnAnyUpdate?.Invoke( amount );
 			}
 		}
 

@@ -1,22 +1,22 @@
-﻿// Copyright 2016 Rick@AIBrain.org.
+﻿// Copyright 2016 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
+//  PayPal: paypal@Protiguous.com
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//  
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/MkModel.cs" was last cleaned by Rick on 2016/06/18 at 10:55 PM
+// "Librainian/MkModel.cs" was last cleaned by Protiguous on 2016/06/18 at 10:55 PM
 
 namespace Librainian.Parsing.Markov {
 
@@ -70,25 +70,22 @@ namespace Librainian.Parsing.Markov {
         /// <returns></returns>
         public IEnumerable<String> Nexts( [CanBeNull] String word ) {
             if ( word is null ) {
-                return CollectionExtensions.EmptyList;
+                return Enumerable.Empty<String>();
             }
 
-            return this._markovChains.ContainsKey( key: word ) ? this._markovChains[ key: word ] : CollectionExtensions.EmptyList;
+            if ( this._markovChains.ContainsKey(word ) ) {
+                return this._markovChains[word ];
+            }
+            return Enumerable.Empty<String>();
         }
 
         public Boolean Save() => this.Saver( this.Name );
 
         public void Train( String corpus, Int32 level = 3 ) {
 
-            //return Task.Run( () => {
             var words = corpus.ToWords().AsParallel().ToArray();
 
-            Parallel.For( 0, words.Length, ( i, state ) => this._markovChains.TryAdd( key: words[ i ], value: words.Skip( i + 1 ).Take( level ).ToList() ) );
-
-            //for ( var i = 0; i < words.Length; i++ ) {
-            //    this._markovChains.TryAdd( key: words[ i ], value: words.Skip( i + 1 ).Take( level ).ToList() );
-            //}
-            //} );
+            Parallel.For( 0, words.Length, ( i, state ) => this._markovChains.TryAdd(words[ i ], value: words.Skip( i + 1 ).Take( level ).ToList() ) );
         }
     }
 }

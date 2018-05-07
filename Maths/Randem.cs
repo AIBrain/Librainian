@@ -1,21 +1,21 @@
-// Copyright 2018 Rick@AIBrain.org.
+// Copyright 2018 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
+//  PayPal: paypal@Protiguous.com
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Randem.cs" was last cleaned by Rick on 2018/05/04 at 9:37 PM
+// "Librainian/Randem.cs" was last cleaned by Protiguous on 2018/05/04 at 9:37 PM
 
 namespace Librainian.Maths {
 
@@ -409,18 +409,18 @@ namespace Librainian.Maths {
         /// <returns></returns>
         public static String[] GetNames<T>() {
             var key = typeof( T );
-            if ( EnumDictionary.TryGetValue( key: key, value: out var values ) ) {
+            if ( EnumDictionary.TryGetValue(key, value: out var values ) ) {
                 return values;
             }
 
             values = Enum.GetNames( enumType: key );
-            EnumDictionary.TryAdd( key: key, value: values );
+            EnumDictionary.TryAdd(key, value: values );
             return values;
         }
 
         public static Percentage GetRandomness( this Action<Byte[]> randomFunc, UInt16 bytesToTest ) {
             var buffer = new Byte[bytesToTest];
-            randomFunc( obj: buffer );
+            randomFunc( buffer );
 
             var compressed = buffer.Compress();
 
@@ -1071,7 +1071,7 @@ namespace Librainian.Maths {
         }
 
         public static Word RandomWord( Int32 avglength = 5, Boolean lowerCase = true, Boolean upperCase = true, Boolean numbers = false, Boolean symbols = false ) {
-            var word = RandomString( length: ( avglength - 2 ).Next( maxValue: avglength + 2 ), lowerCase: lowerCase, upperCase: upperCase, numbers: numbers, symbols: symbols );
+            var word = RandomString(( avglength - 2 ).Next( maxValue: avglength + 2 ), lowerCase: lowerCase, upperCase: upperCase, numbers: numbers, symbols: symbols );
             return new Word( word: word );
         }
 
@@ -1243,7 +1243,7 @@ namespace Librainian.Maths {
                     using ( var reader = new StreamReader( stream: dataStream ) ) {
                         var responseFromServer = reader.ReadToEnd();
 
-                        return responseFromServer.Split( '\n' ).Where( predicate: n => n.Length > 0 ).Select( selector: Int32.Parse );
+                        return responseFromServer.Split( '\n' ).Where( n => n.Length > 0 ).Select( selector: Int32.Parse );
                     }
                 }
             }

@@ -13,7 +13,7 @@
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/Countable.cs" was last cleaned by Rick on 2018/05/06 at 2:22 PM
+// "Librainian/Countable.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
 
 namespace Librainian.Maths.Numbers {
     using System;
@@ -80,10 +80,10 @@ namespace Librainian.Maths.Numbers {
                     throw new ArgumentNullException( paramName: nameof( key ) );
                 }
 
-                var bucket = this.Bucket( key: key );
+                var bucket = this.Bucket(key );
                 try {
                     if ( bucket.TryEnterReadLock( timeout: this.ReadTimeout ) ) {
-                        return this.Dictionary.TryGetValue( key: key, value: out var result ) ? result : default;
+                        return this.Dictionary.TryGetValue(key, value: out var result ) ? result : default;
                     }
                 }
                 finally {
@@ -108,11 +108,11 @@ namespace Librainian.Maths.Numbers {
                     return;
                 }
 
-                var bucket = this.Bucket( key: key );
+                var bucket = this.Bucket(key );
 
                 try {
                     if ( bucket.TryEnterWriteLock( timeout: this.WriteTimeout ) ) {
-                        this.Dictionary.TryAdd( key: key, value: value.Value );
+                        this.Dictionary.TryAdd(key, value: value.Value );
                     }
                 }
                 finally {
@@ -144,26 +144,26 @@ namespace Librainian.Maths.Numbers {
                 return false;
             }
 
-            var result = Parallel.ForEach( source: keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive, body: key => this.Add( key: key ) );
+            var result = Parallel.ForEach( source: keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive, body: key => this.Add(key ) );
             return result.IsCompleted;
         }
 
-        public Boolean Add( TKey key ) => this.Add( key: key, amount: BigInteger.One );
+        public Boolean Add( TKey key ) => this.Add(key, amount: BigInteger.One );
 
         public Boolean Add( TKey key, BigInteger amount ) {
             if ( this.IsReadOnly ) {
                 return false;
             }
 
-            var bucket = this.Bucket( key: key );
+            var bucket = this.Bucket(key );
 
             try {
                 if ( bucket.TryEnterWriteLock( timeout: this.WriteTimeout ) ) {
-                    if ( !this.Dictionary.ContainsKey( key: key ) ) {
-                        this.Dictionary.TryAdd( key: key, value: BigInteger.Zero );
+                    if ( !this.Dictionary.ContainsKey(key ) ) {
+                        this.Dictionary.TryAdd(key, value: BigInteger.Zero );
                     }
 
-                    this.Dictionary[ key: key ] += amount;
+                    this.Dictionary[key ] += amount;
                     return true;
                 }
             }
@@ -191,14 +191,14 @@ namespace Librainian.Maths.Numbers {
                 return false;
             }
 
-            var bucket = this.Bucket( key: key );
+            var bucket = this.Bucket(key );
             try {
                 if ( bucket.TryEnterWriteLock( timeout: this.WriteTimeout ) ) {
-                    if ( !this.Dictionary.ContainsKey( key: key ) ) {
-                        this.Dictionary.TryAdd( key: key, value: BigInteger.Zero );
+                    if ( !this.Dictionary.ContainsKey(key ) ) {
+                        this.Dictionary.TryAdd(key, value: BigInteger.Zero );
                     }
 
-                    this.Dictionary[ key: key ] -= amount;
+                    this.Dictionary[key ] -= amount;
                     return true;
                 }
             }
@@ -218,8 +218,8 @@ namespace Librainian.Maths.Numbers {
         public BigInteger Sum() => this.Dictionary.Aggregate( seed: BigInteger.Zero, func: ( current, pair ) => current + pair.Value );
 
         public void Trim() =>
-            Parallel.ForEach( source: this.Dictionary.Where( predicate: pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ), parallelOptions: ThreadingExtensions.CPUIntensive,
-                body: pair => { this.Dictionary.TryRemove( key: pair.Key, value: out var dummy ); } );
+            Parallel.ForEach( source: this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ), parallelOptions: ThreadingExtensions.CPUIntensive,
+                body: pair => { this.Dictionary.TryRemove(pair.Key, value: out var dummy ); } );
 
         /// <summary>
         ///     Mark that this container will now become UnReadOnly/immutable. Allow more adds and subtracts.
@@ -238,16 +238,16 @@ namespace Librainian.Maths.Numbers {
 
         [NotNull]
         private ReaderWriterLockSlim Bucket( TKey key ) {
-            var hash = Hash( key: key );
+            var hash = Hash(key );
 
             TryAgain:
 
-            if ( this.Buckets.TryGetValue( key: hash, value: out var bucket ) ) {
+            if ( this.Buckets.TryGetValue(hash, value: out var bucket ) ) {
                 return bucket;
             }
 
             bucket = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
-            if ( this.Buckets.TryAdd( key: hash, value: bucket ) ) {
+            if ( this.Buckets.TryAdd(hash, value: bucket ) ) {
                 return bucket;
             }
 

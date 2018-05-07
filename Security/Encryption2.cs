@@ -13,7 +13,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Encryption2.cs" was last cleaned by Rick on 2018/05/06 at 2:22 PM
+// "Librainian/Encryption2.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
 
 namespace Librainian.Security {
 
@@ -42,7 +42,7 @@ namespace Librainian.Security {
             var iterations = inputString.Length / base64BlockSize;
             var arrayList = new ArrayList();
             for ( var i = 0; i < iterations; i++ ) {
-                var encryptedBytes = Convert.FromBase64String( s: inputString.Substring( startIndex: base64BlockSize * i, length: base64BlockSize ) );
+                var encryptedBytes = Convert.FromBase64String( s: inputString.Substring( startIndex: base64BlockSize * i,base64BlockSize ) );
 
                 // Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes after
                 // encryption and before decryption. If you do not require compatibility with

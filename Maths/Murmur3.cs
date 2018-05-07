@@ -1,22 +1,22 @@
-﻿// Copyright 2018 Rick@AIBrain.org.
+﻿// Copyright 2018 Protiguous.
 // 
 // This notice must be kept visible in the source.
 // 
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 // 
 // Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
+//  PayPal: paypal@Protiguous.com
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//  
 // 
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 // 
 // Contact me by email if you have any questions or helpful criticism.
 // 
-// "Librainian/Murmur3.cs" was last cleaned by Rick on 2018/02/03 at 1:14 AM
+// "Librainian/Murmur3.cs" was last cleaned by Protiguous on 2018/02/03 at 1:14 AM
 
 namespace Librainian.Maths {
     using System;
@@ -55,8 +55,8 @@ namespace Librainian.Maths {
 
             var hash = new Byte[READ_SIZE];
 
-            Array.Copy( sourceArray: BitConverter.GetBytes( value: this.h1 ), sourceIndex: 0, destinationArray: hash, destinationIndex: 0, length: 8 );
-            Array.Copy( sourceArray: BitConverter.GetBytes( value: this.h2 ), sourceIndex: 0, destinationArray: hash, destinationIndex: 8, length: 8 );
+            Array.Copy( sourceArray: BitConverter.GetBytes( value: this.h1 ), sourceIndex: 0, destinationArray: hash, destinationIndex: 0,8 );
+            Array.Copy( sourceArray: BitConverter.GetBytes( value: this.h2 ), sourceIndex: 0, destinationArray: hash, destinationIndex: 8,8 );
 
             return hash;
         }

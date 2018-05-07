@@ -13,7 +13,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/C5Random.cs" was last cleaned by Rick on 2018/05/06 at 2:22 PM
+// "Librainian/C5Random.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
 
 namespace Librainian.Security {
 
@@ -89,7 +89,7 @@ namespace Librainian.Security {
                 throw new ArgumentException( message: "Q must have length 16, was " + q.Length );
             }
 
-            Array.Copy( sourceArray: q, destinationArray: this.Q.Value, length: this.Q.Value.Length );
+            Array.Copy( sourceArray: q, destinationArray: this.Q.Value,this.Q.Value.Length );
         }
 
         private ThreadLocal<UInt32> C { get; } = new ThreadLocal<UInt32>( valueFactory: () => 362436, trackAllValues: false );

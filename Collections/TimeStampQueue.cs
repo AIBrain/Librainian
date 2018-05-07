@@ -1,22 +1,17 @@
-// Copyright 2016 Rick@AIBrain.org.
+// Copyright 2018 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/TimeStampQueue.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
+// "Librainian/TimeStampQueue.cs" was last cleaned by Protiguous on 2018/05/06 at 9:40 PM
 
 namespace Librainian.Collections {
 
@@ -31,55 +26,57 @@ namespace Librainian.Collections {
     [JsonObject]
     public class TimeStampQueue<T> : IEnumerable<WithTime<T>> where T : class {
 
-        public IEnumerable<T> Items => this.Queue.Select( item => item.Item );
+        public IEnumerable<T> Items => this.Queue.Select( selector: item => item.Item );
 
         [JsonProperty]
         public ConcurrentQueue<WithTime<T>> Queue { get; } = new ConcurrentQueue<WithTime<T>>();
 
-        /// <summary>Adds the data to the queue.</summary>
+        /// <summary>
+        /// Adds the data to the queue.
+        /// </summary>
         /// <param name="item"></param>
         /// <returns>Returns the DateTime the data was queued.</returns>
         public DateTime Add( T item ) {
             if ( null == item ) {
                 return default;
             }
-            this.Queue.Enqueue( new WithTime<T>( item: item ) );
 
-            //this.bob.Set();
-            return new WithTime<T>( item: item ).TimeStamp;
+            this.Queue.Enqueue( item: new WithTime<T>( item: item ) );
+
+            return new WithTime<T>( item ).TimeStamp;
         }
 
-        //private readonly ManualResetEventSlim bob = new ManualResetEventSlim( false );
-        //private Atomic _AddedCounter { get; set; }
-        //public Func<int> OnWait { get; set; }
-        public void AddRange( IEnumerable<T> items ) {
+        public void AddRange( params T[] items ) {
             if ( null != items ) {
-                Parallel.ForEach( items, obj => this.Add( obj ) );
+                Parallel.ForEach( source: items, body: obj => this.Add( item: obj ) );
             }
         }
 
-        //TODO maybe use BlockingCollection?
-        //public readonly BlockingCollection<ObjectWithTimeStamp<T>> Queue = new ConcurrentQueue<ObjectWithTimeStamp<T>>();
         public Boolean Contains( T value ) => this.Queue.Any( q => Equals( q.Item, value ) );
 
         public IEnumerator<WithTime<T>> GetEnumerator() => this.Queue.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        /// <summary>Returns the next <see cref="T" /> in the <see cref="Queue" /> or null.</summary>
+        /// <summary>
+        /// Returns the next <see cref="T"/> in the <see cref="Queue"/> or null.
+        /// </summary>
         /// <returns></returns>
         public T Next() {
             var temp = this.Pull();
             return temp.Item;
         }
 
-        /// <summary>Does a Dequeue for each item in the <see cref="Queue" /> ?or null?</summary>
+        /// <summary>
+        /// Does a Dequeue for each item in the <see cref="Queue"/> ?or null?
+        /// </summary>
         /// <returns></returns>
-        public IEnumerable<T> NextAll() => this.Queue.Select( o => this.Next() );
+        public IEnumerable<T> NextAll() => this.Queue.Select( selector: o => this.Next() );
 
-        /// <summary>Returns the next Object in the <see cref="Queue" /> or null.</summary>
+        /// <summary>
+        /// Returns the next Object in the <see cref="Queue"/> or null.
+        /// </summary>
         /// <returns></returns>
-        public WithTime<T> Pull() => this.Queue.TryDequeue( out var temp ) ? temp : default;
+        public WithTime<T> Pull() => this.Queue.TryDequeue( result: out var temp ) ? temp : default;
 
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

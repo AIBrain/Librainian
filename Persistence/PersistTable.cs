@@ -156,12 +156,12 @@ namespace Librainian.Persistence {
         public TValue this[[CanBeNull] TKey key] {
             [CanBeNull]
             get {
-                if ( Equals( objA: default, objB: key ) ) {
+                if ( Equals( default, key ) ) {
                     return default;
                 }
 
                 // ReSharper disable once AssignNullToNotNullAttribute
-                if ( !Dictionary.TryGetValue( key: key, value: out var storedValue ) ) {
+                if ( !Dictionary.TryGetValue(key, value: out var storedValue ) ) {
                     return default;
                 }
 
@@ -170,12 +170,12 @@ namespace Librainian.Persistence {
             }
 
             set {
-                if ( Equals( objA: default, objB: value ) ) {
+                if ( Equals( default, value ) ) {
                     return;
                 }
 
                 var valueToStore = value.ToJSON().ToCompressedBase64();
-                Dictionary[key: key] = valueToStore;
+                Dictionary[  key] = valueToStore;
             }
         }
 
@@ -193,7 +193,7 @@ namespace Librainian.Persistence {
         /// <exception cref="T:System.NotSupportedException">
         ///     The <see cref="T:System.Collections.Generic.IDictionary`2" /> is read-only.
         /// </exception>
-        public void Add( TKey key, TValue value ) => this[key: key] = value;
+        public void Add( TKey key, TValue value ) => this[  key] = value;
 
         /// <summary>
         ///     Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" /> .
@@ -204,7 +204,7 @@ namespace Librainian.Persistence {
         /// <exception cref="T:System.NotSupportedException">
         ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
         /// </exception>
-        public void Add( KeyValuePair<TKey, TValue> item ) => this[key: item.Key] = item.Value;
+        public void Add( KeyValuePair<TKey, TValue> item ) => this[  item.Key] = item.Value;
 
         /// <summary>
         ///     Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1" /> .
@@ -227,7 +227,7 @@ namespace Librainian.Persistence {
         /// </param>
         public Boolean Contains( KeyValuePair<TKey, TValue> item ) {
             var value = item.Value.ToJSON().ToCompressedBase64();
-            var asItem = new KeyValuePair<TKey, String>( key: item.Key, value: value );
+            var asItem = new KeyValuePair<TKey, String>(item.Key, value: value );
             return Dictionary.Contains( item: asItem );
         }
 
@@ -243,7 +243,7 @@ namespace Librainian.Persistence {
         ///     The key to locate in the <see cref="T:System.Collections.Generic.IDictionary`2" /> .
         /// </param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> is null.</exception>
-        public Boolean ContainsKey( TKey key ) => Dictionary.ContainsKey( key: key );
+        public Boolean ContainsKey( TKey key ) => Dictionary.ContainsKey(key );
 
         /// <summary>
         ///     Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to
@@ -309,7 +309,7 @@ namespace Librainian.Persistence {
         ///     All <see cref="KeyValuePair{TKey,TValue }" /> , with the <see cref="TValue" /> deserialized.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<TKey, TValue>> Items() => Dictionary.Select( selector: pair => new KeyValuePair<TKey, TValue>( key: pair.Key, value: pair.Value.FromCompressedBase64().FromJSON<TValue>() ) );
+        public IEnumerable<KeyValuePair<TKey, TValue>> Items() => Dictionary.Select( selector: pair => new KeyValuePair<TKey, TValue>(pair.Key, value: pair.Value.FromCompressedBase64().FromJSON<TValue>() ) );
 
         /// <summary>
         ///     Removes the element with the specified key from the
@@ -325,7 +325,7 @@ namespace Librainian.Persistence {
         /// <exception cref="T:System.NotSupportedException">
         ///     The <see cref="T:System.Collections.Generic.IDictionary`2" /> is read-only.
         /// </exception>
-        public Boolean Remove( TKey key ) => Dictionary.ContainsKey( key: key ) && Dictionary.Remove( key: key );
+        public Boolean Remove( TKey key ) => Dictionary.ContainsKey(key ) && Dictionary.Remove(key );
 
         /// <summary>
         ///     Removes the first occurrence of a specific object from the
@@ -345,7 +345,7 @@ namespace Librainian.Persistence {
         /// </exception>
         public Boolean Remove( KeyValuePair<TKey, TValue> item ) {
             var value = item.Value.ToJSON().ToCompressedBase64();
-            var asItem = new KeyValuePair<TKey, String>( key: item.Key, value: value );
+            var asItem = new KeyValuePair<TKey, String>(item.Key, value: value );
             return Dictionary.Remove( item: asItem );
         }
 
@@ -358,8 +358,8 @@ namespace Librainian.Persistence {
         public override String ToString() => $"{Count} items";
 
         public void TryAdd( TKey key, TValue value ) {
-            if ( !Dictionary.ContainsKey( key: key ) ) {
-                this[key: key] = value;
+            if ( !Dictionary.ContainsKey(key ) ) {
+                this[  key] = value;
             }
         }
 
@@ -381,7 +381,7 @@ namespace Librainian.Persistence {
         public Boolean TryGetValue( TKey key, out TValue value ) {
             value = default;
 
-            if ( !Dictionary.TryGetValue( key: key, value: out var storedValue ) ) {
+            if ( !Dictionary.TryGetValue(key, value: out var storedValue ) ) {
                 return false;
             }
 
@@ -389,7 +389,7 @@ namespace Librainian.Persistence {
             return true;
         }
 
-        public Boolean TryRemove( TKey key ) => Dictionary.ContainsKey( key: key ) && Dictionary.Remove( key: key );
+        public Boolean TryRemove( TKey key ) => Dictionary.ContainsKey(key ) && Dictionary.Remove(key );
 
         /// <summary>
         ///     Returns an enumerator that iterates through a collection.
@@ -407,7 +407,7 @@ namespace Librainian.Persistence {
         private Boolean TestForReadWriteAccess() {
             try {
                 if ( Folder.TryGetTempDocument( document: out var document ) ) {
-                    var text = Randem.NextString( length: 64, lowers: true, uppers: true, numbers: true, symbols: true );
+                    var text = Randem.NextString(64, lowers: true, uppers: true, numbers: true, symbols: true );
                     document.AppendText( text: text );
                     document.TryDeleting( tryFor: Seconds.Seven );
                     return true;

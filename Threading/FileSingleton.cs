@@ -1,22 +1,22 @@
-// Copyright 2016 Rick@AIBrain.org.
+// Copyright 2016 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
 // original license has been overwritten by the automatic formatting of this code. Any unmodified
 // sections of source code borrowed from other projects retain their original license and thanks
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
+//  PayPal: paypal@Protiguous.com
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+//  
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/FileSingleton.cs" was last cleaned by Rick on 2016/08/06 at 10:30 PM
+// "Librainian/FileSingleton.cs" was last cleaned by Protiguous on 2016/08/06 at 10:30 PM
 
 namespace Librainian.Threading {
 
@@ -46,30 +46,6 @@ namespace Librainian.Threading {
                 this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: id.ToString( "D" ) );
                 this.Snagged = this.Semaphore.WaitOne( Minutes.One );
             }
-            catch ( ObjectDisposedException exception ) {
-                exception.More();
-            }
-            catch ( AbandonedMutexException exception ) {
-                exception.More();
-            }
-            catch ( InvalidOperationException exception ) {
-                exception.More();
-            }
-            catch ( ArgumentOutOfRangeException exception ) {
-                exception.More();
-            }
-            catch ( ArgumentException exception ) {
-                exception.More();
-            }
-            catch ( IOException exception ) {
-                exception.More();
-            }
-            catch ( UnauthorizedAccessException exception ) {
-                exception.More();
-            }
-            catch ( WaitHandleCannotBeOpenedException exception ) {
-                exception.More();
-            }
             catch ( Exception exception ) {
                 exception.More();
             }
@@ -86,30 +62,6 @@ namespace Librainian.Threading {
                 var encoded = name.FullName.Sha512().GetHexString();
                 this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: encoded );
                 this.Snagged = this.Semaphore.WaitOne( Minutes.One );
-            }
-            catch ( ObjectDisposedException exception ) {
-                exception.More();
-            }
-            catch ( AbandonedMutexException exception ) {
-                exception.More();
-            }
-            catch ( InvalidOperationException exception ) {
-                exception.More();
-            }
-            catch ( ArgumentOutOfRangeException exception ) {
-                exception.More();
-            }
-            catch ( ArgumentException exception ) {
-                exception.More();
-            }
-            catch ( IOException exception ) {
-                exception.More();
-            }
-            catch ( UnauthorizedAccessException exception ) {
-                exception.More();
-            }
-            catch ( WaitHandleCannotBeOpenedException exception ) {
-                exception.More();
             }
             catch ( Exception exception ) {
                 exception.More();
@@ -128,37 +80,13 @@ namespace Librainian.Threading {
                 this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: encoded );
                 this.Snagged = this.Semaphore.WaitOne( Minutes.One );
             }
-            catch ( ObjectDisposedException exception ) {
-                exception.More();
-            }
-            catch ( AbandonedMutexException exception ) {
-                exception.More();
-            }
-            catch ( InvalidOperationException exception ) {
-                exception.More();
-            }
-            catch ( ArgumentOutOfRangeException exception ) {
-                exception.More();
-            }
-            catch ( ArgumentException exception ) {
-                exception.More();
-            }
-            catch ( IOException exception ) {
-                exception.More();
-            }
-            catch ( UnauthorizedAccessException exception ) {
-                exception.More();
-            }
-            catch ( WaitHandleCannotBeOpenedException exception ) {
-                exception.More();
-            }
             catch ( Exception exception ) {
                 exception.More();
             }
         }
 
-        private FileSingleton() {
-        }
+        // ReSharper disable once UnusedMember.Local
+        private FileSingleton() { /* Disallow private contructor */}
 
         public Boolean Snagged {
             get; private set;

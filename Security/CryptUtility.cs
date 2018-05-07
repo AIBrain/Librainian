@@ -13,7 +13,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/CryptUtility.cs" was last cleaned by Rick on 2018/05/06 at 2:22 PM
+// "Librainian/CryptUtility.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
 
 namespace Librainian.Security {
 
@@ -119,7 +119,7 @@ namespace Librainian.Security {
             //Xor the keys an their passwords
             var keyStreams = new MemoryStream[keys.Count];
             for ( var n = 0; n < keys.Count; n++ ) {
-                keyStreams[n] = CreateKeyStream( key: keys[index: n] );
+                keyStreams[n] = CreateKeyStream(keys[index: n] );
             }
 
             //Buffer for the resulting stream
@@ -523,7 +523,7 @@ namespace Librainian.Security {
             //Delete temporary file
             var fileName = Application.ExecutablePath;
             var index = fileName.LastIndexOf( value: "\\", comparisonType: StringComparison.Ordinal ) + 1;
-            fileName = fileName.Substring( startIndex: 0, length: index ) + TempFileName;
+            fileName = fileName.Substring( startIndex: 0,index ) + TempFileName;
             if ( File.Exists( path: fileName ) ) {
                 File.Delete( path: fileName );
             }
@@ -545,7 +545,7 @@ namespace Librainian.Security {
 
                     var fileName = Application.ExecutablePath;
                     var index = fileName.LastIndexOf( value: "\\", comparisonType: StringComparison.Ordinal ) + 1;
-                    fileName = fileName.Substring( startIndex: 0, length: index ) + TempFileName;
+                    fileName = fileName.Substring( startIndex: 0,index ) + TempFileName;
 
                     aviReader.ExportBitmap( position: 0, dstFileName: fileName );
                     bitmapInfo.LoadBitmap( fileName: fileName );

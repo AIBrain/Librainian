@@ -156,7 +156,7 @@
     <Compile Include="FileSystem\AllSeeingWatcher.cs" />
     <Compile Include="FileSystem\FolderTests.cs" />
     <Compile Include="FileSystem\Location.cs" />
-    <Compile Include="FileSystem\SelfDeletingFile.cs" />
+    <Compile Include="FileSystem\SelfDeletingDocument.cs" />
     <Compile Include="FileSystem\Logical\LogicalDisk.cs" />
     <Compile Include="FileSystem\PhysicalDiskTests.cs" />
     <Compile Include="FileSystem\DriveTests.cs" />
@@ -191,6 +191,7 @@
     <Compile Include="Graphics\Imaging\ImagingExtensions.cs" />
     <Compile Include="Graphics\Imaging\PropertyItem.cs" />
     <Compile Include="Internet\AdapterInfo.cs" />
+    <Compile Include="Internet\DownloadException.cs" />
     <Compile Include="Internet\NetworkInterfaceHelper.cs" />
     <Compile Include="Internet\IPHelperInvoke.cs" />
     <Compile Include="Maths\ByteSize.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="OperatingSystem\WinSAT.cs" />
     <Compile Include="Persistence\ConcurrentDictionaryFile.cs" />
     <Compile Include="Persistence\ConcurrentListFile.cs" />
+    <Compile Include="Persistence\Section.cs" />
     <Compile Include="Security\AES.cs" />
     <Compile Include="Security\PasswordTests.cs" />
     <Compile Include="Security\GpwData.cs" />
@@ -313,10 +315,9 @@
     <Compile Include="Parsing\ParagraphExtensions.cs" />
     <Compile Include="Persistence\INIFile.cs" />
     <Compile Include="Persistence\INIFile_Tests.cs" />
-    <Compile Include="Persistence\JSONFile.cs" />
+    <Compile Include="Persistence\Ini.cs" />
     <Compile Include="Persistence\JSONFile_Tests.cs" />
     <Compile Include="Persistence\PasswordExtensions.cs" />
-    <Compile Include="Collections\AbstractBlockingQueue.cs" />
     <Compile Include="Collections\AbstractCollection.cs" />
     <Compile Include="Collections\AbstractQueue.cs" />
     <Compile Include="Collections\BlockingQueue.cs" />
@@ -857,4 +858,9 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_StartDate="2000/1/1" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

@@ -13,7 +13,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/AESThenHMAC.cs" was last cleaned by Rick on 2018/05/06 at 2:22 PM
+// "Librainian/AESThenHMAC.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
 
 namespace Librainian.Security {
 
@@ -73,7 +73,7 @@ namespace Librainian.Security {
                 throw new ArgumentException( message: "Encrypted Message Required!", paramName: nameof( encryptedMessage ) );
             }
 
-            using ( var hmac = new HMACSHA256( key: authKey ) ) {
+            using ( var hmac = new HMACSHA256(authKey ) ) {
                 var sentTag = new Byte[hmac.HashSize / 8];
 
                 //Calculate Tag
@@ -86,7 +86,7 @@ namespace Librainian.Security {
                 }
 
                 //Grab Sent Tag
-                Array.Copy( sourceArray: encryptedMessage, sourceIndex: encryptedMessage.Length - sentTag.Length, destinationArray: sentTag, destinationIndex: 0, length: sentTag.Length );
+                Array.Copy( sourceArray: encryptedMessage, sourceIndex: encryptedMessage.Length - sentTag.Length, destinationArray: sentTag, destinationIndex: 0,sentTag.Length );
 
                 //Compare Tag with constant time comparison
                 var compare = 0;
@@ -103,9 +103,9 @@ namespace Librainian.Security {
 
                     //Grab IV from message
                     var iv = new Byte[ivLength];
-                    Array.Copy( sourceArray: encryptedMessage, sourceIndex: nonSecretPayloadLength, destinationArray: iv, destinationIndex: 0, length: iv.Length );
+                    Array.Copy( sourceArray: encryptedMessage, sourceIndex: nonSecretPayloadLength, destinationArray: iv, destinationIndex: 0,iv.Length );
 
-                    using ( var decrypter = aes.CreateDecryptor( key: cryptKey, iv: iv ) ) {
+                    using ( var decrypter = aes.CreateDecryptor(cryptKey, iv: iv ) ) {
                         var plainTextStream = new MemoryStream();
                         var decrypterStream = new CryptoStream( stream: plainTextStream, transform: decrypter, mode: CryptoStreamMode.Write );
                         using ( var binaryWriter = new BinaryWriter( output: decrypterStream ) ) {
@@ -185,8 +185,8 @@ namespace Librainian.Security {
             var authSalt = new Byte[SaltBitSize / 8];
 
             //Grab Salt from Non-Secret Payload
-            Array.Copy( sourceArray: encryptedMessage, sourceIndex: nonSecretPayloadLength, destinationArray: cryptSalt, destinationIndex: 0, length: cryptSalt.Length );
-            Array.Copy( sourceArray: encryptedMessage, sourceIndex: nonSecretPayloadLength + cryptSalt.Length, destinationArray: authSalt, destinationIndex: 0, length: authSalt.Length );
+            Array.Copy( sourceArray: encryptedMessage, sourceIndex: nonSecretPayloadLength, destinationArray: cryptSalt, destinationIndex: 0,cryptSalt.Length );
+            Array.Copy( sourceArray: encryptedMessage, sourceIndex: nonSecretPayloadLength + cryptSalt.Length, destinationArray: authSalt, destinationIndex: 0,authSalt.Length );
 
             Byte[] cryptKey;
             Byte[] authKey;
@@ -241,7 +241,7 @@ namespace Librainian.Security {
                 aes.GenerateIV();
                 iv = aes.IV;
 
-                using ( var encrypter = aes.CreateEncryptor( key: cryptKey, iv: iv ) ) {
+                using ( var encrypter = aes.CreateEncryptor(cryptKey, iv: iv ) ) {
                     var cipherStream = new MemoryStream();
                     using ( var binaryWriter = new BinaryWriter( output: new CryptoStream( stream: cipherStream, transform: encrypter, mode: CryptoStreamMode.Write ) ) ) {
                         binaryWriter.Write( buffer: secretMessage );
@@ -252,7 +252,7 @@ namespace Librainian.Security {
             }
 
             //Assemble encrypted message and add authentication
-            using ( var hmac = new HMACSHA256( key: authKey ) ) {
+            using ( var hmac = new HMACSHA256(authKey ) ) {
                 var encryptedStream = new MemoryStream();
                 using ( var binaryWriter = new BinaryWriter( output: encryptedStream ) ) {
 
@@ -348,7 +348,7 @@ namespace Librainian.Security {
 
             var payload = new Byte[SaltBitSize / 8 * 2 + nonSecretPayload.Length];
 
-            Array.Copy( sourceArray: nonSecretPayload, destinationArray: payload, length: nonSecretPayload.Length );
+            Array.Copy( sourceArray: nonSecretPayload, destinationArray: payload,nonSecretPayload.Length );
             var payloadIndex = nonSecretPayload.Length;
 
             Byte[] cryptKey;
@@ -362,7 +362,7 @@ namespace Librainian.Security {
                 cryptKey = generator.GetBytes( cb: KeyBitSize / 8 );
 
                 //Create Non Secret Payload
-                Array.Copy( sourceArray: salt, sourceIndex: 0, destinationArray: payload, destinationIndex: payloadIndex, length: salt.Length );
+                Array.Copy( sourceArray: salt, sourceIndex: 0, destinationArray: payload, destinationIndex: payloadIndex,salt.Length );
                 payloadIndex += salt.Length;
             }
 
@@ -375,7 +375,7 @@ namespace Librainian.Security {
                 authKey = generator.GetBytes( cb: KeyBitSize / 8 );
 
                 //Create Rest of Non Secret Payload
-                Array.Copy( sourceArray: salt, sourceIndex: 0, destinationArray: payload, destinationIndex: payloadIndex, length: salt.Length );
+                Array.Copy( sourceArray: salt, sourceIndex: 0, destinationArray: payload, destinationIndex: payloadIndex,salt.Length );
             }
 
             return secretMessage.SimpleEncrypt( cryptKey, authKey, payload );
