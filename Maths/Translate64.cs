@@ -8,7 +8,7 @@
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@Protiguous.com
+//  
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.

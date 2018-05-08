@@ -58,7 +58,7 @@ namespace Librainian.Persistence {
         public override Boolean Equals( Object obj ) => Equals( this, obj as Ini );
 
         /// <summary>
-        /// static comparison
+        /// static comparison.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -68,23 +68,13 @@ namespace Librainian.Persistence {
                 return true;
             }
 
-            if ( left is null || right is null ) {
+            if ( ReferenceEquals( left, default ) || ReferenceEquals( default, right ) ) {
                 return false;
             }
 
-            if ( left.AllID().Except( right.AllID() ).Any() ) {
-                return false;
-            }
-
-            //var keysame = ( left.Data.Keys as IList<String> ).ContainSameElements( right.Data.Keys as IList<String> );
-            //if ( !keysame ) {
-            //    return false;
-            //}
-
-            return true;
+            return left.ID.Equals( right.ID );
         }
 
-        public IReadOnlyList<Guid> AllID() => this.Data.Values.Select( section => section.ID ) as IReadOnlyList<Guid>;
 
         /// <summary>Serves as the default hash function. </summary>
         /// <returns>A hash code for the current object.</returns>
@@ -130,102 +120,73 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public Document Document { get; set; }
 
-        public IEnumerable<Section> Sections => this.Data.Values;
-
-        public Section this[ [NotNull] String key ] {
-            [DebuggerStepThrough]
-            [CanBeNull] get {
-                if ( key is null ) {
-                    throw new ArgumentNullException( paramName: nameof( key ) );
-                }
-
-                return this.Data.TryGetValue(key, value: out var section ) ? section : null;
-            }
-
-            [DebuggerStepThrough]
-            set {
-                if ( key == null ) {
-                    throw new ArgumentNullException( paramName: nameof( key ) );
-                }
-
-                this.Data[ key ] = value;
-            }
-        }
+        public IReadOnlyList<Section> Sections => this.Data.Values as IReadOnlyList<Section>;
 
         /// <summary>
         /// </summary>
-        /// <param name="sectionKey"></param>
-        /// <param name="dataKey">    </param>
+        /// <param name="section"></param>
+        /// <param name="key">    </param>
         /// <returns></returns>
-        public String this[ [NotNull] String sectionKey, [NotNull] String dataKey ] {
+        public String this[String section, String key] {
 
             [DebuggerStepThrough]
             [CanBeNull]
             get {
-                if ( sectionKey is null ) {
-                    throw new ArgumentNullException( paramName: nameof( sectionKey ) );
+                if ( section is null ) {
+                    return null;
                 }
 
-                if ( dataKey is null ) {
-                    throw new ArgumentNullException( paramName: nameof( dataKey ) );
+                if ( key is null ) {
+                    return null;
                 }
 
-                return this.Data[ sectionKey ]?[ dataKey ];
+                return this.Data[section]?[key];
             }
 
             [DebuggerStepThrough]
             set {
-                if ( sectionKey is null ) {
-                    throw new ArgumentNullException( paramName: nameof( sectionKey ) );
+                if ( section is null ) {
+                    return;
                 }
 
-                if ( dataKey is null ) {
-                    throw new ArgumentNullException( paramName: nameof( dataKey ) );
+                if ( key is null ) {
+                    return;
                 }
 
-                var data = new Section();
-                data[
-
-                this.Add( section: sectionKey, pair: new KeyValuePair<String, String>(dataKey, value: value ) );
+                if ( this.Data.TryGetValue( section, out var result ) ) {
+                    result[key] = value;
+                }
+                else {
+                    //is this threadsafe? another thread could pop in between the TryGetValue() above, and the Add() here.
+                    this.Add( section, key, value );
+                }
             }
         }
 
         /// <summary>
-        ///     (Trims whitespaces from section and key)
+        ///     Add the <paramref name="value"/> to the <see cref="Section"/> under the key
         /// </summary>
         /// <param name="section"></param>
-        /// <param name="pair">   </param>
+        /// <param name="key">   </param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        private Boolean Add( String section, KeyValuePair<String, String> pair ) {
-            if ( String.IsNullOrWhiteSpace( value: section ) ) {
-                throw new ArgumentException( message: "Argument is null or whitespace", paramName: nameof( section ) );
+        private Boolean Add( [NotNull] String section, [NotNull] String key, String value ) {
+            if ( section is null ) {
+                throw new ArgumentNullException( paramName: nameof( section ) );
             }
 
-            section = section.Trim();
-            if ( String.IsNullOrWhiteSpace( value: section ) ) {
-                throw new ArgumentException( message: "Argument is null or whitespace", paramName: nameof( section ) );
+            if ( key is null ) {
+                throw new ArgumentNullException( paramName: nameof( key ) );
             }
 
-            var retries = 10;
-            TryAgain:
-            if ( !this.Data.ContainsKey(section ) ) {
-                this.Data.TryAdd(section, value: new ConcurrentDictionary<String, String>() );
+            if ( this.Data.TryGetValue( section, out var result ) ) {
+                result[key] = value;
+            }
+            else {
+                this.Data[ section ] = new Section { [ key ] = value };
             }
 
-            try {
-                this.Data[section ][pair.Key.Trim() ] = pair.Value;
-                return true;
-            }
-            catch ( KeyNotFoundException exception ) {
-                retries--;
-                if ( retries.Any() ) {
-                    goto TryAgain;
-                }
-
-                exception.More();
-            }
-
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -240,9 +201,9 @@ namespace Librainian.Persistence {
             }
 
             Parallel.ForEach( source: iniFile.Sections.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive, body: section => {
-                var dictionary = iniFile[ section: section ];
-                if ( null != dictionary ) {
-                    Parallel.ForEach( source: dictionary.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive, body: pair => { this.Add( section: section, pair: pair ); } );
+                var dictionary = iniFile[section: section];
+                if ( dictionary != null ) {
+                    Parallel.ForEach( source: dictionary.AsParallel(), parallelOptions: ThreadingExtensions.AllCPU, body: pair => { this.Add( section: section, pair.Key, pair.Value ); } );
                 }
             } );
 
@@ -271,15 +232,15 @@ namespace Librainian.Persistence {
                 }
 
                 try {
-                    var data = document.LoadJSON<ConcurrentDictionary<String, ConcurrentDictionary<String, String>>>();
+                    var data = document.LoadJSON();
                     if ( data is null ) {
                         return false;
                     }
 
                     var result = Parallel.ForEach( source: data.Keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive,
                         body: section => {
-                            Parallel.ForEach( source: data[section ].Keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive,
-                                body: key => { this.Add( section: section, pair: new KeyValuePair<String, String>(key, value: data[section ][key ] ) ); } );
+                            Parallel.ForEach( source: data[section].Keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive,
+                                body: key => { this.Add( section: section, key, data[ section ][ key ] ); } );
                         } );
                     return result.IsCompleted;
                 }
@@ -291,7 +252,7 @@ namespace Librainian.Persistence {
                     exception.More();
                 }
                 catch ( OutOfMemoryException exception ) {
-                    //file is huge
+                    //file is huge. too huge for text!
                     exception.More();
                 }
 
@@ -311,7 +272,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( paramName: nameof( section ) );
             }
 
-            return this.Data.TryRemove(section, value: out var dict );
+            return this.Data.TryRemove( section, value: out var dict );
         }
 
         [DebuggerStepThrough]
@@ -320,11 +281,11 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( paramName: nameof( section ) );
             }
 
-            if ( !this.Data.ContainsKey(section ) ) {
+            if ( !this.Data.ContainsKey( section ) ) {
                 return false;
             }
 
-            return this.Data[section ].TryRemove(key, value: out _ );
+            return this.Data[section].TryRemove( key, value: out _ );
         }
 
         /// <summary>

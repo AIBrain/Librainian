@@ -8,7 +8,7 @@
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@Protiguous.com
+//  
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  
 //
@@ -72,7 +72,7 @@ data33   =   3
         }
 
         [Test]
-        public static async void test_load_from_string() {
+        public static async Task test_load_from_string() {
             Ini.Add( ini_test_data );
 
             Json.Add( Ini );

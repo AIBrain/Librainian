@@ -8,7 +8,7 @@
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@Protiguous.com
+//  
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  
 //
@@ -513,74 +513,12 @@ namespace Librainian.Persistence
         }
 
         [NotNull]
-        public static readonly ThreadLocal<JsonSerializer> JsonSerializers = new ThreadLocal<JsonSerializer>( () => new JsonSerializer {
+        public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new ThreadLocal<JsonSerializer>( () => new JsonSerializer {
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
             PreserveReferencesHandling = PreserveReferencesHandling.All
         }, true );
 
 
-        /// <summary>
-        ///     Return an object loaded from a JSON text file.
-        /// </summary>
-        /// <typeparam name="TType"></typeparam>
-        /// <param name="document"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        public static TType LoadJSON<TType>( [NotNull] this Document document ) {
-            if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
-            }
-
-            if ( !document.Exists() ) {
-                return default;
-            }
-
-            try {
-                var textReader = File.OpenText( document.FullPathWithFileName );
-                using ( var jsonReader = new JsonTextReader( textReader ) ) {
-                    var obj = JsonSerializers.Value.Deserialize<TType>( jsonReader );
-                    return obj;
-                }
-
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
-
-            return default;
-        }
-
-        /// <summary>
-        ///     Return an object loaded from a JSON text file (async).
-        /// </summary>
-        /// <typeparam name="TType"></typeparam>
-        /// <param name="document"></param>
-        /// <returns></returns>
-        public static Task<TType> LoadJSONAsync<TType>( [NotNull] this Document document ) {
-            if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
-            }
-
-            if ( !document.Exists() ) {
-                return default;
-            }
-
-            return Task.Run( () => {
-                try {
-                    var textReader = File.OpenText( document.FullPathWithFileName );
-                    //var s = await textReader.ReadToEndAsync();    //TODO
-                    using ( var jsonReader = new JsonTextReader( textReader ) ) {
-                        var obj = JsonSerializers.Value.Deserialize< TType >( jsonReader );
-                        return obj;
-                    }
-                }
-                catch ( Exception exception ) {
-                    exception.More();
-                }
-
-                return default;
-            } );
-        }
 
 
 
@@ -589,7 +527,7 @@ namespace Librainian.Persistence
         /// <param name="feedback"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        [Obsolete]
+        [Obsolete("Use JSON serializers")]
         public static TSource LoadOrCreate<TSource>( [NotNull] String fileName, ProgressChangedEventHandler feedback = null, [NotNull] params Object[] parameters ) where TSource : class, new() {
             if ( fileName is null ) {
                 throw new ArgumentNullException( nameof( fileName ) );
@@ -645,7 +583,7 @@ namespace Librainian.Persistence
         /// <param name="obj" />
         /// <param name="fileName" />
         /// <returns></returns>
-        [Obsolete]
+        [Obsolete( "Use JSON serializers" )]
         public static Boolean LoadValue<T>( out T obj, String fileName ) where T : struct {
             obj = default;
             try {

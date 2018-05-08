@@ -8,7 +8,7 @@
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@Protiguous.com
+//  
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  
 //
@@ -51,6 +51,20 @@ namespace Librainian.Threading {
         /// </summary>
         [NotNull]
         public static readonly ParallelOptions AllCPU = new ParallelOptions { MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount ) };
+
+        /// <summary>
+        ///     <para>
+        ///         Sets the <see cref="System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism" /> of a
+        ///         <see cref="System.Threading.Tasks.ParallelOptions" /> to half of <see cref="Environment.ProcessorCount" />.
+        ///     </para>
+        ///     <para>1 core to 1?</para>
+        ///     <para>2 cores to 1</para>
+        ///     <para>4 cores to 2</para>
+        ///     <para>8 cores to 4</para>
+        ///     <para>n cores to n/2</para>
+        /// </summary>
+        [NotNull]
+        public static readonly ParallelOptions CPULight = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount / 2 };
 
         /// <summary>
         ///     <para>
@@ -125,7 +139,12 @@ namespace Librainian.Threading {
             };
         }
 
-        /// <summary>Thread.BeginThreadAffinity(); Thread.BeginCriticalRegion();</summary>
+        /// <summary>
+        /// <para>Thread.BeginThreadAffinity();</para>
+        /// <para>Thread.BeginCriticalRegion();</para>
+        /// <para>...</para>
+        /// <see cref="End"/>
+        /// </summary>
         public static void Begin( Boolean lowPriority = true ) {
             Thread.BeginThreadAffinity();
             Thread.BeginCriticalRegion();
@@ -133,10 +152,7 @@ namespace Librainian.Threading {
                 return;
             }
 
-            // ReSharper disable RedundantCheckBeforeAssignment
             if ( Thread.CurrentThread.Priority != ThreadPriority.Lowest ) {
-
-                // ReSharper restore RedundantCheckBeforeAssignment
                 Thread.CurrentThread.Priority = ThreadPriority.Lowest;
             }
         }
@@ -244,7 +260,12 @@ namespace Librainian.Threading {
         public static void DoNothing() {
         }
 
-        /// <summary>Thread.EndThreadAffinity(); Thread.EndCriticalRegion();</summary>
+        /// <summary>
+        /// <para><see cref="Begin"/></para>
+        /// <para>...</para>
+        /// <para>Thread.EndThreadAffinity();</para>
+        /// <para>Thread.EndCriticalRegion();</para>
+        /// </summary>
         public static void End() {
             Thread.EndThreadAffinity();
             Thread.EndCriticalRegion();
@@ -279,82 +300,61 @@ namespace Librainian.Threading {
         }
 
         public static Int32 GetMaximumActiveWorkerThreads() {
-			ThreadPool.GetMaxThreads( workerThreads: out var maxWorkerThreads, completionPortThreads: out var maxPortThreads );
+			ThreadPool.GetMaxThreads( workerThreads: out _, completionPortThreads: out var maxPortThreads );
             return maxPortThreads;
         }
 
         public static Boolean GetSizeOfPrimitives<T>( this T obj, out UInt64 total ) {
 
-            //if ( obj is String ) {
-            //    total = ( UInt64 ) ( obj as String ).Length;
-            //    return true;
-            //}
+            if ( obj is String s1 ) {
+                total = ( UInt64 )s1.Length;
+                return true;
+            }
 
-            var type = obj.GetType();
+            var type = typeof(T);
 
             if ( !type.IsPrimitive ) {
-                total = 0;
+                total = 0;  //TODO recurse all fields
                 return false;
             }
 
-            if ( obj is UInt32 ) {
-                total = sizeof( UInt32 );
-                return true;
-            }
-
-            if ( obj is Int32 ) {
-                total = sizeof( Int32 );
-                return true;
-            }
-
-            if ( obj is UInt64 ) {
-                total = sizeof( UInt64 );
-                return true;
-            }
-
-            if ( obj is Int64 ) {
-                total = sizeof( Int64 );
-                return true;
-            }
-
-            if ( obj is Decimal ) {
-                total = sizeof( Decimal );
-                return true;
-            }
-
-            if ( obj is Double ) {
-                total = sizeof( Double );
-                return true;
-            }
-
-            if ( obj is UInt16 ) {
-                total = sizeof( UInt16 );
-                return true;
-            }
-
-            if ( obj is Byte ) {
-                total = sizeof( Byte );
-                return true;
-            }
-
-            if ( obj is SByte ) {
-                total = sizeof( SByte );
-                return true;
-            }
-
-            if ( obj is Int16 ) {
-                total = sizeof( Int16 );
-                return true;
-            }
-
-            if ( obj is Single ) {
-                total = sizeof( Single );
-                return true;
-            }
-
-            if ( obj is Boolean ) {
-                total = sizeof( Boolean );
-                return true;
+            switch ( obj ) {
+                case UInt32 _:
+                    total = sizeof( UInt32 );
+                    return true;
+                case Int32 _:
+                    total = sizeof( Int32 );
+                    return true;
+                case UInt64 _:
+                    total = sizeof( UInt64 );
+                    return true;
+                case Int64 _:
+                    total = sizeof( Int64 );
+                    return true;
+                case Decimal _:
+                    total = sizeof( Decimal );
+                    return true;
+                case Double _:
+                    total = sizeof( Double );
+                    return true;
+                case UInt16 _:
+                    total = sizeof( UInt16 );
+                    return true;
+                case Byte _:
+                    total = sizeof( Byte );
+                    return true;
+                case SByte _:
+                    total = sizeof( SByte );
+                    return true;
+                case Int16 _:
+                    total = sizeof( Int16 );
+                    return true;
+                case Single _:
+                    total = sizeof( Single );
+                    return true;
+                case Boolean _:
+                    total = sizeof( Boolean );
+                    return true;
             }
 
             total = 0;
@@ -388,7 +388,7 @@ namespace Librainian.Threading {
         /// <param name="times"></param>
         /// <param name="action"></param>
         public static void Repeat( this Int32 times, [CanBeNull] Action action ) {
-            if ( null == action ) {
+            if ( action is null ) {
                 return;
             }
             for ( var i = 0; i < Math.Abs( times ); i++ ) {
@@ -397,7 +397,7 @@ namespace Librainian.Threading {
         }
 
         public static void Repeat( [CanBeNull] this Action action, Int32 times ) {
-            if ( null == action ) {
+            if ( action is null ) {
                 return;
             }
             for ( var i = 0; i < Math.Abs( times ); i++ ) {

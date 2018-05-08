@@ -8,7 +8,7 @@
 // goes to the Authors.
 // 
 // Donations and royalties can be paid via
-//  PayPal: paypal@Protiguous.com
+//  
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  
 // 
@@ -394,7 +394,7 @@ namespace Librainian.Threading {
 		///// <param name="delay"> </param>
 		///// <param name="task"> </param>
 		///// <returns> </returns>
-		//public static async void Then( Action<Task> task, TimeSpan? delay = null ) {
+		//public static async Task Then( Action<Task> task, TimeSpan? delay = null ) {
 		//    if ( task is null ) {
 		//        throw new ArgumentNullException( "task" );
 		//    }
@@ -476,7 +476,7 @@ namespace Librainian.Threading {
 		//    return mainTask;
 		//}
 
-		//private static async void doDelay( TimeSpan delay ) {
+		//private static async Task doDelay( TimeSpan delay ) {
 		//    await Task.Delay( delay );
 		//}
 

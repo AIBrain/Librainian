@@ -779,6 +779,35 @@ namespace Librainian.FileSystem {
             return handle;
         }
         */
+        /// <summary>
+        ///     Return an object loaded from a JSON text file.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        [CanBeNull]
+        public T LoadJSON<T>() {
+
+            if ( !this.Exists() ) {
+                return default;
+            }
+
+            try {
+                using ( var textReader = File.OpenText( this.FullPathWithFileName ) ) {
+                    using ( var jsonReader = new JsonTextReader( textReader ) ) {
+                        return PersistenceExtensions.LocalJsonSerializers.Value.Deserialize<T>( jsonReader );
+                    }
+                }
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+
+            return default;
+        }
+
+        public async Task<T> LoadJSONAsync<T>() {
+          return  await Task.Run( () => this.LoadJSON<T>() ).ConfigureAwait(false);
+        }
     }
 
 

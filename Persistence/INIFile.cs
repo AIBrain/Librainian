@@ -8,7 +8,7 @@
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@Protiguous.com
+//  
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  
 //
@@ -135,7 +135,7 @@ namespace Librainian.Persistence {
         }
 
         [DebuggerStepThrough]
-        public static String EncodePair( KeyValuePair<String, String> pair ) => $"{pair.Key}{PairSeparator}{pair.Value ?? String.Empty}{Environment.NewLine}";
+        public static String EncodePair( KeyValuePair<String, String> pair ) => $"{pair.Key}{PairSeparator}{pair.Value ?? String.Empty}";
 
 	    [DebuggerStepThrough]
         public static String EncodeSection( String section ) {
@@ -361,7 +361,7 @@ namespace Librainian.Persistence {
                 using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
                     writer.Write( EncodeSection( section ) );
                     foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) {
-                        writer.Write( EncodePair( pair ) );
+                        writer.WriteLine( EncodePair( pair ) );
                     }
                     writer.Write( Environment.NewLine );
                     writer.Flush();

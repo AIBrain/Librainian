@@ -25,13 +25,6 @@ namespace LibrainianTests {
     using System.Threading.Tasks;
     using FluentAssertions;
     using JetBrains.Annotations;
-    using Librainian;
-    using Librainian.Collections;
-    using Librainian.Maths;
-    using Librainian.Measurement.Time;
-    using Librainian.Measurement.Time.Clocks;
-    using Librainian.Parsing;
-    using Librainian.Threading;
     using NUnit.Framework;
 
     [TestFixture]

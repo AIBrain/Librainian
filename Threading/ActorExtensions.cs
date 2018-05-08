@@ -8,7 +8,7 @@
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@Protiguous.com
+//  
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  
 //
@@ -58,7 +58,7 @@ namespace Librainian.Threading {
         }
 
         [Test]
-        public static async void ActorTest() {
+        public static async Task ActorTest() {
             var bobDole = Actor.Do( () => Console.WriteLine( "Hello." ) ).LimitActing( TimeSpan.FromMilliseconds( 1 ), () => Console.WriteLine( "..uh..what?" ) ).Then( () => Console.WriteLine( "This is Bob Dole." ) ).Then( () => Console.WriteLine( "I just wanted to say." ) ).Then( () => Console.WriteLine( "Some about." ) ).EndScene().EndScene();
 
             //var bobBush = Actor.Do( () => {

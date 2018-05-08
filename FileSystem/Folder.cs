@@ -8,7 +8,7 @@
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@Protiguous.com
+//  
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  
 //
@@ -169,10 +169,11 @@ namespace Librainian.FileSystem {
 
         [CanBeNull]
         public Folder GetParent() {
-            if ( null != this.Info.Parent ) {
-                return new Folder( this.Info.Parent );
+            if ( this.Info.Parent is null ) {
+                return null;
             }
-            return null;
+
+            return new Folder( this.Info.Parent );
         }
 
 	    /// <summary>

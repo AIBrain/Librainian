@@ -9,7 +9,7 @@
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@Protiguous.com
+//  
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  
 //
@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 // Change these attribute values to modify the information associated with an assembly.
 
 [assembly: AssemblyTitle( "Librainian" )]
-[assembly: AssemblyDescription( "Collection of classes I will use in my projects." )]
+[assembly: AssemblyDescription( "AIBrain's collection of classes I will use in my projects." )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "Protiguous.com" )]
 [assembly: AssemblyProduct( "Librainian" )]
@@ -50,7 +50,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers by using the '*'
 // as shown below: [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion( "2018.05.07.0425" )]
-[assembly: AssemblyFileVersion( "2018.05.07.0425" )]
+[assembly: AssemblyVersion( "2018.05.07.0435" )]
+[assembly: AssemblyFileVersion( "2018.05.07.0435" )]
 [assembly: NeutralResourcesLanguage( "en-US" )]
 

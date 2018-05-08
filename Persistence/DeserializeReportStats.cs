@@ -8,7 +8,7 @@
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@Protiguous.com
+//  
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  
 //
@@ -82,7 +82,7 @@ namespace Librainian.Persistence {
         public void StopReporting() => this.Enabled = false;
 
         /// <summary>Perform a Report.</summary>
-        private async void Report() {
+        private async Task Report() {
             if ( !this.Enabled ) {
                 return;
             }

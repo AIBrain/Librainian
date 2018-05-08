@@ -200,7 +200,7 @@ namespace Librainian.FileSystem {
 	public static class TestAsyncCopyAndMoves {
 
 		[ Test ]
-		public static async void TestCopyAsync() {
+		public static async Task TestCopyAsync() {
 			var source = Document.GetTempDocument();
 			source.AppendText( "0123456789,\r\n".Repeat( UInt16.MaxValue, String.Empty ) );
 			var sourceSize = source.Size();

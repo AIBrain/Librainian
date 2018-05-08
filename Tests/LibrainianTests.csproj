@@ -49,15 +49,15 @@
   <ItemGroup>
     <Compile Include="DiagnosticTests.cs" />
     <Compile Include="FileHistoryFileTests.cs" />
+    <Compile Include="FolderBagTests.cs" />
     <Compile Include="Linguistics\SentenceTests.cs" />
     <Compile Include="Maths\MathsTests.cs" />
     <Compile Include="MyClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Librainian.csproj">
-      <Project>{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}</Project>
+      <Project>{722e3411-b605-4af8-adea-d2d18bc9cd2c}</Project>
       <Name>Librainian</Name>
     </ProjectReference>
   </ItemGroup>

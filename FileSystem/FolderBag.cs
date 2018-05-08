@@ -8,7 +8,7 @@
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@Protiguous.com
+//  
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  
 //
@@ -23,7 +23,6 @@ namespace Librainian.FileSystem {
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using FluentAssertions;
@@ -31,10 +30,10 @@ namespace Librainian.FileSystem {
     using Newtonsoft.Json;
 
     /// <summary>
-    ///     <para>A bag of folders, stored somewhat efficiently memory-wise than a list.</para>
+    ///     <para>A bag of folders, stored somewhat efficiently ?memory-wise> than a list.</para>
     /// </summary>
     [JsonObject]
-    public class FolderBag : IEnumerable<Folder> {
+    public partial class FolderBag /*: IEnumerable<Folder>*/ {
 
         [JsonProperty]
         public List<Node> Endings { get; } = new List<Node>();
@@ -70,7 +69,8 @@ namespace Librainian.FileSystem {
                 throw new ArgumentNullException( nameof( folder ) );
             }
 
-            var pathParts = FolderExtensions.SplitPath( folder ).ToList();
+            var pathParts = folder.Info.SplitPath().ToList();
+
             if ( !pathParts.Any() ) {
                 return;
             }
@@ -90,7 +90,7 @@ namespace Librainian.FileSystem {
             }
 
             foreach ( var pathPart in pathParts.Skip( 1 ) ) {
-                var nextNode = new Node( pathPart ) { Parent = currentNode };
+                var nextNode = new Node( pathPart, currentNode );
                 existingNode = currentNode.SubFolders.Find( node => Node.Equals( node, nextNode ) );
                 if ( !Node.Equals( existingNode, default ) ) {
                     nextNode = existingNode; // already there? don't need to add it.
@@ -127,69 +127,6 @@ namespace Librainian.FileSystem {
                 this.Roots.Should().Contain( node );
                 yield return new Folder( path );
             }
-        }
-
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
-        /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-	    [JsonObject]
-        [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-        public class Node : IEquatable<Node>, IComparable<Node> {
-
-            public Node( String data ) => this.Data = data;
-
-	        [JsonProperty]
-            public String Data {
-                get;
-            }
-
-            public Boolean IsEmpty => !this.SubFolders.Any();
-
-            [JsonProperty]
-            public Node Parent {
-                get; set;
-            }
-
-            [JsonProperty]
-            public List<Node> SubFolders { get; } = new List<Node>();
-
-            /// <summary>
-            ///     Static equality check
-            /// </summary>
-            /// <param name="lhs"></param>
-            /// <param name="rhs"></param>
-            /// <returns></returns>
-            public static Boolean Equals( Node lhs, Node rhs ) {
-                if ( ReferenceEquals( lhs, rhs ) ) {
-                    return true;
-                }
-                if ( lhs is null || rhs is null ) {
-                    return false;
-                }
-                return String.Equals( lhs.Data, rhs.Data, StringComparison.Ordinal );
-            }
-
-            public Int32 CompareTo( Node other ) => String.Compare( this.Data, other.Data, StringComparison.Ordinal );
-
-		    public Boolean Equals( Node other ) => Equals( this, other );
-
-		    //public override Boolean Equals( Object obj ) {
-            //    var bob = obj as Node;
-            //    if ( null == bob ) {
-            //        return false;
-            //    }
-            //    return Equals( this, bob );
-            //}
-
-            public override Int32 GetHashCode() => this.Data.GetHashCode();
-
-		    public override String ToString() => this.Data;
-
         }
     }
 }

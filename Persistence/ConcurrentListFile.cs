@@ -8,7 +8,7 @@
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  PayPal: paypal@Protiguous.com
+//  
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  
 //
@@ -92,7 +92,7 @@ namespace Librainian.Persistence {
             }
 
             try {
-                var data = this.Document.LoadJSON<ConcurrentList<TValue>>();
+                var data = this.Document.LoadJSON();
                 if ( data != null ) {
                     await this.AddRangeAsync( data );
                     return true;

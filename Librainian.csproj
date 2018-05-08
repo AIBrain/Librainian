@@ -33,7 +33,7 @@
     <WarningsAsErrors>4014,1998,618,8073</WarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>7.3</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <DocumentationFile>
@@ -43,16 +43,16 @@
     <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>embedded</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Single Image|AnyCPU'">
     <OutputPath>bin\Single Image\</OutputPath>
@@ -154,9 +154,9 @@
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Controls\ListBoxLog.cs" />
     <Compile Include="FileSystem\AllSeeingWatcher.cs" />
+    <Compile Include="FileSystem\FolderBag.Node.cs" />
     <Compile Include="FileSystem\FolderTests.cs" />
     <Compile Include="FileSystem\Location.cs" />
-    <Compile Include="FileSystem\SelfDeletingDocument.cs" />
     <Compile Include="FileSystem\Logical\LogicalDisk.cs" />
     <Compile Include="FileSystem\PhysicalDiskTests.cs" />
     <Compile Include="FileSystem\DriveTests.cs" />
@@ -216,7 +216,6 @@
     <Compile Include="Measurement\Time\HighResolutionDateTime.cs" />
     <Compile Include="Measurement\Time\Clocks\WindowsClock.cs" />
     <Compile Include="Measurement\Time\Duration.cs" />
-    <Compile Include="FileSystem\FolderBagTests.cs" />
     <Compile Include="Misc\PlaySound.cs" />
     <Compile Include="OperatingSystem\Applications\Class1.cs" />
     <Compile Include="OperatingSystem\Audio.cs" />
@@ -752,14 +751,12 @@
     <Compile Include="Threading\WaitNode.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="x64\liblept172.dll" />
-    <Content Include="x64\libtesseract304.dll" />
-    <Content Include="x86\liblept172.dll" />
-    <Content Include="x86\libtesseract304.dll" />
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="md5sum.exe" />
+    <EmbeddedResource Include="Security\md5sum.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Measurement\Time\TimeMap.dgml">
