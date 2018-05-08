@@ -1,22 +1,17 @@
-// Copyright 2016 Protiguous.
+// Copyright 2018 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Log.cs" was last cleaned by Protiguous on 2016/08/03 at 4:10 PM
+// "Librainian/Log.cs" was last cleaned by Protiguous on 2018/05/07 at 11:13 PM
 
 namespace Librainian {
 
@@ -51,18 +46,16 @@ namespace Librainian {
     }
 
     /// <summary>
-    ///     A class to help with exception handling and plain ol' simple time+logging to the Console.
-    ///     <para>I feel like this is a rereinvented wheel..</para>
-    /// UPDATe: Can we use the NLOG nuget pagkage?
+    /// A class to help with exception handling and plain ol' simple time+logging to the Console.
+    /// <para>I feel like this is a rereinvented wheel..</para>
+    /// UPDATE: Can we use the NLOG nuget pagkage? It looks clean..
     /// </summary>
     public static class Log {
         private static readonly ConsoleListenerWithTimePrefix ConsoleListener;
 
         static Log() => ConsoleListener = new ConsoleListenerWithTimePrefix();
 
-        public static Boolean HasConsoleBeenAllocated {
-            get; private set;
-        }
+        public static Boolean HasConsoleBeenAllocated { get; private set; }
 
         [DebuggerStepThrough]
         public static void After( [CallerMemberName] String method = "" ) {
@@ -81,6 +74,7 @@ namespace Librainian {
             if ( !String.IsNullOrEmpty( exception.Message ) ) {
                 Debug.WriteLine( exception.ToString() );
             }
+
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
             }
@@ -95,6 +89,7 @@ namespace Librainian {
             if ( !String.IsNullOrEmpty( message ) ) {
                 Debug.WriteLine( message );
             }
+
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
             }
@@ -109,13 +104,14 @@ namespace Librainian {
             if ( !String.IsNullOrEmpty( message ) ) {
                 Debug.WriteLine( message );
             }
+
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
             }
         }
 
         /// <summary>
-        ///     See also <seealso cref="Log.Exit" />.
+        /// See also <seealso cref="Log.Exit"/>.
         /// </summary>
         /// <param name="method"></param>
         [DebuggerStepThrough]
@@ -125,11 +121,8 @@ namespace Librainian {
         }
 
         /// <summary>
-        ///     <para>Write the <paramref name="message" /> with <see cref="WriteLine" /></para>
-        ///     <para>
-        ///         See also: <seealso cref="Message" />, <seealso cref="Info" />,
-        ///         <seealso cref="Warning" />, and <seealso cref="Error" />.
-        ///     </para>
+        /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/></para>
+        /// <para>See also: <seealso cref="Message"/>, <seealso cref="Info"/>, <seealso cref="Warning"/>, and <seealso cref="Error"/>.</para>
         /// </summary>
         /// <param name="message"></param>
         [DebuggerStepThrough]
@@ -149,7 +142,7 @@ namespace Librainian {
         public static void Finalized( [CallerMemberName] String method = "" ) => $"Finalized: {method ?? String.Empty}".WriteLine();
 
         /// <summary>
-        ///     Gets the number of frames in the <see cref="StackTrace" />
+        /// Gets the number of frames in the <see cref="StackTrace"/>
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -157,10 +150,9 @@ namespace Librainian {
         public static Int32 FrameCount( this Object obj ) => new StackTrace( false ).FrameCount;
 
         /// <summary>
-        ///     Force a memory garbage collection on generation0 and generation1 objects.
+        /// Force a memory garbage collection on generation0 and generation1 objects.
         /// </summary>
-        /// <seealso
-        ///     cref="http://programmers.stackexchange.com/questions/276585/when-is-it-a-good-idea-to-force-garbage-collection" />
+        /// <seealso cref="http://programmers.stackexchange.com/questions/276585/when-is-it-a-good-idea-to-force-garbage-collection"/>
         public static void Garbage() {
             var before = GC.GetTotalMemory( forceFullCollection: false );
             GC.Collect( generation: 1, mode: GCCollectionMode.Forced, blocking: true );
@@ -172,11 +164,8 @@ namespace Librainian {
         }
 
         /// <summary>
-        ///     <para>Write the <paramref name="message" /> with <see cref="WriteLine" /></para>
-        ///     <para>
-        ///         See also: <seealso cref="Message" />, <seealso cref="Info" />,
-        ///         <seealso cref="Warning" />, and <seealso cref="Error" />.
-        ///     </para>
+        /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/></para>
+        /// <para>See also: <seealso cref="Message"/>, <seealso cref="Info"/>, <seealso cref="Warning"/>, and <seealso cref="Error"/>.</para>
         /// </summary>
         /// <param name="message"></param>
         [DebuggerStepThrough]
@@ -186,14 +175,11 @@ namespace Librainian {
         }
 
         /// <summary>
-        ///     <para>Write the <paramref name="message" /> with <see cref="WriteLine" /></para>
-        ///     <para>
-        ///         See also: <seealso cref="Message" />, <seealso cref="Info" />,
-        ///         <seealso cref="Warning" />, and <seealso cref="Error" />.
-        ///     </para>
+        /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/></para>
+        /// <para>See also: <seealso cref="Message"/>, <seealso cref="Info"/>, <seealso cref="Warning"/>, and <seealso cref="Error"/>.</para>
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="method"></param>
+        /// <param name="method"> </param>
         [DebuggerStepThrough]
         public static String Message( [CanBeNull] this String message, [CallerMemberName] String method = "" ) {
             $"{method.NullIfEmpty() ?? "?"}: {message}".WriteLine();
@@ -201,14 +187,15 @@ namespace Librainian {
         }
 
         /// <summary>
-        ///     "Bring out yer' dead! Bring out yer' dead!"
+        /// "Bring out yer' dead! Bring out yer' dead!"
         /// </summary>
-        /// <param name="exception"></param>
-        /// <param name="method"></param>
-        /// <param name="sourceFilePath"></param>
+        /// <param name="exception">       </param>
+        /// <param name="method">          </param>
+        /// <param name="sourceFilePath">  </param>
         /// <param name="sourceLineNumber"></param>
         [DebuggerStepThrough]
-        public static void More( [NotNull] this Exception exception, [CanBeNull] [CallerMemberName] String method = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "", [CallerLineNumber] Int32 sourceLineNumber = 0 ) {
+        public static Exception More( [NotNull] this Exception exception, [CanBeNull] [CallerMemberName] String method = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "",
+            [CallerLineNumber] Int32 sourceLineNumber = 0 ) {
             var message = new StringBuilder();
             message.Append( $" [Exception: {exception.Message}]\r\n" );
             message.Append( $" [In: {exception.Source}]\r\n" );
@@ -223,6 +210,8 @@ namespace Librainian {
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
             }
+
+            return exception;
         }
 
         public static void Shutdown( Boolean linger = true ) {
@@ -269,25 +258,22 @@ namespace Librainian {
         }
 
         /// <summary>
-        ///     <para>Write the <paramref name="message" /> with <see cref="WriteLine" /></para>
-        ///     <para>
-        ///         See also: <seealso cref="Message" />, <seealso cref="Info" />,
-        ///         <seealso cref="Warning" />, and <seealso cref="Error" />.
-        ///     </para>
+        /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/></para>
+        /// <para>See also: <seealso cref="Message"/>, <seealso cref="Info"/>, <seealso cref="Warning"/>, and <seealso cref="Error"/>.</para>
         /// </summary>
         /// <param name="message"></param>
         [DebuggerStepThrough]
         public static void Warning( this String message ) => $"Warning: {message}".WriteLine();
 
         /// <summary>
-        ///     <para>Write the <paramref name="message" /> out to the <see cref="ConsoleListener" />.</para>
+        /// <para>Write the <paramref name="message"/> out to the <see cref="ConsoleListener"/>.</para>
         /// </summary>
         /// <param name="message"></param>
         [DebuggerStepThrough]
         public static void Write( this String message ) => ConsoleListener.Write( message );
 
         /// <summary>
-        ///     <para>Write the <paramref name="message" /> out to the <see cref="ConsoleListener" />.</para>
+        /// <para>Write the <paramref name="message"/> out to the <see cref="ConsoleListener"/>.</para>
         /// </summary>
         /// <param name="message"></param>
         [DebuggerStepThrough]

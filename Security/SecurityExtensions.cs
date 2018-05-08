@@ -1,19 +1,18 @@
-﻿// Copyright 2018 Protiguous
+﻿// Copyright 2018 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/SecurityExtensions.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
+// "Librainian/SecurityExtensions.cs" was last cleaned by Protiguous on 2018/05/07 at 11:20 PM
 
 namespace Librainian.Security {
 
@@ -37,7 +36,7 @@ namespace Librainian.Security {
     public static class SecurityExtensions {
 
         /// <summary>
-        ///     Not very secure. Oh well.
+        /// Not very secure. Oh well.
         /// </summary>
         public const String EntropyPhrase1 = "ZuZgBzuvvtn98vmmmt4vn4v9vwcaSjUtOmSkrA8Wo3ATOlMp3qXQmRQOdWyFFgJU";
 
@@ -52,14 +51,29 @@ namespace Librainian.Security {
 
         public static ThreadLocal<MD5> Md5S { get; } = new ThreadLocal<MD5>( valueFactory: MD5.Create );
 
-        /// <summary>Provide to each thread its own <see cref="SHA256Managed" />.</summary>
+        /// <summary>
+        /// Provide to each thread its own <see cref="SHA256Managed"/>.
+        /// </summary>
         public static ThreadLocal<SHA256Managed> SHA256Local { get; } = new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
 
-        /// <summary>Provide to each thread its own <see cref="SHA256Managed" />.</summary>
+        /// <summary>
+        /// Provide to each thread its own <see cref="SHA256Managed"/>.
+        /// </summary>
         public static ThreadLocal<SHA384Managed> SHA384Local { get; } = new ThreadLocal<SHA384Managed>( valueFactory: () => new SHA384Managed(), trackAllValues: false );
 
-        /// <summary>Provide to each thread its own <see cref="SHA256Managed" />.</summary>
+        /// <summary>
+        /// Provide to each thread its own <see cref="SHA256Managed"/>.
+        /// </summary>
         public static ThreadLocal<SHA512Managed> SHA512Local { get; } = new ThreadLocal<SHA512Managed>( valueFactory: () => new SHA512Managed(), trackAllValues: false );
+
+        private static Byte[] Uid( String s ) {
+            var numArray = new Byte[s.Length];
+            for ( var i = 0; i < s.Length; i++ ) {
+                numArray[i] = ( Byte )( s[index: i] & '\u007F' );
+            }
+
+            return numArray;
+        }
 
         public static Task<Byte[]> ComputeMD5Hash( String filename ) =>
             Task.Run( function: () => {
@@ -94,8 +108,7 @@ namespace Librainian.Security {
 
             var decryptedValue = String.Empty;
 
-            // Create the CspParameters object which is used to create the RSA provider without it
-            // generating a new private/public key. Parameter value of 1 indicates RSA provider type
+            // Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
             // - 13 would indicate DSA provider
             var csp = new CspParameters( dwTypeIn: 1 ) { KeyContainerName = privateKey, ProviderName = "Microsoft Strong Cryptographic Provider" };
 
@@ -128,7 +141,7 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        ///     Converts the given string ( <paramref name="input" />) to an encrypted Base64 string.
+        /// Converts the given string ( <paramref name="input"/>) to an encrypted Base64 string.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -150,8 +163,7 @@ namespace Librainian.Security {
 
             var encryptedValue = String.Empty;
 
-            // Create the CspParameters object which is used to create the RSA provider without it
-            // generating a new private/public key. Parameter value of 1 indicates RSA provider type
+            // Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
             // - 13 would indicate DSA provider
             var csp = new CspParameters( dwTypeIn: 1 ) { KeyContainerName = publicKey, ProviderName = "Microsoft Strong Cryptographic Provider" };
 
@@ -167,8 +179,7 @@ namespace Librainian.Security {
                 // Before encrypting the value we must convert it over to byte array
                 var bytesToEncrypt = Encoding.UTF8.GetBytes( s: stringToEncrypt );
 
-                // Encrypt our byte array. The false parameter has to do with padding (not to clear
-                // on this point but you can look it up and decide which is better for your use)
+                // Encrypt our byte array. The false parameter has to do with padding (not to clear on this point but you can look it up and decide which is better for your use)
                 var bytesEncrypted = rsa.Encrypt( rgb: bytesToEncrypt, fOAEP: false );
 
                 // Extract our encrypted byte array into a String value to return to our user
@@ -244,7 +255,7 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        ///     Uses the md5sum.exe to obtain the md5 string.
+        /// Uses the md5sum.exe to obtain the md5 string.
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
@@ -271,10 +282,10 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        ///     <para>Compute the SHA-256 hash for the <paramref name="input" /></para>
-        ///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
+        /// <para>Compute the SHA-256 hash for the <paramref name="input"/></para>
+        /// <para>Defaults to <see cref="Encoding.UTF8"/></para>
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">   </param>
         /// <param name="encoding"></param>
         /// <returns></returns>
         public static Byte[] Sha256( this String input, Encoding encoding = null ) {
@@ -290,10 +301,10 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        ///     <para>Compute the SHA-384 hash for the <paramref name="input" /></para>
-        ///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
+        /// <para>Compute the SHA-384 hash for the <paramref name="input"/></para>
+        /// <para>Defaults to <see cref="Encoding.UTF8"/></para>
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">   </param>
         /// <param name="encoding"></param>
         /// <returns></returns>
         public static Byte[] Sha384( this String input, Encoding encoding = null ) {
@@ -317,10 +328,10 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        ///     <para>Compute the SHA-384 hash for the <paramref name="input" /></para>
-        ///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
+        /// <para>Compute the SHA-384 hash for the <paramref name="input"/></para>
+        /// <para>Defaults to <see cref="Encoding.UTF8"/></para>
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">   </param>
         /// <param name="encoding"></param>
         /// <returns></returns>
         public static Byte[] Sha512( this String input, Encoding encoding = null ) {
@@ -396,14 +407,14 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        ///     Attempt to decrypt an encrypted version of the file with the given key and salt.
+        /// Attempt to decrypt an encrypted version of the file with the given key and salt.
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="output"></param>
-        /// <param name="key">Must be between 1 and 32767 bytes.</param>
-        /// <param name="reportProgress"></param>
-        /// <param name="exceptions">List of exceptions encountered.</param>
-        /// <param name="salt"></param>
+        /// <param name="input">            </param>
+        /// <param name="output">           </param>
+        /// <param name="key">              Must be between 1 and 32767 bytes.</param>
+        /// <param name="reportProgress">   </param>
+        /// <param name="exceptions">       List of exceptions encountered.</param>
+        /// <param name="salt">             </param>
         /// <param name="reportEveryXBytes"></param>
         /// <returns>Returns true if all is successful</returns>
         public static Boolean TryDecryptFile( [CanBeNull] this Document input, [CanBeNull] Document output, [CanBeNull] String key, Int32 salt, UInt64? reportEveryXBytes, Action<Single> reportProgress,
@@ -447,14 +458,14 @@ namespace Librainian.Security {
             }
 
             try {
-                DeriveBytes rgb = new Rfc2898DeriveBytes( password: key, salt: Encoding.Unicode.GetBytes( s: salt.ToString() ) );
-
                 if ( !output.Folder.Create() ) {
                     exceptions.Add( item: new IOException( message: $"Unable to write to {output.FullPathWithFileName} because folder {output.Folder.FullName} does not exist." ) );
                     return false;
                 }
 
                 using ( var aes = new AesCryptoServiceProvider() ) {
+                    DeriveBytes rgb = new Rfc2898DeriveBytes( password: key, salt: Encoding.Unicode.GetBytes( s: salt.ToString() ) );
+
                     aes.BlockSize = 128;
                     aes.KeySize = 256;
                     aes.Key = rgb.GetBytes( cb: aes.KeySize >> 3 );
@@ -495,15 +506,15 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        ///     Create an encrypted version of the given file with the given key and salt.
+        /// Create an encrypted version of the given file with the given key and salt.
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="output"></param>
-        /// <param name="key">Must be between 1 and 32767 bytes.</param>
-        /// <param name="salt"></param>
+        /// <param name="input">            </param>
+        /// <param name="output">           </param>
+        /// <param name="key">              Must be between 1 and 32767 bytes.</param>
+        /// <param name="salt">             </param>
         /// <param name="reportEveryXBytes"></param>
-        /// <param name="reportProgress">Reports progress every X bytes</param>
-        /// <param name="exceptions">List of exceptions encountered.</param>
+        /// <param name="reportProgress">   Reports progress every X bytes</param>
+        /// <param name="exceptions">       List of exceptions encountered.</param>
         /// <returns>Returns true if all is successful</returns>
         public static Boolean TryEncryptFile( [CanBeNull] this Document input, [CanBeNull] Document output, [CanBeNull] String key, Int32 salt, UInt64? reportEveryXBytes, Action<Single> reportProgress,
             [NotNull] out List<Exception> exceptions ) {
@@ -604,15 +615,6 @@ namespace Librainian.Security {
                 exceptions.Add( item: exception );
                 return false;
             }
-        }
-
-        private static Byte[] Uid( String s ) {
-            var numArray = new Byte[s.Length];
-            for ( var i = 0; i < s.Length; i++ ) {
-                numArray[i] = ( Byte )( s[index: i] & '\u007F' );
-            }
-
-            return numArray;
         }
     }
 

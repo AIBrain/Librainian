@@ -1,5 +1,5 @@
 ﻿using System.Resources;
-// Copyright 2016 Protiguous.
+// Copyright 2018 Protiguous.
 //
 // This notice must be kept visible in the source.
 //

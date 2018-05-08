@@ -59,14 +59,14 @@ namespace Librainian.Internet {
                 throw new ArgumentNullException( paramName: nameof( request ) );
             }
 
-            var reader = await DoRequestAsync( request: request ).ConfigureAwait( continueOnCapturedContext: false );
-            var response = await reader.ReadToEndAsync().ConfigureAwait( continueOnCapturedContext: false );
+            var reader = await DoRequestAsync( request: request ).ConfigureAwait( false );
+            var response = await reader.ReadToEndAsync().ConfigureAwait( false );
             return JsonConvert.DeserializeObject<T>( value: response );
         }
 
         public static async Task<T> DoRequestJsonAsync<T>( Uri uri ) {
-            var reader = await DoRequestAsync( uri: uri ).ConfigureAwait( continueOnCapturedContext: false );
-            var response = await reader.ReadToEndAsync().ConfigureAwait( continueOnCapturedContext: false );
+            var reader = await DoRequestAsync( uri: uri ).ConfigureAwait( false );
+            var response = await reader.ReadToEndAsync().ConfigureAwait( false );
             return JsonConvert.DeserializeObject<T>( value: response );
         }
 
@@ -126,7 +126,7 @@ namespace Librainian.Internet {
                 var request = WebRequest.Create( requestUri: uri );
                 request.Proxy = null;
                 request.Credentials = CredentialCache.DefaultCredentials;
-                using ( var response = await request.GetResponseAsync().ConfigureAwait( continueOnCapturedContext: false ) ) {
+                using ( var response = await request.GetResponseAsync().ConfigureAwait( false ) ) {
                     using ( var dataStream = response.GetResponseStream() ) {
                         if ( dataStream != null ) {
                             using ( var reader = new StreamReader( stream: dataStream ) ) {

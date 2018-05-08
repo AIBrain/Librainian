@@ -11,7 +11,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Document.cs" was last cleaned by Protiguous on 2018/05/06 at 4:10 PM
+// "Librainian/Document.cs" was last cleaned by Protiguous on 2018/05/07 at 11:18 PM
 
 namespace Librainian.FileSystem {
 
@@ -52,19 +52,11 @@ namespace Librainian.FileSystem {
     [JsonObject]
     public class Document : ABetterClassDispose, IEquatable<Document>, IEnumerable<Byte>, IComparable<Document> {
 
-        /// <inheritdoc />
-        public override void DisposeManaged() {
-            if ( this.DeleteAfterClose ) {
-                this.Delete();
-            }
-            base.DisposeManaged();
-        }
-
         // ReSharper disable once NotNullMemberIsNotInitialized
         private Document() => throw new NotImplementedException( message: "Private contructor is not allowed." );
 
         public Document( [NotNull] String fullPath, String filename, Boolean deleteAfterClose = false ) :
-                    this( fullPathWithFilename: Path.Combine( path1: fullPath, path2: filename ), deleteAfterClose: deleteAfterClose ) { }
+            this( fullPathWithFilename: Path.Combine( path1: fullPath, path2: filename ), deleteAfterClose: deleteAfterClose ) { }
 
         /// <summary>
         /// </summary>
@@ -104,6 +96,10 @@ namespace Librainian.FileSystem {
         [NotNull]
         public Folder Folder => new Folder( fileSystemInfo: this.Info.Directory );
 
+        /// <summary>
+        /// The heart of the <see cref="Document"/> class.
+        /// </summary>
+        [JsonProperty]
         [NotNull]
         public FileInfo Info { get; }
 
@@ -355,7 +351,7 @@ namespace Librainian.FileSystem {
                 }
 
                 if ( this.Exists() ) {
-                    File.Delete( path: this.FullPathWithFileName );
+                    this.Info.Delete();
                 }
 
                 return !this.Exists();
@@ -387,6 +383,15 @@ namespace Librainian.FileSystem {
             return false;
         }
 
+        /// <inheritdoc/>
+        public override void DisposeManaged() {
+            if ( this.DeleteAfterClose ) {
+                this.Delete();
+            }
+
+            base.DisposeManaged();
+        }
+
         /// <summary>
         /// <para>Downloads (replaces) the local document with the specified <paramref name="source"/>.</para>
         /// <para>Note: will replace the content of the this <see cref="Document"/>.</para>
@@ -400,45 +405,18 @@ namespace Librainian.FileSystem {
 
             try {
                 if ( !source.IsWellFormedOriginalString() ) {
-                    return ( new DownloadException( message: $"Could not use source Uri '{source}'." ), null );
+                    return (new DownloadException( message: $"Could not use source Uri '{source}'." ), null);
                 }
 
                 using ( var webClient = new WebClient() ) {
-                    await webClient.DownloadFileTaskAsync( source, this.FullPathWithFileName ).ConfigureAwait( continueOnCapturedContext: false );
+                    await webClient.DownloadFileTaskAsync( source, this.FullPathWithFileName ).ConfigureAwait( false );
                     return (null, webClient.ResponseHeaders);
                 }
             }
             catch ( Exception exception ) {
-                return ( exception , null);
+                return (exception, null);
             }
         }
-
-        /// <summary>
-        /// Uploads this <see cref="Document"/> to the given <paramref name="destination"/>.
-        /// </summary>
-        /// <param name="destination"></param>
-        /// <returns></returns>
-        public async Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination ) {
-            if ( destination == null ) {
-                throw new ArgumentNullException( paramName: nameof( destination ) );
-            }
-
-            if ( !destination.IsWellFormedOriginalString() ) {
-                return ( new ArgumentException( $"Destination address '{destination.OriginalString}' is not well formed.", nameof( destination ) ), null );
-            }
-
-            try {
-                using ( var webClient = new WebClient() ) {
-                    await webClient.UploadFileTaskAsync( destination, this.FullPathWithFileName ).ConfigureAwait( continueOnCapturedContext: false );
-                    return (null, webClient.ResponseHeaders);
-                }
-            }
-            catch ( Exception exception ) {
-                return ( exception, null );
-            }
-        }
-
-        
 
         /// <summary>
         /// <para>Compares the file names (case insensitive) and file sizes for equality.</para>
@@ -528,6 +506,35 @@ namespace Librainian.FileSystem {
             } );
 
         /// <summary>
+        /// Attempt to return an object Deserialized from this JSON text file.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        [CanBeNull]
+        public T LoadJSON<T>() {
+            if ( !this.Exists() ) {
+                return default;
+            }
+
+            try {
+                using ( var textReader = File.OpenText( this.FullPathWithFileName ) ) {
+                    using ( var jsonReader = new JsonTextReader( textReader ) ) {
+                        return PersistenceExtensions.LocalJsonSerializers.Value.Deserialize<T>( jsonReader );
+                    }
+                }
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+
+            return default;
+        }
+
+        public async Task<T> LoadJSONAsync<T>() {
+            return await Task.Run( () => this.LoadJSON<T>() ).ConfigureAwait( false );
+        }
+
+        /// <summary>
         /// Starts a task to copy a file
         /// </summary>
         /// <param name="destination"></param>
@@ -587,9 +594,11 @@ namespace Librainian.FileSystem {
 
         public async Task<String> ReadToEndAsync() {
             using ( var reader = new StreamReader( path: this.FullPathWithFileName ) ) {
-                return await reader.ReadToEndAsync().ConfigureAwait( continueOnCapturedContext: false );
+                return await reader.ReadToEndAsync().ConfigureAwait( false );
             }
         }
+
+        public void Refresh() => this.Info.Refresh();
 
         /// <summary>
         /// <para>Performs a byte by byte file comparison, but ignores the <see cref="Document"/> file names.</para>
@@ -660,14 +669,8 @@ namespace Librainian.FileSystem {
         /// </summary>
         /// <returns></returns>
         public async Task<String> ToJSON() {
-            Ini bob = new Ini();
-            bob.
-            using ( var reader = new StreamReader( path: this.FullPathWithFileName ) ) {
-                using ( var writer = new StreamWriter( outfile.FullPathWithFileName ) ) {
-                    await writer.WriteAsync( buffer ).ConfigureAwait(false);
-                }
-
-                return await reader.ReadToEndAsync().ConfigureAwait( continueOnCapturedContext: false );
+            using ( var reader = new StreamReader( this.FullPathWithFileName ) ) {
+                return await reader.ReadToEndAsync().ConfigureAwait( false );
             }
         }
 
@@ -692,8 +695,9 @@ namespace Librainian.FileSystem {
                 }
 
                 this.Delete();
+                this.Refresh();
 
-                return !File.Exists( path: this.FullPathWithFileName );
+                return !this.Exists();
             }
             catch ( DirectoryNotFoundException ) { }
             catch ( PathTooLongException ) { }
@@ -715,100 +719,34 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
+        /// Uploads this <see cref="Document"/> to the given <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <returns></returns>
+        public async Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination ) {
+            if ( destination == null ) {
+                throw new ArgumentNullException( paramName: nameof( destination ) );
+            }
+
+            if ( !destination.IsWellFormedOriginalString() ) {
+                return (new ArgumentException( $"Destination address '{destination.OriginalString}' is not well formed.", nameof( destination ) ), null);
+            }
+
+            try {
+                using ( var webClient = new WebClient() ) {
+                    await webClient.UploadFileTaskAsync( destination, this.FullPathWithFileName ).ConfigureAwait( false );
+                    return (null, webClient.ResponseHeaders);
+                }
+            }
+            catch ( Exception exception ) {
+                return (exception, null);
+            }
+        }
+
+        /// <summary>
         /// Returns an enumerator that iterates through a collection.
         /// </summary>
         /// <returns>An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        /*
-        public static String IndexToPath( Folder baseFolder, UInt64 index ) {
-            if ( baseFolder is null ) {
-                throw new ArgumentNullException( paramName: nameof( baseFolder ) );
-            }
-
-            var path = baseFolder.FullName;
-            foreach ( var c in index.ToString() ) {
-                path = @"\" + c;
-            }
-            return path;
-        }
-        */
-        /*
-        [Test]
-        public static void Test_IndexToPath() {
-            var largestEmptiestDrive = IOExtensions.GetLargestEmptiestDrive();
-            var baseFolder = new Folder( largestEmptiestDrive.RootDirectory.FullName + @"\test\" );
-        }
-        */
-        /*
-
-        /// <summary>
-        /// </summary>
-        /// <param name="uri">     </param>
-        /// <param name="download"></param>
-        /// <exception cref="DirectoryNotFoundException"></exception>
-        /// <exception cref="WebException"></exception>
-        /// <exception cref="NotSupportedException"></exception>
-        public Document( [NotNull] Uri uri, Boolean download = true ) {
-            if ( uri is null ) {
-                throw new ArgumentNullException( nameof( uri ) );
-            }
-
-            var tempFolder = Folder.GetTempFolder();
-            if ( null == tempFolder ) {
-                throw new DirectoryNotFoundException( "Unable to find user's temp folder." );
-            }
-
-            var webClient = new WebClient();
-            webClient.DownloadFileAsync( uri, downloadLocation.FullPathWithFileName );
-
-            this.Info = new FileInfo( downloadLocation.FullPathWithFileName );
-        }
-        */
-
-        /*
-
-        //https://stackoverflow.com/questions/21661798/how-do-we-access-mft-through-c-sharp
-        public SafeFileHandle GetVolumeHandle( NativeMethods.EFileAccess access = NativeMethods.EFileAccess.AccessSystemSecurity | NativeMethods.EFileAccess.GenericRead | NativeMethods.EFileAccess.ReadControl ) {
-            var attributes = ( UInt32 )NativeMethods.EFileAttributes.BackupSemantics;
-            var handle = NativeMethods.CreateFile( this.FullPathWithFileName, access, 7U, IntPtr.Zero, ( UInt32 )NativeMethods.ECreationDisposition.OpenExisting, attributes, IntPtr.Zero );
-            if ( handle.IsInvalid ) {
-                throw new IOException( "Bad path" );
-            }
-
-            return handle;
-        }
-        */
-        /// <summary>
-        ///     Return an object loaded from a JSON text file.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        [CanBeNull]
-        public T LoadJSON<T>() {
-
-            if ( !this.Exists() ) {
-                return default;
-            }
-
-            try {
-                using ( var textReader = File.OpenText( this.FullPathWithFileName ) ) {
-                    using ( var jsonReader = new JsonTextReader( textReader ) ) {
-                        return PersistenceExtensions.LocalJsonSerializers.Value.Deserialize<T>( jsonReader );
-                    }
-                }
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
-
-            return default;
-        }
-
-        public async Task<T> LoadJSONAsync<T>() {
-          return  await Task.Run( () => this.LoadJSON<T>() ).ConfigureAwait(false);
-        }
     }
-
-
 }

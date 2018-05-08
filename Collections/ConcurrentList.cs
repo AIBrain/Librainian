@@ -379,7 +379,7 @@ namespace Librainian.Collections {
                 if ( items != null ) {
                     this.AddRange( items: items, afterEachAdd: afterEachAdd, afterRangeAdded: afterRangeAdded );
                 }
-            } ).ConfigureAwait( continueOnCapturedContext: false );
+            } ).ConfigureAwait( false );
 
         /// <summary>
         /// Returns true if this <see cref="ConcurrentList{TType}"/> has not been marked as <see cref="Complete"/>.
