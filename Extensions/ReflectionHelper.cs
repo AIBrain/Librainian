@@ -1,22 +1,17 @@
-﻿// Copyright 2016 Protiguous.
+﻿// Copyright 2018 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ReflectionHelper.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// "Librainian/ReflectionHelper.cs" was last cleaned by Protiguous on 2018/05/07 at 10:24 PM
 
 namespace Librainian.Extensions {
 
@@ -24,29 +19,33 @@ namespace Librainian.Extensions {
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using Newtonsoft.Json;
 
-    [JsonObject]
-    internal static class ReflectionHelper {
-
-        /// <summary>All types across multiple assemblies</summary>
-        public static IEnumerable<Type> GetTypes( this IEnumerable<Assembly> assemblies ) => from assembly in assemblies from type in assembly.GetTypes() select type;
-
-        /// <summary>Find all types in 'assembly' that derive from 'baseType'</summary>
-        /// <owner>jayBaz</owner>
-        internal static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>( Assembly assembly ) => from type in assembly.GetTypes() where type.IsSubclassOf( typeof( TBase ) ) select type;
-
-        // I find that the default GetFields behavior is not suitable to my needs
-        internal static IEnumerable<FieldInfo> GetAllDeclaredInstanceFields( Type type ) => type.GetFields( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly );
-
-        /// <summary>A typesafe wrapper for Attribute.GetCustomAttribute</summary>
-        /// <remarks>TODO: add overloads for Assembly, Module, and ParameterInfo</remarks>
-        internal static TAttribute GetCustomAttribute<TAttribute>( MemberInfo element ) where TAttribute : Attribute => ( TAttribute )Attribute.GetCustomAttribute( element, typeof( TAttribute ) );
+    public static class ReflectionHelper {
 
         /// <summary>
-        ///     Check if the given type has the given attribute on it. Don't look at base classes.
+        /// Find all types in 'assembly' that derive from 'baseType'
         /// </summary>
         /// <owner>jayBaz</owner>
-        internal static Boolean TypeHasAttribute<TAttribute>( Type type ) where TAttribute : Attribute => Attribute.IsDefined( type, typeof( TAttribute ) );
+        public static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>( this Assembly assembly ) => from type in assembly.GetTypes() where type.IsSubclassOf( typeof( TBase ) ) select type;
+
+        // I find that the default GetFields behavior is not suitable to my needs
+        public static IEnumerable<FieldInfo> GetAllDeclaredInstanceFields( this Type type ) => type.GetFields( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly );
+
+        /// <summary>
+        /// A typesafe wrapper for Attribute.GetCustomAttribute
+        /// </summary>
+        /// <remarks>TODO: add overloads for Assembly, Module, and ParameterInfo</remarks>
+        public static TAttribute GetCustomAttribute<TAttribute>( this MemberInfo element ) where TAttribute : Attribute => ( TAttribute )Attribute.GetCustomAttribute( element, typeof( TAttribute ) );
+
+        /// <summary>
+        /// All types across multiple assemblies
+        /// </summary>
+        public static IEnumerable<Type> GetTypes( this IEnumerable<Assembly> assemblies ) => assemblies.SelectMany( assembly => assembly.GetTypes() );
+
+        /// <summary>
+        /// Check if the given type has the given attribute on it. Don't look at base classes.
+        /// </summary>
+        /// <owner>jayBaz</owner>
+        public static Boolean TypeHasAttribute<TAttribute>( this Type type ) where TAttribute : Attribute => Attribute.IsDefined( type, typeof( TAttribute ) );
     }
 }
