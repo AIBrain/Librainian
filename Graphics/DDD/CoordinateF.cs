@@ -102,7 +102,7 @@ namespace Librainian.Graphics.DDD {
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
         /// <returns></returns>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public static Boolean Equals( CoordinateF lhs, CoordinateF rhs ) {
             if ( ReferenceEquals( lhs, rhs ) ) {
                 return true;

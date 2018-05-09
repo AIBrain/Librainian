@@ -33,7 +33,7 @@ namespace Librainian.FileSystem {
     ///     <para>A bag of folders, stored somewhat efficiently ?memory-wise> than a list.</para>
     /// </summary>
     [JsonObject]
-    public partial class FolderBag /*: IEnumerable<Folder>*/ {
+    public partial class FolderBag : IEnumerable<Folder> {
 
         [JsonProperty]
         public List<Node> Endings { get; } = new List<Node>();
@@ -123,10 +123,12 @@ namespace Librainian.FileSystem {
                     path = $"{Path.DirectorySeparatorChar}{node.Data}{path}";
                     node = node.Parent;
                 }
-                path = String.Concat( node.Data, path );
                 this.Roots.Should().Contain( node );
+                path = String.Concat( node.Data, path );
                 yield return new Folder( path );
             }
         }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

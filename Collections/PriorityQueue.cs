@@ -43,11 +43,11 @@ namespace Librainian.Collections {
         //        return;
         //    }
 
-        // Single priority; switch ( positionial ) { case Positionial.Highest: { priority = this.Dictionary.Max( pair => pair.Key ) + MathConstants.EpsilonSingle; break; } case Positionial.Highish: { priority =
-        // Randem.NextSingle( this.Dictionary.Average( pair => pair.Key ), this.Dictionary.Max( pair => pair.Key ) ) + MathConstants.EpsilonSingle; break; } case Positionial.Middle: { priority = this.Dictionary.Average(
-        // pair => pair.Key ) + MathConstants.EpsilonSingle; break; } case Positionial.Lowish: { priority = Randem.NextSingle( this.Dictionary.Min( pair => pair.Key ), this.Dictionary.Average( pair => pair.Key ) ) -
-        // MathConstants.EpsilonSingle; break; } case Positionial.Lowest: { priority = this.Dictionary.Min( pair => pair.Key ) - MathConstants.EpsilonSingle; break; } default: throw new ArgumentOutOfRangeException(
-        // nameof( positionial ) ); }
+        // Single priority; switch ( positionial ) { case Positionial.Highest: { priority = this.Dictionary.Max( pair => pair.Key ) + Constants.EpsilonSingle; break; } case Positionial.Highish: { priority =
+        // Randem.NextSingle( this.Dictionary.Average( pair => pair.Key ), this.Dictionary.Max( pair => pair.Key ) ) + Constants.EpsilonSingle; break; } case Positionial.Middle: { priority = this.Dictionary.Average( pair
+        // => pair.Key ) + Constants.EpsilonSingle; break; } case Positionial.Lowish: { priority = Randem.NextSingle( this.Dictionary.Min( pair => pair.Key ), this.Dictionary.Average( pair => pair.Key ) ) -
+        // Constants.EpsilonSingle; break; } case Positionial.Lowest: { priority = this.Dictionary.Min( pair => pair.Key ) - Constants.EpsilonSingle; break; } default: throw new ArgumentOutOfRangeException( nameof(
+        // positionial ) ); }
 
         //    this.Add( item, priority );
         //    this.ReNormalize();
@@ -58,13 +58,19 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="item">    </param>
         /// <param name="priority"></param>
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+
         public void Add( TValue item, Single priority ) =>
 
             //while ( this.Dictionary.ContainsKey( priority ) ) {
-            //    priority += MathConstants.EpsilonSingle;
+            //    priority += Constants.EpsilonSingle;
             //}
-            this.Dictionary[  priority] = item;
+            this.Dictionary[priority] = item;
+
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.</returns>
+        public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
 
         [CanBeNull]
         public TValue PullNext() {
@@ -94,16 +100,10 @@ namespace Librainian.Collections {
                     continue;
                 }
 
-                this.Dictionary.TryRemove(key, value: out var value );
+                this.Dictionary.TryRemove( key, value: out var value );
                 this.Add( item: value, priority: newPriority );
             }
         }
-
-        /// <summary>
-        /// Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.</returns>
-        public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
 
         /// <summary>
         /// Returns an enumerator that iterates through the collection.

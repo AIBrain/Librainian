@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -34,48 +32,48 @@ namespace Librainian.Measurement.Time {
     public struct Days : IComparable<Days>, IQuantityOfTime {
 
         /// <summary>
-        ///     365
+        /// 365
         /// </summary>
         public const UInt16 InOneCommonYear = 365;
 
         /// <summary>
-        ///     7
+        /// 7
         /// </summary>
         public const UInt16 InOneWeek = 7;
 
         /// <summary>
-        ///     One <see cref="Days" /> .
+        /// One <see cref="Days"/> .
         /// </summary>
         public static readonly Days One = new Days( 1 );
 
-		/// <summary>
-		/// Ten <see cref="Days" /> .
-		/// </summary>
-		public static readonly Days Ten = new Days( 10 );
-
-		/// <summary>
-		/// Seven <see cref="Days" /> .
-		/// </summary>
-		public static readonly Days Seven = new Days( 7 );
-
-		/// <summary>
-		/// </summary>
-		public static readonly Days Thousand = new Days( 1000 );
+        /// <summary>
+        /// Seven <see cref="Days"/> .
+        /// </summary>
+        public static readonly Days Seven = new Days( 7 );
 
         /// <summary>
-        ///     Zero <see cref="Days" />
+        /// Ten <see cref="Days"/> .
+        /// </summary>
+        public static readonly Days Ten = new Days( 10 );
+
+        /// <summary>
+        /// </summary>
+        public static readonly Days Thousand = new Days( 1000 );
+
+        /// <summary>
+        /// Zero <see cref="Days"/>
         /// </summary>
         public static readonly Days Zero = new Days( 0 );
 
         public Days( Decimal value ) => this.Value = value;
 
-	    public Days( BigRational value ) => this.Value = value;
+        public Days( BigRational value ) => this.Value = value;
 
-	    public Days( Int64 value ) => this.Value = value;
+        public Days( Int64 value ) => this.Value = value;
 
-	    public Days( BigInteger value ) => this.Value = value;
+        public Days( BigInteger value ) => this.Value = value;
 
-	    [JsonProperty]
+        [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -88,15 +86,15 @@ namespace Librainian.Measurement.Time {
         public static Days Combine( Days left, BigInteger days ) => new Days( ( BigInteger )left.Value + days );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Days left, Days right ) => left.Value == right.Value;
 
         /// <summary>
-        ///     Implicitly convert the number of <paramref name="days" /> to <see cref="Hours" />.
+        /// Implicitly convert the number of <paramref name="days"/> to <see cref="Hours"/>.
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
@@ -107,7 +105,7 @@ namespace Librainian.Measurement.Time {
         public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double )days.Value );
 
         /// <summary>
-        ///     Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.
+        /// Implicitly convert the number of <paramref name="days"/> to <see cref="Weeks"/>.
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
@@ -159,7 +157,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+            if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
                 return $"{whole} {whole.PluralOf( "day" )}";
             }

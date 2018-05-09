@@ -1,14 +1,12 @@
 ﻿
 namespace Librainian.Misc {
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.InteropServices;
+    using System.Text;
+    using System.Threading.Tasks;
 
     namespace SharpEssentials {
-
-        using System;
-        using System.Diagnostics.CodeAnalysis;
-        using System.Runtime.InteropServices;
-        using System.Text;
-        using System.Threading.Tasks;
-
         /// <summary>
         /// Pulled from https://github.com/PaddiM8/SharpEssentials/blob/master/SharpEssentials/SharpEssentials/PlaySound.cs
         /// </summary>

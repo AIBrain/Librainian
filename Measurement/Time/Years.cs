@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -36,7 +34,7 @@ namespace Librainian.Measurement.Time {
     public struct Years : IComparable<Years>, IQuantityOfTime {
 
         /// <summary>
-        ///     One <see cref="Years" /> .
+        /// One <see cref="Years"/> .
         /// </summary>
         public static readonly Years One = new Years( 1 );
 
@@ -49,19 +47,19 @@ namespace Librainian.Measurement.Time {
         public static readonly Years Thousand = new Years( 1000 );
 
         /// <summary>
-        ///     Zero <see cref="Years" />
+        /// Zero <see cref="Years"/>
         /// </summary>
         public static readonly Years Zero = new Years( 0 );
 
         public Years( Decimal value ) => this.Value = value;
 
-	    public Years( BigRational value ) => this.Value = value;
+        public Years( BigRational value ) => this.Value = value;
 
-	    public Years( Int64 value ) => this.Value = value;
+        public Years( Int64 value ) => this.Value = value;
 
-	    public Years( BigInteger value ) => this.Value = value;
+        public Years( BigInteger value ) => this.Value = value;
 
-	    [JsonProperty]
+        [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -73,9 +71,9 @@ namespace Librainian.Measurement.Time {
         public static Years Combine( Years left, BigRational years ) => new Years( left.Value + years );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Years left, Years right ) => left.Value == right.Value;
@@ -131,7 +129,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+            if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
                 return $"{whole} {whole.PluralOf( "year" )}";
             }

@@ -31,60 +31,40 @@ namespace Librainian.Collections {
     /// <summary>
     /// <para>A thread safe list. Uses the Microsoft TPL dataflow behind the scene.</para>
     /// </summary>
-    /// <typeparam name="TType"></typeparam>
+    /// <typeparam name="T"></typeparam>
     /// <remarks>This class was created on a spur of the moment idea, and is thoroughly untested.</remarks>
     /// <copyright>
-    ///     Protiguous 2014
+    ///     Protiguous 2018
     /// </copyright>
     [Obsolete( message: "Use ConcurrentList instead." )]
     [JsonObject]
-#pragma warning disable IDE0009 // Member access should be qualified.
     [DebuggerDisplay( value: "Count={" + nameof( Count ) + "}" )]
-#pragma warning restore IDE0009 // Member access should be qualified.
-    public sealed class ParallelList<TType> : ABetterClassDispose, IList<TType> {
+    public sealed class ParallelList<T> : ABetterClassDispose, IList<T> {
 
         /// <summary>
         /// <para>Provide a dataflow block to process messages in a serial fashion.</para>
         /// </summary>
         [NotNull]
-        private readonly ActionBlock<Action> _actionBlock =
-            new ActionBlock<Action>( action: action => action(), dataflowBlockOptions: new ExecutionDataflowBlockOptions { SingleProducerConstrained = false, MaxDegreeOfParallelism = 1 } );
+        private readonly ActionBlock<Action> _actionBlock = new ActionBlock<Action>( action => action(), new ExecutionDataflowBlockOptions { SingleProducerConstrained = false, MaxDegreeOfParallelism = 1 } );
 
         /// <summary>
         /// <para>The internal list actually used.</para>
         /// </summary>
         [JsonProperty]
         [NotNull]
-        private readonly List<TType> _list;
-
-        [NotNull]
-        private readonly ReaderWriterLockSlim _readerWriter;
-
-        private readonly ThreadLocal<ManualResetEventSlim> _slims = new ThreadLocal<ManualResetEventSlim>( valueFactory: () => new ManualResetEventSlim( initialState: false ), trackAllValues: false );
-
-        [NotNull]
-        private readonly ThreadLocal<Int32> _waitingToBeAddedCounter;
-
-        [NotNull]
-        private readonly ThreadLocal<Int32> _waitingToBeChangedCounter;
-
-        [NotNull]
-        private readonly ThreadLocal<Int32> _waitingToBeInsertedCounter;
-
-        [NotNull]
-        private readonly ThreadLocal<Int32> _waitingToBeRemovedCounter;
-
-        /// <summary>
-        /// Internal item counter.
-        /// </summary>
-        [NotNull]
-        private ThreadLocal<Int32> _itemCounter;
+        private readonly List<T> _list = new List<T>();
 
         /// <summary>
         /// <para>Tracks count of times this <see cref="ParallelList{TType}"/> has been marked as <see cref="Complete"/>.</para>
         /// </summary>
         /// <seealso cref="AllowModifications"/>
         private Int64 _markedAsCompleteCounter;
+
+        private ParallelList() {
+            this.ReaderWriter = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
+            this.TimeoutForReads = Minutes.One;
+            this.TimeoutForWrites = Minutes.One;
+        }
 
         /// <summary>
         /// </summary>
@@ -100,17 +80,28 @@ namespace Librainian.Collections {
             }
         }
 
-        private ParallelList() {
-            this._itemCounter = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true );
-            this._waitingToBeRemovedCounter = new ThreadLocal<Int32>( trackAllValues: true );
-            this._waitingToBeInsertedCounter = new ThreadLocal<Int32>( trackAllValues: true );
-            this._waitingToBeChangedCounter = new ThreadLocal<Int32>( trackAllValues: true );
-            this._waitingToBeAddedCounter = new ThreadLocal<Int32>( trackAllValues: true );
-            this._list = new List<TType>();
-            this._readerWriter = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
-            this.TimeoutForReads = Minutes.One;
-            this.TimeoutForWrites = Minutes.One;
-        }
+        /// <summary>
+        /// Internal item counter.
+        /// </summary>
+        [NotNull]
+        private ThreadLocal<Int32> ItemCounter { get; set; } = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true );
+
+        [NotNull]
+        private ReaderWriterLockSlim ReaderWriter { get; }
+
+        private ThreadLocal<ManualResetEventSlim> Slims { get; } = new ThreadLocal<ManualResetEventSlim>( valueFactory: () => new ManualResetEventSlim( initialState: false ), trackAllValues: true );
+
+        [NotNull]
+        private ThreadLocal<Int32> WaitingToBeAddedCounter { get; } = new ThreadLocal<Int32>( trackAllValues: true );
+
+        [NotNull]
+        private ThreadLocal<Int32> WaitingToBeChangedCounter { get; } = new ThreadLocal<Int32>( trackAllValues: true );
+
+        [NotNull]
+        private ThreadLocal<Int32> WaitingToBeInsertedCounter { get; } = new ThreadLocal<Int32>( trackAllValues: true );
+
+        [NotNull]
+        private ThreadLocal<Int32> WaitingToBeRemovedCounter { get; } = new ThreadLocal<Int32>( trackAllValues: true );
 
         /// <summary>
         /// Returns true if this <see cref="ParallelList{TType}"/> has not been marked as <see cref="Complete"/>.
@@ -131,35 +122,36 @@ namespace Librainian.Collections {
         public Boolean AnyWritesPending => 0 == this.CountOfItemsWaitingToBeAdded && 0 == this.CountOfItemsWaitingToBeChanged && 0 == this.CountOfItemsWaitingToBeInserted;
 
         /// <summary>
+        /// <para>Count of items currently in this <see cref="ParallelList{TType}"/>.</para>
+        /// </summary>
+        public Int32 Count => this.ItemCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
+
+        /// <summary>
         /// <para>Returns the count of items waiting to be added to this <see cref="ParallelList{TType}"/>.</para>
         /// </summary>
-        public Int32 CountOfItemsWaitingToBeAdded => this._waitingToBeAddedCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
+        public Int32 CountOfItemsWaitingToBeAdded => this.WaitingToBeAddedCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
 
         /// <summary>
         /// <para>Returns the count of items waiting to be changed in this <see cref="ParallelList{TType}"/>.</para>
         /// </summary>
-        public Int32 CountOfItemsWaitingToBeChanged => this._waitingToBeChangedCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
+        public Int32 CountOfItemsWaitingToBeChanged => this.WaitingToBeChangedCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
 
         /// <summary>
         /// <para>Returns the count of items waiting to be inserted to this <see cref="ParallelList{TType}"/>.</para>
         /// </summary>
-        public Int32 CountOfItemsWaitingToBeInserted => this._waitingToBeInsertedCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
-
-        public Span TimeoutForReads { get; set; }
-
-        public Span TimeoutForWrites { get; set; }
-
-        /// <summary>
-        /// <para>Count of items currently in this <see cref="ParallelList{TType}"/>.</para>
-        /// </summary>
-        public Int32 Count => this._itemCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
+        public Int32 CountOfItemsWaitingToBeInserted => this.WaitingToBeInsertedCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
 
         /// <summary>
         /// </summary>
         /// <seealso cref="AllowModifications"/>
         public Boolean IsReadOnly { get; private set; }
 
-        public TType this[Int32 index] {
+        public Span TimeoutForReads { get; set; }
+
+        public Span TimeoutForWrites { get; set; }
+
+        [CanBeNull]
+        public T this[Int32 index] {
             [CanBeNull]
             get {
                 if ( index > 0 && index < this._list.Count ) {
@@ -188,130 +180,102 @@ namespace Librainian.Collections {
             }
         }
 
+        private void AnItemHasBeenAdded() {
+            this.WaitingToBeAddedCounter.Value--;
+            this.ItemCounter.Value++;
+        }
+
+        private void AnItemHasBeenChanged() => this.WaitingToBeChangedCounter.Value--;
+
+        private void AnItemHasBeenInserted() => this.WaitingToBeInsertedCounter.Value--;
+
+        private void AnItemHasBeenRemoved( [CanBeNull] Action action = null ) {
+            this.WaitingToBeRemovedCounter.Value--;
+            this.ItemCounter.Value--;
+            action?.Invoke();
+        }
+
         /// <summary>
-        /// <para>Add the <typeparam name="TType">item</typeparam> to the end of this <see cref="ParallelList{TType}"/>.</para>
+        /// <para>Filter read requests through a <see cref="ReaderWriterLockSlim"/>.</para>
+        /// </summary>
+        /// <typeparam name="TFuncResult"></typeparam>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        private TFuncResult Read<TFuncResult>( Func<TFuncResult> func ) {
+            if ( !this.AllowModifications && func != null ) {
+                return func(); //list has been marked to not allow any more modifications, go ahead and perform the read function.
+            }
+
+            if ( !this.ReaderWriter.TryEnterUpgradeableReadLock( timeout: this.TimeoutForReads ) ) {
+                return default;
+            }
+
+            try {
+                if ( func != null ) {
+                    return func();
+                }
+            }
+            finally {
+                this.ReaderWriter.ExitUpgradeableReadLock();
+            }
+
+            return default;
+        }
+
+        private void RequestToAddAnItem() => this.WaitingToBeAddedCounter.Value++;
+
+        private void RequestToChangeAnItem() => this.WaitingToBeChangedCounter.Value++;
+
+        private void RequestToInsertAnItem() => this.WaitingToBeInsertedCounter.Value++;
+
+        private void RequestToRemoveAnItem() => this.WaitingToBeRemovedCounter.Value++;
+
+        /// <summary>
+        /// <para>Filter write requests through a <see cref="ReaderWriterLockSlim"/>.</para>
+        /// </summary>
+        /// <typeparam name="TFuncResult"></typeparam>
+        /// <param name="func">                         </param>
+        /// <param name="ignoreAllowModificationsCheck"></param>
+        /// <returns></returns>
+        /// <seealso cref="CatchUp"/>
+        private TFuncResult Write<TFuncResult>( Func<TFuncResult> func, Boolean ignoreAllowModificationsCheck = false ) {
+            if ( !ignoreAllowModificationsCheck ) {
+                if ( !this.AllowModifications && func != null ) {
+                    return default;
+                }
+            }
+
+            //BUG what if we want a clone of the list, but it has been marked as !this.AllowModifications
+
+            if ( !this.ReaderWriter.TryEnterWriteLock( timeout: this.TimeoutForWrites ) ) {
+                return default;
+            }
+
+            try {
+                if ( func != null ) {
+                    return func();
+                }
+            }
+            finally {
+                this.ReaderWriter.ExitWriteLock();
+            }
+
+            return default;
+        }
+
+        /// <summary>
+        /// <para>Add the <typeparam name="T">item</typeparam> to the end of this <see cref="ParallelList{TType}"/>.</para>
         /// </summary>
         /// <param name="item"></param>
-        public void Add( TType item ) => this.Add( item: item, afterAdd: null );
+        public void Add( T item ) => this.Add( item: item, afterAdd: null );
 
         /// <summary>
-        /// Mark this <see cref="ParallelList{TType}"/> to be cleared.
-        /// </summary>
-        public void Clear() {
-            if ( !this.AllowModifications ) {
-                return;
-            }
-
-            this._actionBlock.Post( item: () => this.Write( func: () => {
-                this._list.Clear();
-                this._itemCounter = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true ); //BUG is this correct?
-                return true;
-            } ) );
-        }
-
-        /// <summary>
-        /// <para>Determines whether the <paramref name="item"/> is in this <see cref="ParallelList{TType}"/> at this moment in time.</para>
-        /// </summary>
-        public Boolean Contains( TType item ) => this.Read( func: () => this._list.Contains( item: item ) );
-
-        /// <summary>
-        /// Copies the entire <see cref="ParallelList{TType}"/> to the <paramref name="array"/>, starting at the specified index in the target array.
-        /// </summary>
-        /// <param name="array">     </param>
-        /// <param name="arrayIndex"></param>
-        public void CopyTo( TType[] array, Int32 arrayIndex ) {
-            if ( array is null ) {
-                throw new ArgumentNullException( paramName: nameof( array ) );
-            }
-
-            this.Read( func: () => {
-                this._list.CopyTo( array: array, arrayIndex: arrayIndex );
-                return true;
-            } );
-        }
-
-        /// <summary>
-        /// <para>Returns an enumerator that iterates through a <see cref="Clone"/> of this <see cref="ParallelList{TType}"/> .</para>
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<TType> GetEnumerator() => this.Clone().GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        /// <summary>
-        /// <para>Searches at this moment in time for the first occurrence of <paramref name="item"/> and returns the zero-based index, or -1 if not found.</para>
-        /// </summary>
-        /// <param name="item">The object to locate in this <see cref="ParallelList{TType}"/>.</param>
-        public Int32 IndexOf( TType item ) => this.Read( func: () => this._list.IndexOf( item: item ) );
-
-        /// <summary>
-        /// <para>Requests an insert of the <paramref name="item"/> into this <see cref="ParallelList{TType}"/> at the specified <paramref name="index"/>.</para>
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="item"> </param>
-        public void Insert( Int32 index, TType item ) {
-            if ( !this.AllowModifications ) {
-                return;
-            }
-
-            this.RequestToInsertAnItem();
-
-            this._actionBlock.Post( item: () => this.Write( func: () => {
-                try {
-                    this._list.Insert( index: index, item: item );
-                    return true;
-                }
-                catch ( ArgumentOutOfRangeException ) {
-                    return false;
-                }
-                finally {
-                    this.AnItemHasBeenInserted();
-                }
-            } ) );
-        }
-
-        /// <summary>
-        /// <para>Returns true if the request to remove <paramref name="item"/> was posted.</para>
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public Boolean Remove( TType item ) => this.Remove( item: item, afterRemoval: null );
-
-        public void RemoveAt( Int32 index ) {
-            if ( index < 0 ) {
-                return;
-            }
-
-            if ( !this.AllowModifications ) {
-                return;
-            }
-
-            this.RequestToRemoveAnItem();
-
-            this._actionBlock.Post( item: () => this.Write( func: () => {
-                try {
-                    if ( index < this._list.Count ) {
-                        this._list.RemoveAt( index: index );
-                    }
-                }
-                catch ( ArgumentOutOfRangeException ) {
-                    return false;
-                }
-                finally {
-                    this.AnItemHasBeenRemoved();
-                }
-
-                return true;
-            } ) );
-        }
-
-        /// <summary>
-        /// <para>Add the <typeparam name="TType">item</typeparam> to the end of this <see cref="ParallelList{TType}"/>.</para>
+        /// <para>Add the <typeparam name="T">item</typeparam> to the end of this <see cref="ParallelList{TType}"/>.</para>
         /// </summary>
         /// <param name="item">    </param>
         /// <param name="afterAdd"></param>
         /// <returns></returns>
-        public Boolean Add( TType item, [CanBeNull] Action afterAdd ) {
+        public Boolean Add( T item, [CanBeNull] Action afterAdd ) {
             if ( !this.AllowModifications ) {
                 return false;
             }
@@ -330,23 +294,23 @@ namespace Librainian.Collections {
             } ) );
         }
 
-        public Boolean AddAndWait( TType item, CancellationToken cancellationToken = default, TimeSpan timeout = default ) {
+        public Boolean AddAndWait( T item, CancellationToken cancellationToken = default, TimeSpan timeout = default ) {
 
             //var slim = new ManualResetEventSlim( initialState: false );
-            this._slims.Value.Reset();
+            this.Slims.Value.Reset();
 
-            this.Add( item: item, afterAdd: () => this._slims.Value.Set() );
+            this.Add( item: item, afterAdd: () => this.Slims.Value.Set() );
 
             try {
                 if ( default != timeout && default != cancellationToken ) {
-                    return this._slims.Value.Wait( timeout: timeout, cancellationToken: cancellationToken );
+                    return this.Slims.Value.Wait( timeout: timeout, cancellationToken: cancellationToken );
                 }
 
                 if ( default != timeout ) {
                     return this._actionBlock.Completion.Wait( timeout: timeout );
                 }
 
-                this._slims.Value.Wait( cancellationToken: cancellationToken );
+                this.Slims.Value.Wait( cancellationToken: cancellationToken );
                 return true;
             }
             catch ( OperationCanceledException ) { }
@@ -357,7 +321,7 @@ namespace Librainian.Collections {
             return false;
         }
 
-        public Task AddAsync( TType item, Action afterAdd = null ) => Task.Run( action: () => { this.TryAdd( item: item, afterAdd: afterAdd ); } );
+        public Task AddAsync( T item, Action afterAdd = null ) => Task.Run( () => { this.TryAdd( item: item, afterAdd: afterAdd ); } );
 
         /// <summary>
         /// Add a collection of items.
@@ -367,7 +331,7 @@ namespace Librainian.Collections {
         /// <param name="afterEachAdd">   <see cref="Action"/> to perform after each add.</param>
         /// <param name="afterRangeAdded"><see cref="Action"/> to perform after range added.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public void AddRange( [NotNull] IEnumerable<TType> items, Byte useParallels = 0, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
+        public void AddRange( [NotNull] IEnumerable<T> items, Byte useParallels = 0, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
             if ( null == items ) {
                 throw new ArgumentNullException( paramName: nameof( items ) );
             }
@@ -378,7 +342,7 @@ namespace Librainian.Collections {
 
             try {
                 if ( useParallels >= 1 ) {
-                    items.AsParallel().WithDegreeOfParallelism( degreeOfParallelism: useParallels ).ForAll( action: item => this.TryAdd( item: item, afterAdd: afterEachAdd ) );
+                    items.AsParallel().WithDegreeOfParallelism( degreeOfParallelism: useParallels ).ForAll( item => this.TryAdd( item: item, afterAdd: afterEachAdd ) );
                 }
                 else {
                     foreach ( var item in items ) {
@@ -391,12 +355,12 @@ namespace Librainian.Collections {
             }
         }
 
-        public Task AddRangeAsync( [CanBeNull] IEnumerable<TType> items ) =>
-            Task.Run( action: () => {
-                if ( items != null ) {
-                    this.AddRange( items: items );
-                }
-            } );
+        public Task AddRangeAsync( [CanBeNull] IEnumerable<T> items ) =>
+                    Task.Run( () => {
+                        if ( items != null ) {
+                            this.AddRange( items: items );
+                        }
+                    } );
 
         /// <summary>
         /// <para>Blocks until the list has no write operations pending, until the <paramref name="timeout"/>, or the <paramref name="cancellationToken"/> is set.</para>
@@ -427,10 +391,25 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
+        /// Mark this <see cref="ParallelList{TType}"/> to be cleared.
+        /// </summary>
+        public void Clear() {
+            if ( !this.AllowModifications ) {
+                return;
+            }
+
+            this._actionBlock.Post( item: () => this.Write( func: () => {
+                this._list.Clear();
+                this.ItemCounter = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true ); //BUG is this correct?
+                return true;
+            } ) );
+        }
+
+        /// <summary>
         /// <para>Returns a copy of this <see cref="ParallelList{TType}"/> as this moment in time.</para>
         /// </summary>
         /// <returns></returns>
-        public List<TType> Clone() =>
+        public List<T> Clone() =>
             this.Write( func: () => {
                 var copy = this._list.ToList();
                 return copy;
@@ -497,12 +476,87 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
+        /// <para>Determines whether the <paramref name="item"/> is in this <see cref="ParallelList{TType}"/> at this moment in time.</para>
+        /// </summary>
+        public Boolean Contains( T item ) => this.Read( func: () => this._list.Contains( item: item ) );
+
+        /// <summary>
+        /// Copies the entire <see cref="ParallelList{TType}"/> to the <paramref name="array"/>, starting at the specified index in the target array.
+        /// </summary>
+        /// <param name="array">     </param>
+        /// <param name="arrayIndex"></param>
+        public void CopyTo( T[] array, Int32 arrayIndex ) {
+            if ( array is null ) {
+                throw new ArgumentNullException( paramName: nameof( array ) );
+            }
+
+            this.Read( func: () => {
+                this._list.CopyTo( array: array, arrayIndex: arrayIndex );
+                return true;
+            } );
+        }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() {
+            using ( this.ReaderWriter ) { }
+
+            using ( this.Slims ) { }
+        }
+
+        /// <summary>
+        /// <para>Returns an enumerator that iterates through a <see cref="Clone"/> of this <see cref="ParallelList{TType}"/> .</para>
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
+
+        /// <summary>
+        /// <para>Searches at this moment in time for the first occurrence of <paramref name="item"/> and returns the zero-based index, or -1 if not found.</para>
+        /// </summary>
+        /// <param name="item">The object to locate in this <see cref="ParallelList{TType}"/>.</param>
+        public Int32 IndexOf( T item ) => this.Read( func: () => this._list.IndexOf( item: item ) );
+
+        /// <summary>
+        /// <para>Requests an insert of the <paramref name="item"/> into this <see cref="ParallelList{TType}"/> at the specified <paramref name="index"/>.</para>
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="item"> </param>
+        public void Insert( Int32 index, T item ) {
+            if ( !this.AllowModifications ) {
+                return;
+            }
+
+            this.RequestToInsertAnItem();
+
+            this._actionBlock.Post( item: () => this.Write( func: () => {
+                try {
+                    this._list.Insert( index: index, item: item );
+                    return true;
+                }
+                catch ( ArgumentOutOfRangeException ) {
+                    return false;
+                }
+                finally {
+                    this.AnItemHasBeenInserted();
+                }
+            } ) );
+        }
+
+        /// <summary>
+        /// <para>Returns true if the request to remove <paramref name="item"/> was posted.</para>
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public Boolean Remove( T item ) => this.Remove( item: item, afterRemoval: null );
+
+        /// <summary>
         /// <para>Returns true if the request to remove <paramref name="item"/> was posted.</para>
         /// </summary>
         /// <param name="item">        </param>
         /// <param name="afterRemoval"></param>
         /// <returns></returns>
-        public Boolean Remove( TType item, [CanBeNull] Action afterRemoval ) {
+        public Boolean Remove( T item, [CanBeNull] Action afterRemoval ) {
             if ( !this.AllowModifications ) {
                 return false;
             }
@@ -515,12 +569,40 @@ namespace Librainian.Collections {
                     return true;
                 }
                 finally {
-                    this.AnItemHasBeenRemoved( action: afterRemoval );
+                    this.AnItemHasBeenRemoved( afterRemoval );
                 }
             } ) );
         }
 
-        public Boolean TryAdd( TType item, [CanBeNull] Action afterAdd = null ) => this.Add( item: item, afterAdd: afterAdd );
+        public void RemoveAt( Int32 index ) {
+            if ( index < 0 ) {
+                return;
+            }
+
+            if ( !this.AllowModifications ) {
+                return;
+            }
+
+            this.RequestToRemoveAnItem();
+
+            this._actionBlock.Post( item: () => this.Write( func: () => {
+                try {
+                    if ( index < this._list.Count ) {
+                        this._list.RemoveAt( index: index );
+                    }
+                }
+                catch ( ArgumentOutOfRangeException ) {
+                    return false;
+                }
+                finally {
+                    this.AnItemHasBeenRemoved();
+                }
+
+                return true;
+            } ) );
+        }
+
+        public Boolean TryAdd( T item, [CanBeNull] Action afterAdd = null ) => this.Add( item: item, afterAdd: afterAdd );
 
         /// <summary>
         /// <para>Try to get an item in this <see cref="ParallelList{TType}"/> by index.</para>
@@ -528,7 +610,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="index">   </param>
         /// <param name="afterGet">Action to be ran after the item at the <paramref name="index"/> is got.</param>
-        public Boolean TryGet( Int32 index, [CanBeNull] Action<TType> afterGet ) {
+        public Boolean TryGet( Int32 index, [CanBeNull] Action<T> afterGet ) {
             if ( index < 0 ) {
                 return false;
             }
@@ -551,95 +633,6 @@ namespace Librainian.Collections {
         /// <param name="cancellationToken"></param>
         public void Wait( Span timeout = default, CancellationToken cancellationToken = default ) => this.CatchUp( timeout: timeout, cancellationToken: cancellationToken );
 
-        private void AnItemHasBeenAdded() {
-            this._waitingToBeAddedCounter.Value--;
-            this._itemCounter.Value++;
-        }
-
-        private void AnItemHasBeenChanged() => this._waitingToBeChangedCounter.Value--;
-
-        private void AnItemHasBeenInserted() => this._waitingToBeInsertedCounter.Value--;
-
-        private void AnItemHasBeenRemoved( [CanBeNull] Action action = null ) {
-            this._waitingToBeRemovedCounter.Value--;
-            this._itemCounter.Value--;
-            action?.Invoke();
-        }
-
-        /// <summary>
-        /// <para>Filter read requests through a <see cref="ReaderWriterLockSlim"/>.</para>
-        /// </summary>
-        /// <typeparam name="TFuncResult"></typeparam>
-        /// <param name="func"></param>
-        /// <returns></returns>
-        private TFuncResult Read<TFuncResult>( Func<TFuncResult> func ) {
-            if ( !this.AllowModifications && func != null ) {
-                return func(); //list has been marked to not allow any more modifications, go ahead and perform the read function.
-            }
-
-            if ( !this._readerWriter.TryEnterUpgradeableReadLock( timeout: this.TimeoutForReads ) ) {
-                return default;
-            }
-
-            try {
-                if ( func != null ) {
-                    return func();
-                }
-            }
-            finally {
-                this._readerWriter.ExitUpgradeableReadLock();
-            }
-
-            return default;
-        }
-
-        private void RequestToAddAnItem() => this._waitingToBeAddedCounter.Value++;
-
-        private void RequestToChangeAnItem() => this._waitingToBeChangedCounter.Value++;
-
-        private void RequestToInsertAnItem() => this._waitingToBeInsertedCounter.Value++;
-
-        private void RequestToRemoveAnItem() => this._waitingToBeRemovedCounter.Value++;
-
-        /// <summary>
-        /// <para>Filter write requests through a <see cref="ReaderWriterLockSlim"/>.</para>
-        /// </summary>
-        /// <typeparam name="TFuncResult"></typeparam>
-        /// <param name="func">                         </param>
-        /// <param name="ignoreAllowModificationsCheck"></param>
-        /// <returns></returns>
-        /// <seealso cref="CatchUp"/>
-        private TFuncResult Write<TFuncResult>( Func<TFuncResult> func, Boolean ignoreAllowModificationsCheck = false ) {
-            if ( !ignoreAllowModificationsCheck ) {
-                if ( !this.AllowModifications && func != null ) {
-                    return default;
-                }
-            }
-
-            //BUG what if we want a clone of the list, but it has been marked as !this.AllowModifications
-
-            if ( !this._readerWriter.TryEnterWriteLock( timeout: this.TimeoutForWrites ) ) {
-                return default;
-            }
-
-            try {
-                if ( func != null ) {
-                    return func();
-                }
-            }
-            finally {
-                this._readerWriter.ExitWriteLock();
-            }
-
-            return default;
-        }
-
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() {
-            this._readerWriter.Dispose();
-            this._slims.Dispose();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

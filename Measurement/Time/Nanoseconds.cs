@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -36,89 +34,89 @@ namespace Librainian.Measurement.Time {
     public struct Nanoseconds : IComparable<Nanoseconds>, IQuantityOfTime {
 
         /// <summary>
-        ///     1000
+        /// 1000
         /// </summary>
         public const UInt16 InOneMicrosecond = 1000;
 
         /// <summary>
-        ///     Ten <see cref="Nanoseconds" /> s.
+        /// Ten <see cref="Nanoseconds"/> s.
         /// </summary>
         public static readonly Nanoseconds Fifteen = new Nanoseconds( value: 15 );
 
         /// <summary>
-        ///     Five <see cref="Nanoseconds" /> s.
+        /// Five <see cref="Nanoseconds"/> s.
         /// </summary>
         public static readonly Nanoseconds Five = new Nanoseconds( value: 5 );
 
         /// <summary>
-        ///     Five Hundred <see cref="Nanoseconds" /> s.
+        /// Five Hundred <see cref="Nanoseconds"/> s.
         /// </summary>
         public static readonly Nanoseconds FiveHundred = new Nanoseconds( value: 500 );
 
         /// <summary>
-        ///     One <see cref="Nanoseconds" />.
+        /// One <see cref="Nanoseconds"/>.
         /// </summary>
         public static readonly Nanoseconds One = new Nanoseconds( value: 1 );
 
         /// <summary>
-        ///     One Thousand Nine <see cref="Nanoseconds" /> (Prime).
+        /// One Thousand Nine <see cref="Nanoseconds"/> (Prime).
         /// </summary>
         public static readonly Nanoseconds OneThousandNine = new Nanoseconds( value: 1009 );
 
         /// <summary>
-        ///     Sixteen <see cref="Nanoseconds" />.
+        /// Sixteen <see cref="Nanoseconds"/>.
         /// </summary>
         public static readonly Nanoseconds Sixteen = new Nanoseconds( value: 16 );
 
         /// <summary>
-        ///     Ten <see cref="Nanoseconds" /> s.
+        /// Ten <see cref="Nanoseconds"/> s.
         /// </summary>
         public static readonly Nanoseconds Ten = new Nanoseconds( value: 10 );
 
         /// <summary>
-        ///     Three <see cref="Nanoseconds" /> s.
+        /// Three <see cref="Nanoseconds"/> s.
         /// </summary>
         public static readonly Nanoseconds Three = new Nanoseconds( value: 3 );
 
         /// <summary>
-        ///     Three Three Three <see cref="Nanoseconds" />.
+        /// Three Three Three <see cref="Nanoseconds"/>.
         /// </summary>
         public static readonly Nanoseconds ThreeHundredThirtyThree = new Nanoseconds( value: 333 );
 
         /// <summary>
-        ///     Two <see cref="Nanoseconds" /> s.
+        /// Two <see cref="Nanoseconds"/> s.
         /// </summary>
         public static readonly Nanoseconds Two = new Nanoseconds( value: 2 );
 
         /// <summary>
-        ///     Two Hundred <see cref="Nanoseconds" />.
+        /// Two Hundred <see cref="Nanoseconds"/>.
         /// </summary>
         public static readonly Nanoseconds TwoHundred = new Nanoseconds( value: 200 );
 
         /// <summary>
-        ///     Two Hundred Eleven <see cref="Nanoseconds" /> (Prime).
+        /// Two Hundred Eleven <see cref="Nanoseconds"/> (Prime).
         /// </summary>
         public static readonly Nanoseconds TwoHundredEleven = new Nanoseconds( value: 211 );
 
         /// <summary>
-        ///     Two Thousand Three <see cref="Nanoseconds" /> (Prime).
+        /// Two Thousand Three <see cref="Nanoseconds"/> (Prime).
         /// </summary>
         public static readonly Nanoseconds TwoThousandThree = new Nanoseconds( value: 2003 );
 
         /// <summary>
-        ///     Zero <see cref="Nanoseconds" />.
+        /// Zero <see cref="Nanoseconds"/>.
         /// </summary>
         public static readonly Nanoseconds Zero = new Nanoseconds( value: 0 );
 
         public Nanoseconds( Decimal value ) => this.Value = value;
 
-	    public Nanoseconds( BigRational value ) => this.Value = value;
+        public Nanoseconds( BigRational value ) => this.Value = value;
 
-	    public Nanoseconds( Int64 value ) => this.Value = value;
+        public Nanoseconds( Int64 value ) => this.Value = value;
 
-	    public Nanoseconds( BigInteger value ) => this.Value = value;
+        public Nanoseconds( BigInteger value ) => this.Value = value;
 
-	    [JsonProperty]
+        [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -130,9 +128,9 @@ namespace Librainian.Measurement.Time {
         public static Nanoseconds Combine( Nanoseconds left, BigInteger nanoseconds ) => new Nanoseconds( left.Value + nanoseconds );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Nanoseconds left, Nanoseconds right ) => left.Value == right.Value;
@@ -191,7 +189,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+            if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
                 return $"{whole} {whole.PluralOf( "ns" )}";
             }

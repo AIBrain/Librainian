@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -32,54 +30,54 @@ namespace Librainian.Measurement.Time {
 
     /// <summary>
     /// </summary>
-    /// <seealso cref="http://wikipedia.org/wiki/Zeptosecond" />
+    /// <seealso cref="http://wikipedia.org/wiki/Zeptosecond"/>
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct Zeptoseconds : IComparable<Zeptoseconds>, IQuantityOfTime {
 
         /// <summary>
-        ///     1000
+        /// 1000
         /// </summary>
         public const UInt16 InOneAttosecond = 1000;
 
         /// <summary>
-        ///     <see cref="Five" /><see cref="Zeptoseconds" />.
+        /// <see cref="Five"/><see cref="Zeptoseconds"/>.
         /// </summary>
         public static readonly Zeptoseconds Five = new Zeptoseconds( 5 );
 
         /// <summary>
-        ///     <see cref="One" /><see cref="Zeptoseconds" />.
+        /// <see cref="One"/><see cref="Zeptoseconds"/>.
         /// </summary>
         public static readonly Zeptoseconds One = new Zeptoseconds( 1 );
 
         /// <summary>
-        ///     <see cref="Seven" /><see cref="Zeptoseconds" />.
+        /// <see cref="Seven"/><see cref="Zeptoseconds"/>.
         /// </summary>
         public static readonly Zeptoseconds Seven = new Zeptoseconds( 7 );
 
         /// <summary>
-        ///     <see cref="Ten" /><see cref="Zeptoseconds" />.
+        /// <see cref="Ten"/><see cref="Zeptoseconds"/>.
         /// </summary>
         public static readonly Zeptoseconds Ten = new Zeptoseconds( 10 );
 
         /// <summary>
-        ///     <see cref="Thirteen" /><see cref="Zeptoseconds" />.
+        /// <see cref="Thirteen"/><see cref="Zeptoseconds"/>.
         /// </summary>
         public static readonly Zeptoseconds Thirteen = new Zeptoseconds( 13 );
 
         /// <summary>
-        ///     <see cref="Thirty" /><see cref="Zeptoseconds" />.
+        /// <see cref="Thirty"/><see cref="Zeptoseconds"/>.
         /// </summary>
         public static readonly Zeptoseconds Thirty = new Zeptoseconds( 30 );
 
         /// <summary>
-        ///     <see cref="Three" /><see cref="Zeptoseconds" />.
+        /// <see cref="Three"/><see cref="Zeptoseconds"/>.
         /// </summary>
         public static readonly Zeptoseconds Three = new Zeptoseconds( 3 );
 
         /// <summary>
-        ///     <see cref="Two" /><see cref="Zeptoseconds" />.
+        /// <see cref="Two"/><see cref="Zeptoseconds"/>.
         /// </summary>
         public static readonly Zeptoseconds Two = new Zeptoseconds( 2 );
 
@@ -89,13 +87,13 @@ namespace Librainian.Measurement.Time {
 
         public Zeptoseconds( Decimal value ) => this.Value = value;
 
-	    public Zeptoseconds( BigRational value ) => this.Value = value;
+        public Zeptoseconds( BigRational value ) => this.Value = value;
 
-	    public Zeptoseconds( Int64 value ) => this.Value = value;
+        public Zeptoseconds( Int64 value ) => this.Value = value;
 
-	    public Zeptoseconds( BigInteger value ) => this.Value = value;
+        public Zeptoseconds( BigInteger value ) => this.Value = value;
 
-	    [JsonProperty]
+        [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -105,15 +103,15 @@ namespace Librainian.Measurement.Time {
         public static Zeptoseconds Combine( Zeptoseconds left, BigRational zeptoseconds ) => new Zeptoseconds( left.Value + zeptoseconds );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Zeptoseconds left, Zeptoseconds right ) => left.Value == right.Value;
 
         /// <summary>
-        ///     Implicitly convert the number of <paramref name="zeptoseconds" /> to <see cref="Milliseconds" />.
+        /// Implicitly convert the number of <paramref name="zeptoseconds"/> to <see cref="Milliseconds"/>.
         /// </summary>
         /// <param name="zeptoseconds"></param>
         /// <returns></returns>
@@ -124,7 +122,7 @@ namespace Librainian.Measurement.Time {
         public static implicit operator TimeSpan( Zeptoseconds zeptoseconds ) => TimeSpan.FromSeconds( value: ( Double )zeptoseconds.Value );
 
         /// <summary>
-        ///     Implicitly convert the number of <paramref name="zeptoseconds" /> to <see cref="Yoctoseconds" />.
+        /// Implicitly convert the number of <paramref name="zeptoseconds"/> to <see cref="Yoctoseconds"/>.
         /// </summary>
         /// <param name="zeptoseconds"></param>
         /// <returns></returns>
@@ -166,7 +164,7 @@ namespace Librainian.Measurement.Time {
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         /// <summary>
-        ///     <para>Convert to a larger unit.</para>
+        /// <para>Convert to a larger unit.</para>
         /// </summary>
         /// <returns></returns>
         [Pure]
@@ -177,7 +175,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+            if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
                 return $"{whole} {whole.PluralOf( "zs" )}";
             }
@@ -186,7 +184,7 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        ///     <para>Convert to a smaller unit.</para>
+        /// <para>Convert to a smaller unit.</para>
         /// </summary>
         /// <returns></returns>
         public Yoctoseconds ToYoctoseconds() => new Yoctoseconds( this.Value * Yoctoseconds.InOneZeptosecond );

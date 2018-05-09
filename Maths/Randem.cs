@@ -2,14 +2,12 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -52,6 +50,16 @@ namespace Librainian.Maths {
     using Ranges;
     using Threading.RandomOrg;
 
+    internal static class Request {
+
+        public static WebRequest Create( String uri ) {
+            var request = WebRequest.Create( requestUriString: uri );
+            request.Proxy = null;
+            request.Credentials = CredentialCache.DefaultCredentials;
+            return request;
+        }
+    }
+
     public static class Randem {
 
         /// <summary>
@@ -59,11 +67,16 @@ namespace Librainian.Maths {
         /// </summary>
         private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<Byte[]>( valueFactory: () => new Byte[sizeof( Double )], trackAllValues: true );
 
-        /// <summary></summary>
+        internal static ConcurrentStack<Int32> PollResponses { get; } = new ConcurrentStack<Int32>();
+
+        /// <summary>
+        /// </summary>
         [NotNull]
         public static ConcurrentDictionary<Type, String[]> EnumDictionary { get; } = new ConcurrentDictionary<Type, String[]>();
 
-        /// <summary>A thread-local (threadsafe) <see cref="Random" />.</summary>
+        /// <summary>
+        /// A thread-local (threadsafe) <see cref="Random"/>.
+        /// </summary>
         [NotNull]
         public static Random Instance => ThreadSafeRandom.Value.Value;
 
@@ -71,7 +84,7 @@ namespace Librainian.Maths {
         public static Lazy<PersonNameGenerator> Names { get; } = new Lazy<PersonNameGenerator>( valueFactory: () => new PersonNameGenerator() );
 
         /// <summary>
-        ///     <para>More cryptographically strong than <see cref="Random" />.</para>
+        /// <para>More cryptographically strong than <see cref="Random"/>.</para>
         /// </summary>
         [NotNull]
         public static ThreadLocal<RandomNumberGenerator> RNG { get; } = new ThreadLocal<RandomNumberGenerator>( valueFactory: () => new RNGCryptoServiceProvider(), trackAllValues: true );
@@ -80,7 +93,9 @@ namespace Librainian.Maths {
         public static ThreadLocal<Lazy<SHA256Managed>> ThreadLocalSHA256Managed { get; } =
                     new ThreadLocal<Lazy<SHA256Managed>>( valueFactory: () => { return new Lazy<SHA256Managed>( valueFactory: () => new SHA256Managed() ); } );
 
-        /// <summary>Provide to each thread its own <see cref="Random" /> with a random seed.</summary>
+        /// <summary>
+        /// Provide to each thread its own <see cref="Random"/> with a random seed.
+        /// </summary>
         [NotNull]
         public static ThreadLocal<Lazy<Random>> ThreadSafeRandom { get; } = new ThreadLocal<Lazy<Random>>( valueFactory: () => {
             var hash = ThreadLocalSHA256Managed.Value.Value.ComputeHash( buffer: Guid.NewGuid().ToByteArray() );
@@ -93,27 +108,45 @@ namespace Librainian.Maths {
             return new Lazy<Random>( valueFactory: () => new Random( Seed: seed ) );
         }, trackAllValues: true );
 
-        internal static ConcurrentStack<Int32> PollResponses { get; } = new ConcurrentStack<Int32>();
+        /// <summary>
+        /// Untested.
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        private static String NextChar( [NotNull] this Char[] range ) {
+            if ( range is null ) {
+                throw new ArgumentNullException( paramName: nameof( range ) );
+            }
+
+            //TODO
+            return range[0.Next( maxValue: range.Length )].ToString();
+        }
 
         /// <summary>
-        ///     Returns a decimal between 0 and 1.
+        /// Returns a decimal between 0 and 1.
         /// </summary>
         /// <returns></returns>
         public static Decimal BranchRatio() => NextDecimal();
 
-        /// <summary>Chooses a random element in the given collection <paramref name="items" />.</summary>
+        /// <summary>
+        /// Chooses a random element in the given collection <paramref name="items"/>.
+        /// </summary>
         /// <typeparam name="T">The Type of element.</typeparam>
         /// <param name="items">The collection of items to choose a random element from.</param>
-        /// <returns>A randomly chosen element in the given collection <paramref name="items" />.</returns>
+        /// <returns>A randomly chosen element in the given collection <paramref name="items"/>.</returns>
         public static T Choose<T>( [NotNull] params T[] items ) => items[items.Length.NextInt()];
 
-        /// <summary>Chooses a random element in the given set of items.</summary>
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
         /// <typeparam name="T">The Type of element.</typeparam>
         /// <param name="a">The first item.</param>
         /// <returns>A randomly chosen element in the given set of items.</returns>
         public static T Choose<T>( this T a ) => a;
 
-        /// <summary>Chooses a random element in the given set of items.</summary>
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
         /// <typeparam name="T">The Type of element.</typeparam>
         /// <param name="a">The first item.</param>
         /// <param name="b">The second item.</param>
@@ -128,7 +161,9 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary>Chooses a random element in the given set of items.</summary>
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
         /// <typeparam name="T">The Type of element.</typeparam>
         /// <param name="a">The first item.</param>
         /// <param name="b">The second item.</param>
@@ -147,7 +182,9 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary>Chooses a random element in the given set of items.</summary>
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
         /// <typeparam name="T">The Type of element.</typeparam>
         /// <param name="a">The first item.</param>
         /// <param name="b">The second item.</param>
@@ -170,7 +207,9 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary>Chooses a random element in the given set of items.</summary>
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
         /// <typeparam name="T">The Type of element.</typeparam>
         /// <param name="a">The first item.</param>
         /// <param name="b">The second item.</param>
@@ -197,7 +236,9 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary>Chooses a random element in the given set of items.</summary>
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
         /// <typeparam name="T">The Type of element.</typeparam>
         /// <param name="a">The first item.</param>
         /// <param name="b">The second item.</param>
@@ -229,7 +270,9 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary>Chooses a random element in the given set of items.</summary>
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
         /// <typeparam name="T">The Type of element.</typeparam>
         /// <param name="a">The first item.</param>
         /// <param name="b">The second item.</param>
@@ -265,7 +308,9 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary>Chooses a random element in the given set of items.</summary>
+        /// <summary>
+        /// Chooses a random element in the given set of items.
+        /// </summary>
         /// <typeparam name="T">The Type of element.</typeparam>
         /// <param name="a">The first item.</param>
         /// <param name="b">The second item.</param>
@@ -317,16 +362,9 @@ namespace Librainian.Maths {
 
         public static List<Int32> GenerateRandom( Int32 count, Int32 min, Int32 max ) {
 
-            //  initialize set S to empty
-            //  for J := N-M + 1 to N do
-            //    T := RandInt(1, J)
-            //    if T is not in S then
-            //      insert T in S
-            //    else
-            //      insert J in S
+            // initialize set S to empty for J := N-M + 1 to N do T := RandInt(1, J) if T is not in S then insert T in S else insert J in S
             //
-            // adapted for C# which does not have an inclusive Next(..)
-            // and to make it from configurable range not just 1.
+            // adapted for C# which does not have an inclusive Next(..) and to make it from configurable range not just 1.
 
             if ( max <= min || count < 0 ||
 
@@ -343,13 +381,11 @@ namespace Librainian.Maths {
             // start count values before max, and end at max
             for ( var top = max - count; top < max; top++ ) {
 
-                // May strike a duplicate.
-                // Need to add +1 to make inclusive generator
+                // May strike a duplicate. Need to add +1 to make inclusive generator
                 // +1 is safe even for MaxVal max value because top < max
                 if ( !candidates.Add( item: Instance.Next( minValue: min, maxValue: top + 1 ) ) ) {
 
-                    // collision, add inclusive max.
-                    // which could not possibly have been added before.
+                    // collision, add inclusive max. which could not possibly have been added before.
                     candidates.Add( item: top );
                 }
             }
@@ -357,9 +393,7 @@ namespace Librainian.Maths {
             // load them in to a list, to sort
             var result = candidates.ToList();
 
-            // shuffle the results because HashSet has messed
-            // with the order, and the algorithm does not produce
-            // random-ordered results (e.g. max-1 will never be the first value)
+            // shuffle the results because HashSet has messed with the order, and the algorithm does not produce random-ordered results (e.g. max-1 will never be the first value)
             for ( var i = result.Count - 1; i > 0; i-- ) {
                 var k = Instance.Next( maxValue: i + 1 );
                 var tmp = result[index: k];
@@ -404,17 +438,19 @@ namespace Librainian.Maths {
             return BitConverter.ToInt64( value: data, startIndex: 0 );
         }
 
-        /// <summary>memoize?</summary>
+        /// <summary>
+        /// memoize?
+        /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         public static String[] GetNames<T>() {
             var key = typeof( T );
-            if ( EnumDictionary.TryGetValue(key, value: out var values ) ) {
+            if ( EnumDictionary.TryGetValue( key, value: out var values ) ) {
                 return values;
             }
 
             values = Enum.GetNames( enumType: key );
-            EnumDictionary.TryAdd(key, value: values );
+            EnumDictionary.TryAdd( key, value: values );
             return values;
         }
 
@@ -454,8 +490,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Generate a random number between <paramref name="minValue" /> and
-        ///     <paramref name="maxValue" /> .
+        /// Generate a random number between <paramref name="minValue"/> and <paramref name="maxValue"/> .
         /// </summary>
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
         /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
@@ -464,7 +499,7 @@ namespace Librainian.Maths {
         public static Int32 Next( this Int32 minValue, Int32 maxValue ) => Instance.Next( minValue: minValue, maxValue: maxValue );
 
         /// <summary>
-        ///     <para>Returns a nonnegative random number less than <paramref name="maxValue" />.</para>
+        /// <para>Returns a nonnegative random number less than <paramref name="maxValue"/>.</para>
         /// </summary>
         /// <param name="maxValue"></param>
         /// <returns></returns>
@@ -474,7 +509,7 @@ namespace Librainian.Maths {
         public static String Next( this String[] strings ) => strings[strings.Length.Next()];
 
         /// <summary>
-        ///     <para>Returns a nonnegative random number less than <paramref name="maxValue" />.</para>
+        /// <para>Returns a nonnegative random number less than <paramref name="maxValue"/>.</para>
         /// </summary>
         /// <param name="maxValue"></param>
         /// <returns></returns>
@@ -482,21 +517,21 @@ namespace Librainian.Maths {
         public static UInt16 Next( this UInt16 maxValue ) => ( UInt16 )Instance.Next( maxValue: maxValue );
 
         /// <summary>
-        ///     Generate a random number between <paramref name="range.Min" /> and
-        ///     <paramref name="range.Max" /> .
+        /// Generate a random number between <paramref name="range.Min"/> and <paramref name="range.Max"/> .
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static Int32 Next( this Int32Range range ) => Instance.Next( minValue: range.Min, maxValue: range.Max );
 
-        /// <summary>Returns a nonnegative random number.</summary>
+        /// <summary>
+        /// Returns a nonnegative random number.
+        /// </summary>
         /// <returns></returns>
         public static UInt32 Next() => ( UInt32 )( Instance.NextDouble() * UInt32.MaxValue );
 
         /// <summary>
-        ///     Generate a random number between <paramref name="minValue" /> and
-        ///     <paramref name="maxValue" /> .
+        /// Generate a random number between <paramref name="minValue"/> and <paramref name="maxValue"/> .
         /// </summary>
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
         /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
@@ -508,8 +543,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Generate a random number between <paramref name="minValue" /> and
-        ///     <paramref name="maxValue" /> .
+        /// Generate a random number between <paramref name="minValue"/> and <paramref name="maxValue"/> .
         /// </summary>
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
         /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
@@ -520,7 +554,8 @@ namespace Librainian.Maths {
             return min + ( Int64 )( Instance.NextDouble() * ( max - min ) );
         }
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         /// <param name="numberOfDigits"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
@@ -535,7 +570,8 @@ namespace Librainian.Maths {
             return new BigInteger( value: buffer );
         }
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         /// <param name="numberOfDigits"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
@@ -563,20 +599,20 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     <para>Generate a random <see cref="Boolean.True" /> or <see cref="Boolean.False" />.</para>
+        /// <para>Generate a random <see cref="Boolean.True"/> or <see cref="Boolean.False"/>.</para>
         /// </summary>
         /// <returns></returns>
         public static Boolean NextBoolean() => Instance.NextDouble() >= 0.5;
 
         /// <summary>
-        ///     <para>Generate a random <see cref="Boolean.True" /> or <see cref="Boolean.False" />.</para>
+        /// <para>Generate a random <see cref="Boolean.True"/> or <see cref="Boolean.False"/>.</para>
         /// </summary>
         /// <returns></returns>
-        /// <remarks>This needs testing if it is actually any faster than <see cref="NextBoolean" />.</remarks>
+        /// <remarks>This needs testing if it is actually any faster than <see cref="NextBoolean"/>.</remarks>
         public static Boolean NextBooleanFast() => Instance.Next( maxValue: 2 ) == 0;
 
         /// <summary>
-        ///     <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
+        /// <para>Returns a random <see cref="Byte"/> between <paramref name="min"/> and <paramref name="max"/>.</para>
         /// </summary>
         /// <returns></returns>
         public static Byte NextByte( this Byte min, Byte max ) {
@@ -592,7 +628,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     <para>Returns a random <see cref="Byte" />.</para>
+        /// <para>Returns a random <see cref="Byte"/>.</para>
         /// </summary>
         /// <returns></returns>
         public static Byte NextByte() {
@@ -602,7 +638,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
+        /// <para>Returns a random <see cref="Byte"/> between <paramref name="min"/> and <paramref name="max"/>.</para>
         /// </summary>
         /// <returns></returns>
         public static IEnumerable<Byte> NextBytes( this Byte min, Byte max ) {
@@ -610,7 +646,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
+        /// <para>Returns a random <see cref="Byte"/> between <paramref name="min"/> and <paramref name="max"/>.</para>
         /// </summary>
         /// <returns></returns>
         public static void NextBytes( this Byte min, Byte max, ref Byte[] buffer ) {
@@ -622,9 +658,10 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary></summary>
-        /// <param name="alpha"></param>
-        /// <param name="lowEnd"></param>
+        /// <summary>
+        /// </summary>
+        /// <param name="alpha">  </param>
+        /// <param name="lowEnd"> </param>
         /// <param name="highEnd"></param>
         /// <returns></returns>
         public static Color NextColor( Byte alpha = 255, Byte lowEnd = 0, Byte highEnd = 255 ) =>
@@ -643,7 +680,9 @@ namespace Librainian.Maths {
 
         public static DateTimeOffset NextDateTimeOffset( this DateTimeOffset value, TimeSpan timeSpan ) => value + new Milliseconds( value: timeSpan.TotalMilliseconds * Instance.NextDouble() );
 
-        /// <summary>Between 0 and 1.</summary>
+        /// <summary>
+        /// Between 0 and 1.
+        /// </summary>
         /// <returns></returns>
         public static Decimal NextDecimal() {
             do {
@@ -657,7 +696,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     <para>Returns a random Decimal between <paramref name="minValue" /> and <paramref name="maxValue" />.</para>
+        /// <para>Returns a random Decimal between <paramref name="minValue"/> and <paramref name="maxValue"/>.</para>
         /// </summary>
         /// <param name="minValue"></param>
         /// <param name="maxValue"></param>
@@ -671,7 +710,8 @@ namespace Librainian.Maths {
 
         public static Decimal NextDecimal( this DecimalRange decimalRange ) => decimalRange.Min.NextDecimal( maxValue: decimalRange.Max );
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         /// <returns></returns>
         public static Decimal NextDecimalFullRange() {
             do {
@@ -687,7 +727,7 @@ namespace Librainian.Maths {
         public static Degrees NextDegrees() => new Degrees( value: NextSingle( min: Degrees.MinimumValue, max: Degrees.MaximumValue ) );
 
         /// <summary>
-        ///     <para>Returns a random digit between 0 and 9.</para>
+        /// <para>Returns a random digit between 0 and 9.</para>
         /// </summary>
         /// <returns></returns>
         public static Byte NextDigit() {
@@ -697,7 +737,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Returns a random digit (0,1,2,3,4,5,6,7,8,9) between <paramref name="min" /> and <paramref name="max" />.
+        /// Returns a random digit (0,1,2,3,4,5,6,7,8,9) between <paramref name="min"/> and <paramref name="max"/>.
         /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
@@ -719,7 +759,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     <para>Returns a random Double between <paramref name="range.Min" /> and <paramref name="range.Max" />.</para>
+        /// <para>Returns a random Double between <paramref name="range.Min"/> and <paramref name="range.Max"/>.</para>
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
@@ -727,7 +767,9 @@ namespace Librainian.Maths {
 
         public static Double NextDouble( this PairOfDoubles variance ) => NextDouble( min: variance.Low, max: variance.High );
 
-        /// <summary>Returns a random Double between <paramref name="min" /> and <paramref name="max" />.</summary>
+        /// <summary>
+        /// Returns a random Double between <paramref name="min"/> and <paramref name="max"/>.
+        /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
@@ -756,11 +798,14 @@ namespace Librainian.Maths {
             return result;
         }
 
-        /// <summary>Returns a random Double between 0 and 1</summary>
+        /// <summary>
+        /// Returns a random Double between 0 and 1
+        /// </summary>
         /// <returns></returns>
         public static Double NextDouble() => Instance.NextDouble();
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         public static T NextEnum<T>() where T : struct {
@@ -775,13 +820,15 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Returns a random <see cref="Single" /> between <paramref name="range.Min" /> and <paramref name="range.Max" />.
+        /// Returns a random <see cref="Single"/> between <paramref name="range.Min"/> and <paramref name="range.Max"/>.
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
         public static Single NextFloat( this SingleRange range ) => ( Single )( range.Min + Instance.NextDouble() * range.Length );
 
-        /// <summary>Returns a random float between <paramref name="min" /> and <paramref name="max" />.</summary>
+        /// <summary>
+        /// Returns a random float between <paramref name="min"/> and <paramref name="max"/>.
+        /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
@@ -789,22 +836,30 @@ namespace Librainian.Maths {
 
         public static Guid NextGuid() => Guid.NewGuid();
 
-        /// <summary>Gets a non-negetive random whole number less than the specified <paramref cref="maximum" />.</summary>
+        /// <summary>
+        /// Gets a non-negetive random whole number less than the specified <paramref cref="maximum"/>.
+        /// </summary>
         /// <param name="maximum">The exclusive upper bound the random number to be generated.</param>
-        /// <returns>A non-negetive random whole number less than the specified <paramref cref="maximum" />.</returns>
+        /// <returns>A non-negetive random whole number less than the specified <paramref cref="maximum"/>.</returns>
         public static Int32 NextInt( this Int32 maximum ) => Instance.Next( maxValue: maximum );
 
-        /// <summary>Gets a random number within a specified range.</summary>
+        /// <summary>
+        /// Gets a random number within a specified range.
+        /// </summary>
         /// <param name="min">The inclusive lower bound of the random number returned.</param>
         /// <param name="max">The exclusive upper bound of the random number returned.</param>
         /// <returns>A random number within a specified range.</returns>
         public static Int32 NextInt( this Int32 min, Int32 max ) => Instance.Next( minValue: min, maxValue: max );
 
-        /// <summary>Return a random number somewhere in the full range of 0 to <see cref="Int16" />.</summary>
+        /// <summary>
+        /// Return a random number somewhere in the full range of 0 to <see cref="Int16"/>.
+        /// </summary>
         /// <returns></returns>
         public static Int16 NextInt16( this Int16 min, Int16 max ) => ( Int16 )( min + Instance.NextDouble() * ( max - min ) );
 
-        /// <summary>Return a random number somewhere in the full range of <see cref="Int32" />.</summary>
+        /// <summary>
+        /// Return a random number somewhere in the full range of <see cref="Int32"/>.
+        /// </summary>
         /// <returns></returns>
         public static Int32 NextInt32() {
             var firstBits = Instance.Next( minValue: 0, maxValue: 1 << 4 ) << 28;
@@ -818,7 +873,9 @@ namespace Librainian.Maths {
             return BitConverter.ToInt64( value: buffer, startIndex: 0 );
         }
 
-        /// <summary>Returns a random Single between <paramref name="min" /> and <paramref name="max" />.</summary>
+        /// <summary>
+        /// Returns a random Single between <paramref name="min"/> and <paramref name="max"/>.
+        /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
@@ -827,7 +884,7 @@ namespace Librainian.Maths {
         public static Single NextSingle( this SingleRange singleRange ) => NextSingle( min: singleRange.Min, max: singleRange.Max );
 
         /// <summary>
-        ///     Return a random <see cref="Span" /> between <paramref name="min" /> and <paramref name="max" />.
+        /// Return a random <see cref="Span"/> between <paramref name="min"/> and <paramref name="max"/>.
         /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
@@ -854,20 +911,14 @@ namespace Librainian.Maths {
             } while ( true ); //BUG horribleness.
         }
 
-        /// <summary>Generate a random String.</summary>
-        /// <param name="length">How many characters long.</param>
-        /// <param name="lowers">
-        ///     <see cref="ParsingExtensions.Lowercase" />
-        /// </param>
-        /// <param name="uppers">
-        ///     <see cref="ParsingExtensions.Uppercase" />
-        /// </param>
-        /// <param name="numbers">
-        ///     <see cref="ParsingExtensions.Numbers" />
-        /// </param>
-        /// <param name="symbols">
-        ///     <see cref="ParsingExtensions.Symbols" />
-        /// </param>
+        /// <summary>
+        /// Generate a random String.
+        /// </summary>
+        /// <param name="length"> How many characters long.</param>
+        /// <param name="lowers"> <see cref="ParsingExtensions.Lowercase"/></param>
+        /// <param name="uppers"> <see cref="ParsingExtensions.Uppercase"/></param>
+        /// <param name="numbers"><see cref="ParsingExtensions.Numbers"/></param>
+        /// <param name="symbols"><see cref="ParsingExtensions.Symbols"/></param>
         /// <returns></returns>
         [CanBeNull]
         public static String NextString( UInt16 length = 11, Boolean lowers = true, Boolean uppers = false, Boolean numbers = false, Boolean symbols = false ) {
@@ -906,8 +957,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Returns a random TimeSpan between <paramref name="minValue" /> and
-        ///     <paramref name="maxValue" /> .
+        /// Returns a random TimeSpan between <paramref name="minValue"/> and <paramref name="maxValue"/> .
         /// </summary>
         /// <param name="minValue"></param>
         /// <param name="maxValue"></param>
@@ -942,8 +992,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Returns a random <see cref="TimeSpan" /> between <paramref name="minMilliseconds" /> and
-        ///     <paramref name="maxMilliseconds" /> .
+        /// Returns a random <see cref="TimeSpan"/> between <paramref name="minMilliseconds"/> and <paramref name="maxMilliseconds"/> .
         /// </summary>
         /// <param name="minMilliseconds"></param>
         /// <param name="maxMilliseconds"></param>
@@ -959,7 +1008,9 @@ namespace Librainian.Maths {
             return BitConverter.ToUInt64( value: buffer, startIndex: 0 );
         }
 
-        /// <summary>Generates a uniformly random integer in the range [0, bound).</summary>
+        /// <summary>
+        /// Generates a uniformly random integer in the range [0, bound).
+        /// </summary>
         public static BigInteger RandomIntegerBelow( this RandomNumberGenerator source, BigInteger bound ) {
             Contract.Requires<ArgumentException>( condition: source != null );
             Contract.Requires<ArgumentException>( condition: bound > 0 );
@@ -993,7 +1044,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Given the String <paramref name="charPool" />, return the letters in a random fashion.
+        /// Given the String <paramref name="charPool"/>, return the letters in a random fashion.
         /// </summary>
         /// <param name="charPool"></param>
         /// <returns></returns>
@@ -1002,18 +1053,19 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     <para>A list containing <see cref="Boolean.True" /> or <see cref="Boolean.False" />.</para>
+        /// <para>A list containing <see cref="Boolean.True"/> or <see cref="Boolean.False"/>.</para>
         /// </summary>
         public static IEnumerable<Boolean> Randomly() {
             do {
                 yield return NextBoolean();
             } while ( true );
 
-            // ReSharper disable once FunctionNeverReturns
-            // ReSharper disable once IteratorNeverReturns
+            // ReSharper disable once FunctionNeverReturns ReSharper disable once IteratorNeverReturns
         }
 
-        /// <summary>Generate a pronounceable pseudorandom string.</summary>
+        /// <summary>
+        /// Generate a pronounceable pseudorandom string.
+        /// </summary>
         /// <param name="aboutLength">Length of the returned string.</param>
         public static String RandomPronounceableString( this Int32 aboutLength ) {
             if ( aboutLength < 1 ) {
@@ -1053,16 +1105,14 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Generate a random String using a limited set of defaults. Default
-        ///     <paramref name="length" /> is 10. Default <paramref name="lowerCase" /> is true. Default
-        ///     <paramref name="upperCase" /> is false. Default <paramref name="numbers" /> is false.
-        ///     Default <paramref name="symbols" /> is false.
+        /// Generate a random String using a limited set of defaults. Default <paramref name="length"/> is 10. Default <paramref name="lowerCase"/> is true. Default <paramref name="upperCase"/> is false. Default <paramref
+        /// name="numbers"/> is false. Default <paramref name="symbols"/> is false.
         /// </summary>
-        /// <param name="length"></param>
+        /// <param name="length">   </param>
         /// <param name="lowerCase"></param>
         /// <param name="upperCase"></param>
-        /// <param name="numbers"></param>
-        /// <param name="symbols"></param>
+        /// <param name="numbers">  </param>
+        /// <param name="symbols">  </param>
         /// <returns></returns>
         public static String RandomString( Int32 length = 10, Boolean lowerCase = true, Boolean upperCase = false, Boolean numbers = false, Boolean symbols = false ) {
             var charPool = String.Concat( str0: lowerCase ? ParsingExtensions.AllLowercaseLetters : String.Empty, str1: upperCase ? ParsingExtensions.AllUppercaseLetters : String.Empty,
@@ -1071,7 +1121,7 @@ namespace Librainian.Maths {
         }
 
         public static Word RandomWord( Int32 avglength = 5, Boolean lowerCase = true, Boolean upperCase = true, Boolean numbers = false, Boolean symbols = false ) {
-            var word = RandomString(( avglength - 2 ).Next( maxValue: avglength + 2 ), lowerCase: lowerCase, upperCase: upperCase, numbers: numbers, symbols: symbols );
+            var word = RandomString( ( avglength - 2 ).Next( maxValue: avglength + 2 ), lowerCase: lowerCase, upperCase: upperCase, numbers: numbers, symbols: symbols );
             return new Word( word: word );
         }
 
@@ -1084,8 +1134,8 @@ namespace Librainian.Maths {
 
             var tasks = new List<Task> {
                 timeout,
-                Task.Run( action: () => { PollResponses.Push( item: TheFacebooks.Get().Result.Error.FbtraceID.GetHashCode() ); }, cancellationToken: cancellationToken ),
-                Task.Run( action: () => { PollResponses.Push( item: RandomDotOrg.Generator.Value.Get() ); }, cancellationToken: cancellationToken )
+                Task.Run(() => { PollResponses.Push( item: TheFacebooks.Get().Result.Error.FbtraceID.GetHashCode() ); }, cancellationToken: cancellationToken ),
+                Task.Run(() => { PollResponses.Push( item: RandomDotOrg.Generator.Value.Get() ); }, cancellationToken: cancellationToken )
             };
 
             var task = await Task.WhenAny( tasks: tasks );
@@ -1108,14 +1158,9 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Generate two random numbers about halfway of
-        ///     <param name="goal"></param>
-        ///     .
+        /// Generate two random numbers about halfway of <param name="goal"></param> .
         /// </summary>
-        /// <remarks>
-        ///     Given one number, return two random numbers that add up to
-        ///     <param name="goal"></param>
-        /// </remarks>
+        /// <remarks>Given one number, return two random numbers that add up to <param name="goal"></param></remarks>
         public static void Split( this Int32 goal, out Int32 lowResult, out Int32 highResult ) {
             var half = goal.Half();
             var quarter = half.Half();
@@ -1135,13 +1180,10 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     <para>Generate two random numbers about halfway of <paramref name="goal" />.</para>
-        ///     <para>Also, return a random number between <paramref name="lowResult" /> and <paramref name="highResult" /></para>
+        /// <para>Generate two random numbers about halfway of <paramref name="goal"/>.</para>
+        /// <para>Also, return a random number between <paramref name="lowResult"/> and <paramref name="highResult"/></para>
         /// </summary>
-        /// <remarks>
-        ///     Given one number, return two random numbers that add up to
-        ///     <param name="goal"></param>
-        /// </remarks>
+        /// <remarks>Given one number, return two random numbers that add up to <param name="goal"></param></remarks>
         public static Decimal Split( this Decimal goal, out Decimal lowResult, out Decimal highResult ) {
             var half = goal.Half();
             var quarter = half.Half();
@@ -1161,39 +1203,12 @@ namespace Librainian.Maths {
             return lowResult.NextDecimal( maxValue: highResult );
         }
 
-        /// <summary>Untested.</summary>
-        /// <param name="range"></param>
-        /// <returns></returns>
-        private static String NextChar( [NotNull] this Char[] range ) {
-            if ( range is null ) {
-                throw new ArgumentNullException( paramName: nameof( range ) );
-            }
-
-            //TODO
-            return range[0.Next( maxValue: range.Length )].ToString();
-        }
-
-        public static class RandomDotOrg {
-
-            static RandomDotOrg() {
-                Generator = new Lazy<IntegerGenerator>( valueFactory: () => new IntegerGenerator( num: 1 ) );
-            }
-
-            internal static Lazy<IntegerGenerator> Generator { get; }
-        }
-
         internal static class TheFacebooks {
 
             public static async Task<FaceBookRootObject> Get() {
                 var uri = new Uri( uriString: "http://graph.facebook.com/microsoft" );
                 var reader = await InternetExtensions.DoRequestJsonAsync<FaceBookRootObject>( uri: uri );
                 return reader; //;.Error.FbtraceID.GetHashCode();
-            }
-
-            public class FaceBookRootObject {
-
-                [JsonProperty( propertyName: "error" )]
-                internal FaceBookError Error { get; }
             }
 
             internal class FaceBookError {
@@ -1210,6 +1225,21 @@ namespace Librainian.Maths {
                 [JsonProperty( propertyName: "type" )]
                 public String Type { get; set; }
             }
+
+            public class FaceBookRootObject {
+
+                [JsonProperty( propertyName: "error" )]
+                internal FaceBookError Error { get; }
+            }
+        }
+
+        public static class RandomDotOrg {
+
+            static RandomDotOrg() {
+                Generator = new Lazy<IntegerGenerator>( valueFactory: () => new IntegerGenerator( num: 1 ) );
+            }
+
+            internal static Lazy<IntegerGenerator> Generator { get; }
         }
     }
 
@@ -1247,16 +1277,6 @@ namespace Librainian.Maths {
                     }
                 }
             }
-        }
-    }
-
-    internal static class Request {
-
-        public static WebRequest Create( String uri ) {
-            var request = WebRequest.Create( requestUriString: uri );
-            request.Proxy = null;
-            request.Credentials = CredentialCache.DefaultCredentials;
-            return request;
         }
     }
 }

@@ -53,6 +53,7 @@
     <Compile Include="FileHistoryFileTests.cs" />
     <Compile Include="FolderBagTests.cs" />
     <Compile Include="Linguistics\SentenceTests.cs" />
+    <Compile Include="Maths\ArithmeticMethods.cs" />
     <Compile Include="Maths\MathsTests.cs" />
     <Compile Include="MyClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

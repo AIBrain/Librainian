@@ -27,11 +27,9 @@ namespace Librainian.Collections {
     using Newtonsoft.Json;
 
     [ComVisible( visibility: false )]
-#pragma warning disable IDE0009 // Member access should be qualified.
     [DebuggerDisplay( value: "Count={" + nameof( Count ) + "}" )]
-#pragma warning restore IDE0009 // Member access should be qualified.
     [JsonObject]
-    [HostProtection( action: SecurityAction.LinkDemand, ExternalThreading = true, Synchronization = true )]
+    [HostProtection( SecurityAction.LinkDemand, ExternalThreading = true, Synchronization = true )]
     public class Q<T> : IProducerConsumerCollection<T> {
 
         [NonSerialized]

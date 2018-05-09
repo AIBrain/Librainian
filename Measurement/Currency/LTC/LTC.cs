@@ -23,9 +23,9 @@ namespace Librainian.Measurement.Currency.LTC {
     using System;
     using System.Diagnostics;
 
-#pragma warning disable IDE0009 // Member access should be qualified.
+
     [DebuggerDisplay( "{" + nameof( Formatted ) + ",nq}" )]
-#pragma warning restore IDE0009 // Member access should be qualified.
+
     public struct Ltc : ICoin {
 
         public Decimal FaceValue => 1.00M;

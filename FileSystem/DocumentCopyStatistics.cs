@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -80,7 +78,7 @@ namespace Librainian.FileSystem {
             if ( Math.Abs( this.TimeTaken.TotalSeconds ) < Double.Epsilon ) {
                 return 0;
             }
-            var mb = this.BytesCopied / ( Double )MathConstants.OneMegaByte;
+            var mb = this.BytesCopied / ( Double )Constants.Sizes.OneMegaByte;
             return mb / this.TimeTaken.TotalSeconds;
         }
 
@@ -92,12 +90,9 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        ///     Returns a string that represents the current object.
+        /// Returns a string that represents the current object.
         /// </summary>
-        /// <returns>
-        ///     A string that represents the current object.
-        /// </returns>
+        /// <returns>A string that represents the current object.</returns>
         public override String ToString() => $"{this.SourceDocument?.FileName()} copied to {this.DestinationDocument.Folder} @ {this.MegabytesPerSecond()}MB/s";
-
     }
 }

@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -34,17 +32,17 @@ namespace Librainian.Measurement.Time {
     public struct Weeks : IComparable<Weeks>, IQuantityOfTime {
 
         /// <summary>
-        ///     52
+        /// 52
         /// </summary>
         public const Decimal InOneCommonYear = 52m;
 
         /// <summary>
-        ///     4. 345
+        /// 4. 345
         /// </summary>
         public const Decimal InOneMonth = 4.345m;
 
         /// <summary>
-        ///     One <see cref="Weeks" /> .
+        /// One <see cref="Weeks"/> .
         /// </summary>
         public static readonly Weeks One = new Weeks( 1 );
 
@@ -57,19 +55,19 @@ namespace Librainian.Measurement.Time {
         public static readonly Weeks Thousand = new Weeks( 1000 );
 
         /// <summary>
-        ///     Zero <see cref="Weeks" />
+        /// Zero <see cref="Weeks"/>
         /// </summary>
         public static readonly Weeks Zero = new Weeks( 0 );
 
         public Weeks( Decimal weeks ) => this.Value = weeks;
 
-	    public Weeks( BigRational weeks ) => this.Value = weeks;
+        public Weeks( BigRational weeks ) => this.Value = weeks;
 
-	    public Weeks( Int64 value ) => this.Value = value;
+        public Weeks( Int64 value ) => this.Value = value;
 
-	    public Weeks( BigInteger value ) => this.Value = value;
+        public Weeks( BigInteger value ) => this.Value = value;
 
-	    [JsonProperty]
+        [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -81,15 +79,15 @@ namespace Librainian.Measurement.Time {
         public static Weeks Combine( Weeks left, BigInteger weeks ) => new Weeks( left.Value + weeks );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Weeks left, Weeks right ) => left.Value == right.Value;
 
         /// <summary>
-        ///     Implicitly convert the number of <paramref name="weeks" /> to <see cref="Days" />.
+        /// Implicitly convert the number of <paramref name="weeks"/> to <see cref="Days"/>.
         /// </summary>
         /// <param name="weeks"></param>
         /// <returns></returns>
@@ -150,7 +148,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+            if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
                 return $"{whole} {whole.PluralOf( "week" )}";
             }

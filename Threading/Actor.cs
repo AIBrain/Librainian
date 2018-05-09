@@ -29,7 +29,7 @@ namespace Librainian.Threading {
     using Magic;
 
     /// <summary>Fluent Actor test class.</summary>
-    /// <copyright>Protiguous 2014</copyright>
+    /// <copyright>Protiguous 2018</copyright>
     /// <remarks>Don't use this class, was just an idea...</remarks>
     public class Actor : ABetterClassDispose {
         internal readonly BlockingCollection<Player> Actions = new BlockingCollection<Player>();

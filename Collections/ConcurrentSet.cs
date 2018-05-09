@@ -75,7 +75,7 @@ namespace Librainian.Collections {
         //         return true;
         //     }
         //}
-        public Boolean Contains( T item ) => item != null && this._dictionary.ContainsKey(item );
+        public Boolean Contains( T item ) => item != null && this._dictionary.ContainsKey( item );
 
         /// <summary>
         /// Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1"/> to an <see cref="T:System.Array"/>, starting at a particular <see cref="T:System.Array"/> index.
@@ -206,12 +206,11 @@ namespace Librainian.Collections {
         /// <returns></returns>
         public T[] ToArray() => this._dictionary.Keys.ToArray();
 
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
-        public Boolean TryAdd( T item ) => this._dictionary.TryAdd(item, value: null );
+        public Boolean TryAdd( T item ) => this._dictionary.TryAdd( item, value: null );
 
-        public Boolean TryGet( T item ) => this._dictionary.TryGetValue(item, value: out var dummy );
+        public Boolean TryGet( T item ) => this._dictionary.TryGetValue( item, out var _ );
 
-        public Boolean TryRemove( T item ) => this._dictionary.TryRemove(item, value: out var donotcare );
+        public Boolean TryRemove( T item ) => this._dictionary.TryRemove( item, value: out _ );
 
         public Boolean TryTakeAny( out T item ) {
             foreach ( var pair in this._dictionary ) {

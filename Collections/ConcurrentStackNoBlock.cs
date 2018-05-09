@@ -82,7 +82,7 @@ namespace Librainian.Collections {
 
         public void Add( IEnumerable<T> items ) => Parallel.ForEach( source: items, parallelOptions: ThreadingExtensions.CPUIntensive, body: this.Push );
 
-        public void Add( ParallelQuery<T> items ) => items.ForAll( action: this.Push );
+        public void Add( ParallelQuery<T> items ) => items.ForAll( this.Push );
 
         public Int64 LongCount() => this.Count;
 

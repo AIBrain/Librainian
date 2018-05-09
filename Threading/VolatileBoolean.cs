@@ -28,10 +28,10 @@ namespace Librainian.Threading {
         private volatile Boolean _value;
 
         public Boolean Value {
-            [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+            
             get => this._value;
 
-            [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+            
 	        set => this._value = value;
         }
 	}

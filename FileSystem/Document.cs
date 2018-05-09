@@ -97,18 +97,18 @@ namespace Librainian.FileSystem {
         public Folder Folder => new Folder( fileSystemInfo: this.Info.Directory );
 
         /// <summary>
-        /// The heart of the <see cref="Document"/> class.
-        /// </summary>
-        [JsonProperty]
-        [NotNull]
-        public FileInfo Info { get; }
-
-        /// <summary>
         /// <para>The <see cref="Folder"/> combined with the <see cref="FileName"/>.</para>
         /// </summary>
         [JsonProperty]
         [NotNull]
         public String FullPathWithFileName => this.Info.FullName;
+
+        /// <summary>
+        /// The heart of the <see cref="Document"/> class.
+        /// </summary>
+        [JsonProperty]
+        [NotNull]
+        public FileInfo Info { get; }
 
         /// <summary>
         /// <para>Static case sensitive comparison of the file names and file sizes for equality.</para>
@@ -242,7 +242,7 @@ namespace Librainian.FileSystem {
         /// <param name="eta">        </param>
         /// <returns></returns>
         public Task Copy( Document destination, Action<Double> progress, Action<TimeSpan> eta ) =>
-            Task.Run( action: () => {
+            Task.Run( () => {
                 var computer = new Computer();
 
                 //TODO file monitor/watcher?

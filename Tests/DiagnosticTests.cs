@@ -25,6 +25,13 @@ namespace LibrainianTests {
     using System.Threading.Tasks;
     using FluentAssertions;
     using JetBrains.Annotations;
+    using Librainian;
+    using Librainian.Collections;
+    using Librainian.Maths;
+    using Librainian.Measurement.Time;
+    using Librainian.Measurement.Time.Clocks;
+    using Librainian.Parsing;
+    using Librainian.Threading;
     using NUnit.Framework;
 
     [TestFixture]
@@ -109,34 +116,12 @@ namespace LibrainianTests {
             $"{e} {e.ToRoman()}".WriteLine();
         }
 
-        //    Console.WriteLine( "Now, please input the question." );
-        //}
-        //[Test]
-        //public static void TestRandems() {
-        //    var ints = new ConcurrentBag< Int32 >();
-        //    var processorCount = Environment.ProcessorCount;
-        //    Parallel.ForEach( source: 1.To( processorCount ), parallelOptions: ThreadingExtensions.ParallelOptions, body: i => ints.AddToList() );
-        //    if ( !ints.Duplicates().Any() ) {
-        //        return;
-        //    }
-        //    ints.RemoveAll();
-        //    Parallel.ForEach( 1.To( processorCount ), ThreadingExtensions.ParallelOptions, i => ints.AddToList() );
-        //    if ( !ints.Duplicates().Any() ) {
-        //        return;
-        //    }
-        //    String.Format( "WARNING: Duplicate Randem.Next() found in static test!" ).WriteLine();
-        //    if ( Debugger.IsAttached ) {
-        //        Debugger.Break();
-        //    }
-        //}
         [Test]
         public static void TestSecond() {
             Second.Minimum.Value.Should().BeLessThan( Second.Maximum.Value );
             Second.Maximum.Value.Should().BeGreaterThan( Second.Minimum.Value );
         }
 
-        //    var answer = test2.ToString();
-        //    Console.WriteLine( "The Answer is {0}.", answer );
         [Test]
         public static void TestSimilarities() {
             var reasons = new ConcurrentQueue<String>();
@@ -144,7 +129,6 @@ namespace LibrainianTests {
             $"test1 was {test1}".WriteLine();
         }
 
-        //    test2 -= BigRational.Parse( "12345678970.320987654321" );
         [Test]
         public static void TestWordVsGuid() {
             var wordToGuidAndGuidToWord = new WordToGuidAndGuidToWord( "test", "$$$" );

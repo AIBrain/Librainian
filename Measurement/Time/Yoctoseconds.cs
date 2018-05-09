@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -32,54 +30,54 @@ namespace Librainian.Measurement.Time {
 
     /// <summary>
     /// </summary>
-    /// <seealso cref="http://wikipedia.org/wiki/Yoctosecond" />
+    /// <seealso cref="http://wikipedia.org/wiki/Yoctosecond"/>
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct Yoctoseconds : IComparable<Yoctoseconds>, IQuantityOfTime {
 
         /// <summary>
-        ///     1000
+        /// 1000
         /// </summary>
         public const UInt16 InOneZeptosecond = 1000;
 
         /// <summary>
-        ///     <see cref="Five" /><see cref="Yoctoseconds" />.
+        /// <see cref="Five"/><see cref="Yoctoseconds"/>.
         /// </summary>
         public static readonly Yoctoseconds Five = new Yoctoseconds( 5 );
 
         /// <summary>
-        ///     <see cref="One" /><see cref="Yoctoseconds" />.
+        /// <see cref="One"/><see cref="Yoctoseconds"/>.
         /// </summary>
         public static readonly Yoctoseconds One = new Yoctoseconds( 1 );
 
         /// <summary>
-        ///     <see cref="Seven" /><see cref="Yoctoseconds" />.
+        /// <see cref="Seven"/><see cref="Yoctoseconds"/>.
         /// </summary>
         public static readonly Yoctoseconds Seven = new Yoctoseconds( 7 );
 
         /// <summary>
-        ///     <see cref="Ten" /><see cref="Yoctoseconds" />.
+        /// <see cref="Ten"/><see cref="Yoctoseconds"/>.
         /// </summary>
         public static readonly Yoctoseconds Ten = new Yoctoseconds( 10 );
 
         /// <summary>
-        ///     <see cref="Thirteen" /><see cref="Yoctoseconds" />.
+        /// <see cref="Thirteen"/><see cref="Yoctoseconds"/>.
         /// </summary>
         public static readonly Yoctoseconds Thirteen = new Yoctoseconds( 13 );
 
         /// <summary>
-        ///     <see cref="Thirty" /><see cref="Yoctoseconds" />.
+        /// <see cref="Thirty"/><see cref="Yoctoseconds"/>.
         /// </summary>
         public static readonly Yoctoseconds Thirty = new Yoctoseconds( 30 );
 
         /// <summary>
-        ///     <see cref="Three" /><see cref="Yoctoseconds" />.
+        /// <see cref="Three"/><see cref="Yoctoseconds"/>.
         /// </summary>
         public static readonly Yoctoseconds Three = new Yoctoseconds( 3 );
 
         /// <summary>
-        ///     <see cref="Two" /><see cref="Yoctoseconds" />.
+        /// <see cref="Two"/><see cref="Yoctoseconds"/>.
         /// </summary>
         public static readonly Yoctoseconds Two = new Yoctoseconds( 2 );
 
@@ -89,13 +87,13 @@ namespace Librainian.Measurement.Time {
 
         public Yoctoseconds( Decimal value ) => this.Value = value;
 
-	    public Yoctoseconds( BigRational value ) => this.Value = value;
+        public Yoctoseconds( BigRational value ) => this.Value = value;
 
-	    public Yoctoseconds( Int64 value ) => this.Value = value;
+        public Yoctoseconds( Int64 value ) => this.Value = value;
 
-	    public Yoctoseconds( BigInteger value ) => this.Value = value;
+        public Yoctoseconds( BigInteger value ) => this.Value = value;
 
-	    [JsonProperty]
+        [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -105,15 +103,15 @@ namespace Librainian.Measurement.Time {
         public static Yoctoseconds Combine( Yoctoseconds left, BigRational yoctoseconds ) => new Yoctoseconds( left.Value + yoctoseconds );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Yoctoseconds left, Yoctoseconds right ) => left.Value == right.Value;
 
         /// <summary>
-        ///     Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="PlanckTimes" />.
+        /// Implicitly convert the number of <paramref name="yoctoseconds"/> to <see cref="PlanckTimes"/>.
         /// </summary>
         /// <param name="yoctoseconds"></param>
         /// <returns></returns>
@@ -122,7 +120,7 @@ namespace Librainian.Measurement.Time {
         public static implicit operator Span( Yoctoseconds yoctoseconds ) => new Span( yoctoseconds: yoctoseconds );
 
         /// <summary>
-        ///     Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="Zeptoseconds" />.
+        /// Implicitly convert the number of <paramref name="yoctoseconds"/> to <see cref="Zeptoseconds"/>.
         /// </summary>
         /// <param name="yoctoseconds"></param>
         /// <returns></returns>
@@ -170,7 +168,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+            if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
                 return $"{whole} {whole.PluralOf( "ys" )}";
             }

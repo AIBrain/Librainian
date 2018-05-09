@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -31,77 +29,109 @@ namespace Librainian.Measurement.Time {
     using Parsing;
 
     /// <summary>
-    ///     <para>
-    ///         Under the International System of Units, since 1967 the second has been defined as the
-    ///         duration of 9192631770 periods of the radiation corresponding to the transition between the
-    ///         two hyperfine levels of the ground state of the caesium 133 atom.
-    ///     </para>
+    /// <para>
+    /// Under the International System of Units, since 1967 the second has been defined as the duration of 9192631770 periods of the radiation corresponding to the transition between the two hyperfine levels of the ground
+    /// state of the caesium 133 atom.
+    /// </para>
     /// </summary>
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct Seconds : IComparable<Seconds>, IQuantityOfTime {
 
-        /// <summary>31536000</summary>
+        /// <summary>
+        /// 31536000
+        /// </summary>
         public const UInt32 InOneCommonYear = 31536000;
 
-        /// <summary>86400</summary>
+        /// <summary>
+        /// 86400
+        /// </summary>
         public const UInt32 InOneDay = 86400;
 
-        /// <summary>3600</summary>
+        /// <summary>
+        /// 3600
+        /// </summary>
         public const UInt16 InOneHour = 3600;
 
-        /// <summary>60</summary>
+        /// <summary>
+        /// 60
+        /// </summary>
         public const Byte InOneMinute = 60;
 
-        /// <summary>2635200 (30.5 days)</summary>
+        /// <summary>
+        /// 2635200 (30.5 days)
+        /// </summary>
         public const UInt32 InOneMonth = 2635200;
 
-        /// <summary>604800</summary>
+        /// <summary>
+        /// 604800
+        /// </summary>
         public const UInt32 InOneWeek = 604800;
 
-        /// <summary><see cref="Five" /> <see cref="Seconds" />.</summary>
+        /// <summary>
+        /// <see cref="Five"/><see cref="Seconds"/>.
+        /// </summary>
         public static readonly Seconds Five = new Seconds( 5 );
 
-        /// <summary><see cref="One" /> <see cref="Seconds" />.</summary>
+        /// <summary>
+        /// <see cref="One"/><see cref="Seconds"/>.
+        /// </summary>
         public static readonly Seconds One = new Seconds( 1 );
 
-        /// <summary><see cref="OnePointFive" /> <see cref="Seconds" />.</summary>
+        /// <summary>
+        /// <see cref="OnePointFive"/><see cref="Seconds"/>.
+        /// </summary>
         public static readonly Seconds OnePointFive = new Seconds( 1.5 );
 
-        /// <summary><see cref="Seven" /> <see cref="Seconds" />.</summary>
+        /// <summary>
+        /// <see cref="Seven"/><see cref="Seconds"/>.
+        /// </summary>
         public static readonly Seconds Seven = new Seconds( 7 );
 
-        /// <summary><see cref="Ten" /> <see cref="Seconds" />.</summary>
+        /// <summary>
+        /// <see cref="Ten"/><see cref="Seconds"/>.
+        /// </summary>
         public static readonly Seconds Ten = new Seconds( 10 );
 
-        /// <summary><see cref="Thirteen" /> <see cref="Seconds" />.</summary>
+        /// <summary>
+        /// <see cref="Thirteen"/><see cref="Seconds"/>.
+        /// </summary>
         public static readonly Seconds Thirteen = new Seconds( 13 );
 
-        /// <summary><see cref="Thirty" /> <see cref="Seconds" />.</summary>
+        /// <summary>
+        /// <see cref="Thirty"/><see cref="Seconds"/>.
+        /// </summary>
         public static readonly Seconds Thirty = new Seconds( 30 );
 
-        /// <summary><see cref="Three" /> <see cref="Seconds" />.</summary>
+        /// <summary>
+        /// <see cref="Three"/><see cref="Seconds"/>.
+        /// </summary>
         public static readonly Seconds Three = new Seconds( 3 );
 
-        /// <summary><see cref="Twenty" /> <see cref="Seconds" />.</summary>
+        /// <summary>
+        /// <see cref="Twenty"/><see cref="Seconds"/>.
+        /// </summary>
         public static readonly Seconds Twenty = new Seconds( 20 );
 
-        /// <summary><see cref="Two" /> <see cref="Seconds" />.</summary>
+        /// <summary>
+        /// <see cref="Two"/><see cref="Seconds"/>.
+        /// </summary>
         public static readonly Seconds Two = new Seconds( 2 );
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         public static readonly Seconds Zero = new Seconds( 0 );
 
         public Seconds( Decimal value ) => this.Value = value;
 
-	    public Seconds( BigRational value ) => this.Value = value;
+        public Seconds( BigRational value ) => this.Value = value;
 
-	    public Seconds( Int64 value ) => this.Value = value;
+        public Seconds( Int64 value ) => this.Value = value;
 
-	    public Seconds( BigInteger value ) => this.Value = value;
+        public Seconds( BigInteger value ) => this.Value = value;
 
-	    [JsonProperty]
+        [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -113,19 +143,23 @@ namespace Librainian.Measurement.Time {
         public static Seconds Combine( Seconds left, BigInteger seconds ) => new Seconds( ( BigInteger )left.Value + seconds );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Seconds left, Seconds right ) => left.Value == right.Value;
 
-        /// <summary>Implicitly convert the number of <paramref name="seconds" /> to <see cref="Milliseconds" />.</summary>
+        /// <summary>
+        /// Implicitly convert the number of <paramref name="seconds"/> to <see cref="Milliseconds"/>.
+        /// </summary>
         /// <param name="seconds"></param>
         /// <returns></returns>
         public static implicit operator Milliseconds( Seconds seconds ) => seconds.ToMilliseconds();
 
-        /// <summary>Implicitly convert the number of <paramref name="seconds" /> to <see cref="Minutes" />.</summary>
+        /// <summary>
+        /// Implicitly convert the number of <paramref name="seconds"/> to <see cref="Minutes"/>.
+        /// </summary>
         /// <param name="seconds"></param>
         /// <returns></returns>
         public static implicit operator Minutes( Seconds seconds ) => seconds.ToMinutes();
@@ -189,12 +223,12 @@ namespace Librainian.Measurement.Time {
         [Pure]
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneSecond * this.Value );
 
-	    [Pure]
+        [Pure]
         public Seconds ToSeconds() => this;
 
         [Pure]
         public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+            if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
                 return $"{whole} {whole.PluralOf( "second" )}";
             }

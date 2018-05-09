@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -28,9 +26,11 @@ namespace Librainian.Measurement.Physics {
     using Numerics;
     using NUnit.Framework;
 
-    /// <summary>Units of mass and energy in ElectronVolts.</summary>
-    /// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
-    /// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
+    /// <summary>
+    /// Units of mass and energy in ElectronVolts.
+    /// </summary>
+    /// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass"/>
+    /// <seealso cref="http://wikipedia.org/wiki/SI_prefix"/>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct ElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
@@ -46,21 +46,29 @@ namespace Librainian.Measurement.Physics {
 
         public const Decimal InOneTeraElectronVolt = 1E12m;
 
-        /// <summary>About 79228162514264337593543950335.</summary>
+        /// <summary>
+        /// About 79228162514264337593543950335.
+        /// </summary>
         public static readonly ElectronVolts MaxValue = new ElectronVolts( Decimal.MaxValue );
 
-        /// <summary>About -79228162514264337593543950335.</summary>
+        /// <summary>
+        /// About -79228162514264337593543950335.
+        /// </summary>
         public static readonly ElectronVolts MinValue = new ElectronVolts( Decimal.MinValue );
 
         public static readonly ElectronVolts NegativeOne = new ElectronVolts( -1 );
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         public static readonly ElectronVolts NegativeZero = new ElectronVolts( -Decimal.Zero );
 
-        /// <summary>More than nothing (unknown but not massless).</summary>
-        public static readonly ElectronVolts NonZero = new ElectronVolts( MathConstants.EpsilonDecimal );
+        /// <summary>
+        /// More than nothing (unknown but not massless).
+        /// </summary>
+        public static readonly ElectronVolts NonZero = new ElectronVolts( Constants.EpsilonDecimal );
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         public static readonly ElectronVolts One = new ElectronVolts( 1 );
 
         public static readonly ElectronVolts Zero = new ElectronVolts( 0 );
@@ -68,13 +76,13 @@ namespace Librainian.Measurement.Physics {
 
         public ElectronVolts( Decimal value ) : this() => this.Value = value;
 
-	    public ElectronVolts( MegaElectronVolts megaElectronVolts ) => this.Value = megaElectronVolts.ToElectronVolts().Value;
+        public ElectronVolts( MegaElectronVolts megaElectronVolts ) => this.Value = megaElectronVolts.ToElectronVolts().Value;
 
-	    public ElectronVolts( BigRational aBigFraction ) => this.Value = ( Decimal )aBigFraction;
+        public ElectronVolts( BigRational aBigFraction ) => this.Value = ( Decimal )aBigFraction;
 
-	    public ElectronVolts( GigaElectronVolts gigaElectronVolts ) => this.Value = gigaElectronVolts.ToElectronVolts().Value;
+        public ElectronVolts( GigaElectronVolts gigaElectronVolts ) => this.Value = gigaElectronVolts.ToElectronVolts().Value;
 
-	    public static implicit operator ElectronVolts( MegaElectronVolts megaElectronVolts ) => megaElectronVolts.ToElectronVolts();
+        public static implicit operator ElectronVolts( MegaElectronVolts megaElectronVolts ) => megaElectronVolts.ToElectronVolts();
 
         public static implicit operator ElectronVolts( GigaElectronVolts gigaElectronVolts ) => gigaElectronVolts.ToElectronVolts();
 
@@ -143,13 +151,11 @@ namespace Librainian.Measurement.Physics {
         public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * InOneMilliElectronVolt );
 
         /// <summary>
-        ///     Returns the fully qualified type name of this instance.
+        /// Returns the fully qualified type name of this instance.
         /// </summary>
-        /// <returns>
-        ///     A <see cref="T:System.String" /> containing a fully qualified type name.
-        /// </returns>
+        /// <returns>A <see cref="T:System.String"/> containing a fully qualified type name.</returns>
         public override String ToString() => $"{this.Value} eV";
 
-	    public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
+        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
     }
 }

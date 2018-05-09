@@ -42,9 +42,9 @@ namespace Librainian.Measurement.Currency.BTC {
     /// Email me!
     /// </summary>
     [JsonObject]
-#pragma warning disable IDE0009 // Member access should be qualified.
+
     [DebuggerDisplay( "{" + nameof( Formatted ) + ",nq}" )]
-#pragma warning restore IDE0009 // Member access should be qualified.
+
     public class CoinWallet : ABetterClassDispose, IEnumerable<KeyValuePair<ICoin, UInt64>>, ICoinWallet {
 
         /// <summary>

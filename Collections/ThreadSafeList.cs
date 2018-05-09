@@ -31,9 +31,7 @@ namespace Librainian.Collections {
     /// <value>Version 1.7</value>
     /// <remarks>TODO replace locks with AsyncLocks</remarks>
     [JsonObject]
-#pragma warning disable IDE0009 // Member access should be qualified.
     [DebuggerDisplay( value: "Count={" + nameof( Count ) + "}" )]
-#pragma warning restore IDE0009 // Member access should be qualified.
     public sealed class ThreadSafeList<T> : IList<T> {
 
         /// <summary>
@@ -44,14 +42,6 @@ namespace Librainian.Collections {
 
         public ThreadSafeList( IEnumerable<T> items = null ) => this.AddRange( collection: items );
 
-        public Int64 LongCount {
-            get {
-                lock ( this._items ) {
-                    return this._items.LongCount();
-                }
-            }
-        }
-
         public Int32 Count {
             get {
                 lock ( this._items ) {
@@ -61,6 +51,14 @@ namespace Librainian.Collections {
         }
 
         public Boolean IsReadOnly => false;
+
+        public Int64 LongCount {
+            get {
+                lock ( this._items ) {
+                    return this._items.LongCount();
+                }
+            }
+        }
 
         public T this[Int32 index] {
             get {
@@ -82,9 +80,36 @@ namespace Librainian.Collections {
             }
         }
 
+        public Task AddAsync( T item ) => Task.Run( () => { this.TryAdd( item: item ); } );
+
+        /// <summary>
+        /// Add in an enumerable of items.
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="asParallel"></param>
+        public void AddRange( IEnumerable<T> collection, Boolean asParallel = true ) {
+            if ( null == collection ) {
+                return;
+            }
+
+            lock ( this._items ) {
+                this._items.AddRange( collection: asParallel ? collection.AsParallel() : collection );
+            }
+        }
+
         public void Clear() {
             lock ( this._items ) {
                 this._items.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Returns a new copy of all items in the <see cref="List{T}"/>.
+        /// </summary>
+        /// <returns></returns>
+        public List<T> Clone( Boolean asParallel = false /*is order guaranteed if true? Based upon ParallelEnumerableWrapper it seems it would be.*/ ) {
+            lock ( this._items ) {
+                return asParallel ? new List<T>( collection: this._items.AsParallel() ) : new List<T>( collection: this._items );
             }
         }
 
@@ -100,9 +125,104 @@ namespace Librainian.Collections {
             }
         }
 
-        public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
+        /// <summary>
+        /// Perform the <paramref name="action"/> on each item in the list.
+        /// </summary>
+        /// <param name="action">               <paramref name="action"/> to perform on each item.</param>
+        /// <param name="performActionOnClones">If true, the <paramref name="action"/> will be performed on a <see cref="Clone"/> of the items.</param>
+        /// <param name="asParallel">           Use the <see cref="ParallelQuery{TSource}"/> method.</param>
+        /// <param name="inParallel">           Use the <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})"/> method.</param>
+        public void ForAll( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
+            if ( action is null ) {
+                throw new ArgumentNullException( paramName: nameof( action ) );
+            }
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+            var wrapper = new Action<T>( obj => {
+                try {
+                    action( obj );
+                }
+                catch ( ArgumentNullException ) {
+
+                    //if a null gets into the list then swallow an ArgumentNullException so we can continue adding
+                }
+            } );
+            if ( performActionOnClones ) {
+                var clones = this.Clone( asParallel: asParallel );
+                if ( asParallel ) {
+                    clones.AsParallel().ForAll( wrapper );
+                }
+                else if ( inParallel ) {
+                    Parallel.ForEach( source: clones, body: wrapper );
+                }
+                else {
+                    clones.ForEach( wrapper );
+                }
+            }
+            else {
+                lock ( this._items ) {
+                    if ( asParallel ) {
+                        this._items.AsParallel().ForAll( wrapper );
+                    }
+                    else if ( inParallel ) {
+                        Parallel.ForEach( source: this._items, body: wrapper );
+                    }
+                    else {
+                        this._items.ForEach( wrapper );
+                    }
+                }
+            }
+        }
+
+        //}
+        /// <summary>
+        /// Perform the <paramref name="action"/> on each item in the list.
+        /// </summary>
+        /// <param name="action">               <paramref name="action"/> to perform on each item.</param>
+        /// <param name="performActionOnClones">If true, the <paramref name="action"/> will be performed on a <see cref="Clone"/> of the items.</param>
+        /// <param name="asParallel">           Use the <see cref="ParallelQuery{TSource}"/> method.</param>
+        /// <param name="inParallel">           Use the <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})"/> method.</param>
+        public void ForEach( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
+            if ( action is null ) {
+                throw new ArgumentNullException( paramName: nameof( action ) );
+            }
+
+            var wrapper = new Action<T>( obj => {
+                try {
+                    action( obj );
+                }
+                catch ( ArgumentNullException ) {
+
+                    //if a null gets into the list then swallow an ArgumentNullException so we can continue adding
+                }
+            } );
+            if ( performActionOnClones ) {
+                var clones = this.Clone( asParallel: asParallel );
+                if ( asParallel ) {
+                    clones.AsParallel().ForAll( wrapper );
+                }
+                else if ( inParallel ) {
+                    Parallel.ForEach( source: clones, body: wrapper );
+                }
+                else {
+                    clones.ForEach( wrapper );
+                }
+            }
+            else {
+                lock ( this._items ) {
+                    if ( asParallel ) {
+                        this._items.AsParallel().ForAll( wrapper );
+                    }
+                    else if ( inParallel ) {
+                        Parallel.ForEach( source: this._items, body: wrapper );
+                    }
+                    else {
+                        this._items.ForEach( wrapper );
+                    }
+                }
+            }
+        }
+
+        public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
 
         public Int32 IndexOf( T item ) {
             lock ( this._items ) {
@@ -125,136 +245,6 @@ namespace Librainian.Collections {
         public void RemoveAt( Int32 index ) {
             lock ( this._items ) {
                 this._items.RemoveAt( index: index );
-            }
-        }
-
-        public Task AddAsync( T item ) => Task.Run( action: () => { this.TryAdd( item: item ); } );
-
-        /// <summary>
-        /// Add in an enumerable of items.
-        /// </summary>
-        /// <param name="collection"></param>
-        /// <param name="asParallel"></param>
-        public void AddRange( IEnumerable<T> collection, Boolean asParallel = true ) {
-            if ( null == collection ) {
-                return;
-            }
-
-            lock ( this._items ) {
-                this._items.AddRange( collection: asParallel ? collection.AsParallel() : collection );
-            }
-        }
-
-        /// <summary>
-        /// Returns a new copy of all items in the <see cref="List{T}"/>.
-        /// </summary>
-        /// <returns></returns>
-        public List<T> Clone( Boolean asParallel = false /*is order guaranteed if true? Based upon ParallelEnumerableWrapper it seems it would be.*/ ) {
-            lock ( this._items ) {
-                return asParallel ? new List<T>( collection: this._items.AsParallel() ) : new List<T>( collection: this._items );
-            }
-        }
-
-        /// <summary>
-        /// Perform the <paramref name="action"/> on each item in the list.
-        /// </summary>
-        /// <param name="action">               <paramref name="action"/> to perform on each item.</param>
-        /// <param name="performActionOnClones">If true, the <paramref name="action"/> will be performed on a <see cref="Clone"/> of the items.</param>
-        /// <param name="asParallel">           Use the <see cref="ParallelQuery{TSource}"/> method.</param>
-        /// <param name="inParallel">           Use the <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})"/> method.</param>
-        public void ForAll( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
-            if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
-            }
-
-            var wrapper = new Action<T>( target: obj => {
-                try {
-                    action( obj );
-                }
-                catch ( ArgumentNullException ) {
-
-                    //if a null gets into the list then swallow an ArgumentNullException so we can continue adding
-                }
-            } );
-            if ( performActionOnClones ) {
-                var clones = this.Clone( asParallel: asParallel );
-                if ( asParallel ) {
-                    clones.AsParallel().ForAll( action: wrapper );
-                }
-                else if ( inParallel ) {
-                    Parallel.ForEach( source: clones, body: wrapper );
-                }
-                else {
-                    clones.ForEach( action: wrapper );
-                }
-            }
-            else {
-                lock ( this._items ) {
-                    if ( asParallel ) {
-                        this._items.AsParallel().ForAll( action: wrapper );
-                    }
-                    else if ( inParallel ) {
-                        Parallel.ForEach( source: this._items, body: wrapper );
-                    }
-                    else {
-                        this._items.ForEach( action: wrapper );
-                    }
-                }
-            }
-        }
-
-        //    return Task.Factory.StartNew( async () => {
-        //        collection.AsParallel()
-        //                  .ForAll( item => produce.SendAsync( item ) );
-        //        produce.Complete();
-        //        await consume.Completion;
-        //    } );
-        //}
-        /// <summary>
-        /// Perform the <paramref name="action"/> on each item in the list.
-        /// </summary>
-        /// <param name="action">               <paramref name="action"/> to perform on each item.</param>
-        /// <param name="performActionOnClones">If true, the <paramref name="action"/> will be performed on a <see cref="Clone"/> of the items.</param>
-        /// <param name="asParallel">           Use the <see cref="ParallelQuery{TSource}"/> method.</param>
-        /// <param name="inParallel">           Use the <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})"/> method.</param>
-        public void ForEach( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
-            if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
-            }
-
-            var wrapper = new Action<T>( target: obj => {
-                try {
-                    action( obj );
-                }
-                catch ( ArgumentNullException ) {
-
-                    //if a null gets into the list then swallow an ArgumentNullException so we can continue adding
-                }
-            } );
-            if ( performActionOnClones ) {
-                var clones = this.Clone( asParallel: asParallel );
-                if ( asParallel ) {
-                    clones.AsParallel().ForAll( action: wrapper );
-                }
-                else if ( inParallel ) {
-                    Parallel.ForEach( source: clones, body: wrapper );
-                }
-                else {
-                    clones.ForEach( action: wrapper );
-                }
-            }
-            else {
-                lock ( this._items ) {
-                    if ( asParallel ) {
-                        this._items.AsParallel().ForAll( action: wrapper );
-                    }
-                    else if ( inParallel ) {
-                        Parallel.ForEach( source: this._items, body: wrapper );
-                    }
-                    else {
-                        this._items.ForEach( action: wrapper );
-                    }
-                }
             }
         }
 
@@ -310,5 +300,7 @@ namespace Librainian.Collections {
             rest = default;
             return false;
         }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

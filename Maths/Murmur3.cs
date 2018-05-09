@@ -36,10 +36,10 @@ namespace Librainian.Maths {
 
         private UInt64 length;
 
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        
         public Murmur3( UInt32 seed ) => this._seed = seed;
 
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        
         public Byte[] GetHash() {
             this.h1 ^= this.length;
             this.h2 ^= this.length;
@@ -61,7 +61,7 @@ namespace Librainian.Maths {
             return hash;
         }
 
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        
         private void MixBody( UInt64 k1, UInt64 k2 ) {
             this.h1 ^= MixKey1( k1: k1 );
 
@@ -76,7 +76,7 @@ namespace Librainian.Maths {
             this.h2 = this.h2 * 5 + 0x38495ab5;
         }
 
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        
         private static UInt64 MixKey1( UInt64 k1 ) {
             k1 *= C1;
             k1 = k1.RotateLeft( bits: 31 );
@@ -84,7 +84,7 @@ namespace Librainian.Maths {
             return k1;
         }
 
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        
         private static UInt64 MixKey2( UInt64 k2 ) {
             k2 *= C2;
             k2 = k2.RotateLeft( bits: 33 );
@@ -92,7 +92,7 @@ namespace Librainian.Maths {
             return k2;
         }
 
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        
         private static UInt64 MixFinal( UInt64 k ) {
             // avalanche bits
 
@@ -104,13 +104,13 @@ namespace Librainian.Maths {
             return k;
         }
 
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        
         public Byte[] ComputeHash( Byte[] bb ) {
             this.ProcessBytes( bb: bb );
             return this.GetHash();
         }
 
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        
         private void ProcessBytes( Byte[] bb ) {
             this.h1 = this._seed;
             this.length = 0L;
@@ -138,7 +138,7 @@ namespace Librainian.Maths {
             }
         }
 
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        
         private void ProcessBytesRemaining( Byte[] bb, UInt64 remaining, Int32 pos ) {
             UInt64 k1 = 0;
             UInt64 k2 = 0;

@@ -59,7 +59,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="action">  todo: describe action parameter on DoDrain</param>
         /// <param name="criteria">todo: describe criteria parameter on DoDrain</param>
-        protected internal virtual Int32 DoDrain( Action<T> action, Predicate<T> criteria ) => this.DoDrain( action: action, maxElements: Int32.MaxValue, criteria: criteria );
+        protected internal virtual Int32 DoDrain( Action<T> action, Predicate<T> criteria ) => this.DoDrain( action, maxElements: Int32.MaxValue, criteria: criteria );
 
         /// <summary>
         /// Does the real work for all drain methods. Caller must guarantee the <paramref name="action"/> is not <c>null</c> and <paramref name="maxElements"/> is greater then zero (0).
@@ -94,7 +94,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <remarks>
         /// This operation may be more efficient than repeatedly polling this queue. A failure encountered while attempting to invoke the <paramref name="action"/> on the elements may result in elements being neither,
-        /// either or both in the queue or processed when the associated exception is thrown. <example> Drain to a non-generic list.
+        /// either or both in the queue or processed when the associated exception is thrown. <example>Drain to a non-generic list.
         /// <code language="c#">
         /// IList c = ...;
         /// int count = Drain(delegate(T e) {c.Add(e);});
@@ -106,14 +106,14 @@ namespace Librainian.Collections {
         /// <exception cref="System.InvalidOperationException">If the queue cannot be drained at this time.</exception>
         /// <exception cref="System.ArgumentNullException">If the specified action is <see langword="null"/>.</exception>
         /// <seealso cref="IQueue{T}.Drain(Action{T}, Int32)"/>
-        public virtual Int32 Drain( Action<T> action ) => this.Drain( action: action, criteria: null );
+        public virtual Int32 Drain( Action<T> action ) => this.Drain( action, criteria: null );
 
         /// <summary>
         /// Removes all elements that pass the given <paramref name="criteria"/> from this queue and invoke the given <paramref name="action"/> on each element in order.
         /// </summary>
         /// <remarks>
         /// This operation may be more efficient than repeatedly polling this queue. A failure encountered while attempting to invoke the <paramref name="action"/> on the elements may result in elements being neither,
-        /// either or both in the queue or processed when the associated exception is thrown. <example> Drain to a non-generic list.
+        /// either or both in the queue or processed when the associated exception is thrown. <example>Drain to a non-generic list.
         /// <code language="c#">
         /// IList c = ...;
         /// int count = Drain(delegate(T e) {c.Add(e);});
@@ -131,7 +131,7 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( paramName: nameof( action ) );
             }
 
-            return this.DoDrain( action: action, criteria: criteria );
+            return this.DoDrain( action, criteria: criteria );
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Librainian.Collections {
         /// <exception cref="System.InvalidOperationException">If the queue cannot be drained at this time.</exception>
         /// <exception cref="System.ArgumentNullException">If the specified action is <see langword="null"/>.</exception>
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})"/>
-        public virtual Int32 Drain( Action<T> action, Int32 maxElements ) => this.Drain( action: action, maxElements: maxElements, criteria: null );
+        public virtual Int32 Drain( Action<T> action, Int32 maxElements ) => this.Drain( action, maxElements: maxElements, criteria: null );
 
         /// <summary>
         /// Removes at most the given number of elements that pass the given <paramref name="criteria"/> from this queue and invoke the given <paramref name="action"/> on each element in order.
@@ -168,7 +168,7 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( paramName: nameof( action ) );
             }
 
-            return maxElements > 0 ? this.DoDrain( action: action, maxElements: maxElements, criteria: criteria ) : 0;
+            return maxElements > 0 ? this.DoDrain( action, maxElements: maxElements, criteria: criteria ) : 0;
         }
 
         /// <summary>

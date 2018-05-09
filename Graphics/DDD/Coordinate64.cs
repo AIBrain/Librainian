@@ -72,7 +72,7 @@ namespace Librainian.Graphics.DDD {
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="z"></param>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public Coordinate64( Int64 x, Int64 y, Int64 z ) {
             this.X = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, x ) );
             this.Y = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, y ) );
@@ -106,7 +106,7 @@ namespace Librainian.Graphics.DDD {
         }
 
         /// <summary>Calculates the distance between two <see cref="Coordinate64" />.</summary>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public static Int64 Distance( Coordinate64 lhs, Coordinate64 rhs ) {
             var num1 = lhs.X - rhs.X;
             var num2 = lhs.Y - rhs.Y;
@@ -118,7 +118,7 @@ namespace Librainian.Graphics.DDD {
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
         /// <returns></returns>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public static Boolean Equals( Coordinate64 lhs, Coordinate64 rhs ) {
             if ( ReferenceEquals( lhs, rhs ) ) {
                 return true;
@@ -132,17 +132,17 @@ namespace Librainian.Graphics.DDD {
             return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public static explicit operator Point( Coordinate64 coordinate ) => new Point( x: ( Int32 )coordinate.X, y: ( Int32 )coordinate.Y );
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public static explicit operator PointF( Coordinate64 coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
         /// <summary>
         ///     Allow an explicit conversion from <see cref="Coordinate64" /> to a <see cref="Vector3" />.
         /// </summary>
         /// <param name="bob"></param>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public static explicit operator Vector3( Coordinate64 bob ) => new Vector3( bob.X, bob.Y, bob.Z );
 
         /// <summary>
@@ -152,41 +152,41 @@ namespace Librainian.Graphics.DDD {
         ///         original Coordinate64.
         ///     </para>
         /// </summary>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public static Coordinate64 Normalize( Coordinate64 coordinate ) {
             var num = 1.0D / coordinate.Length;
             return new Coordinate64( ( Int64 )( coordinate.X * num ), ( Int64 )( coordinate.Y * num ), ( Int64 )( coordinate.Z * num ) );
         }
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public static Coordinate64 operator -( Coordinate64 v1, Coordinate64 v2 ) => new Coordinate64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public static Boolean operator !=( Coordinate64 lhs, Coordinate64 rhs ) => !Equals( lhs: lhs, rhs: rhs );
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public static Boolean operator ==( Coordinate64 lhs, Coordinate64 rhs ) => Equals( lhs: lhs, rhs: rhs );
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public static Coordinate64 Random() => new Coordinate64( x: Randem.NextInt64(), y: Randem.NextInt64(), z: Randem.NextInt64() );
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         [Pure]
         public Int32 CompareTo( Coordinate64 other ) => this.Length.CompareTo( other.Length );
 
         /// <summary>
         ///     Calculates the distance between this <see cref="Coordinate64" /> and another <see cref="Coordinate64" />.
         /// </summary>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public Int64 Distance( Coordinate64 to ) => Distance( this, to );
 
         /// <summary>Calls the static comparison.</summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public Boolean Equals( Coordinate64 other ) => Equals( this, other );
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
                 return false;
@@ -197,7 +197,7 @@ namespace Librainian.Graphics.DDD {
         /// <summary>precomputed hash of <see cref="X" />, <see cref="Y" />, and <see cref="Z" />.</summary>
         public override Int32 GetHashCode() => this._hashCode;
 
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         public override String ToString() => $"{this.X}, {this.Y}, {this.Z}";
     }
 }

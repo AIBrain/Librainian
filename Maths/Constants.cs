@@ -2,21 +2,19 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/MathConstants.cs" was last cleaned by Protiguous on 2016/07/11 at 6:17 AM
+// "Librainian/Constants.cs" was last cleaned by Protiguous on 2016/07/11 at 6:17 AM
 
 namespace Librainian.Maths {
 
@@ -24,13 +22,15 @@ namespace Librainian.Maths {
     using System.Numerics;
     using Numerics;
 
-    public static class MathConstants {
+    public static class Constants {
 
-		/// <summary>
-		///     <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="Decimal" />.</para>
-		/// </summary>
-		public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
+        /// <summary>
+        /// <para>Return the smallest possible value above <see cref="Decimal.Zero"/> for a <see cref="Decimal"/>.</para>
+        /// </summary>
+        public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
 
+        public const Single NegativeOne = -1.0f;
+        public const Single NegativeOneHalf = -0.5f;
         public const Boolean No = false;
 
         public const String NumberBaseChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -39,19 +39,7 @@ namespace Librainian.Maths {
 
         public const Boolean On = !Off;
 
-        public const UInt64 OneGigaByte = OneMegaByte * OneKiloByte;
-
-        public const UInt64 OneKiloByte = 1024;
-
-        public const UInt64 OneMegaByte = OneKiloByte * OneKiloByte;
-
-        public const UInt64 OneTeraByte = OneGigaByte * OneKiloByte;
-
         public const Boolean Yes = !No;
-
-	    public const Single NegativeOne = -1.0f;
-
-	    public const Single NegativeOneHalf = -0.5f;
 
         public static readonly BigRational DecimalMaxValueAsBigRational = Decimal.MaxValue;
 
@@ -59,15 +47,24 @@ namespace Librainian.Maths {
 
         public static readonly BigRational MinusOneOverTwo = new BigRational( -1, 2 );
 
-        public static readonly BigInteger OneMegaByteBi = new BigInteger( OneMegaByte );
-
         public static readonly BigRational OneOverTwo = new BigRational( 1, 2 );
 
         public static readonly BigRational ThreeOverTwo = new BigRational( 3, 2 );
 
         /// <summary>
-        ///     Precalculated -3/2.
+        /// Precalculated -3/2.
         /// </summary>
         public static BigRational NegativeThreeOverTwo { get; } = new BigRational( -3, 2 );
+
+        public static class Sizes {
+            public const UInt64 OneGigaByte = OneMegaByte * OneKiloByte;
+
+            public const UInt64 OneKiloByte = 1024;
+
+            public const UInt64 OneMegaByte = OneKiloByte * OneKiloByte;
+
+            public const UInt64 OneTeraByte = OneGigaByte * OneKiloByte;
+            public static readonly BigInteger OneMegaByteBi = new BigInteger( OneMegaByte );
+        }
     }
 }

@@ -139,7 +139,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="objects"></param>
         /// <returns></returns>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         [Pure]
         public static Int32 GetHashCodes<T>( params T[] objects ) {
             unchecked {
@@ -163,7 +163,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="objects"></param>
         /// <returns></returns>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        
         [Pure]
         public static Int32 GetHashCodes( params Object[] objects ) {
             unchecked {

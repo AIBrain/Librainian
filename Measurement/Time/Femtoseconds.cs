@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -32,96 +30,96 @@ namespace Librainian.Measurement.Time {
 
     /// <summary>
     /// </summary>
-    /// <seealso cref="http://wikipedia.org/wiki/Femtosecond" />
+    /// <seealso cref="http://wikipedia.org/wiki/Femtosecond"/>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
     public struct Femtoseconds : IComparable<Femtoseconds>, IQuantityOfTime {
 
         /// <summary>
-        ///     1000
+        /// 1000
         /// </summary>
         public const UInt16 InOnePicosecond = 1000;
 
         /// <summary>
-        ///     Ten <see cref="Femtoseconds" /> s.
+        /// Ten <see cref="Femtoseconds"/> s.
         /// </summary>
         public static readonly Femtoseconds Fifteen = new Femtoseconds( value: 15 );
 
         /// <summary>
-        ///     Five <see cref="Femtoseconds" /> s.
+        /// Five <see cref="Femtoseconds"/> s.
         /// </summary>
         public static readonly Femtoseconds Five = new Femtoseconds( value: 5 );
 
         /// <summary>
-        ///     Five Hundred <see cref="Femtoseconds" /> s.
+        /// Five Hundred <see cref="Femtoseconds"/> s.
         /// </summary>
         public static readonly Femtoseconds FiveHundred = new Femtoseconds( value: 500 );
 
         /// <summary>
-        ///     One <see cref="Femtoseconds" />.
+        /// One <see cref="Femtoseconds"/>.
         /// </summary>
         public static readonly Femtoseconds One = new Femtoseconds( value: 1 );
 
         /// <summary>
-        ///     One Thousand Nine <see cref="Femtoseconds" /> (Prime).
+        /// One Thousand Nine <see cref="Femtoseconds"/> (Prime).
         /// </summary>
         public static readonly Femtoseconds OneThousandNine = new Femtoseconds( value: 1009 );
 
         /// <summary>
-        ///     Sixteen <see cref="Femtoseconds" />.
+        /// Sixteen <see cref="Femtoseconds"/>.
         /// </summary>
         public static readonly Femtoseconds Sixteen = new Femtoseconds( value: 16 );
 
         /// <summary>
-        ///     Ten <see cref="Femtoseconds" /> s.
+        /// Ten <see cref="Femtoseconds"/> s.
         /// </summary>
         public static readonly Femtoseconds Ten = new Femtoseconds( value: 10 );
 
         /// <summary>
-        ///     Three <see cref="Femtoseconds" /> s.
+        /// Three <see cref="Femtoseconds"/> s.
         /// </summary>
         public static readonly Femtoseconds Three = new Femtoseconds( value: 3 );
 
         /// <summary>
-        ///     Three Three Three <see cref="Femtoseconds" />.
+        /// Three Three Three <see cref="Femtoseconds"/>.
         /// </summary>
         public static readonly Femtoseconds ThreeHundredThirtyThree = new Femtoseconds( value: 333 );
 
         /// <summary>
-        ///     Two <see cref="Femtoseconds" /> s.
+        /// Two <see cref="Femtoseconds"/> s.
         /// </summary>
         public static readonly Femtoseconds Two = new Femtoseconds( value: 2 );
 
         /// <summary>
-        ///     Two Hundred <see cref="Femtoseconds" />.
+        /// Two Hundred <see cref="Femtoseconds"/>.
         /// </summary>
         public static readonly Femtoseconds TwoHundred = new Femtoseconds( value: 200 );
 
         /// <summary>
-        ///     Two Hundred Eleven <see cref="Femtoseconds" /> (Prime).
+        /// Two Hundred Eleven <see cref="Femtoseconds"/> (Prime).
         /// </summary>
         public static readonly Femtoseconds TwoHundredEleven = new Femtoseconds( value: 211 );
 
         /// <summary>
-        ///     Two Thousand Three <see cref="Femtoseconds" /> (Prime).
+        /// Two Thousand Three <see cref="Femtoseconds"/> (Prime).
         /// </summary>
         public static readonly Femtoseconds TwoThousandThree = new Femtoseconds( value: 2003 );
 
         /// <summary>
-        ///     Zero <see cref="Femtoseconds" />.
+        /// Zero <see cref="Femtoseconds"/>.
         /// </summary>
         public static readonly Femtoseconds Zero = new Femtoseconds( value: 0 );
 
         public Femtoseconds( Decimal value ) => this.Value = value;
 
-	    public Femtoseconds( BigRational value ) => this.Value = value;
+        public Femtoseconds( BigRational value ) => this.Value = value;
 
-	    public Femtoseconds( Int64 value ) => this.Value = value;
+        public Femtoseconds( Int64 value ) => this.Value = value;
 
-	    public Femtoseconds( BigInteger value ) => this.Value = value;
+        public Femtoseconds( BigInteger value ) => this.Value = value;
 
-	    [JsonProperty]
+        [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -131,9 +129,9 @@ namespace Librainian.Measurement.Time {
         public static Femtoseconds Combine( Femtoseconds left, BigRational femtoseconds ) => new Femtoseconds( left.Value + femtoseconds );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Femtoseconds left, Femtoseconds right ) => left.Value == right.Value;
@@ -176,13 +174,13 @@ namespace Librainian.Measurement.Time {
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         /// <summary>
-        ///     Convert to a smaller unit.
+        /// Convert to a smaller unit.
         /// </summary>
         /// <returns></returns>
         public Attoseconds ToAttoseconds() => new Attoseconds( this.Value * Attoseconds.InOneFemtosecond );
 
         /// <summary>
-        ///     Convert to a larger unit.
+        /// Convert to a larger unit.
         /// </summary>
         /// <returns></returns>
         [Pure]
@@ -193,7 +191,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+            if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
                 return $"{whole} {whole.PluralOf( "fs" )}";
             }

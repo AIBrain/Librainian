@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -37,16 +35,24 @@ namespace Librainian.OperatingSystem {
     using NUnit.Framework;
 
     public static class Computer {
-
         private static List<PerformanceCounter> _utilizationCounters;
 
-		static Computer() => InitCounters();
+        static Computer() => InitCounters();
 
-		/// <summary>
-		/// </summary>
-		/// <remarks>http: //msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx</remarks>
-		/// <returns></returns>
-		public static String RAM {
+        private static ManagementObjectSearcher PerfFormattedDataManagementObjectSearcher { get; } = new ManagementObjectSearcher( "select * from Win32_PerfFormattedData_PerfOS_Processor" );
+
+        /// <summary>
+        /// Provides properties for getting information about the computer's memory, loaded assemblies, name, and operating system.
+        /// </summary>
+        // BUG how slow is this class?
+        [NotNull]
+        public static ComputerInfo Info => new ComputerInfo();
+
+        /// <summary>
+        /// </summary>
+        /// <remarks>http: //msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx</remarks>
+        /// <returns></returns>
+        public static String RAM {
             get {
                 try {
                     using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_PhysicalMemory" ) ) {
@@ -54,9 +60,9 @@ namespace Librainian.OperatingSystem {
 
                         var sb = new StringBuilder();
                         foreach ( var result in searcher.Get() ) {
-                            var mem = ( UInt64 )result[ "Capacity" ];
+                            var mem = ( UInt64 )result["Capacity"];
                             total += mem;
-                            sb.Append( $"{result[ "DeviceLocator" ]}:{mem / 1024 / 1024}MB, " );
+                            sb.Append( $"{result["DeviceLocator"]}:{mem / 1024 / 1024}MB, " );
                         }
 
                         sb.Append( $" Total: {total / 1024 / 1024:0,000}MB" );
@@ -71,7 +77,7 @@ namespace Librainian.OperatingSystem {
 
         /// <summary>
         /// </summary>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx" />
+        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx"/>
         public static UInt64 TotalPhysicalMemory {
             get {
                 try {
@@ -84,21 +90,22 @@ namespace Librainian.OperatingSystem {
             }
         }
 
-        /// <summary>
-        ///     Provides properties for getting information about the computer's memory, loaded
-        ///     assemblies, name, and operating system.
-        /// </summary>
-        // BUG how slow is this class?
-        [NotNull]
-        public static ComputerInfo Info => new ComputerInfo();
+        private static Int32 GetFreeProcessors() => _utilizationCounters.Count( pc => pc.NextValue() <= 0.50f );
 
-        private static ManagementObjectSearcher PerfFormattedDataManagementObjectSearcher { get; } = new ManagementObjectSearcher( "select * from Win32_PerfFormattedData_PerfOS_Processor" );
+        private static void InitCounters() {
 
-		public static void AbortShutdown() => Process.Start( "shutdown", "/a" );
+            // Initialize the list to a counter-per-processor:
+            _utilizationCounters = new List<PerformanceCounter>();
+            for ( var i = 0; i < Environment.ProcessorCount; i++ ) {
+                _utilizationCounters.Add( new PerformanceCounter( "Processor", "% Processor Time", i.ToString() ) );
+            }
+        }
 
-		public static Boolean CanAllocateMemory( this BigInteger bytes ) {
+        public static void AbortShutdown() => Process.Start( "shutdown", "/a" );
+
+        public static Boolean CanAllocateMemory( this BigInteger bytes ) {
             try {
-                var megabytes = bytes / MathConstants.OneMegaByteBi;
+                var megabytes = bytes / Constants.Sizes.OneMegaByteBi;
 
                 if ( megabytes <= BigInteger.Zero ) {
                     return true;
@@ -139,8 +146,7 @@ namespace Librainian.OperatingSystem {
         public static Boolean CanAllocateMemory( this Byte bytes ) => ( ( BigInteger )bytes ).CanAllocateMemory();
 
         /// <summary>
-        ///     //TODO description. Bytes? Which one does .NET allocate objects in..? Sum, or smaller of
-        ///     the two? Is this real time? How fast/slow is this method?
+        /// //TODO description. Bytes? Which one does .NET allocate objects in..? Sum, or smaller of the two? Is this real time? How fast/slow is this method?
         /// </summary>
         /// <returns></returns>
         public static BigInteger GetAvailableMemeory() {
@@ -157,7 +163,7 @@ namespace Librainian.OperatingSystem {
         public static UInt64 GetAvailableVirtualMemory() {
             try {
                 using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_LogicalMemoryConfiguration" ) ) {
-                    var total = searcher.Get().Cast<ManagementBaseObject>().Select( baseObject => ( UInt64 )baseObject[ "AvailableVirtualMemory" ] ).Aggregate( 0UL, ( current, mem ) => current + mem );
+                    var total = searcher.Get().Cast<ManagementBaseObject>().Select( baseObject => ( UInt64 )baseObject["AvailableVirtualMemory"] ).Aggregate( 0UL, ( current, mem ) => current + mem );
                     return total;
                 }
             }
@@ -168,7 +174,7 @@ namespace Librainian.OperatingSystem {
         }
 
         /// <summary>
-        ///     Use WMI (System.Managment) to get the CPU type
+        /// Use WMI (System.Managment) to get the CPU type
         /// </summary>
         /// <remarks>http: //msdn2.microsoft.com/en-us/Library/aa394373(VS.85).aspx</remarks>
         /// <returns></returns>
@@ -177,7 +183,7 @@ namespace Librainian.OperatingSystem {
                 using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_Processor" ) ) {
                     var sb = new StringBuilder();
                     foreach ( var result in searcher.Get() ) {
-                        sb.Append( $"{result[ "Name" ]} with {result[ "NumberOfCores" ]} cores" );
+                        sb.Append( $"{result["Name"]} with {result["NumberOfCores"]} cores" );
                     }
 
                     return sb.ToString();
@@ -189,14 +195,14 @@ namespace Librainian.OperatingSystem {
         }
 
         /// <summary>
-        ///     Get the average percent of all cpu cores being used.
+        /// Get the average percent of all cpu cores being used.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
         public static Single GetCPUUsage() {
             var cpuTimes = PerfFormattedDataManagementObjectSearcher.Get().Cast<ManagementObject>().Select( managementObject => new {
-                Name = managementObject[ "Name" ],
-                Usage = Convert.ToSingle( managementObject[ "PercentProcessorTime" ] ) / 100.0f
+                Name = managementObject["Name"],
+                Usage = Convert.ToSingle( managementObject["PercentProcessorTime"] ) / 100.0f
             } ); //.ToList();
 
             //The '_Total' value represents the average usage across all cores, and is the best representation of overall CPU usage
@@ -210,34 +216,23 @@ namespace Librainian.OperatingSystem {
 
         public static IEnumerable<String> GetWorkingMacAddresses() => from nic in NetworkInterface.GetAllNetworkInterfaces() where nic.OperationalStatus == OperationalStatus.Up select nic.GetPhysicalAddress().ToString();
 
-		public static void Hibernate( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/h" : $"/h /t {( Int32 )delay.Value.TotalSeconds}" );
+        public static void Hibernate( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/h" : $"/h /t {( Int32 )delay.Value.TotalSeconds}" );
 
-		public static void Logoff( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/l" : $"/l /t {( Int32 )delay.Value.TotalSeconds}" );
+        public static void Logoff( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/l" : $"/l /t {( Int32 )delay.Value.TotalSeconds}" );
 
-		/// <summary>
-		///     Send a reboot request.
-		/// </summary>
-		public static void Restart( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/r" : $"/r /t {( Int32 )delay.Value.TotalSeconds}" );
+        /// <summary>
+        /// Send a reboot request.
+        /// </summary>
+        public static void Restart( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/r" : $"/r /t {( Int32 )delay.Value.TotalSeconds}" );
 
-		public static void RestartFast( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/hybrid /s" : $"/hybrid /s /t {( Int32 )delay.Value.TotalSeconds}" );
+        public static void RestartFast( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/hybrid /s" : $"/hybrid /s /t {( Int32 )delay.Value.TotalSeconds}" );
 
-		public static void Shutdown( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/s" : $"/s /t {( Int32 )delay.Value.TotalSeconds}" );
+        public static void Shutdown( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/s" : $"/s /t {( Int32 )delay.Value.TotalSeconds}" );
 
-		/// <summary>
-		///     Turn off the local computer with no time-out or warning.
-		/// </summary>
-		public static void ShutdownNow() => Process.Start( "shutdown", "/p" );
-
-		private static Int32 GetFreeProcessors() => _utilizationCounters.Count( pc => pc.NextValue() <= 0.50f );
-
-        private static void InitCounters() {
-
-            // Initialize the list to a counter-per-processor:
-            _utilizationCounters = new List<PerformanceCounter>();
-            for ( var i = 0; i < Environment.ProcessorCount; i++ ) {
-                _utilizationCounters.Add( new PerformanceCounter( "Processor", "% Processor Time", i.ToString() ) );
-            }
-        }
+        /// <summary>
+        /// Turn off the local computer with no time-out or warning.
+        /// </summary>
+        public static void ShutdownNow() => Process.Start( "shutdown", "/p" );
 
         public static class Beep {
 
@@ -246,7 +241,6 @@ namespace Librainian.OperatingSystem {
             public static void High() => At( 14917, TimeExtensions.GetAverageDateTimePrecision() );
 
             public static void Low() => At( 440, TimeExtensions.GetAverageDateTimePrecision() );
-
         }
 
         public static class SATScores {
@@ -256,10 +250,10 @@ namespace Librainian.OperatingSystem {
             public static Single? CPU() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Single.TryParse( queryObj[ "CPUScore" ].ToString(), out var result ) ) {
-							return result;
-						}
-					}
+                        if ( Single.TryParse( queryObj["CPUScore"].ToString(), out var result ) ) {
+                            return result;
+                        }
+                    }
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -270,10 +264,10 @@ namespace Librainian.OperatingSystem {
             public static Single? D3D() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Single.TryParse( queryObj[ "D3DScore" ].ToString(), out var result ) ) {
-							return result;
-						}
-					}
+                        if ( Single.TryParse( queryObj["D3DScore"].ToString(), out var result ) ) {
+                            return result;
+                        }
+                    }
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -284,10 +278,10 @@ namespace Librainian.OperatingSystem {
             public static Single? Disk() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Single.TryParse( queryObj[ "DiskScore" ].ToString(), out var result ) ) {
-							return result;
-						}
-					}
+                        if ( Single.TryParse( queryObj["DiskScore"].ToString(), out var result ) ) {
+                            return result;
+                        }
+                    }
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -298,10 +292,10 @@ namespace Librainian.OperatingSystem {
             public static Single? Graphics() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Single.TryParse( queryObj[ "GraphicsScore" ].ToString(), out var result ) ) {
-							return result;
-						}
-					}
+                        if ( Single.TryParse( queryObj["GraphicsScore"].ToString(), out var result ) ) {
+                            return result;
+                        }
+                    }
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -312,10 +306,10 @@ namespace Librainian.OperatingSystem {
             public static Single? Memory() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Single.TryParse( queryObj[ "MemoryScore" ].ToString(), out var result ) ) {
-							return result;
-						}
-					}
+                        if ( Single.TryParse( queryObj["MemoryScore"].ToString(), out var result ) ) {
+                            return result;
+                        }
+                    }
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -326,7 +320,7 @@ namespace Librainian.OperatingSystem {
             public static Object TimeTaken() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        return queryObj[ "TimeTaken" ];
+                        return queryObj["TimeTaken"];
                     }
                 }
                 catch ( ManagementException exception ) {
@@ -338,10 +332,10 @@ namespace Librainian.OperatingSystem {
             public static Int32? WinSAT_AssessmentState() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Int32.TryParse( queryObj[ "WinSATAssessmentState" ].ToString(), out var result ) ) {
-							return result;
-						}
-					}
+                        if ( Int32.TryParse( queryObj["WinSATAssessmentState"].ToString(), out var result ) ) {
+                            return result;
+                        }
+                    }
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -352,10 +346,10 @@ namespace Librainian.OperatingSystem {
             public static Single? WinSPRLevel() {
                 try {
                     foreach ( var queryObj in Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Single.TryParse( queryObj[ "WinSPRLevel" ].ToString(), out var result ) ) {
-							return result;
-						}
-					}
+                        if ( Single.TryParse( queryObj["WinSPRLevel"].ToString(), out var result ) ) {
+                            return result;
+                        }
+                    }
                 }
                 catch ( ManagementException exception ) {
                     exception.More();
@@ -379,7 +373,5 @@ namespace Librainian.OperatingSystem {
             Debug.WriteLine( Computer.SATScores.WinSAT_AssessmentState() );
             Debug.WriteLine( Computer.SATScores.WinSPRLevel() );
         }
-
     }
-
 }

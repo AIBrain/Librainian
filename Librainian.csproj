@@ -195,7 +195,6 @@
     <Compile Include="Internet\NetworkInterfaceHelper.cs" />
     <Compile Include="Internet\IPHelperInvoke.cs" />
     <Compile Include="Maths\ByteSize.cs" />
-    <Compile Include="Maths\ArithmeticMethods.cs" />
     <Compile Include="Maths\Union.cs" />
     <Compile Include="Maths\Murmur3.cs" />
     <Compile Include="Maths\HumanCalculator.cs" />
@@ -294,7 +293,7 @@
     <Compile Include="FileSystem\PathSplitter.cs" />
     <Compile Include="Magic\ChainElement.cs" />
     <Compile Include="Magic\Instantiator.cs" />
-    <Compile Include="Maths\MathConstants.cs" />
+    <Compile Include="Maths\Constants.cs" />
     <Compile Include="Maths\Numbers\Countable.cs" />
     <Compile Include="Maths\CountableIntegersTests.cs" />
     <Compile Include="Maths\Numbers\Int256.cs" />

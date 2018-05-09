@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -36,12 +34,12 @@ namespace Librainian.Measurement.Time {
     public struct Months : IComparable<Months>, IQuantityOfTime {
 
         /// <summary>
-        ///     12
+        /// 12
         /// </summary>
         public const Byte InOneCommonYear = 12;
 
         /// <summary>
-        ///     One <see cref="Months" /> .
+        /// One <see cref="Months"/> .
         /// </summary>
         public static readonly Months One = new Months( 1 );
 
@@ -54,19 +52,19 @@ namespace Librainian.Measurement.Time {
         public static readonly Months Thousand = new Months( 1000 );
 
         /// <summary>
-        ///     Zero <see cref="Months" />
+        /// Zero <see cref="Months"/>
         /// </summary>
         public static readonly Months Zero = new Months( 0 );
 
+        private Months( Int32 value ) => this.Value = value;
+
         public Months( Decimal value ) => this.Value = value;
 
-	    public Months( BigRational value ) => this.Value = value;
+        public Months( BigRational value ) => this.Value = value;
 
-	    public Months( BigInteger value ) => this.Value = value;
+        public Months( BigInteger value ) => this.Value = value;
 
-	    private Months( Int32 value ) => this.Value = value;
-
-	    [JsonProperty]
+        [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -78,9 +76,9 @@ namespace Librainian.Measurement.Time {
         public static Months Combine( Months left, BigInteger months ) => new Months( left.Value + months );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Months left, Months right ) => left.Value == right.Value;
@@ -128,7 +126,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+            if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
                 return $"{whole} {whole.PluralOf( "month" )}";
             }

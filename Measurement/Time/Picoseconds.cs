@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -36,89 +34,89 @@ namespace Librainian.Measurement.Time {
     public struct Picoseconds : IComparable<Picoseconds>, IQuantityOfTime {
 
         /// <summary>
-        ///     1000
+        /// 1000
         /// </summary>
         public const UInt16 InOneNanosecond = 1000;
 
         /// <summary>
-        ///     Ten <see cref="Picoseconds" /> s.
+        /// Ten <see cref="Picoseconds"/> s.
         /// </summary>
         public static readonly Picoseconds Fifteen = new Picoseconds( 15 );
 
         /// <summary>
-        ///     Five <see cref="Picoseconds" /> s.
+        /// Five <see cref="Picoseconds"/> s.
         /// </summary>
         public static readonly Picoseconds Five = new Picoseconds( 5 );
 
         /// <summary>
-        ///     Five Hundred <see cref="Picoseconds" /> s.
+        /// Five Hundred <see cref="Picoseconds"/> s.
         /// </summary>
         public static readonly Picoseconds FiveHundred = new Picoseconds( 500 );
 
         /// <summary>
-        ///     One <see cref="Picoseconds" />.
+        /// One <see cref="Picoseconds"/>.
         /// </summary>
         public static readonly Picoseconds One = new Picoseconds( 1 );
 
         /// <summary>
-        ///     One Thousand Nine <see cref="Picoseconds" /> (Prime).
+        /// One Thousand Nine <see cref="Picoseconds"/> (Prime).
         /// </summary>
         public static readonly Picoseconds OneThousandNine = new Picoseconds( 1009 );
 
         /// <summary>
-        ///     Sixteen <see cref="Picoseconds" />.
+        /// Sixteen <see cref="Picoseconds"/>.
         /// </summary>
         public static readonly Picoseconds Sixteen = new Picoseconds( 16 );
 
         /// <summary>
-        ///     Ten <see cref="Picoseconds" /> s.
+        /// Ten <see cref="Picoseconds"/> s.
         /// </summary>
         public static readonly Picoseconds Ten = new Picoseconds( 10 );
 
         /// <summary>
-        ///     Three <see cref="Picoseconds" /> s.
+        /// Three <see cref="Picoseconds"/> s.
         /// </summary>
         public static readonly Picoseconds Three = new Picoseconds( 3 );
 
         /// <summary>
-        ///     Three Three Three <see cref="Picoseconds" />.
+        /// Three Three Three <see cref="Picoseconds"/>.
         /// </summary>
         public static readonly Picoseconds ThreeHundredThirtyThree = new Picoseconds( 333 );
 
         /// <summary>
-        ///     Two <see cref="Picoseconds" /> s.
+        /// Two <see cref="Picoseconds"/> s.
         /// </summary>
         public static readonly Picoseconds Two = new Picoseconds( 2 );
 
         /// <summary>
-        ///     Two Hundred <see cref="Picoseconds" />.
+        /// Two Hundred <see cref="Picoseconds"/>.
         /// </summary>
         public static readonly Picoseconds TwoHundred = new Picoseconds( 200 );
 
         /// <summary>
-        ///     Two Hundred Eleven <see cref="Picoseconds" /> (Prime).
+        /// Two Hundred Eleven <see cref="Picoseconds"/> (Prime).
         /// </summary>
         public static readonly Picoseconds TwoHundredEleven = new Picoseconds( 211 );
 
         /// <summary>
-        ///     Two Thousand Three <see cref="Picoseconds" /> (Prime).
+        /// Two Thousand Three <see cref="Picoseconds"/> (Prime).
         /// </summary>
         public static readonly Picoseconds TwoThousandThree = new Picoseconds( 2003 );
 
         /// <summary>
-        ///     Zero <see cref="Picoseconds" />.
+        /// Zero <see cref="Picoseconds"/>.
         /// </summary>
         public static readonly Picoseconds Zero = new Picoseconds( 0 );
 
         public Picoseconds( Decimal value ) => this.Value = value;
 
-	    public Picoseconds( BigRational value ) => this.Value = value;
+        public Picoseconds( BigRational value ) => this.Value = value;
 
-	    public Picoseconds( Int64 value ) => this.Value = value;
+        public Picoseconds( Int64 value ) => this.Value = value;
 
-	    public Picoseconds( BigInteger value ) => this.Value = value;
+        public Picoseconds( BigInteger value ) => this.Value = value;
 
-	    [JsonProperty]
+        [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -128,9 +126,9 @@ namespace Librainian.Measurement.Time {
         public static Picoseconds Combine( Picoseconds left, BigRational picoseconds ) => new Picoseconds( left.Value + picoseconds );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Picoseconds left, Picoseconds right ) => left.Value == right.Value;
@@ -181,7 +179,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+            if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
                 return $"{whole} {whole.PluralOf( "ps" )}";
             }

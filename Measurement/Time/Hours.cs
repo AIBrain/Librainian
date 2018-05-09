@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -36,17 +34,17 @@ namespace Librainian.Measurement.Time {
     public struct Hours : IComparable<Hours>, IQuantityOfTime {
 
         /// <summary>
-        ///     24
+        /// 24
         /// </summary>
         public const Byte InOneDay = 24;
 
         /// <summary>
-        ///     Eight <see cref="Hours" /> .
+        /// Eight <see cref="Hours"/> .
         /// </summary>
         public static readonly Hours Eight = new Hours( 8 );
 
         /// <summary>
-        ///     One <see cref="Hours" /> .
+        /// One <see cref="Hours"/> .
         /// </summary>
         public static readonly Hours One = new Hours( 1 );
 
@@ -59,25 +57,25 @@ namespace Librainian.Measurement.Time {
         public static readonly Hours Thousand = new Hours( 1000 );
 
         /// <summary>
-        ///     Zero <see cref="Hours" />
+        /// Zero <see cref="Hours"/>
         /// </summary>
         public static readonly Hours Zero = new Hours( 0 );
 
         /// <summary>
-        ///     730 <see cref="Hours" /> in one month, according to WolframAlpha.
+        /// 730 <see cref="Hours"/> in one month, according to WolframAlpha.
         /// </summary>
-        /// <see cref="http://www.wolframalpha.com/input/?i=converts+1+month+to+hours" />
+        /// <see cref="http://www.wolframalpha.com/input/?i=converts+1+month+to+hours"/>
         public static BigInteger InOneMonth = 730;
 
         public Hours( Decimal value ) => this.Value = value;
 
-	    public Hours( BigRational value ) => this.Value = value;
+        public Hours( BigRational value ) => this.Value = value;
 
-	    public Hours( Int64 value ) => this.Value = value;
+        public Hours( Int64 value ) => this.Value = value;
 
-	    public Hours( BigInteger value ) => this.Value = value;
+        public Hours( BigInteger value ) => this.Value = value;
 
-	    [JsonProperty]
+        [JsonProperty]
         public BigRational Value {
             get;
         }
@@ -89,22 +87,22 @@ namespace Librainian.Measurement.Time {
         public static Hours Combine( Hours left, BigInteger hours ) => new Hours( ( BigInteger )left.Value + hours );
 
         /// <summary>
-        ///     <para>static equality test</para>
+        /// <para>static equality test</para>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Hours left, Hours right ) => left.Value == right.Value;
 
         /// <summary>
-        ///     Implicitly convert the number of <paramref name="hours" /> to <see cref="Days" />.
+        /// Implicitly convert the number of <paramref name="hours"/> to <see cref="Days"/>.
         /// </summary>
         /// <param name="hours"></param>
         /// <returns></returns>
         public static implicit operator Days( Hours hours ) => hours.ToDays();
 
         /// <summary>
-        ///     Implicitly convert the number of <paramref name="hours" /> to <see cref="Minutes" />.
+        /// Implicitly convert the number of <paramref name="hours"/> to <see cref="Minutes"/>.
         /// </summary>
         /// <param name="hours"></param>
         /// <returns></returns>
@@ -162,7 +160,7 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+            if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
                 return $"{whole} {whole.PluralOf( "hour" )}";
             }
