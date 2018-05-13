@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -44,6 +42,21 @@ namespace Librainian.FileSystem {
         Ndscontainer = 0x0b
     }
 
+    public enum ResourceDisplayType {
+        RESOURCEDISPLAYTYPE_GENERIC,
+        RESOURCEDISPLAYTYPE_DOMAIN,
+        RESOURCEDISPLAYTYPE_SERVER,
+        RESOURCEDISPLAYTYPE_SHARE,
+        RESOURCEDISPLAYTYPE_FILE,
+        RESOURCEDISPLAYTYPE_GROUP,
+        RESOURCEDISPLAYTYPE_NETWORK,
+        RESOURCEDISPLAYTYPE_ROOT,
+        RESOURCEDISPLAYTYPE_SHAREADMIN,
+        RESOURCEDISPLAYTYPE_DIRECTORY,
+        RESOURCEDISPLAYTYPE_TREE,
+        RESOURCEDISPLAYTYPE_NDSCONTAINER
+    };
+
     public enum ResourceScope {
         Connected = 1,
         GlobalNetwork,
@@ -59,8 +72,18 @@ namespace Librainian.FileSystem {
         Reserved = 8
     }
 
-    [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public enum ResourceUsage {
+        RESOURCEUSAGE_CONNECTABLE = 0x00000001,
+        RESOURCEUSAGE_CONTAINER = 0x00000002,
+        RESOURCEUSAGE_NOLOCALDEVICE = 0x00000004,
+        RESOURCEUSAGE_SIBLING = 0x00000008,
+        RESOURCEUSAGE_ATTACHED = 0x00000010,
+        RESOURCEUSAGE_ALL = RESOURCEUSAGE_CONNECTABLE | RESOURCEUSAGE_CONTAINER | RESOURCEUSAGE_ATTACHED
+    };
+
+    [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
     public class NetResource {
+
         [MarshalAs( UnmanagedType.LPWStr )]
         public String Comment;
 
@@ -80,31 +103,6 @@ namespace Librainian.FileSystem {
         public Int32 Usage;
     }
 
-    public enum ResourceDisplayType {
-        RESOURCEDISPLAYTYPE_GENERIC,
-        RESOURCEDISPLAYTYPE_DOMAIN,
-        RESOURCEDISPLAYTYPE_SERVER,
-        RESOURCEDISPLAYTYPE_SHARE,
-        RESOURCEDISPLAYTYPE_FILE,
-        RESOURCEDISPLAYTYPE_GROUP,
-        RESOURCEDISPLAYTYPE_NETWORK,
-        RESOURCEDISPLAYTYPE_ROOT,
-        RESOURCEDISPLAYTYPE_SHAREADMIN,
-        RESOURCEDISPLAYTYPE_DIRECTORY,
-        RESOURCEDISPLAYTYPE_TREE,
-        RESOURCEDISPLAYTYPE_NDSCONTAINER
-    };
-
-    public enum ResourceUsage {
-        RESOURCEUSAGE_CONNECTABLE = 0x00000001,
-        RESOURCEUSAGE_CONTAINER = 0x00000002,
-        RESOURCEUSAGE_NOLOCALDEVICE = 0x00000004,
-        RESOURCEUSAGE_SIBLING = 0x00000008,
-        RESOURCEUSAGE_ATTACHED = 0x00000010,
-        RESOURCEUSAGE_ALL = RESOURCEUSAGE_CONNECTABLE | RESOURCEUSAGE_CONTAINER | RESOURCEUSAGE_ATTACHED,
-       };
-
-
     [StructLayout( LayoutKind.Sequential )]
     public class NETRESOURCE {
         public ResourceScope dwScope = 0;
@@ -116,8 +114,6 @@ namespace Librainian.FileSystem {
         public String lpComment = null;
         public String lpProvider = null;
     };
-
-
 
     public class NetworkConnection : IDisposable {
 
@@ -143,14 +139,9 @@ namespace Librainian.FileSystem {
             get;
         }
 
-        public void Dispose() {
-            this.Dispose( true );
-            GC.SuppressFinalize( this );
-        }
+        protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
 
-		protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
-
-		public static Boolean IsNetworkConnected( Int32 retries = 3 ) {
+        public static Boolean IsNetworkConnected( Int32 retries = 3 ) {
             var counter = retries;
             while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
                 --counter;
@@ -160,5 +151,9 @@ namespace Librainian.FileSystem {
             return NetworkInterface.GetIsNetworkAvailable();
         }
 
+        public void Dispose() {
+            this.Dispose( true );
+            GC.SuppressFinalize( this );
+        }
     }
 }

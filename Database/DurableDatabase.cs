@@ -2,19 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/DurableDatabase.cs" was last cleaned by Protiguous on 2016/08/30 at 12:31 PM
+// "Librainian/DurableDatabase.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
 
 namespace Librainian.Database {
 
@@ -24,7 +22,6 @@ namespace Librainian.Database {
     using System.Data.Common;
     using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
     using Extensions;
@@ -44,32 +41,30 @@ namespace Librainian.Database {
         public DurableDatabase( String connectionString, UInt16 retries ) {
             this.Retries = retries;
             this.ConnectionString = connectionString;
+
             this.SqlConnections = new ThreadLocal<SqlConnection>( () => {
 
                 // ReSharper disable once UseObjectOrCollectionInitializer
                 var connection = new SqlConnection( this.ConnectionString );
                 connection.StateChange += this.SqlConnection_StateChange;
+
                 return connection;
             }, true );
 
-            var test = this.OpenConnection();    //try/start the current thread's open;
+            var test = this.OpenConnection(); //try/start the current thread's open;
+
             if ( null == test ) {
                 var builder = new SqlConnectionStringBuilder( this.ConnectionString );
+
                 throw new InvalidOperationException( $"Unable to connect to {builder.DataSource}" );
             }
         }
 
-        private String ConnectionString {
-            get;
-        }
+        private String ConnectionString { get; }
 
-        private UInt16 Retries {
-            get;
-        }
+        private UInt16 Retries { get; }
 
-        private ThreadLocal<SqlConnection> SqlConnections {
-            get;
-        }
+        private ThreadLocal<SqlConnection> SqlConnections { get; }
 
         public CancellationTokenSource CancelConnection { get; } = new CancellationTokenSource();
 
@@ -81,11 +76,13 @@ namespace Librainian.Database {
 
             try {
                 this.SqlConnections.Value.Open();
+
                 return this.SqlConnections.Value;
             }
             catch ( Exception exception ) {
                 exception.More();
             }
+
             return null;
         }
 
@@ -104,8 +101,10 @@ namespace Librainian.Database {
             }
 
             var retries = this.Retries;
+
             do {
                 retries--;
+
                 try {
                     if ( this.CancelConnection.IsCancellationRequested ) {
                         return false;
@@ -136,28 +135,34 @@ namespace Librainian.Database {
                     break;
 
                 case ConnectionState.Open:
+
                     break; //do nothing
 
                 case ConnectionState.Connecting:
-                    Thread.SpinWait( 99 );    //TODO pooa.
+                    Thread.SpinWait( 99 ); //TODO pooa.
+
                     break;
 
                 case ConnectionState.Executing:
+
                     break; //do nothing
 
                 case ConnectionState.Fetching:
+
                     break; //do nothing
 
                 case ConnectionState.Broken:
                     this.ReOpenConnection( sender );
+
                     break;
 
                 default:
+
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        protected override void DisposeManaged() {
+        public override void DisposeManaged() {
             if ( !this.CancelConnection.IsCancellationRequested ) {
                 this.CancelConnection.Cancel();
             }
@@ -166,61 +171,38 @@ namespace Librainian.Database {
                 switch ( connection.State ) {
                     case ConnectionState.Open:
                         connection.Close();
+
                         break;
 
                     case ConnectionState.Closed:
+
                         break;
 
                     case ConnectionState.Connecting:
                         connection.Close();
+
                         break;
 
                     case ConnectionState.Executing:
                         connection.Close();
+
                         break;
 
                     case ConnectionState.Fetching:
                         connection.Close();
+
                         break;
 
                     case ConnectionState.Broken:
                         connection.Close();
+
                         break;
 
                     default:
+
                         throw new ArgumentOutOfRangeException();
                 }
             }
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <returns></returns>
-        [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
-        public Boolean ExecuteNonQuery( String query ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
-
-            try {
-                using ( var sqlcommand = new SqlCommand( query, this.OpenConnection() ) {
-                    CommandType = CommandType.Text
-                } ) {
-                    sqlcommand.ExecuteNonQuery();
-                    return true;
-                }
-            }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
-            catch ( DbException exception ) {
-                exception.More();
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
-
-            return false;
         }
 
         /// <summary>
@@ -232,15 +214,16 @@ namespace Librainian.Database {
             if ( query.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( query ) );
             }
+
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-                    CommandType = CommandType.Text
-                } ) {
+                using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = CommandType.Text } ) {
                     if ( null != parameters ) {
                         command.Parameters.AddRange( parameters );
                     }
+
                     command.ExecuteNonQuery();
                 }
+
                 return true;
             }
             catch ( SqlException exception ) {
@@ -263,15 +246,15 @@ namespace Librainian.Database {
             }
 
             TryAgain:
+
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-                    CommandType = CommandType.StoredProcedure
-                } ) {
+                using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = CommandType.StoredProcedure } ) {
                     if ( null != parameters ) {
                         command.Parameters.AddRange( parameters );
                     }
 
                     command.ExecuteNonQuery();
+
                     return true;
                 }
             }
@@ -279,6 +262,7 @@ namespace Librainian.Database {
 
                 //timeout probably
                 retries--;
+
                 if ( retries.Any() ) {
                     goto TryAgain;
                 }
@@ -293,6 +277,35 @@ namespace Librainian.Database {
             return false;
         }
 
+        /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
+        public Boolean ExecuteNonQuery( String query ) {
+            if ( query.IsNullOrWhiteSpace() ) {
+                throw new ArgumentNullException( nameof( query ) );
+            }
+
+            try {
+                using ( var sqlcommand = new SqlCommand( query, this.OpenConnection() ) { CommandType = CommandType.Text } ) {
+                    sqlcommand.ExecuteNonQuery();
+
+                    return true;
+                }
+            }
+            catch ( SqlException exception ) {
+                exception.More();
+            }
+            catch ( DbException exception ) {
+                exception.More();
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+
+            return false;
+        }
+
         [ItemCanBeNull]
         public async Task<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
@@ -300,9 +313,7 @@ namespace Librainian.Database {
             }
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-                    CommandType = commandType
-                } ) {
+                using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
                     if ( null != parameters ) {
                         command.Parameters.AddRange( parameters );
                     }
@@ -337,9 +348,7 @@ namespace Librainian.Database {
             table = new DataTable();
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-                    CommandType = commandType
-                } ) {
+                using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
                     if ( null != parameters ) {
                         command.Parameters.AddRange( parameters );
                     }
@@ -385,9 +394,7 @@ namespace Librainian.Database {
             var table = new DataTable();
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-                    CommandType = commandType
-                } ) {
+                using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
                     if ( null != parameters ) {
                         command.Parameters.AddRange( parameters );
                     }
@@ -427,12 +434,11 @@ namespace Librainian.Database {
             }
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-                    CommandType = commandType
-                } ) {
+                using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
                     if ( null != parameters ) {
                         command.Parameters.AddRange( parameters );
                     }
+
                     return await command.ExecuteReaderAsync().ConfigureAwait( false );
                 }
             }
@@ -458,9 +464,7 @@ namespace Librainian.Database {
             var table = new DataTable();
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-                    CommandType = commandType
-                } ) {
+                using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
                     if ( null != parameters ) {
                         command.Parameters.AddRange( parameters );
                     }
@@ -483,6 +487,7 @@ namespace Librainian.Database {
             catch ( Exception exception ) {
                 exception.More();
             }
+
             return table;
         }
 
@@ -501,17 +506,17 @@ namespace Librainian.Database {
             }
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-                    CommandType = commandType
-                } ) {
+                using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
                     if ( null != parameters ) {
                         command.Parameters.AddRange( parameters );
                     }
 
                     var scalar = command.ExecuteScalar();
+
                     if ( null == scalar || Convert.IsDBNull( scalar ) ) {
                         return default;
                     }
+
                     if ( scalar is TResult result1 ) {
                         return result1;
                     }
@@ -547,16 +552,14 @@ namespace Librainian.Database {
             }
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-                    CommandType = commandType,
-                    CommandTimeout = 0
-                } ) {
+                using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType, CommandTimeout = 0 } ) {
                     if ( null != parameters ) {
                         command.Parameters.AddRange( parameters );
                     }
 
                     TryAgain:
                     Object scalar;
+
                     try {
                         scalar = await command.ExecuteScalarAsync().ConfigureAwait( false );
                     }
@@ -564,6 +567,7 @@ namespace Librainian.Database {
                         if ( exception.Number == DatabaseErrors.Deadlock ) {
                             goto TryAgain;
                         }
+
                         throw;
                     }
 
@@ -608,15 +612,14 @@ namespace Librainian.Database {
             }
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-                    CommandType = CommandType.StoredProcedure
-                } ) {
+                using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = CommandType.StoredProcedure } ) {
                     if ( null != parameters ) {
                         command.Parameters.AddRange( parameters );
                     }
 
                     using ( var reader = command.ExecuteReader() ) {
                         var data = GenericPopulator<TResult>.CreateList( reader );
+
                         return data;
                     }
                 }

@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -30,7 +28,7 @@ namespace Librainian.Graphics.DDD {
     using Newtonsoft.Json;
 
     /// <summary>
-    ///     A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> .
+    /// A 3D point, with <see cref="X"/> , <see cref="Y"/> , and <see cref="Z"/> .
     /// </summary>
     /// <remarks>Coded towards speed.</remarks>
     [Immutable]
@@ -38,19 +36,25 @@ namespace Librainian.Graphics.DDD {
     [JsonObject( MemberSerialization.Fields )]
     public struct CoordinateU64 : IEquatable<CoordinateU64>, IComparable<CoordinateU64> {
 
-        /// <summary>The smallest value a <see cref="CoordinateU64" /> will hold.</summary>
+        /// <summary>
+        /// The smallest value a <see cref="CoordinateU64"/> will hold.
+        /// </summary>
         public const UInt64 Minimum = 1 + UInt64.MinValue; //TODO why is this not Zero ?
 
         public static readonly CoordinateU64 Empty;
 
-        /// <summary>The largest value a <see cref="CoordinateU64" /> will hold.</summary>
-        /// <remarks>the cuberoot of <see cref="UInt64.MaxValue" /> split into x*y*z.</remarks>
+        /// <summary>
+        /// The largest value a <see cref="CoordinateU64"/> will hold.
+        /// </summary>
+        /// <remarks>the cuberoot of <see cref="UInt64.MaxValue"/> split into x*y*z.</remarks>
         public static readonly UInt64 Maximum = ( UInt64 )Math.Pow( UInt64.MaxValue, 1.0 / 3.0 );
 
         public static readonly CoordinateU64 MaxValue = new CoordinateU64( x: UInt64.MaxValue, y: UInt64.MaxValue, z: UInt64.MaxValue );
         public static readonly CoordinateU64 MinValue = new CoordinateU64( x: Minimum, y: Minimum, z: Minimum );
 
-        /// <summary>Maximum - Minimum</summary>
+        /// <summary>
+        /// Maximum - Minimum
+        /// </summary>
         public static readonly UInt64 Range = Maximum - Minimum;
 
         [JsonProperty]
@@ -76,7 +80,8 @@ namespace Librainian.Graphics.DDD {
         public CoordinateU64( UInt64Range x, UInt64Range y, UInt64Range z ) : this( x.Min.Next( x.Max ), y: y.Min.Next( y.Max ), z: z.Min.Next( z.Max ) ) {
         }
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="z"></param>
@@ -87,30 +92,31 @@ namespace Librainian.Graphics.DDD {
             this.SquareLength = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
         }
 
-        /// <summary>Calculates the distance between two <see cref="CoordinateU64" />.</summary>
-        public static UInt64 Distance( CoordinateU64 lhs, CoordinateU64 rhs ) {
-            var num1 = lhs.X - rhs.X;
-            var num2 = lhs.Y - rhs.Y;
-            var num3 = lhs.Z - rhs.Z;
+        /// <summary>
+        /// Calculates the distance between two <see cref="CoordinateU64"/>.
+        /// </summary>
+        public static UInt64 Distance( CoordinateU64 left, CoordinateU64 rhs ) {
+            var num1 = left.X - rhs.X;
+            var num2 = left.Y - rhs.Y;
+            var num3 = left.Z - rhs.Z;
             return ( UInt64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
         }
 
-        /// <summary>static comparison.</summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
+        /// <summary>
+        /// static comparison.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="rhs"> </param>
         /// <returns></returns>
-        public static Boolean Equals( CoordinateU64 lhs, CoordinateU64 rhs ) => lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
+        public static Boolean Equals( CoordinateU64 left, CoordinateU64 rhs ) => left.X == rhs.X && left.Y == rhs.Y && left.Z == rhs.Z;
 
         public static implicit operator Point( CoordinateU64 coordinate ) => new Point( x: ( Int32 )coordinate.X, y: ( Int32 )coordinate.Y );
 
         public static implicit operator PointF( CoordinateU64 coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
         /// <summary>
-        ///     <para>Returns a new Coordinate as a unit <see cref="CoordinateU64" />.</para>
-        ///     <para>
-        ///         The result is a Coordinate one unit in length pointing in the same direction as the
-        ///         original Coordinate.
-        ///     </para>
+        /// <para>Returns a new Coordinate as a unit <see cref="CoordinateU64"/>.</para>
+        /// <para>The result is a Coordinate one unit in length pointing in the same direction as the original Coordinate.</para>
         /// </summary>
         public static CoordinateU64 Normalize( CoordinateU64 coordinate ) {
             var num = 1.0D / coordinate.SquareLength;
@@ -119,24 +125,24 @@ namespace Librainian.Graphics.DDD {
 
         public static CoordinateU64 operator -( CoordinateU64 v1, CoordinateU64 v2 ) => new CoordinateU64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-        public static Boolean operator !=( CoordinateU64 lhs, CoordinateU64 rhs ) => !Equals( lhs: lhs, rhs: rhs );
+        public static Boolean operator !=( CoordinateU64 left, CoordinateU64 rhs ) => !Equals( left: left, rhs: rhs );
 
-        public static Boolean operator ==( CoordinateU64 lhs, CoordinateU64 rhs ) => Equals( lhs: lhs, rhs: rhs );
+        public static Boolean operator ==( CoordinateU64 left, CoordinateU64 rhs ) => Equals( left: left, rhs: rhs );
 
-        /// <summary>Compares the current <see cref="CoordinateU64" /> with another <see cref="CoordinateU64" />.</summary>
+        /// <summary>
+        /// Compares the current <see cref="CoordinateU64"/> with another <see cref="CoordinateU64"/>.
+        /// </summary>
         /// <returns>
-        ///     A 32-bit signed integer that indicates the relative order of the objects being compared.
-        ///     The return value has the following meanings: Value Meaning Less than zero: This object
-        ///     is less than the <paramref name="other" /> parameter.
-        ///     Zero: This object is equal to <paramref name="other" /> . Greater than zero This object
-        ///     is greater than <paramref name="other" /> .
+        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero: This object is less than the <paramref
+        /// name="other"/> parameter.
+        /// Zero: This object is equal to <paramref name="other"/> . Greater than zero This object is greater than <paramref name="other"/> .
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         [Pure]
         public Int32 CompareTo( CoordinateU64 other ) => this.SquareLength.CompareTo( other.SquareLength );
 
         /// <summary>
-        ///     Calculates the distance between this <see cref="CoordinateU64" /> and another <see cref="CoordinateU64" />.
+        /// Calculates the distance between this <see cref="CoordinateU64"/> and another <see cref="CoordinateU64"/>.
         /// </summary>
         public UInt64 Distance( CoordinateU64 rhs ) {
             var num1 = this.X - rhs.X;
@@ -145,7 +151,9 @@ namespace Librainian.Graphics.DDD {
             return ( UInt64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
         }
 
-        /// <summary>Calls the static comparison.</summary>
+        /// <summary>
+        /// Calls the static comparison.
+        /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         public Boolean Equals( CoordinateU64 other ) => Equals( this, other );
@@ -158,8 +166,7 @@ namespace Librainian.Graphics.DDD {
         }
 
         /// <summary>
-        ///     preCalc hash of <see cref="X" />, <see cref="Y" />, and <see cref="Z" />. (I have no
-        ///     clue if GetHashCode is called once for immutable objects..?)
+        /// preCalc hash of <see cref="X"/>, <see cref="Y"/>, and <see cref="Z"/>. (I have no clue if GetHashCode is called once for immutable objects..?)
         /// </summary>
         public override Int32 GetHashCode() => this.X.GetHashMerge( this.Y.GetHashMerge( this.Z ) );
 

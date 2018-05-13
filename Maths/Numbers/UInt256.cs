@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -27,7 +25,7 @@ namespace Librainian.Maths.Numbers {
     using JetBrains.Annotations;
 
     /// <summary>
-    ///     <para>Pulled from the BitcoinSharp project.</para>
+    /// <para>Pulled from the BitcoinSharp project.</para>
     /// </summary>
     public struct UInt256 : IComparable<UInt256> {
         private readonly Int32 _hashCode;
@@ -36,20 +34,29 @@ namespace Librainian.Maths.Numbers {
         private readonly UInt64 _part3; // parts are big-endian
         private readonly UInt64 _part4; // parts are big-endian
 
+        private UInt256( UInt64 part1, UInt64 part2, UInt64 part3, UInt64 part4 ) {
+            this._part1 = part1;
+            this._part2 = part2;
+            this._part3 = part3;
+            this._part4 = part4;
+
+            this._hashCode = this._part1.GetHashMerge( this._part2.GetHashMerge( this._part3.GetHashMerge( this._part4 ) ) );
+        }
+
         public UInt256( Byte[] value ) {
-            if ( value.Length > 32 && !( value.Length == 33 && value[ 32 ] == 0 ) ) {
+            if ( value.Length > 32 && !( value.Length == 33 && value[32] == 0 ) ) {
                 throw new ArgumentOutOfRangeException();
             }
 
             if ( value.Length < 32 ) {
-                value = value.Concat( new Byte[ 32 - value.Length ] );
+                value = value.Concat( new Byte[32 - value.Length] );
             }
 
             // convert parts and store
             this._part1 = value.ToUInt64( 24 );
-            this._part2 = value.ToUInt64(  16 );
-            this._part3 = value.ToUInt64(  8 );
-            this._part4 = value.ToUInt64(  0 );
+            this._part2 = value.ToUInt64( 16 );
+            this._part3 = value.ToUInt64( 8 );
+            this._part4 = value.ToUInt64( 0 );
 
             this._hashCode = this._part1.GetHashMerge( this._part2.GetHashMerge( this._part3.GetHashMerge( this._part4 ) ) );
         }
@@ -78,20 +85,11 @@ namespace Librainian.Maths.Numbers {
             }
         }
 
-        private UInt256( UInt64 part1, UInt64 part2, UInt64 part3, UInt64 part4 ) {
-            this._part1 = part1;
-            this._part2 = part2;
-            this._part3 = part3;
-            this._part4 = part4;
-
-            this._hashCode = this._part1.GetHashMerge( this._part2.GetHashMerge( this._part3.GetHashMerge( this._part4 ) ) );
-        }
-
-        public static UInt256 Zero { get; } = new UInt256( new Byte[ 0 ] );
+        public static UInt256 Zero { get; } = new UInt256( new Byte[0] );
 
         public static UInt256 DivRem( UInt256 dividend, UInt256 divisor, out UInt256 remainder ) {
-			var result = new UInt256( BigInteger.DivRem( dividend.ToBigInteger(), divisor.ToBigInteger(), out var remainderBigInt ) );
-			remainder = new UInt256( remainderBigInt );
+            var result = new UInt256( BigInteger.DivRem( dividend.ToBigInteger(), divisor.ToBigInteger(), out var remainderBigInt ) );
+            remainder = new UInt256( remainderBigInt );
             return result;
         }
 
@@ -153,11 +151,7 @@ namespace Librainian.Maths.Numbers {
             if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 < right._part3 ) {
                 return true;
             }
-            if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 < right._part4 ) {
-                return true;
-            }
-
-            return false;
+            return left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 < right._part4;
         }
 
         public static Boolean operator <=( UInt256 left, UInt256 right ) {
@@ -189,11 +183,7 @@ namespace Librainian.Maths.Numbers {
             if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 > right._part3 ) {
                 return true;
             }
-            if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 > right._part4 ) {
-                return true;
-            }
-
-            return false;
+            return left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 > right._part4;
         }
 
         public static Boolean operator >=( UInt256 left, UInt256 right ) {
@@ -254,7 +244,7 @@ namespace Librainian.Maths.Numbers {
         public BigInteger ToBigInteger() => new BigInteger( this.ToByteArray().Concat( 0 ) );
 
         public Byte[] ToByteArray() {
-            var buffer = new Byte[ 32 ];
+            var buffer = new Byte[32];
             Buffer.BlockCopy( this._part4.GetBytes(), 0, buffer, 0, 8 );
             Buffer.BlockCopy( this._part3.GetBytes(), 0, buffer, 8, 8 );
             Buffer.BlockCopy( this._part2.GetBytes(), 0, buffer, 16, 8 );
@@ -273,7 +263,7 @@ namespace Librainian.Maths.Numbers {
         //TODO properly taken into account host endianness
         public Byte[] ToByteArrayBe() {
             unchecked {
-                var buffer = new Byte[ 32 ];
+                var buffer = new Byte[32];
                 Buffer.BlockCopy( BitConverter.GetBytes( IPAddress.HostToNetworkOrder( ( Int64 )this._part1 ) ), 0, buffer, 0, 8 );
                 Buffer.BlockCopy( BitConverter.GetBytes( IPAddress.HostToNetworkOrder( ( Int64 )this._part2 ) ), 0, buffer, 8, 8 );
                 Buffer.BlockCopy( BitConverter.GetBytes( IPAddress.HostToNetworkOrder( ( Int64 )this._part3 ) ), 0, buffer, 16, 8 );

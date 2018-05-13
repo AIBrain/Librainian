@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -40,6 +38,14 @@ namespace Librainian.OperatingSystem.Compression {
             this.GZipStream = new GZipStream( stream: this.NullStream, compressionLevel: CompressionLevel.Optimal );
         }
 
+        [NotNull]
+        private GZipStream GZipStream {
+            get;
+        }
+
+        [NotNull]
+        private NullStream NullStream { get; } = new NullStream();
+
         public BigInteger HowManyBytesAsCompressed {
             get; private set;
         }
@@ -48,13 +54,13 @@ namespace Librainian.OperatingSystem.Compression {
             get; private set;
         }
 
-        [NotNull]
-        private GZipStream GZipStream {
-            get;
-        }
+        public override void DisposeManaged() {
+            using ( this.GZipStream ) {
+            }
 
-        [NotNull]
-        private NullStream NullStream { get; } = new NullStream();
+            using ( this.NullStream ) {
+            }
+        }
 
         public void FeedItData( [NotNull] Byte[] data ) {
             if ( data is null ) {
@@ -67,12 +73,12 @@ namespace Librainian.OperatingSystem.Compression {
         }
 
         public void FeedItData( Document document ) {
-            var data = document.AsByteArray().ToArray();
+            var data = document.AsBytes().ToArray();
             this.FeedItData( data );
         }
 
         /// <summary>
-        ///     The smaller the compressed 'data' is, the less the random it was.
+        /// The smaller the compressed 'data' is, the less the random it was.
         /// </summary>
         /// <returns></returns>
         public Double GetCurrentCompressionRatio() {
@@ -81,14 +87,5 @@ namespace Librainian.OperatingSystem.Compression {
         }
 
         public void Report() => Debug.WriteLine( $"Current compression is now {this.GetCurrentCompressionRatio():P4}" );
-
-        protected override void DisposeManaged() {
-            using ( this.GZipStream ) {
-            }
-
-            using ( this.NullStream ) {
-            }
-        }
-
     }
 }

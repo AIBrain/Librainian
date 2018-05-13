@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -28,20 +26,26 @@ namespace Librainian.Maths.Numbers {
     using Numerics;
 
     /// <summary>
-    ///     <para>threadsafe, keep integer count of Yes or No votes.</para>
+    /// <para>threadsafe, keep integer count of Yes or No votes.</para>
     /// </summary>
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class VotallyI {
 
-        /// <summary>No vote for either.</summary>
-        public static readonly VotallyI Zero = new VotallyI( votesYes: 0, votesNo: 0 );
-
-        /// <summary>ONLY used in the getter and setter.</summary>
+        /// <summary>
+        /// ONLY used in the getter and setter.
+        /// </summary>
         private UInt64 _votesNo;
 
-        /// <summary>ONLY used in the getter and setter.</summary>
+        /// <summary>
+        /// ONLY used in the getter and setter.
+        /// </summary>
         private UInt64 _votesYes;
+
+        /// <summary>
+        /// No vote for either.
+        /// </summary>
+        public static readonly VotallyI Zero = new VotallyI( votesYes: 0, votesNo: 0 );
 
         public VotallyI( UInt64 votesYes = 0, UInt64 votesNo = 0 ) {
             this.Yes = votesYes;
@@ -51,7 +55,7 @@ namespace Librainian.Maths.Numbers {
         public UInt64 No {
             get => Thread.VolatileRead( ref this._votesNo );
 
-	        private set => Thread.VolatileWrite( ref this._votesNo, value );
+            private set => Thread.VolatileWrite( ref this._votesNo, value );
         }
 
         public UInt64 Votes => this.Yes + this.No;
@@ -59,19 +63,7 @@ namespace Librainian.Maths.Numbers {
         public UInt64 Yes {
             get => Thread.VolatileRead( ref this._votesYes );
 
-	        private set => Thread.VolatileWrite( ref this._votesYes, value );
-        }
-
-        /// <summary>
-        ///     Add in the votes from another <see cref="VotallyI" />.
-        /// </summary>
-        /// <param name="right"></param>
-        public void Add( [NotNull] VotallyI right ) {
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-            VoteYes( right.Yes );
-            VoteNo( right.No );
+            private set => Thread.VolatileWrite( ref this._votesYes, value );
         }
 
         public static VotallyI Combine( [NotNull] VotallyI left, [NotNull] VotallyI right ) {
@@ -85,6 +77,19 @@ namespace Librainian.Maths.Numbers {
             result.VoteYes( right.Yes );
             result.VoteNo( right.No );
             return result;
+        }
+
+        /// <summary>
+        /// Add in the votes from another <see cref="VotallyI"/>.
+        /// </summary>
+        /// <param name="right"></param>
+        public void Add( [NotNull] VotallyI right ) {
+            if ( right is null ) {
+                throw new ArgumentNullException( nameof( right ) );
+            }
+
+            this.VoteYes( right.Yes );
+            this.VoteNo( right.No );
         }
 
         public Double ChanceNo() {
@@ -135,22 +140,22 @@ namespace Librainian.Maths.Numbers {
         public override String ToString() => $"{this.ChanceYes():P1} yes vs {this.ChanceNo():p1} no of {this.Votes} votes.";
 
         /// <summary>
-        ///     <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
+        /// <para>Increments the votes for candidate <see cref="No"/> by <paramref name="votes"/>.</para>
         /// </summary>
         public void VoteNo( UInt64 votes = 1 ) => this.No += votes;
 
         /// <summary>
-        ///     <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
+        /// <para>Increments the votes for candidate <see cref="Yes"/> by <paramref name="votes"/>.</para>
         /// </summary>
         public void VoteYes( UInt64 votes = 1 ) => this.Yes += votes;
 
         /// <summary>
-        ///     <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
+        /// <para>Increments the votes for candidate <see cref="No"/> by <paramref name="votes"/>.</para>
         /// </summary>
         public void WithdrawNoVote( UInt64 votes = 1 ) => this.No -= votes;
 
         /// <summary>
-        ///     <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
+        /// <para>Increments the votes for candidate <see cref="Yes"/> by <paramref name="votes"/>.</para>
         /// </summary>
         public void WithdrawYesVote( UInt64 votes = 1 ) => this.Yes -= votes;
     }

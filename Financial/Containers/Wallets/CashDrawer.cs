@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -35,7 +33,7 @@ namespace Librainian.Financial.Containers.Wallets {
                 throw new ArgumentNullException( nameof( bankNotes ) );
             }
 
-            return 0 == bankNotes.LongCount( bankNote => !this.Deposit( bankNote, 1 ) );
+            return 0 == bankNotes.LongCount( bankNote => !Deposit( bankNote, 1 ) );
         }
 
         public Boolean Fund( params ICoin[] coins ) {
@@ -43,10 +41,9 @@ namespace Librainian.Financial.Containers.Wallets {
                 throw new ArgumentNullException( nameof( coins ) );
             }
 
-            return 0 == coins.LongCount( coin => this.Deposit( coin, 1 ) != 1 );
+            return 0 == coins.LongCount( coin => Deposit( coin, 1 ) != 1 );
         }
 
-        public Decimal RunningTotal() => this.Total();
-
+        public Decimal RunningTotal() => Total();
     }
 }

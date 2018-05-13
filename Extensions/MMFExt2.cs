@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/MMFExt2.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// "Librainian/MMFExt2.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
 
 namespace Librainian.Extensions {
 
@@ -28,11 +24,13 @@ namespace Librainian.Extensions {
 
         public static Boolean Resize( FileInfo source, FileInfo destination, Boolean overwriteDestination = true, Boolean findRoom = true ) {
             source.Refresh();
+
             if ( !source.Exists ) {
                 return false;
             }
 
             destination.Refresh();
+
             if ( destination.Exists ) {
                 if ( overwriteDestination ) {
                     destination.Delete();
@@ -43,8 +41,7 @@ namespace Librainian.Extensions {
             }
 
             // ReSharper disable once UnusedVariable
-            using ( var sourceMappedFile = MemoryMappedFile.CreateFromFile( source.FullName, FileMode.Open, "why?", source.Length, MemoryMappedFileAccess.Read ) ) {
-            }
+            using ( var sourceMappedFile = MemoryMappedFile.CreateFromFile( source.FullName, FileMode.Open, "why?", source.Length, MemoryMappedFileAccess.Read ) ) { }
 
             return false;
         }

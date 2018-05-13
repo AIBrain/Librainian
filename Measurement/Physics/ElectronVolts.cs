@@ -100,9 +100,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public static ElectronVolts operator *( BigInteger left, ElectronVolts right ) {
-            var lhs = new BigRational( left );
-            var rhs = new BigRational( right.Value );
-            var res = lhs * rhs;
+            var res = new BigRational( left ) * new BigRational( right.Value );
             return new ElectronVolts( ( Decimal )res );
         }
 

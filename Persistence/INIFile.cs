@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -34,15 +32,17 @@ namespace Librainian.Persistence {
     using Parsing;
 
     /// <summary>
+    /// A text <see cref="Document"/> with <see cref="KeyValuePair{TKey,TValue}"/> under common Sections.
     /// </summary>
     [JsonObject]
-    public class INIFile {
-        public const String PairSeparator = "=";
-        public const String SectionBegin = "[";
+    public class IniFile {
+        private const String PairSeparator = "=";
 
-        public const String SectionEnd = "]";
+        private const String SectionBegin = "[";
 
-        public INIFile( String data ) {
+        private const String SectionEnd = "]";
+
+        public IniFile( String data ) {
 
             //cheat: write out to temp file, read in, then delete temp file
             var document = Document.GetTempDocument();
@@ -53,20 +53,24 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     Entire document dictionary is saved on any change.
+        /// Entire document dictionary is saved on any change.
         /// </summary>
         /// <param name="autoSaveDocument"></param>
-        public INIFile( Document autoSaveDocument ) : this() {
+        public IniFile( Document autoSaveDocument ) : this() {
             this.AutoSaveDocument = autoSaveDocument;
             this.Add( autoSaveDocument );
         }
 
-        public INIFile() {
+        public IniFile() {
         }
 
+        [JsonProperty]
+        [NotNull]
+        private ConcurrentDictionary<String, ConcurrentDictionary<String, String>> Data { [DebuggerStepThrough] get; } = new ConcurrentDictionary<String, ConcurrentDictionary<String, String>>();
+
         /// <summary>
-        ///     <para>WARNING: Set this value AFTER <see cref="Add(Document)" />.</para>
-        ///     <para>If <see cref="AutoSaveDocument" /> is set, the entire dictionary/text is saved on each change.</para>
+        /// <para>WARNING: Set this value AFTER <see cref="Add(Document)"/>.</para>
+        /// <para>If <see cref="AutoSaveDocument"/> is set, the entire dictionary/text is saved on each change.</para>
         /// </summary>
         [JsonProperty]
         public Document AutoSaveDocument {
@@ -75,11 +79,7 @@ namespace Librainian.Persistence {
 
         public IEnumerable<String> Sections => this.Data.Keys;
 
-        [JsonProperty]
-        [NotNull]
-        private ConcurrentDictionary<String, ConcurrentDictionary<String, String>> Data { [DebuggerStepThrough] get; } = new ConcurrentDictionary<String, ConcurrentDictionary<String, String>>();
-
-        public IReadOnlyDictionary<String, String> this[ [CanBeNull] String section ] {
+        public IReadOnlyDictionary<String, String> this[[CanBeNull] String section] {
             [DebuggerStepThrough]
             [CanBeNull]
             get {
@@ -89,17 +89,17 @@ namespace Librainian.Persistence {
                 if ( !this.Data.ContainsKey( section ) ) {
                     return null;
                 }
-				return this.Data.TryGetValue( section, out var result ) ? result : null;
-			}
+                return this.Data.TryGetValue( section, out var result ) ? result : null;
+            }
         }
 
         /// <summary>
-        ///     If <see cref="AutoSaveDocument" /> is set, the entire dictionary/text is saved on each change.
+        /// If <see cref="AutoSaveDocument"/> is set, the entire dictionary/text is saved on each change.
         /// </summary>
         /// <param name="section"></param>
-        /// <param name="key"></param>
+        /// <param name="key">    </param>
         /// <returns></returns>
-        public String this[ [CanBeNull] String section, [CanBeNull] String key ] {
+        public String this[[CanBeNull] String section, [CanBeNull] String key] {
             [DebuggerStepThrough]
             [CanBeNull]
             get {
@@ -114,9 +114,8 @@ namespace Librainian.Persistence {
                     return null;
                 }
 
-
-				return this.Data[ section ].TryGetValue( key, out var value ) ? value : null;
-			}
+                return this.Data[section].TryGetValue( key, out var value ) ? value : null;
+            }
 
             [DebuggerStepThrough]
             set {
@@ -134,10 +133,87 @@ namespace Librainian.Persistence {
             }
         }
 
+        private Boolean WriteSection( Document document, String section ) {
+            if ( document is null ) {
+                throw new ArgumentNullException( nameof( document ) );
+            }
+            if ( section is null ) {
+                throw new ArgumentNullException( nameof( section ) );
+            }
+
+            if ( !this.Data.TryGetValue( section, out var dict ) ) {
+                return false; //section not found
+            }
+
+            try {
+                using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
+                    writer.Write( EncodeSection( section ) );
+                    foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) {
+                        writer.WriteLine( EncodePair( pair ) );
+                    }
+                    writer.Write( Environment.NewLine );
+                    writer.Flush();
+                }
+
+                return true;
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+
+            return false;
+        }
+
+        private async Task<Boolean> WriteSectionAsync( Document document, String section ) {
+            if ( document is null ) {
+                throw new ArgumentNullException( nameof( document ) );
+            }
+            if ( section is null ) {
+                throw new ArgumentNullException( nameof( section ) );
+            }
+
+            try {
+                if ( !this.Data.TryGetValue( section, out var dict ) ) {
+                    return false; //section not found
+                }
+
+                using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
+                    writer.Write( EncodeSection( section ) );
+                    foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) {
+                        await writer.WriteAsync( EncodePair( pair ) );
+                    }
+                    await writer.WriteLineAsync();
+                    await writer.FlushAsync();
+                }
+
+                return true;
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+
+            return false;
+        }
+
+        private Boolean WriteSectionJSON( Document document, String section ) {
+            if ( !this.Data.TryGetValue( section, out var dict ) ) {
+                return false; //section not found
+            }
+
+            try {
+                return true;
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+
+            return false;
+        }
+
         [DebuggerStepThrough]
         public static String EncodePair( KeyValuePair<String, String> pair ) => $"{pair.Key}{PairSeparator}{pair.Value ?? String.Empty}";
 
-	    [DebuggerStepThrough]
+        [DebuggerStepThrough]
         public static String EncodeSection( String section ) {
             if ( section is null ) {
                 throw new ArgumentNullException( nameof( section ) );
@@ -146,10 +222,10 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     (Trims whitespaces from section, key, and value.)
+        /// (Trims whitespaces from section, key, and value.)
         /// </summary>
         /// <param name="section"></param>
-        /// <param name="kvp"></param>
+        /// <param name="kvp">    </param>
         /// <returns></returns>
         public Boolean Add( String section, KeyValuePair<String, String> kvp ) {
             if ( String.IsNullOrWhiteSpace( section ) ) {
@@ -161,11 +237,11 @@ namespace Librainian.Persistence {
             TryAgain:
             lock ( this.Data ) {
                 if ( !this.Data.ContainsKey( section ) ) {
-                    this.Data[ section ] = new ConcurrentDictionary<String, String>();
+                    this.Data[section] = new ConcurrentDictionary<String, String>();
                 }
             }
             try {
-                this.Data[ section ][ kvp.Key.Trim() ] = kvp.Value.Trim();
+                this.Data[section][kvp.Key.Trim()] = kvp.Value.Trim();
                 return null == this.AutoSaveDocument || this.Save( this.AutoSaveDocument );
             }
             catch ( KeyNotFoundException exception ) {
@@ -207,12 +283,12 @@ namespace Librainian.Persistence {
             }
         }
 
-        public Boolean Add(  String text ) {
-	        text = text.Replace( Environment.NewLine, "\n" );
+        public Boolean Add( String text ) {
+            text = text.Replace( Environment.NewLine, "\n" );
 
             var lines = text.Split( new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries );
 
-            return Add( lines );
+            return this.Add( lines );
         }
 
         public Boolean Add( [NotNull] IEnumerable<String> lines ) {
@@ -242,7 +318,7 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     Return the entire structure as a JSON formatted String.
+        /// Return the entire structure as a JSON formatted String.
         /// </summary>
         /// <returns></returns>
         public String AsJSON() {
@@ -262,20 +338,20 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     Removes all data from all sections.
+        /// Removes all data from all sections.
         /// </summary>
         /// <returns></returns>
         public Boolean Clear() {
             Parallel.ForEach( this.Data.Keys, section => {
-                TryRemove( section );
+                this.TryRemove( section );
             } );
             return !this.Data.Keys.Any();
         }
 
         /// <summary>
-        ///     Save the data to the specified document, overwriting it by default.
+        /// Save the data to the specified document, overwriting it by default.
         /// </summary>
-        /// <param name="document"></param>
+        /// <param name="document"> </param>
         /// <param name="overwrite"></param>
         /// <returns></returns>
         public Boolean Save( Document document, Boolean overwrite = true ) {
@@ -293,16 +369,16 @@ namespace Librainian.Persistence {
             }
 
             foreach ( var section in this.Data.Keys.OrderBy( section => section ) ) {
-                WriteSection( document, section );
+                this.WriteSection( document, section );
             }
 
             return true;
         }
 
         /// <summary>
-        ///     Save the data to the specified document, overwriting it by default.
+        /// Save the data to the specified document, overwriting it by default.
         /// </summary>
-        /// <param name="document"></param>
+        /// <param name="document"> </param>
         /// <param name="overwrite"></param>
         /// <returns></returns>
         public async Task<Boolean> SaveAsync( Document document, Boolean overwrite = true ) {
@@ -331,8 +407,8 @@ namespace Librainian.Persistence {
             if ( section is null ) {
                 throw new ArgumentNullException( nameof( section ) );
             }
-			return this.Data.TryRemove( section, out var dict );
-		}
+            return this.Data.TryRemove( section, out var dict );
+        }
 
         [DebuggerStepThrough]
         public Boolean TryRemove( String section, String key ) {
@@ -342,84 +418,7 @@ namespace Librainian.Persistence {
             if ( !this.Data.ContainsKey( section ) ) {
                 return false;
             }
-			return this.Data[ section ].TryRemove( key, out var value );
-		}
-
-        private Boolean WriteSection( Document document, String section ) {
-            if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
-            }
-            if ( section is null ) {
-                throw new ArgumentNullException( nameof( section ) );
-            }
-
-			if ( !this.Data.TryGetValue( section, out var dict ) ) {
-				return false; //section not found
-			}
-
-			try {
-                using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
-                    writer.Write( EncodeSection( section ) );
-                    foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) {
-                        writer.WriteLine( EncodePair( pair ) );
-                    }
-                    writer.Write( Environment.NewLine );
-                    writer.Flush();
-                }
-
-                return true;
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
-
-            return false;
-        }
-
-        private async Task<Boolean> WriteSectionAsync( Document document, String section ) {
-            if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
-            }
-            if ( section is null ) {
-                throw new ArgumentNullException( nameof( section ) );
-            }
-
-            try {
-				if ( !this.Data.TryGetValue( section, out var dict ) ) {
-					return false; //section not found
-				}
-
-				using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
-                    writer.Write( EncodeSection( section ) );
-                    foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) {
-                        await writer.WriteAsync( EncodePair( pair ) );
-                    }
-                    await writer.WriteLineAsync();
-                    await writer.FlushAsync();
-                }
-
-                return true;
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
-
-            return false;
-        }
-
-        private Boolean WriteSectionJSON( Document document, String section ) {
-			if ( !this.Data.TryGetValue( section, out var dict ) ) {
-				return false; //section not found
-			}
-
-			try {
-                return true;
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
-
-            return false;
+            return this.Data[section].TryRemove( key, out var value );
         }
     }
 }

@@ -33,7 +33,7 @@ namespace Librainian.Internet {
 
         public static async Task<TextReader> DoRequestAsync( this WebRequest request ) {
             if ( request is null ) {
-                throw new ArgumentNullException( paramName: nameof( request ) );
+                throw new ArgumentNullException(nameof( request ) );
             }
 
             var result = await Task.Factory.FromAsync( beginMethod: ( asyncCallback, state ) => ( ( HttpWebRequest )state ).BeginGetResponse( callback: asyncCallback, state: state ),
@@ -44,7 +44,7 @@ namespace Librainian.Internet {
 
         public static async Task<TextReader> DoRequestAsync( this Uri uri ) {
             if ( uri is null ) {
-                throw new ArgumentNullException( paramName: nameof( uri ) );
+                throw new ArgumentNullException(nameof( uri ) );
             }
 
             var request = WebRequest.CreateHttp( requestUri: uri );
@@ -56,7 +56,7 @@ namespace Librainian.Internet {
 
         public static async Task<T> DoRequestJsonAsync<T>( this WebRequest request ) {
             if ( request is null ) {
-                throw new ArgumentNullException( paramName: nameof( request ) );
+                throw new ArgumentNullException(nameof( request ) );
             }
 
             var reader = await DoRequestAsync( request: request ).ConfigureAwait( false );

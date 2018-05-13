@@ -2,19 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Types.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// "Librainian/Types.cs" was last cleaned by Protiguous on 2018/05/12 at 1:23 AM
 
 namespace Librainian.Extensions {
 
@@ -45,6 +43,7 @@ namespace Librainian.Extensions {
             if ( field is null ) {
                 throw new ArgumentNullException( nameof( field ) );
             }
+
             try {
                 var sourceValue = field.GetValue( source );
 
@@ -85,6 +84,7 @@ namespace Librainian.Extensions {
                 foreach ( var field in sourceFields.Where( destFields.Contains ) ) {
                     CopyField( source: source, destination: destination, field: field );
                 }
+
                 return true;
             }
             catch ( Exception ) {
@@ -107,6 +107,7 @@ namespace Librainian.Extensions {
                 foreach ( var prop in sourceProps.Where( destProps.Contains ) ) {
                     CopyProperty( source: source, destination: destination, prop: prop );
                 }
+
                 return true;
             }
             catch ( Exception ) {
@@ -118,6 +119,7 @@ namespace Librainian.Extensions {
             if ( prop is null ) {
                 throw new ArgumentNullException( nameof( prop ) );
             }
+
             try {
                 var sourceValue = prop.GetValue( source, null );
                 prop.SetValue( destination, sourceValue, null );
@@ -152,9 +154,11 @@ namespace Librainian.Extensions {
             if ( ReferenceEquals( source, destination ) ) {
                 return true;
             }
+
             if ( Equals( source, default ) ) {
                 return false;
             }
+
             if ( Equals( destination, default ) ) {
                 return false;
             }
@@ -176,6 +180,7 @@ namespace Librainian.Extensions {
             }
 
             const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
             return type.GetFields( flags ).Union( GetAllFields( type.BaseType ) );
         }
 
@@ -190,6 +195,7 @@ namespace Librainian.Extensions {
             }
 
             const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
             return type.GetProperties( flags ).Union( GetAllProperties( type.BaseType ) );
         }
 
@@ -210,7 +216,8 @@ namespace Librainian.Extensions {
                 else {
                     var declaredCtor = myType.GetConstructors();
 
-                    foreach ( var _ in declaredCtor.Select( constructorInfo => constructorInfo.GetParameters() ).SelectMany( parms => parms.Where( parameterInfo => parameterInfo.ParameterType == typeof( Guid ) ), ( parms, parameterInfo ) => parms ) ) {
+                    foreach ( var _ in declaredCtor.Select( constructorInfo => constructorInfo.GetParameters() )
+                        .SelectMany( parms => parms.Where( parameterInfo => parameterInfo.ParameterType == typeof( Guid ) ), ( parms, parameterInfo ) => parms ) ) {
                         yield return Activator.CreateInstance( myType, Guid.NewGuid() ) as T;
                     }
                 }
@@ -226,6 +233,7 @@ namespace Librainian.Extensions {
             if ( baseType is null ) {
                 throw new ArgumentNullException( nameof( baseType ) );
             }
+
             return baseType.Assembly.GetTypes().Where( type => type.IsAssignableFrom( baseType ) && type.IsSealed );
         }
 
@@ -238,6 +246,7 @@ namespace Librainian.Extensions {
             if ( baseType is null ) {
                 throw new ArgumentNullException( nameof( baseType ) );
             }
+
             return CurrentDomainGetAssemblies.Value.SelectMany( assembly => assembly.GetTypes(), ( assembly, type ) => type ).Where( arg => baseType.IsAssignableFrom( arg ) && arg.IsClass && !arg.IsAbstract );
         }
 
@@ -254,7 +263,8 @@ namespace Librainian.Extensions {
                 throw new ArgumentNullException( nameof( @this ), "IsBlittable called on a null Type." );
             }
 
-            return @this.IsValueType && @this.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic ).All( fieldInfo => fieldInfo.FieldType.IsValueType || fieldInfo.FieldType.IsPointer ) && ( @this.IsExplicitLayout || @this.IsLayoutSequential );
+            return @this.IsValueType && @this.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic ).All( fieldInfo => fieldInfo.FieldType.IsValueType || fieldInfo.FieldType.IsPointer ) &&
+                   ( @this.IsExplicitLayout || @this.IsLayoutSequential );
         }
 
         public static Boolean IsNullable( this PropertyInfo p ) => p.PropertyType.IsNullable();
@@ -270,7 +280,9 @@ namespace Librainian.Extensions {
             if ( @this is null ) {
                 throw new ArgumentNullException( nameof( @this ), "IsNumeric called on a null Type." );
             }
-            return @this == typeof( Double ) || @this == typeof( Single ) || @this == typeof( Int64 ) || @this == typeof( Int16 ) || @this == typeof( Byte ) || @this == typeof( SByte ) || @this == typeof( UInt32 ) || @this == typeof( UInt64 ) || @this == typeof( UInt16 ) || @this == typeof( Decimal ) || @this == typeof( Int32 );
+
+            return @this == typeof( Double ) || @this == typeof( Single ) || @this == typeof( Int64 ) || @this == typeof( Int16 ) || @this == typeof( Byte ) || @this == typeof( SByte ) || @this == typeof( UInt32 ) ||
+                   @this == typeof( UInt64 ) || @this == typeof( UInt16 ) || @this == typeof( Decimal ) || @this == typeof( Int32 );
         }
 
         /// <summary>
@@ -282,11 +294,14 @@ namespace Librainian.Extensions {
         public static Boolean IsSubclassOfRawGeneric( this Type type, Type generic ) {
             while ( type != typeof( Object ) ) {
                 var cur = type != null && type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+
                 if ( generic == cur ) {
                     return true;
                 }
+
                 type = type?.BaseType;
             }
+
             return false;
         }
 
@@ -294,9 +309,11 @@ namespace Librainian.Extensions {
             if ( null == sourceValue ) {
                 return false;
             }
+
             if ( !( field.GetValue( destination ) is IDictionary destAsDictionary ) ) {
                 return false;
             }
+
             foreach ( var key in sourceValue.Keys ) {
                 try {
                     destAsDictionary[key] = sourceValue[key];
@@ -305,6 +322,7 @@ namespace Librainian.Extensions {
                     exception.More();
                 }
             }
+
             return true;
         }
 
@@ -312,7 +330,9 @@ namespace Librainian.Extensions {
             if ( propertyExpression is null ) {
                 throw new ArgumentNullException( nameof( propertyExpression ) );
             }
+
             var memberExpression = propertyExpression.Body as MemberExpression;
+
             return memberExpression?.Member.Name ?? String.Empty;
         }
 
@@ -320,6 +340,7 @@ namespace Librainian.Extensions {
             if ( type is null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
+
             var localType = type; // create a local copy to prevent adverse effects of closure
 
             Object Func() => Activator.CreateInstance( localType );
@@ -331,6 +352,7 @@ namespace Librainian.Extensions {
             if ( type is null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
+
             return Expression.Lambda<Func<Object>>( Expression.New( type ) ).Compile();
         }
 
@@ -342,60 +364,79 @@ namespace Librainian.Extensions {
         public static Type ToType( this TypeCode @this ) {
             switch ( @this ) {
                 case TypeCode.Boolean:
+
                     return typeof( Boolean );
 
                 case TypeCode.Byte:
+
                     return typeof( Byte );
 
                 case TypeCode.Char:
+
                     return typeof( Char );
 
                 case TypeCode.DBNull:
+
                     return typeof( DBNull );
 
                 case TypeCode.DateTime:
+
                     return typeof( DateTime );
 
                 case TypeCode.Decimal:
+
                     return typeof( Decimal );
 
                 case TypeCode.Double:
+
                     return typeof( Double );
 
                 case TypeCode.Int16:
+
                     return typeof( Int16 );
 
                 case TypeCode.Int32:
+
                     return typeof( Int32 );
 
                 case TypeCode.Int64:
+
                     return typeof( Int64 );
 
                 case TypeCode.SByte:
+
                     return typeof( SByte );
 
                 case TypeCode.Single:
+
                     return typeof( Single );
 
                 case TypeCode.String:
+
                     return typeof( String );
 
                 case TypeCode.UInt16:
+
                     return typeof( UInt16 );
 
                 case TypeCode.UInt32:
+
                     return typeof( UInt32 );
 
                 case TypeCode.UInt64:
+
                     return typeof( UInt64 );
 
                 case TypeCode.Empty:
+
                     return typeof( Object );
 
                 case TypeCode.Object:
+
                     return typeof( Object );
 
                 default:
+
                     return typeof( Object );
             }
         }
@@ -406,6 +447,7 @@ namespace Librainian.Extensions {
             // If the type is nullable and the result should be null, set a null value.
             if ( type.IsNullable() && ( value is null || value == DBNull.Value ) ) {
                 result = default;
+
                 return true;
             }
 
@@ -419,28 +461,34 @@ namespace Librainian.Extensions {
                     if ( value is String ) {
                         value = new Guid( ( String )value );
                     }
+
                     if ( value is Byte[] ) {
                         value = new Guid( ( Byte[] )value );
                     }
 
                     result = ( T )Convert.ChangeType( value, underlyingType );
+
                     return true;
                 }
 
                 result = ( T )Convert.ChangeType( value, underlyingType );
+
                 return true;
             }
             catch ( Exception ) {
                 result = default;
+
                 return false;
             }
         }
 
         public static class New<T> {
+
             public static readonly Func<T> Instance = Creator();
 
             private static Func<T> Creator() {
                 var t = typeof( T );
+
                 if ( t == typeof( String ) ) {
                     return Expression.Lambda<Func<T>>( Expression.Constant( String.Empty ) ).Compile();
                 }

@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -33,13 +31,12 @@ namespace Librainian.Graphics {
     using OperatingSystem;
 
     public static class GraphicsExtensions {
-        public static RAMP DefaultRamp;
-
         private static Boolean _gotGamma;
+        public static RAMP DefaultRamp;
 
         static GraphicsExtensions() => DefaultRamp = GetGamma();
 
-	    public static Stream EfvToStream() {
+        public static Stream EfvToStream() {
             var ms = new MemoryStream();
 
             //TODO
@@ -49,18 +46,18 @@ namespace Librainian.Graphics {
         public static RAMP GetGamma() {
             var ramp = new RAMP();
             if ( NativeMethods.GetDeviceGammaRamp( NativeMethods.GetDC( IntPtr.Zero ), ref ramp ) ) {
-                GraphicsExtensions._gotGamma = true;
+                _gotGamma = true;
                 return ramp;
             }
             throw new InvalidOperationException( "Unable to obtain Gamma setting." );
         }
 
         /// <summary>
-        ///     Resets the gamma to when it was first called.
+        /// Resets the gamma to when it was first called.
         /// </summary>
         /// <exception cref="InvalidOperationException"></exception>
         public static void ResetGamma() {
-            if ( GraphicsExtensions._gotGamma ) {
+            if ( _gotGamma ) {
                 NativeMethods.SetDeviceGammaRamp( NativeMethods.GetDC( IntPtr.Zero ), ref DefaultRamp );
             }
             else {
@@ -70,14 +67,14 @@ namespace Librainian.Graphics {
 
         public static void SetGamma( Int32 gamma ) {
             if ( gamma.Between( 1, 256 ) ) {
-                var ramp = new RAMP { Red = new UInt16[ 256 ], Green = new UInt16[ 256 ], Blue = new UInt16[ 256 ] };
+                var ramp = new RAMP { Red = new UInt16[256], Green = new UInt16[256], Blue = new UInt16[256] };
                 for ( var i = 1; i < 256; i++ ) {
                     var iArrayValue = i * ( gamma + 128 );
 
                     if ( iArrayValue > 65535 ) {
                         iArrayValue = 65535;
                     }
-                    ramp.Red[ i ] = ramp.Blue[ i ] = ramp.Green[ i ] = ( UInt16 )iArrayValue;
+                    ramp.Red[i] = ramp.Blue[i] = ramp.Green[i] = ( UInt16 )iArrayValue;
                 }
 
                 NativeMethods.SetDeviceGammaRamp( NativeMethods.GetDC( IntPtr.Zero ), ref ramp );

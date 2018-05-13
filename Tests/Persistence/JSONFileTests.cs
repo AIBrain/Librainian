@@ -2,33 +2,31 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/JSONFile_Tests.cs" was last cleaned by Protiguous on 2016/06/18 at 10:56 PM
+// "LibrainianTests/JSONFile_Tests.cs" was last cleaned by Protiguous on 2018/05/11 at 8:52 PM
 
-namespace Librainian.Persistence {
+namespace LibrainianTests.Persistence {
 
     using System;
-    using FileSystem;
-    using Magic;
+    using System.Threading.Tasks;
+    using Librainian.FileSystem;
+    using Librainian.Magic;
+    using Librainian.Persistence;
     using NUnit.Framework;
 
     [TestFixture]
-    public static class JSONFile_Tests {
+    public static class JSONFileTests {
 
-        public const String ini_test_data = @"
+        public const String IniTestData = @"
 [ Section 1  ]
 ;This is a comment
 data1=value1
@@ -62,18 +60,18 @@ data33   =   3
 
 ";
 
-        public static INIFile Ini;
+        public static IniFile Ini;
         public static Ini Json;
 
         [OneTimeSetUp]
         public static void Setup() {
             Json = IoC.Container.Get<Ini>();
-            Ini = IoC.Container.Get<INIFile>();
+            Ini = IoC.Container.Get<IniFile>();
         }
 
         [Test]
         public static async Task test_load_from_string() {
-            Ini.Add( ini_test_data );
+            Ini.Add( IniTestData );
 
             Json.Add( Ini );
             Json.Add( Ini );

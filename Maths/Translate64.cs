@@ -2,14 +2,12 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -24,8 +22,7 @@ namespace Librainian.Maths {
     using System.Runtime.InteropServices;
 
     /// <summary>
-    ///     Struct for combining two <see cref="int" /> (or <see cref="uint" />) to and from a
-    ///     <see cref="ulong" /> (or <see cref="long" />) as easily as possible.
+    /// Struct for combining two <see cref="int"/> (or <see cref="uint"/>) to and from a <see cref="ulong"/> (or <see cref="long"/>) as easily as possible.
     /// </summary>
     [StructLayout( layoutKind: LayoutKind.Explicit )]
     [SuppressMessage( category: "ReSharper", checkId: "FieldCanBeMadeReadOnly.Global" )]
@@ -51,30 +48,30 @@ namespace Librainian.Maths {
         public Int32 SignedHigh;
 
         public Translate64( Int32 signedHigh, Int32 signedLow ) {
-            SignedValue = 0;
-            UnsignedLow = 0;
-            UnsignedHigh = 0;
-            UnsignedValue = UInt64.MaxValue;
-            SignedHigh = signedHigh;
-            SignedLow = signedLow;
+            this.UnsignedValue = default;
+            this.SignedValue = default;
+            this.UnsignedLow = default;
+            this.UnsignedHigh = default;
+            this.SignedLow = signedLow;
+            this.SignedHigh = signedHigh;
         }
 
         public Translate64( UInt64 unsignedValue ) {
-            SignedHigh = default;
-            SignedLow = default;
-            SignedValue = default;
-            UnsignedLow = default;
-            UnsignedHigh = default;
-            UnsignedValue = unsignedValue;
+            this.SignedValue = default;
+            this.SignedHigh = default;
+            this.SignedLow = default;
+            this.UnsignedLow = default;
+            this.UnsignedHigh = default;
+            this.UnsignedValue = unsignedValue;
         }
 
         public Translate64( Int64 signedValue ) {
-            UnsignedValue = default;
-            UnsignedLow = default;
-            UnsignedHigh = default;
-            SignedLow = default;
-            SignedHigh = default;
-            SignedValue = signedValue;
+            this.UnsignedValue = default;
+            this.UnsignedLow = default;
+            this.UnsignedHigh = default;
+            this.SignedLow = default;
+            this.SignedHigh = default;
+            this.SignedValue = signedValue;
         }
     }
 }

@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/KiloElectronVolts.cs" was last cleaned by Protiguous on 2016/06/18 at 10:53 PM
+// "Librainian/KiloElectronVolts.cs" was last cleaned by Protiguous on 2018/05/13 at 1:43 AM
 
 namespace Librainian.Measurement.Physics {
 
@@ -26,12 +22,15 @@ namespace Librainian.Measurement.Physics {
     using Librainian.Extensions;
     using Numerics;
 
-    /// <summary>Units of mass and energy in ElectronVolts.</summary>
-    /// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
-    /// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
+    /// <summary>
+    /// Units of mass and energy in ElectronVolts.
+    /// </summary>
+    /// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass"/>
+    /// <seealso cref="http://wikipedia.org/wiki/SI_prefix"/>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct KiloElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<KiloElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
+
         public const Decimal InOneElectronVolt = 1E-3m;
 
         public const Decimal InOneGigaElectronVolt = 1E6m;
@@ -44,18 +43,24 @@ namespace Librainian.Measurement.Physics {
 
         public const Decimal InOneTeraElectronVolt = 1E9m;
 
-        /// <summary>About 79228162514264337593543950335.</summary>
+        /// <summary>
+        /// About 79228162514264337593543950335.
+        /// </summary>
         public static readonly KiloElectronVolts MaxValue = new KiloElectronVolts( Decimal.MaxValue );
 
-        /// <summary>About -79228162514264337593543950335.</summary>
+        /// <summary>
+        /// About -79228162514264337593543950335.
+        /// </summary>
         public static readonly KiloElectronVolts MinValue = new KiloElectronVolts( Decimal.MinValue );
 
         public static readonly KiloElectronVolts NegativeOne = new KiloElectronVolts( -1 );
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         public static readonly KiloElectronVolts NegativeZero = new KiloElectronVolts( -Decimal.Zero );
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         public static readonly KiloElectronVolts One = new KiloElectronVolts( 1 );
 
         public static readonly KiloElectronVolts Zero = new KiloElectronVolts( 0 );
@@ -64,15 +69,15 @@ namespace Librainian.Measurement.Physics {
 
         public KiloElectronVolts( Decimal value ) : this() => this.Value = value;
 
-	    public KiloElectronVolts( MegaElectronVolts megaElectronVolts ) => this.Value = megaElectronVolts.ToKiloElectronVolts().Value;
+        public KiloElectronVolts( MegaElectronVolts megaElectronVolts ) => this.Value = megaElectronVolts.ToKiloElectronVolts().Value;
 
-	    public KiloElectronVolts( BigRational aBigFraction ) => this.Value = ( Decimal )aBigFraction;
+        public KiloElectronVolts( BigRational aBigFraction ) => this.Value = ( Decimal )aBigFraction;
 
-	    public KiloElectronVolts( GigaElectronVolts gigaElectronVolts ) => this.Value = gigaElectronVolts.ToKiloElectronVolts().Value;
+        public KiloElectronVolts( GigaElectronVolts gigaElectronVolts ) => this.Value = gigaElectronVolts.ToKiloElectronVolts().Value;
 
-	    public KiloElectronVolts( ElectronVolts electronVolts ) => this.Value = electronVolts.ToKiloElectronVolts().Value;
+        public KiloElectronVolts( ElectronVolts electronVolts ) => this.Value = electronVolts.ToKiloElectronVolts().Value;
 
-	    public static implicit operator KiloElectronVolts( MegaElectronVolts megaElectronVolts ) => megaElectronVolts.ToKiloElectronVolts();
+        public static implicit operator KiloElectronVolts( MegaElectronVolts megaElectronVolts ) => megaElectronVolts.ToKiloElectronVolts();
 
         public static implicit operator KiloElectronVolts( GigaElectronVolts gigaElectronVolts ) => gigaElectronVolts.ToKiloElectronVolts();
 
@@ -86,13 +91,13 @@ namespace Librainian.Measurement.Physics {
 
         public static KiloElectronVolts operator *( BigRational left, KiloElectronVolts right ) {
             var res = left * right.Value;
+
             return new KiloElectronVolts( ( Decimal )res );
         }
 
         public static KiloElectronVolts operator *( BigInteger left, KiloElectronVolts right ) {
-            var lhs = new BigRational( left );
-            var rhs = new BigRational( right.Value );
-            var res = lhs * rhs;
+            var res = new BigRational( left ) * new BigRational( right.Value );
+
             return new KiloElectronVolts( ( Decimal )res );
         }
 
@@ -131,13 +136,11 @@ namespace Librainian.Measurement.Physics {
         public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * InOneMilliElectronVolt );
 
         /// <summary>
-        ///     Returns the fully qualified type name of this instance.
+        /// Returns the fully qualified type name of this instance.
         /// </summary>
-        /// <returns>
-        ///     A <see cref="T:System.String" /> containing a fully qualified type name.
-        /// </returns>
+        /// <returns>A <see cref="T:System.String"/> containing a fully qualified type name.</returns>
         public override String ToString() => $"{this.Value} eV";
 
-	    public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
+        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
     }
 }

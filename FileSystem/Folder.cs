@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -36,10 +34,10 @@ namespace Librainian.FileSystem {
     using Parsing;
 
     /// <summary>
-    ///     //TODO add in long name (unc) support. Like 'ZedLongPaths' does
+    /// //TODO add in long name (unc) support. Like 'ZedLongPaths' does
     /// </summary>
     [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-    [JsonObject(MemberSerialization.Fields)]
+    [JsonObject]
     [Immutable]
     public class Folder : IEquatable<Folder> {
 
@@ -54,11 +52,11 @@ namespace Librainian.FileSystem {
             if ( fullPath.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( fullPath ) );
             }
-			if ( !fullPath.TryGetFolderFromPath( out var directoryInfo, out _ ) ) {
-				throw new InvalidOperationException( $"Unable to parse a valid path from `{fullPath}`" );
-			}
+            if ( !fullPath.TryGetFolderFromPath( out var directoryInfo, out _ ) ) {
+                throw new InvalidOperationException( $"Unable to parse a valid path from `{fullPath}`" );
+            }
 
-			this.Info = directoryInfo ?? throw new InvalidOperationException( $"Unable to parse a valid path from `{fullPath}`" );
+            this.Info = directoryInfo ?? throw new InvalidOperationException( $"Unable to parse a valid path from `{fullPath}`" );
         }
 
         /// <exception cref="InvalidOperationException"></exception>
@@ -107,16 +105,13 @@ namespace Librainian.FileSystem {
         //}
 
         /// <summary>
-        ///     <para>
-        ///         Pass null to automatically fill in <paramref name="companyName" /> and
-        ///         <paramref name="applicationName" /> .
-        ///     </para>
+        /// <para>Pass null to automatically fill in <paramref name="companyName"/> and <paramref name="applicationName"/> .</para>
         /// </summary>
-        /// <param name="specialFolder"></param>
-        /// <param name="companyName"></param>
+        /// <param name="specialFolder">  </param>
+        /// <param name="companyName">    </param>
         /// <param name="applicationName"></param>
-        /// <param name="subFolder"></param>
-        /// <param name="subSubfolder"></param>
+        /// <param name="subFolder">      </param>
+        /// <param name="subSubfolder">   </param>
         /// <param name="subSubSubfolder"></param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="PathTooLongException"></exception>
@@ -143,13 +138,13 @@ namespace Librainian.FileSystem {
         public Folder( FileSystemInfo fileSystemInfo ) : this( fileSystemInfo.FullName ) { } //-V3073
 
         /// <summary>
-        ///     "/"
+        /// "/"
         /// </summary>
         [NotNull]
         public static String FolderAltSeparator { get; } = new String( new[] { Path.AltDirectorySeparatorChar } );
 
         /// <summary>
-        ///     "\"
+        /// "\"
         /// </summary>
         [NotNull]
         public static String FolderSeparator { get; } = new String( new[] { Path.DirectorySeparatorChar } );
@@ -157,45 +152,33 @@ namespace Librainian.FileSystem {
         public static Char[] FolderSeparatorChar { get; } = { Path.DirectorySeparatorChar };
 
         [NotNull]
-        public String FullName => this.Info.FullName;
-
-        [NotNull]
         public DirectoryInfo Info {
             get;
         }
 
         [NotNull]
+        public String FullName => this.Info.FullName;
+
+        [NotNull]
         public String Name => this.Info.Name;
 
-        [CanBeNull]
-        public Folder GetParent() {
-            if ( this.Info.Parent is null ) {
-                return null;
-            }
-
-            return new Folder( this.Info.Parent );
-        }
-
-	    /// <summary>
-	    ///     <para>Static comparison of the folder names (case sensitive) for equality.</para>
-	    ///     <para>
-	    ///         To compare the path of two <see cref="Folder" /> use
-	    /// <param name="left">todo: describe left parameter on Equals</param>
-	    /// <param name="right">todo: describe right parameter on Equals</param>
-	    ///         <seealso /> .
-	    ///     </para>
-	    /// </summary>
-	    /// <param name="left"></param>
-	    /// <param name="right"></param>
-	    /// <returns></returns>
-	    public static Boolean Equals( [CanBeNull] Folder left, [CanBeNull] Folder right ) {
+        /// <summary>
+        /// <para>Static comparison of the folder names (case sensitive) for equality.</para>
+        /// <para>
+        /// To compare the path of two <see cref="Folder"/> use <param name="left">todo: describe left parameter on Equals</param><param name="right">todo: describe right parameter on Equals</param><seealso/> .
+        /// </para>
+        /// </summary>
+        /// <param name="left"> </param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals( [CanBeNull] Folder left, [CanBeNull] Folder right ) {
             if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
             if ( left is null || right is null ) {
                 return false;
             }
-            return left.FullName.Same( right.FullName );
+            return left.FullName.Is( right.FullName );
         }
 
         /// <summary>
@@ -227,13 +210,13 @@ namespace Librainian.FileSystem {
                     return false;
                 }
                 DirectoryInfo dirInfo;
-				if ( Uri.TryCreate( path, UriKind.Absolute, out var uri ) ) {
-					dirInfo = new DirectoryInfo( uri.LocalPath );
-					folder = new Folder( dirInfo );
-					return true;
-				}
+                if ( Uri.TryCreate( path, UriKind.Absolute, out var uri ) ) {
+                    dirInfo = new DirectoryInfo( uri.LocalPath );
+                    folder = new Folder( dirInfo );
+                    return true;
+                }
 
-				dirInfo = new DirectoryInfo( path ); //try it anyways
+                dirInfo = new DirectoryInfo( path ); //try it anyways
                 folder = new Folder( dirInfo );
                 return true;
             }
@@ -255,13 +238,13 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        ///     Returns a copy of the folder instance.
+        /// Returns a copy of the folder instance.
         /// </summary>
         /// <returns></returns>
         public Folder Clone() => new Folder( this );
 
-	    /// <summary>
-        ///     <para>Returns True if the folder exists.</para>
+        /// <summary>
+        /// <para>Returns True if the folder exists.</para>
         /// </summary>
         /// <returns></returns>
         /// See also:
@@ -271,6 +254,11 @@ namespace Librainian.FileSystem {
                 if ( this.Exists() ) {
                     return true;
                 }
+
+                if ( this.Info.Parent != null && !this.Info.Parent.Exists ) {
+                    new Folder( this.Info.Parent.FullName ).Create();
+                }
+
                 this.Info.Create();
                 return this.Exists();
             }
@@ -280,7 +268,7 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        ///     <para>Returns True if the folder no longer exists.</para>
+        /// <para>Returns True if the folder no longer exists.</para>
         /// </summary>
         /// <returns></returns>
         /// <seealso cref="Create"></seealso>
@@ -299,7 +287,7 @@ namespace Librainian.FileSystem {
 
         public Boolean DemandPermission( FileIOPermissionAccess access ) {
             try {
-                var bob = new FileIOPermission( access: access, path: this.FullName );
+                var bob = new FileIOPermission( access: access, this.FullName );
                 bob.Demand();
                 return true;
             }
@@ -312,8 +300,8 @@ namespace Librainian.FileSystem {
 
         public Boolean Equals( Folder other ) => Equals( this, other );
 
-	    /// <summary>
-        ///     Returns true if the <see cref="Folder" /> currently exists.
+        /// <summary>
+        /// Returns true if the <see cref="Folder"/> currently exists.
         /// </summary>
         /// <exception cref="IOException"></exception>
         /// <exception cref="SecurityException"></exception>
@@ -324,7 +312,7 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        ///     Free space available to the current user.
+        /// Free space available to the current user.
         /// </summary>
         /// <returns></returns>
         public UInt64 GetAvailableFreeSpace() {
@@ -334,7 +322,7 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        ///     <para>Returns an enumerable collection of <see cref="Document" /> in the current directory.</para>
+        /// <para>Returns an enumerable collection of <see cref="Document"/> in the current directory.</para>
         /// </summary>
         /// <returns></returns>
         public IEnumerable<Document> GetDocuments() {
@@ -353,7 +341,7 @@ namespace Librainian.FileSystem {
 
         public Drive GetDrive() => new Drive( this.Info.Root.FullName );
 
-	    public IEnumerable<Folder> GetFolders() {
+        public IEnumerable<Folder> GetFolders() {
             if ( !this.Info.Exists ) {
                 this.Refresh();
                 if ( !this.Info.Exists ) {
@@ -383,21 +371,21 @@ namespace Librainian.FileSystem {
 
         public override Int32 GetHashCode() => this.FullName.GetHashCode();
 
+        [CanBeNull]
+        public Folder GetParent() => this.Info.Parent is null ? null : new Folder( this.Info.Parent );
+
         /// <summary>
-        ///     <para>
-        ///         Check if this <see cref="Folder" /> contains any <see cref="Folder" /> or
-        ///         <see cref="Document" /> .
-        ///     </para>
+        /// <para>Check if this <see cref="Folder"/> contains any <see cref="Folder"/> or <see cref="Document"/> .</para>
         /// </summary>
         /// <returns></returns>
         public Boolean IsEmpty() => !this.GetFolders( "*.*" ).Any() && !this.GetDocuments( "*.*" ).Any();
 
-		public void OpenWithExplorer() => Windows.ExecuteExplorer( arguments: this.FullName );
+        public void OpenWithExplorer() => Windows.ExecuteExplorer( arguments: this.FullName );
 
-		public void Refresh() => this.Info.Refresh();
+        public void Refresh() => this.Info.Refresh();
 
         /// <summary>
-        ///     <para>Shorten the full path with "..."</para>
+        /// <para>Shorten the full path with "..."</para>
         /// </summary>
         /// <returns></returns>
         public String ToCompactFormat() {
@@ -407,10 +395,9 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        ///     Returns a String that represents the current object.
+        /// Returns a String that represents the current object.
         /// </summary>
         /// <returns>A String that represents the current object.</returns>
         public override String ToString() => this.FullName;
-
     }
 }

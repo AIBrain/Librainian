@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/GenericPopulator.cs" was last cleaned by Protiguous on 2016/06/18 at 10:50 PM
+// "Librainian/GenericPopulator.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
 
 namespace Librainian.Database {
 
@@ -28,19 +24,9 @@ namespace Librainian.Database {
 
     public static class GenericPopulator<T> {
 
-        public static List<T> CreateList( SqlDataReader reader ) {
-            var results = new List<T>();
-            var readRow = GetReader( reader );
-
-            while ( reader.Read() ) {
-                results.Add( readRow( reader ) );
-            }
-
-            return results;
-        }
-
         private static Func<SqlDataReader, T> GetReader( IDataRecord reader ) {
             var readerColumns = new List<String>();
+
             for ( var index = 0; index < reader.FieldCount; index++ ) {
                 readerColumns.Add( reader.GetName( index ) );
             }
@@ -55,10 +41,12 @@ namespace Librainian.Database {
 
             // loop through the properties and create MemberBinding expressions for each property
             var memberBindings = new List<MemberBinding>();
+
             foreach ( var prop in typeof( T ).GetProperties() ) {
 
                 // determine the default value of the property
                 Object defaultValue = null;
+
                 if ( prop.PropertyType.IsValueType ) {
                     defaultValue = Activator.CreateInstance( prop.PropertyType );
                 }
@@ -78,7 +66,7 @@ namespace Librainian.Database {
                     var ifFalse = Expression.Convert( Expression.Constant( defaultValue ), prop.PropertyType );
 
                     // create the actual Bind expression to bind the value from the reader to the property value
-                    var mi = typeof( T ).GetMember( prop.Name )[ 0 ];
+                    var mi = typeof( T ).GetMember( prop.Name )[0];
                     MemberBinding mb = Expression.Bind( mi, Expression.Condition( testExp, ifTrue, ifFalse ) );
                     memberBindings.Add( mb );
                 }
@@ -92,6 +80,17 @@ namespace Librainian.Database {
             Delegate resDelegate = lambda.Compile();
 
             return ( Func<SqlDataReader, T> )resDelegate;
+        }
+
+        public static List<T> CreateList( SqlDataReader reader ) {
+            var results = new List<T>();
+            var readRow = GetReader( reader );
+
+            while ( reader.Read() ) {
+                results.Add( readRow( reader ) );
+            }
+
+            return results;
         }
     }
 }

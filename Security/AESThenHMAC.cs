@@ -62,15 +62,15 @@ namespace Librainian.Security {
 
             //Basic Usage Error Checks
             if ( cryptKey is null || cryptKey.Length != KeyBitSize / 8 ) {
-                throw new ArgumentException( message: $"CryptKey needs to be {KeyBitSize} bit!", paramName: nameof( cryptKey ) );
+                throw new ArgumentException( message: $"CryptKey needs to be {KeyBitSize} bit!",nameof( cryptKey ) );
             }
 
             if ( authKey is null || authKey.Length != KeyBitSize / 8 ) {
-                throw new ArgumentException( message: $"AuthKey needs to be {KeyBitSize} bit!", paramName: nameof( authKey ) );
+                throw new ArgumentException( message: $"AuthKey needs to be {KeyBitSize} bit!",nameof( authKey ) );
             }
 
             if ( encryptedMessage is null || encryptedMessage.Length == 0 ) {
-                throw new ArgumentException( message: "Encrypted Message Required!", paramName: nameof( encryptedMessage ) );
+                throw new ArgumentException( message: "Encrypted Message Required!",nameof( encryptedMessage ) );
             }
 
             using ( var hmac = new HMACSHA256(authKey ) ) {
@@ -132,7 +132,7 @@ namespace Librainian.Security {
         /// <exception cref="System.ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
         public static String SimpleDecrypt( String encryptedMessage, Byte[] cryptKey, Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
             if ( String.IsNullOrWhiteSpace( value: encryptedMessage ) ) {
-                throw new ArgumentException( message: "Encrypted Message Required!", paramName: nameof( encryptedMessage ) );
+                throw new ArgumentException( message: "Encrypted Message Required!",nameof( encryptedMessage ) );
             }
 
             var cipherText = Convert.FromBase64String( s: encryptedMessage );
@@ -152,7 +152,7 @@ namespace Librainian.Security {
         /// <remarks>Significantly less secure than using random binary keys.</remarks>
         public static String SimpleDecryptWithPassword( String encryptedMessage, String password, Int32 nonSecretPayloadLength = 0 ) {
             if ( String.IsNullOrWhiteSpace( value: encryptedMessage ) ) {
-                throw new ArgumentException( message: "Encrypted Message Required!", paramName: nameof( encryptedMessage ) );
+                throw new ArgumentException( message: "Encrypted Message Required!",nameof( encryptedMessage ) );
             }
 
             var cipherText = Convert.FromBase64String( s: encryptedMessage );
@@ -174,11 +174,11 @@ namespace Librainian.Security {
 
             //User Error Checks
             if ( String.IsNullOrWhiteSpace( value: password ) || password.Length < MinPasswordLength ) {
-                throw new ArgumentException( message: $"Must have a password of at least {MinPasswordLength} characters!", paramName: nameof( password ) );
+                throw new ArgumentException( message: $"Must have a password of at least {MinPasswordLength} characters!",nameof( password ) );
             }
 
             if ( encryptedMessage is null || encryptedMessage.Length == 0 ) {
-                throw new ArgumentException( message: "Encrypted Message Required!", paramName: nameof( encryptedMessage ) );
+                throw new ArgumentException( message: "Encrypted Message Required!",nameof( encryptedMessage ) );
             }
 
             var cryptSalt = new Byte[SaltBitSize / 8];
@@ -218,15 +218,15 @@ namespace Librainian.Security {
 
             //User Error Checks
             if ( cryptKey is null || cryptKey.Length != KeyBitSize / 8 ) {
-                throw new ArgumentException( message: $"Key needs to be {KeyBitSize} bit!", paramName: nameof( cryptKey ) );
+                throw new ArgumentException( message: $"Key needs to be {KeyBitSize} bit!",nameof( cryptKey ) );
             }
 
             if ( authKey is null || authKey.Length != KeyBitSize / 8 ) {
-                throw new ArgumentException( message: $"Key needs to be {KeyBitSize} bit!", paramName: nameof( authKey ) );
+                throw new ArgumentException( message: $"Key needs to be {KeyBitSize} bit!",nameof( authKey ) );
             }
 
             if ( secretMessage is null || secretMessage.Length < 1 ) {
-                throw new ArgumentException( message: "Secret Message Required!", paramName: nameof( secretMessage ) );
+                throw new ArgumentException( message: "Secret Message Required!",nameof( secretMessage ) );
             }
 
             //non-secret payload optional
@@ -290,7 +290,7 @@ namespace Librainian.Security {
         /// </remarks>
         public static String SimpleEncrypt( String secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[] nonSecretPayload = null ) {
             if ( String.IsNullOrEmpty( value: secretMessage ) ) {
-                throw new ArgumentException( message: "Secret Message Required!", paramName: nameof( secretMessage ) );
+                throw new ArgumentException( message: "Secret Message Required!",nameof( secretMessage ) );
             }
 
             var plainText = Encoding.UTF8.GetBytes( s: secretMessage );
@@ -313,7 +313,7 @@ namespace Librainian.Security {
         /// </remarks>
         public static String SimpleEncryptWithPassword( String secretMessage, String password, Byte[] nonSecretPayload = null ) {
             if ( String.IsNullOrEmpty( value: secretMessage ) ) {
-                throw new ArgumentException( message: "Secret Message Required!", paramName: nameof( secretMessage ) );
+                throw new ArgumentException( message: "Secret Message Required!",nameof( secretMessage ) );
             }
 
             var plainText = Encoding.UTF8.GetBytes( s: secretMessage );
@@ -339,11 +339,11 @@ namespace Librainian.Security {
 
             //User Error Checks
             if ( String.IsNullOrWhiteSpace( value: password ) || password.Length < MinPasswordLength ) {
-                throw new ArgumentException( message: $"Must have a password of at least {MinPasswordLength} characters!", paramName: nameof( password ) );
+                throw new ArgumentException( message: $"Must have a password of at least {MinPasswordLength} characters!",nameof( password ) );
             }
 
             if ( secretMessage is null || secretMessage.Length == 0 ) {
-                throw new ArgumentException( message: "Secret Message Required!", paramName: nameof( secretMessage ) );
+                throw new ArgumentException( message: "Secret Message Required!",nameof( secretMessage ) );
             }
 
             var payload = new Byte[SaltBitSize / 8 * 2 + nonSecretPayload.Length];

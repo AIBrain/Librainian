@@ -2,10 +2,8 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -21,15 +19,19 @@ namespace Librainian.Security {
     using System.Collections.Generic;
     using System.Security.Cryptography;
 
-    /// <summary>Implements a 64-bit CRC hash algorithm for a given polynomial.</summary>
+    /// <summary>
+    /// Implements a 64-bit CRC hash algorithm for a given polynomial.
+    /// </summary>
     /// <remarks>For ISO 3309 compliant 64-bit CRC's use Crc64Iso.</remarks>
-    /// <copyright>Damien Guard. All rights reserved.</copyright>
-    /// <seealso cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
+    /// <copyright>
+    ///     Damien Guard. All rights reserved.
+    /// </copyright>
+    /// <seealso cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs"/>
     public class Crc64 : HashAlgorithm {
-        protected const UInt64 DefaultSeed = 0x0;
         private readonly UInt64 _seed;
         private readonly UInt64[] _table;
         private UInt64 _hash;
+        protected const UInt64 DefaultSeed = 0x0;
 
         public Crc64( UInt64 polynomial, UInt64 seed = DefaultSeed ) {
             this._table = InitializeTable( polynomial: polynomial );
@@ -38,7 +40,29 @@ namespace Librainian.Security {
 
         public override Int32 HashSize => 64;
 
-        public override void Initialize() => this._hash = this._seed;
+        private static UInt64[] InitializeTable( UInt64 polynomial ) {
+            if ( polynomial == Crc64Iso.Iso3309Polynomial && Crc64Iso.Table != null ) {
+                return Crc64Iso.Table;
+            }
+
+            var createTable = CreateTable( polynomial: polynomial );
+
+            if ( polynomial == Crc64Iso.Iso3309Polynomial ) {
+                Crc64Iso.Table = createTable;
+            }
+
+            return createTable;
+        }
+
+        private static Byte[] UInt64ToBigEndianBytes( UInt64 value ) {
+            var result = BitConverter.GetBytes( value: value );
+
+            if ( BitConverter.IsLittleEndian ) {
+                Array.Reverse( array: result );
+            }
+
+            return result;
+        }
 
         protected static UInt64 CalculateHash( UInt64 seed, UInt64[] table, IList<Byte> buffer, Int32 start, Int32 size ) {
             var crc = seed;
@@ -75,32 +99,10 @@ namespace Librainian.Security {
 
         protected override Byte[] HashFinal() {
             var hashBuffer = UInt64ToBigEndianBytes( value: this._hash );
-            this.HashValue = hashBuffer;
+            HashValue = hashBuffer;
             return hashBuffer;
         }
 
-        private static UInt64[] InitializeTable( UInt64 polynomial ) {
-            if ( polynomial == Crc64Iso.Iso3309Polynomial && Crc64Iso.Table != null ) {
-                return Crc64Iso.Table;
-            }
-
-            var createTable = CreateTable( polynomial: polynomial );
-
-            if ( polynomial == Crc64Iso.Iso3309Polynomial ) {
-                Crc64Iso.Table = createTable;
-            }
-
-            return createTable;
-        }
-
-        private static Byte[] UInt64ToBigEndianBytes( UInt64 value ) {
-            var result = BitConverter.GetBytes( value: value );
-
-            if ( BitConverter.IsLittleEndian ) {
-                Array.Reverse( array: result );
-            }
-
-            return result;
-        }
+        public override void Initialize() => this._hash = this._seed;
     }
 }

@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -27,7 +25,9 @@ namespace Librainian.Threading {
 
     public static class ActorExtensions {
 
-        /// <summary>".....and....ACTION!"</summary>
+        /// <summary>
+        /// ".....and....ACTION!"
+        /// </summary>
         /// <param name="actor"></param>
         public static async Task<Actor> Act( this Actor actor ) {
 
@@ -50,7 +50,7 @@ namespace Librainian.Threading {
                     var task = Task.Run( () => player.TheAct() );
                     var runner = Task.Delay( player.ActingTimeout.Value );
 
-                    var result = await Task.WhenAny( task, runner );
+                    await Task.WhenAny( task, runner );
                 }
             }
 
@@ -83,11 +83,7 @@ namespace Librainian.Threading {
                 return actor;
             }
 
-            if ( actor.IsReady() ) {
-                return actor.EndScene().Then( action );
-            }
-
-            return actor;
+            return actor.IsReady() ? actor.EndScene().Then( action ) : actor;
         }
     }
 }

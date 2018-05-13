@@ -2,10 +2,8 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -15,13 +13,14 @@
 //
 // "Librainian/PasswordTests.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
 
-namespace Librainian.Security {
+namespace LibrainianTests {
 
     using System;
     using System.Globalization;
-    using Maths;
+    using Librainian.Maths;
+    using Librainian.Parsing;
+    using Librainian.Security;
     using NUnit.Framework;
-    using Parsing;
 
     [TestFixture]
     public static class PasswordTests {

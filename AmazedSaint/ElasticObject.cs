@@ -226,13 +226,10 @@ namespace Librainian.AmazedSaint {
             if ( indexes.Length == 1 && indexes[0] is null ) {
                 result = this.ElasticProvider.Elements.ToList();
             }
-            else if ( indexes.Length == 1 && indexes[0] is Int32 ) {
-                var indx = ( Int32 )indexes[0];
-                var elmt = this.Elements.ElementAt( indx );
-                result = elmt;
+            else if ( indexes.Length == 1 && indexes[0] is Int32 indx ) {
+                result = this.Elements.ElementAt( indx );
             }
-            else if ( indexes.Length == 1 && indexes[0] is Func<Object, Boolean> ) {
-                var filter = indexes[0] as Func<Object, Boolean>;
+            else if ( indexes.Length == 1 && indexes[0] is Func<Object, Boolean> filter ) {
                 result = this.Elements.Where( filter ).ToList();
             }
             else {

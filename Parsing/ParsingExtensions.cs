@@ -2,7 +2,7 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
 // Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
@@ -12,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ParsingExtensions.cs" was last cleaned by Protiguous on 2018/05/08 at 10:59 PM
+// "Librainian/ParsingExtensions.cs" was last cleaned by Protiguous on 2018/05/13 at 1:40 AM
 
 namespace Librainian.Parsing {
 
@@ -27,35 +27,30 @@ namespace Librainian.Parsing {
     using System.Net;
     using System.Numerics;
     using System.Runtime.Serialization;
-    using System.Runtime.Serialization.Formatters;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Xml;
     using Collections;
-    using Extensions;
     using JetBrains.Annotations;
     using Linguistics;
     using Maths;
     using Maths.Numbers;
     using Measurement.Time;
+    using Newtonsoft.Json;
     using Numerics;
     using NUnit.Framework;
     using Threading;
+    using Formatting = Newtonsoft.Json.Formatting;
 
     public static class ParsingExtensions {
+
         public const String Doublespace = Singlespace + Singlespace;
 
-        /// <summary>
-        /// abcdefghijklmnopqrstuvwxyz
-        /// </summary>
         public const String Lowercase = "abcdefghijklmnopqrstuvwxyz";
 
         public const String MatchMoney = @"//\$\s*[-+]?([0-9]{0,3}(,[0-9]{3})*(\.[0-9]+)?)";
 
-        /// <summary>
-        /// 0123456789
-        /// </summary>
         public const String Numbers = "0123456789";
 
         public const String Singlespace = @" ";
@@ -141,6 +136,7 @@ namespace Librainian.Parsing {
 
         public static String AddSpacesBeforeUppercase( this String word ) {
             var sb = new StringBuilder( word.Length * 2 );
+
             foreach ( var c in word ) {
                 if ( Char.IsUpper( c ) ) {
                     sb.Append( Singlespace );
@@ -212,20 +208,25 @@ namespace Librainian.Parsing {
                 case 13:
                 case 12:
                 case 11:
+
                     return $"{number}th";
             }
 
             switch ( number % 10 ) {
                 case 1:
+
                     return $"{number}st";
 
                 case 2:
+
                     return $"{number}nd";
 
                 case 3:
+
                     return $"{number}rd";
 
                 default:
+
                     return $"{number}th";
             }
         }
@@ -263,6 +264,7 @@ namespace Librainian.Parsing {
         public static IDictionary<Char, UInt64> Count( this String text ) {
             var dict = new ConcurrentDictionary<Char, UInt64>();
             text.AsParallel().ForAll( c => dict.AddOrUpdate( c, 1, ( c1, arg2 ) => arg2 + 1 ) );
+
             return dict;
         }
 
@@ -341,6 +343,7 @@ namespace Librainian.Parsing {
                     }
 
                     dCurrent[i] = min;
+
                     if ( min < minDistance ) {
                         minDistance = min;
                     }
@@ -350,17 +353,20 @@ namespace Librainian.Parsing {
                 }
 
                 jm1++;
+
                 if ( minDistance > threshold ) {
                     return Int32.MaxValue;
                 }
             }
 
             var result = dCurrent[maxi];
+
             return result > threshold ? Int32.MaxValue : result;
         }
 
         public static Int32 EditDistanceParallel( this String s1, String s2 ) {
             var dist = new Int32[s1.Length + 1, s2.Length + 1];
+
             for ( var i = 0; i <= s1.Length; i++ ) {
                 dist[i, 0] = i;
             }
@@ -413,6 +419,7 @@ namespace Librainian.Parsing {
             }
             catch ( Exception exception ) {
                 exception.More();
+
                 return s;
             }
         }
@@ -471,6 +478,7 @@ namespace Librainian.Parsing {
             }
 
             var sentences = text.ToSentences().FirstOrDefault();
+
             return sentences?.ToString() ?? String.Empty;
         }
 
@@ -490,11 +498,13 @@ namespace Librainian.Parsing {
             builder.Append( toBeFormatted[0] );
             builder.Append( "." );
             builder.Append( toBeFormatted.Substring( 1, numberOfDigits - 1 ) );
+
             return builder.ToString();
         }
 
         public static String FromBase64( this String base64EncodedData ) {
             var base64EncodedBytes = Convert.FromBase64String( base64EncodedData );
+
             return Encoding.Unicode.GetString( base64EncodedBytes );
         }
 
@@ -662,6 +672,7 @@ namespace Librainian.Parsing {
             }
             catch ( Exception error ) {
                 error.More();
+
                 return s;
             }
         }
@@ -674,6 +685,7 @@ namespace Librainian.Parsing {
         /// <seealso cref="Sentence"/>
         public static IEnumerable<String> JustWords( this String sentence ) {
             var result = sentence.ToWords().Where( word => word.Any( Char.IsLetterOrDigit ) );
+
             return result;
         }
 
@@ -682,10 +694,10 @@ namespace Librainian.Parsing {
         /// <para>( for example: cAt == CaT is true )</para>
         /// <para><see cref="StringComparison.InvariantCultureIgnoreCase"/></para>
         /// </summary>
-        /// <param name="source"> </param>
-        /// <param name="compare"></param>
+        /// <param name="left"> </param>
+        /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Like( this String source, String compare ) => ( source ?? String.Empty ).Equals( compare ?? String.Empty, StringComparison.InvariantCultureIgnoreCase );
+        public static Boolean Like( [CanBeNull] this String left, String right ) => ( left ?? String.Empty ).Equals( right ?? String.Empty, StringComparison.InvariantCultureIgnoreCase );
 
         /// <summary>
         /// Convert the first letter of a String to lower case
@@ -699,17 +711,15 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="bob"></param>
         /// <returns></returns>
-        public static Int64 MemoryUsed( [NotNull] this Object bob ) {
-            if ( bob is null ) {
+        public static Int64 MemoryUsed<T>( [CanBeNull] this T bob ) {
+            if ( bob == null ) {
                 throw new ArgumentNullException( nameof( bob ) );
             }
 
             try {
-                using ( var s = new NullStream() ) {
-                    var serializer = new NetDataContractSerializer { AssemblyFormat = FormatterAssemblyStyle.Full };
-                    serializer.WriteObject( stream: s, graph: bob );
-                    return s.Length;
-                }
+                var me = JsonConvert.SerializeObject( bob, Formatting.None );
+
+                return me.LongCount();
             }
             catch ( InvalidDataContractException exception ) {
                 exception.More();
@@ -732,6 +742,7 @@ namespace Librainian.Parsing {
             }
 
             theString = theString.Trim();
+
             return String.IsNullOrWhiteSpace( theString ) ? null : theString;
         }
 
@@ -745,6 +756,7 @@ namespace Librainian.Parsing {
 
         public static String PadMiddle( Int32 totalLength, String partA, String partB, Char paddingChar ) {
             var result = partA + partB;
+
             while ( result.Length < totalLength ) {
                 result = result.Insert( partA.Length, paddingChar.ToString() );
             }
@@ -758,6 +770,7 @@ namespace Librainian.Parsing {
 
         public static String PadMiddle( Int32 totalLength, String partA, String partB, String partC, Char paddingChar = '_' ) {
             var padding = String.Empty.PadRight( ( totalLength - ( partA.Length + partB.Length + partC.Length ) ) / 2, paddingChar );
+
             return partA + padding + partB + String.Empty.PadRight( totalLength - ( partA.Length + padding.Length + partB.Length + partC.Length ), paddingChar ) + partC;
         }
 
@@ -782,11 +795,13 @@ namespace Librainian.Parsing {
 
             if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
                 PluralCache[singular] = singular;
+
                 return singular;
             }
 
             var pluralized = LazyPluralizationService.Value.Pluralize( singular );
             PluralCache[singular] = pluralized;
+
             return pluralized;
         }
 
@@ -811,11 +826,13 @@ namespace Librainian.Parsing {
 
             if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
                 PluralCache[singular] = singular;
+
                 return singular;
             }
 
             var pluralized = LazyPluralizationService.Value.Pluralize( singular );
             PluralCache[singular] = pluralized;
+
             return pluralized;
         }
 
@@ -840,11 +857,13 @@ namespace Librainian.Parsing {
 
             if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
                 PluralCache[singular] = singular;
+
                 return singular;
             }
 
             var pluralized = LazyPluralizationService.Value.Pluralize( singular );
             PluralCache[singular] = pluralized;
+
             return pluralized;
         }
 
@@ -869,11 +888,13 @@ namespace Librainian.Parsing {
 
             if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
                 PluralCache[singular] = singular;
+
                 return singular;
             }
 
             var pluralized = LazyPluralizationService.Value.Pluralize( singular );
             PluralCache[singular] = pluralized;
+
             return pluralized;
         }
 
@@ -898,11 +919,13 @@ namespace Librainian.Parsing {
 
             if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
                 PluralCache[singular] = singular;
+
                 return singular;
             }
 
             var pluralized = LazyPluralizationService.Value.Pluralize( singular );
             PluralCache[singular] = pluralized;
+
             return pluralized;
         }
 
@@ -927,11 +950,13 @@ namespace Librainian.Parsing {
 
             if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
                 PluralCache[singular] = singular;
+
                 return singular;
             }
 
             var pluralized = LazyPluralizationService.Value.Pluralize( singular );
             PluralCache[singular] = pluralized;
+
             return pluralized;
         }
 
@@ -956,11 +981,13 @@ namespace Librainian.Parsing {
 
             if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
                 PluralCache[singular] = singular;
+
                 return singular;
             }
 
             var pluralized = LazyPluralizationService.Value.Pluralize( singular );
             PluralCache[singular] = pluralized;
+
             return pluralized;
         }
 
@@ -974,6 +1001,7 @@ namespace Librainian.Parsing {
             }
 
             ms.Seek( 0, SeekOrigin.Begin );
+
             using ( var reader = new StreamReader( ms ) ) {
                 return reader.ReadToEnd();
             }
@@ -985,6 +1013,7 @@ namespace Librainian.Parsing {
             }
 
             var stringInfo = new StringInfo( s );
+
             return ( UInt64 )stringInfo.LengthInTextElements;
         }
 
@@ -1030,6 +1059,7 @@ namespace Librainian.Parsing {
             }
 
             var builder = new StringBuilder( @this.Length * repetitions + separator.Length * ( repetitions - 1 ) );
+
             for ( var i = 0; i < repetitions; ++i ) {
                 if ( i > 0 ) {
                     builder.Append( separator );
@@ -1058,6 +1088,7 @@ namespace Librainian.Parsing {
 
         public static String ReplaceFirst( this String haystack, String needle, String replacement ) {
             var pos = haystack.IndexOf( needle, StringComparison.Ordinal );
+
             if ( pos < 0 ) {
                 return haystack;
             }
@@ -1075,6 +1106,7 @@ namespace Librainian.Parsing {
         public static String Reverse( this String s ) {
             var charArray = s.ToCharArray();
             Array.Reverse( charArray );
+
             return new String( charArray );
         }
 
@@ -1088,12 +1120,14 @@ namespace Librainian.Parsing {
             var tokens = new Char[length];
             var position = 0;
             Int32 lastIndex;
+
             for ( var i = length - 1; i >= 0; i-- ) {
                 if ( myString[i] != ' ' ) {
                     continue;
                 }
 
                 lastIndex = length - position;
+
                 for ( var k = i + 1; k < lastIndex; k++ ) {
                     tokens[position] = myString[k];
                     position++;
@@ -1104,6 +1138,7 @@ namespace Librainian.Parsing {
             }
 
             lastIndex = myString.Length - position;
+
             for ( var i = 0; i < lastIndex; i++ ) {
                 tokens[position] = myString[i];
                 position++;
@@ -1121,16 +1156,17 @@ namespace Librainian.Parsing {
 
             var startIndex = s.Length - count;
             newString = startIndex > 0 ? s.Substring( startIndex, count ) : s;
+
             return newString;
         }
 
         /// <summary>
         /// Case sensitive ( <see cref="StringComparison.InvariantCulture"/>) string comparison.
         /// </summary>
-        /// <param name="source"> </param>
-        /// <param name="compare"></param>
+        /// <param name="left"> </param>
+        /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Same( this String source, String compare ) => ( source ?? String.Empty ).Equals( compare ?? String.Empty, StringComparison.InvariantCulture );
+        public static Boolean Is( [CanBeNull] this String left, [CanBeNull] String right ) => ( left ?? String.Empty ).Equals( right ?? String.Empty, StringComparison.InvariantCulture );
 
         /// <summary>
         /// Compute a Similarity between two strings. <br/>
@@ -1147,6 +1183,7 @@ namespace Librainian.Parsing {
 
             if ( source is null && compare is null ) {
                 similarity.Add( 1 );
+
                 goto noMoreTests;
             }
 
@@ -1171,6 +1208,7 @@ namespace Librainian.Parsing {
             if ( source.ExactMatch( compare ) ) {
                 matchReasons?.Add( "ExactMatch( source, compare )" );
                 similarity.Add( 1 );
+
                 goto noMoreTests;
             }
 
@@ -1198,6 +1236,7 @@ namespace Librainian.Parsing {
                 votes.ForA( sourceIntoUtf32Encoding.Length );
                 votes.ForB( compareIntoUtf32Encoding.Length );
                 matchReasons.Add( "exact match as UTF32 encoded" );
+
                 goto noMoreTests;
             }
 
@@ -1206,6 +1245,7 @@ namespace Librainian.Parsing {
             }
 
             var compareReversed = compare.Reverse();
+
             if ( source.SequenceEqual( compareReversed ) ) {
                 votes.ForA( source.Length );
                 votes.ForB( compare.Length / 2.0 );
@@ -1241,8 +1281,10 @@ namespace Librainian.Parsing {
             }
 
             var tempcounter = 0;
+
             foreach ( var c in source ) {
                 votes.ForA();
+
                 if ( !compare.Contains( c ) ) {
                     continue;
                 }
@@ -1260,8 +1302,10 @@ namespace Librainian.Parsing {
             }
 
             tempcounter = 0;
+
             foreach ( var c in compare ) {
                 votes.ForB();
+
                 if ( !source.Contains( c ) ) {
                     continue;
                 }
@@ -1312,6 +1356,7 @@ namespace Librainian.Parsing {
             //TODO
 
             noMoreTests:
+
             return similarity;
         }
 
@@ -1355,6 +1400,7 @@ namespace Librainian.Parsing {
 
         public static String StringFromResponse( [CanBeNull] this WebResponse response ) {
             var restream = response?.GetResponseStream();
+
             return restream != null ? new StreamReader( restream ).ReadToEnd() : String.Empty;
         }
 
@@ -1401,6 +1447,7 @@ namespace Librainian.Parsing {
                     }
 
                     isAllowed = true;
+
                     break;
                 }
 
@@ -1447,6 +1494,7 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         public static String Sub( this String s, Int32 count ) {
             var length = Math.Min( count, s.Length );
+
             return s.Substring( 0, length );
         }
 
@@ -1501,6 +1549,7 @@ namespace Librainian.Parsing {
 
         public static String ToBase64( this String plainText ) {
             var plainTextBytes = Encoding.Unicode.GetBytes( plainText ?? String.Empty );
+
             return Convert.ToBase64String( plainTextBytes );
         }
 
@@ -1527,6 +1576,7 @@ namespace Librainian.Parsing {
         public static String ToOrdinal( this Int32 number ) {
             var n = Math.Abs( number );
             var lt = n % 100;
+
             return number + OrdinalSuffixes[lt >= 11 && lt <= 13 ? 0 : n % 10];
         }
 
@@ -1545,6 +1595,7 @@ namespace Librainian.Parsing {
             text = text.Replace( "_", " " );
             var joinString = removeUnderscores ? String.Empty : "_";
             var words = text.Split( ' ' );
+
             if ( words.Length <= 1 && !words[0].IsUpperCase() ) {
                 return String.Concat( words[0].Substring( 0, 1 ).ToUpper( culture ), words[0].Substring( 1 ) );
             }
@@ -1576,6 +1627,7 @@ namespace Librainian.Parsing {
 
             //clean it up some
             paragraph = paragraph.Replace( "\t", Singlespace );
+
             do {
                 paragraph = paragraph.Replace( Doublespace, Singlespace );
             } while ( paragraph.Contains( Doublespace ) );
@@ -1592,6 +1644,7 @@ namespace Librainian.Parsing {
             }
 
             var results = RegexBySentenceStackoverflow.Split( input: paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trim() ).Where( ts => !String.IsNullOrWhiteSpace( ts ) && !ts.Equals( "." ) );
+
             return results.Select( s => new Sentence( s ) );
         }
 
@@ -1640,6 +1693,7 @@ namespace Librainian.Parsing {
             }
             else {
                 words += TensMap[number / 10];
+
                 if ( number % 10 > 0 ) {
                     words += "-" + UnitsMap[number % 10];
                 }
@@ -1667,12 +1721,14 @@ namespace Librainian.Parsing {
             var decPortion = ( Int32 )fraction;
 
             var words = ToVerbalWord( intPortion );
+
             if ( decPortion <= 0 ) {
                 return words;
             }
 
             words += " and ";
             words += ToVerbalWord( decPortion );
+
             return words;
         }
 
@@ -1706,6 +1762,7 @@ namespace Librainian.Parsing {
             }
 
             var result = RegexByWordBreak.Split( sentence ).ToStrings( " " ).Split( SpaceSplitBy, StringSplitOptions.RemoveEmptyEntries );
+
             return result;
 
             //var sb = new StringBuilder( sentence.Length );
@@ -1724,6 +1781,7 @@ namespace Librainian.Parsing {
             try {
                 var doc = new XmlDocument();
                 doc.LoadXml( input );
+
                 return doc;
             }
             catch ( XmlException ) {
@@ -1784,6 +1842,7 @@ namespace Librainian.Parsing {
             var sb = new StringBuilder( words.Count );
             var prevWord = words.FirstOrDefault();
             sb.Append( prevWord );
+
             foreach ( var cur in words.Where( cur => !cur.Equals( prevWord ) ) ) {
                 sb.Append( $" {cur}" );
             }

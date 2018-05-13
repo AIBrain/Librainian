@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Actor.cs" was last cleaned by Protiguous on 2016/06/18 at 10:57 PM
+// "Librainian/Actor.cs" was last cleaned by Protiguous on 2018/05/09 at 1:10 PM
 
 namespace Librainian.Threading {
 
@@ -28,20 +24,18 @@ namespace Librainian.Threading {
     using JetBrains.Annotations;
     using Magic;
 
-    /// <summary>Fluent Actor test class.</summary>
-    /// <copyright>Protiguous 2018</copyright>
-    /// <remarks>Don't use this class, was just an idea...</remarks>
+    /// <summary>
+    /// Fluent Actor test class.
+    /// </summary>
+    /// <copyright>
+    ///     Protiguous 2018
+    /// </copyright>
+    /// <remarks>This class was just an experimental idea..</remarks>
     public class Actor : ABetterClassDispose {
         internal readonly BlockingCollection<Player> Actions = new BlockingCollection<Player>();
 
         [NotNull]
         internal Player Current;
-
-        public Actor( Action action ) : this() {
-            if ( null != action ) {
-                this.Current.TheAct = action;
-            }
-        }
 
         private Actor() {
             this.Current = new Player();
@@ -49,12 +43,22 @@ namespace Librainian.Threading {
             Debug.WriteLine( "Created a new player." );
         }
 
-        /// <summary>The beginning.</summary>
+        public Actor( Action action ) : this() {
+            if ( null != action ) {
+                this.Current.TheAct = action;
+            }
+        }
+
+        /// <summary>
+        /// The beginning.
+        /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
         public static Actor Do( Action action ) => new Actor( action );
 
-        /// <summary>add a scene if everything <see cref="IsReady" />.</summary>
+        /// <summary>
+        /// add a scene if everything <see cref="IsReady"/>.
+        /// </summary>
         /// <returns></returns>
         public Actor AddScene() {
             if ( this.IsReady() ) {
@@ -65,7 +69,14 @@ namespace Librainian.Threading {
             return this;
         }
 
-        /// <summary>add a scene.</summary>
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this.Actions.Dispose();
+
+        /// <summary>
+        /// add a scene.
+        /// </summary>
         /// <returns></returns>
         public Actor EndScene() {
 
@@ -109,37 +120,21 @@ namespace Librainian.Threading {
         internal class Player {
 
             [CanBeNull]
-            public TimeSpan? ActingTimeout {
-                get; internal set;
-            }
+            public TimeSpan? ActingTimeout { get; internal set; }
 
             [CanBeNull]
-            public CancellationToken? CancellationToken {
-                get; internal set;
-            }
+            public CancellationToken? CancellationToken { get; internal set; }
 
             [CanBeNull]
-            public Action OnSuccess {
-                get; internal set;
-            }
+            public Action OnSuccess { get; internal set; }
 
             [CanBeNull]
-            public Action OnTimeout {
-                get; internal set;
-            }
+            public Action OnTimeout { get; internal set; }
 
             [CanBeNull]
-            public Action TheAct {
-                get; internal set;
-            }
+            public Action TheAct { get; internal set; }
 
             //would events be okay here? are either Action or Events serializable?
         }
-
-		/// <summary>
-		/// Dispose any disposable members.
-		/// </summary>
-		protected override void DisposeManaged() => this.Actions.Dispose();
-
-	}
+    }
 }

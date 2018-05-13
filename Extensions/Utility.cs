@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Utility.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// "Librainian/Utility.cs" was last cleaned by Protiguous on 2018/05/12 at 1:23 AM
 
 namespace Librainian.Extensions {
 
@@ -27,32 +23,38 @@ namespace Librainian.Extensions {
     using System.Threading;
 
     public static class Utility {
-        public static readonly DummyXMLResolver DummyXMLResolver = new DummyXMLResolver();
+
         private static readonly ReaderWriterLockSlim ConsoleOutputSynch = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+        public static readonly DummyXMLResolver DummyXMLResolver = new DummyXMLResolver();
 
         /// <summary>
-        ///     Output the <paramref name="text" /> at the end of the current <seealso cref="Console" /> line.
+        /// Output the <paramref name="text"/> at the end of the current <seealso cref="Console"/> line.
         /// </summary>
-        /// <param name="text"></param>
+        /// <param name="text">   </param>
         /// <param name="yOffset"></param>
         public static void AtEndOfLine( this String text, Int32 yOffset = 0 ) {
             if ( String.IsNullOrEmpty( text ) ) {
                 return;
             }
+
             try {
                 ConsoleOutputSynch.EnterUpgradeableReadLock();
                 var oldTop = Console.CursorTop;
                 var oldLeft = Console.CursorLeft;
+
                 try {
                     ConsoleOutputSynch.EnterWriteLock();
                     Console.CursorVisible = false;
                     yOffset = oldTop + yOffset;
+
                     while ( yOffset < 0 ) {
                         yOffset++;
                     }
+
                     while ( yOffset >= Console.WindowHeight ) {
                         yOffset--;
                     }
+
                     Console.SetCursorPosition( left: Console.WindowWidth - ( text.Length + 2 ), top: yOffset );
                     Console.Write( text );
                     Console.SetCursorPosition( left: oldLeft, top: oldTop );
@@ -76,17 +78,17 @@ namespace Librainian.Extensions {
             }
         }
 
-		//    Console.SetCursorPosition( left: Console.WindowWidth - ( text.Length + 1 ), top: 0 );
-		//    Console.Write( text );
-		//    Console.SetCursorPosition( left: oldLeft, top: oldTop );
-		//}
+        //    Console.SetCursorPosition( left: Console.WindowWidth - ( text.Length + 1 ), top: 0 );
+        //    Console.Write( text );
+        //    Console.SetCursorPosition( left: oldLeft, top: oldTop );
+        //}
 
-		public static void OnSet<T>( this EventHandler<T> @event, Object sender, T e ) where T : EventArgs => throw new NotImplementedException();//if ( @event != null ) { @event( sender, e ); }
+        public static void OnSet<T>( this EventHandler<T> @event, Object sender, T e ) where T : EventArgs => throw new NotImplementedException(); //if ( @event != null ) { @event( sender, e ); }
 
-		//    return false;
-		//}
+        //    return false;
+        //}
 
-		public static void Spin( String text ) {
+        public static void Spin( String text ) {
             var oldTop = Console.CursorTop;
             var oldLeft = Console.CursorLeft;
             Console.Write( text );
@@ -139,10 +141,12 @@ namespace Librainian.Extensions {
             if ( String.IsNullOrEmpty( text ) ) {
                 return;
             }
+
             try {
                 ConsoleOutputSynch.EnterUpgradeableReadLock();
                 var oldTop = Console.CursorTop;
                 var oldLeft = Console.CursorLeft;
+
                 try {
                     ConsoleOutputSynch.EnterWriteLock();
                     Console.CursorVisible = false;

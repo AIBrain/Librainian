@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ContinuousSentence.cs" was last cleaned by Protiguous on 2016/06/18 at 10:55 PM
+// "Librainian/ContinuousSentence.cs" was last cleaned by Protiguous on 2018/05/09 at 1:16 PM
 
 namespace Librainian.Parsing {
 
@@ -30,21 +26,20 @@ namespace Librainian.Parsing {
     using Newtonsoft.Json;
 
     /// <summary>
-    ///     A thread-safe object to contain a moving target of sentences. I'd like to make this act like
-    ///     a <see cref="Stream" /> if possible?
+    /// A thread-safe object to contain a moving target of sentences. I'd like to make this act like a <see cref="Stream"/> if possible?
     /// </summary>
     [JsonObject]
     public class ContinuousSentence : ABetterClassDispose {
-
-        [JsonProperty]
-        private ReaderWriterLockSlim AccessInputBuffer { get; } = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
         [JsonProperty]
         private String _inputBuffer = String.Empty;
 
         public ContinuousSentence( [CanBeNull] String startingInput = null ) => this.CurrentBuffer = startingInput ?? String.Empty;
 
-	    public static IEnumerable<String> EndOfUSEnglishSentences { get; } = new[] { ".", "?", "!" };
+        [JsonProperty]
+        private ReaderWriterLockSlim AccessInputBuffer { get; } = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+
+        public static IEnumerable<String> EndOfUSEnglishSentences { get; } = new[] { ".", "?", "!" };
 
         public String CurrentBuffer {
             get {
@@ -68,14 +63,24 @@ namespace Librainian.Parsing {
             }
         }
 
-        /// <summary>Append the <paramref name="text" /> to the current sentence buffer.</summary>
+        /// <summary>
+        /// Append the <paramref name="text"/> to the current sentence buffer.
+        /// </summary>
         /// <returns></returns>
         public ContinuousSentence Add( [CanBeNull] String text ) {
             if ( text is null ) {
                 text = String.Empty;
             }
+
             this.CurrentBuffer += text;
             return this;
+        }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() {
+            using ( this.AccessInputBuffer ) { }
         }
 
         public String PeekNextChar() => new String( new[] { this.CurrentBuffer.FirstOrDefault() } );
@@ -110,6 +115,7 @@ namespace Librainian.Parsing {
                 if ( !String.IsNullOrEmpty( result ) ) {
                     this._inputBuffer = this._inputBuffer.Remove( 0, 1 );
                 }
+
                 return result;
             }
             finally {
@@ -135,14 +141,5 @@ namespace Librainian.Parsing {
                 this.AccessInputBuffer.ExitUpgradeableReadLock();
             }
         }
-
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() {
-            using ( this.AccessInputBuffer ) {
-            }
-        }
-
     }
 }

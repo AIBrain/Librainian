@@ -56,6 +56,9 @@
     <Compile Include="Maths\ArithmeticMethods.cs" />
     <Compile Include="Maths\MathsTests.cs" />
     <Compile Include="MyClass.cs" />
+    <Compile Include="PasswordTests.cs" />
+    <Compile Include="Persistence\IniFileTests.cs" />
+    <Compile Include="Persistence\JSONFileTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

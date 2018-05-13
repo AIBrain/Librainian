@@ -1,24 +1,21 @@
 // Copyright 2018 Protiguous.
-// 
+//
 // This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
-// 
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
-// 
+//
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
+//
 // Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/ConcurrentDictionaryFile.cs" was last cleaned by Protiguous on 2018/02/03 at 4:26 PM
+//
+// "Librainian/ConcurrentDictionaryFile.cs" was last cleaned by Protiguous on 2018/05/13 at 1:40 AM
 
 namespace Librainian.Persistence {
+
     using System;
     using System.Collections.Concurrent;
     using System.Diagnostics;
@@ -30,47 +27,47 @@ namespace Librainian.Persistence {
     using JetBrains.Annotations;
     using Measurement.Time;
     using Newtonsoft.Json;
-    using Threading;
 
     /// <summary>
-    ///     Persist a dictionary to and from a JSON formatted text document.
+    /// Persist a dictionary to and from a JSON formatted text document.
     /// </summary>
     [JsonObject]
     public class ConcurrentDictionaryFile<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IDisposable {
+
         private volatile Boolean _isReading;
 
         /// <summary>
-        ///     Persist a dictionary to and from a JSON formatted text document.
+        /// disallow constructor without a document/filename
+        /// </summary>
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        private ConcurrentDictionaryFile() => throw new NotImplementedException();
+
+        /// <summary>
+        /// Persist a dictionary to and from a JSON formatted text document.
         /// </summary>
         /// <param name="document"></param>
-        /// <param name="autoload"></param>
-        public ConcurrentDictionaryFile( [NotNull] Document document, Boolean autoload = false ) {
-            this.Document = document ?? throw new ArgumentNullException( paramName: nameof( document ) );
+        /// <param name="preload"> </param>
+        public ConcurrentDictionaryFile( [NotNull] Document document, Boolean preload = false ) {
+            this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
 
             if ( !this.Document.Folder.Exists() ) {
                 this.Document.Folder.Create();
             }
 
-            if ( autoload ) {
+            if ( preload ) {
                 this.Load().Wait();
             }
         }
 
         /// <summary>
-        ///     Persist a dictionary to and from a JSON formatted text document.
-        ///     <para>Defaults to user\appdata\Local\productname\filename</para>
+        /// Persist a dictionary to and from a JSON formatted text document.
+        /// <para>Defaults to user\appdata\Local\productname\filename</para>
         /// </summary>
         /// <param name="filename"></param>
-        /// <param name="autoload"></param>
-        public ConcurrentDictionaryFile( [NotNull] String filename, Boolean autoload = false ) : this( document: new Document( fullPathWithFilename: filename ), autoload: autoload ) { }
+        /// <param name="preload"> </param>
+        public ConcurrentDictionaryFile( [NotNull] String filename, Boolean preload = false ) : this( document: new Document( fullPathWithFilename: filename ), preload: preload ) { }
 
-        /// <summary>
-        ///     disallow constructor without a document/filename
-        /// </summary>
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        private ConcurrentDictionaryFile() => throw new NotImplementedException();
-
-        private Boolean isReading {
+        private Boolean IsReading {
             get => this._isReading;
             set => this._isReading = value;
         }
@@ -81,11 +78,6 @@ namespace Librainian.Persistence {
         [NotNull]
         public Document Document { get; }
 
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose() => this.Dispose( releaseManaged: true );
-
         protected virtual void Dispose( Boolean releaseManaged ) {
             if ( releaseManaged ) {
                 this.Write().Wait( timeout: Minutes.One );
@@ -94,65 +86,67 @@ namespace Librainian.Persistence {
             GC.SuppressFinalize( this );
         }
 
-        public async Task<(Boolean loaded, UInt64 bytesRead)> Load( CancellationToken cancellationToken = default ) {
-            this.isReading = true;
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose() => this.Dispose( releaseManaged: true );
+
+        public async Task<Boolean> Load( CancellationToken cancellationToken = default ) {
+            this.IsReading = true;
+
             try {
                 var document = this.Document;
 
                 if ( !document.Exists() ) {
-                    return (false, UInt64.MinValue);
+                    return false;
                 }
 
                 try {
-                    var data = await document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>();
+                    var data = await document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>().ConfigureAwait( false );
+
                     if ( data != null ) {
-                        var result = Parallel.ForEach( source: data.Keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive, body: key => { this[  key] = data[  key]; } );
-                        return (result.IsCompleted, 0);
+                        var result = Parallel.ForEach( source: data.Keys.AsParallel(), body: key => this[key] = data[key] );
+
+                        return result.IsCompleted;
                     }
                 }
                 catch ( JsonException exception ) {
                     exception.More();
                 }
                 catch ( IOException exception ) {
+
                     //file in use by another app
                     exception.More();
                 }
                 catch ( OutOfMemoryException exception ) {
+
                     //file is huge
                     exception.More();
                 }
 
-                return (false, 0);
+                return false;
             }
             finally {
-                this.isReading = false;
+                this.IsReading = false;
             }
         }
 
         /// <summary>
-        ///     Returns a string that represents the current object.
+        /// Returns a string that represents the current object.
         /// </summary>
-        /// <returns>
-        ///     A string that represents the current object.
-        /// </returns>
-        public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
+        /// <returns>A string that represents the current object.</returns>
+        public override String ToString() => $"{Keys.Count} keys, {Values.Count} values";
 
         [DebuggerStepThrough]
-        public Boolean TryRemove( TKey key ) {
-            if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
-            }
-
-            return this.TryRemove(key, value: out var value );
-        }
+        public Boolean TryRemove( TKey key ) => key != null && TryRemove( key, value: out _ );
 
         /// <summary>
-        ///     Saves the data to the <see cref="Document" />.
+        /// Saves the data to the <see cref="Document"/>.
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task<Boolean> Write( CancellationToken cancellationToken = default ) =>
-            Task.Run( () => {
+        public async Task<Boolean> Write( CancellationToken cancellationToken = default ) =>
+            await Task.Run( () => {
                 var document = this.Document;
 
                 if ( !document.Folder.Exists() ) {
@@ -164,6 +158,6 @@ namespace Librainian.Persistence {
                 }
 
                 return this.Save( document: document, overwrite: true, formatting: Formatting.Indented );
-            }, cancellationToken: cancellationToken );
+            }, cancellationToken: cancellationToken ).ConfigureAwait( false );
     }
 }

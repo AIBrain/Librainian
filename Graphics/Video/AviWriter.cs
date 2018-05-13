@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -27,7 +25,9 @@ namespace Librainian.Graphics.Video {
     using Magic;
     using OperatingSystem;
 
-    /// <summary>Create AVI files from bitmaps</summary>
+    /// <summary>
+    /// Create AVI files from bitmaps
+    /// </summary>
     public class AviWriter : ABetterClassDispose {
         private readonly UInt32 _fccHandler = 1668707181;
 
@@ -45,7 +45,38 @@ namespace Librainian.Graphics.Video {
         private UInt32 _stride;
         private Int32 _width;
 
-        /// <summary>Adds a new frame to the AVI stream</summary>
+        /// <summary>
+        /// Creates a new video stream in the AVI file
+        /// </summary>
+        private void CreateStream() {
+            var strhdr = new Avi.Avistreaminfo { fccType = this._fccType, fccHandler = this._fccHandler, dwScale = 1, dwRate = this._frameRate, dwSuggestedBufferSize = ( UInt32 )( this._height * this._stride ), dwQuality = 10000, rcFrame = { bottom = ( UInt32 )this._height, right = ( UInt32 )this._width }, szName = new UInt16[64] };
+
+            //highest quality! Compression destroys the hidden message
+
+            var result = NativeMethods.AVIFileCreateStream( this._aviFile, out this._aviStream, ref strhdr );
+            if ( result != 0 ) {
+                throw new Exception( "Error in AVIFileCreateStream: " + result );
+            }
+
+            //define the image format
+
+            var bi = new Avi.Bitmapinfoheader();
+            bi.biSize = ( UInt32 )Marshal.SizeOf( bi );
+            bi.biWidth = this._width;
+            bi.biHeight = this._height;
+            bi.biPlanes = 1;
+            bi.biBitCount = 24;
+            bi.biSizeImage = ( UInt32 )( this._stride * this._height );
+
+            result = NativeMethods.AVIStreamSetFormat( this._aviStream, 0, ref bi, Marshal.SizeOf( bi ) );
+            if ( result != 0 ) {
+                throw new Exception( "Error in AVIStreamSetFormat: " + result );
+            }
+        }
+
+        /// <summary>
+        /// Adds a new frame to the AVI stream
+        /// </summary>
         /// <param name="bmp">The image to add</param>
         public void AddFrame( Bitmap bmp ) {
             bmp.RotateFlip( RotateFlipType.RotateNoneFlipY );
@@ -72,7 +103,9 @@ namespace Librainian.Graphics.Video {
             this._countFrames++;
         }
 
-        /// <summary>Closes stream, file and AVI Library</summary>
+        /// <summary>
+        /// Closes stream, file and AVI Library
+        /// </summary>
         public void Close() {
             if ( this._aviStream != IntPtr.Zero ) {
                 NativeMethods.AVIStreamRelease( this._aviStream );
@@ -85,8 +118,16 @@ namespace Librainian.Graphics.Video {
             NativeMethods.AVIFileExit();
         }
 
-        /// <summary>Creates a new AVI file</summary>
-        /// <param name="fileName">Name of the new AVI file</param>
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() {
+        }
+
+        /// <summary>
+        /// Creates a new AVI file
+        /// </summary>
+        /// <param name="fileName"> Name of the new AVI file</param>
         /// <param name="frameRate">Frames per second</param>
         public void Open( String fileName, UInt32 frameRate ) {
             this._frameRate = frameRate;
@@ -96,39 +137,6 @@ namespace Librainian.Graphics.Video {
             var hr = NativeMethods.AVIFileOpen( ref this._aviFile, fileName, 4097 /* OF_WRITE | OF_CREATE (winbase.h) */, 0 );
             if ( hr != 0 ) {
                 throw new Exception( "Error in AVIFileOpen: " + hr );
-            }
-        }
-
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() {
-        }
-
-        /// <summary>Creates a new video stream in the AVI file</summary>
-        private void CreateStream() {
-            var strhdr = new Avi.Avistreaminfo { fccType = this._fccType, fccHandler = this._fccHandler, dwScale = 1, dwRate = this._frameRate, dwSuggestedBufferSize = ( UInt32 )( this._height * this._stride ), dwQuality = 10000, rcFrame = { bottom = ( UInt32 )this._height, right = ( UInt32 )this._width }, szName = new UInt16[ 64 ] };
-
-            //highest quality! Compression destroys the hidden message
-
-            var result = NativeMethods.AVIFileCreateStream( this._aviFile, out this._aviStream, ref strhdr );
-            if ( result != 0 ) {
-                throw new Exception( "Error in AVIFileCreateStream: " + result );
-            }
-
-            //define the image format
-
-            var bi = new Avi.Bitmapinfoheader();
-            bi.biSize = ( UInt32 )Marshal.SizeOf( bi );
-            bi.biWidth = this._width;
-            bi.biHeight = this._height;
-            bi.biPlanes = 1;
-            bi.biBitCount = 24;
-            bi.biSizeImage = ( UInt32 )( this._stride * this._height );
-
-            result = NativeMethods.AVIStreamSetFormat( this._aviStream, 0, ref bi, Marshal.SizeOf( bi ) );
-            if ( result != 0 ) {
-                throw new Exception( "Error in AVIStreamSetFormat: " + result );
             }
         }
     }

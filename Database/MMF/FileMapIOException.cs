@@ -2,50 +2,43 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/FileMapIOException.cs" was last cleaned by Protiguous on 2016/06/18 at 10:50 PM
+// "Librainian/FileMapIOException.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
 
 namespace Librainian.Database.MMF {
 
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Runtime.Serialization;
     using Newtonsoft.Json;
 
-    /// <summary>Exception class thrown by the Library</summary>
-    /// <remarks>
-    ///     Represents an exception occured as a result of an invalid IO operation on any of the File
-    ///     mapping classes It wraps the error message and the underlying Win32 error code that caused
-    ///     the error.
-    /// </remarks>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Usage", "CA2240:ImplementISerializableCorrectly" )]
+    /// <summary>
+    /// Exception class thrown by the Library
+    /// </summary>
+    /// <remarks>Represents an exception occured as a result of an invalid IO operation on any of the File mapping classes It wraps the error message and the underlying Win32 error code that caused the error.</remarks>
+    [SuppressMessage( "Microsoft.Usage", "CA2240:ImplementISerializableCorrectly" )]
     [JsonObject]
     [Serializable]
     public class FileMapIOException : IOException {
 
+        protected FileMapIOException( SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+
         // construction
         public FileMapIOException( Int32 error ) => this.Win32ErrorCode = error;
 
-	    public FileMapIOException( String message ) : base( message ) {
-        }
+        public FileMapIOException( String message ) : base( message ) { }
 
-        public FileMapIOException( String message, Exception innerException ) : base( message, innerException ) {
-        }
-
-        protected FileMapIOException( SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+        public FileMapIOException( String message, Exception innerException ) : base( message, innerException ) { }
 
         public override String Message {
             get {
@@ -60,8 +53,6 @@ namespace Librainian.Database.MMF {
             }
         }
 
-        public Int32 Win32ErrorCode {
-            get;
-        }
+        public Int32 Win32ErrorCode { get; }
     }
 }

@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -30,7 +28,7 @@ namespace Librainian.Magic {
     using Ninject.Activation.Caching;
     using Ninject.Modules;
 
-    public sealed class NinjectIocContainer : ABetterClassDispose ,IIocContainer {
+    public sealed class NinjectIocContainer : ABetterClassDispose, IIocContainer {
 
         // ReSharper disable once NotNullMemberIsNotInitialized
         public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
@@ -70,7 +68,12 @@ namespace Librainian.Magic {
         //}
 
         /// <summary>
-        ///     Returns a new instance of the given type or throws NullReferenceException.
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this.Kernel.Dispose();
+
+        /// <summary>
+        /// Returns a new instance of the given type or throws NullReferenceException.
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <returns></returns>
@@ -78,18 +81,20 @@ namespace Librainian.Magic {
         [DebuggerStepThrough]
         public TType Get<TType>() {
             var tryGet = this.Kernel.TryGet<TType>();
-	        if ( Equals( default, tryGet ) ) {
-		        tryGet = this.Kernel.TryGet< TType >(); //HACK why would it work at the second time?
-		        if ( Equals( default, tryGet ) ) {
-			        throw new NullReferenceException( "Unable to TryGet() class " + typeof( TType ).FullName );
-		        }
-	        }
-	        return tryGet;
+            if ( Equals( default, tryGet ) ) {
+                tryGet = this.Kernel.TryGet<TType>(); //HACK why would it work at the second time?
+                if ( Equals( default, tryGet ) ) {
+                    throw new NullReferenceException( "Unable to TryGet() class " + typeof( TType ).FullName );
+                }
+            }
+            return tryGet;
         }
 
         public void Inject( Object item ) => this.Kernel.Inject( item );
 
-        /// <summary>Warning!</summary>
+        /// <summary>
+        /// Warning!
+        /// </summary>
         public void ResetKernel() {
             this.Kernel.Should().NotBeNull();
             this.Kernel.GetModules().ForEach( module => this.Kernel.Unload( module.Name ) );
@@ -104,7 +109,7 @@ namespace Librainian.Magic {
         }
 
         /// <summary>
-        ///     Re
+        /// Re
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <returns></returns>
@@ -116,11 +121,5 @@ namespace Librainian.Magic {
             }
             return tryGet;
         }
-
-		/// <summary>
-		/// Dispose any disposable members.
-		/// </summary>
-		protected override void DisposeManaged() => this.Kernel.Dispose();
-
-	}
+    }
 }

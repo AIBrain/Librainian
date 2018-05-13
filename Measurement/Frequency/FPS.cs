@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -28,7 +26,7 @@ namespace Librainian.Measurement.Frequency {
 
     /// <summary>
     /// </summary>
-    /// <seealso cref="http://en.wikipedia.org/wiki/Frame_rate" />
+    /// <seealso cref="http://en.wikipedia.org/wiki/Frame_rate"/>
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public struct Fps {
@@ -46,96 +44,96 @@ namespace Librainian.Measurement.Frequency {
         }
 
         /// <summary>
-        ///     Frames per second.
+        /// Frames per second.
         /// </summary>
         /// <param name="fps"></param>
         public Fps( UInt64 fps ) : this( ( Decimal )fps ) { }
 
         /// <summary>
-        ///     Frames per second.
+        /// Frames per second.
         /// </summary>
         /// <param name="fps"></param>
         public Fps( Double fps ) : this( ( Decimal )fps ) { }
 
         /// <summary>
-        ///     Fifteen <see cref="Fps" /> s.
+        /// Fifteen <see cref="Fps"/> s.
         /// </summary>
         public static Fps Fifteen { get; } = new Fps( 15 );
 
         /// <summary>
-        ///     59. 9 <see cref="Fps" />.
+        /// 59. 9 <see cref="Fps"/>.
         /// </summary>
         public static Fps FiftyNinePointNine { get; } = new Fps( 59.9 );
 
         /// <summary>
-        ///     Five <see cref="Fps" /> s.
+        /// Five <see cref="Fps"/> s.
         /// </summary>
         public static Fps Five { get; } = new Fps( 5 );
 
         /// <summary>
-        ///     Five Hundred <see cref="Fps" /> s.
+        /// Five Hundred <see cref="Fps"/> s.
         /// </summary>
         public static Fps FiveHundred { get; } = new Fps( 500 );
 
         /// <summary>
-        ///     111. 1 <see cref="Fps" />.
+        /// 111. 1 <see cref="Fps"/>.
         /// </summary>
         public static Fps Hertz111 { get; } = new Fps( 111.1 );
 
         /// <summary>
-        ///     One <see cref="Fps" />.
+        /// One <see cref="Fps"/>.
         /// </summary>
         public static Fps One { get; } = new Fps( 1 );
 
         /// <summary>
-        ///     120 <see cref="Fps" />.
+        /// 120 <see cref="Fps"/>.
         /// </summary>
         public static Fps OneHundredTwenty { get; } = new Fps( 120 );
 
         /// <summary>
-        ///     One Thousand Nine <see cref="Fps" /> (Prime).
+        /// One Thousand Nine <see cref="Fps"/> (Prime).
         /// </summary>
         public static Fps OneThousandNine { get; } = new Fps( 1009 );
 
         /// <summary>
-        ///     Sixty <see cref="Fps" />.
+        /// Sixty <see cref="Fps"/>.
         /// </summary>
         public static Fps Sixty { get; } = new Fps( 60 );
 
         /// <summary>
-        ///     Ten <see cref="Fps" /> s.
+        /// Ten <see cref="Fps"/> s.
         /// </summary>
         public static Fps Ten { get; } = new Fps( 10 );
 
         public static TimeSpan Thirty { get; } = new Fps( 30 );
 
         /// <summary>
-        ///     Three <see cref="Fps" /> s.
+        /// Three <see cref="Fps"/> s.
         /// </summary>
         public static Fps Three { get; } = new Fps( 3 );
 
         /// <summary>
-        ///     Three Three Three <see cref="Fps" />.
+        /// Three Three Three <see cref="Fps"/>.
         /// </summary>
         public static Fps ThreeHundredThirtyThree { get; } = new Fps( 333 );
 
         /// <summary>
-        ///     Two <see cref="Fps" /> s.
+        /// Two <see cref="Fps"/> s.
         /// </summary>
         public static Fps Two { get; } = new Fps( 2 );
 
         /// <summary>
-        ///     Two Hundred <see cref="Fps" />.
+        /// Two Hundred <see cref="Fps"/>.
         /// </summary>
         public static Fps TwoHundred { get; } = new Fps( 200 );
 
         /// <summary>
-        ///     Two Hundred Eleven <see cref="Fps" /> (Prime).
+        /// Two Hundred Eleven <see cref="Fps"/> (Prime).
         /// </summary>
         public static Fps TwoHundredEleven { get; } = new Fps( 211 );
 
         /// <summary>
-        ///     Two.Five <see cref="Fps" /> s.
+        /// Two.Five <see cref="Fps"/> s.
         /// </summary>
         public static Fps TwoPointFive { get; } = new Fps( 2.5 );
 
@@ -144,12 +142,12 @@ namespace Librainian.Measurement.Frequency {
         //faster WPM than a female (~240wpm)
 
         /// <summary>
-        ///     Two Thousand Three <see cref="Fps" /> (Prime).
+        /// Two Thousand Three <see cref="Fps"/> (Prime).
         /// </summary>
         public static Fps TwoThousandThree { get; } = new Fps( 2003 );
 
         /// <summary>
-        ///     One <see cref="Fps" />.
+        /// One <see cref="Fps"/>.
         /// </summary>
         public static Fps Zero { get; } = new Fps( 0 );
 
@@ -159,9 +157,9 @@ namespace Librainian.Measurement.Frequency {
 
         public static implicit operator TimeSpan( Fps fps ) => TimeSpan.FromSeconds( ( Double )( 1.0m / fps.Value ) );
 
-        public static Boolean operator <( Fps lhs, Fps rhs ) => lhs.Value.CompareTo( rhs.Value ) < 0;
+        public static Boolean operator <( Fps left, Fps rhs ) => left.Value.CompareTo( rhs.Value ) < 0;
 
-        public static Boolean operator >( Fps lhs, Fps rhs ) => lhs.Value.CompareTo( rhs.Value ) > 0;
+        public static Boolean operator >( Fps left, Fps rhs ) => left.Value.CompareTo( rhs.Value ) > 0;
 
         public override String ToString() => $"{this.Value} FPS ({( ( TimeSpan )this ).Simpler()})";
     }

@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -32,13 +30,13 @@ namespace Librainian.Threading {
     public static class FluentTimer {
 
         /// <summary>
-        ///     Container to keep track of any created <see cref="Timer" /> and the <see cref="DateTime" />.
+        /// Container to keep track of any created <see cref="Timer"/> and the <see cref="DateTime"/>.
         /// </summary>
         [NotNull]
         private static ConcurrentDictionary<Timer, DateTime> Timers { get; } = new ConcurrentDictionary<Timer, DateTime>();
 
         /// <summary>
-        ///     <para>Start the <paramref name="timer" />.</para>
+        /// <para>Start the <paramref name="timer"/>.</para>
         /// </summary>
         /// <param name="timer"></param>
         /// <returns></returns>
@@ -51,7 +49,9 @@ namespace Librainian.Threading {
             return timer;
         }
 
-        /// <summary>Make the <paramref name="timer" /> fire every <see cref="Timer.Interval" />.</summary>
+        /// <summary>
+        /// Make the <paramref name="timer"/> fire every <see cref="Timer.Interval"/>.
+        /// </summary>
         /// <param name="timer"></param>
         /// <returns></returns>
         public static Timer AutoResetting( [NotNull] this Timer timer ) {
@@ -65,10 +65,10 @@ namespace Librainian.Threading {
         public static Timer CreateTimer( this Hertz frequency, Action onElapsed ) => CreateTimer( ( TimeSpan )frequency, onElapsed );
 
         /// <summary>
-        ///     <para>Creates, but does not start, the <see cref="Timer" />.</para>
-        ///     <para>Defaults to a one-time <see cref="Timer.Elapsed" /></para>
+        /// <para>Creates, but does not start, the <see cref="Timer"/>.</para>
+        /// <para>Defaults to a one-time <see cref="Timer.Elapsed"/></para>
         /// </summary>
-        /// <param name="interval"></param>
+        /// <param name="interval"> </param>
         /// <param name="onElapsed"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
@@ -104,7 +104,7 @@ namespace Librainian.Threading {
                     }
                 }
             };
-            Timers[ timer ] = DateTime.Now;
+            Timers[timer] = DateTime.Now;
             return timer;
         }
 
@@ -117,16 +117,16 @@ namespace Librainian.Threading {
             if ( null == timer ) {
                 return;
             }
-			Timers.TryRemove( timer, out var value );
-			using ( timer ) {
+            Timers.TryRemove( timer, out _ );
+            using ( timer ) {
                 timer.Stop();
             }
         }
 
         public static IEnumerable<KeyValuePair<Timer, DateTime>> GetTimers() => Timers;
 
-	    /// <summary>
-        ///     <para>Make the <paramref name="timer" /> fire only once.</para>
+        /// <summary>
+        /// <para>Make the <paramref name="timer"/> fire only once.</para>
         /// </summary>
         /// <param name="timer"></param>
         /// <returns></returns>

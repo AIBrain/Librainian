@@ -34,13 +34,13 @@ namespace Librainian.FileSystem {
 
         public Location( [ NotNull ] String location ) {
             if ( String.IsNullOrWhiteSpace( value: location ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", paramName: nameof(location) );
+                throw new ArgumentException( "Value cannot be null or whitespace.",nameof(location) );
             }
 
             location = location.Trim();
 
             if ( String.IsNullOrWhiteSpace( value: location ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", paramName: nameof(location) );
+                throw new ArgumentException( "Value cannot be null or whitespace.",nameof(location) );
             }
 
             this.Address = new Uri( uriString: location ).AbsoluteUri;

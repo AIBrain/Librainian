@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -43,7 +41,7 @@ namespace Librainian.Financial.Containers.Shopping {
                 throw new ArgumentNullException( nameof( category ) );
             }
 
-	        this.Category = category;
+            this.Category = category;
             this.ItemID = itemID ?? throw new ArgumentNullException( nameof( itemID ) );
         }
 
@@ -72,29 +70,28 @@ namespace Librainian.Financial.Containers.Shopping {
         }
 
         /// <summary>
-        ///     Compares <see cref="ItemID" /> and <see cref="Category" />.
+        /// Compares <see cref="ItemID"/> and <see cref="Category"/>.
         /// </summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
+        /// <param name="left"></param>
+        /// <param name="rhs"> </param>
         /// <returns></returns>
-        public static Boolean Equals( ShoppingItem lhs, ShoppingItem rhs ) {
-            if ( ReferenceEquals( lhs, rhs ) ) {
+        public static Boolean Equals( ShoppingItem left, ShoppingItem rhs ) {
+            if ( ReferenceEquals( left, rhs ) ) {
                 return true;
             }
-            if ( null == lhs || null == rhs ) {
+            if ( null == left || null == rhs ) {
                 return false;
             }
-            return lhs.Category == rhs.Category && lhs.ItemID == rhs.ItemID;
+            return left.Category == rhs.Category && left.ItemID == rhs.ItemID;
         }
 
         /// <summary>
-        ///     Serves as the default hash function.
+        /// Serves as the default hash function.
         /// </summary>
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this.Category.GetHashCode();
 
-	    public Boolean IsValidData() => this.Category != ItemType.Invalid && !this.ItemID.IsNullOrWhiteSpace();
-
+        public Boolean IsValidData() => this.Category != ItemType.Invalid && !this.ItemID.IsNullOrWhiteSpace();
     }
 
     public class TaxableShoppingItem : ShoppingItem {

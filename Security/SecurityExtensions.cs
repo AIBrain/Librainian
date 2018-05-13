@@ -79,8 +79,8 @@ namespace Librainian.Security {
             Task.Run( function: () => {
                 var md5Hasher = Md5S.Value;
 
-                using ( var fs = new FileStream( path: filename, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
-                    return md5Hasher.ComputeHash( inputStream: fs );
+                using ( var fs = new FileStream(filename, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
+                    return md5Hasher.ComputeHash( fs );
                 }
             } );
 
@@ -99,11 +99,11 @@ namespace Librainian.Security {
 
             // This is the variable that will be returned to the user
             if ( decryptValue is null ) {
-                throw new ArgumentNullException( paramName: nameof( decryptValue ) );
+                throw new ArgumentNullException(nameof( decryptValue ) );
             }
 
             if ( privateKey is null ) {
-                throw new ArgumentNullException( paramName: nameof( privateKey ) );
+                throw new ArgumentNullException(nameof( privateKey ) );
             }
 
             var decryptedValue = String.Empty;
@@ -154,11 +154,11 @@ namespace Librainian.Security {
 
             // This is the variable that will be returned to the user
             if ( stringToEncrypt is null ) {
-                throw new ArgumentNullException( paramName: nameof( stringToEncrypt ) );
+                throw new ArgumentNullException(nameof( stringToEncrypt ) );
             }
 
             if ( publicKey is null ) {
-                throw new ArgumentNullException( paramName: nameof( publicKey ) );
+                throw new ArgumentNullException(nameof( publicKey ) );
             }
 
             var encryptedValue = String.Empty;
@@ -275,7 +275,7 @@ namespace Librainian.Security {
 
         public static Byte[] Sha256( this Byte[] input ) {
             if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
+                throw new ArgumentNullException(nameof( input ) );
             }
 
             return SHA256Local.Value.ComputeHash( buffer: input, offset: 0, count: input.Length );
@@ -290,7 +290,7 @@ namespace Librainian.Security {
         /// <returns></returns>
         public static Byte[] Sha256( this String input, Encoding encoding = null ) {
             if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
+                throw new ArgumentNullException(nameof( input ) );
             }
 
             if ( null == encoding ) {
@@ -309,7 +309,7 @@ namespace Librainian.Security {
         /// <returns></returns>
         public static Byte[] Sha384( this String input, Encoding encoding = null ) {
             if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
+                throw new ArgumentNullException(nameof( input ) );
             }
 
             if ( null == encoding ) {
@@ -321,7 +321,7 @@ namespace Librainian.Security {
 
         public static Byte[] Sha384( this Byte[] input ) {
             if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
+                throw new ArgumentNullException(nameof( input ) );
             }
 
             return SHA384Local.Value.ComputeHash( buffer: input, offset: 0, count: input.Length );
@@ -336,7 +336,7 @@ namespace Librainian.Security {
         /// <returns></returns>
         public static Byte[] Sha512( this String input, Encoding encoding = null ) {
             if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
+                throw new ArgumentNullException(nameof( input ) );
             }
 
             if ( null == encoding ) {
@@ -348,7 +348,7 @@ namespace Librainian.Security {
 
         public static Byte[] Sha512( this Byte[] input ) {
             if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
+                throw new ArgumentNullException(nameof( input ) );
             }
 
             return SHA512Local.Value.ComputeHash( buffer: input, offset: 0, count: input.Length );
@@ -356,7 +356,7 @@ namespace Librainian.Security {
 
         public static String ToInsecureString( this SecureString input ) {
             if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
+                throw new ArgumentNullException(nameof( input ) );
             }
 
             String returnValue;
@@ -373,7 +373,7 @@ namespace Librainian.Security {
 
         public static SecureString ToSecureString( this String input ) {
             if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
+                throw new ArgumentNullException(nameof( input ) );
             }
 
             var secure = new SecureString();
@@ -388,7 +388,7 @@ namespace Librainian.Security {
         public static Boolean TryComputeMd5ForFile( [CanBeNull] this Document document, [CanBeNull] out String md5 ) {
             md5 = null;
             try {
-                if ( document is null || !File.Exists( path: "md5sum.exe" ) || !document.Exists() ) {
+                if ( document is null || !File.Exists("md5sum.exe" ) || !document.Exists() ) {
                     return false;
                 }
 
@@ -422,7 +422,7 @@ namespace Librainian.Security {
             exceptions = new List<Exception>( capacity: 1 );
 
             if ( input is null ) {
-                exceptions.Add( item: new ArgumentNullException( paramName: nameof( input ) ) );
+                exceptions.Add( item: new ArgumentNullException(nameof( input ) ) );
                 return false;
             }
 
@@ -438,7 +438,7 @@ namespace Librainian.Security {
             }
 
             if ( output is null ) {
-                exceptions.Add( item: new ArgumentNullException( paramName: nameof( output ) ) );
+                exceptions.Add( item: new ArgumentNullException(nameof( output ) ) );
                 return false;
             }
 
@@ -448,12 +448,12 @@ namespace Librainian.Security {
             }
 
             if ( key is null ) {
-                exceptions.Add( item: new ArgumentNullException( paramName: nameof( key ) ) );
+                exceptions.Add( item: new ArgumentNullException(nameof( key ) ) );
                 return false;
             }
 
             if ( !key.Length.Between( startInclusive: 1, endInclusive: Int16.MaxValue ) ) {
-                exceptions.Add( item: new ArgumentOutOfRangeException( paramName: nameof( key ) ) );
+                exceptions.Add( item: new ArgumentOutOfRangeException(nameof( key ) ) );
                 return false;
             }
 
@@ -472,9 +472,9 @@ namespace Librainian.Security {
                     aes.IV = rgb.GetBytes( cb: aes.BlockSize >> 3 );
                     aes.Mode = CipherMode.CBC;
 
-                    using ( var outputStream = new FileStream( path: output.FullPathWithFileName, mode: FileMode.Create, access: FileAccess.Write ) ) {
+                    using ( var outputStream = new FileStream(output.FullPathWithFileName, mode: FileMode.Create, access: FileAccess.Write ) ) {
                         using ( var decryptor = aes.CreateDecryptor() ) {
-                            var inputStream = new FileStream( path: input.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read );
+                            var inputStream = new FileStream(input.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read );
                             using ( var cs = new CryptoStream( stream: inputStream, transform: decryptor, mode: CryptoStreamMode.Read ) ) {
                                 Int32 data;
                                 while ( ( data = cs.ReadByte() ) != -1 ) {
@@ -521,7 +521,7 @@ namespace Librainian.Security {
             exceptions = new List<Exception>( capacity: 1 );
 
             if ( input is null ) {
-                exceptions.Add( item: new ArgumentNullException( paramName: nameof( input ) ) );
+                exceptions.Add( item: new ArgumentNullException(nameof( input ) ) );
                 return false;
             }
 
@@ -537,7 +537,7 @@ namespace Librainian.Security {
             }
 
             if ( output is null ) {
-                exceptions.Add( item: new ArgumentNullException( paramName: nameof( output ) ) );
+                exceptions.Add( item: new ArgumentNullException(nameof( output ) ) );
                 return false;
             }
 
@@ -547,12 +547,12 @@ namespace Librainian.Security {
             }
 
             if ( key is null ) {
-                exceptions.Add( item: new ArgumentNullException( paramName: nameof( key ) ) );
+                exceptions.Add( item: new ArgumentNullException(nameof( key ) ) );
                 return false;
             }
 
             if ( !key.Length.Between( startInclusive: 1, endInclusive: Int16.MaxValue ) ) {
-                exceptions.Add( item: new ArgumentOutOfRangeException( paramName: nameof( key ) ) );
+                exceptions.Add( item: new ArgumentOutOfRangeException(nameof( key ) ) );
                 return false;
             }
 
@@ -571,7 +571,7 @@ namespace Librainian.Security {
                     aes.IV = rgb.GetBytes( cb: aes.BlockSize >> 3 );
                     aes.Mode = CipherMode.CBC;
 
-                    var outputStream = new FileStream( path: output.FullPathWithFileName, mode: FileMode.Create, access: FileAccess.Write );
+                    var outputStream = new FileStream(output.FullPathWithFileName, mode: FileMode.Create, access: FileAccess.Write );
                     if ( !outputStream.CanWrite ) {
                         exceptions.Add( item: new IOException( message: $"Unable to write to {output.FullPathWithFileName}." ) );
                         return false;
@@ -579,7 +579,7 @@ namespace Librainian.Security {
 
                     using ( var encryptor = aes.CreateEncryptor() ) {
                         using ( var cryptoStream = new CryptoStream( stream: outputStream, transform: encryptor, mode: CryptoStreamMode.Write ) ) {
-                            using ( var inputStream = new FileStream( path: input.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read ) ) {
+                            using ( var inputStream = new FileStream(input.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read ) ) {
                                 if ( !inputStream.CanRead || !inputStream.CanSeek ) {
                                     exceptions.Add( item: new IOException( message: $"Unable to read from {input.FullPathWithFileName}." ) );
                                     return false;

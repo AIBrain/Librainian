@@ -202,8 +202,6 @@ namespace Librainian.Collections {
             return default;
         }
 
-        //[OnSerializing]
-        //private void OnSerializing( StreamingContext context ) => this.CatchUp();
         /// <summary>
         /// <para>Filter write requests through the <see cref="ReaderWriter"/>.</para>
         /// </summary>
@@ -237,23 +235,19 @@ namespace Librainian.Collections {
         /// <summary>
         /// Static comparison function.
         /// </summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
+        /// <param name="left"></param>
+        /// <param name="rhs"> </param>
         /// <returns></returns>
-        public static Boolean Equals( IEnumerable<TType> lhs, IEnumerable<TType> rhs ) {
-            if ( ReferenceEquals( lhs, rhs ) ) {
+        public static Boolean Equals( IEnumerable<TType> left, IEnumerable<TType> rhs ) {
+            if ( ReferenceEquals( left, rhs ) ) {
                 return true;
             }
 
-            if ( lhs is null ) {
+            if ( left is null || rhs is null ) {
                 return false;
             }
 
-            if ( rhs is null ) {
-                return false;
-            }
-
-            return lhs.SequenceEqual( second: rhs );
+            return left.SequenceEqual( second: rhs );
         }
 
         /// <summary>
@@ -337,11 +331,7 @@ namespace Librainian.Collections {
         /// <summary>
         /// </summary>
         /// <seealso cref="CatchUp"/>
-        public Boolean AnyWritesPending() {
-            var inputBuffer = this.InputBuffer;
-
-            return inputBuffer != null && inputBuffer.Any();
-        }
+        public Boolean AnyWritesPending() => this.InputBuffer?.Any() == true;
 
         /// <summary>
         /// Blocks, transfers items from <see cref="InputBuffer"/>, and then releases lock.
@@ -433,7 +423,7 @@ namespace Librainian.Collections {
             this.ItemCounter?.Dispose();
         }
 
-        public Boolean Equals( IEnumerable<TType> other ) => Equals( lhs: this, rhs: other );
+        public Boolean Equals( IEnumerable<TType> other ) => Equals( left: this, rhs: other );
 
         /// <summary>
         /// The <seealso cref="List{T}.Capacity"/> is resized down to the <seealso cref="List{T}.Count"/>.

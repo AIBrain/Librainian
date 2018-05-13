@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -26,10 +24,8 @@ namespace Librainian.Threading {
     using NUnit.Framework;
 
     /// <summary>
-    ///     A reader-writer lock implementation that is intended to be simple, yet very efficient. In
-    ///     particular only 1 interlocked operation is taken for any lock operation (we use spin locks
-    ///     to achieve this). The spin lock is never held for more than a few instructions (in
-    ///     particular, we never call event APIs or in fact any non-trivial API while holding the spin lock).
+    /// A reader-writer lock implementation that is intended to be simple, yet very efficient. In particular only 1 interlocked operation is taken for any lock operation (we use spin locks to achieve this). The spin lock
+    /// is never held for more than a few instructions (in particular, we never call event APIs or in fact any non-trivial API while holding the spin lock).
     /// </summary>
     [HostProtection( Synchronization = true, ExternalThreading = true )]
     [HostProtection( MayLeakOnAbort = true )]
@@ -73,9 +69,8 @@ namespace Librainian.Threading {
 
         private Boolean _fUpgradeThreadHoldingRead;
 
-        // Lock specifiation for myLock: This lock protects exactly the local fields associted
-        // instance of ReaderWriterLockSlim. It does NOT protect the memory associted with the the
-        // events that hang off this lock (eg writeEvent, readEvent upgradeEvent).
+        // Lock specifiation for myLock: This lock protects exactly the local fields associted instance of ReaderWriterLockSlim. It does NOT protect the memory associted with the the events that hang off this lock (eg
+        // writeEvent, readEvent upgradeEvent).
         private Int32 _myLock;
 
         private UInt32 _numReadWaiters; // maximum number of threads that can be doing a WaitOne on the readEvent
@@ -212,7 +207,7 @@ namespace Librainian.Threading {
         private void EnterMyLockSpin() {
             var pc = ProcessorCount;
             for ( var i = 0; ; i++ ) {
-                if ( i < SlimLock.LockSpinCount && pc > 1 ) {
+                if ( i < LockSpinCount && pc > 1 ) {
                     Thread.SpinWait( LockSpinCycles * ( i + 1 ) ); // Wait a few dozen instructions to let another processor release lock.
                 }
                 else if ( i < LockSpinCount + LockSleep0Count ) {
@@ -229,13 +224,9 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     This routine retrieves/sets the per-thread counts needed to enforce the various rules
-        ///     related to acquiring the lock. It's a simple hash table, where the first entry is
-        ///     pre-allocated for optimizing the common case. After the first element has been
-        ///     allocated, duplicates are kept of in linked-list. The entries are never freed, and the
-        ///     max size of the table would be bounded by the max number of threads that held the lock
-        ///     simultaneously. DontAllocate is set to true if the caller just wants to get an existing
-        ///     entry for this thread, but doesn't want to add one if an existing one could not be found.
+        /// This routine retrieves/sets the per-thread counts needed to enforce the various rules related to acquiring the lock. It's a simple hash table, where the first entry is pre-allocated for optimizing the common
+        /// case. After the first element has been allocated, duplicates are kept of in linked-list. The entries are never freed, and the max size of the table would be bounded by the max number of threads that held the
+        /// lock simultaneously. DontAllocate is set to true if the caller just wants to get an existing entry for this thread, but doesn't want to add one if an existing one could not be found.
         /// </summary>
         private ReaderWriterCount GetThreadRwCount( Int32 id, Boolean dontAllocate ) {
             var hash = id & HashTableSize;
@@ -243,30 +234,30 @@ namespace Librainian.Threading {
 
             Assert.That( this.MyLockHeld );
 
-            if ( null == this._rwc[ hash ] ) {
+            if ( null == this._rwc[hash] ) {
                 if ( dontAllocate ) {
                     return null;
                 }
-                this._rwc[ hash ] = new ReaderWriterCount( this._fIsReentrant );
+                this._rwc[hash] = new ReaderWriterCount( this._fIsReentrant );
             }
 
-            if ( this._rwc[ hash ].Threadid == id ) {
-                return this._rwc[ hash ];
+            if ( this._rwc[hash].Threadid == id ) {
+                return this._rwc[hash];
             }
 
-            if ( IsRwEntryEmpty( this._rwc[ hash ] ) && !dontAllocate ) {
+            if ( IsRwEntryEmpty( this._rwc[hash] ) && !dontAllocate ) {
 
                 //No more entries in chain, so no more searching required.
-                if ( this._rwc[ hash ].Next is null ) {
-                    this._rwc[ hash ].Threadid = id;
-                    return this._rwc[ hash ];
+                if ( this._rwc[hash].Next is null ) {
+                    this._rwc[hash].Threadid = id;
+                    return this._rwc[hash];
                 }
-                firstfound = this._rwc[ hash ];
+                firstfound = this._rwc[hash];
             }
 
             //SlowPath
 
-            var temp = this._rwc[ hash ].Next;
+            var temp = this._rwc[hash].Next;
 
             while ( temp != null ) {
                 if ( temp.Threadid == id ) {
@@ -287,8 +278,8 @@ namespace Librainian.Threading {
             }
 
             if ( firstfound is null ) {
-                temp = new ReaderWriterCount( this._fIsReentrant ) { Threadid = id, Next = this._rwc[ hash ].Next };
-                this._rwc[ hash ].Next = temp;
+                temp = new ReaderWriterCount( this._fIsReentrant ) { Threadid = id, Next = this._rwc[hash].Next };
+                this._rwc[hash].Next = temp;
                 return temp;
             }
             firstfound.Threadid = id;
@@ -303,7 +294,7 @@ namespace Librainian.Threading {
         }
 
         private void InitializeThreadCounts() {
-            this._rwc = new ReaderWriterCount[ HashTableSize + 1 ];
+            this._rwc = new ReaderWriterCount[HashTableSize + 1];
             this._upgradeLockOwnerId = -1;
             this._writeLockOwnerId = -1;
         }
@@ -397,10 +388,9 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for ( ;;) {
+            for (; ; ) {
 
-                // We can enter a read lock if there are only read-locks have been given out and a
-                // writer is not trying to get in.
+                // We can enter a read lock if there are only read-locks have been given out and a writer is not trying to get in.
 
                 if ( this._owners < MaxReader ) {
 
@@ -451,7 +441,7 @@ namespace Librainian.Threading {
         private static void SpinWait( Int32 spinCount ) {
 
             //Exponential backoff
-            if ( spinCount < 5 && SlimLock.ProcessorCount > 1 ) {
+            if ( spinCount < 5 && ProcessorCount > 1 ) {
                 Thread.SpinWait( LockSpinCycles * spinCount );
             }
             else if ( spinCount < MaxSpinCount - 3 ) {
@@ -465,9 +455,7 @@ namespace Librainian.Threading {
         private static Boolean IsRwHashEntryChanged( ReaderWriterCount lrwc, Int32 id ) => lrwc.Threadid != id;
 
         /// <summary>
-        ///     A routine for lazily creating a event outside the lock (so if errors happen they are
-        ///     outside the lock and that we don't do much work while holding a spin lock). If all goes
-        ///     well, reenter the lock and set 'waitEvent'
+        /// A routine for lazily creating a event outside the lock (so if errors happen they are outside the lock and that we don't do much work while holding a spin lock). If all goes well, reenter the lock and set 'waitEvent'
         /// </summary>
         private void LazyCreateEvent( ref EventWaitHandle waitEvent, Boolean makeAutoResetEvent ) {
 #if DEBUG
@@ -486,8 +474,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     Waits on 'waitEvent' with a timeout of 'millisceondsTimeout. Before the wait
-        ///     'numWaiters' is incremented and is restored before leaving this routine.
+        /// Waits on 'waitEvent' with a timeout of 'millisceondsTimeout. Before the wait 'numWaiters' is incremented and is restored before leaving this routine.
         /// </summary>
         private Boolean WaitOnEvent( EventWaitHandle waitEvent, ref UInt32 numWaiters, Int32 millisecondsTimeout ) {
 #if DEBUG
@@ -615,7 +602,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for ( ;;) {
+            for (; ; ) {
                 if ( this.IsWriterAcquired() ) {
 
                     // Good case, there is no contention, we are basically done
@@ -806,12 +793,12 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for ( ;;) {
+            for (; ; ) {
 
                 //Once an upgrade lock is taken, it's like having a reader lock held
                 //until upgrade or downgrade operations are performed.
 
-                if ( this._upgradeLockOwnerId == -1 && this._owners < SlimLock.MaxReader ) {
+                if ( this._upgradeLockOwnerId == -1 && this._owners < MaxReader ) {
                     this._owners++;
                     this._upgradeLockOwnerId = id;
                     break;
@@ -904,7 +891,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     Determines the appropriate events to set, leaves the locks, and sets the events.
+        /// Determines the appropriate events to set, leaves the locks, and sets the events.
         /// </summary>
         private void ExitAndWakeUpAppropriateWaiters() {
 #if DEBUG

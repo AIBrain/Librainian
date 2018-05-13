@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -23,30 +21,35 @@ namespace Librainian.Maths {
     using System;
     using Newtonsoft.Json;
 
-    /// <summary>A Double number, constrained between 0 and 1. Not thread safe!</summary>
+    /// <summary>
+    /// A Double number, constrained between 0 and 1. Not thread safe!
+    /// </summary>
     [JsonObject]
     public sealed class FuzzyNonTs {
+
+        /// <summary>
+        /// ONLY used in the getter and setter.
+        /// </summary>
+        [JsonProperty]
+        private Double _value;
+
         public const Double MaxValue = 1D;
         public const Double MinValue = 0D;
 
         //private static readonly Random rnd = new Random( ( int ) DateTime.UtcNow.Ticks );
 
-        public static readonly FuzzyNonTs Undecided = new FuzzyNonTs( 0.5D );
         public static readonly FuzzyNonTs Falser = new FuzzyNonTs( Undecided - Undecided / 2 );
         public static readonly FuzzyNonTs Truer = new FuzzyNonTs( Undecided + Undecided / 2 );
-
-        /// <summary>ONLY used in the getter and setter.</summary>
-        [JsonProperty]
-        private Double _value;
+        public static readonly FuzzyNonTs Undecided = new FuzzyNonTs( 0.5D );
 
         public FuzzyNonTs( Double value ) => this.Value = value;
 
-		public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
+        public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
 
-		public Double Value {
+        public Double Value {
             get => this._value;
 
-	        set {
+            set {
                 var correctedvalue = value;
                 if ( value > MaxValue ) {
                     correctedvalue = MaxValue;
@@ -68,9 +71,9 @@ namespace Librainian.Maths {
 
         public static implicit operator Double( FuzzyNonTs special ) => special.Value;
 
-        public static Boolean IsFalser( FuzzyNonTs special ) => null != special && special.Value <= FuzzyNonTs.Falser.Value;
+        public static Boolean IsFalser( FuzzyNonTs special ) => null != special && special.Value <= Falser.Value;
 
-        public static Boolean IsTruer( FuzzyNonTs special ) => null != special && special.Value >= FuzzyNonTs.Truer.Value;
+        public static Boolean IsTruer( FuzzyNonTs special ) => null != special && special.Value >= Truer.Value;
 
         public static Boolean IsUndecided( FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
 
@@ -83,7 +86,7 @@ namespace Librainian.Maths {
         public void MoreLikely( Double towards ) => this.Value = ( this.Value + ( towards >= MinValue ? towards : MaxValue ) ) / 2D;
 
         /// <summary>
-        ///     Initializes a random number between 0 and 1 within a range, defaulting to Middle
+        /// Initializes a random number between 0 and 1 within a range, defaulting to Middle
         /// </summary>
         public void Randomize( LowMiddleHigh lmh = LowMiddleHigh.Middle ) {
             switch ( lmh ) {

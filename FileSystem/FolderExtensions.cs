@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -38,14 +36,14 @@ namespace Librainian.FileSystem {
     public static class FolderExtensions {
         public static readonly Char[] InvalidPathChars = Path.GetInvalidPathChars();
 
-        public static String CleanupForFolder( [ NotNull ] this String foldername ) {
+        public static String CleanupForFolder( [NotNull] this String foldername ) {
             if ( String.IsNullOrWhiteSpace( value: foldername ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", paramName: nameof(foldername) );
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( foldername ) );
             }
 
             var sb = new StringBuilder( foldername.Length, UInt16.MaxValue / 2 );
             foreach ( var c in foldername ) {
-                if ( !InvalidPathChars.Contains( c) ) {
+                if ( !InvalidPathChars.Contains( c ) ) {
                     sb.Append( c );
                 }
             }
@@ -66,13 +64,13 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        ///     Returns a list of all files copied.
+        /// Returns a list of all files copied.
         /// </summary>
-        /// <param name="sourceFolder"></param>
-        /// <param name="destinationFolder"></param>
-        /// <param name="searchPatterns"></param>
+        /// <param name="sourceFolder">                 </param>
+        /// <param name="destinationFolder">            </param>
+        /// <param name="searchPatterns">               </param>
         /// <param name="overwriteDestinationDocuments"></param>
-        /// <param name="crc">Calculate the CRC64 of source and destination documents.</param>
+        /// <param name="crc">                          Calculate the CRC64 of source and destination documents.</param>
         /// <returns></returns>
         public static IEnumerable<DocumentCopyStatistics> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder, IEnumerable<String> searchPatterns, Boolean overwriteDestinationDocuments = true, Boolean crc = true ) {
             if ( sourceFolder is null ) {
@@ -101,7 +99,7 @@ namespace Librainian.FileSystem {
                     var statistics = new DocumentCopyStatistics { TimeStarted = beginTime, SourceDocument = sourceDocument };
 
                     if ( crc ) {
-                        statistics.SourceDocumentCRC64 = sourceDocument.Crc64();
+                        statistics.SourceDocumentCRC64 = sourceDocument.CRC64Hex();
                     }
 
                     var destinationDocument = new Document( destinationFolder, sourceDocument.FileName() );
@@ -113,7 +111,7 @@ namespace Librainian.FileSystem {
                     File.Copy( sourceDocument.FullPathWithFileName, destinationDocument.FullPathWithFileName );
 
                     if ( crc ) {
-                        statistics.DestinationDocumentCRC64 = destinationDocument.Crc64();
+                        statistics.DestinationDocumentCRC64 = destinationDocument.CRC64Hex();
                     }
 
                     var endTime = DateTime.UtcNow;
@@ -176,7 +174,7 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        ///     <seealso cref="PathSplitter" />.
+        /// <seealso cref="PathSplitter"/>.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -186,7 +184,7 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        ///     <seealso cref="PathSplitter" />.
+        /// <seealso cref="PathSplitter"/>.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -198,8 +196,8 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        ///     <para>Returns true if the <see cref="Document" /> no longer seems to exist.</para>
-        ///     <para>Returns null if existence cannot be determined.</para>
+        /// <para>Returns true if the <see cref="Document"/> no longer seems to exist.</para>
+        /// <para>Returns null if existence cannot be determined.</para>
         /// </summary>
         /// <param name="folder"></param>
         /// <param name="tryFor"></param>

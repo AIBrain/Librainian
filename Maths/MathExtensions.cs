@@ -191,10 +191,10 @@ namespace Librainian.Maths {
         /// <param name="startInclusive"></param>
         /// <param name="endInclusive">  </param>
         /// <returns></returns>
-        /// <example>5. Between(1, 10) == true</example>
-        /// <example>5. Between(10, 1) == true</example>
+        /// <example>5. Between(1, 10)</example>
+        /// <example>5. Between(10, 1)</example>
         /// <example>5. Between(10, 6) == false</example>
-        /// <example>5. Between(5, 5)) == true</example>
+        /// <example>5. Between(5, 5))</example>
         public static Boolean Between<T>( this T target, T startInclusive, T endInclusive ) where T : IComparable {
             if ( startInclusive.CompareTo( endInclusive ) == 1 ) {
                 return target.CompareTo( startInclusive ) <= 0 && target.CompareTo( endInclusive ) >= 0;
@@ -215,11 +215,7 @@ namespace Librainian.Maths {
                 return min;
             }
 
-            if ( @this.CompareTo( other: max ) > 0 ) {
-                return max;
-            }
-
-            return @this;
+            return @this.CompareTo( other: max ) > 0 ? max : @this;
         }
 
         /// <summary>
@@ -883,7 +879,7 @@ namespace Librainian.Maths {
         [Pure]
         public static Double LogOnePlusX( this Double x ) {
             if ( x <= -1.0 ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( x ), message: $"Invalid input argument: {x}" );
+                throw new ArgumentOutOfRangeException( nameof( x ), message: $"Invalid input argument: {x}" );
             }
 
             if ( Math.Abs( value: x ) > 1e-4 ) {
@@ -1313,7 +1309,7 @@ namespace Librainian.Maths {
 
         public static Double Slope( [NotNull] this List<TimeProgression> data ) {
             if ( data is null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException( nameof( data ) );
             }
 
             var averageX = data.Average( d => d.MillisecondsPassed );
@@ -1513,7 +1509,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         public static IEnumerable<UInt64> To( this Int32 start, UInt64 end, UInt64 step = 1 ) {
             if ( start < 0 ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( start ), message: "'low' must be equal to or greater than zero." );
+                throw new ArgumentOutOfRangeException( nameof( start ), message: "'low' must be equal to or greater than zero." );
             }
 
             if ( step == 0UL ) {
@@ -1549,7 +1545,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         public static IEnumerable<Int32> To( this Int32 start, Int32 end, Int32 step = 1 ) {
             if ( start < 0 ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( start ), message: "'low' must be equal to or greater than zero." );
+                throw new ArgumentOutOfRangeException( nameof( start ), message: "'low' must be equal to or greater than zero." );
             }
 
             if ( step == 0 ) {
@@ -1802,7 +1798,7 @@ namespace Librainian.Maths {
 
         public static String ToHex( this IEnumerable<Byte> input ) {
             if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
+                throw new ArgumentNullException( nameof( input ) );
             }
 
             return input.Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );

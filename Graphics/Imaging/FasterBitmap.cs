@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -63,6 +61,12 @@ namespace Librainian.Graphics.Imaging {
             get;
         }
 
+        public override void DisposeManaged() {
+            if ( this.IsLocked ) {
+                this.UnlockImage();
+            }
+        }
+
         public Color GetPixel( Int32 x, Int32 y ) {
             this._pixelData = ( PixelData* )( this._pBase + y * this.Width + x * sizeof( PixelData ) );
             return Color.FromArgb( this._pixelData->Alpha, this._pixelData->Red, this._pixelData->Green, this._pixelData->Blue );
@@ -94,20 +98,13 @@ namespace Librainian.Graphics.Imaging {
             this.IsLocked = false;
         }
 
-        protected override void DisposeManaged() {
-            if ( this.IsLocked ) {
-                this.UnlockImage();
-            }
-        }
-
         private struct PixelData {
             public Byte Alpha;
-            public Byte Red;
-            public Byte Green;
             public Byte Blue;
+            public Byte Green;
+            public Byte Red;
 
             public override String ToString() => $"({this.Alpha}, {this.Red}, {this.Green}, {this.Blue})";
-
         }
     }
 }

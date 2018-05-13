@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -70,7 +68,9 @@ namespace Librainian.Internet {
             */
         }
 
-        /// <summary>Returns True if a download is currently in progress</summary>
+        /// <summary>
+        /// Returns True if a download is currently in progress
+        /// </summary>
         public Boolean DownloadInProgress {
             get {
                 try {
@@ -95,23 +95,23 @@ namespace Librainian.Internet {
 
         public static IEnumerable<UriLinkItem> ParseLinks( Uri baseUri, String webpage ) {
 
-			// ReSharper disable LoopCanBeConvertedToQuery
+            // ReSharper disable LoopCanBeConvertedToQuery
 #pragma warning disable IDE0007 // Use implicit type
-			foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
+            foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
 #pragma warning restore IDE0007 // Use implicit type
 
-				// ReSharper restore LoopCanBeConvertedToQuery
-				var value = match.Groups[ 1 ].Value;
+                // ReSharper restore LoopCanBeConvertedToQuery
+                var value = match.Groups[1].Value;
                 var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
 
-                var i = new UriLinkItem { Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ), Href = new Uri( baseUri: baseUri, relativeUri: m2.Success ? m2.Groups[ 1 ].Value : String.Empty ) };
+                var i = new UriLinkItem { Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ), Href = new Uri( baseUri: baseUri, relativeUri: m2.Success ? m2.Groups[1].Value : String.Empty ) };
 
                 yield return i;
             }
         }
 
         /// <summary>
-        ///     Returns True if the address was successfully added to the queue to be downloaded.
+        /// Returns True if the address was successfully added to the queue to be downloaded.
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
@@ -130,7 +130,7 @@ namespace Librainian.Internet {
         }
 
         /// <summary>
-        ///     Returns True if the address was successfully added to the queue to be downloaded.
+        /// Returns True if the address was successfully added to the queue to be downloaded.
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
@@ -151,7 +151,7 @@ namespace Librainian.Internet {
         }
 
         internal void webclient_DownloadStringCompleted( Object sender, DownloadStringCompletedEventArgs e ) {
-            if ( e.UserState is Uri userState) {
+            if ( e.UserState is Uri userState ) {
                 String.Format( format: "Surf(): Download completed on {0}", arg0: userState ).WriteLine();
                 this._pastUrls.Add( userState );
                 this.DownloadInProgress = false;
@@ -164,11 +164,11 @@ namespace Librainian.Internet {
             if ( this.DownloadInProgress ) {
                 return;
             }
-			if ( !this._urls.TryDequeue( result: out var address ) ) {
-				return;
-			}
+            if ( !this._urls.TryDequeue( result: out var address ) ) {
+                return;
+            }
 
-			this.DownloadInProgress = true;
+            this.DownloadInProgress = true;
             $"Surf(): Starting download: {address.AbsoluteUri}".WriteLine();
             this._webclient.DownloadStringAsync( address: address, userToken: address );
         } ).ContinueWith( t => {
@@ -177,10 +177,9 @@ namespace Librainian.Internet {
             }
         } );
 
-		/// <summary>
-		/// Dispose any disposable members.
-		/// </summary>
-		protected override void DisposeManaged() => this._downloadInProgressAccess.Dispose();
-
-	}
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this._downloadInProgressAccess.Dispose();
+    }
 }

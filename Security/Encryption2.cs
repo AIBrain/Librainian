@@ -29,11 +29,11 @@ namespace Librainian.Security {
 
             // TODO: Add Proper Exception Handlers
             if ( inputString is null ) {
-                throw new ArgumentNullException( paramName: nameof( inputString ) );
+                throw new ArgumentNullException(nameof( inputString ) );
             }
 
             if ( xmlString is null ) {
-                throw new ArgumentNullException( paramName: nameof( xmlString ) );
+                throw new ArgumentNullException(nameof( xmlString ) );
             }
 
             var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: dwKeySize );
@@ -59,11 +59,11 @@ namespace Librainian.Security {
 
             // TODO: Add Proper Exception Handlers
             if ( inputString is null ) {
-                throw new ArgumentNullException( paramName: nameof( inputString ) );
+                throw new ArgumentNullException(nameof( inputString ) );
             }
 
             if ( xmlString is null ) {
-                throw new ArgumentNullException( paramName: nameof( xmlString ) );
+                throw new ArgumentNullException(nameof( xmlString ) );
             }
 
             var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: dwKeySize );

@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Combiner.cs" was last cleaned by Protiguous on 2016/06/18 at 10:50 PM
+// "Librainian/Combiner.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
 
 namespace Librainian.Extensions {
 
@@ -29,13 +25,14 @@ namespace Librainian.Extensions {
             foreach ( var item in a ) {
                 yield return item;
             }
+
             foreach ( var item in b ) {
                 yield return item;
             }
         }
 
         /// <summary>
-        ///     add the new item <paramref name="a" /> at the beginning of the collection <paramref name="b" />
+        /// add the new item <paramref name="a"/> at the beginning of the collection <paramref name="b"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="a"></param>
@@ -43,13 +40,14 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         public static IEnumerable<T> Append<T>( this T a, IEnumerable<T> b ) {
             yield return a;
+
             foreach ( var item in b ) {
                 yield return item;
             }
         }
 
         /// <summary>
-        ///     add the collection <paramref name="a" /> at the beginning of the new item <paramref name="b" />
+        /// add the collection <paramref name="a"/> at the beginning of the new item <paramref name="b"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="a"></param>
@@ -59,6 +57,7 @@ namespace Librainian.Extensions {
             foreach ( var item in a ) {
                 yield return item;
             }
+
             yield return b;
         }
 
@@ -67,12 +66,14 @@ namespace Librainian.Extensions {
 
             return sequences.Aggregate( emptyProduct, ( accumulator, sequence ) => {
                 var enumerable = sequence as IList<T> ?? sequence.ToList();
+
                 return from accseq in accumulator from item in enumerable where !accseq.Contains( item ) select accseq.Concat( new[] { item } );
             } );
         }
 
         public static IEnumerable<IEnumerable<T>> Combinations<T>( params IEnumerable<T>[] input ) {
-            IEnumerable<IEnumerable<T>> result = new T[ 0 ][];
+            IEnumerable<IEnumerable<T>> result = new T[0][];
+
             return input.Aggregate( result, ( current, item ) => current.Combine( item.Combinationss() ) );
         }
 
@@ -81,12 +82,13 @@ namespace Librainian.Extensions {
         public static IEnumerable<IEnumerable<T>> Combine<T>( this IEnumerable<IEnumerable<T>> groupAs, IEnumerable<IEnumerable<T>> groupBs ) {
             var found = false;
 
-            var bs = groupBs as IEnumerable< T >[] ?? groupBs.ToArray();
+            var bs = groupBs as IEnumerable<T>[] ?? groupBs.ToArray();
 
             foreach ( var groupA in groupAs ) {
                 found = true;
+
                 foreach ( var groupB in bs ) {
-                    // ReSharper disable once PossibleMultipleEnumeration
+
                     yield return groupA.Append( groupB );
                 }
             }
@@ -94,6 +96,7 @@ namespace Librainian.Extensions {
             if ( found ) {
                 yield break;
             }
+
             foreach ( var groupB in bs ) {
                 yield return groupB;
             }
@@ -104,12 +107,12 @@ namespace Librainian.Extensions {
 
             foreach ( var bGroup in b ) {
                 found = true;
-                // ReSharper disable once PossibleMultipleEnumeration
+
                 yield return a.Append( bGroup );
             }
 
             if ( !found ) {
-                // ReSharper disable once PossibleMultipleEnumeration
+
                 yield return a;
             }
         }
@@ -119,12 +122,12 @@ namespace Librainian.Extensions {
 
             foreach ( var aGroup in a ) {
                 found = true;
-                // ReSharper disable once PossibleMultipleEnumeration
+
                 yield return aGroup.Append( b );
             }
 
             if ( !found ) {
-                // ReSharper disable once PossibleMultipleEnumeration
+
                 yield return b;
             }
         }
@@ -134,6 +137,7 @@ namespace Librainian.Extensions {
 
             foreach ( var bGroup in b ) {
                 found = true;
+
                 yield return a.Append( bGroup );
             }
 
@@ -147,6 +151,7 @@ namespace Librainian.Extensions {
 
             foreach ( var aGroup in a ) {
                 found = true;
+
                 yield return aGroup.Append( b );
             }
 
@@ -156,20 +161,25 @@ namespace Librainian.Extensions {
         }
 
         public static T[][] FastPowerSet<T>( this T[] seq ) {
-            var powerSet = new T[ 1 << seq.Length ][];
-            powerSet[ 0 ] = new T[ 0 ];
+            var powerSet = new T[1 << seq.Length][];
+            powerSet[0] = new T[0];
+
             for ( var i = 0; i < seq.Length; i++ ) {
-                var cur = seq[ i ];
+                var cur = seq[i];
                 var count = 1 << i;
+
                 for ( var j = 0; j < count; j++ ) {
-                    var source = powerSet[ j ];
-                    var destination = powerSet[ count + j ] = new T[ source.Length + 1 ];
+                    var source = powerSet[j];
+                    var destination = powerSet[count + j] = new T[source.Length + 1];
+
                     for ( var q = 0; q < source.Length; q++ ) {
-                        destination[ q ] = source[ q ];
+                        destination[q] = source[q];
                     }
-                    destination[ source.Length ] = cur;
+
+                    destination[source.Length] = cur;
                 }
             }
+
             return powerSet;
         }
 

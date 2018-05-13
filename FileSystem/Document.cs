@@ -20,11 +20,14 @@ namespace Librainian.FileSystem {
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using System.IO.MemoryMappedFiles;
     using System.Linq;
     using System.Net;
     using System.Numerics;
+    using System.Runtime.InteropServices;
     using System.Security;
     using System.Security.Permissions;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
@@ -73,7 +76,7 @@ namespace Librainian.FileSystem {
         /// <exception cref="FileNotFoundException"></exception>
         public Document( [NotNull] String fullPathWithFilename, Boolean deleteAfterClose = false ) {
             if ( String.IsNullOrWhiteSpace( value: fullPathWithFilename ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullPathWithFilename ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( fullPathWithFilename ) );
             }
 
             this.DeleteAfterClose = deleteAfterClose;
@@ -87,6 +90,8 @@ namespace Librainian.FileSystem {
 
         public Document( Folder folder, Document document, Boolean deleteAfterClose = false ) : this( fullPathWithFilename: Path.Combine( path1: folder.FullName, path2: document.FileName() ),
             deleteAfterClose: deleteAfterClose ) { }
+
+        public static Int32 BufferSize { get; } = 0x1000000;
 
         public Boolean DeleteAfterClose { get; }
 
@@ -126,7 +131,7 @@ namespace Librainian.FileSystem {
                 return false;
             }
 
-            return left.Size() == right.Size() && left.FullPathWithFileName.Same( compare: right.FullPathWithFileName );
+            return left.Size() == right.Size() && left.FullPathWithFileName.Is( right: right.FullPathWithFileName );
         }
 
         /// <summary>
@@ -182,13 +187,13 @@ namespace Librainian.FileSystem {
             }
 
             if ( this.Exists() ) {
-                using ( var writer = File.AppendText( path: this.FullPathWithFileName ) ) {
+                using ( var writer = File.AppendText( this.FullPathWithFileName ) ) {
                     writer.WriteLine( value: text );
                     writer.Flush();
                 }
             }
             else {
-                using ( var writer = File.CreateText( path: this.FullPathWithFileName ) ) {
+                using ( var writer = File.CreateText( this.FullPathWithFileName ) ) {
                     writer.WriteLine( value: text );
                     writer.Flush();
                 }
@@ -199,12 +204,12 @@ namespace Librainian.FileSystem {
         /// Enumerates the <see cref="Document"/> as a sequence of <see cref="Byte"/>.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Byte> AsByteArray() {
+        public IEnumerable<Byte> AsBytes() {
             if ( !this.Exists() ) {
                 yield break;
             }
 
-            var stream = IOExtensions.ReTry( ioFunction: () => new FileStream( path: this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ), tryFor: Seconds.Seven,
+            var stream = IOExtensions.ReTry( ioFunction: () => new FileStream( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ), tryFor: Seconds.Seven,
                 token: CancellationToken.None );
 
             if ( null == stream ) {
@@ -228,6 +233,51 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
+        /// <para>Clone the entire document to the <paramref name="destination"/> as quickly as possible.</para>
+        /// <para>This will OVERWRITE any <see cref="destination"/> file.</para>
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="progress">   </param>
+        /// <param name="eta">        </param>
+        /// <returns></returns>
+        public async Task<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] Document destination, [CanBeNull] IProgress<Single> progress = null, [CanBeNull] IProgress<TimeSpan> eta = null ) {
+            if ( destination == null ) {
+                throw new ArgumentNullException( nameof( destination ) );
+            }
+
+            var stopwatch = StopWatch.StartNew();
+
+            var fileSize = this.Length();
+            if ( !fileSize.Any() ) {
+                return (false, stopwatch.Elapsed);
+            }
+
+            if ( fileSize <= ( UInt64 )BufferSize ) {
+                await this.Copy( destination, progress, eta ).ConfigureAwait( false );
+                return (destination.Exists() && destination.Length() == fileSize, stopwatch.Elapsed);
+            }
+
+            var processorCount = ( UInt64 )Environment.ProcessorCount;
+
+            var chunksNeeded = fileSize / processorCount;
+
+            var buffers = new ThreadLocal<Byte[]>( () => new Byte[BufferSize], trackAllValues: true );
+
+            var sourceStream = new FileStream( this.FullPathWithFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize, FileOptions.Asynchronous | FileOptions.RandomAccess );
+            var sourceBuffer = new BufferedStream( sourceStream, BufferSize );
+            var sourceBinary = new BinaryReader( sourceBuffer, Encoding.Unicode );
+
+            var destinationStream = new FileStream( destination.FullPathWithFileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, BufferSize, FileOptions.Asynchronous | FileOptions.RandomAccess );
+            var destinationBuffer = new BufferedStream( destinationStream, BufferSize );
+            var destinationBinary = new BinaryWriter( destinationBuffer, Encoding.Unicode );
+
+            using ( var memoryOut = MemoryMappedFile.CreateOrOpen( destination.JustName(), ( Int64 )fileSize, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.DelayAllocatePages, HandleInheritability.Inheritable ) ) {
+                var viewStream = memoryMapped.CreateViewStream();
+                viewStream.Write( fileBytes, 0, fileBytes.Length );
+            }
+        }
+
+        /// <summary>
         /// Compares this. <see cref="FullPathWithFileName"/> against other <see cref="FullPathWithFileName"/>.
         /// </summary>
         /// <param name="other"></param>
@@ -241,7 +291,7 @@ namespace Librainian.FileSystem {
         /// <param name="progress">   </param>
         /// <param name="eta">        </param>
         /// <returns></returns>
-        public Task Copy( Document destination, Action<Double> progress, Action<TimeSpan> eta ) =>
+        public Task Copy( Document destination, IProgress<Single> progress, IProgress<TimeSpan> eta ) =>
             Task.Run( () => {
                 var computer = new Computer();
 
@@ -272,27 +322,26 @@ namespace Librainian.FileSystem {
             return webClient;
         }
 
+        /// <summary>
+        /// Returns a lowercase hex-string of the hash.
+        /// </summary>
+        /// <returns></returns>
         [CanBeNull]
-        public String Crc32() {
-            if ( !this.Folder.Exists() ) {
-                return null;
-            }
-
-            if ( !this.Exists() ) {
-                return null;
-            }
-
-            var size = this.Size();
-            if ( !size.HasValue ) {
-                return null;
-            }
-
+        public async Task<String> Crc32() {
             try {
-                var crc32 = new Crc32( polynomial: ( UInt32 )size.Value, seed: ( UInt32 )size.Value );
-
-                using ( var fileStream = File.Open( path: this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
-                    return crc32.ComputeHash( inputStream: fileStream ).Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "x2" ).ToLower() );
+                if ( !this.Exists() ) {
+                    return null;
                 }
+
+                var size = this.Size();
+
+                var crc32 = new Crc32( polynomial: ( UInt32 )size, seed: ( UInt32 )size );
+
+                return await Task.Run( () => {
+                    using ( var fileStream = File.Open( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
+                        return crc32.ComputeHash( fileStream ).Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "x2" ).ToLower() );
+                    }
+                } ).ConfigureAwait( false );
             }
             catch ( FileNotFoundException ) { }
             catch ( DirectoryNotFoundException ) { }
@@ -304,25 +353,72 @@ namespace Librainian.FileSystem {
         }
 
         [CanBeNull]
-        public String Crc64() {
-            if ( !this.Folder.Exists() ) {
-                return null;
-            }
-
-            if ( !this.Exists() ) {
-                return null;
-            }
-
-            var size = this.Size();
-            if ( !size.HasValue ) {
-                return null;
-            }
-
+        public async Task<UInt32?> CRC32() {
             try {
-                var crc64 = new Crc64( polynomial: size.Value, seed: size.Value );
+                if ( !this.Exists() ) {
+                    return null;
+                }
 
-                using ( var fileStream = File.Open( path: this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
-                    return crc64.ComputeHash( inputStream: fileStream ).Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "x2" ).ToLower() );
+                return await Task.Run( () => {
+                    var size = this.Size();
+
+                    var crc32 = new Crc32( polynomial: ( UInt32 )size, seed: ( UInt32 )size );
+
+                    using ( var fileStream = File.Open( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
+                        var result = crc32.ComputeHash( fileStream );
+
+                        return BitConverter.ToUInt32( result, 0 );
+                    }
+                } ).ConfigureAwait( false );
+            }
+            catch ( FileNotFoundException ) { }
+            catch ( DirectoryNotFoundException ) { }
+            catch ( PathTooLongException ) { }
+            catch ( IOException ) { }
+            catch ( UnauthorizedAccessException ) { }
+
+            return null;
+        }
+
+        [CanBeNull]
+        public async Task<UInt64?> CRC64() {
+            try {
+                if ( !this.Exists() ) {
+                    return null;
+                }
+
+                await Task.Run( () => {
+                    var size = this.Size();
+
+                    var crc64 = new Crc64( polynomial: size, seed: size );
+
+                    using ( var fileStream = File.Open( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
+                        return BitConverter.ToUInt64( crc64.ComputeHash( fileStream ), 0 );
+                    }
+                } );
+            }
+            catch ( FileNotFoundException ) { }
+            catch ( DirectoryNotFoundException ) { }
+            catch ( PathTooLongException ) { }
+            catch ( IOException ) { }
+            catch ( UnauthorizedAccessException ) { }
+
+            return null;
+        }
+
+        [CanBeNull]
+        public String CRC64Hex() {
+            try {
+                if ( !this.Exists() ) {
+                    return null;
+                }
+
+                var size = this.Size();
+
+                var crc64 = new Crc64( polynomial: size, seed: size );
+
+                using ( var fileStream = File.Open( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
+                    return crc64.ComputeHash( fileStream ).Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "x2" ).ToLower() );
                 }
             }
             catch ( FileNotFoundException ) { }
@@ -371,7 +467,7 @@ namespace Librainian.FileSystem {
 
         public Boolean DemandPermission( FileIOPermissionAccess access ) {
             try {
-                var bob = new FileIOPermission( access: access, path: this.FullPathWithFileName );
+                var bob = new FileIOPermission( access: access, this.FullPathWithFileName );
                 bob.Demand();
                 return true;
             }
@@ -400,7 +496,7 @@ namespace Librainian.FileSystem {
         /// <returns></returns>
         public async Task<(Exception exception, WebHeaderCollection responseHeaders)> DownloadFile( [NotNull] Uri source ) {
             if ( source == null ) {
-                throw new ArgumentNullException( paramName: nameof( source ) );
+                throw new ArgumentNullException( nameof( source ) );
             }
 
             try {
@@ -431,7 +527,7 @@ namespace Librainian.FileSystem {
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override Boolean Equals( Object obj ) => obj is Document && Equals( left: this, right: ( Document )obj );
+        public override Boolean Equals( Object obj ) => obj is Document document && Equals( left: this, right: document );
 
         /// <summary>
         /// Returns true if the <see cref="Document"/> currently exists.
@@ -443,20 +539,20 @@ namespace Librainian.FileSystem {
         /// <para>Computes the extension of the <see cref="FileName"/>, including the prefix ".".</para>
         /// </summary>
         [NotNull]
-        public String Extension() => Path.GetExtension( path: this.FullPathWithFileName ).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
+        public String Extension() => Path.GetExtension( this.FullPathWithFileName ).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
 
         /// <summary>
         /// <para>Just the file's name, including the extension.</para>
         /// </summary>
         /// <seealso cref="Path.GetFileName"/>
         [NotNull]
-        public String FileName() => Path.GetFileName( path: this.FullPathWithFileName );
+        public String FileName() => Path.GetFileName( this.FullPathWithFileName );
 
         /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.</returns>
-        public IEnumerator<Byte> GetEnumerator() => this.AsByteArray().GetEnumerator();
+        public IEnumerator<Byte> GetEnumerator() => this.AsBytes().GetEnumerator();
 
         /// <summary>
         /// (file name, not contents)
@@ -464,25 +560,7 @@ namespace Librainian.FileSystem {
         /// <returns></returns>
         public override Int32 GetHashCode() => this.FullPathWithFileName.GetHashCode();
 
-        /// <summary>
-        /// <para>Gets the current size of the <see cref="Document"/>.</para>
-        /// </summary>
-        [CanBeNull]
-        public UInt64? GetLength() {
-            try {
-                if ( this.Exists() ) {
-                    return ( UInt64 )this.Info.Length;
-                }
-            }
-            catch ( FileNotFoundException exception ) {
-                exception.More();
-            }
-            catch ( IOException exception ) {
-                exception.More();
-            }
-
-            return null;
-        }
+        public String JustName() => Path.GetFileNameWithoutExtension( this.FileName() );
 
         /// <summary>
         /// Attempt to start the process.
@@ -504,6 +582,25 @@ namespace Librainian.FileSystem {
 
                 return null;
             } );
+
+        /// <summary>
+        /// <para>Gets the current size of the <see cref="Document"/>.</para>
+        /// </summary>
+        public UInt64 Length() {
+            try {
+                if ( this.Exists() ) {
+                    return ( UInt64 )this.Info.Length;
+                }
+            }
+            catch ( FileNotFoundException exception ) {
+                exception.More();
+            }
+            catch ( IOException exception ) {
+                exception.More();
+            }
+
+            return default;
+        }
 
         /// <summary>
         /// Attempt to return an object Deserialized from this JSON text file.
@@ -541,7 +638,7 @@ namespace Librainian.FileSystem {
         /// <returns></returns>
         public Task<Boolean> Move( [NotNull] Document destination ) {
             if ( destination is null || String.IsNullOrWhiteSpace( value: destination.FullPathWithFileName ) ) {
-                throw new ArgumentNullException( paramName: nameof( destination ) );
+                throw new ArgumentNullException( nameof( destination ) );
             }
 
             return Task.Run( function: () => {
@@ -578,22 +675,8 @@ namespace Librainian.FileSystem {
         [NotNull]
         public String Name() => this.FileName();
 
-        /// <summary>
-        /// Reads the entire file into a <see cref="String"/>.
-        /// </summary>
-        /// <returns></returns>
-        [CanBeNull]
-        public async Task<String> ReadTextAsync() {
-            try {
-                return await Task.Run( function: () => this.Exists() ? File.ReadAllText( path: this.FullPathWithFileName ) : String.Empty );
-            }
-            catch ( Exception ) {
-                return null;
-            }
-        }
-
-        public async Task<String> ReadToEndAsync() {
-            using ( var reader = new StreamReader( path: this.FullPathWithFileName ) ) {
+        public async Task<String> ReadStringAsync() {
+            using ( var reader = new StreamReader( this.FullPathWithFileName ) ) {
                 return await reader.ReadToEndAsync().ConfigureAwait( false );
             }
         }
@@ -615,26 +698,12 @@ namespace Librainian.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         public Boolean SameContent( [CanBeNull] Document right ) {
-            if ( right is null ) {
+
+            if ( right is null || !this.Exists() || !right.Exists() ) {
                 return false;
             }
 
-            if ( !this.Exists() ) {
-                return false;
-            }
-
-            if ( !right.Exists() ) {
-                return false;
-            }
-
-            var ll = this.GetLength();
-            var rl = right.GetLength();
-
-            if ( !ll.HasValue || !rl.HasValue ) {
-                return false;
-            }
-
-            return ll.Value == rl.Value && this.AsByteArray().SequenceEqual( second: right.AsByteArray() );
+            return this.Length() == right.Length() && this.AsBytes().SequenceEqual( second: right.AsBytes() );
         }
 
         public void SetCreationTime( DateTime when, CancellationToken cancellationToken ) {
@@ -652,7 +721,7 @@ namespace Librainian.FileSystem {
                     return false;
                 }
 
-                File.SetCreationTime( path: this.FullPathWithFileName, creationTime: when );
+                File.SetCreationTime( this.FullPathWithFileName, creationTime: when );
                 return true;
             }, tryFor: Seconds.Five, token: cancellationToken );
         }
@@ -660,9 +729,20 @@ namespace Librainian.FileSystem {
         /// <summary>
         /// <para>Gets the current size of the <see cref="Document"/>.</para>
         /// </summary>
-        /// <seealso cref="GetLength"/>
-        [CanBeNull]
-        public UInt64? Size() => this.GetLength();
+        /// <remarks>Same as <seealso cref="Length"/>.</remarks>
+        public UInt64 Size() => this.Length();
+
+        /// <summary>
+        /// Open the file for reading and return a <see cref="StreamReader"/>.
+        /// </summary>
+        /// <returns></returns>
+        public StreamReader StreamReader() => new StreamReader( File.OpenRead( this.FullPathWithFileName ) );
+
+        /// <summary>
+        /// Open the file for writing and return a <see cref="StreamWriter"/>.
+        /// </summary>
+        /// <returns></returns>
+        public StreamWriter StreamWriter() => new StreamWriter( File.OpenWrite( this.FullPathWithFileName ) );
 
         /// <summary>
         /// Return this <see cref="Document"/> as a JSON string.
@@ -725,7 +805,7 @@ namespace Librainian.FileSystem {
         /// <returns></returns>
         public async Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination ) {
             if ( destination == null ) {
-                throw new ArgumentNullException( paramName: nameof( destination ) );
+                throw new ArgumentNullException( nameof( destination ) );
             }
 
             if ( !destination.IsWellFormedOriginalString() ) {

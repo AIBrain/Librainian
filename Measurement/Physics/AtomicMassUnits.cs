@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -27,15 +25,18 @@ namespace Librainian.Measurement.Physics {
     using Librainian.Extensions;
     using Numerics;
 
-    /// <summary>Units of mass and energy in ElectronVolts.</summary>
-    /// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
-    /// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
-    /// <seealso cref="http://www.wolframalpha.com/input/?i=1+unified+atomic+mass+units+convert+to+electronvolts" />
+    /// <summary>
+    /// Units of mass and energy in ElectronVolts.
+    /// </summary>
+    /// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass"/>
+    /// <seealso cref="http://wikipedia.org/wiki/SI_prefix"/>
+    /// <seealso cref="http://www.wolframalpha.com/input/?i=1+unified+atomic+mass+units+convert+to+electronvolts"/>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct AtomicMassUnits : IComparable<ElectronVolts>, IComparable<AtomicMassUnits> {
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         public const Decimal InOneElectronVolt = 0.000000001073544m;
 
         public const Decimal InOneGigaElectronVolt = 1.073544m;
@@ -48,18 +49,24 @@ namespace Librainian.Measurement.Physics {
 
         public const Decimal InOneTeraElectronVolt = 1073.544m;
 
-        /// <summary>About 79228162514264337593543950335.</summary>
+        /// <summary>
+        /// About 79228162514264337593543950335.
+        /// </summary>
         public static readonly AtomicMassUnits MaxValue = new AtomicMassUnits( Decimal.MaxValue );
 
-        /// <summary>About -79228162514264337593543950335.</summary>
+        /// <summary>
+        /// About -79228162514264337593543950335.
+        /// </summary>
         public static readonly AtomicMassUnits MinValue = new AtomicMassUnits( Decimal.MinValue );
 
         public static readonly AtomicMassUnits NegativeOne = new AtomicMassUnits( -1 );
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         public static readonly AtomicMassUnits NegativeZero = new AtomicMassUnits( -Decimal.Zero );
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         public static readonly AtomicMassUnits One = new AtomicMassUnits( 1 );
 
         public static readonly ElectronVolts OneAtomicUnitEqualsElectronVolt = new MegaElectronVolts( 931.494095m );
@@ -68,14 +75,15 @@ namespace Librainian.Measurement.Physics {
 
         public static readonly AtomicMassUnits Zero = new AtomicMassUnits( 0 );
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         public readonly Decimal Value;
 
         public AtomicMassUnits( Decimal value ) : this() => this.Value = value;
 
-	    public AtomicMassUnits( BigRational aBigFraction ) => this.Value = ( Decimal )aBigFraction;
+        public AtomicMassUnits( BigRational aBigFraction ) => this.Value = ( Decimal )aBigFraction;
 
-	    public static AtomicMassUnits operator -( AtomicMassUnits electronVolts ) => new AtomicMassUnits( -electronVolts.Value );
+        public static AtomicMassUnits operator -( AtomicMassUnits electronVolts ) => new AtomicMassUnits( -electronVolts.Value );
 
         //public static implicit operator AtomicMassUnits( GigaElectronVolts gigaElectronVolts ) {
         //    return gigaElectronVolts.ToElectronVolts();
@@ -83,7 +91,7 @@ namespace Librainian.Measurement.Physics {
 
         /// <summary>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static AtomicMassUnits operator *( AtomicMassUnits left, AtomicMassUnits right ) => new AtomicMassUnits( left.Value * right.Value );
@@ -94,7 +102,7 @@ namespace Librainian.Measurement.Physics {
 
         /// <summary>
         /// </summary>
-        /// <param name="left"></param>
+        /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static AtomicMassUnits operator *( AtomicMassUnits left, Decimal right ) => new AtomicMassUnits( left.Value * right );
@@ -107,9 +115,9 @@ namespace Librainian.Measurement.Physics {
         }
 
         public static AtomicMassUnits operator *( BigInteger left, AtomicMassUnits right ) {
-            var lhs = new BigRational( left );
+            var left = new BigRational( left );
             var rhs = new BigRational( right.Value );
-            var res = lhs * rhs;
+            var res = left * rhs;
             return new AtomicMassUnits( ( Decimal )res );
         }
 
@@ -154,13 +162,11 @@ namespace Librainian.Measurement.Physics {
         public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * InOneMilliElectronVolt );
 
         /// <summary>
-        ///     Returns the fully qualified type name of this instance.
+        /// Returns the fully qualified type name of this instance.
         /// </summary>
-        /// <returns>
-        ///     A <see cref="T:System.String" /> containing a fully qualified type name.
-        /// </returns>
+        /// <returns>A <see cref="T:System.String"/> containing a fully qualified type name.</returns>
         public override String ToString() => $"{this.Value} u";
 
-	    public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
+        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
     }
 }

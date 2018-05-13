@@ -444,7 +444,7 @@ namespace Librainian.Threading {
 
             private static Boolean ToBool( Int32 value ) {
                 if ( value != False && value != True ) {
-                    throw new ArgumentOutOfRangeException( paramName: nameof(value) );
+                    throw new ArgumentOutOfRangeException(nameof(value) );
                 }
 
                 return value == True;
@@ -749,7 +749,7 @@ namespace Librainian.Threading {
             /// <param name="length">Length of the array</param>
             public BooleanArray( Int32 length ) {
                 if ( length <= 0 ) {
-                    throw new ArgumentOutOfRangeException( paramName: nameof(length) );
+                    throw new ArgumentOutOfRangeException(nameof(length) );
                 }
 
                 this._array = new Int32[ length ];
@@ -760,7 +760,7 @@ namespace Librainian.Threading {
             ///     copied from, the given array.
             /// </summary>
             /// <param name="array"></param>
-            public BooleanArray( IEnumerable< Boolean > array ) => this._array = array?.Select( selector: ToInt ).ToArray() ?? throw new ArgumentNullException( paramName: nameof(array) );
+            public BooleanArray( IEnumerable< Boolean > array ) => this._array = array?.Select( selector: ToInt ).ToArray() ?? throw new ArgumentNullException(nameof(array) );
 
             /// <summary>Length of the array</summary>
             public Int32 Length => this._array.Length;
@@ -849,7 +849,7 @@ namespace Librainian.Threading {
 
             private static Boolean ToBool( Int32 value ) {
                 if ( value != False && value != True ) {
-                    throw new ArgumentOutOfRangeException( paramName: nameof(value) );
+                    throw new ArgumentOutOfRangeException(nameof(value) );
                 }
 
                 return value == True;
@@ -866,7 +866,7 @@ namespace Librainian.Threading {
             /// <param name="length">Length of the array</param>
             public IntegerArray( Int32 length ) {
                 if ( length <= 0 ) {
-                    throw new ArgumentOutOfRangeException( paramName: nameof(length) );
+                    throw new ArgumentOutOfRangeException(nameof(length) );
                 }
 
                 this._array = new Int32[ length ];
@@ -879,7 +879,7 @@ namespace Librainian.Threading {
             /// <param name="array"></param>
             public IntegerArray( Int32[] array ) {
                 if ( array is null ) {
-                    throw new ArgumentNullException( paramName: nameof(array) );
+                    throw new ArgumentNullException(nameof(array) );
                 }
 
                 this._array = new Int32[ array.Length ];
@@ -991,7 +991,7 @@ namespace Librainian.Threading {
             /// <param name="length">Length of the array</param>
             public LongArray( Int32 length ) {
                 if ( length <= 0 ) {
-                    throw new ArgumentOutOfRangeException( paramName: nameof(length) );
+                    throw new ArgumentOutOfRangeException(nameof(length) );
                 }
 
                 this._array = new Int64[ length ];
@@ -1004,7 +1004,7 @@ namespace Librainian.Threading {
             /// <param name="array"></param>
             public LongArray( Int64[] array ) {
                 if ( array is null ) {
-                    throw new ArgumentNullException( paramName: nameof(array) );
+                    throw new ArgumentNullException(nameof(array) );
                 }
 
                 this._array = new Int64[ array.Length ];
@@ -1116,7 +1116,7 @@ namespace Librainian.Threading {
             /// <param name="length">Length of the array</param>
             public ReferenceArray( Int32 length ) {
                 if ( length <= 0 ) {
-                    throw new ArgumentOutOfRangeException( paramName: nameof(length) );
+                    throw new ArgumentOutOfRangeException(nameof(length) );
                 }
 
                 this._array = new T[ length ];
@@ -1127,7 +1127,7 @@ namespace Librainian.Threading {
             ///     elements copied from, the given array.
             /// </summary>
             /// <param name="array"></param>
-            public ReferenceArray( IEnumerable< T > array ) => this._array = array?.ToArray() ?? throw new ArgumentNullException( paramName: nameof(array) );
+            public ReferenceArray( IEnumerable< T > array ) => this._array = array?.ToArray() ?? throw new ArgumentNullException(nameof(array) );
 
             /// <summary>Length of the array</summary>
             public Int32 Length => this._array.Length;

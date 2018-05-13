@@ -2,18 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Randem.cs" was last cleaned by Protiguous on 2018/05/04 at 9:37 PM
+// "Librainian/Randem.cs" was last cleaned by Protiguous on 2018/05/09 at 3:00 PM
 
 namespace Librainian.Maths {
 
@@ -91,7 +90,7 @@ namespace Librainian.Maths {
 
         [NotNull]
         public static ThreadLocal<Lazy<SHA256Managed>> ThreadLocalSHA256Managed { get; } =
-                    new ThreadLocal<Lazy<SHA256Managed>>( valueFactory: () => { return new Lazy<SHA256Managed>( valueFactory: () => new SHA256Managed() ); } );
+            new ThreadLocal<Lazy<SHA256Managed>>( valueFactory: () => { return new Lazy<SHA256Managed>( valueFactory: () => new SHA256Managed() ); } );
 
         /// <summary>
         /// Provide to each thread its own <see cref="Random"/> with a random seed.
@@ -115,7 +114,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         private static String NextChar( [NotNull] this Char[] range ) {
             if ( range is null ) {
-                throw new ArgumentNullException( paramName: nameof( range ) );
+                throw new ArgumentNullException( nameof( range ) );
             }
 
             //TODO
@@ -372,7 +371,7 @@ namespace Librainian.Maths {
                  count > max - min && max - min > 0 ) {
 
                 // need to use 64-bit to support big ranges (negative min, positive max)
-                throw new ArgumentOutOfRangeException( paramName: $"Range {min} to {max} ({( Int64 )max - min} values), or count {count} is illegal." );
+                throw new ArgumentOutOfRangeException( $"Range {min} to {max} ({( Int64 )max - min} values), or count {count} is illegal." );
             }
 
             // generate count random values.
@@ -406,7 +405,7 @@ namespace Librainian.Maths {
 
         public static Char GetChar( this RandomNumberGenerator rng ) {
             if ( rng is null ) {
-                throw new ArgumentNullException( paramName: nameof( rng ) );
+                throw new ArgumentNullException( nameof( rng ) );
             }
 
             var data = new Byte[sizeof( Char )];
@@ -562,7 +561,7 @@ namespace Librainian.Maths {
         public static BigInteger NextBigInteger( this UInt16 numberOfDigits ) {
             numberOfDigits.Should().BeGreaterThan( expected: 0 );
             if ( numberOfDigits <= 0 ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( numberOfDigits ) );
+                throw new ArgumentOutOfRangeException( nameof( numberOfDigits ) );
             }
 
             var buffer = new Byte[numberOfDigits];
@@ -578,7 +577,7 @@ namespace Librainian.Maths {
         public static BigInteger NextBigIntegerPositive( this UInt16 numberOfDigits ) {
             numberOfDigits.Should().BeGreaterThan( expected: 0 );
             if ( numberOfDigits <= 0 ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( numberOfDigits ) );
+                throw new ArgumentOutOfRangeException( nameof( numberOfDigits ) );
             }
 
             var buffer = new Byte[numberOfDigits];
@@ -590,7 +589,7 @@ namespace Librainian.Maths {
         public static BigInteger NextBigIntegerSecure( this UInt16 numberOfDigits ) {
             numberOfDigits.Should().BeGreaterThan( expected: 0 );
             if ( numberOfDigits <= 0 ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( numberOfDigits ) );
+                throw new ArgumentOutOfRangeException( nameof( numberOfDigits ) );
             }
 
             var buffer = new Byte[numberOfDigits];
@@ -1069,7 +1068,7 @@ namespace Librainian.Maths {
         /// <param name="aboutLength">Length of the returned string.</param>
         public static String RandomPronounceableString( this Int32 aboutLength ) {
             if ( aboutLength < 1 ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( aboutLength ), actualValue: aboutLength, message: $"{aboutLength} is out of range." );
+                throw new ArgumentOutOfRangeException( nameof( aboutLength ), actualValue: aboutLength, message: $"{aboutLength} is out of range." );
             }
 
             //char[] consonants = { 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z' };
@@ -1134,8 +1133,8 @@ namespace Librainian.Maths {
 
             var tasks = new List<Task> {
                 timeout,
-                Task.Run(() => { PollResponses.Push( item: TheFacebooks.Get().Result.Error.FbtraceID.GetHashCode() ); }, cancellationToken: cancellationToken ),
-                Task.Run(() => { PollResponses.Push( item: RandomDotOrg.Generator.Value.Get() ); }, cancellationToken: cancellationToken )
+                Task.Run( () => PollResponses.Push( item: TheFacebooks.Get().Result.Error.FbtraceID.GetHashCode() ), cancellationToken: cancellationToken ),
+                Task.Run( () => PollResponses.Push( item: RandomDotOrg.Generator.Value.Get() ), cancellationToken: cancellationToken )
             };
 
             var task = await Task.WhenAny( tasks: tasks );
@@ -1259,11 +1258,11 @@ namespace Librainian.Maths {
             }
 
             if ( minValue < -Math.Pow( x: 10, y: 8 ) || minValue > Math.Pow( x: 10, y: 8 ) ) {
-                throw new ArgumentException( message: "Value of min must be between -1e9 and 1e9", paramName: nameof( minValue ) );
+                throw new ArgumentException( message: "Value of min must be between -1e9 and 1e9", nameof( minValue ) );
             }
 
             if ( maxValue < -Math.Pow( x: 10, y: 8 ) || maxValue > Math.Pow( x: 10, y: 8 ) ) {
-                throw new ArgumentException( message: "Value of max must be between -1e9 and 1e9", paramName: nameof( maxValue ) );
+                throw new ArgumentException( message: "Value of max must be between -1e9 and 1e9", nameof( maxValue ) );
             }
 
             var uri = $"http://www.random.org/sequences/?min={minValue}&max={maxValue}&col=1&base=10&format=plain&rnd=new";

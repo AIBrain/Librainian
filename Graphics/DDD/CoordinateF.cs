@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -31,7 +29,7 @@ namespace Librainian.Graphics.DDD {
     using static Maths.Hashing;
 
     /// <summary>
-    ///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="Single" />).</para>
+    /// <para>A 3D point, with <see cref="X"/> , <see cref="Y"/> , and <see cref="Z"/> (as <see cref="Single"/>).</para>
     /// </summary>
     /// <remarks>Code towards speed.</remarks>
     [Immutable]
@@ -87,48 +85,48 @@ namespace Librainian.Graphics.DDD {
         }
 
         /// <summary>
-        ///     Calculates the distance between two Coordinates.
+        /// Calculates the distance between two Coordinates.
         /// </summary>
-        public static Single Distance( CoordinateF lhs, CoordinateF rhs ) {
-            var num1 = lhs.X - rhs.X;
-            var num2 = lhs.Y - rhs.Y;
-            var num3 = lhs.Z - rhs.Z;
+        public static Single Distance( CoordinateF left, CoordinateF rhs ) {
+            var num1 = left.X - rhs.X;
+            var num2 = left.Y - rhs.Y;
+            var num3 = left.Z - rhs.Z;
             return ( Single )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
         }
 
         /// <summary>
-        ///     static comparison.
+        /// static comparison.
         /// </summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
+        /// <param name="left"></param>
+        /// <param name="rhs"> </param>
         /// <returns></returns>
-        
-        public static Boolean Equals( CoordinateF lhs, CoordinateF rhs ) {
-            if ( ReferenceEquals( lhs, rhs ) ) {
+
+        public static Boolean Equals( CoordinateF left, CoordinateF rhs ) {
+            if ( ReferenceEquals( left, rhs ) ) {
                 return true;
             }
-            if ( lhs is null ) {
+            if ( left is null ) {
                 return false;
             }
             if ( rhs is null ) {
                 return false;
             }
-            if ( lhs.X < rhs.X ) {
+            if ( left.X < rhs.X ) {
                 return false;
             }
-            if ( lhs.X > rhs.X ) {
+            if ( left.X > rhs.X ) {
                 return false;
             }
-            if ( lhs.Y < rhs.Y ) {
+            if ( left.Y < rhs.Y ) {
                 return false;
             }
-            if ( lhs.Y > rhs.Y ) {
+            if ( left.Y > rhs.Y ) {
                 return false;
             }
-            if ( lhs.Z < rhs.Z ) {
+            if ( left.Z < rhs.Z ) {
                 return false;
             }
-            return !( lhs.Z > rhs.Z );
+            return !( left.Z > rhs.Z );
         }
 
         public static implicit operator Point( CoordinateF coordinate ) => new Point( ( Int32 )coordinate.X, ( Int32 )coordinate.Y );
@@ -136,8 +134,7 @@ namespace Librainian.Graphics.DDD {
         public static implicit operator PointF( CoordinateF coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
         /// <summary>
-        ///     Returns a new Coordinate as a unit Coordinate. The result is a Coordinate one unit in
-        ///     length pointing in the same direction as the original Coordinate.
+        /// Returns a new Coordinate as a unit Coordinate. The result is a Coordinate one unit in length pointing in the same direction as the original Coordinate.
         /// </summary>
         public static CoordinateF Normalize( CoordinateF coordinate ) {
             var num = 1.0f / coordinate.SquareLength;
@@ -146,19 +143,16 @@ namespace Librainian.Graphics.DDD {
 
         public static CoordinateF operator -( CoordinateF v1, CoordinateF v2 ) => new CoordinateF( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-        public static Boolean operator !=( CoordinateF lhs, CoordinateF rhs ) => !Equals( lhs: lhs, rhs: rhs );
+        public static Boolean operator !=( CoordinateF left, CoordinateF rhs ) => !Equals( left: left, rhs: rhs );
 
-        public static Boolean operator ==( CoordinateF lhs, CoordinateF rhs ) => Equals( lhs: lhs, rhs: rhs );
+        public static Boolean operator ==( CoordinateF left, CoordinateF rhs ) => Equals( left: left, rhs: rhs );
 
         /// <summary>
-        ///     Compares the current object with another object of the same type.
+        /// Compares the current object with another object of the same type.
         /// </summary>
         /// <returns>
-        ///     A 32-bit signed integer that indicates the relative order of the objects being compared.
-        ///     The return value has the following meanings: Value Meaning Less than zero This object is
-        ///     less than the <paramref name="other" /> parameter. Zero This object is equal to
-        ///     <paramref name="other" /> . Greater than zero This object is greater than
-        ///     <paramref name="other" /> .
+        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref
+        /// name="other"/> parameter. Zero This object is equal to <paramref name="other"/> . Greater than zero This object is greater than <paramref name="other"/> .
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         public Int32 CompareTo( CoordinateF other ) => this.SquareLength.CompareTo( other.SquareLength );

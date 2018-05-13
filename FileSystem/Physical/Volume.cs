@@ -11,19 +11,19 @@ namespace Librainian.FileSystem.Physical {
     using OperatingSystem;
 
     /// <summary>
-    ///     A volume device.
+    /// A volume device.
     /// </summary>
     public class Volume : Device {
 
         internal Volume( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index ) : base( deviceClass, deviceInfoData, path, index ) { }
 
         /// <summary>
-        ///     Compares the current instance with another object of the same type.
+        /// Compares the current instance with another object of the same type.
         /// </summary>
         /// <param name="obj">An object to compare with this instance.</param>
         /// <returns>A 32-bit signed integer that indicates the relative order of the comparands.</returns>
         public override Int32 CompareTo( Object obj ) {
-	        if ( !( obj is Volume device ) ) {
+            if ( !( obj is Volume device ) ) {
                 throw new ArgumentException();
             }
 
@@ -55,6 +55,7 @@ namespace Librainian.FileSystem.Physical {
                 UInt32 bytesReturned;
                 try {
                     if ( !NativeMethods.DeviceIoControl( hFile.DangerousGetHandle(), NativeMethods.IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, IntPtr.Zero, 0, buffer, size, out bytesReturned, IntPtr.Zero ) ) {
+
                         // do nothing here on purpose
                     }
                 }
@@ -78,7 +79,7 @@ namespace Librainian.FileSystem.Physical {
         }
 
         /// <summary>
-        ///     Gets a list of underlying disks for this volume.
+        /// Gets a list of underlying disks for this volume.
         /// </summary>
         public IEnumerable<Device> GetDisks() {
             if ( this.GetDiskNumbers() is null ) {
@@ -96,20 +97,20 @@ namespace Librainian.FileSystem.Physical {
         }
 
         /// <summary>
-        ///     Gets the volume's logical drive in the form [letter]:\
+        /// Gets the volume's logical drive in the form [letter]:\
         /// </summary>
         [CanBeNull]
         public String GetLogicalDrive() {
             var volumeName = this.GetVolumeName();
             String logicalDrive = null;
             if ( volumeName != null ) {
-                ( this.DeviceClass as VolumeDeviceClass )?.LogicalDrives.TryGetValue( volumeName, out logicalDrive );
+                ( DeviceClass as VolumeDeviceClass )?.LogicalDrives.TryGetValue( volumeName, out logicalDrive );
             }
             return logicalDrive;
         }
 
         /// <summary>
-        ///     Gets a list of removable devices for this volume.
+        /// Gets a list of removable devices for this volume.
         /// </summary>
         public override IEnumerable<Device> GetRemovableDevices() {
             if ( this.GetDisks() is null ) {
@@ -127,12 +128,13 @@ namespace Librainian.FileSystem.Physical {
         }
 
         /// <summary>
-        ///     Gets the volume's name.
+        /// Gets the volume's name.
         /// </summary>
         [CanBeNull]
         public String GetVolumeName() {
             var sb = new StringBuilder( 1024 );
-            if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( this.Path + "\\", sb, ( UInt32 )sb.Capacity ) ) {
+            if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( Path + "\\", sb, ( UInt32 )sb.Capacity ) ) {
+
                 // throw new Win32Exception(Marshal.GetLastWin32Error());
                 return null;
             }
@@ -141,11 +143,12 @@ namespace Librainian.FileSystem.Physical {
         }
 
         /// <summary>
-        ///     Gets a value indicating whether this volume is a based on USB devices.
+        /// Gets a value indicating whether this volume is a based on USB devices.
         /// </summary>
         public override Boolean IsUsb() {
             if ( this.GetDisks() != null ) {
                 foreach ( var disk in this.GetDisks() ) {
+
                     //TODO
                     if ( disk.IsUsb() ) {
                         return true;
@@ -155,7 +158,5 @@ namespace Librainian.FileSystem.Physical {
 
             return false;
         }
-
     }
-
 }

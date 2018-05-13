@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -27,7 +25,9 @@ namespace Librainian.Graphics.Video {
     using Magic;
     using OperatingSystem;
 
-    /// <summary>Extract bitmaps from AVI files</summary>
+    /// <summary>
+    /// Extract bitmaps from AVI files
+    /// </summary>
     public class AviReader : ABetterClassDispose {
 
         //pointers
@@ -51,7 +51,9 @@ namespace Librainian.Graphics.Video {
 
         public UInt32 FrameRate => this._streamInfo.dwRate / this._streamInfo.dwScale;
 
-        /// <summary>Closes all streams, files and libraries</summary>
+        /// <summary>
+        /// Closes all streams, files and libraries
+        /// </summary>
         public void Close() {
             if ( this._getFrameObject != 0 ) {
                 NativeMethods.AVIStreamGetFrameClose( this._getFrameObject );
@@ -68,8 +70,16 @@ namespace Librainian.Graphics.Video {
             NativeMethods.AVIFileExit();
         }
 
-        /// <summary>Exports a frame into a bitmap file</summary>
-        /// <param name="position">Position of the frame</param>
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() {
+        }
+
+        /// <summary>
+        /// Exports a frame into a bitmap file
+        /// </summary>
+        /// <param name="position">   Position of the frame</param>
         /// <param name="dstFileName">Name ofthe file to store the bitmap</param>
         public void ExportBitmap( Int32 position, String dstFileName ) {
             if ( position > this.CountFrames ) {
@@ -91,20 +101,20 @@ namespace Librainian.Graphics.Video {
             }
 
             //Copy the image
-            var bitmapData = new Byte[ bih.biSizeImage ];
+            var bitmapData = new Byte[bih.biSizeImage];
             var address = pDib + Marshal.SizeOf( bih );
             for ( var offset = 0; offset < bitmapData.Length; offset++ ) {
-                bitmapData[ offset ] = Marshal.ReadByte( new IntPtr( address ) );
+                bitmapData[offset] = Marshal.ReadByte( new IntPtr( address ) );
                 address++;
             }
 
             //Copy bitmap info
-            var bitmapInfo = new Byte[ Marshal.SizeOf( bih ) ];
+            var bitmapInfo = new Byte[Marshal.SizeOf( bih )];
             var ptr = Marshal.AllocHGlobal( bitmapInfo.Length );
             Marshal.StructureToPtr( bih, ptr, false );
             address = ptr.ToInt32();
             for ( var offset = 0; offset < bitmapInfo.Length; offset++ ) {
-                bitmapInfo[ offset ] = Marshal.ReadByte( new IntPtr( address ) );
+                bitmapInfo[offset] = Marshal.ReadByte( new IntPtr( address ) );
                 address++;
             }
 
@@ -137,7 +147,9 @@ namespace Librainian.Graphics.Video {
             }
         }
 
-        /// <summary>Opens an AVI file and creates a GetFrame object</summary>
+        /// <summary>
+        /// Opens an AVI file and creates a GetFrame object
+        /// </summary>
         /// <param name="fileName">Name of the AVI file</param>
         public void Open( String fileName ) {
 
@@ -184,13 +196,5 @@ namespace Librainian.Graphics.Video {
                 throw new Exception( "Exception in AVIStreamGetFrameOpen!" );
             }
         }
-
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() {
-
-        }
-
     }
 }

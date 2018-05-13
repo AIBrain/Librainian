@@ -1,20 +1,18 @@
-// Copyright 2017 Protiguous.
+// Copyright 2018 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/TimeExtensions.cs" was last cleaned by Protiguous on 2017/04/14 at 11:47 PM
+// "Librainian/TimeExtensions.cs" was last cleaned by Protiguous on 2018/05/13 at 1:41 AM
 
 namespace Librainian.Measurement.Time {
 
@@ -47,6 +45,7 @@ namespace Librainian.Measurement.Time {
         private static DateTime ExtractDate( String input, String pattern, IFormatProvider culture ) {
             var dt = DateTime.MinValue;
             var regex = new Regex( pattern );
+
             if ( !regex.IsMatch( input ) ) {
                 return dt;
             }
@@ -64,13 +63,15 @@ namespace Librainian.Measurement.Time {
 
             var mod = DateTime.ParseExact( match.Groups[3].Value, "HHmm", culture );
             dt = match.Groups[2].Value == "+" ? dt.Add( mod.TimeOfDay ) : dt.Subtract( mod.TimeOfDay );
+
             return dt;
         }
 
         private static DateTime ParseFormattedDate( String input, CultureInfo culture ) {
             var formats = new[] {
-                "u", "s", "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", "yyyy-MM-ddTHH:mm:ssZ", "yyyy-MM-dd HH:mm:ssZ", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-ddTHH:mm:sszzzzzz", "M/d/yyyy h:mm:ss tt" // default format for invariant culture
-			};
+                "u", "s", "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", "yyyy-MM-ddTHH:mm:ssZ", "yyyy-MM-dd HH:mm:ssZ", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-ddTHH:mm:sszzzzzz",
+                "M/d/yyyy h:mm:ss tt" // default format for invariant culture
+            };
 
             if ( DateTime.TryParseExact( input, formats, culture, DateTimeStyles.None, out var date ) ) {
                 return date;
@@ -88,6 +89,7 @@ namespace Librainian.Measurement.Time {
         public static DateTime AddBusinessDays( this DateTime current, Int32 days ) {
             var sign = Math.Sign( days );
             var unsignedDays = Math.Abs( days );
+
             for ( var i = 0; i < unsignedDays; i++ ) {
                 do {
                     current = current.AddDays( sign );
@@ -135,6 +137,7 @@ namespace Librainian.Measurement.Time {
             }
 
             var ticks = dates.Select( time => time.Ticks ).Average();
+
             return new DateTime( ( Int64 )ticks );
         }
 
@@ -196,9 +199,9 @@ namespace Librainian.Measurement.Time {
         public static DateTime EndOfDay( this DateTime date ) => new DateTime( year: date.Year, month: date.Month, day: date.Day, hour: 23, minute: 59, second: 59, millisecond: 999, kind: date.Kind );
 
         //public static int Comparison( this Minutes minutes, Milliseconds milliseconds ) {
-        //    var lhs = minutes.Value;
+        //    var left = minutes.Value;
         //    var rhs = new Minutes( milliseconds: milliseconds ).Value;
-        //    return lhs.CompareTo( rhs );
+        //    return left.CompareTo( rhs );
         //}
 
         /// <summary>
@@ -217,6 +220,7 @@ namespace Librainian.Measurement.Time {
 
             var milliseconds = timeElapsed.TotalMilliseconds; // example: 5 seconds elapsed so far
             var remainingTime = milliseconds / progress - milliseconds; // should be 15 seconds ( 20 - 5)
+
             return TimeSpan.FromMilliseconds( value: remainingTime );
         }
 
@@ -301,17 +305,20 @@ namespace Librainian.Measurement.Time {
             $"Performing {Environment.ProcessorCount} timeslice calibrations.".WriteLine();
             AverageDateTimePrecision = new Milliseconds( 0.To( Environment.ProcessorCount ).Select( i => GetDateTimePrecision() ).Average( span => span.TotalMilliseconds ) );
             $"Average datetime precision is {( AverageDateTimePrecision ?? Measurement.Time.Milliseconds.One ).Simpler()}.".WriteLine();
+
             return AverageDateTimePrecision ?? Measurement.Time.Milliseconds.One;
         }
 
         public static TimeSpan GetDateTimePrecision() {
             var then = DateTime.UtcNow.Ticks;
             var now = DateTime.UtcNow.Ticks;
+
             while ( then == now ) {
                 now = DateTime.UtcNow.Ticks;
             }
 
             var result = new Milliseconds( TimeSpan.FromTicks( now - then ).TotalMilliseconds );
+
             return result;
         }
 
@@ -410,6 +417,7 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static DateTime LastDayOfWeek( this DateTime date ) {
             var month = date.Month;
+
             while ( month == date.Month && date.DayOfWeek != DayOfWeek.Saturday ) {
                 date = date.AddDays( 1 );
             }
@@ -539,6 +547,7 @@ namespace Librainian.Measurement.Time {
 
             var differenceInDays = start.Day - numberOfDaysInSameMonthNextYear;
             var dateTime = new DateTime( nextYear, start.Month, numberOfDaysInSameMonthNextYear, start.Hour, start.Minute, start.Second, start.Millisecond, start.Kind );
+
             return dateTime + differenceInDays.Days();
         }
 
@@ -554,7 +563,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="value">The ISO 8601 string representation to parse.</param>
         /// <returns>The DateTime equivalent.</returns>
-        public static DateTime ParseIso8601( String value ) => DateTime.ParseExact( value, TimeExtensions.Iso8601Format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal );
+        public static DateTime ParseIso8601( String value ) => DateTime.ParseExact( value, Iso8601Format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal );
 
         /// <summary>
         /// Parses most common JSON date formats
@@ -570,21 +579,22 @@ namespace Librainian.Measurement.Time {
 
             if ( Int64.TryParse( input, out var unix ) ) {
                 var epoch = new DateTime( 1970, 1, 1, 0, 0, 0, DateTimeKind.Utc );
+
                 return epoch.AddSeconds( unix );
             }
 
             if ( input.Contains( "/Date(" ) ) {
-                return TimeExtensions.ExtractDate( input, @"\\?/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\?/", culture );
+                return ExtractDate( input, @"\\?/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\?/", culture );
             }
 
             if ( !input.Contains( "new Date(" ) ) {
-                return TimeExtensions.ParseFormattedDate( input, culture );
+                return ParseFormattedDate( input, culture );
             }
 
             input = input.Replace( " ", "" );
 
             // because all whitespace is removed, match against newDate( instead of new Date(
-            return TimeExtensions.ExtractDate( input, @"newDate\((-?\d+)*\)", culture );
+            return ExtractDate( input, @"newDate\((-?\d+)*\)", culture );
         }
 
         /// <summary>
@@ -638,6 +648,7 @@ namespace Librainian.Measurement.Time {
 
             var differenceInDays = start.Day - numberOfDaysInSameMonthPreviousYear;
             var dateTime = new DateTime( previousYear, start.Month, numberOfDaysInSameMonthPreviousYear, start.Hour, start.Minute, start.Second, start.Millisecond, start.Kind );
+
             return dateTime + differenceInDays.Days();
         }
 
@@ -647,30 +658,38 @@ namespace Librainian.Measurement.Time {
             switch ( rt ) {
                 case RoundTo.Second: {
                         rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind );
+
                         if ( dateTime.Millisecond >= 500 ) {
                             rounded = rounded.AddSeconds( 1 );
                         }
+
                         break;
                     }
                 case RoundTo.Minute: {
                         rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Kind );
+
                         if ( dateTime.Second >= 30 ) {
                             rounded = rounded.AddMinutes( 1 );
                         }
+
                         break;
                     }
                 case RoundTo.Hour: {
                         rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0, dateTime.Kind );
+
                         if ( dateTime.Minute >= 30 ) {
                             rounded = rounded.AddHours( 1 );
                         }
+
                         break;
                     }
                 case RoundTo.Day: {
                         rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, dateTime.Kind );
+
                         if ( dateTime.Hour >= 12 ) {
                             rounded = rounded.AddDays( 1 );
                         }
+
                         break;
                     }
                 default: {
@@ -718,17 +737,20 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         /// Returns <see cref="DateTime"/> with changed Hour part.
         /// </summary>
-        public static DateTime SetHour( this DateTime originalDate, Int32 hour ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
+        public static DateTime SetHour( this DateTime originalDate, Int32 hour ) =>
+            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>
         /// Returns <see cref="DateTime"/> with changed Millisecond part.
         /// </summary>
-        public static DateTime SetMillisecond( this DateTime originalDate, Int32 millisecond ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, originalDate.Second, millisecond, originalDate.Kind );
+        public static DateTime SetMillisecond( this DateTime originalDate, Int32 millisecond ) =>
+            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, originalDate.Second, millisecond, originalDate.Kind );
 
         /// <summary>
         /// Returns <see cref="DateTime"/> with changed Minute part.
         /// </summary>
-        public static DateTime SetMinute( this DateTime originalDate, Int32 minute ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
+        public static DateTime SetMinute( this DateTime originalDate, Int32 minute ) =>
+            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>
         /// Returns <see cref="DateTime"/> with changed Month part.
@@ -738,27 +760,32 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         /// Returns <see cref="DateTime"/> with changed Second part.
         /// </summary>
-        public static DateTime SetSecond( this DateTime originalDate, Int32 second ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, second, originalDate.Millisecond, originalDate.Kind );
+        public static DateTime SetSecond( this DateTime originalDate, Int32 second ) =>
+            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>
         /// Returns the original <see cref="DateTime"/> with Hour part changed to supplied hour parameter.
         /// </summary>
-        public static DateTime SetTime( this DateTime originalDate, Int32 hour ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
+        public static DateTime SetTime( this DateTime originalDate, Int32 hour ) =>
+            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>
         /// Returns the original <see cref="DateTime"/> with Hour and Minute parts changed to supplied hour and minute parameters.
         /// </summary>
-        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
+        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute ) =>
+            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>
         /// Returns the original <see cref="DateTime"/> with Hour, Minute and Second parts changed to supplied hour, minute and second parameters.
         /// </summary>
-        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, originalDate.Millisecond, originalDate.Kind );
+        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second ) =>
+            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>
         /// Returns the original <see cref="DateTime"/> with Hour, Minute, Second and Millisecond parts changed to supplied hour, minute, second and millisecond parameters.
         /// </summary>
-        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second, Int32 millisecond ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, millisecond, originalDate.Kind );
+        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second, Int32 millisecond ) =>
+            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, millisecond, originalDate.Kind );
 
         /// <summary>
         /// Returns <see cref="DateTime"/> with changed Year part.
@@ -911,6 +938,7 @@ namespace Librainian.Measurement.Time {
         public static TimeSpan TimeATaskWait() {
             var stopwatch = Stopwatch.StartNew();
             Task.Run( () => Task.Delay( 1 ).Wait() ).Wait();
+
             return stopwatch.Elapsed;
         }
 
@@ -920,6 +948,7 @@ namespace Librainian.Measurement.Time {
         public static TimeSpan TimeAThreadSwitch() {
             var stopwatch = Stopwatch.StartNew();
             Thread.Sleep( 1 );
+
             return stopwatch.Elapsed;
         }
 
@@ -938,12 +967,14 @@ namespace Librainian.Measurement.Time {
         // if ( value < Constants.MinimumUsefulDecimal ) { throw new OverflowException( Constants.ValueIsTooLow ); }
         public static Span TimeStatement( [CanBeNull] this Action action ) {
             var one = Stopwatch.StartNew();
+
             try {
                 action?.Invoke();
             }
             catch ( Exception exception ) {
                 exception.More();
             }
+
             return new Span( one.Elapsed );
         }
 
@@ -952,7 +983,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="value">The date to format.</param>
         /// <returns>The formatted date.</returns>
-        public static String ToIso8601( this DateTime value ) => value.ToUniversalTime().ToString( TimeExtensions.Iso8601Format, CultureInfo.InvariantCulture );
+        public static String ToIso8601( this DateTime value ) => value.ToUniversalTime().ToString( Iso8601Format, CultureInfo.InvariantCulture );
 
         public static String ToPath( this DateTime dateTime ) {
             var sb = new StringBuilder( String.Empty, 24 );
@@ -963,6 +994,7 @@ namespace Librainian.Measurement.Time {
             sb.Append( $"{dateTime.Minute:D}/" );
             sb.Append( $"{dateTime.Second:D}/" );
             sb.Append( $"{dateTime.Millisecond:D}/" );
+
             return sb.ToString();
         }
 
@@ -971,13 +1003,15 @@ namespace Librainian.Measurement.Time {
             span += new Years( date.Year );
             span += new Months( ( Decimal )date.Month.Value );
             span += new Days( date.Day.Value );
+
             return span;
         }
 
         public static Decimal ToStarDate( this DateTime earthDateTime ) {
-            var earthToStarDateDiff = earthDateTime - TimeExtensions.StarDateOrigin;
+            var earthToStarDateDiff = earthDateTime - StarDateOrigin;
             var millisecondConversion = ( Decimal )earthToStarDateDiff.TotalMilliseconds / 34367056.4m;
             var starDate = Math.Floor( millisecondConversion * 100 ) / 100;
+
             return Math.Round( starDate, 2, MidpointRounding.AwayFromZero );
         }
 
@@ -988,6 +1022,7 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static UInt64 ToUnixTimestamp( this DateTime date ) {
             var diff = date - Epochs.Unix;
+
             return ( UInt64 )diff.TotalSeconds;
         }
 
@@ -995,12 +1030,14 @@ namespace Librainian.Measurement.Time {
             try {
                 if ( date.Year.Value.Between( DateTime.MinValue.Year, DateTime.MaxValue.Year ) ) {
                     dateTime = new DateTime( year: ( Int32 )date.Year.Value, month: date.Month.Value, day: date.Day.Value );
+
                     return true;
                 }
             }
             catch ( ArgumentOutOfRangeException ) { }
 
             dateTime = null;
+
             return false;
         }
     }

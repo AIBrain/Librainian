@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks goes
-// to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-// 
+//
 // bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// 
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -37,14 +35,10 @@ namespace Librainian.Measurement.Currency.BTC {
     using Threading;
 
     /// <summary>
-    /// My first go at a thread-safe CoinWallet class for bitcoin coins. It's more pseudocode for
-    /// learning than for production.. Use at your own risk. Any tips or ideas? Any dos or dont's?
-    /// Email me!
+    /// My first go at a thread-safe CoinWallet class for bitcoin coins. It's more pseudocode for learning than for production.. Use at your own risk. Any tips or ideas? Any dos or dont's? Email me!
     /// </summary>
     [JsonObject]
-
     [DebuggerDisplay( "{" + nameof( Formatted ) + ",nq}" )]
-
     public class CoinWallet : ABetterClassDispose, IEnumerable<KeyValuePair<ICoin, UInt64>>, ICoinWallet {
 
         /// <summary>
@@ -112,14 +106,7 @@ namespace Librainian.Measurement.Currency.BTC {
         public Decimal Total => this._coins.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue * pair.Value );
 
         /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() => this.Statistics.Dispose();
-
-        /// <summary>
-        /// Create an empty wallet with the given <paramref name="id"/>. If the given
-        /// <paramref name="id"/> is null or <see cref="Guid.Empty"/>, a new random
-        /// <paramref name="id"/> is generated.
+        /// Create an empty wallet with the given <paramref name="id"/>. If the given <paramref name="id"/> is null or <see cref="Guid.Empty"/>, a new random <paramref name="id"/> is generated.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -172,13 +159,15 @@ namespace Librainian.Measurement.Currency.BTC {
             }
         }
 
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this.Statistics.Dispose();
+
         public IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator() => this._coins.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
         /// <summary>
-        /// Attempt to <see cref="TryWithdraw(ICoin,UInt64)"/> one or more <see cref="ICoin"/> from
-        /// this <see cref="CoinWallet"/> .
+        /// Attempt to <see cref="TryWithdraw(ICoin,UInt64)"/> one or more <see cref="ICoin"/> from this <see cref="CoinWallet"/> .
         /// </summary>
         /// <param name="coin">    </param>
         /// <param name="quantity"></param>
@@ -226,5 +215,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
             return this.TryWithdraw( coin, 1 ) ? coin : default;
         }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

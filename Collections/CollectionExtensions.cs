@@ -12,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/CollectionExtensions.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
+// "Librainian/CollectionExtensions.cs" was last cleaned by Protiguous on 2018/05/12 at 8:27 PM
 
 namespace Librainian.Collections {
 
@@ -88,14 +88,10 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( nameof( @this ), message: "AnyRelationship called on a null IEnumerable<T>." );
             }
 
-            // ReSharper disable once PossibleMultipleEnumeration
             var enumerable = @this as T[] ?? @this.ToArray();
 
-            return enumerable.Select( selector: ( a, aIndex ) => {
-
-                // ReSharper disable once PossibleMultipleEnumeration
-                return enumerable.Skip( count: aIndex + 1 ).Any( b => ( relationshipFunc?.Invoke( arg1: a, arg2: b ) ?? default ) || ( relationshipFunc?.Invoke( arg1: b, arg2: a ) ?? default ) );
-            } ).Any( value => value );
+            return enumerable.Select( selector: ( a, aIndex ) =>
+                enumerable.Skip( count: aIndex + 1 ).Any( b => ( relationshipFunc?.Invoke( arg1: a, arg2: b ) ?? default ) || ( relationshipFunc?.Invoke( arg1: b, arg2: a ) ?? default ) ) ).Any( value => value );
         }
 
         /// <summary>
@@ -169,7 +165,7 @@ namespace Librainian.Collections {
             }
 
             var copy = new Byte[bytes.Length];
-            Array.Copy( sourceArray: bytes, destinationArray: copy, bytes.Length );
+            Buffer.BlockCopy( bytes, 0, copy, 0, bytes.Length );
 
             return copy;
         }
@@ -188,7 +184,7 @@ namespace Librainian.Collections {
             }
 
             var copy = new Byte[length];
-            Array.Copy( sourceArray: bytes, sourceIndex: offset, destinationArray: copy, destinationIndex: 0, length );
+            Buffer.BlockCopy( bytes, offset, copy, 0, length );
 
             return copy;
         }
@@ -279,14 +275,10 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( nameof( @this ), message: "CountRelationship called on a null IEnumerable<T>." );
             }
 
-            // ReSharper disable once PossibleMultipleEnumeration
             var enumerable = @this as T[] ?? @this.ToArray();
 
-            return enumerable.Select( selector: ( a, aIndex ) => {
-
-                // ReSharper disable once PossibleMultipleEnumeration
-                return enumerable.Skip( count: aIndex + 1 ).Any( b => ( relationshipFunc?.Invoke( arg1: a, arg2: b ) ?? default ) || ( relationshipFunc?.Invoke( arg1: b, arg2: a ) ?? default ) );
-            } ).Count( value => value );
+            return enumerable.Select( selector: ( a, aIndex ) =>
+                enumerable.Skip( count: aIndex + 1 ).Any( b => ( relationshipFunc?.Invoke( arg1: a, arg2: b ) ?? default ) || ( relationshipFunc?.Invoke( arg1: b, arg2: a ) ?? default ) ) ).Count( value => value );
         }
 
         /// <summary>
@@ -375,10 +367,8 @@ namespace Librainian.Collections {
 
             var aIndex = 0;
 
-            // ReSharper disable once PossibleMultipleEnumeration
             foreach ( var a in @this ) {
 
-                // ReSharper disable once PossibleMultipleEnumeration
                 foreach ( var b in @this.Skip( count: ++aIndex ).Where( b => relationshipFunc( arg1: a, arg2: b ) || relationshipFunc( arg1: b, arg2: a ) ) ) {
                     return new KeyValuePair<T, T>( a, value: b );
                 }
@@ -1440,10 +1430,8 @@ namespace Librainian.Collections {
 
             var aIndex = 0;
 
-            // ReSharper disable once PossibleMultipleEnumeration
             foreach ( var a in @this ) {
 
-                // ReSharper disable once PossibleMultipleEnumeration
                 foreach ( var b in @this.Skip( count: ++aIndex ).Where( b => relationshipFunc( arg1: a, arg2: b ) || relationshipFunc( arg1: b, arg2: a ) ) ) {
                     yield return new KeyValuePair<T, T>( a, value: b );
                 }

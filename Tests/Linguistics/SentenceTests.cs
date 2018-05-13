@@ -1,4 +1,5 @@
 ﻿namespace LibrainianTests.Linguistics {
+
     using System;
     using System.Linq;
     using FluentAssertions;
@@ -7,8 +8,18 @@
 
     [TestFixture]
     public static class SentenceTests {
-
         public const String Sample = "the quick brown fox jumped over the lazy dog";
+
+        [Test]
+        public static void CombinationsTest() {
+            var sentence = SampleLengthTest();
+
+            //var list = sentence.ToList();
+
+            var bob = sentence.Possibles().ToList();
+            bob.Count.Should()
+               .Be( 511 );
+        }
 
         public static Sentence SampleLengthTest() {
             var sentence = new Sentence( Sample );
@@ -17,17 +28,5 @@
                .Be( 9 );
             return sentence;
         }
-
-        [Test]
-        public static void CombinationsTest() {
-            var sentence = SampleLengthTest();
-
-            var list = sentence.ToList();
-
-            var bob = sentence.Possibles().ToList();
-            bob.Count.Should()
-               .Be( 511 );
-        }
-
     }
 }

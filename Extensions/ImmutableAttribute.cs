@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ImmutableAttribute.cs" was last cleaned by Protiguous on 2018/05/07 at 10:25 PM
+// "Librainian/ImmutableAttribute.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
 
 namespace Librainian.Extensions {
 
@@ -32,6 +33,7 @@ namespace Librainian.Extensions {
     [JsonObject]
     [MeansImplicitUse]
     public sealed class ImmutableAttribute : Attribute {
+
         public Boolean OnFaith;
 
         private static Boolean IsMarkedImmutable( Type type ) => type.TypeHasAttribute<ImmutableAttribute>();
@@ -61,7 +63,8 @@ namespace Librainian.Extensions {
 
             // override all checks on this type if [ImmutableAttribute(OnFaith=true)] is set
             var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>( type );
-            return immutableAttribute != null && immutableAttribute.OnFaith;
+
+            return immutableAttribute?.OnFaith;
         }
 
         // in some cases, a type is immutable but can't be proven as such. in these cases, the developer can mark the type with [Immutable(true)] and the code below will take it on faith that the type is immutable,
@@ -173,6 +176,7 @@ namespace Librainian.Extensions {
         [JsonObject]
         [Serializable]
         public class ImmutableFailureException : Exception {
+
             public readonly Type Type;
 
             protected ImmutableFailureException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }

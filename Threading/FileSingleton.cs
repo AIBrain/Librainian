@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/FileSingleton.cs" was last cleaned by Protiguous on 2016/08/06 at 10:30 PM
+// "Librainian/FileSingleton.cs" was last cleaned by Protiguous on 2018/05/09 at 1:14 PM
 
 namespace Librainian.Threading {
 
@@ -30,13 +26,18 @@ namespace Librainian.Threading {
     using Security;
 
     /// <summary>
-    ///     Uses a named semaphore to allow only ONE of name.
+    /// Uses a named semaphore to allow only ONE of name.
     /// </summary>
     /// <example>using ( new FileSingleton( anyName ) ) { DoCode(); }</example>
     public class FileSingleton : ABetterClassDispose {
 
+        // ReSharper disable once UnusedMember.Local
+        private FileSingleton() {
+            /* Disallow private contructor */
+        }
+
         /// <summary>
-        ///     Uses a named semaphore to allow only ONE of <paramref name="id" />.
+        /// Uses a named semaphore to allow only ONE of <paramref name="id"/>.
         /// </summary>
         /// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
         public FileSingleton( Guid id ) {
@@ -52,7 +53,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     Uses a named semaphore to allow only ONE of name.
+        /// Uses a named semaphore to allow only ONE of name.
         /// </summary>
         /// <example>using ( var snag = new FileSingleton( info ) ) { DoCode(); }</example>
         public FileSingleton( FileSystemInfo name ) {
@@ -69,7 +70,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        ///     Uses a named semaphore to allow only ONE of name.
+        /// Uses a named semaphore to allow only ONE of name.
         /// </summary>
         /// <example>using ( var snag = new FileSingleton( name ) ) { DoCode(); }</example>
         public FileSingleton( String name ) {
@@ -85,22 +86,15 @@ namespace Librainian.Threading {
             }
         }
 
-        // ReSharper disable once UnusedMember.Local
-        private FileSingleton() { /* Disallow private contructor */}
-
-        public Boolean Snagged {
-            get; private set;
-        }
-
         [CanBeNull]
-        private Semaphore Semaphore {
-            get;
-        }
+        private Semaphore Semaphore { get; }
+
+        public Boolean Snagged { get; private set; }
 
         /// <summary>
-        ///     Dispose any disposable members.
+        /// Dispose any disposable members.
         /// </summary>
-        protected override void DisposeManaged() {
+        public override void DisposeManaged() {
             if ( !this.Snagged ) {
                 return;
             }

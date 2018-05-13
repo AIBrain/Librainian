@@ -368,14 +368,6 @@ namespace Librainian.Internet.Servers {
         }
 
         /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() {
-            this.OutputStream?.Dispose();
-            this.RawOutputStream?.Dispose();
-        }
-
-        /// <summary>
         /// Processes the request.
         /// </summary>
         internal void Process( Object objParameter ) {
@@ -514,6 +506,14 @@ namespace Librainian.Internet.Servers {
                 data.Append( Convert.ToChar( nextChar ) );
             }
             return data.ToString();
+        }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() {
+            this.OutputStream?.Dispose();
+            this.RawOutputStream?.Dispose();
         }
 
         /// <summary>

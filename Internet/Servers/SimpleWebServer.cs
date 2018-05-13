@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -32,30 +30,28 @@ namespace Librainian.Internet.Servers {
     using JetBrains.Annotations;
     using Magic;
 
-    /// <summary></summary>
+    /// <summary>
+    /// </summary>
     /// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>
-    /// <example>
-    ///     WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/"); ws.Run();
-    ///     Console.WriteLine("A simple webserver. Press a key to quit."); Console.ReadKey(); ws.Stop();
-    /// </example>
-    /// <example>
-    ///     public static string SendResponse(HttpListenerRequest request) { return string.Format("My
-    ///     web page", DateTime.Now); }
-    /// </example>
+    /// <example>WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/"); ws.Run(); Console.WriteLine("A simple webserver. Press a key to quit."); Console.ReadKey(); ws.Stop();</example>
+    /// <example>public static string SendResponse(HttpListenerRequest request) { return string.Format("My web page", DateTime.Now); }</example>
     [UsedImplicitly]
     public class SimpleWebServer : ABetterClassDispose {
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         [NotNull]
         private readonly HttpListener _httpListener = new HttpListener();
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         [CanBeNull]
         private readonly Func<HttpListenerRequest, String> _responderMethod;
 
-        /// <summary></summary>
+        /// <summary>
+        /// </summary>
         /// <param name="prefixes"></param>
-        /// <param name="method"></param>
+        /// <param name="method">  </param>
         /// <exception cref="HttpListenerException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
         public SimpleWebServer( ICollection<String> prefixes, Func<HttpListenerRequest, String> method ) {
@@ -107,16 +103,23 @@ namespace Librainian.Internet.Servers {
             get; private set;
         }
 
-		/// <summary>
-		/// Dispose any disposable members.
-		/// </summary>
-		protected override void DisposeManaged() => this.Stop();
+        private void ImNotReady( String because ) {
+            this.IsReadyForRequests = false;
+            this.NotReadyBecause = because;
+        }
 
-		/// <summary>Start the http listener.</summary>
-		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
-		/// <seealso cref="Stop" />
-		public Task Run( CancellationToken cancellationToken ) => Task.Run( async () => {
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this.Stop();
+
+        /// <summary>
+        /// Start the http listener.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <seealso cref="Stop"/>
+        public Task Run( CancellationToken cancellationToken ) => Task.Run( async () => {
             "Webserver running...".Info();
             try {
                 while ( this._httpListener.IsListening ) {
@@ -168,11 +171,6 @@ namespace Librainian.Internet.Servers {
                 catch ( ObjectDisposedException ) { }
                 this._httpListener.Close();
             }
-        }
-
-        private void ImNotReady( String because ) {
-            this.IsReadyForRequests = false;
-            this.NotReadyBecause = because;
         }
     }
 }

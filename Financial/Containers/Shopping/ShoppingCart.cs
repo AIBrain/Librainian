@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -38,7 +36,7 @@ namespace Librainian.Financial.Containers.Shopping {
 
         public Boolean AddItem( [CanBeNull] ShoppingItem item ) => item != null && this.Items.TryAdd( item );
 
-	    public UInt32 AddItems( params ShoppingItem[] items ) {
+        public UInt32 AddItems( params ShoppingItem[] items ) {
             UInt32 added = 0;
             if ( null == items ) {
                 return added;
@@ -65,27 +63,26 @@ namespace Librainian.Financial.Containers.Shopping {
         }
 
         /// <summary>
-        ///     Removes the first <paramref name="item" /> from the list.
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this.Items.Dispose();
+
+        /// <summary>
+        /// Removes the first <paramref name="item"/> from the list.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
         public Boolean RemoveItem( [CanBeNull] ShoppingItem item ) => this.Items.Remove( item );
 
-	    public IEnumerable<KeyValuePair<ShoppingItem, Int32>> RunningList() {
+        public IEnumerable<KeyValuePair<ShoppingItem, Int32>> RunningList() {
             var items = new ConcurrentDictionary<ShoppingItem, Int32>();
             foreach ( var shoppingItem in this.Items ) {
                 if ( !items.ContainsKey( shoppingItem ) ) {
                     items.TryAdd( shoppingItem, 0 );
                 }
-                items[ shoppingItem ]++;
+                items[shoppingItem]++;
             }
             return items;
         }
-
-		/// <summary>
-		/// Dispose any disposable members.
-		/// </summary>
-		protected override void DisposeManaged() => this.Items.Dispose();
-
-	}
+    }
 }

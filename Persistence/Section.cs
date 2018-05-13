@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Section.cs" was last cleaned by Protiguous on 2018/05/07 at 5:40 PM
+// "Librainian/Section.cs" was last cleaned by Protiguous on 2018/05/12 at 1:13 AM
 
 namespace Librainian.Persistence {
 
@@ -19,38 +20,39 @@ namespace Librainian.Persistence {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Collections;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     /// <summary>
-    /// <para>This just wraps a ConcurrentDictionary with a Guid ID so we can index the data without throwing exceptions on missing or null keys.</para>
+    /// <para>This just wraps a <see cref="ConcurrentDictionary{TKey,TValue}"/> so we can index the <see cref="Data"/> without throwing exceptions on missing or null keys.</para>
     /// <para>Does not throw <see cref="ArgumentNullException"/> on null keys passed to the indexer.</para>
     /// </summary>
     [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public class Section : IEquatable<Section> {
 
-        /// <summary>
-        /// Create a new <see cref="ID"/> for this <see cref="Section"/>.
-        /// </summary>
-        public Section() => this.ID = Guid.NewGuid();
-
-        public Section( Guid id ) => this.ID = id;
-
+        [JsonProperty( IsReference = false, ItemIsReference = false )]
         private ConcurrentDictionary<String, String> Data { get; } = new ConcurrentDictionary<String, String>();
 
         /// <summary>
-        /// The identifier for this dictionary of <see cref="Data"/>.
+        /// Automatically remove any key where there is no value. Defaults to true.
         /// </summary>
-        [JsonProperty]
-        public Guid ID { get; }
+        public Boolean AutoCleanup { get; set; } = true;
 
+        [JsonIgnore]
         [NotNull]
         public IReadOnlyList<String> Keys => ( IReadOnlyList<String> )this.Data.Keys;
 
+        [JsonIgnore]
         [NotNull]
         public IReadOnlyList<String> Values => ( IReadOnlyList<String> )this.Data.Values;
 
+        [JsonIgnore]
+        [CanBeNull]
         public String this[[CanBeNull] String key] {
             [CanBeNull]
             get {
@@ -66,17 +68,22 @@ namespace Librainian.Persistence {
                     return;
                 }
 
-                this.Data[key] = value;
+                if ( value is null && this.AutoCleanup ) {
+                    this.Data.TryRemove( key, out _ ); //a little cleanup
+                }
+                else {
+                    this.Data[key] = value;
+                }
             }
         }
 
         /// <summary>
-        /// Static comparison. Checks pointers and then <see cref="ID"/>.
+        /// Static comparison. Checks references and then keys and then values.
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Section left, Section right ) {
+        public static Boolean Equals( [CanBeNull] Section left, [CanBeNull] Section right ) {
             if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
@@ -89,24 +96,86 @@ namespace Librainian.Persistence {
                 return true;
             }
 
-            return left.ID.Equals( g: right.ID ) && left.Data.Equals( right.Data );
+            return left.Data.OrderBy( pair => pair.Key ).ThenBy( pair => pair.Value ).SequenceEqual( right.Data.OrderBy( pair => pair.Key ).ThenBy( pair => pair.Value ) );
         }
 
-        public static Boolean operator !=( Section left, Section right ) => !Equals( left: left, right: right );
+        public static Boolean operator !=( [CanBeNull] Section left, [CanBeNull] Section right ) => !Equals( left: left, right: right );
 
-        public static Boolean operator ==( Section left, Section right ) => Equals( left: left, right: right );
+        public static Boolean operator ==( [CanBeNull] Section left, [CanBeNull] Section right ) => Equals( left: left, right: right );
 
         /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
+        /// Remove any key where there is no value.
         /// </summary>
-        /// <param name="other">An object to compare with this object.</param>
-        /// <returns><see langword="true"/> if the current object is equal to the <paramref name="other"/> parameter; otherwise, <see langword="false"/>.</returns>
-        public Boolean Equals( Section other ) => Equals( left: this, right: other );
+        /// <returns></returns>
+        public async Task Cleanup() {
+            await Task.Run( () => {
+                foreach ( var key in this.Keys.Where( String.IsNullOrEmpty ) ) {
+                    if ( this.Data.TryRemove( key, out var value ) && !String.IsNullOrEmpty( value ) ) {
+                        this[key] = value; //whoops, re-add value. Cause: other threads.
+                    }
+                }
+            } ).ConfigureAwait( false );
+        }
 
-        public override Boolean Equals( Object obj ) => Equals( left: this, right: obj as Section );
+        public Boolean Equals( [CanBeNull] Section other ) => Equals( left: this, right: other );
+
+        public override Boolean Equals( [CanBeNull] Object obj ) => Equals( left: this, right: obj as Section );
 
         public override Int32 GetHashCode() => this.Data.GetHashCode();
 
-        public override String ToString() => $"{this.ID:D}";
+        /// <summary>
+        /// Merges (adds keys and overwrites values) <see cref="Data"/> into <see cref="this"/>.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        public async Task<Boolean> Read( [NotNull] TextReader reader ) {
+            if ( reader is null ) {
+                throw new ArgumentNullException( paramName: nameof( reader ) );
+            }
+
+            try {
+                var that = await reader.ReadLineAsync().ConfigureAwait( false );
+
+                return await Task.Run( () => {
+                    if ( JsonConvert.DeserializeObject( that, this.Data.GetType() ) is ConcurrentDictionary<String, String> other ) {
+                        Parallel.ForEach( other, pair => this[pair.Key] = pair.Value );
+
+                        return true;
+                    }
+
+                    return false;
+                } ).ConfigureAwait( false );
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+
+            return false;
+        }
+
+        public override String ToString() => $"{this.Keys.Take( 25 ).ToStrings()}";
+
+        /// <summary>
+        /// Write this <see cref="Section"/> to the <paramref name="writer"/>.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <returns></returns>
+        public async Task<Boolean> Write( [NotNull] TextWriter writer ) {
+            if ( writer is null ) {
+                throw new ArgumentNullException( paramName: nameof( writer ) );
+            }
+
+            try {
+                var me = JsonConvert.SerializeObject( this, Formatting.None );
+                await writer.WriteLineAsync( me ).ConfigureAwait( false );
+
+                return true;
+            }
+            catch ( Exception exception ) {
+                exception.More();
+            }
+
+            return false;
+        }
     }
 }

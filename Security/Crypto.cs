@@ -33,11 +33,11 @@ namespace Librainian.Security {
         /// <param name="sharedSecret">A password used to generate a key for decryption.</param>
         public static String DecryptStringAES( this String cipherText, String sharedSecret ) {
             if ( String.IsNullOrEmpty( value: cipherText ) ) {
-                throw new ArgumentNullException( paramName: nameof( cipherText ) );
+                throw new ArgumentNullException(nameof( cipherText ) );
             }
 
             if ( String.IsNullOrEmpty( value: sharedSecret ) ) {
-                throw new ArgumentNullException( paramName: nameof( sharedSecret ) );
+                throw new ArgumentNullException(nameof( sharedSecret ) );
             }
 
             // Declare the RijndaelManaged object used to decrypt the data.
@@ -88,11 +88,11 @@ namespace Librainian.Security {
         /// <param name="sharedSecret">A password used to generate a key for encryption.</param>
         public static String EncryptStringAES( this String plainText, String sharedSecret ) {
             if ( String.IsNullOrEmpty( value: plainText ) ) {
-                throw new ArgumentNullException( paramName: nameof( plainText ) );
+                throw new ArgumentNullException(nameof( plainText ) );
             }
 
             if ( String.IsNullOrEmpty( value: sharedSecret ) ) {
-                throw new ArgumentNullException( paramName: nameof( sharedSecret ) );
+                throw new ArgumentNullException(nameof( sharedSecret ) );
             }
 
             String outStr; // Encrypted string to return

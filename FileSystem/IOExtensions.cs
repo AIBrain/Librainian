@@ -65,7 +65,7 @@ namespace Librainian.FileSystem {
                 var encodedText = Encoding.Unicode.GetBytes( text );
                 var length = encodedText.Length;
 
-                using ( var sourceStream = new FileStream( path: fileInfo.FullName, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length, useAsync: true ) ) {
+                using ( var sourceStream = new FileStream(fileInfo.FullName, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length, useAsync: true ) ) {
                     await sourceStream.WriteAsync( buffer: encodedText, offset: 0, count: length ).ConfigureAwait( false );
                     await sourceStream.FlushAsync().ConfigureAwait( false );
                 }
@@ -104,7 +104,7 @@ namespace Librainian.FileSystem {
                 yield break;
             }
 
-            var stream = ReTry( () => new FileStream( path: fileInfo.FullName, mode: FileMode.Open, access: FileAccess.Read ), Seconds.Seven, CancellationToken.None );
+            var stream = ReTry( () => new FileStream(fileInfo.FullName, mode: FileMode.Open, access: FileAccess.Read ), Seconds.Seven, CancellationToken.None );
 
             if ( stream is null ) {
                 yield break;
@@ -142,7 +142,7 @@ namespace Librainian.FileSystem {
                 yield break;
             }
 
-            var stream = ReTry( () => new FileStream( path: filename, mode: FileMode.Open, access: FileAccess.Read ), Seconds.Seven, CancellationToken.None );
+            var stream = ReTry( () => new FileStream(filename, mode: FileMode.Open, access: FileAccess.Read ), Seconds.Seven, CancellationToken.None );
 
             if ( stream is null ) {
                 yield break;
@@ -516,12 +516,12 @@ namespace Librainian.FileSystem {
                                     file.InternalSearchFoundFile( onFindFile, cancellation );
                                 }
                             }
-#pragma warning disable CC0004 // Catch block cannot be empty
+
                             catch ( UnauthorizedAccessException ) { }
                             catch ( DirectoryNotFoundException ) { }
                             catch ( IOException ) { }
                             catch ( SecurityException ) { }
-#pragma warning restore CC0004 // Catch block cannot be empty
+
                             catch ( AggregateException exception ) {
                                 exception.Handle( ex => {
                                     if ( ex is UnauthorizedAccessException ) {
@@ -548,12 +548,12 @@ namespace Librainian.FileSystem {
                             folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
                         } );
                     }
-#pragma warning disable CC0004 // Catch block cannot be empty
+
                     catch ( UnauthorizedAccessException ) { }
                     catch ( DirectoryNotFoundException ) { }
                     catch ( IOException ) { }
                     catch ( SecurityException ) { }
-#pragma warning restore CC0004 // Catch block cannot be empty
+
                     catch ( AggregateException exception ) {
                         exception.Handle( ex => {
                             if ( ex is UnauthorizedAccessException ) {
@@ -578,12 +578,12 @@ namespace Librainian.FileSystem {
                     }
                 } );
             }
-#pragma warning disable CC0004 // Catch block cannot be empty
+
             catch ( UnauthorizedAccessException ) { }
             catch ( DirectoryNotFoundException ) { }
             catch ( IOException ) { }
             catch ( SecurityException ) { }
-#pragma warning restore CC0004 // Catch block cannot be empty
+
             catch ( AggregateException exception ) {
                 exception.Handle( ex => {
                     if ( ex is UnauthorizedAccessException ) {
@@ -667,7 +667,7 @@ namespace Librainian.FileSystem {
                 return String.Empty;
             }
 
-            var files = Directory.EnumerateFiles( path: dir.FullName, searchPattern: searchPattern, searchOption: searchOption );
+            var files = Directory.EnumerateFiles(dir.FullName, searchPattern: searchPattern, searchOption: searchOption );
             var pickedfile = files.OrderBy( r => Randem.Next() ).FirstOrDefault();
             if ( pickedfile != null && File.Exists( pickedfile ) ) {
                 return new FileInfo( pickedfile ).FullName;
@@ -922,7 +922,7 @@ namespace Librainian.FileSystem {
 
             if ( File.Exists( filePath ) ) {
                 try {
-                    using ( var sourceStream = new FileStream( path: filePath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: bufferSize.Value, useAsync: true ) ) {
+                    using ( var sourceStream = new FileStream(filePath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: bufferSize.Value, useAsync: true ) ) {
                         var sb = new StringBuilder( bufferSize.Value );
                         var buffer = new Byte[bufferSize.Value];
                         Int32 numRead;
@@ -1038,7 +1038,7 @@ namespace Librainian.FileSystem {
                 return false;
             }
 
-            return left.GetLength() == ( UInt64 )right.Length && left.AsByteArray().SequenceEqual( right.AsByteArray() );
+            return left.Length() == ( UInt64 )right.Length && left.AsBytes().SequenceEqual( right.AsByteArray() );
         }
 
         /// <summary>
@@ -1061,7 +1061,7 @@ namespace Librainian.FileSystem {
                 return false;
             }
 
-            return ( UInt64 )left.Length == right.GetLength() && left.AsByteArray().SequenceEqual( right.AsByteArray() );
+            return ( UInt64 )left.Length == right.Length() && left.AsByteArray().SequenceEqual( right.AsBytes() );
         }
 
         /// <summary>
@@ -1088,28 +1088,21 @@ namespace Librainian.FileSystem {
                     drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
                 } );
             }
-#pragma warning disable CC0004 // Catch block cannot be empty
+
             catch ( UnauthorizedAccessException ) { }
             catch ( DirectoryNotFoundException ) { }
             catch ( IOException ) { }
             catch ( SecurityException ) { }
-#pragma warning restore CC0004 // Catch block cannot be empty
+
             catch ( AggregateException exception ) {
                 exception.Handle( ex => {
-                    if ( ex is UnauthorizedAccessException ) {
-                        return true;
-                    }
-
-                    if ( ex is DirectoryNotFoundException ) {
-                        return true;
-                    }
-
-                    if ( ex is IOException ) {
-                        return true;
-                    }
-
-                    if ( ex is SecurityException ) {
-                        return true;
+                    switch ( ex ) {
+                        case UnauthorizedAccessException _:
+                        case DirectoryNotFoundException _:
+                        case IOException _:
+                        case SecurityException _: {
+                            return true;
+                        }
                     }
 
                     ex.More();
@@ -1158,6 +1151,7 @@ namespace Librainian.FileSystem {
         //public static DriveInfo GetDriveWithLargestAvailableFreeSpace() {
         //	return DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).FirstOrDefault( driveInfo => driveInfo.AvailableFreeSpace >= DriveInfo.GetDrives().AsParallel().Max( info => info.AvailableFreeSpace ) );
         //}
+
         [NotNull]
         public static String SimplifyFileName( [NotNull] this Document document /*, Folder hintFolder*/ ) {
             if ( document is null ) {
@@ -1271,7 +1265,7 @@ namespace Librainian.FileSystem {
             var memoryStream = new MemoryStream();
             try {
                 if ( File.Exists( filePath ) ) {
-                    using ( var fileStream = File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare ) ) {
+                    using ( var fileStream = File.Open(filePath, mode: fileMode, access: fileAccess, share: fileShare ) ) {
                         var length = ( Int32 )fileStream.Length;
                         if ( length > 0 ) {
                             fileStream.CopyTo( memoryStream, length ); //BUG int-long possible issue.
@@ -1316,13 +1310,13 @@ namespace Librainian.FileSystem {
                 directoryInfo = new DirectoryInfo( path ); //try it anyways
                 return true;
             }
-#pragma warning disable CC0004 // Catch block cannot be empty
+
             catch ( ArgumentException ) { }
             catch ( UriFormatException ) { }
             catch ( SecurityException ) { }
             catch ( PathTooLongException ) { }
             catch ( InvalidOperationException ) { }
-#pragma warning restore CC0004 // Catch block cannot be empty
+
 
             return false;
         }
@@ -1356,21 +1350,21 @@ namespace Librainian.FileSystem {
                 document = new Document( randomFileName );
                 return true;
             }
-#pragma warning disable CC0004 // Catch block cannot be empty
+
             catch ( DirectoryNotFoundException ) { }
-#pragma warning restore CC0004 // Catch block cannot be empty
-#pragma warning disable CC0004 // Catch block cannot be empty
+
+
             catch ( PathTooLongException ) { }
-#pragma warning restore CC0004 // Catch block cannot be empty
-#pragma warning disable CC0004 // Catch block cannot be empty
+
+
             catch ( IOException ) { }
-#pragma warning restore CC0004 // Catch block cannot be empty
-#pragma warning disable CC0004 // Catch block cannot be empty
+
+
             catch ( NotSupportedException ) { }
-#pragma warning restore CC0004 // Catch block cannot be empty
-#pragma warning disable CC0004 // Catch block cannot be empty
+
+
             catch ( UnauthorizedAccessException ) { }
-#pragma warning restore CC0004 // Catch block cannot be empty
+
 
             // ReSharper disable once AssignNullToNotNullAttribute
             document = default;
@@ -1390,14 +1384,14 @@ namespace Librainian.FileSystem {
 
             //TODO
             try {
-                return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
+                return File.Open(filePath, mode: fileMode, access: fileAccess, share: fileShare );
             }
-#pragma warning disable CC0004 // Catch block cannot be empty
+
             catch ( IOException ) {
 
                 // IOExcception is thrown if the file is in use by another process.
             }
-#pragma warning restore CC0004 // Catch block cannot be empty
+
 
             return null;
         }
@@ -1409,7 +1403,7 @@ namespace Librainian.FileSystem {
             TryAgain:
             try {
                 if ( File.Exists( filePath ) ) {
-                    return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
+                    return File.Open(filePath, mode: fileMode, access: fileAccess, share: fileShare );
                 }
             }
             catch ( IOException ) {
@@ -1434,14 +1428,14 @@ namespace Librainian.FileSystem {
 
             //TODO
             try {
-                return File.Open( path: filePath, mode: fileMode, access: fileAccess, share: fileShare );
+                return File.Open(filePath, mode: fileMode, access: fileAccess, share: fileShare );
             }
-#pragma warning disable CC0004 // Catch block cannot be empty
+
             catch ( IOException ) {
 
                 // IOExcception is thrown if the file is in use by another process.
             }
-#pragma warning restore CC0004 // Catch block cannot be empty
+
 
             return null;
         }
@@ -1461,7 +1455,7 @@ namespace Librainian.FileSystem {
             var lpBytesReturned = 0;
             Int16 compressionFormatDefault = 1;
 
-            using ( var fileStream = File.Open( path: info.FullName, mode: FileMode.Open, access: FileAccess.ReadWrite, share: FileShare.None ) ) {
+            using ( var fileStream = File.Open(info.FullName, mode: FileMode.Open, access: FileAccess.ReadWrite, share: FileShare.None ) ) {
                 var success = false;
 
                 try {

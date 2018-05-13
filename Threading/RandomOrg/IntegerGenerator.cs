@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -26,8 +24,9 @@ using Librainian.Parsing;
 
 namespace Librainian.Threading.RandomOrg {
 
-    /// <summary></summary>
-    /// <seealso cref="http://github.com/OrigamiTech/Random.org/blob/master/Random.org/IntegerGenerator.cs" />
+    /// <summary>
+    /// </summary>
+    /// <seealso cref="http://github.com/OrigamiTech/Random.org/blob/master/Random.org/IntegerGenerator.cs"/>
     public class IntegerGenerator {
         private const Int32 BaseDefault = 10;
         private const Int32 ColDefault = 1;
@@ -40,33 +39,27 @@ namespace Librainian.Threading.RandomOrg {
         private Int32 _index;
 
         public IntegerGenerator() {
-            Init( NumMax, Min, Max, ColDefault, BaseDefault );
+            this.Init( NumMax, Min, Max, ColDefault, BaseDefault );
         }
 
         public IntegerGenerator( Int32 num ) {
-            Init( num, Min, Max, ColDefault, BaseDefault );
+            this.Init( num, Min, Max, ColDefault, BaseDefault );
         }
 
         public IntegerGenerator( Int32 num, Int32 min ) {
-            Init( num, min, Max, ColDefault, BaseDefault );
+            this.Init( num, min, Max, ColDefault, BaseDefault );
         }
 
         public IntegerGenerator( Int32 num, Int32 min, Int32 max ) {
-            Init( num, min, max, ColDefault, BaseDefault );
+            this.Init( num, min, max, ColDefault, BaseDefault );
         }
 
         public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col ) {
-            Init( num, min, max, col, BaseDefault );
+            this.Init( num, min, max, col, BaseDefault );
         }
 
         public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase ) {
-            Init( num, min, max, col, inbase );
-        }
-
-        public Int32 Get() {
-            _index++;
-            _index %= _ints.Count;
-            return _ints[_index];
+            this.Init( num, min, max, col, inbase );
         }
 
         private void Init( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase ) {
@@ -86,7 +79,7 @@ namespace Librainian.Threading.RandomOrg {
                                     foreach ( var s in Regex.Split( toParse, @"\D" ) ) {
                                         try {
                                             if ( !s.IsNullOrWhiteSpace() ) {
-                                                _ints.Add( Convert.ToInt32( s, inbase ) );
+                                                this._ints.Add( Convert.ToInt32( s, inbase ) );
                                             }
                                         }
                                         catch { }
@@ -121,6 +114,12 @@ namespace Librainian.Threading.RandomOrg {
                 throw new ArgumentOutOfRangeException( nameof( num ),
                     "The number of random numbers to generate must be between 1 and 10000." );
             }
+        }
+
+        public Int32 Get() {
+            this._index++;
+            this._index %= this._ints.Count;
+            return this._ints[this._index];
         }
     }
 }

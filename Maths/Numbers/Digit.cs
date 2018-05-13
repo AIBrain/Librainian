@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -24,7 +22,7 @@ namespace Librainian.Maths.Numbers {
     using Extensions;
 
     /// <summary>
-    ///     Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+    /// Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
     /// </summary>
     /// <remarks>All functions should be atomic.</remarks>
     [Immutable]
@@ -33,7 +31,7 @@ namespace Librainian.Maths.Numbers {
         public const Byte Minimum = 0;
 
         public Digit( SByte value ) {
-            if ( value < Digit.Minimum || value > Digit.Maximum ) {
+            if ( value < Minimum || value > Maximum ) {
                 throw new ArgumentOutOfRangeException( nameof( value ), "Out of range" );
             }
             this.Value = ( Byte )value;
@@ -109,14 +107,12 @@ namespace Librainian.Maths.Numbers {
         public static Boolean operator >=( SByte left, Digit right ) => left >= right.Value;
 
         /// <summary>
-        ///     Compares the current object with another object of the same type.
+        /// Compares the current object with another object of the same type.
         /// </summary>
         /// <returns>
-        ///     A value that indicates the relative order of the objects being compared. The return
-        ///     value has the following
-        ///     meanings: Value Meaning Less than zero This object is less than the
-        ///     <paramref name="other" /> parameter.Zero This object is equal to
-        ///     <paramref name="other" />. Greater than zero This object is greater than <paramref name="other" />.
+        /// A value that indicates the relative order of the objects being compared. The return value has the following
+        /// meanings: Value Meaning Less than zero This object is less than the <paramref name="other"/> parameter.Zero This object is equal to <paramref name="other"/>. Greater than zero This object is greater than
+        ///           <paramref name="other"/>.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         public Int32 CompareTo( Digit other ) => this.Value.CompareTo( other.Value );

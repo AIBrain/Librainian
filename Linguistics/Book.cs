@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -30,13 +28,16 @@ namespace Librainian.Linguistics {
     using Newtonsoft.Json;
 
     /// <summary>
-    ///     <para>A <see cref="Book" /> is a sequence of <see cref="Page" /> .</para>
+    /// <para>A <see cref="Book"/> is a sequence of <see cref="Page"/> .</para>
     /// </summary>
     [JsonObject]
     [Immutable]
     [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public sealed class Book : IEquatable<Book>, IEnumerable<KeyValuePair<Int32, Page>> {
+
+        private Book() {
+        }
 
         public Book( [ItemCanBeNull] [NotNull] IEnumerable<Page> pages, [ItemCanBeNull] [CanBeNull] IEnumerable<Author> authors = null ) {
             if ( pages is null ) {
@@ -46,18 +47,13 @@ namespace Librainian.Linguistics {
             var pageNumber = 0;
             foreach ( var page in pages.Where( page => page != null ) ) {
                 pageNumber++;
-                this.Pages[ pageNumber ] = page;
+                this.Pages[pageNumber] = page;
             }
 
             if ( null != authors ) {
                 this.Authors.AddRange( authors.Where( author => null != author ) );
             }
         }
-
-        private Book() {
-        }
-
-        public static Book Empty { get; } = new Book();
 
         [NotNull]
         [JsonProperty]
@@ -67,43 +63,50 @@ namespace Librainian.Linguistics {
         [JsonProperty]
         private Dictionary<Int32, Page> Pages { get; } = new Dictionary<Int32, Page>();
 
+        public static Book Empty { get; } = new Book();
+
         /// <summary>
-        ///     static equality test, compare sequence of Books
+        /// static equality test, compare sequence of Books
         /// </summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
+        /// <param name="left"></param>
+        /// <param name="rhs"> </param>
         /// <returns></returns>
-        public static Boolean Equals( Book lhs, Book rhs ) {
-            if ( ReferenceEquals( lhs, rhs ) ) {
+        public static Boolean Equals( Book left, Book rhs ) {
+            if ( ReferenceEquals( left, rhs ) ) {
                 return true;
             }
-            if ( lhs is null ) {
+            if ( left is null ) {
                 return false;
             }
             if ( rhs is null ) {
                 return false;
             }
 
-            return lhs.SequenceEqual( rhs ); //no authors??
+            return left.SequenceEqual( rhs ); //no authors??
         }
 
         public Boolean Equals( [CanBeNull] Book other ) => Equals( this, other );
 
-	    public IEnumerable<Author> GetAuthors() => this.Authors;
+        public IEnumerable<Author> GetAuthors() => this.Authors;
 
-        /// <summary>Returns an enumerator that iterates through the collection.</summary>
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
         public IEnumerator<KeyValuePair<Int32, Page>> GetEnumerator() => this.Pages.GetEnumerator();
 
-	    /// <summary>Serves as the default hash function. </summary>
+        /// <summary>
+        /// Serves as the default hash function.
+        /// </summary>
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this.Pages.GetHashCode();
 
-	    public IEnumerable<KeyValuePair<Int32, Page>> GetPages() => this.Pages;
+        public IEnumerable<KeyValuePair<Int32, Page>> GetPages() => this.Pages;
 
-	    /// <summary>Returns an enumerator that iterates through a collection.</summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Pages ).GetEnumerator();
-
     }
 }

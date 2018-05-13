@@ -42,7 +42,7 @@ namespace Librainian.Collections {
             this.Children = new TreeNodeList<T>( parent: this );
         }
 
-        public event EventHandler Disposing;
+        //public event EventHandler Disposing;
 
         public TreeNodeList<T> Children { get; }
 
@@ -60,7 +60,7 @@ namespace Librainian.Collections {
 
                 this._parent?.Children.Remove( item: this );
 
-                if ( value != null && !value.Children.Contains( item: this ) ) {
+                if ( value?.Children.Contains( item: this ) == false ) {
                     value.Children.Add( node: this );
                 }
 
@@ -95,7 +95,7 @@ namespace Librainian.Collections {
             }
         }
 
-        protected void OnDisposing() => this.Disposing?.Invoke( sender: this, e: EventArgs.Empty );
+        //protected void OnDisposing() => this.Disposing?.Invoke( sender: this, e: EventArgs.Empty );
 
         public void CheckDisposed() {
             if ( this.IsDisposed ) {
@@ -108,7 +108,8 @@ namespace Librainian.Collections {
         /// </summary>
         public override void DisposeManaged() {
             this.CheckDisposed();
-            this.OnDisposing();
+
+            //this.OnDisposing();
 
             // clean up contained objects (in Value property)
             if ( this.Value is IDisposable disposable ) {

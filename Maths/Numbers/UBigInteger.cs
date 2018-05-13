@@ -56,7 +56,7 @@ namespace Librainian.Maths.Numbers
         public UBigInteger( [NotNull] Byte[] bytes ) {
             // http: //stackoverflow.com/questions/5649190/byte-to-unsigned-biginteger
             if ( bytes is null ) {
-                throw new ArgumentNullException( paramName: nameof( bytes ) );
+                throw new ArgumentNullException(nameof( bytes ) );
             }
 
             var bytesWith00Attheendnd = new Byte[bytes.Length + 1];
@@ -153,7 +153,7 @@ namespace Librainian.Maths.Numbers
 
         public static UBigInteger Parse( [NotNull] String number, NumberStyles style ) {
             if ( number is null ) {
-                throw new ArgumentNullException( paramName: nameof( number ) );
+                throw new ArgumentNullException(nameof( number ) );
             }
 
             return new UBigInteger( value: BigInteger.Parse( value: number, style: style ) );
@@ -164,7 +164,7 @@ namespace Librainian.Maths.Numbers
         [Pure]
         public Int32 CompareTo( [NotNull] Object obj ) {
             if ( obj is null ) {
-                throw new ArgumentNullException( paramName: nameof( obj ) );
+                throw new ArgumentNullException(nameof( obj ) );
             }
 
             if ( !( obj is UBigInteger ) ) {

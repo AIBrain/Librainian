@@ -138,7 +138,7 @@ namespace Librainian.OperatingSystem {
                 var oPath = new ManagementPath( "SystemRestore" );
                 var oGetOp = new ObjectGetOptions();
 
-                using ( var oProcess = new ManagementClass( scope: oScope, path: oPath, options: oGetOp ) ) {
+                using ( var oProcess = new ManagementClass( scope: oScope,oPath, options: oGetOp ) ) {
                     var oInParams = oProcess.GetMethodParameters( "CreateRestorePoint" );
                     oInParams["Description"] = description;
                     oInParams["RestorePointType"] = 12; // MODIFY_SETTINGS
@@ -277,7 +277,7 @@ namespace Librainian.OperatingSystem {
         [CanBeNull]
         public static Folder FindFolder( [NotNull] String fullname, String okayMessage = null, String errorMessage = null ) {
             if ( String.IsNullOrWhiteSpace( value: fullname ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", paramName: nameof( fullname ) );
+                throw new ArgumentException( "Value cannot be null or whitespace.",nameof( fullname ) );
             }
 
             if ( !String.IsNullOrEmpty( value: okayMessage ) ) {

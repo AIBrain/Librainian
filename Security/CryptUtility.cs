@@ -35,7 +35,7 @@ namespace Librainian.Security {
         /// <param name="key">The key/password pair to combine</param>
         /// <returns>The stream created from key and password</returns>
         public static MemoryStream CreateKeyStream( FilePasswordPair key ) {
-            var fileStream = new FileStream( path: key.FileName, mode: FileMode.Open );
+            var fileStream = new FileStream(key.FileName, mode: FileMode.Open );
             var resultStream = new MemoryStream();
             var passwordIndex = 0;
             Int32 currentByte;
@@ -524,8 +524,8 @@ namespace Librainian.Security {
             var fileName = Application.ExecutablePath;
             var index = fileName.LastIndexOf( value: "\\", comparisonType: StringComparison.Ordinal ) + 1;
             fileName = fileName.Substring( startIndex: 0,index ) + TempFileName;
-            if ( File.Exists( path: fileName ) ) {
-                File.Delete( path: fileName );
+            if ( File.Exists(fileName ) ) {
+                File.Delete(fileName );
             }
 
             keyStream.Close();
@@ -633,7 +633,7 @@ namespace Librainian.Security {
 
                         //Delete temporary file
                         //bitmapInfo.Bitmap.Dispose();      //BUG memory leak?
-                        File.Delete( path: bitmapInfo.SourceFileName );
+                        File.Delete(bitmapInfo.SourceFileName );
                     }
                     else {
 

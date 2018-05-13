@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -33,14 +31,14 @@ namespace Librainian.Parsing.Markov {
     using Persistence;
 
     public class MkModel {
-        public readonly String Name;
         private readonly ConcurrentDictionary<String, List<String>> _markovChains = new ConcurrentDictionary<String, List<String>>();
+        public readonly String Name;
 
         public MkModel() => throw new NotImplementedException();
 
-	    public MkModel( String name ) => this.Name = name;
+        public MkModel( String name ) => this.Name = name;
 
-	    public String GenerateRandomCorpus( Int32 numberOfWords ) {
+        public String GenerateRandomCorpus( Int32 numberOfWords ) {
             if ( !this._markovChains.Any() ) {
                 return String.Empty;
             }
@@ -63,9 +61,15 @@ namespace Librainian.Parsing.Markov {
             return newCorpus.ToString();
         }
 
+        /// <summary>
+        /// Need to use JSON loader here..
+        /// </summary>
+        /// <returns></returns>
         public Boolean Load() => this.Name.Loader<MkModel>( source => source.DeepClone( destination: this ) );
 
-        /// <summary>Return the list of strings found after this <paramref name="word" />.</summary>
+        /// <summary>
+        /// Return the list of strings found after this <paramref name="word"/>.
+        /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
         public IEnumerable<String> Nexts( [CanBeNull] String word ) {
@@ -73,19 +77,22 @@ namespace Librainian.Parsing.Markov {
                 return Enumerable.Empty<String>();
             }
 
-            if ( this._markovChains.ContainsKey(word ) ) {
-                return this._markovChains[word ];
+            if ( this._markovChains.ContainsKey( word ) ) {
+                return this._markovChains[word];
             }
             return Enumerable.Empty<String>();
         }
 
+        /// <summary>
+        /// Need to use JSON saver here..
+        /// </summary>
+        /// <returns></returns>
         public Boolean Save() => this.Saver( this.Name );
 
         public void Train( String corpus, Int32 level = 3 ) {
-
             var words = corpus.ToWords().AsParallel().ToArray();
 
-            Parallel.For( 0, words.Length, ( i, state ) => this._markovChains.TryAdd(words[ i ], value: words.Skip( i + 1 ).Take( level ).ToList() ) );
+            Parallel.For( 0, words.Length, ( i, state ) => this._markovChains.TryAdd( words[i], value: words.Skip( i + 1 ).Take( level ).ToList() ) );
         }
     }
 }

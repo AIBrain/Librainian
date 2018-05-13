@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -24,7 +22,7 @@ namespace Librainian.Measurement.Time.Clocks {
     using System.Diagnostics;
 
     /// <summary>
-    ///     MicroStopwatch class
+    /// MicroStopwatch class
     /// </summary>
     public class MicroStopwatch : Stopwatch {
 
@@ -38,6 +36,6 @@ namespace Librainian.Measurement.Time.Clocks {
             }
         }
 
-        public UInt64 ElapsedMicroseconds => ( UInt64 )( this.ElapsedTicks * this.MicrosecondsPerTick );
+        public UInt64 ElapsedMicroseconds => ( UInt64 )( ElapsedTicks * this.MicrosecondsPerTick );
     }
 }

@@ -42,7 +42,7 @@ namespace Librainian.FileSystem {
 
         public static UInt32 BufferSize { get; } = 0x1000000;
 
-        private static async Task InternalCopyWithProgress( Document source, Document destination, IProgress<Single> progress, IProgress<TimeSpan> eta, Char[] buffer, Single bytesToBeCopied, StopWatch begin ) {
+        private static async Task InternalCpyWithProgress( Document source, Document destination, IProgress<Single> progress, IProgress<TimeSpan> eta, Char[] buffer, Single bytesToBeCopied, StopWatch begin ) {
             using ( var reader = new StreamReader( source.FullPathWithFileName ) ) {
                 using ( var writer = new StreamWriter( destination.FullPathWithFileName, false ) ) {
                     Int32 numRead;
@@ -121,7 +121,7 @@ namespace Librainian.FileSystem {
                 var buffer = Buffers.Value;
 
                 try {
-                    await InternalCopyWithProgress( source, destination, progress, eta, buffer, bytesToBeCopied, begin );
+                    await InternalCopyWithProgress( source, destination, progress, eta, buffer, bytesToBeCopied, begin ).ConfigureAwait( false );
                 }
                 catch ( Exception exception ) {
                     exception.More();

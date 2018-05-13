@@ -37,16 +37,16 @@ namespace Librainian.OperatingSystem.FileHistory {
         /// <returns></returns>
         public static Boolean TryParse( [ NotNull ] this Document original, [ CanBeNull ] out Folder folder, [ CanBeNull ] out String filename, out DateTime? when ) {
             if ( original is null ) {
-                throw new ArgumentNullException( paramName: nameof(original) );
+                throw new ArgumentNullException(nameof(original) );
             }
 
             filename = null;
             folder = original.Folder;
             when = null;
 
-            var extension = Path.GetExtension( path: original.FullPathWithFileName ).Trim();
+            var extension = Path.GetExtension(original.FullPathWithFileName ).Trim();
 
-            var value = Path.GetFileNameWithoutExtension( path: original.FileName() ).Trim();
+            var value = Path.GetFileNameWithoutExtension(original.FileName() ).Trim();
 
             var posA = value.LastIndexOf( value: '(' );
             var posB = value.LastIndexOf( "UTC)", comparisonType: StringComparison.Ordinal );

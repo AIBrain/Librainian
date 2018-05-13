@@ -82,7 +82,7 @@ namespace Librainian.Security {
         /// </param>
         public C5Random( [NotNull] UInt32[] q ) {
             if ( q is null ) {
-                throw new ArgumentNullException( paramName: nameof( q ) );
+                throw new ArgumentNullException(nameof( q ) );
             }
 
             if ( q.Length > 16 ) {
@@ -141,7 +141,7 @@ namespace Librainian.Security {
         /// <param name="buffer">The array to fill</param>
         public override void NextBytes( Byte[] buffer ) {
             if ( buffer is null ) {
-                throw new ArgumentNullException( paramName: nameof( buffer ) );
+                throw new ArgumentNullException(nameof( buffer ) );
             }
 
             for ( Int32 i = 0, length = buffer.Length; i < length; i++ ) {

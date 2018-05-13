@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -27,19 +25,26 @@ namespace Librainian.Measurement.Length {
     using Newtonsoft.Json;
     using NUnit.Framework;
 
-    /// <summary></summary>
-    /// <seealso cref="http://en.wikipedia.org/wiki/Plank_length" />
+    /// <summary>
+    /// </summary>
+    /// <seealso cref="http://en.wikipedia.org/wiki/Plank_length"/>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public struct PlanckLengths : IComparable<PlanckLengths> {
 
-        /// <summary>One <see cref="PlanckLengths" />.</summary>
+        /// <summary>
+        /// One <see cref="PlanckLengths"/>.
+        /// </summary>
         public static readonly PlanckLengths One = new PlanckLengths( planckLengths: 1 );
 
-        /// <summary>One <see cref="PlanckLengths" />.</summary>
+        /// <summary>
+        /// One <see cref="PlanckLengths"/>.
+        /// </summary>
         public static readonly PlanckLengths Two = new PlanckLengths( planckLengths: 2 );
 
-        /// <summary>Zero <see cref="PlanckLengths" />.</summary>
+        /// <summary>
+        /// Zero <see cref="PlanckLengths"/>.
+        /// </summary>
         public static readonly PlanckLengths Zero = new PlanckLengths( planckLengths: 0 );
 
         [JsonProperty]
@@ -47,10 +52,10 @@ namespace Librainian.Measurement.Length {
 
         public PlanckLengths( BigInteger planckLengths ) : this() => this.Value = planckLengths;
 
-	    public Int32 CompareTo( PlanckLengths other ) => this.Value.CompareTo( other.Value );
+        public Int32 CompareTo( PlanckLengths other ) => this.Value.CompareTo( other.Value );
 
-        //public static Boolean operator >( PlanckUnits lhs, Minutes rhs ) {
-        //    return lhs.Comparison( rhs ) > 0;
+        //public static Boolean operator >( PlanckUnits left, Minutes rhs ) {
+        //    return left.Comparison( rhs ) > 0;
         //}
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
@@ -60,24 +65,24 @@ namespace Librainian.Measurement.Length {
         //    return Span.FromMilliseconds( milliseconds: milliseconds.Value );
         //}
 
-        //public static Boolean operator <( PlanckUnits lhs, PlanckUnits rhs ) {
-        //    return lhs.Value.CompareTo( rhs.Value ) < 0;
+        //public static Boolean operator <( PlanckUnits left, PlanckUnits rhs ) {
+        //    return left.Value.CompareTo( rhs.Value ) < 0;
         //}
 
-        //public static Boolean operator <( PlanckUnits lhs, Seconds rhs ) {
-        //    return lhs.Comparison( rhs ) < 0;
+        //public static Boolean operator <( PlanckUnits left, Seconds rhs ) {
+        //    return left.Comparison( rhs ) < 0;
         //}
 
-        //public static Boolean operator <( PlanckUnits lhs, Minutes rhs ) {
-        //    return lhs.Comparison( rhs ) < 0;
+        //public static Boolean operator <( PlanckUnits left, Minutes rhs ) {
+        //    return left.Comparison( rhs ) < 0;
         //}
 
-        //public static Boolean operator >( PlanckUnits lhs, PlanckUnits rhs ) {
-        //    return lhs.Value.CompareTo( rhs.Value ) > 0;
+        //public static Boolean operator >( PlanckUnits left, PlanckUnits rhs ) {
+        //    return left.Value.CompareTo( rhs.Value ) > 0;
         //}
 
-        //public static Boolean operator >( PlanckUnits lhs, Seconds rhs ) {
-        //    return lhs.Comparison( rhs ) > 0;
+        //public static Boolean operator >( PlanckUnits left, Seconds rhs ) {
+        //    return left.Comparison( rhs ) > 0;
         //}
     }
 
@@ -90,7 +95,5 @@ namespace Librainian.Measurement.Length {
             PlanckLengths.One.Should().BeLessThan( PlanckLengths.Two );
             PlanckLengths.Two.Should().BeGreaterThan( PlanckLengths.One );
         }
-
     }
-
 }

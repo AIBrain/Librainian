@@ -31,7 +31,7 @@ namespace Librainian.FileSystem {
 
         [ItemNotNull]
         [NotNull]
-        private ConcurrentHashset<FileSystemWatcher> FileWatchers { get; } = new ConcurrentList<FileSystemWatcher>();
+        private ConcurrentList<FileSystemWatcher> FileWatchers { get; } = new ConcurrentList<FileSystemWatcher>();
 
         public ConcurrentDictionary<DateTime, FileSystemEventArgs> Changed { get; } = new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 123 );
 
@@ -49,7 +49,7 @@ namespace Librainian.FileSystem {
 
         private void OnRenamed( Object sender, RenamedEventArgs args ) => this.Renamed[DateTime.UtcNow] = args;
 
-        protected override void DisposeManaged() {
+        public override void DisposeManaged() {
             this.Stop();
             base.DisposeManaged();
         }
@@ -58,7 +58,7 @@ namespace Librainian.FileSystem {
             var drives = DriveInfo.GetDrives();
 
             foreach ( var drive in drives ) {
-                var watcher = new FileSystemWatcher( path: drive.RootDirectory.FullName ) {
+                var watcher = new FileSystemWatcher( drive.RootDirectory.FullName ) {
                     IncludeSubdirectories = true,
                     NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.Size | NotifyFilters.LastAccess | NotifyFilters.LastWrite,
                     InternalBufferSize = UInt16.MaxValue
