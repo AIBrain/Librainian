@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/AbstractCollection.cs" was last cleaned by Protiguous on 2018/05/06 at 9:30 PM
+// "Librainian/AbstractCollection.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -34,6 +35,7 @@ namespace Librainian.Collections {
     [JsonObject]
     public abstract class AbstractCollection<T> : ICollection<T>, ICollection //NET_ONLY
     {
+
         /// <summary>
         /// Gets a value indicating whether the <see cref="ICollection{T}"/> is read-only. This implementation always return true;
         /// </summary>
@@ -94,7 +96,7 @@ namespace Librainian.Collections {
             }
 
             // new T[size] won't work here when targetArray is subtype of T.
-            return ( T[] )Array.CreateInstance( elementType: array.GetType().GetElementType() ?? throw new InvalidOperationException(),length );
+            return ( T[] )Array.CreateInstance( elementType: array.GetType().GetElementType() ?? throw new InvalidOperationException(), length );
         }
 
         /// <summary>
@@ -104,6 +106,7 @@ namespace Librainian.Collections {
         /// <returns><c>true</c> if this collection is modified, else <c>false</c>.</returns>
         protected virtual Boolean DoAddRange( IEnumerable<T> collection ) {
             var modified = false;
+
             foreach ( var element in collection ) {
                 this.Add( item: element );
                 modified = true;
@@ -125,7 +128,7 @@ namespace Librainian.Collections {
         /// </returns>
         protected virtual T[] DoCopyTo( T[] array, Int32 arrayIndex, Boolean ensureCapacity ) {
             if ( ensureCapacity ) {
-                array = EnsureCapacity( array: array,this.Count );
+                array = EnsureCapacity( array: array, this.Count );
             }
 
             foreach ( var e in this ) {
@@ -161,11 +164,11 @@ namespace Librainian.Collections {
         /// <exception cref="System.ArgumentException">If the collection is the current collection.</exception>
         public virtual Boolean AddRange( IEnumerable<T> collection ) {
             if ( collection is null ) {
-                throw new ArgumentNullException( paramName: nameof( collection ) );
+                throw new ArgumentNullException( nameof( collection ) );
             }
 
             if ( ReferenceEquals( collection, this ) ) {
-                throw new ArgumentException( message: "Cannot add to itself.", paramName: nameof( collection ) );
+                throw new ArgumentException( message: "Cannot add to itself.", nameof( collection ) );
             }
 
             return this.DoAddRange( collection: collection );
@@ -198,18 +201,18 @@ namespace Librainian.Collections {
         /// </exception>
         public void CopyTo( T[] array, Int32 arrayIndex ) {
             if ( array is null ) {
-                throw new ArgumentNullException( paramName: nameof( array ) );
+                throw new ArgumentNullException( nameof( array ) );
             }
 
             if ( arrayIndex < array.GetLowerBound( dimension: 0 ) ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( arrayIndex ), actualValue: arrayIndex, message: "arrayIndex must not be less then the lower bound of the array." );
+                throw new ArgumentOutOfRangeException( nameof( arrayIndex ), actualValue: arrayIndex, message: "arrayIndex must not be less then the lower bound of the array." );
             }
 
             try {
                 this.DoCopyTo( array: array, arrayIndex: arrayIndex, ensureCapacity: false );
             }
             catch ( IndexOutOfRangeException e ) {
-                throw new ArgumentException( message: "array is too small to fit the collection.", paramName: nameof( array ), innerException: e );
+                throw new ArgumentException( message: "array is too small to fit the collection.", nameof( array ), innerException: e );
             }
         }
 
@@ -255,7 +258,7 @@ namespace Librainian.Collections {
         /// <exception cref="ArrayTypeMismatchException">If type of <paramref name="targetArray"/> is a derived type of <typeparamref name="T"/> and the collection contains element that is not that derived type.</exception>
         public virtual T[] ToArray( T[] targetArray ) {
             if ( targetArray is null ) {
-                throw new ArgumentNullException( paramName: nameof( targetArray ) );
+                throw new ArgumentNullException( nameof( targetArray ) );
             }
 
             return this.DoCopyTo( array: targetArray, arrayIndex: 0, ensureCapacity: true );
@@ -283,6 +286,7 @@ namespace Librainian.Collections {
             var sb = new StringBuilder();
             sb.Append( value: GetType().Name ).Append( value: "(" );
             var first = true;
+
             foreach ( var e in this ) {
                 if ( !first ) {
                     sb.Append( value: ", " );
@@ -331,21 +335,21 @@ namespace Librainian.Collections {
         /// <filterpriority>2</filterpriority>
         void ICollection.CopyTo( Array array, Int32 index ) {
             if ( array is null ) {
-                throw new ArgumentNullException( paramName: nameof( array ) );
+                throw new ArgumentNullException( nameof( array ) );
             }
 
             if ( index < array.GetLowerBound( dimension: 0 ) ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( index ), actualValue: index, message: "index must not be less then lower bound of the array" );
+                throw new ArgumentOutOfRangeException( nameof( index ), actualValue: index, message: "index must not be less then lower bound of the array" );
             }
 
             try {
                 this.CopyTo( array: array, index: index );
             }
             catch ( RankException re ) {
-                throw new ArgumentException( message: "array must not be multi-dimensional.", paramName: nameof( array ), innerException: re );
+                throw new ArgumentException( message: "array must not be multi-dimensional.", nameof( array ), innerException: re );
             }
             catch ( IndexOutOfRangeException e ) {
-                throw new ArgumentException( message: "array is too small to fit the collection.", paramName: nameof( array ), innerException: e );
+                throw new ArgumentException( message: "array is too small to fit the collection.", nameof( array ), innerException: e );
             }
         }
 

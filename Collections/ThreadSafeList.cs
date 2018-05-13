@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ThreadSafeList.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/ThreadSafeList.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -134,7 +135,7 @@ namespace Librainian.Collections {
         /// <param name="inParallel">           Use the <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})"/> method.</param>
         public void ForAll( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
             if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
+                throw new ArgumentNullException( nameof( action ) );
             }
 
             var wrapper = new Action<T>( obj => {
@@ -146,8 +147,10 @@ namespace Librainian.Collections {
                     //if a null gets into the list then swallow an ArgumentNullException so we can continue adding
                 }
             } );
+
             if ( performActionOnClones ) {
                 var clones = this.Clone( asParallel: asParallel );
+
                 if ( asParallel ) {
                     clones.AsParallel().ForAll( wrapper );
                 }
@@ -183,7 +186,7 @@ namespace Librainian.Collections {
         /// <param name="inParallel">           Use the <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})"/> method.</param>
         public void ForEach( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
             if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
+                throw new ArgumentNullException( nameof( action ) );
             }
 
             var wrapper = new Action<T>( obj => {
@@ -195,8 +198,10 @@ namespace Librainian.Collections {
                     //if a null gets into the list then swallow an ArgumentNullException so we can continue adding
                 }
             } );
+
             if ( performActionOnClones ) {
                 var clones = this.Clone( asParallel: asParallel );
+
                 if ( asParallel ) {
                     clones.AsParallel().ForAll( wrapper );
                 }
@@ -252,6 +257,7 @@ namespace Librainian.Collections {
             try {
                 lock ( this._items ) {
                     this._items.Add( item: item );
+
                     return true;
                 }
             }
@@ -267,15 +273,18 @@ namespace Librainian.Collections {
         public Boolean TryTake( out T item ) {
             lock ( this._items ) {
                 var count = this._items.Count;
+
                 if ( count >= 1 ) {
                     var idx = 0.Next( maxValue: count );
                     item = this._items[index: idx];
                     this._items.RemoveAt( index: idx );
+
                     return true;
                 }
             }
 
             item = default;
+
             return false;
         }
 
@@ -288,16 +297,19 @@ namespace Librainian.Collections {
         public Boolean TryTakeOneCopyRest( out T item, out List<T> rest ) {
             lock ( this._items ) {
                 var count = this._items.Count;
+
                 if ( count >= 1 ) {
                     item = this._items[index: 0];
                     this._items.RemoveAt( index: 0 );
                     rest = new List<T>( collection: this._items );
+
                     return true;
                 }
             }
 
             item = default;
             rest = default;
+
             return false;
         }
 

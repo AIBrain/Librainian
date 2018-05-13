@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/LockfreeQueue.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/LockfreeQueue.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -26,8 +27,11 @@ namespace Librainian.Collections {
     /// <typeparam name="T">specifies the type of the elements in the queue</typeparam>
     /// <remarks>Enumeration and clearing are not thread-safe.</remarks>
     public class LockfreeQueue<T> : IEnumerable<T> where T : class {
+
         private Int32 _count;
+
         private SingleLinkNode<T> _head = new SingleLinkNode<T>();
+
         private SingleLinkNode<T> _tail;
 
         /// <summary>
@@ -127,6 +131,7 @@ namespace Librainian.Collections {
 
         public T TryDequeue() {
             this.TryDequeue( item: out var item );
+
             return item;
         }
 
@@ -139,6 +144,7 @@ namespace Librainian.Collections {
             item = default;
 
             var haveAdvancedHead = false;
+
             while ( !haveAdvancedHead ) {
                 var oldTail = this._tail;
                 var oldHead = this._head;
@@ -163,6 +169,7 @@ namespace Librainian.Collections {
             }
 
             Interlocked.Decrement( location: ref this._count );
+
             return true;
         }
 

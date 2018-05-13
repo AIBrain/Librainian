@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/TreeNode.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/TreeNode.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -24,7 +25,9 @@ namespace Librainian.Collections {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class TreeNode<T> : ABetterClassDispose {
+
         private TreeNode<T> _parent;
+
         private T _value;
 
         public TreeNode( T value ) {
@@ -35,7 +38,7 @@ namespace Librainian.Collections {
 
         public TreeNode( T value, [NotNull] TreeNode<T> parent ) {
             this.Value = value;
-            this.Parent = parent ?? throw new ArgumentNullException( paramName: nameof( parent ) );
+            this.Parent = parent ?? throw new ArgumentNullException( nameof( parent ) );
             this.Children = new TreeNodeList<T>( parent: this );
         }
 
@@ -71,6 +74,7 @@ namespace Librainian.Collections {
                 //return (Parent == null) ? this : Parent.Root;
 
                 var node = this;
+
                 while ( node.Parent != null ) {
                     node = node.Parent;
                 }
@@ -91,10 +95,18 @@ namespace Librainian.Collections {
             }
         }
 
+        protected void OnDisposing() => this.Disposing?.Invoke( sender: this, e: EventArgs.Empty );
+
+        public void CheckDisposed() {
+            if ( this.IsDisposed ) {
+                throw new ObjectDisposedException( objectName: GetType().Name );
+            }
+        }
+
         /// <summary>
         /// Dispose any disposable members.
         /// </summary>
-        protected override void DisposeManaged() {
+        public override void DisposeManaged() {
             this.CheckDisposed();
             this.OnDisposing();
 
@@ -116,14 +128,6 @@ namespace Librainian.Collections {
             }
 
             this.IsDisposed = true;
-        }
-
-        protected void OnDisposing() => this.Disposing?.Invoke( sender: this, e: EventArgs.Empty );
-
-        public void CheckDisposed() {
-            if ( this.IsDisposed ) {
-                throw new ObjectDisposedException( objectName: GetType().Name );
-            }
         }
     }
 }

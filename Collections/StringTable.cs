@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/StringTable.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/StringTable.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -42,15 +43,15 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         public UInt64 this[[NotNull] String key] {
-            get => this.Words.TryGetValue(key, value: out var result ) ? result : default;
+            get => this.Words.TryGetValue( key, value: out var result ) ? result : default;
 
             set {
                 if ( String.IsNullOrEmpty( value: key ) ) {
                     return;
                 }
 
-                this.Words[  key] = value;
-                this.Ints[  value] = key;
+                this.Words[key] = value;
+                this.Ints[value] = key;
             }
         }
 
@@ -60,11 +61,11 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         public String this[UInt64 key] {
-            get => this.Ints[  key];
+            get => this.Ints[key];
 
             set {
-                this.Words[  value] = key;
-                this.Ints[  key] = value;
+                this.Words[value] = key;
+                this.Ints[key] = value;
             }
         }
 
@@ -83,7 +84,7 @@ namespace Librainian.Collections {
                 return false;
             }
 
-            return this.Words.TryGetValue(word, value: out _ );
+            return this.Words.TryGetValue( word, value: out _ );
         }
 
         /// <summary>
@@ -91,7 +92,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Boolean Contains( UInt64 key ) => this.Ints.TryGetValue(key, value: out _ );
+        public Boolean Contains( UInt64 key ) => this.Ints.TryGetValue( key, value: out _ );
 
         public IEnumerable<UInt64> EachInt() => this.Ints.Keys;
 

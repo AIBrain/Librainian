@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,11 +12,12 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/AbstractQueue.cs" was last cleaned by Protiguous on 2018/05/06 at 9:30 PM
+// "Librainian/AbstractQueue.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
     using System;
+    using System.Collections.Generic;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -33,6 +35,7 @@ namespace Librainian.Collections {
     [JsonObject]
     internal abstract class AbstractQueue<T> : AbstractCollection<T>, IQueue<T> //JDK_1_6
     {
+
         /// <summary>
         /// Returns the current capacity of this queue.
         /// </summary>
@@ -94,7 +97,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <remarks>
         /// This operation may be more efficient than repeatedly polling this queue. A failure encountered while attempting to invoke the <paramref name="action"/> on the elements may result in elements being neither,
-        /// either or both in the queue or processed when the associated exception is thrown. <example>Drain to a non-generic list.
+        /// either or both in the queue or processed when the associated exception is thrown. <example> Drain to a non-generic list.
         /// <code language="c#">
         /// IList c = ...;
         /// int count = Drain(delegate(T e) {c.Add(e);});
@@ -113,7 +116,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <remarks>
         /// This operation may be more efficient than repeatedly polling this queue. A failure encountered while attempting to invoke the <paramref name="action"/> on the elements may result in elements being neither,
-        /// either or both in the queue or processed when the associated exception is thrown. <example>Drain to a non-generic list.
+        /// either or both in the queue or processed when the associated exception is thrown. <example> Drain to a non-generic list.
         /// <code language="c#">
         /// IList c = ...;
         /// int count = Drain(delegate(T e) {c.Add(e);});
@@ -128,7 +131,7 @@ namespace Librainian.Collections {
         /// <seealso cref="IQueue{T}.Drain(Action{T}, Int32)"/>
         public virtual Int32 Drain( Action<T> action, Predicate<T> criteria ) {
             if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
+                throw new ArgumentNullException( nameof( action ) );
             }
 
             return this.DoDrain( action, criteria: criteria );
@@ -165,7 +168,7 @@ namespace Librainian.Collections {
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})"/>
         public virtual Int32 Drain( Action<T> action, Int32 maxElements, Predicate<T> criteria ) {
             if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
+                throw new ArgumentNullException( nameof( action ) );
             }
 
             return maxElements > 0 ? this.DoDrain( action, maxElements: maxElements, criteria: criteria ) : 0;

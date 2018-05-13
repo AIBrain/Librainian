@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/StringVersusGuid.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/StringVersusGuid.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -52,12 +53,13 @@ namespace Librainian.Collections {
         public Guid this[String key] {
             get {
                 if ( !String.IsNullOrEmpty( value: key ) ) {
-                    if ( this.Words.TryGetValue(key, value: out var result ) ) {
+                    if ( this.Words.TryGetValue( key, value: out var result ) ) {
                         return result;
                     }
 
                     var newValue = Guid.NewGuid();
-                    this[  key] = newValue;
+                    this[key] = newValue;
+
                     return newValue;
                 }
 
@@ -70,8 +72,8 @@ namespace Librainian.Collections {
                 }
 
                 var guid = value;
-                this.Words.AddOrUpdate(key, addValue: guid, updateValueFactory: ( s, g ) => guid );
-                this.Guids.AddOrUpdate(guid, addValue: key, updateValueFactory: ( g, s ) => key );
+                this.Words.AddOrUpdate( key, addValue: guid, updateValueFactory: ( s, g ) => guid );
+                this.Guids.AddOrUpdate( guid, addValue: key, updateValueFactory: ( g, s ) => key );
             }
         }
 
@@ -81,22 +83,22 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         public String this[Guid key] {
-            get => Guid.Empty.Equals( g: key ) ? String.Empty : this.Guids[  key];
+            get => Guid.Empty.Equals( g: key ) ? String.Empty : this.Guids[key];
 
             set {
                 if ( Guid.Empty.Equals( g: key ) ) {
                     return;
                 }
 
-                this.Guids.AddOrUpdate(key, addValue: value, updateValueFactory: ( g, s ) => value );
-                this.Words.AddOrUpdate(value, addValue: key, updateValueFactory: ( s, g ) => key );
+                this.Guids.AddOrUpdate( key, addValue: value, updateValueFactory: ( g, s ) => value );
+                this.Words.AddOrUpdate( value, addValue: key, updateValueFactory: ( s, g ) => key );
             }
         }
 
         public static void InternalTest( StringVersusGuid stringVersusGuid ) {
             var guid = new Guid( g: @"bddc4fac-20b9-4365-97bf-c98e84697012" );
-            stringVersusGuid[  "AIBrain"] = guid;
-            stringVersusGuid[  guid].Same( compare: "AIBrain" ).BreakIfFalse();
+            stringVersusGuid["AIBrain"] = guid;
+            stringVersusGuid[guid].Is( right: "AIBrain" ).BreakIfFalse();
         }
 
         public void Clear() {
@@ -114,7 +116,7 @@ namespace Librainian.Collections {
                 return false;
             }
 
-            return this.Words.TryGetValue(daword, value: out var value );
+            return this.Words.TryGetValue( daword, value: out var value );
         }
 
         /// <summary>
@@ -122,6 +124,6 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="daguid"></param>
         /// <returns></returns>
-        public Boolean Contains( Guid daguid ) => this.Guids.TryGetValue(daguid, value: out var value );
+        public Boolean Contains( Guid daguid ) => this.Guids.TryGetValue( daguid, value: out var value );
     }
 }

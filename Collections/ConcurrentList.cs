@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ConcurrentList.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/ConcurrentList.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -55,6 +56,7 @@ namespace Librainian.Collections {
         /// <param name="writeTimeout"></param>
         public ConcurrentList( [CanBeNull] IEnumerable<TType> enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) {
             this.InputBuffer = new ConcurrentQueue<TType>();
+
             if ( readTimeout.HasValue ) {
                 this.TimeoutForReads = readTimeout.Value;
             }
@@ -128,6 +130,7 @@ namespace Librainian.Collections {
                     }
 
                     this.TheList[index: index] = value;
+
                     return true;
                 } );
             }
@@ -232,14 +235,6 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() {
-            this.ReaderWriter?.Dispose();
-            this.ItemCounter?.Dispose();
-        }
-
-        /// <summary>
         /// Static comparison function.
         /// </summary>
         /// <param name="lhs"></param>
@@ -281,6 +276,7 @@ namespace Librainian.Collections {
             return this.Write( func: () => {
                 try {
                     this.TheList.Add( item: item );
+
                     return true;
                 }
                 finally {
@@ -304,7 +300,7 @@ namespace Librainian.Collections {
         /// <exception cref="ArgumentNullException"></exception>
         public void AddRange( [NotNull] IEnumerable<TType> items, Byte useParallelism = 0, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
             if ( null == items ) {
-                throw new ArgumentNullException( paramName: nameof( items ) );
+                throw new ArgumentNullException( nameof( items ) );
             }
 
             if ( !this.AllowModifications() ) {
@@ -343,6 +339,7 @@ namespace Librainian.Collections {
         /// <seealso cref="CatchUp"/>
         public Boolean AnyWritesPending() {
             var inputBuffer = this.InputBuffer;
+
             return inputBuffer != null && inputBuffer.Any();
         }
 
@@ -378,6 +375,7 @@ namespace Librainian.Collections {
             this.Write( func: () => {
                 this.TheList.Clear();
                 this.ItemCounter = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true ); //BUG is this wrong? how else do we reset all the counters?
+
                 return true;
             } );
         }
@@ -417,13 +415,22 @@ namespace Librainian.Collections {
         /// <param name="arrayIndex"></param>
         public void CopyTo( TType[] array, Int32 arrayIndex ) {
             if ( array is null ) {
-                throw new ArgumentNullException( paramName: nameof( array ) );
+                throw new ArgumentNullException( nameof( array ) );
             }
 
             this.Read( func: () => {
                 this.TheList.CopyTo( array: array, arrayIndex: arrayIndex );
+
                 return true;
             } );
+        }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() {
+            this.ReaderWriter?.Dispose();
+            this.ItemCounter?.Dispose();
         }
 
         public Boolean Equals( IEnumerable<TType> other ) => Equals( lhs: this, rhs: other );
@@ -434,6 +441,7 @@ namespace Librainian.Collections {
         public void FixCapacity() =>
             this.Write( func: () => {
                 this.TheList.Capacity = this.TheList.Count;
+
                 return true;
             } );
 
@@ -463,6 +471,7 @@ namespace Librainian.Collections {
                 try {
                     this.TheList.Insert( index: index, item: item );
                     this.AnItemHasBeenAdded();
+
                     return true;
                 }
                 catch ( ArgumentOutOfRangeException ) {
@@ -491,6 +500,7 @@ namespace Librainian.Collections {
 
             return this.Write( func: () => {
                 var result = this.TheList.Remove( item: item );
+
                 if ( result ) {
                     this.AnItemHasBeenRemoved( afterRemoval );
                 }
@@ -501,6 +511,7 @@ namespace Librainian.Collections {
 
         public void RemoveAt( Int32 index ) {
             index.Should().BeGreaterOrEqualTo( expected: 0 );
+
             if ( index < 0 ) {
                 return;
             }
@@ -558,6 +569,7 @@ namespace Librainian.Collections {
                 this[index: b] = temp;
                 --iterations;
                 counter++;
+
                 if ( howLong.HasValue && stopWatch.Elapsed > howLong.Value ) {
                     orUntilCancelled.RequestCancel();
                 }
@@ -578,12 +590,14 @@ namespace Librainian.Collections {
             }
 
             var gotLock = false;
+
             try {
                 if ( !this.ReaderWriter.TryEnterWriteLock( timeout: timeout ) ) {
                     return false;
                 }
 
                 gotLock = true;
+
                 while ( this.InputBuffer.TryDequeue( result: out var bob ) ) {
                     this.TheList.Add( item: bob );
                     this.AnItemHasBeenAdded();
@@ -616,6 +630,7 @@ namespace Librainian.Collections {
 
                 var result = this.TheList[index: index];
                 afterGet?.Invoke( result );
+
                 return true;
             } );
         }

@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/TreeNodeList.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/TreeNodeList.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -24,19 +25,21 @@ namespace Librainian.Collections {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class TreeNodeList<T> : List<TreeNode<T>> {
+
         public readonly TreeNode<T> Parent;
 
-        public TreeNodeList( [NotNull] TreeNode<T> parent ) => this.Parent = parent ?? throw new ArgumentNullException( paramName: nameof( parent ) );
+        public TreeNodeList( [NotNull] TreeNode<T> parent ) => this.Parent = parent ?? throw new ArgumentNullException( nameof( parent ) );
 
         public TreeNode<T> Add( T value ) => this.Add( node: new TreeNode<T>( value: value ) );
 
         public new TreeNode<T> Add( [NotNull] TreeNode<T> node ) {
             if ( node is null ) {
-                throw new ArgumentNullException( paramName: nameof( node ) );
+                throw new ArgumentNullException( nameof( node ) );
             }
 
             base.Add( item: node );
             node.Parent = this.Parent;
+
             return node;
         }
 

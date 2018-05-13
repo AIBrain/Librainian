@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ElasticObject.cs" was last cleaned by Protiguous on 2016/06/18 at 10:50 PM
+// "Librainian/ElasticObject.cs" was last cleaned by Protiguous on 2018/05/12 at 1:18 AM
 
 namespace Librainian.AmazedSaint {
 
@@ -28,12 +24,11 @@ namespace Librainian.AmazedSaint {
     using System.Linq.Expressions;
 
     /// <summary>
-    ///     See http://amazedsaint.blogspot.com/2010/02/introducing-elasticobject-for-net-40.html for details
+    /// See http://amazedsaint.blogspot.com/2010/02/introducing-elasticobject-for-net-40.html for details
     /// </summary>
     public class ElasticObject : DynamicObject, IElasticHierarchyWrapper, INotifyPropertyChanged {
 
-        public ElasticObject() : this( $"id={Guid.NewGuid()}" ) {
-        }
+        public ElasticObject() : this( $"id={Guid.NewGuid()}" ) { }
 
         public ElasticObject( String name, Object value = null ) {
             this.InternalName = name;
@@ -42,17 +37,19 @@ namespace Librainian.AmazedSaint {
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public IEnumerable<KeyValuePair<String, ElasticObject>> Attributes => this.ElasticProvider.Attributes;
+        private IElasticHierarchyWrapper ElasticProvider { get; } = new SimpleHierarchyWrapper();
 
-        public IEnumerable<ElasticObject> Elements => this.ElasticProvider.Elements;
+        private NodeType NodeType { get; set; } = NodeType.Element;
 
         public Object InternalContent {
             get => this.ElasticProvider.InternalContent;
 
-	        set => this.ElasticProvider.InternalContent = value;
+            set => this.ElasticProvider.InternalContent = value;
         }
 
-        /// <summary>Fully qualified name</summary>
+        /// <summary>
+        /// Fully qualified name
+        /// </summary>
         public String InternalFullName {
             get {
                 var path = this.InternalName;
@@ -70,24 +67,40 @@ namespace Librainian.AmazedSaint {
         public String InternalName {
             get => this.ElasticProvider.InternalName;
 
-	        set => this.ElasticProvider.InternalName = value;
+            set => this.ElasticProvider.InternalName = value;
         }
 
         public ElasticObject InternalParent {
             get => this.ElasticProvider.InternalParent;
 
-	        set => this.ElasticProvider.InternalParent = value;
+            set => this.ElasticProvider.InternalParent = value;
         }
 
         public Object InternalValue {
             get => this.ElasticProvider.InternalValue;
 
-	        set => this.ElasticProvider.InternalValue = value;
+            set => this.ElasticProvider.InternalValue = value;
         }
 
-        private IElasticHierarchyWrapper ElasticProvider { get; } = new SimpleHierarchyWrapper();
+        public IEnumerable<KeyValuePair<String, ElasticObject>> Attributes => this.ElasticProvider.Attributes;
 
-        private NodeType NodeType { get; set; } = NodeType.Element;
+        public IEnumerable<ElasticObject> Elements => this.ElasticProvider.Elements;
+
+        private void OnPropertyChanged( String prop ) => this.PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( prop ) );
+
+        /// <summary>
+        /// Add a member to this element, with the specified value
+        /// </summary>
+        /// <param name="memberName"></param>
+        /// <param name="value">     </param>
+        /// <returns></returns>
+        internal ElasticObject CreateOrGetAttribute( String memberName, Object value ) {
+            if ( !this.HasAttribute( memberName ) ) {
+                this.AddAttribute( memberName, new ElasticObject( memberName, value ) );
+            }
+
+            return this.Attribute( memberName );
+        }
 
         public void AddAttribute( String key, ElasticObject value ) {
             value.NodeType = NodeType.Attribute;
@@ -115,85 +128,111 @@ namespace Librainian.AmazedSaint {
 
         public void SetAttributeValue( String name, Object obj ) => this.ElasticProvider.SetAttributeValue( name, obj );
 
-		/// <summary>Interpret the invocation of a binary operation</summary>
-		/// <param name="binder">todo: describe binder parameter on TryBinaryOperation</param>
-		/// <param name="arg">todo: describe arg parameter on TryBinaryOperation</param>
-		/// <param name="result">todo: describe result parameter on TryBinaryOperation</param>
-		public override Boolean TryBinaryOperation( BinaryOperationBinder binder, Object arg, out Object result ) {
+        /// <summary>
+        /// Interpret the invocation of a binary operation
+        /// </summary>
+        /// <param name="binder">todo: describe binder parameter on TryBinaryOperation</param>
+        /// <param name="arg">   todo: describe arg parameter on TryBinaryOperation</param>
+        /// <param name="result">todo: describe result parameter on TryBinaryOperation</param>
+        public override Boolean TryBinaryOperation( BinaryOperationBinder binder, Object arg, out Object result ) {
             if ( binder.Operation == ExpressionType.LeftShiftAssign && this.NodeType == NodeType.Element ) {
                 this.InternalContent = arg;
                 result = this;
+
                 return true;
             }
+
             if ( binder.Operation == ExpressionType.LeftShiftAssign && this.NodeType == NodeType.Attribute ) {
                 this.InternalValue = arg;
                 result = this;
+
                 return true;
             }
+
             switch ( binder.Operation ) {
                 case ExpressionType.LeftShift:
-	                if ( arg is String s ) {
+
+                    if ( arg is String s ) {
                         var exp = new ElasticObject( s ) { NodeType = NodeType.Element };
                         this.AddElement( exp );
                         result = exp;
+
                         return true;
                     }
-	                if ( arg is ElasticObject o ) {
+
+                    if ( arg is ElasticObject o ) {
                         var eobj = o;
+
                         if ( !this.Elements.Contains( eobj ) ) {
                             this.AddElement( eobj );
                         }
+
                         result = eobj;
+
                         return true;
                     }
+
                     break;
 
                 case ExpressionType.LessThan: {
                         var memberName = arg as String;
+
                         if ( arg is String ) {
                             if ( !this.HasAttribute( memberName ) ) {
                                 var att = new ElasticObject( memberName );
                                 this.AddAttribute( memberName, att );
                                 result = att;
+
                                 return true;
                             }
+
                             throw new InvalidOperationException( $"An attribute with name {memberName} already exists" );
                         }
-						if ( arg is ElasticObject elasticObject ) {
-							//TODO
-							//HACK
-							//this.AddAttribute( memberName, eobj );
-							result = elasticObject;
-							return true;
-						}
-					}
+
+                        if ( arg is ElasticObject elasticObject ) {
+
+                            //TODO
+                            //HACK
+                            //this.AddAttribute( memberName, eobj );
+                            result = elasticObject;
+
+                            return true;
+                        }
+                    }
+
                     break;
 
                 case ExpressionType.GreaterThan:
+
                     if ( arg is FormatType ) {
                         result = this.ToXElement();
+
                         return true;
                     }
+
                     break;
             }
+
             return base.TryBinaryOperation( binder, arg, out result );
         }
 
-		/// <summary>Handle the indexer operations</summary>
-		/// <param name="binder">todo: describe binder parameter on TryGetIndex</param>
-		/// <param name="indexes">todo: describe indexes parameter on TryGetIndex</param>
-		/// <param name="result">todo: describe result parameter on TryGetIndex</param>
-		public override Boolean TryGetIndex( GetIndexBinder binder, Object[] indexes, out Object result ) {
-            if ( indexes.Length == 1 && indexes[ 0 ] is null ) {
+        /// <summary>
+        /// Handle the indexer operations
+        /// </summary>
+        /// <param name="binder"> todo: describe binder parameter on TryGetIndex</param>
+        /// <param name="indexes">todo: describe indexes parameter on TryGetIndex</param>
+        /// <param name="result"> todo: describe result parameter on TryGetIndex</param>
+        public override Boolean TryGetIndex( GetIndexBinder binder, Object[] indexes, out Object result ) {
+            if ( indexes.Length == 1 && indexes[0] is null ) {
                 result = this.ElasticProvider.Elements.ToList();
             }
-            else if ( indexes.Length == 1 && indexes[ 0 ] is Int32 ) {
-                var indx = ( Int32 )indexes[ 0 ];
+            else if ( indexes.Length == 1 && indexes[0] is Int32 ) {
+                var indx = ( Int32 )indexes[0];
                 var elmt = this.Elements.ElementAt( indx );
                 result = elmt;
             }
-            else if ( indexes.Length == 1 && indexes[ 0 ] is Func<Object, Boolean> ) {
-                var filter = indexes[ 0 ] as Func<Object, Boolean>;
+            else if ( indexes.Length == 1 && indexes[0] is Func<Object, Boolean> ) {
+                var filter = indexes[0] as Func<Object, Boolean>;
                 result = this.Elements.Where( filter ).ToList();
             }
             else {
@@ -203,7 +242,9 @@ namespace Librainian.AmazedSaint {
             return true;
         }
 
-        /// <summary>Catch a get member invocation</summary>
+        /// <summary>
+        /// Catch a get member invocation
+        /// </summary>
         /// <param name="binder"></param>
         /// <param name="result"></param>
         /// <returns></returns>
@@ -213,6 +254,7 @@ namespace Librainian.AmazedSaint {
             }
             else {
                 var obj = this.ElasticProvider.Element( binder.Name );
+
                 if ( obj != null ) {
                     result = obj;
                 }
@@ -226,67 +268,63 @@ namespace Librainian.AmazedSaint {
             return true;
         }
 
-        /// <summary>Interpret a method call</summary>
+        /// <summary>
+        /// Interpret a method call
+        /// </summary>
         /// <param name="binder"></param>
-        /// <param name="args"></param>
+        /// <param name="args">  </param>
         /// <param name="result"></param>
         /// <returns></returns>
         public override Boolean TryInvokeMember( InvokeMemberBinder binder, Object[] args, out Object result ) {
             var obj = new ElasticObject( binder.Name );
             this.AddElement( obj );
             result = obj;
+
             return true;
         }
 
-		/// <summary>Catch a set member invocation</summary>
-		/// <param name="binder">todo: describe binder parameter on TrySetMember</param>
-		/// <param name="value">todo: describe value parameter on TrySetMember</param>
-		public override Boolean TrySetMember( SetMemberBinder binder, Object value ) {
+        /// <summary>
+        /// Catch a set member invocation
+        /// </summary>
+        /// <param name="binder">todo: describe binder parameter on TrySetMember</param>
+        /// <param name="value"> todo: describe value parameter on TrySetMember</param>
+        public override Boolean TrySetMember( SetMemberBinder binder, Object value ) {
             var memberName = binder.Name;
 
-			if ( value is ElasticObject o ) {
-				var eobj = o;
-				if ( !this.Elements.Contains( eobj ) ) {
-					this.AddElement( eobj );
-				}
-			}
-			else {
-				if ( !this.ElasticProvider.HasAttribute( memberName ) ) {
-					this.ElasticProvider.AddAttribute( memberName, new ElasticObject( memberName, value ) );
-				}
-				else {
-					this.ElasticProvider.SetAttributeValue( memberName, value );
-				}
-			}
+            if ( value is ElasticObject o ) {
+                var eobj = o;
 
-			this.OnPropertyChanged( memberName );
+                if ( !this.Elements.Contains( eobj ) ) {
+                    this.AddElement( eobj );
+                }
+            }
+            else {
+                if ( !this.ElasticProvider.HasAttribute( memberName ) ) {
+                    this.ElasticProvider.AddAttribute( memberName, new ElasticObject( memberName, value ) );
+                }
+                else {
+                    this.ElasticProvider.SetAttributeValue( memberName, value );
+                }
+            }
+
+            this.OnPropertyChanged( memberName );
 
             return true;
         }
 
-		/// <summary>Try the unary operation.</summary>
-		/// <param name="binder">todo: describe binder parameter on TryUnaryOperation</param>
-		/// <param name="result">todo: describe result parameter on TryUnaryOperation</param>
-		public override Boolean TryUnaryOperation( UnaryOperationBinder binder, out Object result ) {
+        /// <summary>
+        /// Try the unary operation.
+        /// </summary>
+        /// <param name="binder">todo: describe binder parameter on TryUnaryOperation</param>
+        /// <param name="result">todo: describe result parameter on TryUnaryOperation</param>
+        public override Boolean TryUnaryOperation( UnaryOperationBinder binder, out Object result ) {
             if ( binder.Operation == ExpressionType.OnesComplement ) {
                 result = this.NodeType == NodeType.Element ? this.InternalContent : this.InternalValue;
+
                 return true;
             }
+
             return base.TryUnaryOperation( binder, out result );
         }
-
-        /// <summary>Add a member to this element, with the specified value</summary>
-        /// <param name="memberName"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        internal ElasticObject CreateOrGetAttribute( String memberName, Object value ) {
-            if ( !this.HasAttribute( memberName ) ) {
-                this.AddAttribute( memberName, new ElasticObject( memberName, value ) );
-            }
-
-            return this.Attribute( memberName );
-        }
-
-        private void OnPropertyChanged( String prop ) => this.PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( prop ) );
     }
 }

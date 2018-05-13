@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/QueueWaiting.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/QueueWaiting.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -29,11 +30,6 @@ namespace Librainian.Collections {
         private ConcurrentQueue<T> Queue { get; } = new ConcurrentQueue<T>();
 
         private AutoResetEvent Wait { get; } = new AutoResetEvent( initialState: false );
-
-        /// <summary>
-        /// Dispose any disposable members.
-        /// </summary>
-        protected override void DisposeManaged() => this.Wait.Dispose();
 
         /// <summary>
         /// Adds the data to the queue.
@@ -56,6 +52,11 @@ namespace Librainian.Collections {
 
             return this;
         }
+
+        /// <summary>
+        /// Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this.Wait.Dispose();
 
         /// <summary>
         /// Returns an enumerator that iterates through the collection.

@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/HistogramaDesenat.cs" was last cleaned by Protiguous on 2016/06/18 at 10:50 PM
+// "Librainian/HistogramaDesenat.cs" was last cleaned by Protiguous on 2018/05/12 at 1:21 AM
 
 namespace Librainian.Controls {
 
@@ -28,13 +24,13 @@ namespace Librainian.Controls {
     using System.Windows.Forms;
 
     /// <summary>
-    ///     Summary description for HistogramaDesenat.
+    /// Summary description for HistogramaDesenat.
     /// </summary>
-    /// <seealso cref="http://www.codeproject.com/Articles/12125/A-simple-histogram-displaying-control" />
+    /// <seealso cref="http://www.codeproject.com/Articles/12125/A-simple-histogram-displaying-control"/>
     public class HistogramaDesenat : UserControl {
 
         /// <summary>
-        ///     Required designer variable.
+        /// Required designer variable.
         /// </summary>
 #pragma warning disable 169
         private readonly Container _components;
@@ -61,8 +57,8 @@ namespace Librainian.Controls {
 
             // TODO: Add any initialization after the InitializeComponent call
 
-            this.Paint += this.HistogramaDesenat_Paint;
-            this.Resize += this.HistogramaDesenat_Resize;
+            Paint += this.HistogramaDesenat_Paint;
+            Resize += this.HistogramaDesenat_Resize;
         }
 
         [Category( "Histogram Options" )]
@@ -85,11 +81,11 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        ///     We draw the histogram on the control
+        /// We draw the histogram on the control
         /// </summary>
         /// <param name="values">The values being drawn</param>
         public void DrawHistogram( Int64[] values ) {
-            this._myValues = new Int64[ values.Length ];
+            this._myValues = new Int64[values.Length];
             values.CopyTo( this._myValues, 0 );
 
             this._myIsDrawing = true;
@@ -109,12 +105,12 @@ namespace Librainian.Controls {
         //}
 
         private void ComputeXyUnitValues() {
-            this._myYUnit = ( Single )( this.Height - 2 * this._myOffset ) / this._myMaxValue;
-            this._myXUnit = ( Single )( this.Width - 2 * this._myOffset ) / ( this._myValues.Length - 1 );
+            this._myYUnit = ( Single )( Height - 2 * this._myOffset ) / this._myMaxValue;
+            this._myXUnit = ( Single )( Width - 2 * this._myOffset ) / ( this._myValues.Length - 1 );
         }
 
         /// <summary>
-        ///     We get the highest value from the array
+        /// We get the highest value from the array
         /// </summary>
         /// <param name="vals">The array of values in which we look</param>
         /// <returns>The maximum value</returns>
@@ -122,6 +118,7 @@ namespace Librainian.Controls {
             if ( this._myIsDrawing ) {
                 return vals.Concat( new Int64[] { 0 } ).Max();
             }
+
             return 1;
         }
 
@@ -137,43 +134,48 @@ namespace Librainian.Controls {
             for ( var i = 0; i < this._myValues.Length; i++ ) {
 
                 //We draw each line
-                g.DrawLine( myPen, new PointF( this._myOffset + i * this._myXUnit, this.Height - this._myOffset ), new PointF( this._myOffset + i * this._myXUnit, this.Height - this._myOffset - this._myValues[ i ] * this._myYUnit ) );
+                g.DrawLine( myPen, new PointF( this._myOffset + i * this._myXUnit, Height - this._myOffset ),
+                    new PointF( this._myOffset + i * this._myXUnit, Height - this._myOffset - this._myValues[i] * this._myYUnit ) );
 
                 //We plot the coresponding index for the maximum value.
-                if ( this._myValues[ i ] != this._myMaxValue ) {
+                if ( this._myValues[i] != this._myMaxValue ) {
                     continue;
                 }
 
                 var mySize = g.MeasureString( i.ToString(), this._myFont );
 
-                g.DrawString( i.ToString(), this._myFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset + i * this._myXUnit - mySize.Width / 2, this.Height - this._myFont.Height ), StringFormat.GenericDefault );
+                g.DrawString( i.ToString(), this._myFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset + i * this._myXUnit - mySize.Width / 2, Height - this._myFont.Height ),
+                    StringFormat.GenericDefault );
             }
 
             //We draw the indexes for 0 and for the length of the array being plotted
-            g.DrawString( "0", this._myFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset, this.Height - this._myFont.Height ), StringFormat.GenericDefault );
-            g.DrawString( s: ( this._myValues.Length - 1 ).ToString(), font: this._myFont, brush: new SolidBrush( this.DisplayColor ), point: new PointF( this._myOffset + this._myValues.Length * this._myXUnit - g.MeasureString( this._myValues.Length.ToString(), this._myFont ).Width, this.Height - this._myFont.Height ), format: StringFormat.GenericDefault );
+            g.DrawString( "0", this._myFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset, Height - this._myFont.Height ), StringFormat.GenericDefault );
+
+            g.DrawString( s: ( this._myValues.Length - 1 ).ToString(), font: this._myFont, brush: new SolidBrush( this.DisplayColor ),
+                point: new PointF( this._myOffset + this._myValues.Length * this._myXUnit - g.MeasureString( this._myValues.Length.ToString(), this._myFont ).Width, Height - this._myFont.Height ),
+                format: StringFormat.GenericDefault );
 
             //We draw a rectangle surrounding the control.
-            g.DrawRectangle( new Pen( new SolidBrush( Color.Black ), 1 ), 0, 0, this.Width - 1, this.Height - 1 );
+            g.DrawRectangle( new Pen( new SolidBrush( Color.Black ), 1 ), 0, 0, Width - 1, Height - 1 );
         }
 
         private void HistogramaDesenat_Resize( Object sender, EventArgs e ) {
             if ( this._myIsDrawing ) {
                 this.ComputeXyUnitValues();
             }
-            this.Refresh();
+
+            Refresh();
         }
 
         /// <summary>
-        ///     Required method for Designer support - do not modify the contents of this method with
-        ///     the code editor.
+        /// Required method for Designer support - do not modify the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
 
             // HistogramaDesenat
-            this.Font = new Font( "Tahoma", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0 );
-            this.Name = "HistogramaDesenat";
-            this.Size = new Size( 208, 176 );
+            Font = new Font( "Tahoma", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0 );
+            Name = "HistogramaDesenat";
+            Size = new Size( 208, 176 );
         }
     }
 }

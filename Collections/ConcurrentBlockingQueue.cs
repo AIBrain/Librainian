@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ConcurrentBlockingQueue.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/ConcurrentBlockingQueue.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -26,11 +27,12 @@ namespace Librainian.Collections {
     /// </summary>
     /// <typeparam name="T">Specifies the type of elements in the queue.</typeparam>
     public class ConcurrentBlockingQueue<T> : ABetterClassDispose {
-        private readonly ConcurrentQueue<T> _queue = new ConcurrentQueue<T>();
-        private readonly AutoResetEvent _workEvent = new AutoResetEvent( initialState: false );
-        private Boolean _isCompleteAdding;
 
-        protected override void DisposeManaged() { }
+        private readonly ConcurrentQueue<T> _queue = new ConcurrentQueue<T>();
+
+        private readonly AutoResetEvent _workEvent = new AutoResetEvent( initialState: false );
+
+        private Boolean _isCompleteAdding;
 
         /// <summary>
         /// Adds the item to the queue.
@@ -63,6 +65,8 @@ namespace Librainian.Collections {
             this._workEvent.Set();
         }
 
+        public override void DisposeManaged() { }
+
         /// <summary>
         /// Provides a consuming enumerable of the items in the queue.
         /// </summary>
@@ -84,6 +88,7 @@ namespace Librainian.Collections {
 
                     // ensure all other consuming enumerables are unblocked when complete
                     this._workEvent.Set();
+
                     yield break;
                 }
 

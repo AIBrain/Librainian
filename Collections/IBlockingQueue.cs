@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/IBlockingQueue.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/IBlockingQueue.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -51,43 +52,43 @@ namespace Librainian.Collections {
     /// <example> Usage example, based on a typical producer-consumer scenario.
     /// TODO: Convert non-generic example below to using generic version
     /// <code>
-    ///   class Producer : IRunnable {
-    ///          private IBlockingQueue queue;
-    ///       Producer(IBlockingQueue q) { queue = q; }
-    ///       public void Run() {
-    ///           try {
-    ///               while (true) {
-    ///                   queue.Put(produce());
-    ///               }
-    ///           } catch (InterruptedException ex) {
-    ///               ... handle ...
-    ///           }
-    ///       }
-    ///       Object Produce() { ... }
-    ///   }
+    ///    class Producer : IRunnable {
+    ///           private IBlockingQueue queue;
+    ///        Producer(IBlockingQueue q) { queue = q; }
+    ///        public void Run() {
+    ///            try {
+    ///                while (true) {
+    ///                    queue.Put(produce());
+    ///                }
+    ///            } catch (InterruptedException ex) {
+    ///                ... handle ...
+    ///            }
+    ///        }
+    ///        Object Produce() { ... }
+    ///    }
     ///
-    ///   class Consumer : IRunnable {
-    ///          private IBlockingQueue queue;
-    ///       Consumer(IBlockingQueue q) { queue = q; }
-    ///       public void Run() {
-    ///           try {
-    ///               while (true) { Consume(queue.Take()); }
-    ///           } catch (InterruptedException ex) { ... handle ...}
-    ///       }
-    ///       void Consume(object x) { ... }
-    ///   }
+    ///    class Consumer : IRunnable {
+    ///           private IBlockingQueue queue;
+    ///        Consumer(IBlockingQueue q) { queue = q; }
+    ///        public void Run() {
+    ///            try {
+    ///                while (true) { Consume(queue.Take()); }
+    ///            } catch (InterruptedException ex) { ... handle ...}
+    ///        }
+    ///        void Consume(object x) { ... }
+    ///    }
     ///
-    ///   class Setup {
-    ///          void Main() {
-    ///           IBlockingQueue q = new SomeQueueImplementation();
-    ///           Producer p = new Producer(q);
-    ///           Consumer c1 = new Consumer(q);
-    ///           Consumer c2 = new Consumer(q);
-    ///           new Thread(new ThreadStart(p.Run)).Start();
-    ///           new Thread(new ThreadStart(c1.Run)).Start();
-    ///           new Thread(new ThreadStart(c2.Run)).Start();
-    ///       }
-    ///   }
+    ///    class Setup {
+    ///           void Main() {
+    ///            IBlockingQueue q = new SomeQueueImplementation();
+    ///            Producer p = new Producer(q);
+    ///            Consumer c1 = new Consumer(q);
+    ///            Consumer c2 = new Consumer(q);
+    ///            new Thread(new ThreadStart(p.Run)).Start();
+    ///            new Thread(new ThreadStart(c1.Run)).Start();
+    ///            new Thread(new ThreadStart(c2.Run)).Start();
+    ///        }
+    ///    }
     /// </code>
     /// </example>
     /// </remarks>
@@ -97,6 +98,7 @@ namespace Librainian.Collections {
     /// <author>Kenneth Xu</author>
     internal interface IBlockingQueue<T> : IQueue<T> //JDK_1_6
     {
+
         /// <summary>
         /// Removes all available elements from this queue and adds them to the given collection.
         /// </summary>

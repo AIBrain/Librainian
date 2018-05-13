@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/TrainingQueue.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/TrainingQueue.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -22,18 +23,20 @@ namespace Librainian.Collections {
     using Magic;
 
     public class TrainingQueue : ABetterClassDispose {
+
         private readonly ManualResetEvent _bob = new ManualResetEvent( initialState: false );
+
         public readonly ConcurrentQueue<TrainingQueueItem> Items = new ConcurrentQueue<TrainingQueueItem>();
 
         //public readonly ConcurrentStack<TrainingQueueItem> Items = new ConcurrentStack<TrainingQueueItem>();
         public TrainingQueue() => this._bob.Reset();
 
+        public TrainingQueueItem Dequeue() => this.Items.Remove();
+
         /// <summary>
         /// Dispose any disposable members.
         /// </summary>
-        protected override void DisposeManaged() => this._bob.Dispose();
-
-        public TrainingQueueItem Dequeue() => this.Items.Remove();
+        public override void DisposeManaged() => this._bob.Dispose();
 
         public void Enqueue( TrainingQueueItem train ) {
             this.Items.Add( item: train );

@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ConcurrentSet.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/ConcurrentSet.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -20,7 +21,6 @@ namespace Librainian.Collections {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.CompilerServices;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -117,6 +117,7 @@ namespace Librainian.Collections {
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other"/> is null.</exception>
         public void IntersectWith( IEnumerable<T> other ) {
             var enumerable = other as IList<T> ?? other.ToArray();
+
             foreach ( var item in this.Where( item => !enumerable.Contains( item: item ) ) ) {
                 this.TryRemove( item: item );
             }
@@ -130,6 +131,7 @@ namespace Librainian.Collections {
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other"/> is null.</exception>
         public Boolean IsProperSubsetOf( IEnumerable<T> other ) {
             var enumerable = other as IList<T> ?? other.ToArray();
+
             return this.Count != enumerable.Count && this.IsSubsetOf( other: enumerable );
         }
 
@@ -141,6 +143,7 @@ namespace Librainian.Collections {
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other"/> is null.</exception>
         public Boolean IsProperSupersetOf( IEnumerable<T> other ) {
             var enumerable = other as IList<T> ?? other.ToArray();
+
             return this.Count != enumerable.Count && this.IsSupersetOf( other: enumerable );
         }
 
@@ -152,6 +155,7 @@ namespace Librainian.Collections {
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other"/> is null.</exception>
         public Boolean IsSubsetOf( IEnumerable<T> other ) {
             var enumerable = other as IList<T> ?? other.ToArray();
+
             return this.AsParallel().All( enumerable.Contains );
         }
 
@@ -190,6 +194,7 @@ namespace Librainian.Collections {
         /// <exception cref="T:System.ArgumentNullException"><paramref name="other"/> is null.</exception>
         public Boolean SetEquals( IEnumerable<T> other ) {
             var enumerable = other as IList<T> ?? other.ToArray();
+
             return this.Count == enumerable.Count && enumerable.AsParallel().All( this.Contains );
         }
 
@@ -208,17 +213,19 @@ namespace Librainian.Collections {
 
         public Boolean TryAdd( T item ) => this._dictionary.TryAdd( item, value: null );
 
-        public Boolean TryGet( T item ) => this._dictionary.TryGetValue( item, out var _ );
+        public Boolean TryGet( T item ) => this._dictionary.TryGetValue( item, out _ );
 
         public Boolean TryRemove( T item ) => this._dictionary.TryRemove( item, value: out _ );
 
         public Boolean TryTakeAny( out T item ) {
             foreach ( var pair in this._dictionary ) {
                 item = pair.Key;
+
                 return true;
             }
 
             item = default;
+
             return false;
         }
 

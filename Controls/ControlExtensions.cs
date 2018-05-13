@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ControlExtensions.cs" was last cleaned by Protiguous on 2016/06/18 at 10:50 PM
+// "Librainian/ControlExtensions.cs" was last cleaned by Protiguous on 2018/05/12 at 1:21 AM
 
 namespace Librainian.Controls {
 
@@ -42,14 +38,16 @@ namespace Librainian.Controls {
 
     public static class ControlExtensions {
 
-        public static ConcurrentDictionary< Control, Int32 > TurnOnOrOffReqests { get; } = new ConcurrentDictionary< Control, Int32 >();
+        public static ConcurrentDictionary<Control, Int32> TurnOnOrOffReqests { get; } = new ConcurrentDictionary<Control, Int32>();
 
-		public static void AppendLine( this RichTextBox box, String text, Color color, params Object[] args ) => box.AppendText( $"\n{text}", color == Color.Empty ? box.ForeColor : color, args );
+        public static void AppendLine( this RichTextBox box, String text, Color color, params Object[] args ) => box.AppendText( $"\n{text}", color == Color.Empty ? box.ForeColor : color, args );
 
-		public static void AppendText( this RichTextBox box, String text, Color color, params Object[] args ) {
+        public static void AppendText( this RichTextBox box, String text, Color color, params Object[] args ) {
             text = String.Format( text, args );
+
             if ( color == Color.Empty ) {
                 box.AppendText( text );
+
                 return;
             }
 
@@ -74,30 +72,36 @@ namespace Librainian.Controls {
             return Color.FromArgb( r, g, b );
         }
 
-        /// <summary>Just changes the cursor to the <see cref="Cursors.WaitCursor" />.</summary>
+        /// <summary>
+        /// Just changes the cursor to the <see cref="Cursors.WaitCursor"/>.
+        /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
         public static void BusyCursor( [CanBeNull] this Control control ) => ThreadingExtensions.Wrap( () => control?.InvokeIfRequired( () => control.Cursor = Cursors.WaitCursor ) );
 
-        /// <summary>Threadsafe <see cref="CheckBox.Checked" /> check.</summary>
+        /// <summary>
+        /// Threadsafe <see cref="CheckBox.Checked"/> check.
+        /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
         public static Boolean Checked( [CanBeNull] this CheckBox control ) {
             if ( null == control ) {
                 return false;
             }
-            return control.InvokeRequired ? ( Boolean )control.Invoke( new Func< Boolean >( () => control.Checked ) ) : control.Checked;
+
+            return control.InvokeRequired ? ( Boolean )control.Invoke( new Func<Boolean>( () => control.Checked ) ) : control.Checked;
         }
 
         /// <summary>
-        ///     Safely set the <see cref="CheckBox.Checked" /> of the control across threads.
+        /// Safely set the <see cref="CheckBox.Checked"/> of the control across threads.
         /// </summary>
         /// <param name="control"></param>
-        /// <param name="value"></param>
+        /// <param name="value">  </param>
         public static void Checked( [CanBeNull] this CheckBox control, Boolean value ) {
             if ( null == control ) {
                 return;
             }
+
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
                     control.Checked = value;
@@ -123,6 +127,7 @@ namespace Librainian.Controls {
                 var div = browser.Document.CreateElement( "DIV" );
 
                 var span = browser.Document.CreateElement( "SPAN" );
+
                 if ( message.StartsWith( "ECHO:" ) ) {
                     if ( span != null ) {
                         span.InnerText = message.Replace( "ECHO:", String.Empty );
@@ -131,6 +136,7 @@ namespace Librainian.Controls {
                 }
                 else if ( message.StartsWith( "INFO:" ) ) {
                     message = message.Replace( "INFO:", String.Empty );
+
                     if ( message.StartsWith( "<" ) ) {
                         if ( span != null ) {
                             span.InnerHtml = message;
@@ -155,12 +161,15 @@ namespace Librainian.Controls {
                     if ( span != null ) {
                         div.AppendChild( span );
                     }
+
                     while ( null == browser.Document.Body ) {
                         Application.DoEvents();
                     }
+
                     browser.Document.Body.AppendChild( div );
                     div.ScrollIntoView( false );
                 }
+
                 browser.Update();
 
                 //Application.DoEvents();
@@ -170,12 +179,12 @@ namespace Librainian.Controls {
             catch ( Exception exception ) {
                 exception.More();
             }
+
             return false;
         }
 
         /// <summary>
-        ///     Returns a contrasting ForeColor for the specified BackColor.  If the source BackColor is dark,
-        ///     then the lightForeColor is returned.  If the BackColor is light, then the darkForeColor is returned.
+        /// Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the lightForeColor is returned. If the BackColor is light, then the darkForeColor is returned.
         /// </summary>
         public static Color DetermineForecolor( this Color thisColor, Color lightForeColor, Color darkForeColor ) {
 
@@ -186,41 +195,45 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        ///     Returns a contrasting ForeColor for the specified BackColor.  If the source BackColor is dark,
-        ///     then the White is returned.  If the BackColor is light, then the Black is returned.
+        /// Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the White is returned. If the BackColor is light, then the Black is returned.
         /// </summary>
         public static Color DetermineForecolor( this Color thisColor ) => DetermineForecolor( thisColor, Color.White, Color.Black );
 
-		/// <summary>
-		///     Safely set the <see cref="Control.Enabled" /> of the control across threads.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="value"></param>
-		/// <param name="refresh"></param>
-		public static void Enabled( this Control control, Boolean value, Boolean refresh = true ) => control?.InvokeIfRequired( () => {
-			if ( control.IsDisposed ) {
-				return;
-			}
-			control.Enabled = value;
-			if ( refresh ) {
-				control.Refresh();
-			}
-		} );
+        /// <summary>
+        /// Safely set the <see cref="Control.Enabled"/> of the control across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="value">  </param>
+        /// <param name="refresh"></param>
+        public static void Enabled( this Control control, Boolean value, Boolean refresh = true ) =>
+            control?.InvokeIfRequired( () => {
+                if ( control.IsDisposed ) {
+                    return;
+                }
 
-		/// <summary>
-		///     Safely set the <see cref="Control.Enabled" /> of the control across threads.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="value"></param>
-		public static void Enabled( this ToolStripProgressBar control, Boolean value ) {
+                control.Enabled = value;
+
+                if ( refresh ) {
+                    control.Refresh();
+                }
+            } );
+
+        /// <summary>
+        /// Safely set the <see cref="Control.Enabled"/> of the control across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="value">  </param>
+        public static void Enabled( this ToolStripProgressBar control, Boolean value ) {
             if ( control?.ProgressBar is null ) {
                 return;
             }
+
             if ( control.ProgressBar.InvokeRequired ) {
                 control.ProgressBar.BeginInvoke( new Action( () => {
                     if ( control.IsDisposed ) {
                         return;
                     }
+
                     control.Enabled = value;
                     control.ProgressBar.Refresh();
                 } ) );
@@ -231,7 +244,9 @@ namespace Librainian.Controls {
             }
         }
 
-        /// <summary>Flashes the control.</summary>
+        /// <summary>
+        /// Flashes the control.
+        /// </summary>
         /// <param name="control"></param>
         /// <param name="spanOff">How long to keep the control off before it resets.</param>
         [CanBeNull]
@@ -239,15 +254,18 @@ namespace Librainian.Controls {
             if ( null == control ) {
                 return null;
             }
+
             if ( !spanOff.HasValue ) {
                 spanOff = Milliseconds.One;
             }
+
             control.OnThread( () => {
                 var foreColor = control.ForeColor;
                 control.ForeColor = control.BackColor;
                 control.BackColor = foreColor;
                 control.Refresh();
             } );
+
             return ( spanOff ?? Milliseconds.One ).CreateTimer( () => control.OnThread( () => {
                 control.ResetForeColor();
                 control.ResetBackColor();
@@ -259,45 +277,53 @@ namespace Librainian.Controls {
             if ( control is null ) {
                 throw new ArgumentNullException( nameof( control ) );
             }
+
             await Seconds.Five.Then( async () => {
                 if ( !input.Text().IsNullOrWhiteSpace() ) {
                     return;
                 }
+
                 control.Flash( Seconds.One );
                 await input.FlashWhileBlank( control );
             } );
         }
 
-		/// <summary>
-		///     Set <see cref="Control.Focus" /> across threads.
-		/// </summary>
-		/// <param name="control"></param>
-		public static void Fokus( [CanBeNull] this Control control ) => control?.InvokeIfRequired( () => {
-			if ( control.IsDisposed ) {
-				return;
-			}
-			control.Focus();
-		} );
+        /// <summary>
+        /// Set <see cref="Control.Focus"/> across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        public static void Fokus( [CanBeNull] this Control control ) =>
+            control?.InvokeIfRequired( () => {
+                if ( control.IsDisposed ) {
+                    return;
+                }
 
-		/// <summary>Threadsafe <see cref="Control.ForeColor" /> check.</summary>
-		/// <param name="control"></param>
-		/// <returns></returns>
-		public static Color ForeColor( [CanBeNull] this Control control ) {
+                control.Focus();
+            } );
+
+        /// <summary>
+        /// Threadsafe <see cref="Control.ForeColor"/> check.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <returns></returns>
+        public static Color ForeColor( [CanBeNull] this Control control ) {
             if ( null == control ) {
                 return default;
             }
-            return control.InvokeRequired ? ( Color )control.Invoke( new Func< Color >( () => control.ForeColor ) ) : control.ForeColor;
+
+            return control.InvokeRequired ? ( Color )control.Invoke( new Func<Color>( () => control.ForeColor ) ) : control.ForeColor;
         }
 
         /// <summary>
-        ///     Safely set the <see cref="Control.ForeColor" /> of the control across threads.
+        /// Safely set the <see cref="Control.ForeColor"/> of the control across threads.
         /// </summary>
         /// <param name="control"></param>
-        /// <param name="value"></param>
+        /// <param name="value">  </param>
         public static void ForeColor( [CanBeNull] this Control control, Color value ) {
             if ( null == control ) {
                 return;
             }
+
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
                     control.ForeColor = value;
@@ -315,14 +341,16 @@ namespace Librainian.Controls {
             window.WindowStyle = WindowStyle.None;
         }
 
-        public static void InvokeA<T>( this T invokable, Action< T > action, T argument = default ) where T : ISynchronizeInvoke {
+        public static void InvokeA<T>( this T invokable, Action<T> action, T argument = default ) where T : ISynchronizeInvoke {
             try {
                 if ( Equals( invokable, default ) ) {
                     return;
                 }
+
                 if ( invokable is Control && ( invokable as Control ).IsDisposed ) {
                     return;
                 }
+
                 if ( invokable.InvokeRequired ) {
                     invokable.Invoke( action, new Object[] { argument } );
                 }
@@ -335,50 +363,52 @@ namespace Librainian.Controls {
             }
         }
 
-		public static void InvokeAppendLine( this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker )delegate {
-			box.AppendLine( text, color, args );
-		} );
+        public static void InvokeAppendLine( this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker )delegate { box.AppendLine( text, color, args ); } );
 
-		public static void InvokeAppendText( this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker )delegate {
-			box.AppendText( text, color, args );
-		} );
+        public static void InvokeAppendText( this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker )delegate { box.AppendText( text, color, args ); } );
 
-		public static T InvokeF<T>( this T invokable, Func< T > function, T argument = default ) where T : class, ISynchronizeInvoke {
+        public static T InvokeF<T>( this T invokable, Func<T> function, T argument = default ) where T : class, ISynchronizeInvoke {
             if ( invokable.InvokeRequired ) {
-                if ( invokable is Control && ( invokable as Control ).IsDisposed ) {
-                }
+                if ( invokable is Control && ( invokable as Control ).IsDisposed ) { }
                 else {
                     return invokable.Invoke( function, new Object[] { argument } ) as T;
                 }
             }
+
             return function();
         }
 
         /// <summary>
-        ///     <para>Perform an <see cref="Action" /> on the control's thread and then <see cref="Control.Refresh" />.</para>
+        /// <para>Perform an <see cref="Action"/> on the control's thread and then <see cref="Control.Refresh"/>.</para>
         /// </summary>
         /// <param name="control"></param>
-        /// <param name="action"></param>
+        /// <param name="action"> </param>
         /// <param name="refresh"></param>
-        /// <seealso />
+        /// <seealso/>
         public static void InvokeIfRequired( [NotNull] this Control control, [NotNull] Action action, Boolean refresh = true ) {
             if ( control is null ) {
                 throw new ArgumentNullException( nameof( control ) );
             }
+
             if ( action is null ) {
                 throw new ArgumentNullException( nameof( action ) );
             }
+
             if ( control.IsDisposed ) {
                 return;
             }
+
             if ( control.InvokeRequired ) {
                 control.Invoke( action );
+
                 if ( !refresh ) {
                     return;
                 }
+
                 if ( control.IsDisposed ) {
                     return;
                 }
+
                 action = control.Refresh;
                 control.Invoke( action );
             }
@@ -386,7 +416,9 @@ namespace Librainian.Controls {
                 if ( control.IsDisposed ) {
                     return;
                 }
+
                 action();
+
                 if ( !control.IsDisposed && refresh ) {
                     control.Refresh();
                 }
@@ -399,16 +431,44 @@ namespace Librainian.Controls {
 
         public static Boolean IsNormal( this Window window ) => window.WindowState == WindowState.Normal && window.WindowStyle != WindowStyle.None;
 
-		/// <summary>Safely set the <see cref="Control.Text" /> of a control across threads.</summary>
-		/// <remarks></remarks>
-		public static void Location( [CanBeNull] this Form form, Point location ) => form?.InvokeIfRequired( () => {
-			if ( form.IsDisposed ) {
-				return;
-			}
-			form.Location = location;
-		} );
+        public static void LoadPosition( [NotNull] this Form form, [CanBeNull] Ini settings ) {
+            if ( form is null ) {
+                throw new ArgumentNullException( nameof( form ) );
+            }
 
-		public static Color MakeDarker( this Color thisColor, Double darknessPercent ) {
+            if ( settings is null ) {
+                throw new ArgumentNullException( nameof( settings ) );
+            }
+
+            var name = form.Name ?? "UnknownForm";
+
+            if ( Int32.TryParse( settings[name, nameof( Point.X )], out var x ) && Int32.TryParse( settings[name, nameof( Point.Y )], out var y ) ) {
+                form.SuspendLayout();
+                form.Location( new Point( x, y ) );
+                form.ResumeLayout();
+            }
+
+            if ( Int32.TryParse( settings[name, nameof( form.Size.Width )], out var width ) && Int32.TryParse( settings[name, nameof( form.Size.Height )], out var height ) ) {
+                form.SuspendLayout();
+                form.Size( new Size( width, height ) );
+                form.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// Safely set the <see cref="Control.Text"/> of a control across threads.
+        /// </summary>
+        /// <remarks></remarks>
+        public static void Location( [CanBeNull] this Form form, Point location ) =>
+            form?.InvokeIfRequired( () => {
+                if ( form.IsDisposed ) {
+                    return;
+                }
+
+                form.Location = location;
+            } );
+
+        public static Color MakeDarker( this Color thisColor, Double darknessPercent ) {
             darknessPercent = darknessPercent.ForceBounds( 0, 1 );
 
             return Blend( thisColor, Color.Black, darknessPercent );
@@ -429,8 +489,10 @@ namespace Librainian.Controls {
         public static async Task MarqueeAsync( [CanBeNull] this Control control, TimeSpan timeSpan, [CanBeNull] String message ) {
             control.Text( message );
             var until = DateTime.Now.Add( timeSpan );
+
             await Task.Run( () => {
                 var stopwatch = StopWatch.StartNew();
+
                 do {
                     stopwatch.Restart();
                     control.Flash();
@@ -441,83 +503,95 @@ namespace Librainian.Controls {
             } );
         }
 
-        /// <summary>Threadsafe get.</summary>
+        /// <summary>
+        /// Threadsafe get.
+        /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
         public static Int32 Maximum( [CanBeNull] this ProgressBar control ) {
             if ( null == control ) {
                 return 0;
             }
-            return control.InvokeRequired ? ( Int32 )control.Invoke( new Func< Int32 >( () => control.Maximum ) ) : control.Maximum;
+
+            return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Maximum ) ) : control.Maximum;
         }
 
-		/// <summary>
-		///     Safely set the <see cref="ProgressBar.Maximum" /> of the <see cref="ProgressBar" />
-		///     across threads.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="value"></param>
-		public static void Maximum( [CanBeNull] this ProgressBar control, Int32 value ) => control?.OnThread( () => {
-			if ( control.IsDisposed ) {
-				return;
-			}
-			control.Maximum = value;
-			control.Refresh();
-		} );
+        /// <summary>
+        /// Safely set the <see cref="ProgressBar.Maximum"/> of the <see cref="ProgressBar"/> across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="value">  </param>
+        public static void Maximum( [CanBeNull] this ProgressBar control, Int32 value ) =>
+            control?.OnThread( () => {
+                if ( control.IsDisposed ) {
+                    return;
+                }
 
-		/// <summary>Threadsafe get.</summary>
-		/// <param name="control"></param>
-		/// <returns></returns>
-		public static Int32 Minimum( [CanBeNull] this ProgressBar control ) {
+                control.Maximum = value;
+                control.Refresh();
+            } );
+
+        /// <summary>
+        /// Threadsafe get.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <returns></returns>
+        public static Int32 Minimum( [CanBeNull] this ProgressBar control ) {
             if ( null == control ) {
                 return 0;
             }
-            return control.InvokeRequired ? ( Int32 )control.Invoke( new Func< Int32 >( () => control.Minimum ) ) : control.Minimum;
+
+            return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Minimum ) ) : control.Minimum;
         }
 
-		/// <summary>
-		///     Safely set the <see cref="ProgressBar.Minimum" /> of the <see cref="ProgressBar" />
-		///     across threads.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="value"></param>
-		public static void Minimum( [CanBeNull] this ProgressBar control, Int32 value ) => control?.InvokeIfRequired( () => {
-			if ( control.IsDisposed ) {
-				return;
-			}
-			control.Minimum = value;
-			control.Refresh();
-		} );
+        /// <summary>
+        /// Safely set the <see cref="ProgressBar.Minimum"/> of the <see cref="ProgressBar"/> across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="value">  </param>
+        public static void Minimum( [CanBeNull] this ProgressBar control, Int32 value ) =>
+            control?.InvokeIfRequired( () => {
+                if ( control.IsDisposed ) {
+                    return;
+                }
 
-		/// <summary>
-		///     <para>Perform an <see cref="Action" /> on the control's thread and then <see cref="Control.Refresh" />.</para>
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="action"></param>
-		/// <param name="refresh"></param>
-		/// <seealso cref="InvokeIfRequired" />
-		public static void OnThread( [CanBeNull] this Control control, [CanBeNull] Action action, Boolean refresh = true ) {
+                control.Minimum = value;
+                control.Refresh();
+            } );
+
+        /// <summary>
+        /// <para>Perform an <see cref="Action"/> on the control's thread and then <see cref="Control.Refresh"/>.</para>
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="action"> </param>
+        /// <param name="refresh"></param>
+        /// <seealso cref="InvokeIfRequired"/>
+        public static void OnThread( [CanBeNull] this Control control, [CanBeNull] Action action, Boolean refresh = true ) {
             if ( null == control ) {
                 return;
             }
+
             if ( null == action ) {
                 return;
             }
+
             control.InvokeIfRequired( action, refresh );
         }
 
         /// <summary>
-        ///     Perform an <see cref="Action" /> on a <see cref="ToolStripItem" />'s thread.
+        /// Perform an <see cref="Action"/> on a <see cref="ToolStripItem"/>'s thread.
         /// </summary>
         /// <param name="control"></param>
-        /// <param name="action"></param>
+        /// <param name="action"> </param>
         public static void OnThread( [CanBeNull] this ToolStripItem control, [CanBeNull] Action action ) {
             if ( null == control ) {
                 return;
             }
+
             if ( null == action ) {
                 return;
             }
+
             var parent = control.GetCurrentParent() as Control;
             parent?.OnThread( action );
         }
@@ -526,6 +600,7 @@ namespace Librainian.Controls {
             if ( browser is null ) {
                 return;
             }
+
             if ( browser.InvokeRequired ) {
                 browser.BeginInvoke( new Action( () => CreateDivInsideBrowser( ref browser, message ) ) );
             }
@@ -535,19 +610,19 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        ///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
+        /// <para>A threadsafe <see cref="Button.PerformClick"/>.</para>
         /// </summary>
         /// <param name="control"></param>
-        /// <param name="delay"></param>
+        /// <param name="delay">  </param>
         /// <returns></returns>
-        /// <seealso cref="Push" />
+        /// <seealso cref="Push"/>
         public static void PerformClickThreadSafe( [CanBeNull] this Button control, TimeSpan? delay = null ) => control?.Push( delay );
 
         /// <summary>
-        ///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
+        /// <para>A threadsafe <see cref="Button.PerformClick"/>.</para>
         /// </summary>
-        /// <param name="control"></param>
-        /// <param name="delay"></param>
+        /// <param name="control">   </param>
+        /// <param name="delay">     </param>
         /// <param name="afterDelay"></param>
         /// <returns></returns>
         public static Timer Push( [NotNull] this Button control, TimeSpan? delay = null, Action afterDelay = null ) {
@@ -555,13 +630,15 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( nameof( control ) );
             }
 
-            return (delay ?? Milliseconds.One ).CreateTimer( () => control.InvokeIfRequired( () => {
+            return ( delay ?? Milliseconds.One ).CreateTimer( () => control.InvokeIfRequired( () => {
                 control.PerformClick();
                 afterDelay?.Invoke();
             } ) ).AndStart();
         }
 
-        /// <summary>Threadsafe <see cref="Control.Refresh" />.</summary>
+        /// <summary>
+        /// Threadsafe <see cref="Control.Refresh"/>.
+        /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
         public static void Redraw( [CanBeNull] this Control control ) => control?.InvokeIfRequired( control.Refresh );
@@ -570,8 +647,9 @@ namespace Librainian.Controls {
             if ( browser?.Document is null ) {
                 return false;
             }
+
             while ( null != browser.Document && browser.Document.GetElementsByTagName( tagName ).Count > keepAtMost ) {
-                var item = browser.Document.GetElementsByTagName( tagName )[ 0 ];
+                var item = browser.Document.GetElementsByTagName( tagName )[0];
                 item.OuterHtml = String.Empty;
                 browser.BeginInvoke( new Action( browser.Update ) );
             }
@@ -579,38 +657,59 @@ namespace Librainian.Controls {
             return true;
         }
 
-		/// <summary>
-		///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="value"></param>
-		public static void Reset( [CanBeNull] this ProgressBar control, Int32? value = null ) => control?.Value( value ?? control.Minimum() );
+        /// <summary>
+        /// Safely set the <see cref="ProgressBar.Value"/> of the <see cref="ProgressBar"/> across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="value">  </param>
+        public static void Reset( [CanBeNull] this ProgressBar control, Int32? value = null ) => control?.Value( value ?? control.Minimum() );
 
-		/// <summary>Just changes the cursor to the <see cref="Cursors.Default" />.</summary>
-		/// <param name="control"></param>
-		/// <returns></returns>
-		public static void ResetCursor( [NotNull] this Control control ) {
+        /// <summary>
+        /// Just changes the cursor to the <see cref="Cursors.Default"/>.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <returns></returns>
+        public static void ResetCursor( [NotNull] this Control control ) {
             if ( control is null ) {
                 throw new ArgumentNullException( nameof( control ) );
             }
+
             ThreadingExtensions.Wrap( () => control.OnThread( () => {
                 control.ResetCursor();
                 control.Invalidate( invalidateChildren: false );
             } ) );
         }
 
+        public static void SavePosition( [NotNull] this Form form, [CanBeNull] Ini settings ) {
+            if ( form is null ) {
+                throw new ArgumentNullException( nameof( form ) );
+            }
+
+            if ( settings is null ) {
+                throw new ArgumentNullException( nameof( settings ) );
+            }
+
+            var name = form.Name ?? "UnknownForm";
+
+            settings[name, nameof( form.Size.Width )] = form.WindowState == FormWindowState.Normal ? form.Size.Width.ToString() : form.RestoreBounds.Size.Width.ToString();
+            settings[name, nameof( form.Size.Height )] = form.WindowState == FormWindowState.Normal ? form.Size.Height.ToString() : form.RestoreBounds.Size.Height.ToString();
+
+            settings[name, nameof( form.Location.X )] = form.WindowState == FormWindowState.Normal ? form.Location.X.ToString() : form.RestoreBounds.Location.X.ToString();
+            settings[name, nameof( form.Location.Y )] = form.WindowState == FormWindowState.Normal ? form.Location.Y.ToString() : form.RestoreBounds.Location.Y.ToString();
+        }
+
         /// <summary>
-        ///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
+        /// Safely set the <see cref="ProgressBar.Value"/> of the <see cref="ProgressBar"/> across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="minimum"></param>
-        /// <param name="value"></param>
+        /// <param name="value">  </param>
         /// <param name="maximum"></param>
-        /// <seealso cref="Values" />
+        /// <seealso cref="Values"/>
         public static void Set( [CanBeNull] this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) => control.Values( minimum: minimum, value: value, maximum: maximum );
 
         /// <summary>
-        ///     Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.
+        /// Safely get the <see cref="Form.Size"/>() of a <see cref="Form"/> across threads.
         /// </summary>
         /// <param name="form"></param>
         /// <returns></returns>
@@ -618,91 +717,110 @@ namespace Librainian.Controls {
             if ( null == form ) {
                 return new Size();
             }
-            return form.InvokeRequired ? ( Size )form.Invoke( new Func< Size >( () => form.Size ) ) : form.Size;
-        }
 
-		/// <summary>Safely set the <see cref="Control.Text" /> of a control across threads.</summary>
-		/// <remarks></remarks>
-		public static void Size( [CanBeNull] this Form form, Size size ) => form?.InvokeIfRequired( () => {
-			if ( form.IsDisposed ) {
-				return;
-			}
-			form.Size = size;
-		} );
-
-		/// <summary>Safely perform the <see cref="ProgressBar.PerformStep" /> across threads.</summary>
-		/// <param name="control"></param>
-		public static void Step( [CanBeNull] this ProgressBar control ) => control?.OnThread( () => {
-            if ( control.IsDisposed ) {
-                return;
-            }
-            if ( control.Style != ProgressBarStyle.Marquee ) {
-                control.PerformStep();
-            }
-            control.Refresh();
-        } );
-
-        /// <summary>Safely perform the <see cref="ProgressBar.PerformStep" /> across threads.</summary>
-        /// <param name="control"></param>
-        public static void Step( [CanBeNull] this ToolStripProgressBar control ) => control?.OnThread( () => {
-            if ( control.IsDisposed ) {
-                return;
-            }
-            control.PerformStep();
-            if ( !control.IsDisposed ) {
-                control.ProgressBar?.Refresh();
-            }
-        } );
-
-		/// <summary>
-		///     Safely set the <see cref="ProgressBar.Step" /> of the <see cref="ProgressBar" /> across threads.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="value"></param>
-		public static void Step( [CanBeNull] this ProgressBar control, Int32 value ) => control?.OnThread( () => {
-			if ( control.IsDisposed ) {
-				return;
-			}
-			control.Step = value;
-			control.Refresh();
-		} );
-
-		/// <summary>
-		///     Safely set the <see cref="ProgressBar.Style" /> of the <see cref="ProgressBar" /> across threads.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="value"></param>
-		public static void Style( [CanBeNull] this ProgressBar control, ProgressBarStyle value ) => control?.OnThread( () => {
-			if ( control.IsDisposed ) {
-				return;
-			}
-			control.Style = value;
-			control.Refresh();
-		} );
-
-		/// <summary>
-		///     <para>
-		///         Safely get the <see cref="Control.Text" /> of a <see cref="Control" /> across threads.
-		///     </para>
-		/// </summary>
-		/// <param name="control"></param>
-		/// <returns></returns>
-		public static String Text( [CanBeNull] this Control control ) {
-            if ( null == control ) {
-                return String.Empty;
-            }
-            return control.InvokeRequired ? control.Invoke( new Func< String >( () => control.Text ) ) as String ?? String.Empty : control.Text;
+            return form.InvokeRequired ? ( Size )form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
         }
 
         /// <summary>
-        ///     Safely set the <see cref="ToolStripItem.Text" /> of the control across threads.
+        /// Safely set the <see cref="Control.Text"/> of a control across threads.
+        /// </summary>
+        /// <remarks></remarks>
+        public static void Size( [CanBeNull] this Form form, Size size ) =>
+            form?.InvokeIfRequired( () => {
+                if ( form.IsDisposed ) {
+                    return;
+                }
+
+                form.Size = size;
+            } );
+
+        /// <summary>
+        /// Safely perform the <see cref="ProgressBar.PerformStep"/> across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        public static void Step( [CanBeNull] this ProgressBar control ) =>
+            control?.OnThread( () => {
+                if ( control.IsDisposed ) {
+                    return;
+                }
+
+                if ( control.Style != ProgressBarStyle.Marquee ) {
+                    control.PerformStep();
+                }
+
+                control.Refresh();
+            } );
+
+        /// <summary>
+        /// Safely perform the <see cref="ProgressBar.PerformStep"/> across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        public static void Step( [CanBeNull] this ToolStripProgressBar control ) =>
+            control?.OnThread( () => {
+                if ( control.IsDisposed ) {
+                    return;
+                }
+
+                control.PerformStep();
+
+                if ( !control.IsDisposed ) {
+                    control.ProgressBar?.Refresh();
+                }
+            } );
+
+        /// <summary>
+        /// Safely set the <see cref="ProgressBar.Step"/> of the <see cref="ProgressBar"/> across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="value">  </param>
+        public static void Step( [CanBeNull] this ProgressBar control, Int32 value ) =>
+            control?.OnThread( () => {
+                if ( control.IsDisposed ) {
+                    return;
+                }
+
+                control.Step = value;
+                control.Refresh();
+            } );
+
+        /// <summary>
+        /// Safely set the <see cref="ProgressBar.Style"/> of the <see cref="ProgressBar"/> across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="value">  </param>
+        public static void Style( [CanBeNull] this ProgressBar control, ProgressBarStyle value ) =>
+            control?.OnThread( () => {
+                if ( control.IsDisposed ) {
+                    return;
+                }
+
+                control.Style = value;
+                control.Refresh();
+            } );
+
+        /// <summary>
+        /// <para>Safely get the <see cref="Control.Text"/> of a <see cref="Control"/> across threads.</para>
+        /// </summary>
+        /// <param name="control"></param>
+        /// <returns></returns>
+        public static String Text( [CanBeNull] this Control control ) {
+            if ( null == control ) {
+                return String.Empty;
+            }
+
+            return control.InvokeRequired ? control.Invoke( new Func<String>( () => control.Text ) ) as String ?? String.Empty : control.Text;
+        }
+
+        /// <summary>
+        /// Safely set the <see cref="ToolStripItem.Text"/> of the control across threads.
         /// </summary>
         /// <param name="toolStripItem"></param>
-        /// <param name="value"></param>
+        /// <param name="value">        </param>
         public static void Text( [CanBeNull] this ToolStripItem toolStripItem, [CanBeNull] String value ) {
             if ( null == toolStripItem ) {
                 return;
             }
+
             if ( toolStripItem.IsDisposed ) {
                 return;
             }
@@ -711,35 +829,39 @@ namespace Librainian.Controls {
                 if ( toolStripItem.IsDisposed ) {
                     return;
                 }
+
                 toolStripItem.Text = value;
                 toolStripItem.Invalidate();
             } );
         }
 
-		/// <summary>
-		///     <para>Safely set the <see cref="Control.Text" /> of a control across threads.</para>
-		/// </summary>
-		/// <remarks></remarks>
-		/// <param name="control"></param>
-		/// <param name="value"></param>
-		/// <seealso cref="http://kristofverbiest.blogspot.com/2007/02/don-confuse-controlbegininvoke-with.html" />
-		/// <seealso
-		///     cref="http://programmers.stackexchange.com/questions/114605/how-will-c-5-async-support-help-ui-thread-synchronization-issues" />
-		public static void Text( [CanBeNull] this Control control, [CanBeNull] String value ) => control?.InvokeIfRequired( () => {
-			if ( control.IsDisposed ) {
-				return;
-			}
-			control.Text = value;
-			control.Invalidate();
-		} );
+        /// <summary>
+        /// <para>Safely set the <see cref="Control.Text"/> of a control across threads.</para>
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="control"></param>
+        /// <param name="value">  </param>
+        /// <seealso cref="http://kristofverbiest.blogspot.com/2007/02/don-confuse-controlbegininvoke-with.html"/>
+        /// <seealso cref="http://programmers.stackexchange.com/questions/114605/how-will-c-5-async-support-help-ui-thread-synchronization-issues"/>
+        public static void Text( [CanBeNull] this Control control, [CanBeNull] String value ) =>
+            control?.InvokeIfRequired( () => {
+                if ( control.IsDisposed ) {
+                    return;
+                }
 
-		public static void TextAdd( [CanBeNull] this RichTextBox textBox, [CanBeNull] String message ) {
+                control.Text = value;
+                control.Invalidate();
+            } );
+
+        public static void TextAdd( [CanBeNull] this RichTextBox textBox, [CanBeNull] String message ) {
             if ( textBox is null ) {
                 return;
             }
+
             if ( message is null ) {
                 return;
             }
+
             var method = new Action( () => {
                 if ( textBox.IsDisposed ) {
                     return;
@@ -748,10 +870,12 @@ namespace Librainian.Controls {
                 textBox.AppendText( message );
 
                 var lines = textBox.Lines.ToList();
+
                 if ( lines.Count > 20 ) {
                     while ( lines.Count > 20 ) {
                         lines.RemoveAt( 0 );
                     }
+
                     textBox.Lines = lines.ToArray();
                 }
 
@@ -772,6 +896,7 @@ namespace Librainian.Controls {
             if ( textBox.IsDisposed ) {
                 return;
             }
+
             if ( textBox.InvokeRequired ) {
                 textBox.BeginInvoke( method );
             }
@@ -784,9 +909,11 @@ namespace Librainian.Controls {
             if ( textBox is null ) {
                 throw new ArgumentNullException( nameof( textBox ) );
             }
+
             if ( text is null ) {
                 throw new ArgumentNullException( nameof( text ) );
             }
+
             textBox.SelectionStart = textBox.TextLength;
             textBox.SelectionLength = 0;
 
@@ -797,62 +924,60 @@ namespace Librainian.Controls {
 
         public static Int32 ToBGR( this Color thisColor ) => ( thisColor.B << 16 ) | ( thisColor.G << 8 ) | ( thisColor.R << 0 );
 
-	    public static Int32 ToRGB( this Color thisColor ) => thisColor.ToArgb() & 0xFFFFFF;
+        public static Int32 ToRGB( this Color thisColor ) => thisColor.ToArgb() & 0xFFFFFF;
 
-	    /// <summary>
-        ///     <para>
-        ///         Make this
-        ///         <param name="control"></param>
-        ///         not <see cref="Usable" />.
-        ///     </para>
+        /// <summary>
+        /// <para>Make this <param name="control"></param> not <see cref="Usable"/>.</para>
         /// </summary>
         /// <param name="control"></param>
         public static void TurnOff( this Control control ) {
             if ( !TurnOnOrOffReqests.ContainsKey( control ) ) {
-                TurnOnOrOffReqests[ control ] = 0;
+                TurnOnOrOffReqests[control] = 0;
             }
-            TurnOnOrOffReqests[ control ]--;
-            control.Usable( TurnOnOrOffReqests[ control ] <= 0 );
+
+            TurnOnOrOffReqests[control]--;
+            control.Usable( TurnOnOrOffReqests[control] <= 0 );
         }
 
         /// <summary>
-        ///     <para>
-        ///         Make this
-        ///         <param name="control"></param>
-        ///         <see cref="Usable" />.
-        ///     </para>
+        /// <para>Make this <param name="control"></param><see cref="Usable"/>.</para>
         /// </summary>
         /// <param name="control"></param>
         public static void TurnOn( [CanBeNull] this Control control ) {
             if ( null == control ) {
                 return;
             }
+
             if ( !TurnOnOrOffReqests.ContainsKey( control ) ) {
-                TurnOnOrOffReqests[ control ] = 0;
+                TurnOnOrOffReqests[control] = 0;
             }
-            TurnOnOrOffReqests[ control ]++;
-            control.Usable( TurnOnOrOffReqests[ control ] > 0 );
+
+            TurnOnOrOffReqests[control]++;
+            control.Usable( TurnOnOrOffReqests[control] > 0 );
         }
 
         /// <summary>
-        ///     Safely set the <see cref="Control.Enabled" /> and <see cref="Control.Visible" /> of a
-        ///     control across threads.
+        /// Safely set the <see cref="Control.Enabled"/> and <see cref="Control.Visible"/> of a control across threads.
         /// </summary>
         /// <param name="control"></param>
-        /// <param name="value"></param>
+        /// <param name="value">  </param>
         public static void Usable( this Control control, Boolean value ) {
             if ( null == control ) {
                 return;
             }
+
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
                     if ( control.IsDisposed ) {
                         return;
                     }
+
                     var anyChange = control.Visible != value || control.Enabled != value;
+
                     if ( !anyChange ) {
                         return;
                     }
+
                     control.Visible = value;
                     control.Enabled = value;
                     control.Refresh();
@@ -860,65 +985,77 @@ namespace Librainian.Controls {
             }
             else {
                 var anyChange = control.Visible != value || control.Enabled != value;
+
                 if ( !anyChange ) {
                     return;
                 }
+
                 control.Visible = value;
                 control.Enabled = value;
                 control.Refresh();
             }
         }
 
-        /// <summary>Threadsafe Value get.</summary>
+        /// <summary>
+        /// Threadsafe Value get.
+        /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
         public static Decimal Value( [CanBeNull] this NumericUpDown control ) {
             if ( null == control ) {
                 return Decimal.Zero;
             }
-            return control.InvokeRequired ? ( Decimal )control.Invoke( new Func< Decimal >( () => control.Value ) ) : control.Value;
+
+            return control.InvokeRequired ? ( Decimal )control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
         }
 
-        /// <summary>Threadsafe Value get.</summary>
+        /// <summary>
+        /// Threadsafe Value get.
+        /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
         public static Int32 Value( [CanBeNull] this ProgressBar control ) {
             if ( null == control ) {
                 return 0;
             }
-            return control.InvokeRequired ? ( Int32 )control.Invoke( new Func< Int32 >( () => control.Value ) ) : control.Value;
+
+            return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Value ) ) : control.Value;
         }
 
-		/// <summary>
-		///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="value"></param>
-		public static void Value( [CanBeNull] this ProgressBar control, Int32 value ) => control?.OnThread( () => {
-			if ( control.IsDisposed ) {
-				return;
-			}
-			if ( value > control.Maximum ) {
-				control.Maximum = value;
-			}
-			else if ( value < control.Minimum ) {
-				control.Minimum = value;
-			}
-			control.Value = value;
-			control.Refresh();
-		} );
+        /// <summary>
+        /// Safely set the <see cref="ProgressBar.Value"/> of the <see cref="ProgressBar"/> across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="value">  </param>
+        public static void Value( [CanBeNull] this ProgressBar control, Int32 value ) =>
+            control?.OnThread( () => {
+                if ( control.IsDisposed ) {
+                    return;
+                }
 
-		/// <summary>
-		///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="minimum"></param>
-		/// <param name="value"></param>
-		/// <param name="maximum"></param>
-		public static void Values( [CanBeNull] this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) {
+                if ( value > control.Maximum ) {
+                    control.Maximum = value;
+                }
+                else if ( value < control.Minimum ) {
+                    control.Minimum = value;
+                }
+
+                control.Value = value;
+                control.Refresh();
+            } );
+
+        /// <summary>
+        /// Safely set the <see cref="ProgressBar.Value"/> of the <see cref="ProgressBar"/> across threads.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="minimum"></param>
+        /// <param name="value">  </param>
+        /// <param name="maximum"></param>
+        public static void Values( [CanBeNull] this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) {
             if ( null == control ) {
                 return;
             }
+
             minimum.Should().BeLessOrEqualTo( maximum );
             value.Should().BeLessOrEqualTo( maximum );
             var lowEnd = Math.Min( minimum, maximum );
@@ -929,19 +1066,21 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        ///     Safely set the <see cref="Control.Visible" /> of the control across threads.
+        /// Safely set the <see cref="Control.Visible"/> of the control across threads.
         /// </summary>
         /// <param name="control"></param>
-        /// <param name="value"></param>
+        /// <param name="value">  </param>
         public static void Visible( this Control control, Boolean value ) {
             if ( null == control ) {
                 return;
             }
+
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
                     if ( control.IsDisposed ) {
                         return;
                     }
+
                     control.Visible = value;
                     control.Refresh();
                 } ) );
@@ -950,48 +1089,6 @@ namespace Librainian.Controls {
                 control.Visible = value;
                 control.Refresh();
             }
-        }
-
-        public static void LoadPosition( [ NotNull ] this Form form, [CanBeNull] Ini settings ) {
-            if ( form is null ) {
-                throw new ArgumentNullException( paramName: nameof(form) );
-            }
-
-            if ( settings is null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            var name = form.Name ?? "UnknownForm";
-
-            if ( Int32.TryParse( settings[ name, nameof( Point.X ) ], out var x ) && Int32.TryParse( settings[ name, nameof( Point.Y ) ], out var y ) ) {
-                form.SuspendLayout();
-                form.Location( new Point( x, y ) );
-                form.ResumeLayout();
-            }
-
-            if ( Int32.TryParse( settings[ name, nameof( form.Size.Width ) ], out var width ) && Int32.TryParse( settings[ name, nameof( form.Size.Height ) ], out var height ) ) {
-                form.SuspendLayout();
-                form.Size( new Size( width, height ) );
-                form.ResumeLayout();
-            }
-        }
-
-        public static void SavePosition( [ NotNull ] this Form form, [CanBeNull] Ini settings ) {
-            if ( form is null ) {
-                throw new ArgumentNullException( paramName: nameof(form) );
-            }
-
-            if ( settings is null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            var name = form.Name ?? "UnknownForm";
-
-            settings[ name, nameof( form.Size.Width ) ] = form.WindowState == FormWindowState.Normal ? form.Size.Width.ToString() : form.RestoreBounds.Size.Width.ToString();
-            settings[ name, nameof( form.Size.Height ) ] = form.WindowState == FormWindowState.Normal ? form.Size.Height.ToString() : form.RestoreBounds.Size.Height.ToString();
-
-            settings[ name, nameof( form.Location.X ) ] = form.WindowState == FormWindowState.Normal ? form.Location.X.ToString() : form.RestoreBounds.Location.X.ToString();
-            settings[ name, nameof( form.Location.Y ) ] = form.WindowState == FormWindowState.Normal ? form.Location.Y.ToString() : form.RestoreBounds.Location.Y.ToString();
         }
     }
 }

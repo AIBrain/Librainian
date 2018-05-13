@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ImmutableList.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/ImmutableList.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -29,6 +30,7 @@ namespace Librainian.Collections {
     /// <seealso cref="http://joeduffyblog.com/2007/11/11/immutable-types-for-c/"/>
     [Immutable]
     public sealed class ImmutableList<T> : IList<T> {
+
         private readonly T[] _mArray;
 
         /// <summary>
@@ -42,11 +44,11 @@ namespace Librainian.Collections {
         /// <param name="arrayToCopy">An array whose contents will be copied.</param>
         public ImmutableList( [NotNull] T[] arrayToCopy ) {
             if ( arrayToCopy is null ) {
-                throw new ArgumentNullException( paramName: nameof( arrayToCopy ) );
+                throw new ArgumentNullException( nameof( arrayToCopy ) );
             }
 
             this._mArray = new T[arrayToCopy.Length];
-            Array.Copy( sourceArray: arrayToCopy, destinationArray: this._mArray,arrayToCopy.Length );
+            Array.Copy( sourceArray: arrayToCopy, destinationArray: this._mArray, arrayToCopy.Length );
         }
 
         /// <summary>
@@ -99,6 +101,7 @@ namespace Librainian.Collections {
             var newArray = new T[this._mArray.Length + 1];
             this._mArray.CopyTo( array: newArray, index: 0 );
             newArray[this._mArray.Length] = value;
+
             return new ImmutableList<T>( arrayToCopy: newArray );
         }
 
@@ -116,9 +119,10 @@ namespace Librainian.Collections {
         /// <returns>A modified copy of this list.</returns>
         public ImmutableList<T> CopyAndInsert( Int32 index, T item ) {
             var newArray = new T[this._mArray.Length + 1];
-            Array.Copy( sourceArray: this._mArray, destinationArray: newArray,index );
+            Array.Copy( sourceArray: this._mArray, destinationArray: newArray, index );
             newArray[index] = item;
-            Array.Copy( sourceArray: this._mArray, sourceIndex: index, destinationArray: newArray, destinationIndex: index + 1,this._mArray.Length - index );
+            Array.Copy( sourceArray: this._mArray, sourceIndex: index, destinationArray: newArray, destinationIndex: index + 1, this._mArray.Length - index );
+
             return new ImmutableList<T>( arrayToCopy: newArray );
         }
 
@@ -129,6 +133,7 @@ namespace Librainian.Collections {
         /// <returns>A modified copy of this list.</returns>
         public ImmutableList<T> CopyAndRemove( T item ) {
             var index = this.IndexOf( item: item );
+
             if ( index == -1 ) {
                 throw new ArgumentException( message: "Item not found in list." );
             }
@@ -143,8 +148,9 @@ namespace Librainian.Collections {
         /// <returns>A modified copy of this list.</returns>
         public ImmutableList<T> CopyAndRemoveAt( Int32 index ) {
             var newArray = new T[this._mArray.Length - 1];
-            Array.Copy( sourceArray: this._mArray, destinationArray: newArray,index );
-            Array.Copy( sourceArray: this._mArray, sourceIndex: index + 1, destinationArray: newArray, destinationIndex: index,this._mArray.Length - index - 1 );
+            Array.Copy( sourceArray: this._mArray, destinationArray: newArray, index );
+            Array.Copy( sourceArray: this._mArray, sourceIndex: index + 1, destinationArray: newArray, destinationIndex: index, this._mArray.Length - index - 1 );
+
             return new ImmutableList<T>( arrayToCopy: newArray );
         }
 
@@ -158,6 +164,7 @@ namespace Librainian.Collections {
             var newArray = new T[this._mArray.Length];
             this._mArray.CopyTo( array: newArray, index: 0 );
             newArray[index] = item;
+
             return new ImmutableList<T>( arrayToCopy: newArray );
         }
 
@@ -207,6 +214,7 @@ namespace Librainian.Collections {
         /// </summary>
         Boolean ICollection<T>.Remove( T item ) {
             ThrowMutableException( copyMethod: "CopyAndRemove" );
+
             return false;
         }
 

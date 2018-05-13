@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/DynamicExtensions.cs" was last cleaned by Protiguous on 2016/06/18 at 10:50 PM
+// "Librainian/DynamicExtensions.cs" was last cleaned by Protiguous on 2018/05/12 at 1:18 AM
 
 namespace Librainian.AmazedSaint {
 
@@ -25,12 +21,14 @@ namespace Librainian.AmazedSaint {
     using System.Xml.Linq;
 
     /// <summary>
-    ///     Extension methods for our ElasticObject. See
-    ///     http: //amazedsaint.blogspot.com/2010/02/introducing-elasticobject-for-net-40.html for details
+    /// Extension methods for our ElasticObject. See
+    /// http: //amazedsaint.blogspot.com/2010/02/introducing-elasticobject-for-net-40.html for details
     /// </summary>
     public static class DynamicExtensions {
 
-        /// <summary>Build an expando from an XElement</summary>
+        /// <summary>
+        /// Build an expando from an XElement
+        /// </summary>
         /// <param name="el"></param>
         /// <returns></returns>
         public static ElasticObject ElasticFromXElement( XElement el ) {
@@ -47,6 +45,7 @@ namespace Librainian.AmazedSaint {
             }
 
             var textNode = el.Nodes().FirstOrDefault();
+
             if ( textNode is XText ) {
                 exp.InternalContent = textNode.ToString();
             }
@@ -55,20 +54,27 @@ namespace Librainian.AmazedSaint {
                 child.InternalParent = exp;
                 exp.AddElement( child );
             }
+
             return exp;
         }
 
-        /// <summary>Converts an XElement to the expando</summary>
+        /// <summary>
+        /// Converts an XElement to the expando
+        /// </summary>
         /// <param name="e"></param>
         /// <returns></returns>
         public static dynamic ToElastic( this XElement e ) => ElasticFromXElement( e );
 
-        /// <summary>Converts an expando to XElement</summary>
+        /// <summary>
+        /// Converts an expando to XElement
+        /// </summary>
         /// <param name="e"></param>
         /// <returns></returns>
         public static XElement ToXElement( this ElasticObject e ) => XElementFromElastic( e );
 
-        /// <summary>Returns an XElement from an ElasticObject</summary>
+        /// <summary>
+        /// Returns an XElement from an ElasticObject
+        /// </summary>
         /// <param name="elastic"></param>
         /// <returns></returns>
         public static XElement XElementFromElastic( ElasticObject elastic ) {
@@ -78,13 +84,14 @@ namespace Librainian.AmazedSaint {
                 exp.Add( new XAttribute( a.Key, a.Value.InternalValue ) );
             }
 
-	        if ( elastic.InternalContent is String s ) {
+            if ( elastic.InternalContent is String s ) {
                 exp.Add( new XText( s ) );
             }
 
             foreach ( var child in elastic.Elements.Select( XElementFromElastic ) ) {
                 exp.Add( child );
             }
+
             return exp;
         }
     }

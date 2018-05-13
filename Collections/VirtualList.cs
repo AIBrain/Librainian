@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/VirtualList.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/VirtualList.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -29,7 +30,9 @@ namespace Librainian.Collections {
     /// = &gt; 0d, (tot, next) =&gt; tot + next, (maint,localt) =&gt; maint + localt, final =&gt; final);
     /// </example>
     public sealed class VirtualList<T> : IList<T>, IList {
+
         private readonly Int32 _count;
+
         private readonly Func<Int32, T> _getValueForIndex;
 
         public VirtualList( Int32 count, Func<Int32, T> getValueForIndex ) {
@@ -51,7 +54,7 @@ namespace Librainian.Collections {
 
         Object ICollection.SyncRoot => this;
 
-        Object IList.this[ Int32 index ] {
+        Object IList.this[Int32 index] {
             get => this._getValueForIndex( arg: index );
 
             set => throw new NotSupportedException();

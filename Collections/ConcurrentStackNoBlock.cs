@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ConcurrentStackNoBlock.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/ConcurrentStackNoBlock.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -23,6 +24,7 @@ namespace Librainian.Collections {
     using Threading;
 
     public class ConcurrentNoBlockStackL<T> {
+
         private volatile Node _head;
 
         public ConcurrentNoBlockStackL() => this._head = new Node( item: default, next: this._head );
@@ -32,6 +34,7 @@ namespace Librainian.Collections {
 
             do {
                 ret = this._head;
+
                 if ( ret.Next is null ) {
                     throw new IndexOutOfRangeException( message: "Stack is empty" );
                 }
@@ -45,6 +48,7 @@ namespace Librainian.Collections {
             var nodeNew = new Node { Item = item };
 
             Node tmp;
+
             do {
                 tmp = this._head;
                 nodeNew.Next = tmp;
@@ -54,6 +58,7 @@ namespace Librainian.Collections {
         }
 
         internal sealed class Node {
+
             internal T Item;
 
             internal Node Next;
@@ -72,6 +77,7 @@ namespace Librainian.Collections {
     /// <typeparam name="T"></typeparam>
     /// <see cref="http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack"/>
     public class ConcurrentStackNoBlock<T> {
+
         private Node _head;
 
         public ConcurrentStackNoBlock() => this._head = new Node( item: default, next: this._head );
@@ -94,6 +100,7 @@ namespace Librainian.Collections {
             var nodeNew = new Node { Item = item };
 
             Node tmp;
+
             do {
                 tmp = this._head;
                 nodeNew.Next = tmp;
@@ -110,6 +117,7 @@ namespace Librainian.Collections {
 
             do {
                 ret = this._head;
+
                 if ( ret.Next == default( Node ) ) {
 
                     //throw new IndexOutOfRangeException( "Stack is empty" );
@@ -120,6 +128,7 @@ namespace Librainian.Collections {
 #pragma warning restore 420
             --this.Count;
             result = ret.Item;
+
             return !Equals( result, default );
         }
 
@@ -132,11 +141,13 @@ namespace Librainian.Collections {
         public Boolean TryPopPop( out T itemOne, out T itemTwo ) {
             if ( !this.TryPop( result: out itemOne ) ) {
                 itemTwo = default;
+
                 return false;
             }
 
             if ( !this.TryPop( result: out itemTwo ) ) {
                 this.Push( item: itemOne );
+
                 return false;
             }
 
@@ -144,6 +155,7 @@ namespace Librainian.Collections {
         }
 
         internal class Node {
+
             internal T Item;
 
             internal Node Next;

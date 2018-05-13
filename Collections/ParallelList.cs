@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ParallelList.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/ParallelList.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -175,6 +176,7 @@ namespace Librainian.Collections {
 
                     this._list[index: index] = value;
                     this.AnItemHasBeenChanged();
+
                     return true;
                 } ) );
             }
@@ -285,6 +287,7 @@ namespace Librainian.Collections {
             return this._actionBlock.Post( item: () => this.Write( func: () => {
                 try {
                     this._list.Add( item: item );
+
                     return true;
                 }
                 finally {
@@ -311,6 +314,7 @@ namespace Librainian.Collections {
                 }
 
                 this.Slims.Value.Wait( cancellationToken: cancellationToken );
+
                 return true;
             }
             catch ( OperationCanceledException ) { }
@@ -333,7 +337,7 @@ namespace Librainian.Collections {
         /// <exception cref="ArgumentNullException"></exception>
         public void AddRange( [NotNull] IEnumerable<T> items, Byte useParallels = 0, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
             if ( null == items ) {
-                throw new ArgumentNullException( paramName: nameof( items ) );
+                throw new ArgumentNullException( nameof( items ) );
             }
 
             if ( !this.AllowModifications ) {
@@ -375,6 +379,7 @@ namespace Librainian.Collections {
 
             var interval = Milliseconds.Hertz111;
             var stopWatch = StopWatch.StartNew();
+
             while ( this.AllowModifications ) {
                 if ( stopWatch.Elapsed > timeout ) {
                     break;
@@ -401,6 +406,7 @@ namespace Librainian.Collections {
             this._actionBlock.Post( item: () => this.Write( func: () => {
                 this._list.Clear();
                 this.ItemCounter = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true ); //BUG is this correct?
+
                 return true;
             } ) );
         }
@@ -412,6 +418,7 @@ namespace Librainian.Collections {
         public List<T> Clone() =>
             this.Write( func: () => {
                 var copy = this._list.ToList();
+
                 return copy;
             }, ignoreAllowModificationsCheck: true );
 
@@ -468,6 +475,7 @@ namespace Librainian.Collections {
 
                 // ReSharper disable once MethodSupportsCancellation
                 this._actionBlock.Completion.Wait();
+
                 return true;
             }
             finally {
@@ -487,11 +495,12 @@ namespace Librainian.Collections {
         /// <param name="arrayIndex"></param>
         public void CopyTo( T[] array, Int32 arrayIndex ) {
             if ( array is null ) {
-                throw new ArgumentNullException( paramName: nameof( array ) );
+                throw new ArgumentNullException( nameof( array ) );
             }
 
             this.Read( func: () => {
                 this._list.CopyTo( array: array, arrayIndex: arrayIndex );
+
                 return true;
             } );
         }
@@ -532,6 +541,7 @@ namespace Librainian.Collections {
             this._actionBlock.Post( item: () => this.Write( func: () => {
                 try {
                     this._list.Insert( index: index, item: item );
+
                     return true;
                 }
                 catch ( ArgumentOutOfRangeException ) {
@@ -566,6 +576,7 @@ namespace Librainian.Collections {
             return this._actionBlock.Post( item: () => this.Write( func: () => {
                 try {
                     this._list.Remove( item: item );
+
                     return true;
                 }
                 finally {
@@ -622,6 +633,7 @@ namespace Librainian.Collections {
 
                 var result = this._list[index: index];
                 afterGet?.Invoke( result );
+
                 return true;
             } ) );
         }

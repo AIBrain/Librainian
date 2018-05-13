@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ConcurrentCollection.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/ConcurrentCollection.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -25,6 +26,7 @@ namespace Librainian.Collections {
     using Maths;
 
     public class ConcurrentCollection<T> : IProducerConsumerCollection<T> {
+
         private const Int32 BackoffMaxYields = 8;
 
         [NonSerialized]
@@ -36,7 +38,7 @@ namespace Librainian.Collections {
 
         public ConcurrentCollection( IEnumerable<T> collection ) {
             if ( collection is null ) {
-                throw new ArgumentNullException( paramName: nameof( collection ) );
+                throw new ArgumentNullException( nameof( collection ) );
             }
 
             this.InitializeFromCollection( collection: collection );
@@ -45,6 +47,7 @@ namespace Librainian.Collections {
         public Int32 Count {
             get {
                 var num = 0;
+
                 for ( var node = this._mHead; node != null; node = node.MNext ) {
                     ++num;
                 }
@@ -59,6 +62,7 @@ namespace Librainian.Collections {
 
         private static void CopyRemovedItems( Node head, IList<T> collection, Int32 startIndex, Int32 nodesCount ) {
             var node = head;
+
             for ( var index = startIndex; index < startIndex + nodesCount; ++index ) {
                 collection[index: index] = node.MValue;
                 node = node.MNext;
@@ -73,16 +77,17 @@ namespace Librainian.Collections {
 
         private static void ValidatePushPopRangeInput( ICollection<T> items, Int32 startIndex, Int32 count ) {
             if ( items is null ) {
-                throw new ArgumentNullException( paramName: nameof( items ) );
+                throw new ArgumentNullException( nameof( items ) );
             }
 
             if ( count < 0 ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( count ), message: "ConcurrentStack_PushPopRange_CountOutOfRange" );
+                throw new ArgumentOutOfRangeException( nameof( count ), message: "ConcurrentStack_PushPopRange_CountOutOfRange" );
             }
 
             var length = items.Count;
+
             if ( startIndex >= length || startIndex < 0 ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( startIndex ), message: "ConcurrentStack_PushPopRange_StartOutOfRange" );
+                throw new ArgumentOutOfRangeException( nameof( startIndex ), message: "ConcurrentStack_PushPopRange_StartOutOfRange" );
             }
 
             if ( length - count < startIndex ) {
@@ -99,6 +104,7 @@ namespace Librainian.Collections {
         private void OnDeserialized( StreamingContext context ) {
             Node node1 = null;
             Node node2 = null;
+
             foreach ( var node3 in this._mSerializationArray.Select( selector: t => new Node( value: t ) ) ) {
                 if ( node1 is null ) {
                     node2 = node3;
@@ -120,6 +126,7 @@ namespace Librainian.Collections {
         private void PushCore( Node head, Node tail ) {
             var spinWait = new SpinWait();
             var mHead = this._mHead;
+
             do {
                 spinWait.SpinOnce();
                 tail.MNext = this._mHead;
@@ -128,6 +135,7 @@ namespace Librainian.Collections {
 
         private List<T> ToList() {
             var list = new List<T>();
+
             for ( var node = this._mHead; node != null; node = node.MNext ) {
                 list.Add( item: node.MValue );
             }
@@ -138,10 +146,12 @@ namespace Librainian.Collections {
         private Boolean TryPopCore( out T result ) {
             if ( this.TryPopCore( count: 1, poppedHead: out var poppedHead ) == 1 ) {
                 result = poppedHead.MValue;
+
                 return true;
             }
 
             result = default;
+
             return false;
         }
 
@@ -152,18 +162,22 @@ namespace Librainian.Collections {
             //var random = new Random( Environment.TickCount & int.MaxValue );
             Node comparand;
             Int32 num2;
+
             while ( true ) {
                 comparand = this._mHead;
+
                 if ( comparand is null ) {
                     break;
                 }
 
                 var node = comparand;
+
                 for ( num2 = 1; num2 < count && node.MNext != null; ++num2 ) {
                     node = node.MNext;
                 }
 
                 var mHead = this._mHead;
+
                 if ( Interlocked.CompareExchange( location1: ref mHead, value: node.MNext, comparand: comparand ) == comparand ) {
                     goto label_9;
                 }
@@ -176,10 +190,12 @@ namespace Librainian.Collections {
             }
 
             poppedHead = null;
+
             return 0;
             label_9:
 
             poppedHead = comparand;
+
             return num2;
         }
 
@@ -187,7 +203,7 @@ namespace Librainian.Collections {
 
         public void CopyTo( T[] array, Int32 index ) {
             if ( array is null ) {
-                throw new ArgumentNullException( paramName: nameof( array ) );
+                throw new ArgumentNullException( nameof( array ) );
             }
 
             this.ToList().CopyTo( array: array, arrayIndex: index );
@@ -200,6 +216,7 @@ namespace Librainian.Collections {
         public void Push( T item ) {
             var node = new Node( value: item ) { MNext = this._mHead };
             var mHead = this._mHead;
+
             if ( Interlocked.CompareExchange( location1: ref mHead, value: node, comparand: node.MNext ) == node.MNext ) {
                 return;
             }
@@ -209,7 +226,7 @@ namespace Librainian.Collections {
 
         public void PushRange( T[] items ) {
             if ( items is null ) {
-                throw new ArgumentNullException( paramName: nameof( items ) );
+                throw new ArgumentNullException( nameof( items ) );
             }
 
             this.PushRange( items: items, startIndex: 0, count: items.Length );
@@ -217,18 +234,21 @@ namespace Librainian.Collections {
 
         public void PushRange( T[] items, Int32 startIndex, Int32 count ) {
             ValidatePushPopRangeInput( items: items, startIndex: startIndex, count: count );
+
             if ( count == 0 ) {
                 return;
             }
 
             Node tail;
             var head = tail = new Node( value: items[startIndex] );
+
             for ( var index = startIndex + 1; index < startIndex + count; ++index ) {
                 head = new Node( value: items[index] ) { MNext = head };
             }
 
             tail.MNext = this._mHead;
             var mHead = this._mHead;
+
             if ( Interlocked.CompareExchange( location1: ref mHead, value: head, comparand: tail.MNext ) == tail.MNext ) {
                 return;
             }
@@ -244,39 +264,47 @@ namespace Librainian.Collections {
 
         public Boolean TryAdd( T item ) {
             this.Push( item: item );
+
             return true;
         }
 
         public Boolean TryPeek( out T result ) {
             var node = this._mHead;
+
             if ( node is null ) {
                 result = default;
+
                 return false;
             }
 
             result = node.MValue;
+
             return true;
         }
 
         public Boolean TryPop( out T result ) {
             var comparand = this._mHead;
+
             if ( comparand != null ) {
                 var mHead = this._mHead;
+
                 if ( Interlocked.CompareExchange( location1: ref mHead, value: comparand.MNext, comparand: comparand ) != comparand ) {
                     return this.TryPopCore( result: out result );
                 }
 
                 result = comparand.MValue;
+
                 return true;
             }
 
             result = default;
+
             return false;
         }
 
         public Int32 TryPopRange( T[] items ) {
             if ( items is null ) {
-                throw new ArgumentNullException( paramName: nameof( items ) );
+                throw new ArgumentNullException( nameof( items ) );
             }
 
             return this.TryPopRange( items: items, startIndex: 0, count: items.Length );
@@ -284,16 +312,19 @@ namespace Librainian.Collections {
 
         public Int32 TryPopRange( T[] items, Int32 startIndex, Int32 count ) {
             ValidatePushPopRangeInput( items: items, startIndex: startIndex, count: count );
+
             if ( count == 0 ) {
                 return 0;
             }
 
             var nodesCount = this.TryPopCore( count: count, poppedHead: out var poppedHead );
+
             if ( nodesCount <= 0 ) {
                 return nodesCount;
             }
 
             CopyRemovedItems( head: poppedHead, collection: items, startIndex: startIndex, nodesCount: nodesCount );
+
             return nodesCount;
         }
 
@@ -301,11 +332,11 @@ namespace Librainian.Collections {
 
         void ICollection.CopyTo( Array array, Int32 index ) {
             if ( array is null ) {
-                throw new ArgumentNullException( paramName: nameof( array ) );
+                throw new ArgumentNullException( nameof( array ) );
             }
 
             if ( !( array is T[] ) ) {
-                throw new ArgumentNullException( paramName: nameof( array ) );
+                throw new ArgumentNullException( nameof( array ) );
             }
 
             this.ToList().CopyTo( array: ( T[] )array, arrayIndex: index );
@@ -314,7 +345,9 @@ namespace Librainian.Collections {
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         private sealed class Node {
+
             internal readonly T MValue;
+
             internal Node MNext;
 
             internal Node( T value ) {

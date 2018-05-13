@@ -2,8 +2,9 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+//
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
@@ -11,7 +12,7 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/EnumerableToArrayBuffer.cs" was last cleaned by Protiguous on 2018/05/06 at 9:31 PM
+// "Librainian/EnumerableToArrayBuffer.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
 
 namespace Librainian.Collections {
 
@@ -19,17 +20,22 @@ namespace Librainian.Collections {
     using System.Collections.Generic;
 
     public struct EnumerableToArrayBuffer<T> {
+
         private readonly ICollection<T> _collection;
+
         private readonly Int32 _count;
+
         private readonly T[] _items;
 
         internal EnumerableToArrayBuffer( IEnumerable<T> source ) {
             T[] array = null;
             var length = 0;
             this._collection = source as ICollection<T>;
+
             if ( this._collection != null ) {
                 this._items = null;
                 this._count = 0;
+
                 return;
             }
 
@@ -39,7 +45,7 @@ namespace Librainian.Collections {
                 }
                 else if ( array.Length == length ) {
                     var destinationArray = new T[length * 2];
-                    Array.Copy( sourceArray: array, sourceIndex: 0, destinationArray: destinationArray, destinationIndex: 0,length );
+                    Array.Copy( sourceArray: array, sourceIndex: 0, destinationArray: destinationArray, destinationIndex: 0, length );
                     array = destinationArray;
                 }
 
@@ -61,24 +67,27 @@ namespace Librainian.Collections {
                 this._collection.CopyTo( array: items, arrayIndex: index );
             }
             else if ( this._count > 0 ) {
-                Array.Copy( sourceArray: this._items, sourceIndex: 0, destinationArray: items, destinationIndex: index,this._count );
+                Array.Copy( sourceArray: this._items, sourceIndex: 0, destinationArray: items, destinationIndex: index, this._count );
             }
         }
 
         internal T[] ToArray() {
             var count = this.Count;
+
             if ( count == 0 ) {
                 return new T[0];
             }
 
             T[] destinationArray;
+
             if ( this._collection is null ) {
                 if ( this._items.Length == this._count ) {
                     return this._items;
                 }
 
                 destinationArray = new T[this._count];
-                Array.Copy( sourceArray: this._items, sourceIndex: 0, destinationArray: destinationArray, destinationIndex: 0,this._count );
+                Array.Copy( sourceArray: this._items, sourceIndex: 0, destinationArray: destinationArray, destinationIndex: 0, this._count );
+
                 return destinationArray;
             }
 
@@ -92,6 +101,7 @@ namespace Librainian.Collections {
 
             destinationArray = new T[count];
             this._collection.CopyTo( array: destinationArray, arrayIndex: 0 );
+
             return destinationArray;
         }
     }

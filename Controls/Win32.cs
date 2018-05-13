@@ -2,21 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/Win32.cs" was last cleaned by Protiguous on 2016/06/18 at 10:50 PM
+// "Librainian/Win32.cs" was last cleaned by Protiguous on 2018/05/12 at 1:21 AM
 
 namespace Librainian.Controls {
 
@@ -30,12 +26,16 @@ namespace Librainian.Controls {
     using Measurement.Frequency;
 
     public enum Speed {
+
         Slow,
+
         Regular,
+
         Fast
     }
 
     public static class Win32 {
+
         public const Int32 MF_DISABLED = 0x00000002;
 
         // ReSharper disable InconsistentNaming
@@ -57,8 +57,7 @@ namespace Librainian.Controls {
 
             return Task.Run( () => {
 
-                // Set the Current cursor, move the cursor's Position,
-                // and set its clipping rectangle to the form.
+                // Set the Current cursor, move the cursor's Position, and set its clipping rectangle to the form.
                 var cx = Cursor.Position.X;
                 var cy = Cursor.Position.Y;
 
@@ -66,38 +65,48 @@ namespace Librainian.Controls {
                     if ( Cursor.Position.X == x && Cursor.Position.Y == y ) {
                         break;
                     }
+
                     if ( Randem.NextBoolean() ) {
                         if ( cx < x ) {
                             var step = ( x - cx ) / 10.0f;
+
                             if ( step < 1 ) {
                                 step = 1;
                             }
+
                             cx -= ( Int32 )step;
                         }
                         else {
                             var step = ( cx - x ) / 10.0f;
+
                             if ( step < 1 ) {
                                 step = 1;
                             }
+
                             cx += ( Int32 )step;
                         }
                     }
                     else {
                         if ( cy < y ) {
                             var step = ( y - cy ) / 10.0f;
+
                             if ( step < 1 ) {
                                 step = 1;
                             }
+
                             cy -= ( Int32 )step;
                         }
                         else {
                             var step = ( cy - y ) / 10.0f;
+
                             if ( step < 1 ) {
                                 step = 1;
                             }
+
                             cy += ( Int32 )step;
                         }
                     }
+
                     Cursor.Position = new Point( cx, cy );
                     Task.Delay( Hertz.Sixty ).Wait();
                 }
@@ -106,7 +115,9 @@ namespace Librainian.Controls {
 
         [StructLayout( LayoutKind.Sequential )]
         public struct POINT {
+
             public Int32 x;
+
             public Int32 y;
         }
 
