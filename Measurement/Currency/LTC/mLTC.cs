@@ -24,7 +24,7 @@ namespace Librainian.Measurement.Currency.LTC {
     using System.Diagnostics;
 
 
-    [DebuggerDisplay( "{" + nameof( Formatted ) + ",nq}" )]
+    [DebuggerDisplay( "{" + nameof( this.Formatted ) + ",nq}" )]
 
     public struct MLtc : ICoin {
 

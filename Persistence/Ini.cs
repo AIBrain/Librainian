@@ -191,11 +191,11 @@ namespace Librainian.Persistence {
                 return false;
             }
 
-            Parallel.ForEach( source: iniFile.Sections.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive, body: section => {
+            Parallel.ForEach( source: iniFile.Sections.AsParallel(), body: section => {
                 var dictionary = iniFile[section: section];
 
                 if ( dictionary != null ) {
-                    Parallel.ForEach( source: dictionary.AsParallel(), parallelOptions: ThreadingExtensions.AllCPU, body: pair => { this.Add( section: section, pair.Key, pair.Value ); } );
+                    Parallel.ForEach( source: dictionary.AsParallel(), body: pair => this.Add( section: section, pair.Key, pair.Value ) );
                 }
             } );
 
@@ -207,7 +207,7 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <returns></returns>
         public Boolean Clear() {
-            Parallel.ForEach( source: this.Data.Keys, body: section => { this.TryRemove( section: section ); } );
+            Parallel.ForEach( source: this.Data.Keys, body: section => this.TryRemove( section: section ) );
 
             return !this.Data.Keys.Any();
         }
@@ -236,11 +236,8 @@ namespace Librainian.Persistence {
             var document = this.Document;
 
             return Task.Run( function: () => {
-                if ( document is null ) {
-                    return false;
-                }
 
-                if ( !document.Exists() ) {
+                if ( document?.Exists() != true ) {
                     return false;
                 }
 
@@ -306,9 +303,6 @@ namespace Librainian.Persistence {
             }
 
             this.Data[section][key] = null;
-
-            if ( this.Data[section].Any ) {
-            }
 
             return true;
         }

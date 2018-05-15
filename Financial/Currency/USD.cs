@@ -37,11 +37,11 @@ namespace Librainian.Financial.Currency {
         /// <summary>
         /// Example new Money(123.4567).Cents == 0.4567
         /// </summary>
-        public Decimal Cents => TotalCoins();
+        public Decimal Cents => this.TotalCoins();
 
         /// <summary>
         /// Example new Money(123.4567).Dollars == 123.0000
         /// </summary>
-        public Decimal Dollars => TotalBankNotes();
+        public Decimal Dollars => this.TotalBankNotes();
     }
 }

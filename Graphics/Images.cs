@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -47,9 +45,9 @@ namespace Librainian.Graphics {
         public static class FileNameExtension {
 
             /// <summary>
-            ///     <para>.tif</para>
+            /// <para>.tif</para>
             /// </summary>
-            /// <seealso cref="http://wikipedia.org/wiki/TIFF" />
+            /// <seealso cref="http://wikipedia.org/wiki/TIFF"/>
             public static String Tiff => ".tif";
         }
 
@@ -60,10 +58,10 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        ///     <para>Exif 2.2 Standard (reference: <see cref="http://www.exiv2.org/tags.html" />)</para>
+        /// <para>Exif 2.2 Standard (reference: <see cref="http://www.exiv2.org/tags.html"/>)</para>
         /// </summary>
         /// Pulled from project "ExifOrganizer" @
-        /// <seealso cref="http://github.com/RiJo/ExifOrganizer/blob/master/MetaParser/Parsers/ExifParser.cs" />
+        /// <seealso cref="http://github.com/RiJo/ExifOrganizer/blob/master/MetaParser/Parsers/ExifParser.cs"/>
         public enum ExifId {
             ImageProcessingSoftware = 0x000b, // The name and version of the software used to post-process the picture.
             ImageNewSubfileType = 0x00fe, // A general indication of the kind of data contained in this subfile.
@@ -454,11 +452,9 @@ namespace Librainian.Graphics {
 
             // To compute Transform = ((X^T * X)^-1 * X^T)U = (X^T * X)^-1 (X^T * U)
 
-            // X^T * X = [ Sum(x_i^2) Sum(x_i*y_i) Sum(x_i) ] [ Sum(x_i*y_i) Sum(y_i^2) Sum(y_i) ] [
-            // Sum(x_i) Sum(y_i) Sum(1)=n ]
+            // X^T * X = [ Sum(x_i^2) Sum(x_i*y_i) Sum(x_i) ] [ Sum(x_i*y_i) Sum(y_i^2) Sum(y_i) ] [ Sum(x_i) Sum(y_i) Sum(1)=n ]
 
-            // X^T * U = [ Sum(x_i*u_i) Sum(x_i*v_i) ] [ Sum(y_i*u_i) Sum(y_i*v_i) ] [ Sum(u_i)
-            // Sum(v_i) ]
+            // X^T * U = [ Sum(x_i*u_i) Sum(x_i*v_i) ] [ Sum(y_i*u_i) Sum(y_i*v_i) ] [ Sum(u_i) Sum(v_i) ]
             var xy = baselineLocations;
             var uv = registerLocations;
 
@@ -468,22 +464,22 @@ namespace Librainian.Graphics {
             for ( var i = 0; i < n; i++ ) {
 
                 // Compute sum of squares for X^T * X
-                a += xy[ i ].X * xy[ i ].X;
-                b += xy[ i ].X * xy[ i ].Y;
-                c += xy[ i ].X;
-                d += xy[ i ].X * xy[ i ].Y;
-                e += xy[ i ].Y * xy[ i ].Y;
-                f += xy[ i ].Y;
-                g += xy[ i ].X;
-                h += xy[ i ].Y;
+                a += xy[i].X * xy[i].X;
+                b += xy[i].X * xy[i].Y;
+                c += xy[i].X;
+                d += xy[i].X * xy[i].Y;
+                e += xy[i].Y * xy[i].Y;
+                f += xy[i].Y;
+                g += xy[i].X;
+                h += xy[i].Y;
 
                 // Compute sum of squares for X^T * U
-                p += xy[ i ].X * uv[ i ].X;
-                q += xy[ i ].X * uv[ i ].Y;
-                r += xy[ i ].Y * uv[ i ].X;
-                s += xy[ i ].Y * uv[ i ].Y;
-                t += uv[ i ].X;
-                u += uv[ i ].Y;
+                p += xy[i].X * uv[i].X;
+                q += xy[i].X * uv[i].Y;
+                r += xy[i].Y * uv[i].X;
+                s += xy[i].Y * uv[i].Y;
+                t += uv[i].X;
+                u += uv[i].Y;
             }
 
             // Create matrices from the coefficients
@@ -496,8 +492,7 @@ namespace Librainian.Graphics {
             // Perform the multiplication to get the transform
             uMat.Multiply( xInv );
 
-            // Matrix uMat now holds the image registration transform to go from the current result
-            // to baseline
+            // Matrix uMat now holds the image registration transform to go from the current result to baseline
             return uMat;
         }
 
@@ -516,11 +511,11 @@ namespace Librainian.Graphics {
                 return null;
             }
 
-			if ( DateTime.TryParse( value, out var result ) ) {
-				return result;
-			}
+            if ( DateTime.TryParse( value, out var result ) ) {
+                return result;
+            }
 
-			if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result ) ) {
+            if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result ) ) {
                 return result;
             }
 
@@ -546,23 +541,23 @@ namespace Librainian.Graphics {
 
                 var bestGuesses = new List<DateTime>();
 
-				if ( info.InternalImageGetDateTime( out var imageCreationBestGuess ) ) {
-					if ( imageCreationBestGuess.HasValue ) {
-						bestGuesses.Add( imageCreationBestGuess.Value );
-					}
-				}
+                if ( info.InternalImageGetDateTime( out var imageCreationBestGuess ) ) {
+                    if ( imageCreationBestGuess.HasValue ) {
+                        bestGuesses.Add( imageCreationBestGuess.Value );
+                    }
+                }
 
-				bestGuesses.RemoveAll( time => !time.Between( oldestDate, youngestDate ) );
+                bestGuesses.RemoveAll( time => !time.Between( oldestDate, youngestDate ) );
 
                 if ( bestGuesses.Any() ) {
 #if DEBUG
                     if ( justName.StartsWith( "2015" ) && bestGuesses.Min()
                                                                    .Year != 2015 ) {
-                        Debugger.Break();
+                        Logging.Break();
                     }
                     if ( justName.StartsWith( "2016" ) && bestGuesses.Min()
                                                                    .Year != 2016 ) {
-                        Debugger.Break();
+                        Logging.Break();
                     }
 #endif
 
@@ -636,10 +631,10 @@ namespace Librainian.Graphics {
                 if ( bestGuesses.Any() ) {
 #if DEBUG
                     if ( justName.StartsWith( "2015" ) && bestGuesses.Min().Year != 2015 ) {
-                        Debugger.Break();
+                        Logging.Break();
                     }
                     if ( justName.StartsWith( "2016" ) && bestGuesses.Min().Year != 2016 ) {
-                        Debugger.Break();
+                        Logging.Break();
                     }
 #endif
 
@@ -661,6 +656,7 @@ namespace Librainian.Graphics {
                 }
             }
             catch ( Exception ) {
+
                 // ignored
             }
 
@@ -672,9 +668,9 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        ///     <para>Returns true if the file could be loaded as an image.</para>
-        ///     <para>Uses <see cref="BitmapImage" /> first, and then</para>
-        ///     <para><see cref="Image.FromFile(String)" /> next.</para>
+        /// <para>Returns true if the file could be loaded as an image.</para>
+        /// <para>Uses <see cref="BitmapImage"/> first, and then</para>
+        /// <para><see cref="Image.FromFile(String)"/> next.</para>
         /// </summary>
         /// <param name="document"></param>
         /// <returns></returns>
@@ -704,7 +700,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        ///     <para>Returns true if the file could be loaded as an image.</para>
+        /// <para>Returns true if the file could be loaded as an image.</para>
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
@@ -713,6 +709,7 @@ namespace Librainian.Graphics {
                 return false;
             }
             try {
+
                 //if ( null != BitmapFromUri( new Uri( file.FullName ) ) ) { return true; }
 
                 using ( Image.FromFile( file.FullName ) ) {
@@ -731,19 +728,23 @@ namespace Librainian.Graphics {
             return false;
         }
 
-        /// <summary>Returns true if the date is 'recent' enough.</summary>
+        /// <summary>
+        /// Returns true if the date is 'recent' enough.
+        /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
         public static Boolean IsDateRecentEnough( this DateTime dateTime ) => dateTime.Year >= 1825;
 
-        /// <summary>Returns true if the date is 'old' enough.</summary>
+        /// <summary>
+        /// Returns true if the date is 'old' enough.
+        /// </summary>
         /// <param name="dateTime"></param>
-        /// <param name="byYears"></param>
+        /// <param name="byYears"> </param>
         /// <returns></returns>
         /// <remarks>Any time travelers in the house?</remarks>
         public static Boolean IsDateNotTooNew( this DateTime dateTime, Int32 byYears = 5 ) => dateTime.Year <= DateTime.UtcNow.AddYears( byYears ).Year;
 
-	    /// <summary>
+        /// <summary>
         /// </summary>
         /// <param name="fileA"></param>
         /// <param name="fileB"></param>
@@ -811,8 +812,10 @@ namespace Librainian.Graphics {
             }
         }
 
-        /// <summary>if the image file contains a 'valid' date, use that.</summary>
-        /// <param name="info"></param>
+        /// <summary>
+        /// if the image file contains a 'valid' date, use that.
+        /// </summary>
+        /// <param name="info">     </param>
         /// <param name="bestGuess"></param>
         /// <returns></returns>
         private static Boolean InternalImageGetDateTime( [NotNull] this FileSystemInfo info, out DateTime? bestGuess ) {

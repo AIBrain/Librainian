@@ -60,7 +60,7 @@ namespace Librainian.Threading {
             for ( var i = 0; i < this._threads.Length; i++ ) {
                 this._threads[i] = new Thread( () => {
                     foreach ( var t in this._tasks.GetConsumingEnumerable() ) {
-                        TryExecuteTask( t );
+                        this.TryExecuteTask( t );
                     }
                 } ) {
                     Name = $"PriorityScheduler: {i}",

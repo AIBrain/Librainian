@@ -12,71 +12,73 @@
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ABetterClassDispose.cs" was last cleaned by Protiguous on 2018/05/13 at 1:17 AM
+// "Librainian/ABetterClassDispose.cs" was last cleaned by Protiguous on 2018/05/14 at 6:41 PM
 
 namespace Librainian.Magic {
 
     using System;
+    using FluentAssertions;
 
     /// <summary>
     /// <para>A better class for implementing the <see cref="IDisposable"/> pattern.</para>
     /// <para>Implement <see cref="DisposeManaged"/> and <see cref="DisposeNative"/>.</para>
     /// </summary>
-    /// <remarks>ABCD hehe. Written by Rick Harker</remarks>
+    /// <remarks>ABCD (hehe). Designed by Rick Harker</remarks>
     public class ABetterClassDispose : IDisposable {
 
-        ~ABetterClassDispose() => this.Dispose( disposing: false );
+        ~ABetterClassDispose() => this.Dispose();
 
         public Boolean HasDisposedManaged { get; private set; }
 
         public Boolean HasDisposedNative { get; private set; }
 
-        private void Dispose( Boolean disposing ) {
-
-            if ( !this.HasDisposedManaged ) {
-                try {
-                    this.DisposeManaged();
-                }
-                catch ( Exception exception ) {
-                    exception.Break();
-                }
-                finally {
-                    this.HasDisposedManaged = true;
-                }
-            }
-
-            if ( !this.HasDisposedNative ) {
-                try {
-                    this.DisposeNative();
-                }
-                catch ( Exception exception ) {
-                    exception.Break();
-                }
-                finally {
-                    this.HasDisposedNative = true;
-                }
-            }
-
-            if ( !disposing ) { }
-        }
+        public Boolean IsDisposed => this.HasDisposedManaged && this.HasDisposedNative;
 
         public void Dispose() {
-            this.Dispose( disposing: true );
-            GC.SuppressFinalize( this );
+            try {
+                if ( !this.HasDisposedManaged ) {
+                    try {
+                        this.DisposeManaged();
+                    }
+                    catch ( Exception exception ) {
+                        exception.Break();
+                    }
+                    finally {
+                        this.HasDisposedManaged = true;
+                    }
+                }
+
+                if ( !this.HasDisposedNative ) {
+                    try {
+                        this.DisposeNative();
+                    }
+                    catch ( Exception exception ) {
+                        exception.Break();
+                    }
+                    finally {
+                        this.HasDisposedNative = true;
+                    }
+                }
+            }
+            finally {
+                this.HasDisposedManaged.Should().BeTrue();
+                this.HasDisposedNative.Should().BeTrue();
+                GC.SuppressFinalize( this );
+            }
         }
 
         /// <summary>
         /// Dispose any disposable managed fields or properties.
         /// </summary>
         public virtual void DisposeManaged() {
-            this.HasDisposedManaged = true;
+            this.HasDisposedManaged = true; //yay or nay?
         }
 
         /// <summary>
         /// Dispose of COM objects, Handles, etc. Then set those objects to null if possible.
         /// </summary>
         public virtual void DisposeNative() {
-            this.HasDisposedNative = true;
+            this.HasDisposedNative = true; //yay or nay?
         }
     }
 }

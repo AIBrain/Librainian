@@ -46,7 +46,7 @@ namespace Librainian.Persistence {
         /// <param name="document"></param>
         public ConcurrentListFile( [NotNull] Document document ) {
             this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
-            this.Read().Wait();
+            this.Read().Wait(); //TODO I don't like this here.
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Librainian.Persistence {
                 var data = this.Document.LoadJSON<IEnumerable<TValue>>();
 
                 if ( data != null ) {
-                    await AddRangeAsync( data ).ConfigureAwait( false );
+                    await this.AddRangeAsync( data ).ConfigureAwait( false );
 
                     return true;
                 }
@@ -118,7 +118,7 @@ namespace Librainian.Persistence {
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
-        public override String ToString() => $"{Count} items";
+        public override String ToString() => $"{this.Count} items";
 
         /// <summary>
         /// Saves the data to the <see cref="Document"/>.

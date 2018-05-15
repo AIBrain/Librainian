@@ -23,7 +23,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
     namespace Denominations {
 
-        [DebuggerDisplay( "{" + nameof( Formatted ) + ",nq}" )]
+        [DebuggerDisplay( "{" + nameof( this.Formatted ) + ",nq}" )]
         public struct Btc : ICoin {
 
             public Decimal FaceValue => 1.00M;
@@ -31,7 +31,7 @@ namespace Librainian.Measurement.Currency.BTC {
             public String Formatted => $"฿{this.FaceValue:f8}";
         }
 
-        [DebuggerDisplay( "{" + nameof( Formatted ) + ",nq}" )]
+        [DebuggerDisplay( "{" + nameof( this.Formatted ) + ",nq}" )]
         public struct MBtc : ICoin {
 
             public Decimal FaceValue => 0.001M;
@@ -39,7 +39,7 @@ namespace Librainian.Measurement.Currency.BTC {
             public String Formatted => $"฿{this.FaceValue:f8}";
         }
 
-        [DebuggerDisplay( "{" + nameof( Formatted ) + ",nq}" )]
+        [DebuggerDisplay( "{" + nameof( this.Formatted ) + ",nq}" )]
         public struct Satoshi : ICoin {
 
             public Decimal FaceValue => 0.00000001M;
@@ -47,7 +47,7 @@ namespace Librainian.Measurement.Currency.BTC {
             public String Formatted => $"฿{this.FaceValue:f8}";
         }
 
-        [DebuggerDisplay( "{" + nameof( Formatted ) + ",nq}" )]
+        [DebuggerDisplay( "{" + nameof( this.Formatted ) + ",nq}" )]
         public struct ΜBtc : ICoin {
 
             public Decimal FaceValue => 0.000001M;

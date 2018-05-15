@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Currency.BTC {
     /// My first go at a thread-safe CoinWallet class for bitcoin coins. It's more pseudocode for learning than for production.. Use at your own risk. Any tips or ideas? Any dos or dont's? Email me!
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( "{" + nameof( Formatted ) + ",nq}" )]
+    [DebuggerDisplay( "{" + nameof( this.Formatted ) + ",nq}" )]
     public class CoinWallet : ABetterClassDispose, IEnumerable<KeyValuePair<ICoin, UInt64>>, ICoinWallet {
 
         /// <summary>

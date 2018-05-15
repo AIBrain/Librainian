@@ -20,33 +20,10 @@ namespace Librainian.Persistence {
     using FileSystem;
     using FluentAssertions;
     using JetBrains.Annotations;
-    using Newtonsoft.Json;
 
-    /// <summary>
-    /// </summary>
-    [Serializable]
-    [JsonObject]
-    public struct DocumentInfo {
+    public static class Data {
 
-        [JsonProperty]
-        public UInt32? CRC32 { get; set; }
-
-        [JsonProperty]
-        public UInt64? CRC64 { get; set; }
-
-        [JsonProperty]
-        public String Document { get; set; }
-
-        [JsonProperty]
-        public UInt64 Length { get; set; }
-
-        [JsonProperty]
-        public DateTime Updated { get; set; }
-    }
-
-    public static class Config {
-
-        public static PersistTable<String, DocumentInfo> DocumentRepository { get; } = new PersistTable<String, DocumentInfo>( Environment.SpecialFolder.CommonApplicationData, nameof( DocumentInfos ) );
+        public static PersistTable<String, DocumentInfo> ScannedDocuments { get; } = new PersistTable<String, DocumentInfo>( Environment.SpecialFolder.CommonApplicationData, nameof( ScannedDocuments ) );
 
         public static PersistTable<String, Folder> StorageLocations { get; } = new PersistTable<String, Folder>( Environment.SpecialFolder.CommonApplicationData, nameof( StorageLocations ) );
 
@@ -55,9 +32,9 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
-            info.Document.Should().BeEquivalentTo( document.FullPathWithFileName );
+            info.FullPath.Should().BeEquivalentTo( document.FullPathWithFileName );
 
-            DocumentRepository[document.FullPathWithFileName] = info;
+            ScannedDocuments[document.FullPathWithFileName] = info;
         }
     }
 }

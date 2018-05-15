@@ -1,18 +1,17 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "MemMapCache.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license has
+// been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/MemMapCache.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
+// "Librainian/MemMapCache.cs" was last cleaned by Protiguous on 2018/05/15 at 1:34 AM.
 
 namespace Librainian.Database.MMF {
 
@@ -77,13 +76,9 @@ namespace Librainian.Database.MMF {
 
         //32 bytes for datetime String... it's an overkill i know
         public T Get( String key ) {
-            if ( !this.IsConnected ) {
-                return default;
-            }
+            if ( !this.IsConnected ) { return default; }
 
-            if ( this.CacheHitAlwaysMiss ) {
-                return default;
-            }
+            if ( this.CacheHitAlwaysMiss ) { return default; }
 
             try {
                 using ( var memoryMappedFile = MemoryMappedFile.OpenExisting( mapName: key ) ) {
@@ -108,9 +103,7 @@ namespace Librainian.Database.MMF {
                 return default;
             }
             catch ( Exception ) {
-                if ( this._keyExpirations.ContainsKey( key ) ) {
-                    this._keyExpirations.Remove( key );
-                }
+                if ( this._keyExpirations.ContainsKey( key ) ) { this._keyExpirations.Remove( key ); }
 
                 return default;
             }
@@ -121,26 +114,16 @@ namespace Librainian.Database.MMF {
 
         public void Set( String key, T obj, Int64 size, DateTime expire ) {
             try {
-                if ( String.IsNullOrEmpty( value: key ) ) {
-                    throw new Exception( message: "The key can't be null or empty." );
-                }
+                if ( String.IsNullOrEmpty( value: key ) ) { throw new Exception( message: "The key can't be null or empty." ); }
 
-                if ( key.Length >= MaxKeyLength ) {
-                    throw new Exception( message: "The key has exceeded the maximum length." );
-                }
+                if ( key.Length >= MaxKeyLength ) { throw new Exception( message: "The key has exceeded the maximum length." ); }
 
-                if ( !this.IsConnected ) {
-                    return;
-                }
+                if ( !this.IsConnected ) { return; }
 
                 expire = expire.ToUniversalTime();
 
-                if ( !this._keyExpirations.ContainsKey( key ) ) {
-                    this._keyExpirations.Add( key, value: expire );
-                }
-                else {
-                    this._keyExpirations[key] = expire;
-                }
+                if ( !this._keyExpirations.ContainsKey( key ) ) { this._keyExpirations.Add( key, value: expire ); }
+                else { this._keyExpirations[key] = expire; }
 
                 var mmf = MemoryMappedFile.CreateOrOpen( mapName: key, capacity: size );
                 var vs = mmf.CreateViewStream();
@@ -179,9 +162,7 @@ namespace Librainian.Database.MMF {
         public T TryGetThenSet( String key, DateTime expire, Func<T> cacheMiss ) {
             var obj = this.Get( key );
 
-            if ( obj != null ) {
-                return obj;
-            }
+            if ( obj != null ) { return obj; }
 
             obj = cacheMiss.Invoke();
             this.Set( key, obj, expire: expire );

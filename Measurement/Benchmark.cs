@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -26,10 +24,9 @@ namespace Librainian.Measurement {
     using Time;
 
     /// <summary>
-    ///     Originally based upon the idea from
-    ///     <see cref="http://github.com/EBrown8534/Framework/blob/master/Evbpc.Framework/Utilities/BenchmarkResult.cs" />.
+    /// Originally based upon the idea from <see cref="http://github.com/EBrown8534/Framework/blob/master/Evbpc.Framework/Utilities/BenchmarkResult.cs"/>.
     /// </summary>
-    /// <seealso cref="http://github.com/PerfDotNet/BenchmarkDotNet" />
+    /// <seealso cref="http://github.com/PerfDotNet/BenchmarkDotNet"/>
     public static class Benchmark {
 
         public enum AorB {
@@ -40,7 +37,7 @@ namespace Librainian.Measurement {
         }
 
         /// <summary>
-        ///     For benchmarking methods that are too fast for individual <see cref="Stopwatch" /> start and stops.
+        /// For benchmarking methods that are too fast for individual <see cref="Stopwatch"/> start and stops.
         /// </summary>
         /// <param name="method"></param>
         /// <param name="runFor"></param>
@@ -59,24 +56,20 @@ namespace Librainian.Measurement {
             }
             catch ( Exception exception ) {
                 Debug.WriteLine( exception.Message );
-                if ( Debugger.IsAttached ) {
-                    Debugger.Break();
-                }
+                Logging.Break();
             }
 
             var rounds = 0UL;
 
             var stopwatch = Stopwatch.StartNew();
-            while ( stopwatch.Elapsed < (runFor ?? Seconds.One) ) {
+            while ( stopwatch.Elapsed < ( runFor ?? Seconds.One ) ) {
                 try {
                     method.Invoke();
                     rounds++;
                 }
                 catch ( Exception exception ) {
                     Debug.WriteLine( exception.Message );
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
+                    Logging.Break();
                 }
             }
             stopwatch.Stop();

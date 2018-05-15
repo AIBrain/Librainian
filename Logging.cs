@@ -31,40 +31,35 @@ namespace Librainian {
     using Parsing;
     using Threading;
 
-    public enum LoggingLevel {
-        Critical = 0,
-
-        Error = 1,
-
-        Warning = 2,
-
-        Info = 3,
-
-        Verbose = 4,
-
-        Debug = 5
-    }
-
     /// <summary>
     /// A class to help with exception handling and plain ol' simple time+logging to the Console.
     /// <para>I feel like this is a rereinvented wheel..</para>
     /// UPDATE: Can we use the NLOG nuget pagkage? It looks clean..
     /// </summary>
-    public static class Log {
+    public static class Logging {
+
         private static readonly ConsoleListenerWithTimePrefix ConsoleListener;
 
-        static Log() => ConsoleListener = new ConsoleListenerWithTimePrefix();
+        static Logging() => ConsoleListener = new ConsoleListenerWithTimePrefix { IndentSize = 1 };
 
         public static Boolean HasConsoleBeenAllocated { get; private set; }
 
+        /// <summary>
+        /// <seealso cref="Before"/>
+        /// </summary>
+        /// <param name="method"></param>
         [DebuggerStepThrough]
-        public static void After( [CallerMemberName] String method = "" ) {
+        public static void After( [CallerMemberName] String method = null ) {
             $"After - {method ?? String.Empty}".WriteLine();
             ConsoleListener.IndentLevel--;
         }
 
+        /// <summary>
+        /// <seealso cref="After"/>
+        /// </summary>
+        /// <param name="method"></param>
         [DebuggerStepThrough]
-        public static void Before( [CallerMemberName] String method = "" ) {
+        public static void Before( [CallerMemberName] String method = null ) {
             ConsoleListener.IndentLevel++;
             $"Before - {method ?? String.Empty}".WriteLine();
         }
@@ -75,6 +70,13 @@ namespace Librainian {
                 Debug.WriteLine( exception.ToString() );
             }
 
+            Break();
+        }
+
+        /// <summary>
+        /// <see cref="Debugger.Break"/> if a <see cref="Debugger"/> is attached.
+        /// </summary>
+        public static void Break() {
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
             }
@@ -90,9 +92,7 @@ namespace Librainian {
                 Debug.WriteLine( message );
             }
 
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
+            Break();
         }
 
         [DebuggerStepThrough]
@@ -105,19 +105,17 @@ namespace Librainian {
                 Debug.WriteLine( message );
             }
 
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
+            Break();
         }
 
         /// <summary>
-        /// See also <seealso cref="Log.Exit"/>.
+        /// <seealso cref="Exit"/>.
         /// </summary>
         /// <param name="method"></param>
         [DebuggerStepThrough]
         public static void Enter( [CallerMemberName] String method = null ) {
-            ConsoleListener.IndentLevel++;
             $"Entering {method ?? String.Empty}".WriteLine();
+            ConsoleListener.IndentLevel++;
         }
 
         /// <summary>
@@ -132,10 +130,14 @@ namespace Librainian {
             }
         }
 
+        /// <summary>
+        /// <seealso cref="Enter"/>
+        /// </summary>
+        /// <param name="method"></param>
         [DebuggerStepThrough]
         public static void Exit( [CallerMemberName] String method = "" ) {
-            $"Exited {method ?? String.Empty}".WriteLine();
             ConsoleListener.IndentLevel--;
+            $"Exited {method ?? String.Empty}".WriteLine();
         }
 
         [DebuggerStepThrough]
@@ -146,20 +148,21 @@ namespace Librainian {
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        // ReSharper disable once UnusedParameter.Global
-        public static Int32 FrameCount( this Object obj ) => new StackTrace( false ).FrameCount;
+        [DebuggerStepThrough]
+        public static Int32 FrameCount<T>( this T obj ) => new StackTrace( false ).FrameCount;
 
         /// <summary>
         /// Force a memory garbage collection on generation0 and generation1 objects.
         /// </summary>
         /// <seealso cref="http://programmers.stackexchange.com/questions/276585/when-is-it-a-good-idea-to-force-garbage-collection"/>
+        [DebuggerStepThrough]
         public static void Garbage() {
             var before = GC.GetTotalMemory( forceFullCollection: false );
             GC.Collect( generation: 1, mode: GCCollectionMode.Forced, blocking: true );
             var after = GC.GetTotalMemory( forceFullCollection: false );
 
             if ( after < before ) {
-                $"{before - after} bytes freed by the GC.".Info();
+                $"{before - after} bytes freed by the garbage collector.".Info();
             }
         }
 
@@ -193,6 +196,7 @@ namespace Librainian {
         /// <param name="method">          </param>
         /// <param name="sourceFilePath">  </param>
         /// <param name="sourceLineNumber"></param>
+        /// <remarks>My catchall for exceptions I don't want to deal with, but where I still want to see the exception.</remarks>
         [DebuggerStepThrough]
         public static Exception More( [NotNull] this Exception exception, [CanBeNull] [CallerMemberName] String method = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "",
             [CallerLineNumber] Int32 sourceLineNumber = 0 ) {
@@ -207,9 +211,7 @@ namespace Librainian {
                 ConsoleListener.Fail( method, message.ToString() );
             }
 
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
+            Break();
 
             return exception;
         }
@@ -233,6 +235,11 @@ namespace Librainian {
             NativeMethods.FreeConsole();
         }
 
+        /// <summary>
+        /// <para>Allocate a Console.</para>
+        /// <para>Start <see cref="ProfileOptimization"/>.</para>
+        /// </summary>
+        /// <returns></returns>
         public static Boolean Startup() {
             try {
                 HasConsoleBeenAllocated = NativeMethods.AllocConsole();
@@ -268,15 +275,17 @@ namespace Librainian {
         /// <summary>
         /// <para>Write the <paramref name="message"/> out to the <see cref="ConsoleListener"/>.</para>
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message"> </param>
+        /// <param name="category"></param>
         [DebuggerStepThrough]
-        public static void Write( this String message ) => ConsoleListener.Write( message );
+        public static void Write( this String message, [CanBeNull] String category = null ) => ConsoleListener.Write( message, category );
 
         /// <summary>
         /// <para>Write the <paramref name="message"/> out to the <see cref="ConsoleListener"/>.</para>
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message"> </param>
+        /// <param name="category"></param>
         [DebuggerStepThrough]
-        public static void WriteLine( this String message ) => ConsoleListener.WriteLine( message );
+        public static void WriteLine( this String message, [CanBeNull] String category = null ) => ConsoleListener.WriteLine( message, category );
     }
 }

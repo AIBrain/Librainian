@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -30,29 +28,24 @@ namespace Librainian.FileSystem {
     using JetBrains.Annotations;
 
     /// <summary>
-    /// 
+    /// A <see cref="Drive"/> contains 1 or more disks.
     /// </summary>
     /// <remarks>http://superuser.com/questions/341497/whats-the-difference-between-a-disk-and-a-drive</remarks>
     [Immutable]
     public class Drive {
 
-        [NotNull]
-        public DriveInfo Info {
-            get;
+        public Drive( Document document ) : this( document.FullPathWithFileName[0] ) {
         }
 
-        public Drive( Document document ) : this( document.FullPathWithFileName[ 0 ] ) {
+        public Drive( Folder folder ) : this( folder.FullName[0] ) {
         }
 
-        public Drive( Folder folder ) : this( folder.FullName[ 0 ] ) {
-        }
-
-        public Drive( String fullpath ) : this( fullpath[ 0 ] ) {
+        public Drive( String fullpath ) : this( fullpath[0] ) {
         }
 
         public Drive( [NotNull] DriveInfo info ) : this( new Folder( info.RootDirectory ) ) => this.Info = info ?? throw new ArgumentNullException( nameof( info ) );
 
-	    public Drive( Char driveLetter ) {
+        public Drive( Char driveLetter ) {
             this.DriveLetter = Char.ToUpper( driveLetter );
 
             this.DriveLetter.Should().BeGreaterOrEqualTo( 'A' );
@@ -72,23 +65,27 @@ namespace Librainian.FileSystem {
             get;
         }
 
+        [NotNull]
+        public DriveInfo Info {
+            get;
+        }
+
         public String RootDirectory => this.Info.RootDirectory.Name;
 
-		public static IEnumerable<Drive> GetDrives() => DriveInfo.GetDrives().Select( drive => new Drive( drive ) );
+        public static IEnumerable<Drive> GetDrives() => DriveInfo.GetDrives().Select( drive => new Drive( drive ) );
 
-		/// <summary>
-		/// </summary>
-		/// <returns></returns>
-		public Boolean Exists() => this.Info.IsReady && !String.IsNullOrWhiteSpace( this.Info.Name );
+        /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        public Boolean Exists() => this.Info.IsReady && !String.IsNullOrWhiteSpace( this.Info.Name );
 
         public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 )this.Info.AvailableFreeSpace : 0;
 
-	    public IEnumerable<Folder> GetFolders( String searchPattern = "*" ) {
+        public IEnumerable<Folder> GetFolders( String searchPattern = "*" ) {
             var root = new Folder( this.Info.RootDirectory );
             return root.BetterGetFolders( searchPattern );
         }
 
         public override String ToString() => this.DriveLetter.ToString();
     }
-
 }

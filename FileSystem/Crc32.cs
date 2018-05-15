@@ -91,7 +91,7 @@ namespace Librainian.FileSystem {
 
         protected override Byte[] HashFinal() {
             var hashBuffer = UInt32ToBigEndianBytes( ~this._hash );
-            HashValue = hashBuffer;
+            this.HashValue = hashBuffer;
             return hashBuffer;
         }
 

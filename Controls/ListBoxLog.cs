@@ -1,18 +1,17 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "ListBoxLog.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license has
+// been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/ListBoxLog.cs" was last cleaned by Protiguous on 2018/05/12 at 1:21 AM
+// "Librainian/ListBoxLog.cs" was last cleaned by Protiguous on 2018/05/15 at 1:34 AM.
 
 namespace Librainian.Controls {
 
@@ -78,11 +77,9 @@ namespace Librainian.Controls {
         private String MessageFormat { get; }
 
         ~ListBoxLog() {
-            if ( this.Disposed ) {
-                return;
-            }
+            if ( this.Disposed ) { return; }
 
-            this.Dispose( false );
+            this.Dispose();
             this.Disposed = true;
         }
 
@@ -106,33 +103,19 @@ namespace Librainian.Controls {
 
         private static String LevelName( LoggingLevel loggingLevel ) {
             switch ( loggingLevel ) {
-                case LoggingLevel.Critical:
+                case LoggingLevel.Critical: return "Critical";
 
-                    return "Critical";
+                case LoggingLevel.Error: return "Error";
 
-                case LoggingLevel.Error:
+                case LoggingLevel.Warning: return "Warning";
 
-                    return "Error";
+                case LoggingLevel.Info: return "Info";
 
-                case LoggingLevel.Warning:
+                case LoggingLevel.Verbose: return "Verbose";
 
-                    return "Warning";
+                case LoggingLevel.Debug: return "Debug";
 
-                case LoggingLevel.Info:
-
-                    return "Info";
-
-                case LoggingLevel.Verbose:
-
-                    return "Verbose";
-
-                case LoggingLevel.Debug:
-
-                    return "Debug";
-
-                default:
-
-                    return $"<value={( Int32 )loggingLevel}>";
+                default: return $"<value={( Int32 )loggingLevel}>";
             }
         }
 
@@ -153,27 +136,19 @@ namespace Librainian.Controls {
         private void AddALogEntryLine( Object item ) {
             this.Box.Items.Add( item );
 
-            if ( this.Box.Items.Count > this.MaxEntriesInListBox ) {
-                this.Box.Items.RemoveAt( 0 );
-            }
+            if ( this.Box.Items.Count > this.MaxEntriesInListBox ) { this.Box.Items.RemoveAt( 0 ); }
 
-            if ( !this.Paused ) {
-                this.Box.TopIndex = this.Box.Items.Count - 1;
-            }
+            if ( !this.Paused ) { this.Box.TopIndex = this.Box.Items.Count - 1; }
         }
 
         private void CopyMenuOnClickHandler( Object sender, EventArgs e ) => this.CopyToClipboard();
 
         private void CopyMenuPopupHandler( Object sender, EventArgs e ) {
-            if ( sender is ContextMenu menu ) {
-                menu.MenuItems[0].Enabled = this.Box.SelectedItems.Count > 0;
-            }
+            if ( sender is ContextMenu menu ) { menu.MenuItems[0].Enabled = this.Box.SelectedItems.Count > 0; }
         }
 
         private void CopyToClipboard() {
-            if ( !this.Box.SelectedItems.Count.Any() ) {
-                return;
-            }
+            if ( !this.Box.SelectedItems.Count.Any() ) { return; }
 
             var selectedItemsAsRTFText = new StringBuilder();
             selectedItemsAsRTFText.AppendLine( @"{\rtf1\ansi\deff0{\fonttbl{\f0\fcharset0 Courier;}}" );
@@ -195,9 +170,7 @@ namespace Librainian.Controls {
         }
 
         public override void DisposeManaged() {
-            if ( this.Box is null ) {
-                return;
-            }
+            if ( this.Box is null ) { return; }
 
             this.CanAdd = false;
 
@@ -216,9 +189,7 @@ namespace Librainian.Controls {
         }
 
         private void DrawItemHandler( Object sender, DrawItemEventArgs e ) {
-            if ( e.Index < 0 ) {
-                return;
-            }
+            if ( e.Index < 0 ) { return; }
 
             e.DrawBackground();
             e.DrawFocusRectangle();
@@ -261,17 +232,13 @@ namespace Librainian.Controls {
                     break;
             }
 
-            if ( logEvent.LoggingLevel == LoggingLevel.Critical ) {
-                e.Graphics.FillRectangle( new SolidBrush( Color.Red ), e.Bounds );
-            }
+            if ( logEvent.LoggingLevel == LoggingLevel.Critical ) { e.Graphics.FillRectangle( new SolidBrush( Color.Red ), e.Bounds ); }
 
             e.Graphics.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), new Font( "Hack", 8.25f, FontStyle.Regular ), new SolidBrush( color ), e.Bounds );
         }
 
         private void KeyDownHandler( Object sender, KeyEventArgs e ) {
-            if ( e.Modifiers == Keys.Control && e.KeyCode == Keys.C ) {
-                this.CopyToClipboard();
-            }
+            if ( e.Modifiers == Keys.Control && e.KeyCode == Keys.C ) { this.CopyToClipboard(); }
         }
 
         private void OnHandleCreated( Object sender, EventArgs e ) => this.CanAdd = true;
@@ -279,15 +246,11 @@ namespace Librainian.Controls {
         private void OnHandleDestroyed( Object sender, EventArgs e ) => this.CanAdd = false;
 
         private void WriteEvent( LogEvent logEvent ) {
-            if ( logEvent != null && this.CanAdd ) {
-                this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntry ), logEvent );
-            }
+            if ( logEvent != null && this.CanAdd ) { this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntry ), logEvent ); }
         }
 
         private void WriteEventLine( LogEvent logEvent ) {
-            if ( logEvent != null && this.CanAdd ) {
-                this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntryLine ), logEvent );
-            }
+            if ( logEvent != null && this.CanAdd ) { this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntryLine ), logEvent ); }
         }
 
         private delegate void AddALogEntryDelegate( Object item );

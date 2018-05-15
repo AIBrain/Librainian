@@ -17,6 +17,7 @@ namespace Librainian.FileSystem {
 
     using System;
     using System.Collections;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
@@ -24,7 +25,6 @@ namespace Librainian.FileSystem {
     using System.Linq;
     using System.Net;
     using System.Numerics;
-    using System.Runtime.InteropServices;
     using System.Security;
     using System.Security.Permissions;
     using System.Text;
@@ -91,8 +91,6 @@ namespace Librainian.FileSystem {
         public Document( Folder folder, Document document, Boolean deleteAfterClose = false ) : this( fullPathWithFilename: Path.Combine( path1: folder.FullName, path2: document.FileName() ),
             deleteAfterClose: deleteAfterClose ) { }
 
-        public static Int32 BufferSize { get; } = 0x1000000;
-
         public Boolean DeleteAfterClose { get; }
 
         /// <summary>
@@ -114,6 +112,21 @@ namespace Librainian.FileSystem {
         [JsonProperty]
         [NotNull]
         public FileInfo Info { get; }
+
+        /// <summary>
+        /// <para>Gets the current <seealso cref="Size"/> of the <see cref="Document"/>.</para>
+        /// </summary>
+        public Int64 Length {
+            get {
+                try {
+                    if ( this.Exists() ) { return this.Info.Length; }
+                }
+                catch ( FileNotFoundException exception ) { exception.More(); }
+                catch ( IOException exception ) { exception.More(); }
+
+                return default;
+            }
+        }
 
         /// <summary>
         /// <para>Static case sensitive comparison of the file names and file sizes for equality.</para>
@@ -247,28 +260,28 @@ namespace Librainian.FileSystem {
 
             var stopwatch = StopWatch.StartNew();
 
-            var fileSize = this.Length();
+            var fileSize = this.Length;
             if ( !fileSize.Any() ) {
                 return (false, stopwatch.Elapsed);
             }
 
-            if ( fileSize <= ( UInt64 )BufferSize ) {
+            if ( fileSize <= ( UInt64 )GetBufferSize() ) {
                 await this.Copy( destination, progress, eta ).ConfigureAwait( false );
-                return (destination.Exists() && destination.Length() == fileSize, stopwatch.Elapsed);
+                return (destination.Exists() && destination.Length == fileSize, stopwatch.Elapsed);
             }
 
             var processorCount = ( UInt64 )Environment.ProcessorCount;
 
             var chunksNeeded = fileSize / processorCount;
 
-            var buffers = new ThreadLocal<Byte[]>( () => new Byte[BufferSize], trackAllValues: true );
+            var buffers = new ThreadLocal<Byte[]>( () => new Byte[GetBufferSize()], trackAllValues: true );
 
-            var sourceStream = new FileStream( this.FullPathWithFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize, FileOptions.Asynchronous | FileOptions.RandomAccess );
-            var sourceBuffer = new BufferedStream( sourceStream, BufferSize );
+            var sourceStream = new FileStream( this.FullPathWithFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, GetBufferSize(), FileOptions.Asynchronous | FileOptions.RandomAccess );
+            var sourceBuffer = new BufferedStream( sourceStream, GetBufferSize() );
             var sourceBinary = new BinaryReader( sourceBuffer, Encoding.Unicode );
 
-            var destinationStream = new FileStream( destination.FullPathWithFileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, BufferSize, FileOptions.Asynchronous | FileOptions.RandomAccess );
-            var destinationBuffer = new BufferedStream( destinationStream, BufferSize );
+            var destinationStream = new FileStream( destination.FullPathWithFileName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, GetBufferSize(), FileOptions.Asynchronous | FileOptions.RandomAccess );
+            var destinationBuffer = new BufferedStream( destinationStream, GetBufferSize() );
             var destinationBinary = new BinaryWriter( destinationBuffer, Encoding.Unicode );
 
             using ( var memoryOut = MemoryMappedFile.CreateOrOpen( destination.JustName(), ( Int64 )fileSize, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.DelayAllocatePages, HandleInheritability.Inheritable ) ) {
@@ -352,7 +365,6 @@ namespace Librainian.FileSystem {
             return null;
         }
 
-        [CanBeNull]
         public async Task<UInt32?> CRC32() {
             try {
                 if ( !this.Exists() ) {
@@ -380,7 +392,6 @@ namespace Librainian.FileSystem {
             return null;
         }
 
-        [CanBeNull]
         public async Task<UInt64?> CRC64() {
             try {
                 if ( !this.Exists() ) {
@@ -549,6 +560,19 @@ namespace Librainian.FileSystem {
         public String FileName() => Path.GetFileName( this.FullPathWithFileName );
 
         /// <summary>
+        /// <para>Could we allocate a full 2GB buffer if we wanted? that'd be really nice for the <see cref="Document"/> copy routines...</para>
+        /// <para>See the file "App.config" for setting gcAllowVeryLargeObjects to true.</para>
+        /// </summary>
+        public Int32 GetBufferSize() {
+            var oursize = this.Size();
+
+            if ( !oursize.Any() ) { return default; }
+            if ( oursize <= Int32.MaxValue ) { return ( Int32 )oursize; }
+
+            return BufferSize1;
+        }
+
+        /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.</returns>
@@ -582,25 +606,6 @@ namespace Librainian.FileSystem {
 
                 return null;
             } );
-
-        /// <summary>
-        /// <para>Gets the current size of the <see cref="Document"/>.</para>
-        /// </summary>
-        public UInt64 Length() {
-            try {
-                if ( this.Exists() ) {
-                    return ( UInt64 )this.Info.Length;
-                }
-            }
-            catch ( FileNotFoundException exception ) {
-                exception.More();
-            }
-            catch ( IOException exception ) {
-                exception.More();
-            }
-
-            return default;
-        }
 
         /// <summary>
         /// Attempt to return an object Deserialized from this JSON text file.
@@ -703,7 +708,7 @@ namespace Librainian.FileSystem {
                 return false;
             }
 
-            return this.Length() == right.Length() && this.AsBytes().SequenceEqual( second: right.AsBytes() );
+            return this.Length == right.Length && this.AsBytes().SequenceEqual( second: right.AsBytes() );
         }
 
         public void SetCreationTime( DateTime when, CancellationToken cancellationToken ) {
@@ -727,10 +732,9 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        /// <para>Gets the current size of the <see cref="Document"/>.</para>
+        /// <para>Gets the current <seealso cref="Length"/> of the <see cref="Document"/>.</para>
         /// </summary>
-        /// <remarks>Same as <seealso cref="Length"/>.</remarks>
-        public UInt64 Size() => this.Length();
+        public Int64 Size() => this.Length;
 
         /// <summary>
         /// Open the file for reading and return a <see cref="StreamReader"/>.

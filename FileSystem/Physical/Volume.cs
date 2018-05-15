@@ -104,7 +104,7 @@ namespace Librainian.FileSystem.Physical {
             var volumeName = this.GetVolumeName();
             String logicalDrive = null;
             if ( volumeName != null ) {
-                ( DeviceClass as VolumeDeviceClass )?.LogicalDrives.TryGetValue( volumeName, out logicalDrive );
+                ( this.DeviceClass as VolumeDeviceClass )?.LogicalDrives.TryGetValue( volumeName, out logicalDrive );
             }
             return logicalDrive;
         }
@@ -133,7 +133,7 @@ namespace Librainian.FileSystem.Physical {
         [CanBeNull]
         public String GetVolumeName() {
             var sb = new StringBuilder( 1024 );
-            if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( Path + "\\", sb, ( UInt32 )sb.Capacity ) ) {
+            if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( this.Path + "\\", sb, ( UInt32 )sb.Capacity ) ) {
 
                 // throw new Win32Exception(Marshal.GetLastWin32Error());
                 return null;

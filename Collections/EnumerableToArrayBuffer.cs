@@ -1,18 +1,17 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "EnumerableToArrayBuffer.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original
+// license has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/EnumerableToArrayBuffer.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
+// "Librainian/EnumerableToArrayBuffer.cs" was last cleaned by Protiguous on 2018/05/15 at 1:28 AM.
 
 namespace Librainian.Collections {
 
@@ -40,9 +39,7 @@ namespace Librainian.Collections {
             }
 
             foreach ( var local in source ) {
-                if ( array is null ) {
-                    array = new T[4];
-                }
+                if ( array is null ) { array = new T[4]; }
                 else if ( array.Length == length ) {
                     var destinationArray = new T[length * 2];
                     Array.Copy( sourceArray: array, sourceIndex: 0, destinationArray: destinationArray, destinationIndex: 0, length );
@@ -63,27 +60,19 @@ namespace Librainian.Collections {
         /// Caller to guarantee items.Length &gt; index &gt;= 0
         /// </summary>
         internal void CopyTo( T[] items, Int32 index ) {
-            if ( this._collection != null && this._collection.Count > 0 ) {
-                this._collection.CopyTo( array: items, arrayIndex: index );
-            }
-            else if ( this._count > 0 ) {
-                Array.Copy( sourceArray: this._items, sourceIndex: 0, destinationArray: items, destinationIndex: index, this._count );
-            }
+            if ( this._collection != null && this._collection.Count > 0 ) { this._collection.CopyTo( array: items, arrayIndex: index ); }
+            else if ( this._count > 0 ) { Array.Copy( sourceArray: this._items, sourceIndex: 0, destinationArray: items, destinationIndex: index, this._count ); }
         }
 
         internal T[] ToArray() {
             var count = this.Count;
 
-            if ( count == 0 ) {
-                return new T[0];
-            }
+            if ( count == 0 ) { return new T[0]; }
 
             T[] destinationArray;
 
             if ( this._collection is null ) {
-                if ( this._items.Length == this._count ) {
-                    return this._items;
-                }
+                if ( this._items.Length == this._count ) { return this._items; }
 
                 destinationArray = new T[this._count];
                 Array.Copy( sourceArray: this._items, sourceIndex: 0, destinationArray: destinationArray, destinationIndex: 0, this._count );
@@ -91,13 +80,9 @@ namespace Librainian.Collections {
                 return destinationArray;
             }
 
-            if ( this._collection is List<T> list ) {
-                return list.ToArray();
-            }
+            if ( this._collection is List<T> list ) { return list.ToArray(); }
 
-            if ( this._collection is AbstractCollection<T> ac ) {
-                return ac.ToArray();
-            }
+            if ( this._collection is AbstractCollection<T> ac ) { return ac.ToArray(); }
 
             destinationArray = new T[count];
             this._collection.CopyTo( array: destinationArray, arrayIndex: 0 );

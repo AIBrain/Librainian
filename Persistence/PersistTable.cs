@@ -186,13 +186,13 @@ namespace Librainian.Persistence {
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => this.Items().GetEnumerator();
 
         public void Initialize() {
-            Log.Enter();
+            Logging.Enter();
             this.Dictionary.Database.Should().NotBeNull();
             if ( this.Dictionary.Database.ToString().IsNullOrWhiteSpace() ) {
                 throw new DirectoryNotFoundException( message: $"Unable to find or create the folder `{this.Folder.FullName}`." );
             }
 
-            Log.Exit();
+            Logging.Exit();
         }
 
         /// <summary>

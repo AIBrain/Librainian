@@ -2,19 +2,17 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
 //
-// Donations and royalties can be paid via
+// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//
+// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
 // Contact me by email if you have any questions or helpful criticism.
 //
-// "Librainian/ProgressStream.cs" was last cleaned by Protiguous on 2016/06/18 at 10:55 PM
+// "Librainian/ProgressStream.cs" was last cleaned by Protiguous on 2018/05/14 at 7:01 PM
 
 namespace Librainian.OperatingSystem.Streams {
 
@@ -25,31 +23,28 @@ namespace Librainian.OperatingSystem.Streams {
     using Measurement.Frequency;
 
     public sealed class ProgressStream : ContainerStream {
+
         private Int32 _lastProgress;
 
         private DateTime _lastProgressUpdate = DateTime.UtcNow.AddSeconds( -1 );
 
         public ProgressStream( Stream stream ) : base( stream: stream ) {
-            if ( stream.CanRead && stream.CanSeek && stream.Length > 0 ) {
-                return;
-            }
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
+            if ( stream.CanRead && stream.CanSeek && stream.Length > 0 ) { return; }
+
+            Logging.Break();
+
             throw new ArgumentException( "stream" );
         }
 
-        public ProgressChangedEventHandler ProgressChanged {
-            get; set;
-        }
+        public ProgressChangedEventHandler ProgressChanged { get; set; }
 
         public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) {
-            var amountRead = Stream.Read( buffer, offset, count );
+            var amountRead = this.Stream.Read( buffer, offset, count );
 
-            var newProgress = ( Int32 )( 1024.0 * ( Position / ( Double )Length ) );
-            if ( newProgress <= this._lastProgress || DateTime.UtcNow - this._lastProgressUpdate < Hertz.Sixty ) {
-                return amountRead;
-            }
+            var newProgress = ( Int32 )( 1024.0 * ( this.Position / ( Double )this.Length ) );
+
+            if ( newProgress <= this._lastProgress || DateTime.UtcNow - this._lastProgressUpdate < Hertz.Sixty ) { return amountRead; }
+
             this._lastProgressUpdate = DateTime.UtcNow;
             this._lastProgress = newProgress;
             var progressChanged = this.ProgressChanged;
@@ -68,7 +63,7 @@ namespace Librainian.OperatingSystem.Streams {
         /// <exception cref="T:System.NotSupportedException">The stream does not support seeking, such as if the stream is constructed from a pipe or console output.</exception>
         /// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>1</filterpriority>
-        public override Int64 Seek( Int64 offset, SeekOrigin origin ) => Stream.Seek( offset: offset, origin: origin );
+        public override Int64 Seek( Int64 offset, SeekOrigin origin ) => this.Stream.Seek( offset: offset, origin: origin );
 
         /// <summary>
         /// When overridden in a derived class, sets the length of the current stream.
@@ -78,7 +73,7 @@ namespace Librainian.OperatingSystem.Streams {
         /// <exception cref="T:System.NotSupportedException">The stream does not support both writing and seeking, such as if the stream is constructed from a pipe or console output.</exception>
         /// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>2</filterpriority>
-        public override void SetLength( Int64 value ) => Stream.SetLength( value: value );
+        public override void SetLength( Int64 value ) => this.Stream.SetLength( value: value );
 
         /// <summary>
         /// When overridden in a derived class, writes a sequence of bytes to the current stream and advances the current position within this stream by the number of bytes written.
@@ -93,6 +88,6 @@ namespace Librainian.OperatingSystem.Streams {
         /// <exception cref="T:System.NotSupportedException">The stream does not support writing.</exception>
         /// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>1</filterpriority>
-        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => Stream.Write( buffer: buffer, offset: offset, count: count );
+        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer: buffer, offset: offset, count: count );
     }
 }

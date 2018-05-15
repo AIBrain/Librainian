@@ -36,6 +36,6 @@ namespace Librainian.Measurement.Time.Clocks {
             }
         }
 
-        public UInt64 ElapsedMicroseconds => ( UInt64 )( ElapsedTicks * this.MicrosecondsPerTick );
+        public UInt64 ElapsedMicroseconds => ( UInt64 )( this.ElapsedTicks * this.MicrosecondsPerTick );
     }
 }

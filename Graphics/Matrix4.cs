@@ -28,7 +28,7 @@ namespace Librainian.Graphics {
         }
 
         public Matrix4( Single[,] matrix ) : base( matrix ) {
-            if ( Rows != 4 || Cols != 4 ) {
+            if ( this.Rows != 4 || this.Cols != 4 ) {
                 throw new ArgumentException();
             }
         }

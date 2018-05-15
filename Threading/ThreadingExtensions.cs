@@ -837,7 +837,7 @@ namespace Librainian.Threading {
             }
             catch ( OutOfMemoryException lowMemory ) {
                 lowMemory.More();
-                Log.Garbage();
+                Logging.Garbage();
                 attempts--;
                 if ( attempts.Any() ) {
                     goto TryAgain;

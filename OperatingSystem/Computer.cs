@@ -42,36 +42,25 @@ namespace Librainian.OperatingSystem {
         private static ManagementObjectSearcher PerfFormattedDataManagementObjectSearcher { get; } = new ManagementObjectSearcher( "select * from Win32_PerfFormattedData_PerfOS_Processor" );
 
         /// <summary>
-        /// Provides properties for getting information about the computer's memory, loaded assemblies, name, and operating system.
-        /// </summary>
-        // BUG how slow is this class?
-        [NotNull]
-        public static ComputerInfo Info => new ComputerInfo();
-
-        /// <summary>
         /// </summary>
         /// <remarks>http: //msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx</remarks>
         /// <returns></returns>
-        public static String RAM {
+        public static UInt64 RAM {
             get {
                 try {
                     using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_PhysicalMemory" ) ) {
                         UInt64 total = 0;
 
-                        var sb = new StringBuilder();
                         foreach ( var result in searcher.Get() ) {
-                            var mem = ( UInt64 )result["Capacity"];
+                            var mem = Convert.ToUInt64( result["Capacity"] );
                             total += mem;
-                            sb.Append( $"{result["DeviceLocator"]}:{mem / 1024 / 1024}MB, " );
                         }
 
-                        sb.Append( $" Total: {total / 1024 / 1024:0,000}MB" );
-                        return sb.ToString();
+                        return total;
                     }
                 }
-                catch ( Exception ex ) {
-                    return $"WMI Error: {ex.Message}";
-                }
+                catch ( Exception exception ) { exception.More(); }
+                return 0;
             }
         }
 
@@ -81,7 +70,7 @@ namespace Librainian.OperatingSystem {
         public static UInt64 TotalPhysicalMemory {
             get {
                 try {
-                    return Info.TotalPhysicalMemory;
+                    return Info().TotalPhysicalMemory;
                 }
                 catch ( Exception exception ) {
                     exception.More();
@@ -149,11 +138,10 @@ namespace Librainian.OperatingSystem {
         /// //TODO description. Bytes? Which one does .NET allocate objects in..? Sum, or smaller of the two? Is this real time? How fast/slow is this method?
         /// </summary>
         /// <returns></returns>
-        public static BigInteger GetAvailableMemeory() {
-            var info = Info;
-            var physical = info.AvailablePhysicalMemory;
-            var virtl = info.AvailableVirtualMemory;
-            return Math.Min( physical, virtl );
+        public static UInt64 GetAvailableMemeory() {
+            var info = Info();
+
+            return Math.Min( info.AvailablePhysicalMemory, info.AvailableVirtualMemory );
         }
 
         /// <summary>
@@ -217,6 +205,13 @@ namespace Librainian.OperatingSystem {
         public static IEnumerable<String> GetWorkingMacAddresses() => from nic in NetworkInterface.GetAllNetworkInterfaces() where nic.OperationalStatus == OperationalStatus.Up select nic.GetPhysicalAddress().ToString();
 
         public static void Hibernate( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/h" : $"/h /t {( Int32 )delay.Value.TotalSeconds}" );
+
+        /// <summary>
+        /// Provides properties for getting information about the computer's memory, loaded assemblies, name, and operating system.
+        /// </summary>
+        // TODO how slow is this class? The code behind it doesn't *look* slow..
+        [NotNull]
+        public static ComputerInfo Info() => new ComputerInfo();
 
         public static void Logoff( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/l" : $"/l /t {( Int32 )delay.Value.TotalSeconds}" );
 

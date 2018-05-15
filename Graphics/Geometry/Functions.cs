@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -30,8 +28,20 @@ namespace Librainian.Graphics.Geometry {
     public static class Functions {
 
         /// <summary>
-        ///     Calculates the intersection line segment between 2 lines (not segments). Returns false
-        ///     if no solution can be found.
+        /// Angles of a rectangle.
+        /// </summary>
+        [Flags]
+        public enum RectAngles {
+            None = 0,
+            TopLeft = 1,
+            TopRight = 2,
+            BottomLeft = 4,
+            BottomRight = 8,
+            All = TopLeft | TopRight | BottomLeft | BottomRight
+        }
+
+        /// <summary>
+        /// Calculates the intersection line segment between 2 lines (not segments). Returns false if no solution can be found.
         /// </summary>
         /// <returns></returns>
         public static Boolean CalculateLineLineIntersection( this Vector3 line1Point1, Vector3 line1Point2, Vector3 line2Point1, Vector3 line2Point2, out Vector3 resultSegmentPoint1, out Vector3 resultSegmentPoint2 ) {
@@ -86,12 +96,11 @@ namespace Librainian.Graphics.Geometry {
         }
 
         /// <summary>
-        ///     Calculates the intersection line segment between 2 lines (not segments). Returns false
-        ///     if no solution can be found.
+        /// Calculates the intersection line segment between 2 lines (not segments). Returns false if no solution can be found.
         /// </summary>
         /// <returns></returns>
         public static Boolean CalculateLineLineIntersection( this CoordinateF line1Point1, CoordinateF line1Point2, CoordinateF line2Point1, CoordinateF line2Point2, out CoordinateF resultSegmentPoint1, out CoordinateF resultSegmentPoint2 ) {
-            Debugger.Break();
+            Logging.Break();
 
             // Algorithm is ported from the C algorithm of Paul Bourke at http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline3d/
             resultSegmentPoint1 = CoordinateF.Empty;
@@ -122,6 +131,7 @@ namespace Librainian.Graphics.Geometry {
             if ( Math.Abs( denom ) < Single.Epsilon ) {
                 return false;
             }
+
             var numer = d1343 * d4321 - d1321 * d4343;
 
             var mua = numer / denom;
@@ -134,35 +144,35 @@ namespace Librainian.Graphics.Geometry {
         }
 
         /// <summary>
-        /// Angles of a rectangle.
-        /// </summary>
-        [Flags]
-        public enum RectAngles {
-            None = 0,
-            TopLeft = 1,
-            TopRight = 2,
-            BottomLeft = 4,
-            BottomRight = 8,
-            All = TopLeft | TopRight | BottomLeft | BottomRight
-        }
-
-        /// <summary>
         /// Draw and fill a rounded rectangle.
         /// </summary>
-        /// <param name="g">The graphics object to use.</param>
-        /// <param name="p">The pen to use to draw the rounded rectangle. If <code>null</code>, the border is not drawn.</param>
-        /// <param name="b">The brush to fill the rounded rectangle. If <code>null</code>, the internal is not filled.</param>
-        /// <param name="r">The rectangle to draw.</param>
+        /// <param name="g">                 The graphics object to use.</param>
+        /// <param name="p">                 
+        /// The pen to use to draw the rounded rectangle. If
+        /// <code>
+        /// null
+        /// </code>
+        /// , the border is not drawn.
+        /// </param>
+        /// <param name="b">                 
+        /// The brush to fill the rounded rectangle. If
+        /// <code>
+        /// null
+        /// </code>
+        /// , the internal is not filled.
+        /// </param>
+        /// <param name="r">                 The rectangle to draw.</param>
         /// <param name="horizontalDiameter">Horizontal diameter for the rounded angles.</param>
-        /// <param name="verticalDiameter">Vertical diameter for the rounded angles.</param>
-        /// <param name="rectAngles">Angles to round.</param>
+        /// <param name="verticalDiameter">  Vertical diameter for the rounded angles.</param>
+        /// <param name="rectAngles">        Angles to round.</param>
         public static void DrawAndFillRoundedRectangle( this Graphics g, Pen p, Brush b, Rectangle r, Int32 horizontalDiameter, Int32 verticalDiameter, RectAngles rectAngles ) {
+
             // get out data
             var x = r.X;
             var y = r.Y;
             var width = r.Width;
             var height = r.Height;
-            
+
             // adapt horizontal and vertical diameter if the rectangle is too little
             if ( width < horizontalDiameter ) {
                 horizontalDiameter = width;
@@ -223,9 +233,10 @@ namespace Librainian.Graphics.Geometry {
                 pointP;
 
             using ( var gp = new GraphicsPath() ) {
+
                 // a
                 gp.AddLine( pointP, pointQ );
-                
+
                 // b
                 if ( tr ) {
                     gp.AddArc( x + width - horizontalDiameter - 1, y, horizontalDiameter, verticalDiameter, 270, 90 );
@@ -233,7 +244,7 @@ namespace Librainian.Graphics.Geometry {
 
                 // c
                 gp.AddLine( pointR, pointS );
-                
+
                 // d
                 if ( br ) {
                     gp.AddArc( x + width - horizontalDiameter - 1, y + height - verticalDiameter - 1, horizontalDiameter, verticalDiameter, 0, 90 );
@@ -241,7 +252,7 @@ namespace Librainian.Graphics.Geometry {
 
                 // e
                 gp.AddLine( pointT, pointU );
-                
+
                 // f
                 if ( bl ) {
                     gp.AddArc( x, y + height - verticalDiameter - 1, horizontalDiameter, verticalDiameter, 90, 90 );
@@ -249,7 +260,7 @@ namespace Librainian.Graphics.Geometry {
 
                 // g
                 gp.AddLine( pointV, pointW );
-                
+
                 // h
                 if ( tl ) {
                     gp.AddArc( x, y, horizontalDiameter, verticalDiameter, 180, 90 );

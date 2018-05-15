@@ -27,6 +27,6 @@ namespace Librainian.Extensions {
 
         public SafeSearchHandle() : base( ownsHandle: true ) { }
 
-        protected override Boolean ReleaseHandle() => NativeMethods.FindClose( hFindFile: handle );
+        protected override Boolean ReleaseHandle() => NativeMethods.FindClose( hFindFile: this.handle );
     }
 }

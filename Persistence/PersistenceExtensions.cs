@@ -258,7 +258,7 @@ namespace Librainian.Persistence {
                 var documents = folder.GetDocuments( $"*{extension}" );
 
                 foreach ( var document in documents ) {
-                    var length = document.Length();
+                    var length = document.Length;
                     if ( length != null && length.Value < 1 ) {
                         document.Delete();
                         continue;

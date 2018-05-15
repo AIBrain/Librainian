@@ -1,18 +1,17 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "AbstractCollection.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original
+// license has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/AbstractCollection.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
+// "Librainian/AbstractCollection.cs" was last cleaned by Protiguous on 2018/05/15 at 1:28 AM.
 
 namespace Librainian.Collections {
 
@@ -87,13 +86,9 @@ namespace Librainian.Collections {
         /// <param name="length">Expected length of array.</param>
         /// <returns><paramref name="array"/> itself if <c>array.Length &gt;= length</c>. Otherwise a new array of same type of <paramref name="array"/> of given <paramref name="length"/>.</returns>
         protected static T[] EnsureCapacity( T[] array, Int32 length ) {
-            if ( array is null ) {
-                return new T[length];
-            }
+            if ( array is null ) { return new T[length]; }
 
-            if ( array.Length >= length ) {
-                return array;
-            }
+            if ( array.Length >= length ) { return array; }
 
             // new T[size] won't work here when targetArray is subtype of T.
             return ( T[] )Array.CreateInstance( elementType: array.GetType().GetElementType() ?? throw new InvalidOperationException(), length );
@@ -127,13 +122,9 @@ namespace Librainian.Collections {
         /// name="array"/> instance itself.
         /// </returns>
         protected virtual T[] DoCopyTo( T[] array, Int32 arrayIndex, Boolean ensureCapacity ) {
-            if ( ensureCapacity ) {
-                array = EnsureCapacity( array: array, this.Count );
-            }
+            if ( ensureCapacity ) { array = EnsureCapacity( array: array, this.Count ); }
 
-            foreach ( var e in this ) {
-                array[arrayIndex++] = e;
-            }
+            foreach ( var e in this ) { array[arrayIndex++] = e; }
 
             return array;
         }
@@ -163,13 +154,9 @@ namespace Librainian.Collections {
         /// <exception cref="System.ArgumentNullException">If the supplied <paramref name="collection"/> is <see langword="null"/>.</exception>
         /// <exception cref="System.ArgumentException">If the collection is the current collection.</exception>
         public virtual Boolean AddRange( IEnumerable<T> collection ) {
-            if ( collection is null ) {
-                throw new ArgumentNullException( nameof( collection ) );
-            }
+            if ( collection is null ) { throw new ArgumentNullException( nameof( collection ) ); }
 
-            if ( ReferenceEquals( collection, this ) ) {
-                throw new ArgumentException( message: "Cannot add to itself.", nameof( collection ) );
-            }
+            if ( ReferenceEquals( collection, this ) ) { throw new ArgumentException( message: "Cannot add to itself.", nameof( collection ) ); }
 
             return this.DoAddRange( collection: collection );
         }
@@ -200,20 +187,14 @@ namespace Librainian.Collections {
         /// available space from arrayIndex to the end of the destination array. <br/>-or- <br/> Type T cannot be cast automatically to the type of the destination array.
         /// </exception>
         public void CopyTo( T[] array, Int32 arrayIndex ) {
-            if ( array is null ) {
-                throw new ArgumentNullException( nameof( array ) );
-            }
+            if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
 
             if ( arrayIndex < array.GetLowerBound( dimension: 0 ) ) {
                 throw new ArgumentOutOfRangeException( nameof( arrayIndex ), actualValue: arrayIndex, message: "arrayIndex must not be less then the lower bound of the array." );
             }
 
-            try {
-                this.DoCopyTo( array: array, arrayIndex: arrayIndex, ensureCapacity: false );
-            }
-            catch ( IndexOutOfRangeException e ) {
-                throw new ArgumentException( message: "array is too small to fit the collection.", nameof( array ), innerException: e );
-            }
+            try { this.DoCopyTo( array: array, arrayIndex: arrayIndex, ensureCapacity: false ); }
+            catch ( IndexOutOfRangeException e ) { throw new ArgumentException( message: "array is too small to fit the collection.", nameof( array ), innerException: e ); }
         }
 
         /// <summary>
@@ -257,9 +238,7 @@ namespace Librainian.Collections {
         /// <exception cref="ArgumentNullException">If the supplied <paramref name="targetArray"/> is <c>null</c>.</exception>
         /// <exception cref="ArrayTypeMismatchException">If type of <paramref name="targetArray"/> is a derived type of <typeparamref name="T"/> and the collection contains element that is not that derived type.</exception>
         public virtual T[] ToArray( T[] targetArray ) {
-            if ( targetArray is null ) {
-                throw new ArgumentNullException( nameof( targetArray ) );
-            }
+            if ( targetArray is null ) { throw new ArgumentNullException( nameof( targetArray ) ); }
 
             return this.DoCopyTo( array: targetArray, arrayIndex: 0, ensureCapacity: true );
         }
@@ -284,13 +263,11 @@ namespace Librainian.Collections {
         /// <filterpriority>2</filterpriority>
         public override String ToString() {
             var sb = new StringBuilder();
-            sb.Append( value: GetType().Name ).Append( value: "(" );
+            sb.Append( value: this.GetType().Name ).Append( value: "(" );
             var first = true;
 
             foreach ( var e in this ) {
-                if ( !first ) {
-                    sb.Append( value: ", " );
-                }
+                if ( !first ) { sb.Append( value: ", " ); }
 
                 sb.Append( value: e );
                 first = false;
@@ -313,9 +290,7 @@ namespace Librainian.Collections {
         /// <exception cref="InvalidCastException">The type of the source <see cref="ICollection"/> cannot be cast automatically to the type of the destination array.</exception>
         /// <filterpriority>2</filterpriority>
         protected virtual void CopyTo( Array array, Int32 index ) {
-            foreach ( var e in this ) {
-                array.SetValue( value: e, index: index++ );
-            }
+            foreach ( var e in this ) { array.SetValue( value: e, index: index++ ); }
         }
 
         /// <summary>
@@ -334,23 +309,13 @@ namespace Librainian.Collections {
         /// <exception cref="T:System.InvalidCastException">The type of the source <see cref="T:System.Collections.ICollection"/> cannot be cast automatically to the type of the destination array.</exception>
         /// <filterpriority>2</filterpriority>
         void ICollection.CopyTo( Array array, Int32 index ) {
-            if ( array is null ) {
-                throw new ArgumentNullException( nameof( array ) );
-            }
+            if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
 
-            if ( index < array.GetLowerBound( dimension: 0 ) ) {
-                throw new ArgumentOutOfRangeException( nameof( index ), actualValue: index, message: "index must not be less then lower bound of the array" );
-            }
+            if ( index < array.GetLowerBound( dimension: 0 ) ) { throw new ArgumentOutOfRangeException( nameof( index ), actualValue: index, message: "index must not be less then lower bound of the array" ); }
 
-            try {
-                this.CopyTo( array: array, index: index );
-            }
-            catch ( RankException re ) {
-                throw new ArgumentException( message: "array must not be multi-dimensional.", nameof( array ), innerException: re );
-            }
-            catch ( IndexOutOfRangeException e ) {
-                throw new ArgumentException( message: "array is too small to fit the collection.", nameof( array ), innerException: e );
-            }
+            try { this.CopyTo( array: array, index: index ); }
+            catch ( RankException re ) { throw new ArgumentException( message: "array must not be multi-dimensional.", nameof( array ), innerException: re ); }
+            catch ( IndexOutOfRangeException e ) { throw new ArgumentException( message: "array is too small to fit the collection.", nameof( array ), innerException: e ); }
         }
 
         /// <summary>

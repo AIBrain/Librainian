@@ -1,18 +1,17 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "DurableDatabase.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license
+// has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/DurableDatabase.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
+// "Librainian/DurableDatabase.cs" was last cleaned by Protiguous on 2018/05/15 at 1:34 AM.
 
 namespace Librainian.Database {
 
@@ -70,18 +69,14 @@ namespace Librainian.Database {
 
         [CanBeNull]
         private SqlConnection OpenConnection() {
-            if ( this.SqlConnections.Value.State == ConnectionState.Open ) {
-                return this.SqlConnections.Value;
-            }
+            if ( this.SqlConnections.Value.State == ConnectionState.Open ) { return this.SqlConnections.Value; }
 
             try {
                 this.SqlConnections.Value.Open();
 
                 return this.SqlConnections.Value;
             }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( Exception exception ) { exception.More(); }
 
             return null;
         }
@@ -92,13 +87,9 @@ namespace Librainian.Database {
         /// <param name="sender"></param>
         /// <returns></returns>
         private Boolean ReOpenConnection( Object sender ) {
-            if ( this.CancelConnection.IsCancellationRequested ) {
-                return false;
-            }
+            if ( this.CancelConnection.IsCancellationRequested ) { return false; }
 
-            if ( !( sender is SqlConnection connection ) ) {
-                return false;
-            }
+            if ( !( sender is SqlConnection connection ) ) { return false; }
 
             var retries = this.Retries;
 
@@ -106,22 +97,14 @@ namespace Librainian.Database {
                 retries--;
 
                 try {
-                    if ( this.CancelConnection.IsCancellationRequested ) {
-                        return false;
-                    }
+                    if ( this.CancelConnection.IsCancellationRequested ) { return false; }
 
                     connection.Open();
 
-                    if ( connection.State == ConnectionState.Open ) {
-                        return true;
-                    }
+                    if ( connection.State == ConnectionState.Open ) { return true; }
                 }
-                catch ( SqlException exception ) {
-                    exception.More();
-                }
-                catch ( DbException exception ) {
-                    exception.More();
-                }
+                catch ( SqlException exception ) { exception.More(); }
+                catch ( DbException exception ) { exception.More(); }
             } while ( retries > 0 );
 
             return false;
@@ -134,38 +117,28 @@ namespace Librainian.Database {
 
                     break;
 
-                case ConnectionState.Open:
-
-                    break; //do nothing
+                case ConnectionState.Open: break; //do nothing
 
                 case ConnectionState.Connecting:
                     Thread.SpinWait( 99 ); //TODO pooa.
 
                     break;
 
-                case ConnectionState.Executing:
+                case ConnectionState.Executing: break; //do nothing
 
-                    break; //do nothing
-
-                case ConnectionState.Fetching:
-
-                    break; //do nothing
+                case ConnectionState.Fetching: break; //do nothing
 
                 case ConnectionState.Broken:
                     this.ReOpenConnection( sender );
 
                     break;
 
-                default:
-
-                    throw new ArgumentOutOfRangeException();
+                default: throw new ArgumentOutOfRangeException();
             }
         }
 
         public override void DisposeManaged() {
-            if ( !this.CancelConnection.IsCancellationRequested ) {
-                this.CancelConnection.Cancel();
-            }
+            if ( !this.CancelConnection.IsCancellationRequested ) { this.CancelConnection.Cancel(); }
 
             foreach ( var connection in this.SqlConnections.Values ) {
                 switch ( connection.State ) {
@@ -174,9 +147,7 @@ namespace Librainian.Database {
 
                         break;
 
-                    case ConnectionState.Closed:
-
-                        break;
+                    case ConnectionState.Closed: break;
 
                     case ConnectionState.Connecting:
                         connection.Close();
@@ -198,9 +169,7 @@ namespace Librainian.Database {
 
                         break;
 
-                    default:
-
-                        throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -211,47 +180,33 @@ namespace Librainian.Database {
         /// <returns></returns>
         [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         public Boolean ExecuteNonQuery( String query, params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
+            if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
             try {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = CommandType.Text } ) {
-                    if ( null != parameters ) {
-                        command.Parameters.AddRange( parameters );
-                    }
+                    if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
                     command.ExecuteNonQuery();
                 }
 
                 return true;
             }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
-            catch ( DbException exception ) {
-                exception.More();
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( SqlException exception ) { exception.More(); }
+            catch ( DbException exception ) { exception.More(); }
+            catch ( Exception exception ) { exception.More(); }
 
             return false;
         }
 
         [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "StoredProcedure" )]
         public Boolean ExecuteNonQuery( String query, Int32 retries, params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
+            if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
             TryAgain:
 
             try {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = CommandType.StoredProcedure } ) {
-                    if ( null != parameters ) {
-                        command.Parameters.AddRange( parameters );
-                    }
+                    if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
                     command.ExecuteNonQuery();
 
@@ -263,16 +218,10 @@ namespace Librainian.Database {
                 //timeout probably
                 retries--;
 
-                if ( retries.Any() ) {
-                    goto TryAgain;
-                }
+                if ( retries.Any() ) { goto TryAgain; }
             }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
-            catch ( DbException exception ) {
-                exception.More();
-            }
+            catch ( SqlException exception ) { exception.More(); }
+            catch ( DbException exception ) { exception.More(); }
 
             return false;
         }
@@ -282,9 +231,7 @@ namespace Librainian.Database {
         /// <returns></returns>
         [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         public Boolean ExecuteNonQuery( String query ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
+            if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
             try {
                 using ( var sqlcommand = new SqlCommand( query, this.OpenConnection() ) { CommandType = CommandType.Text } ) {
@@ -293,40 +240,26 @@ namespace Librainian.Database {
                     return true;
                 }
             }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
-            catch ( DbException exception ) {
-                exception.More();
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( SqlException exception ) { exception.More(); }
+            catch ( DbException exception ) { exception.More(); }
+            catch ( Exception exception ) { exception.More(); }
 
             return false;
         }
 
         [ItemCanBeNull]
         public async Task<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
+            if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
             try {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
-                    if ( null != parameters ) {
-                        command.Parameters.AddRange( parameters );
-                    }
+                    if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
                     return await command.ExecuteNonQueryAsync().ConfigureAwait( false );
                 }
             }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
-            catch ( DbException exception ) {
-                exception.More();
-            }
+            catch ( SqlException exception ) { exception.More(); }
+            catch ( DbException exception ) { exception.More(); }
 
             return null;
         }
@@ -341,38 +274,26 @@ namespace Librainian.Database {
         /// <returns></returns>
         [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         public Boolean ExecuteReader( String query, CommandType commandType, out DataTable table, params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
+            if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
             table = new DataTable();
 
             try {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
-                    if ( null != parameters ) {
-                        command.Parameters.AddRange( parameters );
-                    }
+                    if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
                     table.BeginLoadData();
 
-                    using ( var reader = command.ExecuteReader() ) {
-                        table.Load( reader );
-                    }
+                    using ( var reader = command.ExecuteReader() ) { table.Load( reader ); }
 
                     table.EndLoadData();
 
                     return true;
                 }
             }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
-            catch ( DbException exception ) {
-                exception.More();
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( SqlException exception ) { exception.More(); }
+            catch ( DbException exception ) { exception.More(); }
+            catch ( Exception exception ) { exception.More(); }
 
             return false;
         }
@@ -387,36 +308,24 @@ namespace Librainian.Database {
         [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         [NotNull]
         public DataTable ExecuteReader( String query, CommandType commandType, params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
+            if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
             var table = new DataTable();
 
             try {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
-                    if ( null != parameters ) {
-                        command.Parameters.AddRange( parameters );
-                    }
+                    if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
                     table.BeginLoadData();
 
-                    using ( var reader = command.ExecuteReader() ) {
-                        table.Load( reader );
-                    }
+                    using ( var reader = command.ExecuteReader() ) { table.Load( reader ); }
 
                     table.EndLoadData();
                 }
             }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
-            catch ( DbException exception ) {
-                exception.More();
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( SqlException exception ) { exception.More(); }
+            catch ( DbException exception ) { exception.More(); }
+            catch ( Exception exception ) { exception.More(); }
 
             return table;
         }
@@ -429,22 +338,16 @@ namespace Librainian.Database {
         /// <returns></returns>
         [ItemCanBeNull]
         public async Task<SqlDataReader> ExecuteReaderAsyncDataReader( String query, CommandType commandType, params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
+            if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
             try {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
-                    if ( null != parameters ) {
-                        command.Parameters.AddRange( parameters );
-                    }
+                    if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
                     return await command.ExecuteReaderAsync().ConfigureAwait( false );
                 }
             }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
+            catch ( SqlException exception ) { exception.More(); }
 
             return null;
         }
@@ -457,36 +360,24 @@ namespace Librainian.Database {
         /// <param name="parameters"> </param>
         /// <returns></returns>
         public async Task<DataTable> ExecuteReaderAsyncDataTable( String query, CommandType commandType, params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
+            if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
             var table = new DataTable();
 
             try {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
-                    if ( null != parameters ) {
-                        command.Parameters.AddRange( parameters );
-                    }
+                    if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
                     table.BeginLoadData();
 
-                    using ( var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).ConfigureAwait( false ) ) {
-                        table.Load( reader );
-                    }
+                    using ( var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).ConfigureAwait( false ) ) { table.Load( reader ); }
 
                     table.EndLoadData();
                 }
             }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
-            catch ( DbException exception ) {
-                exception.More();
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( SqlException exception ) { exception.More(); }
+            catch ( DbException exception ) { exception.More(); }
+            catch ( Exception exception ) { exception.More(); }
 
             return table;
         }
@@ -501,39 +392,25 @@ namespace Librainian.Database {
         [CanBeNull]
         [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         public TResult ExecuteScalar<TResult>( String query, CommandType commandType, params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
+            if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
             try {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
-                    if ( null != parameters ) {
-                        command.Parameters.AddRange( parameters );
-                    }
+                    if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
                     var scalar = command.ExecuteScalar();
 
-                    if ( null == scalar || Convert.IsDBNull( scalar ) ) {
-                        return default;
-                    }
+                    if ( null == scalar || Convert.IsDBNull( scalar ) ) { return default; }
 
-                    if ( scalar is TResult result1 ) {
-                        return result1;
-                    }
+                    if ( scalar is TResult result1 ) { return result1; }
 
-                    if ( scalar.TryCast<TResult>( out var result ) ) {
-                        return result;
-                    }
+                    if ( scalar.TryCast<TResult>( out var result ) ) { return result; }
 
                     return ( TResult )Convert.ChangeType( scalar, typeof( TResult ) );
                 }
             }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
-            catch ( DbException exception ) {
-                exception.More();
-            }
+            catch ( SqlException exception ) { exception.More(); }
+            catch ( DbException exception ) { exception.More(); }
 
             return default;
         }
@@ -547,41 +424,27 @@ namespace Librainian.Database {
         /// <returns></returns>
         [ItemCanBeNull]
         public async Task<TResult> ExecuteScalarAsync<TResult>( String query, CommandType commandType, params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
+            if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
             try {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType, CommandTimeout = 0 } ) {
-                    if ( null != parameters ) {
-                        command.Parameters.AddRange( parameters );
-                    }
+                    if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
                     TryAgain:
                     Object scalar;
 
-                    try {
-                        scalar = await command.ExecuteScalarAsync().ConfigureAwait( false );
-                    }
+                    try { scalar = await command.ExecuteScalarAsync().ConfigureAwait( false ); }
                     catch ( SqlException exception ) {
-                        if ( exception.Number == DatabaseErrors.Deadlock ) {
-                            goto TryAgain;
-                        }
+                        if ( exception.Number == DatabaseErrors.Deadlock ) { goto TryAgain; }
 
                         throw;
                     }
 
-                    if ( null == scalar || Convert.IsDBNull( scalar ) ) {
-                        return default;
-                    }
+                    if ( null == scalar || Convert.IsDBNull( scalar ) ) { return default; }
 
-                    if ( scalar is TResult scalarAsync ) {
-                        return scalarAsync;
-                    }
+                    if ( scalar is TResult scalarAsync ) { return scalarAsync; }
 
-                    if ( scalar.TryCast<TResult>( out var result ) ) {
-                        return result;
-                    }
+                    if ( scalar.TryCast<TResult>( out var result ) ) { return result; }
 
                     return ( TResult )Convert.ChangeType( scalar, typeof( TResult ) );
                 }
@@ -591,9 +454,7 @@ namespace Librainian.Database {
                 //TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
                 exception.More();
             }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
+            catch ( SqlException exception ) { exception.More(); }
 
             return default;
         }
@@ -607,15 +468,11 @@ namespace Librainian.Database {
         [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         [ItemCanBeNull]
         public IEnumerable<TResult> QueryList<TResult>( String query, params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
+            if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
             try {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = CommandType.StoredProcedure } ) {
-                    if ( null != parameters ) {
-                        command.Parameters.AddRange( parameters );
-                    }
+                    if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
                     using ( var reader = command.ExecuteReader() ) {
                         var data = GenericPopulator<TResult>.CreateList( reader );
@@ -624,15 +481,9 @@ namespace Librainian.Database {
                     }
                 }
             }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
-            catch ( DbException exception ) {
-                exception.More();
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( SqlException exception ) { exception.More(); }
+            catch ( DbException exception ) { exception.More(); }
+            catch ( Exception exception ) { exception.More(); }
 
             return null;
         }

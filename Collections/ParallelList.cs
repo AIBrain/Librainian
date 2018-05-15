@@ -1,18 +1,17 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "ParallelList.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license has
+// been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/ParallelList.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
+// "Librainian/ParallelList.cs" was last cleaned by Protiguous on 2018/05/15 at 1:28 AM.
 
 namespace Librainian.Collections {
 
@@ -39,7 +38,7 @@ namespace Librainian.Collections {
     /// </copyright>
     [Obsolete( message: "Use ConcurrentList instead." )]
     [JsonObject]
-    [DebuggerDisplay( value: "Count={" + nameof( Count ) + "}" )]
+    [DebuggerDisplay( value: "Count={" + nameof( this.Count ) + "}" )]
     public sealed class ParallelList<T> : ABetterClassDispose, IList<T> {
 
         /// <summary>
@@ -72,13 +71,9 @@ namespace Librainian.Collections {
         /// <param name="readTimeout"> </param>
         /// <param name="writeTimeout"></param>
         public ParallelList( Span readTimeout = null, Span writeTimeout = null ) : this() {
-            if ( null != readTimeout ) {
-                this.TimeoutForReads = readTimeout;
-            }
+            if ( null != readTimeout ) { this.TimeoutForReads = readTimeout; }
 
-            if ( null != writeTimeout ) {
-                this.TimeoutForWrites = writeTimeout;
-            }
+            if ( null != writeTimeout ) { this.TimeoutForWrites = writeTimeout; }
         }
 
         /// <summary>
@@ -109,9 +104,7 @@ namespace Librainian.Collections {
         /// </summary>
         public Boolean AllowModifications {
             get {
-                if ( this.IsReadOnly ) {
-                    return false;
-                }
+                if ( this.IsReadOnly ) { return false; }
 
                 return Interlocked.Read( location: ref this._markedAsCompleteCounter ) == 0;
             }
@@ -155,24 +148,18 @@ namespace Librainian.Collections {
         public T this[Int32 index] {
             [CanBeNull]
             get {
-                if ( index > 0 && index < this._list.Count ) {
-                    return this.Read( func: () => this._list[index: index] );
-                }
+                if ( index > 0 && index < this._list.Count ) { return this.Read( func: () => this._list[index: index] ); }
 
                 return default;
             }
 
             set {
-                if ( !this.AllowModifications ) {
-                    return;
-                }
+                if ( !this.AllowModifications ) { return; }
 
                 this.RequestToChangeAnItem();
 
                 this._actionBlock.Post( item: () => this.Write( func: () => {
-                    if ( !this.AllowModifications ) {
-                        return false;
-                    }
+                    if ( !this.AllowModifications ) { return false; }
 
                     this._list[index: index] = value;
                     this.AnItemHasBeenChanged();
@@ -208,18 +195,12 @@ namespace Librainian.Collections {
                 return func(); //list has been marked to not allow any more modifications, go ahead and perform the read function.
             }
 
-            if ( !this.ReaderWriter.TryEnterUpgradeableReadLock( timeout: this.TimeoutForReads ) ) {
-                return default;
-            }
+            if ( !this.ReaderWriter.TryEnterUpgradeableReadLock( timeout: this.TimeoutForReads ) ) { return default; }
 
             try {
-                if ( func != null ) {
-                    return func();
-                }
+                if ( func != null ) { return func(); }
             }
-            finally {
-                this.ReaderWriter.ExitUpgradeableReadLock();
-            }
+            finally { this.ReaderWriter.ExitUpgradeableReadLock(); }
 
             return default;
         }
@@ -242,25 +223,17 @@ namespace Librainian.Collections {
         /// <seealso cref="CatchUp"/>
         private TFuncResult Write<TFuncResult>( Func<TFuncResult> func, Boolean ignoreAllowModificationsCheck = false ) {
             if ( !ignoreAllowModificationsCheck ) {
-                if ( !this.AllowModifications && func != null ) {
-                    return default;
-                }
+                if ( !this.AllowModifications && func != null ) { return default; }
             }
 
             //BUG what if we want a clone of the list, but it has been marked as !this.AllowModifications
 
-            if ( !this.ReaderWriter.TryEnterWriteLock( timeout: this.TimeoutForWrites ) ) {
-                return default;
-            }
+            if ( !this.ReaderWriter.TryEnterWriteLock( timeout: this.TimeoutForWrites ) ) { return default; }
 
             try {
-                if ( func != null ) {
-                    return func();
-                }
+                if ( func != null ) { return func(); }
             }
-            finally {
-                this.ReaderWriter.ExitWriteLock();
-            }
+            finally { this.ReaderWriter.ExitWriteLock(); }
 
             return default;
         }
@@ -278,9 +251,7 @@ namespace Librainian.Collections {
         /// <param name="afterAdd"></param>
         /// <returns></returns>
         public Boolean Add( T item, [CanBeNull] Action afterAdd ) {
-            if ( !this.AllowModifications ) {
-                return false;
-            }
+            if ( !this.AllowModifications ) { return false; }
 
             this.RequestToAddAnItem();
 
@@ -305,13 +276,9 @@ namespace Librainian.Collections {
             this.Add( item: item, afterAdd: () => this.Slims.Value.Set() );
 
             try {
-                if ( default != timeout && default != cancellationToken ) {
-                    return this.Slims.Value.Wait( timeout: timeout, cancellationToken: cancellationToken );
-                }
+                if ( default != timeout && default != cancellationToken ) { return this.Slims.Value.Wait( timeout: timeout, cancellationToken: cancellationToken ); }
 
-                if ( default != timeout ) {
-                    return this._actionBlock.Completion.Wait( timeout: timeout );
-                }
+                if ( default != timeout ) { return this._actionBlock.Completion.Wait( timeout: timeout ); }
 
                 this.Slims.Value.Wait( cancellationToken: cancellationToken );
 
@@ -336,34 +303,22 @@ namespace Librainian.Collections {
         /// <param name="afterRangeAdded"><see cref="Action"/> to perform after range added.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public void AddRange( [NotNull] IEnumerable<T> items, Byte useParallels = 0, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
-            if ( null == items ) {
-                throw new ArgumentNullException( nameof( items ) );
-            }
+            if ( null == items ) { throw new ArgumentNullException( nameof( items ) ); }
 
-            if ( !this.AllowModifications ) {
-                return;
-            }
+            if ( !this.AllowModifications ) { return; }
 
             try {
-                if ( useParallels >= 1 ) {
-                    items.AsParallel().WithDegreeOfParallelism( degreeOfParallelism: useParallels ).ForAll( item => this.TryAdd( item: item, afterAdd: afterEachAdd ) );
-                }
+                if ( useParallels >= 1 ) { items.AsParallel().WithDegreeOfParallelism( degreeOfParallelism: useParallels ).ForAll( item => this.TryAdd( item: item, afterAdd: afterEachAdd ) ); }
                 else {
-                    foreach ( var item in items ) {
-                        this.TryAdd( item: item, afterAdd: afterEachAdd );
-                    }
+                    foreach ( var item in items ) { this.TryAdd( item: item, afterAdd: afterEachAdd ); }
                 }
             }
-            finally {
-                afterRangeAdded?.Invoke();
-            }
+            finally { afterRangeAdded?.Invoke(); }
         }
 
         public Task AddRangeAsync( [CanBeNull] IEnumerable<T> items ) =>
                     Task.Run( () => {
-                        if ( items != null ) {
-                            this.AddRange( items: items );
-                        }
+                        if ( items != null ) { this.AddRange( items: items ); }
                     } );
 
         /// <summary>
@@ -373,21 +328,15 @@ namespace Librainian.Collections {
         /// <param name="cancellationToken"></param>
         /// <returns>Returns true if list is caught up. (No write operations pending)</returns>
         public Boolean CatchUp( Span timeout = default, CancellationToken cancellationToken = default ) {
-            if ( timeout == default ) {
-                timeout = this.TimeoutForWrites;
-            }
+            if ( timeout == default ) { timeout = this.TimeoutForWrites; }
 
             var interval = Milliseconds.Hertz111;
             var stopWatch = StopWatch.StartNew();
 
             while ( this.AllowModifications ) {
-                if ( stopWatch.Elapsed > timeout ) {
-                    break;
-                }
+                if ( stopWatch.Elapsed > timeout ) { break; }
 
-                if ( !this.AnyWritesPending ) {
-                    break;
-                }
+                if ( !this.AnyWritesPending ) { break; }
 
                 Task.Delay( delay: interval, cancellationToken: cancellationToken ).Wait( cancellationToken: cancellationToken );
             }
@@ -399,9 +348,7 @@ namespace Librainian.Collections {
         /// Mark this <see cref="ParallelList{TType}"/> to be cleared.
         /// </summary>
         public void Clear() {
-            if ( !this.AllowModifications ) {
-                return;
-            }
+            if ( !this.AllowModifications ) { return; }
 
             this._actionBlock.Post( item: () => this.Write( func: () => {
                 this._list.Clear();
@@ -428,9 +375,7 @@ namespace Librainian.Collections {
         /// <seealso cref="AllowModifications"/>
         /// <seealso cref="IsReadOnly"/>
         public void Complete() {
-            try {
-                this._actionBlock.Complete();
-            }
+            try { this._actionBlock.Complete(); }
             finally {
                 Interlocked.Increment( location: ref this._markedAsCompleteCounter );
                 this.IsReadOnly = true;
@@ -448,27 +393,17 @@ namespace Librainian.Collections {
             try {
                 this.Complete();
 
-                if ( default != timeout && default != cancellationToken ) {
-                    return this._actionBlock.Completion.Wait( millisecondsTimeout: ( Int32 )timeout.TotalMilliseconds, cancellationToken: cancellationToken );
-                }
+                if ( default != timeout && default != cancellationToken ) { return this._actionBlock.Completion.Wait( millisecondsTimeout: ( Int32 )timeout.TotalMilliseconds, cancellationToken: cancellationToken ); }
 
-                if ( default != timeout ) {
-                    return this._actionBlock.Completion.Wait( timeout: timeout );
-                }
+                if ( default != timeout ) { return this._actionBlock.Completion.Wait( timeout: timeout ); }
 
                 if ( default != cancellationToken ) {
-                    try {
-                        this._actionBlock.Completion.Wait( cancellationToken: cancellationToken );
-                    }
+                    try { this._actionBlock.Completion.Wait( cancellationToken: cancellationToken ); }
                     catch ( OperationCanceledException ) {
                         return false; //BUG Is this correct?
                     }
-                    catch ( ObjectDisposedException ) {
-                        return false;
-                    }
-                    catch ( AggregateException ) {
-                        return false;
-                    }
+                    catch ( ObjectDisposedException ) { return false; }
+                    catch ( AggregateException ) { return false; }
 
                     return true;
                 }
@@ -494,9 +429,7 @@ namespace Librainian.Collections {
         /// <param name="array">     </param>
         /// <param name="arrayIndex"></param>
         public void CopyTo( T[] array, Int32 arrayIndex ) {
-            if ( array is null ) {
-                throw new ArgumentNullException( nameof( array ) );
-            }
+            if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
 
             this.Read( func: () => {
                 this._list.CopyTo( array: array, arrayIndex: arrayIndex );
@@ -532,9 +465,7 @@ namespace Librainian.Collections {
         /// <param name="index"></param>
         /// <param name="item"> </param>
         public void Insert( Int32 index, T item ) {
-            if ( !this.AllowModifications ) {
-                return;
-            }
+            if ( !this.AllowModifications ) { return; }
 
             this.RequestToInsertAnItem();
 
@@ -544,12 +475,8 @@ namespace Librainian.Collections {
 
                     return true;
                 }
-                catch ( ArgumentOutOfRangeException ) {
-                    return false;
-                }
-                finally {
-                    this.AnItemHasBeenInserted();
-                }
+                catch ( ArgumentOutOfRangeException ) { return false; }
+                finally { this.AnItemHasBeenInserted(); }
             } ) );
         }
 
@@ -567,9 +494,7 @@ namespace Librainian.Collections {
         /// <param name="afterRemoval"></param>
         /// <returns></returns>
         public Boolean Remove( T item, [CanBeNull] Action afterRemoval ) {
-            if ( !this.AllowModifications ) {
-                return false;
-            }
+            if ( !this.AllowModifications ) { return false; }
 
             this.RequestToRemoveAnItem();
 
@@ -579,35 +504,23 @@ namespace Librainian.Collections {
 
                     return true;
                 }
-                finally {
-                    this.AnItemHasBeenRemoved( afterRemoval );
-                }
+                finally { this.AnItemHasBeenRemoved( afterRemoval ); }
             } ) );
         }
 
         public void RemoveAt( Int32 index ) {
-            if ( index < 0 ) {
-                return;
-            }
+            if ( index < 0 ) { return; }
 
-            if ( !this.AllowModifications ) {
-                return;
-            }
+            if ( !this.AllowModifications ) { return; }
 
             this.RequestToRemoveAnItem();
 
             this._actionBlock.Post( item: () => this.Write( func: () => {
                 try {
-                    if ( index < this._list.Count ) {
-                        this._list.RemoveAt( index: index );
-                    }
+                    if ( index < this._list.Count ) { this._list.RemoveAt( index: index ); }
                 }
-                catch ( ArgumentOutOfRangeException ) {
-                    return false;
-                }
-                finally {
-                    this.AnItemHasBeenRemoved();
-                }
+                catch ( ArgumentOutOfRangeException ) { return false; }
+                finally { this.AnItemHasBeenRemoved(); }
 
                 return true;
             } ) );
@@ -622,14 +535,10 @@ namespace Librainian.Collections {
         /// <param name="index">   </param>
         /// <param name="afterGet">Action to be ran after the item at the <paramref name="index"/> is got.</param>
         public Boolean TryGet( Int32 index, [CanBeNull] Action<T> afterGet ) {
-            if ( index < 0 ) {
-                return false;
-            }
+            if ( index < 0 ) { return false; }
 
             return this._actionBlock.Post( item: () => this.Read( func: () => {
-                if ( index >= this._list.Count ) {
-                    return false;
-                }
+                if ( index >= this._list.Count ) { return false; }
 
                 var result = this._list[index: index];
                 afterGet?.Invoke( result );

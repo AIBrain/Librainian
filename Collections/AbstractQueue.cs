@@ -1,23 +1,23 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "AbstractQueue.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license
+// has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/AbstractQueue.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
+// "Librainian/AbstractQueue.cs" was last cleaned by Protiguous on 2018/05/15 at 1:28 AM.
 
 namespace Librainian.Collections {
 
     using System;
     using System.Collections.Generic;
+    using Maths;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -44,7 +44,7 @@ namespace Librainian.Collections {
         /// <summary>
         /// Returns <see langword="true"/> if there are no elements in the <see cref="IQueue{T}"/>, <see langword="false"/> otherwise.
         /// </summary>
-        public virtual Boolean IsEmpty => Count == 0;
+        public virtual Boolean IsEmpty => !this.Count.Any();
 
         /// <summary>
         /// Gets a value indicating whether the <see cref="ICollection{T}"/> is read-only. This implementation always return true;
@@ -79,9 +79,7 @@ namespace Librainian.Collections {
         /// <param name="element">The element to add.</param>
         /// <exception cref="InvalidOperationException">If the <paramref name="element"/> cannot be added at this time due to capacity restrictions.</exception>
         public override void Add( T element ) {
-            if ( !this.Offer( element: element ) ) {
-                throw new InvalidOperationException( message: "Queue full." );
-            }
+            if ( !this.Offer( element: element ) ) { throw new InvalidOperationException( message: "Queue full." ); }
         }
 
         /// <summary>
@@ -89,7 +87,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <remarks>This implementation repeatedly calls the <see cref="Poll"/> moethod until it returns <c>false</c>.</remarks>
         public override void Clear() {
-            while ( this.Poll( element: out var element ) ) { }
+            while ( this.Poll( element: out _ ) ) { }
         }
 
         /// <summary>
@@ -130,9 +128,7 @@ namespace Librainian.Collections {
         /// <exception cref="System.ArgumentNullException">If the specified action is <see langword="null"/>.</exception>
         /// <seealso cref="IQueue{T}.Drain(Action{T}, Int32)"/>
         public virtual Int32 Drain( Action<T> action, Predicate<T> criteria ) {
-            if ( action is null ) {
-                throw new ArgumentNullException( nameof( action ) );
-            }
+            if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
 
             return this.DoDrain( action, criteria: criteria );
         }
@@ -167,9 +163,7 @@ namespace Librainian.Collections {
         /// <exception cref="System.ArgumentNullException">If the specified action is <see langword="null"/>.</exception>
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})"/>
         public virtual Int32 Drain( Action<T> action, Int32 maxElements, Predicate<T> criteria ) {
-            if ( action is null ) {
-                throw new ArgumentNullException( nameof( action ) );
-            }
+            if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
 
             return maxElements > 0 ? this.DoDrain( action, maxElements: maxElements, criteria: criteria ) : 0;
         }
@@ -184,9 +178,7 @@ namespace Librainian.Collections {
         /// <returns>The head of this queue.</returns>
         /// <exception cref="InvalidOperationException">If this queue is empty.</exception>
         public virtual T Element() {
-            if ( this.Peek( element: out var element ) ) {
-                return element;
-            }
+            if ( this.Peek( element: out var element ) ) { return element; }
 
             throw new InvalidOperationException( message: "Queue is empty." );
         }
@@ -221,9 +213,7 @@ namespace Librainian.Collections {
         /// <returns>The head of this queue</returns>
         /// <exception cref="InvalidOperationException">If this queue is empty.</exception>
         public virtual T Remove() {
-            if ( this.Poll( element: out var element ) ) {
-                return element;
-            }
+            if ( this.Poll( element: out var element ) ) { return element; }
 
             throw new InvalidOperationException( message: "Queue is empty." );
         }

@@ -109,10 +109,7 @@ namespace Coding
                 this._compilerResults = CSharpCodeProvider.CompileAssemblyFromSource( new CompilerParameters { GenerateInMemory = true, GenerateExecutable = false }, this.SourceCode );
 
                 if ( this._compilerResults.Errors.HasErrors ) {
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
-
+                    Logging.Break();
                     return false;
                 }
 
@@ -120,9 +117,7 @@ namespace Coding
                     return true;
                 }
 
-                if ( Debugger.IsAttached ) {
-                    Debugger.Break();
-                }
+                Logging.Break();
 
                 return true;
             }
@@ -161,26 +156,20 @@ namespace Coding
                 }
 
                 if ( this._compilerResults.Errors.HasErrors ) {
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
+                    Logging.Break();
 
                     return null;
                 }
 
                 if ( this._compilerResults.Errors.HasWarnings ) {
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
+                    Logging.Break();
                 }
 
                 var loAssembly = this._compilerResults.CompiledAssembly;
                 var loObject = loAssembly.CreateInstance( "Coding.CodeEngine" );
 
                 if ( loObject is null ) {
-                    if ( Debugger.IsAttached ) {
-                        Debugger.Break();
-                    }
+                    Logging.Break();
 
                     return null;
                 }

@@ -1,18 +1,17 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "ControlExtensions.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original
+// license has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/ControlExtensions.cs" was last cleaned by Protiguous on 2018/05/12 at 1:21 AM
+// "Librainian/ControlExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 1:34 AM.
 
 namespace Librainian.Controls {
 
@@ -85,9 +84,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <returns></returns>
         public static Boolean Checked( [CanBeNull] this CheckBox control ) {
-            if ( null == control ) {
-                return false;
-            }
+            if ( null == control ) { return false; }
 
             return control.InvokeRequired ? ( Boolean )control.Invoke( new Func<Boolean>( () => control.Checked ) ) : control.Checked;
         }
@@ -98,9 +95,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="value">  </param>
         public static void Checked( [CanBeNull] this CheckBox control, Boolean value ) {
-            if ( null == control ) {
-                return;
-            }
+            if ( null == control ) { return; }
 
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
@@ -116,13 +111,9 @@ namespace Librainian.Controls {
 
         public static Boolean CreateDivInsideBrowser( ref WebBrowser browser, String message ) {
             try {
-                if ( null == browser ) {
-                    return false;
-                }
+                if ( null == browser ) { return false; }
 
-                while ( null == browser.Document ) {
-                    Application.DoEvents();
-                }
+                while ( null == browser.Document ) { Application.DoEvents(); }
 
                 var div = browser.Document.CreateElement( "DIV" );
 
@@ -158,13 +149,9 @@ namespace Librainian.Controls {
                 }
 
                 if ( div != null ) {
-                    if ( span != null ) {
-                        div.AppendChild( span );
-                    }
+                    if ( span != null ) { div.AppendChild( span ); }
 
-                    while ( null == browser.Document.Body ) {
-                        Application.DoEvents();
-                    }
+                    while ( null == browser.Document.Body ) { Application.DoEvents(); }
 
                     browser.Document.Body.AppendChild( div );
                     div.ScrollIntoView( false );
@@ -176,9 +163,7 @@ namespace Librainian.Controls {
 
                 return true;
             }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( Exception exception ) { exception.More(); }
 
             return false;
         }
@@ -207,15 +192,11 @@ namespace Librainian.Controls {
         /// <param name="refresh"></param>
         public static void Enabled( this Control control, Boolean value, Boolean refresh = true ) =>
             control?.InvokeIfRequired( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
+                if ( control.IsDisposed ) { return; }
 
                 control.Enabled = value;
 
-                if ( refresh ) {
-                    control.Refresh();
-                }
+                if ( refresh ) { control.Refresh(); }
             } );
 
         /// <summary>
@@ -224,15 +205,11 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="value">  </param>
         public static void Enabled( this ToolStripProgressBar control, Boolean value ) {
-            if ( control?.ProgressBar is null ) {
-                return;
-            }
+            if ( control?.ProgressBar is null ) { return; }
 
             if ( control.ProgressBar.InvokeRequired ) {
                 control.ProgressBar.BeginInvoke( new Action( () => {
-                    if ( control.IsDisposed ) {
-                        return;
-                    }
+                    if ( control.IsDisposed ) { return; }
 
                     control.Enabled = value;
                     control.ProgressBar.Refresh();
@@ -251,13 +228,9 @@ namespace Librainian.Controls {
         /// <param name="spanOff">How long to keep the control off before it resets.</param>
         [CanBeNull]
         public static Timer Flash( [CanBeNull] this Control control, [CanBeNull] TimeSpan? spanOff = null ) {
-            if ( null == control ) {
-                return null;
-            }
+            if ( null == control ) { return null; }
 
-            if ( !spanOff.HasValue ) {
-                spanOff = Milliseconds.One;
-            }
+            if ( !spanOff.HasValue ) { spanOff = Milliseconds.One; }
 
             control.OnThread( () => {
                 var foreColor = control.ForeColor;
@@ -274,14 +247,10 @@ namespace Librainian.Controls {
         }
 
         public static async Task FlashWhileBlank( this Control input, [NotNull] Control control ) {
-            if ( control is null ) {
-                throw new ArgumentNullException( nameof( control ) );
-            }
+            if ( control is null ) { throw new ArgumentNullException( nameof( control ) ); }
 
             await Seconds.Five.Then( async () => {
-                if ( !input.Text().IsNullOrWhiteSpace() ) {
-                    return;
-                }
+                if ( !input.Text().IsNullOrWhiteSpace() ) { return; }
 
                 control.Flash( Seconds.One );
                 await input.FlashWhileBlank( control );
@@ -294,9 +263,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         public static void Fokus( [CanBeNull] this Control control ) =>
             control?.InvokeIfRequired( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
+                if ( control.IsDisposed ) { return; }
 
                 control.Focus();
             } );
@@ -307,9 +274,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <returns></returns>
         public static Color ForeColor( [CanBeNull] this Control control ) {
-            if ( null == control ) {
-                return default;
-            }
+            if ( null == control ) { return default; }
 
             return control.InvokeRequired ? ( Color )control.Invoke( new Func<Color>( () => control.ForeColor ) ) : control.ForeColor;
         }
@@ -320,9 +285,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="value">  </param>
         public static void ForeColor( [CanBeNull] this Control control, Color value ) {
-            if ( null == control ) {
-                return;
-            }
+            if ( null == control ) { return; }
 
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
@@ -343,24 +306,14 @@ namespace Librainian.Controls {
 
         public static void InvokeA<T>( this T invokable, Action<T> action, T argument = default ) where T : ISynchronizeInvoke {
             try {
-                if ( Equals( invokable, default ) ) {
-                    return;
-                }
+                if ( Equals( invokable, default ) ) { return; }
 
-                if ( invokable is Control && ( invokable as Control ).IsDisposed ) {
-                    return;
-                }
+                if ( invokable is Control && ( invokable as Control ).IsDisposed ) { return; }
 
-                if ( invokable.InvokeRequired ) {
-                    invokable.Invoke( action, new Object[] { argument } );
-                }
-                else {
-                    action( argument );
-                }
+                if ( invokable.InvokeRequired ) { invokable.Invoke( action, new Object[] { argument } ); }
+                else { action( argument ); }
             }
-            catch ( ObjectDisposedException exception ) {
-                exception.More();
-            }
+            catch ( ObjectDisposedException exception ) { exception.More(); }
         }
 
         public static void InvokeAppendLine( this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker )delegate { box.AppendLine( text, color, args ); } );
@@ -370,9 +323,7 @@ namespace Librainian.Controls {
         public static T InvokeF<T>( this T invokable, Func<T> function, T argument = default ) where T : class, ISynchronizeInvoke {
             if ( invokable.InvokeRequired ) {
                 if ( invokable is Control && ( invokable as Control ).IsDisposed ) { }
-                else {
-                    return invokable.Invoke( function, new Object[] { argument } ) as T;
-                }
+                else { return invokable.Invoke( function, new Object[] { argument } ) as T; }
             }
 
             return function();
@@ -386,42 +337,28 @@ namespace Librainian.Controls {
         /// <param name="refresh"></param>
         /// <seealso/>
         public static void InvokeIfRequired( [NotNull] this Control control, [NotNull] Action action, Boolean refresh = true ) {
-            if ( control is null ) {
-                throw new ArgumentNullException( nameof( control ) );
-            }
+            if ( control is null ) { throw new ArgumentNullException( nameof( control ) ); }
 
-            if ( action is null ) {
-                throw new ArgumentNullException( nameof( action ) );
-            }
+            if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
 
-            if ( control.IsDisposed ) {
-                return;
-            }
+            if ( control.IsDisposed ) { return; }
 
             if ( control.InvokeRequired ) {
                 control.Invoke( action );
 
-                if ( !refresh ) {
-                    return;
-                }
+                if ( !refresh ) { return; }
 
-                if ( control.IsDisposed ) {
-                    return;
-                }
+                if ( control.IsDisposed ) { return; }
 
                 action = control.Refresh;
                 control.Invoke( action );
             }
             else {
-                if ( control.IsDisposed ) {
-                    return;
-                }
+                if ( control.IsDisposed ) { return; }
 
                 action();
 
-                if ( !control.IsDisposed && refresh ) {
-                    control.Refresh();
-                }
+                if ( !control.IsDisposed && refresh ) { control.Refresh(); }
             }
         }
 
@@ -432,13 +369,9 @@ namespace Librainian.Controls {
         public static Boolean IsNormal( this Window window ) => window.WindowState == WindowState.Normal && window.WindowStyle != WindowStyle.None;
 
         public static void LoadPosition( [NotNull] this Form form, [CanBeNull] Ini settings ) {
-            if ( form is null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
+            if ( form is null ) { throw new ArgumentNullException( nameof( form ) ); }
 
-            if ( settings is null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
+            if ( settings is null ) { throw new ArgumentNullException( nameof( settings ) ); }
 
             var name = form.Name ?? "UnknownForm";
 
@@ -461,9 +394,7 @@ namespace Librainian.Controls {
         /// <remarks></remarks>
         public static void Location( [CanBeNull] this Form form, Point location ) =>
             form?.InvokeIfRequired( () => {
-                if ( form.IsDisposed ) {
-                    return;
-                }
+                if ( form.IsDisposed ) { return; }
 
                 form.Location = location;
             } );
@@ -509,9 +440,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <returns></returns>
         public static Int32 Maximum( [CanBeNull] this ProgressBar control ) {
-            if ( null == control ) {
-                return 0;
-            }
+            if ( null == control ) { return 0; }
 
             return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Maximum ) ) : control.Maximum;
         }
@@ -523,9 +452,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Maximum( [CanBeNull] this ProgressBar control, Int32 value ) =>
             control?.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
+                if ( control.IsDisposed ) { return; }
 
                 control.Maximum = value;
                 control.Refresh();
@@ -537,9 +464,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <returns></returns>
         public static Int32 Minimum( [CanBeNull] this ProgressBar control ) {
-            if ( null == control ) {
-                return 0;
-            }
+            if ( null == control ) { return 0; }
 
             return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Minimum ) ) : control.Minimum;
         }
@@ -551,9 +476,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Minimum( [CanBeNull] this ProgressBar control, Int32 value ) =>
             control?.InvokeIfRequired( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
+                if ( control.IsDisposed ) { return; }
 
                 control.Minimum = value;
                 control.Refresh();
@@ -567,13 +490,9 @@ namespace Librainian.Controls {
         /// <param name="refresh"></param>
         /// <seealso cref="InvokeIfRequired"/>
         public static void OnThread( [CanBeNull] this Control control, [CanBeNull] Action action, Boolean refresh = true ) {
-            if ( null == control ) {
-                return;
-            }
+            if ( null == control ) { return; }
 
-            if ( null == action ) {
-                return;
-            }
+            if ( null == action ) { return; }
 
             control.InvokeIfRequired( action, refresh );
         }
@@ -584,29 +503,19 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="action"> </param>
         public static void OnThread( [CanBeNull] this ToolStripItem control, [CanBeNull] Action action ) {
-            if ( null == control ) {
-                return;
-            }
+            if ( null == control ) { return; }
 
-            if ( null == action ) {
-                return;
-            }
+            if ( null == action ) { return; }
 
             var parent = control.GetCurrentParent() as Control;
             parent?.OnThread( action );
         }
 
         public static void Output( this WebBrowser browser, String message ) {
-            if ( browser is null ) {
-                return;
-            }
+            if ( browser is null ) { return; }
 
-            if ( browser.InvokeRequired ) {
-                browser.BeginInvoke( new Action( () => CreateDivInsideBrowser( ref browser, message ) ) );
-            }
-            else {
-                CreateDivInsideBrowser( ref browser, message );
-            }
+            if ( browser.InvokeRequired ) { browser.BeginInvoke( new Action( () => CreateDivInsideBrowser( ref browser, message ) ) ); }
+            else { CreateDivInsideBrowser( ref browser, message ); }
         }
 
         /// <summary>
@@ -626,9 +535,7 @@ namespace Librainian.Controls {
         /// <param name="afterDelay"></param>
         /// <returns></returns>
         public static Timer Push( [NotNull] this Button control, TimeSpan? delay = null, Action afterDelay = null ) {
-            if ( control is null ) {
-                throw new ArgumentNullException( nameof( control ) );
-            }
+            if ( control is null ) { throw new ArgumentNullException( nameof( control ) ); }
 
             return ( delay ?? Milliseconds.One ).CreateTimer( () => control.InvokeIfRequired( () => {
                 control.PerformClick();
@@ -644,9 +551,7 @@ namespace Librainian.Controls {
         public static void Redraw( [CanBeNull] this Control control ) => control?.InvokeIfRequired( control.Refresh );
 
         public static Boolean RemoveTags( this WebBrowser browser, String tagName, Int32 keepAtMost = 50 ) {
-            if ( browser?.Document is null ) {
-                return false;
-            }
+            if ( browser?.Document is null ) { return false; }
 
             while ( null != browser.Document && browser.Document.GetElementsByTagName( tagName ).Count > keepAtMost ) {
                 var item = browser.Document.GetElementsByTagName( tagName )[0];
@@ -670,9 +575,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <returns></returns>
         public static void ResetCursor( [NotNull] this Control control ) {
-            if ( control is null ) {
-                throw new ArgumentNullException( nameof( control ) );
-            }
+            if ( control is null ) { throw new ArgumentNullException( nameof( control ) ); }
 
             ThreadingExtensions.Wrap( () => control.OnThread( () => {
                 control.ResetCursor();
@@ -681,13 +584,9 @@ namespace Librainian.Controls {
         }
 
         public static void SavePosition( [NotNull] this Form form, [CanBeNull] Ini settings ) {
-            if ( form is null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
+            if ( form is null ) { throw new ArgumentNullException( nameof( form ) ); }
 
-            if ( settings is null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
+            if ( settings is null ) { throw new ArgumentNullException( nameof( settings ) ); }
 
             var name = form.Name ?? "UnknownForm";
 
@@ -714,9 +613,7 @@ namespace Librainian.Controls {
         /// <param name="form"></param>
         /// <returns></returns>
         public static Size Size( [CanBeNull] this Form form ) {
-            if ( null == form ) {
-                return new Size();
-            }
+            if ( null == form ) { return new Size(); }
 
             return form.InvokeRequired ? ( Size )form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
         }
@@ -727,9 +624,7 @@ namespace Librainian.Controls {
         /// <remarks></remarks>
         public static void Size( [CanBeNull] this Form form, Size size ) =>
             form?.InvokeIfRequired( () => {
-                if ( form.IsDisposed ) {
-                    return;
-                }
+                if ( form.IsDisposed ) { return; }
 
                 form.Size = size;
             } );
@@ -740,13 +635,9 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         public static void Step( [CanBeNull] this ProgressBar control ) =>
             control?.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
+                if ( control.IsDisposed ) { return; }
 
-                if ( control.Style != ProgressBarStyle.Marquee ) {
-                    control.PerformStep();
-                }
+                if ( control.Style != ProgressBarStyle.Marquee ) { control.PerformStep(); }
 
                 control.Refresh();
             } );
@@ -757,15 +648,11 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         public static void Step( [CanBeNull] this ToolStripProgressBar control ) =>
             control?.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
+                if ( control.IsDisposed ) { return; }
 
                 control.PerformStep();
 
-                if ( !control.IsDisposed ) {
-                    control.ProgressBar?.Refresh();
-                }
+                if ( !control.IsDisposed ) { control.ProgressBar?.Refresh(); }
             } );
 
         /// <summary>
@@ -775,9 +662,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Step( [CanBeNull] this ProgressBar control, Int32 value ) =>
             control?.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
+                if ( control.IsDisposed ) { return; }
 
                 control.Step = value;
                 control.Refresh();
@@ -790,9 +675,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Style( [CanBeNull] this ProgressBar control, ProgressBarStyle value ) =>
             control?.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
+                if ( control.IsDisposed ) { return; }
 
                 control.Style = value;
                 control.Refresh();
@@ -804,9 +687,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <returns></returns>
         public static String Text( [CanBeNull] this Control control ) {
-            if ( null == control ) {
-                return String.Empty;
-            }
+            if ( null == control ) { return String.Empty; }
 
             return control.InvokeRequired ? control.Invoke( new Func<String>( () => control.Text ) ) as String ?? String.Empty : control.Text;
         }
@@ -817,18 +698,12 @@ namespace Librainian.Controls {
         /// <param name="toolStripItem"></param>
         /// <param name="value">        </param>
         public static void Text( [CanBeNull] this ToolStripItem toolStripItem, [CanBeNull] String value ) {
-            if ( null == toolStripItem ) {
-                return;
-            }
+            if ( null == toolStripItem ) { return; }
 
-            if ( toolStripItem.IsDisposed ) {
-                return;
-            }
+            if ( toolStripItem.IsDisposed ) { return; }
 
             toolStripItem.OnThread( () => {
-                if ( toolStripItem.IsDisposed ) {
-                    return;
-                }
+                if ( toolStripItem.IsDisposed ) { return; }
 
                 toolStripItem.Text = value;
                 toolStripItem.Invalidate();
@@ -845,36 +720,26 @@ namespace Librainian.Controls {
         /// <seealso cref="http://programmers.stackexchange.com/questions/114605/how-will-c-5-async-support-help-ui-thread-synchronization-issues"/>
         public static void Text( [CanBeNull] this Control control, [CanBeNull] String value ) =>
             control?.InvokeIfRequired( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
+                if ( control.IsDisposed ) { return; }
 
                 control.Text = value;
                 control.Invalidate();
             } );
 
         public static void TextAdd( [CanBeNull] this RichTextBox textBox, [CanBeNull] String message ) {
-            if ( textBox is null ) {
-                return;
-            }
+            if ( textBox is null ) { return; }
 
-            if ( message is null ) {
-                return;
-            }
+            if ( message is null ) { return; }
 
             var method = new Action( () => {
-                if ( textBox.IsDisposed ) {
-                    return;
-                }
+                if ( textBox.IsDisposed ) { return; }
 
                 textBox.AppendText( message );
 
                 var lines = textBox.Lines.ToList();
 
                 if ( lines.Count > 20 ) {
-                    while ( lines.Count > 20 ) {
-                        lines.RemoveAt( 0 );
-                    }
+                    while ( lines.Count > 20 ) { lines.RemoveAt( 0 ); }
 
                     textBox.Lines = lines.ToArray();
                 }
@@ -893,26 +758,16 @@ namespace Librainian.Controls {
                 textBox.Invalidate();
             } );
 
-            if ( textBox.IsDisposed ) {
-                return;
-            }
+            if ( textBox.IsDisposed ) { return; }
 
-            if ( textBox.InvokeRequired ) {
-                textBox.BeginInvoke( method );
-            }
-            else {
-                method();
-            }
+            if ( textBox.InvokeRequired ) { textBox.BeginInvoke( method ); }
+            else { method(); }
         }
 
         public static void TextAdd( [NotNull] this RichTextBox textBox, [NotNull] String text, Color color ) {
-            if ( textBox is null ) {
-                throw new ArgumentNullException( nameof( textBox ) );
-            }
+            if ( textBox is null ) { throw new ArgumentNullException( nameof( textBox ) ); }
 
-            if ( text is null ) {
-                throw new ArgumentNullException( nameof( text ) );
-            }
+            if ( text is null ) { throw new ArgumentNullException( nameof( text ) ); }
 
             textBox.SelectionStart = textBox.TextLength;
             textBox.SelectionLength = 0;
@@ -931,9 +786,7 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         public static void TurnOff( this Control control ) {
-            if ( !TurnOnOrOffReqests.ContainsKey( control ) ) {
-                TurnOnOrOffReqests[control] = 0;
-            }
+            if ( !TurnOnOrOffReqests.ContainsKey( control ) ) { TurnOnOrOffReqests[control] = 0; }
 
             TurnOnOrOffReqests[control]--;
             control.Usable( TurnOnOrOffReqests[control] <= 0 );
@@ -944,13 +797,9 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         public static void TurnOn( [CanBeNull] this Control control ) {
-            if ( null == control ) {
-                return;
-            }
+            if ( null == control ) { return; }
 
-            if ( !TurnOnOrOffReqests.ContainsKey( control ) ) {
-                TurnOnOrOffReqests[control] = 0;
-            }
+            if ( !TurnOnOrOffReqests.ContainsKey( control ) ) { TurnOnOrOffReqests[control] = 0; }
 
             TurnOnOrOffReqests[control]++;
             control.Usable( TurnOnOrOffReqests[control] > 0 );
@@ -962,21 +811,15 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="value">  </param>
         public static void Usable( this Control control, Boolean value ) {
-            if ( null == control ) {
-                return;
-            }
+            if ( null == control ) { return; }
 
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
-                    if ( control.IsDisposed ) {
-                        return;
-                    }
+                    if ( control.IsDisposed ) { return; }
 
                     var anyChange = control.Visible != value || control.Enabled != value;
 
-                    if ( !anyChange ) {
-                        return;
-                    }
+                    if ( !anyChange ) { return; }
 
                     control.Visible = value;
                     control.Enabled = value;
@@ -986,9 +829,7 @@ namespace Librainian.Controls {
             else {
                 var anyChange = control.Visible != value || control.Enabled != value;
 
-                if ( !anyChange ) {
-                    return;
-                }
+                if ( !anyChange ) { return; }
 
                 control.Visible = value;
                 control.Enabled = value;
@@ -1002,9 +843,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <returns></returns>
         public static Decimal Value( [CanBeNull] this NumericUpDown control ) {
-            if ( null == control ) {
-                return Decimal.Zero;
-            }
+            if ( null == control ) { return Decimal.Zero; }
 
             return control.InvokeRequired ? ( Decimal )control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
         }
@@ -1015,9 +854,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <returns></returns>
         public static Int32 Value( [CanBeNull] this ProgressBar control ) {
-            if ( null == control ) {
-                return 0;
-            }
+            if ( null == control ) { return 0; }
 
             return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Value ) ) : control.Value;
         }
@@ -1029,16 +866,10 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Value( [CanBeNull] this ProgressBar control, Int32 value ) =>
             control?.OnThread( () => {
-                if ( control.IsDisposed ) {
-                    return;
-                }
+                if ( control.IsDisposed ) { return; }
 
-                if ( value > control.Maximum ) {
-                    control.Maximum = value;
-                }
-                else if ( value < control.Minimum ) {
-                    control.Minimum = value;
-                }
+                if ( value > control.Maximum ) { control.Maximum = value; }
+                else if ( value < control.Minimum ) { control.Minimum = value; }
 
                 control.Value = value;
                 control.Refresh();
@@ -1052,9 +883,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         /// <param name="maximum"></param>
         public static void Values( [CanBeNull] this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) {
-            if ( null == control ) {
-                return;
-            }
+            if ( null == control ) { return; }
 
             minimum.Should().BeLessOrEqualTo( maximum );
             value.Should().BeLessOrEqualTo( maximum );
@@ -1071,15 +900,11 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="value">  </param>
         public static void Visible( this Control control, Boolean value ) {
-            if ( null == control ) {
-                return;
-            }
+            if ( null == control ) { return; }
 
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
-                    if ( control.IsDisposed ) {
-                        return;
-                    }
+                    if ( control.IsDisposed ) { return; }
 
                     control.Visible = value;
                     control.Refresh();

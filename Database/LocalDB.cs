@@ -1,18 +1,17 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "LocalDB.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/LocalDB.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
+// "Librainian/LocalDB.cs" was last cleaned by Protiguous on 2018/05/15 at 1:34 AM.
 
 namespace Librainian.Database {
 
@@ -38,13 +37,9 @@ namespace Librainian.Database {
         // ReSharper disable once NotNullMemberIsNotInitialized
         [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         public LocalDb( [NotNull] String databaseName, [CanBeNull] Folder databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) {
-            if ( String.IsNullOrWhiteSpace( databaseName ) ) {
-                throw new ArgumentNullException( nameof( databaseName ) );
-            }
+            if ( String.IsNullOrWhiteSpace( databaseName ) ) { throw new ArgumentNullException( nameof( databaseName ) ); }
 
-            if ( databaseLocation is null ) {
-                databaseLocation = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
-            }
+            if ( databaseLocation is null ) { databaseLocation = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName ); }
 
             this.ReadTimeout = timeoutForReads.GetValueOrDefault( TimeSpan.FromMinutes( 1 ) );
             this.WriteTimeout = timeoutForWrites.GetValueOrDefault( TimeSpan.FromMinutes( 1 ) );
@@ -112,21 +107,15 @@ namespace Librainian.Database {
 
         public async Task DetachDatabaseAsync() {
             try {
-                if ( this.Connection.State == ConnectionState.Closed ) {
-                    await this.Connection.OpenAsync();
-                }
+                if ( this.Connection.State == ConnectionState.Closed ) { await this.Connection.OpenAsync(); }
 
                 using ( var cmd = this.Connection.CreateCommand() ) {
                     cmd.CommandText = String.Format( "ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; exec sp_detach_db N'{0}'", this.DatabaseName );
                     await cmd.ExecuteNonQueryAsync();
                 }
             }
-            catch ( SqlException exception ) {
-                exception.More();
-            }
-            catch ( DbException exception ) {
-                exception.More();
-            }
+            catch ( SqlException exception ) { exception.More(); }
+            catch ( DbException exception ) { exception.More(); }
         }
 
         public override void DisposeManaged() => this.DetachDatabaseAsync().Wait( this.ReadTimeout + this.WriteTimeout );

@@ -1,18 +1,17 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "StringVersusGuid.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license
+// has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/StringVersusGuid.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
+// "Librainian/StringVersusGuid.cs" was last cleaned by Protiguous on 2018/05/15 at 1:29 AM.
 
 namespace Librainian.Collections {
 
@@ -53,9 +52,7 @@ namespace Librainian.Collections {
         public Guid this[String key] {
             get {
                 if ( !String.IsNullOrEmpty( value: key ) ) {
-                    if ( this.Words.TryGetValue( key, value: out var result ) ) {
-                        return result;
-                    }
+                    if ( this.Words.TryGetValue( key, value: out var result ) ) { return result; }
 
                     var newValue = Guid.NewGuid();
                     this[key] = newValue;
@@ -67,9 +64,7 @@ namespace Librainian.Collections {
             }
 
             set {
-                if ( String.IsNullOrEmpty( value: key ) ) {
-                    return;
-                }
+                if ( String.IsNullOrEmpty( value: key ) ) { return; }
 
                 var guid = value;
                 this.Words.AddOrUpdate( key, addValue: guid, updateValueFactory: ( s, g ) => guid );
@@ -86,9 +81,7 @@ namespace Librainian.Collections {
             get => Guid.Empty.Equals( g: key ) ? String.Empty : this.Guids[key];
 
             set {
-                if ( Guid.Empty.Equals( g: key ) ) {
-                    return;
-                }
+                if ( Guid.Empty.Equals( g: key ) ) { return; }
 
                 this.Guids.AddOrUpdate( key, addValue: value, updateValueFactory: ( g, s ) => value );
                 this.Words.AddOrUpdate( value, addValue: key, updateValueFactory: ( s, g ) => key );
@@ -112,9 +105,7 @@ namespace Librainian.Collections {
         /// <param name="daword"></param>
         /// <returns></returns>
         public Boolean Contains( String daword ) {
-            if ( String.IsNullOrEmpty( value: daword ) ) {
-                return false;
-            }
+            if ( String.IsNullOrEmpty( value: daword ) ) { return false; }
 
             return this.Words.TryGetValue( daword, value: out var value );
         }

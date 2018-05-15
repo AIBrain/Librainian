@@ -1,18 +1,17 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "Q.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/Q.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
+// "Librainian/Q.cs" was last cleaned by Protiguous on 2018/05/15 at 1:28 AM.
 
 namespace Librainian.Collections {
 
@@ -28,7 +27,7 @@ namespace Librainian.Collections {
     using Newtonsoft.Json;
 
     [ComVisible( visibility: false )]
-    [DebuggerDisplay( value: "Count={" + nameof( Count ) + "}" )]
+    [DebuggerDisplay( value: "Count={" + nameof( this.Count ) + "}" )]
     [JsonObject]
     [HostProtection( SecurityAction.LinkDemand, ExternalThreading = true, Synchronization = true )]
     public class Q<T> : IProducerConsumerCollection<T> {
@@ -44,9 +43,7 @@ namespace Librainian.Collections {
         public Q() => this._head = this._tail = new Segment( index: 0L );
 
         public Q( IEnumerable<T> collection ) {
-            if ( collection is null ) {
-                throw new ArgumentNullException( nameof( collection ) );
-            }
+            if ( collection is null ) { throw new ArgumentNullException( nameof( collection ) ); }
 
             this.InitializeFromCollection( collection: collection );
         }
@@ -55,18 +52,12 @@ namespace Librainian.Collections {
             get {
                 var segment = this._head;
 
-                if ( !segment.IsEmpty ) {
-                    return false;
-                }
+                if ( !segment.IsEmpty ) { return false; }
 
-                if ( segment.Next is null ) {
-                    return true;
-                }
+                if ( segment.Next is null ) { return true; }
 
                 for ( ; segment.IsEmpty; segment = this._head ) {
-                    if ( segment.Next is null ) {
-                        return true;
-                    }
+                    if ( segment.Next is null ) { return true; }
 
                     Thread.Yield();
                 }
@@ -79,9 +70,7 @@ namespace Librainian.Collections {
             get {
                 this.GetHeadTailPositions( head: out var head, tail: out var tail, headLow: out var headLow, tailHigh: out var tailHigh );
 
-                if ( head == tail ) {
-                    return tailHigh - headLow + 1;
-                }
+                if ( head == tail ) { return tailHigh - headLow + 1; }
 
                 return 32 - headLow + 32 * ( Int32 )( tail.Index - head.Index - 1L ) + tailHigh + 1;
             }
@@ -92,9 +81,7 @@ namespace Librainian.Collections {
         public Object SyncRoot => throw new NotSupportedException();
 
         public void CopyTo( T[] array, Int32 index ) {
-            if ( array is null ) {
-                throw new ArgumentNullException( nameof( array ) );
-            }
+            if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
 
             this.ToList().CopyTo( array: array, arrayIndex: index );
         }
@@ -106,9 +93,7 @@ namespace Librainian.Collections {
         public Boolean TryTake( out T item ) => this.TryDequeue( result: out item );
 
         void ICollection.CopyTo( Array array, Int32 index ) {
-            if ( array is null ) {
-                throw new ArgumentNullException( nameof( array ) );
-            }
+            if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
 
             this.ToArray().CopyTo( array: array, index: index );
         }
@@ -122,16 +107,12 @@ namespace Librainian.Collections {
         }
 
         public void Enqueue( T item ) {
-            while ( !this._tail.TryAppend( value: item, tail: ref this._tail ) ) {
-                Thread.Yield();
-            }
+            while ( !this._tail.TryAppend( value: item, tail: ref this._tail ) ) { Thread.Yield(); }
         }
 
         public Boolean TryDequeue( out T result ) {
             while ( !this.IsEmpty ) {
-                if ( this._head.TryRemove( result: out result, head: ref this._head ) ) {
-                    return true;
-                }
+                if ( this._head.TryRemove( result: out result, head: ref this._head ) ) { return true; }
             }
 
             result = default;
@@ -141,9 +122,7 @@ namespace Librainian.Collections {
 
         public Boolean TryPeek( out T result ) {
             while ( !this.IsEmpty ) {
-                if ( this._head.TryPeek( result: out result ) ) {
-                    return true;
-                }
+                if ( this._head.TryPeek( result: out result ) ) { return true; }
             }
 
             result = default;
@@ -174,9 +153,7 @@ namespace Librainian.Collections {
                 this._tail.UnsafeAdd( value: obj );
                 ++num;
 
-                if ( num < 32 ) {
-                    continue;
-                }
+                if ( num < 32 ) { continue; }
 
                 this._tail = this._tail.UnsafeGrow();
                 num = 0;
@@ -195,15 +172,11 @@ namespace Librainian.Collections {
         private List<T> ToList() {
             this.GetHeadTailPositions( head: out var head, tail: out var tail, headLow: out var headLow, tailHigh: out var tailHigh );
 
-            if ( head == tail ) {
-                return head.ToList( start: headLow, end: tailHigh );
-            }
+            if ( head == tail ) { return head.ToList( start: headLow, end: tailHigh ); }
 
             var list = new List<T>( collection: head.ToList( start: headLow, end: 31 ) );
 
-            for ( var next = head.Next; next != tail; next = next.Next ) {
-                list.AddRange( collection: next.ToList( start: 0, end: 31 ) );
-            }
+            for ( var next = head.Next; next != tail; next = next.Next ) { list.AddRange( collection: next.ToList( start: 0, end: 31 ) ); }
 
             list.AddRange( collection: tail.ToList( start: 0, end: tailHigh ) );
 
@@ -241,9 +214,7 @@ namespace Librainian.Collections {
                 var list = new List<T>();
 
                 for ( var index = start; index <= end; ++index ) {
-                    while ( this._state[index] == 0 ) {
-                        Thread.Yield();
-                    }
+                    while ( this._state[index] == 0 ) { Thread.Yield(); }
 
                     list.Add( item: this._array[index] );
                 }
@@ -252,9 +223,7 @@ namespace Librainian.Collections {
             }
 
             public Boolean TryAppend( T value, ref Segment tail ) {
-                if ( this._high >= 31 ) {
-                    return false;
-                }
+                if ( this._high >= 31 ) { return false; }
 
 #pragma warning disable 420
                 var index = Interlocked.Increment( location: ref this._high );
@@ -264,9 +233,7 @@ namespace Librainian.Collections {
                     this._state[index] = 1;
                 }
 
-                if ( index == 31 ) {
-                    this.Grow( tail: out tail );
-                }
+                if ( index == 31 ) { this.Grow( tail: out tail ); }
 
                 return index <= 31;
             }
@@ -275,13 +242,9 @@ namespace Librainian.Collections {
                 result = default;
                 var low = this.Low;
 
-                if ( low > this.High ) {
-                    return false;
-                }
+                if ( low > this.High ) { return false; }
 
-                while ( this._state[low] == 0 ) {
-                    Thread.Yield();
-                }
+                while ( this._state[low] == 0 ) { Thread.Yield(); }
 
                 result = this._array[low];
 
@@ -299,16 +262,12 @@ namespace Librainian.Collections {
                         low = this.Low;
                     }
                     else {
-                        while ( this._state[low] == 0 ) {
-                            Thread.Yield();
-                        }
+                        while ( this._state[low] == 0 ) { Thread.Yield(); }
 
                         result = this._array[low];
 
                         if ( low + 1 >= 32 ) {
-                            while ( this.Next is null ) {
-                                Thread.Yield();
-                            }
+                            while ( this.Next is null ) { Thread.Yield(); }
 
                             head = this.Next;
                         }

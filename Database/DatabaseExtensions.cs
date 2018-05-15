@@ -1,18 +1,17 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "DatabaseExtensions.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original
+// license has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/DatabaseExtensions.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
+// "Librainian/DatabaseExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 1:34 AM.
 
 namespace Librainian.Database {
 
@@ -42,9 +41,7 @@ namespace Librainian.Database {
             //T item = new T();
             var item = Activator.CreateInstance<T>();
 
-            foreach ( var property in properties ) {
-                property.SetValue( item, row[property.Name], null );
-            }
+            foreach ( var property in properties ) { property.SetValue( item, row[property.Name], null ); }
 
             return item;
         }
@@ -61,20 +58,14 @@ namespace Librainian.Database {
                 var getSqlEngine = new ManagementObjectSearcher( correctNamespace, query );
 
                 try {
-                    if ( !getSqlEngine.Get().Count.Any() ) {
-                        yield break;
-                    }
+                    if ( !getSqlEngine.Get().Count.Any() ) { yield break; }
                 }
-                catch ( ManagementException ) {
-                    yield break;
-                }
+                catch ( ManagementException ) { yield break; }
 
                 //Console.WriteLine( "SQL Server database instances discovered :" );
                 //Console.WriteLine( "Instance Name \t ServiceName \t Edition \t Version \t" );
                 foreach ( var o in getSqlEngine.Get() ) {
-                    if ( !( o is ManagementObject sqlEngine ) ) {
-                        continue;
-                    }
+                    if ( !( o is ManagementObject sqlEngine ) ) { continue; }
 
                     var serviceName = sqlEngine["ServiceName"].ToString();
                     var instanceName = GetInstanceNameFromServiceName( serviceName );
@@ -101,13 +92,9 @@ namespace Librainian.Database {
                 var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), null );
                 namespaces.AddRange( nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns["Name"].ToString() ) );
             }
-            catch ( ManagementException exception ) {
-                exception.More();
-            }
+            catch ( ManagementException exception ) { exception.More(); }
 
-            foreach ( var ns in namespaces.Where( s => s.StartsWith( "ComputerManagement" ) ) ) {
-                yield return root + "\\" + ns;
-            }
+            foreach ( var ns in namespaces.Where( s => s.StartsWith( "ComputerManagement" ) ) ) { yield return root + "\\" + ns; }
         }
 
         /// <summary>
@@ -116,13 +103,9 @@ namespace Librainian.Database {
         /// <param name="serviceName"></param>
         /// <returns></returns>
         public static String GetInstanceNameFromServiceName( String serviceName ) {
-            if ( String.IsNullOrEmpty( serviceName ) ) {
-                return String.Empty;
-            }
+            if ( String.IsNullOrEmpty( serviceName ) ) { return String.Empty; }
 
-            if ( String.Equals( serviceName, "MSSQLSERVER", StringComparison.OrdinalIgnoreCase ) ) {
-                return serviceName;
-            }
+            if ( String.Equals( serviceName, "MSSQLSERVER", StringComparison.OrdinalIgnoreCase ) ) { return serviceName; }
 
             return serviceName.Substring( serviceName.IndexOf( '$' ) + 1, serviceName.Length - serviceName.IndexOf( '$' ) - 1 );
         }
@@ -130,9 +113,7 @@ namespace Librainian.Database {
         public static IList<PropertyInfo> GetPropertiesForType<T>() {
             var type = typeof( T );
 
-            if ( !TypeDictionary.ContainsKey( typeof( T ) ) ) {
-                TypeDictionary.Add( type, type.GetProperties().ToList() );
-            }
+            if ( !TypeDictionary.ContainsKey( typeof( T ) ) ) { TypeDictionary.Add( type, type.GetProperties().ToList() ); }
 
             return TypeDictionary[type];
         }
@@ -145,25 +126,17 @@ namespace Librainian.Database {
         /// <param name="propertyName">The property name whose value is required</param>
         /// <returns></returns>
         public static String GetWmiPropertyValueForEngineService( [NotNull] String serviceName, [NotNull] String wmiNamespace, [NotNull] String propertyName ) {
-            if ( serviceName is null ) {
-                throw new ArgumentNullException( nameof( serviceName ) );
-            }
+            if ( serviceName is null ) { throw new ArgumentNullException( nameof( serviceName ) ); }
 
-            if ( wmiNamespace is null ) {
-                throw new ArgumentNullException( nameof( wmiNamespace ) );
-            }
+            if ( wmiNamespace is null ) { throw new ArgumentNullException( nameof( wmiNamespace ) ); }
 
-            if ( propertyName is null ) {
-                throw new ArgumentNullException( nameof( propertyName ) );
-            }
+            if ( propertyName is null ) { throw new ArgumentNullException( nameof( propertyName ) ); }
 
             var query = $"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = '{propertyName}' and ServiceName = '{serviceName}'";
             var propertySearcher = new ManagementObjectSearcher( wmiNamespace, query );
 
             foreach ( var o in propertySearcher.Get() ) {
-                if ( o is ManagementObject managementObject ) {
-                    return managementObject["PropertyStrValue"].ToString();
-                }
+                if ( o is ManagementObject managementObject ) { return managementObject["PropertyStrValue"].ToString(); }
             }
 
             return String.Empty;
@@ -171,9 +144,7 @@ namespace Librainian.Database {
 
         [Test]
         public static void ListInstances() {
-            foreach ( var instance in EnumerateSQLInstances() ) {
-                Console.WriteLine( instance );
-            }
+            foreach ( var instance in EnumerateSQLInstances() ) { Console.WriteLine( instance ); }
         }
 
         public static void StartSqlBrowserService( IEnumerable<String> activeMachines ) {
@@ -205,9 +176,7 @@ namespace Librainian.Database {
                                 Console.WriteLine( "Attempting to continue the service." );
                                 myService.Start();
                             }
-                            catch ( Exception e ) {
-                                Console.WriteLine( e.Message );
-                            }
+                            catch ( Exception e ) { Console.WriteLine( e.Message ); }
 
                             break;
 
@@ -236,16 +205,12 @@ namespace Librainian.Database {
                                 Console.WriteLine( "Attempting to restart service." );
                                 myService.Start();
                             }
-                            catch ( Exception e ) {
-                                Console.WriteLine( e.Message );
-                            }
+                            catch ( Exception e ) { Console.WriteLine( e.Message ); }
 
                             break;
                     }
                 }
-                catch ( Exception e ) {
-                    Console.WriteLine( e.Message );
-                }
+                catch ( Exception e ) { Console.WriteLine( e.Message ); }
             }
         }
 
@@ -307,9 +272,7 @@ namespace Librainian.Database {
             var table = new DataTable();
             table.BeginLoadData();
 
-            if ( dataReader != null ) {
-                table.Load( dataReader, LoadOption.OverwriteChanges );
-            }
+            if ( dataReader != null ) { table.Load( dataReader, LoadOption.OverwriteChanges ); }
 
             table.EndLoadData();
 
@@ -442,9 +405,7 @@ namespace Librainian.Database {
                     player.Play();
                 }
             }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( Exception exception ) { exception.More(); }
         }
 
         /*

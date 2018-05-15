@@ -99,7 +99,7 @@ namespace Librainian.Security {
 
         protected override Byte[] HashFinal() {
             var hashBuffer = UInt64ToBigEndianBytes( value: this._hash );
-            HashValue = hashBuffer;
+            this.HashValue = hashBuffer;
             return hashBuffer;
         }
 

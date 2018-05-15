@@ -1,18 +1,17 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "LockfreeQueue.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license
+// has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/LockfreeQueue.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
+// "Librainian/LockfreeQueue.cs" was last cleaned by Protiguous on 2018/05/15 at 1:28 AM.
 
 namespace Librainian.Collections {
 
@@ -40,9 +39,7 @@ namespace Librainian.Collections {
         public LockfreeQueue() => this._tail = this._head;
 
         public LockfreeQueue( IEnumerable<T> items ) : this() {
-            foreach ( var item in items ) {
-                this.Enqueue( item: item );
-            }
+            foreach ( var item in items ) { this.Enqueue( item: item ); }
         }
 
         /// <summary>
@@ -75,9 +72,7 @@ namespace Librainian.Collections {
         /// </summary>
         /// <returns>the object that is removed from the beginning of the queue</returns>
         public T Dequeue() {
-            if ( !this.TryDequeue( item: out var result ) ) {
-                throw new InvalidOperationException( message: "the queue is empty" );
-            }
+            if ( !this.TryDequeue( item: out var result ) ) { throw new InvalidOperationException( message: "the queue is empty" ); }
 
             return result;
         }
@@ -97,16 +92,10 @@ namespace Librainian.Collections {
                 oldTail = this._tail;
                 var oldTailNext = oldTail.Next;
 
-                if ( this._tail != oldTail ) {
-                    continue;
-                }
+                if ( this._tail != oldTail ) { continue; }
 
-                if ( oldTailNext is null ) {
-                    newNodeWasAdded = Interlocked.CompareExchange( location1: ref this._tail.Next, value: newNode, comparand: null ) == null;
-                }
-                else {
-                    Interlocked.CompareExchange( location1: ref this._tail, value: oldTailNext, comparand: oldTail );
-                }
+                if ( oldTailNext is null ) { newNodeWasAdded = Interlocked.CompareExchange( location1: ref this._tail.Next, value: newNode, comparand: null ) == null; }
+                else { Interlocked.CompareExchange( location1: ref this._tail, value: oldTailNext, comparand: oldTail ); }
             }
 
             Interlocked.CompareExchange( location1: ref this._tail, value: newNode, comparand: oldTail );
@@ -121,9 +110,7 @@ namespace Librainian.Collections {
             var currentNode = this._head;
 
             do {
-                if ( currentNode.Item is null ) {
-                    yield break;
-                }
+                if ( currentNode.Item is null ) { yield break; }
 
                 yield return currentNode.Item;
             } while ( ( currentNode = currentNode.Next ) != null );
@@ -149,16 +136,12 @@ namespace Librainian.Collections {
                 var oldTail = this._tail;
                 var oldHead = this._head;
 
-                if ( oldHead != this._head ) {
-                    continue;
-                }
+                if ( oldHead != this._head ) { continue; }
 
                 var oldHeadNext = this._head.Next;
 
                 if ( oldHead == oldTail ) {
-                    if ( oldHeadNext is null ) {
-                        return false;
-                    }
+                    if ( oldHeadNext is null ) { return false; }
 
                     Interlocked.CompareExchange( location1: ref this._tail, value: oldHeadNext, comparand: oldTail );
                 }

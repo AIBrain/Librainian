@@ -2,15 +2,13 @@
 //
 // This notice must be kept visible in the source.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
+// borrowed from other projects retain their original license and thanks goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
+// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -59,6 +57,30 @@ namespace Librainian.Threading {
             get;
         }
 
+        private async Task Triage() {
+            Logging.Enter();
+            while ( !this.CancellationToken.IsCancellationRequested ) {
+                await Task.WhenAny( this.Input.OutputAvailableAsync( this.CancellationToken ) );
+
+                if ( !this.Input.TryReceive( null, out var item ) ) {
+                    continue; //Hello? Hello? Hmm. No one is there. Go back to waiting.
+                }
+
+                var highest = this._jobs.OrderByDescending( job => job.Priority ).FirstOrDefault();
+                if ( null == highest ) {
+                    continue;
+                }
+                this._jobs.Remove( highest );
+
+                if ( highest != item ) {
+                    this.Add( item ); //add back into the pile
+                }
+
+                await this.Output.SendAsync( highest.Action, this.CancellationToken );
+            }
+            Logging.Exit();
+        }
+
         public void Add( [NotNull] OneJob oneJob ) {
             if ( oneJob is null ) {
                 throw new ArgumentNullException( nameof( oneJob ) );
@@ -78,30 +100,6 @@ namespace Librainian.Threading {
             foreach ( var job in enumerable.OrderByDescending( job => job.Priority ) ) {
                 this.Input.TryPost( job );
             }
-        }
-
-        private async Task Triage() {
-            Log.Enter();
-            while ( !this.CancellationToken.IsCancellationRequested ) {
-                await Task.WhenAny( this.Input.OutputAvailableAsync( this.CancellationToken ) );
-
-				if ( !this.Input.TryReceive( null, out var item ) ) {
-					continue; //Hello? Hello? Hmm. No one is there. Go back to waiting.
-				}
-
-				var highest = this._jobs.OrderByDescending( job => job.Priority ).FirstOrDefault();
-                if ( null == highest ) {
-                    continue;
-                }
-                this._jobs.Remove( highest );
-
-                if ( highest != item ) {
-                    this.Add( item ); //add back into the pile
-                }
-
-                await this.Output.SendAsync( highest.Action, this.CancellationToken );
-            }
-            Log.Exit();
         }
     }
 }

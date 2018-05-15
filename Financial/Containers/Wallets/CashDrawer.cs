@@ -33,7 +33,7 @@ namespace Librainian.Financial.Containers.Wallets {
                 throw new ArgumentNullException( nameof( bankNotes ) );
             }
 
-            return 0 == bankNotes.LongCount( bankNote => !Deposit( bankNote, 1 ) );
+            return 0 == bankNotes.LongCount( bankNote => !this.Deposit( bankNote, 1 ) );
         }
 
         public Boolean Fund( params ICoin[] coins ) {
@@ -41,9 +41,9 @@ namespace Librainian.Financial.Containers.Wallets {
                 throw new ArgumentNullException( nameof( coins ) );
             }
 
-            return 0 == coins.LongCount( coin => Deposit( coin, 1 ) != 1 );
+            return 0 == coins.LongCount( coin => this.Deposit( coin, 1 ) != 1 );
         }
 
-        public Decimal RunningTotal() => Total();
+        public Decimal RunningTotal() => this.Total();
     }
 }

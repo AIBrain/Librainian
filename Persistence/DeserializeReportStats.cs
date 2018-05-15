@@ -63,7 +63,7 @@ namespace Librainian.Persistence {
             handler( this );
 
             if ( this.Enabled ) {
-                await this.Timing.Then( job: this.Report ); //TODO is this correct?
+                await this.Timing.Then( async () => await this.Report() ); //TODO is this correct?
             }
         }
 
@@ -85,7 +85,7 @@ namespace Librainian.Persistence {
 
         public async Task StartReporting() {
             this.Enabled = true;
-            await this.Timing.Then( job: this.Report );
+            await this.Timing.Then( async () => await this.Report() );
         }
 
         public void StopReporting() => this.Enabled = false;

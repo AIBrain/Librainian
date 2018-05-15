@@ -1,18 +1,17 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "MultiKeyDictionary.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original
+// license has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/MultiKeyDictionary.cs" was last cleaned by Protiguous on 2018/05/12 at 1:19 AM
+// "Librainian/MultiKeyDictionary.cs" was last cleaned by Protiguous on 2018/05/15 at 1:28 AM.
 
 namespace Librainian.Collections {
 
@@ -35,9 +34,7 @@ namespace Librainian.Collections {
 
         public TV this[TL subKey] {
             get {
-                if ( this.TryGetValue( subKey: subKey, val: out var item ) ) {
-                    return item;
-                }
+                if ( this.TryGetValue( subKey: subKey, val: out var item ) ) { return item; }
 
                 throw new KeyNotFoundException( message: $"sub key not found: {subKey}" );
             }
@@ -45,26 +42,22 @@ namespace Librainian.Collections {
 
         public new TV this[TK primaryKey] {
             get {
-                if ( this.TryGetValue( primaryKey: primaryKey, val: out var item ) ) {
-                    return item;
-                }
+                if ( this.TryGetValue( primaryKey: primaryKey, val: out var item ) ) { return item; }
 
                 throw new KeyNotFoundException( message: $"primary key not found: {primaryKey}" );
             }
         }
 
-        public void Add( TK primaryKey, TV val ) => TryAdd( primaryKey, value: val );
+        public void Add( TK primaryKey, TV val ) => this.TryAdd( primaryKey, value: val );
 
         public void Add( TK primaryKey, TL subKey, TV val ) {
-            TryAdd( primaryKey, value: val );
+            this.TryAdd( primaryKey, value: val );
 
             this.Associate( subKey: subKey, primaryKey: primaryKey );
         }
 
         public void Associate( TL subKey, TK primaryKey ) {
-            if ( !base.ContainsKey( primaryKey ) ) {
-                throw new KeyNotFoundException( message: $"The primary dictionary does not contain the key '{primaryKey}'" );
-            }
+            if ( !base.ContainsKey( primaryKey ) ) { throw new KeyNotFoundException( message: $"The primary dictionary does not contain the key '{primaryKey}'" ); }
 
             if ( this.SubDictionary.ContainsKey( subKey ) ) {
                 this.SubDictionary[subKey] = primaryKey;
@@ -76,11 +69,11 @@ namespace Librainian.Collections {
             }
         }
 
-        public TK[] ClonePrimaryKeys() => Keys.ToArray();
+        public TK[] ClonePrimaryKeys() => this.Keys.ToArray();
 
         public TL[] CloneSubKeys() => this.SubDictionary.Keys.ToArray();
 
-        public TV[] CloneValues() => Values.ToArray();
+        public TV[] CloneValues() => this.Values.ToArray();
 
         public Boolean ContainsKey( TL subKey ) => this.TryGetValue( subKey: subKey, val: out var val );
 
@@ -91,11 +84,11 @@ namespace Librainian.Collections {
 
             this.PrimaryToSubkeyMapping.TryRemove( primaryKey, value: out var lvalue );
 
-            TryRemove( primaryKey, value: out var value );
+            this.TryRemove( primaryKey, value: out var value );
         }
 
         public void Remove( TL subKey ) {
-            TryRemove( this.SubDictionary[subKey], value: out var value );
+            this.TryRemove( this.SubDictionary[subKey], value: out var value );
             this.PrimaryToSubkeyMapping.TryRemove( this.SubDictionary[subKey], value: out var lvalue );
             this.SubDictionary.TryRemove( subKey, value: out var kvalue );
         }

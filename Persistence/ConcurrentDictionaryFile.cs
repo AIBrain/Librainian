@@ -135,10 +135,10 @@ namespace Librainian.Persistence {
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
-        public override String ToString() => $"{Keys.Count} keys, {Values.Count} values";
+        public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
 
         [DebuggerStepThrough]
-        public Boolean TryRemove( TKey key ) => key != null && TryRemove( key, value: out _ );
+        public Boolean TryRemove( TKey key ) => key != null && this.TryRemove( key, value: out _ );
 
         /// <summary>
         /// Saves the data to the <see cref="Document"/>.
