@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Point3DI.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Point3DI.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// "Librainian/Librainian/Point3DI.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Graphics {
 
@@ -22,18 +38,18 @@ namespace Librainian.Graphics {
     using Maths;
 
     /// <summary>
-    /// Represents a location in 3D integer space.
+    ///     Represents a location in 3D integer space.
     /// </summary>
     /// <remarks>Culled from the file CPI.Plot3D.cs I don't know where that file came from otherwise I'd attribute it!</remarks>
     public struct Point3Di : IEquatable<Point3Di> {
 
         /// <summary>
-        /// The maximum distance two coordinates can be from each other for them to be considered approximately equal.
+        ///     The maximum distance two coordinates can be from each other for them to be considered approximately equal.
         /// </summary>
         public const Int32 Tolerance = 0;
 
         /// <summary>
-        /// Instantiates a new Point3D.
+        ///     Instantiates a new Point3D.
         /// </summary>
         /// <param name="x">The point's X coordinate.</param>
         /// <param name="y">The point's Y coordinate.</param>
@@ -45,25 +61,19 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// The point's X coordinate.
+        ///     The point's X coordinate.
         /// </summary>
-        public Int32 X {
-            get;
-        }
+        public Int32 X { get; }
 
         /// <summary>
-        /// The point's Y coordinate.
+        ///     The point's Y coordinate.
         /// </summary>
-        public Int32 Y {
-            get;
-        }
+        public Int32 Y { get; }
 
         /// <summary>
-        /// The point's Z coordinate.
+        ///     The point's Z coordinate.
         /// </summary>
-        public Int32 Z {
-            get;
-        }
+        public Int32 Z { get; }
 
         ///// <summary>
         /////   Gets the location of the point projected onto the XY plane at the Z origin, from a specified
@@ -85,7 +95,7 @@ namespace Librainian.Graphics {
         //}
 
         /// <summary>
-        /// Static comparison.
+        ///     Static comparison.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="rhs"> </param>
@@ -93,7 +103,7 @@ namespace Librainian.Graphics {
         public static Boolean Equals( Point3Di left, Point3Di rhs ) => left.ApproximatelyEquals( rhs );
 
         /// <summary>
-        /// Determines whether the specified Point3D instances are unequal.
+        ///     Determines whether the specified Point3D instances are unequal.
         /// </summary>
         /// <param name="a">The first Point3D instance to compare.</param>
         /// <param name="b">The second Point3D instance to compare.</param>
@@ -101,7 +111,7 @@ namespace Librainian.Graphics {
         public static Boolean operator !=( Point3Di a, Point3Di b ) => !a.Equals( b );
 
         /// <summary>
-        /// Determines whether the specified Point3D instances are equal.
+        ///     Determines whether the specified Point3D instances are equal.
         /// </summary>
         /// <param name="a">The first Point3D instance to compare.</param>
         /// <param name="b">The second Point3D instance to compare.</param>
@@ -109,39 +119,42 @@ namespace Librainian.Graphics {
         public static Boolean operator ==( Point3Di a, Point3Di b ) => a.Equals( b );
 
         /// <summary>
-        /// Determines whether this instance is very nearly equal to a specified Point3D structure.
+        ///     Determines whether this instance is very nearly equal to a specified Point3D structure.
         /// </summary>
         /// <remarks>
-        /// Since floating point math is kind of fuzzy, we're taking a "close enough" approach to equality with this method. If the individual coordinates of two points fall within a small tolerance, we'll consider them
-        /// to be approximately equal. Remember, though, that the uncertainty here can be cumulative. For example: if pointA.Equals(pointB) and pointB.Equals(pointC), then it's an absolute certainty that
-        /// pointA.Equals(pointC). However, if pointD.ApproximatelyEquals(pointE) and pointE.ApproximatelyEquals(pointF), it is NOT certain whether pointD.ApproximatelyEquals(pointF).
+        ///     Since floating point math is kind of fuzzy, we're taking a "close enough" approach to equality with this method. If
+        ///     the individual coordinates of two points fall within a small tolerance, we'll consider them
+        ///     to be approximately equal. Remember, though, that the uncertainty here can be cumulative. For example: if
+        ///     pointA.Equals(pointB) and pointB.Equals(pointC), then it's an absolute certainty that
+        ///     pointA.Equals(pointC). However, if pointD.ApproximatelyEquals(pointE) and pointE.ApproximatelyEquals(pointF), it is
+        ///     NOT certain whether pointD.ApproximatelyEquals(pointF).
         /// </remarks>
         /// <param name="other">A Point3D structure to compare to this instance.</param>
         /// <returns>True if the X,Y,Z components are approximately equal; false otherwise.</returns>
         public Boolean ApproximatelyEquals( Point3Di other ) => Math.Abs( this.X - other.X ) <= Tolerance && Math.Abs( this.Y - other.Y ) <= Tolerance && Math.Abs( this.Z - other.Z ) <= Tolerance;
 
         /// <summary>
-        /// Returns a value indicating whether this instance is equal to a specified object.
+        ///     Returns a value indicating whether this instance is equal to a specified object.
         /// </summary>
         /// <param name="obj">An object to compare with this instance.</param>
         /// <returns>True if the object equals this instance; false otherwise.</returns>
         public override Boolean Equals( Object obj ) => obj is Point3Di && this.Equals( ( Point3Di )obj );
 
         /// <summary>
-        /// Returns a value indicating whether this instance is equal to a specified Point3D structure.
+        ///     Returns a value indicating whether this instance is equal to a specified Point3D structure.
         /// </summary>
         /// <param name="other">A Point3D structure to compare to this instance.</param>
         /// <returns>True if the X,Y,Z components are the same; false otherwise.</returns>
         public Boolean Equals( Point3Di other ) => Equals( this, other );
 
         /// <summary>
-        /// Returns the hash code for this instance.
+        ///     Returns the hash code for this instance.
         /// </summary>
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override Int32 GetHashCode() => Hashing.GetHashCodes( this.X, this.Y, this.Z );
 
         /// <summary>
-        /// Returns a String representation of the point in [X,Y,Z] format.
+        ///     Returns a String representation of the point in [X,Y,Z] format.
         /// </summary>
         /// <returns>A String representing the point's XYZ coordinates.</returns>
         public override String ToString() => $"[{this.X}, {this.Y}, {this.Z}]";

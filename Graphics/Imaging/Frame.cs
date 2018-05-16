@@ -1,22 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Frame.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Frame.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Frame.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -29,6 +43,7 @@ namespace Librainian.Graphics.Imaging {
     [JsonObject]
     [StructLayout( LayoutKind.Sequential )]
     public struct Frame : IEquatable<Frame> {
+
         public static readonly String DefaultHeader = "EFGFrame";
 
         /// <summary>Checksum of the page (guard against corruption).</summary>
@@ -37,26 +52,31 @@ namespace Librainian.Graphics.Imaging {
         ///     overflows and timeouts.
         /// </remarks>
         [JsonProperty]
+
         //[FieldOffset( sizeof( UInt64 ) * 1 )]
         public UInt64 Checksum;
 
         /// <summary>How many milliseconds to display this frame?</summary>
         [JsonProperty]
+
         //[FieldOffset( sizeof( UInt64 ) * 3 )]
         public UInt64 Delay;
 
         /// <summary></summary>
         [JsonProperty]
+
         //[FieldOffset( sizeof( UInt64 ) * 0 )]
         public UInt64 Identity;
 
         /// <summary>How many lines should be in this frame?</summary>
         [JsonProperty]
+
         //[FieldOffset( sizeof( UInt64 ) * 2 )]
         public UInt64 LineCount;
 
         /// <summary>An array of <see cref="Line" />.</summary>
         [JsonProperty]
+
         //[FieldOffset( sizeof( UInt64 ) * 4 )]
         public Line[] Lines;
 
@@ -76,19 +96,17 @@ namespace Librainian.Graphics.Imaging {
         /// <returns></returns>
         [Pure]
         public static Boolean Equal( Frame left, Frame right ) {
+
             //if ( ( left is null ) || ( right is null ) ) {
             //    return false;
             //}
 
-            if ( left.Checksum != right.Checksum ) {
-                return false;
-            }
-            if ( left.LineCount != right.LineCount ) {
-                return false;
-            }
-            if ( left.Lines.LongLength != right.Lines.LongLength ) {
-                return false;
-            }
+            if ( left.Checksum != right.Checksum ) { return false; }
+
+            if ( left.LineCount != right.LineCount ) { return false; }
+
+            if ( left.Lines.LongLength != right.Lines.LongLength ) { return false; }
+
             return left.Lines.SequenceEqual( right.Lines );
         }
     }

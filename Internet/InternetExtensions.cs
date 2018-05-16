@@ -1,19 +1,36 @@
-// Copyright 2018 Protiguous
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "InternetExtensions.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/InternetExtensions.cs" was last cleaned by Protiguous on 2018/05/06 at 3:46 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/InternetExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Internet {
 
@@ -22,7 +39,6 @@ namespace Librainian.Internet {
     using System.IO;
     using System.Linq;
     using System.Net;
-    using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
@@ -32,42 +48,41 @@ namespace Librainian.Internet {
     public static class InternetExtensions {
 
         public static async Task<TextReader> DoRequestAsync( this WebRequest request ) {
-            if ( request is null ) {
-                throw new ArgumentNullException(nameof( request ) );
-            }
+            if ( request is null ) { throw new ArgumentNullException( nameof( request ) ); }
 
             var result = await Task.Factory.FromAsync( beginMethod: ( asyncCallback, state ) => ( ( HttpWebRequest )state ).BeginGetResponse( callback: asyncCallback, state: state ),
                 endMethod: asyncResult => ( ( HttpWebRequest )asyncResult.AsyncState ).EndGetResponse( asyncResult: asyncResult ), state: request );
+
             var stream = result.GetResponseStream();
+
             return stream != null ? new StreamReader( stream: stream ) : TextReader.Null;
         }
 
         public static async Task<TextReader> DoRequestAsync( this Uri uri ) {
-            if ( uri is null ) {
-                throw new ArgumentNullException(nameof( uri ) );
-            }
+            if ( uri is null ) { throw new ArgumentNullException( nameof( uri ) ); }
 
             var request = WebRequest.CreateHttp( requestUri: uri );
 
             //request.AllowReadStreamBuffering = true;
             var textReader = await request.DoRequestAsync();
+
             return textReader;
         }
 
         public static async Task<T> DoRequestJsonAsync<T>( this WebRequest request ) {
-            if ( request is null ) {
-                throw new ArgumentNullException(nameof( request ) );
-            }
+            if ( request is null ) { throw new ArgumentNullException( nameof( request ) ); }
 
             var reader = await DoRequestAsync( request: request ).ConfigureAwait( false );
             var response = await reader.ReadToEndAsync().ConfigureAwait( false );
-            return JsonConvert.DeserializeObject<T>( value: response );
+
+            return JsonConvert.DeserializeObject<T>( response );
         }
 
         public static async Task<T> DoRequestJsonAsync<T>( Uri uri ) {
             var reader = await DoRequestAsync( uri: uri ).ConfigureAwait( false );
             var response = await reader.ReadToEndAsync().ConfigureAwait( false );
-            return JsonConvert.DeserializeObject<T>( value: response );
+
+            return JsonConvert.DeserializeObject<T>( response );
         }
 
         /// <summary>Convert network bytes to a string</summary>
@@ -75,10 +90,9 @@ namespace Librainian.Internet {
         public static String FromNetworkBytes( this IEnumerable<Byte> data ) {
             var listData = data as IList<Byte> ?? data.ToList();
 
-            var len = IPAddress.NetworkToHostOrder( network: BitConverter.ToInt16( value: listData.Take( count: 2 ).ToArray(), startIndex: 0 ) );
-            if ( listData.Count < 2 + len ) {
-                throw new ArgumentException( message: "Too few bytes in packet" );
-            }
+            var len = IPAddress.NetworkToHostOrder( network: BitConverter.ToInt16( listData.Take( count: 2 ).ToArray(), startIndex: 0 ) );
+
+            if ( listData.Count < 2 + len ) { throw new ArgumentException( "Too few bytes in packet" ); }
 
             return Encoding.UTF8.GetString( bytes: listData.Skip( count: 2 ).Take( count: len ).ToArray() );
         }
@@ -89,6 +103,7 @@ namespace Librainian.Internet {
         public static JObject GetNonAsync( Uri uri ) {
             var httpClient = new HttpClient();
             var content = httpClient.GetStringAsync( requestUri: uri ).Result;
+
             return JObject.Parse( json: content );
         }
 
@@ -101,22 +116,20 @@ namespace Librainian.Internet {
 
                 using ( var response = request.GetResponse() as HttpWebResponse ) {
                     var dataStream = response?.GetResponseStream();
+
                     if ( dataStream != null ) {
                         try {
                             using ( var reader = new StreamReader( stream: dataStream ) ) {
                                 var responseFromServer = reader.ReadToEnd();
+
                                 return responseFromServer;
                             }
                         }
-                        finally {
-                            dataStream.Dispose();
-                        }
+                        finally { dataStream.Dispose(); }
                     }
                 }
             }
-            catch {
-                throw new Exception( message: $"Unable to connect to {url}." );
-            }
+            catch { throw new Exception( $"Unable to connect to {url}." ); }
 
             return null;
         }
@@ -126,20 +139,20 @@ namespace Librainian.Internet {
                 var request = WebRequest.Create( requestUri: uri );
                 request.Proxy = null;
                 request.Credentials = CredentialCache.DefaultCredentials;
+
                 using ( var response = await request.GetResponseAsync().ConfigureAwait( false ) ) {
                     using ( var dataStream = response.GetResponseStream() ) {
                         if ( dataStream != null ) {
                             using ( var reader = new StreamReader( stream: dataStream ) ) {
                                 var responseFromServer = reader.ReadToEnd();
+
                                 return responseFromServer;
                             }
                         }
                     }
                 }
             }
-            catch {
-                $"Unable to connect to {uri}.".Error();
-            }
+            catch { $"Unable to connect to {uri}.".Error(); }
 
             return null;
         }
@@ -150,7 +163,7 @@ namespace Librainian.Internet {
 
             var len = IPAddress.HostToNetworkOrder( host: ( Int16 )bytes.Length );
 
-            return BitConverter.GetBytes( value: len ).Concat( second: bytes );
+            return BitConverter.GetBytes( len ).Concat( second: bytes );
         }
     }
 }

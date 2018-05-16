@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "PlanckTimes.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/PlanckTimes.cs" was last cleaned by Protiguous on 2016/06/18 at 10:54 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/PlanckTimes.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -48,6 +62,26 @@ namespace Librainian.Measurement.Time {
     [JsonObject]
     public struct PlanckTimes : IComparable<PlanckTimes>, IQuantityOfTime {
 
+        public static readonly BigRational InOneAttosecond = InOneFemtosecond / Attoseconds.InOneFemtosecond;
+
+        public static readonly BigRational InOneDay = InOneSecond * Seconds.InOneDay;
+
+        public static readonly BigRational InOneFemtosecond = InOnePicosecond / Femtoseconds.InOnePicosecond;
+
+        public static readonly BigRational InOneHour = InOneSecond * Seconds.InOneHour;
+
+        public static readonly BigRational InOneMicrosecond = InOneMillisecond / Microseconds.InOneMillisecond;
+
+        public static readonly BigRational InOneMillisecond = InOneSecond / Milliseconds.InOneSecond;
+
+        public static readonly BigRational InOneMinute = InOneSecond * Seconds.InOneMinute;
+
+        public static readonly BigRational InOneMonth = InOneSecond * Seconds.InOneMonth;
+
+        public static readonly BigRational InOneNanosecond = InOneMicrosecond / Nanoseconds.InOneMicrosecond;
+
+        public static readonly BigRational InOnePicosecond = InOneNanosecond / Picoseconds.InOneNanosecond;
+
         /// <summary>
         ///     <para>Possible numbers are:</para>
         ///     <para>18548608483392000000</para>
@@ -57,70 +91,42 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly BigRational InOneSecond = new BigRational( 18550948324478E30 );
 
-        public static readonly BigRational InOneMillisecond = InOneSecond / Milliseconds.InOneSecond;
-
-        public static readonly BigRational InOneMicrosecond = InOneMillisecond / Microseconds.InOneMillisecond;
-
-        public static readonly BigRational InOneNanosecond = InOneMicrosecond / Nanoseconds.InOneMicrosecond;
-
-        public static readonly BigRational InOnePicosecond = InOneNanosecond / Picoseconds.InOneNanosecond;
-
-        public static readonly BigRational InOneFemtosecond = InOnePicosecond / Femtoseconds.InOnePicosecond;
-
-        public static readonly BigRational InOneAttosecond = InOneFemtosecond / Attoseconds.InOneFemtosecond;
-
-        public static readonly BigRational InOneDay = InOneSecond * Seconds.InOneDay;
-
-        public static readonly BigRational InOneHour = InOneSecond * Seconds.InOneHour;
-
-
-        public static readonly BigRational InOneMinute = InOneSecond * Seconds.InOneMinute;
-
-        public static readonly BigRational InOneMonth = InOneSecond * Seconds.InOneMonth;
-
         public static readonly BigRational InOneWeek = InOneSecond * Seconds.InOneWeek;
 
         public static readonly BigRational InOneYear = InOneSecond * Seconds.InOneCommonYear;
 
-        public static readonly BigRational InOneZeptosecond = InOneAttosecond / Zeptoseconds.InOneAttosecond;
-
         public static readonly BigRational InOneYoctosecond = InOneZeptosecond / Yoctoseconds.InOneZeptosecond;
+        public static readonly BigRational InOneZeptosecond = InOneAttosecond / Zeptoseconds.InOneAttosecond;
 
         /// <summary>
         ///     One <see cref="PlanckTimes" />.
         /// </summary>
-        public static readonly PlanckTimes One = new PlanckTimes( value: 1 );
+        public static readonly PlanckTimes One = new PlanckTimes( 1 );
 
         /// <summary>
         ///     Two <see cref="PlanckTimes" />.
         /// </summary>
-        public static readonly PlanckTimes Two = new PlanckTimes( value: 2 );
+        public static readonly PlanckTimes Two = new PlanckTimes( 2 );
 
         /// <summary>
         ///     Zero <see cref="PlanckTimes" />.
         /// </summary>
-        public static readonly PlanckTimes Zero = new PlanckTimes( value: 0 );
+        public static readonly PlanckTimes Zero = new PlanckTimes( 0 );
 
         //was 5.85E50
 
-        public PlanckTimes( Int64 value ) : this( ( BigInteger )value ) {
-        }
+        public PlanckTimes( Int64 value ) : this( ( BigInteger )value ) { }
 
-        public PlanckTimes( BigRational value ) : this( value.GetWholePart() ) {
-        }
+        public PlanckTimes( BigRational value ) : this( value.GetWholePart() ) { }
 
         public PlanckTimes( BigInteger value ) => this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
 
-	    public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes().Value ) {
-        }
+        public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes().Value ) { }
 
-        public PlanckTimes( Years years ) : this( years.ToPlanckTimes().Value ) {
-        }
+        public PlanckTimes( Years years ) : this( years.ToPlanckTimes().Value ) { }
 
         [JsonProperty]
-        public BigInteger Value {
-            get;
-        }
+        public BigInteger Value { get; }
 
         public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) => new PlanckTimes( left.Value + right.Value );
 
@@ -170,9 +176,8 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( PlanckTimes other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj is null ) {
-                return false;
-            }
+            if ( obj is null ) { return false; }
+
             return obj is PlanckTimes times && this.Equals( times );
         }
 
@@ -201,6 +206,7 @@ namespace Librainian.Measurement.Time {
             //}
             var integer = BigInteger.Divide( planckTimes, constant );
             planckTimes -= BigInteger.Multiply( integer, constant );
+
             return integer;
         }
 
@@ -221,6 +227,7 @@ namespace Librainian.Measurement.Time {
 
             //planckTimes -= BigInteger.Multiply( pullPlancks, ( BigInteger ) constant );
             planckTimes -= ( BigInteger )( pullPlancks * constant );
+
             return pullPlancks;
         }
     }

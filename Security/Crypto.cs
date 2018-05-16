@@ -1,19 +1,36 @@
-﻿// Copyright 2018 Protiguous
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Crypto.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Crypto.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Crypto.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
 
 namespace Librainian.Security {
 
@@ -23,6 +40,7 @@ namespace Librainian.Security {
     using System.Text;
 
     public static class Crypto {
+
         private static readonly Byte[] Salt = Encoding.ASCII.GetBytes( s: "evatuewot8evtet8e8paaa40aqtab60w489uvmw" );
 
         /// <summary>
@@ -32,13 +50,9 @@ namespace Librainian.Security {
         /// <param name="cipherText">The text to decrypt.</param>
         /// <param name="sharedSecret">A password used to generate a key for decryption.</param>
         public static String DecryptStringAES( this String cipherText, String sharedSecret ) {
-            if ( String.IsNullOrEmpty( value: cipherText ) ) {
-                throw new ArgumentNullException(nameof( cipherText ) );
-            }
+            if ( String.IsNullOrEmpty( cipherText ) ) { throw new ArgumentNullException( nameof( cipherText ) ); }
 
-            if ( String.IsNullOrEmpty( value: sharedSecret ) ) {
-                throw new ArgumentNullException(nameof( sharedSecret ) );
-            }
+            if ( String.IsNullOrEmpty( sharedSecret ) ) { throw new ArgumentNullException( nameof( sharedSecret ) ); }
 
             // Declare the RijndaelManaged object used to decrypt the data.
             RijndaelManaged aesAlg = null;
@@ -64,6 +78,7 @@ namespace Librainian.Security {
 
                 // Create a decrytor to perform the stream transform.
                 var decryptor = aesAlg.CreateDecryptor( rgbKey: aesAlg.Key, rgbIV: aesAlg.IV );
+
                 using ( var srDecrypt = new StreamReader( stream: new CryptoStream( stream: msDecrypt, transform: decryptor, mode: CryptoStreamMode.Read ) ) ) {
 
                     // Read the decrypted bytes from the decrypting stream and place them in
@@ -87,13 +102,9 @@ namespace Librainian.Security {
         /// <param name="plainText">The text to encrypt.</param>
         /// <param name="sharedSecret">A password used to generate a key for encryption.</param>
         public static String EncryptStringAES( this String plainText, String sharedSecret ) {
-            if ( String.IsNullOrEmpty( value: plainText ) ) {
-                throw new ArgumentNullException(nameof( plainText ) );
-            }
+            if ( String.IsNullOrEmpty( plainText ) ) { throw new ArgumentNullException( nameof( plainText ) ); }
 
-            if ( String.IsNullOrEmpty( value: sharedSecret ) ) {
-                throw new ArgumentNullException(nameof( sharedSecret ) );
-            }
+            if ( String.IsNullOrEmpty( sharedSecret ) ) { throw new ArgumentNullException( nameof( sharedSecret ) ); }
 
             String outStr; // Encrypted string to return
             RijndaelManaged aesAlg = null; // RijndaelManaged object used to encrypt the data.
@@ -114,14 +125,15 @@ namespace Librainian.Security {
                 var msEncrypt = new MemoryStream();
 
                 // prepend the IV
-                msEncrypt.Write( buffer: BitConverter.GetBytes( value: aesAlg.IV.Length ), offset: 0, count: sizeof( Int32 ) );
+                msEncrypt.Write( buffer: BitConverter.GetBytes( aesAlg.IV.Length ), offset: 0, count: sizeof( Int32 ) );
                 msEncrypt.Write( buffer: aesAlg.IV, offset: 0, count: aesAlg.IV.Length );
 
                 var csEncrypt = new CryptoStream( stream: msEncrypt, transform: encryptor, mode: CryptoStreamMode.Write );
+
                 using ( var swEncrypt = new StreamWriter( stream: csEncrypt ) ) {
 
                     //Write all data to the stream.
-                    swEncrypt.Write( value: plainText );
+                    swEncrypt.Write( plainText );
                 }
 
                 outStr = Convert.ToBase64String( inArray: msEncrypt.ToArray() );
@@ -138,14 +150,12 @@ namespace Librainian.Security {
 
         public static Byte[] ReadByteArray( this Stream s ) {
             var rawLength = new Byte[sizeof( Int32 )];
-            if ( s.Read( buffer: rawLength, offset: 0, count: rawLength.Length ) != rawLength.Length ) {
-                throw new SystemException( message: "Stream did not contain properly formatted byte array" );
-            }
 
-            var buffer = new Byte[BitConverter.ToInt32( value: rawLength, startIndex: 0 )];
-            if ( s.Read( buffer: buffer, offset: 0, count: buffer.Length ) != buffer.Length ) {
-                throw new SystemException( message: "Did not read byte array properly" );
-            }
+            if ( s.Read( buffer: rawLength, offset: 0, count: rawLength.Length ) != rawLength.Length ) { throw new SystemException( "Stream did not contain properly formatted byte array" ); }
+
+            var buffer = new Byte[BitConverter.ToInt32( rawLength, startIndex: 0 )];
+
+            if ( s.Read( buffer: buffer, offset: 0, count: buffer.Length ) != buffer.Length ) { throw new SystemException( "Did not read byte array properly" ); }
 
             return buffer;
         }

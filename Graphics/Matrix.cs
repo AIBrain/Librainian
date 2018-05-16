@@ -1,30 +1,47 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Matrix.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Matrix.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Matrix.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Graphics {
 
     using System;
 
     public class Matrix {
+
         protected readonly Int32 Cols;
+
         protected readonly Single[,] matrix;
+
         protected readonly Int32 Rows;
 
         protected Matrix( Single[,] matrix ) {
@@ -34,9 +51,46 @@ namespace Librainian.Graphics {
         }
 
         protected Matrix( Int32 rows, Int32 cols ) {
-            this.matrix = new Single[ rows, cols ];
+            this.matrix = new Single[rows, cols];
             this.Rows = rows;
             this.Cols = cols;
+        }
+
+        private static Single[,] Multiply( Matrix matrix1, Matrix matrix2 ) {
+            var m1Cols = matrix1.Cols;
+
+            if ( m1Cols != matrix2.Rows ) { throw new ArgumentException(); }
+
+            var m1Rows = matrix1.Rows;
+            var m2Cols = matrix2.Cols;
+            var m1 = matrix1.matrix;
+            var m2 = matrix2.matrix;
+            var m3 = new Single[m1Rows, m2Cols];
+
+            for ( var i = 0; i < m1Rows; ++i ) {
+                for ( var j = 0; j < m2Cols; ++j ) {
+                    Single sum = 0;
+
+                    for ( var it = 0; it < m1Cols; ++it ) { sum += m1[i, it] * m2[it, j]; }
+
+                    m3[i, j] = sum;
+                }
+            }
+
+            return m3;
+        }
+
+        protected static Single[,] Multiply( Matrix matrix, Single scalar ) {
+            var rows = matrix.Rows;
+            var cols = matrix.Cols;
+            var m1 = matrix.matrix;
+            var m2 = new Single[rows, cols];
+
+            for ( var i = 0; i < rows; ++i ) {
+                for ( var j = 0; j < cols; ++j ) { m2[i, j] = m1[i, j] * scalar; }
+            }
+
+            return m2;
         }
 
         public static Matrix operator *( Matrix m, Single scalar ) => new Matrix( Multiply( m, scalar ) );
@@ -45,53 +99,18 @@ namespace Librainian.Graphics {
 
         public override String ToString() {
             var res = "";
+
             for ( var i = 0; i < this.Rows; ++i ) {
-                if ( i > 0 ) {
-                    res += "|";
-                }
+                if ( i > 0 ) { res += "|"; }
+
                 for ( var j = 0; j < this.Cols; ++j ) {
-                    if ( j > 0 ) {
-                        res += ",";
-                    }
-                    res += this.matrix[ i, j ];
+                    if ( j > 0 ) { res += ","; }
+
+                    res += this.matrix[i, j];
                 }
             }
+
             return $"({res})";
-        }
-
-        protected static Single[,] Multiply( Matrix matrix, Single scalar ) {
-            var rows = matrix.Rows;
-            var cols = matrix.Cols;
-            var m1 = matrix.matrix;
-            var m2 = new Single[ rows, cols ];
-            for ( var i = 0; i < rows; ++i ) {
-                for ( var j = 0; j < cols; ++j ) {
-                    m2[ i, j ] = m1[ i, j ] * scalar;
-                }
-            }
-            return m2;
-        }
-
-        private static Single[,] Multiply( Matrix matrix1, Matrix matrix2 ) {
-            var m1Cols = matrix1.Cols;
-            if ( m1Cols != matrix2.Rows ) {
-                throw new ArgumentException();
-            }
-            var m1Rows = matrix1.Rows;
-            var m2Cols = matrix2.Cols;
-            var m1 = matrix1.matrix;
-            var m2 = matrix2.matrix;
-            var m3 = new Single[ m1Rows, m2Cols ];
-            for ( var i = 0; i < m1Rows; ++i ) {
-                for ( var j = 0; j < m2Cols; ++j ) {
-                    Single sum = 0;
-                    for ( var it = 0; it < m1Cols; ++it ) {
-                        sum += m1[ i, it ] * m2[ it, j ];
-                    }
-                    m3[ i, j ] = sum;
-                }
-            }
-            return m3;
         }
     }
 }

@@ -1,17 +1,36 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "PriorityScheduler.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original
-// license has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "PriorityScheduler.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/PriorityScheduler.cs" was last cleaned by Protiguous on 2018/05/15 at 4:23 AM.
+// "Librainian/Librainian/PriorityScheduler.cs" was last cleaned by Protiguous on 2018/05/15 at 10:50 PM.
 
 namespace Librainian.Threading {
 
@@ -23,8 +42,11 @@ namespace Librainian.Threading {
 
     /// <summary>
     /// </summary>
-    /// <example>Task.Factory.StartNew(() =&gt; { //everything here will be executed in a thread whose priority is BelowNormal }, null, TaskCreationOptions.None, PriorityScheduler.BelowNormal);</example>
-    /// <seealso cref="http://stackoverflow.com/questions/3836584/lowering-priority-of-task-factory-startnew-thread"/>
+    /// <example>
+    ///     Task.Factory.StartNew(() =&gt; { //everything here will be executed in a thread whose priority is BelowNormal
+    ///     }, null, TaskCreationOptions.None, PriorityScheduler.BelowNormal);
+    /// </example>
+    /// <seealso cref="http://stackoverflow.com/questions/3836584/lowering-priority-of-task-factory-startnew-thread" />
     public class PriorityScheduler : TaskScheduler, IDisposable {
 
         private readonly Int32 _maximumConcurrencyLevel = Math.Max( 1, Environment.ProcessorCount );
@@ -68,7 +90,7 @@ namespace Librainian.Threading {
         protected override Boolean TryExecuteTaskInline( Task task, Boolean taskWasPreviouslyQueued ) => false;
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose() => this.Dispose( true );
     }

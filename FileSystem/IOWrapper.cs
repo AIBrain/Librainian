@@ -1,22 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "IOWrapper.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/IOWrapper.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/IOWrapper.cs" was last cleaned by Protiguous on 2018/05/15 at 10:41 PM.
 
 namespace Librainian.FileSystem {
 
@@ -32,6 +46,7 @@ namespace Librainian.FileSystem {
     /// </summary>
     /// <seealso cref="http://blogs.msdn.com/b/jeffrey_wall/archive/2004/09/13/229137.aspx" />
     public class IOWrapper {
+
         private const UInt32 ErrorInsufficientBuffer = 122;
 
         private const UInt32 FileFlagNoBuffering = 0x20000000;
@@ -72,13 +87,11 @@ namespace Librainian.FileSystem {
 
                 const Int32 q = 1024 * 1024 * 64; // 1024 bytes == 1k * 1024 == 1 meg * 64 == 64 megs
 
-				pAlloc = Marshal.AllocHGlobal( q );
-				var pDest = pAlloc;
+                pAlloc = Marshal.AllocHGlobal( q );
+                var pDest = pAlloc;
                 var fResult = NativeMethods.DeviceIoControl( hFile, FSConstants.FsctlGetRetrievalPointers, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
 
-                if ( !fResult ) {
-                    throw new Exception( Marshal.GetLastWin32Error().ToString() );
-                }
+                if ( !fResult ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
 
                 handle.Free();
 
@@ -153,14 +166,13 @@ namespace Librainian.FileSystem {
                 // == 2048 gig disk storage
                 const Int32 q = 1024 * 1024 * 64; // 1024 bytes == 1k * 1024 == 1 meg * 64 == 64 megs
 
-				pAlloc = Marshal.AllocHGlobal( q );
-				var pDest = pAlloc;
+                pAlloc = Marshal.AllocHGlobal( q );
+                var pDest = pAlloc;
 
                 var result = NativeMethods.DeviceIoControl( hDevice, FSConstants.FsctlGetVolumeBitmap, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
 
-                if ( !result ) {
-                    throw new Exception( Marshal.GetLastWin32Error().ToString() );
-                }
+                if ( !result ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+
                 handle.Free();
 
                 /*
@@ -184,7 +196,7 @@ namespace Librainian.FileSystem {
 
                 var bitmapBegin = ( IntPtr )( ( Int64 )pDest + 8 );
 
-                var byteArr = new Byte[ byteSize ];
+                var byteArr = new Byte[byteSize];
 
                 Marshal.Copy( bitmapBegin, byteArr, 0, byteSize );
 
@@ -217,6 +229,7 @@ namespace Librainian.FileSystem {
         public static void MoveFile( String deviceName, String path, Int64 vcn, Int64 lcn, Int32 count ) {
             var hVol = IntPtr.Zero;
             var hFile = IntPtr.Zero;
+
             try {
                 hVol = OpenVolume( deviceName );
 
@@ -228,12 +241,11 @@ namespace Librainian.FileSystem {
                 var p = handle.AddrOfPinnedObject();
                 var bufSize = ( UInt32 )Marshal.SizeOf( mfd );
 
-				var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, /* no output data from this FSCTL*/ 0, out var size, IntPtr.Zero );
-				if ( !fResult ) {
-                    throw new Exception( Marshal.GetLastWin32Error().ToString() );
-                }
-                handle.Free();
+                var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, /* no output data from this FSCTL*/ 0, out var size, IntPtr.Zero );
 
+                if ( !fResult ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+
+                handle.Free();
             }
             finally {
                 NativeMethods.CloseHandle( hVol );
@@ -243,25 +255,25 @@ namespace Librainian.FileSystem {
 
         public static IntPtr OpenFile( String path ) {
             var hFile = NativeMethods.CreateFile( path, FileAccess.ReadWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
-            if ( hFile.IsInvalid ) {
-                throw new Exception( Marshal.GetLastWin32Error().ToString() );
-            }
+
+            if ( hFile.IsInvalid ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+
             return hFile.DangerousGetHandle();
         }
 
         public static IntPtr OpenVolume( String deviceName ) {
             var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName, FileAccess.ReadWrite, FileShare.Write, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
-            if ( hDevice.IsInvalid ) {
-                throw new Exception( Marshal.GetLastWin32Error().ToString() );
-            }
+
+            if ( hDevice.IsInvalid ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+
             return hDevice.DangerousGetHandle();
         }
-
 
         /// <summary>
         ///     input structure for use in MoveFile
         /// </summary>
         private struct MoveFileData {
+
 #pragma warning disable 414
             public Int32 ClusterCount;
 #pragma warning restore 414

@@ -220,7 +220,7 @@
     <Compile Include="Measurement\Time\Clocks\WindowsClock.cs" />
     <Compile Include="Measurement\Time\Duration.cs" />
     <Compile Include="Misc\PlaySound.cs" />
-    <Compile Include="OperatingSystem\Applications\Class1.cs" />
+    <Compile Include="Misc\Applications\Class1.cs" />
     <Compile Include="OperatingSystem\Audio.cs" />
     <Compile Include="OperatingSystem\OSExtensions.cs" />
     <Compile Include="OperatingSystem\OSInfoTests.cs" />
@@ -234,6 +234,7 @@
     <Compile Include="Persistence\DocumentInfo.cs" />
     <Compile Include="Persistence\Section.cs" />
     <Compile Include="Security\AES.cs" />
+    <Compile Include="Security\Document.cs" />
     <Compile Include="Security\GpwData.cs" />
     <Compile Include="Security\PronounceablePasswordCreator.cs" />
     <Compile Include="Threading\SimpleMutex.cs" />
@@ -746,7 +747,7 @@
     <Compile Include="Threading\SlimLock.cs" />
     <Compile Include="Extensions\DirectoryInfos.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Threading\Tasks.cs" />
+    <Compile Include="Threading\TaskExtensions.cs" />
     <Compile Include="Threading\ThreadingExtensions.cs" />
     <Compile Include="Threading\FluentTimer.cs" />
     <Compile Include="Threading\WaitNode.cs" />

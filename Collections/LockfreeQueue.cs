@@ -1,17 +1,36 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "LockfreeQueue.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license
-// has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "LockfreeQueue.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/LockfreeQueue.cs" was last cleaned by Protiguous on 2018/05/15 at 1:28 AM.
+// "Librainian/Librainian/LockfreeQueue.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
 
 namespace Librainian.Collections {
 
@@ -21,7 +40,7 @@ namespace Librainian.Collections {
     using System.Threading;
 
     /// <summary>
-    /// Represents a lock-free, thread-safe, first-in, first-out collection of objects.
+    ///     Represents a lock-free, thread-safe, first-in, first-out collection of objects.
     /// </summary>
     /// <typeparam name="T">specifies the type of the elements in the queue</typeparam>
     /// <remarks>Enumeration and clearing are not thread-safe.</remarks>
@@ -34,7 +53,7 @@ namespace Librainian.Collections {
         private SingleLinkNode<T> _tail;
 
         /// <summary>
-        /// Default constructor.
+        ///     Default constructor.
         /// </summary>
         public LockfreeQueue() => this._tail = this._head;
 
@@ -43,12 +62,12 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Gets the number of elements contained in the queue.
+        ///     Gets the number of elements contained in the queue.
         /// </summary>
         public Int32 Count => Thread.VolatileRead( address: ref this._count );
 
         /// <summary>
-        /// Clears the queue.
+        ///     Clears the queue.
         /// </summary>
         /// <remarks>This method is not thread-safe.</remarks>
         public void Clear() {
@@ -68,17 +87,17 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Removes and returns the object at the beginning of the queue.
+        ///     Removes and returns the object at the beginning of the queue.
         /// </summary>
         /// <returns>the object that is removed from the beginning of the queue</returns>
         public T Dequeue() {
-            if ( !this.TryDequeue( item: out var result ) ) { throw new InvalidOperationException( message: "the queue is empty" ); }
+            if ( !this.TryDequeue( item: out var result ) ) { throw new InvalidOperationException( "the queue is empty" ); }
 
             return result;
         }
 
         /// <summary>
-        /// Adds an object to the end of the queue.
+        ///     Adds an object to the end of the queue.
         /// </summary>
         /// <param name="item">the object to add to the queue</param>
         public void Enqueue( T item ) {
@@ -94,16 +113,16 @@ namespace Librainian.Collections {
 
                 if ( this._tail != oldTail ) { continue; }
 
-                if ( oldTailNext is null ) { newNodeWasAdded = Interlocked.CompareExchange( location1: ref this._tail.Next, value: newNode, comparand: null ) == null; }
-                else { Interlocked.CompareExchange( location1: ref this._tail, value: oldTailNext, comparand: oldTail ); }
+                if ( oldTailNext is null ) { newNodeWasAdded = Interlocked.CompareExchange( location1: ref this._tail.Next, newNode, comparand: null ) == null; }
+                else { Interlocked.CompareExchange( location1: ref this._tail, oldTailNext, comparand: oldTail ); }
             }
 
-            Interlocked.CompareExchange( location1: ref this._tail, value: newNode, comparand: oldTail );
+            Interlocked.CompareExchange( location1: ref this._tail, newNode, comparand: oldTail );
             Interlocked.Increment( location: ref this._count );
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through the queue.
+        ///     Returns an enumerator that iterates through the queue.
         /// </summary>
         /// <returns>an enumerator for the queue</returns>
         public IEnumerator<T> GetEnumerator() {
@@ -123,9 +142,12 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Removes and returns the object at the beginning of the queue.
+        ///     Removes and returns the object at the beginning of the queue.
         /// </summary>
-        /// <param name="item">when the method returns, contains the object removed from the beginning of the queue, if the queue is not empty; otherwise it is the default value for the element type</param>
+        /// <param name="item">
+        ///     when the method returns, contains the object removed from the beginning of the queue, if the queue
+        ///     is not empty; otherwise it is the default value for the element type
+        /// </param>
         /// <returns>true if an object from removed from the beginning of the queue; false if the queue is empty</returns>
         public Boolean TryDequeue( out T item ) {
             item = default;
@@ -143,11 +165,11 @@ namespace Librainian.Collections {
                 if ( oldHead == oldTail ) {
                     if ( oldHeadNext is null ) { return false; }
 
-                    Interlocked.CompareExchange( location1: ref this._tail, value: oldHeadNext, comparand: oldTail );
+                    Interlocked.CompareExchange( location1: ref this._tail, oldHeadNext, comparand: oldTail );
                 }
                 else {
                     item = oldHeadNext.Item;
-                    haveAdvancedHead = Interlocked.CompareExchange( location1: ref this._head, value: oldHeadNext, comparand: oldHead ) == oldHead;
+                    haveAdvancedHead = Interlocked.CompareExchange( location1: ref this._head, oldHeadNext, comparand: oldHead ) == oldHead;
                 }
             }
 
@@ -157,7 +179,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through the queue.
+        ///     Returns an enumerator that iterates through the queue.
         /// </summary>
         /// <returns>an enumerator for the queue</returns>
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();

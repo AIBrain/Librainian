@@ -1,22 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "DefragTests.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/DefragTests.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/DefragTests.cs" was last cleaned by Protiguous on 2018/05/15 at 10:41 PM.
 
 namespace Librainian.FileSystem {
 
@@ -28,17 +42,11 @@ namespace Librainian.FileSystem {
     [TestFixture]
     public static class DefragTests {
 
-        private static Document SourceDocument {
-            get; set;
-        }
+        private static Document SourceDocument { get; set; }
 
-        private static Document TargetDocument {
-            get; set;
-        }
+        private static Document TargetDocument { get; set; }
 
-        private static Folder TargetFolder {
-            get; set;
-        }
+        private static Folder TargetFolder { get; set; }
 
         //[OneTimeSetUp]
         public static void Setup() {
@@ -49,16 +57,15 @@ namespace Librainian.FileSystem {
             TargetDocument = new Document( Path.Combine( TargetFolder.FullName, "mrt.exe" ) );
             Console.WriteLine( SourceDocument.FullPathWithFileName );
 
-            while ( TargetDocument.Exists() ) {
-                TargetDocument.Delete();
-            }
+            while ( TargetDocument.Exists() ) { TargetDocument.Delete(); }
+
             File.Copy( SourceDocument.FullPathWithFileName, TargetDocument.FullPathWithFileName );
         }
 
-		//[OneTimeTearDown]
-		public static void TearDown() => TargetDocument.Delete();
+        //[OneTimeTearDown]
+        public static void TearDown() => TargetDocument.Delete();
 
-		[Test]
+        [Test]
         public static void Test_something() {
 
             //var bob = new Document( new Uri("http://www.google.com/") );

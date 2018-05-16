@@ -1,18 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "DocumentInfo.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/DocumentInfo.cs" was last cleaned by Protiguous on 2018/05/13 at 8:51 PM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/DocumentInfo.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
 
 namespace Librainian.Persistence {
 
@@ -30,9 +48,8 @@ namespace Librainian.Persistence {
     public class DocumentInfo {
 
         public DocumentInfo( [NotNull] String fullPathFilenameExtension ) {
-            if ( String.IsNullOrWhiteSpace( value: fullPathFilenameExtension ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullPathFilenameExtension ) );
-            }
+            if ( String.IsNullOrWhiteSpace( fullPathFilenameExtension ) ) { throw new ArgumentException( "Value cannot be null or whitespace.", paramName: nameof( fullPathFilenameExtension ) ); }
+
             this.FullPath = fullPathFilenameExtension;
         }
 
@@ -43,7 +60,7 @@ namespace Librainian.Persistence {
         public UInt64? CRC64 { get; set; }
 
         /// <summary>
-        /// "drive:/folder/file.ext"
+        ///     "drive:/folder/file.ext"
         /// </summary>
         [JsonProperty]
         public String FullPath { get; set; }
@@ -55,9 +72,7 @@ namespace Librainian.Persistence {
         public DateTime? Updated { get; set; }
 
         public async Task<Boolean> Update() {
-            if ( this.FullPath.IsNullOrWhiteSpace() ) {
-                return false;
-            }
+            if ( this.FullPath.IsNullOrWhiteSpace() ) { return false; }
 
             var doc = new Document( this.FullPath );
 

@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Audio.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Audio.cs" was last cleaned by Protiguous on 2016/06/18 at 10:55 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Audio.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.OperatingSystem {
 
@@ -28,6 +42,7 @@ namespace Librainian.OperatingSystem {
     public static class Audio {
 
         public enum EDataFlow {
+
             eRender,
 
             eCapture,
@@ -38,6 +53,7 @@ namespace Librainian.OperatingSystem {
         }
 
         public enum ERole {
+
             eConsole,
 
             eMultimedia,
@@ -128,51 +144,53 @@ namespace Librainian.OperatingSystem {
             // get the speakers (1st render + multimedia) device
 
             // ReSharper disable once SuspiciousTypeConversion.Global
-	        if ( !( new MMDeviceEnumerator() is IMMDeviceEnumerator deviceEnumerator ) ) {
-                yield break;
+            if ( !( new MMDeviceEnumerator() is IMMDeviceEnumerator deviceEnumerator ) ) { yield break; }
+
+            deviceEnumerator.GetDefaultAudioEndpoint( EDataFlow.eRender, ERole.eMultimedia, out var speakers );
+
+            // activate the session manager. we need the enumerator
+            var IID_IAudioSessionManager2 = typeof( IAudioSessionManager2 ).GUID;
+            speakers.Activate( ref IID_IAudioSessionManager2, 0, IntPtr.Zero, out var o );
+
+            // enumerate sessions for on this device
+            if ( o is IAudioSessionManager2 mgr ) {
+                mgr.GetSessionEnumerator( out var sessionEnumerator );
+                sessionEnumerator.GetCount( out var count );
+
+                for ( var i = 0; i < count; i++ ) {
+                    sessionEnumerator.GetSession( i, out var ctl );
+                    ctl.GetDisplayName( out var dn );
+
+                    yield return dn;
+                    Marshal.ReleaseComObject( ctl );
+                }
+
+                Marshal.ReleaseComObject( sessionEnumerator );
+                Marshal.ReleaseComObject( mgr );
             }
-			deviceEnumerator.GetDefaultAudioEndpoint( EDataFlow.eRender, ERole.eMultimedia, out var speakers );
 
-			// activate the session manager. we need the enumerator
-			var IID_IAudioSessionManager2 = typeof( IAudioSessionManager2 ).GUID;
-			speakers.Activate( ref IID_IAudioSessionManager2, 0, IntPtr.Zero, out var o );
-
-			// enumerate sessions for on this device
-			if ( o is IAudioSessionManager2 mgr ) {
-				mgr.GetSessionEnumerator( out var sessionEnumerator );
-				sessionEnumerator.GetCount( out var count );
-
-				for ( var i = 0; i < count; i++ ) {
-					sessionEnumerator.GetSession( i, out var ctl );
-					ctl.GetDisplayName( out var dn );
-					yield return dn;
-					Marshal.ReleaseComObject( ctl );
-				}
-				Marshal.ReleaseComObject( sessionEnumerator );
-				Marshal.ReleaseComObject( mgr );
-			}
-			Marshal.ReleaseComObject( speakers );
+            Marshal.ReleaseComObject( speakers );
             Marshal.ReleaseComObject( deviceEnumerator );
         }
 
         public static Boolean? GetApplicationMute( String name ) {
             var volume = GetVolumeObject( name );
-            if ( volume is null ) {
-                return null;
-            }
 
-			volume.GetMute( out var mute );
-			return mute;
+            if ( volume is null ) { return null; }
+
+            volume.GetMute( out var mute );
+
+            return mute;
         }
 
         public static Single? GetApplicationVolume( String name ) {
             var volume = GetVolumeObject( name );
-            if ( volume is null ) {
-                return null;
-            }
 
-			volume.GetMasterVolume( out var level );
-			return level * 100;
+            if ( volume is null ) { return null; }
+
+            volume.GetMasterVolume( out var level );
+
+            return level * 100;
         }
 
         [CanBeNull]
@@ -181,46 +199,50 @@ namespace Librainian.OperatingSystem {
             // get the speakers (1st render + multimedia) device
 
             // ReSharper disable once SuspiciousTypeConversion.Global
-	        if ( !( new MMDeviceEnumerator() is IMMDeviceEnumerator deviceEnumerator ) ) {
-                return null;
-            }
-			deviceEnumerator.GetDefaultAudioEndpoint( EDataFlow.eRender, ERole.eMultimedia, out var speakers );
+            if ( !( new MMDeviceEnumerator() is IMMDeviceEnumerator deviceEnumerator ) ) { return null; }
 
-			// activate the session manager. we need the enumerator
-			var iidIAudioSessionManager2 = typeof( IAudioSessionManager2 ).GUID;
-			speakers.Activate( ref iidIAudioSessionManager2, 0, IntPtr.Zero, out var o );
-			var mgr = ( IAudioSessionManager2 )o;
+            deviceEnumerator.GetDefaultAudioEndpoint( EDataFlow.eRender, ERole.eMultimedia, out var speakers );
 
-			// enumerate sessions for on this device
-			mgr.GetSessionEnumerator( out var sessionEnumerator );
-			sessionEnumerator.GetCount( out var count );
+            // activate the session manager. we need the enumerator
+            var iidIAudioSessionManager2 = typeof( IAudioSessionManager2 ).GUID;
+            speakers.Activate( ref iidIAudioSessionManager2, 0, IntPtr.Zero, out var o );
+            var mgr = ( IAudioSessionManager2 )o;
 
-			// search for an audio session with the required name
-			// NOTE: we could also use the process id instead of the app name (with IAudioSessionControl2)
-			ISimpleAudioVolume volumeControl = null;
+            // enumerate sessions for on this device
+            mgr.GetSessionEnumerator( out var sessionEnumerator );
+            sessionEnumerator.GetCount( out var count );
+
+            // search for an audio session with the required name
+            // NOTE: we could also use the process id instead of the app name (with IAudioSessionControl2)
+            ISimpleAudioVolume volumeControl = null;
+
             for ( var i = 0; i < count; i++ ) {
-				sessionEnumerator.GetSession( i, out var ctl );
-				ctl.GetDisplayName( out var dn );
-				if ( String.Compare( name, dn, StringComparison.OrdinalIgnoreCase ) == 0 ) {
+                sessionEnumerator.GetSession( i, out var ctl );
+                ctl.GetDisplayName( out var dn );
+
+                if ( String.Compare( name, dn, StringComparison.OrdinalIgnoreCase ) == 0 ) {
 
                     // ReSharper disable once SuspiciousTypeConversion.Global
                     volumeControl = ctl as ISimpleAudioVolume;
+
                     break;
                 }
+
                 Marshal.ReleaseComObject( ctl );
             }
+
             Marshal.ReleaseComObject( sessionEnumerator );
             Marshal.ReleaseComObject( mgr );
             Marshal.ReleaseComObject( speakers );
             Marshal.ReleaseComObject( deviceEnumerator );
+
             return volumeControl;
         }
 
         public static void SetApplicationMute( String name, Boolean mute ) {
             var volume = GetVolumeObject( name );
-            if ( volume is null ) {
-                return;
-            }
+
+            if ( volume is null ) { return; }
 
             var guid = Guid.Empty;
             volume.SetMute( mute, ref guid );
@@ -228,9 +250,8 @@ namespace Librainian.OperatingSystem {
 
         public static void SetApplicationVolume( String name, Single level ) {
             var volume = GetVolumeObject( name );
-            if ( volume is null ) {
-                return;
-            }
+
+            if ( volume is null ) { return; }
 
             var guid = Guid.Empty;
             volume.SetMasterVolume( level / 100, ref guid );
@@ -238,7 +259,6 @@ namespace Librainian.OperatingSystem {
 
         [ComImport]
         [Guid( "BCDE0395-E52F-467C-8E3D-C4579291692E" )]
-        public class MMDeviceEnumerator {
-        }
+        public class MMDeviceEnumerator { }
     }
 }

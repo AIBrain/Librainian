@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "NetworkAdapter.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/NetworkAdapter.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/NetworkAdapter.cs" was last cleaned by Protiguous on 2018/05/15 at 10:41 PM.
 
 namespace Librainian.FileSystem {
 
@@ -43,21 +57,21 @@ namespace Librainian.FileSystem {
 
         public NetworkAdapter( Int32 deviceId ) {
             var strWQuery = $"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE DeviceID = {deviceId}";
+
             try {
                 var networkAdapters = WMIExtensions.WmiQuery( strWQuery );
 
                 var crtNetworkAdapter = networkAdapters.Cast<ManagementBaseObject>().Select( o => o as ManagementObject ).FirstOrDefault();
-                if ( null == crtNetworkAdapter ) {
-                    return;
-                }
+
+                if ( null == crtNetworkAdapter ) { return; }
 
                 this.DeviceId = deviceId;
 
-                this.Name = crtNetworkAdapter[ "ProductName" ].ToString();
+                this.Name = crtNetworkAdapter["ProductName"].ToString();
 
-                this.NetEnabled = Convert.ToBoolean( crtNetworkAdapter[ "NetEnabled" ].ToString() ) ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled;
+                this.NetEnabled = Convert.ToBoolean( crtNetworkAdapter["NetEnabled"].ToString() ) ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled;
 
-                this.NetConnectionStatus = Convert.ToInt32( crtNetworkAdapter[ "NetConnectionStatus" ].ToString() );
+                this.NetConnectionStatus = Convert.ToInt32( crtNetworkAdapter["NetConnectionStatus"].ToString() );
             }
             catch ( NullReferenceException ) {
 
@@ -74,6 +88,7 @@ namespace Librainian.FileSystem {
         ///     Enum the Operation result of Enable and Disable Network Adapter
         /// </summary>
         private enum EnumEnableDisableResult {
+
             Fail = -1,
 
             Unknow,
@@ -104,6 +119,7 @@ namespace Librainian.FileSystem {
         ///     Enum the NetEnabled Status
         /// </summary>
         private enum EnumNetEnabledStatus {
+
             Disabled = -1,
 
             Unknown,
@@ -114,30 +130,22 @@ namespace Librainian.FileSystem {
         /// <summary>
         ///     The DeviceID of the NetworkAdapter
         /// </summary>
-        public Int32 DeviceId {
-            get;
-        }
+        public Int32 DeviceId { get; }
 
         /// <summary>
         ///     The ProductName of the NetworkAdapter
         /// </summary>
-        public String Name {
-            get;
-        }
+        public String Name { get; }
 
         /// <summary>
         ///     The Net Connection Status Value
         /// </summary>
-        public Int32 NetConnectionStatus {
-            get;
-        }
+        public Int32 NetConnectionStatus { get; }
 
         /// <summary>
         ///     The NetEnabled status of the NetworkAdapter
         /// </summary>
-        public Int32 NetEnabled {
-            get;
-        }
+        public Int32 NetEnabled { get; }
 
         /// <summary>
         ///     List all the NetworkAdapters
@@ -152,7 +160,10 @@ namespace Librainian.FileSystem {
             // NetworkAdapter = 'Ethernet 802.3' or NetworkAdapter = 'Wireless’
 
             var networkAdapters = WMIExtensions.WmiQuery( "SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE Manufacturer <> \'Microsoft\'" );
-            return networkAdapters.Cast<ManagementBaseObject>().Select( o => o as ManagementObject ).Select( moNetworkAdapter => new NetworkAdapter( Convert.ToInt32( moNetworkAdapter[ "DeviceID" ].ToString() ), moNetworkAdapter[ "ProductName" ].ToString(), Convert.ToBoolean( moNetworkAdapter[ "NetEnabled" ].ToString() ) ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled, Convert.ToInt32( moNetworkAdapter[ "NetConnectionStatus" ].ToString() ) ) );
+
+            return networkAdapters.Cast<ManagementBaseObject>().Select( o => o as ManagementObject ).Select( moNetworkAdapter => new NetworkAdapter( Convert.ToInt32( moNetworkAdapter["DeviceID"].ToString() ),
+                moNetworkAdapter["ProductName"].ToString(), Convert.ToBoolean( moNetworkAdapter["NetEnabled"].ToString() ) ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled,
+                Convert.ToInt32( moNetworkAdapter["NetConnectionStatus"].ToString() ) ) );
 
             //return allNetworkAdapter;
         }
@@ -171,13 +182,13 @@ namespace Librainian.FileSystem {
 
                 try {
                     var networkAdapters = WMIExtensions.WmiQuery( $"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}" );
-                    foreach ( var networkAdapter in from ManagementBaseObject o in networkAdapters select o as ManagementObject ) {
-                        crtNetworkAdapter = networkAdapter;
-                    }
+
+                    foreach ( var networkAdapter in from ManagementBaseObject o in networkAdapters select o as ManagementObject ) { crtNetworkAdapter = networkAdapter; }
 
                     crtNetworkAdapter?.InvokeMethod( strOperation, null );
 
                     Task.Delay( Milliseconds.OneHundred ).Wait();
+
                     while ( this.GetNetEnabled() != ( strOperation.Equals( "Enable", StringComparison.OrdinalIgnoreCase ) ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled ) ) {
                         Task.Delay( Milliseconds.OneHundred ).Wait();
                     }
@@ -190,7 +201,6 @@ namespace Librainian.FileSystem {
                     // adapter operation will be fail
                     resultEnableDisableNetworkAdapter = ( Int32 )EnumEnableDisableResult.Fail;
                 }
-
             }
 
             return resultEnableDisableNetworkAdapter;
@@ -202,18 +212,17 @@ namespace Librainian.FileSystem {
         /// <returns>Whether the NetworkAdapter is enabled</returns>
         public Int32 GetNetEnabled() {
             var netEnabled = ( Int32 )EnumNetEnabledStatus.Unknown;
+
             try {
                 var networkAdapters = WMIExtensions.WmiQuery( $"SELECT NetEnabled FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}" );
+
                 foreach ( var networkAdapter in networkAdapters.Cast<ManagementBaseObject>().Select( o => o as ManagementObject ) ) {
-                    if ( Convert.ToBoolean( networkAdapter[ "NetEnabled" ].ToString() ) ) {
-                        netEnabled = ( Int32 )EnumNetEnabledStatus.Enabled;
-                    }
-                    else {
-                        netEnabled = ( Int32 )EnumNetEnabledStatus.Disabled;
-                    }
+                    if ( Convert.ToBoolean( networkAdapter["NetEnabled"].ToString() ) ) { netEnabled = ( Int32 )EnumNetEnabledStatus.Enabled; }
+                    else { netEnabled = ( Int32 )EnumNetEnabledStatus.Disabled; }
                 }
             }
             catch ( NullReferenceException ) { }
+
             return netEnabled;
         }
     }

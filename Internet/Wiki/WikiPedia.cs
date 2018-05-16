@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "WikiPedia.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/WikiPedia.cs" was last cleaned by Protiguous on 2016/06/18 at 10:52 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/WikiPedia.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Internet.Wiki {
 
@@ -99,6 +113,7 @@ namespace Librainian.Internet.Wiki {
                 webRequest.UserAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)";
                 webRequest.AutomaticDecompression = DecompressionMethods.GZip;
                 webRequest.Accept = "text/xml";
+
                 using ( var webResponse = ( HttpWebResponse )webRequest.GetResponse() ) {
 
                     //var responseStream = webResponse.GetResponseStream();
@@ -106,9 +121,9 @@ namespace Librainian.Internet.Wiki {
                     var alldata = XElement.Parse( alltext, LoadOptions.None );
                     var cats = alldata.Elements( "categories" );
                     var results = new HashSet<String>();
-                    foreach ( var xElement in cats ) {
-                        results.Add( xElement.Value );
-                    }
+
+                    foreach ( var xElement in cats ) { results.Add( xElement.Value ); }
+
                     return results;
 
                     //using ( var reader = new XmlTextReader( responseStream ) ) {
@@ -120,6 +135,7 @@ namespace Librainian.Internet.Wiki {
             }
             catch ( Exception exception ) {
                 exception.More();
+
                 return null;
             }
         }
@@ -132,14 +148,14 @@ namespace Librainian.Internet.Wiki {
                 webRequest.UserAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)";
                 webRequest.AutomaticDecompression = DecompressionMethods.GZip;
                 webRequest.Accept = "text/xml";
+
                 using ( var webResponse = webRequest.GetResponse() as HttpWebResponse ) {
-                    if ( null == webResponse ) {
-                        return null;
-                    }
+                    if ( null == webResponse ) { return null; }
 
                     //var responseStream = webResponse.GetResponseStream();
                     var alltext = webResponse.StringFromResponse();
                     var data = XElement.Parse( alltext, LoadOptions.None );
+
                     return data;
 
                     //using ( var reader = new XmlTextReader( responseStream ) ) {
@@ -151,6 +167,7 @@ namespace Librainian.Internet.Wiki {
             }
             catch ( Exception exception ) {
                 exception.More();
+
                 return null;
             }
         }

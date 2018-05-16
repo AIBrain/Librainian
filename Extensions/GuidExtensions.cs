@@ -1,35 +1,54 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "GuidExtensions.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/GuidExtensions.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/GuidExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:40 PM.
 
 namespace Librainian.Extensions {
 
     using System;
     using System.IO;
-    using System.Linq;
     using System.Numerics;
     using System.Runtime.InteropServices;
+    using System.Security.Cryptography;
+    using System.Text;
     using System.Text.RegularExpressions;
     using FileSystem;
     using FluentAssertions;
     using Maths.Numbers;
     using NUnit.Framework;
-    using Security;
 
     /// <summary>
-    /// A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique identifier is required.
+    ///     A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique
+    ///     identifier is required.
     /// </summary>
     /// <remarks>I just love guids!</remarks>
     public static class GuidExtensions {
@@ -40,7 +59,28 @@ namespace Librainian.Extensions {
                          "^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$", options: RegexOptions.Compiled );
 
         /// <summary>
-        /// <seealso cref="ToPath"/>
+        ///     Convert string to Guid
+        /// </summary>
+        /// <param name="value">the string value</param>
+        /// <returns>the Guid value</returns>
+        public static Guid ConvertToMD5HashGUID( String value ) {
+
+            // convert null to empty string - null can not be hashed
+            if ( value == null ) { value = String.Empty; }
+
+            // get the byte representation
+            var bytes = Encoding.Unicode.GetBytes( value );
+
+            // create the md5 hash
+            var md5Hasher = MD5.Create();
+            var data = md5Hasher.ComputeHash( bytes );
+
+            // convert the hash to a Guid
+            return new Guid( data );
+        }
+
+        /// <summary>
+        ///     <seealso cref="ToPath" />
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -48,50 +88,46 @@ namespace Librainian.Extensions {
             var s = path.ToPaths().ToList();
             s.RemoveAll( s1 => s1.Any( c => !Char.IsDigit( c ) ) );
 
-            if ( s.Count < 16 ) {
-                return Guid.Empty;
-            }
+            if ( s.Count < 16 ) { return Guid.Empty; }
 
             var b = new Byte[s.Count];
 
-            for ( var i = 0; i < s.Count; i++ ) {
-                b[i] = Convert.ToByte( value: s[i] );
-            }
+            for ( var i = 0; i < s.Count; i++ ) { b[i] = Convert.ToByte( s[i] ); }
 
             try {
                 var result = new Guid( b );
 
                 return result;
             }
-            catch ( ArgumentException exception ) {
-                exception.More();
-            }
+            catch ( ArgumentException exception ) { exception.More(); }
 
             return Guid.Empty;
         }
 
         /// <summary>
-        /// Converts the string representation of a Guid to its Guid equivalent. A return value indicates whether the operation succeeded.
+        ///     Converts the string representation of a Guid to its Guid equivalent. A return value indicates whether the operation
+        ///     succeeded.
         /// </summary>
         /// <param name="s">A string containing a Guid to convert.</param>
         /// When this method returns, contains the Guid value equivalent to the Guid contained in
-        /// <paramref name="s"/>
+        /// <paramref name="s" />
         /// , if the conversion succeeded, or
-        /// <see cref="Guid.Empty"/>
+        /// <see cref="Guid.Empty" />
         /// if the conversion failed. The conversion fails if the
-        /// <paramref name="s"/>
+        /// <paramref name="s" />
         /// parameter is a
-        /// <see langword="null"/>
+        /// <see langword="null" />
         /// reference (
-        /// <see langword="Nothing"/>
+        /// <see langword="Nothing" />
         /// in Visual Basic), or is not of the correct format.
-        /// <value><see langword="true"/> if <paramref name="s"/> was converted successfully; otherwise, <see langword="false"/>.</value>
-        /// <exception cref="ArgumentNullException">Thrown if <pararef name="s"/> is <see langword="null"/>.</exception>
+        /// <value>
+        ///     <see langword="true" /> if <paramref name="s" /> was converted successfully; otherwise, <see langword="false" />
+        ///     .
+        /// </value>
+        /// <exception cref="ArgumentNullException">Thrown if <pararef name="s" /> is <see langword="null" />.</exception>
         /// <remarks>Original code at https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=94072</remarks>
         public static Boolean IsGuid( this String s ) {
-            if ( s is null ) {
-                throw new ArgumentNullException( nameof( s ) );
-            }
+            if ( s is null ) { throw new ArgumentNullException( nameof( s ) ); }
 
             var match = InGuidFormat.Match( input: s );
 
@@ -99,7 +135,7 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// merge two guids
+        ///     merge two guids
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
@@ -113,16 +149,14 @@ namespace Librainian.Extensions {
             Assert.AreEqual( expected: rhsBytes.Length, actual: destByte.Length );
 
             for ( var i = 0; i < bytecount; i++ ) {
-                unchecked {
-                    destByte[i] = ( Byte )( lhsBytes[i] ^ rhsBytes[i] );
-                }
+                unchecked { destByte[i] = ( Byte )( lhsBytes[i] ^ rhsBytes[i] ); }
             }
 
             return new Guid( b: destByte );
         }
 
         /// <summary>
-        /// Untested.
+        ///     Untested.
         /// </summary>
         /// <param name="guid">  </param>
         /// <param name="amount"></param>
@@ -139,7 +173,7 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Untested.
+        ///     Untested.
         /// </summary>
         /// <param name="guid">  </param>
         /// <param name="amount"></param>
@@ -156,28 +190,28 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Untested.
+        ///     Untested.
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
         public static BigInteger ToBigInteger( this Guid guid ) {
-            var bigInteger = new BigInteger( value: guid.ToByteArray() );
+            var bigInteger = new BigInteger( guid.ToByteArray() );
 
             return bigInteger;
         }
 
         /// <summary>
-        /// (Kinda) converts a guid to a datetime. Returns DateTime.MinValue if any error occurs.
+        ///     (Kinda) converts a guid to a datetime. Returns DateTime.MinValue if any error occurs.
         /// </summary>
         /// <param name="g"></param>
         /// <returns></returns>
-        /// <seealso cref="ToGuid(DateTime)"/>
+        /// <seealso cref="ToGuid(DateTime)" />
         public static DateTime ToDateTime( this Guid g ) {
             try {
                 var bytes = g.ToByteArray();
-                var year = BitConverter.ToInt32( value: bytes, startIndex: 0 );
-                var dayofYear = BitConverter.ToUInt16( value: bytes, startIndex: 4 );
-                var millisecond = BitConverter.ToUInt16( value: bytes, startIndex: 6 );
+                var year = BitConverter.ToInt32( bytes, startIndex: 0 );
+                var dayofYear = BitConverter.ToUInt16( bytes, startIndex: 4 );
+                var millisecond = BitConverter.ToUInt16( bytes, startIndex: 6 );
                 var dayofweek = ( DayOfWeek )bytes[8];
                 var day = bytes[9];
                 var hour = bytes[10];
@@ -217,7 +251,7 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Convert the first 16 bytes of the SHA256 hash of the <paramref name="word"/> into a <see cref="Guid"/>.
+        ///     Convert the first 16 bytes of the SHA256 hash of the <paramref name="word" /> into a <see cref="Guid" />.
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
@@ -229,11 +263,11 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Converts a datetime to a guid. Returns Guid.Empty if any error occurs.
+        ///     Converts a datetime to a guid. Returns Guid.Empty if any error occurs.
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
-        /// <seealso cref="ToDateTime"/>
+        /// <seealso cref="ToDateTime" />
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
@@ -246,7 +280,7 @@ namespace Librainian.Extensions {
                         , g: ( Byte )dateTime.Minute //11
                         , h: ( Byte )dateTime.Second //12
                         , i: ( Byte )dateTime.Month //13
-                        , j: Convert.ToByte( value: dateTime.IsDaylightSavingTime() ) //14
+                        , j: Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
                         , k: ( Byte )dateTime.Kind ); //15
 
                     guid.Should().NotBeEmpty();
@@ -254,14 +288,15 @@ namespace Librainian.Extensions {
                     return guid;
                 }
             }
-            catch ( Exception ) {
-                return Guid.Empty;
-            }
+            catch ( Exception ) { return Guid.Empty; }
         }
 
         /// <summary>
-        /// <para>A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique identifier is required.</para>
-        /// <para>A GUID has a very low probability of being duplicated.</para>
+        ///     <para>
+        ///         A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique
+        ///         identifier is required.
+        ///     </para>
+        ///     <para>A GUID has a very low probability of being duplicated.</para>
         /// </summary>
         /// <param name="mostImportantbits">    </param>
         /// <param name="somewhatImportantbits"></param>
@@ -280,13 +315,13 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Return the characters of the guid as a path structure.
+        ///     Return the characters of the guid as a path structure.
         /// </summary>
         /// <example>1/a/b/2/c/d/e/f/</example>
         /// <param name="guid">    </param>
-        /// <param name="reversed">Return the reversed order of the <see cref="Guid"/>.</param>
+        /// <param name="reversed">Return the reversed order of the <see cref="Guid" />.</param>
         /// <returns></returns>
-        /// <seealso cref="FromPath"/>
+        /// <seealso cref="FromPath" />
         public static String ToPath( this Guid guid, Boolean reversed = false ) {
             var a = guid.ToByteArray();
 
@@ -302,7 +337,7 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Untested.
+        ///     Untested.
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
@@ -323,7 +358,7 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// I don't think this works the way I originally intended. Don't use it.
+        ///     I don't think this works the way I originally intended. Don't use it.
         /// </summary>
         [StructLayout( layoutKind: LayoutKind.Explicit )]
         public struct GuidUnionUInt64 {

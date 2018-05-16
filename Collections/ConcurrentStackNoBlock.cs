@@ -1,17 +1,36 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "ConcurrentStackNoBlock.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original
-// license has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "ConcurrentStackNoBlock.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/ConcurrentStackNoBlock.cs" was last cleaned by Protiguous on 2018/05/15 at 1:28 AM.
+// "Librainian/Librainian/ConcurrentStackNoBlock.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
 
 namespace Librainian.Collections {
 
@@ -34,10 +53,9 @@ namespace Librainian.Collections {
             do {
                 ret = this._head;
 
-                if ( ret.Next is null ) { throw new IndexOutOfRangeException( message: "Stack is empty" ); }
-#pragma warning disable 420
-            } while ( Interlocked.CompareExchange( location1: ref this._head, value: ret.Next, comparand: ret ) != ret );
-#pragma warning restore 420
+                if ( ret.Next is null ) { throw new IndexOutOfRangeException( "Stack is empty" ); }
+            } while ( Interlocked.CompareExchange( location1: ref this._head, ret.Next, comparand: ret ) != ret );
+
             return ret.Item;
         }
 
@@ -49,9 +67,7 @@ namespace Librainian.Collections {
             do {
                 tmp = this._head;
                 nodeNew.Next = tmp;
-#pragma warning disable 420
-            } while ( Interlocked.CompareExchange( location1: ref this._head, value: nodeNew, comparand: tmp ) != tmp );
-#pragma warning restore 420
+            } while ( Interlocked.CompareExchange( location1: ref this._head, nodeNew, comparand: tmp ) != tmp );
         }
 
         internal sealed class Node {
@@ -72,7 +88,7 @@ namespace Librainian.Collections {
     /// <summary>
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <see cref="http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack"/>
+    /// <remarks>http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack</remarks>
     public class ConcurrentStackNoBlock<T> {
 
         private Node _head;
@@ -99,9 +115,8 @@ namespace Librainian.Collections {
             do {
                 tmp = this._head;
                 nodeNew.Next = tmp;
-#pragma warning disable 420
-            } while ( Interlocked.CompareExchange( location1: ref this._head, value: nodeNew, comparand: tmp ) != tmp );
-#pragma warning restore 420
+            } while ( Interlocked.CompareExchange( location1: ref this._head, nodeNew, comparand: tmp ) != tmp );
+
             ++this.Count;
         }
 
@@ -118,9 +133,8 @@ namespace Librainian.Collections {
                     //throw new IndexOutOfRangeException( "Stack is empty" );
                     return false;
                 }
-#pragma warning disable 420
-            } while ( Interlocked.CompareExchange( location1: ref this._head, value: ret.Next, comparand: ret ) != ret );
-#pragma warning restore 420
+            } while ( Interlocked.CompareExchange( location1: ref this._head, ret.Next, comparand: ret ) != ret );
+
             --this.Count;
             result = ret.Item;
 
@@ -128,7 +142,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Attempt two <see cref="TryPop"/>
+        ///     Attempt two <see cref="TryPop" />
         /// </summary>
         /// <param name="itemOne"></param>
         /// <param name="itemTwo"></param>

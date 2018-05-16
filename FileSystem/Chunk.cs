@@ -1,18 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "Chunk.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/Chunk.cs" was last cleaned by Protiguous on 2018/05/14 at 11:31 PM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Chunk.cs" was last cleaned by Protiguous on 2018/05/15 at 10:41 PM.
 
 namespace Librainian.FileSystem {
 
@@ -21,20 +39,19 @@ namespace Librainian.FileSystem {
     using System.Diagnostics;
     using System.IO;
     using System.IO.MemoryMappedFiles;
-    using System.Linq;
-    using FluentAssertions;
     using JetBrains.Annotations;
     using Magic;
-    using Maths;
     using OperatingSystem;
 
     /// <summary>
-    /// For copying a <see cref="Chunk"/> of a <see cref="Document"/> into another <see cref="Document"/>.
+    ///     For copying a <see cref="Chunk" /> of a <see cref="Document" /> into another <see cref="Document" />.
     /// </summary>
     public class Chunk : ABetterClassDispose {
 
         private const Byte High = 32;
+
         private const Byte Low = 12;
+
         private Int64 _offsetBegin;
 
         private Int64 _offsetEnd = 1;
@@ -46,7 +63,7 @@ namespace Librainian.FileSystem {
         public Chunk( [NotNull] Document document ) => this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
 
         /// <summary>
-        /// Just some common buffer sizes we might use.
+        ///     Just some common buffer sizes we might use.
         /// </summary>
         private static ConcurrentDictionary<Byte, Int64> BufferSizes { get; } = new ConcurrentDictionary<Byte, Int64>();
 
@@ -57,7 +74,7 @@ namespace Librainian.FileSystem {
         public Document Document { get; }
 
         /// <summary>
-        /// Starting position in file. Limited to <see cref="Int32.MaxValue"/> (even though this is a <see cref="Int64"/>).
+        ///     Starting position in file. Limited to <see cref="Int32.MaxValue" /> (even though this is a <see cref="Int64" />).
         /// </summary>
         public Int64 OffsetBegin {
             get => this._offsetBegin;
@@ -72,7 +89,7 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        /// Ending position in file.
+        ///     Ending position in file.
         /// </summary>
         public Int64 OffsetEnd {
             get => this._offsetEnd;
@@ -115,7 +132,7 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        /// Not really 'optimal'.. Gets the largest buffer we can allocate. Up to 2^32 down to 4096 bytes.
+        ///     Not really 'optimal'.. Gets the largest buffer we can allocate. Up to 2^32 down to 4096 bytes.
         /// </summary>
         /// <returns></returns>
         private Int64 CreateOptimalBufferSize() {
@@ -134,6 +151,7 @@ namespace Librainian.FileSystem {
                 catch ( OutOfMemoryException ) { this.Buffer = null; }
                 finally {
                     this.Buffer.Should().NotBeNull();
+
                     if ( Debugger.IsAttached ) { Debug.WriteLine( $"Created {l:N0} byte buffer for {this.Document.FullPathWithFileName}." ); }
                 }
             }
@@ -159,7 +177,7 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        /// Dispose any disposable managed fields or properties.
+        ///     Dispose any disposable managed fields or properties.
         /// </summary>
         public override void DisposeManaged() {
             this.Buffer = null;
@@ -167,7 +185,7 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        /// Return the difference between <see cref="OffsetEnd"/> and <see cref="OffsetBegin"/>.
+        ///     Return the difference between <see cref="OffsetEnd" /> and <see cref="OffsetBegin" />.
         /// </summary>
         /// <returns></returns>
         public Int64 Size() => this.OffsetEnd - this.OffsetBegin;

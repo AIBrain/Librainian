@@ -1,17 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Logging.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Log.cs" was last cleaned by Protiguous on 2018/05/07 at 11:13 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Logging.cs" was last cleaned by Protiguous on 2018/05/15 at 10:51 PM.
 
 namespace Librainian {
 
@@ -23,18 +42,16 @@ namespace Librainian {
     using System.Text;
     using System.Threading;
     using System.Windows.Forms;
-    using Extensions;
     using JetBrains.Annotations;
     using Measurement.Frequency;
     using Measurement.Time;
     using OperatingSystem;
-    using Parsing;
     using Threading;
 
     /// <summary>
-    /// A class to help with exception handling and plain ol' simple time+logging to the Console.
-    /// <para>I feel like this is a rereinvented wheel..</para>
-    /// UPDATE: Can we use the NLOG nuget pagkage? It looks clean..
+    ///     A class to help with exception handling and plain ol' simple time+logging to the Console.
+    ///     <para>I feel like this is a rereinvented wheel..</para>
+    ///     UPDATE: Can we use the NLOG nuget pagkage? It looks clean..
     /// </summary>
     public static class Logging {
 
@@ -45,7 +62,7 @@ namespace Librainian {
         public static Boolean HasConsoleBeenAllocated { get; private set; }
 
         /// <summary>
-        /// <seealso cref="Before"/>
+        ///     <seealso cref="Before" />
         /// </summary>
         /// <param name="method"></param>
         [DebuggerStepThrough]
@@ -55,7 +72,7 @@ namespace Librainian {
         }
 
         /// <summary>
-        /// <seealso cref="After"/>
+        ///     <seealso cref="After" />
         /// </summary>
         /// <param name="method"></param>
         [DebuggerStepThrough]
@@ -66,50 +83,38 @@ namespace Librainian {
 
         [DebuggerStepThrough]
         public static void Break( this Exception exception ) {
-            if ( !String.IsNullOrEmpty( exception.Message ) ) {
-                Debug.WriteLine( exception.ToString() );
-            }
+            if ( !String.IsNullOrEmpty( exception.Message ) ) { Debug.WriteLine( exception.ToString() ); }
 
             Break();
         }
 
         /// <summary>
-        /// <see cref="Debugger.Break"/> if a <see cref="Debugger"/> is attached.
+        ///     <see cref="Debugger.Break" /> if a <see cref="Debugger" /> is attached.
         /// </summary>
         public static void Break() {
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
+            if ( Debugger.IsAttached ) { Debugger.Break(); }
         }
 
         [DebuggerStepThrough]
         public static void BreakIfFalse( this Boolean condition, String message = "" ) {
-            if ( condition ) {
-                return;
-            }
+            if ( condition ) { return; }
 
-            if ( !String.IsNullOrEmpty( message ) ) {
-                Debug.WriteLine( message );
-            }
+            if ( !String.IsNullOrEmpty( message ) ) { Debug.WriteLine( message ); }
 
             Break();
         }
 
         [DebuggerStepThrough]
         public static void BreakIfTrue( this Boolean condition, String message = "" ) {
-            if ( !condition ) {
-                return;
-            }
+            if ( !condition ) { return; }
 
-            if ( !String.IsNullOrEmpty( message ) ) {
-                Debug.WriteLine( message );
-            }
+            if ( !String.IsNullOrEmpty( message ) ) { Debug.WriteLine( message ); }
 
             Break();
         }
 
         /// <summary>
-        /// <seealso cref="Exit"/>.
+        ///     <seealso cref="Exit" />.
         /// </summary>
         /// <param name="method"></param>
         [DebuggerStepThrough]
@@ -119,19 +124,20 @@ namespace Librainian {
         }
 
         /// <summary>
-        /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/></para>
-        /// <para>See also: <seealso cref="Message"/>, <seealso cref="Info"/>, <seealso cref="Warning"/>, and <seealso cref="Error"/>.</para>
+        ///     <para>Write the <paramref name="message" /> with <see cref="WriteLine" /></para>
+        ///     <para>
+        ///         See also: <seealso cref="Message" />, <seealso cref="Info" />, <seealso cref="Warning" />, and
+        ///         <seealso cref="Error" />.
+        ///     </para>
         /// </summary>
         /// <param name="message"></param>
         [DebuggerStepThrough]
         public static void Error( [CanBeNull] this String message ) {
-            if ( message != null ) {
-                $"Error: {message}".WriteLine();
-            }
+            if ( message != null ) { $"Error: {message}".WriteLine(); }
         }
 
         /// <summary>
-        /// <seealso cref="Enter"/>
+        ///     <seealso cref="Enter" />
         /// </summary>
         /// <param name="method"></param>
         [DebuggerStepThrough]
@@ -144,7 +150,7 @@ namespace Librainian {
         public static void Finalized( [CallerMemberName] String method = "" ) => $"Finalized: {method ?? String.Empty}".WriteLine();
 
         /// <summary>
-        /// Gets the number of frames in the <see cref="StackTrace"/>
+        ///     Gets the number of frames in the <see cref="StackTrace" />
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -152,45 +158,52 @@ namespace Librainian {
         public static Int32 FrameCount<T>( this T obj ) => new StackTrace( false ).FrameCount;
 
         /// <summary>
-        /// Force a memory garbage collection on generation0 and generation1 objects.
+        ///     Force a memory garbage collection on generation0 and generation1 objects.
         /// </summary>
-        /// <seealso cref="http://programmers.stackexchange.com/questions/276585/when-is-it-a-good-idea-to-force-garbage-collection"/>
+        /// <seealso
+        ///     cref="http://programmers.stackexchange.com/questions/276585/when-is-it-a-good-idea-to-force-garbage-collection" />
         [DebuggerStepThrough]
         public static void Garbage() {
             var before = GC.GetTotalMemory( forceFullCollection: false );
             GC.Collect( generation: 1, mode: GCCollectionMode.Forced, blocking: true );
             var after = GC.GetTotalMemory( forceFullCollection: false );
 
-            if ( after < before ) {
-                $"{before - after} bytes freed by the garbage collector.".Info();
-            }
+            if ( after < before ) { $"{before - after} bytes freed by the garbage collector.".Info(); }
         }
 
         /// <summary>
-        /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/></para>
-        /// <para>See also: <seealso cref="Message"/>, <seealso cref="Info"/>, <seealso cref="Warning"/>, and <seealso cref="Error"/>.</para>
+        ///     <para>Write the <paramref name="message" /> with <see cref="WriteLine" /></para>
+        ///     <para>
+        ///         See also: <seealso cref="Message" />, <seealso cref="Info" />, <seealso cref="Warning" />, and
+        ///         <seealso cref="Error" />.
+        ///     </para>
         /// </summary>
         /// <param name="message"></param>
         [DebuggerStepThrough]
         public static String Info( [CanBeNull] this String message ) {
             $"Info: {message ?? String.Empty}".WriteLine();
+
             return message ?? String.Empty;
         }
 
         /// <summary>
-        /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/></para>
-        /// <para>See also: <seealso cref="Message"/>, <seealso cref="Info"/>, <seealso cref="Warning"/>, and <seealso cref="Error"/>.</para>
+        ///     <para>Write the <paramref name="message" /> with <see cref="WriteLine" /></para>
+        ///     <para>
+        ///         See also: <seealso cref="Message" />, <seealso cref="Info" />, <seealso cref="Warning" />, and
+        ///         <seealso cref="Error" />.
+        ///     </para>
         /// </summary>
         /// <param name="message"></param>
         /// <param name="method"> </param>
         [DebuggerStepThrough]
         public static String Message( [CanBeNull] this String message, [CallerMemberName] String method = "" ) {
             $"{method.NullIfEmpty() ?? "?"}: {message}".WriteLine();
+
             return message ?? String.Empty;
         }
 
         /// <summary>
-        /// "Bring out yer' dead! Bring out yer' dead!"
+        ///     "Bring out yer' dead! Bring out yer' dead!"
         /// </summary>
         /// <param name="exception">       </param>
         /// <param name="method">          </param>
@@ -207,9 +220,8 @@ namespace Librainian {
             message.Append( $" [Msg: {exception.Message}]\r\n" );
             message.Append( $" [Source: {sourceFilePath}]\r\n" );
             message.Append( $" [Line: {sourceLineNumber}]\r\n" );
-            if ( method != null ) {
-                ConsoleListener.Fail( method, message.ToString() );
-            }
+
+            if ( method != null ) { ConsoleListener.Fail( method, message.ToString() ); }
 
             Break();
 
@@ -217,13 +229,13 @@ namespace Librainian {
         }
 
         public static void Shutdown( Boolean linger = true ) {
-            if ( !HasConsoleBeenAllocated ) {
-                return;
-            }
+            if ( !HasConsoleBeenAllocated ) { return; }
 
             "Shutting down".WriteColor( ConsoleColor.White, ConsoleColor.Blue );
+
             if ( linger ) {
                 var stopwatch = StopWatch.StartNew();
+
                 while ( stopwatch.Elapsed < Seconds.One ) {
                     Thread.Sleep( Hertz.OneHundredTwenty );
                     ".".WriteColor( ConsoleColor.White, ConsoleColor.Blue );
@@ -236,8 +248,8 @@ namespace Librainian {
         }
 
         /// <summary>
-        /// <para>Allocate a Console.</para>
-        /// <para>Start <see cref="ProfileOptimization"/>.</para>
+        ///     <para>Allocate a Console.</para>
+        ///     <para>Start <see cref="ProfileOptimization" />.</para>
         /// </summary>
         /// <returns></returns>
         public static Boolean Startup() {
@@ -257,23 +269,24 @@ namespace Librainian {
 
                 return HasConsoleBeenAllocated;
             }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( Exception exception ) { exception.More(); }
 
             return false;
         }
 
         /// <summary>
-        /// <para>Write the <paramref name="message"/> with <see cref="WriteLine"/></para>
-        /// <para>See also: <seealso cref="Message"/>, <seealso cref="Info"/>, <seealso cref="Warning"/>, and <seealso cref="Error"/>.</para>
+        ///     <para>Write the <paramref name="message" /> with <see cref="WriteLine" /></para>
+        ///     <para>
+        ///         See also: <seealso cref="Message" />, <seealso cref="Info" />, <seealso cref="Warning" />, and
+        ///         <seealso cref="Error" />.
+        ///     </para>
         /// </summary>
         /// <param name="message"></param>
         [DebuggerStepThrough]
         public static void Warning( this String message ) => $"Warning: {message}".WriteLine();
 
         /// <summary>
-        /// <para>Write the <paramref name="message"/> out to the <see cref="ConsoleListener"/>.</para>
+        ///     <para>Write the <paramref name="message" /> out to the <see cref="ConsoleListener" />.</para>
         /// </summary>
         /// <param name="message"> </param>
         /// <param name="category"></param>
@@ -281,7 +294,7 @@ namespace Librainian {
         public static void Write( this String message, [CanBeNull] String category = null ) => ConsoleListener.Write( message, category );
 
         /// <summary>
-        /// <para>Write the <paramref name="message"/> out to the <see cref="ConsoleListener"/>.</para>
+        ///     <para>Write the <paramref name="message" /> out to the <see cref="ConsoleListener" />.</para>
         /// </summary>
         /// <param name="message"> </param>
         /// <param name="category"></param>

@@ -1,22 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Pixel.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Pixel.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Pixel.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -123,7 +137,8 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equal( Pixel left, Pixel right ) => left.Checksum == right.Checksum && left.Alpha == right.Alpha && left.Red == right.Red && left.Green == right.Green && left.Blue == right.Blue && left.X == right.X && left.Y == right.Y;
+        public static Boolean Equal( Pixel left, Pixel right ) =>
+            left.Checksum == right.Checksum && left.Alpha == right.Alpha && left.Red == right.Red && left.Green == right.Green && left.Blue == right.Blue && left.X == right.X && left.Y == right.Y;
 
         /// <summary>
         ///     Indicates whether the current object is equal to another object of the same type.
@@ -145,97 +160,110 @@ namespace Librainian.Graphics.Imaging {
         public override String ToString() => $"{this.Checksum}({this.Alpha},{this.Red},{this.Green},{this.Blue})@{this.X},{this.Y}";
 
         public Task WriteToStreamAsync( [NotNull] StreamWriter streamWriter ) {
-            if ( streamWriter is null ) {
-                throw new ArgumentNullException( nameof( streamWriter ) );
-            }
+            if ( streamWriter is null ) { throw new ArgumentNullException( nameof( streamWriter ) ); }
+
             return streamWriter.WriteLineAsync( this.ToString() );
         }
 
         public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader reader, [NotNull] StreamWriter errors ) {
-            if ( reader is null ) {
-                throw new ArgumentNullException( nameof( reader ) );
-            }
-            if ( errors is null ) {
-                throw new ArgumentNullException( nameof( errors ) );
-            }
+            if ( reader is null ) { throw new ArgumentNullException( nameof( reader ) ); }
+
+            if ( errors is null ) { throw new ArgumentNullException( nameof( errors ) ); }
 
             var line = await reader.ReadLineAsync() ?? String.Empty;
             line = line.Trim();
 
             if ( String.IsNullOrWhiteSpace( line ) ) {
                 await errors.WriteLineAsync( "Blank input line" ).ConfigureAwait( false );
+
                 return null;
             }
 
             var openParent = line.IndexOf( "(", StringComparison.OrdinalIgnoreCase );
+
             if ( openParent <= -1 ) {
                 await errors.WriteLineAsync( $"Unable to find a '(' in {line}" ).ConfigureAwait( false );
+
                 return null;
             }
 
             if ( !Byte.TryParse( line.Substring( 0, openParent ), out var checksum ) ) {
                 await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).ConfigureAwait( false );
+
                 return null;
             }
 
             var closeParent = line.IndexOf( ")", StringComparison.OrdinalIgnoreCase );
+
             if ( closeParent == -1 ) {
                 await errors.WriteLineAsync( $"Unable to find a ')' in {line}" ).ConfigureAwait( false );
+
                 return null;
             }
 
             var argb = line.Substring( openParent + 1, closeParent - openParent ).Split( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
+
             if ( argb.Length != 4 ) {
                 await errors.WriteLineAsync( $"Unable to parse Color from {line}" ).ConfigureAwait( false );
+
                 return null;
             }
 
             if ( !Byte.TryParse( argb[0], out var alpha ) ) {
                 await errors.WriteLineAsync( $"Unable to parse Alpha from {line}" ).ConfigureAwait( false );
+
                 return null;
             }
 
             if ( !Byte.TryParse( argb[1], out var red ) ) {
                 await errors.WriteLineAsync( $"Unable to parse Red from {line}" ).ConfigureAwait( false );
+
                 return null;
             }
 
             if ( !Byte.TryParse( argb[2], out var green ) ) {
                 await errors.WriteLineAsync( $"Unable to parse Green from {line}" ).ConfigureAwait( false );
+
                 return null;
             }
 
             if ( !Byte.TryParse( argb[3], out var blue ) ) {
                 await errors.WriteLineAsync( $"Unable to parse Blue from {line}" ).ConfigureAwait( false );
+
                 return null;
             }
 
             var at = line.IndexOf( "@", StringComparison.OrdinalIgnoreCase );
+
             if ( at == -1 ) {
                 await errors.WriteLineAsync( $"Unable to find an '@' in {line}" ).ConfigureAwait( false );
+
                 return null;
             }
 
             var xandy = line.Substring( at + 1 ).Split( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
+
             if ( xandy.Length != 2 ) {
                 await errors.WriteLineAsync( $"Unable to parse X & Y from {line}" ).ConfigureAwait( false );
+
                 return null;
             }
 
             if ( !UInt32.TryParse( xandy[0], out var x ) ) {
                 await errors.WriteLineAsync( $"Unable to parse X from {line}" ).ConfigureAwait( false );
+
                 return null;
             }
 
             if ( !UInt32.TryParse( xandy[0], out var y ) ) {
                 await errors.WriteLineAsync( $"Unable to parse Y from {line}" ).ConfigureAwait( false );
+
                 return null;
             }
 
             var pixel = new Pixel( alpha, red, green, blue, x, y );
-            if ( pixel.Checksum != checksum ) {
-                await errors.WriteLineAsync( $"Warning checksums do not match! Expected {checksum}, but got {pixel.Checksum}" ).ConfigureAwait( false );
-            }
+
+            if ( pixel.Checksum != checksum ) { await errors.WriteLineAsync( $"Warning checksums do not match! Expected {checksum}, but got {pixel.Checksum}" ).ConfigureAwait( false ); }
 
             return pixel;
         }

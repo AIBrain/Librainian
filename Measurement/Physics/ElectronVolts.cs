@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "ElectronVolts.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/ElectronVolts.cs" was last cleaned by Protiguous on 2016/06/18 at 10:53 PM
+// "Librainian/Librainian/ElectronVolts.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Physics {
 
@@ -27,13 +43,14 @@ namespace Librainian.Measurement.Physics {
     using NUnit.Framework;
 
     /// <summary>
-    /// Units of mass and energy in ElectronVolts.
+    ///     Units of mass and energy in ElectronVolts.
     /// </summary>
-    /// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass"/>
-    /// <seealso cref="http://wikipedia.org/wiki/SI_prefix"/>
+    /// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
+    /// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct ElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
+
         public const Decimal InOneElectronVolt = 1E0m;
 
         public const Decimal InOneGigaElectronVolt = 1E9m;
@@ -47,12 +64,12 @@ namespace Librainian.Measurement.Physics {
         public const Decimal InOneTeraElectronVolt = 1E12m;
 
         /// <summary>
-        /// About 79228162514264337593543950335.
+        ///     About 79228162514264337593543950335.
         /// </summary>
         public static readonly ElectronVolts MaxValue = new ElectronVolts( Decimal.MaxValue );
 
         /// <summary>
-        /// About -79228162514264337593543950335.
+        ///     About -79228162514264337593543950335.
         /// </summary>
         public static readonly ElectronVolts MinValue = new ElectronVolts( Decimal.MinValue );
 
@@ -63,7 +80,7 @@ namespace Librainian.Measurement.Physics {
         public static readonly ElectronVolts NegativeZero = new ElectronVolts( -Decimal.Zero );
 
         /// <summary>
-        /// More than nothing (unknown but not massless).
+        ///     More than nothing (unknown but not massless).
         /// </summary>
         public static readonly ElectronVolts NonZero = new ElectronVolts( Constants.EpsilonDecimal );
 
@@ -72,6 +89,7 @@ namespace Librainian.Measurement.Physics {
         public static readonly ElectronVolts One = new ElectronVolts( 1 );
 
         public static readonly ElectronVolts Zero = new ElectronVolts( 0 );
+
         public readonly Decimal Value;
 
         public ElectronVolts( Decimal value ) : this() => this.Value = value;
@@ -96,11 +114,13 @@ namespace Librainian.Measurement.Physics {
 
         public static ElectronVolts operator *( BigRational left, ElectronVolts right ) {
             var res = left * right.Value;
+
             return new ElectronVolts( ( Decimal )res );
         }
 
         public static ElectronVolts operator *( BigInteger left, ElectronVolts right ) {
             var res = new BigRational( left ) * new BigRational( right.Value );
+
             return new ElectronVolts( ( Decimal )res );
         }
 
@@ -149,9 +169,9 @@ namespace Librainian.Measurement.Physics {
         public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * InOneMilliElectronVolt );
 
         /// <summary>
-        /// Returns the fully qualified type name of this instance.
+        ///     Returns the fully qualified type name of this instance.
         /// </summary>
-        /// <returns>A <see cref="T:System.String"/> containing a fully qualified type name.</returns>
+        /// <returns>A <see cref="T:System.String" /> containing a fully qualified type name.</returns>
         public override String ToString() => $"{this.Value} eV";
 
         public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );

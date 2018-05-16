@@ -1,19 +1,36 @@
-// Copyright 2018 Protiguous
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "C5Random.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/C5Random.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/C5Random.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
 
 namespace Librainian.Security {
 
@@ -59,9 +76,7 @@ namespace Librainian.Security {
         /// <exception cref="ArgumentException">If seed is zero</exception>
         /// <param name="seed">The seed</param>
         public C5Random( Int64 seed ) {
-            if ( seed == 0 ) {
-                throw new ArgumentException( message: "Seed must be non-zero" );
-            }
+            if ( seed == 0 ) { throw new ArgumentException( "Seed must be non-zero" ); }
 
             var j = ( UInt32 )( seed & 0xFFFFFFFF );
 
@@ -81,15 +96,11 @@ namespace Librainian.Security {
         ///     The start state. Must be a collection of random bits given by an array of exactly 16 uints.
         /// </param>
         public C5Random( [NotNull] UInt32[] q ) {
-            if ( q is null ) {
-                throw new ArgumentNullException(nameof( q ) );
-            }
+            if ( q is null ) { throw new ArgumentNullException( nameof( q ) ); }
 
-            if ( q.Length > 16 ) {
-                throw new ArgumentException( message: "Q must have length 16, was " + q.Length );
-            }
+            if ( q.Length > 16 ) { throw new ArgumentException( "Q must have length 16, was " + q.Length ); }
 
-            Array.Copy( sourceArray: q, destinationArray: this.Q.Value,this.Q.Value.Length );
+            Array.Copy( sourceArray: q, destinationArray: this.Q.Value, this.Q.Value.Length );
         }
 
         private ThreadLocal<UInt32> C { get; } = new ThreadLocal<UInt32>( valueFactory: () => 362436, trackAllValues: false );
@@ -97,6 +108,27 @@ namespace Librainian.Security {
         private ThreadLocal<UInt32> I { get; } = new ThreadLocal<UInt32>( valueFactory: () => 15, trackAllValues: false );
 
         private ThreadLocal<UInt32[]> Q { get; } = new ThreadLocal<UInt32[]>( valueFactory: () => new UInt32[16], trackAllValues: false );
+
+        private UInt32 Cmwc() {
+            const UInt64 a = 487198574UL;
+            const UInt32 r = 0xfffffffe;
+
+            this.I.Value = ( this.I.Value + 1 ) & 15;
+            var t = a * this.Q.Value[this.I.Value] + this.C.Value;
+            this.C.Value = ( UInt32 )( t >> 32 );
+            var x = ( UInt32 )( t + this.C.Value );
+
+            if ( x >= this.C.Value ) { return this.Q.Value[this.I.Value] = r - x; }
+
+            x++;
+            this.C.Value++;
+
+            return this.Q.Value[this.I.Value] = r - x;
+        }
+
+        /// <summary>Get a new random System.Double value</summary>
+        /// <returns>The random Double</returns>
+        protected override Double Sample() => this.NextDouble();
 
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         [SuppressMessage( category: "Microsoft.Usage", checkId: "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<Q>k__BackingField" )]
@@ -118,9 +150,7 @@ namespace Librainian.Security {
         /// <param name="max">The upper bound (exclusive)</param>
         /// <returns></returns>
         public override Int32 Next( Int32 min, Int32 max ) {
-            if ( min > max ) {
-                throw new ArgumentException( message: "min must be less than or equal to max" );
-            }
+            if ( min > max ) { throw new ArgumentException( "min must be less than or equal to max" ); }
 
             return min + ( Int32 )( this.Cmwc() / 4294967296.0 * ( max - min ) );
         }
@@ -130,9 +160,7 @@ namespace Librainian.Security {
         /// <param name="max">The upper bound (exclusive)</param>
         /// <returns></returns>
         public override Int32 Next( Int32 max ) {
-            if ( max < 0 ) {
-                throw new ArgumentException( message: "max must be non-negative" );
-            }
+            if ( max < 0 ) { throw new ArgumentException( "max must be non-negative" ); }
 
             return ( Int32 )( this.Cmwc() / 4294967296.0 * max );
         }
@@ -140,39 +168,13 @@ namespace Librainian.Security {
         /// <summary>Fill a array of byte with random bytes</summary>
         /// <param name="buffer">The array to fill</param>
         public override void NextBytes( Byte[] buffer ) {
-            if ( buffer is null ) {
-                throw new ArgumentNullException(nameof( buffer ) );
-            }
+            if ( buffer is null ) { throw new ArgumentNullException( nameof( buffer ) ); }
 
-            for ( Int32 i = 0, length = buffer.Length; i < length; i++ ) {
-                buffer[i] = ( Byte )this.Cmwc();
-            }
+            for ( Int32 i = 0, length = buffer.Length; i < length; i++ ) { buffer[i] = ( Byte )this.Cmwc(); }
         }
 
         /// <summary>Get a new random System.Double value</summary>
         /// <returns>The random Double</returns>
         public override Double NextDouble() => this.Cmwc() / 4294967296.0;
-
-        /// <summary>Get a new random System.Double value</summary>
-        /// <returns>The random Double</returns>
-        protected override Double Sample() => this.NextDouble();
-
-        private UInt32 Cmwc() {
-            const UInt64 a = 487198574UL;
-            const UInt32 r = 0xfffffffe;
-
-            this.I.Value = ( this.I.Value + 1 ) & 15;
-            var t = a * this.Q.Value[this.I.Value] + this.C.Value;
-            this.C.Value = ( UInt32 )( t >> 32 );
-            var x = ( UInt32 )( t + this.C.Value );
-            if ( x >= this.C.Value ) {
-                return this.Q.Value[this.I.Value] = r - x;
-            }
-
-            x++;
-            this.C.Value++;
-
-            return this.Q.Value[this.I.Value] = r - x;
-        }
     }
 }

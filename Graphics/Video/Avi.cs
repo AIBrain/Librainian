@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Avi.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Avi.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Avi.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Graphics.Video {
 
@@ -24,6 +38,7 @@ namespace Librainian.Graphics.Video {
     using System.Runtime.InteropServices;
 
     public class Avi {
+
         public const Int32 BmpMagicCookie = 19778;
 
         public const Int32 OfShareDenyWrite = 32;
@@ -64,22 +79,39 @@ namespace Librainian.Graphics.Video {
 
         [StructLayout( LayoutKind.Sequential, Pack = 1 )]
         public struct Avistreaminfo {
+
             public UInt32 fccType;
+
             public UInt32 fccHandler;
+
             public UInt32 dwFlags;
+
             public UInt32 dwCaps;
+
             public UInt16 wPriority;
+
             public UInt16 wLanguage;
+
             public UInt32 dwScale;
+
             public UInt32 dwRate;
+
             public UInt32 dwStart;
+
             public UInt32 dwLength;
+
             public UInt32 dwInitialFrames;
+
             public UInt32 dwSuggestedBufferSize;
+
             public UInt32 dwQuality;
+
             public UInt32 dwSampleSize;
+
             public Rect rcFrame;
+
             public UInt32 dwEditCount;
+
             public UInt32 dwFormatChangeCount;
 
             [MarshalAs( UnmanagedType.ByValArray, SizeConst = 64 )]
@@ -88,33 +120,53 @@ namespace Librainian.Graphics.Video {
 
         [StructLayout( LayoutKind.Sequential, Pack = 1 )]
         public struct Bitmapfileheader {
+
             public Int16 bfType; //"magic cookie" - must be "BM"
+
             public Int32 bfSize;
+
             public Int16 bfReserved1;
+
             public Int16 bfReserved2;
+
             public Int32 bfOffBits;
         }
 
         [StructLayout( LayoutKind.Sequential, Pack = 1 )]
         public struct Bitmapinfoheader {
+
             public UInt32 biSize;
+
             public Int32 biWidth;
+
             public Int32 biHeight;
+
             public Int16 biPlanes;
+
             public Int16 biBitCount;
+
             public UInt32 biCompression;
+
             public UInt32 biSizeImage;
+
             public Int32 biXPelsPerMeter;
+
             public Int32 biYPelsPerMeter;
+
             public UInt32 biClrUsed;
+
             public UInt32 biClrImportant;
         }
 
         [StructLayout( LayoutKind.Sequential, Pack = 1 )]
         public struct Rect {
+
             public UInt32 left;
+
             public UInt32 top;
+
             public UInt32 right;
+
             public UInt32 bottom;
         }
 

@@ -1,17 +1,36 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "TreeNodeList.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license has
-// been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "TreeNodeList.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/TreeNodeList.cs" was last cleaned by Protiguous on 2018/05/15 at 1:29 AM.
+// "Librainian/Librainian/TreeNodeList.cs" was last cleaned by Protiguous on 2018/05/15 at 10:38 PM.
 
 namespace Librainian.Collections {
 
@@ -20,7 +39,7 @@ namespace Librainian.Collections {
     using JetBrains.Annotations;
 
     /// <summary>
-    /// http: //dvanderboom.wordpress.com/2008/03/15/treet-implementing-a-non-binary-tree-in-c/
+    ///     http: //dvanderboom.wordpress.com/2008/03/15/treet-implementing-a-non-binary-tree-in-c/
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class TreeNodeList<T> : List<TreeNode<T>> {
@@ -29,7 +48,7 @@ namespace Librainian.Collections {
 
         public TreeNodeList( [NotNull] TreeNode<T> parent ) => this.Parent = parent ?? throw new ArgumentNullException( nameof( parent ) );
 
-        public TreeNode<T> Add( T value ) => this.Add( node: new TreeNode<T>( value: value ) );
+        public TreeNode<T> Add( T value ) => this.Add( node: new TreeNode<T>( value ) );
 
         public new TreeNode<T> Add( [NotNull] TreeNode<T> node ) {
             if ( node is null ) { throw new ArgumentNullException( nameof( node ) ); }

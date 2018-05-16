@@ -1,20 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "SpeechOutput.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/SpeechOutput.cs" was last cleaned by Protiguous on 2016/06/18 at 10:57 PM
+// "Librainian/Librainian/SpeechOutput.cs" was last cleaned by Protiguous on 2018/05/15 at 10:50 PM.
 
 using System;
 
@@ -34,22 +50,17 @@ namespace Librainian.Speech {
         public SpeechOutput( VoiceGender gender = VoiceGender.Female, VoiceAge age = VoiceAge.Teen ) => this.Synthesizer.Value.SelectVoiceByHints( gender, age );
 
         [NotNull]
-        public Lazy<SpeechSynthesizer> Synthesizer {
-            get;
-        } = new Lazy<SpeechSynthesizer>( () => {
+        public Lazy<SpeechSynthesizer> Synthesizer { get; } = new Lazy<SpeechSynthesizer>( () => {
             var synthesizer = new SpeechSynthesizer();
+
             return synthesizer;
         }, isThreadSafe: true );
 
         public void AttachEvents( Action<EventArgs> speechFeedbackEvent = null ) {
             try {
-                if ( null == speechFeedbackEvent ) {
-                    return;
-                }
+                if ( null == speechFeedbackEvent ) { return; }
 
-                if ( this.Synthesizer.Value is null ) {
-                    return;
-                }
+                if ( this.Synthesizer.Value is null ) { return; }
 
                 this.Synthesizer.Value.SpeakStarted += ( sender, e ) => speechFeedbackEvent( e );
                 this.Synthesizer.Value.SpeakStarted += ( sender, e ) => speechFeedbackEvent( e );
@@ -58,9 +69,7 @@ namespace Librainian.Speech {
                 this.Synthesizer.Value.SpeakCompleted += ( sender, e ) => speechFeedbackEvent( e );
                 this.Synthesizer.Value.StateChanged += ( sender, e ) => speechFeedbackEvent( e );
             }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( Exception exception ) { exception.More(); }
         }
 
         public IEnumerable<InstalledVoice> GetVoices() => this.Synthesizer.Value.GetInstalledVoices();
@@ -68,7 +77,7 @@ namespace Librainian.Speech {
         public Boolean IsTalking() => this.Synthesizer.Value.State == SynthesizerState.Speaking;
 
         /// <summary>
-        /// Start speaking ASAP Start speaking (optionally interrupting anything already being said).
+        ///     Start speaking ASAP Start speaking (optionally interrupting anything already being said).
         /// </summary>
         /// <param name="interruptTalking"></param>
         /// <param name="message">         </param>
@@ -76,47 +85,37 @@ namespace Librainian.Speech {
         /// <param name="emphasis">        </param>
         /// <param name="promptRate">      </param>
         /// <param name="volume">          </param>
-        public void Speak( [CanBeNull] String message, Boolean interruptTalking = false, SayAs sayAs = SayAs.Text, PromptEmphasis emphasis = PromptEmphasis.None, PromptRate promptRate = PromptRate.Medium, PromptVolume volume = PromptVolume.NotSet ) {
+        public void Speak( [CanBeNull] String message, Boolean interruptTalking = false, SayAs sayAs = SayAs.Text, PromptEmphasis emphasis = PromptEmphasis.None, PromptRate promptRate = PromptRate.Medium,
+            PromptVolume volume = PromptVolume.NotSet ) {
             try {
-                if ( String.IsNullOrEmpty( message ) ) {
-                    return;
-                }
+                if ( String.IsNullOrEmpty( message ) ) { return; }
 
                 message = message.Trim();
 
-                if ( String.IsNullOrEmpty( message ) ) {
-                    return;
-                }
-                if ( message.StartsWith( "ECHO:" ) ) {
-                    message = message.Substring( "ECHO:".Length );
-                }
-                if ( message.StartsWith( "INFO:" ) ) {
-                    message = message.Substring( "INFO:".Length );
-                }
+                if ( String.IsNullOrEmpty( message ) ) { return; }
+
+                if ( message.StartsWith( "ECHO:" ) ) { message = message.Substring( "ECHO:".Length ); }
+
+                if ( message.StartsWith( "INFO:" ) ) { message = message.Substring( "INFO:".Length ); }
+
                 if ( message.Contains( "AIBrain" ) ) {
                     message = message.Replace( "AIBrain", "A-I-Brain" ); //HACK ugh.
                 }
 
                 message = message.Trim();
 
-                if ( interruptTalking /*&& this.IsTalking()*/ ) {
-                    this.StopTalking();
-                }
+                if ( interruptTalking /*&& this.IsTalking()*/ ) { this.StopTalking(); }
 
                 var prompt = new PromptBuilder(); //7.5
 
                 var promptStyle = new PromptStyle { Volume = volume, Emphasis = emphasis, Rate = promptRate };
 
                 if ( emphasis == PromptEmphasis.None ) {
-                    if ( message.EndsWith( "!" ) ) {
-                        promptStyle.Emphasis = PromptEmphasis.Strong;
-                    }
-                    if ( message.EndsWith( "!!" ) ) {
-                        promptStyle.Volume = PromptVolume.Loud;
-                    }
-                    if ( message.EndsWith( "!!!" ) ) {
-                        promptStyle.Volume = PromptVolume.ExtraLoud;
-                    }
+                    if ( message.EndsWith( "!" ) ) { promptStyle.Emphasis = PromptEmphasis.Strong; }
+
+                    if ( message.EndsWith( "!!" ) ) { promptStyle.Volume = PromptVolume.Loud; }
+
+                    if ( message.EndsWith( "!!!" ) ) { promptStyle.Volume = PromptVolume.ExtraLoud; }
                 }
 
                 prompt.StartStyle( promptStyle );
@@ -125,15 +124,13 @@ namespace Librainian.Speech {
 
                 this.Synthesizer.Value.SpeakAsync( prompt );
             }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( Exception exception ) { exception.More(); }
         }
 
         public void StopTalking() => this.Synthesizer.Value.SpeakAsyncCancelAll();
 
         /// <summary>
-        /// Pumps message loop while Talking
+        ///     Pumps message loop while Talking
         /// </summary>
         public void Wait() {
             while ( this.IsTalking() ) {

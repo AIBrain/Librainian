@@ -1,19 +1,36 @@
-﻿// Copyright 2018 Protiguous
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Encryption2.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Encryption2.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Encryption2.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
 
 namespace Librainian.Security {
 
@@ -28,21 +45,18 @@ namespace Librainian.Security {
         public static String DecryptString( [NotNull] this String inputString, Int32 dwKeySize, [NotNull] String xmlString ) {
 
             // TODO: Add Proper Exception Handlers
-            if ( inputString is null ) {
-                throw new ArgumentNullException(nameof( inputString ) );
-            }
+            if ( inputString is null ) { throw new ArgumentNullException( nameof( inputString ) ); }
 
-            if ( xmlString is null ) {
-                throw new ArgumentNullException(nameof( xmlString ) );
-            }
+            if ( xmlString is null ) { throw new ArgumentNullException( nameof( xmlString ) ); }
 
             var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: dwKeySize );
             rsaCryptoServiceProvider.FromXmlString( xmlString: xmlString );
             var base64BlockSize = dwKeySize / 8 % 3 != 0 ? dwKeySize / 8 / 3 * 4 + 4 : dwKeySize / 8 / 3 * 4;
             var iterations = inputString.Length / base64BlockSize;
             var arrayList = new ArrayList();
+
             for ( var i = 0; i < iterations; i++ ) {
-                var encryptedBytes = Convert.FromBase64String( s: inputString.Substring( startIndex: base64BlockSize * i,base64BlockSize ) );
+                var encryptedBytes = Convert.FromBase64String( s: inputString.Substring( startIndex: base64BlockSize * i, base64BlockSize ) );
 
                 // Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes after
                 // encryption and before decryption. If you do not require compatibility with
@@ -58,13 +72,9 @@ namespace Librainian.Security {
         public static String EncryptString( [NotNull] this String inputString, Int32 dwKeySize, [NotNull] String xmlString ) {
 
             // TODO: Add Proper Exception Handlers
-            if ( inputString is null ) {
-                throw new ArgumentNullException(nameof( inputString ) );
-            }
+            if ( inputString is null ) { throw new ArgumentNullException( nameof( inputString ) ); }
 
-            if ( xmlString is null ) {
-                throw new ArgumentNullException(nameof( xmlString ) );
-            }
+            if ( xmlString is null ) { throw new ArgumentNullException( nameof( xmlString ) ); }
 
             var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: dwKeySize );
             rsaCryptoServiceProvider.FromXmlString( xmlString: xmlString );
@@ -77,6 +87,7 @@ namespace Librainian.Security {
             var dataLength = bytes.Length;
             var iterations = dataLength / maxLength;
             var stringBuilder = new StringBuilder();
+
             for ( var i = 0; i <= iterations; i++ ) {
                 var tempBytes = new Byte[dataLength - maxLength * i > maxLength ? maxLength : dataLength - maxLength * i];
                 Buffer.BlockCopy( src: bytes, srcOffset: maxLength * i, dst: tempBytes, dstOffset: 0, count: tempBytes.Length );
@@ -90,7 +101,7 @@ namespace Librainian.Security {
 
                 // Why convert to base 64? Because it is the largest power-of-two base printable
                 // using only ASCII characters
-                stringBuilder.Append( value: Convert.ToBase64String( inArray: encryptedBytes ) );
+                stringBuilder.Append( Convert.ToBase64String( inArray: encryptedBytes ) );
             }
 
             return stringBuilder.ToString();

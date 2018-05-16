@@ -1,17 +1,36 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "ThreadSafeList.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license
-// has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "ThreadSafeList.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/ThreadSafeList.cs" was last cleaned by Protiguous on 2018/05/15 at 1:29 AM.
+// "Librainian/Librainian/ThreadSafeList.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
 
 namespace Librainian.Collections {
 
@@ -21,21 +40,20 @@ namespace Librainian.Collections {
     using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
-    using Maths;
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Just a simple thread safe collection. Doesn't scale well because of the locks.
+    ///     Just a simple thread safe collection. Doesn't scale well because of the locks.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <value>Version 1.7</value>
+    /// <value>Version 1.8</value>
     /// <remarks>TODO replace locks with AsyncLocks</remarks>
     [JsonObject]
-    [DebuggerDisplay( value: "Count={" + nameof( this.Count ) + "}" )]
+    [DebuggerDisplay( "Count={" + nameof( Count ) + "}" )]
     public sealed class ThreadSafeList<T> : IList<T> {
 
         /// <summary>
-        /// TODO replace the locks with a ReaderWriterLockSlim
+        ///     TODO replace the locks with a ReaderWriterLockSlim
         /// </summary>
         [JsonProperty]
         private readonly List<T> _items = new List<T>();
@@ -70,10 +88,10 @@ namespace Librainian.Collections {
             lock ( this._items ) { this._items.Add( item: item ); }
         }
 
-        public Task AddAsync( T item ) => Task.Run( () => { this.TryAdd( item: item ); } );
+        public async Task AddAsync( T item ) => await Task.Run( () => { this.TryAdd( item: item ); } ).ConfigureAwait( false );
 
         /// <summary>
-        /// Add in an enumerable of items.
+        ///     Add in an enumerable of items.
         /// </summary>
         /// <param name="collection"></param>
         /// <param name="asParallel"></param>
@@ -88,7 +106,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns a new copy of all items in the <see cref="List{T}"/>.
+        ///     Returns a new copy of all items in the <see cref="List{T}" />.
         /// </summary>
         /// <returns></returns>
         public List<T> Clone( Boolean asParallel = false /*is order guaranteed if true? Based upon ParallelEnumerableWrapper it seems it would be.*/ ) {
@@ -104,12 +122,19 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Perform the <paramref name="action"/> on each item in the list.
+        ///     Perform the <paramref name="action" /> on each item in the list.
         /// </summary>
-        /// <param name="action">               <paramref name="action"/> to perform on each item.</param>
-        /// <param name="performActionOnClones">If true, the <paramref name="action"/> will be performed on a <see cref="Clone"/> of the items.</param>
-        /// <param name="asParallel">           Use the <see cref="ParallelQuery{TSource}"/> method.</param>
-        /// <param name="inParallel">           Use the <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})"/> method.</param>
+        /// <param name="action">               <paramref name="action" /> to perform on each item.</param>
+        /// <param name="performActionOnClones">
+        ///     If true, the <paramref name="action" /> will be performed on a <see cref="Clone" />
+        ///     of the items.
+        /// </param>
+        /// <param name="asParallel">           Use the <see cref="ParallelQuery{TSource}" /> method.</param>
+        /// <param name="inParallel">
+        ///     Use the
+        ///     <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})" />
+        ///     method.
+        /// </param>
         public void ForAll( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
             if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
 
@@ -139,12 +164,19 @@ namespace Librainian.Collections {
 
         //}
         /// <summary>
-        /// Perform the <paramref name="action"/> on each item in the list.
+        ///     Perform the <paramref name="action" /> on each item in the list.
         /// </summary>
-        /// <param name="action">               <paramref name="action"/> to perform on each item.</param>
-        /// <param name="performActionOnClones">If true, the <paramref name="action"/> will be performed on a <see cref="Clone"/> of the items.</param>
-        /// <param name="asParallel">           Use the <see cref="ParallelQuery{TSource}"/> method.</param>
-        /// <param name="inParallel">           Use the <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})"/> method.</param>
+        /// <param name="action">               <paramref name="action" /> to perform on each item.</param>
+        /// <param name="performActionOnClones">
+        ///     If true, the <paramref name="action" /> will be performed on a <see cref="Clone" />
+        ///     of the items.
+        /// </param>
+        /// <param name="asParallel">           Use the <see cref="ParallelQuery{TSource}" /> method.</param>
+        /// <param name="inParallel">
+        ///     Use the
+        ///     <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})" />
+        ///     method.
+        /// </param>
         public void ForEach( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
             if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
 
@@ -226,7 +258,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Remove one item, and return a list-copy of the rest.
+        ///     Remove one item, and return a list-copy of the rest.
         /// </summary>
         /// <param name="item"></param>
         /// <param name="rest"></param>

@@ -1,17 +1,36 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "CollectionExtensions.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original
-// license has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "CollectionExtensions.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/CollectionExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 1:28 AM.
+// "Librainian/Librainian/CollectionExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
 
 namespace Librainian.Collections {
 
@@ -34,12 +53,12 @@ namespace Librainian.Collections {
     public static class CollectionExtensions {
 
         /// <summary>
-        /// <para>A list containing <see cref="bool.False"/> then <see cref="bool.True"/>.</para>
+        ///     <para>A list containing <see cref="bool.False" /> then <see cref="bool.True" />.</para>
         /// </summary>
         public static readonly Lazy<List<Boolean>> FalseThenTrue = new Lazy<List<Boolean>>( valueFactory: () => new List<Boolean>( collection: new[] { false, true } ) );
 
         /// <summary>
-        /// <para>A list containing <see cref="Boolean.True"/> then <see cref="Boolean.False"/>.</para>
+        ///     <para>A list containing <see cref="Boolean.True" /> then <see cref="Boolean.False" />.</para>
         /// </summary>
         public static readonly Lazy<List<Boolean>> TrueThenFalse = new Lazy<List<Boolean>>( valueFactory: () => new List<Boolean>( collection: new[] { true, false } ) );
 
@@ -58,24 +77,24 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Determines whether or not the given sequence contains any duplicate elements.
+        ///     Determines whether or not the given sequence contains any duplicate elements.
         /// </summary>
-        /// <param name="this">The extended <see cref="IEnumerable{T}"/>.</param>
+        /// <param name="this">The extended <see cref="IEnumerable{T}" />.</param>
         /// <returns>True if the sequence contains duplicate elements, false if not.</returns>
         public static Boolean AnyDuplicates<T>( this IEnumerable<T> @this ) {
-            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), message: "AnyDuplicates<T> called on a null IEnumerable<T>." ); }
+            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), "AnyDuplicates<T> called on a null IEnumerable<T>." ); }
 
             return AnyRelationship( @this: @this, relationshipFunc: ( arg1, arg2 ) => arg1.Equals( arg2 ) );
         }
 
         /// <summary>
-        /// Determines whether or not a given relationship exists between any two elements in the sequence.
+        ///     Determines whether or not a given relationship exists between any two elements in the sequence.
         /// </summary>
-        /// <param name="this">            The extended <see cref="IEnumerable{T}"/>.</param>
+        /// <param name="this">            The extended <see cref="IEnumerable{T}" />.</param>
         /// <param name="relationshipFunc">The function that determines whether the given relationship exists between two elements.</param>
         /// <returns>True if the relationship exists between any two elements, false if not.</returns>
         public static Boolean AnyRelationship<T>( this IEnumerable<T> @this, Func<T, T, Boolean> relationshipFunc ) {
-            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), message: "AnyRelationship called on a null IEnumerable<T>." ); }
+            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), "AnyRelationship called on a null IEnumerable<T>." ); }
 
             var enumerable = @this as T[] ?? @this.ToArray();
 
@@ -84,17 +103,22 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns whether or not there are at least <paramref name="minInstances"/> elements in the source sequence that satisfy the given <paramref name="predicate"/>.
+        ///     Returns whether or not there are at least <paramref name="minInstances" /> elements in the source sequence that
+        ///     satisfy the given <paramref name="predicate" />.
         /// </summary>
         /// <param name="this">        The extended IEnumerable{T}.</param>
-        /// <param name="minInstances">The number of elements that must satisfy the <paramref name="predicate"/>.</param>
+        /// <param name="minInstances">The number of elements that must satisfy the <paramref name="predicate" />.</param>
         /// <param name="predicate">   The function that determines whether or not an element is counted.</param>
         /// <returns>
-        /// This method will immediately return true upon finding the <paramref name="minInstances"/> th element that satisfies the predicate, or if <paramref name="minInstances"/> is 0. Otherwise, if <paramref
-        /// name="minInstances"/> is greater than the size of the source sequence, or less than <paramref name="minInstances"/> elements are found to match the <paramref name="predicate"/>, it will return false.
+        ///     This method will immediately return true upon finding the <paramref name="minInstances" /> th element that
+        ///     satisfies the predicate, or if <paramref name="minInstances" /> is 0. Otherwise, if
+        ///     <paramref
+        ///         name="minInstances" />
+        ///     is greater than the size of the source sequence, or less than <paramref name="minInstances" /> elements are found
+        ///     to match the <paramref name="predicate" />, it will return false.
         /// </returns>
         public static Boolean AtLeast<T>( this IEnumerable<T> @this, UInt64 minInstances, Func<T, Boolean> predicate ) {
-            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), message: "AtLeast called on a null IEnumerable<>." ); }
+            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), "AtLeast called on a null IEnumerable<>." ); }
 
             if ( predicate is null ) { throw new ArgumentNullException( nameof( predicate ) ); }
 
@@ -106,17 +130,20 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Ascertains whether there are no more than <paramref name="maxInstances"/> elements in the source sequence that satisfy the given <paramref name="predicate"/>.
+        ///     Ascertains whether there are no more than <paramref name="maxInstances" /> elements in the source sequence that
+        ///     satisfy the given <paramref name="predicate" />.
         /// </summary>
         /// <param name="this">        The extended IEnumerable{T}.</param>
-        /// <param name="maxInstances">The maximum number of elements that can satisfy the <paramref name="predicate"/>.</param>
+        /// <param name="maxInstances">The maximum number of elements that can satisfy the <paramref name="predicate" />.</param>
         /// <param name="predicate">   The function that determines whether or not an element is counted.</param>
         /// <returns>
-        /// This method will immediately return false upon finding the ( <paramref name="maxInstances"/> + 1)th element that satisfies the predicate. Otherwise, if <paramref name="maxInstances"/> is greater than the size
-        /// of the source sequence, or less than <paramref name="maxInstances"/> elements are found to match the <paramref name="predicate"/>, it will return true.
+        ///     This method will immediately return false upon finding the ( <paramref name="maxInstances" /> + 1)th element that
+        ///     satisfies the predicate. Otherwise, if <paramref name="maxInstances" /> is greater than the size
+        ///     of the source sequence, or less than <paramref name="maxInstances" /> elements are found to match the
+        ///     <paramref name="predicate" />, it will return true.
         /// </returns>
         public static Boolean AtMost<T>( this IEnumerable<T> @this, UInt64 maxInstances, Func<T, Boolean> predicate ) {
-            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), message: "AtMost called on a null IEnumerable<>." ); }
+            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), "AtMost called on a null IEnumerable<>." ); }
 
             if ( predicate is null ) { throw new ArgumentNullException( nameof( predicate ) ); }
 
@@ -170,7 +197,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Checks if two IEnumerables contain the exact same elements and same number of elements. Order does not matter.
+        ///     Checks if two IEnumerables contain the exact same elements and same number of elements. Order does not matter.
         /// </summary>
         /// <typeparam name="T">The Type of object.</typeparam>
         /// <param name="a">The first collection.</param>
@@ -201,13 +228,15 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Counts the number of times each element appears in a collection, and returns a <see cref="IDictionary{T, V}">dictionary</see>; where each key is an element and its value is the number of times that element
-        /// appeared in the source collection.
+        ///     Counts the number of times each element appears in a collection, and returns a
+        ///     <see cref="IDictionary{T, V}">dictionary</see>; where each key is an element and its value is the number of times
+        ///     that element
+        ///     appeared in the source collection.
         /// </summary>
         /// <param name="this">The extended IEnumerable{T}.</param>
-        /// <returns>A dictionary of elements mapped to the number of times they appeared in <paramref name="this"/>.</returns>
+        /// <returns>A dictionary of elements mapped to the number of times they appeared in <paramref name="this" />.</returns>
         public static IDictionary<T, Int32> CountInstances<T>( this IEnumerable<T> @this ) {
-            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), message: "CountInstances called on a null IEnumerable<T>." ); }
+            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), "CountInstances called on a null IEnumerable<T>." ); }
 
             IDictionary<T, Int32> result = new Dictionary<T, Int32>();
 
@@ -220,13 +249,14 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Counts how many pairs of elements in the source sequence share the relationship defined by <paramref name="relationshipFunc"/>.
+        ///     Counts how many pairs of elements in the source sequence share the relationship defined by
+        ///     <paramref name="relationshipFunc" />.
         /// </summary>
         /// <param name="this">            The extended IEnumerable{T}.</param>
         /// <param name="relationshipFunc">The function that determines whether the given relationship exists between two elements.</param>
         /// <returns>The number of pairs found.</returns>
         public static Int32 CountRelationship<T>( this IEnumerable<T> @this, Func<T, T, Boolean> relationshipFunc ) {
-            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), message: "CountRelationship called on a null IEnumerable<T>." ); }
+            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), "CountRelationship called on a null IEnumerable<T>." ); }
 
             var enumerable = @this as T[] ?? @this.ToArray();
 
@@ -235,7 +265,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns duplicate items found in the <see cref="sequence"/> .
+        ///     Returns duplicate items found in the <see cref="sequence" /> .
         /// </summary>
         /// <param name="sequence">todo: describe sequence parameter on Duplicates</param>
         public static HashSet<T> Duplicates<T>( this IEnumerable<T> sequence ) {
@@ -284,13 +314,17 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns the first two items to in the source collection that satisfy the given <paramref name="relationshipFunc"/> , or <c>null</c> if no match was found.
+        ///     Returns the first two items to in the source collection that satisfy the given <paramref name="relationshipFunc" />
+        ///     , or <c>null</c> if no match was found.
         /// </summary>
         /// <param name="this">            The extended IEnumerable{T}.</param>
         /// <param name="relationshipFunc">The function that determines whether the given relationship exists between two elements.</param>
-        /// <returns>A tuple of the first two elements that match the given relationship, or <c>null</c> if no such relationship exists.</returns>
+        /// <returns>
+        ///     A tuple of the first two elements that match the given relationship, or <c>null</c> if no such relationship
+        ///     exists.
+        /// </returns>
         public static KeyValuePair<T, T>? FirstRelationship<T>( this IEnumerable<T> @this, Func<T, T, Boolean> relationshipFunc ) {
-            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), message: "FirstRelationship called on a null IEnumerable<T>." ); }
+            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), "FirstRelationship called on a null IEnumerable<T>." ); }
 
             if ( relationshipFunc is null ) { throw new ArgumentNullException( nameof( relationshipFunc ) ); }
 
@@ -298,14 +332,14 @@ namespace Librainian.Collections {
 
             foreach ( var a in @this ) {
 
-                foreach ( var b in @this.Skip( count: ++aIndex ).Where( b => relationshipFunc( arg1: a, arg2: b ) || relationshipFunc( arg1: b, arg2: a ) ) ) { return new KeyValuePair<T, T>( a, value: b ); }
+                foreach ( var b in @this.Skip( count: ++aIndex ).Where( b => relationshipFunc( arg1: a, arg2: b ) || relationshipFunc( arg1: b, arg2: a ) ) ) { return new KeyValuePair<T, T>( a, b ); }
             }
 
             return null;
         }
 
         /// <summary>
-        /// The <seealso cref="List{T}.Capacity"/> is resized down to the <seealso cref="List{T}.Count"/>.
+        ///     The <seealso cref="List{T}.Capacity" /> is resized down to the <seealso cref="List{T}.Count" />.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>
@@ -328,7 +362,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// http://blogs.msdn.com/b/pfxteam/archive/2012/02/04/10264111.aspx
+        ///     http://blogs.msdn.com/b/pfxteam/archive/2012/02/04/10264111.aspx
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TValue"></typeparam>
@@ -341,7 +375,7 @@ namespace Librainian.Collections {
             if ( generator is null ) { throw new ArgumentNullException( nameof( generator ) ); }
 
             while ( true ) {
-                if ( dict.TryGetValue( key, value: out var value ) ) {
+                if ( dict.TryGetValue( key, out var value ) ) {
                     added = false;
 
                     return value;
@@ -349,7 +383,7 @@ namespace Librainian.Collections {
 
                 value = generator( arg: key );
 
-                if ( !dict.TryAdd( key, value: value ) ) { continue; }
+                if ( !dict.TryAdd( key, value ) ) { continue; }
 
                 added = true;
 
@@ -374,10 +408,10 @@ namespace Librainian.Collections {
         public static Boolean In<T>( this T value, [NotNull] params T[] items ) {
             if ( items is null ) { throw new ArgumentNullException( nameof( items ) ); }
 
-            return items.Contains( value: value );
+            return items.Contains( value );
         }
 
-        public static Int32 IndexOf<T>( this T[] @this, T item ) => Array.IndexOf( array: @this, value: item );
+        public static Int32 IndexOf<T>( this T[] @this, T item ) => Array.IndexOf( array: @this, item );
 
         /// <summary>
         /// </summary>
@@ -385,7 +419,7 @@ namespace Librainian.Collections {
         /// <param name="source">  </param>
         /// <param name="sequence"></param>
         /// <returns></returns>
-        /// <see cref="http://stackoverflow.com/a/3562370/956364"/>
+        /// <remarks>http://stackoverflow.com/a/3562370/956364</remarks>
         public static Int32 IndexOfSequence<T>( [NotNull] this IEnumerable<T> source, [NotNull] IEnumerable<T> sequence ) {
             if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
 
@@ -401,7 +435,7 @@ namespace Librainian.Collections {
         /// <param name="sequence"></param>
         /// <param name="comparer"></param>
         /// <returns></returns>
-        /// <see cref="http://stackoverflow.com/a/3562370/956364"/>
+        /// <remarks>http://stackoverflow.com/a/3562370/956364</remarks>
         public static Int32 IndexOfSequence<T>( [NotNull] this IEnumerable<T> source, [NotNull] IEnumerable<T> sequence, [NotNull] IEqualityComparer<T> comparer ) {
             if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
 
@@ -462,7 +496,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>An infinite list.</para>
+        ///     <para>An infinite list.</para>
         /// </summary>
         /// <param name="value">todo: describe value parameter on Infinitely</param>
         public static IEnumerable<Boolean> Infinitely( this Boolean value ) {
@@ -472,11 +506,11 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Checks if an IEnumerable is empty.
+        ///     Checks if an IEnumerable is empty.
         /// </summary>
         /// <typeparam name="T">The type of objects to enumerate.</typeparam>
         /// <param name="source">The IEnumerable to check if empty.</param>
-        /// <returns>True if the <paramref name="source"/> is null or empty; otherwise false.</returns>
+        /// <returns>True if the <paramref name="source" /> is null or empty; otherwise false.</returns>
         public static Boolean IsEmpty<T>( this IEnumerable<T> source ) => source?.Any() != true;
 
         public static UInt64 LongSum( this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0UL, func: ( current, u ) => current + ( UInt64 )u );
@@ -525,7 +559,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// untested
+        ///     untested
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TValue"></typeparam>
@@ -540,7 +574,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// untested
+        ///     untested
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="this"></param>
@@ -553,7 +587,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// untested
+        ///     untested
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="this"></param>
@@ -617,7 +651,8 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Removes the <paramref name="specificItem"/> from the <paramref name="collection"/> and returns how many <paramref name="specificItem"/> or null were removed.
+        ///     Removes the <paramref name="specificItem" /> from the <paramref name="collection" /> and returns how many
+        ///     <paramref name="specificItem" /> or null were removed.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection">  </param>
@@ -631,7 +666,7 @@ namespace Librainian.Collections {
 
             var removed = 0;
 
-            while ( collection.Contains( value: specificItem ) ) {
+            while ( collection.Contains( specificItem ) ) {
                 if ( !collection.TryTake( item: out var temp ) ) { continue; }
 
                 if ( Equals( temp, default ) || Equals( temp, specificItem ) ) {
@@ -665,13 +700,13 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Shuffle an array[] in <paramref name="iterations"/>.</para>
+        ///     <para>Shuffle an array[] in <paramref name="iterations" />.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="array">     </param>
         /// <param name="iterations"></param>
         /// <example>Deck.Shuffle( 7 );</example>
-        [Obsolete( message: "broken at the moment. seealso Shuffle<List>" )]
+        [Obsolete( "broken at the moment. seealso Shuffle<List>" )]
         public static void Shuffle<T>( [NotNull] this T[] array, Int32 iterations = 1 ) {
             if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
 
@@ -733,7 +768,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Shuffle a list in <paramref name="iterations"/>.</para>
+        ///     <para>Shuffle a list in <paramref name="iterations" />.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list">            </param>
@@ -790,7 +825,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Untested for speed and cpu/threading impact. Also, a lot of elements will/could NOT be shuffled much.
+        ///     Untested for speed and cpu/threading impact. Also, a lot of elements will/could NOT be shuffled much.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list">         </param>
@@ -825,7 +860,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Fast shuffle. Not guaranteed or tested to be the fastest, but it *should* shuffle *well enough* in reasonable time.
+        ///     Fast shuffle. Not guaranteed or tested to be the fastest, but it *should* shuffle *well enough* in reasonable time.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list">            </param>
@@ -932,7 +967,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Swap the two indexes
+        ///     Swap the two indexes
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="array"> </param>
@@ -947,7 +982,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Remove and return the first item in the list, otherwise return null (or the default() for value types).</para>
+        ///     <para>Remove and return the first item in the list, otherwise return null (or the default() for value types).</para>
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
@@ -972,7 +1007,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Remove and return the first item in the list, otherwise return null.</para>
+        ///     <para>Remove and return the first item in the list, otherwise return null.</para>
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
@@ -990,7 +1025,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Remove and return the last item in the list, otherwise return null.</para>
+        ///     <para>Remove and return the last item in the list, otherwise return null.</para>
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
@@ -1014,7 +1049,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Remove and return the last item in the list, otherwise return null.</para>
+        ///     <para>Remove and return the last item in the list, otherwise return null.</para>
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="list"></param>
@@ -1034,7 +1069,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Untested.
+        ///     Untested.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
@@ -1073,7 +1108,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Optimally create a list from the <paramref name="source"/>.
+        ///     Optimally create a list from the <paramref name="source" />.
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
         /// <param name="source">  </param>
@@ -1091,7 +1126,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Do a Take() on the top X percent
+        ///     Do a Take() on the top X percent
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
         /// <param name="source"></param>
@@ -1121,10 +1156,13 @@ namespace Librainian.Collections {
                 }
         */
 
-        public static String ToStrings( this IEnumerable<Object> enumerable, Char c ) => ToStrings( enumerable: enumerable, separator: new String( value: new[] { c } ) );
+        public static String ToStrings( this IEnumerable<Object> enumerable, Char c ) => ToStrings( enumerable: enumerable, separator: new String( new[] { c } ) );
 
         /// <summary>
-        /// <para>Returns a String with the <paramref name="separator"/> between each item of an <paramref name="enumerable"/>.</para>
+        ///     <para>
+        ///         Returns a String with the <paramref name="separator" /> between each item of an
+        ///         <paramref name="enumerable" />.
+        ///     </para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="enumerable"></param>
@@ -1140,7 +1178,7 @@ namespace Librainian.Collections {
             String result;
             var list = enumerable as IList<T> ?? enumerable.ToList();
 
-            if ( String.IsNullOrEmpty( value: atTheEnd ) || list.Count <= 2 ) { result = String.Join( separator: separator, values: list ); }
+            if ( String.IsNullOrEmpty( atTheEnd ) || list.Count <= 2 ) { result = String.Join( separator: separator, values: list ); }
             else {
                 result = String.Join( separator: separator, values: list.Take( count: list.Count - 2 ) );
 
@@ -1159,7 +1197,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Wrapper for <see cref="ConcurrentQueue{T}.TryDequeue"/>
+        ///     Wrapper for <see cref="ConcurrentQueue{T}.TryDequeue" />
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="queue"></param>
@@ -1174,7 +1212,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Wrapper for <see cref="ConcurrentStack{T}.TryPop"/>
+        ///     Wrapper for <see cref="ConcurrentStack{T}.TryPop" />
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="stack"></param>
@@ -1189,21 +1227,25 @@ namespace Librainian.Collections {
         public static void Update<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dictionary, TKey key, TValue value ) {
             if ( dictionary is null ) { throw new ArgumentNullException( nameof( dictionary ) ); }
 
-            dictionary.TryRemove( key, value: out var dummy ); //HACK
-            dictionary.TryAdd( key, value: value );
+            dictionary.TryRemove( key, out var dummy ); //HACK
+            dictionary.TryAdd( key, value );
 
             //var wtf = default( TValue );
             //dictionary.TryUpdate( key, value, wtf );  //BUG I don't understand the whole if-same-then-replace-semantics. If we're going to replace the value, then why do we care what the current value is anyway?
         }
 
         /// <summary>
-        /// Returns all combinations of items in the source collection that satisfy the given <paramref name="relationshipFunc"/>.
+        ///     Returns all combinations of items in the source collection that satisfy the given
+        ///     <paramref name="relationshipFunc" />.
         /// </summary>
         /// <param name="this">            The extended IEnumerable{T}.</param>
         /// <param name="relationshipFunc">The function that determines whether the given relationship exists between two elements.</param>
-        /// <returns>An enumeration of all combinations of items that satisfy the <paramref name="relationshipFunc"/>. Each combination will only be returned once (e.g. <c>[a, b]</c> but not <c>[b, a]</c>).</returns>
+        /// <returns>
+        ///     An enumeration of all combinations of items that satisfy the <paramref name="relationshipFunc" />. Each
+        ///     combination will only be returned once (e.g. <c>[a, b]</c> but not <c>[b, a]</c>).
+        /// </returns>
         public static IEnumerable<KeyValuePair<T, T>> WhereRelationship<T>( this IEnumerable<T> @this, [NotNull] Func<T, T, Boolean> relationshipFunc ) {
-            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), message: "WhereRelationship called on a null IEnumerable<T>." ); }
+            if ( @this is null ) { throw new ArgumentNullException( nameof( @this ), "WhereRelationship called on a null IEnumerable<T>." ); }
 
             if ( relationshipFunc is null ) { throw new ArgumentNullException( nameof( relationshipFunc ) ); }
 
@@ -1211,7 +1253,7 @@ namespace Librainian.Collections {
 
             foreach ( var a in @this ) {
 
-                foreach ( var b in @this.Skip( count: ++aIndex ).Where( b => relationshipFunc( arg1: a, arg2: b ) || relationshipFunc( arg1: b, arg2: a ) ) ) { yield return new KeyValuePair<T, T>( a, value: b ); }
+                foreach ( var b in @this.Skip( count: ++aIndex ).Where( b => relationshipFunc( arg1: a, arg2: b ) || relationshipFunc( arg1: b, arg2: a ) ) ) { yield return new KeyValuePair<T, T>( a, b ); }
             }
         }
     }

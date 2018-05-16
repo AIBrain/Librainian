@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "HumanCalculator.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/HumanCalculator.cs" was last cleaned by Protiguous on 2016/06/18 at 10:53 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/HumanCalculator.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
 
 namespace Librainian.Maths {
 
@@ -83,12 +97,8 @@ namespace Librainian.Maths {
                 var s = total.ToString();
                 var result = String.Empty;
 
-                if ( s.Length < term.Length ) {
-                    s = s.PadLeft( term.Length, '0' );
-                }
-                else if ( term.Length < s.Length ) {
-                    term = term.PadLeft( s.Length, '0' );
-                }
+                if ( s.Length < term.Length ) { s = s.PadLeft( term.Length, '0' ); }
+                else if ( term.Length < s.Length ) { term = term.PadLeft( s.Length, '0' ); }
 
                 while ( term.Any() ) {
                     var l = Byte.Parse( s.Last().ToString() );
@@ -99,12 +109,9 @@ namespace Librainian.Maths {
 
                     var t = ( l + m ).ToString();
                     var c = Byte.Parse( t.Last().ToString() );
-                    if ( 2 == t.Length ) {
-                        result = "1" + c;
-                    }
-                    else {
-                        result += c;
-                    }
+
+                    if ( 2 == t.Length ) { result = "1" + c; }
+                    else { result += c; }
                 }
 
                 total += BigInteger.Parse( result );
@@ -115,28 +122,22 @@ namespace Librainian.Maths {
 
         public static BigInteger Divide( BigInteger[] terms ) => throw new NotImplementedException();
 
-	    public static BigInteger Multiply( BigInteger[] terms ) => throw new NotImplementedException();
+        public static BigInteger Multiply( BigInteger[] terms ) => throw new NotImplementedException();
 
-	    public static BigInteger Operate( Operation operation, params BigInteger[] terms ) {
+        public static BigInteger Operate( Operation operation, params BigInteger[] terms ) {
             switch ( operation ) {
-                case Operation.Addition:
-                    return Add( terms );
+                case Operation.Addition: return Add( terms );
 
-                case Operation.Subtraction:
-                    return Subtract( terms );
+                case Operation.Subtraction: return Subtract( terms );
 
-                case Operation.Multiplication:
-                    return Multiply( terms );
+                case Operation.Multiplication: return Multiply( terms );
 
-                case Operation.Division:
-                    return Divide( terms );
+                case Operation.Division: return Divide( terms );
 
-                default:
-                    throw new ArgumentOutOfRangeException( nameof( operation ), operation, $"Unknown operation {operation}" );
+                default: throw new ArgumentOutOfRangeException( nameof( operation ), operation, $"Unknown operation {operation}" );
             }
         }
 
         public static BigInteger Subtract( BigInteger[] terms ) => throw new NotImplementedException();
-
     }
 }

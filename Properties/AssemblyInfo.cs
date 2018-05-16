@@ -1,5 +1,4 @@
-﻿using System.Resources;
-// Copyright 2018 Protiguous.
+﻿// Copyright 2018 Protiguous.
 //
 // This notice must be kept visible in the source.
 //
@@ -9,9 +8,9 @@
 // goes to the Authors.
 //
 // Donations and royalties can be paid via
-//  
+//
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+//
 //
 // Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
 //
@@ -20,6 +19,7 @@
 // "Librainian/AssemblyInfo.cs" was last cleaned by Protiguous on 2016/06/18 at 10:56 PM
 
 using System.Reflection;
+using System.Resources;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following set of attributes.
@@ -53,4 +53,3 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion( "2018.05.07.0435" )]
 [assembly: AssemblyFileVersion( "2018.05.07.0435" )]
 [assembly: NeutralResourcesLanguage( "en-US" )]
-

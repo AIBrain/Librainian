@@ -1,20 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "SimpleBitcoinWallet.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/SimpleBitcoinWallet.cs" was last cleaned by Protiguous on 2016/06/18 at 10:53 PM
+// "Librainian/Librainian/SimpleBitcoinWallet.cs" was last cleaned by Protiguous on 2018/05/15 at 10:46 PM.
 
 namespace Librainian.Measurement.Currency.BTC {
 
@@ -30,10 +46,10 @@ namespace Librainian.Measurement.Currency.BTC {
     using Time;
 
     /// <summary>
-    /// A very simple, thread-safe, Decimal-based bitcoin wallet.
+    ///     A very simple, thread-safe, Decimal-based bitcoin wallet.
     /// </summary>
     /// <remarks>TODO add in support for automatic persisting TODO add in support for exploring the blockchain</remarks>
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Serializable]
     [JsonObject]
     public class SimpleBitcoinWallet : ABetterClassDispose, IEquatable<SimpleBitcoinWallet>, IComparable<SimpleBitcoinWallet> {
@@ -48,56 +64,55 @@ namespace Librainian.Measurement.Currency.BTC {
         private Decimal _balance;
 
         /// <summary>
-        /// 1
+        ///     1
         /// </summary>
         public const Decimal BTC = 1M;
 
         /// <summary>
-        /// 0. 001
+        ///     0. 001
         /// </summary>
         public const Decimal mBTC = 0.001M;
 
         /// <summary>
-        /// 1000 mBTC are in 1 BTC
+        ///     1000 mBTC are in 1 BTC
         /// </summary>
         public const UInt64 mBTCInOneBTC = ( UInt64 )( BTC / mBTC );
 
         /// <summary>
-        /// 0.00000001
+        ///     0.00000001
         /// </summary>
         public const Decimal Satoshi = 0.00000001M;
 
         /// <summary>
-        /// 100,000,000 Satoshi are in 1 BTC
+        ///     100,000,000 Satoshi are in 1 BTC
         /// </summary>
         public const UInt64 SatoshiInOneBtc = ( UInt64 )( BTC / Satoshi );
 
         /// <summary>
-        /// 0.0000001
+        ///     0.0000001
         /// </summary>
         public const Decimal TenSatoshi = 0.0000001M;
 
         /// <summary>
-        /// 0. 000001
+        ///     0. 000001
         /// </summary>
         public const Decimal ΜBtc = 0.000001M;
 
         /// <summary>
-        /// 1,000,000 μBTC are in 1 BTC
+        ///     1,000,000 μBTC are in 1 BTC
         /// </summary>
         public const UInt64 ΜBtcInOneBtc = ( UInt64 )( BTC / ΜBtc );
 
         /// <summary>
-        /// Initialize the wallet with the specified amount of satoshi.
+        ///     Initialize the wallet with the specified amount of satoshi.
         /// </summary>
         /// <param name="satoshi"></param>
         public SimpleBitcoinWallet( Int64 satoshi ) : this( balance: satoshi.ToBTC() ) { }
 
-        public SimpleBitcoinWallet( ISimpleWallet wallet ) : this( balance: wallet.Balance ) {
-        }
+        public SimpleBitcoinWallet( ISimpleWallet wallet ) : this( balance: wallet.Balance ) { }
 
         /// <summary>
-        /// Initialize the wallet with the specified <paramref name="balance"/> .
+        ///     Initialize the wallet with the specified <paramref name="balance" /> .
         /// </summary>
         /// <param name="balance"></param>
         public SimpleBitcoinWallet( Decimal balance ) {
@@ -106,18 +121,13 @@ namespace Librainian.Measurement.Currency.BTC {
             this._hashcode = Randem.NextInt32();
         }
 
-        public SimpleBitcoinWallet() : this( balance: 0.0m ) {
-        }
+        public SimpleBitcoinWallet() : this( balance: 0.0m ) { }
 
         public Decimal Balance {
             get {
-                try {
-                    return this._access.TryEnterReadLock( timeout: this.Timeout ) ? this._balance : Decimal.Zero;
-                }
+                try { return this._access.TryEnterReadLock( timeout: this.Timeout ) ? this._balance : Decimal.Zero; }
                 finally {
-                    if ( this._access.IsReadLockHeld ) {
-                        this._access.ExitReadLock();
-                    }
+                    if ( this._access.IsReadLockHeld ) { this._access.ExitReadLock(); }
                 }
             }
         }
@@ -135,13 +145,13 @@ namespace Librainian.Measurement.Currency.BTC {
         public Action<Decimal> OnBeforeWithdraw { get; set; }
 
         /// <summary>
-        /// <para>Defaults to <see cref="Seconds.Thirty"/> in the ctor.</para>
+        ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
         /// </summary>
         public TimeSpan Timeout { get; set; }
 
         /// <summary>
-        /// <para>Static comparison.</para>
-        /// <para>Returns true if the wallets are the same instance.</para>
+        ///     <para>Static comparison.</para>
+        ///     <para>Returns true if the wallets are the same instance.</para>
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
@@ -149,20 +159,18 @@ namespace Librainian.Measurement.Currency.BTC {
         public static Boolean Equals( [CanBeNull] SimpleBitcoinWallet left, [CanBeNull] SimpleBitcoinWallet right ) => ReferenceEquals( left, right );
 
         public Int32 CompareTo( [NotNull] SimpleBitcoinWallet otherWallet ) {
-            if ( otherWallet is null ) {
-                throw new ArgumentNullException(nameof( otherWallet ) );
-            }
+            if ( otherWallet is null ) { throw new ArgumentNullException( nameof( otherWallet ) ); }
 
             return this.Balance.CompareTo( otherWallet.Balance );
         }
 
         /// <summary>
-        /// Dispose any disposable members.
+        ///     Dispose any disposable members.
         /// </summary>
         public override void DisposeManaged() => this._access.Dispose();
 
         /// <summary>
-        /// Indicates whether the current wallet is the same as the <paramref name="otherWallet"/> wallet.
+        ///     Indicates whether the current wallet is the same as the <paramref name="otherWallet" /> wallet.
         /// </summary>
         /// <param name="otherWallet">Annother to compare with this wallet.</param>
         public Boolean Equals( SimpleBitcoinWallet otherWallet ) => Equals( left: this, right: otherWallet );
@@ -172,99 +180,77 @@ namespace Librainian.Measurement.Currency.BTC {
         public override String ToString() => $"฿ {this.Balance:F8}";
 
         /// <summary>
-        /// Add any (+-)amount directly to the balance.
+        ///     Add any (+-)amount directly to the balance.
         /// </summary>
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
         public Boolean TryAdd( Decimal amount, Boolean sanitize = true ) {
-            if ( sanitize ) {
-                amount = amount.Sanitize();
-            }
+            if ( sanitize ) { amount = amount.Sanitize(); }
 
             try {
-                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
-                    return false;
-                }
+                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) { return false; }
 
                 this._balance += amount;
                 this.LabelToFlashOnChanges.Flash();
+
                 return true;
             }
             finally {
-                if ( this._access.IsWriteLockHeld ) {
-                    this._access.ExitWriteLock();
-                }
+                if ( this._access.IsWriteLockHeld ) { this._access.ExitWriteLock(); }
 
                 this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
         public Boolean TryAdd( [NotNull] SimpleBitcoinWallet wallet, Boolean sanitize = true ) {
-            if ( wallet is null ) {
-                throw new ArgumentNullException(nameof( wallet ) );
-            }
+            if ( wallet is null ) { throw new ArgumentNullException( nameof( wallet ) ); }
 
             return this.TryAdd( amount: wallet.Balance, sanitize: sanitize );
         }
 
         /// <summary>
-        /// Attempt to deposit amoount (larger than zero) to the <see cref="Balance"/> .
+        ///     Attempt to deposit amoount (larger than zero) to the <see cref="Balance" /> .
         /// </summary>
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
         public Boolean TryDeposit( Decimal amount, Boolean sanitize = true ) {
-            if ( sanitize ) {
-                amount = amount.Sanitize();
-            }
+            if ( sanitize ) { amount = amount.Sanitize(); }
 
-            if ( amount <= Decimal.Zero ) {
-                return false;
-            }
+            if ( amount <= Decimal.Zero ) { return false; }
 
             this.OnBeforeDeposit?.Invoke( amount );
 
-            if ( !this.TryAdd( amount: amount ) ) {
-                return false;
-            }
+            if ( !this.TryAdd( amount: amount ) ) { return false; }
 
             this.OnAfterDeposit?.Invoke( amount );
+
             return true;
         }
 
         public Boolean TryTransfer( Decimal amount, ref SimpleBitcoinWallet intoWallet, Boolean sanitize = true ) {
-            if ( sanitize ) {
-                amount = amount.Sanitize();
-            }
+            if ( sanitize ) { amount = amount.Sanitize(); }
 
-            if ( amount <= Decimal.Zero ) {
-                return false;
-            }
+            if ( amount <= Decimal.Zero ) { return false; }
 
             Decimal? withdrewAmount = null;
-            try {
-                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
-                    return false;
-                }
 
-                if ( this._balance < amount ) {
-                    return false;
-                }
+            try {
+                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) { return false; }
+
+                if ( this._balance < amount ) { return false; }
 
                 this._balance -= amount;
                 this.LabelToFlashOnChanges.Flash();
                 withdrewAmount = amount;
+
                 return true;
             }
             finally {
-                if ( this._access.IsWriteLockHeld ) {
-                    this._access.ExitWriteLock();
-                }
+                if ( this._access.IsWriteLockHeld ) { this._access.ExitWriteLock(); }
 
-                if ( withdrewAmount.HasValue ) {
-                    intoWallet.TryDeposit( amount: withdrewAmount.Value, sanitize: false );
-                }
+                if ( withdrewAmount.HasValue ) { intoWallet.TryDeposit( amount: withdrewAmount.Value, sanitize: false ); }
 
                 this.OnAfterWithdraw?.Invoke( amount );
                 this.OnAnyUpdate?.Invoke( amount );
@@ -272,26 +258,23 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        /// <para>Directly sets the <see cref="Balance"/> of this wallet.</para>
+        ///     <para>Directly sets the <see cref="Balance" /> of this wallet.</para>
         /// </summary>
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
         public Boolean TryUpdateBalance( Decimal amount, Boolean sanitize = true ) {
             try {
-                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
-                    return false;
-                }
+                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) { return false; }
 
                 this._balance = sanitize ? amount.Sanitize() : amount;
 
                 this.LabelToFlashOnChanges.Flash();
+
                 return true;
             }
             finally {
-                if ( this._access.IsWriteLockHeld ) {
-                    this._access.ExitWriteLock();
-                }
+                if ( this._access.IsWriteLockHeld ) { this._access.ExitWriteLock(); }
 
                 this.OnAnyUpdate?.Invoke( amount );
             }
@@ -300,38 +283,29 @@ namespace Librainian.Measurement.Currency.BTC {
         public void TryUpdateBalance( SimpleBitcoinWallet simpleBitcoinWallet ) => this.TryUpdateBalance( amount: simpleBitcoinWallet.Balance );
 
         /// <summary>
-        /// <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
-        /// <para>If the amount is not available, then nothing is withdrawn.</para>
+        ///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
+        ///     <para>If the amount is not available, then nothing is withdrawn.</para>
         /// </summary>
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
         public Boolean TryWithdraw( Decimal amount, Boolean sanitize = true ) {
-            if ( sanitize ) {
-                amount = amount.Sanitize();
-            }
+            if ( sanitize ) { amount = amount.Sanitize(); }
 
-            if ( amount <= Decimal.Zero ) {
-                return false;
-            }
+            if ( amount <= Decimal.Zero ) { return false; }
 
             try {
-                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
-                    return false;
-                }
+                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) { return false; }
 
-                if ( this._balance < amount ) {
-                    return false;
-                }
+                if ( this._balance < amount ) { return false; }
 
                 this._balance -= amount;
                 this.LabelToFlashOnChanges.Flash();
+
                 return true;
             }
             finally {
-                if ( this._access.IsWriteLockHeld ) {
-                    this._access.ExitWriteLock();
-                }
+                if ( this._access.IsWriteLockHeld ) { this._access.ExitWriteLock(); }
 
                 this.OnAfterWithdraw?.Invoke( amount );
                 this.OnAnyUpdate?.Invoke( amount );
@@ -339,14 +313,12 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         /// <summary>
-        /// Attempt to withdraw an amount (must be larger than Zero) from the wallet.
+        ///     Attempt to withdraw an amount (must be larger than Zero) from the wallet.
         /// </summary>
         /// <param name="wallet"></param>
         /// <returns></returns>
         public Boolean TryWithdraw( [NotNull] SimpleBitcoinWallet wallet ) {
-            if ( wallet is null ) {
-                throw new ArgumentNullException(nameof( wallet ) );
-            }
+            if ( wallet is null ) { throw new ArgumentNullException( nameof( wallet ) ); }
 
             return this.TryWithdraw( amount: wallet.Balance );
         }

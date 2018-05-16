@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Versus.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Versus.cs" was last cleaned by Protiguous on 2016/06/18 at 10:53 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Versus.cs" was last cleaned by Protiguous on 2018/05/15 at 10:46 PM.
 
 namespace Librainian.Maths {
 
@@ -33,6 +47,14 @@ namespace Librainian.Maths {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class Versus {
 
+        /// <summary>ONLY used in the getter and setter.</summary>
+        [JsonProperty]
+        private Int64 _failures;
+
+        /// <summary>ONLY used in the getter and setter.</summary>
+        [JsonProperty]
+        private Int64 _successes;
+
         /// <summary>One failure.</summary>
         public static readonly Versus Failured = new Versus( successes: 0, failures: 1 );
 
@@ -42,14 +64,6 @@ namespace Librainian.Maths {
         /// <summary>None for either.</summary>
         public static readonly Versus Zero = new Versus( successes: 0, failures: 0 );
 
-        /// <summary>ONLY used in the getter and setter.</summary>
-        [JsonProperty]
-        private Int64 _failures;
-
-        /// <summary>ONLY used in the getter and setter.</summary>
-        [JsonProperty]
-        private Int64 _successes;
-
         public Versus( Int64 successes = 0, Int64 failures = 0 ) {
             this.Successes = successes;
             this.Failures = failures;
@@ -58,13 +72,13 @@ namespace Librainian.Maths {
         public Int64 Failures {
             get => Thread.VolatileRead( ref this._failures );
 
-	        private set => Thread.VolatileWrite( ref this._failures, value );
+            private set => Thread.VolatileWrite( ref this._failures, value );
         }
 
         public Int64 Successes {
             get => Thread.VolatileRead( ref this._successes );
 
-	        private set => Thread.VolatileWrite( ref this._successes, value );
+            private set => Thread.VolatileWrite( ref this._successes, value );
         }
 
         public Int64 Total => this.Successes + this.Failures;
@@ -79,14 +93,15 @@ namespace Librainian.Maths {
         public Single FailurePercentage() {
             try {
                 var total = this.Total;
+
                 if ( !total.Near( 0 ) ) {
                     var result = new BigRational( this.Failures, total );
+
                     return ( Single )result;
                 }
             }
-            catch ( DivideByZeroException exception ) {
-                exception.More();
-            }
+            catch ( DivideByZeroException exception ) { exception.More(); }
+
             return 0;
         }
 
@@ -98,14 +113,16 @@ namespace Librainian.Maths {
         public Single SuccessPercentage() {
             try {
                 var total = this.Total;
-                if ( total.Near( 0 ) ) {
-                    return 0;
-                }
+
+                if ( total.Near( 0 ) ) { return 0; }
+
                 var chance = new BigRational( this.Successes, total );
+
                 return ( Single )chance;
             }
             catch ( DivideByZeroException exception ) {
                 exception.More();
+
                 return 0;
             }
         }

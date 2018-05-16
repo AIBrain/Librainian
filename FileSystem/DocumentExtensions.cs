@@ -1,18 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "DocumentExtensions.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/DocumentExtensions.cs" was last cleaned by Protiguous on 2018/05/08 at 10:32 PM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/DocumentExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:41 PM.
 
 namespace Librainian.FileSystem {
 
@@ -30,13 +48,13 @@ namespace Librainian.FileSystem {
     public static class DocumentExtensions {
 
         /// <summary>
-        /// The characters not allowed in file names.
+        ///     The characters not allowed in file names.
         /// </summary>
         [NotNull]
         public static readonly Char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
 
         /// <summary>
-        /// I hope this works the way I need it to: allocate one per thread and reuse it many times.
+        ///     I hope this works the way I need it to: allocate one per thread and reuse it many times.
         /// </summary>
         private static ThreadLocal<Char[]> Buffers { get; } = new ThreadLocal<Char[]>( () => new Char[BufferSize], true );
 
@@ -46,6 +64,7 @@ namespace Librainian.FileSystem {
             using ( var reader = new StreamReader( source.FullPathWithFileName ) ) {
                 using ( var writer = new StreamWriter( destination.FullPathWithFileName, false ) ) {
                     Int32 numRead;
+
                     while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ) != 0 ) {
                         await writer.WriteAsync( buffer, 0, numRead ).ConfigureAwait( false );
                         var bytesCopied = ( UInt64 )numRead;
@@ -60,7 +79,7 @@ namespace Librainian.FileSystem {
         }
 
         /// <summary>
-        /// Returns the <paramref name="filename"/> with any invalid chars removed.
+        ///     Returns the <paramref name="filename" /> with any invalid chars removed.
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
@@ -70,15 +89,13 @@ namespace Librainian.FileSystem {
 
             var sb = new StringBuilder( filename.Length );
 
-            foreach ( var c in filename.Where( c => !InvalidFileNameChars.Contains( c ) ) ) {
-                sb.Append( c );
-            }
+            foreach ( var c in filename.Where( c => !InvalidFileNameChars.Contains( c ) ) ) { sb.Append( c ); }
 
             return sb.ToString();
         }
 
         /// <summary>
-        /// Any result less than 1 is an error of some sort.
+        ///     Any result less than 1 is an error of some sort.
         /// </summary>
         /// <param name="source">              </param>
         /// <param name="destination">         </param>
@@ -89,94 +106,72 @@ namespace Librainian.FileSystem {
         /// <returns></returns>
         public static async Task<ResultCode> CloneAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, Boolean deleteSource, IProgress<Single> progress = null,
             IProgress<TimeSpan> eta = null ) {
-            if ( source is null ) {
-                throw new ArgumentNullException( nameof( source ) );
-            }
+            if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
 
-            if ( destination is null ) {
-                throw new ArgumentNullException( nameof( destination ) );
-            }
+            if ( destination is null ) { throw new ArgumentNullException( nameof( destination ) ); }
 
             try {
                 var begin = StopWatch.StartNew();
 
-                if ( !source.Exists() ) {
-                    return ResultCode.FailureSourceDoesNotExist;
-                }
+                if ( !source.Exists() ) { return ResultCode.FailureSourceDoesNotExist; }
 
-                if ( overwriteDestination && destination.Exists() ) {
-                    destination.Delete();
-                }
+                if ( overwriteDestination && destination.Exists() ) { destination.Delete(); }
 
                 var sourceInfo = source.Info;
                 var sourceLength = source.Size();
 
-                if ( !sourceLength.HasValue ) {
-                    return ResultCode.FailureSourceIsEmpty;
-                }
+                if ( !sourceLength.HasValue ) { return ResultCode.FailureSourceIsEmpty; }
 
                 var bytesToBeCopied = ( Single )sourceLength.Value;
                 UInt64 bytesCopied = 0;
 
                 var buffer = Buffers.Value;
 
-                try {
-                    await InternalCopyWithProgress( source, destination, progress, eta, buffer, bytesToBeCopied, begin ).ConfigureAwait( false );
-                }
+                try { await InternalCopyWithProgress( source, destination, progress, eta, buffer, bytesToBeCopied, begin ).ConfigureAwait( false ); }
                 catch ( Exception exception ) {
                     exception.More();
+
                     return ResultCode.FailureOnCopy;
                 }
 
-                if ( !destination.Exists() ) {
-                    return ResultCode.FailureDestinationDoesNotExist;
-                }
+                if ( !destination.Exists() ) { return ResultCode.FailureDestinationDoesNotExist; }
 
-                if ( bytesCopied != ( UInt64 )bytesToBeCopied ) {
-                    return ResultCode.FailureDestinationSizeIsDifferent;
-                }
+                if ( bytesCopied != ( UInt64 )bytesToBeCopied ) { return ResultCode.FailureDestinationSizeIsDifferent; }
 
-                try {
-                    File.SetAttributes( destination.FullPathWithFileName, sourceInfo.Attributes );
-                }
+                try { File.SetAttributes( destination.FullPathWithFileName, sourceInfo.Attributes ); }
                 catch ( Exception exception ) {
                     exception.More();
+
                     return ResultCode.FailureUnableToSetFileAttributes;
                 }
 
-                try {
-                    File.SetCreationTimeUtc( destination.FullPathWithFileName, sourceInfo.CreationTimeUtc );
-                }
+                try { File.SetCreationTimeUtc( destination.FullPathWithFileName, sourceInfo.CreationTimeUtc ); }
                 catch ( Exception exception ) {
                     exception.More();
+
                     return ResultCode.FailureUnableToSetFileCreationTime;
                 }
 
-                try {
-                    File.SetLastWriteTimeUtc( destination.FullPathWithFileName, sourceInfo.LastWriteTimeUtc );
-                }
+                try { File.SetLastWriteTimeUtc( destination.FullPathWithFileName, sourceInfo.LastWriteTimeUtc ); }
                 catch ( Exception exception ) {
                     exception.More();
+
                     return ResultCode.FailureUnableToSetLastWriteTime;
                 }
 
-                try {
-                    File.SetLastAccessTimeUtc( destination.FullPathWithFileName, sourceInfo.LastAccessTimeUtc );
-                }
+                try { File.SetLastAccessTimeUtc( destination.FullPathWithFileName, sourceInfo.LastAccessTimeUtc ); }
                 catch ( Exception exception ) {
                     exception.More();
+
                     return ResultCode.FailureUnableToSetLastAccessTime;
                 }
 
-                if ( !deleteSource ) {
-                    return ResultCode.Success;
-                }
+                if ( !deleteSource ) { return ResultCode.Success; }
 
-                try {
-                    File.Delete( source.FullPathWithFileName );
-                }
+                try { File.Delete( source.FullPathWithFileName ); }
                 catch ( Exception exception ) {
                     exception.More();
+
                     return ResultCode.FailureUnableToDeleteSourceDocument;
                 }
 
@@ -184,6 +179,7 @@ namespace Librainian.FileSystem {
             }
             catch ( Exception exception ) {
                 exception.More();
+
                 return ResultCode.FailureUnknown;
             }
         }

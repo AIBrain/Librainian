@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "EFV.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/EFV.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/EFV.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Graphics.Moving {
 
@@ -39,6 +53,7 @@ namespace Librainian.Graphics.Moving {
     /// </remarks>
     [JsonObject]
     public class Efv {
+
         public static readonly String Extension = ".efv";
 
         /// <summary>Human readable file header.</summary>
@@ -56,62 +71,54 @@ namespace Librainian.Graphics.Moving {
 
         /// <summary>Checksum guard</summary>
         [JsonProperty]
-        public UInt64 Checksum {
-            get; set;
-        }
+        public UInt64 Checksum { get; set; }
 
         [JsonProperty]
-        public UInt16 Height {
-            get; set;
-        }
+        public UInt16 Height { get; set; }
 
         [JsonProperty]
-        public UInt16 Width {
-            get; set;
-        }
+        public UInt16 Width { get; set; }
 
         public Boolean Add( Pixelyx pixelyx ) {
             var rgbMatchesJustNotTimestamp = this.Pixels.Where( pair => Pixelyx.Equal( pair.Value, pixelyx ) );
 
             foreach ( var pair in rgbMatchesJustNotTimestamp ) {
-                if ( null == this.Dopples[pixelyx.Timestamp] ) {
-                    this.Dopples[pixelyx.Timestamp] = new List<UInt64>();
-                }
+                if ( null == this.Dopples[pixelyx.Timestamp] ) { this.Dopples[pixelyx.Timestamp] = new List<UInt64>(); }
+
                 this.Dopples[pixelyx.Timestamp].Add( pair.Value.Timestamp );
             }
 
             this.Pixels[pixelyx.Timestamp] = pixelyx;
+
             return true;
         }
 
         public Int32 CalculateChecksum() {
             var sum = 0;
+
             foreach ( var pixelyx in this.Pixels ) {
-                unchecked {
-                    sum += pixelyx.GetHashCode();
-                }
+                unchecked { sum += pixelyx.GetHashCode(); }
             }
+
             return this.Pixels.Count + sum;
         }
 
-        public async Task<UInt64> CalculateChecksumAsync() => await Task.Run( () => {
-            unchecked {
-                return ( UInt64 )Hashing.GetHashCodes( this.Pixels );
-            }
-        } );
+        public async Task<UInt64> CalculateChecksumAsync() =>
+            await Task.Run( () => {
+                unchecked { return ( UInt64 )Hashing.GetHashCodes( this.Pixels ); }
+            } );
 
         [CanBeNull]
         public Pixelyx Get( UInt64 index ) => this.Pixels.TryGetValue( index, out var pixelyx ) ? pixelyx : null;
 
         [CanBeNull]
         public Pixelyx Get( UInt16 x, UInt16 y ) {
-            if ( x == 0 ) {
-                throw new ArgumentException( "x" );
-            }
-            if ( y == 0 ) {
-                throw new ArgumentException( "y" );
-            }
+            if ( x == 0 ) { throw new ArgumentException( "x" ); }
+
+            if ( y == 0 ) { throw new ArgumentException( "y" ); }
+
             var index = ( UInt64 )( this.Height * y + x );
+
             return this.Get( index );
         }
     }

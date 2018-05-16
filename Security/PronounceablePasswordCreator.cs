@@ -1,19 +1,36 @@
-// Copyright 2018 Protiguous
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "PronounceablePasswordCreator.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations, royalties, and licenses can be paid via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/PronounceablePasswordCreator.cs" was last cleaned by Protiguous on 2018/05/06 at 2:22 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/PronounceablePasswordCreator.cs" was last cleaned by Protiguous on 2018/05/15 at 10:50 PM.
 
 namespace Librainian.Security {
 
@@ -58,13 +75,12 @@ namespace Librainian.Security {
                 for ( c2 = 0; c2 < 26 && !finished; c2++ ) {
                     for ( c3 = 0; c3 < 26 && !finished; c3++ ) {
                         sum += GpwData.Get( i1: c1, i2: c2, i3: c3 );
-                        if ( sum <= weightedRandom ) {
-                            continue;
-                        }
 
-                        password.Append( value: ParsingExtensions.EnglishAlphabetLowercase[index: c1] );
-                        password.Append( value: ParsingExtensions.EnglishAlphabetLowercase[index: c2] );
-                        password.Append( value: ParsingExtensions.EnglishAlphabetLowercase[index: c3] );
+                        if ( sum <= weightedRandom ) { continue; }
+
+                        password.Append( ParsingExtensions.EnglishAlphabetLowercase[index: c1] );
+                        password.Append( ParsingExtensions.EnglishAlphabetLowercase[index: c2] );
+                        password.Append( ParsingExtensions.EnglishAlphabetLowercase[index: c3] );
                         finished = true;
                     }
                 }
@@ -72,19 +88,16 @@ namespace Librainian.Security {
 
             // Now do a random walk - starting at the 4th position as just done 3 above.
             var nchar = 3;
+
             while ( nchar < requiredLength ) {
-                c1 = ParsingExtensions.EnglishAlphabetLowercase.IndexOf( value: password[index: nchar - 2] );
-                c2 = ParsingExtensions.EnglishAlphabetLowercase.IndexOf( value: password[index: nchar - 1] );
+                c1 = ParsingExtensions.EnglishAlphabetLowercase.IndexOf( password[index: nchar - 2] );
+                c2 = ParsingExtensions.EnglishAlphabetLowercase.IndexOf( password[index: nchar - 1] );
 
                 sum = 0;
 
-                for ( c3 = 0; c3 < 26; c3++ ) {
-                    sum += GpwData.Get( i1: c1, i2: c2, i3: c3 );
-                }
+                for ( c3 = 0; c3 < 26; c3++ ) { sum += GpwData.Get( i1: c1, i2: c2, i3: c3 ); }
 
-                if ( sum == 0 ) {
-                    break;
-                }
+                if ( sum == 0 ) { break; }
 
                 weightedRandom = ( Int64 )( Randem.NextDouble() * sum );
 
@@ -92,11 +105,11 @@ namespace Librainian.Security {
 
                 for ( c3 = 0; c3 < 26; c3++ ) {
                     sum += GpwData.Get( i1: c1, i2: c2, i3: c3 );
-                    if ( sum <= weightedRandom ) {
-                        continue;
-                    }
 
-                    password.Append( value: ParsingExtensions.EnglishAlphabetLowercase[index: c3] );
+                    if ( sum <= weightedRandom ) { continue; }
+
+                    password.Append( ParsingExtensions.EnglishAlphabetLowercase[index: c3] );
+
                     break;
                 }
 
@@ -124,7 +137,7 @@ namespace Librainian.Security {
                 words.Add( item: word );
             }
 
-            return String.Join( separator: " ", value: words.ToArray() );
+            return String.Join( separator: " ", words.ToArray() );
         }
     }
 }

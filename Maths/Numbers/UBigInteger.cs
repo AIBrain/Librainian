@@ -1,25 +1,39 @@
-// Copyright 2018 Protiguous.
-// 
-// This notice must be kept visible in the source.
-// 
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
-// 
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
-// 
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-// 
-// Contact me by email if you have any questions or helpful criticism.
-// 
-// "Librainian/UBigInteger.cs" was last cleaned by Protiguous on 2018/01/31 at 6:18 PM
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
+//
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
+//
+// =========================================================
+// This section of source code, "UBigInteger.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
+//
+// (We try to avoid that from happening, but it does happen.)
+//
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/UBigInteger.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
 
-namespace Librainian.Maths.Numbers
-{
+namespace Librainian.Maths.Numbers {
+
     using System;
     using System.Globalization;
     using System.Numerics;
@@ -32,64 +46,59 @@ namespace Librainian.Maths.Numbers
     ///     <para>Unsigned biginteger class.</para>
     /// </summary>
     [Immutable]
-    public struct UBigInteger : IComparable, IComparable<UBigInteger>
-    {
+    public struct UBigInteger : IComparable, IComparable<UBigInteger> {
+
+        private readonly BigInteger _internalValue;
+
         /// <summary>
         ///     <para>The lowest <see cref="UBigInteger" /> that is higher than <see cref="Zero" />.</para>
         ///     <para>Should be "1".</para>
         /// </summary>
-        public static readonly UBigInteger Epsilon = new UBigInteger( value: 1 );
+        public static readonly UBigInteger Epsilon = new UBigInteger( 1 );
 
         /// <summary>1</summary>
-        public static readonly UBigInteger One = new UBigInteger( value: 1 );
+        public static readonly UBigInteger One = new UBigInteger( 1 );
 
         /// <summary>2</summary>
-        public static readonly UBigInteger Two = new UBigInteger( value: 2 );
+        public static readonly UBigInteger Two = new UBigInteger( 2 );
 
         /// <summary>0</summary>
-        public static readonly UBigInteger Zero = new UBigInteger( value: 0 );
+        public static readonly UBigInteger Zero = new UBigInteger( 0 );
 
-        private readonly BigInteger _internalValue;
+        private UBigInteger( BigInteger value ) {
+            value.Should().BeGreaterOrEqualTo( expected: BigInteger.Zero );
+
+            if ( value < BigInteger.Zero ) { throw new ArgumentOutOfRangeException(); }
+
+            this._internalValue = value;
+        }
 
         public UBigInteger( UInt64 value ) => this._internalValue = value;
 
         public UBigInteger( [NotNull] Byte[] bytes ) {
+
             // http: //stackoverflow.com/questions/5649190/byte-to-unsigned-biginteger
-            if ( bytes is null ) {
-                throw new ArgumentNullException(nameof( bytes ) );
-            }
+            if ( bytes is null ) { throw new ArgumentNullException( nameof( bytes ) ); }
 
             var bytesWith00Attheendnd = new Byte[bytes.Length + 1];
             bytes.CopyTo( array: bytesWith00Attheendnd, index: 0 );
             bytesWith00Attheendnd[bytes.Length] = 0;
-            this._internalValue = new BigInteger( value: bytesWith00Attheendnd );
+            this._internalValue = new BigInteger( bytesWith00Attheendnd );
 
             this._internalValue.Should().BeGreaterOrEqualTo( expected: 0 );
 
-            if ( this._internalValue < 0 ) {
-                throw new ArgumentOutOfRangeException();
-            }
+            if ( this._internalValue < 0 ) { throw new ArgumentOutOfRangeException(); }
         }
 
         public UBigInteger( Int64 value ) {
             value.Should().BeGreaterOrEqualTo( expected: 0 );
-            if ( value < 0 ) {
-                throw new ArgumentOutOfRangeException();
-            }
+
+            if ( value < 0 ) { throw new ArgumentOutOfRangeException(); }
 
             this._internalValue = value;
         }
 
-        private UBigInteger( BigInteger value ) {
-            value.Should().BeGreaterOrEqualTo( expected: BigInteger.Zero );
-            if ( value < BigInteger.Zero ) {
-                throw new ArgumentOutOfRangeException();
-            }
-
-            this._internalValue = value;
-        }
-
-        public static UBigInteger Add( UBigInteger left, UBigInteger right ) => new UBigInteger( value: BigInteger.Add( left: left._internalValue, right: right._internalValue ) );
+        public static UBigInteger Add( UBigInteger left, UBigInteger right ) => new UBigInteger( BigInteger.Add( left: left._internalValue, right: right._internalValue ) );
 
         public static explicit operator Decimal( UBigInteger number ) => ( Decimal )number._internalValue;
 
@@ -101,29 +110,30 @@ namespace Librainian.Maths.Numbers
 
         public static implicit operator BigInteger( UBigInteger number ) => number._internalValue;
 
-        public static implicit operator UBigInteger( Int64 number ) => new UBigInteger( value: number );
+        public static implicit operator UBigInteger( Int64 number ) => new UBigInteger( number );
 
-        public static UBigInteger Multiply( UBigInteger left, UBigInteger right ) => new UBigInteger( value: BigInteger.Multiply( left: left._internalValue, right: right._internalValue ) );
+        public static UBigInteger Multiply( UBigInteger left, UBigInteger right ) => new UBigInteger( BigInteger.Multiply( left: left._internalValue, right: right._internalValue ) );
 
-        public static UBigInteger operator -( UBigInteger number ) => new UBigInteger( value: -number._internalValue );
+        public static UBigInteger operator -( UBigInteger number ) => new UBigInteger( -number._internalValue );
 
-        public static UBigInteger operator -( UBigInteger left, UBigInteger right ) => new UBigInteger( value: left._internalValue - right._internalValue );
+        public static UBigInteger operator -( UBigInteger left, UBigInteger right ) => new UBigInteger( left._internalValue - right._internalValue );
 
-        public static UBigInteger operator %( UBigInteger dividend, UBigInteger divisor ) => new UBigInteger( value: dividend._internalValue % divisor._internalValue );
+        public static UBigInteger operator %( UBigInteger dividend, UBigInteger divisor ) => new UBigInteger( dividend._internalValue % divisor._internalValue );
 
-        public static UBigInteger operator &( UBigInteger left, UBigInteger right ) => new UBigInteger( value: left._internalValue & right._internalValue );
+        public static UBigInteger operator &( UBigInteger left, UBigInteger right ) => new UBigInteger( left._internalValue & right._internalValue );
 
-        public static UBigInteger operator *( UBigInteger left, UBigInteger right ) => new UBigInteger( value: left._internalValue * right._internalValue );
+        public static UBigInteger operator *( UBigInteger left, UBigInteger right ) => new UBigInteger( left._internalValue * right._internalValue );
 
-        public static UBigInteger operator /( UBigInteger left, UBigInteger right ) => new UBigInteger( value: left._internalValue / right._internalValue );
+        public static UBigInteger operator /( UBigInteger left, UBigInteger right ) => new UBigInteger( left._internalValue / right._internalValue );
 
         public static Double operator /( Double left, UBigInteger right ) {
             right.Should().BeGreaterThan( expected: Zero );
-            var rational = new BigRational( numerator: new BigInteger( value: left ), denominator: right._internalValue );
+            var rational = new BigRational( numerator: new BigInteger( left ), denominator: right._internalValue );
+
             return ( Double )rational;
         }
 
-        public static UBigInteger operator +( UBigInteger left, UBigInteger right ) => new UBigInteger( value: left._internalValue + right._internalValue );
+        public static UBigInteger operator +( UBigInteger left, UBigInteger right ) => new UBigInteger( left._internalValue + right._internalValue );
 
         public static Boolean operator <( UBigInteger left, Int64 right ) => left._internalValue < right;
 
@@ -133,7 +143,7 @@ namespace Librainian.Maths.Numbers
 
         public static Boolean operator <( UInt64 left, UBigInteger right ) => left < right._internalValue;
 
-        public static UBigInteger operator <<( UBigInteger number, Int32 shift ) => new UBigInteger( value: number._internalValue << shift );
+        public static UBigInteger operator <<( UBigInteger number, Int32 shift ) => new UBigInteger( number._internalValue << shift );
 
         public static Boolean operator <=( UBigInteger left, UInt64 right ) => left._internalValue <= right;
 
@@ -152,24 +162,18 @@ namespace Librainian.Maths.Numbers
         public static Boolean operator >=( UBigInteger left, UBigInteger right ) => left._internalValue >= right._internalValue;
 
         public static UBigInteger Parse( [NotNull] String number, NumberStyles style ) {
-            if ( number is null ) {
-                throw new ArgumentNullException(nameof( number ) );
-            }
+            if ( number is null ) { throw new ArgumentNullException( nameof( number ) ); }
 
-            return new UBigInteger( value: BigInteger.Parse( value: number, style: style ) );
+            return new UBigInteger( BigInteger.Parse( number, style: style ) );
         }
 
-        public static UBigInteger Pow( UBigInteger number, Int32 exponent ) => new UBigInteger( value: BigInteger.Pow( value: number._internalValue, exponent: exponent ) );
+        public static UBigInteger Pow( UBigInteger number, Int32 exponent ) => new UBigInteger( BigInteger.Pow( number._internalValue, exponent: exponent ) );
 
         [Pure]
         public Int32 CompareTo( [NotNull] Object obj ) {
-            if ( obj is null ) {
-                throw new ArgumentNullException(nameof( obj ) );
-            }
+            if ( obj is null ) { throw new ArgumentNullException( nameof( obj ) ); }
 
-            if ( !( obj is UBigInteger ) ) {
-                throw new InvalidCastException();
-            }
+            if ( !( obj is UBigInteger ) ) { throw new InvalidCastException(); }
 
             return this._internalValue.CompareTo( other: ( UBigInteger )obj );
         }

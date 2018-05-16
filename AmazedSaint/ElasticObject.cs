@@ -1,17 +1,36 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "ElasticObject.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license
-// has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "ElasticObject.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/ElasticObject.cs" was last cleaned by Protiguous on 2018/05/15 at 1:28 AM.
+// "Librainian/Librainian/ElasticObject.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
 
 namespace Librainian.AmazedSaint {
 
@@ -23,7 +42,7 @@ namespace Librainian.AmazedSaint {
     using System.Linq.Expressions;
 
     /// <summary>
-    /// See http://amazedsaint.blogspot.com/2010/02/introducing-elasticobject-for-net-40.html for details
+    ///     See http://amazedsaint.blogspot.com/2010/02/introducing-elasticobject-for-net-40.html for details
     /// </summary>
     public class ElasticObject : DynamicObject, IElasticHierarchyWrapper, INotifyPropertyChanged {
 
@@ -47,7 +66,7 @@ namespace Librainian.AmazedSaint {
         }
 
         /// <summary>
-        /// Fully qualified name
+        ///     Fully qualified name
         /// </summary>
         public String InternalFullName {
             get {
@@ -88,7 +107,7 @@ namespace Librainian.AmazedSaint {
         private void OnPropertyChanged( String prop ) => this.PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( prop ) );
 
         /// <summary>
-        /// Add a member to this element, with the specified value
+        ///     Add a member to this element, with the specified value
         /// </summary>
         /// <param name="memberName"></param>
         /// <param name="value">     </param>
@@ -126,7 +145,7 @@ namespace Librainian.AmazedSaint {
         public void SetAttributeValue( String name, Object obj ) => this.ElasticProvider.SetAttributeValue( name, obj );
 
         /// <summary>
-        /// Interpret the invocation of a binary operation
+        ///     Interpret the invocation of a binary operation
         /// </summary>
         /// <param name="binder">todo: describe binder parameter on TryBinaryOperation</param>
         /// <param name="arg">   todo: describe arg parameter on TryBinaryOperation</param>
@@ -212,7 +231,7 @@ namespace Librainian.AmazedSaint {
         }
 
         /// <summary>
-        /// Handle the indexer operations
+        ///     Handle the indexer operations
         /// </summary>
         /// <param name="binder"> todo: describe binder parameter on TryGetIndex</param>
         /// <param name="indexes">todo: describe indexes parameter on TryGetIndex</param>
@@ -227,7 +246,7 @@ namespace Librainian.AmazedSaint {
         }
 
         /// <summary>
-        /// Catch a get member invocation
+        ///     Catch a get member invocation
         /// </summary>
         /// <param name="binder"></param>
         /// <param name="result"></param>
@@ -249,7 +268,7 @@ namespace Librainian.AmazedSaint {
         }
 
         /// <summary>
-        /// Interpret a method call
+        ///     Interpret a method call
         /// </summary>
         /// <param name="binder"></param>
         /// <param name="args">  </param>
@@ -264,7 +283,7 @@ namespace Librainian.AmazedSaint {
         }
 
         /// <summary>
-        /// Catch a set member invocation
+        ///     Catch a set member invocation
         /// </summary>
         /// <param name="binder">todo: describe binder parameter on TrySetMember</param>
         /// <param name="value"> todo: describe value parameter on TrySetMember</param>
@@ -287,7 +306,7 @@ namespace Librainian.AmazedSaint {
         }
 
         /// <summary>
-        /// Try the unary operation.
+        ///     Try the unary operation.
         /// </summary>
         /// <param name="binder">todo: describe binder parameter on TryUnaryOperation</param>
         /// <param name="result">todo: describe result parameter on TryUnaryOperation</param>

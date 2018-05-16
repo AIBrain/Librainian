@@ -1,33 +1,59 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "SpatialExtensions.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/SpatialExtensions.cs" was last cleaned by Protiguous on 2016/06/18 at 10:53 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/SpatialExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Spatial {
 
     using System;
+    using System.Numerics;
     using System.Windows;
     using System.Windows.Media.Media3D;
     using JetBrains.Annotations;
-    using Vector3 = System.Numerics.Vector3;
+    using Vector = System.Windows.Vector;
 
     public static class SpatialExtensions {
+
         public const Single TwoPi = ( Single )( Math.PI * 2 );
+
+        /// <summary>Returns the angle expressed in radians between -Pi and Pi.</summary>
+        [UsedImplicitly]
+        private static Single WrapAngle( Single radians ) {
+            while ( radians < -Math.PI ) { radians += TwoPi; }
+
+            while ( radians > Math.PI ) { radians -= TwoPi; }
+
+            return radians;
+        }
 
         public static T Clamp<T>( this T val, T min, T max ) where T : IComparable<T> => val.CompareTo( min ) < 0 ? min : ( val.CompareTo( max ) > 0 ? max : val );
 
@@ -46,6 +72,7 @@ namespace Librainian.Measurement.Spatial {
         public static Single CompassAngleLerp( this Single from, Single to, Single portion ) {
             var dif = To180Angle( to - from );
             dif *= Clamp01( portion );
+
             return To360Angle( from + dif );
         }
 
@@ -55,9 +82,11 @@ namespace Librainian.Measurement.Spatial {
             var dx = there.X - here.X;
             var dy = there.Y - here.Y;
             var angle = RadiansToDegrees( Math.Atan2( dy, dx ) );
+
             if ( angle < 0 ) {
                 angle += 360; //This is simular to doing 360 Math.Atan2(y1 - y2, x1 - x2) * (180 / Math.PI)
             }
+
             return angle;
         }
 
@@ -89,6 +118,7 @@ namespace Librainian.Measurement.Spatial {
         /// <returns></returns>
         public static Double MathAngleToCompassAngle( Double angle ) {
             angle = 90.0f - angle;
+
             return To360Angle( angle );
         }
 
@@ -99,12 +129,9 @@ namespace Librainian.Measurement.Spatial {
         /// <param name="byAmount"></param>
         /// <returns></returns>
         public static Degrees RotateLeft( this Degrees degrees, Single byAmount = 1 ) {
-            if ( Single.IsNaN( byAmount ) ) {
-                return degrees;
-            }
-            if ( Single.IsInfinity( byAmount ) ) {
-                return degrees;
-            }
+            if ( Single.IsNaN( byAmount ) ) { return degrees; }
+
+            if ( Single.IsInfinity( byAmount ) ) { return degrees; }
 
             return degrees - byAmount;
         }
@@ -114,12 +141,9 @@ namespace Librainian.Measurement.Spatial {
         /// <param name="byAmount"></param>
         /// <returns></returns>
         public static Degrees RotateRight( this Degrees degrees, Single byAmount = 1 ) {
-            if ( Single.IsNaN( byAmount ) ) {
-                return degrees;
-            }
-            if ( Single.IsInfinity( byAmount ) ) {
-                return degrees;
-            }
+            if ( Single.IsNaN( byAmount ) ) { return degrees; }
+
+            if ( Single.IsInfinity( byAmount ) ) { return degrees; }
 
             return degrees + byAmount;
         }
@@ -130,12 +154,10 @@ namespace Librainian.Measurement.Spatial {
         /// <param name="angle"></param>
         /// <returns></returns>
         public static Single To180Angle( this Single angle ) {
-            while ( angle < -180.0f ) {
-                angle += 360.0f;
-            }
-            while ( angle >= 180.0f ) {
-                angle -= 360.0f;
-            }
+            while ( angle < -180.0f ) { angle += 360.0f; }
+
+            while ( angle >= 180.0f ) { angle -= 360.0f; }
+
             return angle;
         }
 
@@ -146,6 +168,7 @@ namespace Librainian.Measurement.Spatial {
             angles.X = To180Angle( angles.X );
             angles.Y = To180Angle( angles.Y );
             angles.Z = To180Angle( angles.Z );
+
             return angles;
         }
 
@@ -155,12 +178,10 @@ namespace Librainian.Measurement.Spatial {
         /// <param name="angle"></param>
         /// <returns></returns>
         public static Double To360Angle( this Double angle ) {
-            while ( angle < 0.0 ) {
-                angle += 360.0;
-            }
-            while ( angle >= 360.0 ) {
-                angle -= 360.0;
-            }
+            while ( angle < 0.0 ) { angle += 360.0; }
+
+            while ( angle >= 360.0 ) { angle -= 360.0; }
+
             return angle;
         }
 
@@ -170,12 +191,10 @@ namespace Librainian.Measurement.Spatial {
         /// <param name="angle"></param>
         /// <returns></returns>
         public static Single To360Angle( this Single angle ) {
-            while ( angle < 0.0f ) {
-                angle += 360.0f;
-            }
-            while ( angle >= 360.0f ) {
-                angle -= 360.0f;
-            }
+            while ( angle < 0.0f ) { angle += 360.0f; }
+
+            while ( angle >= 360.0f ) { angle -= 360.0f; }
+
             return angle;
         }
 
@@ -186,6 +205,7 @@ namespace Librainian.Measurement.Spatial {
             angles.X = To360Angle( angles.X );
             angles.Y = To360Angle( angles.Y );
             angles.Z = To360Angle( angles.Z );
+
             return angles;
         }
 
@@ -208,7 +228,8 @@ namespace Librainian.Measurement.Spatial {
         ///     Calculates the angle that an object should face, given its position, its target's
         ///     position, its current angle, and its maximum turning speed.
         /// </summary>
-        public static Single TurnToFace( this Point3D position, Point3D faceThis, Single currentAngle, Single turnSpeed ) => TurnToFace( new Vector( position.X, position.Y ), new Vector( faceThis.X, faceThis.Y ), currentAngle, turnSpeed );
+        public static Single TurnToFace( this Point3D position, Point3D faceThis, Single currentAngle, Single turnSpeed ) =>
+            TurnToFace( new Vector( position.X, position.Y ), new Vector( faceThis.X, faceThis.Y ), currentAngle, turnSpeed );
 
         /// <summary>
         ///     Calculates the angle that an object should face, given its position, its target's
@@ -249,18 +270,6 @@ namespace Librainian.Measurement.Spatial {
             // using WrapAngle again.
             //return WrapAngle( currentAngle + difference );
             return To360Angle( currentAngle + difference );
-        }
-
-        /// <summary>Returns the angle expressed in radians between -Pi and Pi.</summary>
-        [UsedImplicitly]
-        private static Single WrapAngle( Single radians ) {
-            while ( radians < -Math.PI ) {
-                radians += TwoPi;
-            }
-            while ( radians > Math.PI ) {
-                radians -= TwoPi;
-            }
-            return radians;
         }
     }
 }

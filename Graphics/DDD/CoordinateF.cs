@@ -1,27 +1,42 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "CoordinateF.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Coordinate.cs" was last cleaned by Protiguous on 2016/07/08 at 9:28 AM
+// "Librainian/Librainian/CoordinateF.cs" was last cleaned by Protiguous on 2018/05/15 at 10:42 PM.
 
 namespace Librainian.Graphics.DDD {
 
     using System;
     using System.Diagnostics;
     using System.Drawing;
-    using System.Runtime.CompilerServices;
     using Extensions;
     using Maths;
     using Maths.Ranges;
@@ -29,7 +44,7 @@ namespace Librainian.Graphics.DDD {
     using static Maths.Hashing;
 
     /// <summary>
-    /// <para>A 3D point, with <see cref="X"/> , <see cref="Y"/> , and <see cref="Z"/> (as <see cref="Single"/>).</para>
+    ///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="float" />).</para>
     /// </summary>
     /// <remarks>Code towards speed.</remarks>
     [Immutable]
@@ -38,13 +53,12 @@ namespace Librainian.Graphics.DDD {
     public class CoordinateF : IEquatable<CoordinateF>, IComparable<CoordinateF> {
 
         /// <summary>
-        /// Initialize with a random point.
+        ///     Initialize with a random point.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="z"></param>
-        public CoordinateF( SingleRange x, SingleRange y, SingleRange z ) : this( x: Randem.NextFloat( x.Min, x.Max ), y: Randem.NextFloat( y.Min, y.Max ), z: Randem.NextFloat( z.Min, z.Max ) ) {
-        }
+        public CoordinateF( SingleRange x, SingleRange y, SingleRange z ) : this( x: Randem.NextFloat( x.Min, x.Max ), y: Randem.NextFloat( y.Min, y.Max ), z: Randem.NextFloat( z.Min, z.Max ) ) { }
 
         /// <summary>
         /// </summary>
@@ -65,67 +79,51 @@ namespace Librainian.Graphics.DDD {
         public static CoordinateF Zero { get; } = new CoordinateF( x: 0, y: 0, z: 0 );
 
         [JsonProperty]
-        public Single SquareLength {
-            get;
-        }
+        public Single SquareLength { get; }
 
         [JsonProperty]
-        public Single X {
-            get;
-        }
+        public Single X { get; }
 
         [JsonProperty]
-        public Single Y {
-            get;
-        }
+        public Single Y { get; }
 
         [JsonProperty]
-        public Single Z {
-            get;
-        }
+        public Single Z { get; }
 
         /// <summary>
-        /// Calculates the distance between two Coordinates.
+        ///     Calculates the distance between two Coordinates.
         /// </summary>
         public static Single Distance( CoordinateF left, CoordinateF rhs ) {
             var num1 = left.X - rhs.X;
             var num2 = left.Y - rhs.Y;
             var num3 = left.Z - rhs.Z;
+
             return ( Single )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
         }
 
         /// <summary>
-        /// static comparison.
+        ///     static comparison.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="rhs"> </param>
         /// <returns></returns>
-
         public static Boolean Equals( CoordinateF left, CoordinateF rhs ) {
-            if ( ReferenceEquals( left, rhs ) ) {
-                return true;
-            }
-            if ( left is null ) {
-                return false;
-            }
-            if ( rhs is null ) {
-                return false;
-            }
-            if ( left.X < rhs.X ) {
-                return false;
-            }
-            if ( left.X > rhs.X ) {
-                return false;
-            }
-            if ( left.Y < rhs.Y ) {
-                return false;
-            }
-            if ( left.Y > rhs.Y ) {
-                return false;
-            }
-            if ( left.Z < rhs.Z ) {
-                return false;
-            }
+            if ( ReferenceEquals( left, rhs ) ) { return true; }
+
+            if ( left is null ) { return false; }
+
+            if ( rhs is null ) { return false; }
+
+            if ( left.X < rhs.X ) { return false; }
+
+            if ( left.X > rhs.X ) { return false; }
+
+            if ( left.Y < rhs.Y ) { return false; }
+
+            if ( left.Y > rhs.Y ) { return false; }
+
+            if ( left.Z < rhs.Z ) { return false; }
+
             return !( left.Z > rhs.Z );
         }
 
@@ -134,10 +132,12 @@ namespace Librainian.Graphics.DDD {
         public static implicit operator PointF( CoordinateF coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
         /// <summary>
-        /// Returns a new Coordinate as a unit Coordinate. The result is a Coordinate one unit in length pointing in the same direction as the original Coordinate.
+        ///     Returns a new Coordinate as a unit Coordinate. The result is a Coordinate one unit in length pointing in the same
+        ///     direction as the original Coordinate.
         /// </summary>
         public static CoordinateF Normalize( CoordinateF coordinate ) {
             var num = 1.0f / coordinate.SquareLength;
+
             return new CoordinateF( coordinate.X * num, coordinate.Y * num, coordinate.Z * num );
         }
 
@@ -148,31 +148,36 @@ namespace Librainian.Graphics.DDD {
         public static Boolean operator ==( CoordinateF left, CoordinateF rhs ) => Equals( left: left, rhs: rhs );
 
         /// <summary>
-        /// Compares the current object with another object of the same type.
+        ///     Compares the current object with another object of the same type.
         /// </summary>
         /// <returns>
-        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less than the <paramref
-        /// name="other"/> parameter. Zero This object is equal to <paramref name="other"/> . Greater than zero This object is greater than <paramref name="other"/> .
+        ///     A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the
+        ///     following meanings: Value Meaning Less than zero This object is less than the
+        ///     <paramref
+        ///         name="other" />
+        ///     parameter. Zero This object is equal to <paramref name="other" /> . Greater than zero This object is greater than
+        ///     <paramref name="other" /> .
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         public Int32 CompareTo( CoordinateF other ) => this.SquareLength.CompareTo( other.SquareLength );
 
         public Double DistanceTo( CoordinateF to ) {
             if ( to == default ) {
-                return 0;   //BUG ?
+                return 0; //BUG ?
             }
+
             var dx = this.X - to.X;
             var dy = this.Y - to.Y;
             var dz = this.Z - to.Z;
+
             return Math.Sqrt( dx * dx + dy * dy + dz * dz );
         }
 
         public Boolean Equals( CoordinateF other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj is null ) {
-                return false;
-            }
+            if ( obj is null ) { return false; }
+
             return obj is CoordinateF f && Equals( this, f );
         }
 

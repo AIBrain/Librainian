@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "IniFile.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/INIFile.cs" was last cleaned by Protiguous on 2016/06/18 at 10:56 PM
+// "Librainian/Librainian/IniFile.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
 
 namespace Librainian.Persistence {
 
@@ -32,10 +48,11 @@ namespace Librainian.Persistence {
     using Parsing;
 
     /// <summary>
-    /// A text <see cref="Document"/> with <see cref="KeyValuePair{TKey,TValue}"/> under common Sections.
+    ///     A text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common Sections.
     /// </summary>
     [JsonObject]
     public class IniFile {
+
         private const String PairSeparator = "=";
 
         private const String SectionBegin = "[";
@@ -53,7 +70,7 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        /// Entire document dictionary is saved on any change.
+        ///     Entire document dictionary is saved on any change.
         /// </summary>
         /// <param name="autoSaveDocument"></param>
         public IniFile( Document autoSaveDocument ) : this() {
@@ -61,21 +78,18 @@ namespace Librainian.Persistence {
             this.Add( autoSaveDocument );
         }
 
-        public IniFile() {
-        }
+        public IniFile() { }
 
         [JsonProperty]
         [NotNull]
         private ConcurrentDictionary<String, ConcurrentDictionary<String, String>> Data { [DebuggerStepThrough] get; } = new ConcurrentDictionary<String, ConcurrentDictionary<String, String>>();
 
         /// <summary>
-        /// <para>WARNING: Set this value AFTER <see cref="Add(Document)"/>.</para>
-        /// <para>If <see cref="AutoSaveDocument"/> is set, the entire dictionary/text is saved on each change.</para>
+        ///     <para>WARNING: Set this value AFTER <see cref="Add(Document)" />.</para>
+        ///     <para>If <see cref="AutoSaveDocument" /> is set, the entire dictionary/text is saved on each change.</para>
         /// </summary>
         [JsonProperty]
-        public Document AutoSaveDocument {
-            get; set;
-        }
+        public Document AutoSaveDocument { get; set; }
 
         public IEnumerable<String> Sections => this.Data.Keys;
 
@@ -83,18 +97,16 @@ namespace Librainian.Persistence {
             [DebuggerStepThrough]
             [CanBeNull]
             get {
-                if ( String.IsNullOrEmpty( section ) ) {
-                    return null;
-                }
-                if ( !this.Data.ContainsKey( section ) ) {
-                    return null;
-                }
+                if ( String.IsNullOrEmpty( section ) ) { return null; }
+
+                if ( !this.Data.ContainsKey( section ) ) { return null; }
+
                 return this.Data.TryGetValue( section, out var result ) ? result : null;
             }
         }
 
         /// <summary>
-        /// If <see cref="AutoSaveDocument"/> is set, the entire dictionary/text is saved on each change.
+        ///     If <see cref="AutoSaveDocument" /> is set, the entire dictionary/text is saved on each change.
         /// </summary>
         /// <param name="section"></param>
         /// <param name="key">    </param>
@@ -103,43 +115,31 @@ namespace Librainian.Persistence {
             [DebuggerStepThrough]
             [CanBeNull]
             get {
-                if ( String.IsNullOrEmpty( section ) ) {
-                    return null;
-                }
-                if ( String.IsNullOrEmpty( key ) ) {
-                    return null;
-                }
+                if ( String.IsNullOrEmpty( section ) ) { return null; }
 
-                if ( !this.Data.ContainsKey( section ) ) {
-                    return null;
-                }
+                if ( String.IsNullOrEmpty( key ) ) { return null; }
+
+                if ( !this.Data.ContainsKey( section ) ) { return null; }
 
                 return this.Data[section].TryGetValue( key, out var value ) ? value : null;
             }
 
             [DebuggerStepThrough]
             set {
-                if ( String.IsNullOrEmpty( section ) ) {
-                    return;
-                }
-                if ( String.IsNullOrEmpty( key ) ) {
-                    return;
-                }
+                if ( String.IsNullOrEmpty( section ) ) { return; }
+
+                if ( String.IsNullOrEmpty( key ) ) { return; }
+
                 this.Add( section, new KeyValuePair<String, String>( key, value ) );
 
-                if ( null != this.AutoSaveDocument ) {
-                    this.Save( this.AutoSaveDocument );
-                }
+                if ( null != this.AutoSaveDocument ) { this.Save( this.AutoSaveDocument ); }
             }
         }
 
         private Boolean WriteSection( Document document, String section ) {
-            if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
-            }
-            if ( section is null ) {
-                throw new ArgumentNullException( nameof( section ) );
-            }
+            if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
+
+            if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
 
             if ( !this.Data.TryGetValue( section, out var dict ) ) {
                 return false; //section not found
@@ -148,29 +148,24 @@ namespace Librainian.Persistence {
             try {
                 using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
                     writer.Write( EncodeSection( section ) );
-                    foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) {
-                        writer.WriteLine( EncodePair( pair ) );
-                    }
+
+                    foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) { writer.WriteLine( EncodePair( pair ) ); }
+
                     writer.Write( Environment.NewLine );
                     writer.Flush();
                 }
 
                 return true;
             }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( Exception exception ) { exception.More(); }
 
             return false;
         }
 
         private async Task<Boolean> WriteSectionAsync( Document document, String section ) {
-            if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
-            }
-            if ( section is null ) {
-                throw new ArgumentNullException( nameof( section ) );
-            }
+            if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
+
+            if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
 
             try {
                 if ( !this.Data.TryGetValue( section, out var dict ) ) {
@@ -179,18 +174,16 @@ namespace Librainian.Persistence {
 
                 using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
                     writer.Write( EncodeSection( section ) );
-                    foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) {
-                        await writer.WriteAsync( EncodePair( pair ) );
-                    }
+
+                    foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) { await writer.WriteAsync( EncodePair( pair ) ); }
+
                     await writer.WriteLineAsync();
                     await writer.FlushAsync();
                 }
 
                 return true;
             }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( Exception exception ) { exception.More(); }
 
             return false;
         }
@@ -200,12 +193,8 @@ namespace Librainian.Persistence {
                 return false; //section not found
             }
 
-            try {
-                return true;
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            try { return true; }
+            catch ( Exception exception ) { exception.More(); }
 
             return false;
         }
@@ -215,52 +204,49 @@ namespace Librainian.Persistence {
 
         [DebuggerStepThrough]
         public static String EncodeSection( String section ) {
-            if ( section is null ) {
-                throw new ArgumentNullException( nameof( section ) );
-            }
+            if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
+
             return $"{SectionBegin}{section.Trim()}{SectionEnd}{Environment.NewLine}";
         }
 
         /// <summary>
-        /// (Trims whitespaces from section, key, and value.)
+        ///     (Trims whitespaces from section, key, and value.)
         /// </summary>
         /// <param name="section"></param>
         /// <param name="kvp">    </param>
         /// <returns></returns>
         public Boolean Add( String section, KeyValuePair<String, String> kvp ) {
-            if ( String.IsNullOrWhiteSpace( section ) ) {
-                throw new ArgumentException( "Argument is null or whitespace", nameof( section ) );
-            }
+            if ( String.IsNullOrWhiteSpace( section ) ) { throw new ArgumentException( "Argument is null or whitespace", nameof( section ) ); }
+
             section = section.Trim();
 
             var retries = 10;
             TryAgain:
+
             lock ( this.Data ) {
-                if ( !this.Data.ContainsKey( section ) ) {
-                    this.Data[section] = new ConcurrentDictionary<String, String>();
-                }
+                if ( !this.Data.ContainsKey( section ) ) { this.Data[section] = new ConcurrentDictionary<String, String>(); }
             }
+
             try {
                 this.Data[section][kvp.Key.Trim()] = kvp.Value.Trim();
+
                 return null == this.AutoSaveDocument || this.Save( this.AutoSaveDocument );
             }
             catch ( KeyNotFoundException exception ) {
                 retries--;
-                if ( retries.Any() ) {
-                    goto TryAgain;
-                }
+
+                if ( retries.Any() ) { goto TryAgain; }
+
                 exception.More();
             }
+
             return false;
         }
 
         public Boolean Add( Document document ) {
-            if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
-            }
-            if ( !document.Exists() ) {
-                return false;
-            }
+            if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
+
+            if ( !document.Exists() ) { return false; }
 
             try {
                 var lines = File.ReadLines( document.FullPathWithFileName ).Where( line => !String.IsNullOrWhiteSpace( line ) );
@@ -273,12 +259,14 @@ namespace Librainian.Persistence {
 
                 //file in use by another app
                 exception.More();
+
                 return false;
             }
             catch ( OutOfMemoryException exception ) {
 
                 //file is huge
                 exception.More();
+
                 return false;
             }
         }
@@ -292,15 +280,15 @@ namespace Librainian.Persistence {
         }
 
         public Boolean Add( [NotNull] IEnumerable<String> lines ) {
-            if ( lines is null ) {
-                throw new ArgumentNullException( nameof( lines ) );
-            }
+            if ( lines is null ) { throw new ArgumentNullException( nameof( lines ) ); }
+
             var counter = 0;
             var section = String.Empty;
 
             foreach ( var line in lines.Where( s => !s.IsNullOrEmpty() ).Select( aline => aline.Trim() ).Where( line => !line.IsNullOrWhiteSpace() ) ) {
                 if ( line.StartsWith( SectionBegin ) && line.EndsWith( SectionEnd ) ) {
                     section = line.Substring( SectionBegin.Length, line.Length - ( SectionBegin.Length + SectionEnd.Length ) ).Trim();
+
                     continue;
                 }
 
@@ -308,9 +296,8 @@ namespace Librainian.Persistence {
                     var pos = line.IndexOf( PairSeparator, StringComparison.Ordinal );
                     var key = line.Substring( 0, pos ).Trim();
                     var value = line.Substring( pos + PairSeparator.Length );
-                    if ( this.Add( section, new KeyValuePair<String, String>( key, value ) ) ) {
-                        counter++;
-                    }
+
+                    if ( this.Add( section, new KeyValuePair<String, String>( key, value ) ) ) { counter++; }
                 }
             }
 
@@ -318,7 +305,7 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        /// Return the entire structure as a JSON formatted String.
+        ///     Return the entire structure as a JSON formatted String.
         /// </summary>
         /// <returns></returns>
         public String AsJSON() {
@@ -338,86 +325,66 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        /// Removes all data from all sections.
+        ///     Removes all data from all sections.
         /// </summary>
         /// <returns></returns>
         public Boolean Clear() {
-            Parallel.ForEach( this.Data.Keys, section => {
-                this.TryRemove( section );
-            } );
+            Parallel.ForEach( this.Data.Keys, section => { this.TryRemove( section ); } );
+
             return !this.Data.Keys.Any();
         }
 
         /// <summary>
-        /// Save the data to the specified document, overwriting it by default.
+        ///     Save the data to the specified document, overwriting it by default.
         /// </summary>
         /// <param name="document"> </param>
         /// <param name="overwrite"></param>
         /// <returns></returns>
         public Boolean Save( Document document, Boolean overwrite = true ) {
-            if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
-            }
+            if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
 
             if ( document.Exists() ) {
-                if ( overwrite ) {
-                    document.Delete();
-                }
-                else {
-                    return false;
-                }
+                if ( overwrite ) { document.Delete(); }
+                else { return false; }
             }
 
-            foreach ( var section in this.Data.Keys.OrderBy( section => section ) ) {
-                this.WriteSection( document, section );
-            }
+            foreach ( var section in this.Data.Keys.OrderBy( section => section ) ) { this.WriteSection( document, section ); }
 
             return true;
         }
 
         /// <summary>
-        /// Save the data to the specified document, overwriting it by default.
+        ///     Save the data to the specified document, overwriting it by default.
         /// </summary>
         /// <param name="document"> </param>
         /// <param name="overwrite"></param>
         /// <returns></returns>
         public async Task<Boolean> SaveAsync( Document document, Boolean overwrite = true ) {
-            if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
-            }
+            if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
 
             if ( document.Exists() ) {
-                if ( overwrite ) {
-                    document.Delete();
-                }
-                else {
-                    return false;
-                }
+                if ( overwrite ) { document.Delete(); }
+                else { return false; }
             }
 
-            foreach ( var section in this.Data.Keys.OrderBy( section => section ) ) {
-                await this.WriteSectionAsync( document, section );
-            }
+            foreach ( var section in this.Data.Keys.OrderBy( section => section ) ) { await this.WriteSectionAsync( document, section ); }
 
             return false;
         }
 
         [DebuggerStepThrough]
         public Boolean TryRemove( String section ) {
-            if ( section is null ) {
-                throw new ArgumentNullException( nameof( section ) );
-            }
+            if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
+
             return this.Data.TryRemove( section, out var dict );
         }
 
         [DebuggerStepThrough]
         public Boolean TryRemove( String section, String key ) {
-            if ( section is null ) {
-                throw new ArgumentNullException( nameof( section ) );
-            }
-            if ( !this.Data.ContainsKey( section ) ) {
-                return false;
-            }
+            if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
+
+            if ( !this.Data.ContainsKey( section ) ) { return false; }
+
             return this.Data[section].TryRemove( key, out var value );
         }
     }

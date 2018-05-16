@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "DateSpan.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Class1.cs" was last cleaned by Protiguous on 2016/07/26 at 3:28 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/DateSpan.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -49,131 +63,94 @@ namespace Librainian.Measurement.Time {
                 end = temp;
             }
 
-	        {
-		        this.Years = end.Year - start.Year;
+            {
+                this.Years = end.Year - start.Year;
 
-		        if ( this.Years <= 0 ) { }
-		        else if ( end.Month < start.Month ) {
-			        this.Years--;
-		        }
-		        else if ( end.Month == start.Month ) {
-			        if ( end.Day >= start.Day ) {
-				        if ( end.Day != start.Day ) { }
-				        else if ( end.Hour < start.Hour ) {
-					        this.Years--;
-				        }
-				        else if ( end.Hour == start.Hour ) {
-					        if ( end.Minute >= start.Minute ) {
-						        if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
-						        else {
-							        this.Years--;
-						        }
-					        }
-					        else {
-						        this.Years--;
-					        }
-				        }
-			        }
-			        else {
-				        this.Years--;
-			        }
-		        }
-	        }
+                if ( this.Years <= 0 ) { }
+                else if ( end.Month < start.Month ) { this.Years--; }
+                else if ( end.Month == start.Month ) {
+                    if ( end.Day >= start.Day ) {
+                        if ( end.Day != start.Day ) { }
+                        else if ( end.Hour < start.Hour ) { this.Years--; }
+                        else if ( end.Hour == start.Hour ) {
+                            if ( end.Minute >= start.Minute ) {
+                                if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
+                                else { this.Years--; }
+                            }
+                            else { this.Years--; }
+                        }
+                    }
+                    else { this.Years--; }
+                }
+            }
+
             {
                 this.Months = end.Month - start.Month;
 
-                if ( end.Month < start.Month || end.Month <= start.Month && this.Years > 1 ) {
-                    this.Months = 12 - start.Month + end.Month;
-                }
+                if ( end.Month < start.Month || end.Month <= start.Month && this.Years > 1 ) { this.Months = 12 - start.Month + end.Month; }
 
-	            if ( this.Months <= 0 ) { }
-	            else if ( end.Day < start.Day ) {
-		            this.Months--;
-	            }
-	            else if ( end.Day == start.Day ) {
-		            if ( end.Hour < start.Hour ) {
-			            this.Months--;
-		            }
-		            else if ( end.Hour == start.Hour ) {
-			            if ( end.Minute >= start.Minute ) {
-				            if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
-				            else {
-					            this.Months--;
-				            }
-			            }
-			            else {
-				            this.Months--;
-			            }
-		            }
-	            }
+                if ( this.Months <= 0 ) { }
+                else if ( end.Day < start.Day ) { this.Months--; }
+                else if ( end.Day == start.Day ) {
+                    if ( end.Hour < start.Hour ) { this.Months--; }
+                    else if ( end.Hour == start.Hour ) {
+                        if ( end.Minute >= start.Minute ) {
+                            if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
+                            else { this.Months--; }
+                        }
+                        else { this.Months--; }
+                    }
+                }
             }
+
             {
                 this.Days = end.Day - start.Day;
 
-                if ( end.Day < start.Day ) {
-                    this.Days = DateTime.DaysInMonth( start.Year, start.Month ) - start.Day + end.Day;
-                }
+                if ( end.Day < start.Day ) { this.Days = DateTime.DaysInMonth( start.Year, start.Month ) - start.Day + end.Day; }
 
                 if ( this.Days > 0 ) {
-                    if ( end.Hour < start.Hour ) {
-                        this.Days--;
-                    }
+                    if ( end.Hour < start.Hour ) { this.Days--; }
                     else if ( end.Hour == start.Hour ) {
                         if ( end.Minute >= start.Minute ) {
-                            if ( end.Minute == start.Minute && end.Second < start.Second ) {
-                                this.Days--;
-                            }
+                            if ( end.Minute == start.Minute && end.Second < start.Second ) { this.Days--; }
                         }
-                        else {
-                            this.Days--;
-                        }
+                        else { this.Days--; }
                     }
 
                     this.Weeks = this.Days / 7;
 
                     this.Days = this.Days % 7;
 
-                    if ( !excludeEndDate ) {
-                        this.Days++;
-                    }
+                    if ( !excludeEndDate ) { this.Days++; }
                 }
             }
+
             {
                 this.Hours = end.Hour - start.Hour;
 
-                if ( end.Hour < start.Hour ) {
-                    this.Hours = 24 - start.Hour + end.Hour;
-                }
+                if ( end.Hour < start.Hour ) { this.Hours = 24 - start.Hour + end.Hour; }
 
-	            if ( this.Hours <= 0 ) { }
-	            else if ( end.Minute >= start.Minute ) {
-		            if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
-		            else {
-			            this.Hours--;
-		            }
-	            }
-	            else {
-		            this.Hours--;
-	            }
+                if ( this.Hours <= 0 ) { }
+                else if ( end.Minute >= start.Minute ) {
+                    if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
+                    else { this.Hours--; }
+                }
+                else { this.Hours--; }
             }
+
             {
                 this.Minutes = end.Minute - start.Minute;
 
-                if ( end.Minute < start.Minute ) {
-                    this.Minutes = 60 - start.Minute + end.Minute;
-                }
+                if ( end.Minute < start.Minute ) { this.Minutes = 60 - start.Minute + end.Minute; }
 
-	            if ( this.Minutes <= 0 || end.Second >= start.Second ) { }
-	            else {
-		            this.Minutes--;
-	            }
+                if ( this.Minutes <= 0 || end.Second >= start.Second ) { }
+                else { this.Minutes--; }
             }
+
             {
                 this.Seconds = end.Second - start.Second;
 
-                if ( end.Second < start.Second ) {
-                    this.Seconds = 60 - start.Second + end.Second;
-                }
+                if ( end.Second < start.Second ) { this.Seconds = 60 - start.Second + end.Second; }
             }
         }
 
@@ -185,50 +162,94 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     The number of discrete days occurring in this span
         /// </summary>
-        public Int32 Days {
-            get;
-        }
+        public Int32 Days { get; }
 
         /// <summary>
         ///     The number of discrete hours occurring in this span
         /// </summary>
-        public Int32 Hours {
-            get;
-        }
+        public Int32 Hours { get; }
 
         /// <summary>
         ///     The number of discrete minutes occurring in this span
         /// </summary>
-        public Int32 Minutes {
-            get;
-        }
+        public Int32 Minutes { get; }
 
         /// <summary>
         ///     The number of discrete months occurring in this span
         /// </summary>
-        public Int32 Months {
-            get;
-        }
+        public Int32 Months { get; }
 
         /// <summary>
         ///     The number of discrete seconds occurring in this span
         /// </summary>
-        public Int32 Seconds {
-            get;
-        }
+        public Int32 Seconds { get; }
 
         /// <summary>
         ///     The number of discrete weeks occurring in this span
         /// </summary>
-        public Int32 Weeks {
-            get;
-        }
+        public Int32 Weeks { get; }
 
         /// <summary>
         ///     The number of discrete years occurring in this span
         /// </summary>
-        public Int32 Years {
-            get;
+        public Int32 Years { get; }
+
+        private static Int64 CalculateDifference( DateInterval interval, DateTime start, DateTime end, Boolean excludeEndDate ) {
+            Int64 sum = 0;
+            var span = new DateSpan( start, end );
+
+            var differenceInDays = GetDifferenceInDays( start, span, excludeEndDate );
+
+            switch ( interval ) {
+                case DateInterval.Years:
+                    sum += span.Years;
+
+                    break;
+
+                case DateInterval.Months:
+
+                    if ( span.Years > 0 ) { sum += span.Years * 12; }
+
+                    sum += span.Months;
+                    sum += span.Weeks / 4; // Helps resolve lower resolution
+
+                    break;
+
+                case DateInterval.Weeks:
+                    sum = differenceInDays / 7;
+
+                    break;
+
+                case DateInterval.Days:
+                    sum = differenceInDays;
+
+                    break;
+
+                case DateInterval.Hours:
+                    sum = differenceInDays * 24;
+                    sum += span.Hours;
+
+                    break;
+
+                case DateInterval.Minutes:
+                    sum = differenceInDays * 24 * 60;
+                    sum += span.Hours * 60;
+                    sum += span.Minutes;
+
+                    break;
+
+                case DateInterval.Seconds:
+                    sum = differenceInDays * 24 * 60 * 60;
+                    sum += span.Hours * 60 * 60;
+                    sum += span.Minutes * 60;
+                    sum += span.Seconds;
+
+                    break;
+
+                default: throw new ArgumentOutOfRangeException( nameof( interval ) );
+            }
+
+            return sum;
         }
 
         /// <summary>
@@ -241,9 +262,10 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static Int64 GetDifference( DateInterval interval, DateTime start, DateTime end, Boolean excludeEndDate = false ) => CalculateDifference( interval, start, end, excludeEndDate );
 
-	    public static Int64 GetDifference( DateInterval interval, DateTimeOffset start, DateTimeOffset end, Boolean excludeEndDate = false ) => CalculateDifference( interval, start.DateTime, end.DateTime, excludeEndDate );
+        public static Int64 GetDifference( DateInterval interval, DateTimeOffset start, DateTimeOffset end, Boolean excludeEndDate = false ) =>
+            CalculateDifference( interval, start.DateTime, end.DateTime, excludeEndDate );
 
-	    public static Int64 GetDifferenceInDays( DateTime start, DateSpan span, Boolean excludeEndDate = true ) {
+        public static Int64 GetDifferenceInDays( DateTime start, DateSpan span, Boolean excludeEndDate = true ) {
             var sum = 0;
 
             if ( span.Years > 0 ) {
@@ -256,9 +278,9 @@ namespace Librainian.Measurement.Time {
             if ( span.Months > 0 ) {
                 for ( var i = 1; i <= span.Months; i++ ) {
                     var month = start.Month + i;
-                    if ( month >= 13 ) {
-                        month -= 12;
-                    }
+
+                    if ( month >= 13 ) { month -= 12; }
+
                     sum += DateTime.DaysInMonth( start.Year + span.Years, month );
                 }
             }
@@ -267,61 +289,7 @@ namespace Librainian.Measurement.Time {
 
             sum += span.Days;
 
-            if ( excludeEndDate ) {
-                sum--;
-            }
-
-            return sum;
-        }
-
-        private static Int64 CalculateDifference( DateInterval interval, DateTime start, DateTime end, Boolean excludeEndDate ) {
-            Int64 sum = 0;
-            var span = new DateSpan( start, end );
-
-            var differenceInDays = GetDifferenceInDays( start, span, excludeEndDate );
-
-            switch ( interval ) {
-                case DateInterval.Years:
-                    sum += span.Years;
-                    break;
-
-                case DateInterval.Months:
-                    if ( span.Years > 0 ) {
-                        sum += span.Years * 12;
-                    }
-                    sum += span.Months;
-                    sum += span.Weeks / 4; // Helps resolve lower resolution
-                    break;
-
-                case DateInterval.Weeks:
-                    sum = differenceInDays / 7;
-                    break;
-
-                case DateInterval.Days:
-                    sum = differenceInDays;
-                    break;
-
-                case DateInterval.Hours:
-                    sum = differenceInDays * 24;
-                    sum += span.Hours;
-                    break;
-
-                case DateInterval.Minutes:
-                    sum = differenceInDays * 24 * 60;
-                    sum += span.Hours * 60;
-                    sum += span.Minutes;
-                    break;
-
-                case DateInterval.Seconds:
-                    sum = differenceInDays * 24 * 60 * 60;
-                    sum += span.Hours * 60 * 60;
-                    sum += span.Minutes * 60;
-                    sum += span.Seconds;
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException( nameof( interval ) );
-            }
+            if ( excludeEndDate ) { sum--; }
 
             return sum;
         }

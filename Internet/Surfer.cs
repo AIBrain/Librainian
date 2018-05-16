@@ -1,20 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Surfer.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Surfer.cs" was last cleaned by Protiguous on 2016/06/18 at 10:52 PM
+// "Librainian/Librainian/Surfer.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Internet {
 
@@ -30,8 +46,11 @@ namespace Librainian.Internet {
     using Magic;
 
     public class Surfer : ABetterClassDispose {
+
         private readonly ReaderWriterLockSlim _downloadInProgressAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+
         private readonly ConcurrentBag<Uri> _pastUrls = new ConcurrentBag<Uri>();
+
         private readonly ConcurrentQueue<Uri> _urls = new ConcurrentQueue<Uri>();
 
         /// <remarks>Not thread safe.</remarks>
@@ -42,12 +61,8 @@ namespace Librainian.Internet {
         public Surfer( Action<DownloadStringCompletedEventArgs> onDownloadStringCompleted ) {
             this._webclient = new WebClient { CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default ) };
 
-            if ( null != onDownloadStringCompleted ) {
-                this._webclient.DownloadStringCompleted += ( sender, e ) => onDownloadStringCompleted( e );
-            }
-            else {
-                this._webclient.DownloadStringCompleted += this.webclient_DownloadStringCompleted;
-            }
+            if ( null != onDownloadStringCompleted ) { this._webclient.DownloadStringCompleted += ( sender, e ) => onDownloadStringCompleted( e ); }
+            else { this._webclient.DownloadStringCompleted += this.webclient_DownloadStringCompleted; }
 
             //System.Net.WebUtility
             //System.HttpStyleUriParser
@@ -69,17 +84,16 @@ namespace Librainian.Internet {
         }
 
         /// <summary>
-        /// Returns True if a download is currently in progress
+        ///     Returns True if a download is currently in progress
         /// </summary>
         public Boolean DownloadInProgress {
             get {
                 try {
                     this._downloadInProgressAccess.EnterReadLock();
+
                     return this._downloadInProgressStatus;
                 }
-                finally {
-                    this._downloadInProgressAccess.ExitReadLock();
-                }
+                finally { this._downloadInProgressAccess.ExitReadLock(); }
             }
 
             private set {
@@ -87,9 +101,7 @@ namespace Librainian.Internet {
                     this._downloadInProgressAccess.EnterWriteLock();
                     this._downloadInProgressStatus = value;
                 }
-                finally {
-                    this._downloadInProgressAccess.ExitWriteLock();
-                }
+                finally { this._downloadInProgressAccess.ExitWriteLock(); }
             }
         }
 
@@ -111,43 +123,41 @@ namespace Librainian.Internet {
         }
 
         /// <summary>
-        /// Returns True if the address was successfully added to the queue to be downloaded.
+        ///     Returns True if the address was successfully added to the queue to be downloaded.
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
         public Boolean Surf( String address ) {
-            if ( String.IsNullOrWhiteSpace( value: address ) ) {
-                return false;
-            }
+            if ( String.IsNullOrWhiteSpace( address ) ) { return false; }
+
             try {
                 var uri = new Uri( uriString: address );
+
                 return this.Surf( address: uri );
             }
             catch ( UriFormatException ) {
                 String.Format( format: "Surf(): Unable to parse address {0}", arg0: address ).WriteLine();
+
                 return false;
             }
         }
 
         /// <summary>
-        /// Returns True if the address was successfully added to the queue to be downloaded.
+        ///     Returns True if the address was successfully added to the queue to be downloaded.
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
         public Boolean Surf( Uri address ) {
-            if ( null == address ) {
-                return false;
-            }
+            if ( null == address ) { return false; }
+
             try {
-                if ( this._pastUrls.Contains( address ) ) {
-                    return false;
-                }
+                if ( this._pastUrls.Contains( address ) ) { return false; }
+
                 this._urls.Enqueue( item: address );
+
                 return true;
             }
-            finally {
-                this.StartNextDownload();
-            }
+            finally { this.StartNextDownload(); }
         }
 
         internal void webclient_DownloadStringCompleted( Object sender, DownloadStringCompletedEventArgs e ) {
@@ -156,29 +166,27 @@ namespace Librainian.Internet {
                 this._pastUrls.Add( userState );
                 this.DownloadInProgress = false;
             }
+
             this.StartNextDownload();
         }
 
-        private void StartNextDownload() => Task.Factory.StartNew( () => {
-            Thread.Yield();
-            if ( this.DownloadInProgress ) {
-                return;
-            }
-            if ( !this._urls.TryDequeue( result: out var address ) ) {
-                return;
-            }
+        private void StartNextDownload() =>
+            Task.Factory.StartNew( () => {
+                Thread.Yield();
 
-            this.DownloadInProgress = true;
-            $"Surf(): Starting download: {address.AbsoluteUri}".WriteLine();
-            this._webclient.DownloadStringAsync( address: address, userToken: address );
-        } ).ContinueWith( t => {
-            if ( this._urls.Any() ) {
-                this.StartNextDownload();
-            }
-        } );
+                if ( this.DownloadInProgress ) { return; }
+
+                if ( !this._urls.TryDequeue( result: out var address ) ) { return; }
+
+                this.DownloadInProgress = true;
+                $"Surf(): Starting download: {address.AbsoluteUri}".WriteLine();
+                this._webclient.DownloadStringAsync( address: address, userToken: address );
+            } ).ContinueWith( t => {
+                if ( this._urls.Any() ) { this.StartNextDownload(); }
+            } );
 
         /// <summary>
-        /// Dispose any disposable members.
+        ///     Dispose any disposable members.
         /// </summary>
         public override void DisposeManaged() => this._downloadInProgressAccess.Dispose();
     }

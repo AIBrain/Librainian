@@ -1,22 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Base58String.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Base58String.cs" was last cleaned by Protiguous on 2016/06/18 at 10:55 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Base58String.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
 
 namespace Librainian.Parsing {
 
@@ -26,6 +40,7 @@ namespace Librainian.Parsing {
     using System.Text;
 
     public static class Base58String {
+
         public const String Base58Chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
         public static String FromByteArray( this Byte[] b ) {
@@ -36,13 +51,12 @@ namespace Librainian.Parsing {
             while ( bi > 0 ) {
                 var mod = ( Int32 )( bi % 58 );
                 bi /= 58;
-                sb.Insert( 0, Base58Chars[ mod ] );
+                sb.Insert( 0, Base58Chars[mod] );
             }
 
             // Add 1s for leading 0x00 bytes
-            for ( var i = 0; i < b.Length && b[ i ] == 0x00; i++ ) {
-                sb.Insert( 0, '1' );
-            }
+            for ( var i = 0; i < b.Length && b[i] == 0x00; i++ ) { sb.Insert( 0, '1' ); }
+
             return sb.ToString();
         }
 
@@ -54,16 +68,16 @@ namespace Librainian.Parsing {
                 bi *= 58;
                 bi += charVal;
             }
+
             var b = bi.ToByteArray();
 
             // Remove 0x00 sign byte if present.
-            if ( b[ b.Length - 1 ] == 0x00 ) {
-                b = b.Take( b.Length - 1 ).ToArray();
-            }
+            if ( b[b.Length - 1] == 0x00 ) { b = b.Take( b.Length - 1 ).ToArray(); }
 
             // Add leading 0x00 bytes
             var num0S = s.IndexOf( s.First( c => c != '1' ) );
-            return b.Concat( new Byte[ num0S ] ).Reverse().ToArray();
+
+            return b.Concat( new Byte[num0S] ).Reverse().ToArray();
         }
     }
 }

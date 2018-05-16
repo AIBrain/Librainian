@@ -1,22 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Percentage.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Percentage.cs" was last cleaned by Protiguous on 2016/06/18 at 10:52 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Percentage.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -74,12 +88,9 @@ namespace Librainian.Maths.Numbers {
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
         public Percentage( Double numerator, Double denominator ) {
-            if ( Double.IsNaN( numerator ) ) {
-                throw new ArgumentOutOfRangeException( nameof( numerator ), "Numerator is not a number." );
-            }
-            if ( Double.IsNaN( denominator ) ) {
-                throw new ArgumentOutOfRangeException( nameof( denominator ), "Denominator is not a number." );
-            }
+            if ( Double.IsNaN( numerator ) ) { throw new ArgumentOutOfRangeException( nameof( numerator ), "Numerator is not a number." ); }
+
+            if ( Double.IsNaN( denominator ) ) { throw new ArgumentOutOfRangeException( nameof( denominator ), "Denominator is not a number." ); }
 
             this.Numerator = new BigInteger( numerator );
             this.Denominator = new BigInteger( denominator );
@@ -88,12 +99,8 @@ namespace Librainian.Maths.Numbers {
 
             this.Quotient = denominator <= 0 ? new BigRational( 0.0 ) : new BigRational( numerator / denominator );
 
-            if ( this.Quotient < Minimum ) {
-                this.Quotient = Minimum;
-            }
-            else if ( this.Quotient > Maximum ) {
-                this.Quotient = Maximum;
-            }
+            if ( this.Quotient < Minimum ) { this.Quotient = Minimum; }
+            else if ( this.Quotient > Maximum ) { this.Quotient = Maximum; }
         }
 
         /// <summary>
@@ -108,12 +115,8 @@ namespace Librainian.Maths.Numbers {
 
             this.Quotient = denominator == BigInteger.Zero ? new BigRational( 0.0 ) : new BigRational( numerator / denominator );
 
-            if ( this.Quotient < Minimum ) {
-                this.Quotient = Minimum;
-            }
-            else if ( this.Quotient > Maximum ) {
-                this.Quotient = Maximum;
-            }
+            if ( this.Quotient < Minimum ) { this.Quotient = Minimum; }
+            else if ( this.Quotient > Maximum ) { this.Quotient = Maximum; }
         }
 
         /// <summary>
@@ -133,15 +136,12 @@ namespace Librainian.Maths.Numbers {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Percentage left, Percentage right ) {
-            if ( ReferenceEquals(left, right) ) {
-                return true;
-            }
-            if ( left is null ) {
-                return false;
-            }
-            if ( right is null ) {
-                return false;
-            }
+            if ( ReferenceEquals( left, right ) ) { return true; }
+
+            if ( left is null ) { return false; }
+
+            if ( right is null ) { return false; }
+
             return left.Quotient == right.Quotient;
         }
 
@@ -154,20 +154,18 @@ namespace Librainian.Maths.Numbers {
         public static Percentage operator +( Percentage left, Percentage right ) => Combine( left, right );
 
         public static Percentage Parse( [NotNull] String value ) {
-            if ( value is null ) {
-                throw new ArgumentNullException( nameof( value ) );
-            }
+            if ( value is null ) { throw new ArgumentNullException( nameof( value ) ); }
+
             return new Percentage( Double.Parse( value ) );
         }
 
         public static Boolean TryParse( [NotNull] String numberString, out Percentage result ) {
-            if ( numberString is null ) {
-                throw new ArgumentNullException( nameof( numberString ) );
-            }
-			if ( !Double.TryParse( numberString, out var value ) ) {
-				value = Double.NaN;
-			}
-			result = new Percentage( value );
+            if ( numberString is null ) { throw new ArgumentNullException( nameof( numberString ) ); }
+
+            if ( !Double.TryParse( numberString, out var value ) ) { value = Double.NaN; }
+
+            result = new Percentage( value );
+
             return !Double.IsNaN( value );
         }
 
@@ -176,14 +174,13 @@ namespace Librainian.Maths.Numbers {
 
         [Pure]
         public Int32 CompareTo( [NotNull] Percentage other ) {
-            if ( other is null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
+            if ( other is null ) { throw new ArgumentNullException( nameof( other ) ); }
+
             return this.Quotient.CompareTo( other.Quotient );
         }
 
         public Boolean Equals( Percentage other ) => Equals( this, other );
 
-	    public override String ToString() => $"{this.Quotient}";
+        public override String ToString() => $"{this.Quotient}";
     }
 }

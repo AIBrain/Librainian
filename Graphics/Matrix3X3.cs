@@ -1,20 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Matrix3X3.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Matrix3X3.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// "Librainian/Librainian/Matrix3X3.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Graphics {
 
@@ -23,38 +39,49 @@ namespace Librainian.Graphics {
 
     /// <summary>
     /// </summary>
-    /// <seealso cref="http://stackoverflow.com/a/8696503/956364"/>
+    /// <seealso cref="http://stackoverflow.com/a/8696503/956364" />
     public class Matrix3X3 : ICloneable {
+
         private const Int32 _M11 = 0;
+
         private const Int32 _M12 = 1;
+
         private const Int32 _M13 = 2;
+
         private const Int32 _M21 = 3;
+
         private const Int32 _M22 = 4;
+
         private const Int32 _M23 = 5;
+
         private const Int32 _M31 = 6;
+
         private const Int32 _M32 = 7;
+
         private const Int32 _M33 = 8;
+
         private readonly Double[] _coeffs;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Matrix3X3"/> class.
+        ///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
         /// </summary>
         public Matrix3X3() => this._coeffs = new Double[9];
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Matrix3X3"/> class.
+        ///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
         /// </summary>
-        /// <param name="coefficients">The coefficients to initialise. The number of elements of the array should be equal to 9, else an exception will be thrown</param>
+        /// <param name="coefficients">
+        ///     The coefficients to initialise. The number of elements of the array should be equal to 9,
+        ///     else an exception will be thrown
+        /// </param>
         public Matrix3X3( Double[] coefficients ) {
-            if ( coefficients.GetLength( 0 ) != 9 ) {
-                throw new Exception( "The number of coefficients passed in to the constructor must be 9" );
-            }
+            if ( coefficients.GetLength( 0 ) != 9 ) { throw new Exception( "The number of coefficients passed in to the constructor must be 9" ); }
 
             this._coeffs = coefficients;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Matrix3X3"/> class.
+        ///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
         /// </summary>
         /// <param name="m11">The M11 coefficient</param>
         /// <param name="m12">The M12 coefficien</param>
@@ -68,7 +95,7 @@ namespace Librainian.Graphics {
         public Matrix3X3( Double m11, Double m12, Double m13, Double m21, Double m22, Double m23, Double m31, Double m32, Double m33 ) => this._coeffs = new[] { m11, m12, m13, m21, m22, m23, m31, m32, m33 };
 
         /// <summary>
-        /// Gets the determinant of the matrix
+        ///     Gets the determinant of the matrix
         /// </summary>
         /// <value>The determinant</value>
         public Double Determinant {
@@ -101,19 +128,20 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Gets a value indicating whether this matrix is affine. This will be true if the right column (M13, M23, M33) is 0 0 1
+        ///     Gets a value indicating whether this matrix is affine. This will be true if the right column (M13, M23, M33) is 0 0
+        ///     1
         /// </summary>
         /// <value><c>true</c> if this instance is affine; otherwise, <c>false</c>.</value>
         public Boolean IsAffine => this._coeffs[_M13].Near( 0 ) && this._coeffs[_M23].Near( 0 ) && this._coeffs[_M33].Near( 1 );
 
         /// <summary>
-        /// Gets a value indicating whether this matrix is singular. If it is singular, it cannot be inverted
+        ///     Gets a value indicating whether this matrix is singular. If it is singular, it cannot be inverted
         /// </summary>
         /// <value><c>true</c> if this instance is singular; otherwise, <c>false</c>.</value>
         public Boolean IsSingular => this.Determinant.Near( 0 );
 
         /// <summary>
-        /// Gets or sets the M11 coefficient
+        ///     Gets or sets the M11 coefficient
         /// </summary>
         /// <value>The M11</value>
         public Double M11 {
@@ -123,7 +151,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Gets or sets the M12 coefficient
+        ///     Gets or sets the M12 coefficient
         /// </summary>
         /// <value>The M12</value>
         public Double M12 {
@@ -133,7 +161,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Gets or sets the M13 coefficient
+        ///     Gets or sets the M13 coefficient
         /// </summary>
         /// <value>The M13</value>
         public Double M13 {
@@ -143,7 +171,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Gets or sets the M21 coefficient
+        ///     Gets or sets the M21 coefficient
         /// </summary>
         /// <value>The M21</value>
         public Double M21 {
@@ -153,7 +181,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Gets or sets the M22 coefficient
+        ///     Gets or sets the M22 coefficient
         /// </summary>
         /// <value>The M22</value>
         public Double M22 {
@@ -163,7 +191,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Gets or sets the M23 coefficient
+        ///     Gets or sets the M23 coefficient
         /// </summary>
         /// <value>The M23</value>
         public Double M23 {
@@ -173,7 +201,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Gets or sets the M31 coefficient
+        ///     Gets or sets the M31 coefficient
         /// </summary>
         /// <value>The M31</value>
         public Double M31 {
@@ -183,7 +211,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Gets or sets the M32 coefficient
+        ///     Gets or sets the M32 coefficient
         /// </summary>
         /// <value>The M32</value>
         public Double M32 {
@@ -193,7 +221,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Gets or sets the M33 coefficient
+        ///     Gets or sets the M33 coefficient
         /// </summary>
         /// <value>The M33</value>
         public Double M33 {
@@ -203,7 +231,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Gets or sets the Translation Offset in the X Direction
+        ///     Gets or sets the Translation Offset in the X Direction
         /// </summary>
         /// <value>The M31</value>
         public Double OffsetX {
@@ -214,7 +242,7 @@ namespace Librainian.Graphics {
 
         // NB: M11, M12, M21, M22 members of IAffineTransformCoefficients are implemented within the #region Public Properties directive
         /// <summary>
-        /// Gets or sets the Translation Offset in the Y Direction
+        ///     Gets or sets the Translation Offset in the Y Direction
         /// </summary>
         /// <value>The M32</value>
         public Double OffsetY {
@@ -224,16 +252,17 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Creates a new object that is a copy of the current instance.
+        ///     Creates a new object that is a copy of the current instance.
         /// </summary>
         /// <returns>A new object that is a copy of this instance.</returns>
         public Object Clone() {
             var coeffCopy = ( Double[] )this._coeffs.Clone();
+
             return new Matrix3X3( coeffCopy );
         }
 
         /// <summary>
-        /// Gets the inverse of this matrix. If the matrix is singular, this method will throw an exception
+        ///     Gets the inverse of this matrix. If the matrix is singular, this method will throw an exception
         /// </summary>
         /// <returns>The inverse</returns>
         public Matrix3X3 Inverse() {
@@ -285,9 +314,7 @@ namespace Librainian.Graphics {
 
             // Compute the determinant
 
-            if ( this.Determinant.Near( 0.0 ) ) {
-                throw new Exception( "Unable to invert the matrix as it is singular" );
-            }
+            if ( this.Determinant.Near( 0.0 ) ) { throw new Exception( "Unable to invert the matrix as it is singular" ); }
 
             // Scale the matrix by 1/determinant
             tempMat.Scale( 1.0 / this.Determinant );
@@ -310,7 +337,7 @@ namespace Librainian.Graphics {
         */
 
         /// <summary>
-        /// Makes the matrix an affine matrix by setting the right column (M13, M23, M33) to 0 0 1
+        ///     Makes the matrix an affine matrix by setting the right column (M13, M23, M33) to 0 0 1
         /// </summary>
         public void MakeAffine() {
             this._coeffs[_M13] = 0;
@@ -319,7 +346,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Multiplies the current matrix by the 3x3 matrix passed in
+        ///     Multiplies the current matrix by the 3x3 matrix passed in
         /// </summary>
         /// <param name="rhs"></param>
         public void Multiply( Matrix3X3 rhs ) {
@@ -360,7 +387,7 @@ namespace Librainian.Graphics {
         }
 
         /// <summary>
-        /// Scales the matrix by the specified scalar value
+        ///     Scales the matrix by the specified scalar value
         /// </summary>
         /// <param name="scalar">The scalar.</param>
         public void Scale( Double scalar ) {

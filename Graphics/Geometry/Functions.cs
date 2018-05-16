@@ -1,25 +1,40 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Functions.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Functions.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// "Librainian/Librainian/Functions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:42 PM.
 
 namespace Librainian.Graphics.Geometry {
 
     using System;
-    using System.Diagnostics;
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Numerics;
@@ -28,20 +43,26 @@ namespace Librainian.Graphics.Geometry {
     public static class Functions {
 
         /// <summary>
-        /// Angles of a rectangle.
+        ///     Angles of a rectangle.
         /// </summary>
         [Flags]
         public enum RectAngles {
+
             None = 0,
+
             TopLeft = 1,
+
             TopRight = 2,
+
             BottomLeft = 4,
+
             BottomRight = 8,
+
             All = TopLeft | TopRight | BottomLeft | BottomRight
         }
 
         /// <summary>
-        /// Calculates the intersection line segment between 2 lines (not segments). Returns false if no solution can be found.
+        ///     Calculates the intersection line segment between 2 lines (not segments). Returns false if no solution can be found.
         /// </summary>
         /// <returns></returns>
         public static Boolean CalculateLineLineIntersection( this Vector3 line1Point1, Vector3 line1Point2, Vector3 line2Point1, Vector3 line2Point2, out Vector3 resultSegmentPoint1, out Vector3 resultSegmentPoint2 ) {
@@ -60,14 +81,17 @@ namespace Librainian.Graphics.Geometry {
             if ( p43.LengthSquared() < Single.Epsilon ) {
                 resultSegmentPoint1 = new Vector3();
                 resultSegmentPoint2 = new Vector3();
+
                 return false;
             }
 
             var p2 = line1Point2;
             var p21 = p2 - line1Point1;
+
             if ( p21.LengthSquared() < Single.Epsilon ) {
                 resultSegmentPoint1 = new Vector3();
                 resultSegmentPoint2 = new Vector3();
+
                 return false;
             }
 
@@ -78,9 +102,11 @@ namespace Librainian.Graphics.Geometry {
             var d2121 = p21.X * p21.X + p21.Y * p21.Y + p21.Z * p21.Z;
 
             var denom = d2121 * d4343 - d4321 * d4321;
+
             if ( Math.Abs( denom ) < Single.Epsilon ) {
                 resultSegmentPoint1 = new Vector3();
                 resultSegmentPoint2 = new Vector3();
+
                 return false;
             }
 
@@ -96,10 +122,11 @@ namespace Librainian.Graphics.Geometry {
         }
 
         /// <summary>
-        /// Calculates the intersection line segment between 2 lines (not segments). Returns false if no solution can be found.
+        ///     Calculates the intersection line segment between 2 lines (not segments). Returns false if no solution can be found.
         /// </summary>
         /// <returns></returns>
-        public static Boolean CalculateLineLineIntersection( this CoordinateF line1Point1, CoordinateF line1Point2, CoordinateF line2Point1, CoordinateF line2Point2, out CoordinateF resultSegmentPoint1, out CoordinateF resultSegmentPoint2 ) {
+        public static Boolean CalculateLineLineIntersection( this CoordinateF line1Point1, CoordinateF line1Point2, CoordinateF line2Point1, CoordinateF line2Point2, out CoordinateF resultSegmentPoint1,
+            out CoordinateF resultSegmentPoint2 ) {
             Logging.Break();
 
             // Algorithm is ported from the C algorithm of Paul Bourke at http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline3d/
@@ -113,13 +140,11 @@ namespace Librainian.Graphics.Geometry {
             var p13 = p1 - p3;
             var p43 = p4 - p3;
 
-            if ( p43.SquareLength < Single.Epsilon ) {
-                return false;
-            }
+            if ( p43.SquareLength < Single.Epsilon ) { return false; }
+
             var p21 = p2 - p1;
-            if ( p21.SquareLength < Single.Epsilon ) {
-                return false;
-            }
+
+            if ( p21.SquareLength < Single.Epsilon ) { return false; }
 
             var d1343 = p13.X * p43.X + p13.Y * p43.Y + p13.Z * p43.Z;
             var d4321 = p43.X * p21.X + p43.Y * p21.Y + p43.Z * p21.Z;
@@ -128,9 +153,8 @@ namespace Librainian.Graphics.Geometry {
             var d2121 = p21.X * p21.X + p21.Y * p21.Y + p21.Z * p21.Z;
 
             var denom = d2121 * d4343 - d4321 * d4321;
-            if ( Math.Abs( denom ) < Single.Epsilon ) {
-                return false;
-            }
+
+            if ( Math.Abs( denom ) < Single.Epsilon ) { return false; }
 
             var numer = d1343 * d4321 - d1321 * d4343;
 
@@ -144,22 +168,22 @@ namespace Librainian.Graphics.Geometry {
         }
 
         /// <summary>
-        /// Draw and fill a rounded rectangle.
+        ///     Draw and fill a rounded rectangle.
         /// </summary>
         /// <param name="g">                 The graphics object to use.</param>
-        /// <param name="p">                 
-        /// The pen to use to draw the rounded rectangle. If
-        /// <code>
+        /// <param name="p">
+        ///     The pen to use to draw the rounded rectangle. If
+        ///     <code>
         /// null
         /// </code>
-        /// , the border is not drawn.
+        ///     , the border is not drawn.
         /// </param>
-        /// <param name="b">                 
-        /// The brush to fill the rounded rectangle. If
-        /// <code>
+        /// <param name="b">
+        ///     The brush to fill the rounded rectangle. If
+        ///     <code>
         /// null
         /// </code>
-        /// , the internal is not filled.
+        ///     , the internal is not filled.
         /// </param>
         /// <param name="r">                 The rectangle to draw.</param>
         /// <param name="horizontalDiameter">Horizontal diameter for the rounded angles.</param>
@@ -174,13 +198,10 @@ namespace Librainian.Graphics.Geometry {
             var height = r.Height;
 
             // adapt horizontal and vertical diameter if the rectangle is too little
-            if ( width < horizontalDiameter ) {
-                horizontalDiameter = width;
-            }
+            if ( width < horizontalDiameter ) { horizontalDiameter = width; }
 
-            if ( height < verticalDiameter ) {
-                verticalDiameter = height;
-            }
+            if ( height < verticalDiameter ) { verticalDiameter = height; }
+
             /*
              * The drawing is the following:
              *
@@ -195,42 +216,23 @@ namespace Librainian.Graphics.Geometry {
              *     U\______________/T
              *             e
              */
-            Boolean tl = ( rectAngles & RectAngles.TopLeft ) != 0,
-                tr = ( rectAngles & RectAngles.TopRight ) != 0,
-                br = ( rectAngles & RectAngles.BottomRight ) != 0,
-                bl = ( rectAngles & RectAngles.BottomLeft ) != 0;
+            Boolean tl = ( rectAngles & RectAngles.TopLeft ) != 0, tr = ( rectAngles & RectAngles.TopRight ) != 0, br = ( rectAngles & RectAngles.BottomRight ) != 0, bl = ( rectAngles & RectAngles.BottomLeft ) != 0;
 
-            var pointP = tl ?
-                new Point( x + horizontalDiameter / 2, y ) :
-                new Point( x, y );
+            var pointP = tl ? new Point( x + horizontalDiameter / 2, y ) : new Point( x, y );
 
-            var pointQ = tr ?
-                new Point( x + width - horizontalDiameter / 2 - 1, y ) :
-                new Point( x + width - 1, y );
+            var pointQ = tr ? new Point( x + width - horizontalDiameter / 2 - 1, y ) : new Point( x + width - 1, y );
 
-            var pointR = tr ?
-                new Point( x + width - 1, y + verticalDiameter / 2 ) :
-                pointQ;
+            var pointR = tr ? new Point( x + width - 1, y + verticalDiameter / 2 ) : pointQ;
 
-            var pointS = br ?
-                new Point( x + width - 1, y + height - verticalDiameter / 2 - 1 ) :
-                new Point( x + width - 1, y + height - 1 );
+            var pointS = br ? new Point( x + width - 1, y + height - verticalDiameter / 2 - 1 ) : new Point( x + width - 1, y + height - 1 );
 
-            var pointT = br ?
-                new Point( x + width - horizontalDiameter / 2 - 1 ) :
-                pointS;
+            var pointT = br ? new Point( x + width - horizontalDiameter / 2 - 1 ) : pointS;
 
-            var pointU = bl ?
-                new Point( x + horizontalDiameter / 2, y + height - 1 ) :
-                new Point( x, y + height - 1 );
+            var pointU = bl ? new Point( x + horizontalDiameter / 2, y + height - 1 ) : new Point( x, y + height - 1 );
 
-            var pointV = bl ?
-                new Point( x, y + height - verticalDiameter / 2 - 1 ) :
-                pointU;
+            var pointV = bl ? new Point( x, y + height - verticalDiameter / 2 - 1 ) : pointU;
 
-            var pointW = tl ?
-                new Point( x, y + verticalDiameter / 2 ) :
-                pointP;
+            var pointW = tl ? new Point( x, y + verticalDiameter / 2 ) : pointP;
 
             using ( var gp = new GraphicsPath() ) {
 
@@ -238,44 +240,33 @@ namespace Librainian.Graphics.Geometry {
                 gp.AddLine( pointP, pointQ );
 
                 // b
-                if ( tr ) {
-                    gp.AddArc( x + width - horizontalDiameter - 1, y, horizontalDiameter, verticalDiameter, 270, 90 );
-                }
+                if ( tr ) { gp.AddArc( x + width - horizontalDiameter - 1, y, horizontalDiameter, verticalDiameter, 270, 90 ); }
 
                 // c
                 gp.AddLine( pointR, pointS );
 
                 // d
-                if ( br ) {
-                    gp.AddArc( x + width - horizontalDiameter - 1, y + height - verticalDiameter - 1, horizontalDiameter, verticalDiameter, 0, 90 );
-                }
+                if ( br ) { gp.AddArc( x + width - horizontalDiameter - 1, y + height - verticalDiameter - 1, horizontalDiameter, verticalDiameter, 0, 90 ); }
 
                 // e
                 gp.AddLine( pointT, pointU );
 
                 // f
-                if ( bl ) {
-                    gp.AddArc( x, y + height - verticalDiameter - 1, horizontalDiameter, verticalDiameter, 90, 90 );
-                }
+                if ( bl ) { gp.AddArc( x, y + height - verticalDiameter - 1, horizontalDiameter, verticalDiameter, 90, 90 ); }
 
                 // g
                 gp.AddLine( pointV, pointW );
 
                 // h
-                if ( tl ) {
-                    gp.AddArc( x, y, horizontalDiameter, verticalDiameter, 180, 90 );
-                }
+                if ( tl ) { gp.AddArc( x, y, horizontalDiameter, verticalDiameter, 180, 90 ); }
 
                 // end
                 gp.CloseFigure();
 
                 // draw
-                if ( b != null ) {
-                    g.FillPath( b, gp );
-                }
-                if ( p != null ) {
-                    g.DrawPath( p, gp );
-                }
+                if ( b != null ) { g.FillPath( b, gp ); }
+
+                if ( p != null ) { g.DrawPath( p, gp ); }
             }
         }
     }

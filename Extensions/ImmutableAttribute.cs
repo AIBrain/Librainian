@@ -1,18 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "ImmutableAttribute.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/ImmutableAttribute.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/ImmutableAttribute.cs" was last cleaned by Protiguous on 2018/05/15 at 10:40 PM.
 
 namespace Librainian.Extensions {
 
@@ -26,9 +44,9 @@ namespace Librainian.Extensions {
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Without further ado, here's the ImmutableAttribute itself.
+    ///     Without further ado, here's the ImmutableAttribute itself.
     /// </summary>
-    /// <seealso cref="http://blogs.msdn.com/b/kevinpilchbisson/archive/2007/11/20/enforcing-immutability-in-code.aspx"/>
+    /// <seealso cref="http://blogs.msdn.com/b/kevinpilchbisson/archive/2007/11/20/enforcing-immutability-in-code.aspx" />
     [AttributeUsage( AttributeTargets.Class | AttributeTargets.Struct )]
     [JsonObject]
     [MeansImplicitUse]
@@ -41,25 +59,15 @@ namespace Librainian.Extensions {
         private static Boolean IsWhiteListed( Type type ) {
 
             // Boolean, int, etc.
-            if ( type.IsPrimitive ) {
-                return true;
-            }
+            if ( type.IsPrimitive ) { return true; }
 
-            if ( type == typeof( Object ) ) {
-                return true;
-            }
+            if ( type == typeof( Object ) ) { return true; }
 
-            if ( type == typeof( String ) ) {
-                return true;
-            }
+            if ( type == typeof( String ) ) { return true; }
 
-            if ( type == typeof( Guid ) ) {
-                return true;
-            }
+            if ( type == typeof( Guid ) ) { return true; }
 
-            if ( type.IsEnum ) {
-                return true;
-            }
+            if ( type.IsEnum ) { return true; }
 
             // override all checks on this type if [ImmutableAttribute(OnFaith=true)] is set
             var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>( type );
@@ -74,68 +82,44 @@ namespace Librainian.Extensions {
         //
         // TODO: replace this with a per-field attribute, to allow the immutability test to run over the rest of the type.
         /// <summary>
-        /// Ensures that 'type' follows the rules for immutability
+        ///     Ensures that 'type' follows the rules for immutability
         /// </summary>
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable<Type> whiteList ) {
-            if ( type is null ) {
-                throw new ArgumentNullException( nameof( type ) );
-            }
+            if ( type is null ) { throw new ArgumentNullException( nameof( type ) ); }
 
-            if ( type.BaseType is null ) {
-                throw new ArgumentNullException( nameof( type ) );
-            }
+            if ( type.BaseType is null ) { throw new ArgumentNullException( nameof( type ) ); }
 
-            if ( whiteList is null ) {
-                throw new ArgumentNullException( nameof( whiteList ) );
-            }
+            if ( whiteList is null ) { throw new ArgumentNullException( nameof( whiteList ) ); }
 
             var enumerable = whiteList as IList<Type> ?? whiteList.ToList();
 
-            if ( enumerable.Contains( type ) ) {
-                return;
-            }
+            if ( enumerable.Contains( type ) ) { return; }
 
-            if ( IsWhiteListed( type ) ) {
-                return;
-            }
+            if ( IsWhiteListed( type ) ) { return; }
 
-            try {
-                VerifyTypeIsImmutable( type.BaseType, enumerable );
-            }
-            catch ( ImmutableFailureException ex ) {
-                throw new MutableBaseException( type, ex );
-            }
+            try { VerifyTypeIsImmutable( type.BaseType, enumerable ); }
+            catch ( ImmutableFailureException ex ) { throw new MutableBaseException( type, ex ); }
 
             foreach ( var fieldInfo in type.GetAllDeclaredInstanceFields() ) {
-                if ( ( fieldInfo.Attributes & FieldAttributes.InitOnly ) == 0 ) {
-                    throw new WritableFieldException( fieldInfo );
-                }
+                if ( ( fieldInfo.Attributes & FieldAttributes.InitOnly ) == 0 ) { throw new WritableFieldException( fieldInfo ); }
 
                 // if it's marked with [Immutable], that's good enough, as we can be sure that these tests will all be applied to this type
-                if ( IsMarkedImmutable( fieldInfo.FieldType ) ) {
-                    continue;
-                }
+                if ( IsMarkedImmutable( fieldInfo.FieldType ) ) { continue; }
 
-                try {
-                    VerifyTypeIsImmutable( fieldInfo.FieldType, enumerable );
-                }
-                catch ( ImmutableFailureException ex ) {
-                    throw new MutableFieldException( fieldInfo, ex );
-                }
+                try { VerifyTypeIsImmutable( fieldInfo.FieldType, enumerable ); }
+                catch ( ImmutableFailureException ex ) { throw new MutableFieldException( fieldInfo, ex ); }
             }
         }
 
         /// <summary>
-        /// Ensures that all types in 'assemblies' that are marked [Immutable] follow the rules for immutability.
+        ///     Ensures that all types in 'assemblies' that are marked [Immutable] follow the rules for immutability.
         /// </summary>
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         public static void VerifyTypesAreImmutable( IEnumerable<Assembly> assemblies, params Type[] whiteList ) {
             var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type ) select type;
 
-            foreach ( var type in typesMarkedImmutable ) {
-                VerifyTypeIsImmutable( type, whiteList );
-            }
+            foreach ( var type in typesMarkedImmutable ) { VerifyTypeIsImmutable( type, whiteList ); }
         }
 
         [JsonObject]

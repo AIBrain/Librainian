@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Digit.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Digit.cs" was last cleaned by Protiguous on 2016/06/18 at 10:52 PM
+// "Librainian/Librainian/Digit.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -22,23 +38,23 @@ namespace Librainian.Maths.Numbers {
     using Extensions;
 
     /// <summary>
-    /// Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+    ///     Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
     /// </summary>
     /// <remarks>All functions should be atomic.</remarks>
     [Immutable]
     public struct Digit : IComparable<Digit> {
+
         public const Byte Maximum = 9;
+
         public const Byte Minimum = 0;
 
         public Digit( SByte value ) {
-            if ( value < Minimum || value > Maximum ) {
-                throw new ArgumentOutOfRangeException( nameof( value ), "Out of range" );
-            }
+            if ( value < Minimum || value > Maximum ) { throw new ArgumentOutOfRangeException( nameof( value ), "Out of range" ); }
+
             this.Value = ( Byte )value;
         }
 
-        public Digit( Byte value ) : this( ( SByte )value ) {
-        }
+        public Digit( Byte value ) : this( ( SByte )value ) { }
 
         public static Digit Eight { get; } = new Digit( 8 );
 
@@ -60,9 +76,7 @@ namespace Librainian.Maths.Numbers {
 
         public static Digit Zero { get; } = new Digit( 0 );
 
-        public Byte Value {
-            get;
-        }
+        public Byte Value { get; }
 
         public static implicit operator Byte( Digit digit ) => digit.Value;
 
@@ -107,12 +121,13 @@ namespace Librainian.Maths.Numbers {
         public static Boolean operator >=( SByte left, Digit right ) => left >= right.Value;
 
         /// <summary>
-        /// Compares the current object with another object of the same type.
+        ///     Compares the current object with another object of the same type.
         /// </summary>
         /// <returns>
-        /// A value that indicates the relative order of the objects being compared. The return value has the following
-        /// meanings: Value Meaning Less than zero This object is less than the <paramref name="other"/> parameter.Zero This object is equal to <paramref name="other"/>. Greater than zero This object is greater than
-        ///           <paramref name="other"/>.
+        ///     A value that indicates the relative order of the objects being compared. The return value has the following
+        ///     meanings: Value Meaning Less than zero This object is less than the <paramref name="other" /> parameter.Zero This
+        ///     object is equal to <paramref name="other" />. Greater than zero This object is greater than
+        ///     <paramref name="other" />.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         public Int32 CompareTo( Digit other ) => this.Value.CompareTo( other.Value );
@@ -121,38 +136,27 @@ namespace Librainian.Maths.Numbers {
 
         public override String ToString() {
             switch ( this.Value ) {
-                case 0:
-                    return nameof( Zero );
+                case 0: return nameof( Zero );
 
-                case 1:
-                    return nameof( One );
+                case 1: return nameof( One );
 
-                case 2:
-                    return nameof( Two );
+                case 2: return nameof( Two );
 
-                case 3:
-                    return nameof( Three );
+                case 3: return nameof( Three );
 
-                case 4:
-                    return nameof( Four );
+                case 4: return nameof( Four );
 
-                case 5:
-                    return nameof( Five );
+                case 5: return nameof( Five );
 
-                case 6:
-                    return nameof( Six );
+                case 6: return nameof( Six );
 
-                case 7:
-                    return nameof( Seven );
+                case 7: return nameof( Seven );
 
-                case 8:
-                    return nameof( Eight );
+                case 8: return nameof( Eight );
 
-                case 9:
-                    return nameof( Nine );
+                case 9: return nameof( Nine );
 
-                default:
-                    return String.Empty;
+                default: return String.Empty;
             }
         }
     }

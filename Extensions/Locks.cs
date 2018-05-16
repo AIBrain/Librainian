@@ -1,18 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "Locks.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/Locks.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Locks.cs" was last cleaned by Protiguous on 2018/05/15 at 10:40 PM.
 
 namespace Librainian.Extensions {
 
@@ -23,7 +41,7 @@ namespace Librainian.Extensions {
     public static class Locks {
 
         /// <summary>
-        /// put a Read ( will-read ) lock on the access object.
+        ///     put a Read ( will-read ) lock on the access object.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -31,7 +49,7 @@ namespace Librainian.Extensions {
         public static IDisposable Read( this ReaderWriterLockSlim obj ) => new ReadLockToken( obj );
 
         /// <summary>
-        /// put an upgradeable ( will-read / may-write ) lock on the access object.
+        ///     put an upgradeable ( will-read / may-write ) lock on the access object.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -39,7 +57,7 @@ namespace Librainian.Extensions {
         public static IDisposable Upgrade( this ReaderWriterLockSlim obj ) => new UpgradeLockToken( obj );
 
         /// <summary>
-        /// put a Write ( will-write ) lock on the access object.
+        ///     put a Write ( will-write ) lock on the access object.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -62,9 +80,7 @@ namespace Librainian.Extensions {
             public void Dispose() {
                 var slim = this._readerWriterLockSlim;
 
-                if ( slim?.IsReadLockHeld ) {
-                    slim.ExitReadLock();
-                }
+                if ( slim?.IsReadLockHeld ) { slim.ExitReadLock(); }
 
                 this._readerWriterLockSlim = null; //don't hold a ref to the lock anymore.
             }
@@ -82,9 +98,7 @@ namespace Librainian.Extensions {
             public void Dispose() {
                 var slim = this._readerWriterLockSlim;
 
-                if ( slim?.IsUpgradeableReadLockHeld ) {
-                    slim.ExitUpgradeableReadLock();
-                }
+                if ( slim?.IsUpgradeableReadLockHeld ) { slim.ExitUpgradeableReadLock(); }
 
                 this._readerWriterLockSlim = null; //don't hold a ref to the lock anymore.
             }
@@ -102,9 +116,7 @@ namespace Librainian.Extensions {
             public void Dispose() {
                 var slim = this._readerWriterLockSlim;
 
-                if ( slim != null && slim.IsWriteLockHeld ) {
-                    slim.ExitWriteLock();
-                }
+                if ( slim != null && slim.IsWriteLockHeld ) { slim.ExitWriteLock(); }
 
                 this._readerWriterLockSlim = null; //don't hold a ref to the lock anymore.
             }

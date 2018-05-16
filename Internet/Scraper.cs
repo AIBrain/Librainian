@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Scraper.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Scraper.cs" was last cleaned by Protiguous on 2016/06/18 at 10:52 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Scraper.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Internet {
 
@@ -50,77 +64,20 @@ namespace Librainian.Internet {
             get {
                 try {
                     MAccess.EnterReadLock();
+
                     return MWebsites.Where( w => w.ResponseCount > 0 ) as List<WebSite>;
                 }
-                finally {
-                    MAccess.ExitReadLock();
-                }
-            }
-        }
-
-        public static void AddSiteToScrape( String url, Action<WebSite> responseaction ) {
-            try {
-				if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out var uri ) ) {
-					AddSiteToScrape( uri, responseaction );
-				}
-			}
-            catch ( Exception exception ) {
-                exception.More();
-            }
-        }
-
-        public static void AddSiteToScrape( Uri uri, Action<WebSite> responseaction ) {
-            if ( !IsSiteQueued( uri ) ) {
-                var web = new WebSite {
-                    Location = uri,
-                    Document = String.Empty,
-                    RequestCount = 0,
-                    ResponseCount = 0,
-                    WhenAddedToQueue = DateTime.UtcNow,
-                    WhenRequestStarted = DateTime.MinValue,
-                    WhenResponseCame = DateTime.MinValue
-
-                    //ResponseAction = responseaction
-                };
-                try {
-                    MAccess.EnterWriteLock();
-                    MWebsites.Add( web );
-                }
-                finally {
-                    MAccess.ExitWriteLock();
-                }
-            }
-            else {
-                try {
-                    MAccess.EnterWriteLock();
-                    MWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => r.RequestCount++ );
-                }
-                finally {
-                    MAccess.ExitWriteLock();
-                }
-            }
-
-            StartNextScrape();
-        }
-
-        public static Boolean IsSiteQueued( Uri uri ) {
-            try {
-                MAccess.EnterReadLock();
-                return MWebsites.Exists( w => w.Location.Equals( uri ) );
-            }
-            finally {
-                MAccess.ExitReadLock();
+                finally { MAccess.ExitReadLock(); }
             }
         }
 
         private static WebSite GetNextToScrape() {
             try {
                 MAccess.EnterReadLock();
+
                 return MWebsites.FirstOrDefault( w => w.WhenRequestStarted.Equals( DateTime.MinValue ) );
             }
-            finally {
-                MAccess.ExitReadLock();
-            }
+            finally { MAccess.ExitReadLock(); }
         }
 
         private static void RespCallback( IAsyncResult asynchronousResult ) {
@@ -135,6 +92,7 @@ namespace Librainian.Internet {
                     web.ResponseCount++;
                     web.WhenResponseCame = DateTime.UtcNow;
                     web.Document = document;
+
                     if ( !web.Location.Equals( response.ResponseUri ) ) {
                         web.Location = response.ResponseUri;
 
@@ -151,22 +109,20 @@ namespace Librainian.Internet {
                 //}
             }
             catch ( WebException ) { }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( Exception exception ) { exception.More(); }
         }
 
         private static void StartNextScrape() {
             try {
                 var web = GetNextToScrape();
-                if ( null == web ) {
-                    return;
-                }
+
+                if ( null == web ) { return; }
 
                 if ( null == web.Request ) {
                     try {
                         MAccess.EnterWriteLock();
                         web.Request = WebRequest.Create( web.Location ) as HttpWebRequest;
+
                         if ( web.Request != null ) {
                             web.Request.AllowAutoRedirect = true;
                             web.Request.AllowWriteStreamBuffering = true;
@@ -182,17 +138,62 @@ namespace Librainian.Internet {
                             var now = DateTime.Now;
                             web.Request.UserAgent = $"AIBrain/{now.Year}.{now.Month}.{now.Day}";
                         }
+
                         web.WhenRequestStarted = DateTime.UtcNow;
                     }
-                    finally {
-                        MAccess.ExitWriteLock();
-                    }
+                    finally { MAccess.ExitWriteLock(); }
                 }
+
                 web.Request?.BeginGetResponse( RespCallback, web );
             }
-            catch ( Exception exception ) {
-                exception.More();
+            catch ( Exception exception ) { exception.More(); }
+        }
+
+        public static void AddSiteToScrape( String url, Action<WebSite> responseaction ) {
+            try {
+                if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out var uri ) ) { AddSiteToScrape( uri, responseaction ); }
             }
+            catch ( Exception exception ) { exception.More(); }
+        }
+
+        public static void AddSiteToScrape( Uri uri, Action<WebSite> responseaction ) {
+            if ( !IsSiteQueued( uri ) ) {
+                var web = new WebSite {
+                    Location = uri,
+                    Document = String.Empty,
+                    RequestCount = 0,
+                    ResponseCount = 0,
+                    WhenAddedToQueue = DateTime.UtcNow,
+                    WhenRequestStarted = DateTime.MinValue,
+                    WhenResponseCame = DateTime.MinValue
+
+                    //ResponseAction = responseaction
+                };
+
+                try {
+                    MAccess.EnterWriteLock();
+                    MWebsites.Add( web );
+                }
+                finally { MAccess.ExitWriteLock(); }
+            }
+            else {
+                try {
+                    MAccess.EnterWriteLock();
+                    MWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => r.RequestCount++ );
+                }
+                finally { MAccess.ExitWriteLock(); }
+            }
+
+            StartNextScrape();
+        }
+
+        public static Boolean IsSiteQueued( Uri uri ) {
+            try {
+                MAccess.EnterReadLock();
+
+                return MWebsites.Exists( w => w.Location.Equals( uri ) );
+            }
+            finally { MAccess.ExitReadLock(); }
         }
     }
 }

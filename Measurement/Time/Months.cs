@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Months.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Months.cs" was last cleaned by Protiguous on 2016/06/18 at 10:54 PM
+// "Librainian/Librainian/Months.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -34,12 +50,12 @@ namespace Librainian.Measurement.Time {
     public struct Months : IComparable<Months>, IQuantityOfTime {
 
         /// <summary>
-        /// 12
+        ///     12
         /// </summary>
         public const Byte InOneCommonYear = 12;
 
         /// <summary>
-        /// One <see cref="Months"/> .
+        ///     One <see cref="Months" /> .
         /// </summary>
         public static readonly Months One = new Months( 1 );
 
@@ -52,7 +68,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Months Thousand = new Months( 1000 );
 
         /// <summary>
-        /// Zero <see cref="Months"/>
+        ///     Zero <see cref="Months" />
         /// </summary>
         public static readonly Months Zero = new Months( 0 );
 
@@ -65,9 +81,7 @@ namespace Librainian.Measurement.Time {
         public Months( BigInteger value ) => this.Value = value;
 
         [JsonProperty]
-        public BigRational Value {
-            get;
-        }
+        public BigRational Value { get; }
 
         public static Months Combine( Months left, Months right ) => Combine( left, right.Value );
 
@@ -76,7 +90,7 @@ namespace Librainian.Measurement.Time {
         public static Months Combine( Months left, BigInteger months ) => new Months( left.Value + months );
 
         /// <summary>
-        /// <para>static equality test</para>
+        ///     <para>static equality test</para>
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
@@ -110,9 +124,8 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Months other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj is null ) {
-                return false;
-            }
+            if ( obj is null ) { return false; }
+
             return obj is Months months && this.Equals( months );
         }
 
@@ -128,9 +141,12 @@ namespace Librainian.Measurement.Time {
         public override String ToString() {
             if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
+
                 return $"{whole} {whole.PluralOf( "month" )}";
             }
+
             var dec = ( Decimal )this.Value;
+
             return $"{dec} {dec.PluralOf( "month" )}";
         }
 

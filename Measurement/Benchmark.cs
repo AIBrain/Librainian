@@ -1,20 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Benchmark.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Benchmark.cs" was last cleaned by Protiguous on 2016/06/18 at 10:55 PM
+// "Librainian/Librainian/Benchmark.cs" was last cleaned by Protiguous on 2018/05/15 at 10:46 PM.
 
 namespace Librainian.Measurement {
 
@@ -24,20 +40,25 @@ namespace Librainian.Measurement {
     using Time;
 
     /// <summary>
-    /// Originally based upon the idea from <see cref="http://github.com/EBrown8534/Framework/blob/master/Evbpc.Framework/Utilities/BenchmarkResult.cs"/>.
+    ///     Originally based upon the idea from
+    ///     <see cref="http://github.com/EBrown8534/Framework/blob/master/Evbpc.Framework/Utilities/BenchmarkResult.cs" />.
     /// </summary>
-    /// <seealso cref="http://github.com/PerfDotNet/BenchmarkDotNet"/>
+    /// <seealso cref="http://github.com/PerfDotNet/BenchmarkDotNet" />
     public static class Benchmark {
 
         public enum AorB {
+
             Unknown,
+
             MethodA,
+
             MethodB,
+
             Same
         }
 
         /// <summary>
-        /// For benchmarking methods that are too fast for individual <see cref="Stopwatch"/> start and stops.
+        ///     For benchmarking methods that are too fast for individual <see cref="Stopwatch" /> start and stops.
         /// </summary>
         /// <param name="method"></param>
         /// <param name="runFor"></param>
@@ -62,6 +83,7 @@ namespace Librainian.Measurement {
             var rounds = 0UL;
 
             var stopwatch = Stopwatch.StartNew();
+
             while ( stopwatch.Elapsed < ( runFor ?? Seconds.One ) ) {
                 try {
                     method.Invoke();
@@ -72,6 +94,7 @@ namespace Librainian.Measurement {
                     Logging.Break();
                 }
             }
+
             stopwatch.Stop();
 
             Process.GetCurrentProcess().PriorityClass = oldPriorityClass;
@@ -81,20 +104,16 @@ namespace Librainian.Measurement {
         }
 
         public static AorB WhichIsFaster( this Action methodA, Action methodB, TimeSpan? runfor = null ) {
-            if ( null == runfor ) {
-                runfor = Milliseconds.FiveHundred;
-            }
+            if ( null == runfor ) { runfor = Milliseconds.FiveHundred; }
 
             var a = methodA.GetBenchmark( runfor );
 
             var b = methodB.GetBenchmark( runfor );
 
-            if ( a > b ) {
-                return AorB.MethodA;
-            }
-            if ( b > a ) {
-                return AorB.MethodB;
-            }
+            if ( a > b ) { return AorB.MethodA; }
+
+            if ( b > a ) { return AorB.MethodB; }
+
             return AorB.Same;
         }
     }

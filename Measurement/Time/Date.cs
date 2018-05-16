@@ -1,22 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Date.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Date.cs" was last cleaned by Protiguous on 2016/06/18 at 10:54 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Date.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -31,17 +45,20 @@ namespace Librainian.Measurement.Time {
     [Immutable]
     [JsonObject]
     public struct Date {
+
         public static readonly Date Zero = new Date( Year.Zero, Month.Minimum, Day.Minimum );
 
         public Date( BigInteger year, Byte month, Byte day ) {
             while ( day > Day.MaximumValue ) {
                 day -= Day.MaximumValue;
                 month++;
+
                 while ( month > Month.Maximum ) {
                     month -= Month.Maximum;
                     year++;
                 }
             }
+
             this.Day = new Day( day );
 
             while ( month > Month.Maximum ) {
@@ -60,8 +77,7 @@ namespace Librainian.Measurement.Time {
             this.Day = day;
         }
 
-        public Date( DateTime dateTime ) : this( year: dateTime.Year, month: ( Byte )dateTime.Month, day: ( Byte )dateTime.Day ) {
-        }
+        public Date( DateTime dateTime ) : this( year: dateTime.Year, month: ( Byte )dateTime.Month, day: ( Byte )dateTime.Day ) { }
 
         public Date( Span span ) {
             this.Year = new Year( span.GetWholeYears() );
@@ -75,18 +91,20 @@ namespace Librainian.Measurement.Time {
         ///     <para>The day of the month. (valid range is 1 to 31)</para>
         /// </summary>
         [JsonProperty]
-        public Day Day {
-            get;
-        }
+        public Day Day { get; }
 
         /// <summary>
         ///     <para>The number of the month. (valid range is 1-12)</para>
         ///     <para>12 months makes 1 year.</para>
         /// </summary>
         [JsonProperty]
-        public Month Month {
-            get;
-        }
+        public Month Month { get; }
+
+        /// <summary>
+        ///     <para><see cref="Year" /> can be a positive or negative <see cref="BigInteger" />.</para>
+        /// </summary>
+        [JsonProperty]
+        public Year Year { get; }
 
         //public Date( Years years, Months months, Days days )
         //    : this( year: ( BigInteger )years.Value, month: ( BigInteger )months.Value, day: ( BigInteger )days.Value ) {
@@ -98,20 +116,12 @@ namespace Librainian.Measurement.Time {
         //}
         public static Date UtcNow => new Date( DateTime.UtcNow );
 
-        /// <summary>
-        ///     <para><see cref="Year" /> can be a positive or negative <see cref="BigInteger" />.</para>
-        /// </summary>
-        [JsonProperty]
-        public Year Year {
-            get;
-        }
-
         //public Date( long year, long month, long day )
         //    : this( year: new Year( year ), month: new Month( month ), day: new Day( day ) ) {
         //}
         public static implicit operator DateTime? ( Date date ) => TimeExtensions.TryConvertToDateTime( date, out var dateTime ) ? dateTime : default;
 
-	    public static Boolean operator <( Date left, Date right ) => left.ToSpan().TotalPlanckTimes < right.ToSpan().TotalPlanckTimes;
+        public static Boolean operator <( Date left, Date right ) => left.ToSpan().TotalPlanckTimes < right.ToSpan().TotalPlanckTimes;
 
         public static Boolean operator <=( Date left, Date right ) => left.ToSpan().TotalPlanckTimes.Value <= right.ToSpan().TotalPlanckTimes.Value;
 

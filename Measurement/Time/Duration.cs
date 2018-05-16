@@ -1,22 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Duration.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Duration.cs" was last cleaned by Protiguous on 2016/06/18 at 10:54 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Duration.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -35,6 +49,7 @@ namespace Librainian.Measurement.Time {
     [JsonObject]
     [Immutable]
     public struct Duration : IComparable<Duration>, IComparable<TimeSpan> {
+
         public const Double MicsPerDay = MicsPerHour * Measurement.Time.Hours.InOneDay;
 
         public const Double MicsPerHour = MicsPerMinute * Measurement.Time.Minutes.InOneHour;
@@ -53,34 +68,50 @@ namespace Librainian.Measurement.Time {
 
         public Duration( Microseconds microseconds ) => this.totalMicroseconds = ( Double )microseconds.Value * MicsPerMicrosecond;
 
-	    public Duration( Milliseconds milliseconds ) => this.totalMicroseconds = ( Double )milliseconds.Value * MicsPerMillisecond;
+        public Duration( Milliseconds milliseconds ) => this.totalMicroseconds = ( Double )milliseconds.Value * MicsPerMillisecond;
 
-	    public Duration( Seconds seconds ) => this.totalMicroseconds = ( Double )seconds.Value * MicsPerSecond;
+        public Duration( Seconds seconds ) => this.totalMicroseconds = ( Double )seconds.Value * MicsPerSecond;
 
-	    public Duration( Minutes minutes ) => this.totalMicroseconds = ( Double )minutes.Value * MicsPerMinute;
+        public Duration( Minutes minutes ) => this.totalMicroseconds = ( Double )minutes.Value * MicsPerMinute;
 
-	    public Duration( Hours hours ) => this.totalMicroseconds = ( Double )hours.Value * MicsPerHour;
+        public Duration( Hours hours ) => this.totalMicroseconds = ( Double )hours.Value * MicsPerHour;
 
-	    public Duration( Days days ) => this.totalMicroseconds = ( Double )days.Value * MicsPerDay;
+        public Duration( Days days ) => this.totalMicroseconds = ( Double )days.Value * MicsPerDay;
 
-	    public Duration( Weeks weeks ) => this.totalMicroseconds = ( Double )weeks.Value * MicsPerWeek;
+        public Duration( Weeks weeks ) => this.totalMicroseconds = ( Double )weeks.Value * MicsPerWeek;
 
-	    public Duration( Years years ) => this.totalMicroseconds = ( Double )years.Value * MicsPerYear;
+        public Duration( Years years ) => this.totalMicroseconds = ( Double )years.Value * MicsPerYear;
 
-	    public Duration( Int64 ticks ) => this.totalMicroseconds = ticks / 10.0;
+        public Duration( Int64 ticks ) => this.totalMicroseconds = ticks / 10.0;
 
-	    public Duration( TimeSpan time ) : this( ticks: time.Ticks ) {
-        }
+        public Duration( TimeSpan time ) : this( ticks: time.Ticks ) { }
 
         public Duration( [NotNull] params TimeSpan[] times ) {
-            if ( times is null ) {
-                throw new ArgumentNullException( nameof( times ) );
-            }
+            if ( times is null ) { throw new ArgumentNullException( nameof( times ) ); }
 
             var total = times.Select( timeSpan => new Duration( timeSpan ) ).Aggregate( BigRational.Zero, ( current, dur ) => current + dur.totalMicroseconds );
 
             this.totalMicroseconds = ( Double )total;
         }
+
+        [JsonProperty]
+
+        // ReSharper disable once InconsistentNaming
+        internal Double totalMicroseconds { get; }
+
+        public Double TotalHours => this.TotalMinutes / Measurement.Time.Minutes.InOneHour;
+
+        public Double TotalMinutes => this.TotalSeconds / Measurement.Time.Seconds.InOneMinute;
+
+        public Double TotalSeconds => this.TotalMilliseconds / Measurement.Time.Milliseconds.InOneSecond;
+
+        public Double TotalWeeks => this.TotalDays / Measurement.Time.Days.InOneWeek;
+
+        public Double TotalYears => this.TotalDays / Measurement.Time.Days.InOneCommonYear;
+
+        public Double Weeks => this.Days / Measurement.Time.Days.InOneWeek % Measurement.Time.Days.InOneWeek;
+
+        public Double Years => this.Days / Measurement.Time.Days.InOneCommonYear % Measurement.Time.Days.InOneCommonYear;
 
         public Double Days => this.Hours / Measurement.Time.Hours.InOneDay % Measurement.Time.Hours.InOneDay;
 
@@ -96,64 +127,43 @@ namespace Librainian.Measurement.Time {
 
         public Double TotalDays => this.TotalHours / Measurement.Time.Hours.InOneDay;
 
-        public Double TotalHours => this.TotalMinutes / Measurement.Time.Minutes.InOneHour;
-
         public Double TotalMicroseconds => this.totalMicroseconds;
 
         public Double TotalMilliseconds => this.TotalMicroseconds / Measurement.Time.Microseconds.InOneMillisecond;
 
-        public Double TotalMinutes => this.TotalSeconds / Measurement.Time.Seconds.InOneMinute;
-
-        public Double TotalSeconds => this.TotalMilliseconds / Measurement.Time.Milliseconds.InOneSecond;
-
-        public Double TotalWeeks => this.TotalDays / Measurement.Time.Days.InOneWeek;
-
-        public Double TotalYears => this.TotalDays / Measurement.Time.Days.InOneCommonYear;
-
-        public Double Weeks => this.Days / Measurement.Time.Days.InOneWeek % Measurement.Time.Days.InOneWeek;
-
-        public Double Years => this.Days / Measurement.Time.Days.InOneCommonYear % Measurement.Time.Days.InOneCommonYear;
-
-        [JsonProperty]
-
-        // ReSharper disable once InconsistentNaming
-        internal Double totalMicroseconds {
-            get;
-        }
-
         public static Duration FromDays( Double value ) => new Duration( new Days( value ) );
 
-	    public static Duration FromHours( Double value ) => new Duration( new Hours( value ) );
+        public static Duration FromHours( Double value ) => new Duration( new Hours( value ) );
 
-	    public static Duration FromMicroseconds( Double value ) => new Duration( new Microseconds( value ) );
+        public static Duration FromMicroseconds( Double value ) => new Duration( new Microseconds( value ) );
 
-	    public static Duration FromMilliseconds( Double value ) => new Duration( new Milliseconds( value ) );
+        public static Duration FromMilliseconds( Double value ) => new Duration( new Milliseconds( value ) );
 
-	    public static Duration FromMinutes( Double value ) => new Duration( new Minutes( value ) );
+        public static Duration FromMinutes( Double value ) => new Duration( new Minutes( value ) );
 
-	    public static Duration FromSeconds( Double value ) => new Duration( new Seconds( value ) );
+        public static Duration FromSeconds( Double value ) => new Duration( new Seconds( value ) );
 
-	    public static Duration FromTicks( Int64 value ) => new Duration( ticks: value );
+        public static Duration FromTicks( Int64 value ) => new Duration( ticks: value );
 
-	    public static Duration FromWeeks( Double value ) => new Duration( new Weeks( value ) );
+        public static Duration FromWeeks( Double value ) => new Duration( new Weeks( value ) );
 
-	    public static Duration FromYears( Double value ) => new Duration( new Years( value ) );
+        public static Duration FromYears( Double value ) => new Duration( new Years( value ) );
 
-	    /// <summary>
+        /// <summary>
         ///     <para>Compares <see cref="totalMicroseconds" /></para>
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         public Int32 CompareTo( Duration other ) => this.totalMicroseconds.CompareTo( other.totalMicroseconds );
 
-	    /// <summary>
+        /// <summary>
         ///     <para>Compares <see cref="TotalMilliseconds" /></para>
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         public Int32 CompareTo( TimeSpan other ) => this.TotalMilliseconds.CompareTo( other.TotalMilliseconds );
 
-	    /// <summary>
+        /// <summary>
         ///     Returns the hash code for this instance.
         /// </summary>
         /// <returns>
@@ -161,7 +171,6 @@ namespace Librainian.Measurement.Time {
         /// </returns>
         public override Int32 GetHashCode() => this.totalMicroseconds.GetHashCode();
 
-	    public override String ToString() => this.Simpler();
-
+        public override String ToString() => this.Simpler();
     }
 }

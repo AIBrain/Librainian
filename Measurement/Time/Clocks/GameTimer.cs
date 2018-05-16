@@ -1,22 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "GameTimer.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/GameTimer.cs" was last cleaned by Protiguous on 2016/06/18 at 10:54 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/GameTimer.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
@@ -53,17 +67,40 @@ namespace Librainian.Measurement.Time.Clocks {
         private DateTime _lastUpdate = DateTime.UtcNow;
 
         public GameTimer( [NotNull] IProgress<ReportBack> progress ) {
-	        this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ), "Progress must not be null." );
-	        // ReSharper disable once UseObjectOrCollectionInitializer
+            this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ), "Progress must not be null." );
+
+            // ReSharper disable once UseObjectOrCollectionInitializer
             this.Timer = new Timer( interval: this.UpdateRate ) { AutoReset = false };
             this.Timer.Elapsed += this.OnTimerElapsed;
             this.Resume();
         }
 
+        private DateTime LastProgressReport {
+            get {
+                try { return this._lastUpdate; }
+                finally { Thread.MemoryBarrier(); }
+            }
+
+            set {
+                try { Thread.MemoryBarrier(); }
+                finally { this._lastUpdate = value; }
+            }
+        }
+
+        [NotNull]
+        private IProgress<ReportBack> Progress { get; }
+
+        /// <summary>
+        /// </summary>
+        [NotNull]
+        private Timer Timer { get; }
+
+        private Double UpdateRate { get; } = ( Double )Fps.Sixty.Value;
+
         public UInt64 Counter {
             get => Thread.VolatileRead( ref this._counter );
 
-	        private set => Thread.VolatileWrite( ref this._counter, value );
+            private set => Thread.VolatileWrite( ref this._counter, value );
         }
 
         /// <summary>
@@ -73,6 +110,7 @@ namespace Librainian.Measurement.Time.Clocks {
         public TimeSpan Elapsed {
             get {
                 this.LastElapsed = DateTime.UtcNow - this.LastProgressReport;
+
                 return this.LastElapsed;
             }
         }
@@ -80,7 +118,7 @@ namespace Librainian.Measurement.Time.Clocks {
         public Boolean IsPaused {
             get => this._isPaused;
 
-	        private set => this._isPaused = value;
+            private set => this._isPaused = value;
         }
 
         /// <summary>
@@ -88,69 +126,42 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         public TimeSpan LastElapsed {
             get {
-                try {
-                    return this._lastElapsed;
-                }
-                finally {
-                    Thread.MemoryBarrier();
-                }
+                try { return this._lastElapsed; }
+                finally { Thread.MemoryBarrier(); }
             }
 
             private set {
-                try {
-                    Thread.MemoryBarrier();
-                }
-                finally {
-                    this._lastElapsed = value;
-                }
+                try { Thread.MemoryBarrier(); }
+                finally { this._lastElapsed = value; }
             }
         }
 
-        private DateTime LastProgressReport {
-            get {
-                try {
-                    return this._lastUpdate;
-                }
-                finally {
-                    Thread.MemoryBarrier();
-                }
+        private void OnTimerElapsed( Object sender, ElapsedEventArgs elapsedEventArgs ) {
+            try {
+                this.Pause();
+                this.Counter++;
+                this.Progress.Report( new ReportBack { Counter = this.Counter, Elapsed = this.Elapsed, RunningSlow = this.IsRunningSlow() } );
             }
-
-            set {
-                try {
-                    Thread.MemoryBarrier();
-                }
-                finally {
-                    this._lastUpdate = value;
-                }
+            catch ( Exception exception ) { exception.More(); }
+            finally {
+                this.LastProgressReport = DateTime.UtcNow;
+                this.Resume();
             }
         }
-
-        [NotNull]
-        private IProgress<ReportBack> Progress {
-            get;
-        }
-
-        /// <summary>
-        /// </summary>
-        [NotNull]
-        private Timer Timer {
-            get;
-        }
-
-        private Double UpdateRate { get; } = ( Double )Fps.Sixty.Value;
 
         public Boolean IsRunningSlow() => this.LastElapsed.TotalMilliseconds > 70;
 
-	    public Boolean Pause() {
+        public Boolean Pause() {
             this.Timer.Stop();
             this.IsPaused = true;
+
             return this.IsPaused;
         }
 
         public Boolean Resume() {
             this.IsPaused = false;
             this.Timer.Start();
+
             return !this.IsPaused;
         }
 
@@ -160,38 +171,17 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <returns></returns>
         public Span TotalElapsed() => new Span( milliseconds: this.Counter / this.UpdateRate );
 
-	    private void OnTimerElapsed( Object sender, ElapsedEventArgs elapsedEventArgs ) {
-            try {
-                this.Pause();
-                this.Counter++;
-                this.Progress.Report( new ReportBack { Counter = this.Counter, Elapsed = this.Elapsed, RunningSlow = this.IsRunningSlow() } );
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
-            finally {
-                this.LastProgressReport = DateTime.UtcNow;
-                this.Resume();
-            }
-        }
-
         [JsonObject]
         public struct ReportBack {
 
             [JsonProperty]
-            public UInt64 Counter {
-                get; set;
-            }
+            public UInt64 Counter { get; set; }
 
             [JsonProperty]
-            public TimeSpan Elapsed {
-                get; set;
-            }
+            public TimeSpan Elapsed { get; set; }
 
             [JsonProperty]
-            public Boolean RunningSlow {
-                get; set;
-            }
+            public Boolean RunningSlow { get; set; }
         }
     }
 }

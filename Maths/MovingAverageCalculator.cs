@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "MovingAverageCalculator.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/MovingAverageCalculator.cs" was last cleaned by Protiguous on 2016/06/18 at 10:53 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/MovingAverageCalculator.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
 
 namespace Librainian.Maths {
 
@@ -34,10 +48,15 @@ namespace Librainian.Maths {
     /// </remarks>
     /// <seealso cref="http://drewnoakes.com/code/util/MovingAverageCalculator.html" />
     public sealed class MovingAverageCalculator {
+
         private readonly Single[] _values;
+
         private readonly Int32 _windowSize;
+
         private Int32 _nextValueIndex;
+
         private Single _sum;
+
         private Int32 _valuesIn;
 
         /// <summary>Create a new moving average calculator.</summary>
@@ -46,12 +65,10 @@ namespace Librainian.Maths {
         /// </param>
         /// <exception cref="ArgumentOutOfRangeException">If windowSize less than one.</exception>
         public MovingAverageCalculator( Int32 windowSize ) {
-            if ( windowSize < 1 ) {
-                throw new ArgumentOutOfRangeException( nameof( windowSize ), windowSize, "Window size must be greater than zero." );
-            }
+            if ( windowSize < 1 ) { throw new ArgumentOutOfRangeException( nameof( windowSize ), windowSize, "Window size must be greater than zero." ); }
 
             this._windowSize = windowSize;
-            this._values = new Single[ this._windowSize ];
+            this._values = new Single[this._windowSize];
 
             this.Reset();
         }
@@ -73,9 +90,7 @@ namespace Librainian.Maths {
         /// <returns>The updated moving average value.</returns>
         /// <exception cref="ArgumentOutOfRangeException">If nextValue is equal to float.NaN.</exception>
         public Single NextValue( Single nextValue ) {
-            if ( Single.IsNaN( nextValue ) ) {
-                throw new ArgumentOutOfRangeException( nameof( nextValue ), "NaN may not be provided as the next value.  It would corrupt the state of the calculation." );
-            }
+            if ( Single.IsNaN( nextValue ) ) { throw new ArgumentOutOfRangeException( nameof( nextValue ), "NaN may not be provided as the next value.  It would corrupt the state of the calculation." ); }
 
             // add new value to the sum
             this._sum += nextValue;
@@ -88,17 +103,16 @@ namespace Librainian.Maths {
             else {
 
                 // remove oldest value from sum
-                this._sum -= this._values[ this._nextValueIndex ];
+                this._sum -= this._values[this._nextValueIndex];
             }
 
             // store the value
-            this._values[ this._nextValueIndex ] = nextValue;
+            this._values[this._nextValueIndex] = nextValue;
 
             // progress the next value index pointer
             this._nextValueIndex++;
-            if ( this._nextValueIndex == this._windowSize ) {
-                this._nextValueIndex = 0;
-            }
+
+            if ( this._nextValueIndex == this._windowSize ) { this._nextValueIndex = 0; }
 
             return this._sum / this._valuesIn;
         }

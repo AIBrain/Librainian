@@ -1,18 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "GuidUtility.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/GuidUtility.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/GuidUtility.cs" was last cleaned by Protiguous on 2018/05/15 at 10:40 PM.
 
 namespace Librainian.Extensions {
 
@@ -21,23 +39,23 @@ namespace Librainian.Extensions {
     using System.Text;
 
     /// <summary>
-    /// Helper methods for working with <see cref="Guid"/>.
+    ///     Helper methods for working with <see cref="Guid" />.
     /// </summary>
-    /// <seealso cref="http://github.com/LogosBible/Logos.Utility/blob/master/src/Logos.Utility/GuidUtility.cs"/>
+    /// <seealso cref="http://github.com/LogosBible/Logos.Utility/blob/master/src/Logos.Utility/GuidUtility.cs" />
     public static class GuidUtility {
 
         /// <summary>
-        /// The namespace for fully-qualified domain names (from RFC 4122, Appendix C).
+        ///     The namespace for fully-qualified domain names (from RFC 4122, Appendix C).
         /// </summary>
         public static readonly Guid DnsNamespace = new Guid( "6ba7b810-9dad-11d1-80b4-00c04fd430c8" );
 
         /// <summary>
-        /// The namespace for ISO OIDs (from RFC 4122, Appendix C).
+        ///     The namespace for ISO OIDs (from RFC 4122, Appendix C).
         /// </summary>
         public static readonly Guid IsoOidNamespace = new Guid( "6ba7b812-9dad-11d1-80b4-00c04fd430c8" );
 
         /// <summary>
-        /// The namespace for URLs (from RFC 4122, Appendix C).
+        ///     The namespace for URLs (from RFC 4122, Appendix C).
         /// </summary>
         public static readonly Guid UrlNamespace = new Guid( "6ba7b811-9dad-11d1-80b4-00c04fd430c8" );
 
@@ -56,30 +74,37 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Creates a name-based UUID using the algorithm from RFC 4122 §4.3.
+        ///     Creates a name-based UUID using the algorithm from RFC 4122 §4.3.
         /// </summary>
         /// <param name="namespaceId">The ID of the namespace.</param>
         /// <param name="name">       The name (within that namespace).</param>
         /// <returns>A UUID derived from the namespace and name.</returns>
-        /// <remarks>See <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html"> Generating a deterministic GUID </a> .</remarks>
+        /// <remarks>
+        ///     See
+        ///     <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html"> Generating a deterministic GUID </a>
+        ///     .
+        /// </remarks>
         public static Guid Create( Guid namespaceId, String name ) => Create( namespaceId, name, 5 );
 
         /// <summary>
-        /// Creates a name-based UUID using the algorithm from RFC 4122 §4.3.
+        ///     Creates a name-based UUID using the algorithm from RFC 4122 §4.3.
         /// </summary>
         /// <param name="namespaceId">The ID of the namespace.</param>
         /// <param name="name">       The name (within that namespace).</param>
-        /// <param name="version">    The version number of the UUID to create; this value must be either 3 (for MD5 hashing) or 5 (for SHA-1 hashing).</param>
+        /// <param name="version">
+        ///     The version number of the UUID to create; this value must be either 3 (for MD5 hashing) or 5
+        ///     (for SHA-1 hashing).
+        /// </param>
         /// <returns>A UUID derived from the namespace and name.</returns>
-        /// <remarks>See <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html"> Generating a deterministic GUID </a> .</remarks>
+        /// <remarks>
+        ///     See
+        ///     <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html"> Generating a deterministic GUID </a>
+        ///     .
+        /// </remarks>
         public static Guid Create( Guid namespaceId, String name, Int32 version ) {
-            if ( name is null ) {
-                throw new ArgumentNullException( nameof( name ) );
-            }
+            if ( name is null ) { throw new ArgumentNullException( nameof( name ) ); }
 
-            if ( version != 3 && version != 5 ) {
-                throw new ArgumentOutOfRangeException( nameof( version ), "version must be either 3 or 5." );
-            }
+            if ( version != 3 && version != 5 ) { throw new ArgumentOutOfRangeException( nameof( version ), "version must be either 3 or 5." ); }
 
             // convert the name to a sequence of octets (as defined by the standard or conventions of its namespace) (step 3)
             // ASSUME: UTF-8 encoding is always appropriate

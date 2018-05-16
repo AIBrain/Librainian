@@ -1,17 +1,36 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "FileSingleton.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license
-// has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "FileSingleton.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/FileSingleton.cs" was last cleaned by Protiguous on 2018/05/15 at 4:23 AM.
+// "Librainian/Librainian/FileSingleton.cs" was last cleaned by Protiguous on 2018/05/15 at 10:50 PM.
 
 namespace Librainian.Threading {
 
@@ -24,7 +43,7 @@ namespace Librainian.Threading {
     using Measurement.Time;
 
     /// <summary>
-    /// Uses a named semaphore to allow only ONE of name.
+    ///     Uses a named semaphore to allow only ONE of name.
     /// </summary>
     /// <example>using ( new FileSingleton( anyName ) ) { DoCode(); }</example>
     public class FileSingleton : ABetterClassDispose {
@@ -35,7 +54,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Uses a named semaphore to allow only ONE of <paramref name="id"/>.
+        ///     Uses a named semaphore to allow only ONE of <paramref name="id" />.
         /// </summary>
         /// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
         public FileSingleton( Guid id ) {
@@ -49,7 +68,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Uses a named semaphore to allow only ONE of name.
+        ///     Uses a named semaphore to allow only ONE of name.
         /// </summary>
         /// <example>using ( var snag = new FileSingleton( info ) ) { DoCode(); }</example>
         public FileSingleton( FileSystemInfo name ) {
@@ -65,7 +84,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Uses a named semaphore to allow only ONE of name.
+        ///     Uses a named semaphore to allow only ONE of name.
         /// </summary>
         /// <example>using ( var snag = new FileSingleton( name ) ) { DoCode(); }</example>
         public FileSingleton( String name ) {
@@ -86,7 +105,7 @@ namespace Librainian.Threading {
         public Boolean Snagged { get; private set; }
 
         /// <summary>
-        /// Dispose any disposable members.
+        ///     Dispose any disposable members.
         /// </summary>
         public override void DisposeManaged() {
             if ( !this.Snagged ) { return; }

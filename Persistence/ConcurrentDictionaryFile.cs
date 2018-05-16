@@ -1,18 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "ConcurrentDictionaryFile.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/ConcurrentDictionaryFile.cs" was last cleaned by Protiguous on 2018/05/13 at 1:40 AM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/ConcurrentDictionaryFile.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
 
 namespace Librainian.Persistence {
 
@@ -29,7 +47,7 @@ namespace Librainian.Persistence {
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Persist a dictionary to and from a JSON formatted text document.
+    ///     Persist a dictionary to and from a JSON formatted text document.
     /// </summary>
     [JsonObject]
     public class ConcurrentDictionaryFile<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IDisposable {
@@ -37,31 +55,27 @@ namespace Librainian.Persistence {
         private volatile Boolean _isReading;
 
         /// <summary>
-        /// disallow constructor without a document/filename
+        ///     disallow constructor without a document/filename
         /// </summary>
         // ReSharper disable once NotNullMemberIsNotInitialized
         private ConcurrentDictionaryFile() => throw new NotImplementedException();
 
         /// <summary>
-        /// Persist a dictionary to and from a JSON formatted text document.
+        ///     Persist a dictionary to and from a JSON formatted text document.
         /// </summary>
         /// <param name="document"></param>
         /// <param name="preload"> </param>
         public ConcurrentDictionaryFile( [NotNull] Document document, Boolean preload = false ) {
             this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
 
-            if ( !this.Document.Folder.Exists() ) {
-                this.Document.Folder.Create();
-            }
+            if ( !this.Document.Folder.Exists() ) { this.Document.Folder.Create(); }
 
-            if ( preload ) {
-                this.Load().Wait();
-            }
+            if ( preload ) { this.Load().Wait(); }
         }
 
         /// <summary>
-        /// Persist a dictionary to and from a JSON formatted text document.
-        /// <para>Defaults to user\appdata\Local\productname\filename</para>
+        ///     Persist a dictionary to and from a JSON formatted text document.
+        ///     <para>Defaults to user\appdata\Local\productname\filename</para>
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="preload"> </param>
@@ -79,15 +93,13 @@ namespace Librainian.Persistence {
         public Document Document { get; }
 
         protected virtual void Dispose( Boolean releaseManaged ) {
-            if ( releaseManaged ) {
-                this.Write().Wait( timeout: Minutes.One );
-            }
+            if ( releaseManaged ) { this.Write().Wait( timeout: Minutes.One ); }
 
             GC.SuppressFinalize( this );
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose() => this.Dispose( releaseManaged: true );
 
@@ -97,9 +109,7 @@ namespace Librainian.Persistence {
             try {
                 var document = this.Document;
 
-                if ( !document.Exists() ) {
-                    return false;
-                }
+                if ( !document.Exists() ) { return false; }
 
                 try {
                     var data = await document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>().ConfigureAwait( false );
@@ -110,9 +120,7 @@ namespace Librainian.Persistence {
                         return result.IsCompleted;
                     }
                 }
-                catch ( JsonException exception ) {
-                    exception.More();
-                }
+                catch ( JsonException exception ) { exception.More(); }
                 catch ( IOException exception ) {
 
                     //file in use by another app
@@ -126,22 +134,20 @@ namespace Librainian.Persistence {
 
                 return false;
             }
-            finally {
-                this.IsReading = false;
-            }
+            finally { this.IsReading = false; }
         }
 
         /// <summary>
-        /// Returns a string that represents the current object.
+        ///     Returns a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
         public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
 
         [DebuggerStepThrough]
-        public Boolean TryRemove( TKey key ) => key != null && this.TryRemove( key, value: out _ );
+        public Boolean TryRemove( TKey key ) => key != null && this.TryRemove( key, out _ );
 
         /// <summary>
-        /// Saves the data to the <see cref="Document"/>.
+        ///     Saves the data to the <see cref="Document" />.
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
@@ -149,13 +155,9 @@ namespace Librainian.Persistence {
             await Task.Run( () => {
                 var document = this.Document;
 
-                if ( !document.Folder.Exists() ) {
-                    document.Folder.Create();
-                }
+                if ( !document.Folder.Exists() ) { document.Folder.Create(); }
 
-                if ( document.Exists() ) {
-                    document.Delete();
-                }
+                if ( document.Exists() ) { document.Delete(); }
 
                 return this.Save( document: document, overwrite: true, formatting: Formatting.Indented );
             }, cancellationToken: cancellationToken ).ConfigureAwait( false );

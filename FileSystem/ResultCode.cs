@@ -1,51 +1,66 @@
-﻿// Copyright 2017 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks goes
-// to the Authors.
+// =========================================================
+// This section of source code, "ResultCode.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-// 
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// 
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/ResultCode.cs" was last cleaned by Protiguous on 2017/04/23 at 7:31 AM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/ResultCode.cs" was last cleaned by Protiguous on 2018/05/15 at 10:41 PM.
 
 namespace Librainian.FileSystem {
 
-	/// <summary>
-	/// Any result less than 1 is an error of some sort.
-	/// </summary>
-	public enum ResultCode {
-		FailureUnknown = -11,
+    /// <summary>
+    ///     Any result less than 1 is an error of some sort.
+    /// </summary>
+    public enum ResultCode {
 
-		FailureUnableToSetLastWriteTime = -10,
+        FailureUnknown = -11,
 
-		FailureUnableToSetLastAccessTime = -9,
+        FailureUnableToSetLastWriteTime = -10,
 
-		FailureUnableToDeleteSourceDocument = -8,
+        FailureUnableToSetLastAccessTime = -9,
 
-		FailureSourceDoesNotExist = -7,
+        FailureUnableToDeleteSourceDocument = -8,
 
-		FailureSourceIsEmpty = -6,
+        FailureSourceDoesNotExist = -7,
 
-		FailureOnCopy = -5,
+        FailureSourceIsEmpty = -6,
 
-		FailureDestinationDoesNotExist = -4,
+        FailureOnCopy = -5,
 
-		FailureDestinationSizeIsDifferent = -3,
+        FailureDestinationDoesNotExist = -4,
 
-		FailureUnableToSetFileAttributes = -2,
+        FailureDestinationSizeIsDifferent = -3,
 
-		FailureUnableToSetFileCreationTime = -1,
+        FailureUnableToSetFileAttributes = -2,
 
-		Success = 1
-	}
+        FailureUnableToSetFileCreationTime = -1,
+
+        Success = 1
+    }
 }

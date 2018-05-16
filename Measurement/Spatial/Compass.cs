@@ -1,21 +1,36 @@
-// Copyright 2015 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Compass.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-// 
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// 
+// (We try to avoid that from happening, but it does happen.)
 //
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
 // Usage of the source code or compiled binaries is AS-IS.
-// I am not responsible for Anything You Do.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Fantasy Core/Compass.cs" was last cleaned by Protiguous on 2016/01/03 at 12:25 AM
+// "Librainian/Librainian/Compass.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Spatial {
 
@@ -28,59 +43,45 @@ namespace Librainian.Measurement.Spatial {
     [DataContract( IsReference = false )]
     public class Compass {
 
-        
         private volatile Single _degrees;
-
         public const Single Maximum = 360;
 
         public const Single Minimum = 0;
 
         /// <summary>
-        /// Init with a random direction
+        ///     Init with a random direction
         /// </summary>
-        public Compass() : this( Randem.NextSingle( Minimum, Maximum ) ) {
-        }
+        public Compass() : this( Randem.NextSingle( Minimum, Maximum ) ) { }
 
         /// <summary>
-        /// ctor with <paramref name="degrees"/>.
+        ///     ctor with <paramref name="degrees" />.
         /// </summary>
         /// <param name="degrees"></param>
         public Compass( Single degrees ) => this.Degrees = degrees;
 
-	    public Single Degrees {
+        public Single Degrees {
             get => this._degrees;
 
-	        set {
-                if ( Single.IsNaN( value ) ) {
-                    throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" );
-                }
-                if ( Single.IsInfinity( value ) ) {
-                    throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" );
-                }
+            set {
+                if ( Single.IsNaN( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" ); }
 
-                while ( value < Minimum ) {
-                    value += Maximum;
-                }
-                while ( value > Maximum ) {
-                    value -= Maximum;
-                }
+                if ( Single.IsInfinity( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" ); }
 
-                value.Should()
-                     .BeGreaterOrEqualTo( Minimum );
-                value.Should()
-                     .BeLessOrEqualTo( Maximum );
+                while ( value < Minimum ) { value += Maximum; }
+
+                while ( value > Maximum ) { value -= Maximum; }
+
+                value.Should().BeGreaterOrEqualTo( Minimum );
+                value.Should().BeLessOrEqualTo( Maximum );
 
                 this._degrees = value;
             }
         }
 
         public Boolean RotateLeft( Single byAmount = ( Single )Math.PI ) {
-            if ( Single.IsNaN( byAmount ) ) {
-                return false;
-            }
-            if ( Single.IsInfinity( byAmount ) ) {
-                return false;
-            }
+            if ( Single.IsNaN( byAmount ) ) { return false; }
+
+            if ( Single.IsInfinity( byAmount ) ) { return false; }
 
             //TODO would a Lerp here make turning smoother?
             this.Degrees -= byAmount;
@@ -92,12 +93,9 @@ namespace Librainian.Measurement.Spatial {
         /// <param name="byAmount"></param>
         /// <returns></returns>
         public Boolean RotateRight( Single byAmount = ( Single )Math.PI ) {
-            if ( Single.IsNaN( byAmount ) ) {
-                return false;
-            }
-            if ( Single.IsInfinity( byAmount ) ) {
-                return false;
-            }
+            if ( Single.IsNaN( byAmount ) ) { return false; }
+
+            if ( Single.IsInfinity( byAmount ) ) { return false; }
 
             //TODO would a Lerp here make turning smoother?
             this.Degrees += byAmount;

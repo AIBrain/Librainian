@@ -1,17 +1,36 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "HistogramaDesenat.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original
-// license has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "HistogramaDesenat.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/HistogramaDesenat.cs" was last cleaned by Protiguous on 2018/05/15 at 1:34 AM.
+// "Librainian/Librainian/HistogramaDesenat.cs" was last cleaned by Protiguous on 2018/05/15 at 10:39 PM.
 
 namespace Librainian.Controls {
 
@@ -23,13 +42,13 @@ namespace Librainian.Controls {
     using System.Windows.Forms;
 
     /// <summary>
-    /// Summary description for HistogramaDesenat.
+    ///     Summary description for HistogramaDesenat.
     /// </summary>
-    /// <seealso cref="http://www.codeproject.com/Articles/12125/A-simple-histogram-displaying-control"/>
+    /// <seealso cref="http://www.codeproject.com/Articles/12125/A-simple-histogram-displaying-control" />
     public class HistogramaDesenat : UserControl {
 
         /// <summary>
-        /// Required designer variable.
+        ///     Required designer variable.
         /// </summary>
         private readonly Container _components;
 
@@ -90,7 +109,7 @@ namespace Librainian.Controls {
         //    base.Dispose( disposing );
         //}
         /// <summary>
-        /// We get the highest value from the array
+        ///     We get the highest value from the array
         /// </summary>
         /// <param name="vals">The array of values in which we look</param>
         /// <returns>The maximum value</returns>
@@ -140,7 +159,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Required method for Designer support - do not modify the contents of this method with the code editor.
+        ///     Required method for Designer support - do not modify the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
 
@@ -151,7 +170,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// We draw the histogram on the control
+        ///     We draw the histogram on the control
         /// </summary>
         /// <param name="values">The values being drawn</param>
         public void DrawHistogram( Int64[] values ) {

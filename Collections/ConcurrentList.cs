@@ -1,17 +1,36 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "ConcurrentList.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license
-// has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "ConcurrentList.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/ConcurrentList.cs" was last cleaned by Protiguous on 2018/05/15 at 1:28 AM.
+// "Librainian/Librainian/ConcurrentList.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
 
 namespace Librainian.Collections {
 
@@ -27,28 +46,27 @@ namespace Librainian.Collections {
     using FluentAssertions;
     using JetBrains.Annotations;
     using Magic;
-    using Maths;
     using Measurement.Time;
     using Microsoft.FSharp.Core;
     using Newtonsoft.Json;
     using Threading;
 
     /// <summary>
-    /// <para>A thread safe list. Uses a <see cref="ConcurrentQueue{T}"/> to buffer adds.</para>
+    ///     <para>A thread safe list. Uses a <see cref="ConcurrentQueue{T}" /> to buffer adds.</para>
     /// </summary>
     /// <typeparam name="TType"></typeparam>
     /// <remarks>
-    /// <para>This class was created on a spur of the moment idea, and is <b>thoroughly</b> UNTESTED.</para>
+    ///     <para>This class was created on a spur of the moment idea, and is <b>thoroughly</b> UNTESTED.</para>
     /// </remarks>
     /// <copyright>
     ///     Protiguous
     /// </copyright>
     [JsonObject]
-    [DebuggerDisplay( value: "Count={" + nameof( Count ) + "}" )]
+    [DebuggerDisplay( "Count={" + nameof( Count ) + "}" )]
     public class ConcurrentList<TType> : ABetterClassDispose, IList<TType>, IEquatable<IEnumerable<TType>> {
 
         /// <summary>
-        /// Create an empty list with different timeout values.
+        ///     Create an empty list with different timeout values.
         /// </summary>
         /// <param name="enumerable">  Fill the list with the given enumerable.</param>
         /// <param name="readTimeout"> </param>
@@ -66,42 +84,48 @@ namespace Librainian.Collections {
         [JsonIgnore]
         private ConcurrentQueue<TType> InputBuffer { get; set; }
 
-        /// <summary> threadsafe item counter (so we don't have to enter & exit the readerwriter). </summary>
+        /// <summary> threadsafe item counter (so we don't have to enter and exit the readerwriter). </summary>
         private ThreadLocal<Int32> ItemCounter { get; set; } = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true );
 
         [JsonIgnore]
         private ReaderWriterLockSlim ReaderWriter { get; set; } = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
 
         /// <summary>
-        /// <para>The internal list actually used.</para>
+        ///     <para>The internal list actually used.</para>
         /// </summary>
         [JsonProperty]
         private List<TType> TheList { get; set; } = new List<TType>();
 
         /// <summary>
-        /// <para>Count of items currently in this <see cref="ConcurrentList{TType}"/>.</para>
+        ///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
         /// </summary>
         [JsonIgnore]
         public Int32 Count => this.ItemCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
 
         /// <summary>
         /// </summary>
-        /// <seealso cref="AllowModifications"/>
+        /// <seealso cref="AllowModifications" />
         public Boolean IsReadOnly { get; private set; }
 
         [JsonProperty]
-        public TimeSpan? TimeoutForReads { get; set; } = TimeSpan.FromMinutes( value: 1 );
+        public TimeSpan? TimeoutForReads { get; set; } = TimeSpan.FromMinutes( 1 );
 
         [JsonProperty]
-        public TimeSpan? TimeoutForWrites { get; set; } = TimeSpan.FromMinutes( value: 1 );
+        public TimeSpan? TimeoutForWrites { get; set; } = TimeSpan.FromMinutes( 1 );
 
         /// <summary>
-        /// Gets or sets the element at the specified index.
+        ///     Gets or sets the element at the specified index.
         /// </summary>
         /// <returns>The element at the specified index.</returns>
         /// <param name="index">The zero-based index of the element to get or set.</param>
-        /// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index"/> is not a valid index in the <see cref="T:System.Collections.Generic.IList`1"/>.</exception>
-        /// <exception cref="T:System.NotSupportedException">The property is set and the <see cref="T:System.Collections.Generic.IList`1"/> is read-only.</exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException">
+        ///     <paramref name="index" /> is not a valid index in the
+        ///     <see cref="T:System.Collections.Generic.IList`1" />.
+        /// </exception>
+        /// <exception cref="T:System.NotSupportedException">
+        ///     The property is set and the
+        ///     <see cref="T:System.Collections.Generic.IList`1" /> is read-only.
+        /// </exception>
         public TType this[Int32 index] {
             [CanBeNull]
             get {
@@ -132,9 +156,9 @@ namespace Librainian.Collections {
 
         [OnDeserialized]
         private void OnDeserialized( StreamingContext context ) {
-            if ( !this.TimeoutForWrites.HasValue ) { this.TimeoutForWrites = TimeSpan.FromMinutes( value: 1 ); }
+            if ( !this.TimeoutForWrites.HasValue ) { this.TimeoutForWrites = TimeSpan.FromMinutes( 1 ); }
 
-            if ( !this.TimeoutForReads.HasValue ) { this.TimeoutForReads = TimeSpan.FromMinutes( value: 1 ); }
+            if ( !this.TimeoutForReads.HasValue ) { this.TimeoutForReads = TimeSpan.FromMinutes( 1 ); }
 
             if ( null == this.ReaderWriter ) { this.ReaderWriter = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion ); }
 
@@ -148,7 +172,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Filter read requests through a <see cref="ReaderWriterLockSlim"/>.</para>
+        ///     <para>Filter read requests through a <see cref="ReaderWriterLockSlim" />.</para>
         /// </summary>
         /// <typeparam name="TFuncResult"></typeparam>
         /// <param name="func"></param>
@@ -161,7 +185,7 @@ namespace Librainian.Collections {
 
             this.CatchUp();
 
-            if ( !this.ReaderWriter.TryEnterUpgradeableReadLock( timeout: this.TimeoutForReads ?? TimeSpan.FromMinutes( value: 1 ) ) ) { return default; }
+            if ( !this.ReaderWriter.TryEnterUpgradeableReadLock( timeout: this.TimeoutForReads ?? TimeSpan.FromMinutes( 1 ) ) ) { return default; }
 
             try {
                 if ( func != null ) { return func(); }
@@ -172,18 +196,18 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Filter write requests through the <see cref="ReaderWriter"/>.</para>
+        ///     <para>Filter write requests through the <see cref="ReaderWriter" />.</para>
         /// </summary>
         /// <typeparam name="TFuncResult"></typeparam>
         /// <param name="func">                         </param>
         /// <param name="ignoreAllowModificationsCheck"></param>
         /// <returns></returns>
-        /// <seealso cref="CatchUp"/>
+        /// <seealso cref="CatchUp" />
         [CanBeNull]
         private TFuncResult Write<TFuncResult>( [CanBeNull] Func<TFuncResult> func, Boolean ignoreAllowModificationsCheck = false ) {
             if ( !ignoreAllowModificationsCheck && !this.AllowModifications() && func != null ) { return default; }
 
-            if ( !this.ReaderWriter.TryEnterWriteLock( timeout: this.TimeoutForWrites ?? TimeSpan.FromMinutes( value: 1 ) ) ) { return default; }
+            if ( !this.ReaderWriter.TryEnterWriteLock( timeout: this.TimeoutForWrites ?? TimeSpan.FromMinutes( 1 ) ) ) { return default; }
 
             try {
                 if ( func != null ) { return func(); }
@@ -194,7 +218,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Static comparison function.
+        ///     Static comparison function.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="rhs"> </param>
@@ -208,13 +232,19 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Add the <typeparam name="TType">item</typeparam> to the end of this <see cref="ConcurrentList{TType}"/>.</para>
+        ///     <para>Add the
+        ///         <typeparam name="TType">item</typeparam>
+        ///         to the end of this <see cref="ConcurrentList{TType}" />.
+        ///     </para>
         /// </summary>
         /// <param name="item"></param>
         public void Add( TType item ) => this.Add( item: item, afterAdd: null );
 
         /// <summary>
-        /// <para>Add the <typeparam name="TType">item</typeparam> to the end of this <see cref="ConcurrentList{TType}"/>.</para>
+        ///     <para>Add the
+        ///         <typeparam name="TType">item</typeparam>
+        ///         to the end of this <see cref="ConcurrentList{TType}" />.
+        ///     </para>
         /// </summary>
         /// <param name="item">    </param>
         /// <param name="afterAdd"></param>
@@ -240,12 +270,15 @@ namespace Librainian.Collections {
         public async Task<Boolean> AddAsync( TType item, Action afterAdd = null ) => await Task.Run( function: () => this.TryAdd( item: item, afterAdd: afterAdd ) );
 
         /// <summary>
-        /// Add a collection of items.
+        ///     Add a collection of items.
         /// </summary>
         /// <param name="items">          </param>
-        /// <param name="useParallelism"> Enables parallelization of the <paramref name="items"/> No guarantee of the final order of items.</param>
-        /// <param name="afterEachAdd">   <see cref="Action"/> to perform after each add.</param>
-        /// <param name="afterRangeAdded"><see cref="Action"/> to perform after range added.</param>
+        /// <param name="useParallelism">
+        ///     Enables parallelization of the <paramref name="items" /> No guarantee of the final order
+        ///     of items.
+        /// </param>
+        /// <param name="afterEachAdd">   <see cref="Action" /> to perform after each add.</param>
+        /// <param name="afterRangeAdded"><see cref="Action" /> to perform after range added.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public void AddRange( [NotNull] IEnumerable<TType> items, Byte useParallelism = 0, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) {
             if ( null == items ) { throw new ArgumentNullException( nameof( items ) ); }
@@ -269,17 +302,17 @@ namespace Librainian.Collections {
             } ).ConfigureAwait( false );
 
         /// <summary>
-        /// Returns true if this <see cref="ConcurrentList{TType}"/> has not been marked as <see cref="Complete"/>.
+        ///     Returns true if this <see cref="ConcurrentList{TType}" /> has not been marked as <see cref="Complete" />.
         /// </summary>
         public Boolean AllowModifications() => !this.IsReadOnly;
 
         /// <summary>
         /// </summary>
-        /// <seealso cref="CatchUp"/>
+        /// <seealso cref="CatchUp" />
         public Boolean AnyWritesPending() => this.InputBuffer?.Any() == true;
 
         /// <summary>
-        /// Blocks, transfers items from <see cref="InputBuffer"/>, and then releases lock.
+        ///     Blocks, transfers items from <see cref="InputBuffer" />, and then releases lock.
         /// </summary>
         public void CatchUp() {
             if ( !this.AnyWritesPending() ) { return; }
@@ -296,7 +329,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Mark this <see cref="ConcurrentList{TType}"/> to be cleared.
+        ///     Mark this <see cref="ConcurrentList{TType}" /> to be cleared.
         /// </summary>
         public void Clear() {
             if ( !this.AllowModifications() ) { return; }
@@ -310,17 +343,17 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Returns a copy of this <see cref="ConcurrentList{TType}"/> at this moment in time.</para>
+        ///     <para>Returns a copy of this <see cref="ConcurrentList{TType}" /> at this moment in time.</para>
         /// </summary>
         /// <returns></returns>
         public IEnumerable<TType> Clone() => this.Read( func: () => this.TheList.ToList() );
 
         /// <summary>
-        /// Signal that this <see cref="ConcurrentList{TType}"/> will not be modified any more.
-        /// <para>Blocks.</para>
+        ///     Signal that this <see cref="ConcurrentList{TType}" /> will not be modified any more.
+        ///     <para>Blocks.</para>
         /// </summary>
-        /// <seealso cref="AllowModifications"/>
-        /// <seealso cref="IsReadOnly"/>
+        /// <seealso cref="AllowModifications" />
+        /// <seealso cref="IsReadOnly" />
         public void Complete() {
             try {
                 this.CatchUp();
@@ -333,12 +366,16 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Determines whether the <paramref name="item"/> is in this <see cref="ConcurrentList{TType}"/> at this moment in time.</para>
+        ///     <para>
+        ///         Determines whether the <paramref name="item" /> is in this <see cref="ConcurrentList{TType}" /> at this
+        ///         moment in time.
+        ///     </para>
         /// </summary>
         public Boolean Contains( TType item ) => this.Read( func: () => this.TheList.Contains( item: item ) );
 
         /// <summary>
-        /// Copies the entire <see cref="ConcurrentList{TType}"/> to the <paramref name="array"/>, starting at the specified index in the target array.
+        ///     Copies the entire <see cref="ConcurrentList{TType}" /> to the <paramref name="array" />, starting at the specified
+        ///     index in the target array.
         /// </summary>
         /// <param name="array">     </param>
         /// <param name="arrayIndex"></param>
@@ -353,7 +390,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Dispose any disposable members.
+        ///     Dispose any disposable members.
         /// </summary>
         public override void DisposeManaged() {
             this.ReaderWriter?.Dispose();
@@ -363,7 +400,7 @@ namespace Librainian.Collections {
         public Boolean Equals( IEnumerable<TType> other ) => Equals( left: this, rhs: other );
 
         /// <summary>
-        /// The <seealso cref="List{T}.Capacity"/> is resized down to the <seealso cref="List{T}.Count"/>.
+        ///     The <seealso cref="List{T}.Capacity" /> is resized down to the <seealso cref="List{T}.Count" />.
         /// </summary>
         public void FixCapacity() =>
             this.Write( func: () => {
@@ -373,19 +410,28 @@ namespace Librainian.Collections {
             } );
 
         /// <summary>
-        /// <para>Returns an enumerator that iterates through a <see cref="Clone"/> of this <see cref="ConcurrentList{TType}"/> .</para>
+        ///     <para>
+        ///         Returns an enumerator that iterates through a <see cref="Clone" /> of this
+        ///         <see cref="ConcurrentList{TType}" /> .
+        ///     </para>
         /// </summary>
         /// <returns></returns>
         public IEnumerator<TType> GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
 
         /// <summary>
-        /// <para>Searches at this moment in time for the first occurrence of <paramref name="item"/> and returns the zero-based index, or -1 if not found.</para>
+        ///     <para>
+        ///         Searches at this moment in time for the first occurrence of <paramref name="item" /> and returns the
+        ///         zero-based index, or -1 if not found.
+        ///     </para>
         /// </summary>
-        /// <param name="item">The object to locate in this <see cref="ConcurrentList{TType}"/>.</param>
+        /// <param name="item">The object to locate in this <see cref="ConcurrentList{TType}" />.</param>
         public Int32 IndexOf( TType item ) => this.Read( func: () => this.TheList.IndexOf( item: item ) );
 
         /// <summary>
-        /// <para>Requests an insert of the <paramref name="item"/> into this <see cref="ConcurrentList{TType}"/> at the specified <paramref name="index"/>.</para>
+        ///     <para>
+        ///         Requests an insert of the <paramref name="item" /> into this <see cref="ConcurrentList{TType}" /> at the
+        ///         specified <paramref name="index" />.
+        ///     </para>
         /// </summary>
         /// <param name="index"></param>
         /// <param name="item"> </param>
@@ -404,14 +450,14 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Returns true if the request to remove <paramref name="item"/> was posted.</para>
+        ///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
         public Boolean Remove( TType item ) => this.Remove( item: item, afterRemoval: null );
 
         /// <summary>
-        /// <para>Returns true if the request to remove <paramref name="item"/> was posted.</para>
+        ///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
         /// </summary>
         /// <param name="item">        </param>
         /// <param name="afterRemoval"></param>
@@ -451,13 +497,13 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Harker's shuffle version. Untested!
+        ///     Harker's shuffle version. Untested!
         /// </summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="iterations">      </param>
         /// <param name="howLong">         </param>
         /// <param name="orUntilCancelled"></param>
-        [Experimental( message: "Untested" )]
+        [Experimental( "Untested" )]
         public UInt32 Shuffle( Int32 iterations = 1, TimeSpan? howLong = null, SimpleCancel orUntilCancelled = null ) {
             var stopWatch = StopWatch.StartNew();
 
@@ -512,11 +558,11 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// <para>Try to get an item in this <see cref="ConcurrentList{TType}"/> by index.</para>
-        /// <para>Returns true if the request was posted to the internal dataflow.</para>
+        ///     <para>Try to get an item in this <see cref="ConcurrentList{TType}" /> by index.</para>
+        ///     <para>Returns true if the request was posted to the internal dataflow.</para>
         /// </summary>
         /// <param name="index">   </param>
-        /// <param name="afterGet">Action to be ran after the item at the <paramref name="index"/> is got.</param>
+        /// <param name="afterGet">Action to be ran after the item at the <paramref name="index" /> is got.</param>
         public Boolean TryGet( Int32 index, [CanBeNull] Action<TType> afterGet ) {
             if ( index < 0 ) { return false; }
 

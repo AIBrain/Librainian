@@ -1,20 +1,36 @@
-// Copyright 2017 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "ZeroToOne.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/ZeroToOne.cs" was last cleaned by Protiguous on 2017/09/09 at 11:44 AM
+// "Librainian/Librainian/ZeroToOne.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -24,16 +40,16 @@ namespace Librainian.Maths.Numbers {
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Restricts the value to between 0.0 and 1.0
-    /// <para>Uses the <see cref="Single"/> type.</para>
+    ///     Restricts the value to between 0.0 and 1.0
+    ///     <para>Uses the <see cref="float" /> type.</para>
     /// </summary>
     [Immutable]
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject( memberSerialization: MemberSerialization.Fields )]
     public class ZeroToOne {
 
         /// <summary>
-        /// ONLY used in the getter and setter.
+        ///     ONLY used in the getter and setter.
         /// </summary>
         [JsonProperty( "v" )]
         private volatile Single _value;
@@ -46,17 +62,16 @@ namespace Librainian.Maths.Numbers {
 
         private ZeroToOne( Double value ) : this() => this.Value = ( Single )( value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value ) );
 
-        private ZeroToOne( Single value ) : this( value: ( Single? )value ) { }
+        private ZeroToOne( Single value ) : this( ( Single? )value ) { }
 
         /// <summary>
-        /// <para>Restricts the value to between 0.0 and 1.0.</para>
-        /// <para>If null is given, a random value (between 0.0 and 1.0) will be assigned.</para>
+        ///     <para>Restricts the value to between 0.0 and 1.0.</para>
+        ///     <para>If null is given, a random value (between 0.0 and 1.0) will be assigned.</para>
         /// </summary>
         /// <param name="value"></param>
         public ZeroToOne( Single? value = null ) {
-            if ( !value.HasValue ) {
-                value = Randem.NextSingle( min: MinValue, max: MaxValue );
-            }
+            if ( !value.HasValue ) { value = Randem.NextSingle( min: MinValue, max: MaxValue ); }
+
             this.Value = value.Value;
         }
 
@@ -67,22 +82,26 @@ namespace Librainian.Maths.Numbers {
         }
 
         /// <summary>
-        /// Return a new <see cref="ZeroToOne"/> with the value of <paramref name="value1"/> moved closer to the value of <paramref name="value2"/> .
+        ///     Return a new <see cref="ZeroToOne" /> with the value of <paramref name="value1" /> moved closer to the value of
+        ///     <paramref name="value2" /> .
         /// </summary>
         /// <param name="value1">The current value.</param>
         /// <param name="value2">The value to move closer towards.</param>
-        /// <returns>Returns a new <see cref="ZeroToOne"/> with the value of <paramref name="value1"/> moved closer to the value of <paramref name="value2"/> .</returns>
-        public static ZeroToOne Combine( ZeroToOne value1, ZeroToOne value2 ) => new ZeroToOne( value: ( value1 + value2 ) / 2f );
+        /// <returns>
+        ///     Returns a new <see cref="ZeroToOne" /> with the value of <paramref name="value1" /> moved closer to the value
+        ///     of <paramref name="value2" /> .
+        /// </returns>
+        public static ZeroToOne Combine( ZeroToOne value1, ZeroToOne value2 ) => new ZeroToOne( ( value1 + value2 ) / 2f );
 
         public static implicit operator Double( ZeroToOne special ) => special.Value;
 
         public static implicit operator Single( ZeroToOne special ) => special.Value;
 
-        public static implicit operator ZeroToOne( Single value ) => new ZeroToOne( value: value );
+        public static implicit operator ZeroToOne( Single value ) => new ZeroToOne( value );
 
-        public static implicit operator ZeroToOne( Double value ) => new ZeroToOne( value: value );
+        public static implicit operator ZeroToOne( Double value ) => new ZeroToOne( value );
 
-        public static ZeroToOne Parse( String value ) => new ZeroToOne( value: Single.Parse( s: value ) );
+        public static ZeroToOne Parse( String value ) => new ZeroToOne( Single.Parse( s: value ) );
 
         public override String ToString() => $"{this.Value:P}";
     }

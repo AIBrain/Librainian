@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "CoordinateU64.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/CoordinateU64.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// "Librainian/Librainian/CoordinateU64.cs" was last cleaned by Protiguous on 2018/05/15 at 10:42 PM.
 
 namespace Librainian.Graphics.DDD {
 
@@ -28,7 +44,7 @@ namespace Librainian.Graphics.DDD {
     using Newtonsoft.Json;
 
     /// <summary>
-    /// A 3D point, with <see cref="X"/> , <see cref="Y"/> , and <see cref="Z"/> .
+    ///     A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> .
     /// </summary>
     /// <remarks>Coded towards speed.</remarks>
     [Immutable]
@@ -37,23 +53,24 @@ namespace Librainian.Graphics.DDD {
     public struct CoordinateU64 : IEquatable<CoordinateU64>, IComparable<CoordinateU64> {
 
         /// <summary>
-        /// The smallest value a <see cref="CoordinateU64"/> will hold.
+        ///     The smallest value a <see cref="CoordinateU64" /> will hold.
         /// </summary>
         public const UInt64 Minimum = 1 + UInt64.MinValue; //TODO why is this not Zero ?
 
         public static readonly CoordinateU64 Empty;
 
         /// <summary>
-        /// The largest value a <see cref="CoordinateU64"/> will hold.
+        ///     The largest value a <see cref="CoordinateU64" /> will hold.
         /// </summary>
-        /// <remarks>the cuberoot of <see cref="UInt64.MaxValue"/> split into x*y*z.</remarks>
+        /// <remarks>the cuberoot of <see cref="UInt64.MaxValue" /> split into x*y*z.</remarks>
         public static readonly UInt64 Maximum = ( UInt64 )Math.Pow( UInt64.MaxValue, 1.0 / 3.0 );
 
         public static readonly CoordinateU64 MaxValue = new CoordinateU64( x: UInt64.MaxValue, y: UInt64.MaxValue, z: UInt64.MaxValue );
+
         public static readonly CoordinateU64 MinValue = new CoordinateU64( x: Minimum, y: Minimum, z: Minimum );
 
         /// <summary>
-        /// Maximum - Minimum
+        ///     Maximum - Minimum
         /// </summary>
         public static readonly UInt64 Range = Maximum - Minimum;
 
@@ -74,11 +91,9 @@ namespace Librainian.Graphics.DDD {
         ///// </summary>
         //public Coordinate() : this( x: Randem.NextFloat(), y: Randem.NextFloat(), z: Randem.NextFloat() ) { }
 
-        public CoordinateU64( UInt64Range x ) : this( x: x.Min.Next( x.Max ), y: Minimum.Next( Maximum ), z: Minimum.Next( Maximum ) ) {
-        }
+        public CoordinateU64( UInt64Range x ) : this( x: x.Min.Next( x.Max ), y: Minimum.Next( Maximum ), z: Minimum.Next( Maximum ) ) { }
 
-        public CoordinateU64( UInt64Range x, UInt64Range y, UInt64Range z ) : this( x.Min.Next( x.Max ), y: y.Min.Next( y.Max ), z: z.Min.Next( z.Max ) ) {
-        }
+        public CoordinateU64( UInt64Range x, UInt64Range y, UInt64Range z ) : this( x.Min.Next( x.Max ), y: y.Min.Next( y.Max ), z: z.Min.Next( z.Max ) ) { }
 
         /// <summary>
         /// </summary>
@@ -93,17 +108,18 @@ namespace Librainian.Graphics.DDD {
         }
 
         /// <summary>
-        /// Calculates the distance between two <see cref="CoordinateU64"/>.
+        ///     Calculates the distance between two <see cref="CoordinateU64" />.
         /// </summary>
         public static UInt64 Distance( CoordinateU64 left, CoordinateU64 rhs ) {
             var num1 = left.X - rhs.X;
             var num2 = left.Y - rhs.Y;
             var num3 = left.Z - rhs.Z;
+
             return ( UInt64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
         }
 
         /// <summary>
-        /// static comparison.
+        ///     static comparison.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="rhs"> </param>
@@ -115,11 +131,12 @@ namespace Librainian.Graphics.DDD {
         public static implicit operator PointF( CoordinateU64 coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
         /// <summary>
-        /// <para>Returns a new Coordinate as a unit <see cref="CoordinateU64"/>.</para>
-        /// <para>The result is a Coordinate one unit in length pointing in the same direction as the original Coordinate.</para>
+        ///     <para>Returns a new Coordinate as a unit <see cref="CoordinateU64" />.</para>
+        ///     <para>The result is a Coordinate one unit in length pointing in the same direction as the original Coordinate.</para>
         /// </summary>
         public static CoordinateU64 Normalize( CoordinateU64 coordinate ) {
             var num = 1.0D / coordinate.SquareLength;
+
             return new CoordinateU64( ( UInt64 )( coordinate.X * num ), ( UInt64 )( coordinate.Y * num ), ( UInt64 )( coordinate.Z * num ) );
         }
 
@@ -130,43 +147,48 @@ namespace Librainian.Graphics.DDD {
         public static Boolean operator ==( CoordinateU64 left, CoordinateU64 rhs ) => Equals( left: left, rhs: rhs );
 
         /// <summary>
-        /// Compares the current <see cref="CoordinateU64"/> with another <see cref="CoordinateU64"/>.
+        ///     Compares the current <see cref="CoordinateU64" /> with another <see cref="CoordinateU64" />.
         /// </summary>
         /// <returns>
-        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero: This object is less than the <paramref
-        /// name="other"/> parameter.
-        /// Zero: This object is equal to <paramref name="other"/> . Greater than zero This object is greater than <paramref name="other"/> .
+        ///     A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the
+        ///     following meanings: Value Meaning Less than zero: This object is less than the
+        ///     <paramref
+        ///         name="other" />
+        ///     parameter.
+        ///     Zero: This object is equal to <paramref name="other" /> . Greater than zero This object is greater than
+        ///     <paramref name="other" /> .
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         [Pure]
         public Int32 CompareTo( CoordinateU64 other ) => this.SquareLength.CompareTo( other.SquareLength );
 
         /// <summary>
-        /// Calculates the distance between this <see cref="CoordinateU64"/> and another <see cref="CoordinateU64"/>.
+        ///     Calculates the distance between this <see cref="CoordinateU64" /> and another <see cref="CoordinateU64" />.
         /// </summary>
         public UInt64 Distance( CoordinateU64 rhs ) {
             var num1 = this.X - rhs.X;
             var num2 = this.Y - rhs.Y;
             var num3 = this.Z - rhs.Z;
+
             return ( UInt64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
         }
 
         /// <summary>
-        /// Calls the static comparison.
+        ///     Calls the static comparison.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         public Boolean Equals( CoordinateU64 other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj is null ) {
-                return false;
-            }
+            if ( obj is null ) { return false; }
+
             return obj is CoordinateU64 u64 && Equals( this, u64 );
         }
 
         /// <summary>
-        /// preCalc hash of <see cref="X"/>, <see cref="Y"/>, and <see cref="Z"/>. (I have no clue if GetHashCode is called once for immutable objects..?)
+        ///     preCalc hash of <see cref="X" />, <see cref="Y" />, and <see cref="Z" />. (I have no clue if GetHashCode is called
+        ///     once for immutable objects..?)
         /// </summary>
         public override Int32 GetHashCode() => this.X.GetHashMerge( this.Y.GetHashMerge( this.Z ) );
 

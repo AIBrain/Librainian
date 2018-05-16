@@ -1,20 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "BigDecimal.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/BigDecimal.cs" was last cleaned by Protiguous on 2016/06/18 at 10:52 PM
+// "Librainian/Librainian/BigDecimal.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -30,59 +46,59 @@ namespace Librainian.Maths.Numbers {
     using Parsing;
 
     /// <summary>
-    /// <para>Arbitrary precision Decimal.</para>
-    /// <para>All operations are exact, except for division. Division never determines more digits than the given precision.</para>
-    /// <para>Based on http://stackoverflow.com/a/4524254 spacer</para>
-    /// <para>Author: Jan Christoph Bernack (contact: jc.bernack at googlemail.com)</para>
-    /// <para>Joined with code from nberardi from gist 2667136</para>
-    /// <para>Rewritten into an immutable struct by Rick@Protiguous.com in August 2014</para>
-    /// <para>Added the parsing ability from the 'clojure' project.</para>
+    ///     <para>Arbitrary precision Decimal.</para>
+    ///     <para>
+    ///         All operations are exact, except for division. Division never determines more digits than the given
+    ///         precision.
+    ///     </para>
+    ///     <para>Based on http://stackoverflow.com/a/4524254 spacer</para>
+    ///     <para>Author: Jan Christoph Bernack (contact: jc.bernack at googlemail.com)</para>
+    ///     <para>Joined with code from nberardi from gist 2667136</para>
+    ///     <para>Rewritten into an immutable struct by Rick@Protiguous.com in August 2014</para>
+    ///     <para>Added the parsing ability from the 'clojure' project.</para>
     /// </summary>
-    /// <seealso cref="http://stackoverflow.com/a/13813535/956364"/>
-    /// <seealso cref="http://gist.github.com/nberardi/2667136"/>
+    /// <seealso cref="http://stackoverflow.com/a/13813535/956364" />
+    /// <seealso cref="http://gist.github.com/nberardi/2667136" />
     [Immutable]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Obsolete( "Use BigRational instead." )]
     public struct BigDecimal : IComparable, IComparable<BigDecimal>, IConvertible, /*IFormattable,*/ IEquatable<BigDecimal> {
 
         /// <summary>
-        /// - 1
+        ///     - 1
         /// </summary>
         public static readonly BigDecimal MinusOne = new BigDecimal( Decimal.MinusOne );
 
         /// <summary>
-        /// 1
+        ///     1
         /// </summary>
         public static readonly BigDecimal One = new BigDecimal( Decimal.One );
 
         /// <summary>
-        /// 0
+        ///     0
         /// </summary>
         public static readonly BigDecimal Zero = new BigDecimal( Decimal.Zero );
 
         /// <summary>
         /// </summary>
-        /// <seealso cref="http://wikipedia.org/wiki/Exponent"/>
+        /// <seealso cref="http://wikipedia.org/wiki/Exponent" />
         public readonly Int32 Exponent;
 
         /// <summary>
-        /// The <see cref="Significand"/> (aka <see cref="Mantissa"/>) is the part of a number consisting of its significant digits.
+        ///     The <see cref="Significand" /> (aka <see cref="Mantissa" />) is the part of a number consisting of its significant
+        ///     digits.
         /// </summary>
-        /// <seealso cref="http://wikipedia.org/wiki/Significand"/>
-        /// <seealso cref="Mantissa"/>
+        /// <seealso cref="http://wikipedia.org/wiki/Significand" />
+        /// <seealso cref="Mantissa" />
         public readonly BigInteger Significand;
 
-        public BigDecimal( BigDecimal bigDecimal ) : this( bigDecimal.Mantissa, bigDecimal.Exponent ) {
-        }
+        public BigDecimal( BigDecimal bigDecimal ) : this( bigDecimal.Mantissa, bigDecimal.Exponent ) { }
 
-        public BigDecimal( Decimal value ) : this( bigDecimal: value ) {
-        }
+        public BigDecimal( Decimal value ) : this( bigDecimal: value ) { }
 
-        public BigDecimal( Double value ) : this( bigDecimal: value ) {
-        }
+        public BigDecimal( Double value ) : this( bigDecimal: value ) { }
 
-        public BigDecimal( Single value ) : this( bigDecimal: value ) {
-        }
+        public BigDecimal( Single value ) : this( bigDecimal: value ) { }
 
         /// <summary>
         /// </summary>
@@ -99,34 +115,25 @@ namespace Librainian.Maths.Numbers {
             while ( exponent > 0 && this.Significand % 10 == 0 ) {
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                if ( this.Significand == 0 ) {
-                    break;
-                }
+                if ( this.Significand == 0 ) { break; }
+
                 this.Significand /= 10;
                 this.Exponent += 1;
             }
         }
 
-        public BigDecimal( Int32 value ) : this( new BigInteger( value ), 0 ) {
-        }
+        public BigDecimal( Int32 value ) : this( new BigInteger( value ), 0 ) { }
 
-        public BigDecimal( Int64 value ) : this( new BigInteger( value ), 0 ) {
-        }
+        public BigDecimal( Int64 value ) : this( new BigInteger( value ), 0 ) { }
 
-        public BigDecimal( UInt32 value ) : this( new BigInteger( value ), 0 ) {
-        }
+        public BigDecimal( UInt32 value ) : this( new BigInteger( value ), 0 ) { }
 
-        public BigDecimal( UInt64 value ) : this( new BigInteger( value ), 0 ) {
-        }
+        public BigDecimal( UInt64 value ) : this( new BigInteger( value ), 0 ) { }
 
         public BigDecimal( Byte[] value ) {
-            if ( value.Length < 5 ) {
-                throw new ArgumentOutOfRangeException( nameof( value ), "Not enough bytes to construct the Significand" );
-            }
+            if ( value.Length < 5 ) { throw new ArgumentOutOfRangeException( nameof( value ), "Not enough bytes to construct the Significand" ); }
 
-            if ( !value.Length.CanAllocateMemory() ) {
-                throw new ArgumentOutOfRangeException( nameof( value ), "'value' is too large to allocate" );
-            }
+            if ( !value.Length.CanAllocateMemory() ) { throw new ArgumentOutOfRangeException( nameof( value ), "'value' is too large to allocate" ); }
 
             var number = new Byte[value.Length - 4];
             var flags = new Byte[4];
@@ -144,12 +151,6 @@ namespace Librainian.Maths.Numbers {
         //    this.Exponent = number.Exponent;
         //}
 
-        /// <summary>
-        /// The significand (aka mantissa) is part of a number consisting of its significant digits.
-        /// </summary>
-        /// <seealso cref="Significand"/>
-        public BigInteger Mantissa => this.Significand;
-
         public Boolean IsEven => this.Significand.IsEven;
 
         public Boolean IsOne => this.Significand.IsOne;
@@ -158,16 +159,27 @@ namespace Librainian.Maths.Numbers {
 
         public Boolean IsZero => this.Significand.IsZero;
 
+        /// <summary>
+        ///     The significand (aka mantissa) is part of a number consisting of its significant digits.
+        /// </summary>
+        /// <seealso cref="Significand" />
+        public BigInteger Mantissa => this.Significand;
+
         public Int32 Sign => this.Significand.Sign;
 
-        private static BigDecimal Add( BigDecimal left, BigDecimal right ) => left.Exponent > right.Exponent ? new BigDecimal( AlignExponent( left, right ) + right.Mantissa, exponent: right.Exponent ) : new BigDecimal( AlignExponent( right, left ) + left.Mantissa, exponent: left.Exponent );
+        private static BigDecimal Add( BigDecimal left, BigDecimal right ) =>
+            left.Exponent > right.Exponent
+                ? new BigDecimal( AlignExponent( left, right ) + right.Mantissa, exponent: right.Exponent )
+                : new BigDecimal( AlignExponent( right, left ) + left.Mantissa, exponent: left.Exponent );
 
         /// <summary>
-        /// Returns the mantissa of <paramref name="value"/>, aligned to the exponent of reference. Assumes the exponent of <paramref name="value"/> is larger than of value.
+        ///     Returns the mantissa of <paramref name="value" />, aligned to the exponent of reference. Assumes the exponent of
+        ///     <paramref name="value" /> is larger than of value.
         /// </summary>
         public static BigInteger AlignExponent( BigDecimal value, BigDecimal reference ) {
             Assert.GreaterOrEqual( value.Exponent, reference.Exponent );
-            return value.Mantissa * BigInteger.Pow( value: 10, exponent: value.Exponent - reference.Exponent );
+
+            return value.Mantissa * BigInteger.Pow( 10, exponent: value.Exponent - reference.Exponent );
         }
 
         //    //BUG is this correct?
@@ -219,7 +231,7 @@ namespace Librainian.Maths.Numbers {
         }
 
         /// <summary>
-        /// <see cref="Divide"/> is soooo broken.
+        ///     <see cref="Divide" /> is soooo broken.
         /// </summary>
         /// <param name="dividend"></param>
         /// <param name="divisor"> </param>
@@ -266,7 +278,7 @@ namespace Librainian.Maths.Numbers {
         //    return new BigDecimal( dividend.Mantissa / divisor.Mantissa, dividend.Exponent - divisor.Exponent - exponentChange );
         //}
         /// <summary>
-        /// Static equality check for <paramref name="left"/> against <paramref name="right"/>.
+        ///     Static equality check for <paramref name="left" /> against <paramref name="right" />.
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
@@ -275,11 +287,13 @@ namespace Librainian.Maths.Numbers {
 
         public static BigDecimal Exp( Double exponent ) {
             var tmp = One;
+
             while ( Math.Abs( exponent ) > 100 ) {
                 var diff = exponent > 0 ? 100 : -100;
                 tmp *= Math.Exp( diff );
                 exponent -= diff;
             }
+
             return tmp * Math.Exp( d: exponent );
         }
 
@@ -316,24 +330,26 @@ namespace Librainian.Maths.Numbers {
         ///// <returns></returns>
         //public static explicit operator BigInteger(BigDecimal value) => value.ToBigInteger();
         /// <summary>
-        /// Do not know if casting and math here is correct (bug free and overflow free)
+        ///     Do not know if casting and math here is correct (bug free and overflow free)
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
         public static implicit operator BigDecimal( Double number ) {
-            var mantissa = new BigInteger( value: number );
+            var mantissa = new BigInteger( number );
             var exponent = 0;
             Double scaleFactor = 1;
+
             while ( Math.Abs( number * scaleFactor - ( Double )mantissa ) > 0 ) {
                 exponent -= 1;
                 scaleFactor *= 10;
                 mantissa = ( BigInteger )( number * scaleFactor );
             }
+
             return new BigDecimal( mantissa, exponent );
         }
 
         /// <summary>
-        /// Do not know if casting and math here is correct (bug free and overflow free)
+        ///     Do not know if casting and math here is correct (bug free and overflow free)
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -341,11 +357,13 @@ namespace Librainian.Maths.Numbers {
             var mantissa = ( BigInteger )value;
             var exponent = 0;
             Decimal scaleFactor = 1;
+
             while ( ( Decimal )mantissa != value * scaleFactor ) {
                 exponent -= 1;
                 scaleFactor *= 10;
-                mantissa = new BigInteger( value: value * scaleFactor );
+                mantissa = new BigInteger( value * scaleFactor );
             }
+
             return new BigDecimal( mantissa, exponent );
         }
 
@@ -412,6 +430,7 @@ namespace Librainian.Maths.Numbers {
             //newmantissa /=  divisor.Mantissa;
             //var result = new BigDecimal( newmantissa, newexponent );
             var result = Divide( dividend, divisor );
+
             return result;
         }
 
@@ -433,25 +452,25 @@ namespace Librainian.Maths.Numbers {
 
         public static BigDecimal Pow( Double basis, Double exponent ) {
             BigDecimal tmp = 1;
+
             while ( Math.Abs( exponent ) > 100 ) {
                 var diff = exponent > 0 ? 100 : -100;
                 tmp *= Math.Pow( basis, diff );
                 exponent -= diff;
             }
+
             return tmp * Math.Pow( basis, exponent );
         }
 
         public Int32 CompareTo( [CanBeNull] Object obj ) {
-            if ( !( obj is BigDecimal ) ) {
-                throw new ArgumentException();
-            }
+            if ( !( obj is BigDecimal ) ) { throw new ArgumentException(); }
+
             return this.CompareTo( ( BigDecimal )obj );
         }
 
         public Int32 CompareTo( BigDecimal other ) {
-            if ( this < other ) {
-                return -1;
-            }
+            if ( this < other ) { return -1; }
+
             return this > other ? 1 : 0;
         }
 
@@ -459,9 +478,8 @@ namespace Librainian.Maths.Numbers {
 
         [Pure]
         public override Boolean Equals( [CanBeNull] Object obj ) {
-            if ( obj is null ) {
-                return false;
-            }
+            if ( obj is null ) { return false; }
+
             return obj is BigDecimal @decimal && Equals( this, @decimal );
         }
 
@@ -524,9 +542,7 @@ namespace Librainian.Maths.Numbers {
             var unscaledValue = this.Significand.ToByteArray();
             var scale = BitConverter.GetBytes( this.Exponent );
 
-            if ( !( unscaledValue.Length + scale.Length ).CanAllocateMemory() ) {
-                throw new OutOfMemoryException( "ToByteArray() is too large to allocate" );
-            }
+            if ( !( unscaledValue.Length + scale.Length ).CanAllocateMemory() ) { throw new OutOfMemoryException( "ToByteArray() is too large to allocate" ); }
 
             var bytes = new Byte[unscaledValue.Length + scale.Length];
             Array.Copy( unscaledValue, 0, bytes, 0, unscaledValue.Length );
@@ -541,6 +557,7 @@ namespace Librainian.Maths.Numbers {
 
             if ( this.Exponent < 0 ) {
                 var amountOfZeros = Math.Abs( this.Exponent ) - result.Length;
+
                 if ( amountOfZeros > 0 ) {
                     var leadingZeros = new String( '0', amountOfZeros );
                     result = result.Prepend( leadingZeros );
@@ -562,9 +579,7 @@ namespace Librainian.Maths.Numbers {
                 result = result.Append( trailingZeros ); //big number, add Exponent zeros on the right
             }
 
-            if ( this.Sign == -1 ) {
-                result = result.Prepend( "-" );
-            }
+            if ( this.Sign == -1 ) { result = result.Prepend( "-" ); }
 
             return result;
 
@@ -629,14 +644,13 @@ namespace Librainian.Maths.Numbers {
             var remainder = BigInteger.Remainder( this.Significand, scaleDivisor );
             var scaledValue = BigInteger.Divide( this.Significand, scaleDivisor );
 
-            if ( scaledValue > new BigInteger( Decimal.MaxValue ) ) {
-                throw new ArgumentOutOfRangeException( nameof( provider ), $"The value {this.Significand} cannot fit into {conversionType.Name}." );
-            }
+            if ( scaledValue > new BigInteger( Decimal.MaxValue ) ) { throw new ArgumentOutOfRangeException( nameof( provider ), $"The value {this.Significand} cannot fit into {conversionType.Name}." ); }
 
             var leftOfDecimal = ( Decimal )scaledValue;
             var rightOfDecimal = ( Decimal )remainder / ( Decimal )scaleDivisor;
 
             var value = leftOfDecimal + rightOfDecimal;
+
             return Convert.ChangeType( value, conversionType ) ?? throw new InvalidOperationException();
         }
 

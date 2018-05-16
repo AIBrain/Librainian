@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Nanoseconds.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Nanoseconds.cs" was last cleaned by Protiguous on 2016/06/18 at 10:54 PM
+// "Librainian/Librainian/Nanoseconds.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -34,79 +50,79 @@ namespace Librainian.Measurement.Time {
     public struct Nanoseconds : IComparable<Nanoseconds>, IQuantityOfTime {
 
         /// <summary>
-        /// 1000
+        ///     1000
         /// </summary>
         public const UInt16 InOneMicrosecond = 1000;
 
         /// <summary>
-        /// Ten <see cref="Nanoseconds"/> s.
+        ///     Ten <see cref="Nanoseconds" /> s.
         /// </summary>
-        public static readonly Nanoseconds Fifteen = new Nanoseconds( value: 15 );
+        public static readonly Nanoseconds Fifteen = new Nanoseconds( 15 );
 
         /// <summary>
-        /// Five <see cref="Nanoseconds"/> s.
+        ///     Five <see cref="Nanoseconds" /> s.
         /// </summary>
-        public static readonly Nanoseconds Five = new Nanoseconds( value: 5 );
+        public static readonly Nanoseconds Five = new Nanoseconds( 5 );
 
         /// <summary>
-        /// Five Hundred <see cref="Nanoseconds"/> s.
+        ///     Five Hundred <see cref="Nanoseconds" /> s.
         /// </summary>
-        public static readonly Nanoseconds FiveHundred = new Nanoseconds( value: 500 );
+        public static readonly Nanoseconds FiveHundred = new Nanoseconds( 500 );
 
         /// <summary>
-        /// One <see cref="Nanoseconds"/>.
+        ///     One <see cref="Nanoseconds" />.
         /// </summary>
-        public static readonly Nanoseconds One = new Nanoseconds( value: 1 );
+        public static readonly Nanoseconds One = new Nanoseconds( 1 );
 
         /// <summary>
-        /// One Thousand Nine <see cref="Nanoseconds"/> (Prime).
+        ///     One Thousand Nine <see cref="Nanoseconds" /> (Prime).
         /// </summary>
-        public static readonly Nanoseconds OneThousandNine = new Nanoseconds( value: 1009 );
+        public static readonly Nanoseconds OneThousandNine = new Nanoseconds( 1009 );
 
         /// <summary>
-        /// Sixteen <see cref="Nanoseconds"/>.
+        ///     Sixteen <see cref="Nanoseconds" />.
         /// </summary>
-        public static readonly Nanoseconds Sixteen = new Nanoseconds( value: 16 );
+        public static readonly Nanoseconds Sixteen = new Nanoseconds( 16 );
 
         /// <summary>
-        /// Ten <see cref="Nanoseconds"/> s.
+        ///     Ten <see cref="Nanoseconds" /> s.
         /// </summary>
-        public static readonly Nanoseconds Ten = new Nanoseconds( value: 10 );
+        public static readonly Nanoseconds Ten = new Nanoseconds( 10 );
 
         /// <summary>
-        /// Three <see cref="Nanoseconds"/> s.
+        ///     Three <see cref="Nanoseconds" /> s.
         /// </summary>
-        public static readonly Nanoseconds Three = new Nanoseconds( value: 3 );
+        public static readonly Nanoseconds Three = new Nanoseconds( 3 );
 
         /// <summary>
-        /// Three Three Three <see cref="Nanoseconds"/>.
+        ///     Three Three Three <see cref="Nanoseconds" />.
         /// </summary>
-        public static readonly Nanoseconds ThreeHundredThirtyThree = new Nanoseconds( value: 333 );
+        public static readonly Nanoseconds ThreeHundredThirtyThree = new Nanoseconds( 333 );
 
         /// <summary>
-        /// Two <see cref="Nanoseconds"/> s.
+        ///     Two <see cref="Nanoseconds" /> s.
         /// </summary>
-        public static readonly Nanoseconds Two = new Nanoseconds( value: 2 );
+        public static readonly Nanoseconds Two = new Nanoseconds( 2 );
 
         /// <summary>
-        /// Two Hundred <see cref="Nanoseconds"/>.
+        ///     Two Hundred <see cref="Nanoseconds" />.
         /// </summary>
-        public static readonly Nanoseconds TwoHundred = new Nanoseconds( value: 200 );
+        public static readonly Nanoseconds TwoHundred = new Nanoseconds( 200 );
 
         /// <summary>
-        /// Two Hundred Eleven <see cref="Nanoseconds"/> (Prime).
+        ///     Two Hundred Eleven <see cref="Nanoseconds" /> (Prime).
         /// </summary>
-        public static readonly Nanoseconds TwoHundredEleven = new Nanoseconds( value: 211 );
+        public static readonly Nanoseconds TwoHundredEleven = new Nanoseconds( 211 );
 
         /// <summary>
-        /// Two Thousand Three <see cref="Nanoseconds"/> (Prime).
+        ///     Two Thousand Three <see cref="Nanoseconds" /> (Prime).
         /// </summary>
-        public static readonly Nanoseconds TwoThousandThree = new Nanoseconds( value: 2003 );
+        public static readonly Nanoseconds TwoThousandThree = new Nanoseconds( 2003 );
 
         /// <summary>
-        /// Zero <see cref="Nanoseconds"/>.
+        ///     Zero <see cref="Nanoseconds" />.
         /// </summary>
-        public static readonly Nanoseconds Zero = new Nanoseconds( value: 0 );
+        public static readonly Nanoseconds Zero = new Nanoseconds( 0 );
 
         public Nanoseconds( Decimal value ) => this.Value = value;
 
@@ -117,9 +133,7 @@ namespace Librainian.Measurement.Time {
         public Nanoseconds( BigInteger value ) => this.Value = value;
 
         [JsonProperty]
-        public BigRational Value {
-            get;
-        }
+        public BigRational Value { get; }
 
         public static Nanoseconds Combine( Nanoseconds left, Nanoseconds right ) => Combine( left, right.Value );
 
@@ -128,7 +142,7 @@ namespace Librainian.Measurement.Time {
         public static Nanoseconds Combine( Nanoseconds left, BigInteger nanoseconds ) => new Nanoseconds( left.Value + nanoseconds );
 
         /// <summary>
-        /// <para>static equality test</para>
+        ///     <para>static equality test</para>
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
@@ -170,9 +184,8 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Nanoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj is null ) {
-                return false;
-            }
+            if ( obj is null ) { return false; }
+
             return obj is Nanoseconds nanoseconds && this.Equals( nanoseconds );
         }
 
@@ -191,9 +204,12 @@ namespace Librainian.Measurement.Time {
         public override String ToString() {
             if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
+
                 return $"{whole} {whole.PluralOf( "ns" )}";
             }
+
             var dec = ( Decimal )this.Value;
+
             return $"{dec} {dec.PluralOf( "ns" )}";
         }
     }

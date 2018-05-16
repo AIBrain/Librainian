@@ -1,18 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "MarshalCache.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/MarshalCache.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/MarshalCache.cs" was last cleaned by Protiguous on 2018/05/15 at 10:40 PM.
 
 namespace Librainian.Extensions {
 
@@ -26,7 +44,7 @@ namespace Librainian.Extensions {
     using System.Runtime.InteropServices;
 
     /// <summary>
-    /// Pulled from https://github.com/lolp1/Process.NET/blob/master/src/Process.NET/Marshaling/MarshalCache.cs
+    ///     Pulled from https://github.com/lolp1/Process.NET/blob/master/src/Process.NET/Marshaling/MarshalCache.cs
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [SuppressMessage( "ReSharper", "StaticMemberInGenericType" )]
@@ -35,22 +53,22 @@ namespace Librainian.Extensions {
         public static readonly GetUnsafePtrDelegate GetUnsafePtr;
 
         /// <summary>
-        /// The real, underlying type.
+        ///     The real, underlying type.
         /// </summary>
         public static readonly Type RealType;
 
         /// <summary>
-        /// The size of the Type
+        ///     The size of the Type
         /// </summary>
         public static Int32 Size;
 
         /// <summary>
-        /// The type code
+        ///     The type code
         /// </summary>
         public static TypeCode TypeCode;
 
         /// <summary>
-        /// True if this type requires the Marshaler to map variables. (No direct pointer dereferencing)
+        ///     True if this type requires the Marshaler to map variables. (No direct pointer dereferencing)
         /// </summary>
         public static Boolean TypeRequiresMarshal;
 
@@ -111,9 +129,7 @@ namespace Librainian.Extensions {
                     var attr = field.GetCustomAttributes( typeof( FixedBufferAttribute ), false );
 
                     if ( attr.Length > 0 ) {
-                        if ( attr[0] is FixedBufferAttribute fba ) {
-                            totalSize += GetSizeOf( fba.ElementType ) * fba.Length;
-                        }
+                        if ( attr[0] is FixedBufferAttribute fba ) { totalSize += GetSizeOf( fba.ElementType ) * fba.Length; }
                     }
 
                     // Recursive. We want to allow ourselves to dive back into this function if we need to!
@@ -135,19 +151,13 @@ namespace Librainian.Extensions {
                 }
 
                 // Nope
-                if ( t == typeof( IntPtr ) || t == typeof( String ) ) {
-                    continue;
-                }
+                if ( t == typeof( IntPtr ) || t == typeof( String ) ) { continue; }
 
                 // If it's a custom object, then check it separately for marshaling requirements.
-                if ( Type.GetTypeCode( t ) == TypeCode.Object ) {
-                    requires |= RequiresMarshal( fieldInfo.FieldType );
-                }
+                if ( Type.GetTypeCode( t ) == TypeCode.Object ) { requires |= RequiresMarshal( fieldInfo.FieldType ); }
 
                 // if anything requires a marshal, period, no matter where/what it is. just return true. Hop out of this func as early as possible.
-                if ( !requires ) {
-                    continue;
-                }
+                if ( !requires ) { continue; }
 
                 Debug.WriteLine( fieldInfo.FieldType.Name + " requires marshaling." );
 

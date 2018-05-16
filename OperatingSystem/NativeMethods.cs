@@ -1,18 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "NativeMethods.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/NativeMethods.cs" was last cleaned by Protiguous on 2018/05/14 at 6:26 PM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/NativeMethods.cs" was last cleaned by Protiguous on 2018/05/15 at 10:48 PM.
 
 namespace Librainian.OperatingSystem {
 
@@ -444,40 +462,54 @@ namespace Librainian.OperatingSystem {
         internal static extern Int32 EnableMenuItem( this IntPtr tMenu, Int32 targetItem, Int32 targetStatus );
 
         /// <summary>
-        /// Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, or FindFirstStreamW function.
+        ///     Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, or FindFirstStreamW function.
         /// </summary>
         /// <param name="hFindFile">The file search handle.</param>
         /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.</returns>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa364413%28VS.85%29.aspx"/>
+        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa364413%28VS.85%29.aspx" />
         [DllImport( "kernel32.dll", SetLastError = true )]
         internal static extern Boolean FindClose( IntPtr hFindFile );
 
         /// <summary>
-        /// Searches a directory for a file or subdirectory with a name that matches a specific name (or partial name if wildcards are used).
+        ///     Searches a directory for a file or subdirectory with a name that matches a specific name (or partial name if
+        ///     wildcards are used).
         /// </summary>
-        /// <param name="lpFileName">The directory or path, and the file name, which can include wildcard characters, for example, an asterisk (*) or a question mark (?).</param>
-        /// <param name="lpFindData">A pointer to the WIN32_FIND_DATA structure that receives information about a found file or directory.</param>
+        /// <param name="lpFileName">
+        ///     The directory or path, and the file name, which can include wildcard characters, for example,
+        ///     an asterisk (*) or a question mark (?).
+        /// </param>
+        /// <param name="lpFindData">
+        ///     A pointer to the WIN32_FIND_DATA structure that receives information about a found file or
+        ///     directory.
+        /// </param>
         /// <returns>
-        /// If the function succeeds, the return value is a search handle used in a subsequent call to FindNextFile or FindClose, and the lpFindFileData parameter contains information about the first file or directory
-        /// found. If the function fails or fails to locate files from the search String in the lpFileName parameter, the return value is INVALID_HANDLE_VALUE and the contents of lpFindFileData are indeterminate.
+        ///     If the function succeeds, the return value is a search handle used in a subsequent call to FindNextFile or
+        ///     FindClose, and the lpFindFileData parameter contains information about the first file or directory
+        ///     found. If the function fails or fails to locate files from the search String in the lpFileName parameter, the
+        ///     return value is INVALID_HANDLE_VALUE and the contents of lpFindFileData are indeterminate.
         /// </returns>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa364418%28VS.85%29.aspx"/>
+        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa364418%28VS.85%29.aspx" />
         [DllImport( "kernel32.dll", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false )]
         internal static extern SafeSearchHandle FindFirstFile( String lpFileName, out Win32FindData lpFindData );
 
         /// <summary>
-        /// Continues a file search from a previous call to the FindFirstFile or FindFirstFileEx function.
+        ///     Continues a file search from a previous call to the FindFirstFile or FindFirstFileEx function.
         /// </summary>
-        /// <param name="hFindFile"> The search handle returned by a previous call to the FindFirstFile or FindFirstFileEx function.</param>
+        /// <param name="hFindFile">
+        ///     The search handle returned by a previous call to the FindFirstFile or FindFirstFileEx
+        ///     function.
+        /// </param>
         /// <param name="lpFindData">
-        /// A pointer to the WIN32_FIND_DATA structure that receives information about the found file or subdirectory. The structure can be used in subsequent calls to FindNextFile to indicate from which file to continue
-        /// the search.
+        ///     A pointer to the WIN32_FIND_DATA structure that receives information about the found file or subdirectory. The
+        ///     structure can be used in subsequent calls to FindNextFile to indicate from which file to continue
+        ///     the search.
         /// </param>
         /// <returns>
-        /// If the function succeeds, the return value is nonzero and the lpFindFileData parameter contains information about the next file or directory found. If the function fails, the return value is zero and the
-        /// contents of lpFindFileData are indeterminate.
+        ///     If the function succeeds, the return value is nonzero and the lpFindFileData parameter contains information about
+        ///     the next file or directory found. If the function fails, the return value is zero and the
+        ///     contents of lpFindFileData are indeterminate.
         /// </returns>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa364428%28VS.85%29.aspx"/>
+        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa364428%28VS.85%29.aspx" />
         [DllImport( "kernel32.dll", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false )]
         internal static extern Boolean FindNextFile( SafeSearchHandle hFindFile, out Win32FindData lpFindData );
 
@@ -503,14 +535,23 @@ namespace Librainian.OperatingSystem {
         internal static extern Int32 GetBestInterface( UInt32 destAddr, out UInt32 bestIfIndex );
 
         /// <summary>
-        /// <para>Retrieves the actual number of bytes of disk storage used to store a specified file as a transacted operation.</para>
-        /// <para>If the file is located on a volume that supports compression and the file is compressed, the value obtained is the compressed size of the specified file.</para>
-        /// <para>If the file is located on a volume that supports sparse files and the file is a sparse file, the value obtained is the sparse size of the specified file.</para>
+        ///     <para>
+        ///         Retrieves the actual number of bytes of disk storage used to store a specified file as a transacted
+        ///         operation.
+        ///     </para>
+        ///     <para>
+        ///         If the file is located on a volume that supports compression and the file is compressed, the value obtained
+        ///         is the compressed size of the specified file.
+        ///     </para>
+        ///     <para>
+        ///         If the file is located on a volume that supports sparse files and the file is a sparse file, the value
+        ///         obtained is the sparse size of the specified file.
+        ///     </para>
         /// </summary>
         /// <param name="lpFileName">    </param>
         /// <param name="lpFileSizeHigh"></param>
         /// <returns></returns>
-        /// <seealso cref="http://msdn.microsoft.com/en-us/Library/windows/desktop/aa364930(v=vs.85).aspx"/>
+        /// <seealso cref="http://msdn.microsoft.com/en-us/Library/windows/desktop/aa364930(v=vs.85).aspx" />
         [DllImport( "kernel32.dll" )]
         internal static extern UInt32 GetCompressedFileSizeW( [In] [MarshalAs( UnmanagedType.LPWStr )]
             String lpFileName, [Out] [MarshalAs( UnmanagedType.U4 )] out UInt32 lpFileSizeHigh );
@@ -524,7 +565,7 @@ namespace Librainian.OperatingSystem {
         /// <summary>
         /// </summary>
         /// <returns></returns>
-        /// <seealso cref="http://www.facepunch.com/showthread.php?t=1312991"/>
+        /// <seealso cref="http://www.facepunch.com/showthread.php?t=1312991" />
         internal static IntPtr GetDesktopHandle() {
             var desktop = GetDesktopWindow();
             var progMan = FindWindowEx( desktop, IntPtr.Zero, "Progman", "Program Manager" );
@@ -607,13 +648,14 @@ namespace Librainian.OperatingSystem {
             MoveFileFlags dwFlags );
 
         /// <summary>
-        /// Netapi32.dll : The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates. Call NetApiBufferFree to free the memory that other network management functions return.
+        ///     Netapi32.dll : The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates.
+        ///     Call NetApiBufferFree to free the memory that other network management functions return.
         /// </summary>
         [DllImport( "netapi32.dll", EntryPoint = "NetApiBufferFree" )]
         internal static extern Int32 NetApiBufferFree( IntPtr buffer );
 
         /// <summary>
-        /// The NetServerEnum function lists all servers of the specified type that are visible in a domain.
+        ///     The NetServerEnum function lists all servers of the specified type that are visible in a domain.
         /// </summary>
         /// <param name="servername">  </param>
         /// <param name="level">       </param>
@@ -625,7 +667,7 @@ namespace Librainian.OperatingSystem {
         /// <param name="domain">      </param>
         /// <param name="resumeHandle"></param>
         /// <returns></returns>
-        /// <seealso cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum"/>
+        /// <seealso cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum" />
         [DllImport( "netapi32.dll", EntryPoint = "NetServerEnum" )]
         internal static extern Int32 NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )] String servername, Int32 level, out IntPtr bufptr, Int32 prefmaxlen, ref Int32 entriesread, ref Int32 totalentries,
             Sv101Types servertype, [MarshalAs( UnmanagedType.LPWStr )] String domain, IntPtr resumeHandle );
@@ -706,7 +748,7 @@ namespace Librainian.OperatingSystem {
         //private static extern ErrorCodes WNetAddConnection2( NETRESOURCE lpNetResource,ref String lpPassword,ref     String lpUsername, UInt32 dwFlags );
 
         /// <summary>
-        /// This must be used if NETRESOURCE is defined as a struct???
+        ///     This must be used if NETRESOURCE is defined as a struct???
         /// </summary>
         /// <param name="netResource"></param>
         /// <param name="password">   </param>
@@ -830,9 +872,10 @@ namespace Librainian.OperatingSystem {
         }
 
         /// <summary>
-        /// Win32 FILETIME structure. The win32 documentation says this: "Contains a 64-bit value representing the number of 100-nanosecond intervals since January 1, 1601 (UTC)."
+        ///     Win32 FILETIME structure. The win32 documentation says this: "Contains a 64-bit value representing the number of
+        ///     100-nanosecond intervals since January 1, 1601 (UTC)."
         /// </summary>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/ms724284%28VS.85%29.aspx"/>
+        /// <see cref="http://msdn.microsoft.com/en-us/Library/ms724284%28VS.85%29.aspx" />
         [StructLayout( LayoutKind.Sequential )]
         public struct Filetime {
 
@@ -854,7 +897,7 @@ namespace Librainian.OperatingSystem {
             public Int64 QuadPart;
 
             /// <summary>
-            /// use only when QuadPart cannot be passed
+            ///     use only when QuadPart cannot be passed
             /// </summary>
             /// <returns></returns>
             public Int64 ToInt64() => ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
@@ -907,9 +950,10 @@ namespace Librainian.OperatingSystem {
         }
 
         /// <summary>
-        /// The Win32 find data structure. The documentation says: "Contains information about the file that is found by the FindFirstFile, FindFirstFileEx, or FindNextFile function."
+        ///     The Win32 find data structure. The documentation says: "Contains information about the file that is found by the
+        ///     FindFirstFile, FindFirstFileEx, or FindNextFile function."
         /// </summary>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa365740%28VS.85%29.aspx"/>
+        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa365740%28VS.85%29.aspx" />
         [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
         public struct Win32FindData {
 

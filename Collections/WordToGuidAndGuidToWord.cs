@@ -1,17 +1,36 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "WordToGuidAndGuidToWord.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original
-// license has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "WordToGuidAndGuidToWord.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/WordToGuidAndGuidToWord.cs" was last cleaned by Protiguous on 2018/05/15 at 1:29 AM.
+// "Librainian/Librainian/WordToGuidAndGuidToWord.cs" was last cleaned by Protiguous on 2018/05/15 at 10:38 PM.
 
 namespace Librainian.Collections {
 
@@ -21,10 +40,9 @@ namespace Librainian.Collections {
     using System.IO;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
-    using Persistence;
 
     /// <summary>
-    /// Contains Words and their guids. Persisted to and from storage? Thread-safe?
+    ///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
     /// </summary>
     [JsonObject]
     public class WordToGuidAndGuidToWord {
@@ -45,11 +63,11 @@ namespace Librainian.Collections {
             this.IsDirty = false;
             this._baseCollectionNameExt = String.Empty;
 
-            if ( !String.IsNullOrEmpty( value: baseCollectionName ) ) { this._baseCollectionName = baseCollectionName; }
+            if ( !String.IsNullOrEmpty( baseCollectionName ) ) { this._baseCollectionName = baseCollectionName; }
 
             this._baseCollectionNameExt = baseCollectionNameExt ?? throw new ArgumentNullException( nameof( baseCollectionNameExt ) );
 
-            if ( String.IsNullOrEmpty( value: this._baseCollectionNameExt ) ) { this._baseCollectionNameExt = "xml"; }
+            if ( String.IsNullOrEmpty( this._baseCollectionNameExt ) ) { this._baseCollectionNameExt = "xml"; }
         }
 
         public IEnumerable<Guid> EachGuid => this._guids.Keys;
@@ -62,15 +80,15 @@ namespace Librainian.Collections {
         public Int32 Count => Math.Min( val1: this._words.Count, val2: this._guids.Count );
 
         /// <summary>
-        /// Get or set the guid for this word.
+        ///     Get or set the guid for this word.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
         public Guid this[String key] {
-            get => String.IsNullOrEmpty( value: key ) ? Guid.Empty : this._words[key];
+            get => String.IsNullOrEmpty( key ) ? Guid.Empty : this._words[key];
 
             set {
-                if ( String.IsNullOrEmpty( value: key ) ) { return; }
+                if ( String.IsNullOrEmpty( key ) ) { return; }
 
                 if ( this._words.ContainsKey( key ) && value == this._words[key] ) { return; }
 
@@ -82,7 +100,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Get or set the word for this guid.
+        ///     Get or set the word for this guid.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -93,12 +111,12 @@ namespace Librainian.Collections {
                 if ( Guid.Empty.Equals( g: key ) ) { return; }
 
                 //Are they removing the guid from both lists?
-                if ( String.IsNullOrEmpty( value: value ) ) {
-                    this._guids.TryRemove( key, value: out var oldstringfortheguid );
+                if ( String.IsNullOrEmpty( value ) ) {
+                    this._guids.TryRemove( key, out var oldstringfortheguid );
 
-                    if ( String.IsNullOrEmpty( value: oldstringfortheguid ) ) { return; }
+                    if ( String.IsNullOrEmpty( oldstringfortheguid ) ) { return; }
 
-                    this._words.TryRemove( oldstringfortheguid, value: out var oldguid );
+                    this._words.TryRemove( oldstringfortheguid, out var oldguid );
                     oldguid.Equals( g: key ).BreakIfFalse();
                     this.IsDirty = true;
                 }
@@ -120,7 +138,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns true if the word is contained in the collections.
+        ///     Returns true if the word is contained in the collections.
         /// </summary>
         /// <param name="theWord"></param>
         /// <returns></returns>
@@ -131,7 +149,7 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns true if the guid is contained in the collection.
+        ///     Returns true if the guid is contained in the collection.
         /// </summary>
         /// <param name="theGuid"></param>
         /// <returns></returns>
@@ -156,12 +174,12 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        /// Returns true if the collections are persisted to storage (or empty).
+        ///     Returns true if the collections are persisted to storage (or empty).
         /// </summary>
         /// <returns></returns>
         public Boolean Save() {
             if ( this.IsDirty ) {
-                return !String.IsNullOrWhiteSpace( value: this._baseCollectionName ) && this._words.Saver( fileName: Path.ChangeExtension( this._baseCollectionName, extension: this._baseCollectionNameExt ) );
+                return !String.IsNullOrWhiteSpace( this._baseCollectionName ) && this._words.Saver( fileName: Path.ChangeExtension( this._baseCollectionName, extension: this._baseCollectionNameExt ) );
             }
 
             return true;

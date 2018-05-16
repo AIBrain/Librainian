@@ -1,18 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "Enums.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/Enums.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Enums.cs" was last cleaned by Protiguous on 2018/05/15 at 10:40 PM.
 
 namespace Librainian.Extensions {
 
@@ -21,13 +39,14 @@ namespace Librainian.Extensions {
     using System.Linq;
 
     /// <summary>
-    /// Strongly typed version of Enum with Parsing and performance improvements.
+    ///     Strongly typed version of Enum with Parsing and performance improvements.
     /// </summary>
     /// <typeparam name="T">Type of Enum</typeparam>
     /// <remarks>
-    /// Copyright (c) Damien Guard. All rights reserved. Licensed under the Apache License, Version
-    /// 2. 0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Originally published at
-    /// http: //damieng.com/blog/2010/10/17/enums-better-syntax-improved-performance-and-tryparse-in-net-3-5
+    ///     Copyright (c) Damien Guard. All rights reserved. Licensed under the Apache License, Version
+    ///     2. 0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the
+    ///     License at http://www.apache.org/licenses/LICENSE-2.0 Originally published at
+    ///     http: //damieng.com/blog/2010/10/17/enums-better-syntax-improved-performance-and-tryparse-in-net-3-5
     /// </remarks>
     public static class Enums<T> where T : struct {
 
@@ -42,15 +61,13 @@ namespace Librainian.Extensions {
         private static readonly Dictionary<Int32, T> Values = All.ToDictionary( k => Convert.ToInt32( k ) );
 
         public static T? CastOrNull( Int32 value ) {
-            if ( Values.TryGetValue( value, out var foundValue ) ) {
-                return foundValue;
-            }
+            if ( Values.TryGetValue( value, out var foundValue ) ) { return foundValue; }
 
             return null;
         }
 
         /// <summary>
-        /// Gets all items for an enum type.
+        ///     Gets all items for an enum type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
@@ -79,49 +96,33 @@ namespace Librainian.Extensions {
         public static Boolean IsDefined( Int32 value ) => Values.Keys.Contains( value );
 
         public static T Parse( String value ) {
-            if ( !SensitiveNames.TryGetValue( value, out var parsed ) ) {
-                throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) );
-            }
+            if ( !SensitiveNames.TryGetValue( value, out var parsed ) ) { throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) ); }
 
             return parsed;
         }
 
         public static T Parse( String value, Boolean ignoreCase ) {
-            if ( !ignoreCase ) {
-                return Parse( value );
-            }
+            if ( !ignoreCase ) { return Parse( value ); }
 
-            if ( !InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var parsed ) ) {
-                throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) );
-            }
+            if ( !InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var parsed ) ) { throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) ); }
 
             return parsed;
         }
 
         public static T? ParseOrNull( String value ) {
-            if ( String.IsNullOrEmpty( value ) ) {
-                return null;
-            }
+            if ( String.IsNullOrEmpty( value ) ) { return null; }
 
-            if ( SensitiveNames.TryGetValue( value, out var foundValue ) ) {
-                return foundValue;
-            }
+            if ( SensitiveNames.TryGetValue( value, out var foundValue ) ) { return foundValue; }
 
             return null;
         }
 
         public static T? ParseOrNull( String value, Boolean ignoreCase ) {
-            if ( !ignoreCase ) {
-                return ParseOrNull( value );
-            }
+            if ( !ignoreCase ) { return ParseOrNull( value ); }
 
-            if ( String.IsNullOrEmpty( value ) ) {
-                return null;
-            }
+            if ( String.IsNullOrEmpty( value ) ) { return null; }
 
-            if ( InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var foundValue ) ) {
-                return foundValue;
-            }
+            if ( InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var foundValue ) ) { return foundValue; }
 
             return null;
         }

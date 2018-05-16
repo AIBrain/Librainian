@@ -1,22 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "HttpServer.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/HttpServer.cs" was last cleaned by Protiguous on 2016/06/18 at 10:52 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/HttpServer.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Internet.Servers {
 
@@ -30,7 +44,15 @@ namespace Librainian.Internet.Servers {
     using Measurement.Time;
 
     public abstract class HttpServer {
-        internal readonly List<Byte[]> LocalIPv4Addresses = new List<Byte[]>();
+
+        private readonly X509Certificate2 _sslCertificate;
+
+        private readonly Thread _thrHttp;
+
+        private readonly Thread _thrHttps;
+
+        private TcpListener _secureListener;
+        private TcpListener _unsecureListener;
 
         /// <summary>If &gt; -1, the Server is listening for http connections on this port.</summary>
         protected readonly Int32 Port;
@@ -39,11 +61,7 @@ namespace Librainian.Internet.Servers {
         protected readonly Int32 SecurePort;
 
         protected volatile Boolean StopRequested;
-        private readonly X509Certificate2 _sslCertificate;
-        private readonly Thread _thrHttp;
-        private readonly Thread _thrHttps;
-        private TcpListener _secureListener;
-        private TcpListener _unsecureListener;
+        internal readonly List<Byte[]> LocalIPv4Addresses = new List<Byte[]>();
 
         /// <summary></summary>
         /// <param name="port">
@@ -67,16 +85,11 @@ namespace Librainian.Internet.Servers {
             this.SecurePort = httpsPort;
             this._sslCertificate = cert;
 
-            if ( this.Port > 65535 || this.Port < -1 ) {
-                this.Port = -1;
-            }
-            if ( this.SecurePort > 65535 || this.SecurePort < -1 ) {
-                this.SecurePort = -1;
-            }
+            if ( this.Port > 65535 || this.Port < -1 ) { this.Port = -1; }
 
-            if ( this.Port > -1 ) {
-                this._thrHttp = new Thread( this.Listen ) { Name = "HttpServer Thread" };
-            }
+            if ( this.SecurePort > 65535 || this.SecurePort < -1 ) { this.SecurePort = -1; }
+
+            if ( this.Port > -1 ) { this._thrHttp = new Thread( this.Listen ) { Name = "HttpServer Thread" }; }
 
             //if ( this.SecurePort > -1 ) {
             //    if ( this._sslCertificate is null ) {
@@ -107,8 +120,97 @@ namespace Librainian.Internet.Servers {
             foreach ( var addr in Dns.GetHostEntry( Dns.GetHostName() ).AddressList ) {
                 if ( addr.AddressFamily == AddressFamily.InterNetwork ) {
                     var bytes = addr.GetAddressBytes();
-                    if ( bytes.Length == 4 ) {
-                        this.LocalIPv4Addresses.Add( bytes );
+
+                    if ( bytes.Length == 4 ) { this.LocalIPv4Addresses.Add( bytes ); }
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Listens for connections, somewhat robustly. Does not return until the Server is stopped
+        ///     or until more than 100 listener restarts occur in a single day.
+        /// </summary>
+        private void Listen( Object param ) {
+            var isSecureListener = ( Boolean )param;
+
+            var errorCount = 0;
+            var lastError = DateTime.Now;
+
+            TcpListener listener = null;
+
+            while ( !this.StopRequested ) {
+                var threwExceptionOuter = false;
+
+                try {
+                    listener = new TcpListener( IPAddress.Any, isSecureListener ? this.SecurePort : this.Port );
+
+                    if ( isSecureListener ) { this._secureListener = listener; }
+                    else { this._unsecureListener = listener; }
+
+                    listener.Start();
+
+                    while ( !this.StopRequested ) {
+                        var innerErrorCount = 0;
+                        var innerLastError = DateTime.Now;
+
+                        try {
+                            var s = listener.AcceptTcpClient();
+                            ThreadPool.GetAvailableThreads( out var workerThreads, out var completionPortThreads );
+
+                            // Here is where we could enforce a minimum number of free pool threads,
+                            // if we wanted to ensure better performance.
+                            if ( workerThreads > 0 ) {
+                                var processor = new HttpProcessor( s, this, isSecureListener ? this._sslCertificate : null );
+                                ThreadPool.QueueUserWorkItem( processor.Process );
+                            }
+                            else {
+                                var outputStream = new StreamWriter( s.GetStream() );
+                                outputStream.WriteLine( "HTTP/1.1 503 Service Unavailable" );
+                                outputStream.WriteLine( "Connection: close" );
+                                outputStream.WriteLine( "" );
+                                outputStream.WriteLine( "Server too busy" );
+                            }
+                        }
+                        catch ( ThreadAbortException ) { throw; }
+                        catch ( Exception ex ) {
+                            if ( DateTime.Now.Hour != innerLastError.Hour || DateTime.Now.DayOfYear != innerLastError.DayOfYear ) {
+
+                                // ReSharper disable once RedundantAssignment
+                                innerLastError = DateTime.Now;
+                                innerErrorCount = 0;
+                            }
+
+                            if ( ++innerErrorCount > 10 ) { throw; }
+
+                            SimpleHttpLogger.Log( ex, "Inner Error count this hour: " + innerErrorCount );
+                            Thread.Sleep( 1 );
+                        }
+                    }
+                }
+                catch ( ThreadAbortException ) { this.StopRequested = true; }
+                catch ( Exception ex ) {
+                    if ( DateTime.Now.DayOfYear != lastError.DayOfYear || DateTime.Now.Year != lastError.Year ) {
+                        lastError = DateTime.Now;
+                        errorCount = 0;
+                    }
+
+                    if ( ++errorCount > 100 ) { throw; }
+
+                    SimpleHttpLogger.Log( ex, "Restarting listener. Error count today: " + errorCount );
+                    threwExceptionOuter = true;
+                }
+                finally {
+                    try {
+                        if ( listener != null ) {
+                            listener.Stop();
+
+                            if ( threwExceptionOuter ) { Thread.Sleep( 1000 ); }
+                        }
+                    }
+                    catch ( ThreadAbortException ) { this.StopRequested = true; }
+                    catch ( Exception ) {
+
+                        // ignored
                     }
                 }
             }
@@ -139,27 +241,22 @@ namespace Librainian.Internet.Servers {
             var stopwatch = new StopWatch();
             var timeToWait = timeoutMilliseconds;
             stopwatch.Start();
+
             if ( timeToWait > 0 ) {
                 try {
-                    if ( this._thrHttp != null && this._thrHttp.IsAlive ) {
-                        this._thrHttp.Join( timeToWait );
-                    }
+                    if ( this._thrHttp != null && this._thrHttp.IsAlive ) { this._thrHttp.Join( timeToWait ); }
                 }
-                catch ( Exception ex ) {
-                    SimpleHttpLogger.Log( ex );
-                }
+                catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
             }
+
             stopwatch.Stop();
             timeToWait = timeoutMilliseconds - ( Int32 )stopwatch.ElapsedMilliseconds;
+
             if ( timeToWait > 0 ) {
                 try {
-                    if ( this._thrHttps != null && this._thrHttps.IsAlive ) {
-                        this._thrHttps.Join( timeToWait );
-                    }
+                    if ( this._thrHttps != null && this._thrHttps.IsAlive ) { this._thrHttps.Join( timeToWait ); }
                 }
-                catch ( Exception ex ) {
-                    SimpleHttpLogger.Log( ex );
-                }
+                catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
             }
         }
 
@@ -171,148 +268,37 @@ namespace Librainian.Internet.Servers {
 
         /// <summary>Stops listening for connections.</summary>
         public void Stop() {
-            if ( this.StopRequested ) {
-                return;
-            }
+            if ( this.StopRequested ) { return; }
+
             this.StopRequested = true;
+
             if ( this._unsecureListener != null ) {
-                try {
-                    this._unsecureListener.Stop();
-                }
-                catch ( Exception ex ) {
-                    SimpleHttpLogger.Log( ex );
-                }
+                try { this._unsecureListener.Stop(); }
+                catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
             }
+
             if ( this._secureListener != null ) {
-                try {
-                    this._secureListener.Stop();
-                }
-                catch ( Exception ex ) {
-                    SimpleHttpLogger.Log( ex );
-                }
+                try { this._secureListener.Stop(); }
+                catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
             }
+
             if ( this._thrHttp != null ) {
-                try {
-                    this._thrHttp.Abort();
-                }
-                catch ( Exception ex ) {
-                    SimpleHttpLogger.Log( ex );
-                }
+                try { this._thrHttp.Abort(); }
+                catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
             }
+
             if ( this._thrHttps != null ) {
-                try {
-                    this._thrHttps.Abort();
-                }
-                catch ( Exception ex ) {
-                    SimpleHttpLogger.Log( ex );
-                }
+                try { this._thrHttps.Abort(); }
+                catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
             }
-            try {
-                this.StopServer();
-            }
-            catch ( Exception ex ) {
-                SimpleHttpLogger.Log( ex );
-            }
+
+            try { this.StopServer(); }
+            catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
         }
 
         /// <summary>
         ///     This is called when the Server is stopping. Perform any cleanup work here.
         /// </summary>
         public abstract void StopServer();
-
-        /// <summary>
-        ///     Listens for connections, somewhat robustly. Does not return until the Server is stopped
-        ///     or until more than 100 listener restarts occur in a single day.
-        /// </summary>
-        private void Listen( Object param ) {
-            var isSecureListener = ( Boolean )param;
-
-            var errorCount = 0;
-            var lastError = DateTime.Now;
-
-            TcpListener listener = null;
-
-            while ( !this.StopRequested ) {
-                var threwExceptionOuter = false;
-                try {
-                    listener = new TcpListener( IPAddress.Any, isSecureListener ? this.SecurePort : this.Port );
-                    if ( isSecureListener ) {
-                        this._secureListener = listener;
-                    }
-                    else {
-                        this._unsecureListener = listener;
-                    }
-                    listener.Start();
-                    while ( !this.StopRequested ) {
-                        var innerErrorCount = 0;
-                        var innerLastError = DateTime.Now;
-                        try {
-                            var s = listener.AcceptTcpClient();
-							ThreadPool.GetAvailableThreads( out var workerThreads, out var completionPortThreads );
-
-                            // Here is where we could enforce a minimum number of free pool threads,
-                            // if we wanted to ensure better performance.
-                            if ( workerThreads > 0 ) {
-                                var processor = new HttpProcessor( s, this, isSecureListener ? this._sslCertificate : null );
-                                ThreadPool.QueueUserWorkItem( processor.Process );
-                            }
-                            else {
-                                var outputStream = new StreamWriter( s.GetStream() );
-                                outputStream.WriteLine( "HTTP/1.1 503 Service Unavailable" );
-                                outputStream.WriteLine( "Connection: close" );
-                                outputStream.WriteLine( "" );
-                                outputStream.WriteLine( "Server too busy" );
-                            }
-                        }
-                        catch ( ThreadAbortException  ) {
-                            throw ;
-                        }
-                        catch ( Exception ex ) {
-                            if ( DateTime.Now.Hour != innerLastError.Hour || DateTime.Now.DayOfYear != innerLastError.DayOfYear ) {
-
-                                // ReSharper disable once RedundantAssignment
-                                innerLastError = DateTime.Now;
-                                innerErrorCount = 0;
-                            }
-                            if ( ++innerErrorCount > 10 ) {
-                                throw;
-                            }
-                            SimpleHttpLogger.Log( ex, "Inner Error count this hour: " + innerErrorCount );
-                            Thread.Sleep( 1 );
-                        }
-                    }
-                }
-                catch ( ThreadAbortException ) {
-                    this.StopRequested = true;
-                }
-                catch ( Exception ex ) {
-                    if ( DateTime.Now.DayOfYear != lastError.DayOfYear || DateTime.Now.Year != lastError.Year ) {
-                        lastError = DateTime.Now;
-                        errorCount = 0;
-                    }
-                    if ( ++errorCount > 100 ) {
-                        throw;
-                    }
-                    SimpleHttpLogger.Log( ex, "Restarting listener. Error count today: " + errorCount );
-                    threwExceptionOuter = true;
-                }
-                finally {
-                    try {
-                        if ( listener != null ) {
-                            listener.Stop();
-                            if ( threwExceptionOuter ) {
-                                Thread.Sleep( 1000 );
-                            }
-                        }
-                    }
-                    catch ( ThreadAbortException ) {
-                        this.StopRequested = true;
-                    }
-                    catch ( Exception ) {
-                        // ignored
-                    }
-                }
-            }
-        }
     }
 }

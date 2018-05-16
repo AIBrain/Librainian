@@ -1,17 +1,36 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "SlimLock.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license has
-// been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "SlimLock.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/SlimLock.cs" was last cleaned by Protiguous on 2018/05/15 at 4:23 AM.
+// "Librainian/Librainian/SlimLock.cs" was last cleaned by Protiguous on 2018/05/15 at 10:50 PM.
 
 namespace Librainian.Threading {
 
@@ -21,8 +40,10 @@ namespace Librainian.Threading {
     using NUnit.Framework;
 
     /// <summary>
-    /// A reader-writer lock implementation that is intended to be simple, yet very efficient. In particular only 1 interlocked operation is taken for any lock operation (we use spin locks to achieve this). The spin lock
-    /// is never held for more than a few instructions (in particular, we never call event APIs or in fact any non-trivial API while holding the spin lock).
+    ///     A reader-writer lock implementation that is intended to be simple, yet very efficient. In particular only 1
+    ///     interlocked operation is taken for any lock operation (we use spin locks to achieve this). The spin lock
+    ///     is never held for more than a few instructions (in particular, we never call event APIs or in fact any non-trivial
+    ///     API while holding the spin lock).
     /// </summary>
     [HostProtection( Synchronization = true, ExternalThreading = true )]
     [HostProtection( MayLeakOnAbort = true )]
@@ -230,9 +251,12 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// This routine retrieves/sets the per-thread counts needed to enforce the various rules related to acquiring the lock. It's a simple hash table, where the first entry is pre-allocated for optimizing the common
-        /// case. After the first element has been allocated, duplicates are kept of in linked-list. The entries are never freed, and the max size of the table would be bounded by the max number of threads that held the
-        /// lock simultaneously. DontAllocate is set to true if the caller just wants to get an existing entry for this thread, but doesn't want to add one if an existing one could not be found.
+        ///     This routine retrieves/sets the per-thread counts needed to enforce the various rules related to acquiring the
+        ///     lock. It's a simple hash table, where the first entry is pre-allocated for optimizing the common
+        ///     case. After the first element has been allocated, duplicates are kept of in linked-list. The entries are never
+        ///     freed, and the max size of the table would be bounded by the max number of threads that held the
+        ///     lock simultaneously. DontAllocate is set to true if the caller just wants to get an existing entry for this thread,
+        ///     but doesn't want to add one if an existing one could not be found.
         /// </summary>
         private ReaderWriterCount GetThreadRwCount( Int32 id, Boolean dontAllocate ) {
             var hash = id & HashTableSize;
@@ -453,7 +477,8 @@ namespace Librainian.Threading {
         private static Boolean IsRwHashEntryChanged( ReaderWriterCount lrwc, Int32 id ) => lrwc.Threadid != id;
 
         /// <summary>
-        /// A routine for lazily creating a event outside the lock (so if errors happen they are outside the lock and that we don't do much work while holding a spin lock). If all goes well, reenter the lock and set 'waitEvent'
+        ///     A routine for lazily creating a event outside the lock (so if errors happen they are outside the lock and that we
+        ///     don't do much work while holding a spin lock). If all goes well, reenter the lock and set 'waitEvent'
         /// </summary>
         private void LazyCreateEvent( ref EventWaitHandle waitEvent, Boolean makeAutoResetEvent ) {
 #if DEBUG
@@ -469,7 +494,8 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Waits on 'waitEvent' with a timeout of 'millisceondsTimeout. Before the wait 'numWaiters' is incremented and is restored before leaving this routine.
+        ///     Waits on 'waitEvent' with a timeout of 'millisceondsTimeout. Before the wait 'numWaiters' is incremented and is
+        ///     restored before leaving this routine.
         /// </summary>
         private Boolean WaitOnEvent( EventWaitHandle waitEvent, ref UInt32 numWaiters, Int32 millisecondsTimeout ) {
 #if DEBUG
@@ -874,7 +900,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Determines the appropriate events to set, leaves the locks, and sets the events.
+        ///     Determines the appropriate events to set, leaves the locks, and sets the events.
         /// </summary>
         private void ExitAndWakeUpAppropriateWaiters() {
 #if DEBUG

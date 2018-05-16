@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Line.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Line.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// "Librainian/Librainian/Line.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -28,23 +44,23 @@ namespace Librainian.Graphics.Imaging {
     using Newtonsoft.Json;
 
     /// <summary>
-    /// A horizontal line of <see cref="Pixel"/>.
+    ///     A horizontal line of <see cref="Pixel" />.
     /// </summary>
     [JsonObject]
     [StructLayout( LayoutKind.Sequential )]
     public class Line : IEquatable<Line>, IEnumerable<Pixel>, IEqualityComparer<Line> {
 
         /// <summary>
-        /// Checksum of the pixels (to guard against corruption).
+        ///     Checksum of the pixels (to guard against corruption).
         /// </summary>
-        /// <remarks>Should include the <see cref="Count"/> to prevent buffer overflows.</remarks>
+        /// <remarks>Should include the <see cref="Count" /> to prevent buffer overflows.</remarks>
         [JsonProperty]
 
         //[FieldOffset( 0 )]
         public UInt64 Checksum;
 
         /// <summary>
-        /// How many pixels should be in this line?
+        ///     How many pixels should be in this line?
         /// </summary>
         [JsonProperty]
 
@@ -52,7 +68,7 @@ namespace Librainian.Graphics.Imaging {
         public UInt64 Count;
 
         /// <summary>
-        /// An array of pixels
+        ///     An array of pixels
         /// </summary>
         /// <remarks>I'd prefer a list instead of an array.</remarks>
         [JsonProperty]
@@ -62,7 +78,7 @@ namespace Librainian.Graphics.Imaging {
         public Pixel[] Pixels;
 
         /// <summary>
-        /// Construct a <see cref="Line"/> from an array of <see cref="Pixel"/>.
+        ///     Construct a <see cref="Line" /> from an array of <see cref="Pixel" />.
         /// </summary>
         /// <param name="pixels"></param>
         public Line( [NotNull] Pixel[] pixels ) {
@@ -72,87 +88,89 @@ namespace Librainian.Graphics.Imaging {
         }
 
         /// <summary>
-        /// Returns the zero-based <see cref="Pixel"/> or null if not found.
+        ///     Returns the zero-based <see cref="Pixel" /> or null if not found.
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
         public Pixel? this[UInt64 index] {
             get {
                 var pixels = this.Pixels;
-                if ( index <= this.Count ) {
-                    return pixels[index];
-                }
+
+                if ( index <= this.Count ) { return pixels[index]; }
+
                 return null;
             }
 
             set {
                 var pixels = this.Pixels;
-                if ( value.HasValue && index <= this.Count ) {
-                    pixels[index] = value.Value;
-                }
+
+                if ( value.HasValue && index <= this.Count ) { pixels[index] = value.Value; }
             }
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through the collection.
+        ///     Returns an enumerator that iterates through the collection.
         /// </summary>
-        /// <returns>A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.</returns>
+        /// <returns>
+        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the
+        ///     collection.
+        /// </returns>
         public IEnumerator<Pixel> GetEnumerator() => this.Pixels.AsEnumerable().GetEnumerator();
 
         /// <summary>
-        /// Returns an enumerator that iterates through a collection.
+        ///     Returns an enumerator that iterates through a collection.
         /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.</returns>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
-        /// Determines whether the specified objects are equal.
+        ///     Determines whether the specified objects are equal.
         /// </summary>
         /// <returns>true if the specified objects are equal.</returns>
         public Boolean Equals( Line x, Line y ) => Equal( x, y );
 
         /// <summary>
-        /// Returns a hash code for the specified object.
+        ///     Returns a hash code for the specified object.
         /// </summary>
         /// <returns>A hash code for the specified object.</returns>
-        /// <param name="obj">The <see cref="T:System.Object"/> for which a hash code is to be returned.</param>
-        /// <exception cref="T:System.ArgumentNullException">The type of <paramref name="obj"/> is a reference type and <paramref name="obj"/> is null.</exception>
+        /// <param name="obj">The <see cref="T:System.Object" /> for which a hash code is to be returned.</param>
+        /// <exception cref="T:System.ArgumentNullException">
+        ///     The type of <paramref name="obj" /> is a reference type and
+        ///     <paramref name="obj" /> is null.
+        /// </exception>
         public Int32 GetHashCode( Line obj ) => this.Pixels.GetHashCode();
 
         /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
+        ///     Indicates whether the current object is equal to another object of the same type.
         /// </summary>
-        /// <returns>true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.</returns>
+        /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
         /// <param name="other">An object to compare with this object.</param>
         public Boolean Equals( Line other ) => Equal( this, other );
 
-        public static async Task<UInt64> CalculateChecksumAsync( IEnumerable<Pixel> pixels ) => await Task.Run( () => {
-            var checksum = UInt64.MinValue;
-            foreach ( var pixel in pixels ) {
-                unchecked {
-                    checksum = ( checksum + ( UInt64 )pixel.GetHashCode() ) / 2;
+        public static async Task<UInt64> CalculateChecksumAsync( IEnumerable<Pixel> pixels ) =>
+            await Task.Run( () => {
+                var checksum = UInt64.MinValue;
+
+                foreach ( var pixel in pixels ) {
+                    unchecked { checksum = ( checksum + ( UInt64 )pixel.GetHashCode() ) / 2; }
                 }
-            }
-            return checksum;
-        } );
+
+                return checksum;
+            } );
 
         /// <summary>
-        /// Static comparison type.
+        ///     Static comparison type.
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equal( [CanBeNull] Line left, [CanBeNull] Line right ) {
-            if ( left is null || right is null ) {
-                return false;
-            }
+            if ( left is null || right is null ) { return false; }
 
-            if ( left.Checksum != right.Checksum ) {
-                return false;
-            }
-            if ( left.Count != right.Count ) {
-                return false;
-            }
+            if ( left.Checksum != right.Checksum ) { return false; }
+
+            if ( left.Count != right.Count ) { return false; }
+
             return left.Pixels.SequenceEqual( right.Pixels );
         }
     }

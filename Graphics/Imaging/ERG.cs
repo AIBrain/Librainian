@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "ERG.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/ERG.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/ERG.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -48,6 +62,7 @@ namespace Librainian.Graphics.Imaging {
     /// <remarks> 1920x1080 pixels = 2,052,000 possible pixels ...so about 8 nanoseconds per pixel? </remarks>
     [JsonObject]
     public class Erg {
+
         public static readonly String Extension = ".erg";
 
         /// <summary>
@@ -67,13 +82,9 @@ namespace Librainian.Graphics.Imaging {
         ///     Checksum of all pages
         /// </summary>
         [JsonProperty]
-        public UInt64 Checksum {
-            get; private set;
-        }
+        public UInt64 Checksum { get; private set; }
 
-        public UInt32 Height {
-            get; private set;
-        }
+        public UInt32 Height { get; private set; }
 
         [JsonProperty]
         public ConcurrentSet<Pixel> Pixels { get; } = new ConcurrentSet<Pixel>();
@@ -84,41 +95,33 @@ namespace Librainian.Graphics.Imaging {
         [JsonProperty]
         public ConcurrentSet<PropertyItem> PropertyItems { get; } = new ConcurrentSet<PropertyItem>();
 
-        public UInt32 Width {
-            get; private set;
-        }
+        public UInt32 Width { get; private set; }
 
-        public async Task<UInt64> CalculateChecksumAsync() => await Task.Run( () => {
-            unchecked {
-                return ( UInt64 )Hashing.GetHashCodes( this.Pixels );
-            }
-        } );
+        public async Task<UInt64> CalculateChecksumAsync() =>
+            await Task.Run( () => {
+                unchecked { return ( UInt64 )Hashing.GetHashCodes( this.Pixels ); }
+            } );
 
         public async Task<Boolean> TryAdd( Document document, TimeSpan delay, CancellationToken cancellationToken ) {
-            try {
-                return await this.TryAdd( new Bitmap( document.FullPathWithFileName ), delay, cancellationToken ).ConfigureAwait( false );
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            try { return await this.TryAdd( new Bitmap( document.FullPathWithFileName ), delay, cancellationToken ).ConfigureAwait( false ); }
+            catch ( Exception exception ) { exception.More(); }
+
             return false;
         }
 
         public async Task<Boolean> TryAdd( [CanBeNull] Bitmap bitmap, TimeSpan timeout, CancellationToken cancellationToken ) {
-            if ( bitmap is null ) {
-                return false;
-            }
+            if ( bitmap is null ) { return false; }
+
             var stopwatch = StopWatch.StartNew();
+
             return await Task.Run( () => {
                 var width = bitmap.Width;
-                if ( width < UInt32.MinValue ) {
-                    return false;
-                }
+
+                if ( width < UInt32.MinValue ) { return false; }
 
                 var height = bitmap.Height;
-                if ( height < UInt32.MinValue ) {
-                    return false;
-                }
+
+                if ( height < UInt32.MinValue ) { return false; }
 
                 this.PropertyIdList.UnionWith( bitmap.PropertyIdList );
                 this.PropertyItems.UnionWith( bitmap.PropertyItems.Select( item => new PropertyItem { Id = item.Id, Len = item.Len, Type = item.Type, Value = item.Value } ) );
@@ -131,12 +134,10 @@ namespace Librainian.Graphics.Imaging {
                 var data = bitmap.LockBits( rect, ImageLockMode.ReadOnly, bitmap.PixelFormat );
 
                 Parallel.For( 0, this.Height, y => {
-                    if ( stopwatch.Elapsed > timeout ) {
-                        return;
-                    }
-                    if ( cancellationToken.IsCancellationRequested ) {
-                        return;
-                    }
+                    if ( stopwatch.Elapsed > timeout ) { return; }
+
+                    if ( cancellationToken.IsCancellationRequested ) { return; }
+
                     for ( UInt32 x = 0; x < bitmap.Width; x++ ) {
                         var color = bitmap.GetPixel( ( Int32 )x, ( Int32 )y );
                         var pixel = new Pixel( color, x, ( UInt32 )y );

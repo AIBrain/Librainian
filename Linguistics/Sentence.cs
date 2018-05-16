@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Sentence.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Sentence.cs" was last cleaned by Protiguous on 2016/08/26 at 10:14 AM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Sentence.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
 
 namespace Librainian.Linguistics {
 
@@ -45,6 +59,8 @@ namespace Librainian.Linguistics {
         /// <summary></summary>
         public static readonly Sentence EndOfLine = new Sentence( "\0" );
 
+        private Sentence() { }
+
         /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
         /// <param name="sentence"></param>
         public Sentence( [NotNull] String sentence ) : this( sentence.ToWords().Select( word => new Word( word ) ) ) { }
@@ -52,32 +68,25 @@ namespace Librainian.Linguistics {
         /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
         /// <param name="words"></param>
         public Sentence( [NotNull] IEnumerable<Word> words ) {
-            if ( words is null ) {
-                throw new ArgumentNullException( nameof( words ) );
-            }
+            if ( words is null ) { throw new ArgumentNullException( nameof( words ) ); }
 
             this.Words.AddRange( words.Where( word => word != null ) );
             this.Words.Fix();
         }
-
-        private Sentence() {
-        }
-
-        public static Sentence Empty { get; } = new Sentence();
 
         /// <summary></summary>
         [NotNull]
         [JsonProperty]
         private List<Word> Words { get; } = new List<Word>();
 
+        public static Sentence Empty { get; } = new Sentence();
+
         //public static implicit operator String( Sentence sentence ) {return sentence != null ? sentence.Words.ToStrings( " " ) : String.Empty;}
 
         public Int32 CompareTo( Sentence other ) => String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
 
-	    public Boolean Equals( Sentence other ) {
-            if ( other is null ) {
-                return false;
-            }
+        public Boolean Equals( Sentence other ) {
+            if ( other is null ) { return false; }
 
             return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
@@ -86,20 +95,20 @@ namespace Librainian.Linguistics {
 
         public override Int32 GetHashCode() => this.Words.GetHashCode();
 
-	    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
 
-		public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
+        public override String ToString() => this.Words.ToStrings( " " );
 
-		//[NotNull]
-		//public Word TakeFirst() {
-		//    try {
-		//        return this.Words.TakeFirst() ?? new Word( String.Empty );
-		//    }
-		//    finally {
-		//        this.Words.Fix();
-		//    }
-		//}
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-		public override String ToString() => this.Words.ToStrings( " " );
+        //[NotNull]
+        //public Word TakeFirst() {
+        //    try {
+        //        return this.Words.TakeFirst() ?? new Word( String.Empty );
+        //    }
+        //    finally {
+        //        this.Words.Fix();
+        //    }
+        //}
     }
 }

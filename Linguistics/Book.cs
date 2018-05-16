@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Book.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Book.cs" was last cleaned by Protiguous on 2016/08/26 at 10:14 AM
+// "Librainian/Librainian/Book.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
 
 namespace Librainian.Linguistics {
 
@@ -28,7 +44,7 @@ namespace Librainian.Linguistics {
     using Newtonsoft.Json;
 
     /// <summary>
-    /// <para>A <see cref="Book"/> is a sequence of <see cref="Page"/> .</para>
+    ///     <para>A <see cref="Book" /> is a sequence of <see cref="Page" /> .</para>
     /// </summary>
     [JsonObject]
     [Immutable]
@@ -36,23 +52,19 @@ namespace Librainian.Linguistics {
     [Serializable]
     public sealed class Book : IEquatable<Book>, IEnumerable<KeyValuePair<Int32, Page>> {
 
-        private Book() {
-        }
+        private Book() { }
 
         public Book( [ItemCanBeNull] [NotNull] IEnumerable<Page> pages, [ItemCanBeNull] [CanBeNull] IEnumerable<Author> authors = null ) {
-            if ( pages is null ) {
-                throw new ArgumentNullException( nameof( pages ) );
-            }
+            if ( pages is null ) { throw new ArgumentNullException( nameof( pages ) ); }
 
             var pageNumber = 0;
+
             foreach ( var page in pages.Where( page => page != null ) ) {
                 pageNumber++;
                 this.Pages[pageNumber] = page;
             }
 
-            if ( null != authors ) {
-                this.Authors.AddRange( authors.Where( author => null != author ) );
-            }
+            if ( null != authors ) { this.Authors.AddRange( authors.Where( author => null != author ) ); }
         }
 
         [NotNull]
@@ -66,21 +78,17 @@ namespace Librainian.Linguistics {
         public static Book Empty { get; } = new Book();
 
         /// <summary>
-        /// static equality test, compare sequence of Books
+        ///     static equality test, compare sequence of Books
         /// </summary>
         /// <param name="left"></param>
         /// <param name="rhs"> </param>
         /// <returns></returns>
         public static Boolean Equals( Book left, Book rhs ) {
-            if ( ReferenceEquals( left, rhs ) ) {
-                return true;
-            }
-            if ( left is null ) {
-                return false;
-            }
-            if ( rhs is null ) {
-                return false;
-            }
+            if ( ReferenceEquals( left, rhs ) ) { return true; }
+
+            if ( left is null ) { return false; }
+
+            if ( rhs is null ) { return false; }
 
             return left.SequenceEqual( rhs ); //no authors??
         }
@@ -90,13 +98,13 @@ namespace Librainian.Linguistics {
         public IEnumerable<Author> GetAuthors() => this.Authors;
 
         /// <summary>
-        /// Returns an enumerator that iterates through the collection.
+        ///     Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
         public IEnumerator<KeyValuePair<Int32, Page>> GetEnumerator() => this.Pages.GetEnumerator();
 
         /// <summary>
-        /// Serves as the default hash function.
+        ///     Serves as the default hash function.
         /// </summary>
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this.Pages.GetHashCode();
@@ -104,9 +112,9 @@ namespace Librainian.Linguistics {
         public IEnumerable<KeyValuePair<Int32, Page>> GetPages() => this.Pages;
 
         /// <summary>
-        /// Returns an enumerator that iterates through a collection.
+        ///     Returns an enumerator that iterates through a collection.
         /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.</returns>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Pages ).GetEnumerator();
     }
 }

@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "FolderBag.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/FolderBag.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/FolderBag.cs" was last cleaned by Protiguous on 2018/05/15 at 10:41 PM.
 
 namespace Librainian.FileSystem {
 
@@ -42,19 +56,17 @@ namespace Librainian.FileSystem {
         public List<Node> Roots { get; } = new List<Node>();
 
         public Boolean Add( [CanBeNull] String folderpath ) {
-            if ( null == folderpath ) {
-                return false;
-            }
+            if ( null == folderpath ) { return false; }
+
             this.FoundAnotherFolder( new Folder( folderpath ) );
+
             return true;
         }
 
         public UInt64 AddRange( [CanBeNull] IEnumerable<String> folderpaths ) {
             var counter = 0UL;
 
-            if ( null == folderpaths ) {
-                return counter;
-            }
+            if ( null == folderpaths ) { return counter; }
 
             foreach ( var folderpath in folderpaths ) {
                 this.FoundAnotherFolder( new Folder( folderpath ) );
@@ -65,19 +77,16 @@ namespace Librainian.FileSystem {
         }
 
         public void FoundAnotherFolder( [NotNull] Folder folder ) {
-            if ( folder is null ) {
-                throw new ArgumentNullException( nameof( folder ) );
-            }
+            if ( folder is null ) { throw new ArgumentNullException( nameof( folder ) ); }
 
             var pathParts = folder.Info.SplitPath().ToList();
 
-            if ( !pathParts.Any() ) {
-                return;
-            }
+            if ( !pathParts.Any() ) { return; }
 
-            var currentNode = new Node( pathParts[ 0 ] );
+            var currentNode = new Node( pathParts[0] );
 
             var existingNode = this.Roots.Find( node => Node.Equals( node, currentNode ) ); // look for an existing root node
+
             if ( !Node.Equals( existingNode, default ) ) {
 
                 // use existing node
@@ -92,19 +101,20 @@ namespace Librainian.FileSystem {
             foreach ( var pathPart in pathParts.Skip( 1 ) ) {
                 var nextNode = new Node( pathPart, currentNode );
                 existingNode = currentNode.SubFolders.Find( node => Node.Equals( node, nextNode ) );
+
                 if ( !Node.Equals( existingNode, default ) ) {
                     nextNode = existingNode; // already there? don't need to add it.
                 }
                 else {
                     currentNode.SubFolders.Add( nextNode ); // didn't find one, add it
                 }
+
                 currentNode = nextNode;
             }
 
             currentNode.IsEmpty.Should().BeTrue();
-            if ( !currentNode.Data.EndsWith( ":" ) ) {
-                currentNode.Parent.Should().NotBeNull();
-            }
+
+            if ( !currentNode.Data.EndsWith( ":" ) ) { currentNode.Parent.Should().NotBeNull(); }
 
             this.Endings.Add( currentNode );
         }
@@ -119,12 +129,15 @@ namespace Librainian.FileSystem {
             foreach ( var ending in this.Endings ) {
                 var node = ending;
                 var path = String.Empty;
+
                 while ( node.Parent != null ) {
                     path = $"{Path.DirectorySeparatorChar}{node.Data}{path}";
                     node = node.Parent;
                 }
+
                 this.Roots.Should().Contain( node );
                 path = String.Concat( node.Data, path );
+
                 yield return new Folder( path );
             }
         }

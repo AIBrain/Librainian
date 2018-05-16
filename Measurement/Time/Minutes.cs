@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Minutes.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Minutes.cs" was last cleaned by Protiguous on 2016/06/18 at 10:54 PM
+// "Librainian/Librainian/Minutes.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -34,38 +50,38 @@ namespace Librainian.Measurement.Time {
     public struct Minutes : IComparable<Minutes>, IQuantityOfTime {
 
         /// <summary>
-        /// 60
+        ///     60
         /// </summary>
         public const Byte InOneHour = 60;
 
         /// <summary>
-        /// 15
+        ///     15
         /// </summary>
-        public static readonly Minutes Fifteen = new Minutes( value: 15 );
+        public static readonly Minutes Fifteen = new Minutes( 15 );
 
         /// <summary>
-        /// One <see cref="Minutes"/> .
+        ///     One <see cref="Minutes" /> .
         /// </summary>
-        public static readonly Minutes One = new Minutes( value: 1 );
+        public static readonly Minutes One = new Minutes( 1 );
 
         /// <summary>
-        /// 10
+        ///     10
         /// </summary>
-        public static readonly Minutes Ten = new Minutes( value: 10 );
+        public static readonly Minutes Ten = new Minutes( 10 );
 
         /// <summary>
-        /// 30
+        ///     30
         /// </summary>
-        public static readonly Minutes Thirty = new Minutes( value: 30 );
+        public static readonly Minutes Thirty = new Minutes( 30 );
 
         /// <summary>
         /// </summary>
-        public static readonly Minutes Thousand = new Minutes( value: 1000 );
+        public static readonly Minutes Thousand = new Minutes( 1000 );
 
         /// <summary>
-        /// Zero <see cref="Minutes"/>
+        ///     Zero <see cref="Minutes" />
         /// </summary>
-        public static readonly Minutes Zero = new Minutes( value: 0 );
+        public static readonly Minutes Zero = new Minutes( 0 );
 
         public Minutes( Decimal value ) => this.Value = value;
 
@@ -76,9 +92,7 @@ namespace Librainian.Measurement.Time {
         public Minutes( BigInteger value ) => this.Value = value;
 
         [JsonProperty]
-        public BigRational Value {
-            get;
-        }
+        public BigRational Value { get; }
 
         public static Minutes Combine( Minutes left, Minutes right ) => Combine( left, right.Value );
 
@@ -87,7 +101,7 @@ namespace Librainian.Measurement.Time {
         public static Minutes Combine( Minutes left, BigInteger minutes ) => new Minutes( ( BigInteger )left.Value + minutes );
 
         /// <summary>
-        /// <para>static equality test</para>
+        ///     <para>static equality test</para>
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
@@ -95,21 +109,21 @@ namespace Librainian.Measurement.Time {
         public static Boolean Equals( Minutes left, Minutes right ) => left.Value == right.Value;
 
         /// <summary>
-        /// Implicitly convert the number of <paramref name="minutes"/> to <see cref="Hours"/>.
+        ///     Implicitly convert the number of <paramref name="minutes" /> to <see cref="Hours" />.
         /// </summary>
         /// <param name="minutes"></param>
         /// <returns></returns>
         public static implicit operator Hours( Minutes minutes ) => minutes.ToHours();
 
         /// <summary>
-        /// Implicitly convert the number of <paramref name="minutes"/> to <see cref="Seconds"/>.
+        ///     Implicitly convert the number of <paramref name="minutes" /> to <see cref="Seconds" />.
         /// </summary>
         /// <param name="minutes"></param>
         /// <returns></returns>
         public static implicit operator Seconds( Minutes minutes ) => minutes.ToSeconds();
 
         /// <summary>
-        /// Implicitly convert the number of <paramref name="minutes"/> to a <see cref="Span"/>.
+        ///     Implicitly convert the number of <paramref name="minutes" /> to a <see cref="Span" />.
         /// </summary>
         /// <param name="minutes"></param>
         /// <returns></returns>
@@ -150,9 +164,8 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Minutes other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj is null ) {
-                return false;
-            }
+            if ( obj is null ) { return false; }
+
             return obj is Minutes minutes && this.Equals( minutes );
         }
 
@@ -170,9 +183,12 @@ namespace Librainian.Measurement.Time {
         public override String ToString() {
             if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
+
                 return $"{whole} {whole.PluralOf( "minute" )}";
             }
+
             var dec = ( Decimal )this.Value;
+
             return $"{dec} {dec.PluralOf( "minute" )}";
         }
     }

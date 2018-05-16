@@ -1,22 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Month.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Month.cs" was last cleaned by Protiguous on 2016/06/18 at 10:54 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Month.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
@@ -33,12 +47,11 @@ namespace Librainian.Measurement.Time.Clocks {
     public struct Month : IComparable<Month>, IClockPart {
 
         public static readonly Byte[] ValidMonths = Enumerable.Range( 1, Months.InOneCommonYear + 1 ) //TODO //BUG ??
-                                                              .Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
+            .Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
 
         public Month( Byte value ) {
-            if ( !ValidMonths.Contains( value ) ) {
-                throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {Minimum} to {Maximum}." );
-            }
+            if ( !ValidMonths.Contains( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {Minimum} to {Maximum}." ); }
+
             this.Value = value;
         }
 
@@ -53,13 +66,11 @@ namespace Librainian.Measurement.Time.Clocks {
         public static Byte Minimum { get; } = ValidMonths.Min();
 
         [JsonProperty]
-        public Byte Value {
-            get;
-        }
+        public Byte Value { get; }
 
         public Int32 CompareTo( Month other ) => this.Value.CompareTo( other.Value );
 
-	    /// <summary>
+        /// <summary>
         ///     Provide the next <see cref="Month" />.
         /// </summary>
         /// <param name="tocked"></param>
@@ -67,10 +78,12 @@ namespace Librainian.Measurement.Time.Clocks {
         public Month Next( out Boolean tocked ) {
             tocked = false;
             var next = this.Value + 1;
+
             if ( next > Maximum ) {
                 next = Minimum;
                 tocked = true;
             }
+
             return new Month( ( Byte )next );
         }
 
@@ -80,10 +93,12 @@ namespace Librainian.Measurement.Time.Clocks {
         public Month Previous( out Boolean tocked ) {
             tocked = false;
             var next = this.Value - 1;
+
             if ( next < Minimum ) {
                 next = Maximum;
                 tocked = true;
             }
+
             return new Month( ( Byte )next );
         }
     }

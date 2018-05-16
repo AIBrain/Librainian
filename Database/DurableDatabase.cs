@@ -1,17 +1,36 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "DurableDatabase.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license
-// has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "DurableDatabase.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/DurableDatabase.cs" was last cleaned by Protiguous on 2018/05/15 at 1:34 AM.
+// "Librainian/Librainian/DurableDatabase.cs" was last cleaned by Protiguous on 2018/05/15 at 10:39 PM.
 
 namespace Librainian.Database {
 
@@ -23,16 +42,13 @@ namespace Librainian.Database {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
-    using Extensions;
     using JetBrains.Annotations;
     using Magic;
-    using Maths;
-    using Parsing;
 
     public class DurableDatabase : ABetterClassDispose, IDatabase {
 
         /// <summary>
-        /// A database connection attempts to stay connected in the event of an unwanted disconnect.
+        ///     A database connection attempts to stay connected in the event of an unwanted disconnect.
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="retries">         </param>
@@ -82,7 +98,7 @@ namespace Librainian.Database {
         }
 
         /// <summary>
-        /// Return true if connected.
+        ///     Return true if connected.
         /// </summary>
         /// <param name="sender"></param>
         /// <returns></returns>
@@ -175,7 +191,7 @@ namespace Librainian.Database {
         }
 
         /// <summary>
-        /// Opens and then closes a <see cref="SqlConnection"/>.
+        ///     Opens and then closes a <see cref="SqlConnection" />.
         /// </summary>
         /// <returns></returns>
         [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
@@ -265,7 +281,7 @@ namespace Librainian.Database {
         }
 
         /// <summary>
-        /// Returns a <see cref="DataTable"/>
+        ///     Returns a <see cref="DataTable" />
         /// </summary>
         /// <param name="query">      </param>
         /// <param name="commandType"></param>
@@ -299,7 +315,7 @@ namespace Librainian.Database {
         }
 
         /// <summary>
-        /// Returns a <see cref="DataTable"/>
+        ///     Returns a <see cref="DataTable" />
         /// </summary>
         /// <param name="query">      </param>
         /// <param name="commandType"></param>
@@ -353,7 +369,7 @@ namespace Librainian.Database {
         }
 
         /// <summary>
-        /// Returns a <see cref="DataTable"/>
+        ///     Returns a <see cref="DataTable" />
         /// </summary>
         /// <param name="query">      </param>
         /// <param name="commandType"></param>
@@ -383,7 +399,7 @@ namespace Librainian.Database {
         }
 
         /// <summary>
-        /// <para>Returns the first column of the first row.</para>
+        ///     <para>Returns the first column of the first row.</para>
         /// </summary>
         /// <param name="query">      </param>
         /// <param name="commandType"></param>
@@ -416,7 +432,7 @@ namespace Librainian.Database {
         }
 
         /// <summary>
-        /// <para>Returns the first column of the first row.</para>
+        ///     <para>Returns the first column of the first row.</para>
         /// </summary>
         /// <param name="query">      </param>
         /// <param name="commandType"></param>
@@ -460,7 +476,7 @@ namespace Librainian.Database {
         }
 
         /// <summary>
-        /// Returns a <see cref="DataTable"/>
+        ///     Returns a <see cref="DataTable" />
         /// </summary>
         /// <param name="query">     </param>
         /// <param name="parameters"></param>

@@ -1,18 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "EvalProvider.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/EvalProvider.cs" was last cleaned by Protiguous on 2018/05/12 at 1:22 AM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/EvalProvider.cs" was last cleaned by Protiguous on 2018/05/15 at 10:40 PM.
 
 namespace Librainian.Extensions {
 
@@ -24,24 +42,22 @@ namespace Librainian.Extensions {
     using Microsoft.CSharp;
 
     /// <summary>
-    /// <para>Pulled from <see cref="http://www.ckode.dk/programming/eval-in-c-yes-its-possible/"/>.</para>
+    ///     <para>Pulled from <see cref="http://www.ckode.dk/programming/eval-in-c-yes-its-possible/" />.</para>
     /// </summary>
     public static class EvalProvider {
 
         private static String GetUsing( IEnumerable<String> usingStatements ) {
             var result = new StringBuilder();
 
-            foreach ( var usingStatement in usingStatements ) {
-                result.AppendLine( $"using {usingStatement};" );
-            }
+            foreach ( var usingStatement in usingStatements ) { result.AppendLine( $"using {usingStatement};" ); }
 
             return result.ToString();
         }
 
         /// <summary>
-        /// Example:
-        /// <para>var HelloWorld = EvalProvider.CreateEvalMethod&lt;Int32, string&gt;(@"return ""Hello world "" + arg;");</para>
-        /// <para>Console.WriteLine(HelloWorld(42));</para>
+        ///     Example:
+        ///     <para>var HelloWorld = EvalProvider.CreateEvalMethod&lt;Int32, string&gt;(@"return ""Hello world "" + arg;");</para>
+        ///     <para>Console.WriteLine(HelloWorld(42));</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="TResult"></typeparam>
@@ -56,18 +72,14 @@ namespace Librainian.Extensions {
             var includeUsings = new HashSet<String>( new[] { "System" } ) { returnType.Namespace, inputType.Namespace };
 
             if ( usingStatements != null ) {
-                foreach ( var usingStatement in usingStatements ) {
-                    includeUsings.Add( usingStatement );
-                }
+                foreach ( var usingStatement in usingStatements ) { includeUsings.Add( usingStatement ); }
             }
 
             using ( var compiler = new CSharpCodeProvider() ) {
                 var includeAssemblies = new HashSet<String>( new[] { "system.dll" } );
 
                 if ( assemblies != null ) {
-                    foreach ( var assembly in assemblies ) {
-                        includeAssemblies.Add( assembly );
-                    }
+                    foreach ( var assembly in assemblies ) { includeAssemblies.Add( assembly ); }
                 }
 
                 var name = "F" + Guid.NewGuid().ToString().Replace( "-", String.Empty );

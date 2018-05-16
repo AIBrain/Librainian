@@ -1,18 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "Urls.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/Urls.cs" was last cleaned by Protiguous on 2018/05/12 at 1:23 AM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Urls.cs" was last cleaned by Protiguous on 2018/05/15 at 10:40 PM.
 
 namespace Librainian.Extensions {
 
@@ -28,9 +46,7 @@ namespace Librainian.Extensions {
             var res = Path.GetFileNameWithoutExtension( url );
 
             //check if there is no file name, i.e. just folder name + query String
-            if ( !String.IsNullOrEmpty( res ) && !res.IsNameOnlyQueryString() ) {
-                return defaultValue;
-            }
+            if ( !String.IsNullOrEmpty( res ) && !res.IsNameOnlyQueryString() ) { return defaultValue; }
 
             res = Path.GetFileName( Path.GetDirectoryName( url ) );
 
@@ -38,7 +54,7 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Check that a String is not null or empty
+        ///     Check that a String is not null or empty
         /// </summary>
         /// <param name="input">String to check</param>
         /// <returns>Boolean</returns>
@@ -55,18 +71,15 @@ namespace Librainian.Extensions {
         public static String UrlDecode( this String input ) => HttpUtility.UrlDecode( input );
 
         /// <summary>
-        /// Uses Uri.EscapeDataString() based on recommendations on MSDN http: //blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
+        ///     Uses Uri.EscapeDataString() based on recommendations on MSDN http:
+        ///     //blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
         /// </summary>
         public static String UrlEncode( this String input ) {
-            if ( input is null ) {
-                throw new ArgumentNullException( nameof( input ) );
-            }
+            if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
             const Int32 maxLength = 32766;
 
-            if ( input.Length <= maxLength ) {
-                return Uri.EscapeDataString( input );
-            }
+            if ( input.Length <= maxLength ) { return Uri.EscapeDataString( input ); }
 
             var sb = new StringBuilder( input.Length * 2 );
             var index = 0;

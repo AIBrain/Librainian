@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "WebClientExtensions.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/WebClientExtensions.cs" was last cleaned by Protiguous on 2016/06/18 at 10:52 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/WebClientExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
 
 namespace Librainian.Internet {
 
@@ -48,14 +62,12 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Byte[]>( address );
 
             // Setup the callback event handler
-	        void Handler( Object sender, DownloadDataCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.DownloadDataCompleted -= Handler );
+            void Handler( Object sender, DownloadDataCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.DownloadDataCompleted -= Handler );
 
-	        webClient.DownloadDataCompleted += Handler;
+            webClient.DownloadDataCompleted += Handler;
 
             // Start the async work
-            try {
-                webClient.DownloadDataAsync( address, tcs );
-            }
+            try { webClient.DownloadDataAsync( address, tcs ); }
             catch ( Exception exc ) {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
@@ -86,14 +98,12 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Object>( address );
 
             // Setup the callback event handler
-	        void Handler( Object sender, AsyncCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => null, () => webClient.DownloadFileCompleted -= Handler );
+            void Handler( Object sender, AsyncCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => null, () => webClient.DownloadFileCompleted -= Handler );
 
-	        webClient.DownloadFileCompleted += Handler;
+            webClient.DownloadFileCompleted += Handler;
 
             // Start the async work
-            try {
-                webClient.DownloadFileAsync( address, fileName, tcs );
-            }
+            try { webClient.DownloadFileAsync( address, fileName, tcs ); }
             catch ( Exception exc ) {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
@@ -122,14 +132,12 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<String>( address );
 
             // Setup the callback event handler
-	        void Handler( Object sender, DownloadStringCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.DownloadStringCompleted -= Handler );
+            void Handler( Object sender, DownloadStringCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.DownloadStringCompleted -= Handler );
 
-	        webClient.DownloadStringCompleted += Handler;
+            webClient.DownloadStringCompleted += Handler;
 
             // Start the async work
-            try {
-                webClient.DownloadStringAsync( address, tcs );
-            }
+            try { webClient.DownloadStringAsync( address, tcs ); }
             catch ( Exception exc ) {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
@@ -158,14 +166,12 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Stream>( address );
 
             // Setup the callback event handler
-	        void Handler( Object sender, OpenReadCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.OpenReadCompleted -= Handler );
+            void Handler( Object sender, OpenReadCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.OpenReadCompleted -= Handler );
 
-	        webClient.OpenReadCompleted += Handler;
+            webClient.OpenReadCompleted += Handler;
 
             // Start the async work
-            try {
-                webClient.OpenReadAsync( address, tcs );
-            }
+            try { webClient.OpenReadAsync( address, tcs ); }
             catch ( Exception exc ) {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
@@ -196,14 +202,12 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Stream>( address );
 
             // Setup the callback event handler
-	        void Handler( Object sender, OpenWriteCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.OpenWriteCompleted -= Handler );
+            void Handler( Object sender, OpenWriteCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.OpenWriteCompleted -= Handler );
 
-	        webClient.OpenWriteCompleted += Handler;
+            webClient.OpenWriteCompleted += Handler;
 
             // Start the async work
-            try {
-                webClient.OpenWriteAsync( address, method, tcs );
-            }
+            try { webClient.OpenWriteAsync( address, method, tcs ); }
             catch ( Exception exc ) {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
@@ -236,14 +240,12 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Byte[]>( address );
 
             // Setup the callback event handler
-	        void Handler( Object sender, UploadDataCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.UploadDataCompleted -= Handler );
+            void Handler( Object sender, UploadDataCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.UploadDataCompleted -= Handler );
 
-	        webClient.UploadDataCompleted += Handler;
+            webClient.UploadDataCompleted += Handler;
 
             // Start the async work
-            try {
-                webClient.UploadDataAsync( address, method, data, tcs );
-            }
+            try { webClient.UploadDataAsync( address, method, data, tcs ); }
             catch ( Exception exc ) {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
@@ -276,14 +278,12 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<Byte[]>( address );
 
             // Setup the callback event handler
-	        void Handler( Object sender, UploadFileCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.UploadFileCompleted -= Handler );
+            void Handler( Object sender, UploadFileCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.UploadFileCompleted -= Handler );
 
-	        webClient.UploadFileCompleted += Handler;
+            webClient.UploadFileCompleted += Handler;
 
             // Start the async work
-            try {
-                webClient.UploadFileAsync( address, method, fileName, tcs );
-            }
+            try { webClient.UploadFileAsync( address, method, fileName, tcs ); }
             catch ( Exception exc ) {
 
                 // If something goes wrong kicking off the async work, unregister the callback and
@@ -316,14 +316,12 @@ namespace Librainian.Internet {
             var tcs = new TaskCompletionSource<String>( address );
 
             // Setup the callback event handler
-	        void Handler( Object sender, UploadStringCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.UploadStringCompleted -= Handler );
+            void Handler( Object sender, UploadStringCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.UploadStringCompleted -= Handler );
 
-	        webClient.UploadStringCompleted += Handler;
+            webClient.UploadStringCompleted += Handler;
 
             // Start the async work
-            try {
-                webClient.UploadStringAsync( address, method, data, tcs );
-            }
+            try { webClient.UploadStringAsync( address, method, data, tcs ); }
             catch ( Exception exc ) {
 
                 // If something goes wrong kicking off the async work, unregister the callback and

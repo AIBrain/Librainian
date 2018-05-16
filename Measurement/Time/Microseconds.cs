@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Microseconds.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Microseconds.cs" was last cleaned by Protiguous on 2016/06/18 at 10:54 PM
+// "Librainian/Librainian/Microseconds.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -34,77 +50,77 @@ namespace Librainian.Measurement.Time {
     public struct Microseconds : IComparable<Microseconds>, IQuantityOfTime {
 
         /// <summary>
-        /// 1000
+        ///     1000
         /// </summary>
         public const UInt16 InOneMillisecond = 1000;
 
         /// <summary>
-        /// Ten <see cref="Microseconds"/> s.
+        ///     Ten <see cref="Microseconds" /> s.
         /// </summary>
         public static readonly Microseconds Fifteen = new Microseconds( 15 );
 
         /// <summary>
-        /// Five <see cref="Microseconds"/> s.
+        ///     Five <see cref="Microseconds" /> s.
         /// </summary>
         public static readonly Microseconds Five = new Microseconds( 5 );
 
         /// <summary>
-        /// Five Hundred <see cref="Microseconds"/> s.
+        ///     Five Hundred <see cref="Microseconds" /> s.
         /// </summary>
         public static readonly Microseconds FiveHundred = new Microseconds( 500 );
 
         /// <summary>
-        /// One <see cref="Microseconds"/>.
+        ///     One <see cref="Microseconds" />.
         /// </summary>
         public static readonly Microseconds One = new Microseconds( 1 );
 
         /// <summary>
-        /// One Thousand Nine <see cref="Microseconds"/> (Prime).
+        ///     One Thousand Nine <see cref="Microseconds" /> (Prime).
         /// </summary>
         public static readonly Microseconds OneThousandNine = new Microseconds( 1009 );
 
         /// <summary>
-        /// Sixteen <see cref="Microseconds"/>.
+        ///     Sixteen <see cref="Microseconds" />.
         /// </summary>
         public static readonly Microseconds Sixteen = new Microseconds( 16 );
 
         /// <summary>
-        /// Ten <see cref="Microseconds"/> s.
+        ///     Ten <see cref="Microseconds" /> s.
         /// </summary>
         public static readonly Microseconds Ten = new Microseconds( 10 );
 
         /// <summary>
-        /// Three <see cref="Microseconds"/> s.
+        ///     Three <see cref="Microseconds" /> s.
         /// </summary>
         public static readonly Microseconds Three = new Microseconds( 3 );
 
         /// <summary>
-        /// Three Three Three <see cref="Microseconds"/>.
+        ///     Three Three Three <see cref="Microseconds" />.
         /// </summary>
         public static readonly Microseconds ThreeHundredThirtyThree = new Microseconds( 333 );
 
         /// <summary>
-        /// Two <see cref="Microseconds"/> s.
+        ///     Two <see cref="Microseconds" /> s.
         /// </summary>
         public static readonly Microseconds Two = new Microseconds( 2 );
 
         /// <summary>
-        /// Two Hundred <see cref="Microseconds"/>.
+        ///     Two Hundred <see cref="Microseconds" />.
         /// </summary>
         public static readonly Microseconds TwoHundred = new Microseconds( 200 );
 
         /// <summary>
-        /// Two Hundred Eleven <see cref="Microseconds"/> (Prime).
+        ///     Two Hundred Eleven <see cref="Microseconds" /> (Prime).
         /// </summary>
         public static readonly Microseconds TwoHundredEleven = new Microseconds( 211 );
 
         /// <summary>
-        /// Two Thousand Three <see cref="Microseconds"/> (Prime).
+        ///     Two Thousand Three <see cref="Microseconds" /> (Prime).
         /// </summary>
         public static readonly Microseconds TwoThousandThree = new Microseconds( 2003 );
 
         /// <summary>
-        /// Zero <see cref="Microseconds"/>.
+        ///     Zero <see cref="Microseconds" />.
         /// </summary>
         public static readonly Microseconds Zero = new Microseconds( 0 );
 
@@ -117,9 +133,7 @@ namespace Librainian.Measurement.Time {
         public Microseconds( BigInteger value ) => this.Value = value;
 
         [JsonProperty]
-        public BigRational Value {
-            get;
-        }
+        public BigRational Value { get; }
 
         public static Microseconds Combine( Microseconds left, Microseconds right ) => Combine( left, right.Value );
 
@@ -128,7 +142,7 @@ namespace Librainian.Measurement.Time {
         public static Microseconds Combine( Microseconds left, BigInteger microseconds ) => new Microseconds( left.Value + microseconds );
 
         /// <summary>
-        /// <para>static equality test</para>
+        ///     <para>static equality test</para>
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
@@ -139,7 +153,7 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Nanoseconds( Microseconds microseconds ) => microseconds.ToNanoseconds();
 
-        public static implicit operator TimeSpan( Microseconds microseconds ) => TimeSpan.FromMilliseconds( value: ( Double )microseconds.Value );
+        public static implicit operator TimeSpan( Microseconds microseconds ) => TimeSpan.FromMilliseconds( ( Double )microseconds.Value );
 
         public static Microseconds operator -( Microseconds milliseconds ) => new Microseconds( milliseconds.Value * -1 );
 
@@ -170,9 +184,8 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Microseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj is null ) {
-                return false;
-            }
+            if ( obj is null ) { return false; }
+
             return obj is Microseconds microseconds && this.Equals( microseconds );
         }
 
@@ -191,9 +204,12 @@ namespace Librainian.Measurement.Time {
         public override String ToString() {
             if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
+
                 return $"{whole} {whole.PluralOf( "µs" )}";
             }
+
             var dec = ( Decimal )this.Value;
+
             return $"{dec} {dec.PluralOf( "µs" )}";
         }
     }

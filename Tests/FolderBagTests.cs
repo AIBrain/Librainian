@@ -1,18 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "FolderBagTests.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "LibrainianTests/FolderBagTests.cs" was last cleaned by Protiguous on 2018/05/08 at 10:25 PM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/LibrainianTests/FolderBagTests.cs" was last cleaned by Protiguous on 2018/05/15 at 10:51 PM.
 
 namespace LibrainianTests {
 
@@ -37,6 +55,7 @@ namespace LibrainianTests {
 
             foreach ( var drive in Drive.GetDrives().Where( drive => drive.Info.IsReady && drive.RootDirectory.StartsWith( "C" ) ).Take( 1 ) ) {
                 var root = new Folder( drive.DriveLetter + ":" + Path.DirectorySeparatorChar );
+
                 foreach ( var folder in root.BetterGetFolders() ) {
                     pathTree.FoundAnotherFolder( folder );
                     counter++;

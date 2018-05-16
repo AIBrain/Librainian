@@ -1,17 +1,36 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "ControlExtensions.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original
-// license has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "ControlExtensions.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/ControlExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 1:34 AM.
+// "Librainian/Librainian/ControlExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:39 PM.
 
 namespace Librainian.Controls {
 
@@ -25,9 +44,7 @@ namespace Librainian.Controls {
     using System.Windows.Forms;
     using FluentAssertions;
     using JetBrains.Annotations;
-    using Maths;
     using Measurement.Time;
-    using Parsing;
     using Persistence;
     using Threading;
     using Application = System.Windows.Forms.Application;
@@ -72,14 +89,14 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Just changes the cursor to the <see cref="Cursors.WaitCursor"/>.
+        ///     Just changes the cursor to the <see cref="Cursors.WaitCursor" />.
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
         public static void BusyCursor( [CanBeNull] this Control control ) => ThreadingExtensions.Wrap( () => control?.InvokeIfRequired( () => control.Cursor = Cursors.WaitCursor ) );
 
         /// <summary>
-        /// Threadsafe <see cref="CheckBox.Checked"/> check.
+        ///     Threadsafe <see cref="CheckBox.Checked" /> check.
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
@@ -90,7 +107,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Safely set the <see cref="CheckBox.Checked"/> of the control across threads.
+        ///     Safely set the <see cref="CheckBox.Checked" /> of the control across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
@@ -169,7 +186,8 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the lightForeColor is returned. If the BackColor is light, then the darkForeColor is returned.
+        ///     Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the
+        ///     lightForeColor is returned. If the BackColor is light, then the darkForeColor is returned.
         /// </summary>
         public static Color DetermineForecolor( this Color thisColor, Color lightForeColor, Color darkForeColor ) {
 
@@ -180,12 +198,13 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the White is returned. If the BackColor is light, then the Black is returned.
+        ///     Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the White is
+        ///     returned. If the BackColor is light, then the Black is returned.
         /// </summary>
         public static Color DetermineForecolor( this Color thisColor ) => DetermineForecolor( thisColor, Color.White, Color.Black );
 
         /// <summary>
-        /// Safely set the <see cref="Control.Enabled"/> of the control across threads.
+        ///     Safely set the <see cref="Control.Enabled" /> of the control across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
@@ -200,7 +219,7 @@ namespace Librainian.Controls {
             } );
 
         /// <summary>
-        /// Safely set the <see cref="Control.Enabled"/> of the control across threads.
+        ///     Safely set the <see cref="Control.Enabled" /> of the control across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
@@ -222,7 +241,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Flashes the control.
+        ///     Flashes the control.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="spanOff">How long to keep the control off before it resets.</param>
@@ -258,7 +277,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Set <see cref="Control.Focus"/> across threads.
+        ///     Set <see cref="Control.Focus" /> across threads.
         /// </summary>
         /// <param name="control"></param>
         public static void Fokus( [CanBeNull] this Control control ) =>
@@ -269,7 +288,7 @@ namespace Librainian.Controls {
             } );
 
         /// <summary>
-        /// Threadsafe <see cref="Control.ForeColor"/> check.
+        ///     Threadsafe <see cref="Control.ForeColor" /> check.
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
@@ -280,7 +299,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Safely set the <see cref="Control.ForeColor"/> of the control across threads.
+        ///     Safely set the <see cref="Control.ForeColor" /> of the control across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
@@ -330,12 +349,12 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// <para>Perform an <see cref="Action"/> on the control's thread and then <see cref="Control.Refresh"/>.</para>
+        ///     <para>Perform an <see cref="Action" /> on the control's thread and then <see cref="Control.Refresh" />.</para>
         /// </summary>
         /// <param name="control"></param>
         /// <param name="action"> </param>
         /// <param name="refresh"></param>
-        /// <seealso/>
+        /// <seealso />
         public static void InvokeIfRequired( [NotNull] this Control control, [NotNull] Action action, Boolean refresh = true ) {
             if ( control is null ) { throw new ArgumentNullException( nameof( control ) ); }
 
@@ -389,7 +408,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Safely set the <see cref="Control.Text"/> of a control across threads.
+        ///     Safely set the <see cref="Control.Text" /> of a control across threads.
         /// </summary>
         /// <remarks></remarks>
         public static void Location( [CanBeNull] this Form form, Point location ) =>
@@ -435,7 +454,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Threadsafe get.
+        ///     Threadsafe get.
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
@@ -446,7 +465,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Safely set the <see cref="ProgressBar.Maximum"/> of the <see cref="ProgressBar"/> across threads.
+        ///     Safely set the <see cref="ProgressBar.Maximum" /> of the <see cref="ProgressBar" /> across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
@@ -459,7 +478,7 @@ namespace Librainian.Controls {
             } );
 
         /// <summary>
-        /// Threadsafe get.
+        ///     Threadsafe get.
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
@@ -470,7 +489,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Safely set the <see cref="ProgressBar.Minimum"/> of the <see cref="ProgressBar"/> across threads.
+        ///     Safely set the <see cref="ProgressBar.Minimum" /> of the <see cref="ProgressBar" /> across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
@@ -483,12 +502,12 @@ namespace Librainian.Controls {
             } );
 
         /// <summary>
-        /// <para>Perform an <see cref="Action"/> on the control's thread and then <see cref="Control.Refresh"/>.</para>
+        ///     <para>Perform an <see cref="Action" /> on the control's thread and then <see cref="Control.Refresh" />.</para>
         /// </summary>
         /// <param name="control"></param>
         /// <param name="action"> </param>
         /// <param name="refresh"></param>
-        /// <seealso cref="InvokeIfRequired"/>
+        /// <seealso cref="InvokeIfRequired" />
         public static void OnThread( [CanBeNull] this Control control, [CanBeNull] Action action, Boolean refresh = true ) {
             if ( null == control ) { return; }
 
@@ -498,7 +517,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Perform an <see cref="Action"/> on a <see cref="ToolStripItem"/>'s thread.
+        ///     Perform an <see cref="Action" /> on a <see cref="ToolStripItem" />'s thread.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="action"> </param>
@@ -519,16 +538,16 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// <para>A threadsafe <see cref="Button.PerformClick"/>.</para>
+        ///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
         /// </summary>
         /// <param name="control"></param>
         /// <param name="delay">  </param>
         /// <returns></returns>
-        /// <seealso cref="Push"/>
+        /// <seealso cref="Push" />
         public static void PerformClickThreadSafe( [CanBeNull] this Button control, TimeSpan? delay = null ) => control?.Push( delay );
 
         /// <summary>
-        /// <para>A threadsafe <see cref="Button.PerformClick"/>.</para>
+        ///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
         /// </summary>
         /// <param name="control">   </param>
         /// <param name="delay">     </param>
@@ -544,7 +563,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Threadsafe <see cref="Control.Refresh"/>.
+        ///     Threadsafe <see cref="Control.Refresh" />.
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
@@ -563,14 +582,14 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Safely set the <see cref="ProgressBar.Value"/> of the <see cref="ProgressBar"/> across threads.
+        ///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
         public static void Reset( [CanBeNull] this ProgressBar control, Int32? value = null ) => control?.Value( value ?? control.Minimum() );
 
         /// <summary>
-        /// Just changes the cursor to the <see cref="Cursors.Default"/>.
+        ///     Just changes the cursor to the <see cref="Cursors.Default" />.
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
@@ -598,17 +617,17 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Safely set the <see cref="ProgressBar.Value"/> of the <see cref="ProgressBar"/> across threads.
+        ///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="minimum"></param>
         /// <param name="value">  </param>
         /// <param name="maximum"></param>
-        /// <seealso cref="Values"/>
-        public static void Set( [CanBeNull] this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) => control.Values( minimum: minimum, value: value, maximum: maximum );
+        /// <seealso cref="Values" />
+        public static void Set( [CanBeNull] this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) => control.Values( minimum: minimum, value, maximum: maximum );
 
         /// <summary>
-        /// Safely get the <see cref="Form.Size"/>() of a <see cref="Form"/> across threads.
+        ///     Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.
         /// </summary>
         /// <param name="form"></param>
         /// <returns></returns>
@@ -619,7 +638,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Safely set the <see cref="Control.Text"/> of a control across threads.
+        ///     Safely set the <see cref="Control.Text" /> of a control across threads.
         /// </summary>
         /// <remarks></remarks>
         public static void Size( [CanBeNull] this Form form, Size size ) =>
@@ -630,7 +649,7 @@ namespace Librainian.Controls {
             } );
 
         /// <summary>
-        /// Safely perform the <see cref="ProgressBar.PerformStep"/> across threads.
+        ///     Safely perform the <see cref="ProgressBar.PerformStep" /> across threads.
         /// </summary>
         /// <param name="control"></param>
         public static void Step( [CanBeNull] this ProgressBar control ) =>
@@ -643,7 +662,7 @@ namespace Librainian.Controls {
             } );
 
         /// <summary>
-        /// Safely perform the <see cref="ProgressBar.PerformStep"/> across threads.
+        ///     Safely perform the <see cref="ProgressBar.PerformStep" /> across threads.
         /// </summary>
         /// <param name="control"></param>
         public static void Step( [CanBeNull] this ToolStripProgressBar control ) =>
@@ -656,7 +675,7 @@ namespace Librainian.Controls {
             } );
 
         /// <summary>
-        /// Safely set the <see cref="ProgressBar.Step"/> of the <see cref="ProgressBar"/> across threads.
+        ///     Safely set the <see cref="ProgressBar.Step" /> of the <see cref="ProgressBar" /> across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
@@ -669,7 +688,7 @@ namespace Librainian.Controls {
             } );
 
         /// <summary>
-        /// Safely set the <see cref="ProgressBar.Style"/> of the <see cref="ProgressBar"/> across threads.
+        ///     Safely set the <see cref="ProgressBar.Style" /> of the <see cref="ProgressBar" /> across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
@@ -682,7 +701,7 @@ namespace Librainian.Controls {
             } );
 
         /// <summary>
-        /// <para>Safely get the <see cref="Control.Text"/> of a <see cref="Control"/> across threads.</para>
+        ///     <para>Safely get the <see cref="Control.Text" /> of a <see cref="Control" /> across threads.</para>
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
@@ -693,7 +712,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Safely set the <see cref="ToolStripItem.Text"/> of the control across threads.
+        ///     Safely set the <see cref="ToolStripItem.Text" /> of the control across threads.
         /// </summary>
         /// <param name="toolStripItem"></param>
         /// <param name="value">        </param>
@@ -711,13 +730,14 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// <para>Safely set the <see cref="Control.Text"/> of a control across threads.</para>
+        ///     <para>Safely set the <see cref="Control.Text" /> of a control across threads.</para>
         /// </summary>
         /// <remarks></remarks>
         /// <param name="control"></param>
         /// <param name="value">  </param>
-        /// <seealso cref="http://kristofverbiest.blogspot.com/2007/02/don-confuse-controlbegininvoke-with.html"/>
-        /// <seealso cref="http://programmers.stackexchange.com/questions/114605/how-will-c-5-async-support-help-ui-thread-synchronization-issues"/>
+        /// <seealso cref="http://kristofverbiest.blogspot.com/2007/02/don-confuse-controlbegininvoke-with.html" />
+        /// <seealso
+        ///     cref="http://programmers.stackexchange.com/questions/114605/how-will-c-5-async-support-help-ui-thread-synchronization-issues" />
         public static void Text( [CanBeNull] this Control control, [CanBeNull] String value ) =>
             control?.InvokeIfRequired( () => {
                 if ( control.IsDisposed ) { return; }
@@ -782,7 +802,10 @@ namespace Librainian.Controls {
         public static Int32 ToRGB( this Color thisColor ) => thisColor.ToArgb() & 0xFFFFFF;
 
         /// <summary>
-        /// <para>Make this <param name="control"></param> not <see cref="Usable"/>.</para>
+        ///     <para>Make this
+        ///         <param name="control"></param>
+        ///         not <see cref="Usable" />.
+        ///     </para>
         /// </summary>
         /// <param name="control"></param>
         public static void TurnOff( this Control control ) {
@@ -793,7 +816,10 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// <para>Make this <param name="control"></param><see cref="Usable"/>.</para>
+        ///     <para>Make this
+        ///         <param name="control"></param>
+        ///         <see cref="Usable" />.
+        ///     </para>
         /// </summary>
         /// <param name="control"></param>
         public static void TurnOn( [CanBeNull] this Control control ) {
@@ -806,7 +832,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Safely set the <see cref="Control.Enabled"/> and <see cref="Control.Visible"/> of a control across threads.
+        ///     Safely set the <see cref="Control.Enabled" /> and <see cref="Control.Visible" /> of a control across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
@@ -838,7 +864,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Threadsafe Value get.
+        ///     Threadsafe Value get.
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
@@ -849,7 +875,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Threadsafe Value get.
+        ///     Threadsafe Value get.
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
@@ -860,7 +886,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Safely set the <see cref="ProgressBar.Value"/> of the <see cref="ProgressBar"/> across threads.
+        ///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
@@ -876,7 +902,7 @@ namespace Librainian.Controls {
             } );
 
         /// <summary>
-        /// Safely set the <see cref="ProgressBar.Value"/> of the <see cref="ProgressBar"/> across threads.
+        ///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="minimum"></param>
@@ -895,7 +921,7 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        /// Safely set the <see cref="Control.Visible"/> of the control across threads.
+        ///     Safely set the <see cref="Control.Visible" /> of the control across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>

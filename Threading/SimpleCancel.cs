@@ -1,17 +1,36 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "SimpleCancel.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license has
-// been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "SimpleCancel.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/SimpleCancel.cs" was last cleaned by Protiguous on 2018/05/15 at 4:23 AM.
+// "Librainian/Librainian/SimpleCancel.cs" was last cleaned by Protiguous on 2018/05/15 at 10:50 PM.
 
 namespace Librainian.Threading {
 
@@ -22,7 +41,8 @@ namespace Librainian.Threading {
     using Microsoft.FSharp.Core;
 
     /// <summary>
-    /// A simpler threadsafe way to cancel a <see cref="Task"/>. <seealso cref="CancellationToken"/> This version has the Date and Time of the cancel request.
+    ///     A simpler threadsafe way to cancel a <see cref="Task" />. <seealso cref="CancellationToken" /> This version has the
+    ///     Date and Time of the cancel request.
     /// </summary>
     [Experimental( "Untested" )]
     public sealed class SimpleCancel : ABetterClassDispose {
@@ -44,7 +64,7 @@ namespace Librainian.Threading {
         public DateTime? YoungestCancelRequest { get; private set; }
 
         /// <summary>
-        /// Returns true if the cancel request was approved.
+        ///     Returns true if the cancel request was approved.
         /// </summary>
         /// <param name="throwIfAlreadyRequested"></param>
         /// <param name="throwMessage">           </param>
@@ -64,7 +84,7 @@ namespace Librainian.Threading {
         public Boolean HaveAnyCancellationsBeenRequested() => Interlocked.Read( location: ref this._cancelRequests ) > 0;
 
         /// <summary>
-        /// Returns true if the cancel request was approved.
+        ///     Returns true if the cancel request was approved.
         /// </summary>
         /// <param name="throwIfAlreadyRequested"></param>
         /// <param name="throwMessage">           </param>
@@ -72,7 +92,7 @@ namespace Librainian.Threading {
         /// <exception cref="TaskCanceledException">Thrown if a cancellation has already been requested.</exception>
         [Experimental( "Untested" )]
         public Boolean RequestCancel( Boolean throwIfAlreadyRequested = false, String throwMessage = "" ) {
-            if ( throwIfAlreadyRequested && this.HaveAnyCancellationsBeenRequested() ) { throw new TaskCanceledException( message: throwMessage ); }
+            if ( throwIfAlreadyRequested && this.HaveAnyCancellationsBeenRequested() ) { throw new TaskCanceledException( throwMessage ); }
 
             var now = DateTime.UtcNow;
 
@@ -91,8 +111,8 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Resets all requests back to starting values.
+        ///     Resets all requests back to starting values.
         /// </summary>
-        public void Reset() => Interlocked.Add( location1: ref this._cancelRequests, value: -Interlocked.Read( location: ref this._cancelRequests ) );
+        public void Reset() => Interlocked.Add( location1: ref this._cancelRequests, -Interlocked.Read( location: ref this._cancelRequests ) );
     }
 }

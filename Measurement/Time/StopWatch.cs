@@ -1,22 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "StopWatch.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/StopWatch.cs" was last cleaned by Protiguous on 2016/06/18 at 10:54 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/StopWatch.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -48,9 +62,6 @@ namespace Librainian.Measurement.Time {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public class StopWatch : IComparable<StopWatch>, IComparable<TimeSpan> {
-        public const Int64 TicksPerMicrosecond = 10;
-
-        public const Int64 TicksPerMillisecond = 10000;
 
         [JsonProperty]
         private Int64 _endTimeStamp;
@@ -61,9 +72,13 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         private Int64 _startTimeStamp;
 
-		public StopWatch() => this.Reset();
+        public const Int64 TicksPerMicrosecond = 10;
 
-		public TimeSpan Elapsed => new TimeSpan( ticks: this.GetElapsedTicks() );
+        public const Int64 TicksPerMillisecond = 10000;
+
+        public StopWatch() => this.Reset();
+
+        public TimeSpan Elapsed => new TimeSpan( ticks: this.GetElapsedTicks() );
 
         public Int64 ElapsedMicroseconds => this.GetElapsedTicks() / TicksPerMicrosecond;
 
@@ -74,26 +89,34 @@ namespace Librainian.Measurement.Time {
         public Int64 EndTimeStamp {
             get => Interlocked.Read( ref this._endTimeStamp );
 
-	        private set => Interlocked.Exchange( ref this._endTimeStamp, value );
+            private set => Interlocked.Exchange( ref this._endTimeStamp, value );
         }
 
         public Boolean IsRunning {
             get => this._isRunning;
 
-	        private set => this._isRunning = value;
+            private set => this._isRunning = value;
         }
 
         public Int64 StartTimeStamp {
             get => Interlocked.Read( ref this._startTimeStamp );
 
-	        private set => Interlocked.Exchange( ref this._startTimeStamp, value );
+            private set => Interlocked.Exchange( ref this._startTimeStamp, value );
         }
 
-        public static implicit operator TimeSpan( StopWatch stopWatch ) => TimeSpan.FromMilliseconds( value: stopWatch.ElapsedMilliseconds );
+        [Pure]
+        private Int64 GetElapsedTicks() {
+            if ( this.IsRunning ) { return DateTime.UtcNow.Ticks - this.StartTimeStamp; }
+
+            return this.EndTimeStamp - this.StartTimeStamp;
+        }
+
+        public static implicit operator TimeSpan( StopWatch stopWatch ) => TimeSpan.FromMilliseconds( stopWatch.ElapsedMilliseconds );
 
         public static StopWatch StartNew() {
             var stopWatch = new StopWatch();
             stopWatch.Start();
+
             return stopWatch;
         }
 
@@ -110,7 +133,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="other">An object to compare with this instance. </param>
         public Int32 CompareTo( StopWatch other ) => this.GetElapsedTicks().CompareTo( other.GetElapsedTicks() );
 
-	    /// <summary>
+        /// <summary>
         ///     Compares the current instance with another object of the same type and returns an integer that indicates whether
         ///     the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
         /// </summary>
@@ -123,12 +146,12 @@ namespace Librainian.Measurement.Time {
         /// <param name="other">An object to compare with this instance. </param>
         public Int32 CompareTo( TimeSpan other ) => this.Elapsed.CompareTo( other );
 
-		public void Pause() => throw new NotImplementedException();
+        public void Pause() => throw new NotImplementedException();
 
-		/// <summary>
-		///     Stops the stopwatch and resets all the values to default.
-		/// </summary>
-		public void Reset() {
+        /// <summary>
+        ///     Stops the stopwatch and resets all the values to default.
+        /// </summary>
+        public void Reset() {
             this.IsRunning = false;
             this.StartTimeStamp = 0;
             this.EndTimeStamp = 0;
@@ -141,21 +164,20 @@ namespace Librainian.Measurement.Time {
 
         public void Resume() {
             this.Start();
+
             throw new NotImplementedException();
         }
 
         public void Start() {
-            if ( this.IsRunning ) {
-                return;
-            }
+            if ( this.IsRunning ) { return; }
+
             this.StartTimeStamp = DateTime.UtcNow.Ticks; //BUG possible bug here?
             this.IsRunning = true;
         }
 
         public void Stop() {
-            if ( !this.IsRunning ) {
-                return;
-            }
+            if ( !this.IsRunning ) { return; }
+
             this.EndTimeStamp = DateTime.UtcNow.Ticks;
         }
 
@@ -166,14 +188,5 @@ namespace Librainian.Measurement.Time {
         ///     A string that represents the current object.
         /// </returns>
         public override String ToString() => this.Elapsed.ToString( "g" );
-
-	    [Pure]
-        private Int64 GetElapsedTicks() {
-            if ( this.IsRunning ) {
-                return DateTime.UtcNow.Ticks - this.StartTimeStamp;
-            }
-
-            return this.EndTimeStamp - this.StartTimeStamp;
-        }
     }
 }

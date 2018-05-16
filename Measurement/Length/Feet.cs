@@ -1,22 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// =========================================================
+// This section of source code, "Feet.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
-//  
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  
+// (We try to avoid that from happening, but it does happen.)
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// "Librainian/Feet.cs" was last cleaned by Protiguous on 2016/06/18 at 10:53 PM
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Feet.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Length {
 
@@ -76,11 +90,11 @@ namespace Librainian.Measurement.Length {
 
         public Feet( BigRational value ) => this.Value = value;
 
-	    public Feet( Int64 value ) => this.Value = value;
+        public Feet( Int64 value ) => this.Value = value;
 
-	    public Feet( BigInteger value ) => this.Value = value;
+        public Feet( BigInteger value ) => this.Value = value;
 
-	    public static Feet Combine( Feet left, BigRational feet ) => new Feet( left.Value + feet );
+        public static Feet Combine( Feet left, BigRational feet ) => new Feet( left.Value + feet );
 
         public static Feet Combine( Feet left, BigInteger seconds ) => new Feet( ( BigInteger )left.Value + seconds );
 
@@ -117,9 +131,8 @@ namespace Librainian.Measurement.Length {
         public Boolean Equals( Feet other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj is null ) {
-                return false;
-            }
+            if ( obj is null ) { return false; }
+
             return obj is Feet feet && this.Equals( feet );
         }
 
@@ -128,8 +141,7 @@ namespace Librainian.Measurement.Length {
 
         public BigRational ToMeters() => throw new NotImplementedException();
 
-	    public override String ToString() => $"{this.Value} {this.Value.PluralOf( "foot" )}";
-
+        public override String ToString() => $"{this.Value} {this.Value.PluralOf( "foot" )}";
     }
 
     [TestFixture]
@@ -145,7 +157,5 @@ namespace Librainian.Measurement.Length {
             //One.Should().BeLessThan( Yards.One );
             //One.Should().BeGreaterThan( Inches.One );
         }
-
     }
-
 }

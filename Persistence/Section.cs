@@ -1,18 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by the automatic formatting of this code.
+// =========================================================
+// This section of source code, "Section.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// (We try to avoid that from happening, but it does happen.)
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// "Librainian/Section.cs" was last cleaned by Protiguous on 2018/05/12 at 1:13 AM
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+//
+// "Librainian/Librainian/Section.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
 
 namespace Librainian.Persistence {
 
@@ -28,10 +46,13 @@ namespace Librainian.Persistence {
     using Newtonsoft.Json;
 
     /// <summary>
-    /// <para>This just wraps a <see cref="ConcurrentDictionary{TKey,TValue}"/> so we can index the <see cref="Data"/> without throwing exceptions on missing or null keys.</para>
-    /// <para>Does not throw <see cref="ArgumentNullException"/> on null keys passed to the indexer.</para>
+    ///     <para>
+    ///         This just wraps a <see cref="ConcurrentDictionary{TKey,TValue}" /> so we can index the <see cref="Data" />
+    ///         without throwing exceptions on missing or null keys.
+    ///     </para>
+    ///     <para>Does not throw <see cref="ArgumentNullException" /> on null keys passed to the indexer.</para>
     /// </summary>
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public class Section : IEquatable<Section> {
 
@@ -39,7 +60,7 @@ namespace Librainian.Persistence {
         private ConcurrentDictionary<String, String> Data { get; } = new ConcurrentDictionary<String, String>();
 
         /// <summary>
-        /// Automatically remove any key where there is no value. Defaults to true.
+        ///     Automatically remove any key where there is no value. Defaults to true.
         /// </summary>
         public Boolean AutoCleanup { get; set; } = true;
 
@@ -56,45 +77,33 @@ namespace Librainian.Persistence {
         public String this[[CanBeNull] String key] {
             [CanBeNull]
             get {
-                if ( key is null ) {
-                    return null;
-                }
+                if ( key is null ) { return null; }
 
-                return this.Data.TryGetValue( key, value: out var value ) ? value : null;
+                return this.Data.TryGetValue( key, out var value ) ? value : null;
             }
 
             set {
-                if ( key is null ) {
-                    return;
-                }
+                if ( key is null ) { return; }
 
                 if ( value is null && this.AutoCleanup ) {
                     this.Data.TryRemove( key, out _ ); //a little cleanup
                 }
-                else {
-                    this.Data[key] = value;
-                }
+                else { this.Data[key] = value; }
             }
         }
 
         /// <summary>
-        /// Static comparison. Checks references and then keys and then values.
+        ///     Static comparison. Checks references and then keys and then values.
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] Section left, [CanBeNull] Section right ) {
-            if ( ReferenceEquals( left, right ) ) {
-                return true;
-            }
+            if ( ReferenceEquals( left, right ) ) { return true; }
 
-            if ( left is null || right is null ) {
-                return false;
-            }
+            if ( left is null || right is null ) { return false; }
 
-            if ( ReferenceEquals( left.Data, right.Data ) ) {
-                return true;
-            }
+            if ( ReferenceEquals( left.Data, right.Data ) ) { return true; }
 
             return left.Data.OrderBy( pair => pair.Key ).ThenBy( pair => pair.Value ).SequenceEqual( right.Data.OrderBy( pair => pair.Key ).ThenBy( pair => pair.Value ) );
         }
@@ -104,7 +113,7 @@ namespace Librainian.Persistence {
         public static Boolean operator ==( [CanBeNull] Section left, [CanBeNull] Section right ) => Equals( left: left, right: right );
 
         /// <summary>
-        /// Remove any key where there is no value.
+        ///     Remove any key where there is no value.
         /// </summary>
         /// <returns></returns>
         public async Task Cleanup() {
@@ -124,14 +133,12 @@ namespace Librainian.Persistence {
         public override Int32 GetHashCode() => this.Data.GetHashCode();
 
         /// <summary>
-        /// Merges (adds keys and overwrites values) <see cref="Data"/> into <see cref="this"/>.
+        ///     Merges (adds keys and overwrites values) <see cref="Data" /> into <see cref="this" />.
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
         public async Task<Boolean> Read( [NotNull] TextReader reader ) {
-            if ( reader is null ) {
-                throw new ArgumentNullException( paramName: nameof( reader ) );
-            }
+            if ( reader is null ) { throw new ArgumentNullException( paramName: nameof( reader ) ); }
 
             try {
                 var that = await reader.ReadLineAsync().ConfigureAwait( false );
@@ -146,9 +153,7 @@ namespace Librainian.Persistence {
                     return false;
                 } ).ConfigureAwait( false );
             }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( Exception exception ) { exception.More(); }
 
             return false;
         }
@@ -156,14 +161,12 @@ namespace Librainian.Persistence {
         public override String ToString() => $"{this.Keys.Take( 25 ).ToStrings()}";
 
         /// <summary>
-        /// Write this <see cref="Section"/> to the <paramref name="writer"/>.
+        ///     Write this <see cref="Section" /> to the <paramref name="writer" />.
         /// </summary>
         /// <param name="writer"></param>
         /// <returns></returns>
         public async Task<Boolean> Write( [NotNull] TextWriter writer ) {
-            if ( writer is null ) {
-                throw new ArgumentNullException( paramName: nameof( writer ) );
-            }
+            if ( writer is null ) { throw new ArgumentNullException( paramName: nameof( writer ) ); }
 
             try {
                 var me = JsonConvert.SerializeObject( this, Formatting.None );
@@ -171,9 +174,7 @@ namespace Librainian.Persistence {
 
                 return true;
             }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+            catch ( Exception exception ) { exception.More(); }
 
             return false;
         }

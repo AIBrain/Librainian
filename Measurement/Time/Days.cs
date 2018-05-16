@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Days.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Days.cs" was last cleaned by Protiguous on 2016/06/18 at 10:54 PM
+// "Librainian/Librainian/Days.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -32,27 +48,27 @@ namespace Librainian.Measurement.Time {
     public struct Days : IComparable<Days>, IQuantityOfTime {
 
         /// <summary>
-        /// 365
+        ///     365
         /// </summary>
         public const UInt16 InOneCommonYear = 365;
 
         /// <summary>
-        /// 7
+        ///     7
         /// </summary>
         public const UInt16 InOneWeek = 7;
 
         /// <summary>
-        /// One <see cref="Days"/> .
+        ///     One <see cref="Days" /> .
         /// </summary>
         public static readonly Days One = new Days( 1 );
 
         /// <summary>
-        /// Seven <see cref="Days"/> .
+        ///     Seven <see cref="Days" /> .
         /// </summary>
         public static readonly Days Seven = new Days( 7 );
 
         /// <summary>
-        /// Ten <see cref="Days"/> .
+        ///     Ten <see cref="Days" /> .
         /// </summary>
         public static readonly Days Ten = new Days( 10 );
 
@@ -61,7 +77,7 @@ namespace Librainian.Measurement.Time {
         public static readonly Days Thousand = new Days( 1000 );
 
         /// <summary>
-        /// Zero <see cref="Days"/>
+        ///     Zero <see cref="Days" />
         /// </summary>
         public static readonly Days Zero = new Days( 0 );
 
@@ -74,9 +90,7 @@ namespace Librainian.Measurement.Time {
         public Days( BigInteger value ) => this.Value = value;
 
         [JsonProperty]
-        public BigRational Value {
-            get;
-        }
+        public BigRational Value { get; }
 
         public static Days Combine( Days left, Days right ) => Combine( left, right.Value );
 
@@ -86,7 +100,7 @@ namespace Librainian.Measurement.Time {
         public static Days Combine( Days left, BigInteger days ) => new Days( ( BigInteger )left.Value + days );
 
         /// <summary>
-        /// <para>static equality test</para>
+        ///     <para>static equality test</para>
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
@@ -94,7 +108,7 @@ namespace Librainian.Measurement.Time {
         public static Boolean Equals( Days left, Days right ) => left.Value == right.Value;
 
         /// <summary>
-        /// Implicitly convert the number of <paramref name="days"/> to <see cref="Hours"/>.
+        ///     Implicitly convert the number of <paramref name="days" /> to <see cref="Hours" />.
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
@@ -105,7 +119,7 @@ namespace Librainian.Measurement.Time {
         public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double )days.Value );
 
         /// <summary>
-        /// Implicitly convert the number of <paramref name="days"/> to <see cref="Weeks"/>.
+        ///     Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
@@ -140,9 +154,8 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Days other ) => Equals( this.Value, other.Value );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj is null ) {
-                return false;
-            }
+            if ( obj is null ) { return false; }
+
             return obj is Days days && this.Equals( days );
         }
 
@@ -159,9 +172,12 @@ namespace Librainian.Measurement.Time {
         public override String ToString() {
             if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.GetWholePart();
+
                 return $"{whole} {whole.PluralOf( "day" )}";
             }
+
             var dec = ( Decimal )this.Value;
+
             return $"{dec} {dec.PluralOf( "day" )}";
         }
 

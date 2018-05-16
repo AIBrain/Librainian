@@ -1,20 +1,36 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "Coordinate64.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Coordinate64.cs" was last cleaned by Protiguous on 2016/06/18 at 10:51 PM
+// "Librainian/Librainian/Coordinate64.cs" was last cleaned by Protiguous on 2018/05/15 at 10:42 PM.
 
 namespace Librainian.Graphics.DDD {
 
@@ -23,14 +39,13 @@ namespace Librainian.Graphics.DDD {
     using System.Diagnostics;
     using System.Drawing;
     using System.Numerics;
-    using System.Runtime.CompilerServices;
     using Extensions;
     using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
 
     /// <summary>
-    /// A 3D point; with <see cref="X"/> , <see cref="Y"/> , and <see cref="Z"/><see cref="Int64"/> integers.
+    ///     A 3D point; with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /><see cref="long" /> integers.
     /// </summary>
     /// <remarks>Code towards speed.</remarks>
     [Immutable]
@@ -72,7 +87,6 @@ namespace Librainian.Graphics.DDD {
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="z"></param>
-
         public Coordinate64( Int64 x, Int64 y, Int64 z ) {
             this.X = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, x ) );
             this.Y = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, y ) );
@@ -83,56 +97,44 @@ namespace Librainian.Graphics.DDD {
 
         [Column]
         [JsonProperty( "L" )]
-        public Int64 Length {
-            get; private set;
-        }
+        public Int64 Length { get; private set; }
 
         [Column]
         [JsonProperty( "X" )]
-        public Int64 X {
-            get; private set;
-        }
+        public Int64 X { get; private set; }
 
         [Column]
         [JsonProperty( "Y" )]
-        public Int64 Y {
-            get; private set;
-        }
+        public Int64 Y { get; private set; }
 
         [Column]
         [JsonProperty( "Z" )]
-        public Int64 Z {
-            get; private set;
-        }
+        public Int64 Z { get; private set; }
 
         /// <summary>
-        /// Calculates the distance between two <see cref="Coordinate64"/>.
+        ///     Calculates the distance between two <see cref="Coordinate64" />.
         /// </summary>
-
         public static Int64 Distance( Coordinate64 left, Coordinate64 rhs ) {
             var num1 = left.X - rhs.X;
             var num2 = left.Y - rhs.Y;
             var num3 = left.Z - rhs.Z;
+
             return ( Int64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
         }
 
         /// <summary>
-        /// static comparison.
+        ///     static comparison.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="rhs"> </param>
         /// <returns></returns>
-
         public static Boolean Equals( Coordinate64 left, Coordinate64 rhs ) {
-            if ( ReferenceEquals( left, rhs ) ) {
-                return true;
-            }
-            if ( left is null ) {
-                return false;
-            }
-            if ( rhs is null ) {
-                return false;
-            }
+            if ( ReferenceEquals( left, rhs ) ) { return true; }
+
+            if ( left is null ) { return false; }
+
+            if ( rhs is null ) { return false; }
+
             return left.X == rhs.X && left.Y == rhs.Y && left.Z == rhs.Z;
         }
 
@@ -141,19 +143,18 @@ namespace Librainian.Graphics.DDD {
         public static explicit operator PointF( Coordinate64 coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
         /// <summary>
-        /// Allow an explicit conversion from <see cref="Coordinate64"/> to a <see cref="Vector3"/>.
+        ///     Allow an explicit conversion from <see cref="Coordinate64" /> to a <see cref="Vector3" />.
         /// </summary>
         /// <param name="bob"></param>
-
         public static explicit operator Vector3( Coordinate64 bob ) => new Vector3( bob.X, bob.Y, bob.Z );
 
         /// <summary>
-        /// <para>Returns a new Coordinate64 as a unit <see cref="Coordinate64"/>.</para>
-        /// <para>The result is a Coordinate64 one unit in length pointing in the same direction as the original Coordinate64.</para>
+        ///     <para>Returns a new Coordinate64 as a unit <see cref="Coordinate64" />.</para>
+        ///     <para>The result is a Coordinate64 one unit in length pointing in the same direction as the original Coordinate64.</para>
         /// </summary>
-
         public static Coordinate64 Normalize( Coordinate64 coordinate ) {
             var num = 1.0D / coordinate.Length;
+
             return new Coordinate64( ( Int64 )( coordinate.X * num ), ( Int64 )( coordinate.Y * num ), ( Int64 )( coordinate.Z * num ) );
         }
 
@@ -169,28 +170,25 @@ namespace Librainian.Graphics.DDD {
         public Int32 CompareTo( Coordinate64 other ) => this.Length.CompareTo( other.Length );
 
         /// <summary>
-        /// Calculates the distance between this <see cref="Coordinate64"/> and another <see cref="Coordinate64"/>.
+        ///     Calculates the distance between this <see cref="Coordinate64" /> and another <see cref="Coordinate64" />.
         /// </summary>
-
         public Int64 Distance( Coordinate64 to ) => Distance( this, to );
 
         /// <summary>
-        /// Calls the static comparison.
+        ///     Calls the static comparison.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-
         public Boolean Equals( Coordinate64 other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj is null ) {
-                return false;
-            }
+            if ( obj is null ) { return false; }
+
             return obj is Coordinate64 coordinate64 && Equals( this, coordinate64 );
         }
 
         /// <summary>
-        /// precomputed hash of <see cref="X"/>, <see cref="Y"/>, and <see cref="Z"/>.
+        ///     precomputed hash of <see cref="X" />, <see cref="Y" />, and <see cref="Z" />.
         /// </summary>
         public override Int32 GetHashCode() => this._hashCode;
 

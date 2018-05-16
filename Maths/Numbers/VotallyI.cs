@@ -1,20 +1,36 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// =========================================================
+// This section of source code, "VotallyI.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations and royalties can be paid via
+// (We try to avoid that from happening, but it does happen.)
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
 //
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/VotallyI.cs" was last cleaned by Protiguous on 2016/07/08 at 8:33 AM
+// "Librainian/Librainian/VotallyI.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -26,24 +42,24 @@ namespace Librainian.Maths.Numbers {
     using Numerics;
 
     /// <summary>
-    /// <para>threadsafe, keep integer count of Yes or No votes.</para>
+    ///     <para>threadsafe, keep integer count of Yes or No votes.</para>
     /// </summary>
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class VotallyI {
 
         /// <summary>
-        /// ONLY used in the getter and setter.
+        ///     ONLY used in the getter and setter.
         /// </summary>
         private UInt64 _votesNo;
 
         /// <summary>
-        /// ONLY used in the getter and setter.
+        ///     ONLY used in the getter and setter.
         /// </summary>
         private UInt64 _votesYes;
 
         /// <summary>
-        /// No vote for either.
+        ///     No vote for either.
         /// </summary>
         public static readonly VotallyI Zero = new VotallyI( votesYes: 0, votesNo: 0 );
 
@@ -67,26 +83,23 @@ namespace Librainian.Maths.Numbers {
         }
 
         public static VotallyI Combine( [NotNull] VotallyI left, [NotNull] VotallyI right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
+            if ( left is null ) { throw new ArgumentNullException( nameof( left ) ); }
+
+            if ( right is null ) { throw new ArgumentNullException( nameof( right ) ); }
+
             var result = left;
             result.VoteYes( right.Yes );
             result.VoteNo( right.No );
+
             return result;
         }
 
         /// <summary>
-        /// Add in the votes from another <see cref="VotallyI"/>.
+        ///     Add in the votes from another <see cref="VotallyI" />.
         /// </summary>
         /// <param name="right"></param>
         public void Add( [NotNull] VotallyI right ) {
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
+            if ( right is null ) { throw new ArgumentNullException( nameof( right ) ); }
 
             this.VoteYes( right.Yes );
             this.VoteNo( right.No );
@@ -95,28 +108,31 @@ namespace Librainian.Maths.Numbers {
         public Double ChanceNo() {
             try {
                 var votes = this.Votes;
+
                 if ( !votes.Near( 0 ) ) {
                     var result = new BigRational( this.No, votes );
+
                     return ( Double )result;
                 }
             }
-            catch ( DivideByZeroException exception ) {
-                exception.More();
-            }
+            catch ( DivideByZeroException exception ) { exception.More(); }
+
             return 0;
         }
 
         public Double ChanceYes() {
             try {
                 var votes = this.Votes;
-                if ( votes.Near( 0 ) ) {
-                    return 0;
-                }
+
+                if ( votes.Near( 0 ) ) { return 0; }
+
                 var chance = new BigRational( this.Yes, votes );
+
                 return ( Double )chance;
             }
             catch ( DivideByZeroException exception ) {
                 exception.More();
+
                 return 0;
             }
         }
@@ -140,22 +156,22 @@ namespace Librainian.Maths.Numbers {
         public override String ToString() => $"{this.ChanceYes():P1} yes vs {this.ChanceNo():p1} no of {this.Votes} votes.";
 
         /// <summary>
-        /// <para>Increments the votes for candidate <see cref="No"/> by <paramref name="votes"/>.</para>
+        ///     <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
         /// </summary>
         public void VoteNo( UInt64 votes = 1 ) => this.No += votes;
 
         /// <summary>
-        /// <para>Increments the votes for candidate <see cref="Yes"/> by <paramref name="votes"/>.</para>
+        ///     <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
         /// </summary>
         public void VoteYes( UInt64 votes = 1 ) => this.Yes += votes;
 
         /// <summary>
-        /// <para>Increments the votes for candidate <see cref="No"/> by <paramref name="votes"/>.</para>
+        ///     <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
         /// </summary>
         public void WithdrawNoVote( UInt64 votes = 1 ) => this.No -= votes;
 
         /// <summary>
-        /// <para>Increments the votes for candidate <see cref="Yes"/> by <paramref name="votes"/>.</para>
+        ///     <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
         /// </summary>
         public void WithdrawYesVote( UInt64 votes = 1 ) => this.Yes -= votes;
     }

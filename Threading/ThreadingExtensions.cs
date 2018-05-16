@@ -1,17 +1,36 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
+// All Rights Reserved.
 //
-// ========================================================= This section of source code, "ThreadingExtensions.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original
-// license has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
+// This ENTIRE copyright notice and file header MUST BE KEPT
+// VISIBLE in any source code derived from or used from our
+// libraries and projects.
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
+// =========================================================
+// This section of source code, "ThreadingExtensions.cs",
+// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting.
 //
-// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// (We try to avoid that from happening, but it does happen.)
 //
-// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
+// Any unmodified portions of source code gleaned from other
+// projects still retain their original license and our thanks
+// goes to those Authors.
+// =========================================================
+//
+// Donations (more please!), royalties from any software that
+// uses any of our code, and license fees can be paid to us via
+// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+//
+// =========================================================
+// Usage of the source code or compiled binaries is AS-IS.
+// No warranties are expressed or implied.
+// I am NOT responsible for Anything You Do With Our Code.
+// =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/ThreadingExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 4:23 AM.
+// "Librainian/Librainian/ThreadingExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:50 PM.
 
 namespace Librainian.Threading {
 
@@ -33,23 +52,29 @@ namespace Librainian.Threading {
     public static class ThreadingExtensions {
 
         /// <summary>
-        /// <para>Sets the <see cref="System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism"/> of a <see cref="System.Threading.Tasks.ParallelOptions"/> to <see cref="Environment.ProcessorCount"/>.</para>
-        /// <para>1 core to 1</para>
-        /// <para>2 cores to 2</para>
-        /// <para>4 cores to 4</para>
-        /// <para>8 cores to 8</para>
-        /// <para>n cores to n</para>
+        ///     <para>
+        ///         Sets the <see cref="System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism" /> of a
+        ///         <see cref="System.Threading.Tasks.ParallelOptions" /> to <see cref="Environment.ProcessorCount" />.
+        ///     </para>
+        ///     <para>1 core to 1</para>
+        ///     <para>2 cores to 2</para>
+        ///     <para>4 cores to 4</para>
+        ///     <para>8 cores to 8</para>
+        ///     <para>n cores to n</para>
         /// </summary>
         [NotNull]
         public static readonly ParallelOptions AllCPU = new ParallelOptions { MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount ) };
 
         /// <summary>
-        /// <para>Sets the <see cref="System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism"/> of a <see cref="System.Threading.Tasks.ParallelOptions"/> to <see cref="Environment.ProcessorCount"/>-1.</para>
-        /// <para>1 core to 1</para>
-        /// <para>2 cores to 1</para>
-        /// <para>4 cores to 3</para>
-        /// <para>8 cores to 7</para>
-        /// <para>n cores to n-1</para>
+        ///     <para>
+        ///         Sets the <see cref="System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism" /> of a
+        ///         <see cref="System.Threading.Tasks.ParallelOptions" /> to <see cref="Environment.ProcessorCount" />-1.
+        ///     </para>
+        ///     <para>1 core to 1</para>
+        ///     <para>2 cores to 1</para>
+        ///     <para>4 cores to 3</para>
+        ///     <para>8 cores to 7</para>
+        ///     <para>n cores to n-1</para>
         /// </summary>
         [NotNull]
         public static readonly ParallelOptions CPUIntensive = new ParallelOptions {
@@ -57,23 +82,29 @@ namespace Librainian.Threading {
         };
 
         /// <summary>
-        /// <para>Sets the <see cref="System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism"/> of a <see cref="System.Threading.Tasks.ParallelOptions"/> to half of <see cref="Environment.ProcessorCount"/>.</para>
-        /// <para>1 core to 1?</para>
-        /// <para>2 cores to 1</para>
-        /// <para>4 cores to 2</para>
-        /// <para>8 cores to 4</para>
-        /// <para>n cores to n/2</para>
+        ///     <para>
+        ///         Sets the <see cref="System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism" /> of a
+        ///         <see cref="System.Threading.Tasks.ParallelOptions" /> to half of <see cref="Environment.ProcessorCount" />.
+        ///     </para>
+        ///     <para>1 core to 1?</para>
+        ///     <para>2 cores to 1</para>
+        ///     <para>4 cores to 2</para>
+        ///     <para>8 cores to 4</para>
+        ///     <para>n cores to n/2</para>
         /// </summary>
         [NotNull]
         public static readonly ParallelOptions CPULight = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount / 2 };
 
         /// <summary>
-        /// <para>Sets the <see cref="System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism"/> of a <see cref="System.Threading.Tasks.ParallelOptions"/> to <see cref="Environment.ProcessorCount"/> * 2.</para>
-        /// <para>1 core to 2</para>
-        /// <para>2 cores to 4</para>
-        /// <para>4 cores to 8</para>
-        /// <para>8 cores to 16</para>
-        /// <para>n cores to 2n</para>
+        ///     <para>
+        ///         Sets the <see cref="System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism" /> of a
+        ///         <see cref="System.Threading.Tasks.ParallelOptions" /> to <see cref="Environment.ProcessorCount" /> * 2.
+        ///     </para>
+        ///     <para>1 core to 2</para>
+        ///     <para>2 cores to 4</para>
+        ///     <para>4 cores to 8</para>
+        ///     <para>8 cores to 16</para>
+        ///     <para>n cores to 2n</para>
         /// </summary>
         [NotNull]
         public static readonly ParallelOptions DiskIntensive = new ParallelOptions { MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount * 2 ) };
@@ -81,16 +112,16 @@ namespace Librainian.Threading {
         public static readonly Boolean IsRunningFromNUnit = AppDomain.CurrentDomain.GetAssemblies().Any( assembly => assembly.FullName.ToLowerInvariant().StartsWith( "nunit.framework" ) );
 
         /// <summary>
-        /// Only allow a delegate to run X times.
+        ///     Only allow a delegate to run X times.
         /// </summary>
         /// <param name="action">      </param>
         /// <param name="callsAllowed"></param>
         /// <returns></returns>
         /// <example>
-        /// var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar,
-        /// remainingCallsAllowed: 2 );
+        ///     var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar,
+        ///     remainingCallsAllowed: 2 );
         /// </example>
-        /// <remarks>Calling the delegate more often than <paramref name="callsAllowed"/> should just NOP.</remarks>
+        /// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
         public static Action ActionBarrier( [CanBeNull] this Action action, Int64? callsAllowed = null ) {
             var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
@@ -100,17 +131,17 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Only allow a delegate to run X times.
+        ///     Only allow a delegate to run X times.
         /// </summary>
         /// <param name="action">      </param>
         /// <param name="parameter">   </param>
         /// <param name="callsAllowed"></param>
         /// <returns></returns>
         /// <example>
-        /// var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar,
-        /// remainingCallsAllowed: 2 );
+        ///     var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar,
+        ///     remainingCallsAllowed: 2 );
         /// </example>
-        /// <remarks>Calling the delegate more often than <paramref name="callsAllowed"/> should just NOP.</remarks>
+        /// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
         public static Action ActionBarrier<T1>( [CanBeNull] this Action<T1> action, T1 parameter, Int64? callsAllowed = null ) {
             var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
@@ -120,10 +151,10 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// <para>Thread.BeginThreadAffinity();</para>
-        /// <para>Thread.BeginCriticalRegion();</para>
-        /// <para>...</para>
-        /// <see cref="End"/>
+        ///     <para>Thread.BeginThreadAffinity();</para>
+        ///     <para>Thread.BeginCriticalRegion();</para>
+        ///     <para>...</para>
+        ///     <see cref="End" />
         /// </summary>
         public static void Begin( Boolean lowPriority = true ) {
             Thread.BeginThreadAffinity();
@@ -135,7 +166,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// About X bytes by polling the object's fields.
+        ///     About X bytes by polling the object's fields.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
@@ -229,16 +260,18 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Has attributes <see cref="MethodImplOptions.NoInlining"/> and <see cref="MethodImplOptions.NoOptimization"/> .
+        ///     Has attributes <see cref="MethodImplOptions.NoInlining" /> and <see cref="MethodImplOptions.NoOptimization" /> .
         /// </summary>
         [MethodImpl( MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization )]
         public static void DoNothing() { }
 
         /// <summary>
-        /// <para><see cref="Begin"/></para>
-        /// <para>...</para>
-        /// <para>Thread.EndThreadAffinity();</para>
-        /// <para>Thread.EndCriticalRegion();</para>
+        ///     <para>
+        ///         <see cref="Begin" />
+        ///     </para>
+        ///     <para>...</para>
+        ///     <para>Thread.EndThreadAffinity();</para>
+        ///     <para>Thread.EndCriticalRegion();</para>
         /// </summary>
         public static void End() {
             Thread.EndThreadAffinity();
@@ -246,7 +279,8 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Split the given <paramref name="timeSpan"/> into tenths, alternating between <see cref="Thread.Sleep(TimeSpan)"/> and <see cref="Thread.Yield"/>
+        ///     Split the given <paramref name="timeSpan" /> into tenths, alternating between <see cref="Thread.Sleep(TimeSpan)" />
+        ///     and <see cref="Thread.Yield" />
         /// </summary>
         /// <param name="thread">  </param>
         /// <param name="timeSpan"></param>
@@ -360,7 +394,7 @@ namespace Librainian.Threading {
         public static Boolean IsNotRunning( this Task task ) => task.IsCompleted || task.IsCanceled || task.IsFaulted;
 
         /// <summary>
-        /// returns Marshal.SizeOf( typeof( T ) );
+        ///     returns Marshal.SizeOf( typeof( T ) );
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
@@ -368,7 +402,7 @@ namespace Librainian.Threading {
         public static Int32 MarshalSizeOf<T>() where T : struct => Marshal.SizeOf( typeof( T ) );
 
         /// <summary>
-        /// boxed returns Marshal.SizeOf( obj )
+        ///     boxed returns Marshal.SizeOf( obj )
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -379,14 +413,14 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// generic returns Marshal.SizeOf( obj )
+        ///     generic returns Marshal.SizeOf( obj )
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         public static Int32 MarshalSizeOf<T>( this T obj ) => Marshal.SizeOf( obj );
 
         /// <summary>
-        /// Repeat the <paramref name="action"/><paramref name="times"/> .
+        ///     Repeat the <paramref name="action" /><paramref name="times" /> .
         /// </summary>
         /// <param name="times"> </param>
         /// <param name="action"></param>
@@ -409,7 +443,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Run each task, optionally in parallel, optionally printing feedback through an action.
+        ///     Run each task, optionally in parallel, optionally printing feedback through an action.
         /// </summary>
         /// <param name="tasks">      </param>
         /// <param name="output">     </param>
@@ -433,7 +467,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Run each task in parallel, optionally printing feedback through an action.
+        ///     Run each task in parallel, optionally printing feedback through an action.
         /// </summary>
         /// <param name="tasks">      </param>
         /// <param name="output">     </param>
@@ -639,9 +673,9 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// <para>Returns true if the task finished before the <paramref name="timeout"/>.</para>
-        /// <para>Use this function if the Task does not have a built-in timeout.</para>
-        /// <para>This function does not end the given <paramref name="task"/> if it does timeout.</para>
+        ///     <para>Returns true if the task finished before the <paramref name="timeout" />.</para>
+        ///     <para>Use this function if the Task does not have a built-in timeout.</para>
+        ///     <para>This function does not end the given <paramref name="task" /> if it does timeout.</para>
         /// </summary>
         /// <param name="task">   </param>
         /// <param name="timeout"></param>
@@ -657,7 +691,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Returns true if the task finished before the <paramref name="timeout"/>.
+        ///     Returns true if the task finished before the <paramref name="timeout" />.
         /// </summary>
         /// <param name="task">   </param>
         /// <param name="timeout"></param>
@@ -665,7 +699,7 @@ namespace Librainian.Threading {
         public static async Task<Boolean> Until( this TimeSpan timeout, Task task ) => await Until( task, timeout );
 
         /// <summary>
-        /// “I have an async operation that’s not cancelable. How do I cancel it?”
+        ///     “I have an async operation that’s not cancelable. How do I cancel it?”
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="task">             </param>
@@ -685,7 +719,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// "you can even have a timeout using the following simple extension method"
+        ///     "you can even have a timeout using the following simple extension method"
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="task">             </param>
@@ -703,7 +737,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// var result = await Wrap( () =&gt; OldNonAsyncFunction( ) );
+        ///     var result = await Wrap( () =&gt; OldNonAsyncFunction( ) );
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="selector"></param>
@@ -715,7 +749,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// var result = await Wrap( () =&gt; OldNonAsyncFunction( "hello world" ) );
+        ///     var result = await Wrap( () =&gt; OldNonAsyncFunction( "hello world" ) );
         /// </summary>
         /// <typeparam name="TIn"></typeparam>
         /// <typeparam name="TOut"></typeparam>
@@ -729,7 +763,7 @@ namespace Librainian.Threading {
         }
 
         /// <summary>
-        /// Just a try/catch wrapper for methods.
+        ///     Just a try/catch wrapper for methods.
         /// </summary>
         /// <param name="action">           </param>
         /// <param name="timeAction">       </param>
