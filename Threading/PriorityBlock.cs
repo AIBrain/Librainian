@@ -1,20 +1,17 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "PriorityBlock.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license
+// has been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Donations and royalties can be paid via
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/PriorityBlock.cs" was last cleaned by Protiguous on 2016/06/18 at 10:57 PM
+// "Librainian/PriorityBlock.cs" was last cleaned by Protiguous on 2018/05/15 at 4:23 AM.
 
 namespace Librainian.Threading {
 
@@ -30,6 +27,7 @@ namespace Librainian.Threading {
 
     [Obsolete]
     public class PriorityBlock {
+
         private readonly ConcurrentQueue<OneJob> _jobs = new ConcurrentQueue<OneJob>();
 
         public PriorityBlock( CancellationToken cancellationToken ) {
@@ -39,26 +37,19 @@ namespace Librainian.Threading {
             this.TheDoctorsTask = Task.Run( this.Triage );
         }
 
-        public CancellationToken CancellationToken {
-            get;
-        }
+        public CancellationToken CancellationToken { get; }
 
         [NotNull]
-        public BufferBlock<OneJob> Input {
-            get;
-        }
+        public BufferBlock<OneJob> Input { get; }
 
         [NotNull]
-        public ActionBlock<Action> Output {
-            get;
-        }
+        public ActionBlock<Action> Output { get; }
 
-        public Task TheDoctorsTask {
-            get;
-        }
+        public Task TheDoctorsTask { get; }
 
         private async Task Triage() {
             Logging.Enter();
+
             while ( !this.CancellationToken.IsCancellationRequested ) {
                 await Task.WhenAny( this.Input.OutputAvailableAsync( this.CancellationToken ) );
 
@@ -67,9 +58,9 @@ namespace Librainian.Threading {
                 }
 
                 var highest = this._jobs.OrderByDescending( job => job.Priority ).FirstOrDefault();
-                if ( null == highest ) {
-                    continue;
-                }
+
+                if ( null == highest ) { continue; }
+
                 this._jobs.Remove( highest );
 
                 if ( highest != item ) {
@@ -78,28 +69,25 @@ namespace Librainian.Threading {
 
                 await this.Output.SendAsync( highest.Action, this.CancellationToken );
             }
+
             Logging.Exit();
         }
 
         public void Add( [NotNull] OneJob oneJob ) {
-            if ( oneJob is null ) {
-                throw new ArgumentNullException( nameof( oneJob ) );
-            }
+            if ( oneJob is null ) { throw new ArgumentNullException( nameof( oneJob ) ); }
+
             this._jobs.Enqueue( oneJob );
             this.Input.TryPost( oneJob );
         }
 
         public void AddJobs( [NotNull] IEnumerable<OneJob> jobs ) {
-            if ( jobs is null ) {
-                throw new ArgumentNullException( nameof( jobs ) );
-            }
+            if ( jobs is null ) { throw new ArgumentNullException( nameof( jobs ) ); }
+
             var enumerable = jobs as IList<OneJob> ?? jobs.ToList();
-            foreach ( var job in enumerable ) {
-                this._jobs.Enqueue( job );
-            }
-            foreach ( var job in enumerable.OrderByDescending( job => job.Priority ) ) {
-                this.Input.TryPost( job );
-            }
+
+            foreach ( var job in enumerable ) { this._jobs.Enqueue( job ); }
+
+            foreach ( var job in enumerable.OrderByDescending( job => job.Priority ) ) { this.Input.TryPost( job ); }
         }
     }
 }

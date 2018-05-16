@@ -1,18 +1,17 @@
-﻿// Copyright 2018 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "SimpleMutex.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license has
+// been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Any unmodified sections of source code borrowed from other projects retain their original license and thanks goes to the Authors.
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// Donations, royalties, and licenses can be paid via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/SimpleMutex.cs" was last cleaned by Protiguous on 2018/05/09 at 1:12 PM
+// "Librainian/SimpleMutex.cs" was last cleaned by Protiguous on 2018/05/15 at 4:23 AM.
 
 namespace Librainian.Threading {
 
@@ -27,6 +26,7 @@ namespace Librainian.Threading {
     /// </summary>
     /// <remarks>Only one thread (and thus process) can have the mutex acquired at the same time.</remarks>
     public sealed class SimpleMutex : ABetterClassDispose {
+
         private readonly Mutex _mutex;
 
         private SimpleMutex( String mutexName ) => this._mutex = new Mutex( false, mutexName );
@@ -40,11 +40,13 @@ namespace Librainian.Threading {
         [CanBeNull]
         public static SimpleMutex Acquire( String mutexName, TimeSpan timeout ) {
             var mutex = new SimpleMutex( mutexName );
+
             try {
                 if ( !mutex._mutex.WaitOne( timeout ) ) {
 
                     // We could not acquire the mutex in time.
                     mutex._mutex.Dispose();
+
                     return null;
                 }
             }
@@ -58,9 +60,7 @@ namespace Librainian.Threading {
         }
 
         public override void DisposeManaged() {
-            using ( this._mutex ) {
-                this._mutex.ReleaseMutex();
-            }
+            using ( this._mutex ) { this._mutex.ReleaseMutex(); }
         }
     }
 }

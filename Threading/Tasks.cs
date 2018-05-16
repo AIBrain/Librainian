@@ -1,20 +1,17 @@
-﻿// Copyright 2017 Protiguous.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "Tasks.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license has been
+// overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Donations and royalties can be paid via
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/Tasks.cs" was last cleaned by Protiguous on 2017/04/02 at 10:13 PM
+// "Librainian/Tasks.cs" was last cleaned by Protiguous on 2018/05/15 at 4:23 AM.
 
 namespace Librainian.Threading {
 
@@ -64,17 +61,18 @@ namespace Librainian.Threading {
             switch ( completedTask.Status ) {
                 case TaskStatus.Canceled:
                     completionSource.TrySetCanceled();
+
                     break;
 
                 case TaskStatus.Faulted:
-                    if ( completedTask.Exception != null ) {
-                        completionSource.TrySetException( exceptions: completedTask.Exception.InnerExceptions );
-                    }
+
+                    if ( completedTask.Exception != null ) { completionSource.TrySetException( exceptions: completedTask.Exception.InnerExceptions ); }
 
                     break;
 
                 case TaskStatus.RanToCompletion:
                     completionSource.TrySetResult( result: completedTask.Result );
+
                     break;
 
                 default: throw new ArgumentException( "Task was not completed." );
@@ -91,9 +89,7 @@ namespace Librainian.Threading {
         /// Task.Delay(4000).ContinueWith(_ =&gt; 4), }; foreach (var bucket in Interleaved(tasks)) { var t = await bucket; int result = await t; Console.WriteLine("{0}: {1}", DateTime.Now, result); }
         /// </example>
         public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
-            if ( tasks is null ) {
-                throw new ArgumentNullException(nameof( tasks ) );
-            }
+            if ( tasks is null ) { throw new ArgumentNullException( nameof( tasks ) ); }
 
             var inputTasks = tasks.ToList();
 
@@ -140,9 +136,7 @@ namespace Librainian.Threading {
         /// <param name="job">  </param>
         /// <returns></returns>
         public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
-            if ( job is null ) {
-                throw new ArgumentNullException(nameof( job ) );
-            }
+            if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
             await Task.Delay( delay: delay );
 
@@ -156,9 +150,7 @@ namespace Librainian.Threading {
         /// <param name="job">  </param>
         /// <returns></returns>
         public static async Task Then( this Span delay, [NotNull] Action job ) {
-            if ( job is null ) {
-                throw new ArgumentNullException(nameof( job ) );
-            }
+            if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
             await Task.Delay( delay: delay ).ConfigureAwait( false );
 
@@ -172,9 +164,7 @@ namespace Librainian.Threading {
         /// <param name="job">  </param>
         /// <returns></returns>
         public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
-            if ( job is null ) {
-                throw new ArgumentNullException(nameof( job ) );
-            }
+            if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
             await Task.Delay( delay: delay ).ConfigureAwait( false );
 
@@ -188,9 +178,7 @@ namespace Librainian.Threading {
         /// <param name="job">  </param>
         /// <returns></returns>
         public static async Task Then( this Seconds delay, [NotNull] Action job ) {
-            if ( job is null ) {
-                throw new ArgumentNullException(nameof( job ) );
-            }
+            if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
             await Task.Delay( delay: delay ).ConfigureAwait( false );
 
@@ -204,9 +192,7 @@ namespace Librainian.Threading {
         /// <param name="job">  </param>
         /// <returns></returns>
         public static async Task Then( this Minutes delay, [NotNull] Action job ) {
-            if ( job is null ) {
-                throw new ArgumentNullException(nameof( job ) );
-            }
+            if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
             await Task.Delay( delay: delay ).ConfigureAwait( false );
 
@@ -220,28 +206,17 @@ namespace Librainian.Threading {
         /// <param name="pre">   </param>
         /// <param name="post">  </param>
         /// <returns></returns>
-        public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) => () => {
-            try {
-                pre?.Invoke();
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+        public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) =>
+            () => {
+                try { pre?.Invoke(); }
+                catch ( Exception exception ) { exception.More(); }
 
-            try {
-                action?.Invoke();
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
+                try { action?.Invoke(); }
+                catch ( Exception exception ) { exception.More(); }
 
-            try {
-                post?.Invoke();
-            }
-            catch ( Exception exception ) {
-                exception.More();
-            }
-        };
+                try { post?.Invoke(); }
+                catch ( Exception exception ) { exception.More(); }
+            };
 
         /// <summary>
         /// Keep posting to the <see cref="ITargetBlock{TInput}"/> until it posts.
@@ -252,7 +227,7 @@ namespace Librainian.Threading {
         public static void TryPost<T>( this ITargetBlock<T> target, T item ) {
             if ( target is null ) {
 #if DEBUG
-                throw new ArgumentNullException(nameof( target ) );
+                throw new ArgumentNullException( nameof( target ) );
 #else
                 return;
 #endif
@@ -271,19 +246,16 @@ namespace Librainian.Threading {
         /// <param name="item">  </param>
         /// <param name="delay"> </param>
         public static System.Timers.Timer TryPost<T>( this ITargetBlock<T> target, T item, TimeSpan delay ) {
-            if ( target is null ) {
-                throw new ArgumentNullException(nameof( target ) );
-            }
+            if ( target is null ) { throw new ArgumentNullException( nameof( target ) ); }
 
             try {
-                if ( delay < Milliseconds.One ) {
-                    delay = Milliseconds.One;
-                }
+                if ( delay < Milliseconds.One ) { delay = Milliseconds.One; }
 
                 return delay.CreateTimer( () => target.TryPost( item: item ) ).AndStart();
             }
             catch ( Exception exception ) {
                 exception.More();
+
                 throw;
             }
         }
@@ -295,23 +267,18 @@ namespace Librainian.Threading {
         /// <param name="action">    </param>
         /// <param name="condition"> </param>
         public static System.Timers.Timer When( this TimeSpan afterDelay, Func<Boolean> condition, Action action ) {
-            if ( condition is null ) {
-                throw new ArgumentNullException(nameof( condition ) );
-            }
-            if ( action is null ) {
-                throw new ArgumentNullException(nameof( action ) );
-            }
+            if ( condition is null ) { throw new ArgumentNullException( nameof( condition ) ); }
+
+            if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
+
             try {
                 return afterDelay.CreateTimer( () => {
-                    if ( condition() ) {
-                        action();
-                    }
-                } )
-                                 .Once()
-                                 .AndStart();
+                    if ( condition() ) { action(); }
+                } ).Once().AndStart();
             }
             catch ( Exception exception ) {
                 exception.More();
+
                 return null;
             }
         }

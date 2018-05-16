@@ -1,20 +1,17 @@
-// Copyright 2018 Protiguous.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved. This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any source code derived from or used from our libraries and projects.
 //
-// This notice must be kept visible in the source.
+// ========================================================= This section of source code, "SlimLock.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com unless otherwise specified OR the original license has
+// been overwritten by the automatic formatting. (We try to avoid that from happening, but it does happen.)
 //
-// This section of source code belongs to Protiguous@Protiguous.com unless otherwise specified, or the original license has been overwritten by the automatic formatting of this code. Any unmodified sections of source code
-// borrowed from other projects retain their original license and thanks goes to the Authors.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors. =========================================================
 //
-// Donations and royalties can be paid via
+// Donations (more please!), royalties from any software that uses any of our code, and license fees can be paid to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+// ========================================================= Usage of the source code or compiled binaries is AS-IS. No warranties are expressed or implied. I am NOT responsible for Anything You Do With Our Code. =========================================================
 //
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/SlimLock.cs" was last cleaned by Protiguous on 2016/06/18 at 10:57 PM
+// "Librainian/SlimLock.cs" was last cleaned by Protiguous on 2018/05/15 at 4:23 AM.
 
 namespace Librainian.Threading {
 
@@ -35,15 +32,25 @@ namespace Librainian.Threading {
         private const Int32 LockSpinCycles = 20;
 
         private const Int32 LockSpinCount = 10;
+
         private const Int32 LockSleep0Count = 5;
+
         private const Int32 HashTableSize = 0xff;
+
         private const Int32 MaxSpinCount = 20;
+
         private const UInt32 WriterHeld = 0x80000000;
+
         private const UInt32 WaitingWriters = 0x40000000;
+
         private const UInt32 WaitingUpgrader = 0x20000000;
+
         private const UInt32 MaxReader = 0x10000000 - 2;
+
         private const UInt32 ReaderMask = 0x10000000 - 1;
+
         private static readonly Int32 ProcessorCount = Environment.ProcessorCount;
+
         private readonly Boolean _fIsReentrant;
 
         //Various R/W masks
@@ -74,7 +81,9 @@ namespace Librainian.Threading {
         private Int32 _myLock;
 
         private UInt32 _numReadWaiters; // maximum number of threads that can be doing a WaitOne on the readEvent
+
         private UInt32 _numUpgradeWaiters;
+
         private UInt32 _numWriteUpgradeWaiters; // maximum number of threads that can be doing a WaitOne on the upgradeEvent (at most 1).
 
         //The variables controlling spinning behaviior of Mylock(which is a spin-lock)
@@ -89,9 +98,13 @@ namespace Librainian.Threading {
         private UInt32 _owners;
 
         private EventWaitHandle _readEvent; // threads waiting to aquire a read lock go here (will be released in bulk)
+
         private ReaderWriterCount[] _rwc;
+
         private EventWaitHandle _upgradeEvent; // thread waiting to acquire the upgrade lock
+
         private Int32 _upgradeLockOwnerId;
+
         private EventWaitHandle _waitUpgradeEvent; // thread waiting to upgrade from the upgrade lock to a write lock go here (at most one)
 
         // conditions we wait on.
@@ -99,13 +112,11 @@ namespace Librainian.Threading {
 
         private Int32 _writeLockOwnerId;
 
-        public SlimLock() : this( LockRecursionPolicy.NoRecursion ) {
-        }
+        public SlimLock() : this( LockRecursionPolicy.NoRecursion ) { }
 
         public SlimLock( LockRecursionPolicy recursionPolicy ) {
-            if ( recursionPolicy == LockRecursionPolicy.SupportsRecursion ) {
-                this._fIsReentrant = true;
-            }
+            if ( recursionPolicy == LockRecursionPolicy.SupportsRecursion ) { this._fIsReentrant = true; }
+
             this.InitializeThreadCounts();
         }
 
@@ -133,9 +144,9 @@ namespace Librainian.Threading {
                 Thread.BeginCriticalRegion();
                 this.EnterMyLock();
                 var lrwc = this.GetThreadRwCount( id, true );
-                if ( lrwc != null ) {
-                    count = lrwc.Readercount;
-                }
+
+                if ( lrwc != null ) { count = lrwc.Readercount; }
+
                 this.ExitMyLock();
                 Thread.EndCriticalRegion();
 
@@ -147,17 +158,16 @@ namespace Librainian.Threading {
             get {
                 var id = Thread.CurrentThread.ManagedThreadId;
 
-                if ( !this._fIsReentrant ) {
-                    return id == this._upgradeLockOwnerId ? 1 : 0;
-                }
+                if ( !this._fIsReentrant ) { return id == this._upgradeLockOwnerId ? 1 : 0; }
+
                 var count = 0;
 
                 Thread.BeginCriticalRegion();
                 this.EnterMyLock();
                 var lrwc = this.GetThreadRwCount( id, true );
-                if ( lrwc != null ) {
-                    count = lrwc.RecursiveCounts.Upgradecount;
-                }
+
+                if ( lrwc != null ) { count = lrwc.RecursiveCounts.Upgradecount; }
+
                 this.ExitMyLock();
                 Thread.EndCriticalRegion();
 
@@ -170,15 +180,14 @@ namespace Librainian.Threading {
                 var id = Thread.CurrentThread.ManagedThreadId;
                 var count = 0;
 
-                if ( !this._fIsReentrant ) {
-                    return id == this._writeLockOwnerId ? 1 : 0;
-                }
+                if ( !this._fIsReentrant ) { return id == this._writeLockOwnerId ? 1 : 0; }
+
                 Thread.BeginCriticalRegion();
                 this.EnterMyLock();
                 var lrwc = this.GetThreadRwCount( id, true );
-                if ( lrwc != null ) {
-                    count = lrwc.RecursiveCounts.Writercount;
-                }
+
+                if ( lrwc != null ) { count = lrwc.RecursiveCounts.Writercount; }
+
                 this.ExitMyLock();
                 Thread.EndCriticalRegion();
 
@@ -199,13 +208,12 @@ namespace Librainian.Threading {
         private UInt32 GetNumReaders() => this._owners & ReaderMask;
 
         private void EnterMyLock() {
-            if ( Interlocked.CompareExchange( ref this._myLock, 1, 0 ) != 0 ) {
-                this.EnterMyLockSpin();
-            }
+            if ( Interlocked.CompareExchange( ref this._myLock, 1, 0 ) != 0 ) { this.EnterMyLockSpin(); }
         }
 
         private void EnterMyLockSpin() {
             var pc = ProcessorCount;
+
             for ( var i = 0; ; i++ ) {
                 if ( i < LockSpinCount && pc > 1 ) {
                     Thread.SpinWait( LockSpinCycles * ( i + 1 ) ); // Wait a few dozen instructions to let another processor release lock.
@@ -217,9 +225,7 @@ namespace Librainian.Threading {
                     Thread.Sleep( 1 ); // Give up my quantum.
                 }
 
-                if ( this._myLock == 0 && Interlocked.CompareExchange( ref this._myLock, 1, 0 ) == 0 ) {
-                    return;
-                }
+                if ( this._myLock == 0 && Interlocked.CompareExchange( ref this._myLock, 1, 0 ) == 0 ) { return; }
             }
         }
 
@@ -235,23 +241,22 @@ namespace Librainian.Threading {
             Assert.That( this.MyLockHeld );
 
             if ( null == this._rwc[hash] ) {
-                if ( dontAllocate ) {
-                    return null;
-                }
+                if ( dontAllocate ) { return null; }
+
                 this._rwc[hash] = new ReaderWriterCount( this._fIsReentrant );
             }
 
-            if ( this._rwc[hash].Threadid == id ) {
-                return this._rwc[hash];
-            }
+            if ( this._rwc[hash].Threadid == id ) { return this._rwc[hash]; }
 
             if ( IsRwEntryEmpty( this._rwc[hash] ) && !dontAllocate ) {
 
                 //No more entries in chain, so no more searching required.
                 if ( this._rwc[hash].Next is null ) {
                     this._rwc[hash].Threadid = id;
+
                     return this._rwc[hash];
                 }
+
                 firstfound = this._rwc[hash];
             }
 
@@ -260,33 +265,31 @@ namespace Librainian.Threading {
             var temp = this._rwc[hash].Next;
 
             while ( temp != null ) {
-                if ( temp.Threadid == id ) {
-                    return temp;
-                }
+                if ( temp.Threadid == id ) { return temp; }
 
                 if ( firstfound is null ) {
-                    if ( IsRwEntryEmpty( temp ) ) {
-                        firstfound = temp;
-                    }
+                    if ( IsRwEntryEmpty( temp ) ) { firstfound = temp; }
                 }
 
                 temp = temp.Next;
             }
 
-            if ( dontAllocate ) {
-                return null;
-            }
+            if ( dontAllocate ) { return null; }
 
             if ( firstfound is null ) {
                 temp = new ReaderWriterCount( this._fIsReentrant ) { Threadid = id, Next = this._rwc[hash].Next };
                 this._rwc[hash].Next = temp;
+
                 return temp;
             }
+
             firstfound.Threadid = id;
+
             return firstfound;
         }
 
-        private static Boolean IsRwEntryEmpty( ReaderWriterCount rwc ) => rwc.Threadid == -1 || rwc.Readercount == 0 && rwc.RecursiveCounts is null || rwc.Readercount == 0 && rwc.RecursiveCounts.Writercount == 0 && rwc.RecursiveCounts.Upgradecount == 0;
+        private static Boolean IsRwEntryEmpty( ReaderWriterCount rwc ) =>
+            rwc.Threadid == -1 || rwc.Readercount == 0 && rwc.RecursiveCounts is null || rwc.Readercount == 0 && rwc.RecursiveCounts.Writercount == 0 && rwc.RecursiveCounts.Upgradecount == 0;
 
         private void ExitMyLock() {
             Assert.That( this._myLock != 0, "Exiting spin lock that is not held" );
@@ -304,25 +307,19 @@ namespace Librainian.Threading {
         public Boolean TryEnterReadLock( Int32 millisecondsTimeout ) {
             Thread.BeginCriticalRegion();
             var result = false;
-            try {
-                result = this.TryEnterReadLockCore( millisecondsTimeout );
-            }
+
+            try { result = this.TryEnterReadLockCore( millisecondsTimeout ); }
             finally {
-                if ( !result ) {
-                    Thread.EndCriticalRegion();
-                }
+                if ( !result ) { Thread.EndCriticalRegion(); }
             }
+
             return result;
         }
 
         private Boolean TryEnterReadLockCore( Int32 millisecondsTimeout ) {
-            if ( millisecondsTimeout < -1 ) {
-                throw new ArgumentOutOfRangeException( nameof( millisecondsTimeout ) );
-            }
+            if ( millisecondsTimeout < -1 ) { throw new ArgumentOutOfRangeException( nameof( millisecondsTimeout ) ); }
 
-            if ( this._fDisposed ) {
-                throw new ObjectDisposedException( null );
-            }
+            if ( this._fDisposed ) { throw new ObjectDisposedException( null ); }
 
             ReaderWriterCount lrwc;
             var id = Thread.CurrentThread.ManagedThreadId;
@@ -330,11 +327,14 @@ namespace Librainian.Threading {
             if ( this._fIsReentrant ) {
                 this.EnterMyLock();
                 lrwc = this.GetThreadRwCount( id, false );
+
                 if ( lrwc.Readercount > 0 ) {
                     lrwc.Readercount++;
                     this.ExitMyLock();
+
                     return true;
                 }
+
                 if ( id == this._upgradeLockOwnerId ) {
 
                     //The upgrade lock is already held.
@@ -343,8 +343,10 @@ namespace Librainian.Threading {
                     this._owners++;
                     this.ExitMyLock();
                     this._fUpgradeThreadHoldingRead = true;
+
                     return true;
                 }
+
                 if ( id == this._writeLockOwnerId ) {
 
                     //The write lock is already held.
@@ -352,6 +354,7 @@ namespace Librainian.Threading {
                     lrwc.Readercount++;
                     this._owners++;
                     this.ExitMyLock();
+
                     return true;
                 }
             }
@@ -372,8 +375,10 @@ namespace Librainian.Threading {
                 //a count in the struucture).
                 if ( lrwc.Readercount > 0 ) {
                     this.ExitMyLock();
+
                     throw new LockRecursionException();
                 }
+
                 if ( id == this._upgradeLockOwnerId ) {
 
                     //The upgrade lock is already held.
@@ -382,6 +387,7 @@ namespace Librainian.Threading {
                     lrwc.Readercount++;
                     this._owners++;
                     this.ExitMyLock();
+
                     return true;
                 }
             }
@@ -397,22 +403,22 @@ namespace Librainian.Threading {
                     // Good case, there is no contention, we are basically done
                     this._owners++; // Indicate we have another reader
                     lrwc.Readercount++;
+
                     break;
                 }
 
                 if ( spincount < MaxSpinCount ) {
                     this.ExitMyLock();
-                    if ( millisecondsTimeout == 0 ) {
-                        return false;
-                    }
+
+                    if ( millisecondsTimeout == 0 ) { return false; }
+
                     spincount++;
                     SpinWait( spincount );
                     this.EnterMyLock();
 
                     //The per-thread structure may have been recycled as the lock is released, load again.
-                    if ( IsRwHashEntryChanged( lrwc, id ) ) {
-                        lrwc = this.GetThreadRwCount( id, false );
-                    }
+                    if ( IsRwHashEntryChanged( lrwc, id ) ) { lrwc = this.GetThreadRwCount( id, false ); }
+
                     continue;
                 }
 
@@ -420,36 +426,28 @@ namespace Librainian.Threading {
                 if ( this._readEvent is null ) // Create the needed event
                 {
                     this.LazyCreateEvent( ref this._readEvent, false );
-                    if ( IsRwHashEntryChanged( lrwc, id ) ) {
-                        lrwc = this.GetThreadRwCount( id, false );
-                    }
+
+                    if ( IsRwHashEntryChanged( lrwc, id ) ) { lrwc = this.GetThreadRwCount( id, false ); }
+
                     continue; // since we left the lock, start over.
                 }
 
-                if ( !this.WaitOnEvent( this._readEvent, ref this._numReadWaiters, millisecondsTimeout ) ) {
-                    return false;
-                }
-                if ( IsRwHashEntryChanged( lrwc, id ) ) {
-                    lrwc = this.GetThreadRwCount( id, false );
-                }
+                if ( !this.WaitOnEvent( this._readEvent, ref this._numReadWaiters, millisecondsTimeout ) ) { return false; }
+
+                if ( IsRwHashEntryChanged( lrwc, id ) ) { lrwc = this.GetThreadRwCount( id, false ); }
             }
 
             this.ExitMyLock();
+
             return true;
         }
 
         private static void SpinWait( Int32 spinCount ) {
 
             //Exponential backoff
-            if ( spinCount < 5 && ProcessorCount > 1 ) {
-                Thread.SpinWait( LockSpinCycles * spinCount );
-            }
-            else if ( spinCount < MaxSpinCount - 3 ) {
-                Thread.Sleep( 0 );
-            }
-            else {
-                Thread.Sleep( 1 );
-            }
+            if ( spinCount < 5 && ProcessorCount > 1 ) { Thread.SpinWait( LockSpinCycles * spinCount ); }
+            else if ( spinCount < MaxSpinCount - 3 ) { Thread.Sleep( 0 ); }
+            else { Thread.Sleep( 1 ); }
         }
 
         private static Boolean IsRwHashEntryChanged( ReaderWriterCount lrwc, Int32 id ) => lrwc.Threadid != id;
@@ -465,12 +463,9 @@ namespace Librainian.Threading {
             this.ExitMyLock();
             var newEvent = makeAutoResetEvent ? ( EventWaitHandle )new AutoResetEvent( false ) : new ManualResetEvent( false );
             this.EnterMyLock();
-            if ( waitEvent is null ) {
-                waitEvent = newEvent;
-            }
-            else {
-                newEvent.Close();
-            }
+
+            if ( waitEvent is null ) { waitEvent = newEvent; }
+            else { newEvent.Close(); }
         }
 
         /// <summary>
@@ -485,39 +480,30 @@ namespace Librainian.Threading {
             this._fNoWaiters = false;
 
             //Setting these bits will prevent new readers from getting in.
-            if ( this._numWriteWaiters == 1 ) {
-                this.SetWritersWaiting();
-            }
-            if ( this._numWriteUpgradeWaiters == 1 ) {
-                this.SetUpgraderWaiting();
-            }
+            if ( this._numWriteWaiters == 1 ) { this.SetWritersWaiting(); }
+
+            if ( this._numWriteUpgradeWaiters == 1 ) { this.SetUpgraderWaiting(); }
 
             var waitSuccessful = false;
             this.ExitMyLock(); // Do the wait outside of any lock
 
-            try {
-                waitSuccessful = waitEvent.WaitOne( millisecondsTimeout, false );
-            }
+            try { waitSuccessful = waitEvent.WaitOne( millisecondsTimeout, false ); }
             finally {
                 this.EnterMyLock();
                 --numWaiters;
 
-                if ( this._numWriteWaiters == 0 && this._numWriteUpgradeWaiters == 0 && this._numUpgradeWaiters == 0 && this._numReadWaiters == 0 ) {
-                    this._fNoWaiters = true;
-                }
+                if ( this._numWriteWaiters == 0 && this._numWriteUpgradeWaiters == 0 && this._numUpgradeWaiters == 0 && this._numReadWaiters == 0 ) { this._fNoWaiters = true; }
 
-                if ( this._numWriteWaiters == 0 ) {
-                    this.ClearWritersWaiting();
-                }
-                if ( this._numWriteUpgradeWaiters == 0 ) {
-                    this.ClearUpgraderWaiting();
-                }
+                if ( this._numWriteWaiters == 0 ) { this.ClearWritersWaiting(); }
+
+                if ( this._numWriteUpgradeWaiters == 0 ) { this.ClearUpgraderWaiting(); }
 
                 if ( !waitSuccessful ) // We may also be aboutto throw for some reason.  Exit myLock.
                 {
                     this.ExitMyLock();
                 }
             }
+
             return waitSuccessful;
         }
 
@@ -534,25 +520,19 @@ namespace Librainian.Threading {
         public Boolean TryEnterWriteLock( Int32 millisecondsTimeout ) {
             Thread.BeginCriticalRegion();
             var result = false;
-            try {
-                result = this.TryEnterWriteLockCore( millisecondsTimeout );
-            }
+
+            try { result = this.TryEnterWriteLockCore( millisecondsTimeout ); }
             finally {
-                if ( !result ) {
-                    Thread.EndCriticalRegion();
-                }
+                if ( !result ) { Thread.EndCriticalRegion(); }
             }
+
             return result;
         }
 
         private Boolean TryEnterWriteLockCore( Int32 millisecondsTimeout ) {
-            if ( millisecondsTimeout < -1 ) {
-                throw new ArgumentOutOfRangeException( nameof( millisecondsTimeout ) );
-            }
+            if ( millisecondsTimeout < -1 ) { throw new ArgumentOutOfRangeException( nameof( millisecondsTimeout ) ); }
 
-            if ( this._fDisposed ) {
-                throw new ObjectDisposedException( null );
-            }
+            if ( this._fDisposed ) { throw new ObjectDisposedException( null ); }
 
             var id = Thread.CurrentThread.ManagedThreadId;
             ReaderWriterCount lrwc;
@@ -564,6 +544,7 @@ namespace Librainian.Threading {
                     //Check for AW->AW
                     throw new LockRecursionException();
                 }
+
                 if ( id == this._upgradeLockOwnerId ) {
 
                     //AU->AW case is allowed once.
@@ -576,6 +557,7 @@ namespace Librainian.Threading {
                 //Can't acquire write lock with reader lock held.
                 if ( lrwc != null && lrwc.Readercount > 0 ) {
                     this.ExitMyLock();
+
                     throw new LockRecursionException();
                 }
             }
@@ -586,16 +568,17 @@ namespace Librainian.Threading {
                 if ( id == this._writeLockOwnerId ) {
                     lrwc.RecursiveCounts.Writercount++;
                     this.ExitMyLock();
+
                     return true;
                 }
-                if ( id == this._upgradeLockOwnerId ) {
-                    upgradingToWrite = true;
-                }
+
+                if ( id == this._upgradeLockOwnerId ) { upgradingToWrite = true; }
                 else if ( lrwc.Readercount > 0 ) {
 
                     //Write locks may not be acquired if only read locks have been
                     //acquired.
                     this.ExitMyLock();
+
                     throw new LockRecursionException();
                 }
             }
@@ -607,6 +590,7 @@ namespace Librainian.Threading {
 
                     // Good case, there is no contention, we are basically done
                     this.SetWriterAcquired();
+
                     break;
                 }
 
@@ -621,13 +605,13 @@ namespace Librainian.Threading {
                     switch ( readercount ) {
                         case 1:
                             this.SetWriterAcquired(); // indicate we have a writer.
+
                             break;
 
                         case 2:
+
                             if ( lrwc != null ) {
-                                if ( IsRwHashEntryChanged( lrwc, id ) ) {
-                                    lrwc = this.GetThreadRwCount( id, false );
-                                }
+                                if ( IsRwHashEntryChanged( lrwc, id ) ) { lrwc = this.GetThreadRwCount( id, false ); }
 
                                 if ( lrwc.Readercount > 0 ) {
 
@@ -639,26 +623,30 @@ namespace Librainian.Threading {
                                     this.SetWriterAcquired(); // indicate we have a writer.
                                 }
                             }
+
                             break;
                     }
                 }
 
                 if ( spincount < MaxSpinCount ) {
                     this.ExitMyLock();
-                    if ( millisecondsTimeout == 0 ) {
-                        return false;
-                    }
+
+                    if ( millisecondsTimeout == 0 ) { return false; }
+
                     spincount++;
                     SpinWait( spincount );
                     this.EnterMyLock();
+
                     continue;
                 }
 
                 Boolean retVal;
+
                 if ( upgradingToWrite ) {
                     if ( this._waitUpgradeEvent is null ) // Create the needed event
                     {
                         this.LazyCreateEvent( ref this._waitUpgradeEvent, true );
+
                         continue; // since we left the lock, start over.
                     }
 
@@ -667,9 +655,7 @@ namespace Librainian.Threading {
                     retVal = this.WaitOnEvent( this._waitUpgradeEvent, ref this._numWriteUpgradeWaiters, millisecondsTimeout );
 
                     //The lock is not held in case of failure.
-                    if ( !retVal ) {
-                        return false;
-                    }
+                    if ( !retVal ) { return false; }
                 }
                 else {
 
@@ -677,27 +663,23 @@ namespace Librainian.Threading {
                     if ( this._writeEvent is null ) // create the needed event.
                     {
                         this.LazyCreateEvent( ref this._writeEvent, true );
+
                         continue; // since we left the lock, start over.
                     }
 
                     retVal = this.WaitOnEvent( this._writeEvent, ref this._numWriteWaiters, millisecondsTimeout );
 
                     //The lock is not held in case of failure.
-                    if ( !retVal ) {
-                        return false;
-                    }
+                    if ( !retVal ) { return false; }
                 }
             }
 
             Assert.That( ( this._owners & WriterHeld ) > 0 );
 
             if ( this._fIsReentrant ) {
-                if ( IsRwHashEntryChanged( lrwc, id ) ) {
-                    lrwc = this.GetThreadRwCount( id, false );
-                }
-                if ( lrwc != null ) {
-                    lrwc.RecursiveCounts.Writercount++;
-                }
+                if ( IsRwHashEntryChanged( lrwc, id ) ) { lrwc = this.GetThreadRwCount( id, false ); }
+
+                if ( lrwc != null ) { lrwc.RecursiveCounts.Writercount++; }
             }
 
             this.ExitMyLock();
@@ -716,25 +698,19 @@ namespace Librainian.Threading {
         public Boolean TryEnterUpgradeableReadLock( Int32 millisecondsTimeout ) {
             Thread.BeginCriticalRegion();
             var result = false;
-            try {
-                result = this.TryEnterUpgradeableReadLockCore( millisecondsTimeout );
-            }
+
+            try { result = this.TryEnterUpgradeableReadLockCore( millisecondsTimeout ); }
             finally {
-                if ( !result ) {
-                    Thread.EndCriticalRegion();
-                }
+                if ( !result ) { Thread.EndCriticalRegion(); }
             }
+
             return result;
         }
 
         private Boolean TryEnterUpgradeableReadLockCore( Int32 millisecondsTimeout ) {
-            if ( millisecondsTimeout < -1 ) {
-                throw new ArgumentOutOfRangeException( nameof( millisecondsTimeout ) );
-            }
+            if ( millisecondsTimeout < -1 ) { throw new ArgumentOutOfRangeException( nameof( millisecondsTimeout ) ); }
 
-            if ( this._fDisposed ) {
-                throw new ObjectDisposedException( null );
-            }
+            if ( this._fDisposed ) { throw new ObjectDisposedException( null ); }
 
             var id = Thread.CurrentThread.ManagedThreadId;
 
@@ -746,6 +722,7 @@ namespace Librainian.Threading {
                     //Check for AU->AU
                     throw new LockRecursionException();
                 }
+
                 if ( id == this._writeLockOwnerId ) {
 
                     //Check for AU->AW
@@ -758,6 +735,7 @@ namespace Librainian.Threading {
                 //Can't acquire upgrade lock with reader lock held.
                 if ( lrwc != null && lrwc.Readercount > 0 ) {
                     this.ExitMyLock();
+
                     throw new LockRecursionException();
                 }
             }
@@ -768,8 +746,10 @@ namespace Librainian.Threading {
                 if ( id == this._upgradeLockOwnerId ) {
                     lrwc.RecursiveCounts.Upgradecount++;
                     this.ExitMyLock();
+
                     return true;
                 }
+
                 if ( id == this._writeLockOwnerId ) {
 
                     //Write lock is already held, Just update the global state to show presence of upgrader.
@@ -777,16 +757,19 @@ namespace Librainian.Threading {
                     this._owners++;
                     this._upgradeLockOwnerId = id;
                     lrwc.RecursiveCounts.Upgradecount++;
-                    if ( lrwc.Readercount > 0 ) {
-                        this._fUpgradeThreadHoldingRead = true;
-                    }
+
+                    if ( lrwc.Readercount > 0 ) { this._fUpgradeThreadHoldingRead = true; }
+
                     this.ExitMyLock();
+
                     return true;
                 }
+
                 if ( lrwc.Readercount > 0 ) {
 
                     //Upgrade locks may not be acquired if only read locks have been acquired.
                     this.ExitMyLock();
+
                     throw new LockRecursionException();
                 }
             }
@@ -801,17 +784,19 @@ namespace Librainian.Threading {
                 if ( this._upgradeLockOwnerId == -1 && this._owners < MaxReader ) {
                     this._owners++;
                     this._upgradeLockOwnerId = id;
+
                     break;
                 }
 
                 if ( spincount < MaxSpinCount ) {
                     this.ExitMyLock();
-                    if ( millisecondsTimeout == 0 ) {
-                        return false;
-                    }
+
+                    if ( millisecondsTimeout == 0 ) { return false; }
+
                     spincount++;
                     SpinWait( spincount );
                     this.EnterMyLock();
+
                     continue;
                 }
 
@@ -819,26 +804,23 @@ namespace Librainian.Threading {
                 if ( this._upgradeEvent is null ) // Create the needed event
                 {
                     this.LazyCreateEvent( ref this._upgradeEvent, true );
+
                     continue; // since we left the lock, start over.
                 }
 
                 //Only one thread with the upgrade lock held can proceed.
                 var retVal = this.WaitOnEvent( this._upgradeEvent, ref this._numUpgradeWaiters, millisecondsTimeout );
-                if ( !retVal ) {
-                    return false;
-                }
+
+                if ( !retVal ) { return false; }
             }
 
             if ( this._fIsReentrant ) {
 
                 //The lock may have been dropped getting here, so make a quick check to see whether some other
                 //thread did not grab the entry.
-                if ( IsRwHashEntryChanged( lrwc, id ) ) {
-                    lrwc = this.GetThreadRwCount( id, false );
-                }
-                if ( lrwc != null ) {
-                    lrwc.RecursiveCounts.Upgradecount++;
-                }
+                if ( IsRwHashEntryChanged( lrwc, id ) ) { lrwc = this.GetThreadRwCount( id, false ); }
+
+                if ( lrwc != null ) { lrwc.RecursiveCounts.Upgradecount++; }
             }
 
             this.ExitMyLock();
@@ -858,12 +840,14 @@ namespace Librainian.Threading {
 
                     //You have to be holding the read lock to make this call.
                     this.ExitMyLock();
+
                     throw new SynchronizationLockException();
                 }
             }
             else {
                 if ( lrwc is null || lrwc.Readercount < 1 ) {
                     this.ExitMyLock();
+
                     throw new SynchronizationLockException();
                 }
 
@@ -871,12 +855,11 @@ namespace Librainian.Threading {
                     lrwc.Readercount--;
                     this.ExitMyLock();
                     Thread.EndCriticalRegion();
+
                     return;
                 }
 
-                if ( id == this._upgradeLockOwnerId ) {
-                    this._fUpgradeThreadHoldingRead = false;
-                }
+                if ( id == this._upgradeLockOwnerId ) { this._fUpgradeThreadHoldingRead = false; }
             }
 
             Assert.That( this._owners > 0, "ReleasingReaderLock: releasing lock and no read lock taken" );
@@ -899,6 +882,7 @@ namespace Librainian.Threading {
 #endif
             if ( this._fNoWaiters ) {
                 this.ExitMyLock();
+
                 return;
             }
 
@@ -916,6 +900,7 @@ namespace Librainian.Threading {
                 if ( this._numWriteUpgradeWaiters > 0 && this._fUpgradeThreadHoldingRead && readercount == 2 ) {
                     this.ExitMyLock(); // Exit before signaling to improve efficiency (wakee will need the lock)
                     this._waitUpgradeEvent.Set(); // release all upgraders (however there can be at most one).
+
                     return;
                 }
             }
@@ -935,13 +920,9 @@ namespace Librainian.Threading {
             }
             else {
                 if ( this._numReadWaiters != 0 || this._numUpgradeWaiters != 0 ) {
-                    if ( this._numReadWaiters != 0 ) {
-                        setReadEvent = true;
-                    }
+                    if ( this._numReadWaiters != 0 ) { setReadEvent = true; }
 
-                    if ( this._numUpgradeWaiters != 0 && this._upgradeLockOwnerId == -1 ) {
-                        setUpgradeEvent = true;
-                    }
+                    if ( this._numUpgradeWaiters != 0 && this._upgradeLockOwnerId == -1 ) { setUpgradeEvent = true; }
 
                     this.ExitMyLock(); // Exit before signaling to improve efficiency (wakee will need the lock)
 
@@ -953,9 +934,7 @@ namespace Librainian.Threading {
                         this._upgradeEvent.Set(); //release one upgrader.
                     }
                 }
-                else {
-                    this.ExitMyLock();
-                }
+                else { this.ExitMyLock(); }
             }
         }
 
@@ -968,6 +947,7 @@ namespace Librainian.Threading {
                     //You have to be holding the write lock to make this call.
                     throw new SynchronizationLockException();
                 }
+
                 this.EnterMyLock();
             }
             else {
@@ -976,6 +956,7 @@ namespace Librainian.Threading {
 
                 if ( lrwc is null ) {
                     this.ExitMyLock();
+
                     throw new SynchronizationLockException();
                 }
 
@@ -983,13 +964,16 @@ namespace Librainian.Threading {
 
                 if ( rc.Writercount < 1 ) {
                     this.ExitMyLock();
+
                     throw new SynchronizationLockException();
                 }
 
                 rc.Writercount--;
+
                 if ( rc.Writercount > 0 ) {
                     this.ExitMyLock();
                     Thread.EndCriticalRegion();
+
                     return;
                 }
             }
@@ -1015,6 +999,7 @@ namespace Librainian.Threading {
                     //You have to be holding the upgrade lock to make this call.
                     throw new SynchronizationLockException();
                 }
+
                 this.EnterMyLock();
             }
             else {
@@ -1023,6 +1008,7 @@ namespace Librainian.Threading {
 
                 if ( lrwc is null ) {
                     this.ExitMyLock();
+
                     throw new SynchronizationLockException();
                 }
 
@@ -1030,6 +1016,7 @@ namespace Librainian.Threading {
 
                 if ( rc.Upgradecount < 1 ) {
                     this.ExitMyLock();
+
                     throw new SynchronizationLockException();
                 }
 
@@ -1038,6 +1025,7 @@ namespace Librainian.Threading {
                 if ( rc.Upgradecount > 0 ) {
                     this.ExitMyLock();
                     Thread.EndCriticalRegion();
+
                     return;
                 }
 
@@ -1052,20 +1040,13 @@ namespace Librainian.Threading {
         }
 
         private void Dispose( Boolean disposing ) {
-            if ( !disposing ) {
-                return;
-            }
-            if ( this._fDisposed ) {
-                throw new ObjectDisposedException( null );
-            }
+            if ( !disposing ) { return; }
 
-            if ( this.WaitingReadCount > 0 || this.WaitingUpgradeCount > 0 || this.WaitingWriteCount > 0 ) {
-                throw new SynchronizationLockException();
-            }
+            if ( this._fDisposed ) { throw new ObjectDisposedException( null ); }
 
-            if ( this.IsReadLockHeld || this.IsUpgradeableReadLockHeld || this.IsWriteLockHeld ) {
-                throw new SynchronizationLockException();
-            }
+            if ( this.WaitingReadCount > 0 || this.WaitingUpgradeCount > 0 || this.WaitingWriteCount > 0 ) { throw new SynchronizationLockException(); }
+
+            if ( this.IsReadLockHeld || this.IsUpgradeableReadLockHeld || this.IsWriteLockHeld ) { throw new SynchronizationLockException(); }
 
             if ( this._writeEvent != null ) {
                 this._writeEvent.Close();
@@ -1092,30 +1073,31 @@ namespace Librainian.Threading {
 
         public Boolean TryEnterReadLock( TimeSpan timeout ) {
             var ltm = ( Int64 )timeout.TotalMilliseconds;
-            if ( ltm < -1 || ltm > Int32.MaxValue ) {
-                throw new ArgumentOutOfRangeException( nameof( timeout ) );
-            }
+
+            if ( ltm < -1 || ltm > Int32.MaxValue ) { throw new ArgumentOutOfRangeException( nameof( timeout ) ); }
+
             var tm = ( Int32 )timeout.TotalMilliseconds;
+
             return this.TryEnterReadLock( tm );
         }
 
         public Boolean TryEnterWriteLock( TimeSpan timeout ) {
             var ltm = ( Int64 )timeout.TotalMilliseconds;
-            if ( ltm < -1 || ltm > Int32.MaxValue ) {
-                throw new ArgumentOutOfRangeException( nameof( timeout ) );
-            }
+
+            if ( ltm < -1 || ltm > Int32.MaxValue ) { throw new ArgumentOutOfRangeException( nameof( timeout ) ); }
 
             var tm = ( Int32 )timeout.TotalMilliseconds;
+
             return this.TryEnterWriteLock( tm );
         }
 
         public Boolean TryEnterUpgradeableReadLock( TimeSpan timeout ) {
             var ltm = ( Int64 )timeout.TotalMilliseconds;
-            if ( ltm < -1 || ltm > Int32.MaxValue ) {
-                throw new ArgumentOutOfRangeException( nameof( timeout ) );
-            }
+
+            if ( ltm < -1 || ltm > Int32.MaxValue ) { throw new ArgumentOutOfRangeException( nameof( timeout ) ); }
 
             var tm = ( Int32 )timeout.TotalMilliseconds;
+
             return this.TryEnterUpgradeableReadLock( tm );
         }
 
