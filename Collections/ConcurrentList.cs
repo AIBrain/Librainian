@@ -43,9 +43,11 @@ namespace Librainian.Collections {
     using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
+    using Extensions;
     using FluentAssertions;
     using JetBrains.Annotations;
     using Magic;
+    using Maths;
     using Measurement.Time;
     using Microsoft.FSharp.Core;
     using Newtonsoft.Json;
@@ -299,7 +301,7 @@ namespace Librainian.Collections {
         public async Task AddRangeAsync( [CanBeNull] IEnumerable<TType> items, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null ) =>
             await Task.Run( () => {
                 if ( items != null ) { this.AddRange( items: items, afterEachAdd: afterEachAdd, afterRangeAdded: afterRangeAdded ); }
-            } ).ConfigureAwait( false );
+            } ).NoUI();
 
         /// <summary>
         ///     Returns true if this <see cref="ConcurrentList{TType}" /> has not been marked as <see cref="Complete" />.

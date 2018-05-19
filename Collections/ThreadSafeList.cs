@@ -40,6 +40,7 @@ namespace Librainian.Collections {
     using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
+    using Maths;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -88,7 +89,7 @@ namespace Librainian.Collections {
             lock ( this._items ) { this._items.Add( item: item ); }
         }
 
-        public async Task AddAsync( T item ) => await Task.Run( () => { this.TryAdd( item: item ); } ).ConfigureAwait( false );
+        public async Task AddAsync( T item ) => await Task.Run( () => { this.TryAdd( item: item ); } ).NoUI();
 
         /// <summary>
         ///     Add in an enumerable of items.

@@ -69,7 +69,7 @@ namespace LibrainianTests {
             Console.WriteLine( $"Found & stored {counter} folders in {watch.Elapsed.Simpler()}." );
 
             var temp = Document.GetTempDocument();
-            pathTree.Save( temp, formatting: Formatting.None );
+            pathTree.TrySave( temp, formatting: Formatting.None );
             File.WriteAllLines( temp.Folder + @"\allLines.txt", allPaths.Select( folder => folder.FullName ) );
         }
     }

@@ -3,7 +3,7 @@
 // This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any
 // source code used or derived from our binaries, libraries, projects, or solutions.
 //
-// This source code, "FourBytes.cs", belongs to Rick@AIBrain.org
+// This source code, "EightBytes.cs", belongs to Rick@AIBrain.org
 // and Protiguous@Protiguous.com unless otherwise specified or
 // the original license has been overwritten by this automatic formatting.
 //
@@ -24,7 +24,7 @@
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/FourBytes.cs" was last formatted by Protiguous on 2018/05/17 at 7:05 PM.
+// "Librainian/Librainian/EightBytes.cs" was last formatted by Protiguous on 2018/05/17 at 7:36 PM.
 
 namespace Librainian.Maths {
 
@@ -32,10 +32,10 @@ namespace Librainian.Maths {
     using System.Runtime.InteropServices;
 
     /// <summary>
-    ///     4 byte struct.
+    ///     8 byte struct.
     /// </summary>
     [StructLayout( layoutKind: LayoutKind.Sequential )]
-    public struct FourBytes {
+    public struct EightBytes {
 
         public Byte A;
 
@@ -44,5 +44,13 @@ namespace Librainian.Maths {
         public Byte C;
 
         public Byte D;
+
+        public Byte E;
+
+        public Byte F;
+
+        public Byte G;
+
+        public Byte H;
     }
 }

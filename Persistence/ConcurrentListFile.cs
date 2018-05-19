@@ -104,7 +104,7 @@ namespace Librainian.Persistence {
                 var data = this.Document.LoadJSON<IEnumerable<TValue>>();
 
                 if ( data != null ) {
-                    await this.AddRangeAsync( data ).ConfigureAwait( false );
+                    await this.AddRangeAsync( data ).NoUI();
 
                     return true;
                 }
@@ -143,7 +143,7 @@ namespace Librainian.Persistence {
 
                 if ( document.Exists() ) { document.Delete(); }
 
-                return this.Save( document, true, Formatting.Indented );
+                return this.TrySave( document, true, Formatting.Indented );
             }, cancellationToken );
         }
     }

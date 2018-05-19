@@ -1,44 +1,38 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "BigNullStream.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code, "BigNullStream.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/BigNullStream.cs" was last cleaned by Protiguous on 2018/05/15 at 10:40 PM.
+// "Librainian/Librainian/BigNullStream.cs" was last formatted by Protiguous on 2018/05/18 at 11:43 PM.
 
 namespace Librainian.Extensions {
 
     using System;
     using System.IO;
+    using Exceptions;
 
     /// <summary>
-    ///     TODO make this class able to use a BigInteger
+    ///     TODO make this class able to use a BigInteger?
     /// </summary>
     public abstract class BigNullStream : Stream {
 
@@ -64,11 +58,19 @@ namespace Librainian.Extensions {
             }
         }
 
-        public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state ) => throw new NotImplementedException( "This stream doesn't support reading." );
+        public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state ) {
+            if ( !this.CanRead ) { throw new StreamReadException( "This stream doesn't support reading." ); }
+
+            throw new UnknownException();
+        }
 
         public override void Flush() { }
 
-        public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) => throw new NotImplementedException( "This stream doesn't support reading." );
+        public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) {
+            if ( !this.CanRead ) { throw new StreamReadException( "This stream doesn't support reading." ); }
+
+            throw new UnknownException();
+        }
 
         public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
             var newPosition = this.Position;

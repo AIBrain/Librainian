@@ -48,7 +48,7 @@ namespace Librainian.Database.MMF {
             using ( var memoryMappedViewStream = memoryMappedFile.CreateViewStream( beginningByteLocation, bytesToReadIn, MemoryMappedFileAccess.Read ) ) {
                 var contentArray = new Byte[bytesToReadIn];
                 memoryMappedViewStream.Read( contentArray, 0, contentArray.Length );
-                content = Encoding.UTF8.GetString( contentArray );
+                content = Encoding.Unicode.GetString( contentArray );
             }
 
             return content;

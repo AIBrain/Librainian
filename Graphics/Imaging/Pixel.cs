@@ -174,7 +174,7 @@ namespace Librainian.Graphics.Imaging {
             line = line.Trim();
 
             if ( String.IsNullOrWhiteSpace( line ) ) {
-                await errors.WriteLineAsync( "Blank input line" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( "Blank input line" ).NoUI();
 
                 return null;
             }
@@ -182,13 +182,13 @@ namespace Librainian.Graphics.Imaging {
             var openParent = line.IndexOf( "(", StringComparison.OrdinalIgnoreCase );
 
             if ( openParent <= -1 ) {
-                await errors.WriteLineAsync( $"Unable to find a '(' in {line}" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( $"Unable to find a '(' in {line}" ).NoUI();
 
                 return null;
             }
 
             if ( !Byte.TryParse( line.Substring( 0, openParent ), out var checksum ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).NoUI();
 
                 return null;
             }
@@ -196,7 +196,7 @@ namespace Librainian.Graphics.Imaging {
             var closeParent = line.IndexOf( ")", StringComparison.OrdinalIgnoreCase );
 
             if ( closeParent == -1 ) {
-                await errors.WriteLineAsync( $"Unable to find a ')' in {line}" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( $"Unable to find a ')' in {line}" ).NoUI();
 
                 return null;
             }
@@ -204,31 +204,31 @@ namespace Librainian.Graphics.Imaging {
             var argb = line.Substring( openParent + 1, closeParent - openParent ).Split( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
 
             if ( argb.Length != 4 ) {
-                await errors.WriteLineAsync( $"Unable to parse Color from {line}" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( $"Unable to parse Color from {line}" ).NoUI();
 
                 return null;
             }
 
             if ( !Byte.TryParse( argb[0], out var alpha ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Alpha from {line}" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( $"Unable to parse Alpha from {line}" ).NoUI();
 
                 return null;
             }
 
             if ( !Byte.TryParse( argb[1], out var red ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Red from {line}" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( $"Unable to parse Red from {line}" ).NoUI();
 
                 return null;
             }
 
             if ( !Byte.TryParse( argb[2], out var green ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Green from {line}" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( $"Unable to parse Green from {line}" ).NoUI();
 
                 return null;
             }
 
             if ( !Byte.TryParse( argb[3], out var blue ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Blue from {line}" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( $"Unable to parse Blue from {line}" ).NoUI();
 
                 return null;
             }
@@ -236,7 +236,7 @@ namespace Librainian.Graphics.Imaging {
             var at = line.IndexOf( "@", StringComparison.OrdinalIgnoreCase );
 
             if ( at == -1 ) {
-                await errors.WriteLineAsync( $"Unable to find an '@' in {line}" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( $"Unable to find an '@' in {line}" ).NoUI();
 
                 return null;
             }
@@ -244,26 +244,26 @@ namespace Librainian.Graphics.Imaging {
             var xandy = line.Substring( at + 1 ).Split( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
 
             if ( xandy.Length != 2 ) {
-                await errors.WriteLineAsync( $"Unable to parse X & Y from {line}" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( $"Unable to parse X & Y from {line}" ).NoUI();
 
                 return null;
             }
 
             if ( !UInt32.TryParse( xandy[0], out var x ) ) {
-                await errors.WriteLineAsync( $"Unable to parse X from {line}" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( $"Unable to parse X from {line}" ).NoUI();
 
                 return null;
             }
 
             if ( !UInt32.TryParse( xandy[0], out var y ) ) {
-                await errors.WriteLineAsync( $"Unable to parse Y from {line}" ).ConfigureAwait( false );
+                await errors.WriteLineAsync( $"Unable to parse Y from {line}" ).NoUI();
 
                 return null;
             }
 
             var pixel = new Pixel( alpha, red, green, blue, x, y );
 
-            if ( pixel.Checksum != checksum ) { await errors.WriteLineAsync( $"Warning checksums do not match! Expected {checksum}, but got {pixel.Checksum}" ).ConfigureAwait( false ); }
+            if ( pixel.Checksum != checksum ) { await errors.WriteLineAsync( $"Warning checksums do not match! Expected {checksum}, but got {pixel.Checksum}" ).NoUI(); }
 
             return pixel;
         }

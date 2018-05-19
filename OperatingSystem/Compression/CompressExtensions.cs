@@ -30,7 +30,7 @@
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/CompressExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
+// "Librainian/Librainian/CompressExtensions.cs" was last formatted by Protiguous on 2018/05/17 at 3:47 PM.
 
 namespace Librainian.OperatingSystem.Compression {
 
@@ -40,6 +40,7 @@ namespace Librainian.OperatingSystem.Compression {
     using System.Text;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
+    using Threading;
 
     /// <summary>
     /// </summary>
@@ -62,10 +63,10 @@ namespace Librainian.OperatingSystem.Compression {
         }
 
         /// <summary>
-        ///     Pulled from https://bitbucket.org/jpbochi/jplabscode/src/e1bb20c8f273/Extensions/CompressionExt.cs
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
+        /// <see cref="http://bitbucket.org/jpbochi/jplabscode/src/e1bb20c8f273/Extensions/CompressionExt.cs" />
         public static Byte[] Compress( [NotNull] this String text ) {
             if ( text is null ) { throw new ArgumentNullException( nameof( text ) ); }
 
@@ -81,7 +82,7 @@ namespace Librainian.OperatingSystem.Compression {
         }
 
         /// <summary>
-        ///     Returns the string compressed (to base64).
+        ///     Returns the string, Gzip compressed and then converted to base64.
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
@@ -90,7 +91,7 @@ namespace Librainian.OperatingSystem.Compression {
 
             using ( var streamIn = new MemoryStream( buffer ) ) {
                 using ( var streamOut = new MemoryStream() ) {
-                    using ( var zipStream = new GZipStream( streamOut, CompressionMode.Compress ) ) { await streamIn.CopyToAsync( zipStream ); }
+                    using ( var zipStream = new GZipStream( streamOut, CompressionMode.Compress ) ) { await streamIn.CopyToAsync( zipStream ).NoUI(); }
 
                     return Convert.ToBase64String( streamOut.ToArray() );
                 }
@@ -146,9 +147,10 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="text"></param>
         /// <returns></returns>
         public static String FromCompressedBase64( this String text ) {
-            var buffer = Convert.FromBase64String( text );
 
             using ( var streamOut = new MemoryStream() ) {
+                var buffer = Convert.FromBase64String( text );
+
                 using ( var streamIn = new MemoryStream( buffer ) ) {
                     using ( var gs = new GZipStream( streamIn, CompressionMode.Decompress ) ) { gs.CopyTo( streamOut ); }
                 }
@@ -163,10 +165,10 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="text"></param>
         /// <returns></returns>
         public static String ToCompressedBase64( this String text ) {
-            var buffer = Encoding.Unicode.GetBytes( text );
+            using ( var streamOut = new MemoryStream() ) {
+                var buffer = Encoding.Unicode.GetBytes( text );
 
-            using ( var streamIn = new MemoryStream( buffer: buffer ) ) {
-                using ( var streamOut = new MemoryStream() ) {
+                using ( var streamIn = new MemoryStream( buffer: buffer ) ) {
                     using ( var zipStream = new GZipStream( stream: streamOut, compressionLevel: CompressionLevel.Fastest ) ) { streamIn.CopyTo( zipStream ); }
 
                     return Convert.ToBase64String( streamOut.ToArray() );

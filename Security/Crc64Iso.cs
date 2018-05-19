@@ -30,7 +30,7 @@
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/Crc64Iso.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
+// "Librainian/Librainian/Crc64Iso.cs" was last formatted by Protiguous on 2018/05/17 at 3:59 PM.
 
 namespace Librainian.Security {
 
@@ -44,6 +44,7 @@ namespace Librainian.Security {
     public class Crc64Iso : Crc64 {
 
         internal static UInt64[] Table;
+
         public const UInt64 Iso3309Polynomial = 0xD800000000000000;
 
         public Crc64Iso() : base( polynomial: Iso3309Polynomial ) { }

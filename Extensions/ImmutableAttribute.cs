@@ -36,7 +36,7 @@ namespace Librainian.Extensions {
 
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
+
     using System.Linq;
     using System.Reflection;
     using System.Runtime.Serialization;
@@ -72,7 +72,7 @@ namespace Librainian.Extensions {
             // override all checks on this type if [ImmutableAttribute(OnFaith=true)] is set
             var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>( type );
 
-            return immutableAttribute?.OnFaith;
+            return immutableAttribute.OnFaith;
         }
 
         // in some cases, a type is immutable but can't be proven as such. in these cases, the developer can mark the type with [Immutable(true)] and the code below will take it on faith that the type is immutable,

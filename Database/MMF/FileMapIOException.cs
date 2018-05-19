@@ -35,7 +35,7 @@
 namespace Librainian.Database.MMF {
 
     using System;
-    using System.Diagnostics.CodeAnalysis;
+
     using System.IO;
     using System.Runtime.Serialization;
     using Newtonsoft.Json;

@@ -61,7 +61,7 @@ namespace Librainian.Collections {
                 if ( array is null ) { array = new T[4]; }
                 else if ( array.Length == length ) {
                     var destinationArray = new T[length * 2];
-                    Array.Copy( sourceArray: array, sourceIndex: 0, destinationArray: destinationArray, destinationIndex: 0, length );
+                    Buffer.BlockCopy( sourceArray: array, sourceIndex: 0, destinationArray: destinationArray, destinationIndex: 0, length );
                     array = destinationArray;
                 }
 
@@ -80,7 +80,7 @@ namespace Librainian.Collections {
         /// </summary>
         internal void CopyTo( T[] items, Int32 index ) {
             if ( this._collection != null && this._collection.Count > 0 ) { this._collection.CopyTo( array: items, arrayIndex: index ); }
-            else if ( this._count > 0 ) { Array.Copy( sourceArray: this._items, sourceIndex: 0, destinationArray: items, destinationIndex: index, this._count ); }
+            else if ( this._count > 0 ) { Buffer.BlockCopy( sourceArray: this._items, sourceIndex: 0, destinationArray: items, destinationIndex: index, this._count ); }
         }
 
         internal T[] ToArray() {
@@ -94,7 +94,7 @@ namespace Librainian.Collections {
                 if ( this._items.Length == this._count ) { return this._items; }
 
                 destinationArray = new T[this._count];
-                Array.Copy( sourceArray: this._items, sourceIndex: 0, destinationArray: destinationArray, destinationIndex: 0, this._count );
+                Buffer.BlockCopy( sourceArray: this._items, sourceIndex: 0, destinationArray: destinationArray, destinationIndex: 0, this._count );
 
                 return destinationArray;
             }

@@ -35,11 +35,14 @@
 namespace Librainian.Magic {
 
     using System;
+    using Exceptions;
     using FluentAssertions;
+    using JetBrains.Annotations;
+    using Parsing;
 
     /// <summary>
     ///     <para>A better class for implementing the <see cref="IDisposable" /> pattern.</para>
-    ///     <para>Implement <see cref="DisposeManaged" /> and <see cref="DisposeNative" />.</para>
+    ///     <para>Override <see cref="DisposeManaged" /> and <see cref="DisposeNative" />.</para>
     /// </summary>
     /// <remarks>ABCD (hehe). Designed by Rick Harker</remarks>
     public class ABetterClassDispose : IDisposable {
@@ -67,9 +70,17 @@ namespace Librainian.Magic {
                 }
             }
             finally {
-                this.HasDisposedManaged.Should().BeTrue();
-                this.HasDisposedNative.Should().BeTrue();
-                GC.SuppressFinalize( this );
+                if ( this.HasDisposedManaged && this.HasDisposedNative ) {
+                    GC.SuppressFinalize( this );
+                }
+                else {
+                    try {
+                        if ( !this.HasDisposedManaged && !this.HasDisposedNative ) {
+                            throw new Warning( "Neither DisposeManaged() or DisposeNative() were called to dispose of this object?" );
+                        }
+                    }
+                    catch ( Exception exception ) { exception.More(); }
+                }
             }
         }
 
@@ -77,16 +88,12 @@ namespace Librainian.Magic {
         ///     <para>Dispose any disposable managed fields or properties.</para>
         ///     <para>Call "base.DisposeManaged();" when possible.</para>
         /// </summary>
-        public virtual void DisposeManaged() {
-            this.HasDisposedManaged = true; //yay or nay?
-        }
+        public virtual void DisposeManaged() => this.HasDisposedManaged = true;
 
         /// <summary>
         ///     <para>Dispose of COM objects, Handles, etc. Then set those objects to null if possible.</para>
         ///     <para>Call "base.DisposeNative();" when possible.</para>
         /// </summary>
-        public virtual void DisposeNative() {
-            this.HasDisposedNative = true; //yay or nay?
-        }
+        public virtual void DisposeNative() => this.HasDisposedNative = true;
     }
 }

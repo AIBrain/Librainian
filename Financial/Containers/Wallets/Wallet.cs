@@ -43,6 +43,7 @@ namespace Librainian.Financial.Containers.Wallets {
     using Currency;
     using Currency.BankNotes;
     using Currency.Coins;
+    using Extensions;
     using JetBrains.Annotations;
     using Magic;
     using Maths;

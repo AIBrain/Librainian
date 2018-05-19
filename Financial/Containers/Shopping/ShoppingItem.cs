@@ -1,46 +1,40 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "ShoppingItem.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code, "ShoppingItem.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/ShoppingItem.cs" was last cleaned by Protiguous on 2018/05/15 at 10:42 PM.
+// "Librainian/Librainian/ShoppingItem.cs" was last formatted by Protiguous on 2018/05/18 at 11:56 PM.
 
 namespace Librainian.Financial.Containers.Shopping {
 
     using System;
     using System.Collections.Generic;
-    using JetBrains.Annotations;
+    using Exceptions;
+    using Extensions;
+    using Maths;
     using Newtonsoft.Json;
-    using Parsing;
 
-    public enum ItemType {
+    public enum ItemCategory {
 
         Invalid = -1,
 
@@ -56,29 +50,38 @@ namespace Librainian.Financial.Containers.Shopping {
     }
 
     [JsonObject]
+    [Immutable]
     public class ShoppingItem {
 
-        public ShoppingItem( ItemType category, [NotNull] String itemID ) {
-            if ( category == ItemType.Invalid ) { throw new ArgumentNullException( nameof( category ) ); }
+        public ShoppingItem( ItemCategory category, Guid itemID ) {
+            if ( category == ItemCategory.Invalid ) { throw new ArgumentNullException( nameof( category ) ); }
+
+            if ( itemID == Guid.Empty ) { throw new InvalidParameterException( $"", new ArgumentNullException( nameof( itemID ) ) ); }
 
             this.Category = category;
-            this.ItemID = itemID ?? throw new ArgumentNullException( nameof( itemID ) );
+            this.ItemID = itemID;
         }
 
-        public ItemType Category { get; }
+        [JsonProperty]
+        public ItemCategory Category { get; private set; }
 
-        public String Description { get; set; }
+        [JsonProperty]
+        public String Description { get; private set; }
 
-        public String ItemID { get; }
+        [JsonProperty]
+        public Guid ItemID { get; private set; }
 
-        public Decimal Price { get; set; }
+        [JsonProperty]
+        public Decimal Price { get; private set; }
 
-        public Boolean TaxExempt { get; set; }
+        [JsonProperty]
+        public Boolean TaxExempt { get; protected set; }
 
-        public Boolean Voided { get; set; }
+        [JsonProperty]
+        public Boolean Voided { get; private set; }
 
         /// <summary>
-        ///     Compares <see cref="ItemID" /> and <see cref="Category" />.
+        ///     Static comparison. Compares <see cref="ItemID" /> and <see cref="Category" />.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="rhs"> </param>
@@ -95,26 +98,26 @@ namespace Librainian.Financial.Containers.Shopping {
         ///     Serves as the default hash function.
         /// </summary>
         /// <returns>A hash code for the current object.</returns>
-        public override Int32 GetHashCode() => this.Category.GetHashCode();
+        public override Int32 GetHashCode() => this.Category.GetHashCodes( this.ItemID ); //non readonly props.. what to do here?
 
-        public Boolean IsValidData() => this.Category != ItemType.Invalid && !this.ItemID.IsNullOrWhiteSpace();
+        public Boolean IsValidData() => this.Category != ItemCategory.Invalid && !this.ItemID.Equals( Guid.Empty );
     }
 
     public class TaxableShoppingItem : ShoppingItem {
 
-        public TaxableShoppingItem( ItemType category, [NotNull] String itemID ) : base( category, itemID ) { }
+        public TaxableShoppingItem( ItemCategory category, Guid itemID ) : base( category, itemID ) => this.TaxExempt = false;
     }
 
     public class TaxTable {
 
-        //TODO this should look up factors like area/state/zip/country
-        public static Dictionary<ItemType, Decimal> Taxes { get; } = new Dictionary<ItemType, Decimal> {
-            { ItemType.Invalid, 0m },
-            { ItemType.Book, 0.06m },
-            { ItemType.Food, 0.06m },
-            { ItemType.Medical, 0.06m },
-            { ItemType.Import, 0.06m },
-            { ItemType.Other, 0.06m }
+        //TODO this should look up factors like area/state/zip/country, if this were a real project.
+        public static Dictionary<ItemCategory, Decimal> Taxes { get; } = new Dictionary<ItemCategory, Decimal> {
+            { ItemCategory.Invalid, 0m },
+            { ItemCategory.Book, 0.06m },
+            { ItemCategory.Food, 0.06m },
+            { ItemCategory.Medical, 0.06m },
+            { ItemCategory.Import, 0.06m },
+            { ItemCategory.Other, 0.06m }
         };
     }
 }

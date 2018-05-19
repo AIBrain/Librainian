@@ -39,9 +39,9 @@ namespace Librainian.Financial.Containers.Shopping {
     using System.Collections.Generic;
     using System.Linq;
     using Collections;
+    using Extensions;
     using JetBrains.Annotations;
     using Magic;
-    using Maths;
     using Newtonsoft.Json;
 
     [JsonObject]

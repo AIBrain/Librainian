@@ -112,7 +112,7 @@ namespace Librainian.Persistence {
                 if ( !document.Exists() ) { return false; }
 
                 try {
-                    var data = await document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>().ConfigureAwait( false );
+                    var data = await document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>().NoUI();
 
                     if ( data != null ) {
                         var result = Parallel.ForEach( source: data.Keys.AsParallel(), body: key => this[key] = data[key] );
@@ -159,7 +159,7 @@ namespace Librainian.Persistence {
 
                 if ( document.Exists() ) { document.Delete(); }
 
-                return this.Save( document: document, overwrite: true, formatting: Formatting.Indented );
-            }, cancellationToken: cancellationToken ).ConfigureAwait( false );
+                return this.TrySave( document: document, overwrite: true, formatting: Formatting.Indented );
+            }, cancellationToken: cancellationToken ).NoUI();
     }
 }

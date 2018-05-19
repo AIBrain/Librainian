@@ -39,6 +39,7 @@ namespace Librainian.Controls {
     using System.Drawing;
     using System.Text;
     using System.Windows.Forms;
+    using Extensions;
     using Magic;
 
     /// <summary>
@@ -88,13 +89,15 @@ namespace Librainian.Controls {
 
         private Boolean CanAdd { get; set; }
 
-        private Boolean Disposed { get; set; }
-
         private Int32 MaxEntriesInListBox { get; }
 
         private String MessageFormat { get; }
 
         ~ListBoxLog() {
+            if ( !this.IsDisposed ) {
+                this.DisposeManaged();
+                this.DisposeNative();
+            }
             if ( this.Disposed ) { return; }
 
             this.Dispose();

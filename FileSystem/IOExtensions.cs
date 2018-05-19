@@ -91,8 +91,8 @@ namespace Librainian.FileSystem {
                 var length = encodedText.Length;
 
                 using ( var sourceStream = new FileStream( fileInfo.FullName, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length, useAsync: true ) ) {
-                    await sourceStream.WriteAsync( buffer: encodedText, offset: 0, count: length ).ConfigureAwait( false );
-                    await sourceStream.FlushAsync().ConfigureAwait( false );
+                    await sourceStream.WriteAsync( buffer: encodedText, offset: 0, count: length ).NoUI();
+                    await sourceStream.FlushAsync().NoUI();
                 }
             }
             catch ( UnauthorizedAccessException exception ) { exception.More(); }

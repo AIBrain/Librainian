@@ -37,9 +37,10 @@ namespace Librainian.Collections {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.IO;
+    using FileSystem;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
+    using Persistence;
 
     /// <summary>
     ///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
@@ -47,28 +48,13 @@ namespace Librainian.Collections {
     [JsonObject]
     public class WordToGuidAndGuidToWord {
 
-        private readonly String _baseCollectionName = "WordToGuidAndGuidToWord";
-
-        private readonly String _baseCollectionNameExt;
-
         [JsonProperty]
         private readonly ConcurrentDictionary<Guid, String> _guids = new ConcurrentDictionary<Guid, String>();
 
         [JsonProperty]
         private readonly ConcurrentDictionary<String, Guid> _words = new ConcurrentDictionary<String, Guid>();
 
-        public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) {
-            if ( baseCollectionName is null ) { throw new ArgumentNullException( nameof( baseCollectionName ) ); }
-
-            this.IsDirty = false;
-            this._baseCollectionNameExt = String.Empty;
-
-            if ( !String.IsNullOrEmpty( baseCollectionName ) ) { this._baseCollectionName = baseCollectionName; }
-
-            this._baseCollectionNameExt = baseCollectionNameExt ?? throw new ArgumentNullException( nameof( baseCollectionNameExt ) );
-
-            if ( String.IsNullOrEmpty( this._baseCollectionNameExt ) ) { this._baseCollectionNameExt = "xml"; }
-        }
+        public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) { }
 
         public IEnumerable<Guid> EachGuid => this._guids.Keys;
 
@@ -77,7 +63,7 @@ namespace Librainian.Collections {
         [JsonIgnore]
         public Boolean IsDirty { get; set; }
 
-        public Int32 Count => Math.Min( val1: this._words.Count, val2: this._guids.Count );
+        public Int32 Count => ( this._words.Count + this._guids.Count ) / 2;
 
         /// <summary>
         ///     Get or set the guid for this word.
@@ -156,9 +142,8 @@ namespace Librainian.Collections {
         public Boolean Contains( Guid theGuid ) => this._words.Values.Contains( item: theGuid ) && this._guids.Keys.Contains( item: theGuid );
 
         public Boolean Load() {
-            if ( this._baseCollectionName is null ) { return false; }
 
-            //DiagnosticTests.TestWordVsGuid( this );
+            var obj = Load
 
             //var filename = Path.ChangeExtension( this.BaseCollectionName, this.BaseCollectionNameExt );
             //var storage = Storage.Loader<ConcurrentDictionary<String, Guid>>( filename, source => Cloning.DeepClone( Source: source, Destination: this ) );
@@ -177,12 +162,6 @@ namespace Librainian.Collections {
         ///     Returns true if the collections are persisted to storage (or empty).
         /// </summary>
         /// <returns></returns>
-        public Boolean Save() {
-            if ( this.IsDirty ) {
-                return !String.IsNullOrWhiteSpace( this._baseCollectionName ) && this._words.Saver( fileName: Path.ChangeExtension( this._baseCollectionName, extension: this._baseCollectionNameExt ) );
-            }
-
-            return true;
-        }
+        public Boolean Save() => !this.IsDirty || this._words.TrySave( new Document( nameof( WordToGuidAndGuidToWord ) ) );
     }
 }

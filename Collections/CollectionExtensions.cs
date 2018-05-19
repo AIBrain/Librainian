@@ -44,6 +44,7 @@ namespace Librainian.Collections {
     using System.Numerics;
     using System.Reflection;
     using System.Threading.Tasks;
+    using Extensions;
     using FluentAssertions;
     using JetBrains.Annotations;
     using Maths;
@@ -161,7 +162,7 @@ namespace Librainian.Collections {
         }
 
         [CanBeNull]
-        public static Byte[] CloneByteArray( this Byte[] bytes ) {
+        public static Byte[] Clone( this Byte[] bytes ) {
             if ( bytes is null ) { return null; }
 
             var copy = new Byte[bytes.Length];
@@ -183,17 +184,26 @@ namespace Librainian.Collections {
             return copy;
         }
 
-        public static Byte[] ConcatenateByteArrays( params Byte[][] bytearrays ) {
-            var totalLength = bytearrays.Sum( selector: t => t.Length );
-            var idx = 0;
-            var rv = new Byte[totalLength];
+        /// <summary>
+        /// Concat multiple arrays into one new array.
+        /// Warning: limited to Int32 byte arrays.
+        /// </summary>
+        /// <param name="arrays"></param>
+        /// <returns></returns>
+        public static Byte[] Concat( params Byte[][] arrays ) {
+            Int64 totalLength = arrays.Where( data => data != null ).Sum( Buffer.ByteLength );
 
-            foreach ( var t in bytearrays ) {
-                Array.Copy( sourceArray: t, sourceIndex: 0, destinationArray: rv, destinationIndex: idx, t.Length );
-                idx += t.Length;
+            if ( totalLength > Int32.MaxValue ) {
+                throw new OutOfRange
             }
-
-            return rv;
+            var ret = new Byte[totalLength];
+            var offset = 0;
+            foreach ( var data in arrays.Where( data => data != null ) ) {
+                var length = Buffer.ByteLength( data );
+                Buffer.BlockCopy( data, 0, ret, offset, length );
+                offset += length;
+            }
+            return ret;
         }
 
         /// <summary>

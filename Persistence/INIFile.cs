@@ -41,6 +41,7 @@ namespace Librainian.Persistence {
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using Extensions;
     using FileSystem;
     using JetBrains.Annotations;
     using Maths;

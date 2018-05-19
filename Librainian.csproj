@@ -36,7 +36,8 @@
     <LangVersion>7.3</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <DocumentationFile>bin\Debug\Librainian.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
@@ -148,7 +149,19 @@
     <Compile Include="Database\OleText.cs" />
     <Compile Include="Database\ReflectionPopulator.cs" />
     <Compile Include="Database\GenericPopulator.cs" />
+    <Compile Include="Exceptions\InvalidParameterException.cs" />
+    <Compile Include="Exceptions\StreamException.cs" />
+    <Compile Include="Exceptions\StreamReadException.cs" />
+    <Compile Include="Exceptions\StreamWriteException.cs" />
+    <Compile Include="Exceptions\UnknownException.cs" />
+    <Compile Include="Exceptions\ValueTooHighException.cs" />
+    <Compile Include="Exceptions\NotAllowed.cs" />
+    <Compile Include="Exceptions\NotEnoughMemoryException.cs" />
+    <Compile Include="Exceptions\OutOfRangeException.cs" />
+    <Compile Include="Exceptions\ValueTooLowException.cs" />
+    <Compile Include="Exceptions\Warning.cs" />
     <Compile Include="Extensions\AssemblyInformation.cs" />
+    <Compile Include="Extensions\CommonExtensions.cs" />
     <Compile Include="Extensions\MarshalCache.cs" />
     <Compile Include="Extensions\FuncExtensions.cs" />
     <Compile Include="Extensions\EvalProvider.cs" />
@@ -198,6 +211,7 @@
     <Compile Include="Internet\IPHelperInvoke.cs" />
     <Compile Include="LoggingLevel.cs" />
     <Compile Include="Maths\ByteSize.cs" />
+    <Compile Include="Maths\EightBytes.cs" />
     <Compile Include="Maths\Translate128.cs" />
     <Compile Include="Maths\Union.cs" />
     <Compile Include="Maths\Murmur3.cs" />
@@ -228,6 +242,7 @@
     <Compile Include="OperatingSystem\Info.cs" />
     <Compile Include="OperatingSystem\SystemRestorePoints.cs" />
     <Compile Include="OperatingSystem\WinSAT.cs" />
+    <Compile Include="Persistence\ObsoletePersistenceClasses.cs" />
     <Compile Include="Persistence\ConcurrentDictionaryFile.cs" />
     <Compile Include="Persistence\ConcurrentListFile.cs" />
     <Compile Include="Persistence\Data.cs" />
@@ -395,7 +410,7 @@
     <Compile Include="Extensions\FuzzyPredicateBuilder.cs" />
     <Compile Include="Extensions\HashSetLinqAccess.cs" />
     <Compile Include="Extensions\ImmutableAttribute.cs" />
-    <Compile Include="Extensions\JunctionPoint.cs" />
+    <Compile Include="FileSystem\JunctionPoint.cs" />
     <Compile Include="Extensions\LargeSizeFormatProvider.cs" />
     <Compile Include="Extensions\LargeSizeFormatProviderExtensions.cs" />
     <Compile Include="Extensions\Locks.cs" />

@@ -41,6 +41,7 @@ namespace Librainian.Threading {
     using JetBrains.Annotations;
     using Magic;
     using Measurement.Time;
+    using Security;
 
     /// <summary>
     ///     Uses a named semaphore to allow only ONE of name.
@@ -71,8 +72,9 @@ namespace Librainian.Threading {
         ///     Uses a named semaphore to allow only ONE of name.
         /// </summary>
         /// <example>using ( var snag = new FileSingleton( info ) ) { DoCode(); }</example>
-        public FileSingleton( FileSystemInfo name ) {
+        public FileSingleton( [NotNull] FileSystemInfo name ) {
             name.Should().NotBeNull();
+            if ( name == null ) { throw new ArgumentNullException( paramName: nameof( name ) ); }
 
             try {
                 this.Snagged = false;

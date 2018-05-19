@@ -72,15 +72,15 @@ namespace Librainian.Internet {
         public static async Task<T> DoRequestJsonAsync<T>( this WebRequest request ) {
             if ( request is null ) { throw new ArgumentNullException( nameof( request ) ); }
 
-            var reader = await DoRequestAsync( request: request ).ConfigureAwait( false );
-            var response = await reader.ReadToEndAsync().ConfigureAwait( false );
+            var reader = await DoRequestAsync( request: request ).NoUI();
+            var response = await reader.ReadToEndAsync().NoUI();
 
             return JsonConvert.DeserializeObject<T>( response );
         }
 
         public static async Task<T> DoRequestJsonAsync<T>( Uri uri ) {
-            var reader = await DoRequestAsync( uri: uri ).ConfigureAwait( false );
-            var response = await reader.ReadToEndAsync().ConfigureAwait( false );
+            var reader = await DoRequestAsync( uri: uri ).NoUI();
+            var response = await reader.ReadToEndAsync().NoUI();
 
             return JsonConvert.DeserializeObject<T>( response );
         }
@@ -140,7 +140,7 @@ namespace Librainian.Internet {
                 request.Proxy = null;
                 request.Credentials = CredentialCache.DefaultCredentials;
 
-                using ( var response = await request.GetResponseAsync().ConfigureAwait( false ) ) {
+                using ( var response = await request.GetResponseAsync().NoUI() ) {
                     using ( var dataStream = response.GetResponseStream() ) {
                         if ( dataStream != null ) {
                             using ( var reader = new StreamReader( stream: dataStream ) ) {

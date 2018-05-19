@@ -30,7 +30,7 @@
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/Crc64.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
+// "Librainian/Librainian/Crc64.cs" was last formatted by Protiguous on 2018/05/17 at 3:58 PM.
 
 namespace Librainian.Security {
 
@@ -89,7 +89,7 @@ namespace Librainian.Security {
         }
 
         protected static UInt64[] CreateTable( UInt64 polynomial ) {
-            var createTable = new UInt64[256];
+            var createTable = new UInt64[256]; //did they mean 255 here (Byte.MaxValue)??
 
             for ( var i = 0; i < 256; ++i ) {
                 var entry = ( UInt64 )i;

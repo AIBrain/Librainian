@@ -40,6 +40,7 @@ namespace Librainian.Graphics {
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Threading;
     using System.Threading.Tasks;
+    using Extensions;
     using FileSystem;
     using Imaging;
     using Maths;

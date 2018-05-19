@@ -49,6 +49,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ConcurrentListTests.cs" />
     <Compile Include="DiagnosticTests.cs" />
     <Compile Include="FileHistoryFileTests.cs" />
     <Compile Include="FolderBagTests.cs" />

@@ -50,6 +50,7 @@ namespace Librainian.Maths {
     using System.Threading;
     using System.Threading.Tasks;
     using Collections;
+    using Extensions;
     using FluentAssertions;
     using Internet;
     using JetBrains.Annotations;
@@ -659,7 +660,7 @@ namespace Librainian.Maths {
         public static DateTime NextDateTime( this DateTime value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds * Instance.NextDouble() );
 
         public static DateTime NextDateTime( this DateTime earlier, DateTime later ) {
-            if ( earlier > later ) { MathExtensions.Swap( arg1: ref earlier, arg2: ref later ); }
+            if ( earlier > later ) { CommonExtensions.Swap( arg1: ref earlier, arg2: ref later ); }
 
             var range = later - earlier;
 
@@ -726,7 +727,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         public static Digit NextDigit( this Digit min, Digit max ) {
             unchecked {
-                if ( min > max ) { MathExtensions.Swap( arg1: ref min, arg2: ref max ); }
+                if ( min > max ) { CommonExtensions.Swap( arg1: ref min, arg2: ref max ); }
 
                 Byte result;
 
@@ -875,7 +876,7 @@ namespace Librainian.Maths {
             var tpMin = min.TotalPlanckTimes;
             var tpMax = max.TotalPlanckTimes;
 
-            if ( tpMin > tpMax ) { MathExtensions.Swap( arg1: ref tpMin, arg2: ref tpMax ); }
+            if ( tpMin > tpMax ) { CommonExtensions.Swap( arg1: ref tpMin, arg2: ref tpMax ); }
 
             var range = tpMax.Value - tpMin.Value;
 
@@ -1023,9 +1024,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="charPool"></param>
         /// <returns></returns>
-        public static String Randomize( [CanBeNull] this String charPool ) {
-            return null == charPool ? String.Empty : charPool.OrderBy( keySelector: r => Next() ).Aggregate( seed: String.Empty, func: ( current, c ) => current + c );
-        }
+        public static String Randomize( [CanBeNull] this String charPool ) => null == charPool ? String.Empty : charPool.OrderBy( keySelector: r => Next() ).Aggregate( seed: String.Empty, func: ( current, c ) => current + c );
 
         /// <summary>
         ///     <para>A list containing <see cref="Boolean.True" /> or <see cref="Boolean.False" />.</para>

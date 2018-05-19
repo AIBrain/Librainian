@@ -30,19 +30,17 @@
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/ActorException.cs" was last cleaned by Protiguous on 2018/05/15 at 10:50 PM.
+// "Librainian/Librainian/ActorException.cs" was last formatted by Protiguous on 2018/05/17 at 4:18 PM.
 
 namespace Librainian.Threading {
 
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Serialization;
 
     /// <summary>
     ///     Thrown when the actor fails.
     /// </summary>
     /// <seealso cref="Actor" />
-    [SuppressMessage( "Microsoft.Usage", "CA2240:ImplementISerializableCorrectly" )]
     [Serializable]
     public class ActorException : Exception {
 
@@ -51,15 +49,5 @@ namespace Librainian.Threading {
         public ActorException( String because ) => this.Reason = because;
 
         public String Reason { get; }
-
-        //[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
-        //public override void GetObjectData( SerializationInfo info, StreamingContext context ) {
-        //    if ( info is null ) {
-        //        throw new ArgumentNullException( nameof( info ) );
-        //    }
-
-        //    //info.AddValue( "Text", _Text );
-        //    //TODO
-        //}
     }
 }

@@ -65,8 +65,8 @@ namespace Librainian.FileSystem {
                 using ( var writer = new StreamWriter( destination.FullPathWithFileName, false ) ) {
                     Int32 numRead;
 
-                    while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ) != 0 ) {
-                        await writer.WriteAsync( buffer, 0, numRead ).ConfigureAwait( false );
+                    while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).NoUI() ) != 0 ) {
+                        await writer.WriteAsync( buffer, 0, numRead ).NoUI();
                         var bytesCopied = ( UInt64 )numRead;
 
                         var percent = bytesCopied / bytesToBeCopied;
@@ -127,7 +127,7 @@ namespace Librainian.FileSystem {
 
                 var buffer = Buffers.Value;
 
-                try { await InternalCopyWithProgress( source, destination, progress, eta, buffer, bytesToBeCopied, begin ).ConfigureAwait( false ); }
+                try { await InternalCopyWithProgress( source, destination, progress, eta, buffer, bytesToBeCopied, begin ).NoUI(); }
                 catch ( Exception exception ) {
                     exception.More();
 
@@ -185,7 +185,7 @@ namespace Librainian.FileSystem {
         }
 
         public static async Task<ResultCode> MoveAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
-            await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).ConfigureAwait( false );
+            await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
     }
 
     [TestFixture]

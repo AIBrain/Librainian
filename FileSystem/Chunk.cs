@@ -1,46 +1,42 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "Chunk.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code, "Chunk.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/Chunk.cs" was last cleaned by Protiguous on 2018/05/15 at 10:41 PM.
+// "Librainian/Librainian/Chunk.cs" was last formatted by Protiguous on 2018/05/17 at 11:41 PM.
 
 namespace Librainian.FileSystem {
 
     using System;
     using System.Collections.Concurrent;
     using System.Diagnostics;
-    using System.IO;
-    using System.IO.MemoryMappedFiles;
+    using System.Linq;
+    using Exceptions;
+    using Extensions;
+    using FluentAssertions;
     using JetBrains.Annotations;
     using Magic;
+    using Maths;
     using OperatingSystem;
 
     /// <summary>
@@ -50,25 +46,26 @@ namespace Librainian.FileSystem {
 
         private const Byte High = 32;
 
-        private const Byte Low = 12;
+        private const Byte Low = 11;
 
         private Int64 _offsetBegin;
 
         private Int64 _offsetEnd = 1;
 
         static Chunk() {
-            foreach ( var l in Low.To( High ) ) { BufferSizes[l] = ( Int64 )Math.Pow( 2, l ); }
+            foreach ( var l in Low.To( High ) ) { GoodBufferSizes[l] = ( Int64 )Math.Pow( 2, l ); }
         }
 
-        public Chunk( [NotNull] Document document ) => this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
+        public Chunk( [NotNull] Document document ) {
+            this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
+
+            this.CreateOptimalBuffer();
+        }
 
         /// <summary>
         ///     Just some common buffer sizes we might use.
         /// </summary>
-        private static ConcurrentDictionary<Byte, Int64> BufferSizes { get; } = new ConcurrentDictionary<Byte, Int64>();
-
-        [CanBeNull]
-        public Byte[] Buffer { get; private set; }
+        private static ConcurrentDictionary<Byte, Int64> GoodBufferSizes { get; } = new ConcurrentDictionary<Byte, Int64>();
 
         [NotNull]
         public Document Document { get; }
@@ -97,26 +94,28 @@ namespace Librainian.FileSystem {
             set {
                 if ( value == this.OffsetBegin ) { throw new ArgumentOutOfRangeException( nameof( this.OffsetBegin ), $"{this.OffsetEnd} cannot be equal to {nameof( this.OffsetBegin )}." ); }
 
-                if ( value < this.OffsetBegin ) { throw new ArgumentOutOfRangeException( nameof( this.OffsetBegin ), $"Offset {value:N0} is greater than {nameof( Int64.MaxValue )}." ); }
+                if ( value < this.OffsetBegin ) { throw new ValueTooHighException( $"{nameof( this.OffsetBegin )} {value:N0} is greater than {nameof( this.OffsetEnd )}." ); }
 
                 this._offsetEnd = value;
             }
         }
 
-        private Boolean BufferCreated() => this.Buffer != null && this.Buffer.Length > 0;
+        [CanBeNull]
+        public Byte[] ReadWriteBuffer { get; private set; }
 
-        private Int64 BufferSize() {
-            if ( !this.BufferCreated() ) { this.CreateBuffer(); }
+        private Int64 BufferSize( Int64? size ) {
+            if ( !this.IsBufferCreated() ) {
+                this.CreateOptimalBufferSize();
+            }
 
-            var buffer = this.Buffer;
+            if ( this.ReadWriteBuffer != null ) { return this.ReadWriteBuffer.LongLength; }
 
-            if ( buffer != null ) { return buffer.LongLength; }
-
-            throw new InvalidOperationException( $"Could not allocate a {this.BufferSize()} buffer" );
+            throw new InvalidOperationException( $"Could not allocate a {this.BufferSize( null )} buffer" );
         }
 
         private Int64 ChunksNeeded() {
-            var needed = Math.Ceiling( this.Size() / ( Double )this.BufferSize() );
+            var size = this.Size();
+            var needed = Math.Ceiling( size / ( Double )this.BufferSize( size ) );
 
             if ( needed > Int64.MaxValue ) {
                 throw new ArgumentOutOfRangeException( nameof( this.ChunksNeeded ) ); //should never happen..
@@ -125,40 +124,40 @@ namespace Librainian.FileSystem {
             return ( Int64 )needed;
         }
 
-        private Boolean CreateBuffer() {
-            var l = this.CreateOptimalBufferSize();
-
-            return this.BufferCreated();
-        }
-
         /// <summary>
         ///     Not really 'optimal'.. Gets the largest buffer we can allocate. Up to 2^32 down to 4096 bytes.
         /// </summary>
         /// <returns></returns>
-        private Int64 CreateOptimalBufferSize() {
+        private void CreateOptimalBufferSize() {
 
-            var ram = Computer.GetAvailableMemeory();
+            this.ReadWriteBuffer = null;
 
-            this.Buffer = null;
+            try {
+                var ram = Computer.GetAvailableMemeory();
 
-            foreach ( var l in BufferSizes.OrderByDescending( pair => pair.Value ).Select( pair => pair.Value ) ) {
-                try {
-                    Logging.Garbage();
-                    this.Buffer = new Byte[l];
+                foreach ( var l in GoodBufferSizes.OrderByDescending( pair => pair.Value ).Select( pair => pair.Value ) ) {
+                    try {
+                        Logging.Garbage();
+                        this.ReadWriteBuffer = new Byte[l];
 
-                    return l;
-                }
-                catch ( OutOfMemoryException ) { this.Buffer = null; }
-                finally {
-                    this.Buffer.Should().NotBeNull();
+                        return;
+                    }
+                    catch ( OutOfMemoryException ) { this.ReadWriteBuffer = null; }
+                    finally {
+                        this.ReadWriteBuffer.Should().NotBeNull();
 
-                    if ( Debugger.IsAttached ) { Debug.WriteLine( $"Created {l:N0} byte buffer for {this.Document.FullPathWithFileName}." ); }
+                        if ( Debugger.IsAttached ) { Debug.WriteLine( $"Created {l:N0} byte buffer for {this.Document.FullPathWithFileName}." ); }
+                    }
                 }
             }
+            catch ( Exception exception ) { exception.More(); }
 
-            return 4096; //default
+            this.ReadWriteBuffer = new Byte[4096];  //default. If we can't allocate this few of bytes, then we're in another bigger issue.
         }
 
+        private Boolean IsBufferCreated() => this.ReadWriteBuffer?.Length.Any() == true;
+
+        /*
         public Boolean CopyTo( [NotNull] Document destination ) {
             if ( destination is null ) { throw new ArgumentNullException( paramName: nameof( destination ) ); }
 
@@ -175,12 +174,13 @@ namespace Librainian.FileSystem {
 
             return false;
         }
+        */
 
         /// <summary>
         ///     Dispose any disposable managed fields or properties.
         /// </summary>
         public override void DisposeManaged() {
-            this.Buffer = null;
+            this.ReadWriteBuffer = null;
             base.DisposeManaged();
         }
 

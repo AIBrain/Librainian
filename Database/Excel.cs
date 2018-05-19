@@ -37,7 +37,7 @@ namespace Librainian.Database {
     using System;
     using System.Data;
     using System.Data.OleDb;
-    using System.Diagnostics.CodeAnalysis;
+
     using JetBrains.Annotations;
 
     public class Excel {

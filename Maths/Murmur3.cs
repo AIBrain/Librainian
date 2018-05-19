@@ -1,36 +1,28 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any
+// source code used or derived from our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "Murmur3.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code, "Murmur3.cs", belongs to Rick@AIBrain.org
+// and Protiguous@Protiguous.com unless otherwise specified
+// or the original license has been overwritten by the automatic formatting.
 //
 // (We try to avoid that from happening, but it does happen.)
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
+// Any unmodified portions of source code gleaned from other projects
+// still retain their original license and our thanks goes to those Authors.
 //
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
+// Donations, royalties from any software that uses any of our code,
+// and license fees can be paid to us via
 // bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// =========================================================
 // Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
-// =========================================================
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/Murmur3.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
+// "Librainian/Librainian/Murmur3.cs" was last formatted by Protiguous on 2018/05/17 at 5:14 PM.
 
 namespace Librainian.Maths {
 
@@ -43,15 +35,14 @@ namespace Librainian.Maths {
     public class Murmur3 {
 
         private const UInt64 C1 = 0x87c37b91114253d5L;
+
         private const UInt64 C2 = 0x4cf5ad432745937fL;
+
         private readonly UInt32 _seed;
-        private UInt64 h1;
-
-        // if want to start with a seed, create a constructor
-        private UInt64 h2;
-
-        private UInt64 length;
-        public const UInt64 READ_SIZE = 16;
+        private UInt64 _h1;
+        private UInt64 _h2;
+        private UInt64 _length;
+        public const UInt64 ReadSize = 16;
 
         public Murmur3( UInt32 seed ) => this._seed = seed;
 
@@ -85,36 +76,36 @@ namespace Librainian.Maths {
         }
 
         private void MixBody( UInt64 k1, UInt64 k2 ) {
-            this.h1 ^= MixKey1( k1: k1 );
+            this._h1 ^= MixKey1( k1: k1 );
 
-            this.h1 = this.h1.RotateLeft( bits: 27 );
-            this.h1 += this.h2;
-            this.h1 = this.h1 * 5 + 0x52dce729;
+            this._h1 = this._h1.RotateLeft( bits: 27 );
+            this._h1 += this._h2;
+            this._h1 = this._h1 * 5 + 0x52dce729;
 
-            this.h2 ^= MixKey2( k2: k2 );
+            this._h2 ^= MixKey2( k2: k2 );
 
-            this.h2 = this.h2.RotateLeft( bits: 31 );
-            this.h2 += this.h1;
-            this.h2 = this.h2 * 5 + 0x38495ab5;
+            this._h2 = this._h2.RotateLeft( bits: 31 );
+            this._h2 += this._h1;
+            this._h2 = this._h2 * 5 + 0x38495ab5;
         }
 
         private void ProcessBytes( Byte[] bb ) {
-            this.h1 = this._seed;
-            this.length = 0L;
+            this._h1 = this._seed;
+            this._length = 0L;
 
             var pos = 0;
             var remaining = ( UInt64 )bb.Length;
 
             // read 128 bits, 16 bytes, 2 longs in eacy cycle
-            while ( remaining >= READ_SIZE ) {
+            while ( remaining >= ReadSize ) {
                 var k1 = bb.ToUInt64( pos: pos );
                 pos += 8;
 
                 var k2 = bb.ToUInt64( pos: pos );
                 pos += 8;
 
-                this.length += READ_SIZE;
-                remaining -= READ_SIZE;
+                this._length += ReadSize;
+                remaining -= ReadSize;
 
                 this.MixBody( k1: k1, k2: k2 );
             }
@@ -126,7 +117,7 @@ namespace Librainian.Maths {
         private void ProcessBytesRemaining( Byte[] bb, UInt64 remaining, Int32 pos ) {
             UInt64 k1 = 0;
             UInt64 k2 = 0;
-            this.length += remaining;
+            this._length += remaining;
 
             // little endian (x86) processing
             switch ( remaining ) {
@@ -179,11 +170,11 @@ namespace Librainian.Maths {
 
                     break;
 
-                default: throw new Exception( "Something went wrong with remaining bytes calculation." );
+                default: throw new InvalidOperationException( "Something went wrong with remaining bytes calculation." );
             }
 
-            this.h1 ^= MixKey1( k1: k1 );
-            this.h2 ^= MixKey2( k2: k2 );
+            this._h1 ^= MixKey1( k1: k1 );
+            this._h2 ^= MixKey2( k2: k2 );
         }
 
         public Byte[] ComputeHash( Byte[] bb ) {
@@ -193,22 +184,22 @@ namespace Librainian.Maths {
         }
 
         public Byte[] GetHash() {
-            this.h1 ^= this.length;
-            this.h2 ^= this.length;
+            this._h1 ^= this._length;
+            this._h2 ^= this._length;
 
-            this.h1 += this.h2;
-            this.h2 += this.h1;
+            this._h1 += this._h2;
+            this._h2 += this._h1;
 
-            this.h1 = MixFinal( k: this.h1 );
-            this.h2 = MixFinal( k: this.h2 );
+            this._h1 = MixFinal( k: this._h1 );
+            this._h2 = MixFinal( k: this._h2 );
 
-            this.h1 += this.h2;
-            this.h2 += this.h1;
+            this._h1 += this._h2;
+            this._h2 += this._h1;
 
-            var hash = new Byte[READ_SIZE];
+            var hash = new Byte[ReadSize];
 
-            Array.Copy( sourceArray: BitConverter.GetBytes( this.h1 ), sourceIndex: 0, destinationArray: hash, destinationIndex: 0, 8 );
-            Array.Copy( sourceArray: BitConverter.GetBytes( this.h2 ), sourceIndex: 0, destinationArray: hash, destinationIndex: 8, 8 );
+            Buffer.BlockCopy( BitConverter.GetBytes( this._h1 ), 0, hash, 0, 8 );
+            Buffer.BlockCopy( BitConverter.GetBytes( this._h2 ), 0, hash, 8, 8 );
 
             return hash;
         }

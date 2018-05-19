@@ -37,6 +37,7 @@ namespace Librainian.Maths {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Extensions;
     using Numbers;
 
     /// <summary>Based on the idea from lavz24.</summary>

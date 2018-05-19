@@ -39,7 +39,7 @@ namespace Librainian.Database {
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
-    using System.Diagnostics.CodeAnalysis;
+
     using System.Threading;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
@@ -271,7 +271,7 @@ namespace Librainian.Database {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
                     if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
-                    return await command.ExecuteNonQueryAsync().ConfigureAwait( false );
+                    return await command.ExecuteNonQueryAsync().NoUI();
                 }
             }
             catch ( SqlException exception ) { exception.More(); }
@@ -360,7 +360,7 @@ namespace Librainian.Database {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) { CommandType = commandType } ) {
                     if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
-                    return await command.ExecuteReaderAsync().ConfigureAwait( false );
+                    return await command.ExecuteReaderAsync().NoUI();
                 }
             }
             catch ( SqlException exception ) { exception.More(); }
@@ -386,7 +386,7 @@ namespace Librainian.Database {
 
                     table.BeginLoadData();
 
-                    using ( var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).ConfigureAwait( false ) ) { table.Load( reader ); }
+                    using ( var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).NoUI() ) { table.Load( reader ); }
 
                     table.EndLoadData();
                 }
@@ -449,7 +449,7 @@ namespace Librainian.Database {
                     TryAgain:
                     Object scalar;
 
-                    try { scalar = await command.ExecuteScalarAsync().ConfigureAwait( false ); }
+                    try { scalar = await command.ExecuteScalarAsync().NoUI(); }
                     catch ( SqlException exception ) {
                         if ( exception.Number == DatabaseErrors.Deadlock ) { goto TryAgain; }
 

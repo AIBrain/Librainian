@@ -56,7 +56,7 @@ namespace Librainian.Database.MMF {
         private TcpClient _tcpClient;
 
         public MemMapCache() {
-            this.Encoding = Encoding.ASCII;
+            this.Encoding = Encoding.Unicode;
             this.ChunkSize = 1024 * 1024 * 30;
 
             this.Server = "127.0.0.1"; //limited to local

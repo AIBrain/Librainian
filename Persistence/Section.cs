@@ -44,6 +44,7 @@ namespace Librainian.Persistence {
     using Collections;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
+    using Threading;
 
     /// <summary>
     ///     <para>
@@ -116,15 +117,13 @@ namespace Librainian.Persistence {
         ///     Remove any key where there is no value.
         /// </summary>
         /// <returns></returns>
-        public async Task Cleanup() {
-            await Task.Run( () => {
-                foreach ( var key in this.Keys.Where( String.IsNullOrEmpty ) ) {
-                    if ( this.Data.TryRemove( key, out var value ) && !String.IsNullOrEmpty( value ) ) {
-                        this[key] = value; //whoops, re-add value. Cause: other threads.
-                    }
+        public async Task Cleanup() => await Task.Run( () => {
+            foreach ( var key in this.Keys.Where( String.IsNullOrEmpty ) ) {
+                if ( this.Data.TryRemove( key, out var value ) && !String.IsNullOrEmpty( value ) ) {
+                    this[key] = value; //whoops, re-add value. Cause: other threads.
                 }
-            } ).ConfigureAwait( false );
-        }
+            }
+        } ).NoUI();
 
         public Boolean Equals( [CanBeNull] Section other ) => Equals( left: this, right: other );
 
@@ -141,7 +140,7 @@ namespace Librainian.Persistence {
             if ( reader is null ) { throw new ArgumentNullException( paramName: nameof( reader ) ); }
 
             try {
-                var that = await reader.ReadLineAsync().ConfigureAwait( false );
+                var that = await reader.ReadLineAsync().NoUI();
 
                 return await Task.Run( () => {
                     if ( JsonConvert.DeserializeObject( that, this.Data.GetType() ) is ConcurrentDictionary<String, String> other ) {
@@ -151,7 +150,7 @@ namespace Librainian.Persistence {
                     }
 
                     return false;
-                } ).ConfigureAwait( false );
+                } ).NoUI();
             }
             catch ( Exception exception ) { exception.More(); }
 
@@ -170,7 +169,7 @@ namespace Librainian.Persistence {
 
             try {
                 var me = JsonConvert.SerializeObject( this, Formatting.None );
-                await writer.WriteLineAsync( me ).ConfigureAwait( false );
+                await writer.WriteLineAsync( me ).NoUI();
 
                 return true;
             }

@@ -1,36 +1,30 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any
+// source code used or derived from our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "ControlExtensions.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code, "ControlExtensions.cs", belongs to Rick@AIBrain.org
+// and Protiguous@Protiguous.com unless otherwise specified or
+// the original license has been overwritten by this automatic formatting.
 //
 // (We try to avoid that from happening, but it does happen.)
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
+// Any unmodified portions of source code gleaned from other projects
+// still retain their original license and our thanks goes to those Authors.
 //
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
+// Donations, royalties from any software that uses any of our code,
+// and license fees can be paid to us via
 // bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
 // Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/ControlExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:39 PM.
+// "Librainian/Librainian/ControlExtensions.cs" was last formatted by Protiguous on 2018/05/17 at 6:12 PM.
 
 namespace Librainian.Controls {
 
@@ -44,7 +38,9 @@ namespace Librainian.Controls {
     using System.Windows.Forms;
     using FluentAssertions;
     using JetBrains.Annotations;
+    using Maths;
     using Measurement.Time;
+    using Parsing;
     using Persistence;
     using Threading;
     using Application = System.Windows.Forms.Application;
@@ -57,6 +53,8 @@ namespace Librainian.Controls {
         public static ConcurrentDictionary<Control, Int32> TurnOnOrOffReqests { get; } = new ConcurrentDictionary<Control, Int32>();
 
         public static void AppendLine( this RichTextBox box, String text, Color color, params Object[] args ) => box.AppendText( $"\n{text}", color == Color.Empty ? box.ForeColor : color, args );
+
+        public static void AppendLineInvoke( this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker )( () => box.AppendLine( text, color, args ) ) );
 
         public static void AppendText( this RichTextBox box, String text, Color color, params Object[] args ) {
             text = String.Format( text, args );
@@ -77,6 +75,8 @@ namespace Librainian.Controls {
             box.SelectionStart = box.TextLength;
             box.ScrollToCaret();
         }
+
+        public static void AppendTextInvoke( this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker )( () => box.AppendText( text, color, args ) ) );
 
         public static Color Blend( this Color thisColor, Color blendToColor, Double blendToPercent ) {
             blendToPercent = ( 1 - blendToPercent ).ForceBounds( 0, 1 );
@@ -323,11 +323,14 @@ namespace Librainian.Controls {
             window.WindowStyle = WindowStyle.None;
         }
 
-        public static void InvokeA<T>( this T invokable, Action<T> action, T argument = default ) where T : ISynchronizeInvoke {
+        public static void InvokeAction<T>( this T invokable, Action<T> action, T argument = default ) where T : ISynchronizeInvoke {
             try {
-                if ( Equals( invokable, default ) ) { return; }
+                switch ( invokable ) {
+                    case null:
+                    case Control control when control.IsDisposed:
 
-                if ( invokable is Control && ( invokable as Control ).IsDisposed ) { return; }
+                        return;
+                }
 
                 if ( invokable.InvokeRequired ) { invokable.Invoke( action, new Object[] { argument } ); }
                 else { action( argument ); }
@@ -335,13 +338,9 @@ namespace Librainian.Controls {
             catch ( ObjectDisposedException exception ) { exception.More(); }
         }
 
-        public static void InvokeAppendLine( this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker )delegate { box.AppendLine( text, color, args ); } );
-
-        public static void InvokeAppendText( this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker )delegate { box.AppendText( text, color, args ); } );
-
         public static T InvokeF<T>( this T invokable, Func<T> function, T argument = default ) where T : class, ISynchronizeInvoke {
             if ( invokable.InvokeRequired ) {
-                if ( invokable is Control && ( invokable as Control ).IsDisposed ) { }
+                if ( ( invokable as Control )?.IsDisposed == true ) { }
                 else { return invokable.Invoke( function, new Object[] { argument } ) as T; }
             }
 
@@ -349,13 +348,12 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        ///     <para>Perform an <see cref="Action" /> on the control's thread and then <see cref="Control.Refresh" />.</para>
+        ///     <para>Perform an <see cref="Action" /> on the control's thread.</para>
         /// </summary>
         /// <param name="control"></param>
         /// <param name="action"> </param>
-        /// <param name="refresh"></param>
         /// <seealso />
-        public static void InvokeIfRequired( [NotNull] this Control control, [NotNull] Action action, Boolean refresh = true ) {
+        public static void InvokeIfRequired( [NotNull] this Control control, [NotNull] Action action ) {
             if ( control is null ) { throw new ArgumentNullException( nameof( control ) ); }
 
             if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
@@ -365,20 +363,11 @@ namespace Librainian.Controls {
             if ( control.InvokeRequired ) {
                 control.Invoke( action );
 
-                if ( !refresh ) { return; }
-
                 if ( control.IsDisposed ) { return; }
 
-                action = control.Refresh;
                 control.Invoke( action );
             }
-            else {
-                if ( control.IsDisposed ) { return; }
-
-                action();
-
-                if ( !control.IsDisposed && refresh ) { control.Refresh(); }
-            }
+            else { action(); }
         }
 
         public static Boolean IsFullScreen( this Window window ) => window.WindowState == WindowState.Maximized && window.WindowStyle == WindowStyle.None;
@@ -502,18 +491,17 @@ namespace Librainian.Controls {
             } );
 
         /// <summary>
-        ///     <para>Perform an <see cref="Action" /> on the control's thread and then <see cref="Control.Refresh" />.</para>
+        ///     <para>Perform an <see cref="Action" /> on the control's thread.</para>
         /// </summary>
         /// <param name="control"></param>
         /// <param name="action"> </param>
-        /// <param name="refresh"></param>
         /// <seealso cref="InvokeIfRequired" />
-        public static void OnThread( [CanBeNull] this Control control, [CanBeNull] Action action, Boolean refresh = true ) {
-            if ( null == control ) { return; }
+        public static void OnThread( [NotNull] this Control control, [NotNull] Action action ) {
+            if ( control == null ) { throw new ArgumentNullException( paramName: nameof( control ) ); }
 
-            if ( null == action ) { return; }
+            if ( action == null ) { throw new ArgumentNullException( paramName: nameof( action ) ); }
 
-            control.InvokeIfRequired( action, refresh );
+            control.InvokeIfRequired( action );
         }
 
         /// <summary>
@@ -526,8 +514,7 @@ namespace Librainian.Controls {
 
             if ( null == action ) { return; }
 
-            var parent = control.GetCurrentParent() as Control;
-            parent?.OnThread( action );
+            control.GetCurrentParent()?.OnThread( action );
         }
 
         public static void Output( this WebBrowser browser, String message ) {
@@ -717,9 +704,8 @@ namespace Librainian.Controls {
         /// <param name="toolStripItem"></param>
         /// <param name="value">        </param>
         public static void Text( [CanBeNull] this ToolStripItem toolStripItem, [CanBeNull] String value ) {
-            if ( null == toolStripItem ) { return; }
 
-            if ( toolStripItem.IsDisposed ) { return; }
+            if ( toolStripItem?.IsDisposed != false ) { return; }
 
             toolStripItem.OnThread( () => {
                 if ( toolStripItem.IsDisposed ) { return; }
@@ -735,9 +721,8 @@ namespace Librainian.Controls {
         /// <remarks></remarks>
         /// <param name="control"></param>
         /// <param name="value">  </param>
-        /// <seealso cref="http://kristofverbiest.blogspot.com/2007/02/don-confuse-controlbegininvoke-with.html" />
-        /// <seealso
-        ///     cref="http://programmers.stackexchange.com/questions/114605/how-will-c-5-async-support-help-ui-thread-synchronization-issues" />
+        /// <remarks>http://kristofverbiest.blogspot.com/2007/02/don-confuse-controlbegininvoke-with.html</remarks>
+        /// <remarks>http://programmers.stackexchange.com/questions/114605/how-will-c-5-async-support-help-ui-thread-synchronization-issues</remarks>
         public static void Text( [CanBeNull] this Control control, [CanBeNull] String value ) =>
             control?.InvokeIfRequired( () => {
                 if ( control.IsDisposed ) { return; }
@@ -802,42 +787,12 @@ namespace Librainian.Controls {
         public static Int32 ToRGB( this Color thisColor ) => thisColor.ToArgb() & 0xFFFFFF;
 
         /// <summary>
-        ///     <para>Make this
-        ///         <param name="control"></param>
-        ///         not <see cref="Usable" />.
-        ///     </para>
-        /// </summary>
-        /// <param name="control"></param>
-        public static void TurnOff( this Control control ) {
-            if ( !TurnOnOrOffReqests.ContainsKey( control ) ) { TurnOnOrOffReqests[control] = 0; }
-
-            TurnOnOrOffReqests[control]--;
-            control.Usable( TurnOnOrOffReqests[control] <= 0 );
-        }
-
-        /// <summary>
-        ///     <para>Make this
-        ///         <param name="control"></param>
-        ///         <see cref="Usable" />.
-        ///     </para>
-        /// </summary>
-        /// <param name="control"></param>
-        public static void TurnOn( [CanBeNull] this Control control ) {
-            if ( null == control ) { return; }
-
-            if ( !TurnOnOrOffReqests.ContainsKey( control ) ) { TurnOnOrOffReqests[control] = 0; }
-
-            TurnOnOrOffReqests[control]++;
-            control.Usable( TurnOnOrOffReqests[control] > 0 );
-        }
-
-        /// <summary>
         ///     Safely set the <see cref="Control.Enabled" /> and <see cref="Control.Visible" /> of a control across threads.
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
         public static void Usable( this Control control, Boolean value ) {
-            if ( null == control ) { return; }
+            if ( control?.IsDisposed != false ) { return; }
 
             if ( control.InvokeRequired ) {
                 control.BeginInvoke( new Action( () => {
@@ -868,8 +823,8 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
-        public static Decimal Value( [CanBeNull] this NumericUpDown control ) {
-            if ( null == control ) { return Decimal.Zero; }
+        public static Decimal Value( [NotNull] this NumericUpDown control ) {
+            if ( control == null ) { throw new ArgumentNullException( paramName: nameof( control ) ); }
 
             return control.InvokeRequired ? ( Decimal )control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
         }
@@ -879,8 +834,8 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
-        public static Int32 Value( [CanBeNull] this ProgressBar control ) {
-            if ( null == control ) { return 0; }
+        public static Int32 Value( [NotNull] this ProgressBar control ) {
+            if ( control == null ) { throw new ArgumentNullException( paramName: nameof( control ) ); }
 
             return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Value ) ) : control.Value;
         }

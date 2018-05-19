@@ -370,103 +370,6 @@ namespace Librainian.Persistence {
         /// <summary>
         ///     Deserialize from an IsolatedStorageFile.
         /// </summary>
-        /// <param name="obj" />
-        /// <param name="fileName" />
-        /// <param name="feedback"> </param>
-        /// <returns></returns>
-        [Obsolete]
-        public static Boolean Load<TSource>( out TSource obj, [NotNull] String fileName, ProgressChangedEventHandler feedback = null ) where TSource : class {
-            if ( fileName is null ) { throw new ArgumentNullException( nameof( fileName ) ); }
-
-            obj = default;
-
-            try {
-                if ( IsolatedStorageFile.IsEnabled && !String.IsNullOrWhiteSpace( fileName ) ) {
-                    using ( var isolatedStorageFile = IsolatedStorageFile.GetMachineStoreForDomain() ) {
-                        var dir = Path.GetDirectoryName( fileName );
-
-                        if ( !String.IsNullOrWhiteSpace( dir ) && !isolatedStorageFile.DirectoryExists( dir ) ) { isolatedStorageFile.CreateDirectory( dir ); }
-
-                        if ( !isolatedStorageFile.FileExists( fileName ) ) { return false; }
-
-                        //if ( 0 == isf.GetFileNames( fileName ).GetLength( 0 ) ) { return false; }
-
-                        var deletefile = false;
-
-                        try {
-                            using ( var test = isolatedStorageFile.OpenFile( fileName, FileMode.Open, FileAccess.Read, FileShare.Read ) ) {
-                                var length = test.Seek( 0, SeekOrigin.End );
-
-                                if ( length <= 3 ) { deletefile = true; }
-                            }
-                        }
-                        catch ( IsolatedStorageException exception ) {
-                            exception.More();
-
-                            return false;
-                        }
-
-                        try {
-                            if ( deletefile ) {
-                                isolatedStorageFile.DeleteFile( fileName );
-
-                                return false;
-                            }
-                        }
-                        catch ( IsolatedStorageException exception ) {
-                            exception.More();
-
-                            return false;
-                        }
-
-                        try {
-                            var fileStream = new IsolatedStorageFileStream( fileName, mode: FileMode.Open, access: FileAccess.Read, isf: isolatedStorageFile );
-                            var ext = Path.GetExtension( fileName );
-                            var useCompression = ext.EndsWith( "Z", ignoreCase: true, culture: null );
-
-                            if ( useCompression ) {
-                                using ( var decompress = new GZipStream( stream: fileStream, mode: CompressionMode.Decompress, leaveOpen: true ) ) { obj = Deserialize<TSource>( stream: decompress, feedback: feedback ); }
-                            }
-                            else {
-
-                                //obj = Deserialize<TSource>( stream: isfs, feedback: feedback );
-                                var serializer = new NetDataContractSerializer();
-                                obj = serializer.Deserialize( fileStream ) as TSource;
-                            }
-
-                            return obj != default( TSource );
-                        }
-                        catch ( InvalidOperationException exception ) { exception.More(); }
-                        catch ( ArgumentNullException exception ) { exception.More(); }
-                        catch ( SerializationException exception ) {
-                            deletefile = true;
-                            exception.More();
-                        }
-                        catch ( Exception exception ) { exception.More(); }
-
-                        try {
-                            if ( deletefile ) {
-                                isolatedStorageFile.DeleteFile( fileName );
-
-                                return false;
-                            }
-                        }
-                        catch ( IsolatedStorageException exception ) {
-                            exception.More();
-
-                            return false;
-                        }
-                    }
-                }
-            }
-            catch ( IsolatedStorageException exception ) { exception.More(); }
-
-            return false;
-        }
-
-        /// <summary>
-        ///     Deserialize from an IsolatedStorageFile.
-        /// </summary>
         /// <param name="fullPathAndFileName" />
         /// <param name="onLoad">              </param>
         /// <param name="feedback">            </param>
@@ -651,34 +554,38 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     Persist the <paramref name="object" /> to a JSON text file.
+        ///     Attempts to serialize this object to an NTFS alternate stream with the index of <paramref name="attribute" />. Use
+        ///     <see cref="TryLoad{TSource}" /> to load an object.
         /// </summary>
-        /// <typeparam name="TKey"></typeparam>
-        /// <param name="object">    </param>
-        /// <param name="document">  </param>
-        /// <param name="overwrite"> </param>
-        /// <param name="formatting"></param>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="objectToSerialize"></param>
+        /// <param name="attribute">        </param>
+        /// <param name="destination"></param>
+        /// <param name="compression"></param>
         /// <returns></returns>
-        public static Boolean Save<TKey>( this TKey @object, Document document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
-            if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
+        public static Boolean Save<TSource>( this TSource objectToSerialize, [NotNull] String attribute, Document destination, CompressionLevel compression = CompressionLevel.Fastest ) {
+            if ( attribute.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( attribute ) ); }
 
-            if ( overwrite && document.Exists() ) { document.Delete(); }
+            try {
 
-            using ( var snag = new FileSingleton( document.Info ) ) {
-                snag.Snagged.Should().BeTrue();
+                var json = objectToSerialize.ToJSON();
 
-                using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
-                    using ( JsonWriter jw = new JsonTextWriter( writer ) ) {
-                        jw.Formatting = formatting;
+                if ( json.IsNullOrWhiteSpace() ) { return false; }
 
-                        //see also http://stackoverflow.com/a/8711702/956364
-                        var serializer = new JsonSerializer { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All };
-                        serializer.Serialize( jw, @object );
-                    }
+                var data = Encoding.Unicode.GetBytes( json ).Compress( CompressionLevel.Fastest );
+
+                var filename = $"{destination.FullPathWithFileName}:{attribute}";
+
+                using ( var fs = NtfsAlternateStream.Open( filename, access: FileAccess.Write, mode: FileMode.Create, share: FileShare.None ) ) {
+                    fs.Write( data, 0, data.Length );
                 }
-            }
 
-            return true;
+                return true;
+            }
+            catch ( SerializationException exception ) { exception.More(); }
+            catch ( Exception exception ) { exception.More(); }
+
+            return false;
         }
 
         /// <summary>
@@ -1077,8 +984,9 @@ namespace Librainian.Persistence {
         /// <param name="attribute"></param>
         /// <param name="value">    </param>
         /// <param name="location"> </param>
+        /// <seealso cref="TrySave{TKey}"/>
         /// <returns></returns>
-        public static Boolean TryGet<TSource>( this String attribute, out TSource value, String location = null ) {
+        public static Boolean TryLoad<TSource>( this String attribute, out TSource value, String location = null ) {
             if ( attribute is null ) { throw new ArgumentNullException( nameof( attribute ) ); }
 
             value = default;
@@ -1106,43 +1014,34 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     Attempts to serialize this object to an NTFS alternate stream with the index of <paramref name="attribute" />. Use
-        ///     <see cref="TryGet{TSource}" /> to load an object.
+        ///     Persist the <paramref name="object" /> to a JSON text file.
         /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <param name="objectToSerialize"></param>
-        /// <param name="attribute">        </param>
-        /// <param name="location">         </param>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="object">    </param>
+        /// <param name="document">  </param>
+        /// <param name="overwrite"> </param>
+        /// <param name="formatting"></param>
         /// <returns></returns>
-        public static Boolean TrySave<TSource>( this TSource objectToSerialize, [NotNull] String attribute, Document location = null ) {
-            if ( attribute.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( attribute ) ); }
+        public static Boolean TrySave<TKey>( this TKey @object, [NotNull] Document document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
+            if ( document is null ) { throw new ArgumentNullException( paramName: nameof( document ) ); }
 
-            try {
-                if ( null == location ) { location = DataDocument.Value; }
+            if ( overwrite && document.Exists() ) { document.Delete(); }
 
-                var json = objectToSerialize.ToJSON();
+            using ( var snag = new FileSingleton( document.Info ) ) {
+                snag.Snagged.Should().BeTrue();
 
-                if ( json.IsNullOrWhiteSpace() ) { return false; }
+                using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
+                    using ( JsonWriter jw = new JsonTextWriter( writer ) ) {
+                        jw.Formatting = formatting;
 
-                var data = Encoding.UTF32.GetBytes( json ).Compress();
-
-                var filename = $"{location.FullPathWithFileName}:{attribute}";
-
-                //var context = new StreamingContext( StreamingContextStates.All );
-
-                using ( var fs = NtfsAlternateStream.Open( filename, access: FileAccess.Write, mode: FileMode.Create, share: FileShare.None ) ) {
-                    fs.Write( data, 0, data.Length );
-
-                    //var serializer = new NetDataContractSerializer( context: context, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false, assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null );
-                    //serializer.Serialize( fs, objectToSerialize );
+                        //see also http://stackoverflow.com/a/8711702/956364
+                        var serializer = new JsonSerializer { ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All };
+                        serializer.Serialize( jw, @object );
+                    }
                 }
-
-                return true;
             }
-            catch ( SerializationException exception ) { exception.More(); }
-            catch ( Exception exception ) { exception.More(); }
 
-            return false;
+            return true;
         }
 
         private class MyContractResolver : DefaultContractResolver {

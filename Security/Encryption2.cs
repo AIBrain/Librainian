@@ -30,7 +30,7 @@
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/Encryption2.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
+// "Librainian/Librainian/Encryption2.cs" was last formatted by Protiguous on 2018/05/17 at 3:43 PM.
 
 namespace Librainian.Security {
 
@@ -42,16 +42,16 @@ namespace Librainian.Security {
 
     public static class Encryption2 {
 
-        public static String DecryptString( [NotNull] this String inputString, Int32 dwKeySize, [NotNull] String xmlString ) {
+        public static String Decrypt( [NotNull] this String inputString, Int32 keySize, [NotNull] String xmlString ) {
 
             // TODO: Add Proper Exception Handlers
             if ( inputString is null ) { throw new ArgumentNullException( nameof( inputString ) ); }
 
             if ( xmlString is null ) { throw new ArgumentNullException( nameof( xmlString ) ); }
 
-            var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: dwKeySize );
+            var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: keySize );
             rsaCryptoServiceProvider.FromXmlString( xmlString: xmlString );
-            var base64BlockSize = dwKeySize / 8 % 3 != 0 ? dwKeySize / 8 / 3 * 4 + 4 : dwKeySize / 8 / 3 * 4;
+            var base64BlockSize = keySize / 8 % 3 != 0 ? keySize / 8 / 3 * 4 + 4 : keySize / 8 / 3 * 4;
             var iterations = inputString.Length / base64BlockSize;
             var arrayList = new ArrayList();
 
@@ -66,10 +66,10 @@ namespace Librainian.Security {
                 arrayList.AddRange( c: rsaCryptoServiceProvider.Decrypt( rgb: encryptedBytes, fOAEP: true ) );
             }
 
-            return !( arrayList.ToArray( type: typeof( Byte ) ) is Byte[] ba ) ? String.Empty : Encoding.UTF32.GetString( bytes: ba );
+            return !( arrayList.ToArray( type: typeof( Byte ) ) is Byte[] ba ) ? String.Empty : Encoding.Unicode.GetString( bytes: ba );
         }
 
-        public static String EncryptString( [NotNull] this String inputString, Int32 dwKeySize, [NotNull] String xmlString ) {
+        public static String Encrypt( [NotNull] this String inputString, Int32 dwKeySize, [NotNull] String xmlString ) {
 
             // TODO: Add Proper Exception Handlers
             if ( inputString is null ) { throw new ArgumentNullException( nameof( inputString ) ); }
@@ -79,7 +79,7 @@ namespace Librainian.Security {
             var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: dwKeySize );
             rsaCryptoServiceProvider.FromXmlString( xmlString: xmlString );
             var keySize = dwKeySize / 8;
-            var bytes = Encoding.UTF32.GetBytes( s: inputString );
+            var bytes = Encoding.Unicode.GetBytes( s: inputString );
 
             // The hash function in use by the .NET RSACryptoServiceProvider here is SHA1 int
             // maxLength = ( keySize ) - 2 - ( 2 * SHA1.Create().ComputeHash( rawBytes ).Length );

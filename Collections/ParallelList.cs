@@ -317,7 +317,7 @@ namespace Librainian.Collections {
             return false;
         }
 
-        public async Task AddAsync( T item, Action afterAdd = null ) => await Task.Run( () => { this.TryAdd( item: item, afterAdd: afterAdd ); } ).ConfigureAwait( false );
+        public async Task AddAsync( T item, Action afterAdd = null ) => await Task.Run( () => { this.TryAdd( item: item, afterAdd: afterAdd ); } ).NoUI();
 
         /// <summary>
         ///     Add a collection of items.

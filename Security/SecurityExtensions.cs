@@ -45,6 +45,7 @@ namespace Librainian.Security {
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Extensions;
     using FileSystem;
     using JetBrains.Annotations;
     using Maths;
@@ -66,7 +67,7 @@ namespace Librainian.Security {
         /// </summary>
         public static SHA1CryptoServiceProvider CryptoProvider { get; } = new SHA1CryptoServiceProvider();
 
-        public static Byte[] Entropy { get; } = Encoding.UTF32.GetBytes( s: $"{EntropyPhrase1} {EntropyPhrase2} {EntropyPhrase3}" );
+        public static Byte[] Entropy { get; } = Encoding.Unicode.GetBytes( s: $"{EntropyPhrase1} {EntropyPhrase2} {EntropyPhrase3}" );
 
         /// <summary>
         ///     threadsafe MD5 hashers
@@ -102,7 +103,7 @@ namespace Librainian.Security {
                 var md5Hasher = MD5s.Value;
 
                 using ( var fs = new FileStream( filename, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: 1073741824, useAsync: true ) ) { return md5Hasher.ComputeHash( fs ); }
-            } ).ConfigureAwait( false );
+            } ).NoUI();
 
         [NotNull]
         public static SecureString DecryptString( this String encryptedData ) {
@@ -312,7 +313,7 @@ namespace Librainian.Security {
         }
 
         /// <summary>
-        ///     <para>Compute the SHA-384 hash for the <paramref name="input" /></para>
+        ///     <para>Compute the SHA-512 hash for the <paramref name="input" /></para>
         ///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
         /// </summary>
         /// <param name="input">   </param>
@@ -321,7 +322,7 @@ namespace Librainian.Security {
         public static Byte[] Sha512( this String input, Encoding encoding = null ) {
             if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
-            if ( null == encoding ) { encoding = Encoding.UTF8; }
+            if ( null == encoding ) { encoding = Encoding.Unicode; }
 
             return encoding.GetBytes( s: input ).Sha512();
         }

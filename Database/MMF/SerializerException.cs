@@ -35,7 +35,7 @@
 namespace Librainian.Database.MMF {
 
     using System;
-    using System.Diagnostics.CodeAnalysis;
+
     using System.Runtime.Serialization;
 
     [SuppressMessage( "Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable" )]

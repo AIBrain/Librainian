@@ -47,6 +47,7 @@ namespace Librainian.Graphics {
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Windows.Media.Imaging;
+    using Extensions;
     using FileSystem;
     using JetBrains.Annotations;
     using Maths;

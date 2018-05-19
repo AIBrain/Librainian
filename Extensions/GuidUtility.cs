@@ -59,12 +59,6 @@ namespace Librainian.Extensions {
         /// </summary>
         public static readonly Guid UrlNamespace = new Guid( "6ba7b811-9dad-11d1-80b4-00c04fd430c8" );
 
-        private static void SwapBytes( Byte[] guid, Int32 left, Int32 right ) {
-            var temp = guid[left];
-            guid[left] = guid[right];
-            guid[right] = temp;
-        }
-
         // Converts a GUID (expressed as a byte array) to/from network order (MSB-first).
         internal static void SwapByteOrder( Byte[] guid ) {
             SwapBytes( guid, 0, 3 );
@@ -125,7 +119,7 @@ namespace Librainian.Extensions {
 
             // most bytes from the hash are copied straight to the bytes of the new GUID (steps 5-7, 9, 11-12)
             var newGuid = new Byte[16];
-            Array.Copy( hash, 0, newGuid, 0, 16 );
+            Buffer.BlockCopy( hash, 0, newGuid, 0, 16 );
 
             // set the four most significant bits (bits 12 through 15) of the time_hi_and_version field to the appropriate 4-bit version number from Section 4.1.3 (step 8)
             newGuid[6] = ( Byte )( ( newGuid[6] & 0x0F ) | ( version << 4 ) );
@@ -137,6 +131,13 @@ namespace Librainian.Extensions {
             SwapByteOrder( newGuid );
 
             return new Guid( newGuid );
+        }
+
+        public static void SwapBytes( Byte[] guid, Int32 left, Int32 right ) {
+            Swap(
+            var temp = guid[left];
+            guid[left] = guid[right];
+            guid[right] = temp;
         }
     }
 }

@@ -1,36 +1,29 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "DocumentInfo.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code, "DocumentInfo.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/DocumentInfo.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
+// "Librainian/Librainian/DocumentInfo.cs" was last formatted by Protiguous on 2018/05/17 at 11:37 PM.
 
 namespace Librainian.Persistence {
 
@@ -39,7 +32,7 @@ namespace Librainian.Persistence {
     using FileSystem;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
-    using Parsing;
+    using Threading;
 
     /// <summary>
     /// </summary>
@@ -47,10 +40,13 @@ namespace Librainian.Persistence {
     [JsonObject]
     public class DocumentInfo {
 
-        public DocumentInfo( [NotNull] String fullPathFilenameExtension ) {
-            if ( String.IsNullOrWhiteSpace( fullPathFilenameExtension ) ) { throw new ArgumentException( "Value cannot be null or whitespace.", paramName: nameof( fullPathFilenameExtension ) ); }
+        public DocumentInfo( [NotNull] Document document ) {
+            if ( document is null ) { throw new ArgumentNullException( paramName: nameof( document ) ); }
 
-            this.FullPath = fullPathFilenameExtension;
+            this.FullPath = document.FullPathWithFileName;
+            this.CreationTimeUtc = document.Info.CreationTimeUtc;
+            this.LastWriteTimeUtc = document.Info.LastWriteTimeUtc;
+            this.Length = document.Length;
         }
 
         [JsonProperty]
@@ -59,29 +55,29 @@ namespace Librainian.Persistence {
         [JsonProperty]
         public UInt64? CRC64 { get; set; }
 
+        public DateTime? CreationTimeUtc { get; set; }
+
         /// <summary>
         ///     "drive:/folder/file.ext"
         /// </summary>
+        [NotNull]
         [JsonProperty]
         public String FullPath { get; set; }
 
+        public DateTime? LastWriteTimeUtc { get; set; }
+
         [JsonProperty]
-        public UInt64? Length { get; set; }
+        public Int64? Length { get; set; }
 
         [JsonProperty]
         public DateTime? Updated { get; set; }
 
         public async Task<Boolean> Update() {
-            if ( this.FullPath.IsNullOrWhiteSpace() ) { return false; }
 
-            var doc = new Document( this.FullPath );
+            var document = new Document( this.FullPath );
 
-            this.Length = doc.Length;
-
-            this.CRC32 = await doc.CRC32().ConfigureAwait( false );
-
-            this.CRC64 = await doc.CRC64().ConfigureAwait( false ); //TODO it would be nice to have a stream ?duplicator? so we only have to read over the file once.
-
+            //attempt to read both files at the same time (and thereby use the OS/disk caching)
+            await Task.Run( () => Parallel.Invoke( () => this.CRC32 = document.CRC32(), () => this.CRC64 = document.CRC64() ) ).NoUI();
             this.Updated = DateTime.UtcNow;
 
             return true;

@@ -39,7 +39,7 @@ namespace Librainian.Database {
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
-    using System.Diagnostics.CodeAnalysis;
+
     using System.Threading.Tasks;
     using JetBrains.Annotations;
     using Magic;
@@ -127,7 +127,7 @@ namespace Librainian.Database {
                     using ( var command = new SqlCommand( query, connection ) { CommandType = commandType, CommandTimeout = 0 } ) {
                         if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
-                        return await command.ExecuteNonQueryAsync().ConfigureAwait( false );
+                        return await command.ExecuteNonQueryAsync().NoUI();
                     }
                 }
             }
@@ -192,7 +192,7 @@ namespace Librainian.Database {
                     using ( var command = new SqlCommand( query, connection ) { CommandType = commandType } ) {
                         if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
-                        return await command.ExecuteReaderAsync().ConfigureAwait( false );
+                        return await command.ExecuteReaderAsync().NoUI();
                     }
                 }
             }
@@ -222,7 +222,7 @@ namespace Librainian.Database {
 
                         table.BeginLoadData();
 
-                        using ( var reader = await command.ExecuteReaderAsync().ConfigureAwait( false ) ) { table.Load( reader ); }
+                        using ( var reader = await command.ExecuteReaderAsync().NoUI() ) { table.Load( reader ); }
 
                         table.EndLoadData();
                     }
@@ -290,7 +290,7 @@ namespace Librainian.Database {
                     using ( var command = new SqlCommand( query, connection ) { CommandType = commandType } ) {
                         if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
-                        var task = command.ExecuteScalarAsync().ConfigureAwait( false );
+                        var task = command.ExecuteScalarAsync().NoUI();
 
                         var result = await task;
 

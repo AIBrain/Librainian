@@ -1,36 +1,29 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "ReflectionHelper.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code, "ReflectionHelper.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/ReflectionHelper.cs" was last cleaned by Protiguous on 2018/05/15 at 10:40 PM.
+// "Librainian/Librainian/ReflectionHelper.cs" was last formatted by Protiguous on 2018/05/18 at 11:30 PM.
 
 namespace Librainian.Extensions {
 
@@ -38,6 +31,7 @@ namespace Librainian.Extensions {
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using JetBrains.Annotations;
 
     public static class ReflectionHelper {
 
@@ -45,26 +39,45 @@ namespace Librainian.Extensions {
         ///     Find all types in 'assembly' that derive from 'baseType'
         /// </summary>
         /// <owner>jayBaz</owner>
-        public static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>( this Assembly assembly ) => from type in assembly.GetTypes() where type.IsSubclassOf( typeof( TBase ) ) select type;
+        public static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>( [NotNull] this Assembly assembly ) {
+            if ( assembly == null ) { throw new ArgumentNullException( paramName: nameof( assembly ) ); }
 
-        // I find that the default GetFields behavior is not suitable to my needs
-        public static IEnumerable<FieldInfo> GetAllDeclaredInstanceFields( this Type type ) => type.GetFields( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly );
+            return assembly.GetTypes().Where( type => type.IsSubclassOf( typeof( TBase ) ) );
+        }
+
+        public static IEnumerable<FieldInfo> GetAllDeclaredInstanceFields( [NotNull] this Type type ) {
+            if ( type == null ) { throw new ArgumentNullException( paramName: nameof( type ) ); }
+
+            return type.GetFields( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly );
+        }
 
         /// <summary>
         ///     A typesafe wrapper for Attribute.GetCustomAttribute
         /// </summary>
         /// <remarks>TODO: add overloads for Assembly, Module, and ParameterInfo</remarks>
-        public static TAttribute GetCustomAttribute<TAttribute>( this MemberInfo element ) where TAttribute : Attribute => ( TAttribute )Attribute.GetCustomAttribute( element, typeof( TAttribute ) );
+        public static TAttribute GetCustomAttribute<TAttribute>( [NotNull] this MemberInfo element ) where TAttribute : Attribute {
+            if ( element == null ) { throw new ArgumentNullException( paramName: nameof( element ) ); }
+
+            return Attribute.GetCustomAttribute( element, typeof( TAttribute ) ) as TAttribute;
+        }
 
         /// <summary>
         ///     All types across multiple assemblies
         /// </summary>
-        public static IEnumerable<Type> GetTypes( this IEnumerable<Assembly> assemblies ) => assemblies.SelectMany( assembly => assembly.GetTypes() );
+        public static IEnumerable<Type> GetTypes( [NotNull] this IEnumerable<Assembly> assemblies ) {
+            if ( assemblies == null ) { throw new ArgumentNullException( paramName: nameof( assemblies ) ); }
+
+            return assemblies.SelectMany( assembly => assembly.GetTypes() );
+        }
 
         /// <summary>
         ///     Check if the given type has the given attribute on it. Don't look at base classes.
         /// </summary>
         /// <owner>jayBaz</owner>
-        public static Boolean TypeHasAttribute<TAttribute>( this Type type ) where TAttribute : Attribute => Attribute.IsDefined( type, typeof( TAttribute ) );
+        public static Boolean TypeHasAttribute<TAttribute>( [NotNull] this Type type ) where TAttribute : Attribute {
+            if ( type == null ) { throw new ArgumentNullException( paramName: nameof( type ) ); }
+
+            return Attribute.IsDefined( type, typeof( TAttribute ) );
+        }
     }
 }

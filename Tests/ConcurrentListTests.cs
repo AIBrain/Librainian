@@ -30,17 +30,14 @@
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/ConcurrentListTests.cs" was last cleaned by Protiguous on 2018/05/16 at 4:43 AM.
+// "Librainian/Librainian/ConcurrentListTests.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
 
 namespace Librainian.Collections {
 
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading;
-    using Maths;
     using NUnit.Framework;
-    using Persistence;
 
     [TestFixture]
     public static class ConcurrentListTests {

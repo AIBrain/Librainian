@@ -306,7 +306,7 @@ namespace Librainian.Persistence {
 
                 if ( document.Exists() ) { document.Delete(); }
 
-                return this.Data.Save( document: document, overwrite: true, formatting: Formatting.Indented );
+                return this.Data.TrySave( document: document, overwrite: true, formatting: Formatting.Indented );
             }, cancellationToken: cancellationToken );
         }
     }

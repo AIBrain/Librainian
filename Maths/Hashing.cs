@@ -1,36 +1,29 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "Hashing.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code, "Hashing.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/Hashing.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
+// "Librainian/Librainian/Hashing.cs" was last formatted by Protiguous on 2018/05/18 at 11:53 PM.
 
 namespace Librainian.Maths {
 
@@ -117,7 +110,7 @@ namespace Librainian.Maths {
         public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6, Int32 h7 ) => h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5.CombineHashCodes( h6, h7 ) );
 
         /// <summary>
-        ///     Takes one UInt64, returns another <see cref="Deterministic" /> UInt64.
+        ///     Takes one <see cref="UInt64" />, and returns another Deterministic <see cref="UInt64" />.
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
@@ -134,6 +127,26 @@ namespace Librainian.Maths {
             translate64.SignedHigh = Convert.ToInt32( bufferB );
 
             return translate64.UnsignedValue;
+        }
+
+        /// <summary>
+        ///     Takes one <see cref="Int64" />, and returns another Deterministic <see cref="Int64" />.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static Int64 Deterministic( this Int64 index ) {
+            var translate64 = new Translate64 { SignedValue = index };
+
+            var bufferA = new Byte[sizeof( Int32 )];
+            new Random( translate64.SignedLow ).NextBytes( bufferA );
+
+            var bufferB = new Byte[sizeof( Int32 )];
+            new Random( translate64.SignedHigh ).NextBytes( bufferB );
+
+            translate64.SignedLow = Convert.ToInt32( bufferA );
+            translate64.SignedHigh = Convert.ToInt32( bufferB );
+
+            return translate64.SignedValue;
         }
 
         public static Byte GetHashCodeByte<TLeft>( this TLeft objectA, Byte maximum = Byte.MaxValue ) {
@@ -193,14 +206,14 @@ namespace Librainian.Maths {
         /// <param name="objectA"></param>
         /// <param name="objectB"></param>
         /// <returns></returns>
-        public static UInt64 GetHashCodes<TLeft, TRight>( this TLeft objectA, TRight objectB ) {
+        public static Int32 GetHashCodes<TLeft, TRight>( this TLeft objectA, TRight objectB ) {
             if ( Equals( objectA, default ) ) { return 0; }
 
             if ( Equals( objectB, default ) ) { return 0; }
 
             var bob = new Translate64( objectA.GetHashCode(), objectB.GetHashCode() );
 
-            return bob.UnsignedValue;
+            return bob.SignedLow;
         }
 
         public static UInt16 GetHashCodeUInt16<TLeft>( this TLeft objectA, UInt16 maximum = UInt16.MaxValue ) {

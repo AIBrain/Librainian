@@ -30,7 +30,7 @@
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/TaskExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:50 PM.
+// "Librainian/Librainian/TaskExtensions.cs" was last formatted by Protiguous on 2018/05/17 at 3:49 PM.
 
 namespace Librainian.Threading {
 
@@ -50,14 +50,14 @@ namespace Librainian.Threading {
     public static class TaskExtensions {
 
         /// <summary>
-        ///     Automatically apply <see cref="Task.ConfigureAwait" /> to the task.
+        ///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
         /// </summary>
         /// <param name="task"></param>
         /// <returns></returns>
         public static ConfiguredTaskAwaitable NoUI( this Task task ) => task.ConfigureAwait( false );
 
         /// <summary>
-        ///     Automatically apply <see cref="Task.ConfigureAwait" /> to the task.
+        ///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="task"></param>
@@ -188,9 +188,9 @@ namespace Librainian.Threading {
         public static async Task Then( this Span delay, [NotNull] Action job ) {
             if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
-            await Task.Delay( delay: delay ).ConfigureAwait( false );
+            await Task.Delay( delay: delay ).NoUI();
 
-            await Task.Run( job ).ConfigureAwait( false );
+            await Task.Run( job ).NoUI();
         }
 
         /// <summary>
@@ -202,9 +202,9 @@ namespace Librainian.Threading {
         public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
             if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
-            await Task.Delay( delay: delay ).ConfigureAwait( false );
+            await Task.Delay( delay: delay ).NoUI();
 
-            await Task.Run( job ).ConfigureAwait( false );
+            await Task.Run( job ).NoUI();
         }
 
         /// <summary>
@@ -216,9 +216,9 @@ namespace Librainian.Threading {
         public static async Task Then( this Seconds delay, [NotNull] Action job ) {
             if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
-            await Task.Delay( delay: delay ).ConfigureAwait( false );
+            await Task.Delay( delay: delay ).NoUI();
 
-            await Task.Run( job ).ConfigureAwait( false );
+            await Task.Run( job ).NoUI();
         }
 
         /// <summary>
@@ -230,9 +230,9 @@ namespace Librainian.Threading {
         public static async Task Then( this Minutes delay, [NotNull] Action job ) {
             if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
-            await Task.Delay( delay: delay ).ConfigureAwait( false );
+            await Task.Delay( delay: delay ).NoUI();
 
-            await Task.Run( job ).ConfigureAwait( false );
+            await Task.Run( job ).NoUI();
         }
 
         /// <summary>
@@ -319,7 +319,5 @@ namespace Librainian.Threading {
                 return null;
             }
         }
-
-        public static ConfiguredTaskAwaitable Multitude( params Action[] actions ) => Task.Run( () => { Parallel.Invoke( actions ); } ).ConfigureAwait( false );
     }
 }

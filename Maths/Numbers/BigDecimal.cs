@@ -1,36 +1,28 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any
+// source code used or derived from our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "BigDecimal.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code, "BigDecimal.cs", belongs to Rick@AIBrain.org
+// and Protiguous@Protiguous.com unless otherwise specified
+// or the original license has been overwritten by the automatic formatting.
 //
 // (We try to avoid that from happening, but it does happen.)
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
+// Any unmodified portions of source code gleaned from other projects
+// still retain their original license and our thanks goes to those Authors.
 //
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
+// Donations, royalties from any software that uses any of our code,
+// and license fees can be paid to us via
 // bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// =========================================================
 // Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
-// =========================================================
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/BigDecimal.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
+// "Librainian/Librainian/BigDecimal.cs" was last formatted by Protiguous on 2018/05/17 at 5:11 PM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -109,7 +101,7 @@ namespace Librainian.Maths.Numbers {
             this.Exponent = exponent;
 
             //BUG is this correct?
-            //TODO
+            //TODO is this correct?
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             while ( exponent > 0 && this.Significand % 10 == 0 ) {
@@ -349,7 +341,7 @@ namespace Librainian.Maths.Numbers {
         }
 
         /// <summary>
-        ///     Do not know if casting and math here is correct (bug free and overflow free)
+        ///     Don't know if casting and math here is correct (bug free and overflow free)
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -545,8 +537,8 @@ namespace Librainian.Maths.Numbers {
             if ( !( unscaledValue.Length + scale.Length ).CanAllocateMemory() ) { throw new OutOfMemoryException( "ToByteArray() is too large to allocate" ); }
 
             var bytes = new Byte[unscaledValue.Length + scale.Length];
-            Array.Copy( unscaledValue, 0, bytes, 0, unscaledValue.Length );
-            Array.Copy( scale, 0, bytes, unscaledValue.Length, scale.Length );
+            Buffer.BlockCopy( unscaledValue, 0, bytes, 0, unscaledValue.Length );
+            Buffer.BlockCopy( scale, 0, bytes, unscaledValue.Length, scale.Length );
 
             return bytes;
         }
@@ -795,15 +787,15 @@ namespace Librainian.Maths.Numbers {
                         return false;
                     }
                     var chArray1 = new char[ num1 + length1 ];
-                    Array.Copy( buf, sourceIndex1, chArray1, 0, num1 );
+                    Buffer.BlockCopy( buf, sourceIndex1, chArray1, 0, num1 );
                     if ( length1 > 0 ) {
-                        Array.Copy( buf, sourceIndex2, chArray1, num1, length1 );
+                        Buffer.BlockCopy( buf, sourceIndex2, chArray1, num1, length1 );
                     }
                     var coeff = BigInteger.Parse( new String( chArray1 ) );
                     var result = 0;
                     if ( length2 > 0 ) {
                         var chArray2 = new char[ length2 ];
-                        Array.Copy( buf, sourceIndex3, chArray2, 0, length2 );
+                        Buffer.BlockCopy( buf, sourceIndex3, chArray2, 0, length2 );
                         if ( throwOnError ) {
                             result = int.Parse( new String( chArray2 ), CultureInfo.InvariantCulture );
                         }

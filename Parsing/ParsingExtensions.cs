@@ -50,6 +50,7 @@ namespace Librainian.Parsing {
     using System.Threading;
     using System.Xml;
     using Collections;
+    using Extensions;
     using JetBrains.Annotations;
     using Linguistics;
     using Maths;
@@ -286,8 +287,8 @@ namespace Librainian.Parsing {
 
             // Ensure arrays [i] / length1 use shorter length
             if ( length1 > length2 ) {
-                MathExtensions.Swap( ref target, ref source );
-                MathExtensions.Swap( ref length1, ref length2 );
+                CommonExtensions.Swap( ref target, ref source );
+                CommonExtensions.Swap( ref length1, ref length2 );
             }
 
             var maxi = length1;

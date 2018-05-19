@@ -1,42 +1,32 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any
+// source code used or derived from our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "C5Random.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code, "C5Random.cs", belongs to Rick@AIBrain.org
+// and Protiguous@Protiguous.com unless otherwise specified
+// or the original license has been overwritten by the automatic formatting.
 //
 // (We try to avoid that from happening, but it does happen.)
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
+// Any unmodified portions of source code gleaned from other projects
+// still retain their original license and our thanks goes to those Authors.
 //
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
+// Donations, royalties from any software that uses any of our code,
+// and license fees can be paid to us via
 // bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
-// =========================================================
 // Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
-// =========================================================
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/C5Random.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
+// "Librainian/Librainian/C5Random.cs" was last formatted by Protiguous on 2018/05/17 at 5:10 PM.
 
 namespace Librainian.Security {
 
     using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Threading;
     using JetBrains.Annotations;
 
     /*
@@ -69,6 +59,12 @@ namespace Librainian.Security {
     /// </summary>
     public sealed class C5Random : Random, IDisposable {
 
+        private readonly UInt32[] _q = new UInt32[16];
+
+        private UInt32 _c = 362436;
+
+        private UInt32 _i = 15;
+
         /// <summary>Create a random number generator seed by system time.</summary>
         public C5Random() : this( seed: DateTime.Now.Ticks ) { }
 
@@ -84,10 +80,10 @@ namespace Librainian.Security {
                 j ^= j << 13;
                 j ^= j >> 17;
                 j ^= j << 5;
-                this.Q.Value[i] = j;
+                this._q[i] = j;
             }
 
-            this.Q.Value[15] = ( UInt32 )( seed ^ ( seed >> 32 ) );
+            this._q[15] = ( UInt32 )( seed ^ ( seed >> 32 ) );
         }
 
         /// <summary>Create a random number generator with a specified internal start state.</summary>
@@ -98,32 +94,26 @@ namespace Librainian.Security {
         public C5Random( [NotNull] UInt32[] q ) {
             if ( q is null ) { throw new ArgumentNullException( nameof( q ) ); }
 
-            if ( q.Length > 16 ) { throw new ArgumentException( "Q must have length 16, was " + q.Length ); }
+            if ( q.Length != 16 ) { throw new ArgumentException( "Q must have length 16, was " + q.Length ); }
 
-            Array.Copy( sourceArray: q, destinationArray: this.Q.Value, this.Q.Value.Length );
+            Buffer.BlockCopy( q, 0, this._q, 0, q.Length );
         }
-
-        private ThreadLocal<UInt32> C { get; } = new ThreadLocal<UInt32>( valueFactory: () => 362436, trackAllValues: false );
-
-        private ThreadLocal<UInt32> I { get; } = new ThreadLocal<UInt32>( valueFactory: () => 15, trackAllValues: false );
-
-        private ThreadLocal<UInt32[]> Q { get; } = new ThreadLocal<UInt32[]>( valueFactory: () => new UInt32[16], trackAllValues: false );
 
         private UInt32 Cmwc() {
             const UInt64 a = 487198574UL;
             const UInt32 r = 0xfffffffe;
 
-            this.I.Value = ( this.I.Value + 1 ) & 15;
-            var t = a * this.Q.Value[this.I.Value] + this.C.Value;
-            this.C.Value = ( UInt32 )( t >> 32 );
-            var x = ( UInt32 )( t + this.C.Value );
+            this._i = ( this._i + 1 ) & 15;
+            var t = a * this._q[this._i] + this._c;
+            this._c = ( UInt32 )( t >> 32 );
+            var x = ( UInt32 )( t + this._c );
 
-            if ( x >= this.C.Value ) { return this.Q.Value[this.I.Value] = r - x; }
+            if ( x >= this._c ) { return this._q[this._i] = r - x; }
 
             x++;
-            this.C.Value++;
+            this._c++;
 
-            return this.Q.Value[this.I.Value] = r - x;
+            return this._q[this._i] = r - x;
         }
 
         /// <summary>Get a new random System.Double value</summary>
@@ -131,14 +121,7 @@ namespace Librainian.Security {
         protected override Double Sample() => this.NextDouble();
 
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-        [SuppressMessage( category: "Microsoft.Usage", checkId: "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<Q>k__BackingField" )]
-        [SuppressMessage( category: "Microsoft.Usage", checkId: "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<I>k__BackingField" )]
-        [SuppressMessage( category: "Microsoft.Usage", checkId: "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<C>k__BackingField" )]
-        public void Dispose() {
-            this.C.Dispose();
-            this.I.Dispose();
-            this.Q.Dispose();
-        }
+        public void Dispose() { }
 
         /// <summary>Get a new random System.Int32 value</summary>
         /// <returns>The random int</returns>

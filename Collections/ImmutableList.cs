@@ -65,7 +65,7 @@ namespace Librainian.Collections {
             if ( arrayToCopy is null ) { throw new ArgumentNullException( nameof( arrayToCopy ) ); }
 
             this._mArray = new T[arrayToCopy.Length];
-            Array.Copy( sourceArray: arrayToCopy, destinationArray: this._mArray, arrayToCopy.Length );
+            Buffer.BlockCopy( sourceArray: arrayToCopy, destinationArray: this._mArray, arrayToCopy.Length );
         }
 
         /// <summary>
@@ -130,9 +130,9 @@ namespace Librainian.Collections {
         /// <returns>A modified copy of this list.</returns>
         public ImmutableList<T> CopyAndInsert( Int32 index, T item ) {
             var newArray = new T[this._mArray.Length + 1];
-            Array.Copy( sourceArray: this._mArray, destinationArray: newArray, index );
+            Buffer.BlockCopy( sourceArray: this._mArray, destinationArray: newArray, index );
             newArray[index] = item;
-            Array.Copy( sourceArray: this._mArray, sourceIndex: index, destinationArray: newArray, destinationIndex: index + 1, this._mArray.Length - index );
+            Buffer.BlockCopy( sourceArray: this._mArray, sourceIndex: index, destinationArray: newArray, destinationIndex: index + 1, this._mArray.Length - index );
 
             return new ImmutableList<T>( arrayToCopy: newArray );
         }
@@ -157,8 +157,8 @@ namespace Librainian.Collections {
         /// <returns>A modified copy of this list.</returns>
         public ImmutableList<T> CopyAndRemoveAt( Int32 index ) {
             var newArray = new T[this._mArray.Length - 1];
-            Array.Copy( sourceArray: this._mArray, destinationArray: newArray, index );
-            Array.Copy( sourceArray: this._mArray, sourceIndex: index + 1, destinationArray: newArray, destinationIndex: index, this._mArray.Length - index - 1 );
+            Buffer.BlockCopy( sourceArray: this._mArray, destinationArray: newArray, index );
+            Buffer.BlockCopy( sourceArray: this._mArray, sourceIndex: index + 1, destinationArray: newArray, destinationIndex: index, this._mArray.Length - index - 1 );
 
             return new ImmutableList<T>( arrayToCopy: newArray );
         }
