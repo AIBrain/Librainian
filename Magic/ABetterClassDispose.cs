@@ -1,53 +1,45 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "ABetterClassDispose.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "ABetterClassDispose.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/ABetterClassDispose.cs" was last cleaned by Protiguous on 2018/05/15 at 10:45 PM.
+// "Librainian/Librainian/ABetterClassDispose.cs" was last formatted by Protiguous on 2018/05/23 at 9:18 PM.
 
 namespace Librainian.Magic {
 
     using System;
-    using Exceptions;
-    using FluentAssertions;
-    using JetBrains.Annotations;
-    using Parsing;
+    using System.Diagnostics;
 
     /// <summary>
     ///     <para>A better class for implementing the <see cref="IDisposable" /> pattern.</para>
+    ///     <para><see cref="Dispose" /> can be called multiple times with no side effects.</para>
     ///     <para>Override <see cref="DisposeManaged" /> and <see cref="DisposeNative" />.</para>
     /// </summary>
     /// <remarks>ABCD (hehe). Designed by Rick Harker</remarks>
     public class ABetterClassDispose : IDisposable {
 
-        ~ABetterClassDispose() => this.Dispose();
+        private Boolean Suppressed { get; set; }
 
         public Boolean HasDisposedManaged { get; private set; }
 
@@ -55,45 +47,52 @@ namespace Librainian.Magic {
 
         public Boolean IsDisposed => this.HasDisposedManaged && this.HasDisposedNative;
 
+        ~ABetterClassDispose() { this.Dispose(); }
+
         public void Dispose() {
+            if ( this.Suppressed ) { return; }
+
             try {
                 if ( !this.HasDisposedManaged ) {
-                    try { this.DisposeManaged(); }
-                    catch ( Exception exception ) { exception.Break(); }
-                    finally { this.HasDisposedManaged = true; }
+                    try {
+                        this.DisposeManaged();
+                        this.HasDisposedManaged = true;
+                    }
+                    catch ( Exception ) {
+                        if ( Debugger.IsAttached ) { Debugger.Break(); }
+                    }
                 }
 
                 if ( !this.HasDisposedNative ) {
-                    try { this.DisposeNative(); }
-                    catch ( Exception exception ) { exception.Break(); }
-                    finally { this.HasDisposedNative = true; }
+                    try {
+                        this.DisposeNative();
+                        this.HasDisposedNative = true;
+                    }
+                    catch ( Exception ) {
+                        if ( Debugger.IsAttached ) { Debugger.Break(); }
+                    }
                 }
             }
             finally {
-                if ( this.HasDisposedManaged && this.HasDisposedNative ) {
+                if ( this.HasDisposedManaged && this.HasDisposedNative && !this.Suppressed ) {
                     GC.SuppressFinalize( this );
-                }
-                else {
-                    try {
-                        if ( !this.HasDisposedManaged && !this.HasDisposedNative ) {
-                            throw new Warning( "Neither DisposeManaged() or DisposeNative() were called to dispose of this object?" );
-                        }
-                    }
-                    catch ( Exception exception ) { exception.More(); }
+                    this.Suppressed = true;
                 }
             }
         }
 
         /// <summary>
         ///     <para>Dispose any disposable managed fields or properties.</para>
-        ///     <para>Call "base.DisposeManaged();" when possible.</para>
+        ///     <para>Call "base.DisposeManaged();" or "base.<see cref="Dispose" />;" when possible.</para>
         /// </summary>
+        /// <remarks>Call sooner rathar than later for garbage collection.</remarks>
         public virtual void DisposeManaged() => this.HasDisposedManaged = true;
 
         /// <summary>
         ///     <para>Dispose of COM objects, Handles, etc. Then set those objects to null if possible.</para>
-        ///     <para>Call "base.DisposeNative();" when possible.</para>
+        ///     <para>Call "base.DisposeNative();" or "base.<see cref="Dispose" />;" when possible.</para>
         /// </summary>
+        /// <remarks>Call sooner rathar than later for garbage collection.</remarks>
         public virtual void DisposeNative() => this.HasDisposedNative = true;
     }
 }
