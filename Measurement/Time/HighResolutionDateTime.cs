@@ -42,18 +42,6 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     public static class HighResolutionDateTime {
 
-        static HighResolutionDateTime() {
-            try {
-                NativeMethods.GetSystemTimePreciseAsFileTime( out var filetime );
-                IsAvailable = true;
-            }
-            catch ( EntryPointNotFoundException ) {
-
-                // Not running Windows 8 or higher.
-                IsAvailable = false;
-            }
-        }
-
         public static Boolean IsAvailable { get; }
 
         public static DateTime UtcNow {
@@ -63,6 +51,18 @@ namespace Librainian.Measurement.Time {
                 NativeMethods.GetSystemTimePreciseAsFileTime( out var filetime );
 
                 return DateTime.FromFileTimeUtc( filetime );
+            }
+        }
+
+        static HighResolutionDateTime() {
+            try {
+                NativeMethods.GetSystemTimePreciseAsFileTime( out _ );
+                IsAvailable = true;
+            }
+            catch ( EntryPointNotFoundException ) {
+
+                // Not running Windows 8 or higher.
+                IsAvailable = false;
             }
         }
     }

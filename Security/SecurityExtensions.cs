@@ -45,12 +45,11 @@ namespace Librainian.Security {
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using ComputerSystems.FileSystem;
     using Extensions;
-    using FileSystem;
     using JetBrains.Annotations;
-    using Maths;
     using Mono.Math;
-    using NUnit.Framework;
+    using Threading;
 
     public static class SecurityExtensions {
 
@@ -411,9 +410,9 @@ namespace Librainian.Security {
                 return false;
             }
 
-            var inputFileSize = ( Single? )input.Size();
+            var inputFileSize = ( Single )input.Size();
 
-            if ( !inputFileSize.HasValue || inputFileSize.Value <= 0 ) {
+            if ( inputFileSize <= 0 ) {
                 exceptions.Add( item: new FileNotFoundException( $"The input file {input.FullPathWithFileName} is empty." ) );
 
                 return false;
@@ -472,7 +471,7 @@ namespace Librainian.Security {
 
                                         if ( position % reportEveryXBytes.Value == 0 ) {
                                             var progress = position / inputFileSize;
-                                            reportProgress( progress.Value );
+                                            reportProgress( progress );
                                         }
                                     }
 
@@ -524,9 +523,9 @@ namespace Librainian.Security {
                 return false;
             }
 
-            var inputFileSize = ( Single? )input.Size();
+            var inputFileSize = ( Single )input.Size();
 
-            if ( !inputFileSize.HasValue || inputFileSize.Value <= 0 ) {
+            if ( inputFileSize <= 0 ) {
                 exceptions.Add( item: new FileNotFoundException( $"The input file {input.FullPathWithFileName} is empty." ) );
 
                 return false;
@@ -599,7 +598,7 @@ namespace Librainian.Security {
 
                                         if ( position % reportEveryXBytes.Value == 0 ) {
                                             var progress = position / inputFileSize;
-                                            reportProgress( progress.Value );
+                                            reportProgress( progress );
                                         }
                                     }
 
@@ -622,28 +621,6 @@ namespace Librainian.Security {
 
                 return false;
             }
-        }
-    }
-
-    [TestFixture]
-    public static class SecurityTests {
-
-        [Test]
-        public static void TestEncryptionAndDecryption() {
-            const String phraseToTest = "Hello world";
-
-            var encrypted = phraseToTest.ToSecureString().EncryptString();
-            var decrypted = encrypted.DecryptString().ToInsecureString();
-
-            Assert.AreEqual( expected: decrypted, actual: phraseToTest );
-        }
-
-        [Test]
-        public static void TestGenerateGenerates() {
-            var result = SecurityExtensions.GenerateKey( username: "Test" );
-            Console.WriteLine( result );
-
-            // 1-KbQP3bo4zph3ynO0flLTxzB8d25AY74E
         }
     }
 }

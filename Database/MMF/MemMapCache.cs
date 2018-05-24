@@ -1,36 +1,30 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "MemMapCache.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "MemMapCache.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/MemMapCache.cs" was last cleaned by Protiguous on 2018/05/15 at 10:39 PM.
+// "Librainian/Librainian/MemMapCache.cs" was last formatted by Protiguous on 2018/05/21 at 9:58 PM.
 
 namespace Librainian.Database.MMF {
 
@@ -47,25 +41,13 @@ namespace Librainian.Database.MMF {
 
         private const String Delim = "[!@#]";
 
-        private readonly Dictionary<String, DateTime> _keyExpirations;
-
         private BinaryFormatter _formatter;
 
         private NetworkStream _networkStream;
 
         private TcpClient _tcpClient;
 
-        public MemMapCache() {
-            this.Encoding = Encoding.Unicode;
-            this.ChunkSize = 1024 * 1024 * 30;
-
-            this.Server = "127.0.0.1"; //limited to local
-            this.Port = 57742;
-
-            this.CacheHitAlwaysMiss = false;
-
-            this._keyExpirations = new Dictionary<String, DateTime>();
-        }
+        private Dictionary<String, DateTime> _keyExpirations { get; }
 
         public static Int32 MaxKeyLength => 4096 - 32;
 
@@ -80,6 +62,18 @@ namespace Librainian.Database.MMF {
         public Int32 Port { get; }
 
         public String Server { get; }
+
+        public MemMapCache() {
+            this.Encoding = Encoding.Unicode;
+            this.ChunkSize = 1024 * 1024 * 30;
+
+            this.Server = "127.0.0.1"; //limited to local
+            this.Port = 57742;
+
+            this.CacheHitAlwaysMiss = false;
+
+            this._keyExpirations = new Dictionary<String, DateTime>();
+        }
 
         public void Connect() {
             this._tcpClient = new TcpClient();
@@ -109,7 +103,7 @@ namespace Librainian.Database.MMF {
                         }
                     }
 
-                    var viewStream = memoryMappedFile.CreateViewStream( offset: 0, size: 0 );
+                    var viewStream = memoryMappedFile.CreateViewStream( offset: 0, size: 0 );   //TODO
 
                     var o = this._formatter.Deserialize( serializationStream: viewStream );
 
@@ -148,8 +142,7 @@ namespace Librainian.Database.MMF {
                 var vs = mmf.CreateViewStream();
                 this._formatter.Serialize( serializationStream: vs, graph: obj );
 
-                var cmd = "{0}{1}{2}";
-                cmd = String.Format( format: cmd, arg0: key, arg1: Delim, arg2: expire.ToString( format: "s" ) );
+                var cmd = String.Format( format: "{0}{1}{2}", arg0: key, arg1: Delim, arg2: expire.ToString( format: "s" ) );
 
                 var buf = this.Encoding.GetBytes( s: cmd );
                 this._networkStream.Write( buffer: buf, offset: 0, size: buf.Length );

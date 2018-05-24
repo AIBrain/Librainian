@@ -1,36 +1,30 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "GuidUtility.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "GuidUtility.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/GuidUtility.cs" was last cleaned by Protiguous on 2018/05/15 at 10:40 PM.
+// "Librainian/Librainian/GuidUtility.cs" was last formatted by Protiguous on 2018/05/21 at 10:00 PM.
 
 namespace Librainian.Extensions {
 
@@ -47,25 +41,17 @@ namespace Librainian.Extensions {
         /// <summary>
         ///     The namespace for fully-qualified domain names (from RFC 4122, Appendix C).
         /// </summary>
-        public static readonly Guid DnsNamespace = new Guid( "6ba7b810-9dad-11d1-80b4-00c04fd430c8" );
+        public static Guid DnsNamespace { get; } = new Guid( "6ba7b810-9dad-11d1-80b4-00c04fd430c8" );
 
         /// <summary>
         ///     The namespace for ISO OIDs (from RFC 4122, Appendix C).
         /// </summary>
-        public static readonly Guid IsoOidNamespace = new Guid( "6ba7b812-9dad-11d1-80b4-00c04fd430c8" );
+        public static Guid IsoOidNamespace { get; } = new Guid( "6ba7b812-9dad-11d1-80b4-00c04fd430c8" );
 
         /// <summary>
         ///     The namespace for URLs (from RFC 4122, Appendix C).
         /// </summary>
-        public static readonly Guid UrlNamespace = new Guid( "6ba7b811-9dad-11d1-80b4-00c04fd430c8" );
-
-        // Converts a GUID (expressed as a byte array) to/from network order (MSB-first).
-        internal static void SwapByteOrder( Byte[] guid ) {
-            SwapBytes( guid, 0, 3 );
-            SwapBytes( guid, 1, 2 );
-            SwapBytes( guid, 4, 5 );
-            SwapBytes( guid, 6, 7 );
-        }
+        public static Guid UrlNamespace { get; } = new Guid( "6ba7b811-9dad-11d1-80b4-00c04fd430c8" );
 
         /// <summary>
         ///     Creates a name-based UUID using the algorithm from RFC 4122 §4.3.
@@ -106,7 +92,7 @@ namespace Librainian.Extensions {
 
             // convert the namespace UUID to network order (step 3)
             var namespaceBytes = namespaceId.ToByteArray();
-            SwapByteOrder( namespaceBytes );
+            namespaceBytes.SwapByteOrder();
 
             // compute the hash of the name space ID concatenated with the name (step 4)
             Byte[] hash;
@@ -128,16 +114,23 @@ namespace Librainian.Extensions {
             newGuid[8] = ( Byte )( ( newGuid[8] & 0x3F ) | 0x80 );
 
             // convert the resulting UUID to local byte order (step 13)
-            SwapByteOrder( newGuid );
+            newGuid.SwapByteOrder();
 
             return new Guid( newGuid );
         }
 
-        public static void SwapBytes( Byte[] guid, Int32 left, Int32 right ) {
-            Swap(
-            var temp = guid[left];
-            guid[left] = guid[right];
-            guid[right] = temp;
+        // Converts a GUID (expressed as a byte array) to/from network order (MSB-first).
+        public static void SwapByteOrder( this Byte[] guid ) {
+            guid.SwapBytes( 0, 3 );
+            guid.SwapBytes( 1, 2 );
+            guid.SwapBytes( 4, 5 );
+            guid.SwapBytes( 6, 7 );
+        }
+
+        public static void SwapBytes( this Byte[] bytes, Int32 leftIndex, Int32 rightIndex ) {
+            var temp = bytes[leftIndex];
+            bytes[leftIndex] = bytes[rightIndex];
+            bytes[rightIndex] = temp;
         }
     }
 }

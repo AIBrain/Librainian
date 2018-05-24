@@ -1,36 +1,30 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "IniFile.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "IniFile.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/IniFile.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
+// "Librainian/Librainian/IniFile.cs" was last formatted by Protiguous on 2018/05/21 at 11:19 PM.
 
 namespace Librainian.Persistence {
 
@@ -41,10 +35,9 @@ namespace Librainian.Persistence {
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using ComputerSystems.FileSystem;
     using Extensions;
-    using FileSystem;
     using JetBrains.Annotations;
-    using Maths;
     using Newtonsoft.Json;
     using Parsing;
 
@@ -59,6 +52,19 @@ namespace Librainian.Persistence {
         private const String SectionBegin = "[";
 
         private const String SectionEnd = "]";
+
+        [JsonProperty]
+        [NotNull]
+        private ConcurrentDictionary<String, ConcurrentDictionary<String, String>> Data { [DebuggerStepThrough] get; } = new ConcurrentDictionary<String, ConcurrentDictionary<String, String>>();
+
+        /// <summary>
+        ///     <para>WARNING: Set this value AFTER <see cref="Add(Document)" />.</para>
+        ///     <para>If <see cref="AutoSaveDocument" /> is set, the entire dictionary/text is saved on each change.</para>
+        /// </summary>
+        [JsonProperty]
+        public Document AutoSaveDocument { get; set; }
+
+        public IEnumerable<String> Sections => this.Data.Keys;
 
         public IniFile( String data ) {
 
@@ -80,19 +86,6 @@ namespace Librainian.Persistence {
         }
 
         public IniFile() { }
-
-        [JsonProperty]
-        [NotNull]
-        private ConcurrentDictionary<String, ConcurrentDictionary<String, String>> Data { [DebuggerStepThrough] get; } = new ConcurrentDictionary<String, ConcurrentDictionary<String, String>>();
-
-        /// <summary>
-        ///     <para>WARNING: Set this value AFTER <see cref="Add(Document)" />.</para>
-        ///     <para>If <see cref="AutoSaveDocument" /> is set, the entire dictionary/text is saved on each change.</para>
-        /// </summary>
-        [JsonProperty]
-        public Document AutoSaveDocument { get; set; }
-
-        public IEnumerable<String> Sections => this.Data.Keys;
 
         public IReadOnlyDictionary<String, String> this[[CanBeNull] String section] {
             [DebuggerStepThrough]
@@ -330,7 +323,7 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <returns></returns>
         public Boolean Clear() {
-            Parallel.ForEach( this.Data.Keys, section => { this.TryRemove( section ); } );
+            Parallel.ForEach( this.Data.Keys, section => this.TryRemove( section ) );
 
             return !this.Data.Keys.Any();
         }

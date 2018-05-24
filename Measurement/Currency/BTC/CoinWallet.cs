@@ -55,7 +55,7 @@ namespace Librainian.Measurement.Currency.BTC {
     ///     production.. Use at your own risk. Any tips or ideas? Any dos or dont's? Email me!
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( "{" + nameof( this.Formatted ) + ",nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class CoinWallet : ABetterClassDispose, IEnumerable<KeyValuePair<ICoin, UInt64>>, ICoinWallet {
 
         /// <summary>
@@ -63,6 +63,31 @@ namespace Librainian.Measurement.Currency.BTC {
         /// </summary>
         [NotNull]
         private readonly ConcurrentDictionary<ICoin, UInt64> _coins = new ConcurrentDictionary<ICoin, UInt64>();
+
+        private ActionBlock<BitcoinTransactionMessage> Actor { get; set; }
+
+        /// <summary>
+        ///     Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.
+        /// </summary>
+        [NotNull]
+        public IEnumerable<ICoin> Coins => this._coins.SelectMany( pair => 1.To( pair.Value ), ( pair, valuePair ) => pair.Key );
+
+        [NotNull]
+        public IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped => this._coins;
+
+        public Guid ID { get; }
+
+        public Action<KeyValuePair<ICoin, UInt64>> OnDeposit { get; set; }
+
+        public Action<KeyValuePair<ICoin, UInt64>> OnWithdraw { get; set; }
+
+        [JsonProperty]
+        public WalletStatistics Statistics { get; } = new WalletStatistics();
+
+        /// <summary>
+        ///     Return the total amount of money contained in this <see cref="CoinWallet" />.
+        /// </summary>
+        public Decimal Total => this._coins.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue * pair.Value );
 
         private CoinWallet( Guid id ) {
             this.ID = id;
@@ -83,39 +108,6 @@ namespace Librainian.Measurement.Currency.BTC {
                 }
             }, Blocks.ManyProducers.ConsumeSerial );
         }
-
-        private ActionBlock<BitcoinTransactionMessage> Actor { get; set; }
-
-        /// <summary>
-        ///     Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.
-        /// </summary>
-        [NotNull]
-        public IEnumerable<ICoin> Coins => this._coins.SelectMany( pair => 1.To( pair.Value ), ( pair, valuePair ) => pair.Key );
-
-        [NotNull]
-        public IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped => this._coins;
-
-        public String Formatted {
-            get {
-                var coins = this._coins.Aggregate( 0UL, ( current, pair ) => current + pair.Value );
-
-                return $"฿{this.Total:F8} (in {coins:N0} coins)";
-            }
-        }
-
-        public Guid ID { get; }
-
-        public Action<KeyValuePair<ICoin, UInt64>> OnDeposit { get; set; }
-
-        public Action<KeyValuePair<ICoin, UInt64>> OnWithdraw { get; set; }
-
-        [JsonProperty]
-        public WalletStatistics Statistics { get; } = new WalletStatistics();
-
-        /// <summary>
-        ///     Return the total amount of money contained in this <see cref="CoinWallet" />.
-        /// </summary>
-        public Decimal Total => this._coins.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue * pair.Value );
 
         /// <summary>
         ///     Create an empty wallet with the given <paramref name="id" />. If the given <paramref name="id" /> is null or
@@ -171,6 +163,13 @@ namespace Librainian.Measurement.Currency.BTC {
         public override void DisposeManaged() => this.Statistics.Dispose();
 
         public IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator() => this._coins.GetEnumerator();
+
+        public override String ToString() {
+
+            var coins = this._coins.Aggregate( 0UL, ( current, pair ) => current + pair.Value );
+
+            return $"฿{this.Total:F8} (in {coins:N0} coins)";
+        }
 
         /// <summary>
         ///     Attempt to <see cref="TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this

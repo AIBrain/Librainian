@@ -121,6 +121,8 @@
     <Compile Include="Collections\PriorityQueue.cs" />
     <Compile Include="Collections\PriorityTime.cs" />
     <Compile Include="Collections\StringTable.cs" />
+    <Compile Include="ComputerSystems\FileSystem\Win32DiskPartition.cs" />
+    <Compile Include="ComputerSystems\Memory.cs" />
     <Compile Include="Controls\CheckboxWithToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -140,6 +142,9 @@
     <Compile Include="Controls\HistogramaDesenat.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Converters\ConverterExtensions.cs" />
+    <Compile Include="Converters\TranslateDecimalGuid.cs" />
+    <Compile Include="Converters\TranslateGuidUInt64.cs" />
     <Compile Include="Database\DatabaseErrors.cs" />
     <Compile Include="Database\DurableDatabase.cs" />
     <Compile Include="Database\Excel.cs" />
@@ -167,24 +172,21 @@
     <Compile Include="Extensions\EvalProvider.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Controls\ListBoxLog.cs" />
-    <Compile Include="FileSystem\AllSeeingWatcher.cs" />
-    <Compile Include="FileSystem\Chunk.cs" />
-    <Compile Include="FileSystem\FolderBag.Node.cs" />
-    <Compile Include="FileSystem\FolderTests.cs" />
-    <Compile Include="FileSystem\Location.cs" />
-    <Compile Include="FileSystem\Logical\LogicalDisk.cs" />
-    <Compile Include="FileSystem\PhysicalDiskTests.cs" />
-    <Compile Include="FileSystem\DriveTests.cs" />
-    <Compile Include="FileSystem\Physical\Device.cs" />
-    <Compile Include="FileSystem\Physical\DeviceCapabilities.cs" />
-    <Compile Include="FileSystem\Physical\DeviceClass.cs" />
-    <Compile Include="FileSystem\Physical\DiskDeviceClass.cs" />
-    <Compile Include="FileSystem\Physical\Volume.cs" />
-    <Compile Include="FileSystem\Physical\VolumeDeviceClass.cs" />
-    <Compile Include="FileSystem\ResultCode.cs" />
-    <Compile Include="FileSystem\Win32DiskPartition.cs" />
-    <Compile Include="FileSystem\NetworkConnection.cs" />
-    <Compile Include="FileSystem\Partitions.cs" />
+    <Compile Include="ComputerSystems\FileSystem\AllSeeingWatcher.cs" />
+    <Compile Include="ComputerSystems\FileSystem\Chunk.cs" />
+    <Compile Include="ComputerSystems\FileSystem\FolderBag.Node.cs" />
+    <Compile Include="ComputerSystems\FileSystem\Location.cs" />
+    <Compile Include="ComputerSystems\Devices\LogicalDisk.cs" />
+    <Compile Include="ComputerSystems\FileSystem\DriveTests.cs" />
+    <Compile Include="ComputerSystems\Devices\Device.cs" />
+    <Compile Include="ComputerSystems\Devices\DeviceCapabilities.cs" />
+    <Compile Include="ComputerSystems\Devices\DeviceClass.cs" />
+    <Compile Include="ComputerSystems\Devices\DiskDeviceClass.cs" />
+    <Compile Include="ComputerSystems\FileSystem\Physical\Volume.cs" />
+    <Compile Include="ComputerSystems\Devices\VolumeDeviceClass.cs" />
+    <Compile Include="ComputerSystems\FileSystem\ResultCode.cs" />
+    <Compile Include="ComputerSystems\FileSystem\NetworkConnection.cs" />
+    <Compile Include="ComputerSystems\FileSystem\Partitions.cs" />
     <Compile Include="Financial\Containers\Wallets\CashDrawer.cs" />
     <Compile Include="Financial\Containers\Shopping\ShoppingItem.cs" />
     <Compile Include="Financial\Containers\Shopping\ShoppingCart.cs" />
@@ -224,7 +226,6 @@
     <Compile Include="Maths\UInt64ToDouble.cs" />
     <Compile Include="Measurement\Benchmark.cs" />
     <Compile Include="Measurement\BenchmarkResult.cs" />
-    <Compile Include="Measurement\BenchmarkTests.cs" />
     <Compile Include="Measurement\Spatial\Compass.cs" />
     <Compile Include="Measurement\Time\DateSpanTests.cs" />
     <Compile Include="Measurement\Time\DateSpan.cs" />
@@ -233,12 +234,13 @@
     <Compile Include="Measurement\Time\HighResolutionDateTime.cs" />
     <Compile Include="Measurement\Time\Clocks\WindowsClock.cs" />
     <Compile Include="Measurement\Time\Duration.cs" />
+    <Compile Include="Measurement\Time\PlanckExtensions.cs" />
     <Compile Include="Misc\PlaySound.cs" />
     <Compile Include="Misc\Applications\Class1.cs" />
     <Compile Include="OperatingSystem\Audio.cs" />
     <Compile Include="OperatingSystem\OSExtensions.cs" />
     <Compile Include="OperatingSystem\OSInfoTests.cs" />
-    <Compile Include="OperatingSystem\DetectSSD.cs" />
+    <Compile Include="OperatingSystem\Storage\DetectSSD.cs" />
     <Compile Include="OperatingSystem\Info.cs" />
     <Compile Include="OperatingSystem\SystemRestorePoints.cs" />
     <Compile Include="OperatingSystem\WinSAT.cs" />
@@ -247,6 +249,7 @@
     <Compile Include="Persistence\ConcurrentListFile.cs" />
     <Compile Include="Persistence\Data.cs" />
     <Compile Include="Persistence\DocumentInfo.cs" />
+    <Compile Include="Persistence\Alpha.cs" />
     <Compile Include="Persistence\Section.cs" />
     <Compile Include="Security\AES.cs" />
     <Compile Include="Security\Document.cs" />
@@ -258,11 +261,9 @@
     <Compile Include="Measurement\Time\Clocks\GameTimer.cs" />
     <Compile Include="Measurement\Time\Clocks\PauseableClock.cs" />
     <Compile Include="OperatingSystem\Compression\ZipStorer.cs" />
-    <Compile Include="OperatingSystem\Computer.cs" />
-    <Compile Include="FileSystem\FolderBag.cs" />
-    <Compile Include="FileSystem\DocumentCopyStatistics.cs" />
-    <Compile Include="FileSystem\DefragTests.cs" />
-    <Compile Include="FileSystem\PathSplitterTests.cs" />
+    <Compile Include="ComputerSystems\Computer.cs" />
+    <Compile Include="ComputerSystems\FileSystem\FolderBag.cs" />
+    <Compile Include="ComputerSystems\FileSystem\DocumentCopyStatistics.cs" />
     <Compile Include="OperatingSystem\Windows.cs" />
     <Compile Include="Extensions\DerivedSerializableExceptionWithAdditionalCustomProperty.cs" />
     <Compile Include="Extensions\CopyProgressRoutine.cs" />
@@ -300,23 +301,22 @@
     <Compile Include="Internet\TraceExtensions.cs" />
     <Compile Include="Internet\InternetExtensions.cs" />
     <Compile Include="OperatingSystem\ComputerFingerPrint.cs" />
-    <Compile Include="FileSystem\DefragExtensions.cs" />
-    <Compile Include="FileSystem\DocumentExtensions.cs" />
-    <Compile Include="FileSystem\PhysicalDisk.cs" />
-    <Compile Include="FileSystem\Drive.cs" />
-    <Compile Include="FileSystem\DriveExtensions.cs" />
+    <Compile Include="ComputerSystems\FileSystem\DefragExtensions.cs" />
+    <Compile Include="ComputerSystems\FileSystem\DocumentExtensions.cs" />
+    <Compile Include="OperatingSystem\Storage\PhysicalDisk.cs" />
+    <Compile Include="ComputerSystems\FileSystem\Drive.cs" />
+    <Compile Include="ComputerSystems\FileSystem\DriveExtensions.cs" />
     <Compile Include="OperatingSystem\FileHistory\FileHistoryFile.cs" />
     <Compile Include="OperatingSystem\FileHistory\FileHistoryFileExtensions.cs" />
     <Compile Include="OperatingSystem\FileHistory\FileHistoryFileTests.cs" />
-    <Compile Include="FileSystem\FolderExtensions.cs" />
-    <Compile Include="FileSystem\FSConstants.cs" />
-    <Compile Include="FileSystem\IOWrapper.cs" />
-    <Compile Include="FileSystem\PathSplitter.cs" />
+    <Compile Include="ComputerSystems\FileSystem\FolderExtensions.cs" />
+    <Compile Include="ComputerSystems\FileSystem\FSConstants.cs" />
+    <Compile Include="ComputerSystems\FileSystem\IOWrapper.cs" />
+    <Compile Include="ComputerSystems\FileSystem\PathSplitter.cs" />
     <Compile Include="Magic\ChainElement.cs" />
     <Compile Include="Magic\Instantiator.cs" />
     <Compile Include="Maths\Constants.cs" />
     <Compile Include="Maths\Numbers\Countable.cs" />
-    <Compile Include="Maths\CountableIntegersTests.cs" />
     <Compile Include="Maths\Numbers\Int256.cs" />
     <Compile Include="Maths\Credits.cs" />
     <Compile Include="Maths\Ranges\DecimalRange.cs" />
@@ -406,11 +406,11 @@
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\DummyXMLResolver.cs" />
     <Compile Include="Extensions\EventArgs.cs" />
-    <Compile Include="FileSystem\FileSizeFormatProviderExtensions.cs" />
+    <Compile Include="ComputerSystems\FileSystem\FileSizeFormatProviderExtensions.cs" />
     <Compile Include="Extensions\FuzzyPredicateBuilder.cs" />
     <Compile Include="Extensions\HashSetLinqAccess.cs" />
     <Compile Include="Extensions\ImmutableAttribute.cs" />
-    <Compile Include="FileSystem\JunctionPoint.cs" />
+    <Compile Include="ComputerSystems\FileSystem\JunctionPoint.cs" />
     <Compile Include="Extensions\LargeSizeFormatProvider.cs" />
     <Compile Include="Extensions\LargeSizeFormatProviderExtensions.cs" />
     <Compile Include="Extensions\Locks.cs" />
@@ -466,19 +466,19 @@
     <Compile Include="Internet\PingExtensions.cs" />
     <Compile Include="Internet\NetworkBrowser.cs" />
     <Compile Include="OperatingSystem\Compression\CompressExtensions.cs" />
-    <Compile Include="FileSystem\FileSizeFormatProvider.cs" />
+    <Compile Include="ComputerSystems\FileSystem\FileSizeFormatProvider.cs" />
     <Compile Include="OperatingSystem\WMI\WMIExtensions.cs" />
-    <Compile Include="FileSystem\NetworkAdapter.cs" />
+    <Compile Include="ComputerSystems\FileSystem\NetworkAdapter.cs" />
     <Compile Include="OperatingSystem\Compression\RandomnessFeeding.cs" />
     <Compile Include="OperatingSystem\Compression\RandomnessTest.cs" />
     <Compile Include="OperatingSystem\Streams\StreamString.cs" />
     <Compile Include="OperatingSystem\Streams\ContainerStream.cs" />
-    <Compile Include="FileSystem\CopyProgressCallbackReason.cs" />
-    <Compile Include="FileSystem\CopyProgressResult.cs" />
-    <Compile Include="FileSystem\Folder.cs" />
-    <Compile Include="FileSystem\MoveFileFlags.cs" />
+    <Compile Include="ComputerSystems\FileSystem\CopyProgressCallbackReason.cs" />
+    <Compile Include="ComputerSystems\FileSystem\CopyProgressResult.cs" />
+    <Compile Include="ComputerSystems\FileSystem\Folder.cs" />
+    <Compile Include="ComputerSystems\FileSystem\MoveFileFlags.cs" />
     <Compile Include="OperatingSystem\Streams\ProgressStream.cs" />
-    <Compile Include="FileSystem\SearchStyle.cs" />
+    <Compile Include="ComputerSystems\FileSystem\SearchStyle.cs" />
     <Compile Include="Linguistics\Author.cs" />
     <Compile Include="Linguistics\UDC.cs" />
     <Compile Include="Magic\ABetterClassDispose.cs" />
@@ -486,9 +486,9 @@
     <Compile Include="Magic\IoC.cs" />
     <Compile Include="Magic\MagicExtensions.cs" />
     <Compile Include="Magic\NinjectIocContainer.cs" />
-    <Compile Include="FileSystem\Crc32.cs" />
-    <Compile Include="FileSystem\IOExtensions.cs" />
-    <Compile Include="FileSystem\Document.cs" />
+    <Compile Include="ComputerSystems\FileSystem\Crc32.cs" />
+    <Compile Include="ComputerSystems\FileSystem\IOExtensions.cs" />
+    <Compile Include="ComputerSystems\FileSystem\Document.cs" />
     <Compile Include="Internet\Browser\Chrome.cs" />
     <Compile Include="Internet\Inet.cs" />
     <Compile Include="Internet\FTP\BasicFTPClient.cs" />
@@ -591,7 +591,6 @@
     <Compile Include="Measurement\Time\FluentTime\VariableTimeSpan.cs" />
     <Compile Include="Measurement\Time\FluentTime\Yesterday.cs" />
     <Compile Include="Measurement\Time\IQuantityOfTime.cs" />
-    <Compile Include="Measurement\Time\TimeSystemTimers.cs" />
     <Compile Include="Measurement\Time\Clocks\AMorPM.cs" />
     <Compile Include="Measurement\Time\Attoseconds.cs" />
     <Compile Include="Measurement\Time\Clocks\ClockExtensions.cs" />
@@ -774,7 +773,9 @@
     <EmbeddedResource Include="Security\md5sum.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="Properties\App.config" />
+    <None Include="Properties\App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Measurement\Time\TimeMap.dgml">

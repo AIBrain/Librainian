@@ -41,43 +41,41 @@ namespace Librainian.Measurement.Currency.BTC {
         using System;
         using System.Diagnostics;
 
-        [DebuggerDisplay( "{" + nameof( this.Formatted ) + ",nq}" )]
+        [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
         public struct Btc : ICoin {
 
             public Decimal FaceValue => 1.00M;
 
-            public String Formatted => $"฿{this.FaceValue:f8}";
+            public override String ToString() => $"฿{this.FaceValue:f8}";
         }
 
-        [DebuggerDisplay( "{" + nameof( this.Formatted ) + ",nq}" )]
+        [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
         public struct MBtc : ICoin {
 
             public Decimal FaceValue => 0.001M;
 
-            public String Formatted => $"฿{this.FaceValue:f8}";
+            public override String ToString() => $"฿{this.FaceValue:f8}";
         }
 
-        [DebuggerDisplay( "{" + nameof( this.Formatted ) + ",nq}" )]
+        [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
         public struct Satoshi : ICoin {
 
             public Decimal FaceValue => 0.00000001M;
 
-            public String Formatted => $"฿{this.FaceValue:f8}";
+            public override String ToString() => $"฿{this.FaceValue:f8}";
         }
 
-        [DebuggerDisplay( "{" + nameof( this.Formatted ) + ",nq}" )]
+        [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
         public struct ΜBtc : ICoin {
 
             public Decimal FaceValue => 0.000001M;
 
-            public String Formatted => $"฿{this.FaceValue:f8}";
+            public override String ToString() => $"฿{this.FaceValue:f8}";
         }
     }
 
     public interface IDenomination {
 
         Decimal FaceValue { get; }
-
-        String Formatted { get; }
     }
 }

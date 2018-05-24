@@ -42,11 +42,12 @@ namespace Librainian.Graphics.Imaging {
     using System.Threading;
     using System.Threading.Tasks;
     using Collections;
-    using FileSystem;
+    using ComputerSystems.FileSystem;
     using JetBrains.Annotations;
     using Maths;
     using Measurement.Time;
     using Newtonsoft.Json;
+    using Threading;
 
     /// <summary> Experimental Resilient Graphics </summary>
     /// <remarks>
@@ -76,8 +77,6 @@ namespace Librainian.Graphics.Imaging {
         [JsonProperty]
         public readonly ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
 
-        public Erg() => this.Checksum = UInt64.MaxValue;
-
         /// <summary>
         ///     Checksum of all pages
         /// </summary>
@@ -96,6 +95,8 @@ namespace Librainian.Graphics.Imaging {
         public ConcurrentSet<PropertyItem> PropertyItems { get; } = new ConcurrentSet<PropertyItem>();
 
         public UInt32 Width { get; private set; }
+
+        public Erg() => this.Checksum = UInt64.MaxValue;
 
         public async Task<UInt64> CalculateChecksumAsync() =>
             await Task.Run( () => {

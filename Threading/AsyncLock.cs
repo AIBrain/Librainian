@@ -40,7 +40,6 @@ namespace Librainian.Threading {
     using System.Threading.Tasks;
     using Extensions;
     using Magic;
-    using Maths;
     using Measurement.Time;
 
     /// <summary>
@@ -52,9 +51,9 @@ namespace Librainian.Threading {
 
         private readonly Task<IDisposable> _releaser;
 
-        public AsyncLock() => this._releaser = Task.FromResult( new Releaser( this ) as IDisposable );
-
         private SemaphoreSlim Semaphore { get; } = new SemaphoreSlim( initialCount: 1 );
+
+        public AsyncLock() => this._releaser = Task.FromResult( new Releaser( this ) as IDisposable );
 
         /// <summary>
         ///     Dispose any disposable members.

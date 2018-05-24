@@ -59,13 +59,6 @@ namespace Librainian.Maths.Numbers {
 
         private volatile Boolean _isReadOnly;
 
-        public Countable() : this( readTimeout: Minutes.One, writeTimeout: Minutes.One ) { }
-
-        public Countable( TimeSpan readTimeout, TimeSpan writeTimeout ) {
-            this.ReadTimeout = readTimeout;
-            this.WriteTimeout = writeTimeout;
-        }
-
         /// <summary>
         ///     Quick hashes of <see cref="TKey" /> for <see cref="ReaderWriterLockSlim" />.
         /// </summary>
@@ -90,6 +83,13 @@ namespace Librainian.Maths.Numbers {
 
         [JsonProperty]
         public TimeSpan WriteTimeout { get; set; }
+
+        public Countable() : this( readTimeout: Minutes.One, writeTimeout: Minutes.One ) { }
+
+        public Countable( TimeSpan readTimeout, TimeSpan writeTimeout ) {
+            this.ReadTimeout = readTimeout;
+            this.WriteTimeout = writeTimeout;
+        }
 
         [CanBeNull]
         [JsonProperty]
@@ -229,7 +229,7 @@ namespace Librainian.Maths.Numbers {
 
         public void Trim() =>
                     Parallel.ForEach( source: this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ), parallelOptions: ThreadingExtensions.CPUIntensive,
-                        body: pair => { this.Dictionary.TryRemove( pair.Key, out var dummy ); } );
+                        body: pair => this.Dictionary.TryRemove( pair.Key, out var dummy ) );
 
         /// <summary>
         ///     Mark that this container will now become UnReadOnly/immutable. Allow more adds and subtracts.

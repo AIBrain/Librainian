@@ -48,7 +48,7 @@ namespace Librainian.Measurement.Time {
 
         [Test]
         public static void TestCountdown() {
-            var watch = new CountDownWatch( Seconds.Three, () => { "Launched!".Info(); } );
+            var watch = new CountDownWatch( Seconds.Three, () => "Launched!".Info() );
             watch.Start();
 
             do {
@@ -75,6 +75,19 @@ namespace Librainian.Measurement.Time {
 
         private volatile Boolean _isRunning;
 
+        [NotNull]
+        private Action Liftoff { get; }
+
+        private Timer Timer { get; set; }
+
+        public TimeSpan Countdown { get; }
+
+        public DateTime TargetTime { get; private set; }
+
+        public DateTime WhenStarted { get; private set; }
+
+        public DateTime WhenStopped { get; private set; }
+
         /// <summary>
         /// </summary>
         /// <param name="countdown"></param>
@@ -93,19 +106,6 @@ namespace Librainian.Measurement.Time {
                 catch ( Exception exception ) { exception.More(); }
             };
         }
-
-        [NotNull]
-        private Action Liftoff { get; }
-
-        private Timer Timer { get; set; }
-
-        public TimeSpan Countdown { get; }
-
-        public DateTime TargetTime { get; private set; }
-
-        public DateTime WhenStarted { get; private set; }
-
-        public DateTime WhenStopped { get; private set; }
 
         public Boolean HasLaunched() => this._hasLaunched;
 

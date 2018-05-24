@@ -39,10 +39,13 @@ namespace Librainian.Database {
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
-
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
+    using Extensions;
     using JetBrains.Annotations;
     using Magic;
+    using Parsing;
+    using Threading;
 
     public sealed class Database : ABetterClassDispose, IDatabase {
 
@@ -60,7 +63,7 @@ namespace Librainian.Database {
         ///     Opens and then closes a <see cref="SqlConnection" />.
         /// </summary>
         /// <returns></returns>
-        [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
+
         public Boolean ExecuteNonQuery( String query, params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
@@ -145,7 +148,7 @@ namespace Librainian.Database {
         /// <param name="table">      </param>
         /// <param name="parameters"> </param>
         /// <returns></returns>
-        [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
+
         public Boolean ExecuteReader( String query, CommandType commandType, out DataTable table, params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
@@ -243,7 +246,6 @@ namespace Librainian.Database {
         /// <param name="parameters"> </param>
         /// <returns></returns>
         [CanBeNull]
-        [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         public TResult ExecuteScalar<TResult>( String query, CommandType commandType, params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
@@ -316,7 +318,7 @@ namespace Librainian.Database {
         /// <param name="query">     </param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
+
         [ItemCanBeNull]
         public IEnumerable<TResult> QueryList<TResult>( String query, params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }

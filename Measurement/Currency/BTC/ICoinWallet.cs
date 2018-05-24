@@ -45,8 +45,6 @@ namespace Librainian.Measurement.Currency.BTC {
 
         IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped { [NotNull] get; }
 
-        String Formatted { get; }
-
         Guid ID { get; }
 
         Action<KeyValuePair<ICoin, UInt64>> OnDeposit { get; set; }

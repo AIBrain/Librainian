@@ -1,36 +1,30 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "PersistenceExtensions.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "PersistenceExtensions.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/PersistenceExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
+// "Librainian/Librainian/PersistenceExtensions.cs" was last formatted by Protiguous on 2018/05/23 at 8:53 PM.
 
 namespace Librainian.Persistence {
 
@@ -54,8 +48,8 @@ namespace Librainian.Persistence {
     using System.Xml;
     using CodeFluent.Runtime.BinaryServices;
     using Collections;
-    using Extensions;
-    using FileSystem;
+    using ComputerSystems.FileSystem;
+    using Converters;
     using FluentAssertions;
     using JetBrains.Annotations;
     using Measurement.Time;
@@ -236,9 +230,7 @@ namespace Librainian.Persistence {
 
                 if ( null == toDictionary ) { return false; }
 
-                if ( null == folder ) { return false; }
-
-                if ( !folder.Exists() ) { return false; }
+                if ( folder?.Exists() != true ) { return false; }
 
                 var fileCount = UInt64.MinValue;
                 var before = toDictionary.LongCount();
@@ -249,7 +241,7 @@ namespace Librainian.Persistence {
                 foreach ( var document in documents ) {
                     var length = document.Length;
 
-                    if ( length != null && length.Value < 1 ) {
+                    if ( length < 1 ) {
                         document.Delete();
 
                         continue;
@@ -576,9 +568,7 @@ namespace Librainian.Persistence {
 
                 var filename = $"{destination.FullPathWithFileName}:{attribute}";
 
-                using ( var fs = NtfsAlternateStream.Open( filename, access: FileAccess.Write, mode: FileMode.Create, share: FileShare.None ) ) {
-                    fs.Write( data, 0, data.Length );
-                }
+                using ( var fs = NtfsAlternateStream.Open( filename, access: FileAccess.Write, mode: FileMode.Create, share: FileShare.None ) ) { fs.Write( data, 0, data.Length ); }
 
                 return true;
             }
@@ -984,7 +974,7 @@ namespace Librainian.Persistence {
         /// <param name="attribute"></param>
         /// <param name="value">    </param>
         /// <param name="location"> </param>
-        /// <seealso cref="TrySave{TKey}"/>
+        /// <seealso cref="TrySave{TKey}" />
         /// <returns></returns>
         public static Boolean TryLoad<TSource>( this String attribute, out TSource value, String location = null ) {
             if ( attribute is null ) { throw new ArgumentNullException( nameof( attribute ) ); }

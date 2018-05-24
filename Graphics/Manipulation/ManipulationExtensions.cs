@@ -38,7 +38,7 @@ namespace Librainian.Graphics.Manipulation {
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.IO;
-    using FileSystem;
+    using ComputerSystems.FileSystem;
     using JetBrains.Annotations;
     using Maths;
 

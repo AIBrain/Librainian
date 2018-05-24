@@ -40,14 +40,26 @@ namespace Librainian.Graphics {
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Threading;
     using System.Threading.Tasks;
+    using ComputerSystems.FileSystem;
     using Extensions;
-    using FileSystem;
     using Imaging;
-    using Maths;
     using Moving;
     using OperatingSystem;
 
     public static class GraphicsExtensions {
+
+        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
+        public struct RAMP {
+
+            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
+            public UInt16[] Red;
+
+            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
+            public UInt16[] Green;
+
+            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
+            public UInt16[] Blue;
+        }
 
         private static Boolean _gotGamma;
 
@@ -129,18 +141,5 @@ namespace Librainian.Graphics {
                 //bob.Serialize(
                 return false;
             }, token );
-
-        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
-        public struct RAMP {
-
-            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
-            public UInt16[] Red;
-
-            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
-            public UInt16[] Green;
-
-            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
-            public UInt16[] Blue;
-        }
     }
 }

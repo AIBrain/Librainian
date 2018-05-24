@@ -1,36 +1,30 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "DeserializeReportStats.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "DeserializeReportStats.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/DeserializeReportStats.cs" was last cleaned by Protiguous on 2018/05/15 at 10:49 PM.
+// "Librainian/Librainian/DeserializeReportStats.cs" was last formatted by Protiguous on 2018/05/21 at 10:33 PM.
 
 namespace Librainian.Persistence {
 
@@ -44,29 +38,29 @@ namespace Librainian.Persistence {
 
     public sealed class DeserializeReportStats : ABetterClassDispose {
 
-        private readonly ThreadLocal<Int64> _gains = new ThreadLocal<Int64>( trackAllValues: true );
+        private ThreadLocal<Int64> Gains { get; } = new ThreadLocal<Int64>( trackAllValues: true );
 
-        private readonly ThreadLocal<Int64> _losses = new ThreadLocal<Int64>( trackAllValues: true );
+        private Action<DeserializeReportStats> Handler { get; }
 
-        public readonly TimeSpan Timing;
+        private ThreadLocal<Int64> Losses { get; } = new ThreadLocal<Int64>( trackAllValues: true );
+
+        public Boolean Enabled { get; set; }
+
+        public TimeSpan Timing { get; }
+
+        public Int64 Total { get; set; }
 
         public DeserializeReportStats( Action<DeserializeReportStats> handler, TimeSpan? timing = null ) {
-            this._gains.Values.Clear();
-            this._gains.Value = 0;
+            this.Gains.Values.Clear();
+            this.Gains.Value = 0;
 
-            this._losses.Values.Clear();
-            this._losses.Value = 0;
+            this.Losses.Values.Clear();
+            this.Losses.Value = 0;
 
             this.Total = 0;
             this.Handler = handler;
             this.Timing = timing ?? Milliseconds.ThreeHundredThirtyThree;
         }
-
-        private Action<DeserializeReportStats> Handler { get; }
-
-        public Boolean Enabled { get; set; }
-
-        public Int64 Total { get; set; }
 
         /// <summary>
         ///     Perform a Report.
@@ -85,21 +79,21 @@ namespace Librainian.Persistence {
             }
         }
 
-        public void AddFailed( Int64 amount = 1 ) => this._losses.Value += amount;
+        public void AddFailed( Int64 amount = 1 ) => this.Losses.Value += amount;
 
-        public void AddSuccess( Int64 amount = 1 ) => this._gains.Value += amount;
+        public void AddSuccess( Int64 amount = 1 ) => this.Gains.Value += amount;
 
         /// <summary>
         ///     Dispose any disposable members.
         /// </summary>
         public override void DisposeManaged() {
-            this._gains.Dispose();
-            this._losses.Dispose();
+            this.Gains.Dispose();
+            this.Losses.Dispose();
         }
 
-        public Int64 GetGains() => this._gains.Values.Sum( arg => arg );
+        public Int64 GetGains() => this.Gains.Values.Sum( arg => arg );
 
-        public Int64 GetLoss() => this._losses.Values.Sum( arg => arg );
+        public Int64 GetLoss() => this.Losses.Values.Sum( arg => arg );
 
         public async Task StartReporting() {
             this.Enabled = true;

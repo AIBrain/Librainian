@@ -1,36 +1,30 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "ListBoxLog.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "ListBoxLog.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/ListBoxLog.cs" was last cleaned by Protiguous on 2018/05/15 at 10:39 PM.
+// "Librainian/Librainian/ListBoxLog.cs" was last formatted by Protiguous on 2018/05/21 at 9:56 PM.
 
 namespace Librainian.Controls {
 
@@ -57,7 +51,6 @@ namespace Librainian.Controls {
         public ListBoxLog( ListBox listBox, String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) { }
 
         public ListBoxLog( ListBox listBox, String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
-            this.Disposed = false;
 
             this.Box = listBox;
             this.MessageFormat = messageFormat;
@@ -76,14 +69,15 @@ namespace Librainian.Controls {
 
             var menuItems = new[] { new MenuItem( "Copy", this.CopyMenuOnClickHandler ) };
 
-            // ReSharper disable once UseObjectOrCollectionInitializer
             this.Box.ContextMenu = new ContextMenu( menuItems );
             this.Box.ContextMenu.Popup += this.CopyMenuPopupHandler;
 
             this.Box.DrawMode = DrawMode.OwnerDrawFixed;
         }
 
-        public Boolean Paused { get; }
+        ~ListBoxLog() => this.Dispose();
+
+        private delegate void AddALogEntryDelegate( Object item );
 
         private ListBox Box { get; set; }
 
@@ -93,26 +87,7 @@ namespace Librainian.Controls {
 
         private String MessageFormat { get; }
 
-        ~ListBoxLog() {
-            if ( !this.IsDisposed ) {
-                this.DisposeManaged();
-                this.DisposeNative();
-            }
-            if ( this.Disposed ) { return; }
-
-            this.Dispose();
-            this.Disposed = true;
-        }
-
-        public void Log( String message ) => this.WriteEvent( new LogEvent( LoggingLevel.Critical, message ) );
-
-        public void LogLine( String message ) => this.LogLine( LoggingLevel.Debug, message );
-
-        public void LogLine( String format, params Object[] args ) => this.LogLine( LoggingLevel.Debug, format is null ? null : String.Format( format, args ) );
-
-        public void LogLine( LoggingLevel loggingLevel, String format, params Object[] args ) => this.LogLine( loggingLevel, format is null ? null : String.Format( format, args ) );
-
-        public void LogLine( LoggingLevel loggingLevel, String message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
+        public Boolean Paused { get; }
 
         private static String FormatALogEventMessage( LogEvent logEvent, String messageFormat ) {
             var message = logEvent.Message ?? "<NULL>";
@@ -175,9 +150,8 @@ namespace Librainian.Controls {
             selectedItemsAsRTFText.AppendLine( @"{\rtf1\ansi\deff0{\fonttbl{\f0\fcharset0 Courier;}}" );
             selectedItemsAsRTFText.AppendLine( @"{\colortbl;\red255\green255\blue255;\red255\green0\blue0;\red218\green165\blue32;\red0\green128\blue0;\red0\green0\blue255;\red0\green0\blue0}" );
 
-#pragma warning disable IDE0007 // Use implicit type
             foreach ( LogEvent logEvent in this.Box.SelectedItems ) {
-#pragma warning restore IDE0007 // Use implicit type
+
                 selectedItemsAsRTFText.AppendFormat( @"{{\f0\fs16\chshdng0\chcbpat{0}\cb{0}\cf{1} ", logEvent.LoggingLevel == LoggingLevel.Critical ? 2 : 1,
                     logEvent.LoggingLevel == LoggingLevel.Critical ? 1 : ( Int32 )logEvent.LoggingLevel > 5 ? 6 : ( Int32 )logEvent.LoggingLevel + 1 );
 
@@ -188,25 +162,6 @@ namespace Librainian.Controls {
             selectedItemsAsRTFText.AppendLine( @"}" );
             Debug.WriteLine( selectedItemsAsRTFText.ToString() );
             Clipboard.SetData( DataFormats.Rtf, selectedItemsAsRTFText.ToString() );
-        }
-
-        public override void DisposeManaged() {
-            if ( this.Box is null ) { return; }
-
-            this.CanAdd = false;
-
-            this.Box.HandleCreated -= this.OnHandleCreated;
-            this.Box.HandleCreated -= this.OnHandleDestroyed;
-            this.Box.DrawItem -= this.DrawItemHandler;
-            this.Box.KeyDown -= this.KeyDownHandler;
-
-            this.Box.ContextMenu.MenuItems.Clear();
-            this.Box.ContextMenu.Popup -= this.CopyMenuPopupHandler;
-            this.Box.ContextMenu = null;
-
-            this.Box.Items.Clear();
-            this.Box.DrawMode = DrawMode.Normal;
-            this.Box = null;
         }
 
         private void DrawItemHandler( Object sender, DrawItemEventArgs e ) {
@@ -274,7 +229,36 @@ namespace Librainian.Controls {
             if ( logEvent != null && this.CanAdd ) { this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntryLine ), logEvent ); }
         }
 
-        private delegate void AddALogEntryDelegate( Object item );
+        public override void DisposeManaged() {
+            if ( this.Box is null ) { return; }
+
+            this.CanAdd = false;
+
+            this.Box.HandleCreated -= this.OnHandleCreated;
+            this.Box.HandleCreated -= this.OnHandleDestroyed;
+            this.Box.DrawItem -= this.DrawItemHandler;
+            this.Box.KeyDown -= this.KeyDownHandler;
+
+            this.Box.ContextMenu.MenuItems.Clear();
+            this.Box.ContextMenu.Popup -= this.CopyMenuPopupHandler;
+            this.Box.ContextMenu = null;
+
+            this.Box.Items.Clear();
+            this.Box.DrawMode = DrawMode.Normal;
+            this.Box = null;
+
+            base.DisposeManaged();
+        }
+
+        public void Log( String message ) => this.WriteEvent( new LogEvent( LoggingLevel.Critical, message ) );
+
+        public void LogLine( String message ) => this.LogLine( LoggingLevel.Debug, message );
+
+        public void LogLine( String format, params Object[] args ) => this.LogLine( LoggingLevel.Debug, format is null ? null : String.Format( format, args ) );
+
+        public void LogLine( LoggingLevel loggingLevel, String format, params Object[] args ) => this.LogLine( loggingLevel, format is null ? null : String.Format( format, args ) );
+
+        public void LogLine( LoggingLevel loggingLevel, String message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
 
         private class LogEvent {
 

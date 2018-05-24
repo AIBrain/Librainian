@@ -1,36 +1,30 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "IBlockingQueue.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "IBlockingQueue.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/IBlockingQueue.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
+// "Librainian/Librainian/IBlockingQueue.cs" was last formatted by Protiguous on 2018/05/21 at 10:50 PM.
 
 namespace Librainian.Collections {
 
@@ -82,44 +76,44 @@ namespace Librainian.Collections {
     ///         Usage example, based on a typical producer-consumer scenario.
     ///         TODO: Convert non-generic example below to using generic version
     ///         <code>
-    ///      class Producer : IRunnable {
-    ///             private IBlockingQueue queue;
-    ///          Producer(IBlockingQueue q) { queue = q; }
-    ///          public void Run() {
-    ///              try {
-    ///                  while (true) {
-    ///                      queue.Put(produce());
-    ///                  }
-    ///              } catch (InterruptedException ex) {
-    ///                  ... handle ...
-    ///              }
-    ///          }
-    ///          Object Produce() { ... }
-    ///      }
+    ///         class Producer : IRunnable {
+    ///                private IBlockingQueue queue;
+    ///             Producer(IBlockingQueue q) { queue = q; }
+    ///             public void Run() {
+    ///                 try {
+    ///                     while (true) {
+    ///                         queue.Put(produce());
+    ///                     }
+    ///                 } catch (InterruptedException ex) {
+    ///                     ... handle ...
+    ///                 }
+    ///             }
+    ///             Object Produce() { ... }
+    ///         }
     ///
-    ///      class Consumer : IRunnable {
-    ///             private IBlockingQueue queue;
-    ///          Consumer(IBlockingQueue q) { queue = q; }
-    ///          public void Run() {
-    ///              try {
-    ///                  while (true) { Consume(queue.Take()); }
-    ///              } catch (InterruptedException ex) { ... handle ...}
-    ///          }
-    ///          void Consume(object x) { ... }
-    ///      }
+    ///         class Consumer : IRunnable {
+    ///                private IBlockingQueue queue;
+    ///             Consumer(IBlockingQueue q) { queue = q; }
+    ///             public void Run() {
+    ///                 try {
+    ///                     while (true) { Consume(queue.Take()); }
+    ///                 } catch (InterruptedException ex) { ... handle ...}
+    ///             }
+    ///             void Consume(object x) { ... }
+    ///         }
     ///
-    ///      class Setup {
-    ///             void Main() {
-    ///              IBlockingQueue q = new SomeQueueImplementation();
-    ///              Producer p = new Producer(q);
-    ///              Consumer c1 = new Consumer(q);
-    ///              Consumer c2 = new Consumer(q);
-    ///              new Thread(new ThreadStart(p.Run)).Start();
-    ///              new Thread(new ThreadStart(c1.Run)).Start();
-    ///              new Thread(new ThreadStart(c2.Run)).Start();
-    ///          }
-    ///      }
-    ///  </code>
+    ///         class Setup {
+    ///                void Main() {
+    ///                 IBlockingQueue q = new SomeQueueImplementation();
+    ///                 Producer p = new Producer(q);
+    ///                 Consumer c1 = new Consumer(q);
+    ///                 Consumer c2 = new Consumer(q);
+    ///                 new Thread(new ThreadStart(p.Run)).Start();
+    ///                 new Thread(new ThreadStart(c1.Run)).Start();
+    ///                 new Thread(new ThreadStart(c2.Run)).Start();
+    ///             }
+    ///         }
+    ///     </code>
     ///     </example>
     /// </remarks>
     /// <typeparam name="T">The type of the elements in the queue.</typeparam>
@@ -149,8 +143,8 @@ namespace Librainian.Collections {
         /// <exception cref="System.ArgumentNullException">If the specified collection is <c>null</c>.</exception>
         /// <exception cref="System.ArgumentException">If <paramref name="collection" /> represents the queue itself.</exception>
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
-        /// <seealso cref="DrainTo(ICollection{T},Int32)" />
-        /// <seealso cref="IQueue{T}.Drain(System.Action{T},Int32)" />
+        /// <seealso cref="DrainTo(ICollection{T},int)" />
+        /// <seealso cref="IQueue{T}.Drain(System.Action{T},int)" />
         Int32 DrainTo( ICollection<T> collection );
 
         /// <summary>

@@ -4,8 +4,9 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code, "ShoppingItem.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by automatic formatting.
+// This source code contained in "ShoppingItem.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
@@ -23,7 +24,7 @@
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/ShoppingItem.cs" was last formatted by Protiguous on 2018/05/18 at 11:56 PM.
+// "Librainian/Librainian/ShoppingItem.cs" was last formatted by Protiguous on 2018/05/21 at 10:02 PM.
 
 namespace Librainian.Financial.Containers.Shopping {
 
@@ -34,6 +35,9 @@ namespace Librainian.Financial.Containers.Shopping {
     using Maths;
     using Newtonsoft.Json;
 
+    /// <summary>
+    /// Obviously there are thousands of real categories that should be loaded from a json document. But this is just a sample/experimental class.
+    /// </summary>
     public enum ItemCategory {
 
         Invalid = -1,
@@ -53,15 +57,6 @@ namespace Librainian.Financial.Containers.Shopping {
     [Immutable]
     public class ShoppingItem {
 
-        public ShoppingItem( ItemCategory category, Guid itemID ) {
-            if ( category == ItemCategory.Invalid ) { throw new ArgumentNullException( nameof( category ) ); }
-
-            if ( itemID == Guid.Empty ) { throw new InvalidParameterException( $"", new ArgumentNullException( nameof( itemID ) ) ); }
-
-            this.Category = category;
-            this.ItemID = itemID;
-        }
-
         [JsonProperty]
         public ItemCategory Category { get; private set; }
 
@@ -79,6 +74,15 @@ namespace Librainian.Financial.Containers.Shopping {
 
         [JsonProperty]
         public Boolean Voided { get; private set; }
+
+        public ShoppingItem( ItemCategory category, Guid itemID ) {
+            if ( category == ItemCategory.Invalid ) { throw new ArgumentNullException( nameof( category ) ); }
+
+            if ( itemID == Guid.Empty ) { throw new InvalidParameterException( $"", new ArgumentNullException( nameof( itemID ) ) ); }
+
+            this.Category = category;
+            this.ItemID = itemID;
+        }
 
         /// <summary>
         ///     Static comparison. Compares <see cref="ItemID" /> and <see cref="Category" />.
@@ -98,7 +102,7 @@ namespace Librainian.Financial.Containers.Shopping {
         ///     Serves as the default hash function.
         /// </summary>
         /// <returns>A hash code for the current object.</returns>
-        public override Int32 GetHashCode() => this.Category.GetHashCodes( this.ItemID ); //non readonly props.. what to do here?
+        public override Int32 GetHashCode() => this.Category.GetHashCodes( this.ItemID ); //non  { get; }  props.. what to do here?
 
         public Boolean IsValidData() => this.Category != ItemCategory.Invalid && !this.ItemID.Equals( Guid.Empty );
     }

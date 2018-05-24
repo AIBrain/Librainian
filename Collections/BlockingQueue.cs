@@ -1,36 +1,30 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "BlockingQueue.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "BlockingQueue.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/BlockingQueue.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
+// "Librainian/Librainian/BlockingQueue.cs" was last formatted by Protiguous on 2018/05/21 at 10:49 PM.
 
 namespace Librainian.Collections {
 
@@ -39,51 +33,51 @@ namespace Librainian.Collections {
 
     public class BlockingQueue<T> {
 
-        private readonly Object _lockObj;
+        private Object LockObj { get; }
 
-        private Node _head;
+        public Node<T> Head { get; set; }
 
-        private Node _tail;
+        public Node<T> Tail { get; set; }
 
         public BlockingQueue() {
-            this._lockObj = new Object();
-            this._head = this._tail = new Node( item: default, next: null );
+            this.LockObj = new Object();
+            this.Head = this.Tail = new Node<T>( item: default, next: null );
         }
 
         public T Dequeue() {
-            lock ( this._lockObj ) {
-                while ( this._head.Next is null ) { Monitor.Wait( this._lockObj ); }
+            lock ( this.LockObj ) {
+                while ( this.Head.Next is null ) { Monitor.Wait( this.LockObj ); }
 
-                var retItem = this._head.Next.Item;
-                this._head = this._head.Next;
+                var retItem = this.Head.Next.Item;
+                this.Head = this.Head.Next;
 
                 return retItem;
             }
         }
 
         public void Enqueue( T item ) {
-            var newNode = new Node( item: item, next: null );
+            var newNode = new Node<T>( item: item, next: null );
 
-            lock ( this._lockObj ) {
-                this._tail.Next = newNode;
-                this._tail = newNode;
+            lock ( this.LockObj ) {
+                this.Tail.Next = newNode;
+                this.Tail = newNode;
 
-                Monitor.Pulse( this._lockObj );
+                Monitor.Pulse( this.LockObj );
             }
         }
+    }
 
-        internal class Node {
+    public class Node<T> {
 
-            internal T Item;
+        internal T Item { get; }
 
-            internal Node Next;
+        internal Node<T> Next { get; set; }
 
-            public Node() { }
+        public Node() { }
 
-            public Node( T item, Node next ) {
-                this.Item = item;
-                this.Next = next;
-            }
+        public Node( T item, Node<T> next ) {
+            this.Item = item;
+            this.Next = next;
         }
     }
 }

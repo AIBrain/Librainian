@@ -72,39 +72,43 @@ namespace Librainian.Measurement {
             var oldPriority = Thread.CurrentThread.Priority;
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
+            if ( runFor is null ) { runFor = Seconds.One; }
+
             try {
-                method.Invoke(); //jit per Eric Lippert (http://codereview.stackexchange.com/questions/125539/benchmarking-things-in-c)
-            }
-            catch ( Exception exception ) {
-                Debug.WriteLine( exception.Message );
-                Logging.Break();
-            }
-
-            var rounds = 0UL;
-
-            var stopwatch = Stopwatch.StartNew();
-
-            while ( stopwatch.Elapsed < ( runFor ?? Seconds.One ) ) {
                 try {
-                    method.Invoke();
-                    rounds++;
+                    method.Invoke(); //jit per Eric Lippert (http://codereview.stackexchange.com/questions/125539/benchmarking-things-in-c)
                 }
                 catch ( Exception exception ) {
                     Debug.WriteLine( exception.Message );
                     Logging.Break();
                 }
+
+                var rounds = 0UL;
+
+                var stopwatch = Stopwatch.StartNew();
+
+                while ( stopwatch.Elapsed < runFor ) {
+                    try {
+                        method.Invoke();
+                    }
+                    catch ( Exception exception ) {
+                        Debug.WriteLine( exception.Message );
+                        Logging.Break();
+                    }
+                    finally {
+                        rounds++;
+                    }
+                }
+                return rounds;
             }
-
-            stopwatch.Stop();
-
-            Process.GetCurrentProcess().PriorityClass = oldPriorityClass;
-            Thread.CurrentThread.Priority = oldPriority;
-
-            return rounds;
+            finally {
+                Process.GetCurrentProcess().PriorityClass = oldPriorityClass;
+                Thread.CurrentThread.Priority = oldPriority;
+            }
         }
 
         public static AorB WhichIsFaster( this Action methodA, Action methodB, TimeSpan? runfor = null ) {
-            if ( null == runfor ) { runfor = Milliseconds.FiveHundred; }
+            if ( null == runfor ) { runfor = Seconds.One; }
 
             var a = methodA.GetBenchmark( runfor );
 

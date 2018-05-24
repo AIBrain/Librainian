@@ -1,36 +1,30 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "EnumerableToArrayBuffer.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "EnumerableToArrayBuffer.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/EnumerableToArrayBuffer.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
+// "Librainian/Librainian/EnumerableToArrayBuffer.cs" was last formatted by Protiguous on 2018/05/22 at 5:40 PM.
 
 namespace Librainian.Collections {
 
@@ -39,11 +33,13 @@ namespace Librainian.Collections {
 
     public struct EnumerableToArrayBuffer<T> {
 
-        private readonly ICollection<T> _collection;
+        private ICollection<T> _collection { get; }
 
-        private readonly Int32 _count;
+        private Int32 _count { get; }
 
-        private readonly T[] _items;
+        private T[] _items { get; }
+
+        internal Int32 Count => this._collection?.Count ?? this._count;
 
         internal EnumerableToArrayBuffer( IEnumerable<T> source ) {
             T[] array = null;
@@ -61,7 +57,7 @@ namespace Librainian.Collections {
                 if ( array is null ) { array = new T[4]; }
                 else if ( array.Length == length ) {
                     var destinationArray = new T[length * 2];
-                    Buffer.BlockCopy( sourceArray: array, sourceIndex: 0, destinationArray: destinationArray, destinationIndex: 0, length );
+                    Buffer.BlockCopy( array, 0, destinationArray, 0, length );
                     array = destinationArray;
                 }
 
@@ -73,14 +69,12 @@ namespace Librainian.Collections {
             this._count = length;
         }
 
-        internal Int32 Count => this._collection?.Count ?? this._count;
-
         /// <summary>
         ///     Caller to guarantee items.Length &gt; index &gt;= 0
         /// </summary>
         internal void CopyTo( T[] items, Int32 index ) {
             if ( this._collection != null && this._collection.Count > 0 ) { this._collection.CopyTo( array: items, arrayIndex: index ); }
-            else if ( this._count > 0 ) { Buffer.BlockCopy( sourceArray: this._items, sourceIndex: 0, destinationArray: items, destinationIndex: index, this._count ); }
+            else if ( this._count > 0 ) { Buffer.BlockCopy( this._items, 0, items, index, this._count ); }
         }
 
         internal T[] ToArray() {
@@ -94,7 +88,7 @@ namespace Librainian.Collections {
                 if ( this._items.Length == this._count ) { return this._items; }
 
                 destinationArray = new T[this._count];
-                Buffer.BlockCopy( sourceArray: this._items, sourceIndex: 0, destinationArray: destinationArray, destinationIndex: 0, this._count );
+                Buffer.BlockCopy( this._items, 0, destinationArray, 0, this._count );
 
                 return destinationArray;
             }

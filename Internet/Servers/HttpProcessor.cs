@@ -165,14 +165,6 @@ namespace Librainian.Internet.Servers {
         /// </summary>
         public Uri RequestUrl;
 
-        public HttpProcessor( TcpClient s, HttpServer srv, X509Certificate2 sslCertificate = null ) {
-            this._sslCertificate = sslCertificate;
-            this.SecureHttps = sslCertificate != null;
-            this.TcpClient = s;
-            this.BaseUriThisServer = new Uri( "http" + ( this.SecureHttps ? "s" : "" ) + "://" + s.Client.LocalEndPoint, UriKind.Absolute );
-            this.Srv = srv;
-        }
-
         private Byte[] RemoteIpAddressBytes {
             get {
                 if ( this._remoteIpAddressBytes != null ) { return this._remoteIpAddressBytes; }
@@ -204,6 +196,14 @@ namespace Librainian.Internet.Servers {
 
                 return this._remoteIpAddress;
             }
+        }
+
+        public HttpProcessor( TcpClient s, HttpServer srv, X509Certificate2 sslCertificate = null ) {
+            this._sslCertificate = sslCertificate;
+            this.SecureHttps = sslCertificate != null;
+            this.TcpClient = s;
+            this.BaseUriThisServer = new Uri( "http" + ( this.SecureHttps ? "s" : "" ) + "://" + s.Client.LocalEndPoint, UriKind.Absolute );
+            this.Srv = srv;
         }
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace Librainian.Internet.Servers {
 
                 var contentType = this.GetHeaderValue( "Content-Type" );
 
-                if ( contentType != null && contentType.Contains( "application/x-www-form-urlencoded" ) ) {
+                if ( contentType?.Contains( "application/x-www-form-urlencoded" ) == true ) {
                     var sr = new StreamReader( ms );
                     var all = sr.ReadToEnd();
                     sr.Close();

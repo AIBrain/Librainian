@@ -1,51 +1,44 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "DerivedSerializableExceptionWithAdditionalCustomProperty.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "DerivedSerializableExceptionWithAdditionalCustomProperty.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/DerivedSerializableExceptionWithAdditionalCustomProperty.cs" was last cleaned by Protiguous on 2018/05/15 at 10:40 PM.
+// "Librainian/Librainian/DerivedSerializableExceptionWithAdditionalCustomProperty.cs" was last formatted by Protiguous on 2018/05/22 at 5:53 PM.
 
 namespace Librainian.Extensions {
 
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Runtime.Serialization;
-    using System.Runtime.Serialization.Formatters.Binary;
     using System.Security.Permissions;
     using Newtonsoft.Json;
-    using NUnit.Framework;
 
     [JsonObject]
     [Serializable]
     public sealed class DerivedSerializableExceptionWithAdditionalCustomProperty : SerializableExceptionWithCustomProperties {
+
+        public String Username { get; }
 
         [SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
 
@@ -65,141 +58,11 @@ namespace Librainian.Extensions {
             validationErrors, innerException ) =>
             this.Username = username;
 
-        public String Username { get; }
-
         public override void GetObjectData( SerializationInfo info, StreamingContext context ) {
             if ( info is null ) { throw new ArgumentNullException( nameof( info ) ); }
 
             info.AddValue( "Username", this.Username );
             base.GetObjectData( info, context );
-        }
-    }
-
-    public class UnitTests {
-
-        private const String Message = "The widget has unavoidably blooped out.";
-
-        private const String ResourceName = "Resource-A";
-
-        private const String Username = "Barry";
-
-        private const String ValidationError1 = "You forgot to set the whizz bang flag.";
-
-        private const String ValidationError2 = "Wally cannot operate in zero gravity.";
-
-        private readonly List<String> _validationErrors = new List<String>();
-
-        public UnitTests() {
-            this._validationErrors.Add( ValidationError1 );
-            this._validationErrors.Add( ValidationError2 );
-        }
-
-        [Test]
-        public void TestDerivedSerializableExceptionWithAdditionalCustomProperty() {
-            var ex = new DerivedSerializableExceptionWithAdditionalCustomProperty( Message, Username, ResourceName, this._validationErrors );
-
-            // Sanity check: Make sure custom properties are set before serialization
-            Assert.AreEqual( Message, ex.Message, "Message" );
-            Assert.AreEqual( ResourceName, ex.ResourceName, "ex.ResourceName" );
-            Assert.AreEqual( 2, ex.ValidationErrors.Count, "ex.ValidationErrors.Count" );
-            Assert.AreEqual( ValidationError1, ex.ValidationErrors[0], "ex.ValidationErrors[0]" );
-            Assert.AreEqual( ValidationError2, ex.ValidationErrors[1], "ex.ValidationErrors[1]" );
-            Assert.AreEqual( Username, ex.Username );
-
-            // Save the full ToString() value, including the exception message and stack trace.
-            var exceptionToString = ex.ToString();
-
-            // Round-trip the exception: Serialize and de-serialize with a BinaryFormatter
-            var bf = new BinaryFormatter();
-
-            using ( var ms = new MemoryStream() ) {
-
-                // "Save" object state
-                bf.Serialize( ms, ex );
-
-                // Re-use the same stream for de-serialization
-                ms.Seek( 0, 0 );
-
-                // Replace the original exception with de-serialized one
-                ex = ( DerivedSerializableExceptionWithAdditionalCustomProperty )bf.Deserialize( ms );
-            }
-
-            // Make sure custom properties are preserved after serialization
-            Assert.AreEqual( Message, ex.Message, "Message" );
-            Assert.AreEqual( ResourceName, ex.ResourceName, "ex.ResourceName" );
-            Assert.AreEqual( 2, ex.ValidationErrors.Count, "ex.ValidationErrors.Count" );
-            Assert.AreEqual( ValidationError1, ex.ValidationErrors[0], "ex.ValidationErrors[0]" );
-            Assert.AreEqual( ValidationError2, ex.ValidationErrors[1], "ex.ValidationErrors[1]" );
-            Assert.AreEqual( Username, ex.Username );
-
-            // Double-check that the exception message and stack trace (owned by the base Exception) are preserved
-            Assert.AreEqual( exceptionToString, ex.ToString(), "ex.ToString()" );
-        }
-
-        [Test]
-        public void TestSerializableExceptionWithCustomProperties() {
-            var ex = new SerializableExceptionWithCustomProperties( Message, ResourceName, this._validationErrors );
-
-            // Sanity check: Make sure custom properties are set before serialization
-            Assert.AreEqual( Message, ex.Message, "Message" );
-            Assert.AreEqual( ResourceName, ex.ResourceName, "ex.ResourceName" );
-            Assert.AreEqual( 2, ex.ValidationErrors.Count, "ex.ValidationErrors.Count" );
-            Assert.AreEqual( ValidationError1, ex.ValidationErrors[0], "ex.ValidationErrors[0]" );
-            Assert.AreEqual( ValidationError2, ex.ValidationErrors[1], "ex.ValidationErrors[1]" );
-
-            // Save the full ToString() value, including the exception message and stack trace.
-            var exceptionToString = ex.ToString();
-
-            // Round-trip the exception: Serialize and de-serialize with a BinaryFormatter
-            var bf = new BinaryFormatter();
-
-            using ( var ms = new MemoryStream() ) {
-
-                // "Save" object state
-                bf.Serialize( ms, ex );
-
-                // Re-use the same stream for de-serialization
-                ms.Seek( 0, 0 );
-
-                // Replace the original exception with de-serialized one
-                ex = ( SerializableExceptionWithCustomProperties )bf.Deserialize( ms );
-            }
-
-            // Make sure custom properties are preserved after serialization
-            Assert.AreEqual( Message, ex.Message, "Message" );
-            Assert.AreEqual( ResourceName, ex.ResourceName, "ex.ResourceName" );
-            Assert.AreEqual( 2, ex.ValidationErrors.Count, "ex.ValidationErrors.Count" );
-            Assert.AreEqual( ValidationError1, ex.ValidationErrors[0], "ex.ValidationErrors[0]" );
-            Assert.AreEqual( ValidationError2, ex.ValidationErrors[1], "ex.ValidationErrors[1]" );
-
-            // Double-check that the exception message and stack trace (owned by the base Exception) are preserved
-            Assert.AreEqual( exceptionToString, ex.ToString(), "ex.ToString()" );
-        }
-
-        [Test]
-        public void TestSerializableExceptionWithoutCustomProperties() {
-            Exception ex = new SerializableExceptionWithoutCustomProperties( "Message", new Exception( "Inner exception." ) );
-
-            // Save the full ToString() value, including the exception message and stack trace.
-            var exceptionToString = ex.ToString();
-
-            // Round-trip the exception: Serialize and de-serialize with a BinaryFormatter
-            var bf = new BinaryFormatter();
-
-            using ( var ms = new MemoryStream() ) {
-
-                // "Save" object state
-                bf.Serialize( ms, ex );
-
-                // Re-use the same stream for de-serialization
-                ms.Seek( 0, 0 );
-
-                // Replace the original exception with de-serialized one
-                ex = ( SerializableExceptionWithoutCustomProperties )bf.Deserialize( ms );
-            }
-
-            // Double-check that the exception message and stack trace (owned by the base Exception) are preserved
-            Assert.AreEqual( exceptionToString, ex.ToString(), "ex.ToString()" );
         }
     }
 }

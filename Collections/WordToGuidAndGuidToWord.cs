@@ -1,43 +1,37 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "WordToGuidAndGuidToWord.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "WordToGuidAndGuidToWord.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/WordToGuidAndGuidToWord.cs" was last cleaned by Protiguous on 2018/05/15 at 10:38 PM.
+// "Librainian/Librainian/WordToGuidAndGuidToWord.cs" was last formatted by Protiguous on 2018/05/22 at 5:55 PM.
 
 namespace Librainian.Collections {
 
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using FileSystem;
+    using ComputerSystems.FileSystem;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
     using Persistence;
@@ -49,21 +43,21 @@ namespace Librainian.Collections {
     public class WordToGuidAndGuidToWord {
 
         [JsonProperty]
-        private readonly ConcurrentDictionary<Guid, String> _guids = new ConcurrentDictionary<Guid, String>();
+        private ConcurrentDictionary<Guid, String> Guids { get; } = new ConcurrentDictionary<Guid, String>();
 
         [JsonProperty]
-        private readonly ConcurrentDictionary<String, Guid> _words = new ConcurrentDictionary<String, Guid>();
+        private ConcurrentDictionary<String, Guid> Words { get; } = new ConcurrentDictionary<String, Guid>();
 
-        public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) { }
+        public IEnumerable<Guid> EachGuid => this.Guids.Keys;
 
-        public IEnumerable<Guid> EachGuid => this._guids.Keys;
-
-        public IEnumerable<String> EachWord => this._words.Keys;
+        public IEnumerable<String> EachWord => this.Words.Keys;
 
         [JsonIgnore]
         public Boolean IsDirty { get; set; }
 
-        public Int32 Count => ( this._words.Count + this._guids.Count ) / 2;
+        public Int32 Count => ( this.Words.Count + this.Guids.Count ) / 2;
+
+        public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) { }
 
         /// <summary>
         ///     Get or set the guid for this word.
@@ -71,14 +65,14 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         public Guid this[String key] {
-            get => String.IsNullOrEmpty( key ) ? Guid.Empty : this._words[key];
+            get => String.IsNullOrEmpty( key ) ? Guid.Empty : this.Words[key];
 
             set {
                 if ( String.IsNullOrEmpty( key ) ) { return; }
 
-                if ( this._words.ContainsKey( key ) && value == this._words[key] ) { return; }
+                if ( this.Words.ContainsKey( key ) && value == this.Words[key] ) { return; }
 
-                this._words[key] = value;
+                this.Words[key] = value;
                 this[value] = key;
 
                 this.IsDirty = true;
@@ -91,35 +85,35 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         public String this[Guid key] {
-            get => Guid.Empty.Equals( g: key ) ? String.Empty : this._guids[key];
+            get => Guid.Empty.Equals( g: key ) ? String.Empty : this.Guids[key];
 
             set {
                 if ( Guid.Empty.Equals( g: key ) ) { return; }
 
                 //Are they removing the guid from both lists?
                 if ( String.IsNullOrEmpty( value ) ) {
-                    this._guids.TryRemove( key, out var oldstringfortheguid );
+                    this.Guids.TryRemove( key, out var oldstringfortheguid );
 
                     if ( String.IsNullOrEmpty( oldstringfortheguid ) ) { return; }
 
-                    this._words.TryRemove( oldstringfortheguid, out var oldguid );
+                    this.Words.TryRemove( oldstringfortheguid, out var oldguid );
                     oldguid.Equals( g: key ).BreakIfFalse();
                     this.IsDirty = true;
                 }
                 else {
-                    if ( this._guids.ContainsKey( key ) && value == this._guids[key] ) { return; }
+                    if ( this.Guids.ContainsKey( key ) && value == this.Guids[key] ) { return; }
 
-                    this._guids[key] = value;
+                    this.Guids[key] = value;
                     this.IsDirty = true;
                 }
             }
         }
 
         public void Clear() {
-            if ( this._words.IsEmpty && this._guids.IsEmpty ) { return; }
+            if ( this.Words.IsEmpty && this.Guids.IsEmpty ) { return; }
 
-            this._words.Clear();
-            this._guids.Clear();
+            this.Words.Clear();
+            this.Guids.Clear();
             this.IsDirty = true;
         }
 
@@ -131,7 +125,7 @@ namespace Librainian.Collections {
         public Boolean Contains( [NotNull] String theWord ) {
             if ( theWord is null ) { throw new ArgumentNullException( nameof( theWord ) ); }
 
-            return this._words.Keys.Contains( item: theWord ) && this._guids.Values.Contains( item: theWord );
+            return this.Words.Keys.Contains( item: theWord ) && this.Guids.Values.Contains( item: theWord );
         }
 
         /// <summary>
@@ -139,11 +133,11 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="theGuid"></param>
         /// <returns></returns>
-        public Boolean Contains( Guid theGuid ) => this._words.Values.Contains( item: theGuid ) && this._guids.Keys.Contains( item: theGuid );
+        public Boolean Contains( Guid theGuid ) => this.Words.Values.Contains( item: theGuid ) && this.Guids.Keys.Contains( item: theGuid );
 
         public Boolean Load() {
 
-            var obj = Load
+            var obj = 1;
 
             //var filename = Path.ChangeExtension( this.BaseCollectionName, this.BaseCollectionNameExt );
             //var storage = Storage.Loader<ConcurrentDictionary<String, Guid>>( filename, source => Cloning.DeepClone( Source: source, Destination: this ) );
@@ -162,6 +156,6 @@ namespace Librainian.Collections {
         ///     Returns true if the collections are persisted to storage (or empty).
         /// </summary>
         /// <returns></returns>
-        public Boolean Save() => !this.IsDirty || this._words.TrySave( new Document( nameof( WordToGuidAndGuidToWord ) ) );
+        public Boolean Save() => !this.IsDirty || this.Words.TrySave( new Document( nameof( WordToGuidAndGuidToWord ) ) );
     }
 }

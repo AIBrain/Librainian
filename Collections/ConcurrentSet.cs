@@ -1,36 +1,30 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "ConcurrentSet.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "ConcurrentSet.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/ConcurrentSet.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
+// "Librainian/Librainian/ConcurrentSet.cs" was last formatted by Protiguous on 2018/05/21 at 10:50 PM.
 
 namespace Librainian.Collections {
 
@@ -51,13 +45,7 @@ namespace Librainian.Collections {
         /// <summary>
         /// </summary>
         [JsonProperty]
-        private readonly ConcurrentDictionary<T, Object> _dictionary = new ConcurrentDictionary<T, Object>( concurrencyLevel: Environment.ProcessorCount, capacity: 7 );
-
-        public ConcurrentSet() { }
-
-        public ConcurrentSet( params T[] items ) => this.UnionWith( other: items );
-
-        public ConcurrentSet( IEnumerable<T> items ) => this.UnionWith( other: items );
+        private ConcurrentDictionary<T, Object> Dictionary { get; } = new ConcurrentDictionary<T, Object>( concurrencyLevel: Environment.ProcessorCount, capacity: 7 );
 
         /// <summary>
         ///     Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
@@ -68,12 +56,18 @@ namespace Librainian.Collections {
         /// <summary>
         ///     Gets the number of elements in the set.
         /// </summary>
-        public Int32 Count => this._dictionary.Count;
+        public Int32 Count => this.Dictionary.Count;
 
         /// <summary>
         ///     Gets a value that indicates if the set is empty.
         /// </summary>
-        public Boolean IsEmpty => this._dictionary.IsEmpty;
+        public Boolean IsEmpty => this.Dictionary.IsEmpty;
+
+        public ConcurrentSet() { }
+
+        public ConcurrentSet( params T[] items ) => this.UnionWith( other: items );
+
+        public ConcurrentSet( IEnumerable<T> items ) => this.UnionWith( other: items );
 
         /// <summary>
         ///     Adds an element to the current set and returns a value to indicate if the element was successfully added.
@@ -82,7 +76,7 @@ namespace Librainian.Collections {
         /// <param name="item">The element to add to the set.</param>
         public Boolean Add( T item ) => this.TryAdd( item: item );
 
-        public void Clear() => this._dictionary.Clear();
+        public void Clear() => this.Dictionary.Clear();
 
         // public T this[ int index ] {
         //     get { return this._dictionary.ElementAt( index ).Key; }
@@ -93,7 +87,7 @@ namespace Librainian.Collections {
         //         return true;
         //     }
         //}
-        public Boolean Contains( T item ) => item != null && this._dictionary.ContainsKey( item );
+        public Boolean Contains( T item ) => item != null && this.Dictionary.ContainsKey( item );
 
         /// <summary>
         ///     Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to an
@@ -115,7 +109,7 @@ namespace Librainian.Collections {
         ///     to the end of the destination <paramref name="array" />.-or-Type T cannot be cast automatically to the type of the
         ///     destination <paramref name="array" />.
         /// </exception>
-        public void CopyTo( T[] array, Int32 arrayIndex ) => this._dictionary.Keys.CopyTo( array: array, arrayIndex: arrayIndex );
+        public void CopyTo( T[] array, Int32 arrayIndex ) => this.Dictionary.Keys.CopyTo( array: array, arrayIndex: arrayIndex );
 
         /// <summary>
         ///     Removes all elements in the specified collection from the current set.
@@ -133,7 +127,7 @@ namespace Librainian.Collections {
         ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the
         ///     collection.
         /// </returns>
-        public IEnumerator<T> GetEnumerator() => this._dictionary.Keys.GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => this.Dictionary.Keys.GetEnumerator();
 
         /// <summary>
         ///     Modifies the current set so that it contains only elements that are also in a specified collection.
@@ -242,16 +236,16 @@ namespace Librainian.Collections {
         ///     Returns a copy of the keys to an array.
         /// </summary>
         /// <returns></returns>
-        public T[] ToArray() => this._dictionary.Keys.ToArray();
+        public T[] ToArray() => this.Dictionary.Keys.ToArray();
 
-        public Boolean TryAdd( T item ) => this._dictionary.TryAdd( item, null );
+        public Boolean TryAdd( T item ) => this.Dictionary.TryAdd( item, null );
 
-        public Boolean TryGet( T item ) => this._dictionary.TryGetValue( item, out _ );
+        public Boolean TryGet( T item ) => this.Dictionary.TryGetValue( item, out _ );
 
-        public Boolean TryRemove( T item ) => this._dictionary.TryRemove( item, out _ );
+        public Boolean TryRemove( T item ) => this.Dictionary.TryRemove( item, out _ );
 
         public Boolean TryTakeAny( out T item ) {
-            foreach ( var pair in this._dictionary ) {
+            foreach ( var pair in this.Dictionary ) {
                 item = pair.Key;
 
                 return true;

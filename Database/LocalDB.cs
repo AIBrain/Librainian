@@ -1,36 +1,30 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "LocalDB.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "LocalDB.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/LocalDB.cs" was last cleaned by Protiguous on 2018/05/15 at 10:39 PM.
+// "Librainian/Librainian/LocalDB.cs" was last formatted by Protiguous on 2018/05/22 at 8:50 PM.
 
 namespace Librainian.Database {
 
@@ -38,23 +32,37 @@ namespace Librainian.Database {
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
-
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    using FileSystem;
+    using ComputerSystems.FileSystem;
     using JetBrains.Annotations;
     using Magic;
 
     public class LocalDb : ABetterClassDispose {
 
-        /// <summary>
-        /// </summary>
-        /// <param name="databaseName">    </param>
-        /// <param name="databaseLocation"></param>
-        /// <param name="timeoutForReads"> </param>
-        /// <param name="timeoutForWrites"></param>
+        [NotNull]
+        public SqlConnection Connection { get; }
+
+        [NotNull]
+        public String ConnectionString { get; }
+
+        [NotNull]
+        public Folder DatabaseLocation { get; }
+
+        [NotNull]
+        public Document DatabaseLog { get; }
+
+        [NotNull]
+        public Document DatabaseMdf { get; }
+
+        [NotNull]
+        public String DatabaseName { get; }
+
+        public TimeSpan ReadTimeout { get; }
+
+        public TimeSpan WriteTimeout { get; }
+
         // ReSharper disable once NotNullMemberIsNotInitialized
-        [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         public LocalDb( [NotNull] String databaseName, [CanBeNull] Folder databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) {
             if ( String.IsNullOrWhiteSpace( databaseName ) ) { throw new ArgumentNullException( nameof( databaseName ) ); }
 
@@ -90,7 +98,6 @@ namespace Librainian.Database {
 
             this.ConnectionString = $@"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog={this.DatabaseName};AttachDBFileName={this.DatabaseMdf.FullPathWithFileName};";
 
-            // ReSharper disable once UseObjectOrCollectionInitializer
             this.Connection = new SqlConnection( this.ConnectionString );
             this.Connection.InfoMessage += ( sender, args ) => args.Message.Info();
             this.Connection.StateChange += ( sender, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info();
@@ -101,28 +108,6 @@ namespace Librainian.Database {
             this.Connection.ServerVersion.Info();
             this.Connection.Close();
         }
-
-        [NotNull]
-        public SqlConnection Connection { get; }
-
-        [NotNull]
-        public String ConnectionString { get; }
-
-        [NotNull]
-        public Folder DatabaseLocation { get; }
-
-        [NotNull]
-        public Document DatabaseLog { get; }
-
-        [NotNull]
-        public Document DatabaseMdf { get; }
-
-        [NotNull]
-        public String DatabaseName { get; }
-
-        public TimeSpan ReadTimeout { get; }
-
-        public TimeSpan WriteTimeout { get; }
 
         public async Task DetachDatabaseAsync() {
             try {
@@ -150,7 +135,7 @@ namespace Librainian.Database {
 
     // /// <summary> /// /// </summary> private static Lazy<Folder> datebaseBaseFolder = new Lazy<Folder>();
 
-    // //public static readonly ConcurrentDictionary<String, Document> DataPointers = new ConcurrentDictionary<String, Document>(); //public static readonly ConcurrentDictionary<String, Document> LogPointers = new
+    // //public static  ConcurrentDictionary<String, Document> DataPointers = new ConcurrentDictionary<String, Document>(); //public static  ConcurrentDictionary<String, Document> LogPointers = new
     // ConcurrentDictionary<String, Document>();
 
     // static LocalDB() { //const string name = "Properties"; //var instance = GetInstance( name ); //var mdf = new Document( Path.Combine( PersistenceExtensions.DataFolder.Value.FullName, String.Format( "{0}.mdf", name )

@@ -49,6 +49,89 @@ namespace Librainian.OperatingSystem.Compression {
     /// <seealso cref="http://zipstorer.codeplex.com/" />
     public class ZipStorer : ABetterClassDispose {
 
+        /// <summary>
+        ///     Compression method enumeration
+        /// </summary>
+        public enum Compression : UInt16 {
+
+            /// <summary>
+            ///     Uncompressed storage
+            /// </summary>
+            Store = 0,
+
+            /// <summary>
+            ///     Deflate compression method
+            /// </summary>
+            Deflate = 8
+        }
+
+        /// <summary>
+        ///     Represents an entry in Zip file directory
+        /// </summary>
+        public struct ZipFileEntry {
+
+            /// <summary>
+            ///     User comment for file
+            /// </summary>
+            public String Comment;
+
+            /// <summary>
+            ///     Compressed file size
+            /// </summary>
+            public UInt32 CompressedSize;
+
+            /// <summary>
+            ///     32-bit checksum of entire file
+            /// </summary>
+            public UInt32 Crc32;
+
+            /// <summary>
+            ///     True if UTF8 encoding for filename and comments, false if default (CP 437)
+            /// </summary>
+            public Boolean EncodeUtf8;
+
+            /// <summary>
+            ///     Full path and filename as stored in Zip
+            /// </summary>
+            public String FilenameInZip;
+
+            /// <summary>
+            ///     Offset of file inside Zip storage
+            /// </summary>
+            public UInt32 FileOffset;
+
+            /// <summary>
+            ///     Original file size
+            /// </summary>
+            public UInt32 FileSize;
+
+            /// <summary>
+            ///     Offset of header information inside Zip storage
+            /// </summary>
+            public UInt32 HeaderOffset;
+
+            /// <summary>
+            ///     Size of header information
+            /// </summary>
+            public UInt32 HeaderSize;
+
+            /// <summary>
+            ///     Compression method
+            /// </summary>
+            public Compression Method;
+
+            /// <summary>
+            ///     Last modification time of file
+            /// </summary>
+            public DateTime ModifyTime;
+
+            /// <summary>
+            ///     Overridden method
+            /// </summary>
+            /// <returns>Filename in Zip</returns>
+            public override String ToString() => this.FilenameInZip;
+        }
+
         // Static CRC32 Table
         private static readonly UInt32[] CrcTable;
 
@@ -102,22 +185,6 @@ namespace Librainian.OperatingSystem.Compression {
 
                 CrcTable[i] = c;
             }
-        }
-
-        /// <summary>
-        ///     Compression method enumeration
-        /// </summary>
-        public enum Compression : UInt16 {
-
-            /// <summary>
-            ///     Uncompressed storage
-            /// </summary>
-            Store = 0,
-
-            /// <summary>
-            ///     Deflate compression method
-            /// </summary>
-            Deflate = 8
         }
 
         private static UInt32 DateTimeToDosTime( DateTime dt ) => ( UInt32 )( ( dt.Second / 2 ) | ( dt.Minute << 5 ) | ( dt.Hour << 11 ) | ( dt.Day << 16 ) | ( dt.Month << 21 ) | ( ( dt.Year - 1980 ) << 25 ) );
@@ -636,73 +703,6 @@ namespace Librainian.OperatingSystem.Compression {
             }
 
             return result;
-        }
-
-        /// <summary>
-        ///     Represents an entry in Zip file directory
-        /// </summary>
-        public struct ZipFileEntry {
-
-            /// <summary>
-            ///     User comment for file
-            /// </summary>
-            public String Comment;
-
-            /// <summary>
-            ///     Compressed file size
-            /// </summary>
-            public UInt32 CompressedSize;
-
-            /// <summary>
-            ///     32-bit checksum of entire file
-            /// </summary>
-            public UInt32 Crc32;
-
-            /// <summary>
-            ///     True if UTF8 encoding for filename and comments, false if default (CP 437)
-            /// </summary>
-            public Boolean EncodeUtf8;
-
-            /// <summary>
-            ///     Full path and filename as stored in Zip
-            /// </summary>
-            public String FilenameInZip;
-
-            /// <summary>
-            ///     Offset of file inside Zip storage
-            /// </summary>
-            public UInt32 FileOffset;
-
-            /// <summary>
-            ///     Original file size
-            /// </summary>
-            public UInt32 FileSize;
-
-            /// <summary>
-            ///     Offset of header information inside Zip storage
-            /// </summary>
-            public UInt32 HeaderOffset;
-
-            /// <summary>
-            ///     Size of header information
-            /// </summary>
-            public UInt32 HeaderSize;
-
-            /// <summary>
-            ///     Compression method
-            /// </summary>
-            public Compression Method;
-
-            /// <summary>
-            ///     Last modification time of file
-            /// </summary>
-            public DateTime ModifyTime;
-
-            /// <summary>
-            ///     Overridden method
-            /// </summary>
-            /// <returns>Filename in Zip</returns>
-            public override String ToString() => this.FilenameInZip;
         }
 
         /* Local file header:

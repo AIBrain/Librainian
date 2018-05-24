@@ -1,36 +1,30 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "HistogramaDesenat.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "HistogramaDesenat.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/HistogramaDesenat.cs" was last cleaned by Protiguous on 2018/05/15 at 10:39 PM.
+// "Librainian/Librainian/HistogramaDesenat.cs" was last formatted by Protiguous on 2018/05/22 at 6:36 PM.
 
 namespace Librainian.Controls {
 
@@ -50,9 +44,7 @@ namespace Librainian.Controls {
         /// <summary>
         ///     Required designer variable.
         /// </summary>
-        private readonly Container _components;
-
-        private readonly Font _myFont = new Font( "Tahoma", 10 );
+        private Container _components;
 
         private Boolean _myIsDrawing;
 
@@ -66,16 +58,7 @@ namespace Librainian.Controls {
 
         private Single _myYUnit;
 
-        public HistogramaDesenat() {
-
-            // This call is required by the Windows.Forms Form Designer.
-            this.InitializeComponent();
-
-            // TODO: Add any initialization after the InitializeComponent call
-
-            this.Paint += this.HistogramaDesenat_Paint;
-            this.Resize += this.HistogramaDesenat_Resize;
-        }
+        private Font MyFont { get; } = new Font( "Tahoma", 10 );
 
         [Category( "Histogram Options" )]
         [Description( "The color used within the control" )]
@@ -92,6 +75,17 @@ namespace Librainian.Controls {
             }
 
             get => this._myOffset;
+        }
+
+        public HistogramaDesenat() {
+
+            // This call is required by the Windows.Forms Form Designer.
+            this.InitializeComponent();
+
+            // TODO: Add any initialization after the InitializeComponent call
+
+            this.Paint += this.HistogramaDesenat_Paint;
+            this.Resize += this.HistogramaDesenat_Resize;
         }
 
         private void ComputeXyUnitValues() {
@@ -135,17 +129,17 @@ namespace Librainian.Controls {
                 //We plot the coresponding index for the maximum value.
                 if ( this._myValues[i] != this._myMaxValue ) { continue; }
 
-                var mySize = g.MeasureString( i.ToString(), this._myFont );
+                var mySize = g.MeasureString( i.ToString(), this.MyFont );
 
-                g.DrawString( i.ToString(), this._myFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset + i * this._myXUnit - mySize.Width / 2, this.Height - this._myFont.Height ),
+                g.DrawString( i.ToString(), this.MyFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset + i * this._myXUnit - mySize.Width / 2, this.Height - this.MyFont.Height ),
                     StringFormat.GenericDefault );
             }
 
             //We draw the indexes for 0 and for the length of the array being plotted
-            g.DrawString( "0", this._myFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset, this.Height - this._myFont.Height ), StringFormat.GenericDefault );
+            g.DrawString( "0", this.MyFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset, this.Height - this.MyFont.Height ), StringFormat.GenericDefault );
 
-            g.DrawString( s: ( this._myValues.Length - 1 ).ToString(), font: this._myFont, brush: new SolidBrush( this.DisplayColor ),
-                point: new PointF( this._myOffset + this._myValues.Length * this._myXUnit - g.MeasureString( this._myValues.Length.ToString(), this._myFont ).Width, this.Height - this._myFont.Height ),
+            g.DrawString( s: ( this._myValues.Length - 1 ).ToString(), font: this.MyFont, brush: new SolidBrush( this.DisplayColor ),
+                point: new PointF( this._myOffset + this._myValues.Length * this._myXUnit - g.MeasureString( this._myValues.Length.ToString(), this.MyFont ).Width, this.Height - this.MyFont.Height ),
                 format: StringFormat.GenericDefault );
 
             //We draw a rectangle surrounding the control.

@@ -1,128 +1,50 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "NativeMethods.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "NativeMethods.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/NativeMethods.cs" was last cleaned by Protiguous on 2018/05/15 at 10:48 PM.
+// "Librainian/Librainian/NativeMethods.cs" was last formatted by Protiguous on 2018/05/21 at 11:16 PM.
 
 namespace Librainian.OperatingSystem {
 
     using System;
-
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Runtime.ConstrainedExecution;
     using System.Runtime.InteropServices;
     using System.Security;
     using System.Text;
     using System.Threading;
+    using ComputerSystems.FileSystem;
     using Controls;
     using Extensions;
-    using FileSystem;
     using Graphics;
     using Graphics.Video;
     using Microsoft.Win32.SafeHandles;
 
     [SuppressMessage( "ReSharper", "InconsistentNaming" )]
     public static class NativeMethods {
-
-        public const UInt32 ATA_FLAGS_DATA_IN = 0x02;
-
-        public const Int32 DIGCF_DEVICEINTERFACE = 0x00000010;
-
-        public const Int32 DIGCF_PRESENT = 0x00000002;
-
-        public const Int32 ERROR_INSUFFICIENT_BUFFER = 122;
-
-        public const Int32 ERROR_INVALID_DATA = 13;
-
-        public const Int32 ERROR_NO_MORE_ITEMS = 259;
-
-        public const UInt32 ErrorMoreData = 234;
-
-        public const UInt32 ErrorSuccess = 0;
-
-        public const UInt32 FILE_ANY_ACCESS = 0;
-
-        public const UInt32 FILE_ATTRIBUTE_NORMAL = 0x00000080;
-
-        public const UInt32 FILE_DEVICE_CONTROLLER = 0x00000004;
-
-        public const UInt32 FILE_DEVICE_MASS_STORAGE = 0x0000002d;
-
-        public const UInt32 FILE_READ_ACCESS = 0x00000001;
-
-        public const UInt32 FILE_SHARE_READ = 0x00000001;
-
-        public const UInt32 FILE_SHARE_WRITE = 0x00000002;
-
-        public const UInt32 FILE_WRITE_ACCESS = 0x00000002;
-
-        public const UInt32 FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
-
-        public const UInt32 GENERIC_READ = 0x80000000;
-
-        public const UInt32 GENERIC_WRITE = 0x40000000;
-
-        public const String GUID_DEVINTERFACE_DISK = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
-
-        public const String GUID_DEVINTERFACE_VOLUME = "53f5630d-b6bf-11d0-94f2-00a0c91efb8b";
-
-        public const UInt32 IOCTL_SCSI_BASE = FILE_DEVICE_CONTROLLER;
-
-        public const UInt32 IOCTL_STORAGE_BASE = FILE_DEVICE_MASS_STORAGE;
-
-        public const Int32 IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x002d1080;
-
-        public const Int32 IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS = 0x00560000;
-
-        public const Int32 MaxPath = 260;
-
-        public const UInt32 METHOD_BUFFERED = 0;
-
-        public const UInt32 OPEN_EXISTING = 3;
-
-        public const UInt32 PropertyStandardQuery = 0;
-
-        public const Int32 SPDRP_CAPABILITIES = 0x0000000F;
-
-        public const Int32 SPDRP_CLASS = 0x00000007;
-
-        public const Int32 SPDRP_CLASSGUID = 0x00000008;
-
-        public const Int32 SPDRP_DEVICEDESC = 0x00000000;
-
-        public const Int32 SPDRP_FRIENDLYNAME = 0x0000000C;
-
-        public const UInt32 StorageDeviceSeekPenaltyProperty = 7;
-
-        public const Int32 WM_DEVICECHANGE = 0x0219;
 
         [Flags]
         public enum AllocationType : UInt32 {
@@ -336,6 +258,284 @@ namespace Librainian.OperatingSystem {
 
             SvTypeAll = 0xFFFFFFFF
         }
+
+        [SuppressMessage( "Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable" )]
+        [StructLayout( LayoutKind.Sequential )]
+        public struct ATA_PASS_THROUGH_EX {
+
+            public UInt16 Length;
+
+            public UInt16 AtaFlags;
+
+            public readonly Byte PathId;
+
+            public readonly Byte TargetId;
+
+            public readonly Byte Lun;
+
+            public readonly Byte ReservedAsUchar;
+
+            public UInt32 DataTransferLength;
+
+            public UInt32 TimeOutValue;
+
+            public readonly UInt32 ReservedAsUlong;
+
+            internal IntPtr DataBufferOffset;
+
+            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
+            public Byte[] PreviousTaskFile;
+
+            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
+            public Byte[] CurrentTaskFile;
+        }
+
+        [StructLayout( LayoutKind.Sequential )]
+        public struct ATAIdentifyDeviceQuery {
+
+            public ATA_PASS_THROUGH_EX header;
+
+            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
+            public UInt16[] data;
+        }
+
+        [StructLayout( LayoutKind.Sequential )]
+        public struct DEVICE_SEEK_PENALTY_DESCRIPTOR {
+
+            public readonly UInt32 Version;
+
+            public readonly UInt32 Size;
+
+            [MarshalAs( UnmanagedType.U1 )]
+            public readonly Boolean IncursSeekPenalty;
+        }
+
+        [StructLayout( LayoutKind.Sequential )]
+        public struct DISK_EXTENT {
+
+            public readonly Int32 DiskNumber;
+
+            public readonly Int64 StartingOffset;
+
+            public readonly Int64 ExtentLength;
+        }
+
+        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+        public struct FILE_ID_BOTH_DIR_INFO {
+
+            public readonly UInt32 NextEntryOffset;
+
+            public readonly UInt32 FileIndex;
+
+            public LargeInteger CreationTime;
+
+            public LargeInteger LastAccessTime;
+
+            public LargeInteger LastWriteTime;
+
+            public LargeInteger ChangeTime;
+
+            public LargeInteger EndOfFile;
+
+            public LargeInteger AllocationSize;
+
+            public readonly UInt32 FileAttributes;
+
+            public readonly UInt32 FileNameLength;
+
+            public readonly UInt32 EaSize;
+
+            public readonly Char ShortNameLength;
+
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 12 )]
+            public readonly String ShortName;
+
+            public LargeInteger FileId;
+
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 1 )]
+            public readonly String FileName;
+        }
+
+        /// <summary>
+        ///     Win32 FILETIME structure. The win32 documentation says this: "Contains a 64-bit value representing the number of
+        ///     100-nanosecond intervals since January 1, 1601 (UTC)."
+        /// </summary>
+        /// <see cref="http://msdn.microsoft.com/en-us/Library/ms724284%28VS.85%29.aspx" />
+        [StructLayout( LayoutKind.Sequential )]
+        public struct Filetime {
+
+            public readonly UInt32 dwLowDateTime;
+
+            public readonly UInt32 dwHighDateTime;
+        }
+
+        [StructLayout( LayoutKind.Explicit )]
+        public struct LargeInteger {
+
+            [FieldOffset( 0 )]
+            public Int32 Low;
+
+            [FieldOffset( 4 )]
+            public Int32 High;
+
+            [FieldOffset( 0 )]
+            public readonly Int64 QuadPart;
+
+            /// <summary>
+            ///     use only when QuadPart cannot be passed
+            /// </summary>
+            /// <returns></returns>
+            public Int64 ToInt64() => ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
+
+            // just for demonstration
+            internal static LargeInteger FromInt64( Int64 value ) => new LargeInteger { Low = ( Int32 )value, High = ( Int32 )( value >> 32 ) };
+        }
+
+        [StructLayout( LayoutKind.Sequential )]
+        public struct ServerInfo101 {
+
+            [MarshalAs( UnmanagedType.U4 )]
+            public readonly UInt32 sv101_platform_id;
+
+            [MarshalAs( UnmanagedType.LPWStr )]
+            public readonly String sv101_name;
+
+            [MarshalAs( UnmanagedType.U4 )]
+            public readonly UInt32 sv101_version_major;
+
+            [MarshalAs( UnmanagedType.U4 )]
+            public readonly UInt32 sv101_version_minor;
+
+            [MarshalAs( UnmanagedType.U4 )]
+            public readonly UInt32 sv101_type;
+
+            [MarshalAs( UnmanagedType.LPWStr )]
+            public readonly String sv101_comment;
+        }
+
+        [StructLayout( LayoutKind.Sequential )]
+        public struct STORAGE_DEVICE_NUMBER {
+
+            public Int32 DeviceType;
+
+            public Int32 DeviceNumber;
+
+            public Int32 PartitionNumber;
+        }
+
+        [StructLayout( LayoutKind.Sequential )]
+        public struct STORAGE_PROPERTY_QUERY {
+
+            public UInt32 PropertyId;
+
+            public UInt32 QueryType;
+
+            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 1 )]
+            public readonly Byte[] AdditionalParameters;
+        }
+
+        /// <summary>
+        ///     The Win32 find data structure. The documentation says: "Contains information about the file that is found by the
+        ///     FindFirstFile, FindFirstFileEx, or FindNextFile function."
+        /// </summary>
+        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa365740%28VS.85%29.aspx" />
+        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
+        public struct Win32FindData {
+
+            public readonly FileAttributes dwFileAttributes;
+
+            public Filetime ftCreationTime;
+
+            public Filetime ftLastAccessTime;
+
+            public Filetime ftLastWriteTime;
+
+            public readonly UInt32 nFileSizeHigh;
+
+            public readonly UInt32 nFileSizeLow;
+
+            public readonly UInt32 dwReserved0;
+
+            public readonly UInt32 dwReserved1;
+
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxPath )]
+            public readonly String cFileName;
+
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
+            public readonly String cAlternateFileName;
+        }
+
+        public const UInt32 ATA_FLAGS_DATA_IN = 0x02;
+
+        public const Int32 DIGCF_DEVICEINTERFACE = 0x00000010;
+
+        public const Int32 DIGCF_PRESENT = 0x00000002;
+
+        public const Int32 ERROR_INSUFFICIENT_BUFFER = 122;
+
+        public const Int32 ERROR_INVALID_DATA = 13;
+
+        public const Int32 ERROR_NO_MORE_ITEMS = 259;
+
+        public const UInt32 ErrorMoreData = 234;
+
+        public const UInt32 ErrorSuccess = 0;
+
+        public const UInt32 FILE_ANY_ACCESS = 0;
+
+        public const UInt32 FILE_ATTRIBUTE_NORMAL = 0x00000080;
+
+        public const UInt32 FILE_DEVICE_CONTROLLER = 0x00000004;
+
+        public const UInt32 FILE_DEVICE_MASS_STORAGE = 0x0000002d;
+
+        public const UInt32 FILE_READ_ACCESS = 0x00000001;
+
+        public const UInt32 FILE_SHARE_READ = 0x00000001;
+
+        public const UInt32 FILE_SHARE_WRITE = 0x00000002;
+
+        public const UInt32 FILE_WRITE_ACCESS = 0x00000002;
+
+        public const UInt32 FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
+
+        public const UInt32 GENERIC_READ = 0x80000000;
+
+        public const UInt32 GENERIC_WRITE = 0x40000000;
+
+        public const String GUID_DEVINTERFACE_DISK = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
+
+        public const String GUID_DEVINTERFACE_VOLUME = "53f5630d-b6bf-11d0-94f2-00a0c91efb8b";
+
+        public const UInt32 IOCTL_SCSI_BASE = FILE_DEVICE_CONTROLLER;
+
+        public const UInt32 IOCTL_STORAGE_BASE = FILE_DEVICE_MASS_STORAGE;
+
+        public const Int32 IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x002d1080;
+
+        public const Int32 IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS = 0x00560000;
+
+        public const Int32 MaxPath = 260;
+
+        public const UInt32 METHOD_BUFFERED = 0;
+
+        public const UInt32 OPEN_EXISTING = 3;
+
+        public const UInt32 PropertyStandardQuery = 0;
+
+        public const Int32 SPDRP_CAPABILITIES = 0x0000000F;
+
+        public const Int32 SPDRP_CLASS = 0x00000007;
+
+        public const Int32 SPDRP_CLASSGUID = 0x00000008;
+
+        public const Int32 SPDRP_DEVICEDESC = 0x00000000;
+
+        public const Int32 SPDRP_FRIENDLYNAME = 0x0000000C;
+
+        public const UInt32 StorageDeviceSeekPenaltyProperty = 7;
+
+        public const Int32 WM_DEVICECHANGE = 0x0219;
 
         [DllImport( "kernel32.dll" )]
         internal static extern Boolean AllocConsole();
@@ -773,212 +973,6 @@ namespace Librainian.OperatingSystem {
         [SuppressMessage( "Microsoft.Interoperability", "CA1401:PInvokesShouldNotBeVisible" )]
         [DllImport( "kernel32.dll", SetLastError = true )]
         public static extern Boolean VirtualFree( UIntPtr lpAddress, UIntPtr dwSize, UInt32 dwFreeType );
-
-        [SuppressMessage( "Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable" )]
-        [StructLayout( LayoutKind.Sequential )]
-        public struct ATA_PASS_THROUGH_EX {
-
-            public UInt16 Length;
-
-            public UInt16 AtaFlags;
-
-            public Byte PathId;
-
-            public Byte TargetId;
-
-            public Byte Lun;
-
-            public Byte ReservedAsUchar;
-
-            public UInt32 DataTransferLength;
-
-            public UInt32 TimeOutValue;
-
-            public UInt32 ReservedAsUlong;
-
-            internal IntPtr DataBufferOffset;
-
-            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
-            public Byte[] PreviousTaskFile;
-
-            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
-            public Byte[] CurrentTaskFile;
-        }
-
-        [StructLayout( LayoutKind.Sequential )]
-        public struct ATAIdentifyDeviceQuery {
-
-            public ATA_PASS_THROUGH_EX header;
-
-            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
-            public UInt16[] data;
-        }
-
-        [StructLayout( LayoutKind.Sequential )]
-        public struct DEVICE_SEEK_PENALTY_DESCRIPTOR {
-
-            public UInt32 Version;
-
-            public UInt32 Size;
-
-            [MarshalAs( UnmanagedType.U1 )]
-            public Boolean IncursSeekPenalty;
-        }
-
-        [StructLayout( LayoutKind.Sequential )]
-        public struct DISK_EXTENT {
-
-            public Int32 DiskNumber;
-
-            public Int64 StartingOffset;
-
-            public Int64 ExtentLength;
-        }
-
-        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
-        public struct FILE_ID_BOTH_DIR_INFO {
-
-            public UInt32 NextEntryOffset;
-
-            public UInt32 FileIndex;
-
-            public LargeInteger CreationTime;
-
-            public LargeInteger LastAccessTime;
-
-            public LargeInteger LastWriteTime;
-
-            public LargeInteger ChangeTime;
-
-            public LargeInteger EndOfFile;
-
-            public LargeInteger AllocationSize;
-
-            public UInt32 FileAttributes;
-
-            public UInt32 FileNameLength;
-
-            public UInt32 EaSize;
-
-            public Char ShortNameLength;
-
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 12 )]
-            public String ShortName;
-
-            public LargeInteger FileId;
-
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 1 )]
-            public String FileName;
-        }
-
-        /// <summary>
-        ///     Win32 FILETIME structure. The win32 documentation says this: "Contains a 64-bit value representing the number of
-        ///     100-nanosecond intervals since January 1, 1601 (UTC)."
-        /// </summary>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/ms724284%28VS.85%29.aspx" />
-        [StructLayout( LayoutKind.Sequential )]
-        public struct Filetime {
-
-            public UInt32 dwLowDateTime;
-
-            public UInt32 dwHighDateTime;
-        }
-
-        [StructLayout( LayoutKind.Explicit )]
-        public struct LargeInteger {
-
-            [FieldOffset( 0 )]
-            public Int32 Low;
-
-            [FieldOffset( 4 )]
-            public Int32 High;
-
-            [FieldOffset( 0 )]
-            public Int64 QuadPart;
-
-            /// <summary>
-            ///     use only when QuadPart cannot be passed
-            /// </summary>
-            /// <returns></returns>
-            public Int64 ToInt64() => ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
-
-            // just for demonstration
-            internal static LargeInteger FromInt64( Int64 value ) => new LargeInteger { Low = ( Int32 )value, High = ( Int32 )( value >> 32 ) };
-        }
-
-        [StructLayout( LayoutKind.Sequential )]
-        public struct ServerInfo101 {
-
-            [MarshalAs( UnmanagedType.U4 )]
-            public readonly UInt32 sv101_platform_id;
-
-            [MarshalAs( UnmanagedType.LPWStr )]
-            public readonly String sv101_name;
-
-            [MarshalAs( UnmanagedType.U4 )]
-            public readonly UInt32 sv101_version_major;
-
-            [MarshalAs( UnmanagedType.U4 )]
-            public readonly UInt32 sv101_version_minor;
-
-            [MarshalAs( UnmanagedType.U4 )]
-            public readonly UInt32 sv101_type;
-
-            [MarshalAs( UnmanagedType.LPWStr )]
-            public readonly String sv101_comment;
-        }
-
-        [StructLayout( LayoutKind.Sequential )]
-        public struct STORAGE_DEVICE_NUMBER {
-
-            public Int32 DeviceType;
-
-            public Int32 DeviceNumber;
-
-            public Int32 PartitionNumber;
-        }
-
-        [StructLayout( LayoutKind.Sequential )]
-        public struct STORAGE_PROPERTY_QUERY {
-
-            public UInt32 PropertyId;
-
-            public UInt32 QueryType;
-
-            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 1 )]
-            public Byte[] AdditionalParameters;
-        }
-
-        /// <summary>
-        ///     The Win32 find data structure. The documentation says: "Contains information about the file that is found by the
-        ///     FindFirstFile, FindFirstFileEx, or FindNextFile function."
-        /// </summary>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa365740%28VS.85%29.aspx" />
-        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
-        public struct Win32FindData {
-
-            public FileAttributes dwFileAttributes;
-
-            public Filetime ftCreationTime;
-
-            public Filetime ftLastAccessTime;
-
-            public Filetime ftLastWriteTime;
-
-            public UInt32 nFileSizeHigh;
-
-            public UInt32 nFileSizeLow;
-
-            public UInt32 dwReserved0;
-
-            public UInt32 dwReserved1;
-
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxPath )]
-            public String cFileName;
-
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
-            public String cAlternateFileName;
-        }
 
         [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
         public class SP_DEVICE_INTERFACE_DATA {

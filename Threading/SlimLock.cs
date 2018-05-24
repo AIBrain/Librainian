@@ -1,36 +1,30 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "SlimLock.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "SlimLock.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/SlimLock.cs" was last cleaned by Protiguous on 2018/05/15 at 10:50 PM.
+// "Librainian/Librainian/SlimLock.cs" was last formatted by Protiguous on 2018/05/21 at 10:56 PM.
 
 namespace Librainian.Threading {
 
@@ -70,9 +64,9 @@ namespace Librainian.Threading {
 
         private const UInt32 ReaderMask = 0x10000000 - 1;
 
-        private static readonly Int32 ProcessorCount = Environment.ProcessorCount;
+        private static Int32 ProcessorCount { get; } = Environment.ProcessorCount;
 
-        private readonly Boolean _fIsReentrant;
+        private Boolean IsReentrant { get; }
 
         //Various R/W masks
         //Note:
@@ -136,12 +130,12 @@ namespace Librainian.Threading {
         public SlimLock() : this( LockRecursionPolicy.NoRecursion ) { }
 
         public SlimLock( LockRecursionPolicy recursionPolicy ) {
-            if ( recursionPolicy == LockRecursionPolicy.SupportsRecursion ) { this._fIsReentrant = true; }
+            if ( recursionPolicy == LockRecursionPolicy.SupportsRecursion ) { this.IsReentrant = true; }
 
             this.InitializeThreadCounts();
         }
 
-        public LockRecursionPolicy RecursionPolicy => this._fIsReentrant ? LockRecursionPolicy.SupportsRecursion : LockRecursionPolicy.NoRecursion;
+        public LockRecursionPolicy RecursionPolicy => this.IsReentrant ? LockRecursionPolicy.SupportsRecursion : LockRecursionPolicy.NoRecursion;
 
         public Int32 CurrentReadCount {
             get {
@@ -179,7 +173,7 @@ namespace Librainian.Threading {
             get {
                 var id = Thread.CurrentThread.ManagedThreadId;
 
-                if ( !this._fIsReentrant ) { return id == this._upgradeLockOwnerId ? 1 : 0; }
+                if ( !this.IsReentrant ) { return id == this._upgradeLockOwnerId ? 1 : 0; }
 
                 var count = 0;
 
@@ -201,7 +195,7 @@ namespace Librainian.Threading {
                 var id = Thread.CurrentThread.ManagedThreadId;
                 var count = 0;
 
-                if ( !this._fIsReentrant ) { return id == this._writeLockOwnerId ? 1 : 0; }
+                if ( !this.IsReentrant ) { return id == this._writeLockOwnerId ? 1 : 0; }
 
                 Thread.BeginCriticalRegion();
                 this.EnterMyLock();
@@ -267,7 +261,7 @@ namespace Librainian.Threading {
             if ( null == this._rwc[hash] ) {
                 if ( dontAllocate ) { return null; }
 
-                this._rwc[hash] = new ReaderWriterCount( this._fIsReentrant );
+                this._rwc[hash] = new ReaderWriterCount( this.IsReentrant );
             }
 
             if ( this._rwc[hash].Threadid == id ) { return this._rwc[hash]; }
@@ -301,7 +295,7 @@ namespace Librainian.Threading {
             if ( dontAllocate ) { return null; }
 
             if ( firstfound is null ) {
-                temp = new ReaderWriterCount( this._fIsReentrant ) { Threadid = id, Next = this._rwc[hash].Next };
+                temp = new ReaderWriterCount( this.IsReentrant ) { Threadid = id, Next = this._rwc[hash].Next };
                 this._rwc[hash].Next = temp;
 
                 return temp;
@@ -348,7 +342,7 @@ namespace Librainian.Threading {
             ReaderWriterCount lrwc;
             var id = Thread.CurrentThread.ManagedThreadId;
 
-            if ( this._fIsReentrant ) {
+            if ( this.IsReentrant ) {
                 this.EnterMyLock();
                 lrwc = this.GetThreadRwCount( id, false );
 
@@ -564,7 +558,7 @@ namespace Librainian.Threading {
             ReaderWriterCount lrwc;
             var upgradingToWrite = false;
 
-            if ( !this._fIsReentrant ) {
+            if ( !this.IsReentrant ) {
                 if ( id == this._writeLockOwnerId ) {
 
                     //Check for AW->AW
@@ -642,7 +636,7 @@ namespace Librainian.Threading {
                                 if ( lrwc.Readercount > 0 ) {
 
                                     //This check is needed for EU->ER->EW case, as the owner count will be two.
-                                    Assert.That( this._fIsReentrant );
+                                    Assert.That( this.IsReentrant );
                                     Assert.That( this._fUpgradeThreadHoldingRead );
 
                                     //Good case again, there is just one upgrader, and no readers.
@@ -702,7 +696,7 @@ namespace Librainian.Threading {
 
             Assert.That( ( this._owners & WriterHeld ) > 0 );
 
-            if ( this._fIsReentrant ) {
+            if ( this.IsReentrant ) {
                 if ( IsRwHashEntryChanged( lrwc, id ) ) { lrwc = this.GetThreadRwCount( id, false ); }
 
                 if ( lrwc != null ) { lrwc.RecursiveCounts.Writercount++; }
@@ -742,7 +736,7 @@ namespace Librainian.Threading {
 
             ReaderWriterCount lrwc;
 
-            if ( !this._fIsReentrant ) {
+            if ( !this.IsReentrant ) {
                 if ( id == this._upgradeLockOwnerId ) {
 
                     //Check for AU->AU
@@ -840,7 +834,7 @@ namespace Librainian.Threading {
                 if ( !retVal ) { return false; }
             }
 
-            if ( this._fIsReentrant ) {
+            if ( this.IsReentrant ) {
 
                 //The lock may have been dropped getting here, so make a quick check to see whether some other
                 //thread did not grab the entry.
@@ -861,7 +855,7 @@ namespace Librainian.Threading {
 
             var lrwc = this.GetThreadRwCount( id, true );
 
-            if ( !this._fIsReentrant ) {
+            if ( !this.IsReentrant ) {
                 if ( lrwc is null ) {
 
                     //You have to be holding the read lock to make this call.
@@ -922,7 +916,7 @@ namespace Librainian.Threading {
 
             //We need this case for EU->ER->EW case, as the read count will be 2 in
             //that scenario.
-            if ( this._fIsReentrant ) {
+            if ( this.IsReentrant ) {
                 if ( this._numWriteUpgradeWaiters > 0 && this._fUpgradeThreadHoldingRead && readercount == 2 ) {
                     this.ExitMyLock(); // Exit before signaling to improve efficiency (wakee will need the lock)
                     this._waitUpgradeEvent.Set(); // release all upgraders (however there can be at most one).
@@ -967,7 +961,7 @@ namespace Librainian.Threading {
         public void ExitWriteLock() {
             var id = Thread.CurrentThread.ManagedThreadId;
 
-            if ( !this._fIsReentrant ) {
+            if ( !this.IsReentrant ) {
                 if ( id != this._writeLockOwnerId ) {
 
                     //You have to be holding the write lock to make this call.
@@ -1019,7 +1013,7 @@ namespace Librainian.Threading {
         public void ExitUpgradeableReadLock() {
             var id = Thread.CurrentThread.ManagedThreadId;
 
-            if ( !this._fIsReentrant ) {
+            if ( !this.IsReentrant ) {
                 if ( id != this._upgradeLockOwnerId ) {
 
                     //You have to be holding the upgrade lock to make this call.

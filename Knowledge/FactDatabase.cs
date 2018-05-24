@@ -42,10 +42,11 @@ namespace Librainian.Knowledge {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    using FileSystem;
+    using ComputerSystems.FileSystem;
     using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
+    using Parsing;
     using Threading;
 
     [JsonObject]

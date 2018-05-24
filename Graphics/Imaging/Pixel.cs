@@ -43,6 +43,7 @@ namespace Librainian.Graphics.Imaging {
     using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
+    using Threading;
 
     /// <summary>
     ///     <para>

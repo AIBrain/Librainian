@@ -1,5 +1,5 @@
 ﻿namespace Librainian.Controls {
-    using System;
+
     using System.ComponentModel;
 
     partial class VerticalProgressBar {
@@ -12,7 +12,7 @@
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose( Boolean disposing ) {
+        protected override void Dispose( System.Boolean disposing ) {
             if ( disposing && ( this.components != null ) ) {
                 this.components.Dispose();
             }

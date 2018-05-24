@@ -1,36 +1,30 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "ConcurrentBlockingQueue.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "ConcurrentBlockingQueue.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/ConcurrentBlockingQueue.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
+// "Librainian/Librainian/ConcurrentBlockingQueue.cs" was last formatted by Protiguous on 2018/05/21 at 10:50 PM.
 
 namespace Librainian.Collections {
 
@@ -46,11 +40,11 @@ namespace Librainian.Collections {
     /// <typeparam name="T">Specifies the type of elements in the queue.</typeparam>
     public class ConcurrentBlockingQueue<T> : ABetterClassDispose {
 
-        private readonly ConcurrentQueue<T> _queue = new ConcurrentQueue<T>();
-
-        private readonly AutoResetEvent _workEvent = new AutoResetEvent( initialState: false );
-
         private Boolean _isCompleteAdding;
+
+        private ConcurrentQueue<T> Queue { get; } = new ConcurrentQueue<T>();
+
+        private AutoResetEvent WorkEvent { get; } = new AutoResetEvent( initialState: false );
 
         /// <summary>
         ///     Adds the item to the queue.
@@ -62,10 +56,10 @@ namespace Librainian.Collections {
             if ( this._isCompleteAdding ) { throw new InvalidOperationException(); }
 
             // queue the item
-            this._queue.Enqueue( item: item );
+            this.Queue.Enqueue( item: item );
 
             // notify the consuming enumerable
-            this._workEvent.Set();
+            this.WorkEvent.Set();
         }
 
         /// <summary>
@@ -78,7 +72,7 @@ namespace Librainian.Collections {
             this._isCompleteAdding = true;
 
             // notify the consuming enumerable
-            this._workEvent.Set();
+            this.WorkEvent.Set();
         }
 
         public override void DisposeManaged() { }
@@ -96,19 +90,19 @@ namespace Librainian.Collections {
             do {
 
                 // dequeue and yield as many items as are available
-                while ( this._queue.TryDequeue( result: out var value ) ) { yield return value; }
+                while ( this.Queue.TryDequeue( result: out var value ) ) { yield return value; }
 
                 // once the queue is empty, check if adding is completed and return if so
-                if ( this._isCompleteAdding && this._queue.Count == 0 ) {
+                if ( this._isCompleteAdding && this.Queue.Count == 0 ) {
 
                     // ensure all other consuming enumerables are unblocked when complete
-                    this._workEvent.Set();
+                    this.WorkEvent.Set();
 
                     yield break;
                 }
 
                 // otherwise, wait for additional items to be added and continue
-            } while ( this._workEvent.WaitOne() );
+            } while ( this.WorkEvent.WaitOne() );
         }
     }
 }

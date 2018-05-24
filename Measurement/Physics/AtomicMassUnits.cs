@@ -132,9 +132,9 @@ namespace Librainian.Measurement.Physics {
         }
 
         public static AtomicMassUnits operator *( BigInteger left, AtomicMassUnits right ) {
-            var left = new BigRational( left );
+            var lhs = new BigRational( left );
             var rhs = new BigRational( right.Value );
-            var res = left * rhs;
+            var res = lhs * rhs;
 
             return new AtomicMassUnits( ( Decimal )res );
         }

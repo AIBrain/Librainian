@@ -24,7 +24,7 @@
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/ABetterClassDispose.cs" was last formatted by Protiguous on 2018/05/23 at 9:18 PM.
+// "Librainian/Librainian/ABetterClassDispose.cs" was last formatted by Protiguous on 2018/05/23 at 9:19 PM.
 
 namespace Librainian.Magic {
 

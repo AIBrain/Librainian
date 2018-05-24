@@ -1,30 +1,30 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT VISIBLE in any
-// source code used or derived from our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// This source code, "ControlExtensions.cs", belongs to Rick@AIBrain.org
-// and Protiguous@Protiguous.com unless otherwise specified or
-// the original license has been overwritten by this automatic formatting.
+// This source code contained in "ControlExtensions.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other projects
-// still retain their original license and our thanks goes to those Authors.
-//
-// Donations, royalties from any software that uses any of our code,
-// and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
+// Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/ControlExtensions.cs" was last formatted by Protiguous on 2018/05/17 at 6:12 PM.
+// "Librainian/Librainian/ControlExtensions.cs" was last formatted by Protiguous on 2018/05/21 at 9:56 PM.
 
 namespace Librainian.Controls {
 
@@ -272,8 +272,8 @@ namespace Librainian.Controls {
                 if ( !input.Text().IsNullOrWhiteSpace() ) { return; }
 
                 control.Flash( Seconds.One );
-                await input.FlashWhileBlank( control );
-            } );
+                await input.FlashWhileBlank( control ).UI();
+            } ).UI();
         }
 
         /// <summary>
@@ -397,15 +397,10 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        ///     Safely set the <see cref="Control.Text" /> of a control across threads.
+        ///     Safely set the <see cref="Control.Location" /> of a <see cref="Form" /> across threads.
         /// </summary>
         /// <remarks></remarks>
-        public static void Location( [CanBeNull] this Form form, Point location ) =>
-            form?.InvokeIfRequired( () => {
-                if ( form.IsDisposed ) { return; }
-
-                form.Location = location;
-            } );
+        public static void Location( [CanBeNull] this Form form, Point location ) => form?.InvokeIfRequired( () => form.Location = location );
 
         public static Color MakeDarker( this Color thisColor, Double darknessPercent ) {
             darknessPercent = darknessPercent.ForceBounds( 0, 1 );

@@ -1,36 +1,30 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "Q.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "Q.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/Q.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
+// "Librainian/Librainian/Q.cs" was last formatted by Protiguous on 2018/05/22 at 6:18 PM.
 
 namespace Librainian.Collections {
 
@@ -51,6 +45,8 @@ namespace Librainian.Collections {
     [HostProtection( SecurityAction.LinkDemand, ExternalThreading = true, Synchronization = true )]
     public class Q<T> : IProducerConsumerCollection<T> {
 
+        private T[] _array;
+
         [NonSerialized]
         private Segment _head;
 
@@ -58,14 +54,6 @@ namespace Librainian.Collections {
 
         [NonSerialized]
         private Segment _tail;
-
-        public Q() => this._head = this._tail = new Segment( index: 0L );
-
-        public Q( IEnumerable<T> collection ) {
-            if ( collection is null ) { throw new ArgumentNullException( nameof( collection ) ); }
-
-            this.InitializeFromCollection( collection: collection );
-        }
 
         public Int32 Count {
             get {
@@ -95,9 +83,25 @@ namespace Librainian.Collections {
             }
         }
 
-        public Boolean IsSynchronized => false;
+        /// <summary>
+        ///     Gets a value indicating whether access to the <see cref="T:System.Collections.ICollection" /> is synchronized
+        ///     (thread safe).
+        /// </summary>
+        /// <returns>
+        ///     <see langword="true" /> if access to the <see cref="T:System.Collections.ICollection" /> is synchronized (thread
+        ///     safe); otherwise, <see langword="false" />.
+        /// </returns>
+        public Boolean IsSynchronized { get; }
 
         public Object SyncRoot => throw new NotSupportedException();
+
+        public Q() => this._head = this._tail = new Segment( index: 0L );
+
+        public Q( IEnumerable<T> collection ) {
+            if ( collection is null ) { throw new ArgumentNullException( nameof( collection ) ); }
+
+            this.InitializeFromCollection( collection: collection );
+        }
 
         private void GetHeadTailPositions( out Segment head, out Segment tail, out Int32 headLow, out Int32 tailHigh ) {
             head = this._head;
@@ -204,27 +208,25 @@ namespace Librainian.Collections {
 
         private sealed class Segment {
 
-            private readonly T[] _array;
+            private Int32 _high = -1;
 
-            private readonly Int32[] _state;
-
-            private Int32 _high;
             private Int32 _low;
-            internal readonly Int64 Index;
+
             public Segment Next;
 
-            internal Segment( Int64 index ) {
-                this._array = new T[32];
-                this._state = new Int32[32];
-                this._high = -1;
-                this.Index = index;
-            }
+            private Int32[] _state { get; } = new Int32[32];
+
+            private T[] Array { get; } = new T[32];
+
+            internal Int64 Index { get; }
+
+            public Int32 High => Math.Min( val1: this._high, val2: 31 );
 
             public Boolean IsEmpty => this.Low > this.High;
 
             public Int32 Low => Math.Min( val1: this._low, val2: 32 );
 
-            public Int32 High => Math.Min( val1: this._high, val2: 31 );
+            internal Segment( Int64 index ) => this.Index = index;
 
             private void Grow( out Segment tail ) {
                 this.Next = new Segment( index: this.Index + 1L );
@@ -237,7 +239,7 @@ namespace Librainian.Collections {
                 for ( var index = start; index <= end; ++index ) {
                     while ( this._state[index] == 0 ) { Thread.Yield(); }
 
-                    list.Add( item: this._array[index] );
+                    list.Add( item: this.Array[index] );
                 }
 
                 return list;
@@ -249,7 +251,7 @@ namespace Librainian.Collections {
                 var index = Interlocked.Increment( location: ref this._high );
 
                 if ( index <= 31 ) {
-                    this._array[index] = value;
+                    this.Array[index] = value;
                     this._state[index] = 1;
                 }
 
@@ -266,7 +268,7 @@ namespace Librainian.Collections {
 
                 while ( this._state[low] == 0 ) { Thread.Yield(); }
 
-                result = this._array[low];
+                result = this.Array[low];
 
                 return true;
             }
@@ -284,7 +286,7 @@ namespace Librainian.Collections {
                     else {
                         while ( this._state[low] == 0 ) { Thread.Yield(); }
 
-                        result = this._array[low];
+                        result = this.Array[low];
 
                         if ( low + 1 >= 32 ) {
                             while ( this.Next is null ) { Thread.Yield(); }
@@ -303,7 +305,7 @@ namespace Librainian.Collections {
 
             public void UnsafeAdd( T value ) {
                 ++this._high;
-                this._array[this._high] = value;
+                this.Array[this._high] = value;
                 this._state[this._high] = 1;
             }
 

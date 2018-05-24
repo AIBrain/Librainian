@@ -1,36 +1,30 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "AbstractCollection.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "AbstractCollection.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 //
-// "Librainian/Librainian/AbstractCollection.cs" was last cleaned by Protiguous on 2018/05/15 at 10:37 PM.
+// "Librainian/Librainian/AbstractCollection.cs" was last formatted by Protiguous on 2018/05/21 at 10:49 PM.
 
 namespace Librainian.Collections {
 
@@ -71,11 +65,6 @@ namespace Librainian.Collections {
         /// </returns>
         public virtual Boolean IsReadOnly => true;
 
-        /// <summary>
-        ///     Gets the number of elements contained in the <see cref="ICollection{T}" />. This implementation counts the elements
-        ///     by iterating through the enumerator returned by <see cref="GetEnumerator()" /> method.
-        /// </summary>
-        /// <returns>The number of elements contained in the <see cref="ICollection{T}" />.</returns>
         // ReSharper disable once UseCollectionCountProperty
         public virtual Int32 Count => this.Count();
 
@@ -136,31 +125,6 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
-        ///     Copies the elements of the <see cref="ICollection" /> to an <see cref="Array" />, starting at a particular
-        ///     <see cref="Array" /> index.
-        /// </summary>
-        /// <param name="array">
-        ///     The one-dimensional <see cref="Array" /> that is the destination of the elements copied from
-        ///     <see cref="ICollection" />. The <see cref="Array" /> must have zero-based indexing.
-        /// </param>
-        /// <param name="index">The zero-based index in array at which copying begins.</param>
-        /// <exception cref="ArgumentNullException">array is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">index is less than zero.</exception>
-        /// <exception cref="ArgumentException">
-        ///     array is multidimensional.-or- index is equal to or greater than the length of array.
-        ///     - or- The number of elements in the source <see cref="ICollection" /> is greater than the available space from
-        ///     index to the end of the destination array.
-        /// </exception>
-        /// <exception cref="InvalidCastException">
-        ///     The type of the source <see cref="ICollection" /> cannot be cast automatically
-        ///     to the type of the destination array.
-        /// </exception>
-        /// <filterpriority>2</filterpriority>
-        protected virtual void CopyTo( Array array, Int32 index ) {
-            foreach ( var e in this ) { array.SetValue( e, index: index++ ); }
-        }
-
-        /// <summary>
         ///     Called by <see cref="AddRange" /> after the parameter is validated to be neither <c>null</c> nor this collection
         ///     itself.
         /// </summary>
@@ -203,6 +167,11 @@ namespace Librainian.Collections {
             return array;
         }
 
+        /// <summary>
+        ///     Gets the number of elements contained in the <see cref="ICollection{T}" />. This implementation counts the elements
+        ///     by iterating through the enumerator returned by <see cref="GetEnumerator()" /> method.
+        /// </summary>
+        /// <returns>The number of elements contained in the <see cref="ICollection{T}" />.</returns>
         /// <summary>
         ///     Adds an item to the <see cref="ICollection{T}" />. This implementation always throw
         ///     <see cref="NotSupportedException" /> .
@@ -390,6 +359,31 @@ namespace Librainian.Collections {
             }
 
             return sb.Append( ")" ).ToString();
+        }
+
+        /// <summary>
+        ///     Copies the elements of the <see cref="ICollection" /> to an <see cref="Array" />, starting at a particular
+        ///     <see cref="Array" /> index.
+        /// </summary>
+        /// <param name="array">
+        ///     The one-dimensional <see cref="Array" /> that is the destination of the elements copied from
+        ///     <see cref="ICollection" />. The <see cref="Array" /> must have zero-based indexing.
+        /// </param>
+        /// <param name="index">The zero-based index in array at which copying begins.</param>
+        /// <exception cref="ArgumentNullException">array is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">index is less than zero.</exception>
+        /// <exception cref="ArgumentException">
+        ///     array is multidimensional.-or- index is equal to or greater than the length of array.
+        ///     - or- The number of elements in the source <see cref="ICollection" /> is greater than the available space from
+        ///     index to the end of the destination array.
+        /// </exception>
+        /// <exception cref="InvalidCastException">
+        ///     The type of the source <see cref="ICollection" /> cannot be cast automatically
+        ///     to the type of the destination array.
+        /// </exception>
+        /// <filterpriority>2</filterpriority>
+        protected virtual void CopyTo( Array array, Int32 index ) {
+            foreach ( var e in this ) { array.SetValue( e, index: index++ ); }
         }
 
         /// <summary>

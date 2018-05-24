@@ -1,36 +1,30 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
-//
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
-//
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "TaskExtensions.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// 
 // =========================================================
-// This section of source code, "TaskExtensions.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
-//
-// (We try to avoid that from happening, but it does happen.)
-//
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
-// =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
-// =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-//
-// "Librainian/Librainian/TaskExtensions.cs" was last formatted by Protiguous on 2018/05/17 at 3:49 PM.
+// 
+// "Librainian/Librainian/TaskExtensions.cs" was last formatted by Protiguous on 2018/05/22 at 4:40 PM.
 
 namespace Librainian.Threading {
 
@@ -43,14 +37,15 @@ namespace Librainian.Threading {
     using System.Threading.Tasks.Dataflow;
     using JetBrains.Annotations;
     using Measurement.Time;
+    using Timer = System.Timers.Timer;
 
     /// <summary>
-    ///     Execute an <see cref="Action" /> on a <see cref="Timer" />.
+    ///     Execute an <see cref="Action{T}" /> on a <see cref="System.Timers.Timer" />.
     /// </summary>
     public static class TaskExtensions {
 
         /// <summary>
-        ///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
+        ///     <para>Automatically apply <see cref="Task{TResult}.ConfigureAwait" /> to the <paramref name="task" />.</para>
         /// </summary>
         /// <param name="task"></param>
         /// <returns></returns>
@@ -65,6 +60,21 @@ namespace Librainian.Threading {
         public static ConfiguredTaskAwaitable<T> NoUI<T>( this Task<T> task ) => task.ConfigureAwait( false );
 
         /// <summary>
+        ///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public static ConfiguredTaskAwaitable UI( this Task task ) => task.ConfigureAwait( true );
+
+        /// <summary>
+        ///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public static ConfiguredTaskAwaitable<T> UI<T>( this Task<T> task ) => task.ConfigureAwait( true );
+
+        /// <summary>
         ///     http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -77,7 +87,7 @@ namespace Librainian.Threading {
 
             foreach ( var task in inputs ) {
                 task.ContinueWith( completed => {
-                    var nextBox = boxes[index: Interlocked.Increment( location: ref currentIndex )];
+                    var nextBox = boxes[ index: Interlocked.Increment( location: ref currentIndex ) ];
                     PropagateResult( completedTask: completed, completionSource: nextBox );
                 }, continuationOptions: TaskContinuationOptions.ExecuteSynchronously );
             }
@@ -128,20 +138,18 @@ namespace Librainian.Threading {
             if ( tasks is null ) { throw new ArgumentNullException( nameof( tasks ) ); }
 
             var inputTasks = tasks.ToList();
-
-            var buckets = new TaskCompletionSource<Task<T>>[inputTasks.Count];
-
-            var results = new Task<Task<T>>[buckets.Length];
+            var buckets = new TaskCompletionSource<Task<T>>[ inputTasks.Count ];
+            var results = new Task<Task<T>>[ buckets.Length ];
 
             for ( var i = 0; i < buckets.Length; i++ ) {
-                buckets[i] = new TaskCompletionSource<Task<T>>();
-                results[i] = buckets[i].Task;
+                buckets[ i ] = new TaskCompletionSource<Task<T>>();
+                results[ i ] = buckets[ i ].Task;
             }
 
             var nextTaskIndex = -1;
 
             void Continuation( Task<T> completed ) {
-                var bucket = buckets[Interlocked.Increment( location: ref nextTaskIndex )];
+                var bucket = buckets[ Interlocked.Increment( location: ref nextTaskIndex ) ];
                 bucket.TrySetResult( result: completed );
             }
 
@@ -164,7 +172,6 @@ namespace Librainian.Threading {
         //    }
         //    AddThenFireAndForget( job: job, delay: delay );
         //}
-
         /// <summary>
         ///     Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" /> .
         /// </summary>
@@ -175,7 +182,6 @@ namespace Librainian.Threading {
             if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
             await Task.Delay( delay: delay );
-
             await Task.Run( job );
         }
 
@@ -189,7 +195,6 @@ namespace Librainian.Threading {
             if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
             await Task.Delay( delay: delay ).NoUI();
-
             await Task.Run( job ).NoUI();
         }
 
@@ -203,7 +208,6 @@ namespace Librainian.Threading {
             if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
             await Task.Delay( delay: delay ).NoUI();
-
             await Task.Run( job ).NoUI();
         }
 
@@ -217,7 +221,6 @@ namespace Librainian.Threading {
             if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
             await Task.Delay( delay: delay ).NoUI();
-
             await Task.Run( job ).NoUI();
         }
 
@@ -231,7 +234,6 @@ namespace Librainian.Threading {
             if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
             await Task.Delay( delay: delay ).NoUI();
-
             await Task.Run( job ).NoUI();
         }
 
@@ -281,7 +283,7 @@ namespace Librainian.Threading {
         /// <param name="target"></param>
         /// <param name="item">  </param>
         /// <param name="delay"> </param>
-        public static System.Timers.Timer TryPost<T>( this ITargetBlock<T> target, T item, TimeSpan delay ) {
+        public static Timer TryPost<T>( this ITargetBlock<T> target, T item, TimeSpan delay ) {
             if ( target is null ) { throw new ArgumentNullException( nameof( target ) ); }
 
             try {
@@ -303,7 +305,8 @@ namespace Librainian.Threading {
         /// <param name="afterDelay"></param>
         /// <param name="action">    </param>
         /// <param name="condition"> </param>
-        public static System.Timers.Timer When( this TimeSpan afterDelay, Func<Boolean> condition, Action action ) {
+        [CanBeNull]
+        public static Timer When( this TimeSpan afterDelay, Func<Boolean> condition, Action action ) {
             if ( condition is null ) { throw new ArgumentNullException( nameof( condition ) ); }
 
             if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
@@ -319,5 +322,7 @@ namespace Librainian.Threading {
                 return null;
             }
         }
+
     }
+
 }

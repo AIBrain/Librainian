@@ -42,17 +42,17 @@ namespace Librainian.Measurement.Time.Clocks {
     /// </summary>
     public class WindowsClock {
 
+        public static Int64 Frequency { get; }
+
+        public static Boolean IsAvailable { get; }
+
         static WindowsClock() {
             try {
-                IsAvailable = NativeMethods.QueryPerformanceFrequency( out var frequency ) && NativeMethods.QueryPerformanceCounter( out var counter );
+                IsAvailable = NativeMethods.QueryPerformanceFrequency( out var frequency ) && NativeMethods.QueryPerformanceCounter( out _ );
                 Frequency = frequency;
             }
             catch ( Exception ) { IsAvailable = false; }
         }
-
-        public static Int64 Frequency { get; }
-
-        public static Boolean IsAvailable { get; }
 
         public static Int64 GetTimestamp() {
             NativeMethods.QueryPerformanceCounter( out var value );

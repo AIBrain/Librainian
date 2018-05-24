@@ -1,36 +1,30 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
-//
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
-//
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "TheInternet.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// 
 // =========================================================
-// This section of source code, "TheInternet.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
-//
-// (We try to avoid that from happening, but it does happen.)
-//
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
-// =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
-// =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-//
-// "Librainian/Librainian/TheInternet.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
+// 
+// "Librainian/Librainian/TheInternet.cs" was last formatted by Protiguous on 2018/05/23 at 9:19 PM.
 
 namespace Librainian.Internet {
 
@@ -40,7 +34,7 @@ namespace Librainian.Internet {
     using System.Media;
     using System.Net;
     using System.Threading.Tasks;
-    using FileSystem;
+    using ComputerSystems.FileSystem;
     using JetBrains.Annotations;
     using Maths.Numbers;
     using Measurement.Time;
@@ -76,7 +70,7 @@ namespace Librainian.Internet {
                 var webclient = new WebClient { Credentials = credentials };
 
                 webclient.DownloadProgressChanged += ( sender, args ) => {
-                    var progress = args.BytesReceived / ( Double )args.TotalBytesToReceive;
+                    var progress = args.BytesReceived / ( Double ) args.TotalBytesToReceive;
                     reportProgress?.Report( progress );
                 };
 
@@ -109,9 +103,10 @@ namespace Librainian.Internet {
 
                 //TODO this /totally/ is not finished yet.
 
-                yield return new Document( internetAddress ); //should download file to a document in the user's temp folder.
+                yield return new Document( internetAddress.ToString() ); //should download file to a document in the user's temp folder.
             }
         }
+
     }
 
     public static class TheInternetTests {
@@ -136,5 +131,7 @@ namespace Librainian.Internet {
                 catch ( Exception exception ) { exception.More(); }
             }
         }
+
     }
+
 }

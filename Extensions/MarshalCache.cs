@@ -47,7 +47,7 @@ namespace Librainian.Extensions {
     ///     Pulled from https://github.com/lolp1/Process.NET/blob/master/src/Process.NET/Marshaling/MarshalCache.cs
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [SuppressMessage( "ReSharper", "StaticMemberInGenericType" )]
+
     public static class MarshalCache<T> {
 
         public static readonly GetUnsafePtrDelegate GetUnsafePtr;

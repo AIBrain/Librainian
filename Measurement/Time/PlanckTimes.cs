@@ -115,6 +115,9 @@ namespace Librainian.Measurement.Time {
 
         //was 5.85E50
 
+        [JsonProperty]
+        public BigInteger Value { get; }
+
         public PlanckTimes( Int64 value ) : this( ( BigInteger )value ) { }
 
         public PlanckTimes( BigRational value ) : this( value.GetWholePart() ) { }
@@ -124,9 +127,6 @@ namespace Librainian.Measurement.Time {
         public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes().Value ) { }
 
         public PlanckTimes( Years years ) : this( years.ToPlanckTimes().Value ) { }
-
-        [JsonProperty]
-        public BigInteger Value { get; }
 
         public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) => new PlanckTimes( left.Value + right.Value );
 
@@ -188,47 +188,5 @@ namespace Librainian.Measurement.Time {
 
         [Pure]
         public override String ToString() => $"{this.Value} tP";
-    }
-
-    public static class PlanckExtensions {
-
-        /// <summary>
-        ///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and
-        ///     return the amount(integer) reduced.
-        /// </summary>
-        /// <param name="constant"></param>
-        /// <param name="planckTimes"></param>
-        /// <returns></returns>
-        public static BigInteger PullPlancks( this BigInteger constant, ref BigInteger planckTimes ) {
-
-            //if ( planckTimes < constant ) {
-            //    return BigInteger.Zero;
-            //}
-            var integer = BigInteger.Divide( planckTimes, constant );
-            planckTimes -= BigInteger.Multiply( integer, constant );
-
-            return integer;
-        }
-
-        /// <summary>
-        ///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and
-        ///     return the amount(integer) reduced.
-        /// </summary>
-        /// <param name="constant"></param>
-        /// <param name="planckTimes"></param>
-        /// <returns></returns>
-        public static BigInteger PullPlancks( this BigRational constant, ref BigInteger planckTimes ) {
-
-            //if ( planckTimes < constant ) {
-            //    return BigInteger.Zero;
-            //}
-            //var integer = BigInteger.Divide( planckTimes, ( BigInteger ) constant );
-            var pullPlancks = ( BigInteger )( planckTimes / constant );
-
-            //planckTimes -= BigInteger.Multiply( pullPlancks, ( BigInteger ) constant );
-            planckTimes -= ( BigInteger )( pullPlancks * constant );
-
-            return pullPlancks;
-        }
     }
 }
